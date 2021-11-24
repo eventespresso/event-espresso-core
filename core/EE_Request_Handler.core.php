@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\CurrentPage;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
@@ -47,13 +48,11 @@ final class EE_Request_Handler implements InterminableInterface
 
 
     /**
-     * @param CurrentPage       $current_page
      * @param RequestInterface  $request
      * @param ResponseInterface $response
      */
-    public function __construct(CurrentPage $current_page, RequestInterface $request, ResponseInterface $response)
+    public function __construct(RequestInterface $request, ResponseInterface $response)
     {
-        $this->current_page = $current_page;
         $this->request      = $request;
         $this->response     = $response;
         $this->ajax         = $this->request->isAjax();
@@ -72,6 +71,15 @@ final class EE_Request_Handler implements InterminableInterface
     }
 
 
+    private function getCurrentPage()
+    {
+        if (! $this->current_page instanceof CurrentPage) {
+            $this->current_page = LoaderFactory::getLoader()->getShared(CurrentPage::class);
+        }
+        return $this->current_page;
+    }
+
+
     /**
      * @param WP $WP
      * @return void
@@ -79,7 +87,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function set_request_vars($WP = null)
     {
-        $this->current_page->parseQueryVars($WP);
+        $this->getCurrentPage()->parseQueryVars($WP);
     }
 
 
@@ -90,7 +98,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function get_post_id_from_request($WP = null)
     {
-        return $this->current_page->postId();
+        return $this->getCurrentPage()->postId();
     }
 
 
@@ -101,7 +109,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function get_post_name_from_request($WP = null)
     {
-        return $this->current_page->postName();
+        return $this->getCurrentPage()->postName();
     }
 
 
@@ -112,7 +120,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function get_post_type_from_request($WP = null)
     {
-        return $this->current_page->postType();
+        return $this->getCurrentPage()->postType();
     }
 
 
@@ -125,7 +133,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function get_current_page_permalink($WP = null)
     {
-        return $this->current_page->getPermalink($WP);
+        return $this->getCurrentPage()->getPermalink($WP);
     }
 
 
@@ -135,7 +143,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function test_for_espresso_page()
     {
-        return $this->current_page->isEspressoPage();
+        return $this->getCurrentPage()->isEspressoPage();
     }
 
 
@@ -203,7 +211,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function set_espresso_page($value = null)
     {
-        $this->current_page->setEspressoPage($value);
+        $this->getCurrentPage()->setEspressoPage($value);
     }
 
 
@@ -213,7 +221,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function is_espresso_page()
     {
-        return $this->current_page->isEspressoPage();
+        return $this->getCurrentPage()->isEspressoPage();
     }
 
 

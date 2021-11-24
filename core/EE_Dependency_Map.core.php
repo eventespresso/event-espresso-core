@@ -450,7 +450,6 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request'     => EE_Dependency_Map::load_from_cache,
             ],
             'EE_Request_Handler'                                                                                          => [
-                'EventEspresso\core\services\request\CurrentPage' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'     => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Response'    => EE_Dependency_Map::load_from_cache,
             ],
