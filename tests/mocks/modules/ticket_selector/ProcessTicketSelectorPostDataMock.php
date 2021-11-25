@@ -2,42 +2,46 @@
 
 namespace EventEspresso\tests\mocks\modules\ticket_selector;
 
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\modules\ticket_selector\ProcessTicketSelectorPostData;
 
 class ProcessTicketSelectorPostDataMock extends ProcessTicketSelectorPostData
 {
 
     /**
-     * @param int              $event_id
+     * @param RequestInterface $request
      */
-    public function __construct(int $event_id)
+    public function __construct(RequestInterface $request)
     {
-        parent::__construct($event_id, new RequestMock());
-    }
-
-    /**
-     * @param string $input_key
-     */
-    public function processQuantity(string $input_key)
-    {
-        parent::processQuantity($input_key, );
+        parent::__construct($request);
     }
 
 
     /**
-     * @param string $input_key
+     * @return RequestInterface
      */
-    public function processTicketID(string $input_key)
+    public function getRequest(): RequestInterface
     {
-        parent::processTicketID($input_key);
+        return $this->request;
     }
 
 
     /**
-     * @param string $input_key
+     * @param string $key
+     * @return mixed
      */
-    public function processReturnURL(string $input_key)
+    public function getValidData(string $key)
     {
-        parent::processReturnURL($input_key);
+        return $this->valid_data[ $key ] ?? null;
+    }
+
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     */
+    public function setValidData(string $key, $value)
+    {
+        $this->valid_data[ $key ] = $value;
     }
 }
