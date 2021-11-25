@@ -15,6 +15,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -195,19 +196,21 @@ class ProcessTicketSelector
                 )
             );
         }
-        // do we have an event id?
-        $id = $this->getEventId();
         // we should really only have 1 registration in the works now
         // (ie, no MER) so unless otherwise requested, clear the session
         if (apply_filters('FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', true)) {
             $this->session->clear_session(__CLASS__, __FUNCTION__);
         }
         // validate/sanitize/filter data
-        $post_data_validator = New ProcessTicketSelectorPostData($id, $this->request);
-        $valid = apply_filters(
-            'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data',
-            $post_data_validator->validatePostData()
-        );
+        try {
+            $post_data_validator = new ProcessTicketSelectorPostData($this->request);
+            $valid               = apply_filters(
+                'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data',
+                $post_data_validator->validatePostData()
+            );
+        } catch (Exception $exception) {
+            EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+        }
         // check total tickets ordered vs max number of attendees that can register
         if (! empty($valid) && $valid['total_tickets'] > $valid['max_atndz']) {
             $this->maxAttendeesViolation($valid);
@@ -225,37 +228,13 @@ class ProcessTicketSelector
         if ($valid['return_url']) {
             EEH_URL::safeRedirectAndExit($valid['return_url']);
         }
+        // do we have an event id?
+        $id = $post_data_validator->getEventId();
         if ($id) {
             EEH_URL::safeRedirectAndExit(get_permalink($id));
         }
         echo EE_Error::get_notices(); // already escaped
         return false;
-    }
-
-
-    /**
-     * @return int
-     */
-    private function getEventId()
-    {
-        // do we have an event id?
-        if (! $this->request->requestParamIsSet('tkt-slctr-event-id')) {
-            // $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
-            EE_Error::add_error(
-                sprintf(
-                    esc_html__(
-                        'An event id was not provided or was not received.%sPlease click the back button on your browser and try again.',
-                        'event_espresso'
-                    ),
-                    '<br/>'
-                ),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
-        }
-        // if event id is valid
-        return $this->request->getRequestParam('tkt-slctr-event-id', 0, 'int');
     }
 
 
