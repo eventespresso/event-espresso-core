@@ -43,7 +43,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
         $this->_columns = array(
-            'cb'              => '<input type="checkbox" />',
+            'cb'              => '<input type="checkbox" />', // <-- this checkbox is actually replaced by WP core
             'id'              => esc_html__('ID', 'event_espresso'),
             'name'            => esc_html__('Name', 'event_espresso'),
             'author'          => esc_html__('Author', 'event_espresso'),
@@ -148,7 +148,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         }
         $this->_dtt = $item->primary_datetime(); // set this for use in other columns
         return sprintf(
-            '<input type="checkbox" name="EVT_IDs[]" value="%s" />',
+            '<input type="checkbox" name="EVT_IDs[]" value="%s" class="ee-event-list-bulk-select-event"/>',
             $item->ID()
         );
     }
