@@ -305,8 +305,6 @@ final class EE_System implements ResettableInterface
         // set autoloaders for all of the classes implementing EEI_Plugin_API
         // which provide helpers for EE plugin authors to more easily register certain components with EE.
         EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
-        // load legacy EE_Request_Handler in case add-ons still need it
-        $this->loader->getShared('EE_Request_Handler');
     }
 
 
@@ -1194,6 +1192,8 @@ final class EE_System implements ResettableInterface
         }
         // integrate WP_Query with the EE models
         $this->loader->getShared('EE_CPT_Strategy');
+        // load legacy EE_Request_Handler in case add-ons still need it
+        $this->loader->getShared('EE_Request_Handler');
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // always load template tags, because it's faster than checking if it's a front-end request, and many page
         // builders require these even on the front-end
