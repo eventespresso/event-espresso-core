@@ -972,7 +972,9 @@ class EE_Dependency_Map
             'EE_Maintenance_Mode'                          => 'load_core',
             'EE_Register_CPTs'                             => 'load_core',
             'EE_Admin'                                     => 'load_core',
-            'EE_CPT_Strategy'                              => 'load_core',
+            'EE_CPT_Strategy'                              => function () {
+                return EE_CPT_Strategy::instance();
+            },
             // load_class
             'EE_Registration_Processor'                    => 'load_class',
             // load_lib
