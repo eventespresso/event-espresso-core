@@ -37,7 +37,7 @@ class EEM_Country extends EEM_Base
     }
 
 
-    protected function __construct(?string $timezone = '')
+    protected function __construct($timezone = '')
     {
         $this->singular_item = esc_html__('Country', 'event_espresso');
         $this->plural_item   = esc_html__('Countries', 'event_espresso');
@@ -151,7 +151,7 @@ class EEM_Country extends EEM_Base
      * @return EE_Country[]
      * @throws EE_Error
      */
-    public function get_all_countries(): array
+    public function get_all_countries()
     {
         if (! self::$_all_countries) {
             self::$_all_countries = $this->get_all(['order_by' => ['CNT_name' => 'ASC'], 'limit' => [0, 99999]]);
@@ -167,7 +167,7 @@ class EEM_Country extends EEM_Base
      * @return EE_Country[]
      * @throws EE_Error
      */
-    public function get_all_active_countries(): array
+    public function get_all_active_countries()
     {
         if (! self::$_active_countries) {
             self::$_active_countries =
@@ -184,7 +184,7 @@ class EEM_Country extends EEM_Base
      * @return string
      * @throws EE_Error
      */
-    public function get_country_name_by_ISO(string $country_ISO): string
+    public function get_country_name_by_ISO(string $country_ISO)
     {
         $countries = $this->get_all_countries();
         if (isset($countries[ $country_ISO ]) && $countries[ $country_ISO ] instanceof EE_Country) {
@@ -206,7 +206,7 @@ class EEM_Country extends EEM_Base
      * @return EE_Country|null
      * @throws EE_Error
      */
-    public function getCountryByName(string $country_name): ?EE_Country
+    public function getCountryByName(string $country_name)
     {
         $countries = $this->get_all_countries();
         foreach ($countries as $country) {
