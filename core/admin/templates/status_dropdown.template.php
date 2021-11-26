@@ -8,9 +8,7 @@
  * @var string[] $statuses
  */
 ?>
-
-<?php /* ?>
-<div id="ee-status-container">
+<div id="ee-status-container" style="display: none;">
     <span id="cur_status"><?php echo esc_html($cur_status_label); ?></span>
     <span id="localized_status_save"><?php echo esc_html($localized_status_save); ?></span>
     <span id="cur_stat_id"><?php echo esc_html($cur_status); ?></span>
@@ -22,4 +20,3 @@
         <?php endforeach; ?>
     </select>
 </div>
-<?php */
