@@ -30,7 +30,7 @@ class ProcessTicketSelectorPostData
 
     const DATA_KEY_TOTAL_TICKETS = 'total_tickets';
 
-    const INPUT_KEY_EVENT_ID    = 'tkt-slctr-event-id';
+    const INPUT_KEY_EVENT_ID     = 'tkt-slctr-event-id';
 
     const INPUT_KEY_MAX_ATNDZ    = 'tkt-slctr-max-atndz-';
 
@@ -163,7 +163,7 @@ class ProcessTicketSelectorPostData
     protected function processQuantity(string $input_key)
     {
         // first get number of ticket option rows
-        $rows = $this->request->getRequestParam(self::INPUT_KEY_ROWS . $this->event_id, 1, 'int');
+        $rows    = $this->request->getRequestParam(self::INPUT_KEY_ROWS . $this->event_id, 1, 'int');
         $raw_qty = $this->request->getRequestParam($input_key);
         // explode integers by the dash if qty is a string
         $delimiter = is_string($raw_qty) && strpos($raw_qty, '-') ? '-' : '';
@@ -171,8 +171,8 @@ class ProcessTicketSelectorPostData
         $row_qty = $this->request->getRequestParam($input_key, [], 'int', true, $delimiter);
         // if qty is coming from a radio button input, then we need to assemble an array of rows
         if ($delimiter === '-') {
-            $row  = isset($row_qty[0]) ? absint($row_qty[0]) : 1;
-            $qty  = isset($row_qty[1]) ? absint($row_qty[1]) : 0;
+            $row = isset($row_qty[0]) ? absint($row_qty[0]) : 1;
+            $qty = isset($row_qty[1]) ? absint($row_qty[1]) : 0;
             // restructure the row qty array so that $row is now the key instead of the first value
             $row_qty = [$row => $qty];
             for ($x = 1; $x <= $rows; $x++) {
@@ -228,7 +228,7 @@ class ProcessTicketSelectorPostData
      */
     protected function processTicketIDs(string $input_key)
     {
-        $ticket_ids = (array) $this->request->getRequestParam($input_key, [], 'int', true);
+        $ticket_ids          = (array) $this->request->getRequestParam($input_key, [], 'int', true);
         $filtered_ticket_ids = array_filter($ticket_ids);
         if (empty($filtered_ticket_ids)) {
             throw new DomainException(
