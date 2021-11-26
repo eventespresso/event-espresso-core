@@ -1028,9 +1028,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         );
         if (! empty($func)) {
             if (is_array($func)) {
-                [$class, $method] = $func;
+                list($class, $method) = $func;
             } elseif (strpos($func, '::') !== false) {
-                [$class, $method] = explode('::', $func);
+                list($class, $method) = explode('::', $func);
             } else {
                 $class  = $this;
                 $method = $func;
