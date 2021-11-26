@@ -15,6 +15,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -195,18 +196,21 @@ class ProcessTicketSelector
                 )
             );
         }
-        // do we have an event id?
-        $id = $this->getEventId();
         // we should really only have 1 registration in the works now
         // (ie, no MER) so unless otherwise requested, clear the session
         if (apply_filters('FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', true)) {
             $this->session->clear_session(__CLASS__, __FUNCTION__);
         }
         // validate/sanitize/filter data
-        $valid = apply_filters(
-            'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data',
-            $this->validatePostData($id)
-        );
+        try {
+            $post_data_validator = new ProcessTicketSelectorPostData($this->request);
+            $valid               = apply_filters(
+                'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data',
+                $post_data_validator->validatePostData()
+            );
+        } catch (Exception $exception) {
+            EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+        }
         // check total tickets ordered vs max number of attendees that can register
         if (! empty($valid) && $valid['total_tickets'] > $valid['max_atndz']) {
             $this->maxAttendeesViolation($valid);
@@ -224,140 +228,13 @@ class ProcessTicketSelector
         if ($valid['return_url']) {
             EEH_URL::safeRedirectAndExit($valid['return_url']);
         }
+        // do we have an event id?
+        $id = $post_data_validator->getEventId();
         if ($id) {
             EEH_URL::safeRedirectAndExit(get_permalink($id));
         }
         echo EE_Error::get_notices(); // already escaped
         return false;
-    }
-
-
-    /**
-     * @return int
-     */
-    private function getEventId()
-    {
-        // do we have an event id?
-        if (! $this->request->requestParamIsSet('tkt-slctr-event-id')) {
-            // $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
-            EE_Error::add_error(
-                sprintf(
-                    esc_html__(
-                        'An event id was not provided or was not received.%sPlease click the back button on your browser and try again.',
-                        'event_espresso'
-                    ),
-                    '<br/>'
-                ),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
-        }
-        // if event id is valid
-        return $this->request->getRequestParam('tkt-slctr-event-id', 0, 'int');
-    }
-
-
-    /**
-     * validate_post_data
-     *
-     * @param int $id
-     * @return array
-     */
-    private function validatePostData($id = 0)
-    {
-        if (! $id) {
-            EE_Error::add_error(
-                esc_html__('The event id provided was not valid.', 'event_espresso'),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
-            return array();
-        }
-        // start with an empty array()
-        $valid_data = array();
-        // grab valid id
-        $valid_data['id'] = $id;
-        // array of other form names
-        $inputs_to_clean = array(
-            'max_atndz'  => 'tkt-slctr-max-atndz-',
-            'rows'       => 'tkt-slctr-rows-',
-            'qty'        => 'tkt-slctr-qty-',
-            'ticket_id'  => 'tkt-slctr-ticket-id-',
-            'return_url' => 'tkt-slctr-return-url-',
-        );
-        // let's track the total number of tickets ordered.'
-        $valid_data['total_tickets'] = 0;
-        // cycle through $inputs_to_clean array
-        foreach ($inputs_to_clean as $what => $input_to_clean) {
-            $input_key = "{$input_to_clean}{$id}";
-            // check for POST data
-            if ($this->request->requestParamIsSet($input_key)) {
-                switch ($what) {
-                    // integers
-                    case 'event_id':
-                    case 'rows':
-                    case 'max_atndz':
-                        $valid_data[ $what ] = $this->request->getRequestParam($input_key, 0, 'int');
-                        break;
-                    // arrays of integers
-                    case 'qty':
-                        $max_atndz = $valid_data['max_atndz'] ?? $this->request->getRequestParam($input_key, 0, 'int');
-                        $raw_qty = $this->request->getRequestParam($input_key);
-                        // explode integers by the dash if qty is a string
-                        $delimiter = is_string($raw_qty) && strpos($raw_qty, '-') ? '-' : '';
-                        /** @var array $row_qty */
-                        $row_qty = $this->request->getRequestParam($input_key, [], 'int', true, $delimiter);
-                        // if qty is coming from a radio button input, then we need to assemble an array of rows
-                        if ($delimiter === '-') {
-                            // get number of rows
-                            $rows = $this->request->getRequestParam('tkt-slctr-rows-' . $id, 1, 'int');
-                            $row = isset($row_qty[0]) ? absint($row_qty[0]) : 1;
-                            $qty = isset($row_qty[1]) ? absint($row_qty[1]) : 0;
-                            // restructure the row qty array so that $row is now the key instead of the first value
-                            $row_qty = array($row => $qty);
-                            for ($x = 1; $x <= $rows; $x++) {
-                                if (! isset($row_qty[ $x ])) {
-                                    $row_qty[ $x ] = 0;
-                                }
-                            }
-                        }
-                        ksort($row_qty);
-                        // cycle thru values
-                        foreach ($row_qty as $qty) {
-                            $qty = absint($qty);
-                            // sanitize as integers
-                            $valid_data[ $what ][] = $qty;
-                            $valid_data['total_tickets'] += $qty;
-                        }
-                        break;
-                    // array of integers
-                    case 'ticket_id':
-                        $ticket_ids = (array) $this->request->getRequestParam($input_key, [], 'int', true);
-                        // cycle thru values
-                        foreach ($ticket_ids as $key => $value) {
-                            // allow only integers
-                            $valid_data[ $what ][ $key ] = absint($value);
-                        }
-                        break;
-                    case 'return_url':
-                        // grab and sanitize return-url
-                        $input_value = $this->request->getRequestParam($input_key, '', 'url');
-                        // was the request coming from an iframe ? if so, then:
-                        if (strpos($input_value, 'event_list=iframe')) {
-                            // get anchor fragment
-                            $input_value = explode('#', $input_value);
-                            $input_value = end($input_value);
-                            // use event list url instead, but append anchor
-                            $input_value = EEH_Event_View::event_archive_url() . '#' . $input_value;
-                        }
-                        $valid_data[ $what ] = $input_value;
-                        break;
-                }    // end switch $what
-            }
-        }    // end foreach $inputs_to_clean
-        return $valid_data;
     }
 
 
