@@ -202,8 +202,11 @@ class ProcessTicketSelector
             $this->session->clear_session(__CLASS__, __FUNCTION__);
         }
         // validate/sanitize/filter data
+        $id = null;
+        $valid = [];
         try {
             $post_data_validator = new ProcessTicketSelectorPostData($this->request);
+            $id = $post_data_validator->getEventId();
             $valid               = apply_filters(
                 'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data',
                 $post_data_validator->validatePostData()
@@ -225,11 +228,10 @@ class ProcessTicketSelector
         if ($this->request->isAdmin() || $this->request->isFrontAjax()) {
             return false;
         }
-        if ($valid['return_url']) {
+        if (! empty($valid['return_url'])) {
             EEH_URL::safeRedirectAndExit($valid['return_url']);
         }
         // do we have an event id?
-        $id = $post_data_validator->getEventId();
         if ($id) {
             EEH_URL::safeRedirectAndExit(get_permalink($id));
         }
