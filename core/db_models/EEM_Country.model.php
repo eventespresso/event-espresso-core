@@ -184,7 +184,7 @@ class EEM_Country extends EEM_Base
      * @return string
      * @throws EE_Error
      */
-    public function get_country_name_by_ISO(string $country_ISO)
+    public function get_country_name_by_ISO($country_ISO)
     {
         $countries = $this->get_all_countries();
         if (isset($countries[ $country_ISO ]) && $countries[ $country_ISO ] instanceof EE_Country) {
@@ -206,7 +206,7 @@ class EEM_Country extends EEM_Base
      * @return EE_Country|null
      * @throws EE_Error
      */
-    public function getCountryByName(string $country_name)
+    public function getCountryByName($country_name)
     {
         $countries = $this->get_all_countries();
         foreach ($countries as $country) {
