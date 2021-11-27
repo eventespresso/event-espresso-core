@@ -1351,7 +1351,7 @@ class EE_Registry implements ResettableInterface
                 ? $this->class_cache->getFqnForAlias($param_class, $class_name)
                 : $param_class;
             if (
-// param is not even a class
+                // param is not even a class
                 $param_class === null
                 // and something already exists in the incoming arguments for this param
                 && array_key_exists($index, $argument_keys)
@@ -1361,7 +1361,7 @@ class EE_Registry implements ResettableInterface
                 continue;
             }
             if (
-// parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
+                // parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
                 $param_class !== null
                 && isset($argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ])
                 && $arguments[ $argument_keys[ $index ] ] instanceof $param_class
@@ -1370,7 +1370,7 @@ class EE_Registry implements ResettableInterface
                 continue;
             }
             if (
-// parameter is type hinted as a class, and should be injected
+                // parameter is type hinted as a class, and should be injected
                 $param_class !== null
                 && $this->_dependency_map->has_dependency_for_class($class_name, $param_class)
             ) {
@@ -1382,11 +1382,17 @@ class EE_Registry implements ResettableInterface
                 );
             }
             if (empty($arguments[ $index ])) {
-                $arguments[ $index ] = $this->mirror->getParameterDefaultValue(
+                $default_value = $this->mirror->getParameterDefaultValue(
                     $param,
                     $class_name,
                     $index
                 );
+                // if there's no default value, and the incoming argument is an array (albeit empty), then use that
+                $arguments[ $index ] = $default_value === null
+                                 && isset($arguments[ $index ])
+                                 && is_array($arguments[ $index ])
+                    ? $arguments[ $index ]
+                    : $default_value;
             }
         }
         return $arguments;
