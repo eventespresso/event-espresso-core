@@ -1242,8 +1242,8 @@ class Messages_Admin_Page extends EE_Admin_Page
     protected function _add_message_template($message_type = '', $messenger = '', $GRP_ID = '')
     {
         // set values override any request data
-        $message_type = ! empty($message_type) ? $message_type : $this->request->getRequestParam('MTP_message_type');
-        $messenger    = ! empty($messenger) ? $messenger : $this->request->getRequestParam('MTP_messenger');
+        $message_type = ! empty($message_type) ? $message_type : $this->request->getRequestParam('message_type');
+        $messenger    = ! empty($messenger) ? $messenger : $this->request->getRequestParam('messenger');
         $GRP_ID       = ! empty($GRP_ID) ? $GRP_ID : $this->request->getRequestParam('GRP_ID', 0, 'int');
 
         // we need messenger and message type.  They should be coming from the event editor. If not here then return error
