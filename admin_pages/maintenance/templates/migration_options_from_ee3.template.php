@@ -35,26 +35,24 @@
                 <tr>
                     <td><h3><?php esc_html_e('1', 'event_espresso'); ?></h3></td>
                     <td>
-                        <?php echo esc_html(
-                            apply_filters(
-                                'FHEE__ee_migration_page__option_1_main',
-                                sprintf(
-                                    __(
-                                        '%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing %5$s data to %6$s.',
-                                        "event_espresso"
-                                    ),
-                                    '<strong>',
-                                    '</strong>',
-                                    '<a id="migration-risks" class="" title="'
-                                    . esc_attr__('click for more details', "event_espresso")
-                                    . '">',
-                                    '</a>',
-                                    $current_db_state,
-                                    $next_db_state
+                        <?php echo apply_filters(
+                            'FHEE__ee_migration_page__option_1_main',
+                            sprintf(
+                                __(
+                                    '%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing %5$s data to %6$s.',
+                                    "event_espresso"
                                 ),
+                                '<strong>',
+                                '</strong>',
+                                '<a id="migration-risks" class="" title="'
+                                . esc_attr__('click for more details', "event_espresso")
+                                . '">',
+                                '</a>',
                                 $current_db_state,
                                 $next_db_state
-                            )
+                            ),
+                            $current_db_state,
+                            $next_db_state
                         );
                             ?>
                         <a id="display-migration-details"
