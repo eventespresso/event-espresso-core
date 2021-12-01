@@ -220,7 +220,7 @@ if ($QST_system === 'country') {
                                min="1"
                                name="QST_max"
                                type="number"
-                               value="<?php esc_attr_e($question->get_f('QST_max')); ?>"
+                               value="<?php echo esc_attr($question->get_f('QST_max')); ?>"
                         />
                         <p>
                             <span class="description">
