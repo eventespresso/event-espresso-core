@@ -66,7 +66,7 @@ class EEW_Upcoming_Events extends EspressoWidget
      * Register widget with WordPress.
      */
     public function __construct()
-    { 
+    {
         parent::__construct(
             esc_html__('Event Espresso Upcoming Events', 'event_espresso'),
             ['description' => esc_html__('A widget to display your upcoming events.', 'event_espresso')]
