@@ -19,7 +19,7 @@ class EEW_Upcoming_Events extends EspressoWidget
     /**
      * @var string
      */
-    private $category;
+    private $events_category;
 
     /**
      * @var bool
@@ -66,7 +66,7 @@ class EEW_Upcoming_Events extends EspressoWidget
      * Register widget with WordPress.
      */
     public function __construct()
-    {
+    { 
         parent::__construct(
             esc_html__('Event Espresso Upcoming Events', 'event_espresso'),
             ['description' => esc_html__('A widget to display your upcoming events.', 'event_espresso')]
@@ -454,7 +454,7 @@ class EEW_Upcoming_Events extends EspressoWidget
     private function parseWidgetSettings(array $instance)
     {
         $this->title = isset($instance['title']) && ! empty($instance['title']) ? $instance['title'] : '';
-        $this->category     = isset($instance['category_name']) && ! empty($instance['category_name'])
+        $this->events_category     = isset($instance['category_name']) && ! empty($instance['category_name'])
             ? $instance['category_name']
             : false;
         $this->show_expired = isset($instance['show_expired'])
@@ -582,9 +582,9 @@ class EEW_Upcoming_Events extends EspressoWidget
             'status' => ['IN', ['publish', 'sold_out']],
         ];
         // add category
-        if ($this->category) {
+        if ($this->events_category) {
             $where['Term_Taxonomy.taxonomy']  = 'espresso_event_categories';
-            $where['Term_Taxonomy.Term.slug'] = $this->category;
+            $where['Term_Taxonomy.Term.slug'] = $this->events_category;
         }
         // if NOT expired then we want events that start today or in the future
         // if NOT show expired then we want events that start today or in the future
@@ -602,7 +602,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             ];
         }
         // allow $where to be filtered
-        return apply_filters('FHEE__EEW_Upcoming_Events__widget__where', $where, $this->category, $this->show_expired);
+        return apply_filters('FHEE__EEW_Upcoming_Events__widget__where', $where, $this->events_category, $this->show_expired);
     }
 
 
