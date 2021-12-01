@@ -1,9 +1,0 @@
-:root {
-    --ee-animation-spin: ee-animation-spin 1s linear infinite;
-}
-
-@keyframes ee-animation-spin {
-    100% {
-        transform: rotate(360deg);
-    }
-}
