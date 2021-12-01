@@ -38,7 +38,7 @@
 		"yoast/phpunit-polyfills": "^1.0"
 	},
 	"require": {
-		"composer/installers": "~1.0",
+		"composer/installers": "~2.0",
 		"php": ">=7.1",
 		"ext-json": "*"
 	},
