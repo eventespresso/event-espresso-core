@@ -62,7 +62,7 @@ if ($QST_system === 'country') {
                                id="QST_display_text"
                                name="QST_display_text"
                                type="text"
-                               value="<?php ($question->get_pretty('QST_display_text')) ?>"
+                               value="<?php $question->f('QST_display_text') ?>"
                         />
                     </td>
                 </tr>
@@ -83,7 +83,7 @@ if ($QST_system === 'country') {
                                id="QST_admin_label<?php echo $id; // escape not needed ?>"
                                name="QST_admin_label<?php echo $id; // escape not needed ?>"
                                type="text"
-                               value="<?php ($question->get_pretty('QST_admin_label')) ?>"
+                               value="<?php $question->f('QST_admin_label') ?>"
                                <?php echo $disabled_attr ?>
                         />
                         <input class="QST_order"
@@ -220,7 +220,7 @@ if ($QST_system === 'country') {
                                min="1"
                                name="QST_max"
                                type="number"
-                               value="<?php esc_attr($question->get_pretty('QST_max')); ?>"
+                               value="<?php esc_attr($question->f('QST_max')); ?>"
                         />
                         <p>
                             <span class="description">
@@ -316,13 +316,13 @@ if ($QST_system === 'country') {
                                                 <input type="text"
                                                        class="option-value regular-text"
                                                        name="question_options[<?php echo $count ?>][QSO_value]"
-                                                       value="<?php echo esc_attr($option->get_pretty('QSO_value')) ?>"
+                                                       value="<?php echo esc_attr($option->f('QSO_value')) ?>"
                                                     <?php echo $disabled_attr; // escape not needed ?>
                                                 />
                                                 <?php if ($has_answers) : ?>
                                                     <input type="hidden"
                                                            name="question_options[<?php echo $count; ?>][QSO_value]"
-                                                           value="<?php echo esc_attr($option->get_pretty('QSO_value')); ?>"
+                                                           value="<?php echo esc_attr($option->f('QSO_value')); ?>"
                                                     />
                                                 <?php endif; ?>
                                             </td>
@@ -330,7 +330,7 @@ if ($QST_system === 'country') {
                                                 <input type="text"
                                                        class="option-desc regular-text"
                                                        name="question_options[<?php echo $count ?>][QSO_desc]"
-                                                       value="<?php esc_attr($option->get_pretty('QSO_desc')) ?>"
+                                                       value="<?php esc_attr($option->f('QSO_desc')) ?>"
                                                 />
                                             </td>
                                             <td>
@@ -485,7 +485,7 @@ if ($QST_system === 'country') {
                                class="regular-text"
                                id="QST_required_text"
                                name="QST_required_text"
-                               value="<?php echo esc_html($question->get_pretty('QST_required_text')); ?>"
+                               value="<?php echo esc_html($question->f('QST_required_text')); ?>"
                         />
 
                     </td>
