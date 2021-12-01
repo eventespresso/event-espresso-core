@@ -15,7 +15,7 @@ class RequestSanitizer
      * @return array|bool|float|int|string
      * @since 4.10.14.p
      */
-    public function clean($param, string $type = 'string', bool $is_array = false, string $delimiter = '')
+    public function clean($param, $type = 'string', $is_array = false, $delimiter = '')
     {
         if ($delimiter !== '' && is_string($param)) {
             $param = explode($delimiter, $param);
@@ -41,7 +41,7 @@ class RequestSanitizer
      * @return array|float|int|mixed|string|string[]|null
      * @since   $VID:$
      */
-    public function sanitizeParam($param, string $type = 'string')
+    public function sanitizeParam($param, $type = 'string')
     {
         switch ($type) {
             case 'bool':

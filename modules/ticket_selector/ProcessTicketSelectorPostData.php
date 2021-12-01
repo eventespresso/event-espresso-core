@@ -84,7 +84,7 @@ class ProcessTicketSelectorPostData
      * @return int
      * @throws DomainException
      */
-    public function getEventId(): int
+    public function getEventId()
     {
         // do we have an event id?
         if ($this->event_id === null) {
@@ -111,7 +111,7 @@ class ProcessTicketSelectorPostData
      * @return array
      * @throws DomainException
      */
-    public function validatePostData(): array
+    public function validatePostData()
     {
         // grab valid id
         $this->valid_data[ self::DATA_KEY_EVENT_ID ] = $this->getEventId();
@@ -150,7 +150,7 @@ class ProcessTicketSelectorPostData
      * @param string $what
      * @param string $input_key
      */
-    protected function processInteger(string $what, string $input_key)
+    protected function processInteger($what, $input_key)
     {
         $this->valid_data[ $what ] = $this->request->getRequestParam($input_key, 0, 'int');
     }
@@ -160,7 +160,7 @@ class ProcessTicketSelectorPostData
      * @param string $input_key
      * @throws DomainException
      */
-    protected function processQuantity(string $input_key)
+    protected function processQuantity($input_key)
     {
         // first get number of ticket option rows
         $rows    = $this->request->getRequestParam(self::INPUT_KEY_ROWS . $this->event_id, 1, 'int');
@@ -206,7 +206,7 @@ class ProcessTicketSelectorPostData
     /**
      * @param string $input_key
      */
-    protected function processReturnURL(string $input_key)
+    protected function processReturnURL($input_key)
     {
         // grab and sanitize return-url
         $input_value = $this->request->getRequestParam($input_key, '', 'url');
@@ -226,7 +226,7 @@ class ProcessTicketSelectorPostData
      * @param string $input_key
      * @throws DomainException
      */
-    protected function processTicketIDs(string $input_key)
+    protected function processTicketIDs($input_key)
     {
         $ticket_ids          = (array) $this->request->getRequestParam($input_key, [], 'int', true);
         $filtered_ticket_ids = array_filter($ticket_ids);
