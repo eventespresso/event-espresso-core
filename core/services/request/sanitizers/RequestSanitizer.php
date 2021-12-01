@@ -39,7 +39,7 @@ class RequestSanitizer
      * @param mixed  $param
      * @param string $type
      * @return array|float|int|mixed|string|string[]|null
-     * @since   $VID:$
+     * @since   4.10.20.p
      */
     public function sanitizeParam($param, $type = 'string')
     {

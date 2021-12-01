@@ -12,7 +12,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @author  Brent Christensen
  * @package EventEspresso\tests\mocks\core\services\request
- * @since   $VID:$
+ * @since   4.10.20.p
  */
 class RequestMockBlank implements RequestInterface
 {

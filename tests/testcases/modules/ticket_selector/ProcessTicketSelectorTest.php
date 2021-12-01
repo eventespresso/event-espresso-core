@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author  Brent Christensen
  * @package EventEspresso\tests\testcases\modules\ticket_selector
- * @since   $VID:$
+ * @since   4.10.20.p
  * @group   ticket-selector
  */
 class ProcessTicketSelectorTest extends TestCase

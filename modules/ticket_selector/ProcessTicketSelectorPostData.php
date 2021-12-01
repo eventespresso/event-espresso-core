@@ -11,7 +11,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @author  Brent Christensen
  * @package EventEspresso\modules\ticket_selector
- * @since   $VID:$
+ * @since   4.10.20.p
  */
 class ProcessTicketSelectorPostData
 {
