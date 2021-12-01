@@ -322,7 +322,7 @@ if ($QST_system === 'country') {
                                                 <?php if ($has_answers) : ?>
                                                     <input type="hidden"
                                                            name="question_options[<?php echo $count; ?>][QSO_value]"
-                                                           value="<?php echo esc_attr($option->f('QSO_value')); ?>"
+                                                           value="<?php esc_attr($option->f('QSO_value')); ?>"
                                                     />
                                                 <?php endif; ?>
                                             </td>
