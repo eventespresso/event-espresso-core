@@ -93,7 +93,7 @@ if ($show_backup_db_text) { ?>
 
         <?php
         if ($show_backup_db_text) {
-            echo esc_html($migration_options_html);
+            echo $migration_options_html;
         } ?>
 
         <?php
