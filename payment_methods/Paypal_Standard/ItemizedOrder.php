@@ -178,7 +178,7 @@ class ItemizedOrder
         foreach ($total_line_item->get_items() as $line_item) {
             if ($line_item instanceof EE_Line_Item) {
                 // it's some kind of discount
-                if ($line_item->pretaxTotal() < 0) {
+                if (EEH_Money::compare_floats($line_item->pretaxTotal(), 0.00, '<')) {
                     $this->total_discounts    += abs($line_item->pretaxTotal());
                     $this->itemized_order_sum += $line_item->pretaxTotal();
                     \EEH_Debug_Tools::printr(
@@ -251,14 +251,14 @@ class ItemizedOrder
             __LINE__
         );
         // ideally the itemized order sum equals the transaction total, but if not (which is weird),
-        // and the itemized sum is MORE than the transaction total...
+        // and the itemized sum is LESS than the transaction total...
         if (EEH_Money::compare_floats($itemized_order_sum_difference, 0.00, '<')) {
             echo "\n\n~~~~~~~~~~~~~~~ ADD DISCOUNT ?!?!?! ~~~~~~~~~~~~~~~\n\n";
 
             // add the difference to the discounts
             $this->total_discounts += abs($itemized_order_sum_difference);
         } elseif (EEH_Money::compare_floats($itemized_order_sum_difference, 0.00, '>')) {
-            // the itemized order sum is LESS than the transaction total
+            // the itemized order sum is MORE than the transaction total
             $this->order_items["item_name_{$item_num}"] = substr(
                 esc_html__('additional charges', 'event_espresso'),
                 0,
