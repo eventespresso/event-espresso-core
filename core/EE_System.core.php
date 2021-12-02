@@ -978,7 +978,7 @@ final class EE_System implements ResettableInterface
      * loading CPT related classes earlier so that their definitions are available
      * but not performing any actual registration with WP core until load_CPTs_and_session() is called
      *
-     * @since   $VID:$
+     * @since   4.10.21.p
      */
     public function loadCustomPostTypes()
     {
