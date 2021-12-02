@@ -87,7 +87,7 @@
                                'Click here to resend the Registration Confirmation email',
                                'event_espresso'
                            ); ?>"
-                           rel="<?php echo esc_url_raw($registration->reg_url_link()); ?>"
+                           rel="<?php echo esc_attr($registration->reg_url_link()); ?>"
                         >
                             <span class="dashicons dashicons-email-alt"></span>
                             <?php esc_html_e('resend email', 'event_espresso'); ?>
