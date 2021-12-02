@@ -1,7 +1,6 @@
 <?php
 
 use EventEspresso\core\exceptions\IpnException;
-use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\payment_methods\Paypal_Standard\ItemizedOrder;
 
 /**
