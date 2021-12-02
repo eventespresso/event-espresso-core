@@ -1,6 +1,5 @@
 <?php
 
-use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\payment_methods\Paypal_Express\ItemizedOrder;
 use EventEspresso\payment_methods\Paypal_Express\TokenRequest;
 
@@ -187,7 +186,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
      * @return EEI_Payment
      * @throws Exception
      */
-    public function handle_payment_update($update_info, $transaction)
+    public function handle_payment_update($update_info, $transaction): EEI_Payment
     {
         // if the supplied transaction is valid, we'll retrieve the actual payment object from it
         // but we'll use a temporary payment for now that we can return with errors if things go wrong
