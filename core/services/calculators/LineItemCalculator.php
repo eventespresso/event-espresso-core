@@ -33,8 +33,6 @@ class LineItemCalculator
         ['LIN_type' => ['!=', EEM_Line_Item::type_cancellation]]
     ];
 
-    private $lb = "\n"; // \n <br />
-
 
     /**
      * @param DecimalValues $decimal_values
@@ -65,9 +63,7 @@ class LineItemCalculator
         if (empty($ticket_line_items)) {
             return 0;
         }
-        [$total, $pretax_total] = $this->recalculateLineItemTotals($line_item);
-        // echo "{$this->lb}{$this->lb} = PRETAX GRAND TOTAL: {$pretax_total}";
-        // echo "{$this->lb} = GRAND TOTAL: {$total}{$this->lb}";
+        [, $pretax_total] = $this->recalculateLineItemTotals($line_item);
         // EEH_Line_Item::visualize($line_item);
         $total_tax = $this->recalculateTaxesAndTaxTotal($line_item);
         // no negative totals plz
@@ -75,7 +71,6 @@ class LineItemCalculator
         $this->updatePreTaxTotal($line_item, $pretax_total, true);
         $grand_total  = $this->updateTotal($line_item, $grand_total, true);
         $this->updateTransaction($line_item, $grand_total, $update_txn_status);
-        // die();
         return $grand_total;
     }
 
@@ -98,7 +93,6 @@ class LineItemCalculator
         float $total = 0,
         float $pretax_total = 0
     ): array {
-        // echo "{$this->lb}recalculate LineItem Totals: {$line_item->type()} -> {$line_item->name()}";
         switch ($line_item->type()) {
             case EEM_Line_Item::type_total:
             case EEM_Line_Item::type_sub_total:
@@ -139,7 +133,6 @@ class LineItemCalculator
      */
     private function recalculateSubTotal(EE_Line_Item $line_item): array
     {
-        // echo "{$this->lb}  recalculate SubTotal: {$line_item->name()}";
         // reset the total and pretax total to zero since we are recalculating them
         $total = $pretax_total = 0;
         if ($line_item->is_total()) {
@@ -160,8 +153,6 @@ class LineItemCalculator
             );
             $total += $child_total;
             $pretax_total += $child_pretax_total;
-            // echo "{$this->lb}   = running sub total: {$total} ({$child_line_item->name()})";
-            // echo "{$this->lb}   = running pretax sub total: {$pretax_total} ({$child_line_item->name()})";
         }
         // update the unit price and pretax total
         $this->updateUnitPrice($line_item, $pretax_total);
@@ -173,8 +164,6 @@ class LineItemCalculator
             // we don't update the total for the total line item, because that will need to include taxes
             $total = $this->updateTotal($line_item, $total, true);
         }
-        // echo "{$this->lb}   = pretax sub total: {$pretax_total} ({$line_item->name()})";
-        // echo "{$this->lb}   = sub total: {$total} ({$line_item->name()})";
         return [$total, $pretax_total];
     }
 
@@ -192,12 +181,9 @@ class LineItemCalculator
         float $total = 0,
         float $pretax_total = 0
     ): array {
-        // echo "{$this->lb}    recalculate LineItem: {$line_item->name()}";
         if ($line_item->is_percent()) {
             $total = $this->calculatePercentage($total, $line_item->percent());
             $pretax_total = $this->calculatePercentage($pretax_total, $line_item->percent());
-            // echo "{$this->lb}     = % pretax total: {$pretax_total} ({$line_item->name()})";
-            // echo "{$this->lb}     = % total: {$total} ({$line_item->name()})";
         } else {
             // recursively loop through children and recalculate their totals
             $children = $line_item->children($this->default_query_params);
@@ -212,17 +198,11 @@ class LineItemCalculator
                     );
                     $total        += $child_total;
                     $pretax_total += $child_pretax_total;
-                    // echo "{$this->lb}     = running total: {$total} ({$child_line_item->name()})";
-                    // echo "{$this->lb}     = running pretax total: {$pretax_total} ({$child_line_item->name()})";
                 }
-                // echo "{$this->lb}     = child pretax total: {$pretax_total} ({$line_item->name()})";
-                // echo "{$this->lb}     = child total: {$total} ({$line_item->name()})";
             } else {
                 // no child line items, so recalculate the total from the unit price and quantity
                 // and set the pretax total to match since their are obviously no sub-taxes
                 $pretax_total = $total = $this->calculateTotalForQuantity($line_item);
-                // echo "{$this->lb}     = li pretax total: {$pretax_total} ({$line_item->name()})";
-                // echo "{$this->lb}     = li total: {$total} ({$line_item->name()})";
             }
         }
         $total  = $this->updateTotal($line_item, $total, true);
@@ -244,25 +224,16 @@ class LineItemCalculator
      */
     private function recalculateSubLineItem(EE_Line_Item $sub_line_item, float $total = 0, float $pretax_total = 0): array
     {
-        // echo "{$this->lb}      recalculate SubLineItem: {$sub_line_item->name()}";
         if ($sub_line_item->is_percent()) {
             $new_total = $this->calculatePercentage($total, $sub_line_item->percent());
             $new_pretax_total = $this->calculatePercentage($pretax_total, $sub_line_item->percent());
-            // echo "{$this->lb}       = sub li percent: {$sub_line_item->percent()}";
-            // echo "{$this->lb}       = sub li total: {$total}";
-            // echo "{$this->lb}       = sub li pretax_total: {$pretax_total}";
         } else {
             $new_total = $new_pretax_total = $this->calculateTotalForQuantity($sub_line_item);
-            // echo "{$this->lb}       = sub li unit price: {$sub_line_item->unit_price()}";
-            // echo "{$this->lb}       = sub li quantity: {$sub_line_item->quantity()}";
-            // echo "{$this->lb}       = sub li new_total: {$new_total}";
         }
         $total = $this->updateTotal($sub_line_item, $new_total);
         $pretax_total = $this->updatePreTaxTotal($sub_line_item, $new_pretax_total);
         // need to also adjust unit price too if the pretax total or quantity has been updated
         $this->updateUnitPrice($sub_line_item, $pretax_total);
-        // echo "{$this->lb}       = sub li final pretax total: {$pretax_total}";
-        // echo "{$this->lb}       = sub li final total: {$total}";
         return [$total, $pretax_total];
     }
 
@@ -276,11 +247,8 @@ class LineItemCalculator
      */
     private function recalculateSubTax(EE_Line_Item $sub_line_item, float $pretax_total = 0): array
     {
-        // echo "{$this->lb}      recalculate SubTax: {$sub_line_item->name()}";
-        // echo "{$this->lb}       = sub li percent: {$sub_line_item->percent()}";
         $total_tax = $this->calculatePercentage($pretax_total, $sub_line_item->percent());
         $total_tax = $this->updateTotal($sub_line_item, $total_tax);
-        // echo "{$this->lb}       = sub li total tax: {$total_tax}";
         return [$total_tax, 0];
     }
 
@@ -361,7 +329,6 @@ class LineItemCalculator
     private function calculatePercentage(float $total, float $percent, bool $round = false): float
     {
         $amount = $total * $percent / 100;
-        // echo "{$this->lb}     = calculate %: {$total} * {$percent}% = {$amount}";
         return $this->decimal_values->roundDecimalValue($amount, $round);
     }
 
