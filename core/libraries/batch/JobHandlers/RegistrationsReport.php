@@ -54,7 +54,7 @@ class RegistrationsReport extends JobHandlerFile
         );
         $job_parameters->add_extra_data('filepath', $filepath);
         if ($job_parameters->request_datum('use_filters', false)) {
-            $query_params = maybe_unserialize(stripslashes($job_parameters->request_datum('filters', array())));
+            $query_params = maybe_unserialize($job_parameters->request_datum('filters', array()));
         } else {
             $query_params = apply_filters('FHEE__EE_Export__report_registration_for_event', array(
                 array(
