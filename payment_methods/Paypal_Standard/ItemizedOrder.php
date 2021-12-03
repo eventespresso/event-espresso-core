@@ -97,8 +97,6 @@ class ItemizedOrder
             ? $this->itemizeOrderForFullPayment($total_line_item, $item_num)
             : $this->handlePartialPayment($item_num);
 
-        $item_num = $this->handleItemizedOrderSumDifference($total_line_item, $item_num);
-
         if ($this->paypal_gateway->isInSandboxMode()) {
             $this->addSandboxModeArgs($item_num, $notify_url, $return_url);
         }
@@ -133,6 +131,8 @@ class ItemizedOrder
         $this->payment->update_extra_meta(EEG_Paypal_Standard::itemized_payment_option_name, true);
         // this payment is for the remaining transaction amount, so let's show all the line items
         $item_num = $this->addOrderItemsForLineItems($total_line_item, $item_num);
+        // and make adjustments as needed
+        $item_num = $this->handleItemizedOrderSumDifference($total_line_item, $item_num);
         // add our taxes to the order if we're NOT using PayPal's
         if (! $this->paypal_gateway->paypalTaxes()) {
             $this->order_items['tax_cart'] = $total_line_item->get_total_tax();
@@ -174,19 +174,12 @@ class ItemizedOrder
      */
     private function addOrderItemsForLineItems(EE_Line_Item $total_line_item, int $item_num): int
     {
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         foreach ($total_line_item->get_items() as $line_item) {
             if ($line_item instanceof EE_Line_Item) {
                 // it's some kind of discount
                 if (EEH_Money::compare_floats($line_item->pretaxTotal(), 0.00, '<')) {
                     $this->total_discounts    += abs($line_item->pretaxTotal());
                     $this->itemized_order_sum += $line_item->pretaxTotal();
-                    \EEH_Debug_Tools::printr(
-                        $this->itemized_order_sum,
-                        '$this->itemized_order_sum',
-                        __FILE__,
-                        __LINE__
-                    );
                     continue;
                 }
                 // dont include shipping again.
@@ -207,7 +200,6 @@ class ItemizedOrder
                     $this->order_items["shipping2_{$item_num}"] = '0';
                 }
                 $this->itemized_order_sum += $line_item->pretaxTotal();
-                \EEH_Debug_Tools::printr($this->itemized_order_sum, '$this->itemized_order_sum', __FILE__, __LINE__);
                 $item_num++;
             }
         }
@@ -224,7 +216,6 @@ class ItemizedOrder
      */
     private function handleItemizedOrderSumDifference(EE_Line_Item $total_line_item, int $item_num): int
     {
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $taxes_li = EEH_Line_Item::get_taxes_subtotal($total_line_item);
         // calculate the difference between the TXN total and the itemized order sum
         $itemized_order_sum_difference = round(
@@ -234,27 +225,9 @@ class ItemizedOrder
             - $this->existing_shipping_charges,
             2
         );
-        \EEH_Debug_Tools::printr($this->transaction->total(), '$this->transaction->total()', __FILE__, __LINE__);
-        \EEH_Debug_Tools::printr($this->transaction->paid(), '$this->transaction->paid()', __FILE__, __LINE__);
-        \EEH_Debug_Tools::printr($this->itemized_order_sum, '$this->itemized_order_sum', __FILE__, __LINE__);
-        \EEH_Debug_Tools::printr($taxes_li->total(), '$taxes_li->total()', __FILE__, __LINE__);
-        \EEH_Debug_Tools::printr(
-            $this->existing_shipping_charges,
-            '$this->existing_shipping_charges',
-            __FILE__,
-            __LINE__
-        );
-        \EEH_Debug_Tools::printr(
-            $itemized_order_sum_difference,
-            '$itemized_order_sum_difference',
-            __FILE__,
-            __LINE__
-        );
         // ideally the itemized order sum equals the transaction total, but if not (which is weird),
         // and the itemized sum is LESS than the transaction total...
         if (EEH_Money::compare_floats($itemized_order_sum_difference, 0.00, '<')) {
-            echo "\n\n~~~~~~~~~~~~~~~ ADD DISCOUNT ?!?!?! ~~~~~~~~~~~~~~~\n\n";
-
             // add the difference to the discounts
             $this->total_discounts += abs($itemized_order_sum_difference);
         } elseif (EEH_Money::compare_floats($itemized_order_sum_difference, 0.00, '>')) {
@@ -271,14 +244,9 @@ class ItemizedOrder
             $item_num++;
         }
         if (EEH_Money::compare_floats($this->total_discounts, 0.00, '>')) {
-
-            \EEH_Debug_Tools::printr($this->total_discounts, '$this->total_discounts', __FILE__, __LINE__);
-
             $this->order_items['discount_amount_cart'] = $this->gateway_data_formatter->formatCurrency(
                 $this->total_discounts
             );
-
-            \EEH_Debug_Tools::printr($this->order_items['discount_amount_cart'], 'discount_amount_cart', __FILE__, __LINE__);
         }
         return $item_num;
     }
