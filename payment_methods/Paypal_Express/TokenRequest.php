@@ -33,7 +33,7 @@ class TokenRequest
      * @param array      $itemized_order
      * @param string     $return_url
      * @param string     $cancel_url
-     * @param string $logo_image_url
+     * @param string     $logo_image_url
      * @param bool       $request_shipping_address
      * @return array
      * @throws EE_Error
@@ -41,13 +41,13 @@ class TokenRequest
      */
     public function generateDetails(
         EE_Payment $payment,
-        array      $itemized_order = [],
-        string     $return_url = '',
-        string     $cancel_url = '',
-        string     $logo_image_url = '',
-        bool       $request_shipping_address = false
+        array $itemized_order = [],
+        string $return_url = '',
+        string $cancel_url = '',
+        string $logo_image_url = '',
+        bool $request_shipping_address = false
     ): array {
-        $locale               = explode('-', get_bloginfo('language'));
+        $locale = explode('-', get_bloginfo('language'));
         // Gather request parameters.
         $token_request_details = [
             'METHOD'                         => 'SetExpressCheckout',
@@ -116,7 +116,7 @@ class TokenRequest
             // We got the Token so we may continue with the payment and redirect the client.
             $payment->set_details($response_args);
             $gateway_url = $is_in_sandbox_mode ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
-            $token = $response_args['TOKEN'];
+            $token       = $response_args['TOKEN'];
             $payment->set_redirect_url(
                 "{$gateway_url}/checkoutnow?useraction=commit&cmd=_express-checkout&token={$token}"
             );

@@ -3,7 +3,6 @@
 use EventEspresso\payment_methods\Paypal_Express\ItemizedOrder;
 use EventEspresso\payment_methods\Paypal_Express\TokenRequest;
 
-
 /**
  * Class  EEG_Paypal_Express
  *
@@ -338,11 +337,11 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
     {
         $errors = [];
         $n      = 0;
-        while (isset($data_array["L_ERRORCODE{$n}"])) {
-            $l_error_code    = $data_array["L_ERRORCODE{$n}"] ?? '';
-            $l_severity_code = $data_array["L_SEVERITYCODE{$n}"] ?? '';
-            $l_short_message = $data_array["L_SHORTMESSAGE{$n}"] ?? '';
-            $l_long_message  = $data_array["L_LONGMESSAGE{$n}"] ?? '';
+        while (isset($data_array[ "L_ERRORCODE{$n}" ])) {
+            $l_error_code    = $data_array[ "L_ERRORCODE{$n}" ] ?? '';
+            $l_severity_code = $data_array[ "L_SEVERITYCODE{$n}" ] ?? '';
+            $l_short_message = $data_array[ "L_SHORTMESSAGE{$n}" ] ?? '';
+            $l_long_message  = $data_array[ "L_LONGMESSAGE{$n}" ] ?? '';
             if ($n === 0) {
                 $errors = [
                     'L_ERRORCODE'    => $l_error_code,

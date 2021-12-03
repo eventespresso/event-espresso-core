@@ -82,9 +82,9 @@ class ItemizedOrder
      */
     public function generateItemizedOrderForPayment(
         EE_Payment $payment,
-        string     $return_url = '',
-        string     $notify_url = '',
-        string     $cancel_url = ''
+        string $return_url = '',
+        string $notify_url = '',
+        string $cancel_url = ''
     ): array {
         $this->payment         = $payment;
         $this->transaction     = $this->payment->transaction();
@@ -151,14 +151,14 @@ class ItemizedOrder
     {
         $this->payment->update_extra_meta(EEG_Paypal_Standard::itemized_payment_option_name, false);
         // partial payment that's not for the remaining amount, so we can't send an itemized list
-        $this->order_items["item_name_{$item_num}"] = substr(
+        $this->order_items[ "item_name_{$item_num}" ] = substr(
             $this->gateway_data_formatter->formatPartialPaymentLineItemName($this->payment),
             0,
             127
         );
-        $this->order_items["amount_{$item_num}"]    = $this->payment->amount();
-        $this->order_items["shipping_{$item_num}"]  = '0';
-        $this->order_items["shipping2_{$item_num}"] = '0';
+        $this->order_items[ "amount_{$item_num}" ]    = $this->payment->amount();
+        $this->order_items[ "shipping_{$item_num}" ]  = '0';
+        $this->order_items[ "shipping2_{$item_num}" ] = '0';
         $this->order_items['tax_cart']              = '0';
         $item_num++;
         return $item_num;
@@ -187,17 +187,17 @@ class ItemizedOrder
                     $this->existing_shipping_charges = $line_item->pretaxTotal();
                     continue;
                 }
-                $this->order_items["item_name_{$item_num}"] = substr(
+                $this->order_items[ "item_name_{$item_num}" ] = substr(
                     $this->gateway_data_formatter->formatLineItemName($line_item, $this->payment),
                     0,
                     127
                 );
-                $this->order_items["amount_{$item_num}"]    = $line_item->unit_price();
-                $this->order_items["quantity_{$item_num}"]  = $line_item->quantity();
+                $this->order_items[ "amount_{$item_num}" ]    = $line_item->unit_price();
+                $this->order_items[ "quantity_{$item_num}" ]  = $line_item->quantity();
                 // if we're not letting PayPal calculate shipping, tell them its 0
                 if (! $this->paypal_gateway->paypalShipping()) {
-                    $this->order_items["shipping_{$item_num}"]  = '0';
-                    $this->order_items["shipping2_{$item_num}"] = '0';
+                    $this->order_items[ "shipping_{$item_num}" ]  = '0';
+                    $this->order_items[ "shipping2_{$item_num}" ] = '0';
                 }
                 $this->itemized_order_sum += $line_item->pretaxTotal();
                 $item_num++;
@@ -232,15 +232,15 @@ class ItemizedOrder
             $this->total_discounts += abs($itemized_order_sum_difference);
         } elseif (EEH_Money::compare_floats($itemized_order_sum_difference, 0.00, '>')) {
             // the itemized order sum is MORE than the transaction total
-            $this->order_items["item_name_{$item_num}"] = substr(
+            $this->order_items[ "item_name_{$item_num}" ] = substr(
                 esc_html__('additional charges', 'event_espresso'),
                 0,
                 127
             );
-            $this->order_items["amount_{$item_num}"]    = $this->gateway_data_formatter->formatCurrency(
+            $this->order_items[ "amount_{$item_num}" ]    = $this->gateway_data_formatter->formatCurrency(
                 $itemized_order_sum_difference
             );
-            $this->order_items["quantity_{$item_num}"]  = 1;
+            $this->order_items[ "quantity_{$item_num}" ]  = 1;
             $item_num++;
         }
         if (EEH_Money::compare_floats($this->total_discounts, 0.00, '>')) {
@@ -259,14 +259,14 @@ class ItemizedOrder
      */
     private function addSandboxModeArgs(int $item_num, string $notify_url, string $return_url)
     {
-        $this->order_items["item_name_{$item_num}"] = 'DEBUG INFO (this item only added in sandbox mode';
-        $this->order_items["amount_{$item_num}"]    = 0;
-        $this->order_items["on0_{$item_num}"]       = 'NOTIFY URL';
-        $this->order_items["os0_{$item_num}"]       = $notify_url;
-        $this->order_items["on1_{$item_num}"]       = 'RETURN URL';
-        $this->order_items["os1_{$item_num}"]       = $return_url;
-        $this->order_items["shipping_{$item_num}"]  = '0';
-        $this->order_items["shipping2_{$item_num}"] = '0';
+        $this->order_items[ "item_name_{$item_num}" ] = 'DEBUG INFO (this item only added in sandbox mode';
+        $this->order_items[ "amount_{$item_num}" ]    = 0;
+        $this->order_items[ "on0_{$item_num}" ]       = 'NOTIFY URL';
+        $this->order_items[ "os0_{$item_num}" ]       = $notify_url;
+        $this->order_items[ "on1_{$item_num}" ]       = 'RETURN URL';
+        $this->order_items[ "os1_{$item_num}" ]       = $return_url;
+        $this->order_items[ "shipping_{$item_num}" ]  = '0';
+        $this->order_items[ "shipping2_{$item_num}" ] = '0';
         // $this->order_items['option_index_' . $item_num] = 1; // <-- dunno if this is needed ?
     }
 

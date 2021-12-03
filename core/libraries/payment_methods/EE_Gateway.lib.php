@@ -523,6 +523,4 @@ abstract class EE_Gateway
     {
         return $this->_debug_mode;
     }
-
-
 }

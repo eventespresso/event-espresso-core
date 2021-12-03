@@ -217,25 +217,25 @@ class ItemizedOrder
                     $line_item_quantity = 1;
                 }
                 // Item Name.
-                $this->order_items["L_PAYMENTREQUEST_0_NAME{$item_num}"] = mb_strcut(
+                $this->order_items[ "L_PAYMENTREQUEST_0_NAME{$item_num}" ] = mb_strcut(
                     $this->gateway_data_formatter->formatLineItemName($line_item, $this->payment),
                     0,
                     127
                 );
                 // Item description.
-                $this->order_items["L_PAYMENTREQUEST_0_DESC{$item_num}"] = mb_strcut(
+                $this->order_items[ "L_PAYMENTREQUEST_0_DESC{$item_num}" ] = mb_strcut(
                     $this->gateway_data_formatter->formatLineItemDesc($line_item, $this->payment),
                     0,
                     127
                 );
                 // Cost of individual item.
-                $this->order_items["L_PAYMENTREQUEST_0_AMT{$item_num}"] = $unit_price;
+                $this->order_items[ "L_PAYMENTREQUEST_0_AMT{$item_num}" ] = $unit_price;
                 // Item Number.
-                $this->order_items["L_PAYMENTREQUEST_0_NUMBER{$item_num}"] = $item_num + 1;
+                $this->order_items[ "L_PAYMENTREQUEST_0_NUMBER{$item_num}" ] = $item_num + 1;
                 // Item quantity.
-                $this->order_items["L_PAYMENTREQUEST_0_QTY{$item_num}"] = $line_item_quantity;
+                $this->order_items[ "L_PAYMENTREQUEST_0_QTY{$item_num}" ] = $line_item_quantity;
                 // Digital item is sold.
-                $this->order_items["L_PAYMENTREQUEST_0_ITEMCATEGORY{$item_num}"] = 'Physical';
+                $this->order_items[ "L_PAYMENTREQUEST_0_ITEMCATEGORY{$item_num}" ] = 'Physical';
                 $this->itemized_order_sum                                        += $unit_price * $line_item_quantity;
                 ++$item_num;
             }
@@ -280,7 +280,7 @@ class ItemizedOrder
         // add the difference as an extra line item.
         if (EEH_Money::compare_floats($itemized_order_sum_difference, 0, '!=')) {
             // Item Name.
-            $this->order_items["L_PAYMENTREQUEST_0_NAME{$item_num}"] = mb_strcut(
+            $this->order_items[ "L_PAYMENTREQUEST_0_NAME{$item_num}" ] = mb_strcut(
                 esc_html__(
                     'Other (promotion/surcharge/cancellation)',
                     'event_espresso'
@@ -289,18 +289,18 @@ class ItemizedOrder
                 127
             );
             // Item description.
-            $this->order_items["L_PAYMENTREQUEST_0_DESC{$item_num}"] = '';
+            $this->order_items[ "L_PAYMENTREQUEST_0_DESC{$item_num}" ] = '';
             // Cost of individual item.
-            $this->order_items["L_PAYMENTREQUEST_0_AMT{$item_num}"] = $this->gateway_data_formatter->formatCurrency(
+            $this->order_items[ "L_PAYMENTREQUEST_0_AMT{$item_num}" ] = $this->gateway_data_formatter->formatCurrency(
                 $itemized_order_sum_difference,
                 $this->decimal_precision
             );
             // Item Number.
-            $this->order_items["L_PAYMENTREQUEST_0_NUMBER{$item_num}"] = $item_num + 1;
+            $this->order_items[ "L_PAYMENTREQUEST_0_NUMBER{$item_num}" ] = $item_num + 1;
             // Item quantity.
-            $this->order_items["L_PAYMENTREQUEST_0_QTY{$item_num}"] = 1;
+            $this->order_items[ "L_PAYMENTREQUEST_0_QTY{$item_num}" ] = 1;
             // Digital item is sold.
-            $this->order_items["L_PAYMENTREQUEST_0_ITEMCATEGORY{$item_num}"] = 'Physical';
+            $this->order_items[ "L_PAYMENTREQUEST_0_ITEMCATEGORY{$item_num}" ] = 'Physical';
         }
     }
 }
