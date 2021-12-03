@@ -169,7 +169,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
         $notify_url = null,
         $cancel_url = null
     ) {
-
         $this->itemized_order = new ItemizedOrder($this->_get_gateway_formatter(), $this);
         $redirect_args = apply_filters(
             "FHEE__EEG_Paypal_Standard__set_redirection_info__arguments",

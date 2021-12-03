@@ -47,7 +47,8 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 	}
 	public function test_set_redirection_info__success(){
 		//make sure paypal gateway is included
-		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
+        /** @var EE_Payment_Method $ppm */
+        $ppm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Paypal_Standard' ) );
 		$ppg = $ppm->type_obj()->get_gateway();
 		$ppg->set_settings( $this->_test_settings );
 		$t = $this->new_typical_transaction( array( 'ticket_types' => 2) );
@@ -481,52 +482,76 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 	 * @group 4710
 	 */
 	public function test_set_redirect_info__partial_payment_for_remainder(){
-		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
-		$ppg = $ppm->type_obj()->get_gateway();
-		$ppg->set_settings( $this->_test_settings );
-		$paid_so_far = 1.00;
-		$t = $this->new_typical_transaction( array( 'ticket_types' => 2));
-		$t->set_paid( $paid_so_far );
-		$previous_payment = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $paid_so_far, 'STS_ID' => EEM_Payment::status_id_approved  ) );
-		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() - $paid_so_far ) );
-		$this->assertNotEquals( EEM_Payment::status_id_approved, $p->status() );
+        $ppm = $this->new_model_obj_with_dependencies('Payment_Method', ['PMD_type' => 'Paypal_Standard']);
+        /** @var EEG_Paypal_Standard $ppg */
+        $ppg = $ppm->type_obj()->get_gateway();
+        $ppg->set_settings($this->_test_settings);
+        $paid_so_far = 1.00;
+        $t           = $this->new_typical_transaction(['ticket_types' => 2]);
+        $t->set_paid($paid_so_far);
+        $this->new_model_obj_with_dependencies(
+            'Payment',
+            [
+                'TXN_ID' => $t->ID(),
+                'PMD_ID' => $ppm->ID(),
+                'PAY_amount' => $paid_so_far,
+                'STS_ID' => EEM_Payment::status_id_approved,
+            ]);
+        $p = $this->new_model_obj_with_dependencies(
+            'Payment',
+            ['TXN_ID' => $t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() - $paid_so_far]
+        );
+        $this->assertNotEquals(EEM_Payment::status_id_approved, $p->status());
 
-		$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
+        $p = $ppg->set_redirection_info($p, null, self::return_url, self::notify_url, self::cancel_url);
 
-		$this->assertNotEmpty( $p->redirect_url() );
-		$rargs = $p->redirect_args();
-		//also check we DID try to enumerat ethe line items
-		$this->assertFalse(  isset( $rargs[ 'discount_amount_cart' ] ) );
-		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
-		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
-		$this->assertFalse( isset( $rargs[ 'item_name_2' ] ) );
-		$this->assertFalse( isset( $rargs[ 'amount_2' ] ) );
-		$this->assertFalse( isset( $rargs[ 'quantity_2' ] ) );
-	}
+        $this->assertNotEmpty($p->redirect_url());
+        $rargs = $p->redirect_args();
+        //also check we DID try to enumerate the line items
+        $this->assertFalse(
+            isset($rargs['discount_amount_cart']),
+            '"discount_amount_cart" was set when it should not have been. Its value is: ' . ($rargs['discount_amount_cart'] ?? '')
+        );
+        $this->assertTrue(isset($rargs['item_name_1']));
+        $this->assertTrue(isset($rargs['amount_1']));
+        $this->assertFalse(isset($rargs['item_name_2']));
+        $this->assertFalse(isset($rargs['amount_2']));
+        $this->assertFalse(isset($rargs['quantity_2']));
+    }
 
-	/**
-	 * This is a legitimate partial payment (different from a total mismatch in that the itemized total
+
+    /**
+     * This is a legitimate partial payment (different from a total mismatch in that the itemized total
 	 * equals the transaction total as expected, but the payment is for less than the transaction
 	 * and there are no previous payments
 	 * @group 4710
 	 */
 	public function test_set_redirect_info__partial_payment_initial(){
-		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
-		$ppg = $ppm->type_obj()->get_gateway();
-		$ppg->set_settings( $this->_test_settings );
-		$t = $this->new_typical_transaction( array( 'ticket_types' => 2));
-		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => 10 ) );
-		$this->assertNotEquals( EEM_Payment::status_id_approved, $p->status() );
+        $ppm = $this->new_model_obj_with_dependencies('Payment_Method', ['PMD_type' => 'Paypal_Standard']);
+        $ppg = $ppm->type_obj()->get_gateway();
+        $ppg->set_settings($this->_test_settings);
+        $t = $this->new_typical_transaction(['ticket_types' => 2]);
+        $p = $this->new_model_obj_with_dependencies(
+            'Payment',
+            ['TXN_ID' => $t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => 10]
+        );
+        $this->assertNotEquals(EEM_Payment::status_id_approved, $p->status());
 
-		$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
+        $p = $ppg->set_redirection_info($p, null, self::return_url, self::notify_url, self::cancel_url);
 
-		$this->assertNotEmpty( $p->redirect_url() );
+        $this->assertNotEmpty( $p->redirect_url() );
 		$rargs = $p->redirect_args();
-		//also check we DID NOT try to enumerat ethe line items
+		//also check we DID NOT try to enumerate the line items
 		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
 		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
-		$this->assertFalse( isset( $rargs[ 'item_name_2' ] ) );
-		$this->assertFalse( isset( $rargs[ 'amount_2' ] ) );
+		$this->assertFalse(
+            isset( $rargs[ 'item_name_2' ] ),
+            '"item_name_2" was set when it should not have been. Its value is: ' . ($rargs['item_name_2'] ?? '')
+        );
+		$this->assertFalse(
+            isset( $rargs[ 'amount_2' ] ),
+            '"amount_2" was set when it should not have been. Its value is: ' . ($rargs['amount_2'] ?? '')
+        );
 		$this->assertFalse( isset( $rargs[ 'quantity_2' ] ) );
 	}
 	/**
