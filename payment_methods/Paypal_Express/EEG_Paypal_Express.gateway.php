@@ -47,7 +47,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
      *
      * @var string
      */
-    protected $_image_url;
+    protected $_image_url = '';
 
     /**
      * gateway URL variable
@@ -161,10 +161,10 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             $this->token_request->generateDetails(
                 $payment,
                 $this->getOrderItems($payment),
-                $return_url,
-                $cancel_url,
-                $this->_image_url,
-                $this->_request_shipping_addr
+                $return_url ?? '',
+                $cancel_url ?? '',
+                $this->_image_url ?? '',
+                $this->_request_shipping_addr ?? ''
             ),
             $this
         );
