@@ -11,26 +11,27 @@ if (! function_exists('espressoSubtotalRow')) {
     {
         return $show
             ? '
-    <tr>
-        <td colspan="2" class="jst-rght small-text sbttl">
-            <b>' . esc_html__('subtotal', 'event_espresso') . '</b>
-        </td>
-        <td data-th="' . esc_html__('subtotal', 'event_espresso') . '" class="jst-rght small-text">
-            <b>' . EEH_Template::format_currency($running_total) . '</b>
-        </td>
-    </tr>
-    '
+                <tr>
+                    <td colspan="2" class="jst-rght small-text sbttl">
+                        <b>' . esc_html__('subtotal', 'event_espresso') . '</b>
+                    </td>
+                    <td data-th="' . esc_html__('subtotal', 'event_espresso') . '" class="jst-rght small-text">
+                        <b>' . EEH_Template::format_currency($running_total) . '</b>
+                    </td>
+                </tr>
+            '
             : '';
     }
 }
 
 if ($display_ticket_price) { ?>
     <section class="tckt-slctr-tkt-price-sctn">
-        <h5><?php
-            echo apply_filters(
+        <h5><?php echo esc_html(
+            apply_filters(
                 'FHEE__ticket_selector_chart_template__ticket_details_price_breakdown_heading',
-                esc_html__('Price', 'event_espresso')
-            ); ?></h5>
+                __('Price', 'event_espresso')
+            )
+        ); ?></h5>
         <div class="tckt-slctr-tkt-details-tbl-wrap-dv">
             <table class="tckt-slctr-tkt-details-tbl">
                 <thead>
@@ -123,15 +124,19 @@ if ($display_ticket_price) { ?>
                     <tr>
                         <td colspan="2" class="jst-rght small-text ttl-lbl-td">
                             <b>
-                                <?php echo apply_filters(
-                                    'FHEE__ticket_selector_chart_template__ticket_details_total_price',
-                                    esc_html__('Total', 'event_espresso')
+                                <?php echo esc_html(
+                                    apply_filters(
+                                        'FHEE__ticket_selector_chart_template__ticket_details_total_price',
+                                        __('Total', 'event_espresso')
+                                    )
                                 ); ?>
                             </b>
                         </td>
-                        <td data-th="<?php echo apply_filters(
-                            'FHEE__ticket_selector_chart_template__ticket_details_total_price',
-                            esc_html__('Total', 'event_espresso')
+                        <td data-th="<?php echo esc_html(
+                            apply_filters(
+                                'FHEE__ticket_selector_chart_template__ticket_details_total_price',
+                                __('Total', 'event_espresso')
+                            )
                         ); ?>" class="jst-rght small-text"
                         >
                             <b><?php echo EEH_Template::format_currency($running_total); ?></b>
