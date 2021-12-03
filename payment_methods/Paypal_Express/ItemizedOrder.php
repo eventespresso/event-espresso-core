@@ -236,7 +236,8 @@ class ItemizedOrder
                 $this->order_items[ "L_PAYMENTREQUEST_0_QTY{$item_num}" ] = $line_item_quantity;
                 // Digital item is sold.
                 $this->order_items[ "L_PAYMENTREQUEST_0_ITEMCATEGORY{$item_num}" ] = 'Physical';
-                $this->itemized_order_sum                                        += $unit_price * $line_item_quantity;
+                // add item total to order sum
+                $this->itemized_order_sum += $unit_price * $line_item_quantity;
                 ++$item_num;
             }
         }
