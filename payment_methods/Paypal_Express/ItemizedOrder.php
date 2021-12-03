@@ -84,18 +84,18 @@ class ItemizedOrder
                     $this->order_items[ $arg_key ] = $arg_val;
                 }
             }
-        }
-        // If we only get a few Items then something is not right.
-        if (count($this->order_items) < 3) {
-            throw new RuntimeException(
-                sprintf(
-                    esc_html__(
-                        'Unable to continue with the checkout because a proper purchase list could not be generated. The purchased list we could have sent was %1$s',
-                        'event_espresso'
-                    ),
-                    wp_json_encode($this->order_items)
-                )
-            );
+            // If we only get a few Items then something is not right.
+            if (count($this->order_items) < 3) {
+                throw new RuntimeException(
+                    sprintf(
+                        esc_html__(
+                            'Unable to continue with the checkout because a proper purchase list could not be generated. The purchased list we could have sent was %1$s',
+                            'event_espresso'
+                        ),
+                        wp_json_encode($this->order_items)
+                    )
+                );
+            }
         }
         return $this->order_items;
     }
@@ -206,7 +206,10 @@ class ItemizedOrder
                 if (EEH_Money::compare_floats($line_item->pretaxTotal(), '0.00', '==')) {
                     continue;
                 }
-                $unit_price         = $line_item->unit_price();
+                $unit_price         = $this->gateway_data_formatter->formatCurrency(
+                    $line_item->unit_price(),
+                    $this->decimal_precision
+                );
                 $line_item_quantity = $line_item->quantity();
                 // This is a discount.
                 if ($line_item->is_percent()) {
@@ -226,17 +229,14 @@ class ItemizedOrder
                     127
                 );
                 // Cost of individual item.
-                $this->order_items["L_PAYMENTREQUEST_0_AMT{$item_num}"] = $this->gateway_data_formatter->formatCurrency(
-                    $unit_price,
-                    $this->decimal_precision
-                );
+                $this->order_items["L_PAYMENTREQUEST_0_AMT{$item_num}"] = $unit_price;
                 // Item Number.
                 $this->order_items["L_PAYMENTREQUEST_0_NUMBER{$item_num}"] = $item_num + 1;
                 // Item quantity.
                 $this->order_items["L_PAYMENTREQUEST_0_QTY{$item_num}"] = $line_item_quantity;
                 // Digital item is sold.
                 $this->order_items["L_PAYMENTREQUEST_0_ITEMCATEGORY{$item_num}"] = 'Physical';
-                $this->itemized_order_sum                                        += $line_item->pretaxTotal();
+                $this->itemized_order_sum                                        += $unit_price * $line_item_quantity;
                 ++$item_num;
             }
         }
@@ -270,7 +270,7 @@ class ItemizedOrder
     private function handleItemizedOrderSumDifference(EE_Line_Item $total_line_item, int $item_num)
     {
         // calculate the difference between the TXN total and the itemized order sum
-        $itemized_sum_diff_from_txn_total = round(
+        $itemized_order_sum_difference = round(
             $this->transaction->total()
             - $this->itemized_order_sum
             - $total_line_item->get_total_tax(),
@@ -278,7 +278,7 @@ class ItemizedOrder
         );
         // If we were not able to recognize some item like promotion, surcharge or cancellation,
         // add the difference as an extra line item.
-        if (EEH_Money::compare_floats($itemized_sum_diff_from_txn_total, 0, '!=')) {
+        if (EEH_Money::compare_floats($itemized_order_sum_difference, 0, '!=')) {
             // Item Name.
             $this->order_items["L_PAYMENTREQUEST_0_NAME{$item_num}"] = mb_strcut(
                 esc_html__(
@@ -292,7 +292,7 @@ class ItemizedOrder
             $this->order_items["L_PAYMENTREQUEST_0_DESC{$item_num}"] = '';
             // Cost of individual item.
             $this->order_items["L_PAYMENTREQUEST_0_AMT{$item_num}"] = $this->gateway_data_formatter->formatCurrency(
-                $itemized_sum_diff_from_txn_total,
+                $itemized_order_sum_difference,
                 $this->decimal_precision
             );
             // Item Number.
