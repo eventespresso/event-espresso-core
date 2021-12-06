@@ -746,7 +746,9 @@ class EED_Add_New_State extends EED_Module
         EE_Question $question = null,
         $answer = null
     ) {
-        if ($answer instanceof EE_Answer && $question instanceof EE_Question
+        if (
+            $answer instanceof EE_Answer
+            && $question instanceof EE_Question
             && $question->type() === EEM_Question::QST_type_country
         ) {
             $CNT_ISO = $answer->value();

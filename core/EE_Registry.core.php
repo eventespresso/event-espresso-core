@@ -1371,7 +1371,8 @@ class EE_Registry implements ResettableInterface
                 ? $this->class_cache->getFqnForAlias($param_class, $class_name)
                 : $param_class;
             // param is not even a class
-            if (! class_exists($param_class, false)
+            if (
+                ! class_exists($param_class, false)
                 // and something already exists in the incoming arguments for this param
                 && array_key_exists($index, $argument_keys)
                 && array_key_exists($argument_keys[ $index ], $arguments)
@@ -1382,7 +1383,8 @@ class EE_Registry implements ResettableInterface
             // parameter is type hinted as a class
             if ($param_class !== null) {
                 // parameter exists as an incoming argument, AND it's the correct class
-                if (array_key_exists($index, $argument_keys)
+                if (
+                    array_key_exists($index, $argument_keys)
                     && isset($arguments[ $argument_keys[ $index ] ])
                     && $arguments[ $argument_keys[ $index ] ] instanceof $param_class
                 ) {
