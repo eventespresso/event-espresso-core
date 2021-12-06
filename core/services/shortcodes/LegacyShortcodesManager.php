@@ -257,7 +257,7 @@ class LegacyShortcodesManager
         // in case $current_post is hierarchical like: /parent-page/current-page
         $current_post = basename($current_post);
         if (
-// is current page/post the "blog" page ?
+            // is current page/post the "blog" page ?
             $current_post === EE_Config::get_page_for_posts()
             // or are we on a category page?
             || (
