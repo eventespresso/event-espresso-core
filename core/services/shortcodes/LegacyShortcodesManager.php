@@ -11,6 +11,7 @@ use EventEspresso\core\services\request\CurrentPage;
 use ReflectionClass;
 use ReflectionException;
 use WP;
+use WP_Post;
 use WP_Query;
 
 /**
@@ -267,13 +268,18 @@ class LegacyShortcodesManager
             // initialize all legacy shortcodes
             $load_assets = $this->parseContentForShortcodes('', true);
         } else {
-            global $wpdb;
-            $post_content = $wpdb->get_var(
-                $wpdb->prepare(
-                    "SELECT post_content from {$wpdb->posts} WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND post_name=%s",
-                    $current_post
-                )
-            );
+            global $post;
+            if ($post instanceof WP_Post) {
+                $post_content = $post->post_content;
+            } else {
+                global $wpdb;
+                $post_content = $wpdb->get_var(
+                    $wpdb->prepare(
+                        "SELECT post_content from {$wpdb->posts} WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND post_name=%s",
+                        $current_post
+                    )
+                );
+            }
             $load_assets = $this->parseContentForShortcodes($post_content);
         }
         if ($load_assets) {
@@ -304,6 +310,10 @@ class LegacyShortcodesManager
                 $this->initializeShortcode($shortcode_class);
                 $has_shortcode = true;
             }
+        }
+        // one last test for an [espresso_*] shortcode
+        if (! $has_shortcode) {
+            $has_shortcode = strpos($content, '[espresso_') !== false;
         }
         return $has_shortcode;
     }
