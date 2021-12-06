@@ -32,7 +32,7 @@ jobs:
     if: ${{ needs.what_has_changed.outputs.php == 'true' }}
     strategy:
       matrix:
-        php-version: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1' ] #'5.6', '7.0'
+        php-version: [ '7.1', '7.2', '7.3', '7.4', '8.0' ] #'5.6', '7.0', '8.1'
     name: Unit Tests with PHP ${{ matrix.php-version }}
     steps:
       - name: Checkout and set up LAMP
