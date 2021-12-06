@@ -14,17 +14,16 @@ jobs:
     if: ${{ needs.what_has_changed.outputs.php == 'true' }}
     strategy:
       matrix:
-        php-version: [ '7.1' ]
+        php-version: [ '7.3' ]
     name: Lint with PHP ${{ matrix.php-version }}
     steps:
       - name: Checkout and set up LAMP
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
         with:
           php-version: ${{ matrix.php-version }}
-          cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-lint
 
-    - name: PHP Lint
-      run: composer config-eventespressocs && composer run-script lint:skip-warnings
+      - name: PHP Lint
+        run: composer config-eventespressocs && composer run-script lint:skip-warnings
 
   php-unit-tests:
     runs-on: ubuntu-latest
@@ -33,7 +32,7 @@ jobs:
     if: ${{ needs.what_has_changed.outputs.php == 'true' }}
     strategy:
       matrix:
-        php-version: [ '7.1', '7.2', '7.3', '7.4', '8.0' ] #'5.6', '7.0', '8.1'
+        php-version: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1' ] #'5.6', '7.0'
     name: Unit Tests with PHP ${{ matrix.php-version }}
     steps:
       - name: Checkout and set up LAMP
@@ -43,36 +42,36 @@ jobs:
           php-tools: phpunit:v7
           cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-test
 
-    - name: Install WP Tests
-      uses: eventespresso/actions/packages/install-wp-tests@main
-      with:
-        database: wordpress_test
-        username: root
-        password: root
-        host: localhost
+      - name: Install WP Tests
+        uses: eventespresso/actions/packages/install-wp-tests@main
+        with:
+          database: wordpress_test
+          username: root
+          password: root
+          host: localhost
+
+        # run PHPUNIT from the vendor folder for PHP 8+
+      - if: ${{ matrix.php-versions == '8.0' || matrix.php-versions == '8.1' }}
+        name: Run PHP Unit Tests
+        run: ./vendor/bin/phpunit --configuration tests/phpunit.xml
+
+      # run PHPUNIT normally for PHP < 8
+      - if: ${{ matrix.php-versions == '7.1' || matrix.php-versions == '7.2' || matrix.php-versions == '7.3' || matrix.php-versions == '7.4' }}
+        name: Run PHP Unit Tests
+        run: phpunit --configuration tests/phpunit.xml
 
       # run PHPUNIT from the vendor folder for PHP 8+
-    - if: ${{ matrix.php-versions == '8.0' || matrix.php-versions == '8.1' }}
-      name: Run PHP Unit Tests
-      run: ./vendor/bin/phpunit --configuration tests/phpunit.xml
+      #            - name: Run PHP Unit Tests
+      #              run: phpunit --configuration tests/phpunit.xml
+      #              # Allow failure for PHP 8.x
+      #              continue-on-error: ${{ startsWith( matrix.php-version, '8.' ) }}
 
-    # run PHPUNIT normally for PHP < 8
-    - if: ${{ matrix.php-versions == '7.1' || matrix.php-versions == '7.2' || matrix.php-versions == '7.3' || matrix.php-versions == '7.4' }}
-      name: Run PHP Unit Tests
-      run: phpunit --configuration tests/phpunit.xml
-
-    # run PHPUNIT from the vendor folder for PHP 8+
-    #            - name: Run PHP Unit Tests
-    #              run: phpunit --configuration tests/phpunit.xml
-    #              # Allow failure for PHP 8.x
-    #              continue-on-error: ${{ startsWith( matrix.php-version, '8.' ) }}
-
-    # run multisite test only with 1 PHP version
-    - if: ${{ matrix.php-version == '7.4' }}
-      name: Run PHP Unit Tests - WP Multisite
-      env:
-        WP_MULTISITE: 1
-      run: phpunit --configuration tests/phpunit.xml
+      # run multisite test only with 1 PHP version
+      - if: ${{ matrix.php-version == '7.4' }}
+        name: Run PHP Unit Tests - WP Multisite
+        env:
+          WP_MULTISITE: 1
+        run: phpunit --configuration tests/phpunit.xml
 
   js-lint-and-build:
     name: JS Lint/Build
