@@ -80,8 +80,8 @@ class TicketSelectorStandard extends TicketSelector
      */
     protected function addTemplateArgs()
     {
-        $row                      = 1;
-        $ticket_row_html          = '';
+        $this->ticket_rows        = 0;
+        $all_ticket_rows_html     = '';
         $required_ticket_sold_out = false;
         // flag to indicate that at least one taxable ticket has been encountered
         $taxable_tickets                          = false;
@@ -104,6 +104,7 @@ class TicketSelectorStandard extends TicketSelector
         // loop through tickets
         foreach ($this->tickets as $ticket) {
             if ($ticket instanceof EE_Ticket) {
+                $this->ticket_rows++;
                 $cols                     = 2;
                 $taxable_tickets          = $ticket->taxable() ? true : $taxable_tickets;
                 $ticket_selector_row      = new TicketSelectorRowStandard(
@@ -111,7 +112,7 @@ class TicketSelectorStandard extends TicketSelector
                     $this->tax_config,
                     $total_tickets,
                     $this->max_attendees,
-                    $row,
+                    $this->ticket_rows,
                     $cols,
                     $required_ticket_sold_out,
                     $this->template_args['event_status'],
@@ -119,13 +120,21 @@ class TicketSelectorStandard extends TicketSelector
                         ? $datetime_selector->getTicketDatetimeClasses($ticket)
                         : ''
                 );
-                $ticket_row_html          .= $ticket_selector_row->getHtml();
+                $ticket_row_html = $ticket_selector_row->getHtml();
+                // check if something was actually returned
+                if (! empty($ticket_row_html)) {
+                    // add any output to the cumulative HTML
+                    $all_ticket_rows_html .= $ticket_row_html;
+                } else {
+                    // or decrement the ticket row count since it looks like one has been removed
+                    $this->ticket_rows--;
+                }
+
                 $required_ticket_sold_out = $ticket_selector_row->getRequiredTicketSoldOut();
-                $row++;
             }
         }
-        $this->template_args['row']                              = $row;
-        $this->template_args['ticket_row_html']                  = $ticket_row_html;
+        $this->template_args['row']                              = $this->ticket_rows;
+        $this->template_args['ticket_row_html']                  = $all_ticket_rows_html;
         $this->template_args['taxable_tickets']                  = $taxable_tickets;
         $this->template_args['prices_displayed_including_taxes'] = $this->tax_config->prices_displayed_including_taxes;
         $this->template_args['template_path']                    =

@@ -56,6 +56,7 @@ class TicketSelectorSimple extends TicketSelector
      */
     protected function addTemplateArgs()
     {
+        $this->ticket_rows = 1;
         unset($this->template_args['tickets']);
         $this->template_args['ticket'] = $this->ticket;
         $ticket_selector_row           = new TicketSelectorRowSimple(
