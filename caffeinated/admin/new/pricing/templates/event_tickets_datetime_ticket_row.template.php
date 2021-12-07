@@ -285,8 +285,10 @@ if (WP_DEBUG) {
                                value="1"<?php echo $TKT_taxable; ?>>
                         <?php endif; ?>
                     <label for="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"> <?php
-                        esc_html_e('Use Global Taxes (those defined in the Pricing admin). If unchecked you can apply taxes below.',
-                                   'event_espresso'); ?>
+                        esc_html_e(
+                            'Use Global Taxes (those defined in the Pricing admin). If unchecked you can apply taxes below.',
+                            'event_espresso'
+                        ); ?>
                     <?php } //end tax_rows check ?>
                 </div>
             </div>
