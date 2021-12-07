@@ -425,16 +425,20 @@ final class EE_Front_Controller
 
 
     /***********************************************        UTILITIES         ***********************************************/
+
+
     /**
-     *    template_include
-     *
-     * @access    public
-     * @param   string $template_include_path
-     * @return    string
+     * @param string $template_include_path
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function template_include($template_include_path = null)
     {
         if ($this->current_page->isEspressoPage()) {
+            // despite all helpers having autoloaders set, we need to manually load the template loader
+            // because there are some side effects in that class for triggering template tag functions
+            $this->Registry->load_helper('EEH_Template');
             $this->_template_path = ! empty($this->_template_path)
                 ? basename($this->_template_path)
                 : basename(

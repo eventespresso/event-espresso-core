@@ -36,7 +36,7 @@ class CurrentPage
     /**
      * @var bool
      */
-    private $is_espresso_page = false;
+    private $is_espresso_page;
 
     /**
      * @var int
@@ -187,7 +187,7 @@ class CurrentPage
             }
             // this stinks but let's run a query to try and get the post name from the URL
             // (assuming pretty permalinks are on)
-            if (! $post_name && $WP->request !== null && ! empty($WP->request)) {
+            if (! $post_name && ! empty($WP->request)) {
                 $possible_post_name = basename($WP->request);
                 if (! is_numeric($possible_post_name)) {
                     $SQL                = "SELECT ID from {$wpdb->posts}";
@@ -247,6 +247,9 @@ class CurrentPage
      */
     public function isEspressoPage()
     {
+        if ($this->is_espresso_page === null) {
+            $this->setEspressoPage();
+        }
         return $this->is_espresso_page;
     }
 
