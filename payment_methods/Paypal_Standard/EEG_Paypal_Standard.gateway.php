@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\exceptions\IpnException;
+use EventEspresso\payment_methods\Paypal_Standard\ItemizedOrder;
 
 /**
  * EEG_Paypal_Standard
@@ -64,16 +65,75 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
         'RUB'
     );
 
+    /**
+     * @var ItemizedOrder
+     * @since $VID:$
+     */
+    protected $itemized_order;
+
 
     /**
      * EEG_Paypal_Standard constructor.
-     *
-     * @return EEG_Paypal_Standard
      */
     public function __construct()
     {
         $this->set_uses_separate_IPN_request(true);
         parent::__construct();
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function gatewayUrl()
+    {
+        return $this->_gateway_url;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function imageUrl()
+    {
+        return $this->_image_url;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function paypalId()
+    {
+        return $this->_paypal_id;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function paypalShipping()
+    {
+        return $this->_paypal_shipping;
+    }
+
+
+
+    /**
+     * @return mixed
+     */
+    public function paypalTaxes()
+    {
+        return $this->_paypal_taxes;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function shippingDetails()
+    {
+        return $this->_shipping_details;
     }
 
 
@@ -99,7 +159,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
      * @param string      $cancel_url   URL to send the user to after a cancelled payment attempt
      *                                  on the payment provider's website
      * @return EEI_Payment
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_redirection_info(
         $payment,
@@ -108,137 +169,25 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
         $notify_url = null,
         $cancel_url = null
     ) {
-        $redirect_args = array();
-        $transaction = $payment->transaction();
-        $gateway_formatter = $this->_get_gateway_formatter();
-        $item_num = 1;
-        /** @type EE_Line_Item $total_line_item */
-        $total_line_item = $transaction->total_line_item();
-
-        $total_discounts_to_cart_total = $transaction->paid();
-        // only itemize the order if we're paying for the rest of the order's amount
-        if (EEH_Money::compare_floats($payment->amount(), $transaction->total(), '==')) {
-            $payment->update_extra_meta(EEG_Paypal_Standard::itemized_payment_option_name, true);
-            // this payment is for the remaining transaction amount,
-            // keep track of exactly how much the itemized order amount equals
-            $itemized_sum = 0;
-            $shipping_previously_added = 0;
-            // so let's show all the line items
-            foreach ($total_line_item->get_items() as $line_item) {
-                if ($line_item instanceof EE_Line_Item) {
-                    // it's some kind of discount
-                    if ($line_item->total() < 0) {
-                        $total_discounts_to_cart_total += abs($line_item->total());
-                        $itemized_sum += $line_item->total();
-                        continue;
-                    }
-                    // dont include shipping again.
-                    if (strpos($line_item->code(), 'paypal_shipping_') === 0) {
-                        $shipping_previously_added = $line_item->total();
-                        continue;
-                    }
-                    $redirect_args[ 'item_name_' . $item_num ] = substr(
-                        $gateway_formatter->formatLineItemName($line_item, $payment),
-                        0,
-                        127
-                    );
-                    $redirect_args[ 'amount_' . $item_num ] = $line_item->unit_price();
-                    $redirect_args[ 'quantity_' . $item_num ] = $line_item->quantity();
-                    // if we're not letting PayPal calculate shipping, tell them its 0
-                    if (! $this->_paypal_shipping) {
-                        $redirect_args[ 'shipping_' . $item_num ] = '0';
-                        $redirect_args[ 'shipping2_' . $item_num ] = '0';
-                    }
-                    $item_num++;
-                    $itemized_sum += $line_item->total();
-                }
-            }
-            $taxes_li = $this->_line_item->get_taxes_subtotal($total_line_item);
-            // ideally itemized sum equals the transaction total. but if not (which is weird)
-            // and the itemized sum is LESS than the transaction total
-            // add another line item
-            // if the itemized sum is MORE than the transaction total,
-            // add the difference it to the discounts
-            $itemized_sum_diff_from_txn_total = round(
-                $transaction->total() - $itemized_sum - $taxes_li->total() - $shipping_previously_added,
-                2
-            );
-            if ($itemized_sum_diff_from_txn_total < 0) {
-                // itemized sum is too big
-                $total_discounts_to_cart_total += abs($itemized_sum_diff_from_txn_total);
-            } elseif ($itemized_sum_diff_from_txn_total > 0) {
-                $redirect_args[ 'item_name_' . $item_num ] = substr(
-                    __('Other charges', 'event_espresso'),
-                    0,
-                    127
-                );
-                $redirect_args[ 'amount_' . $item_num ] = $gateway_formatter->formatCurrency(
-                    $itemized_sum_diff_from_txn_total
-                );
-                $redirect_args[ 'quantity_' . $item_num ] = 1;
-                $item_num++;
-            }
-            if ($total_discounts_to_cart_total > 0) {
-                $redirect_args['discount_amount_cart'] = $gateway_formatter->formatCurrency(
-                    $total_discounts_to_cart_total
-                );
-            }
-            // add our taxes to the order if we're NOT using PayPal's
-            if (! $this->_paypal_taxes) {
-                $redirect_args['tax_cart'] = $total_line_item->get_total_tax();
-            }
-        } else {
-            $payment->update_extra_meta(EEG_Paypal_Standard::itemized_payment_option_name, false);
-            // partial payment that's not for the remaining amount, so we can't send an itemized list
-            $redirect_args[ 'item_name_' . $item_num ] = substr(
-                $gateway_formatter->formatPartialPaymentLineItemName($payment),
-                0,
-                127
-            );
-            $redirect_args[ 'amount_' . $item_num ] = $payment->amount();
-            $redirect_args[ 'shipping_' . $item_num ] = '0';
-            $redirect_args[ 'shipping2_' . $item_num ] = '0';
-            $redirect_args['tax_cart'] = '0';
-            $item_num++;
-        }
-
-        if ($this->_debug_mode) {
-            $redirect_args[ 'item_name_' . $item_num ] = 'DEBUG INFO (this item only added in sandbox mode';
-            $redirect_args[ 'amount_' . $item_num ] = 0;
-            $redirect_args[ 'on0_' . $item_num ] = 'NOTIFY URL';
-            $redirect_args[ 'os0_' . $item_num ] = $notify_url;
-            $redirect_args[ 'on1_' . $item_num ] = 'RETURN URL';
-            $redirect_args[ 'os1_' . $item_num ] = $return_url;
-//          $redirect_args['option_index_' . $item_num] = 1; // <-- dunno if this is needed ?
-            $redirect_args[ 'shipping_' . $item_num ] = '0';
-            $redirect_args[ 'shipping2_' . $item_num ] = '0';
-        }
-
-        $redirect_args['business'] = $this->_paypal_id;
-        $redirect_args['return'] = $return_url;
-        $redirect_args['cancel_return'] = $cancel_url;
-        $redirect_args['notify_url'] = $notify_url;
-        $redirect_args['cmd'] = '_cart';
-        $redirect_args['upload'] = 1;
-        $redirect_args['currency_code'] = $payment->currency_code();
-        $redirect_args['rm'] = 2;// makes the user return with method=POST
-        if ($this->_image_url) {
-            $redirect_args['image_url'] = $this->_image_url;
-        }
-        $redirect_args['no_shipping'] = $this->_shipping_details;
-        $redirect_args['bn'] = 'EventEspresso_SP';// EE will blow up if you change this
-
-        $redirect_args = apply_filters("FHEE__EEG_Paypal_Standard__set_redirection_info__arguments", $redirect_args, $this);
+        $this->itemized_order = new ItemizedOrder($this->_get_gateway_formatter(), $this);
+        $redirect_args = apply_filters(
+            "FHEE__EEG_Paypal_Standard__set_redirection_info__arguments",
+            $this->itemized_order->generateItemizedOrderForPayment(
+                $payment,
+                $return_url,
+                $notify_url,
+                $cancel_url
+            ),
+            $this
+        );
 
         $payment->set_redirect_url($this->_gateway_url);
         $payment->set_redirect_args($redirect_args);
         // log the results
         $this->log(
             array(
-                'message'     => sprintf(
-                    __('PayPal payment request initiated.', 'event_espresso')
-                ),
-                'transaction' => $transaction->model_field_array(),
+                'message'     => esc_html__('PayPal payment request initiated.', 'event_espresso'),
+                'transaction' => $payment->transaction()->model_field_array(),
             ),
             $payment
         );
@@ -253,8 +202,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
      *
      * @param array $update_info like $_POST
      * @param EEI_Transaction $transaction
-     * @return \EEI_Payment updated
-     * @throws \EE_Error, IpnException
+     * @return EEI_Payment updated
+     * @throws EE_Error, IpnException
      */
     public function handle_payment_update($update_info, $transaction)
     {
@@ -263,10 +212,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
             // log the results
             $this->log(
                 array(
-                    'message'     => sprintf(
-                        // @codingStandardsIgnoreStart
-                        __('PayPal IPN response is missing critical payment data. This may indicate a PDT request and require your PayPal account settings to be corrected.', 'event_espresso')
-                        // @codingStandardsIgnoreEnd
+                    'message'     => esc_html__(
+                        'PayPal IPN response is missing critical payment data. This may indicate a PDT request and require your PayPal account settings to be corrected.',
+                        'event_espresso'
                     ),
                     'update_info' => $update_info,
                 ),
@@ -360,7 +308,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
         // check if we've already processed this payment
         if ($payment instanceof EEI_Payment) {
             // payment exists. if this has the exact same status and amount, don't bother updating. just return
-            if ($payment->status() === $status && (float) $payment->amount() === (float) $update_info['mc_gross']) {
+            if ($payment->status() === $status && $payment->amount() === (float) $update_info['mc_gross']) {
                 // DUPLICATED IPN! don't bother updating transaction
                 throw new IpnException(
                     sprintf(
@@ -407,7 +355,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
      * @param array                  $update_info like $_REQUEST
      * @param EE_Payment|EEI_Payment $payment
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function validate_ipn($update_info, $payment)
     {
@@ -431,9 +379,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
         }
         // read the IPN message sent from PayPal and prepend 'cmd=_notify-validate'
         $req = 'cmd=_notify-validate';
-        $uses_get_magic_quotes = function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() === 1
-            ? true
-            : false;
+        $uses_get_magic_quotes = function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() === 1;
         foreach ($update_info as $key => $value) {
             $value = $uses_get_magic_quotes ? urlencode(stripslashes($value)) : urlencode($value);
             $req .= "&$key=$value";
@@ -498,7 +444,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
      * _process_response_url
      * @return string
      */
-    protected function _process_response_url()
+    protected function _process_response_url(): string
     {
         if (isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
             $url = is_ssl() ? 'https://' : 'http://';
@@ -516,7 +462,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
      * like the taxes or shipping
      *
      * @param EEI_Payment $payment
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function update_txn_based_on_payment($payment)
     {

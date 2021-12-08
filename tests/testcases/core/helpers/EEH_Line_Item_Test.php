@@ -11,7 +11,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
- *
+ * @group                 line-item-calculator
  */
 class EEH_Line_Item_Test extends EE_UnitTestCase{
 
@@ -557,7 +557,9 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 	 * Create a line item tree which was originally for 6 tickets and a discount,
 	 * but 2 got cancelled and so shouldn't count towards the grand total,
 	 * and so the ticket line item's quantity should be 4
+	 *
 	 * @group 5580
+	 * @group cancel_ticket_line_item__with_sub_items_already
 	 */
 	function test_cancel_ticket_line_item__with_sub_items_already(){
 		$grand_total = EE_Line_Item::new_instance(

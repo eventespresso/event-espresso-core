@@ -1,11 +1,18 @@
 <?php
 
+use EventEspresso\core\services\helpers\DecimalValues;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * Text_Fields is a base class for any fields which are have float value. (Exception: foreign and private key fields.
  * Wish PHP had multiple-inheritance for this...)
  */
 class EE_Money_Field extends EE_Float_Field
 {
+    /**
+     * @var DecimalValues
+     */
+    protected $decimal_values;
 
     /**
      * @param string $table_column
@@ -17,6 +24,7 @@ class EE_Money_Field extends EE_Float_Field
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType('object');
+        $this->decimal_values = LoaderFactory::getShared(DecimalValues::class);
     }
 
 
@@ -29,23 +37,18 @@ class EE_Money_Field extends EE_Float_Field
      * @param string $value_on_field_to_be_outputted
      * @param string $schema
      * @return string
+     * @throws EE_Error
      */
-    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null): string
     {
-        $pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
-
         if ($schema == 'localized_float') {
-            return $pretty_float;
+            return parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
         }
-        if ($schema == 'no_currency_code') {
-//          echo "schema no currency!";
-            $display_code = false;
-        } else {
-            $display_code = true;
-        }
+        $display_code = $schema !== 'no_currency_code';
         // we don't use the $pretty_float because format_currency will take care of it.
         return EEH_Template::format_currency($value_on_field_to_be_outputted, false, $display_code);
     }
+
 
     /**
      * If provided with a string, strips out money-related formatting to turn it into a proper float.
@@ -56,43 +59,36 @@ class EE_Money_Field extends EE_Float_Field
      * @param string $value_inputted_for_field_on_model_object
      * @return float
      */
-    public function prepare_for_set($value_inputted_for_field_on_model_object)
+    public function prepare_for_set($value_inputted_for_field_on_model_object): float
     {
-        // remove any currencies etc.
-//      if(is_string($value_inputted_for_field_on_model_object)){
-//          $value_inputted_for_field_on_model_object = preg_replace("/[^0-9,.]/", "", $value_inputted_for_field_on_model_object);
-//      }
         // now it's a float-style string or number
         $float_val = parent::prepare_for_set($value_inputted_for_field_on_model_object);
         // round to the correctly number of decimal places for this  currency
-        $rounded_value = round($float_val, EE_Registry::instance()->CFG->currency->dec_plc);
-        return $rounded_value;
+        return $this->decimal_values->roundDecimalValue($float_val);
     }
 
-    public function prepare_for_get($value_of_field_on_model_object)
-    {
-        $c = EE_Registry::instance()->CFG->currency;
-        return round(parent::prepare_for_get($value_of_field_on_model_object), $c->dec_plc);
-    }
 
-    public function getSchemaProperties()
+    /**
+     * @return array[]
+     */
+    public function getSchemaProperties(): array
     {
-        return array(
-            'raw' => array(
-                'description' =>  sprintf(
+        return [
+            'raw'    => [
+                'description' => sprintf(
                     __('%s - the raw value as it exists in the database as a simple float.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'number',
-            ),
-            'pretty' => array(
-                'description' =>  sprintf(
+                'type'        => 'number',
+            ],
+            'pretty' => [
+                'description' => sprintf(
                     __('%s - formatted for display in the set currency and decimal places.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'string',
-                'format' => 'money'
-            )
-        );
+                'type'        => 'string',
+                'format'      => 'money',
+            ],
+        ];
     }
 }

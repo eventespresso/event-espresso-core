@@ -18,9 +18,9 @@
         <thead>
         <tr>
             <th scope="col" width=""><?php _e('Name and Description', 'event_espresso'); ?></th>
-            <th scope="col" width="15%" class="jst-cntr"><?php _e('Price', 'event_espresso'); ?></th>
-            <th scope="col" width="5%" class="jst-cntr"><?php _e('Qty', 'event_espresso'); ?></th>
-            <th scope="col" width="15%" class="jst-cntr"><?php _e('Total', 'event_espresso'); ?></th>
+            <th scope="col" width="15%" class="jst-rght"><?php _e('Price', 'event_espresso'); ?></th>
+            <th scope="col" width="7.5%" class="spco-table-qty jst-rght"><?php _e('Qty', 'event_espresso'); ?></th>
+            <th scope="col" width="15%" class="jst-rght"><?php _e('Total', 'event_espresso'); ?></th>
             <?php do_action('AHEE__registration_page_payment_options__payment_info_table_thead_row_end'); ?>
         </tr>
         </thead>

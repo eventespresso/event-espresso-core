@@ -111,7 +111,7 @@ class RegistrantForm extends EE_Form_Section_Proper
                     'subsections'     => [],
                     'layout_strategy' => new EE_Fieldset_Section_Layout(
                         [
-                            'legend_class' => 'spco-attendee-lgnd smaller-text lt-grey-text',
+                            'legend_class' => 'spco-attendee-lgnd',
                             'legend_text'  => sprintf(
                                 esc_html_x(
                                     'Attendee %d',

@@ -10,7 +10,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
- *
+ * @group                 line-item-calculator
  */
 class EE_Line_Item__EE_Single_Registration_Line_Item_Filter__Integration_Test extends EE_UnitTestCase{
 	/**
@@ -86,7 +86,6 @@ class EE_Line_Item__EE_Single_Registration_Line_Item_Filter__Integration_Test ex
 		$transaction = $this->new_typical_transaction(
 			array(
 				'ticket_types' => 2,
-				'fixed_ticket_price_modifiers' => 2,
 			)
 		);
 		//add another ticket purchase for one of the same events

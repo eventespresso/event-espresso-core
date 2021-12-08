@@ -11,6 +11,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @subpackage
  * @author				Mike Nelson
  * @group 				Line_Item_Filter
+ * @group                line-item-calculator
  */
 class EE_Specific_Registrations_Line_Item_Filter_Test extends EE_UnitTestCase{
 	function setUp(){
@@ -244,7 +245,7 @@ class EE_Specific_Registrations_Line_Item_Filter_Test extends EE_UnitTestCase{
 
 
 /**
- *
+ * @group 2_events_some_taxed_with_discounts
  */
 function test_process__2_events_some_taxed_with_discounts() {
 		$grand_total = EE_Line_Item::new_instance( array(
@@ -291,6 +292,7 @@ function test_process__2_events_some_taxed_with_discounts() {
 			'LIN_order' => 2,
 		) );
 		$pretax_total->add_child_line_item( $event_B_subtotal );
+
 		$ticket_quantities = array(
 			1 => array(
 				'included' => 4,
@@ -371,16 +373,17 @@ function test_process__2_events_some_taxed_with_discounts() {
 			'LIN_is_taxable' => true,
 		));
 		$event_B_subtotal->add_child_line_item( $ticket_3_li );
+        // echo "BEFORE tree:";
+        // EEH_Line_Item::visualize($grand_total);
 
 		//also need to make registrations
 		$regs_to_include = $this->_create_regs( $ticket_quantities, $grand_total );
 
 		//ok now let's use the filter
-		$filter = new EE_Specific_Registrations_Line_Item_Filter(
-				$regs_to_include );
+		$filter = new EE_Specific_Registrations_Line_Item_Filter( $regs_to_include );
 		$filtered_total = $filter->process( $grand_total );
-//		echo "AFTER tree:";
-//		EEH_Line_Item::visualize( $grand_total );
+		// echo "AFTER tree:";
+		// EEH_Line_Item::visualize($filtered_total );
 		//the filter doesn't recalculate totals, and it edits the inputted tree;
 		//hat's ok, the processor does both of those. But we need to manually do it here
 		$this->assertEquals( $grand_total, $filtered_total );
@@ -417,29 +420,36 @@ function test_process__2_events_some_taxed_with_discounts() {
 		$this->assertEquals( 35, $ticket_3_li->total() );
 	}
 
-	/**
-	 * Creates a bunch of registrations and returns an array of all the "approved" ones
-	 * @param array $ticket_quantities top-level-keys are ticket IDs,
-	 * next-level keys are either 'included' or 'not'.
-	 * @param EE_Line_Item $grand_total
-	 * @return a flat array of all the registrations that were for 'included'
-	 */
-	protected function _create_regs( $ticket_quantities, $grand_total ) {
-		$txn = $this->new_model_obj_with_dependencies( 'Transaction' );
-		$regs_to_include = array();
-		foreach( $ticket_quantities as $ticket_id => $approved_or_not_counts ) {
-			foreach( $approved_or_not_counts as $key => $count ) {
-				for( $i = 0; $i < $count; $i++ ) {
-					$r = $this->new_model_obj_with_dependencies( 'Registration', array( 'TXN_ID' => $txn->ID(), 'TKT_ID' => $ticket_id ) );
-					if( $key == 'included' ) {
-						$regs_to_include[] = $r;
-					}
-				}
-			}
-		}
-		$grand_total->save_this_and_descendants_to_txn( $txn->ID() );
-		return $regs_to_include;
-	}
+
+    /**
+     * Creates a bunch of registrations and returns an array of all the "approved" ones
+     *
+     * @param array        $ticket_quantities top-level-keys are ticket IDs,
+     *                                        next-level keys are either 'included' or 'not'.
+     * @param EE_Line_Item $grand_total
+     * @return array flat array of all the registrations that were for 'included'
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+	protected function _create_regs(array $ticket_quantities, EE_Line_Item $grand_total ): array {
+        $txn = $this->new_model_obj_with_dependencies('Transaction');
+        $regs_to_include = [];
+        foreach ($ticket_quantities as $ticket_id => $approved_or_not_counts) {
+            foreach ($approved_or_not_counts as $key => $count) {
+                for ($i = 0; $i < $count; $i++) {
+                    $r = $this->new_model_obj_with_dependencies(
+                        'Registration',
+                        ['TXN_ID' => $txn->ID(), 'TKT_ID' => $ticket_id]
+                    );
+                    if ($key == 'included') {
+                        $regs_to_include[] = $r;
+                    }
+                }
+            }
+        }
+        $grand_total->save_this_and_descendants_to_txn($txn->ID());
+        return $regs_to_include;
+    }
 
 }
 

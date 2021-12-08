@@ -27,7 +27,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway
 
 
     /**
-     * @return EE_Offsite_Gateway
+     * EE_Offsite_Gateway constructor
      */
     public function __construct()
     {

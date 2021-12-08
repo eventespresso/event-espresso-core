@@ -1143,30 +1143,15 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     protected function new_typical_transaction($options = array())
     {
-        $ticket_types = isset($options['ticket_types'])
-            ? $options['ticket_types']
-            : $ticket_types = 1;
-        $taxable_tickets = isset($options['taxable_tickets'])
-            ? $options['taxable_tickets']
-            : $taxable_tickets = EE_INF;
-        $fixed_ticket_price_modifiers = isset($options['fixed_ticket_price_modifiers'])
-            ? $options['fixed_ticket_price_modifiers']
-            : $fixed_ticket_price_modifiers = 1;
-        $reg_status = isset($options['reg_status'])
-            ? $options['reg_status']
-            : EEM_Registration::status_id_approved;
-        $setup_reg = isset($options['setup_reg'])
-            ? $options['setup_reg']
-            : true;
-        $tkt_qty = isset($options['tkt_qty'])
-            ? $options['tkt_qty']
-            : 1;
+        $ticket_types = $options['ticket_types'] ?? 1;
+        $taxable_tickets = $options['taxable_tickets'] ?? EE_INF;
+        $reg_status = $options['reg_status'] ?? EEM_Registration::status_id_approved;
+        $setup_reg = $options['setup_reg'] ?? true;
+        $tkt_qty = $options['tkt_qty'] ?? 1;
         $ticket_types = isset($options['tickets'])
             ? count($options['tickets'])
             : $ticket_types;
-        $timestamp = isset($options['timestamp'])
-            ? $options['timestamp']
-            : current_time('timestamp');
+        $timestamp = $options['timestamp'] ?? current_time('timestamp');
         /** @var EE_Transaction $txn */
         $txn = $this->new_model_obj_with_dependencies(
             'Transaction',
@@ -1175,69 +1160,55 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 'TXN_timestamp' => $timestamp
             )
         );
-        $total_line_item = EEH_Line_Item::create_total_line_item($txn->ID());
+        $total_line_item = EEH_Line_Item::create_total_line_item($txn);
         $total_line_item->save_this_and_descendants_to_txn($txn->ID());
-        $taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
+        $tickets = [];
+        $ticket_line_items = [];
         for ($i = 1; $i <= $ticket_types; $i++) {
             /** @var EE_Ticket $ticket */
-            if(isset($options['tickets'], $options['tickets'][$i])){
+            if(isset($options['tickets'][$i])){
                 $ticket = $options['tickets'][$i];
-                $reg_final_price = $ticket->price();
-                $datetime = $ticket->first_datetime();
             } else {
-
-                $ticket = $this->new_model_obj_with_dependencies(
-                    'Ticket',
-                    array(
-                        'TKT_price' => $i * 10,
-                        'TKT_taxable' => $taxable_tickets-- > 0 ? true : false,
-                        'TKT_reserved' => $setup_reg && $reg_status === EEM_Registration::status_id_pending_payment ? 1 : 0
-                    )
+                $is_taxable = $taxable_tickets-- > 0;
+                $ticket = $this->new_ticket(
+                    [
+                        'TKT_price'    => $i * 10,
+                        'TKT_qty'      => $tkt_qty,
+                        'TKT_taxable'  => $is_taxable,
+                        'TKT_reserved' => $setup_reg && $reg_status === EEM_Registration::status_id_pending_payment
+                            ? 1
+                            : 0,
+                    ]
                 );
-                $sum_of_sub_prices = 0;
-                for ($j = 1; $j <= $fixed_ticket_price_modifiers; $j++) {
-                    if ($j === $fixed_ticket_price_modifiers) {
-                        $price_amount = $ticket->price() - $sum_of_sub_prices;
-                    } else {
-                        $price_amount = $i * 10 / $fixed_ticket_price_modifiers;
-                    }
-                    /** @var EE_Price $price */
-                    $price = $this->new_model_obj_with_dependencies(
-                        'Price',
-                        array('PRC_amount' => $price_amount, 'PRC_order' => $j)
-                    );
-                    $sum_of_sub_prices += $price->amount();
-                    $ticket->_add_relation_to($price, 'Price');
-                }
-                /** @var EE_Datetime $datetime */
-                $datetime = $this->new_model_obj_with_dependencies('Datetime');
-                $ticket->_add_relation_to($datetime, 'Datetime');
-                $reg_final_price = $ticket->price();
-                foreach ($taxes as $taxes_at_priority) {
-                    foreach ($taxes_at_priority as $tax) {
-                        /** @var EE_Price $tax */
-                        $reg_final_price += $reg_final_price * $tax->amount() / 100;
-                    }
-                }
             }
             $line_item = EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket, $tkt_qty);
-            $this->assertInstanceOf(
-                'EE_Line_Item',
-                $line_item
-            );
-            if ($setup_reg) {
+            $this->assertInstanceOf( 'EE_Line_Item', $line_item );
+            $this->assertEquals($ticket->ID(), $line_item->OBJ_ID() );
+            $tickets[ $ticket->ID() ] = $ticket;
+            $ticket_line_items[ $ticket->ID() ] = $line_item;
+        }
+
+        if ($setup_reg) {
+            $reg_count = count($tickets);
+            $i = 0;
+            foreach ($tickets as $TKT_ID =>  $ticket) {
+                $i++;
+                $final_price = EEH_Line_Item::calculate_final_price_for_ticket_line_item(
+                    $total_line_item,
+                    $ticket_line_items[ $TKT_ID ]
+                );
                 $this->new_model_obj_with_dependencies(
                     'Registration',
-                    array(
+                    [
                         'TXN_ID'          => $txn->ID(),
-                        'TKT_ID'          => $ticket->ID(),
+                        'TKT_ID'          => $TKT_ID,
                         'STS_ID'          => $reg_status,
-                        'EVT_ID'          => $datetime->get('EVT_ID'),
-                        'REG_count'       => 1,
-                        'REG_group_size'  => 1,
-                        'REG_final_price' => $reg_final_price,
-                        'REG_date' => $timestamp
-                    )
+                        'EVT_ID'          => $ticket->get_event_ID(), // $datetime->get('EVT_ID'),
+                        'REG_count'       => $i,
+                        'REG_group_size'  => $reg_count,
+                        'REG_final_price' => $final_price,
+                        'REG_date'        => $timestamp
+                    ]
                 );
             }
         }
@@ -1276,12 +1247,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
             ? filter_var($options['TKT_taxable'], FILTER_VALIDATE_BOOLEAN)
             : true;
         //  make sure ticket start and end dates are set else they will default to NOW !!!
-        $ticket_args['TKT_start_date'] = isset($options['TKT_start_date'])
-            ? $options['TKT_start_date']
-            : time() + MONTH_IN_SECONDS;
-        $ticket_args['TKT_end_date'] = isset($options['TKT_end_date'])
-            ? $options['TKT_end_date']
-            : time() + MONTH_IN_SECONDS + DAY_IN_SECONDS;
+        $ticket_args['TKT_start_date'] = $options['TKT_start_date'] ?? time() + MONTH_IN_SECONDS;
+        $ticket_args['TKT_end_date'] = $options['TKT_end_date'] ?? time() + MONTH_IN_SECONDS + DAY_IN_SECONDS;
         // now dump any other elements that came from the incoming options that are not ticket properties
         $ticket_args = array_intersect_key(
             $ticket_args,
@@ -1295,7 +1262,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 'TKT_max' => 1,
                 'TKT_price' => 1,
                 'TKT_sold' => 1,
-                'TKT_qty' => 1,
+                'TKT_qty' => -1,
                 'TKT_reserved' => 1,
                 'TKT_uses' => 1,
                 'TKT_required' => 1,
@@ -1308,6 +1275,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 'TKT_parent' => 1,
             )
         );
+        // \EEH_Debug_Tools::printr($ticket_args, '$ticket_args', __FILE__, __LINE__);
+        // \EEH_Debug_Tools::printr($options, '$options', __FILE__, __LINE__);
         /** @type EE_Ticket $ticket */
         $ticket = $this->new_model_obj_with_dependencies('Ticket',$ticket_args);
         $base_price_type = EEM_Price_Type::instance()->get_one(array(array('PRT_name' => 'Base Price')));
@@ -1356,7 +1325,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
              */
             global $current_user;
             // create new datetimes, default = 1
-            $datetimes = isset($options['datetimes']) ? $options['datetimes'] : 1;
+            $datetimes = $options['datetimes'] ?? 1;
             $event = $this->new_model_obj_with_dependencies('Event', array('EVT_wp_user' => $current_user->ID));
             for ($i = 0; $i <= $datetimes; $i++) {
                 $ddt = $this->new_model_obj_with_dependencies(

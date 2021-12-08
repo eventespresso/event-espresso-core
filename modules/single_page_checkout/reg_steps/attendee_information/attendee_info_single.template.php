@@ -31,14 +31,11 @@ if (count($registrations) > 0) {
     <div id="spco-attendee-panel-dv-<?php echo $ticketID; ?>"
         class="spco-attendee-panel-dv spco-attendee-ticket-<?php echo $ticketID; ?>">
 
-        <div class="spco-ticket-info-dv small-text">
-            <?php if (!is_admin()) : ?>
-                <h5><?php esc_html_e('Details', 'event_espresso'); ?></h5>
-            <?php endif; ?>
+        <div class="spco-ticket-info-dv">
             <table class="spco-ticket-details">
                 <thead>
                 <tr>
-                    <th scope="col" width="" class="jst-left"><?php esc_html_e('Name and Description', 'event_espresso'); ?></th>
+                    <th scope="col" width="" class="jst-left"></th>
                     <th scope="col" width="7.5%" class="jst-rght">
                         <?php esc_html_e(
                             'Qty',

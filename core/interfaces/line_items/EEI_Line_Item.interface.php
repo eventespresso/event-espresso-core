@@ -70,7 +70,7 @@ interface EEI_Line_Item
 
     /**
      * Gets all teh children line items of type 'line-item'
-     * @return EEI_Line_Item[]
+     * @return EE_Line_Item[]
      */
     public function get_items();
 
@@ -86,7 +86,7 @@ interface EEI_Line_Item
 
     /**
      * Gets all the children line items of type 'tax'
-     * @return EEI_Line_Item[]
+     * @return EE_Line_Item[]
      */
     public function tax_descendants();
 
@@ -128,7 +128,7 @@ interface EEI_Line_Item
 
     /**
      * Gets ALL the children of this line item (ie, all the parts that contribute towards this total).
-     * @return EEI_Line_Item[]
+     * @return EE_Line_Item[]
      */
     public function children();
 
@@ -137,11 +137,11 @@ interface EEI_Line_Item
     /**
      * Adds the line item as a child to this line item. If there is another child line
      * item with the same LIN_code, it is overwritten by this new one
-     * @param EEI_Line_Item $line_item
+     * @param EE_Line_Item $line_item
      * @param bool         $set_order
      * @return bool true for success, false for fail
      */
-    public function add_child_line_item(EEI_Line_Item $line_item, $set_order = true);
+    public function add_child_line_item(EE_Line_Item $line_item, $set_order = true);
 
 
 

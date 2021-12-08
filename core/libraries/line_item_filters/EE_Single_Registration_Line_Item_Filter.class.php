@@ -19,6 +19,7 @@ class EE_Single_Registration_Line_Item_Filter extends EE_Specific_Registrations_
     /**
      *
      * @param EE_Registration $registration
+     * @throws EE_Error
      */
     public function __construct($registration)
     {

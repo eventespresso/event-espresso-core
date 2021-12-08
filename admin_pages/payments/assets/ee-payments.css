@@ -55,3 +55,22 @@
 #espresso_Invoice_payment_settings table.form-table td, #espresso_Invoice_payment_settings table.form-table th {
 	padding-left: 20px
 }
+
+
+table.widefat.ee-payment-log-details,
+table.widefat.ee-payment-log-details table.widefat {
+    border: none;
+    box-shadow: none;
+}
+.ee-payment-log-details tr:nth-child(even) {
+    background: #f9f9f9;
+}
+.ee-payment-log-details th,
+.ee-payment-log-details__content td:first-child {
+    word-break: normal;
+    white-space: nowrap;
+}
+.ee-payment-log-details__content td:not(:first-child) {
+    word-break: break-word;
+    white-space: normal;
+}

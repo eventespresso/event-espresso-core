@@ -11,6 +11,10 @@
  */
 class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 {
+    /**
+     * @var bool
+     */
+    protected $prices_include_taxes = false;
 
     /**
      * array of events
@@ -46,6 +50,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @type int $_total_items
      */
     private $_total_items = 0;
+
+
+    public function __construct()
+    {
+        $this->prices_include_taxes = EE_Registry::instance()->CFG->tax_settings->prices_displayed_including_taxes;
+    }
 
 
 
@@ -88,6 +98,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             'odd'       => false,
         );
         $options = array_merge($default_options, (array) $options);
+
         switch ($line_item->type()) {
             case EEM_Line_Item::type_line_item:
                 $this->_show_taxes = $line_item->is_taxable() ? true : $this->_show_taxes;
@@ -110,15 +121,21 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     }
                 }
                 break;
+
             case EEM_Line_Item::type_sub_line_item:
                 $html .= $this->_sub_item_row($line_item, $options, $parent_line_item);
                 break;
+
+            case EEM_Line_Item::type_sub_tax:
+                $this->_show_taxes = true;
+                break;
+
             case EEM_Line_Item::type_sub_total:
                 static $sub_total = 0;
                 $event_sub_total = 0;
                 $text = esc_html__('Sub-Total', 'event_espresso');
                 if ($line_item->OBJ_type() === 'Event') {
-                    $options['event_id'] = $event_id = $line_item->OBJ_ID();
+                    $options['event_id'] = $line_item->OBJ_ID();
                     if (! isset($this->_events[ $options['event_id'] ])) {
                         $event = EEM_Event::instance()->get_one_by_ID($options['event_id']);
                         // if event has default reg status of Not Approved, then don't display info on it
@@ -170,11 +187,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     $html .= $this->_sub_total_row($line_item, $text, $options);
                 }
                 break;
+
             case EEM_Line_Item::type_tax:
                 if ($this->_show_taxes) {
                     $this->_taxes_html .= $this->_tax_row($line_item, $options);
                 }
                 break;
+
             case EEM_Line_Item::type_tax_sub_total:
                 if ($this->_show_taxes) {
                     $child_line_items = $line_item->children();
@@ -188,6 +207,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     }
                 }
                 break;
+
             case EEM_Line_Item::type_total:
                 // get all child line items
                 $children = $line_item->children();
@@ -289,14 +309,14 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $line_item->unit_price_no_code(),
             $line_item
         );
-        $html .= EEH_HTML::td($price, '', 'item_c jst-rght');
+        $html .= EEH_HTML::td($price, '', 'spco-nowrap item_c jst-rght');
         // quantity td
-        $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
+        $html .= EEH_HTML::td($line_item->quantity(), '', 'spco-nowrap item_l jst-rght');
         $this->_total_items += $line_item->quantity();
         // determine total for line item
         $total = apply_filters(
             'FHEE__EE_SPCO_Line_Item_Display_Strategy___ticket_row__total',
-            $line_item->total(),
+            $line_item->pretaxTotal(),
             $line_item
         );
         $this->_events[ $options['event_id'] ] += $total;
@@ -304,7 +324,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td(
             EEH_Template::format_currency($total, false, false),
             '',
-            'item_r jst-rght'
+            'spco-nowrap item_r jst-rght'
         );
         // end of row
         $html .= EEH_HTML::trx();
@@ -355,12 +375,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td($name_and_desc, '', 'item_l');
         // price td
         if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'item_c jst-rght');
+            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'spco-nowrap item_c jst-rght');
         } else {
-            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
+            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'spco-nowrap item_c jst-rght');
         }
         // quantity td
-        $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
+        $html .= EEH_HTML::td($line_item->quantity(), '', 'spco-nowrap item_l jst-rght');
         // $total = $line_item->total() * $line_item->quantity();
         $total = $line_item->total();
         if (isset($options['event_id'], $this->_events[ $options['event_id'] ])) {
@@ -370,7 +390,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td(
             EEH_Template::format_currency($total, false, false),
             '',
-            'item_r jst-rght'
+            'spco-nowrap item_r jst-rght'
         );
         // end of row
         $html .= EEH_HTML::trx();
@@ -421,10 +441,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     false
                 ),
                 '',
-                'item_c jst-rght'
+                'spco-nowrap item_c jst-rght'
             );
         } else {
-            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
+            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'spco-nowrap item_c jst-rght');
         }
         // no quantity td
         $html .= EEH_HTML::td();
@@ -468,7 +488,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             'item_l sub-item'
         );
         // percent td
-        $html .= EEH_HTML::td($line_item->percent() . '%', '', ' jst-rght', '');
+        $html .= EEH_HTML::td($line_item->percent() . '%', '', 'spco-nowrap jst-rght', '');
         // empty td (price)
         $html .= EEH_HTML::td(EEH_HTML::nbsp());
         // total td
@@ -479,7 +499,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                 false
             ),
             '',
-            'item_r jst-rght'
+            'spco-nowrap item_r jst-rght'
         );
         // end of row
         $html .= EEH_HTML::trx();
@@ -516,7 +536,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $html .= EEH_HTML::td(
                 EEH_Template::format_currency($line_item->total(), false, false),
                 '',
-                'total jst-rght'
+                'spco-nowrap total jst-rght'
             );
             // end of row
             $html .= EEH_HTML::trx();
@@ -553,7 +573,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $html .= EEH_HTML::td(
                 EEH_Template::format_currency($options['sub_total'], false, false),
                 '',
-                'total jst-rght'
+                'spco-nowrap total jst-rght'
             );
             // end of row
             $html .= EEH_HTML::trx();
@@ -581,7 +601,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td(
             EEH_Template::format_currency($line_item->total(), false, false),
             '',
-            'total jst-rght'
+            'spco-nowrap total jst-rght'
         );
         // end of row
         $html .= EEH_HTML::trx();
@@ -640,7 +660,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                                 false
                             ),
                             '',
-                            'total jst-rght'
+                            'spco-nowrap total jst-rght'
                         );
                         // end of row
                         $html .= EEH_HTML::trx();
@@ -661,7 +681,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     $html .= EEH_HTML::td(
                         EEH_Template::format_currency($owing, false, false),
                         '',
-                        'total jst-rght'
+                        'spco-nowrap total jst-rght'
                     );
                     // end of row
                     $html .= EEH_HTML::trx();

@@ -506,13 +506,15 @@ class EEH_Debug_Tools
         $file = str_replace(EE_PLUGIN_DIR_PATH, '/', $file);
         if (EEH_Debug_Tools::plainOutput()) {
             if ($heading_tag === 'h1' || $heading_tag === 'h2') {
-                return " ({$file})";
+                return " ({$file})" . EEH_Debug_Tools::lineBreak();
             }
             return '';
         }
-        return '<br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
+        return EEH_Debug_Tools::lineBreak()
+               . '<span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
                . $file
-               . '<br />line no: '
+               . EEH_Debug_Tools::lineBreak()
+               . 'line no: '
                . $line
                . '</span>';
     }
@@ -611,6 +613,12 @@ class EEH_Debug_Tools
     {
         $linebreak = defined('DOING_AJAX') && DOING_AJAX ? '<br />' : PHP_EOL;
         return str_repeat($linebreak, $lines);
+    }
+
+
+    public static function shortClassName(string $fqcn): string
+    {
+        return substr(strrchr($fqcn, '\\'), 1);
     }
 
 

@@ -65,6 +65,13 @@ class EEM_Line_Item extends EEM_Base
     const type_sub_line_item = 'sub-item';
 
     /**
+     * SubTax line items indicate a tax that is only applied to the pre-tax total of their parent line item.
+     * Should not have any children line items. Its LIN_unit_price = 0. Its LIN_percent is a percent, not a decimal
+     * (eg 10% tax = 10, not 0.1). Its LIN_total = LIN_unit_price * pre-tax-total. Quantity = 1.
+     */
+    const type_sub_tax = 'sub-tax';
+
+    /**
      * Line item indicating a sub-total (eg total for an event, or pre-tax subtotal).
      * Direct children should be event subtotals.
      * Should have quantity of 1, and a LIN_total and LIN_unit_price of the sum of all its sub-items' LIN_totals.
@@ -189,7 +196,13 @@ class EEM_Line_Item extends EEM_Base
                 ),
                 'LIN_total'      => new EE_Money_Field(
                     'LIN_total',
-                    esc_html__('Total (unit price x quantity)', 'event_espresso'),
+                    esc_html__('Total (unit price x quantity) after taxes', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'LIN_pretax'      => new EE_Money_Field(
+                    'LIN_pretax',
+                    esc_html__('Total (unit price x quantity) before taxes', 'event_espresso'),
                     false,
                     0
                 ),
@@ -213,6 +226,7 @@ class EEM_Line_Item extends EEM_Base
                     array(
                         self::type_line_item     => esc_html__('Line Item', 'event_espresso'),
                         self::type_sub_line_item => esc_html__('Sub-Item', 'event_espresso'),
+                        self::type_sub_tax       => esc_html__('Sub-Tax', 'event_espresso'),
                         self::type_sub_total     => esc_html__('Subtotal', 'event_espresso'),
                         self::type_tax_sub_total => esc_html__('Tax Subtotal', 'event_espresso'),
                         self::type_tax           => esc_html__('Tax', 'event_espresso'),

@@ -16,7 +16,11 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_UnitTestCase_Test extends EE_UnitTestCase{
 
-	public function test_new_typical_transaction(){
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function test_new_typical_transaction(){
 		//there should be a tax in the system by default
 		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
 		$this->assertEquals(1, count( $taxes ) );
@@ -31,7 +35,7 @@ class EE_UnitTestCase_Test extends EE_UnitTestCase{
 		$regs = $txn->registrations();
 		$this->assertEquals(1, count( $regs ) );
 		$reg = array_shift( $regs );
-		$this->assertEquals( $txn->total(), $reg->final_price() );
+        $this->assertEquals( $txn->total(), $reg->final_price() );
 
 		$tkt = $reg->ticket();
 		$this->assertEquals( $tkt->price() * ( 100 + $tax->amount()) / 100, $reg->final_price() );

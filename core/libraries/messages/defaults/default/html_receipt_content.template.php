@@ -4,6 +4,9 @@
  * This is the template for the html messenger and receipt message type main content field.
  */
 
+/** @var EE_Admin_Config $admin_config */
+$admin_config = EventEspresso\core\services\loaders\LoaderFactory::getShared(EE_Admin_Config::class);
+$show_taxes = ! $admin_config->useAdvancedEditor();
 ?>
 <div class="print_button_div noPrint">
     [INVOICE_RECEIPT_SWITCHER_BUTTON] [DISPLAY_PDF_BUTTON]
@@ -61,6 +64,7 @@
             </tbody>
         </table>
     </div>
+    <?php if ($show_taxes) :?>
     <div class="taxes">
         <h3 class="section-title"><?php _e("Taxes", 'event_espresso') ?></h3>
         <p><?php printf(__('%s*%s Taxable items. The total amount collected for taxes is reflected in the total(s) below.', 'event_espresso'), '<strong>', '</strong>'); ?></p>
@@ -80,6 +84,7 @@
             </tbody>
         </table>
     </div>
+    <?php endif; ?>
     <div class="grand-total-dv">
         <h2 class="grand-total"><?php printf(__("Grand Total: %s", "event_espresso"), '[TOTAL_COST]'); ?></h2>
     </div>

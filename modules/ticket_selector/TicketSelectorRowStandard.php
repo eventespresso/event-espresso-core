@@ -5,6 +5,7 @@ namespace EventEspresso\modules\ticket_selector;
 use EE_Error;
 use EE_Tax_Config;
 use EEH_HTML;
+use EEH_Template;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 
 /**
@@ -273,7 +274,11 @@ class TicketSelectorRowStandard extends TicketSelectorRow
                 '',
                 'headers="price-' . $this->EVT_ID . '"'
             );
-            $html .= \EEH_Template::format_currency($this->ticket_price);
+            $html .= EEH_HTML::span(
+                EEH_Template::format_currency($this->ticket_price),
+                '',
+                'tckt-price--nowrap'
+            );
             $html .= $this->ticket->taxable()
                 ? EEH_HTML::span('*', '', 'taxable-tickets-asterisk grey-text')
                 : '';

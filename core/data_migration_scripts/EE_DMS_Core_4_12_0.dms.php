@@ -306,13 +306,14 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				TXN_ID int(10) DEFAULT NULL,
 				LIN_name varchar(245) NOT NULL DEFAULT '',
 				LIN_desc text DEFAULT NULL,
-				LIN_unit_price decimal(12,3) DEFAULT NULL,
-				LIN_percent decimal(12,3) DEFAULT NULL,
+				LIN_unit_price decimal(12,6) DEFAULT NULL,
+				LIN_percent decimal(12,6) DEFAULT NULL,
 				LIN_is_taxable tinyint(1) DEFAULT 0,
 				LIN_order int(10) DEFAULT 0,
 				LIN_parent int(10) DEFAULT 0,
 				LIN_type varchar(25) NOT NULL,
-				LIN_total decimal(12,3) DEFAULT NULL,
+				LIN_total decimal(12,6) DEFAULT NULL,
+				LIN_pretax decimal(12,6) DEFAULT NULL,
 				LIN_quantity int(10) DEFAULT NULL,
 				OBJ_ID int(11) DEFAULT NULL,
 				OBJ_type varchar(45) DEFAULT NULL,
@@ -322,7 +323,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				KEY txn_type_timestamp (TXN_ID,LIN_type,LIN_timestamp),
 				KEY txn_obj_id_obj_type (TXN_ID,OBJ_ID,OBJ_type),
 				KEY obj_id_obj_type (OBJ_ID,OBJ_type)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
         $table_name = 'esp_log';
         $sql        = "LOG_ID int(11) NOT NULL AUTO_INCREMENT,
@@ -440,7 +441,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
         $table_name = "esp_price";
         $sql        = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				PRT_ID tinyint(3) unsigned NOT NULL,
-				PRC_amount decimal(12,3) NOT NULL DEFAULT '0.00',
+				PRC_amount decimal(12,6) NOT NULL DEFAULT '0.00',
 				PRC_name varchar(245) NOT NULL,
 				PRC_desc text,
 				PRC_is_default tinyint(1) unsigned NOT NULL DEFAULT '1',
@@ -451,7 +452,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				PRC_parent int(10) unsigned DEFAULT 0,
 				PRIMARY KEY  (PRC_ID),
 				KEY PRT_ID (PRT_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
         $table_name = "esp_price_type";
         $sql        = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,

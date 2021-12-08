@@ -238,6 +238,12 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         // styles
         wp_enqueue_style('espresso-ui-theme');
+        wp_register_style(
+            'espresso_payments',
+            EE_PAYMENTS_ASSETS_URL . 'ee-payments.css',
+            [],
+            EVENT_ESPRESSO_VERSION
+        );
         // scripts
         wp_enqueue_script('ee_admin_js');
         wp_enqueue_script('ee-text-links');
@@ -248,22 +254,19 @@ class Payments_Admin_Page extends EE_Admin_Page
             EVENT_ESPRESSO_VERSION,
             true
         );
-        wp_enqueue_style('espresso-ui-theme');
     }
 
 
     public function load_scripts_styles_default()
     {
-        // styles
-        wp_register_style(
-            'espresso_payments',
-            EE_PAYMENTS_ASSETS_URL . 'ee-payments.css',
-            array(),
-            EVENT_ESPRESSO_VERSION
-        );
         wp_enqueue_style('espresso_payments');
         wp_enqueue_style('ee-text-links');
-        // scripts
+    }
+
+
+    public function load_scripts_styles_payment_log_details()
+    {
+        wp_enqueue_style('espresso_payments');
     }
 
 
@@ -1169,6 +1172,6 @@ class Payments_Admin_Page extends EE_Admin_Page
             ),
             true
         );
-        $this->display_admin_page_with_sidebar();
+        $this->display_admin_page_with_no_sidebar();
     }
 }

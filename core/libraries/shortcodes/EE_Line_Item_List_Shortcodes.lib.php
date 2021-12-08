@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  *
  * EE_Line_Item_List_Shortcodes
@@ -42,23 +44,18 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[TICKET_LINE_ITEM_LIST]':
                 return $this->_get_ticket_line_item_list();
-                break;
 
             case '[TAX_LINE_ITEM_LIST]':
                 return $this->_get_tax_line_item_list();
-                break;
 
             case '[PRICE_MODIFIER_LINE_ITEM_LIST]':
                 return $this->_get_price_mod_line_item_list();
-                break;
 
             case '[ADDITIONAL_LINE_ITEM_LIST]':
                 return $this->_get_additional_line_item_list();
-                break;
 
             default:
                 return '';
-                break;
         }
     }
 
@@ -110,13 +107,17 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
     /**
      * Verify incoming data contains what is needed for retrieving and parsing each tax line item for a transaction.
      *
-     * @since 4.5.0
-     *
      * @return string  parsed tax line item list.
+     * @throws EE_Error
+     * @since 4.5.0
      */
     private function _get_tax_line_item_list()
     {
-
+        /** @var EE_Admin_Config $admin_config */
+        $admin_config = LoaderFactory::getShared(EE_Admin_Config::class);
+        if ($admin_config->useAdvancedEditor()) {
+            return '';
+        }
         $this->_validate_list_requirements();
 
         if (! $this->_data['data'] instanceof EE_Messages_Addressee) {

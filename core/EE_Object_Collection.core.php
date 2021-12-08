@@ -65,7 +65,7 @@ abstract class EE_Object_Collection extends SplObjectStorage implements EEI_Coll
         $info = ! empty($info) ? $info : spl_object_hash($object);
         $this->rewind();
         while ($this->valid()) {
-            if ($object == $this->current()) {
+            if ($object === $this->current()) {
                 $this->setInfo($info);
                 $this->rewind();
                 return true;

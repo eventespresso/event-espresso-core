@@ -806,6 +806,12 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\services\registration\form\v1\RegFormDependencyHandler' => [
                 'EE_Dependency_Map' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\services\calculators\LineItemCalculator' => [
+                'EventEspresso\core\services\helpers\DecimalValues' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\helpers\DecimalValues'          => [
+                'EE_Currency_Config' => EE_Dependency_Map::load_from_cache,
+            ],
         ];
     }
 
