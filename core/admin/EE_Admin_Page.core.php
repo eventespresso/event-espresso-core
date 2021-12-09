@@ -4174,7 +4174,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function _process_resend_registration()
     {
-        $this->_template_args['success'] = EED_Messages::process_resend($this->request->requestParams());
+        $this->_template_args['success'] = EED_Messages::process_resend($this->_req_data);
         do_action(
             'AHEE__EE_Admin_Page___process_resend_registration',
             $this->_template_args['success'],
