@@ -435,6 +435,4 @@ abstract class TicketSelectorRow
     {
         $this->is_on_sale = filter_var($is_on_sale, FILTER_VALIDATE_BOOLEAN);
     }
-
-
 }
