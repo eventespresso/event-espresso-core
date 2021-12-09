@@ -7,6 +7,7 @@ use EE_Error;
 use EE_Ticket;
 use EEH_HTML;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use ReflectionException;
 
 /**
  * Class TicketSelectorRow
@@ -19,88 +20,93 @@ abstract class TicketSelectorRow
 {
 
     /**
-     * @var EE_Ticket $ticket
+     * @var EE_Ticket
      */
     protected $ticket;
 
     /**
-     * @var int $total_tickets
+     * @var int
      */
     protected $total_tickets;
 
     /**
-     * @var int $max_attendees
+     * @var int
      */
     protected $max_attendees;
 
     /**
-     * @var string $date_format
+     * @var string
      */
     protected $date_format;
 
     /**
-     * @var int $EVT_ID
+     * @var int
      */
     protected $EVT_ID;
 
     /**
-     * @var string $event_status
+     * @var string
      */
     protected $event_status;
 
     /**
-     * @var boolean $required_ticket_sold_out
+     * @var boolean|string
      */
     protected $required_ticket_sold_out;
 
     /**
-     * @var string $ticket_status_display
+     * @var string
      */
     protected $ticket_status_display;
 
     /**
-     * @var int $max
+     * @var int
      */
     protected $max = 0;
 
     /**
-     * @var int $min
+     * @var int
      */
     protected $min = 0;
 
     /**
-     * @var float $ticket_price
+     * @var float
      */
     protected $ticket_price = 0.00;
 
     /**
-     * @var bool $ticket_bundle
+     * @var bool
      */
     protected $ticket_bundle = false;
 
     /**
-     * @var string $ticket_status_id
+     * @var string
      */
     protected $ticket_status_id = EE_Ticket::sold_out;
 
     /**
-     * @var string $ticket_status_html
+     * @var string
      */
     protected $ticket_status_html = 'ticket-sales-sold-out';
 
     /**
-     * @var string $status_class
+     * @var string
      */
     protected $status_class = 'ticket-sales-sold-out lt-grey-text';
 
+    /**
+     * @var bool
+     */
+    protected $is_on_sale = true;
+
 
     /**
-     * @param EE_Ticket $ticket
-     * @param int       $max_attendees
-     * @param string    $date_format
-     * @param string    $event_status
-     * @param bool      $required_ticket_sold_out
-     * @param int       $total_tickets
+     * @param EE_Ticket      $ticket
+     * @param int            $max_attendees
+     * @param string         $date_format
+     * @param string         $event_status
+     * @param boolean|string $required_ticket_sold_out
+     * @param int            $total_tickets
      * @throws EE_Error
      * @throws UnexpectedEntityException
      */
@@ -151,27 +157,32 @@ abstract class TicketSelectorRow
             case EE_Ticket::sold_out:
                 $ticket_status_class = 'ticket-sales-sold-out';
                 $this->status_class = 'ticket-sales-sold-out lt-grey-text';
+                $this->setIsOnSale(false);
                 break;
             // expired
             case EE_Ticket::expired:
                 $ticket_status_class = 'ticket-sales-expired';
                 $this->status_class = 'ticket-sales-expired lt-grey-text';
+                $this->setIsOnSale(false);
                 break;
             // archived
             case EE_Ticket::archived:
                 $ticket_status_class = 'archived-ticket';
                 $this->status_class = 'archived-ticket hidden';
+                $this->setIsOnSale(false);
                 break;
             // pending
             case EE_Ticket::pending:
                 $ticket_status_class = 'ticket-pending';
                 $this->status_class = 'ticket-pending';
+                $this->setIsOnSale(false);
                 break;
             // on sale
             case EE_Ticket::onsale:
             default:
                 $ticket_status_class = 'ticket-on-sale';
                 $this->status_class = 'ticket-on-sale';
+                $this->setIsOnSale();
                 break;
         }
         $this->ticket_status_html = EEH_HTML::span(
@@ -196,6 +207,7 @@ abstract class TicketSelectorRow
      *
      * @param int $remaining
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function setTicketStatusDisplay($remaining)
     {
@@ -205,18 +217,23 @@ abstract class TicketSelectorRow
         if ($this->max_attendees === 0) {
             // registration is CLOSED because admin set max attendees to ZERO
             $this->ticket_status_display = $this->registrationClosed();
+            $this->setIsOnSale(false);
         } elseif ($this->ticket_status_id === EE_Ticket::sold_out || $remaining === 0) {
             // SOLD OUT - no tickets remaining
             $this->ticket_status_display = $this->ticketsSoldOut();
+            $this->setIsOnSale(false);
         } elseif ($this->ticket_status_id === EE_Ticket::expired || $this->ticket_status_id === EE_Ticket::archived) {
             // expired or archived ticket
             $this->ticket_status_display = $this->ticket_status_html;
+            $this->setIsOnSale(false);
         } elseif ($this->ticket_status_id === EE_Ticket::pending) {
             // ticket not on sale yet
             $this->ticket_status_display = $this->ticketsSalesPending();
+            $this->setIsOnSale(false);
         } elseif ($this->ticket->min() > $remaining) {
             // min qty purchasable is less than tickets available
             $this->ticket_status_display = $this->notEnoughTicketsAvailable();
+            $this->setIsOnSale(false);
         }
     }
 
@@ -257,6 +274,7 @@ abstract class TicketSelectorRow
      * ticketsSalesPending
      *
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function ticketsSalesPending()
     {
@@ -373,7 +391,7 @@ abstract class TicketSelectorRow
      */
     protected function getFilteredRowContents()
     {
-        return apply_filters(
+        $filtered_row_content = apply_filters(
             'FHEE__ticket_selector_chart_template__do_ticket_inside_row',
             false,
             $this->ticket,
@@ -386,5 +404,37 @@ abstract class TicketSelectorRow
             $this->status_class,
             $this
         );
+        // if the ticket row html is overridden but does NOT contain some kind of input...
+        if (
+            $filtered_row_content !== false
+            && strpos($filtered_row_content, '<input') === false
+            && strpos($filtered_row_content, '<select') === false
+        ) {
+            // then mark the ticket as not on sale
+            $this->setIsOnSale(false);
+        }
+        return $filtered_row_content;
     }
+
+
+    /**
+     * @return bool
+     * @since $VID:$
+     */
+    public function isOnSale()
+    {
+        return $this->is_on_sale;
+    }
+
+
+    /**
+     * @param bool $is_on_sale
+     * @since $VID:$
+     */
+    public function setIsOnSale($is_on_sale = true)
+    {
+        $this->is_on_sale = filter_var($is_on_sale, FILTER_VALIDATE_BOOLEAN);
+    }
+
+
 }
