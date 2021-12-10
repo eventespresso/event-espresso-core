@@ -4,18 +4,15 @@ namespace EventEspresso\core\domain\services\registration\form\v1;
 
 use EE_Error;
 use EE_Event;
-use EE_Fieldset_Section_Layout;
-use EE_Form_Input_Base;
-use EE_Form_Section_Proper;
-use EE_Hidden_Input;
 use EE_Question_Group;
 use EE_Registration;
 use EE_SPCO_Reg_Step_Attendee_Information;
 use EEM_Event_Question_Group;
+use EventEspresso\core\domain\services\registration\form\base\RegistrantForm as BaseRegistrantForm;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use ReflectionException;
 
-class RegistrantForm extends EE_Form_Section_Proper
+class RegistrantForm extends BaseRegistrantForm
 {
     /**
      * @var EE_SPCO_Reg_Step_Attendee_Information
@@ -26,11 +23,6 @@ class RegistrantForm extends EE_Form_Section_Proper
      * @var EEM_Event_Question_Group
      */
     public $event_question_group_model;
-
-    /**
-     * @var bool
-     */
-    private $has_questions = false;
 
 
     /**
@@ -60,15 +52,6 @@ class RegistrantForm extends EE_Form_Section_Proper
 
 
     /**
-     * @return bool
-     */
-    public function hasQuestions(): bool
-    {
-        return $this->has_questions;
-    }
-
-
-    /**
      * @param EE_Registration $registration
      * @param bool            $copy_attendee_info
      * @param callable        $enablePrintCopyInfo
@@ -82,7 +65,6 @@ class RegistrantForm extends EE_Form_Section_Proper
         callable $enablePrintCopyInfo
     ): array {
         static $attendee_nmbr = 1;
-        $form_args = [];
         // verify that registration has valid event
         if ($registration->event() instanceof EE_Event) {
             $field_name      = 'Event_Question_Group.' . $this->event_question_group_model->fieldNameForContext(
@@ -104,35 +86,15 @@ class RegistrantForm extends EE_Form_Section_Proper
             );
             if ($question_groups) {
                 // array of params to pass to parent constructor
-                $form_args = [
-                    'html_id'         => 'ee-registration-' . $registration->reg_url_link(),
-                    'html_class'      => 'ee-reg-form-attendee-dv',
-                    'html_style'      => $this->reg_step->checkout->admin_request
-                        ? 'padding:0em 2em 1em; margin:3em 0 0; border:1px solid #ddd;'
-                        : '',
-                    'subsections'     => [],
-                    'layout_strategy' => new EE_Fieldset_Section_Layout(
-                        [
-                            'legend_class' => 'spco-attendee-lgnd',
-                            'legend_text'  => sprintf(
-                                esc_html_x(
-                                    'Attendee %d',
-                                    'Attendee 123',
-                                    'event_espresso'
-                                ),
-                                $attendee_nmbr
-                            ),
-                        ]
-                    ),
-                ];
+                $this->form_args = $this->generateTopLevelFormArgs($registration, $admin_request, $attendee_nmbr);
                 foreach ($question_groups as $question_group) {
                     if ($question_group instanceof EE_Question_Group) {
                         $question_group_reg_form = LoaderFactory::getNew(
                             RegFormQuestionGroup::class,
                             [$registration, $question_group, $this->reg_step]
                         );
-                        $form_args['subsections'][ $question_group->identifier() ] = apply_filters(
-                            'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegistrantForm__generateFormArgs__question_group_reg_form',
+                        $this->form_args['subsections'][ $question_group->identifier() ] = apply_filters(
+                            'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form',
                             $question_group_reg_form,
                             $registration,
                             $question_group,
@@ -140,73 +102,15 @@ class RegistrantForm extends EE_Form_Section_Proper
                         );
                     }
                 }
-                // add hidden input
-                $form_args['subsections']['additional_attendee_reg_info'] = $this->additionalAttendeeRegInfoInput(
-                    $registration
-                );
-
-                // If we have question groups for additional attendees, then display the copy options
-                $printCopyInfo = apply_filters(
-                    'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegistrantForm__generateFormArgs__printCopyInfo',
-                    $attendee_nmbr > 1 && $copy_attendee_info,
-                    $attendee_nmbr,
-                    $registration,
-                    $this
-                );
-                if ($printCopyInfo) {
-                    $enablePrintCopyInfo();
-                }
-
-
-                if ($registration->is_primary_registrant()) {
-                    // generate hidden input
-                    $form_args['subsections']['primary_registrant'] = $this->additionalPrimaryRegistrantInputs(
-                        $registration
-                    );
-                }
+                $this->addAdditionalAttendeeRegInfoInput($registration);
+                $this->enablePrintCopyInfo($attendee_nmbr, $copy_attendee_info, $enablePrintCopyInfo);
+                $this->addAdditionalPrimaryRegistrantInputs($registration);
             }
         }
         $attendee_nmbr++;
 
-        // Increment the reg forms number if form is valid.
-        if (! empty($form_args)) {
-            $this->has_questions = true;
-        }
+        $this->setHasQuestions();
 
-        return $form_args;
-    }
-
-
-    /**
-     * @param EE_Registration $registration
-     * @return EE_Form_Input_Base
-     * @throws EE_Error
-     */
-    private function additionalAttendeeRegInfoInput(EE_Registration $registration)
-    {
-        // generate hidden input
-        return new EE_Hidden_Input(
-            [
-                'html_id' => 'additional-attendee-reg-info-' . $registration->reg_url_link(),
-                'default' => true,
-            ]
-        );
-    }
-
-
-    /**
-     * @param EE_Registration $registration
-     * @return    EE_Form_Input_Base
-     * @throws EE_Error
-     */
-    private function additionalPrimaryRegistrantInputs(EE_Registration $registration)
-    {
-        // generate hidden input
-        return new EE_Hidden_Input(
-            [
-                'html_id' => 'primary_registrant',
-                'default' => $registration->reg_url_link(),
-            ]
-        );
+        return $this->form_args;
     }
 }
