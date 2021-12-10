@@ -720,7 +720,7 @@ class EED_Messages extends EED_Module
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function process_resend($req_data)
+    public static function process_resend(array $req_data = [])
     {
         self::_load_controller();
         $request = self::getRequest();
@@ -730,14 +730,14 @@ class EED_Messages extends EED_Module
         }
 
         // make sure any incoming request data is set on the request so that it gets picked up later.
-        $req_data = (array) $req_data;
-        foreach ($req_data as $request_key => $request_value) {
-            $request->setRequestParam($request_key, $request_value);
+        foreach ((array) $req_data as $request_key => $request_value) {
+            if (! $request->requestParamIsSet($request_key)) {
+                $request->setRequestParam($request_key, $request_value);
+            }
         }
 
         if (
-            ! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request(
-            )
+            ! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request()
         ) {
             return false;
         }
