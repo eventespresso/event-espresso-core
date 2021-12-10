@@ -95,6 +95,8 @@ abstract class TicketSelectorRow
     protected $status_class = 'ticket-sales-sold-out lt-grey-text';
 
     /**
+     * used as an alternate way to indicate that a ticket is not available for sale
+     *
      * @var bool
      */
     protected $is_on_sale = true;
@@ -157,32 +159,27 @@ abstract class TicketSelectorRow
             case EE_Ticket::sold_out:
                 $ticket_status_class = 'ticket-sales-sold-out';
                 $this->status_class = 'ticket-sales-sold-out lt-grey-text';
-                $this->setIsOnSale(false);
                 break;
             // expired
             case EE_Ticket::expired:
                 $ticket_status_class = 'ticket-sales-expired';
                 $this->status_class = 'ticket-sales-expired lt-grey-text';
-                $this->setIsOnSale(false);
                 break;
             // archived
             case EE_Ticket::archived:
                 $ticket_status_class = 'archived-ticket';
                 $this->status_class = 'archived-ticket hidden';
-                $this->setIsOnSale(false);
                 break;
             // pending
             case EE_Ticket::pending:
                 $ticket_status_class = 'ticket-pending';
                 $this->status_class = 'ticket-pending';
-                $this->setIsOnSale(false);
                 break;
             // on sale
             case EE_Ticket::onsale:
             default:
                 $ticket_status_class = 'ticket-on-sale';
                 $this->status_class = 'ticket-on-sale';
-                $this->setIsOnSale();
                 break;
         }
         $this->ticket_status_html = EEH_HTML::span(
@@ -217,23 +214,18 @@ abstract class TicketSelectorRow
         if ($this->max_attendees === 0) {
             // registration is CLOSED because admin set max attendees to ZERO
             $this->ticket_status_display = $this->registrationClosed();
-            $this->setIsOnSale(false);
         } elseif ($this->ticket_status_id === EE_Ticket::sold_out || $remaining === 0) {
             // SOLD OUT - no tickets remaining
             $this->ticket_status_display = $this->ticketsSoldOut();
-            $this->setIsOnSale(false);
         } elseif ($this->ticket_status_id === EE_Ticket::expired || $this->ticket_status_id === EE_Ticket::archived) {
             // expired or archived ticket
             $this->ticket_status_display = $this->ticket_status_html;
-            $this->setIsOnSale(false);
         } elseif ($this->ticket_status_id === EE_Ticket::pending) {
             // ticket not on sale yet
             $this->ticket_status_display = $this->ticketsSalesPending();
-            $this->setIsOnSale(false);
         } elseif ($this->ticket->min() > $remaining) {
             // min qty purchasable is less than tickets available
             $this->ticket_status_display = $this->notEnoughTicketsAvailable();
-            $this->setIsOnSale(false);
         }
     }
 
