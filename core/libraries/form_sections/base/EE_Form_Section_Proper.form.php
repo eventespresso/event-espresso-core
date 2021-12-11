@@ -2,8 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\form\legacy\FormSectionProperInterface;
 
 /**
  * For containing info about a non-field form section, which contains other form sections/fields.
@@ -13,7 +12,7 @@ use EventEspresso\core\services\request\RequestInterface;
  * before the hook wp_enqueue_scripts is called (so that the form section can enqueue its needed scripts).
  * However, you may output the form (usually by calling get_html) anywhere you like.
  */
-class EE_Form_Section_Proper extends EE_Form_Section_Validatable
+class EE_Form_Section_Proper extends EE_Form_Section_Validatable implements FormSectionProperInterface
 {
     const SUBMITTED_FORM_DATA_SSN_KEY = 'submitted_form_data';
 
