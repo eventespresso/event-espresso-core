@@ -119,13 +119,14 @@ class EE_Form_Submission extends EE_Base_Class
 
 
     /**
-     * @return mixed
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function data()
+    public function data(): string
     {
-        return $this->get('FSB_data');
+        $form_data = $this->get('FSB_data');
+        return ! empty($form_data) ? $form_data : '{}';
     }
 
 
