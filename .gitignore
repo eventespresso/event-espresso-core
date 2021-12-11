@@ -13,6 +13,7 @@ node_modules/
 languages/
 *.code-workspace
 *.DS_Store
+.env
 *.idea
 *.vscode
 
