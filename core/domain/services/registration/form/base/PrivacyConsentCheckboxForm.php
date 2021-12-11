@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form\v1;
+namespace EventEspresso\core\domain\services\registration\form\base;
 
 use EE_Checkbox_Multi_Input;
 use EE_Error;
@@ -32,12 +32,12 @@ class PrivacyConsentCheckboxForm extends EE_Form_Section_Proper
                             'consent' => $consent_checkbox_label_text,
                         ],
                         [
-                            'required'                          => true,
+                            'required' => true,
                             'required_validation_error_message' => esc_html__(
                                 'You must consent to these terms in order to register.',
                                 'event_espresso'
                             ),
-                            'html_label_text'                   => '',
+                            'html_label_text' => '',
                         ]
                     ),
                 ],

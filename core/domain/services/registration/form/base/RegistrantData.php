@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form\v1;
+namespace EventEspresso\core\domain\services\registration\form\base;
 
 use EE_Answer;
 use EE_Attendee;
@@ -78,10 +78,10 @@ class RegistrantData
      */
     public function initializeRegistrantData(EE_Registration $registration): void
     {
-        $reg_url_link = $registration->reg_url_link();
-        $this->registrations[ $reg_url_link ] = $registration;
+        $reg_url_link                              = $registration->reg_url_link();
+        $this->registrations[ $reg_url_link ]      = $registration;
         $this->registrant_answers[ $reg_url_link ] = $registration->answers();
-        $this->registrant_data[ $reg_url_link ] = [];
+        $this->registrant_data[ $reg_url_link ]    = [];
         $this->attendee_counter++;
     }
 
@@ -136,7 +136,7 @@ class RegistrantData
     /**
      * @param string $reg_url_link
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function addRegistrantDataValue(string $reg_url_link, string $key, $value): void
     {
@@ -190,7 +190,7 @@ class RegistrantData
 
     /**
      * @param string $reg_url_link
-     * @param array $registrant_data
+     * @param array  $registrant_data
      */
     public function setRegistrantData(string $reg_url_link, array $registrant_data): void
     {
@@ -227,8 +227,8 @@ class RegistrantData
 
 
     /**
-     * @param string $reg_url_link
-     * @param string $identifier  the answer cache ID
+     * @param string    $reg_url_link
+     * @param string    $identifier the answer cache ID
      * @param EE_Answer $answer
      */
     public function addRegistrantAnswer(string $reg_url_link, string $identifier, EE_Answer $answer): void
@@ -246,7 +246,6 @@ class RegistrantData
     {
         return $this->registrant_answers[ $reg_url_link ][ $identifier ] ?? null;
     }
-
 
 
     /**
@@ -333,11 +332,10 @@ class RegistrantData
     public function currentRegistrantIsPrimary(string $reg_url_link = ''): bool
     {
         return $this->attendeeCount() === 1
-            || (
-                $this->attendeeCount() === 1
-                && $reg_url_link !== ''
-                && $this->getPrimaryRegistrantDataValue('reg_url_link') === $reg_url_link
-            );
+               || (
+                   $reg_url_link !== ''
+                   && $this->getPrimaryRegistrantDataValue('reg_url_link') === $reg_url_link
+               );
     }
 
 

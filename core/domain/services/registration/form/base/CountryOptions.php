@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form\v1;
+namespace EventEspresso\core\domain\services\registration\form\base;
 
 use EE_Answer;
 use EE_Country;
@@ -63,7 +63,7 @@ class CountryOptions
      * @param array|null           $countries_list deprecated prop from an old hook
      * @param EE_Question|null     $question
      * @param EE_Registration|null $registration
-     * @param EE_Answer|null       $answer deprecated prop from an old hook
+     * @param EE_Answer|null       $answer         deprecated prop from an old hook
      * @return array 2d keys are country IDs, values are their names
      * @throws EE_Error
      * @throws ReflectionException
