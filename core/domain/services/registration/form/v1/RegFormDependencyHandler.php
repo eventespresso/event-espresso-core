@@ -13,11 +13,11 @@ class RegFormDependencyHandler extends DependencyHandler
     public function registerDependencies()
     {
         $reg_form_dependencies = [
-            'EventEspresso\core\domain\services\registration\form\v1\RegForm'                => [
+            'EventEspresso\core\domain\services\registration\form\v1\RegForm'                  => [
                 null,
                 'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\RegistrantForm'         => [
+            'EventEspresso\core\domain\services\registration\form\v1\RegistrantForm'           => [
                 null,
                 null,
                 null,
@@ -25,40 +25,42 @@ class RegFormDependencyHandler extends DependencyHandler
                 null,
                 'EEM_Event_Question_Group' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionFactory' => [
+            'EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionFactory'   => [
                 null,
                 'EEM_Answer' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionGroup'   => [
+            'EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionGroup'     => [
                 null,
                 null,
                 null,
                 'EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionFactory' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\CountryOptions'         => [
+            'EventEspresso\core\domain\services\registration\form\base\CountryOptions'         => [
                 null,
                 'EEM_Answer'  => EE_Dependency_Map::load_from_cache,
                 'EEM_Country' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\StateOptions'           => [
+            'EventEspresso\core\domain\services\registration\form\base\StateOptions'           => [
                 null,
                 'EEM_State' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\RegFormHandler'         => [
+            'EventEspresso\core\domain\services\registration\form\v1\RegFormHandler'           => [
                 null,
-                'EventEspresso\core\domain\services\registration\form\v1\RegistrantData'         => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\registration\form\v1\RegFormAttendeeFactory' => EE_Dependency_Map::load_from_cache,
-                'EE_Registration_Processor'                                                      => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\registration\form\base\RegistrantData'         => EE_Dependency_Map::load_from_cache,
+                'EE_Form_Section_Proper'                                                           => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\registration\form\base\RegFormAttendeeFactory' => EE_Dependency_Map::load_from_cache,
+                'EE_Registration_Processor'                                                        => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\RegFormInputHandler'    => [
+            'EventEspresso\core\domain\services\registration\form\v1\RegFormInputHandler'      => [
                 null,
                 null,
-                'EEM_Attendee'                                                           => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\registration\form\v1\RegistrantData' => EE_Dependency_Map::load_from_cache,
+                'EEM_Attendee'                                                                  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\registration\form\base\RegistrantData'      => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\registration\form\v1\SystemInputFieldNames' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\RegFormAttendeeFactory' => [
-                'EventEspresso\core\services\commands\CommandBus'                        => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\registration\form\v1\RegistrantData' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\domain\services\registration\form\base\RegFormAttendeeFactory' => [
+                'EventEspresso\core\services\commands\CommandBus'                          => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\registration\form\base\RegistrantData' => EE_Dependency_Map::load_from_cache,
             ],
         ];
         foreach ($reg_form_dependencies as $class => $dependencies) {
