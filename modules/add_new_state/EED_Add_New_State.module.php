@@ -1,8 +1,8 @@
 <?php
 
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
-use EventEspresso\core\domain\services\registration\form\v1\CountryOptions;
-use EventEspresso\core\domain\services\registration\form\v1\StateOptions;
+use EventEspresso\core\domain\services\registration\form\base\CountryOptions;
+use EventEspresso\core\domain\services\registration\form\base\StateOptions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
