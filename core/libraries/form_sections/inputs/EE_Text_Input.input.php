@@ -16,7 +16,8 @@ class EE_Text_Input extends EE_Form_Input_Base
      */
     public function __construct($options = array())
     {
-        $this->_set_display_strategy(new EE_Text_Input_Display_Strategy());
+        $type = isset($options['type']) ?: 'text';
+        $this->_set_display_strategy(new EE_Text_Input_Display_Strategy($type));
         $this->_set_normalization_strategy(new EE_Text_Normalization());
         parent::__construct($options);
         // if the input hasn't specifically mentioned a more lenient validation strategy,
