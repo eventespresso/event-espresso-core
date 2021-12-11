@@ -180,6 +180,18 @@ class Attributes implements JsonableInterface
 
     /**
      * @param string $attribute
+     * @return bool|float|int|string
+     */
+    public function getAttribute(string $attribute)
+    {
+        return array_key_exists($attribute, $this->attributes)
+            ? $this->attributes[ $attribute ]
+            : $this->sanitize($attribute, null);
+    }
+
+
+    /**
+     * @param string $attribute
      */
     public function removeAttribute(string $attribute): void
     {
