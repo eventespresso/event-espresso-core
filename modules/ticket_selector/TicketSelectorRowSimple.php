@@ -3,6 +3,7 @@
 namespace EventEspresso\modules\ticket_selector;
 
 use EE_Error;
+use ReflectionException;
 
 /**
  * Class TicketSelectorRowSimple
@@ -16,6 +17,7 @@ class TicketSelectorRowSimple extends TicketSelectorRow
 
     /**
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function setupTicketStatusDisplay()
     {

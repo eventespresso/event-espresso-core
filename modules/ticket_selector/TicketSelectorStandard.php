@@ -7,6 +7,7 @@ use EE_Event;
 use EE_Tax_Config;
 use EE_Ticket;
 use EE_Ticket_Selector_Config;
+use ReflectionException;
 
 /**
  * Class TicketSelectorStandard
@@ -52,7 +53,6 @@ class TicketSelectorStandard extends TicketSelector
      * @param array                     $template_args
      * @param string                    $date_format
      * @param string                    $time_format
-     * @throws EE_Error
      */
     public function __construct(
         EE_Ticket_Selector_Config $ticket_selector_config,
@@ -77,6 +77,7 @@ class TicketSelectorStandard extends TicketSelector
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function addTemplateArgs()
     {
@@ -105,9 +106,9 @@ class TicketSelectorStandard extends TicketSelector
         foreach ($this->tickets as $ticket) {
             if ($ticket instanceof EE_Ticket) {
                 $this->ticket_rows++;
-                $cols                     = 2;
-                $taxable_tickets          = $ticket->taxable() ? true : $taxable_tickets;
-                $ticket_selector_row      = new TicketSelectorRowStandard(
+                $cols                = 2;
+                $taxable_tickets     = $ticket->taxable() ? true : $taxable_tickets;
+                $ticket_selector_row = new TicketSelectorRowStandard(
                     new TicketDetails($ticket, $this->ticket_selector_config, $this->template_args),
                     $this->tax_config,
                     $total_tickets,
@@ -120,13 +121,14 @@ class TicketSelectorStandard extends TicketSelector
                         ? $datetime_selector->getTicketDatetimeClasses($ticket)
                         : ''
                 );
-                $ticket_row_html = $ticket_selector_row->getHtml();
+                $ticket_row_html     = $ticket_selector_row->getHtml();
                 // check if something was actually returned
                 if (! empty($ticket_row_html)) {
                     // add any output to the cumulative HTML
                     $all_ticket_rows_html .= $ticket_row_html;
-                } else {
-                    // or decrement the ticket row count since it looks like one has been removed
+                }
+                if (empty($ticket_row_html) || ! $ticket_selector_row->isOnSale()) {
+                    // decrement the ticket row count since it looks like one has been removed
                     $this->ticket_rows--;
                 }
 
@@ -137,8 +139,9 @@ class TicketSelectorStandard extends TicketSelector
         $this->template_args['ticket_row_html']                  = $all_ticket_rows_html;
         $this->template_args['taxable_tickets']                  = $taxable_tickets;
         $this->template_args['prices_displayed_including_taxes'] = $this->tax_config->prices_displayed_including_taxes;
-        $this->template_args['template_path']                    =
-            TICKET_SELECTOR_TEMPLATES_PATH . 'standard_ticket_selector.template.php';
+        // now load template
+        $this->template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH
+                                                . 'standard_ticket_selector.template.php';
         remove_all_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector');
     }
 }
