@@ -2104,7 +2104,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * @param array $event_ids
      * @return array
-     * @since   $VID:$
+     * @since   4.10.23.p
      */
     private function cleanEventIds(array $event_ids)
     {
@@ -2114,7 +2114,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * @return array
-     * @since   $VID:$
+     * @since   4.10.23.p
      */
     private function getEventIdsFromRequest()
     {

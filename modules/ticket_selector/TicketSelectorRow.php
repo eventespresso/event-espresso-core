@@ -411,7 +411,7 @@ abstract class TicketSelectorRow
 
     /**
      * @return bool
-     * @since $VID:$
+     * @since 4.10.23.p
      */
     public function isOnSale()
     {
@@ -421,7 +421,7 @@ abstract class TicketSelectorRow
 
     /**
      * @param bool $is_on_sale
-     * @since $VID:$
+     * @since 4.10.23.p
      */
     public function setIsOnSale($is_on_sale = true)
     {
