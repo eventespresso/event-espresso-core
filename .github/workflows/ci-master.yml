@@ -21,6 +21,9 @@ jobs:
               uses: eventespresso/actions/packages/checkout-and-LAMP@main
               with:
                   php-version: ${{ matrix.php-version }}
+                  php-tools: composer:v2
+                  composer-dependencies: 'locked'
+                  composer-options: '--optimize-autoloader --ignore-platform-reqs --with-dependencies'
 
             - name: PHP Lint
               run: composer config-eventespressocs && composer run-script lint:skip-warnings
