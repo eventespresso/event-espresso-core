@@ -43,7 +43,7 @@ jobs:
               uses: eventespresso/actions/packages/checkout-and-LAMP@main
               with:
                   php-version: ${{ matrix.php-version }}
-                  php-tools: phpunit:v7
+                  php-tools: composer:v2 phpunit:v7
 
             - name: Install WP Tests
               uses: eventespresso/actions/packages/install-wp-tests@main
