@@ -2503,7 +2503,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 // Get RSS Feed(s)
                 self::cached_rss_display(
                     'espresso_news_post_box_content',
-                    urlencode(
+                    esc_url_raw(
                         apply_filters(
                             'FHEE__EE_Admin_Page__espresso_news_post_box__feed_url',
                             'https://eventespresso.com/feed/'
