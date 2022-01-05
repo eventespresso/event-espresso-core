@@ -14,13 +14,14 @@ jobs:
         if: ${{ needs.what_has_changed.outputs.php == 'true' }}
         strategy:
             matrix:
-                php-version: ['7.3']
+                php-version: ['7.1']
         name: Lint with PHP ${{ matrix.php-version }}
         steps:
             - name: Checkout and set up LAMP
               uses: eventespresso/actions/packages/checkout-and-LAMP@main
               with:
                   php-version: ${{ matrix.php-version }}
+                  composer-dependencies: locked
 
             - name: PHP Lint
               run: composer config-eventespressocs && composer run-script lint:skip-warnings
