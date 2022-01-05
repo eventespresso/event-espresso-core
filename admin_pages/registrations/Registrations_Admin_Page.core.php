@@ -32,8 +32,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     /**
      * @var EE_Session
      */
-    private        $_session;
+    private $_session;
 
+    /**
+     * @var array
+     */
     private static $_reg_status;
 
     /**
@@ -1193,11 +1196,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             )
         ) {
             $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                    'new_registration',
-                    'add-registrant',
-                    ['event_id' => $EVT_ID],
-                    'add-new-h2'
-                );
+                'new_registration',
+                'add-registrant',
+                ['event_id' => $EVT_ID],
+                'add-new-h2'
+            );
         }
     }
 
