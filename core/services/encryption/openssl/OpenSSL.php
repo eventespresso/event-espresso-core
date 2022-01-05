@@ -136,7 +136,7 @@ abstract class OpenSSL implements EncryptionMethodInterface
             );
         }
         return sprintf(
-            esc_html__('OpenSSL v1 encryption using %1$S is available for use.', 'event_espresso'),
+            esc_html__('OpenSSL v1 encryption using %1$s is available for use.', 'event_espresso'),
             OpenSSLv1::CIPHER_METHOD
         );
     }
@@ -247,7 +247,7 @@ abstract class OpenSSL implements EncryptionMethodInterface
         if ($encrypted_text === false) {
             throw new RuntimeException(
                 sprintf(
-                    esc_html__('The following error occurred during OpenSSL encryption: %1$S', 'event_espresso'),
+                    esc_html__('The following error occurred during OpenSSL encryption: %1$s', 'event_espresso'),
                     $this->getOpenSslError()
                 )
             );
@@ -274,7 +274,7 @@ abstract class OpenSSL implements EncryptionMethodInterface
         if ($encrypted_text === false) {
             throw new RuntimeException(
                 sprintf(
-                    esc_html__('OpenSSL decryption failed for the following reason: %1$S', 'event_espresso'),
+                    esc_html__('OpenSSL decryption failed for the following reason: %1$s', 'event_espresso'),
                     $this->getOpenSslError()
                 )
             );

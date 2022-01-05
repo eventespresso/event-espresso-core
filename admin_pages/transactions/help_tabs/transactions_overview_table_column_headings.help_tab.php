@@ -102,7 +102,7 @@
             <li style="list-style-type: none;">
                 <strong>
                     <?php printf(
-                        esc_html__('View Transaction Details %1$S', 'event_espresso'),
+                        esc_html__('View Transaction Details %1$s', 'event_espresso'),
                         '<span class="dashicons dashicons-cart"></span>'
                     ); ?>
                 </strong>
@@ -115,7 +115,7 @@
             <li style="list-style-type: none;">
                 <strong>
                     <?php printf(
-                        esc_html__('View Invoice for Transaction %1$S', 'event_espresso'),
+                        esc_html__('View Invoice for Transaction %1$s', 'event_espresso'),
                         '<span class="dashicons dashicons-media-spreadsheet"></span>'
                     ); ?>
                 </strong>
@@ -135,7 +135,7 @@
             <li style="list-style-type: none;">
                 <strong>
                     <?php printf(
-                        esc_html__('View Registration Details %1$S', 'event_espresso'),
+                        esc_html__('View Registration Details %1$s', 'event_espresso'),
                         '<span class="dashicons dashicons-clipboard"></span>'
                     ); ?>
                 </strong>
