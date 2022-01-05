@@ -2728,7 +2728,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return void
      */
-    private function _display_espresso_notices()
+    protected function _display_espresso_notices()
     {
         $notices = $this->_get_transient(true);
         echo stripslashes($notices);
