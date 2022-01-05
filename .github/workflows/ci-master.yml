@@ -21,6 +21,7 @@ jobs:
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
         with:
           php-version: ${{ matrix.php-version }}
+          php-tools: composer:v2
 
       - name: PHP Lint
         run: composer config-eventespressocs && composer run-script lint:skip-warnings
@@ -39,8 +40,17 @@ jobs:
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
         with:
           php-version: ${{ matrix.php-version }}
-          php-tools: phpunit:v7
-          cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-test
+          php-tools: composer:v2, phpunit-polyfills, ${{ env.phpUnitVersion }}
+
+      - name: Set WP version for PHP 7
+        if: ${{ startsWith( matrix.php-version, '7.' ) }}
+        run: |
+          echo "wpVersion=5.8.2" >> $GITHUB_ENV
+
+      - name: Set WP version for PHP 8+
+        if: ${{ startsWith( matrix.php-version, '8.' ) }}
+        run: |
+          echo "wpVersion=latest" >> $GITHUB_ENV
 
       - name: Install WP Tests
         uses: eventespresso/actions/packages/install-wp-tests@main
