@@ -179,6 +179,19 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
+     * merges the incoming array of parameters into the existing request parameters
+     *
+     * @param array $request_params
+     * @return void
+     * @since   $VID:$
+     */
+    public function mergeRequestParams(array $request_params)
+    {
+        $this->request_params->mergeRequestParams($request_params);
+    }
+
+
+    /**
      * returns sanitized value for a request param if the given key exists
      *
      * @param string     $key
