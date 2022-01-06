@@ -1064,10 +1064,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             $actions['filtered_messages_link'] = '
             <li>
                 ' . EEH_MSG_Template::get_message_action_link(
-                    'see_notifications_for',
-                    null,
-                    ['_REG_ID' => $item->ID()]
-                ) . '
+                'see_notifications_for',
+                null,
+                ['_REG_ID' => $item->ID()]
+            ) . '
             </li>';
         }
 

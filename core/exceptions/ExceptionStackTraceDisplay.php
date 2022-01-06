@@ -101,11 +101,11 @@ class ExceptionStackTraceDisplay
 		<p class="ee-error-dev-msg-pg">
 		    '
             . sprintf(
-               esc_html__('%1$sAn %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
-               '<strong class="ee-error-dev-msg-str">',
-               get_class($exception),
-               '</strong>  &nbsp; <span>',
-               $code . '</span>'
+                esc_html__('%1$sAn %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
+                '<strong class="ee-error-dev-msg-str">',
+                get_class($exception),
+                '</strong>  &nbsp; <span>',
+                $code . '</span>'
             )
             . '<br />
             <span class="big-text">"' . trim($msg) . '"</span><br/>
@@ -119,10 +119,10 @@ class ExceptionStackTraceDisplay
             '
             . $exception->getFile()
             . sprintf(
-               esc_html__('%1$s( line no: %2$s )%3$s', 'event_espresso'),
-               ' &nbsp; <span class="small-text lt-grey-text">',
-               $exception->getLine(),
-               '</span>'
+                esc_html__('%1$s( line no: %2$s )%3$s', 'event_espresso'),
+                ' &nbsp; <span class="small-text lt-grey-text">',
+                $exception->getLine(),
+                '</span>'
             )
             . '
         </p>
