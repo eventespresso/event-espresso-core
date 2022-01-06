@@ -942,61 +942,56 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $actions  = [];
         $attendee = $item->attendee();
         $this->_set_related_details($item);
-        // Build row actions
-        $view_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-            [
-                'action'  => 'view_registration',
-                '_REG_ID' => $item->ID(),
-            ],
-            REG_ADMIN_URL
-        );
-        $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-            [
-                'action' => 'edit_attendee',
-                'post'   => $item->attendee_ID(),
-            ],
-            REG_ADMIN_URL
-        );
-        // page=attendees&event_admin_reports=resend_email&registration_id=43653465634&event_id=2&form_action=resend_email
-        // $resend_reg_lnk_url_params = array( 'action'=>'resend_registration', '_REG_ID'=>$item->REG_ID );
-        $resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-            [
-                'action'  => 'resend_registration',
-                '_REG_ID' => $item->ID(),
-            ],
-            REG_ADMIN_URL,
-            true
-        );
-        // Build row actions
-        $actions['view_lnk'] = EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_registration',
-            'espresso_registrations_view_registration',
-            $item->ID()
-        )
-            ? '<li><a href="'
-              . $view_lnk_url
-              . '" title="'
-              . esc_attr__('View Registration Details', 'event_espresso')
-              . '" class="tiny-text">
-				<div class="dashicons dashicons-clipboard"></div>
-			</a>
-			</li>'
-            : '';
-        $actions['edit_lnk'] = EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_contacts',
-            'espresso_registrations_edit_attendee'
-        )
-                               && $attendee instanceof EE_Attendee
-            ? '
-			<li>
-			<a href="' . $edit_lnk_url . '" title="'
-              . esc_attr__('Edit Contact Details', 'event_espresso') . '" class="tiny-text">
-				<div class="ee-icon ee-icon-user-edit ee-icon-size-16"></div>
-			</a>
-			</li>'
-            : '';
 
-        $actions['resend_reg_lnk'] = '';
+        // Build row actions
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registration',
+                'espresso_registrations_view_registration',
+                $item->ID()
+            )
+        ) {
+            $view_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action'  => 'view_registration',
+                    '_REG_ID' => $item->ID(),
+                ],
+                REG_ADMIN_URL
+            );
+            $actions['view_lnk'] = '
+            <li>
+                <a href="' . $view_lnk_url . '" title="'
+                . esc_attr__('View Registration Details', 'event_espresso')
+                . '" class="tiny-text">
+				    <div class="dashicons dashicons-clipboard"></div>
+			    </a>
+			</li>';
+        }
+
+        if (
+            $attendee instanceof EE_Attendee
+            && EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_contacts',
+                'espresso_registrations_edit_attendee'
+            )
+        ) {
+            $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action' => 'edit_attendee',
+                    'post'   => $item->attendee_ID(),
+                ],
+                REG_ADMIN_URL
+            );
+            $actions['edit_lnk'] = '
+			<li>
+                <a href="' . $edit_lnk_url . '" title="'
+                . esc_attr__('Edit Contact Details', 'event_espresso')
+                . '" class="tiny-text">
+                    <div class="ee-icon ee-icon-user-edit ee-icon-size-16"></div>
+                </a>
+			</li>';
+        }
+
         if (
             $attendee instanceof EE_Attendee
             && EE_Registry::instance()->CAP->current_user_can(
@@ -1005,24 +1000,24 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 $item->ID()
             )
         ) {
-            $actions['resend_reg_lnk'] = '<li>';
-            $actions['resend_reg_lnk'] .= '<a href="' . $resend_reg_lnk_url;
-            $actions['resend_reg_lnk'] .= '" title="';
-            $actions['resend_reg_lnk'] .= esc_attr__('Resend Registration Details', 'event_espresso');
-            $actions['resend_reg_lnk'] .= '" class="tiny-text">';
-            $actions['resend_reg_lnk'] .= '<div class="dashicons dashicons-email-alt"></div>';
-            $actions['resend_reg_lnk'] .= '</a>';
-            $actions['resend_reg_lnk'] .= '</li>';
+            $resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action'  => 'resend_registration',
+                    '_REG_ID' => $item->ID(),
+                ],
+                REG_ADMIN_URL,
+                true
+            );
+            $actions['resend_reg_lnk'] = '
+			<li>
+			    <a href="' . $resend_reg_lnk_url . '" title="'
+                . esc_attr__('Resend Registration Details', 'event_espresso')
+                . '" class="tiny-text">
+			        <div class="dashicons dashicons-email-alt"></div>
+			    </a>
+            </li>';
         }
-        // page=transactions&action=view_transaction&txn=256&_wpnonce=6414da4dbb
-        $view_txn_lnk_url        = EE_Admin_Page::add_query_args_and_nonce(
-            [
-                'action' => 'view_transaction',
-                'TXN_ID' => $this->_transaction_details['id'],
-            ],
-            TXN_ADMIN_URL
-        );
-        $actions['view_txn_lnk'] = '';
+
         if (
             EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_transaction',
@@ -1030,22 +1025,23 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 $this->_transaction_details['id']
             )
         ) {
+            $view_txn_lnk_url        = EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action' => 'view_transaction',
+                    'TXN_ID' => $this->_transaction_details['id'],
+                ],
+                TXN_ADMIN_URL
+            );
             $actions['view_txn_lnk'] = '
 			<li>
-			<a class="ee-status-color-'
-                                       . $this->_transaction_details['status']
-                                       . ' tiny-text" href="'
-                                       . $view_txn_lnk_url
-                                       . '"  title="'
-                                       . $this->_transaction_details['title_attr']
-                                       . '">
-				<div class="dashicons dashicons-cart"></div>
-			</a>
+                <a class="ee-status-color-' . $this->_transaction_details['status']
+                . ' tiny-text" href="' . $view_txn_lnk_url
+                . '"  title="' . $this->_transaction_details['title_attr'] . '">
+                    <div class="dashicons dashicons-cart"></div>
+                </a>
 			</li>';
         }
-        // invoice link
-        $actions['dl_invoice_lnk'] = '';
-        $dl_invoice_lnk_url        = $item->invoice_url();
+
         // only show invoice link if message type is active.
         if (
             $attendee instanceof EE_Attendee
@@ -1053,26 +1049,28 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             && EEH_MSG_Template::is_mt_active('invoice')
         ) {
             $actions['dl_invoice_lnk'] = '
-		<li>
-			<a title="' . esc_attr__('View Transaction Invoice', 'event_espresso')
-                                         . '" target="_blank" href="'
-                                         . $dl_invoice_lnk_url
-                                         . '" class="tiny-text">
-				<span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
-			</a>
-		</li>';
+            <li>
+                <a title="' . esc_attr__('View Transaction Invoice', 'event_espresso')
+                . '" target="_blank" href="' . $item->invoice_url() . '" class="tiny-text">
+                    <span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
+                </a>
+            </li>';
         }
-        $actions['filtered_messages_link'] = '';
+
         // message list table link (filtered by REG_ID
-        if (EE_Registry::instance()->CAP->current_user_can('ee_read_global_messages', 'view_filtered_messages')) {
-            $actions['filtered_messages_link'] = '<li>';
-            $actions['filtered_messages_link'] .= EEH_MSG_Template::get_message_action_link(
-                'see_notifications_for',
-                null,
-                ['_REG_ID' => $item->ID()]
-            );
-            $actions['filtered_messages_link'] .= '</li>';
+        if (
+            EE_Registry::instance()->CAP->current_user_can('ee_read_global_messages', 'view_filtered_messages')
+        ) {
+            $actions['filtered_messages_link'] = '
+            <li>
+                ' . EEH_MSG_Template::get_message_action_link(
+                    'see_notifications_for',
+                    null,
+                    ['_REG_ID' => $item->ID()]
+                ) . '
+            </li>';
         }
+
         $actions = apply_filters('FHEE__EE_Registrations_List_Table__column_actions__actions', $actions, $item, $this);
         return $this->_action_string(implode('', $actions), $item, 'ul', 'reg-overview-actions-ul');
     }
