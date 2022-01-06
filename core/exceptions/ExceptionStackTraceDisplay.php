@@ -100,14 +100,14 @@ class ExceptionStackTraceDisplay
 	<div class="ee-error-dev-msg-dv">
 		<p class="ee-error-dev-msg-pg">
 		    '
-               . sprintf(
-                   esc_html__('%1$sAn %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
-                   '<strong class="ee-error-dev-msg-str">',
-                   get_class($exception),
-                   '</strong>  &nbsp; <span>',
-                   $code . '</span>'
-                )
-               . '<br />
+            . sprintf(
+               esc_html__('%1$sAn %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
+               '<strong class="ee-error-dev-msg-str">',
+               get_class($exception),
+               '</strong>  &nbsp; <span>',
+               $code . '</span>'
+            )
+            . '<br />
             <span class="big-text">"' . trim($msg) . '"</span><br/>
             <a id="display-ee-error-trace-1'
                . $time
@@ -117,14 +117,14 @@ class ExceptionStackTraceDisplay
                 ' . esc_html__('click to view backtrace and class/method details', 'event_espresso') . '
             </a><br />
             '
-               . $exception->getFile()
-               . sprintf(
-                   esc_html__('%1$s( line no: %2$s )%3$s', 'event_espresso'),
-                   ' &nbsp; <span class="small-text lt-grey-text">',
-                   $exception->getLine(),
-                   '</span>'
-                )
-               . '
+            . $exception->getFile()
+            . sprintf(
+               esc_html__('%1$s( line no: %2$s )%3$s', 'event_espresso'),
+               ' &nbsp; <span class="small-text lt-grey-text">',
+               $exception->getLine(),
+               '</span>'
+            )
+            . '
         </p>
         <div id="ee-error-trace-1'
                . $time
