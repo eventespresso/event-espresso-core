@@ -3273,7 +3273,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         ),
                         'use_filters' => EEH_Array::is_set($request_params, 'use_filters', false),
                         'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
-                        'return_url'  => urlencode($this->request->getRequestParam('return_url')),
+                        'return_url'  => urlencode($this->request->getRequestParam('return_url', '', 'url')),
                     ]
                 )
             );
@@ -3323,7 +3323,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'page'        => 'espresso_batch',
                         'batch'       => 'file',
                         'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\AttendeesReport'),
-                        'return_url'  => urlencode($this->request->getRequestParam('return_url')),
+                        'return_url'  => urlencode($this->request->getRequestParam('return_url', '', 'url')),
                     ]
                 )
             );
