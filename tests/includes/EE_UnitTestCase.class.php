@@ -1,18 +1,6 @@
 <?php
-/**
- * EE's extension of WP_UnitTestCase for writing all EE_Tests
- *
- * @since        4.3.0
- * @package        Event Espresso
- * @subpackage    tests
- */
 
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\request\Request;
-use EventEspresso\core\services\request\RequestParams;
-use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
-use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
-use EventEspresso\core\services\request\ServerParams;
 
 /**
  * This is used to override any existing WP_UnitTestCase methods that need specific handling in EE.  We
