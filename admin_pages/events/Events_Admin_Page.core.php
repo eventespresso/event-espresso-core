@@ -1280,10 +1280,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'TKT_end_date'    => ! empty($ticket_data['TKT_end_date'])
                     ? $ticket_data['TKT_end_date']
                     : $default_end_date,
-                'TKT_qty'         => ! empty($ticket_data['TKT_qty']) || (int) $ticket_data['TKT_qty'] === 0
+                'TKT_qty'         => ! empty($ticket_data['TKT_qty'])
+                                     || (isset($ticket_data['TKT_qty']) && (int) $ticket_data['TKT_qty'] === 0)
                     ? $ticket_data['TKT_qty']
                     : EE_INF,
-                'TKT_uses'        => ! empty($ticket_data['TKT_uses']) || (int) $ticket_data['TKT_uses'] === 0
+                'TKT_uses'        => ! empty($ticket_data['TKT_uses'])
+                                     || (isset($ticket_data['TKT_uses']) && (int) $ticket_data['TKT_uses'] === 0)
                     ? $ticket_data['TKT_uses']
                     : EE_INF,
                 'TKT_min'         => ! empty($ticket_data['TKT_min']) ? $ticket_data['TKT_min'] : 0,
