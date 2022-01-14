@@ -86,7 +86,7 @@ class ExceptionStackTraceDisplay
         return '
     <p>
         <span class="ee-error-user-msg-spn">' . trim($msg) . '</span> &nbsp; <sup>' . $code . '</sup>
-	</p>';
+    </p>';
     }
 
 
