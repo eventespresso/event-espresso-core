@@ -20,7 +20,7 @@ class ProcessTicketSelectorPostData
 
     const DATA_KEY_MAX_ATNDZ     = 'max_atndz';
 
-    const DATA_KEY_QUANTITY      = 'qty';
+    const DATA_KEY_QUANTITY      = 'ticket-selections';
 
     const DATA_KEY_RETURN_URL    = 'return_url';
 
@@ -175,10 +175,19 @@ class ProcessTicketSelectorPostData
                 )
             );
         }
+        $max_atndz = $this->valid_data[ self::DATA_KEY_MAX_ATNDZ ];
+        // if max attendees is 1 then the incoming row qty array
+        // will only have one element and the value will be the ticket ID
+        // ex: row qty = [ 0 => TKT_ID ]
+        if ($max_atndz === 1 && count($row_qty) === 1) {
+            // so we'll grab that ticket ID, use it as the key, and set the value to 1
+            // ex: row qty = [ TKT_ID => 1 ]
+            $ticket_id = array_pop($row_qty);
+            $row_qty = [ $ticket_id => 1 ];
+        }
         foreach ($this->valid_data[ self::DATA_KEY_TICKET_ID ] as $ticket_id) {
             $qty = isset($row_qty[ $ticket_id ]) ? $row_qty[ $ticket_id ] : 0;
-            // sanitize as integers
-            $this->valid_data[ self::DATA_KEY_QUANTITY ][]     = $qty;
+            $this->valid_data[ self::DATA_KEY_QUANTITY ][ $ticket_id ]     = $qty;
             $this->valid_data[ self:: DATA_KEY_TOTAL_TICKETS ] += $qty;
         }
     }
