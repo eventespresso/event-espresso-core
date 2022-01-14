@@ -96,6 +96,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [1],
                     'return_url' => "{$this->mock_url}{$this->anchor}1",
                     'tickets'    => 1,
+                    'selected_ticket_ids' => [2 => 1],
                 ],
             ],
             [
@@ -108,6 +109,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [1],
                     'return_url' => "{$this->mock_url}{$this->anchor}3", // <-- last number needs to match the EVT ID
                     'tickets'    => 1,
+                    'selected_ticket_ids' => [4 => 1],
                 ],
             ],
             [
@@ -120,6 +122,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [1],
                     'return_url' => "{$this->mock_url}?hack_attack=Robert');%20DROP%20TABLE%20students;--{$this->anchor}5",
                     'tickets'    => 1,
+                    'selected_ticket_ids' => [6 => 1],
                 ],
                 false,
                 ["hack_attack=Robert'); DROP TABLE students;--"],
@@ -134,6 +137,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [0],
                     'return_url' => "{$this->mock_url}{$this->anchor}0",
                     'tickets'    => 0,
+                    'selected_ticket_ids' => [0],
                 ],
                 true, // <-- throws exception due to bad data
             ],
@@ -148,6 +152,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [0, 1, 0],
                     'return_url' => "{$this->mock_url}{$this->anchor}7",
                     'tickets'    => 1,
+                    'selected_ticket_ids' => [8 => 0, 9 => 1, 10 => 0],
                 ],
             ],
             [
@@ -160,6 +165,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [1, 0],
                     'return_url' => "{$this->mock_url}{$this->anchor}11",
                     'tickets'    => 1,
+                    'selected_ticket_ids' => [12 => 1, 13 => 0],
                 ],
             ],
             [
@@ -172,6 +178,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [1, 0],
                     'return_url' => "{$this->mock_url}{$this->anchor}11",
                     'tickets'    => 1,
+                    'selected_ticket_ids' => [14 => 0],
                 ],
                 true, // <-- throws exception due to bad data
             ],
@@ -186,6 +193,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [0, 2],
                     'return_url' => "{$this->mock_url}{$this->anchor}15",
                     'tickets'    => 2,
+                    'selected_ticket_ids' => [16 => 0, 17 => 2],
                 ],
             ],
             [
@@ -198,6 +206,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [1, 1, 1, 1, 1],
                     'return_url' => "{$this->mock_url}{$this->anchor}18",
                     'tickets'    => 5,
+                    'selected_ticket_ids' => [19 => 1, 20 => 1, 21 => 1, 22 => 1, 23 => 1],
                 ],
             ],
             [
@@ -210,6 +219,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [1, 2, 3],
                     'return_url' => "{$this->mock_url}{$this->anchor}24",
                     'tickets'    => 6,
+                    'selected_ticket_ids' => [25 => 1, 26 => 2, 27 => 3],
                 ],
             ],
             [
@@ -223,6 +233,7 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [1, 2, 3],
                     'return_url' => "{$this->mock_url}{$this->anchor}24",
                     'tickets'    => 6,
+                    'selected_ticket_ids' => [25 => 1, 26 => 2, 27 => 3],
                 ],
             ],
             [
@@ -235,8 +246,24 @@ class ProcessTicketSelectorTest extends TestCase
                     'qty'        => [1, 2],
                     'return_url' => "{$this->mock_url}{$this->anchor}28",
                     'tickets'    => 3,
+                    'selected_ticket_ids' => [29 => 1, 30 => 2],
                 ],
                 true, // <-- throws exception due to bad data
+            ],
+            // max attendees = 1 & ticket options > 1 & first two tickets cap restricted
+            12 => [
+                '31',
+                ['32', '33', '34', '35', '36'],
+                '1',
+                '3',
+                '1-1',
+                // ['32' => 0, '33' => 0, '34' => 1],
+                [
+                    'qty'        => [0, 0, 1, 0, 0],
+                    'return_url' => "{$this->mock_url}{$this->anchor}31",
+                    'tickets'    => 1,
+                    'selected_ticket_ids' => [32 => 0, 33 => 0, 34 => 1, 35 => 0, 36 => 0],
+                ],
             ],
         ];
     }
@@ -268,7 +295,7 @@ class ProcessTicketSelectorTest extends TestCase
         if ($throws) {
             $this->expectException('DomainException');
         }
-        $this->initializeValidator((int) $event_id);
+        $this->initializeValidator();
         $this->post_data_validator->validatePostData();
 
         // event ID
@@ -295,6 +322,8 @@ class ProcessTicketSelectorTest extends TestCase
         $this->assertIsArray($quantities);
         foreach ($quantities as $key => $quantity) {
             $this->assertEquals($expected['qty'][ $key ], $quantity);
+            // also make sure that quantities for ticket IDs match up with expected
+            $this->assertEquals($expected['selected_ticket_ids'][ $tickets[ $key ] ], $quantity);
         }
 
         // total ticket count
@@ -307,7 +336,6 @@ class ProcessTicketSelectorTest extends TestCase
         // return_url
         $return_url = $this->post_data_validator->getValidData(PTSPD::DATA_KEY_RETURN_URL);
         $this->assertEquals($expected['return_url'], $return_url);
-
     }
 }
 // /tests/testcases/modules/ticket_selector/ProcessTicketSelectorTest.php
