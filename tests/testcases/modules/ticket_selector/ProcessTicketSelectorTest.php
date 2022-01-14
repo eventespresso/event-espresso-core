@@ -82,16 +82,16 @@ class ProcessTicketSelectorTest extends TestCase
      *
      * @return array[]
      */
-    public function postDataProvider(): array
+    public function postDataProvider()
     {
         return [
             // Dude Where's My Ticket Selector? ( max attendees = 1 & ticket options = 1  )
-            [
+            0 => [
                 '1',
                 ['2'],
                 '1',
                 '1',
-                ['1'],
+                ['2' => '1'],
                 [
                     'qty'        => [1],
                     'return_url' => "{$this->mock_url}{$this->anchor}1",
@@ -99,12 +99,12 @@ class ProcessTicketSelectorTest extends TestCase
                     'selected_ticket_ids' => [2 => 1],
                 ],
             ],
-            [
+            1 => [
                 3,
                 [4],
                 1,
                 1,
-                [1],
+                [4 => 1],
                 [
                     'qty'        => [1],
                     'return_url' => "{$this->mock_url}{$this->anchor}3", // <-- last number needs to match the EVT ID
@@ -112,12 +112,12 @@ class ProcessTicketSelectorTest extends TestCase
                     'selected_ticket_ids' => [4 => 1],
                 ],
             ],
-            [
+            2 => [
                 5,
                 [6],
                 1,
                 1,
-                [1],
+                [6 => 1],
                 [
                     'qty'        => [1],
                     'return_url' => "{$this->mock_url}?hack_attack=Robert');%20DROP%20TABLE%20students;--{$this->anchor}5",
@@ -127,12 +127,12 @@ class ProcessTicketSelectorTest extends TestCase
                 false,
                 ["hack_attack=Robert'); DROP TABLE students;--"],
             ],
-            [
+            3 => [
                 'bad',
                 ['garbage'],
                 'useless',
                 'junk',
-                ['Kid Rock'],
+                ['garbage' => 'Kid Rock'],
                 [
                     'qty'        => [0],
                     'return_url' => "{$this->mock_url}{$this->anchor}0",
@@ -142,12 +142,12 @@ class ProcessTicketSelectorTest extends TestCase
                 true, // <-- throws exception due to bad data
             ],
             // max attendees = 1 & ticket options > 1
-            [
+            4 => [
                 '7',
                 ['8', '9', '10'],
                 '1',
                 '3',
-                '2-1', // if max atndz = 1 but not DWMTS, then qty is a dash (-) separated value string
+                ['9' => '1'],
                 [
                     'qty'        => [0, 1, 0],
                     'return_url' => "{$this->mock_url}{$this->anchor}7",
@@ -155,12 +155,12 @@ class ProcessTicketSelectorTest extends TestCase
                     'selected_ticket_ids' => [8 => 0, 9 => 1, 10 => 0],
                 ],
             ],
-            [
+            5 => [
                 '11',
                 ['12', '13'],
                 '1',
                 '2',
-                '1-1',
+                ['12' => '1'],
                 [
                     'qty'        => [1, 0],
                     'return_url' => "{$this->mock_url}{$this->anchor}11",
@@ -168,12 +168,12 @@ class ProcessTicketSelectorTest extends TestCase
                     'selected_ticket_ids' => [12 => 1, 13 => 0],
                 ],
             ],
-            [
+            6 => [
                 '14',
                 ['not', 'valid', 'data'],
                 '1',
                 '0',
-                '1-1',
+                ['not' => '1'],
                 [
                     'qty'        => [1, 0],
                     'return_url' => "{$this->mock_url}{$this->anchor}11",
@@ -183,12 +183,12 @@ class ProcessTicketSelectorTest extends TestCase
                 true, // <-- throws exception due to bad data
             ],
             // max attendees > 1 & ticket options > 1
-            [
+            7 => [
                 '15',
                 ['16', '17'],
                 '10', // <-- default max attendees value
                 '2',
-                ['0', '2'], // <-- selected 2 of ticket 17
+                ['16' => '0', '17' => '2'], // <-- selected 2 of ticket 17
                 [
                     'qty'        => [0, 2],
                     'return_url' => "{$this->mock_url}{$this->anchor}15",
@@ -196,12 +196,12 @@ class ProcessTicketSelectorTest extends TestCase
                     'selected_ticket_ids' => [16 => 0, 17 => 2],
                 ],
             ],
-            [
+            8 => [
                 '18',
                 ['19', '20', '21', '22', '23'],
                 '10', // <-- default max attendees value
                 '5',
-                ['1', '1', '1', '1', '1'], // <-- selected 1 of each ticket
+                ['19' => '1', '20' => '1', '21' => '1', '22' => '1', '23' => '1'], // <-- selected 1 of each ticket
                 [
                     'qty'        => [1, 1, 1, 1, 1],
                     'return_url' => "{$this->mock_url}{$this->anchor}18",
@@ -209,12 +209,12 @@ class ProcessTicketSelectorTest extends TestCase
                     'selected_ticket_ids' => [19 => 1, 20 => 1, 21 => 1, 22 => 1, 23 => 1],
                 ],
             ],
-            [
+            9 => [
                 '24',
                 ['25', '26', '27'],
                 '10', // <-- default max attendees value
                 '3',
-                ['1', '2', '3'],
+                ['25' => '1', '26' => '2', '27' => '3'],
                 [
                     'qty'        => [1, 2, 3],
                     'return_url' => "{$this->mock_url}{$this->anchor}24",
@@ -222,13 +222,13 @@ class ProcessTicketSelectorTest extends TestCase
                     'selected_ticket_ids' => [25 => 1, 26 => 2, 27 => 3],
                 ],
             ],
-            [
+            10 => [
                 '24',
                 ['25', '26', '27'],
                 '5', // <-- reduced max attendees value that is less than quantity of tickets selected,
                 // test will still pass because max attendees is NOT enforced within ProcessTicketSelectorPostData
                 '3',
-                ['1', '2', '3'],
+                ['25' => '1', '26' => '2', '27' => '3'],
                 [
                     'qty'        => [1, 2, 3],
                     'return_url' => "{$this->mock_url}{$this->anchor}24",
@@ -236,19 +236,18 @@ class ProcessTicketSelectorTest extends TestCase
                     'selected_ticket_ids' => [25 => 1, 26 => 2, 27 => 3],
                 ],
             ],
-            [
+            11 => [
                 '28',
                 ['29', '30'],
                 '5', // <-- reduced max attendees value
                 '2',
-                ['1', '2', '3'], // mismatch with available ticket options
+                ['29' => '1', '30' => '2', '3'], // mismatch with available ticket options
                 [
                     'qty'        => [1, 2],
                     'return_url' => "{$this->mock_url}{$this->anchor}28",
                     'tickets'    => 3,
                     'selected_ticket_ids' => [29 => 1, 30 => 2],
                 ],
-                true, // <-- throws exception due to bad data
             ],
             // max attendees = 1 & ticket options > 1 & first two tickets cap restricted
             12 => [
@@ -256,8 +255,7 @@ class ProcessTicketSelectorTest extends TestCase
                 ['32', '33', '34', '35', '36'],
                 '1',
                 '3',
-                '1-1',
-                // ['32' => 0, '33' => 0, '34' => 1],
+                ['32' => 0, '33' => 0, '34' => 1],
                 [
                     'qty'        => [0, 0, 1, 0, 0],
                     'return_url' => "{$this->mock_url}{$this->anchor}31",
@@ -287,7 +285,7 @@ class ProcessTicketSelectorTest extends TestCase
         $rows,
         $qty,
         array $expected,
-        bool $throws = false,
+        $throws = false,
         array $extra_url_params = []
     ) {
         // put test data into request
