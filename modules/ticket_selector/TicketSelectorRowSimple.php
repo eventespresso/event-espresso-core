@@ -28,6 +28,10 @@ class TicketSelectorRowSimple extends TicketSelectorRow
     }
 
 
+    /**
+     * @return bool|string
+     * @throws EE_Error
+     */
     public function getTicketDescription()
     {
         $filtered_row_content = $this->getFilteredRowContents();
