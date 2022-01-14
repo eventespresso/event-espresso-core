@@ -12,8 +12,8 @@
 
 <?php echo $hidden_inputs; // already escaped ?>
     <input type="hidden"
-           name="tkt-slctr-qty-<?php echo esc_attr($EVT_ID); ?>[<?php echo esc_attr($TKT_ID); ?>]"
-           value="1"
+           name="tkt-slctr-qty-<?php echo esc_attr($EVT_ID); ?>[]"
+           value="<?php echo esc_attr($TKT_ID); ?>"
     />
     <input type="hidden"
            name="tkt-slctr-ticket-id-<?php echo esc_attr($EVT_ID); ?>[]"
