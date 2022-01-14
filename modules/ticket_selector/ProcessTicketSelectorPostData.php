@@ -72,10 +72,10 @@ class ProcessTicketSelectorPostData
         $this->request         = $request;
         $this->inputs_to_clean = [
             self::DATA_KEY_MAX_ATNDZ     => self::INPUT_KEY_MAX_ATNDZ,
-            self::DATA_KEY_ROWS          => self::INPUT_KEY_ROWS,
-            self::DATA_KEY_QUANTITY      => self::INPUT_KEY_QTY,
-            self::DATA_KEY_TOTAL_TICKETS => self::INPUT_KEY_TICKET_ID,
             self::DATA_KEY_RETURN_URL    => self::INPUT_KEY_RETURN_URL,
+            self::DATA_KEY_ROWS          => self::INPUT_KEY_ROWS,
+            self::DATA_KEY_TOTAL_TICKETS => self::INPUT_KEY_TICKET_ID,
+            self::DATA_KEY_QUANTITY      => self::INPUT_KEY_QTY,
         ];
     }
 
@@ -162,26 +162,9 @@ class ProcessTicketSelectorPostData
      */
     protected function processQuantity($input_key)
     {
-        // first get number of ticket option rows
-        $rows    = $this->request->getRequestParam(self::INPUT_KEY_ROWS . $this->event_id, 1, 'int');
-        $raw_qty = $this->request->getRequestParam($input_key);
-        // explode integers by the dash if qty is a string
-        $delimiter = is_string($raw_qty) && strpos($raw_qty, '-') ? '-' : '';
         /** @var array $row_qty */
-        $row_qty = $this->request->getRequestParam($input_key, [], 'int', true, $delimiter);
-        // if qty is coming from a radio button input, then we need to assemble an array of rows
-        if ($delimiter === '-') {
-            $row = isset($row_qty[0]) ? absint($row_qty[0]) : 1;
-            $qty = isset($row_qty[1]) ? absint($row_qty[1]) : 0;
-            // restructure the row qty array so that $row is now the key instead of the first value
-            $row_qty = [$row => $qty];
-            for ($x = 1; $x <= $rows; $x++) {
-                if (! isset($row_qty[ $x ])) {
-                    $row_qty[ $x ] = 0;
-                }
-            }
-        }
-        if (empty($row_qty) || ! is_array($row_qty) || $rows !== count($row_qty)) {
+        $row_qty = $this->request->getRequestParam($input_key, [], 'int', true);
+        if (empty($row_qty) || ! is_array($row_qty)) {
             throw new DomainException(
                 sprintf(
                     esc_html__(
@@ -192,10 +175,8 @@ class ProcessTicketSelectorPostData
                 )
             );
         }
-        ksort($row_qty);
-        // cycle thru values
-        foreach ($row_qty as $qty) {
-            $qty = absint($qty);
+        foreach ($this->valid_data[ self::DATA_KEY_TICKET_ID ] as $ticket_id) {
+            $qty = isset($row_qty[ $ticket_id ]) ? $row_qty[ $ticket_id ] : 0;
             // sanitize as integers
             $this->valid_data[ self::DATA_KEY_QUANTITY ][]     = $qty;
             $this->valid_data[ self:: DATA_KEY_TOTAL_TICKETS ] += $qty;
