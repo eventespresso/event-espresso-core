@@ -119,7 +119,7 @@ class ProcessTicketSelector
     public function cancelTicketSelections()
     {
         // check nonce
-        if (! $this->processTicketSelectorNonce('cancel_ticket_selections')) {
+        if (! $this->processTicketSelectorNonce()) {
             return false;
         }
         $this->session->clear_session(__CLASS__, __FUNCTION__);
@@ -140,20 +140,17 @@ class ProcessTicketSelector
     /**
      * processTicketSelectorNonce
      *
-     * @param  string $nonce_name
-     * @param string  $id
      * @return bool
      */
-    private function processTicketSelectorNonce($nonce_name, $id = '')
+    private function processTicketSelectorNonce()
     {
-        $nonce_name_with_id = ! empty($id) ? "{$nonce_name}_nonce_{$id}" : "{$nonce_name}_nonce";
         if (
             ! $this->request->isAdmin()
             && (
-                ! $this->request->requestParamIsSet($nonce_name_with_id)
+                ! $this->request->requestParamIsSet('cancel_ticket_selections_nonce')
                 || ! wp_verify_nonce(
-                    $this->request->getRequestParam($nonce_name_with_id),
-                    $nonce_name
+                    $this->request->getRequestParam('cancel_ticket_selections_nonce'),
+                    'cancel_ticket_selections'
                 )
             )
         ) {
@@ -281,29 +278,23 @@ class ProcessTicketSelector
     {
         $tickets_added = 0;
         $tickets_selected = false;
-        if (! empty($valid) && $valid['total_tickets'] > 0) {
+        if (! empty($valid['ticket-selections']) && $valid['total_tickets'] > 0) {
             // load cart using factory because we don't want to do so until actually needed
             $this->cart = CartFactory::getCart();
             // if the user is an admin that can edit registrations,
             // then we'll also allow them to add any tickets, even if they are expired
             $current_user_is_admin = current_user_can('ee_edit_registrations');
             // cycle thru the number of data rows sent from the event listing
-            for ($x = 0; $x < $valid['rows']; $x++) {
-                // does this row actually contain a ticket quantity?
-                if (isset($valid['qty'][ $x ]) && $valid['qty'][ $x ] > 0) {
+            foreach ($valid['ticket-selections'] as $ticket_id => $qty) {
+                if ($qty) {
                     // YES we have a ticket quantity
                     $tickets_selected = true;
-                    $valid_ticket = false;
-                    if (isset($valid['ticket_id'][ $x ])) {
-                        // get ticket via the ticket id we put in the form
-                        $ticket = $this->ticket_model->get_one_by_ID($valid['ticket_id'][ $x ]);
-                        if ($ticket instanceof EE_Ticket && ($ticket->is_on_sale() || $current_user_is_admin)) {
-                            $valid_ticket = true;
-                            $tickets_added += $this->addTicketToCart(
-                                $ticket,
-                                $valid['qty'][ $x ]
-                            );
-                        }
+                    $valid_ticket     = false;
+                    // get ticket via the ticket id we put in the form
+                    $ticket = $this->ticket_model->get_one_by_ID($ticket_id);
+                    if ($ticket instanceof EE_Ticket && ($ticket->is_on_sale() || $current_user_is_admin)) {
+                        $valid_ticket  = true;
+                        $tickets_added += $this->addTicketToCart($ticket, $qty);
                     }
                     if ($valid_ticket !== true) {
                         // nothing added to cart retrieved
