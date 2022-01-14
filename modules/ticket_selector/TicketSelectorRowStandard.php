@@ -155,13 +155,14 @@ class TicketSelectorRowStandard extends TicketSelectorRow
             . espresso_get_object_css_class($this->ticket)
         );
         $filtered_row_content = $this->getFilteredRowContents();
-        if ($filtered_row_content !== false && $this->max_attendees === 1) {
-            return $ticket_selector_row_html
-                   . $filtered_row_content
-                   . $this->ticketQtyAndIdHiddenInputs()
-                   . EEH_HTML::trx();
-        }
         if ($filtered_row_content !== false) {
+            $this->hidden_input_qty = true;
+            if ($this->max_attendees === 1) {
+                return $ticket_selector_row_html
+                       . $filtered_row_content
+                       . $this->ticketQtyAndIdHiddenInputs()
+                       . EEH_HTML::trx();
+            }
             return $ticket_selector_row_html
                    . $filtered_row_content
                    . EEH_HTML::trx();
@@ -309,6 +310,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * onlyOneAttendeeCanRegister
      *
      * @return string
+     * @throws EE_Error
      */
     protected function onlyOneAttendeeCanRegister()
     {
@@ -318,9 +320,9 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $id = 'ticket-selector-tbl-qty-slct-' . $this->EVT_ID . '-' . $this->row;
         $html = '<label class="ee-a11y-screen-reader-text" for="' . $id . '">';
         $html .= esc_html__('Select this ticket', 'event_espresso') . '</label>';
-        $html .= '<input type="radio" name="tkt-slctr-qty-' . $this->EVT_ID . '"';
+        $html .= '<input type="radio" name="tkt-slctr-qty-' . $this->EVT_ID . '[' . $this->ticket->ID() . ']"';
         $html .= ' id="' . $id . '"';
-        $html .= ' class="ticket-selector-tbl-qty-slct" value="' . $this->row . '-1"';
+        $html .= ' class="ticket-selector-tbl-qty-slct" value="1"';
         $html .= $this->total_tickets === 1 ? ' checked="checked"' : '';
         $html .= ' title=""/>';
         return $html;
@@ -341,7 +343,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $id = 'ticket-selector-tbl-qty-slct-' . $this->EVT_ID . '-' . $this->row;
         $html = '<label class="ee-a11y-screen-reader-text" for="' . $id . '">';
         $html .= esc_html__('Quantity', 'event_espresso') . '</label>';
-        $html .= '<select name="tkt-slctr-qty-' . $this->EVT_ID . '[]"';
+        $html .= '<select name="tkt-slctr-qty-' . $this->EVT_ID . '[' . $this->ticket->ID() . ']"';
         $html .= ' id="' . $id . '"';
         $html .= ' class="ticket-selector-tbl-qty-slct">';
         // this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
@@ -368,7 +370,9 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $html = '';
         // depending on group reg we need to change the format for qty
         if ($this->hidden_input_qty) {
-            $html .= '<input type="hidden" name="tkt-slctr-qty-' . $this->EVT_ID . '[]" value="0"/>';
+            $html .= '<input type="hidden" name="tkt-slctr-qty-' . $this->EVT_ID . '['
+                     . $this->ticket->ID()
+                     . ']" value="0"/>';
         }
         $html .= '<input type="hidden" name="tkt-slctr-ticket-id-' . $this->EVT_ID . '[]"';
         $html .= ' value="' . $this->ticket->ID() . '"/>';
