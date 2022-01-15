@@ -2350,7 +2350,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
     {
         $TXN_ID = $this->request->getRequestParam('TXN_ID', 0, 'int');
         $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
-        $redirect_to = $this->request->getRequestParam('redirect_to', '', 'url');
+        $redirect_to = $this->request->getRequestParam('redirect_to');
         $query_args  = $redirect_to ? ['action' => $redirect_to, 'TXN_ID' => $TXN_ID,] : [];
         do_action(
             'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder',
@@ -2528,12 +2528,13 @@ class Transactions_Admin_Page extends EE_Admin_Page
         /** @var EE_Transaction $transaction */
         $transaction     = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
         $success         = $transaction->recalculateLineItems();
-        $redirect_to = $this->request->getRequestParam('redirect_to', '', 'url');
+        $redirect_to = $this->request->getRequestParam('redirect_to');
+        $query_args = $redirect_to ? ['action' => $redirect_to, 'TXN_ID' => $TXN_ID,] : [];
         $this->_redirect_after_action(
             $success,
             esc_html__('Transaction taxes and totals', 'event_espresso'),
             esc_html__('recalculated', 'event_espresso'),
-            $redirect_to ? ['action' => $redirect_to, 'TXN_ID' => $TXN_ID,] : [],
+            $query_args,
             true
         );
     }
