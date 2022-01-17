@@ -180,10 +180,18 @@ class ProcessTicketSelectorPostData
         // will only have one element and the value will be the ticket ID
         // ex: row qty = [ 0 => TKT_ID ]
         if ($max_atndz === 1 && count($row_qty) === 1) {
-            // so we'll grab that ticket ID, use it as the key, and set the value to 1
+            // if the TS used radio buttons, then the ticket ID is stored differently in the request data
+            $raw_qty = $this->request->getRequestParam($input_key);
+            // explode integers by the dash if qty is a string
+            $delimiter = is_string($raw_qty) && strpos($raw_qty, '-') ? '-' : '';
+            if ($delimiter !== '') {
+                $row_qty = explode($delimiter, $raw_qty);
+            }
+            // grab that ticket ID regardless of where it is
+            $ticket_id = isset($row_qty[0]) ? $row_qty[0] : key($row_qty);
+            // use it as the key, and set the value to 1
             // ex: row qty = [ TKT_ID => 1 ]
-            $ticket_id = array_pop($row_qty);
-            $row_qty = [ $ticket_id => 1 ];
+            $row_qty = [$ticket_id => 1];
         }
         foreach ($this->valid_data[ self::DATA_KEY_TICKET_ID ] as $ticket_id) {
             $qty = isset($row_qty[ $ticket_id ]) ? $row_qty[ $ticket_id ] : 0;
