@@ -102,6 +102,19 @@ class RequestParams
 
 
     /**
+     * merges the incoming array of parameters into the existing request parameters
+     *
+     * @param array $request_params
+     * @return void
+     * @since   $VID:$
+     */
+    public function mergeRequestParams(array $request_params)
+    {
+        $this->request = array_merge_recursive($this->request, $request_params);
+    }
+
+
+    /**
      * returns   the value for a request param if the given key exists
      *
      * @param string     $key

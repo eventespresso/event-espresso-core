@@ -197,4 +197,14 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
      * @param bool $is_bot
      */
     public function setIsBot($is_bot);
+
+
+    /**
+     * merges the incoming array of parameters into the existing request parameters
+     *
+     * @param array $request_params
+     * @return mixed
+     * @since   $VID:$
+     */
+    public function mergeRequestParams(array $request_params);
 }
