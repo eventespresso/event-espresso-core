@@ -143,7 +143,7 @@ class ProcessTicketSelectorTest extends TestCase
                 ['8', '9', '10'],
                 '1',
                 '3',
-                [9],
+                '9-1',
                 [
                     'qty'        => [8 => 0, 9 => 1, 10 => 0],
                     'return_url' => "{$this->mock_url}{$this->anchor}7",
@@ -155,7 +155,7 @@ class ProcessTicketSelectorTest extends TestCase
                 ['12', '13'],
                 '1',
                 '2',
-                [12],
+                '12-1',
                 [
                     'qty' => [12 => 1, 13 => 0],
                     'return_url' => "{$this->mock_url}{$this->anchor}11",
@@ -167,7 +167,7 @@ class ProcessTicketSelectorTest extends TestCase
                 ['not', 'valid', 'data'],
                 '1',
                 '0',
-                ['not'],
+                'not-1',
                 [
                     'qty'        => [0],
                     'return_url' => "{$this->mock_url}{$this->anchor}11",
@@ -243,7 +243,7 @@ class ProcessTicketSelectorTest extends TestCase
                 ['32', '33', '34', '35', '36'],
                 '1',
                 '3',
-                [34],
+                '34-1',
                 [
                     'qty'        => [32 => 0, 33 => 0, 34 => 1, 35 => 0, 36 => 0],
                     'return_url' => "{$this->mock_url}{$this->anchor}31",
