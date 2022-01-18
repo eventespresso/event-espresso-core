@@ -21,13 +21,13 @@ class ExceptionStackTraceDisplay
 
     /**
      * @var   string
-     * @since $VID:$
+     * @since 4.10.24.p
      */
     private $class_name = '';
 
     /**
      * @var   string
-     * @since $VID:$
+     * @since 4.10.24.p
      */
     private $error_code = '';
 
@@ -159,7 +159,7 @@ class ExceptionStackTraceDisplay
      * @param Exception $exception
      * @return string
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.24.p
      */
     private function traceDetails(Exception $exception)
     {

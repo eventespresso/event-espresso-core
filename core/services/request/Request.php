@@ -183,7 +183,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      *
      * @param array $request_params
      * @return void
-     * @since   $VID:$
+     * @since   4.10.24.p
      */
     public function mergeRequestParams(array $request_params)
     {

@@ -204,7 +204,7 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
      *
      * @param array $request_params
      * @return mixed
-     * @since   $VID:$
+     * @since   4.10.24.p
      */
     public function mergeRequestParams(array $request_params);
 }
