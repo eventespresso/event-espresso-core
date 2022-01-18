@@ -98,11 +98,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
     {
 
         $this->_set_transaction_status_array();
-
-        $txn_id = ! empty($this->_req_data['TXN_ID'])
-                  && ! is_array($this->_req_data['TXN_ID'])
-            ? $this->_req_data['TXN_ID']
-            : 0;
+        $TXN_ID = $this->request->getRequestParam('TXN_ID', 0, 'int');
 
         $this->_page_routes = [
 
@@ -114,7 +110,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'view_transaction' => [
                 'func'       => '_transaction_details',
                 'capability' => 'ee_read_transaction',
-                'obj_id'     => $txn_id,
+                'obj_id'     => $TXN_ID,
             ],
 
             'send_payment_reminder' => [
@@ -153,6 +149,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
     protected function _set_page_config()
     {
+        $TXN_ID = $this->request->getRequestParam('TXN_ID', 0, 'int');
         $this->_page_config = [
             'default'          => [
                 'nav'           => [
@@ -187,8 +184,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'nav'       => [
                     'label'      => esc_html__('View Transaction', 'event_espresso'),
                     'order'      => 5,
-                    'url'        => isset($this->_req_data['TXN_ID'])
-                        ? add_query_arg(['TXN_ID' => $this->_req_data['TXN_ID']], $this->_current_page_view_url)
+                    'url'        => $TXN_ID
+                        ? add_query_arg(['TXN_ID' => $TXN_ID], $this->_current_page_view_url)
                         : $this->_admin_base_url,
                     'persistent' => false,
                 ],
@@ -238,24 +235,16 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
     public function admin_init()
     {
+        $EVT_ID = $this->request->getRequestParam('EVT_ID', 0, 'int');
+        $event_name = $this->request->getRequestParam('event_name');
+        $redirect_from = $this->request->getRequestParam('redirect_from', '', 'url');
         // IF a registration was JUST added via the admin...
-        if (
-            isset(
-                $this->_req_data['redirect_from'],
-                $this->_req_data['EVT_ID'],
-                $this->_req_data['event_name']
-            )
-        ) {
+        if ($EVT_ID && $event_name && $redirect_from) {
             // then set a cookie so that we can block any attempts to use
             // the back button as a way to enter another registration.
-            setcookie(
-                'ee_registration_added',
-                $this->_req_data['EVT_ID'],
-                time() + WEEK_IN_SECONDS,
-                '/'
-            );
+            setcookie('ee_registration_added', $EVT_ID, time() + WEEK_IN_SECONDS, '/');
             // and update the global
-            $_COOKIE['ee_registration_added'] = $this->_req_data['EVT_ID'];
+            $_COOKIE['ee_registration_added'] = $EVT_ID;
         }
         EE_Registry::$i18n_js_strings['invalid_server_response'] = esc_html__(
             'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.',
@@ -484,9 +473,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             return;
         } //get out we've already set the object
 
-        $TXN_ID = ! empty($this->_req_data['TXN_ID'])
-            ? absint($this->_req_data['TXN_ID'])
-            : false;
+        $TXN_ID = $this->request->getRequestParam('TXN_ID', 0, 'int');
 
         // get transaction object
         $this->_transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
@@ -654,16 +641,13 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _transactions_overview_list_table()
     {
-        $this->_admin_page_title                   = esc_html__('Transactions', 'event_espresso');
-        $event                                     = isset($this->_req_data['EVT_ID'])
-            ? EEM_Event::instance()->get_one_by_ID($this->_req_data['EVT_ID'])
-            : null;
+        $this->_admin_page_title = esc_html__('Transactions', 'event_espresso');
+
+        $EVT_ID = $this->request->getRequestParam('EVT_ID', 0, 'int');
+        $event = EEM_Event::instance()->get_one_by_ID($EVT_ID);
         $this->_template_args['admin_page_header'] = $event instanceof EE_Event
             ? sprintf(
-                esc_html__(
-                    '%sViewing Transactions for the Event: %s%s',
-                    'event_espresso'
-                ),
+                esc_html__('%sViewing Transactions for the Event: %s%s', 'event_espresso'),
                 '<h3>',
                 '<a href="'
                 . EE_Admin_Page::add_query_args_and_nonce(
@@ -671,10 +655,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     EVENTS_ADMIN_URL
                 )
                 . '" title="'
-                . esc_attr__(
-                    'Click to Edit event',
-                    'event_espresso'
-                )
+                . esc_attr__('Click to Edit event', 'event_espresso')
                 . '">' . $event->name() . '</a>',
                 '</h3>'
             )
@@ -712,10 +693,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
         if (! $this->_transaction instanceof EE_Transaction) {
             return;
         }
-        $primary_registration = $this->_transaction->primary_registration();
-        $attendee             = $primary_registration instanceof EE_Registration
-            ? $primary_registration->attendee()
-            : null;
 
         $this->_template_args['txn_nmbr']['value'] = $this->_transaction->ID();
         $this->_template_args['txn_nmbr']['label'] = esc_html__('Transaction Number', 'event_espresso');
@@ -807,19 +784,17 @@ class Transactions_Admin_Page extends EE_Admin_Page
             )
             : '';
 
+        $EVT_ID        = $this->request->getRequestParam('EVT_ID', 0, 'int');
+        $event_name    = $this->request->getRequestParam('event_name');
+        $redirect_from = $this->request->getRequestParam('redirect_from', '', 'url');
+
         // were we just redirected here after adding a new registration ???
-        if (
-            isset(
-                $this->_req_data['redirect_from'],
-                $this->_req_data['EVT_ID'],
-                $this->_req_data['event_name']
-            )
-        ) {
+        if ($EVT_ID && $event_name && $redirect_from) {
             if (
                 EE_Registry::instance()->CAP->current_user_can(
                     'ee_edit_registrations',
                     'espresso_registrations_new_registration',
-                    $this->_req_data['EVT_ID']
+                    $EVT_ID
                 )
             ) {
                 $this->_admin_page_title .= '<a id="add-new-registration" class="add-new-h2 button-primary" href="';
@@ -829,7 +804,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                         'action'   => 'new_registration',
                         'return'   => 'default',
                         'TXN_ID'   => $this->_transaction->ID(),
-                        'event_id' => $this->_req_data['EVT_ID'],
+                        'event_id' => $EVT_ID,
                     ],
                     REG_ADMIN_URL
                 );
@@ -837,7 +812,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
                 $this->_admin_page_title .= sprintf(
                     esc_html__('Add Another New Registration to Event: "%1$s" ?', 'event_espresso'),
-                    htmlentities(urldecode($this->_req_data['event_name']), ENT_QUOTES, 'UTF-8')
+                    htmlentities(urldecode($event_name), ENT_QUOTES, 'UTF-8')
                 );
                 $this->_admin_page_title .= '</a>';
             }
@@ -1102,8 +1077,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             );
         }
 
-        $this->_template_args['txn_details']['registration_session']['value']
-                                                                              =
+        $this->_template_args['txn_details']['registration_session']['value'] =
             $this->_transaction->primary_registration() instanceof EE_Registration
                 ? $this->_transaction->primary_registration()->session_ID()
                 : null;
@@ -1137,7 +1111,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                                   ucwords(str_replace('_', ' ', $reg_step))
                               )
                               . '</li>';
-            } elseif (is_numeric($reg_step_status) && $reg_step_status !== false) {
+            } elseif ($reg_step_status !== false && is_numeric($reg_step_status)) {
                 $reg_steps .= '<li style="color:#2EA2CC">'
                               . sprintf(
                                   esc_html__('%1$s : Initiated %2$s', 'event_espresso'),
@@ -1599,6 +1573,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function txn_billing_info_side_meta_box()
     {
@@ -1719,7 +1694,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _validate_payment_request_data()
     {
-        if (! isset($this->_req_data['txn_admin_payment'])) {
+        if (! $this->request->requestParamIsSet('txn_admin_payment')) {
             return [];
         }
         $payment_form = $this->_generate_payment_form_section();
@@ -1730,9 +1705,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     $submission_error_messages = [];
                     foreach ($payment_form->get_validation_errors_accumulated() as $validation_error) {
                         if ($validation_error instanceof EE_Validation_Error) {
+                            $form_input = $validation_error->get_form_section();
                             $submission_error_messages[] = sprintf(
                                 _x('%s : %s', 'Form Section Name : Form Validation Error', 'event_espresso'),
-                                $validation_error->get_form_section()->html_label_text(),
+                                $form_input instanceof EE_Form_Input_Base ? $form_input->html_label_text() : '',
                                 $validation_error->getMessage()
                             );
                         }
@@ -1926,7 +1902,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
     /**
      * _process_transaction_payments
      *
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1967,7 +1943,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * _get_REG_IDs_to_apply_payment_to
      * returns a list of registration IDs that the payment will apply to
      *
-     * @param \EE_Payment $payment
+     * @param EE_Payment $payment
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1977,11 +1953,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _get_REG_IDs_to_apply_payment_to(EE_Payment $payment)
     {
-        $REG_IDs = [];
         // grab array of IDs for specific registrations to apply changes to
-        if (isset($this->_req_data['txn_admin_payment']['registrations'])) {
-            $REG_IDs = (array) $this->_req_data['txn_admin_payment']['registrations'];
-        }
+        $REG_IDs = $this->request->getRequestParam('txn_admin_payment[registrations]', [], 'int', true);
         // nothing specified ? then get all reg IDs
         if (empty($REG_IDs)) {
             $registrations = $payment->transaction()->registrations();
@@ -2018,7 +1991,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * returns a list of registration IDs that the payment is currently related to
      * as recorded in the database
      *
-     * @param \EE_Payment $payment
+     * @param EE_Payment $payment
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -2049,8 +2022,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * removes any related registrations that no longer apply,
      * and then updates the registration paid fields
      *
-     * @param \EE_Payment $payment
-     * @param int         $PAY_ID
+     * @param EE_Payment $payment
+     * @param int        $PAY_ID
      * @return bool;
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -2089,7 +2062,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * but only if they have not already been paid for
      *
      * @param EE_Transaction $transaction
-     * @param \EE_Payment    $payment
+     * @param EE_Payment     $payment
      * @param array          $REG_IDs
      * @return void
      * @throws EE_Error
@@ -2142,10 +2115,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
     protected function _process_registration_status_change(EE_Transaction $transaction, $REG_IDs = [])
     {
         // first if there is no change in status then we get out.
-        if (
-            ! isset($this->_req_data['txn_reg_status_change']['reg_status'])
-            || $this->_req_data['txn_reg_status_change']['reg_status'] === 'NAN'
-        ) {
+        $reg_status = $this->request->getRequestParam('txn_reg_status_change[reg_status]', 'NAN');
+        if ($reg_status === 'NAN') {
             // no error message, no change requested, just nothing to do man.
             return false;
         }
@@ -2155,7 +2126,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         // made it here dude?  Oh WOW.  K, let's take care of changing the statuses
         return $transaction_processor->manually_update_registration_statuses(
             $transaction,
-            sanitize_text_field($this->_req_data['txn_reg_status_change']['reg_status']),
+            $reg_status,
             [['REG_ID' => ['IN', $REG_IDs]]]
         );
     }
@@ -2165,7 +2136,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * _build_payment_json_response
      *
      * @access public
-     * @param \EE_Payment $payment
+     * @param EE_Payment  $payment
      * @param array       $REG_IDs
      * @param bool | null $delete_txn_reg_status_change
      * @return array
@@ -2191,30 +2162,29 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'registrations'                => $this->_registration_payment_data_array($REG_IDs),
                 'delete_txn_reg_status_change' => $delete_txn_reg_status_change,
             ];
-        } else {
-            $this->_get_payment_status_array();
-
-            return [
-                'amount'           => $payment->amount(),
-                'total_paid'       => $payment->transaction()->paid(),
-                'txn_status'       => $payment->transaction()->status_ID(),
-                'pay_status'       => $payment->STS_ID(),
-                'PAY_ID'           => $payment->ID(),
-                'STS_ID'           => $payment->STS_ID(),
-                'status'           => self::$_pay_status[ $payment->STS_ID() ],
-                'date'             => $payment->timestamp('Y-m-d', 'h:i a'),
-                'method'           => strtoupper($payment->source()),
-                'PM_ID'            => $payment->payment_method() ? $payment->payment_method()->ID() : 1,
-                'gateway'          => $payment->payment_method()
-                    ? $payment->payment_method()->admin_name()
-                    : esc_html__('Unknown', 'event_espresso'),
-                'gateway_response' => $payment->gateway_response(),
-                'txn_id_chq_nmbr'  => $payment->txn_id_chq_nmbr(),
-                'po_number'        => $payment->po_number(),
-                'extra_accntng'    => $payment->extra_accntng(),
-                'registrations'    => $this->_registration_payment_data_array($REG_IDs),
-            ];
         }
+
+        $this->_get_payment_status_array();
+        return [
+            'amount'           => $payment->amount(),
+            'total_paid'       => $payment->transaction()->paid(),
+            'txn_status'       => $payment->transaction()->status_ID(),
+            'pay_status'       => $payment->STS_ID(),
+            'PAY_ID'           => $payment->ID(),
+            'STS_ID'           => $payment->STS_ID(),
+            'status'           => self::$_pay_status[ $payment->STS_ID() ],
+            'date'             => $payment->timestamp('Y-m-d', 'h:i a'),
+            'method'           => strtoupper($payment->source()),
+            'PM_ID'            => $payment->payment_method() ? $payment->payment_method()->ID() : 1,
+            'gateway'          => $payment->payment_method()
+                ? $payment->payment_method()->admin_name()
+                : esc_html__('Unknown', 'event_espresso'),
+            'gateway_response' => $payment->gateway_response(),
+            'txn_id_chq_nmbr'  => $payment->txn_id_chq_nmbr(),
+            'po_number'        => $payment->po_number(),
+            'extra_accntng'    => $payment->extra_accntng(),
+            'registrations'    => $this->_registration_payment_data_array($REG_IDs),
+        ];
     }
 
 
@@ -2233,18 +2203,19 @@ class Transactions_Admin_Page extends EE_Admin_Page
     public function delete_payment()
     {
         $json_response_data = ['return_data' => false];
-        $PAY_ID             = isset($this->_req_data['delete_txn_admin_payment']['PAY_ID'])
-            ? absint($this->_req_data['delete_txn_admin_payment']['PAY_ID'])
-            : 0;
+        $PAY_ID = $this->request->getRequestParam('delete_txn_admin_payment[PAY_ID]', 0, 'int');
+
         $can_delete         = EE_Registry::instance()->CAP->current_user_can(
             'ee_delete_payments',
             'delete_payment_from_registration_details'
         );
         if ($PAY_ID && $can_delete) {
-            $delete_txn_reg_status_change = isset($this->_req_data['delete_txn_reg_status_change'])
-                ? $this->_req_data['delete_txn_reg_status_change']
-                : false;
-            $payment                      = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
+            $delete_txn_reg_status_change = $this->request->getRequestParam(
+                'delete_txn_reg_status_change',
+                false,
+                'bool'
+            );
+            $payment = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
             if ($payment instanceof EE_Payment) {
                 $REG_IDs = $this->_get_existing_reg_payment_REG_IDs($payment);
                 /** @type EE_Transaction_Payments $transaction_payments */
@@ -2256,9 +2227,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
                         $delete_txn_reg_status_change
                     );
                     if ($delete_txn_reg_status_change) {
-                        $this->_req_data['txn_reg_status_change'] = $delete_txn_reg_status_change;
                         // MAKE sure we also add the delete_txn_req_status_change to the
-                        // $_REQUEST global because that's how messages will be looking for it.
+                        // request data because that's how messages will be looking for it.
                         $this->request->setRequestParam('txn_reg_status_change', $delete_txn_reg_status_change);
                         $this->_maybe_send_notifications();
                         $this->_process_registration_status_change($payment->transaction(), $REG_IDs);
@@ -2344,32 +2314,20 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * If passed an EE_Payment object, then it will trigger payment notifications instead.
      *
      * @access protected
-     * @param \EE_Payment | null $payment
+     * @param EE_Payment | null $payment
      */
     protected function _maybe_send_notifications($payment = null)
     {
         switch ($payment instanceof EE_Payment) {
             // payment notifications
             case true:
-                if (
-                    isset($this->_req_data['txn_payments']['send_notifications'])
-                    && filter_var(
-                        $this->_req_data['txn_payments']['send_notifications'],
-                        FILTER_VALIDATE_BOOLEAN
-                    )
-                ) {
+                if ($this->request->getRequestParam('txn_payments[send_notifications]', false, 'bool')) {
                     $this->_process_payment_notification($payment);
                 }
                 break;
             // registration notifications
             case false:
-                if (
-                    isset($this->_req_data['txn_reg_status_change']['send_notifications'])
-                    && filter_var(
-                        $this->_req_data['txn_reg_status_change']['send_notifications'],
-                        FILTER_VALIDATE_BOOLEAN
-                    )
-                ) {
+                if ($this->request->getRequestParam('txn_reg_status_change[send_notifications]', false, 'bool')) {
                     add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true');
                 }
                 break;
@@ -2390,12 +2348,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _send_payment_reminder()
     {
-        $TXN_ID      = ! empty($this->_req_data['TXN_ID']) ? absint($this->_req_data['TXN_ID']) : false;
+        $TXN_ID = $this->request->getRequestParam('TXN_ID', 0, 'int');
         $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
-        $query_args  = isset($this->_req_data['redirect_to']) ? [
-            'action' => $this->_req_data['redirect_to'],
-            'TXN_ID' => $this->_req_data['TXN_ID'],
-        ] : [];
+        $redirect_to = $this->request->getRequestParam('redirect_to');
+        $query_args  = $redirect_to ? ['action' => $redirect_to, 'TXN_ID' => $TXN_ID,] : [];
         do_action(
             'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder',
             $transaction
@@ -2414,29 +2370,23 @@ class Transactions_Admin_Page extends EE_Admin_Page
      *  get_transactions
      *    get transactions for given parameters (used by list table)
      *
-     * @param int     $perpage how many transactions displayed per page
+     * @param int     $per_page how many transactions displayed per page
      * @param boolean $count   return the count or objects
      * @param string  $view
-     * @return mixed int = count || array of transaction objects
+     * @return EE_Transaction[]|int int = count || array of transaction objects
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function get_transactions($perpage, $count = false, $view = '')
+    public function get_transactions($per_page, $count = false, $view = '')
     {
-
-        $TXN = EEM_Transaction::instance();
-
-        $start_date = isset($this->_req_data['txn-filter-start-date'])
-            ? wp_strip_all_tags($this->_req_data['txn-filter-start-date'])
-            : date(
-                'm/d/Y',
-                strtotime('-10 year')
-            );
-        $end_date   = isset($this->_req_data['txn-filter-end-date'])
-            ? wp_strip_all_tags($this->_req_data['txn-filter-end-date'])
-            : date('m/d/Y');
+        $start_date = wp_strip_all_tags(
+            $this->request->getRequestParam('txn-filter-start-date', date('m/d/Y', strtotime('-10 year')))
+        );
+        $end_date = wp_strip_all_tags(
+            $this->request->getRequestParam('txn-filter-end-date', date('m/d/Y'))
+        );
 
         // make sure our timestamps start and end right at the boundaries for each day
         $start_date = date('Y-m-d', strtotime($start_date)) . ' 00:00:00';
@@ -2465,11 +2415,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
 
         // set orderby
-        $this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
+        $orderby = $this->request->getRequestParam('orderby');
 
-        switch ($this->_req_data['orderby']) {
+        switch ($orderby) {
             case 'TXN_ID':
-                $orderby = 'TXN_ID';
                 break;
             case 'ATT_fname':
                 $orderby = 'Registration.Attendee.ATT_fname';
@@ -2481,10 +2430,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 $orderby = 'TXN_timestamp';
         }
 
-        $sort         = ! empty($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
-        $current_page = ! empty($this->_req_data['paged']) ? $this->_req_data['paged'] : 1;
-        $per_page     = ! empty($perpage) ? $perpage : 10;
-        $per_page     = ! empty($this->_req_data['perpage']) ? $this->_req_data['perpage'] : $per_page;
+        $sort         = $this->request->getRequestParam('order', 'DESC');
+        $current_page = $this->request->getRequestParam('paged', 1, 'int');
+
+        $per_page = absint($per_page) ? $per_page : 10;
+        $per_page = $this->request->getRequestParam('perpage', $per_page, 'int');
 
         $offset = ($current_page - 1) * $per_page;
         $limit  = [$offset, $per_page];
@@ -2494,44 +2444,44 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'Registration.REG_count' => 1,
         ];
 
-        if (isset($this->_req_data['EVT_ID'])) {
-            $_where['Registration.EVT_ID'] = $this->_req_data['EVT_ID'];
+        $EVT_ID = $this->request->getRequestParam('EVT_ID', 0, 'int');
+        if ($EVT_ID) {
+            $_where['Registration.EVT_ID'] = $EVT_ID;
         }
 
-        if (isset($this->_req_data['s'])) {
-            $search_string = '%' . $this->_req_data['s'] . '%';
+        $search_term = $this->request->getRequestParam('s');
+        if ($search_term) {
+            $search_term = '%' . $search_term . '%';
             $_where['OR']  = [
-                'Registration.Event.EVT_name'         => ['LIKE', $search_string],
-                'Registration.Event.EVT_desc'         => ['LIKE', $search_string],
-                'Registration.Event.EVT_short_desc'   => ['LIKE', $search_string],
-                'Registration.Attendee.ATT_full_name' => ['LIKE', $search_string],
-                'Registration.Attendee.ATT_fname'     => ['LIKE', $search_string],
-                'Registration.Attendee.ATT_lname'     => ['LIKE', $search_string],
-                'Registration.Attendee.ATT_short_bio' => ['LIKE', $search_string],
-                'Registration.Attendee.ATT_email'     => ['LIKE', $search_string],
-                'Registration.Attendee.ATT_address'   => ['LIKE', $search_string],
-                'Registration.Attendee.ATT_address2'  => ['LIKE', $search_string],
-                'Registration.Attendee.ATT_city'      => ['LIKE', $search_string],
-                'Registration.REG_final_price'        => ['LIKE', $search_string],
-                'Registration.REG_code'               => ['LIKE', $search_string],
-                'Registration.REG_count'              => ['LIKE', $search_string],
-                'Registration.REG_group_size'         => ['LIKE', $search_string],
-                'Registration.Ticket.TKT_name'        => ['LIKE', $search_string],
-                'Registration.Ticket.TKT_description' => ['LIKE', $search_string],
-                'Payment.PAY_source'                  => ['LIKE', $search_string],
-                'Payment.Payment_Method.PMD_name'     => ['LIKE', $search_string],
-                'TXN_session_data'                    => ['LIKE', $search_string],
-                'Payment.PAY_txn_id_chq_nmbr'         => ['LIKE', $search_string],
+                'Registration.Event.EVT_name'         => ['LIKE', $search_term],
+                'Registration.Event.EVT_desc'         => ['LIKE', $search_term],
+                'Registration.Event.EVT_short_desc'   => ['LIKE', $search_term],
+                'Registration.Attendee.ATT_full_name' => ['LIKE', $search_term],
+                'Registration.Attendee.ATT_fname'     => ['LIKE', $search_term],
+                'Registration.Attendee.ATT_lname'     => ['LIKE', $search_term],
+                'Registration.Attendee.ATT_short_bio' => ['LIKE', $search_term],
+                'Registration.Attendee.ATT_email'     => ['LIKE', $search_term],
+                'Registration.Attendee.ATT_address'   => ['LIKE', $search_term],
+                'Registration.Attendee.ATT_address2'  => ['LIKE', $search_term],
+                'Registration.Attendee.ATT_city'      => ['LIKE', $search_term],
+                'Registration.REG_final_price'        => ['LIKE', $search_term],
+                'Registration.REG_code'               => ['LIKE', $search_term],
+                'Registration.REG_count'              => ['LIKE', $search_term],
+                'Registration.REG_group_size'         => ['LIKE', $search_term],
+                'Registration.Ticket.TKT_name'        => ['LIKE', $search_term],
+                'Registration.Ticket.TKT_description' => ['LIKE', $search_term],
+                'Payment.PAY_source'                  => ['LIKE', $search_term],
+                'Payment.Payment_Method.PMD_name'     => ['LIKE', $search_term],
+                'TXN_session_data'                    => ['LIKE', $search_term],
+                'Payment.PAY_txn_id_chq_nmbr'         => ['LIKE', $search_term],
             ];
         }
 
+        $status = $this->request->getRequestParam('status');
         // failed transactions
-        $failed     = (! empty($this->_req_data['status']) && $this->_req_data['status'] === 'failed' && ! $count)
-                      || ($count && $view === 'failed');
-        $abandoned  = (! empty($this->_req_data['status']) && $this->_req_data['status'] === 'abandoned' && ! $count)
-                      || ($count && $view === 'abandoned');
-        $incomplete = (! empty($this->_req_data['status']) && $this->_req_data['status'] === 'incomplete' && ! $count)
-                      || ($count && $view === 'incomplete');
+        $failed     = (! empty($status) && $status === 'failed' && ! $count) || ($count && $view === 'failed');
+        $abandoned  = (! empty($status) && $status === 'abandoned' && ! $count) || ($count && $view === 'abandoned');
+        $incomplete = (! empty($status) && $status === 'incomplete' && ! $count) || ($count && $view === 'incomplete');
 
         if ($failed) {
             $_where['STS_ID'] = EEM_Transaction::failed_status_code;
@@ -2552,16 +2502,14 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'limit'                    => $limit,
                 'default_where_conditions' => EEM_Base::default_where_conditions_this_only,
             ],
-            $this->_req_data,
+            $this->request->requestParams(),
             $view,
             $count
         );
 
-        $transactions = $count
-            ? $TXN->count([$query_params[0]], 'TXN_ID', true)
-            : $TXN->get_all($query_params);
-
-        return $transactions;
+        return $count
+            ? EEM_Transaction::instance()->count([$query_params[0]], 'TXN_ID', true)
+            : EEM_Transaction::instance()->get_all($query_params);
     }
 
 
@@ -2576,21 +2524,17 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     public function recalculateLineItems()
     {
-        $TXN_ID = ! empty($this->_req_data['TXN_ID']) ? absint($this->_req_data['TXN_ID']) : false;
+        $TXN_ID = $this->request->getRequestParam('TXN_ID', 0, 'int');
         /** @var EE_Transaction $transaction */
         $transaction     = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
-        $total_line_item = $transaction->total_line_item(false);
         $success         = $transaction->recalculateLineItems();
+        $redirect_to = $this->request->getRequestParam('redirect_to');
+        $query_args = $redirect_to ? ['action' => $redirect_to, 'TXN_ID' => $TXN_ID,] : [];
         $this->_redirect_after_action(
-            (bool) $success,
+            $success,
             esc_html__('Transaction taxes and totals', 'event_espresso'),
             esc_html__('recalculated', 'event_espresso'),
-            isset($this->_req_data['redirect_to'])
-                ? [
-                'action' => $this->_req_data['redirect_to'],
-                'TXN_ID' => $this->_req_data['TXN_ID'],
-            ]
-                : [],
+            $query_args,
             true
         );
     }
