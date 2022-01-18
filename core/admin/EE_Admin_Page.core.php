@@ -3311,7 +3311,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string $generator    (options are 'string' or 'array', basically use this to indicate which generator to
      *                             use)
      * @param bool   $id
-     * @return string
+     * @return array|string
      * @uses   EEH_Form_Fields::get_form_fields (/helper/EEH_Form_Fields.helper.php)
      * @uses   EEH_Form_Fields::get_form_fields_array (/helper/EEH_Form_Fields.helper.php)
      */

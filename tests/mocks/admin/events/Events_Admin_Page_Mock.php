@@ -44,7 +44,7 @@ class Events_Admin_Page_Mock extends Events_Admin_Page {
 	 */
 	public function delete_event( $EVT_ID_to_delete ) {
 		//set request data for event
-		$this->_req_data['EVT_ID'] = $EVT_ID_to_delete;
+        $this->request->setRequestParam('EVT_IDs', $EVT_ID_to_delete);
 		$this->_delete_event( false );
 	}
 
