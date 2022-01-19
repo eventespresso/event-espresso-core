@@ -2975,7 +2975,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             return true;
         }
 
-        $EVT_ID = $this->request->getRequestParam('event_id[reg_status]', 0, 'int');
+        $EVT_ID = $this->request->getRequestParam('event_id', 0, 'int');
         if (! $EVT_ID) {
             return false;
         }
