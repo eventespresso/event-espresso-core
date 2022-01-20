@@ -54,6 +54,8 @@ class RequestSanitizer
                 return (int) $param;
             case 'key':
                 return sanitize_key($param);
+            case 'title':
+                return sanitize_title($param);
             case 'url':
                 return esc_url_raw($param);
             case 'string':
