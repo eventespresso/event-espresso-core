@@ -4205,17 +4205,17 @@ class Messages_Admin_Page extends EE_Admin_Page
                 EE_Error::add_error(
                     $message_type instanceof EE_message_type
                         ? sprintf(
-                        esc_html__(
-                            '%s message type was not successfully activated with the %s messenger',
-                            'event_espresso'
-                        ),
-                        ucwords($message_type->label['singular']),
-                        ucwords($messenger->label['singular'])
-                    )
+                            esc_html__(
+                                '%s message type was not successfully activated with the %s messenger',
+                                'event_espresso'
+                            ),
+                            ucwords($message_type->label['singular']),
+                            ucwords($messenger->label['singular'])
+                        )
                         : sprintf(
-                        esc_html__('%s messenger was not successfully activated', 'event_espresso'),
-                        ucwords($messenger->label['singular'])
-                    ),
+                            esc_html__('%s messenger was not successfully activated', 'event_espresso'),
+                            ucwords($messenger->label['singular'])
+                        ),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
