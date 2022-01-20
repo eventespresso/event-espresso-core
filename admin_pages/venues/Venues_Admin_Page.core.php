@@ -550,13 +550,15 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             esc_html__("View Venue Archive Page", "event_espresso"),
             'button'
         );
-        $this->_admin_page_title                  .= ' ' . $this->get_action_link_or_button(
-                'create_new',
-                'add',
-                [],
-                'add-new-h2'
-            );
-        $this->_search_btn_label                  = esc_html__('Venues', 'event_espresso');
+
+        $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
+            'create_new',
+            'add',
+            [],
+            'add-new-h2'
+        );
+
+        $this->_search_btn_label  = esc_html__('Venues', 'event_espresso');
         $this->display_admin_list_table_page_with_sidebar();
     }
 
@@ -627,9 +629,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             isset(EE_Registry::instance()->CFG->map_settings)
             && ! empty(EE_Registry::instance()->CFG->map_settings)
                 ? (object) array_merge(
-                (array) $default_map_settings,
-                (array) EE_Registry::instance()->CFG->map_settings
-            )
+                    (array) $default_map_settings,
+                    (array) EE_Registry::instance()->CFG->map_settings
+                )
                 : $default_map_settings;
 
         $this->_set_add_edit_form_tags('update_google_map_settings');
@@ -1340,11 +1342,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                'add_category',
-                'add_category',
-                [],
-                'add-new-h2'
-            );
+            'add_category',
+            'add_category',
+            [],
+            'add-new-h2'
+        );
         $this->_search_btn_label = esc_html__('Venue Categories', 'event_espresso');
         $this->display_admin_list_table_page_with_sidebar();
     }
