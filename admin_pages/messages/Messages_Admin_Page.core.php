@@ -2684,13 +2684,12 @@ class Messages_Admin_Page extends EE_Admin_Page
             'MTP_user_id'        => $this->request->getRequestParam('MTP_user_id', 0, 'int'),
             'MTP_messenger'      => strtolower($this->request->getRequestParam('MTP_messenger', '')),
             'MTP_message_type'   => strtolower($this->request->getRequestParam('MTP_message_type', '')),
-            'MTP_template_field' => strtolower($this->request->getRequestParam('name', '')),
+            'MTP_template_field' => strtolower($this->request->getRequestParam("MTP_template_fields[{$index}][name]", '')),
             'MTP_context'        => strtolower($this->request->getRequestParam('MTP_context', '')),
             'MTP_content'        => $this->request->getRequestParam(
                 "MTP_template_fields[{$index}][content]",
                 '',
-                'string',
-                true
+                'string'
             ),
             'MTP_is_global'      => $this->request->getRequestParam('MTP_is_global', 0, 'int'),
             'MTP_is_override'    => $this->request->getRequestParam('MTP_is_override', 0, 'int'),
