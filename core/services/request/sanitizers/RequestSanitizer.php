@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\services\request\sanitizers;
 
-use EventEspresso\core\services\request\DataTypes;
+use EventEspresso\core\services\request\DataType;
 
 class RequestSanitizer
 {
@@ -17,7 +17,7 @@ class RequestSanitizer
      * @return array|bool|float|int|string
      * @since 4.10.14.p
      */
-    public function clean($param, $type = DataTypes::STRING, $is_array = false, $delimiter = '')
+    public function clean($param, $type = DataType::STRING, $is_array = false, $delimiter = '')
     {
         if ($delimiter !== '' && is_string($param)) {
             $param = explode($delimiter, $param);
@@ -44,27 +44,27 @@ class RequestSanitizer
      * @return array|float|int|mixed|string|string[]|null
      * @since   4.10.20.p
      */
-    public function sanitizeParam($param, $type = DataTypes::STRING)
+    public function sanitizeParam($param, $type = DataType::STRING)
     {
         switch ($type) {
-            case DataTypes::BOOL:
+            case DataType::BOOL:
                 return filter_var($param, FILTER_VALIDATE_BOOLEAN);
-            case DataTypes::FLOAT:
+            case DataType::FLOAT:
                 return (float) $param;
-            case DataTypes::FQCN:
+            case DataType::FQCN:
                 return preg_replace('[^\\\w\d]', '', $param);
-            case DataTypes::HTML:
+            case DataType::HTML:
                 $allowed_tags = AllowedTags::getAllowedTags();
                 return wp_kses($param, $allowed_tags);
-            case DataTypes::INT:
+            case DataType::INT:
                 return (int) $param;
-            case DataTypes::KEY:
+            case DataType::KEY:
                 return sanitize_key($param);
-            case DataTypes::TITLE:
+            case DataType::TITLE:
                 return sanitize_title($param);
-            case DataTypes::URL:
+            case DataType::URL:
                 return esc_url_raw($param);
-            case DataTypes::STRING:
+            case DataType::STRING:
             default:
                 return sanitize_text_field($param);
         }

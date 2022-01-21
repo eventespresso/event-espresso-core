@@ -201,7 +201,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return array|bool|float|int|string
      */
-    public function getRequestParam($key, $default = null, $type = DataTypes::STRING, $is_array = false, $delimiter = '')
+    public function getRequestParam($key, $default = null, $type = DataType::STRING, $is_array = false, $delimiter = '')
     {
         return $this->request_params->getRequestParam($key, $default, $type, $is_array, $delimiter);
     }
@@ -233,7 +233,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return array|bool|float|int|string
      */
-    public function getMatch($pattern, $default = null, $type = DataTypes::STRING, $is_array = false, $delimiter = '')
+    public function getMatch($pattern, $default = null, $type = DataType::STRING, $is_array = false, $delimiter = '')
     {
         return $this->request_params->getMatch($pattern, $default, $type, $is_array, $delimiter);
     }
