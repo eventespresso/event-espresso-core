@@ -13,6 +13,23 @@ use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
  */
 class RequestParams
 {
+    /**
+     * Used for matches() and parameterDrillDown()
+     * 'bool' will return true or false if match is found or not
+     */
+    const RETURN_BOOL  = 'bool';
+
+    /**
+     * Used for matches() and parameterDrillDown()
+     * 'key' will return the first key found that matches the supplied pattern
+     */
+    const RETURN_KEY   = 'key';
+
+    /**
+     * Used for matches() and parameterDrillDown()
+     * 'value' will return the value for the first request parameter
+     */
+    const RETURN_VALUE = 'value';
 
     /**
      * $_GET parameters
@@ -124,7 +141,7 @@ class RequestParams
      * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return array|bool|float|int|string
      */
-    public function getRequestParam($key, $default = null, $type = 'string', $is_array = false, $delimiter = '')
+    public function getRequestParam($key, $default = null, $type = DataTypes::STRING, $is_array = false, $delimiter = '')
     {
         return $this->sanitizer->clean(
             $this->parameterDrillDown($key, $default, 'get'),
@@ -161,7 +178,7 @@ class RequestParams
      * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return array|bool|float|int|string
      */
-    public function getMatch($pattern, $default = null, $type = 'string', $is_array = false, $delimiter = '')
+    public function getMatch($pattern, $default = null, $type = DataTypes::STRING, $is_array = false, $delimiter = '')
     {
         return $this->sanitizer->clean(
             $this->parameterDrillDown($pattern, $default, 'match'),
@@ -184,7 +201,7 @@ class RequestParams
      */
     public function matches($pattern)
     {
-        return (bool) $this->parameterDrillDown($pattern, false, 'match', 'bool');
+        return (bool) $this->parameterDrillDown($pattern, false, 'match', self::RETURN_BOOL);
     }
 
 
@@ -196,17 +213,17 @@ class RequestParams
      * @param mixed  $default               [optional] The value to be returned if no match is found.
      *                                      Default is null
      * @param string $return                [optional] Controls what kind of value is returned.
-     *                                      Options are:
-     *                                      'bool' will return true or false if match is found or not
-     *                                      'key' will return the first key found that matches the supplied pattern
-     *                                      'value' will return the value for the first request parameter
+     *                                      Options are the RETURN_* constants:
+     *                                      RETURN_BOOL will return true or false if match is found or not
+     *                                      RETURN_KEY will return the first key found that matches the supplied pattern
+     *                                      RETURN_VALUE will return the value for the first request parameter
      *                                      whose key matches the supplied pattern
      *                                      Default is 'value'
      * @return boolean|string
      */
-    private function match($pattern, array $request_params, $default = null, $return = 'value')
+    private function match($pattern, array $request_params, $default = null, $return = self::RETURN_VALUE)
     {
-        $return = in_array($return, ['bool', 'key', 'value'], true)
+        $return = in_array($return, [self::RETURN_BOOL, self::RETURN_KEY, self::RETURN_VALUE], true)
             ? $return
             : 'is_set';
         // replace wildcard chars with regex chars
@@ -218,15 +235,15 @@ class RequestParams
         foreach ($request_params as $key => $request_param) {
             if (preg_match('/^' . $pattern . '$/is', $key)) {
                 // return value for request param
-                if ($return === 'value') {
+                if ($return === self::RETURN_VALUE) {
                     return $request_param;
                 }
                 // or actual key or true just to indicate it was found
-                return $return === 'key' ? $key : true;
+                return $return === self::RETURN_KEY ? $key : true;
             }
         }
         // match not found so return default value or false
-        return $return === 'value' ? $default : false;
+        return $return === self::RETURN_VALUE ? $default : false;
     }
 
 
@@ -258,7 +275,7 @@ class RequestParams
         $key,
         $default = null,
         $callback = 'is_set',
-        $return = 'value',
+        $return = self::RETURN_VALUE,
         $request_params = []
     ) {
         $callback       = in_array($callback, ['is_set', 'get', 'match'], true)
@@ -274,7 +291,7 @@ class RequestParams
             $keys = explode('[', $key);
             $key  = array_shift($keys);
             if ($callback === 'match') {
-                $real_key = $this->match($key, $request_params, $default, 'key');
+                $real_key = $this->match($key, $request_params, $default, self::RETURN_KEY);
                 $key      = $real_key ?: $key;
             }
             // check if top level key exists
