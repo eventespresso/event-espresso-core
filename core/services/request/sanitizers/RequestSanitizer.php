@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\request\sanitizers;
 
+use EventEspresso\core\services\request\DataTypes;
+
 class RequestSanitizer
 {
     /**
@@ -15,15 +17,16 @@ class RequestSanitizer
      * @return array|bool|float|int|string
      * @since 4.10.14.p
      */
-    public function clean($param, $type = 'string', $is_array = false, $delimiter = '')
+    public function clean($param, $type = DataTypes::STRING, $is_array = false, $delimiter = '')
     {
         if ($delimiter !== '' && is_string($param)) {
             $param = explode($delimiter, $param);
+            $is_array = is_array($param);
             // unset the delimiter else this function will recurse forever when we loop over the array of results
             $delimiter = '';
         }
         // check if we are getting an improperly typed array and correct
-        $is_array = $is_array || is_array($param);
+        $is_array = $is_array && is_array($param);
         if ($is_array) {
             $values = [];
             foreach ((array) $param as $key => $value) {
@@ -41,24 +44,27 @@ class RequestSanitizer
      * @return array|float|int|mixed|string|string[]|null
      * @since   4.10.20.p
      */
-    public function sanitizeParam($param, $type = 'string')
+    public function sanitizeParam($param, $type = DataTypes::STRING)
     {
         switch ($type) {
-            case 'bool':
+            case DataTypes::BOOL:
                 return filter_var($param, FILTER_VALIDATE_BOOLEAN);
-            case 'float':
+            case DataTypes::FLOAT:
                 return (float) $param;
-            case 'fqcn':
+            case DataTypes::FQCN:
                 return preg_replace('[^\\\w\d]', '', $param);
-            case 'int':
+            case DataTypes::HTML:
+                $allowed_tags = AllowedTags::getAllowedTags();
+                return wp_kses($param, $allowed_tags);
+            case DataTypes::INT:
                 return (int) $param;
-            case 'key':
+            case DataTypes::KEY:
                 return sanitize_key($param);
-            case 'title':
+            case DataTypes::TITLE:
                 return sanitize_title($param);
-            case 'url':
+            case DataTypes::URL:
                 return esc_url_raw($param);
-            case 'string':
+            case DataTypes::STRING:
             default:
                 return sanitize_text_field($param);
         }
