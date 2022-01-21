@@ -141,14 +141,16 @@ class RequestParams
      * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return array|bool|float|int|string
      */
-    public function getRequestParam($key, $default = null, $type = DataTypes::STRING, $is_array = false, $delimiter = '')
+    public function getRequestParam($key, $default = null, $type = DataType::STRING, $is_array = false, $delimiter = '')
     {
-        return $this->sanitizer->clean(
+        $param = $this->sanitizer->clean(
             $this->parameterDrillDown($key, $default, 'get'),
             $type,
             $is_array,
             $delimiter
         );
+        $type = $is_array ? 'array' : $type;
+        return DataType::setDataType($param, $type);
     }
 
 
@@ -178,14 +180,16 @@ class RequestParams
      * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return array|bool|float|int|string
      */
-    public function getMatch($pattern, $default = null, $type = DataTypes::STRING, $is_array = false, $delimiter = '')
+    public function getMatch($pattern, $default = null, $type = DataType::STRING, $is_array = false, $delimiter = '')
     {
-        return $this->sanitizer->clean(
+        $param = $this->sanitizer->clean(
             $this->parameterDrillDown($pattern, $default, 'match'),
             $type,
             $is_array,
             $delimiter
         );
+        $type = $is_array ? 'array' : $type;
+        return DataType::setDataType($param, $type);
     }
 
 

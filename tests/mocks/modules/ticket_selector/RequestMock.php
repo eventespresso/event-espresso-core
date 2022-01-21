@@ -2,6 +2,7 @@
 
 namespace EventEspresso\tests\mocks\modules\ticket_selector;
 
+use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
 use EventEspresso\tests\mocks\core\services\request\RequestMockBlank;
 
@@ -37,7 +38,9 @@ class RequestMock extends RequestMockBlank
         // even though we are fully mocking the request,
         // we still need to apply the same sanitization to the request params
         // in order for our test results to be accurate
-        return $this->sanitizer->clean($param, $type, $is_array, $delimiter);
+        $param = $this->sanitizer->clean($param, $type, $is_array, $delimiter);
+        $type = $is_array ? 'array' : $type;
+        return DataType::setDataType($param, $type);
     }
 
 
