@@ -2021,7 +2021,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * they want.
      *
      * @access protected
-     * @return array|null
+     * @return array|void
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -2030,7 +2030,6 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected function _reset_to_default_template()
     {
-
         $templates    = [];
         $GRP_ID       = $this->request->getRequestParam('GRP_ID', 0, 'int');
         $messenger    = $this->request->getRequestParam('msgr');
@@ -2101,13 +2100,10 @@ class Messages_Admin_Page extends EE_Admin_Page
         ];
 
         // if called via ajax then we return query args otherwise redirect
-        if (defined('DOING_AJAX') && DOING_AJAX) {
+        if ($this->request->isAjax()) {
             return $query_args;
-        } else {
-            $this->_redirect_after_action(false, '', '', $query_args, true);
-
-            return null;
         }
+        $this->_redirect_after_action(false, '', '', $query_args, true);
     }
 
 
@@ -2125,7 +2121,7 @@ class Messages_Admin_Page extends EE_Admin_Page
     public function _preview_message($send = false)
     {
         // first make sure we've got the necessary parameters
-        $GRP_ID       = $this->request->getRequestParam('GRP_ID', 0, 'int');
+        $GRP_ID = $this->request->getRequestParam('GRP_ID', 0, 'int');
         if (! ($GRP_ID && $this->_active_messenger_name && $this->_active_message_type_name)) {
             EE_Error::add_error(
                 esc_html__('Missing necessary parameters for displaying preview', 'event_espresso'),
@@ -2679,17 +2675,20 @@ class Messages_Admin_Page extends EE_Admin_Page
     protected function _set_message_template_column_values($index)
     {
         return [
-            'MTP_ID'             => $this->request->getRequestParam('MTP_ID', 0, 'int'),
+            'MTP_ID'             => $this->request->getRequestParam("MTP_template_fields[{$index}][MTP_ID]", 0, 'int'),
             'GRP_ID'             => $this->request->getRequestParam('GRP_ID', 0, 'int'),
             'MTP_user_id'        => $this->request->getRequestParam('MTP_user_id', 0, 'int'),
             'MTP_messenger'      => strtolower($this->request->getRequestParam('MTP_messenger', '')),
             'MTP_message_type'   => strtolower($this->request->getRequestParam('MTP_message_type', '')),
-            'MTP_template_field' => strtolower($this->request->getRequestParam("MTP_template_fields[{$index}][name]", '')),
+            'MTP_template_field' => strtolower(
+                $this->request->getRequestParam("MTP_template_fields[{$index}][name]", '')
+            ),
             'MTP_context'        => strtolower($this->request->getRequestParam('MTP_context', '')),
             'MTP_content'        => $this->request->getRequestParam(
                 "MTP_template_fields[{$index}][content]",
-                '',
-                'string'
+                null,
+                'html',
+                true
             ),
             'MTP_is_global'      => $this->request->getRequestParam('MTP_is_global', 0, 'int'),
             'MTP_is_override'    => $this->request->getRequestParam('MTP_is_override', 0, 'int'),
@@ -2700,12 +2699,12 @@ class Messages_Admin_Page extends EE_Admin_Page
 
 
     /**
+     * @param bool $new
      * @throws EE_Error
      * @throws ReflectionException
      */
     protected function _insert_or_update_message_template($new = false)
     {
-
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $success  = 0;
         $override = false;
@@ -2759,9 +2758,11 @@ class Messages_Admin_Page extends EE_Admin_Page
             $MTPG = EEM_Message_Template_Group::instance();
             $MTP  = EEM_Message_Template::instance();
 
-
             // run update for each template field in displayed context
-            $template_fields = $this->request->getRequestParam('MTP_template_fields');
+            $template_fields = $this->request->getRequestParam('MTP_template_fields', null, 'html', true);
+            // messages content is expected to be escaped
+            $template_fields = EEH_Array::addSlashesRecursively($template_fields);
+
             if (! $template_fields) {
                 EE_Error::add_error(
                     esc_html__(
@@ -2799,14 +2800,14 @@ class Messages_Admin_Page extends EE_Admin_Page
                     $message_type_slug
                 );
 
-                $system_validation = ! is_array($system_validation) && $system_validation ? []
-                    : $system_validation;
+
+                $system_validation = ! is_array($system_validation) && $system_validation ? [] : $system_validation;
                 $validates         = array_merge($custom_validation, $system_validation);
 
                 // if $validate returned error messages (i.e. is_array()) then we need to process them and setup an
                 // appropriate response. HMM, dang this isn't correct, $validates will ALWAYS be an array.
                 //  WE need to make sure there is no actual error messages in validates.
-                if (is_array($validates) && ! empty($validates)) {
+                if (! empty($validates)) {
                     // add the transient so when the form loads we know which fields to highlight
                     $this->_add_transient('edit_message_template', $validates);
 
@@ -2819,33 +2820,18 @@ class Messages_Admin_Page extends EE_Admin_Page
                         }
                     }
                 } else {
+                    $success           = 1;
+                    $action_desc       = 'updated';
                     $set_column_values = [];
                     foreach ($template_fields as $template_field => $content) {
+
                         $set_column_values = $this->_set_message_template_column_values($template_field);
 
-                        $where_cols_n_values = ['MTP_ID' => $content['MTP_ID']];
                         // if they aren't allowed to use all JS, restrict them to just posty-y tags
                         if (! current_user_can('unfiltered_html')) {
-                            if (is_array($set_column_values['MTP_content'])) {
-                                foreach ($set_column_values['MTP_content'] as $key => $value) {
-                                    // remove slashes so wp_kses works properly (its wp_kses_stripslashes() function
-                                    // only removes slashes from double-quotes, so attributes using single quotes always
-                                    // appear invalid.) But currently the models expect slashed data, so after wp_kses
-                                    // runs we need to re-slash the data. Sheesh. See
-                                    // https://events.codebasehq.com/projects/event-espresso/tickets/11211#update-47321587
-                                    $set_column_values['MTP_content'][ $key ] = addslashes(
-                                        wp_kses(
-                                            stripslashes($value),
-                                            wp_kses_allowed_html('post')
-                                        )
-                                    );
-                                }
-                            } else {
-                                $set_column_values['MTP_content'] = wp_kses(
-                                    $set_column_values['MTP_content'],
-                                    wp_kses_allowed_html('post')
-                                );
-                            }
+                            $set_column_values['MTP_content'] = $this->sanitizeMessageTemplateContent(
+                                $set_column_values['MTP_content']
+                            );
                         }
                         $message_template_fields = [
                             'GRP_ID'             => $set_column_values['GRP_ID'],
@@ -2853,46 +2839,35 @@ class Messages_Admin_Page extends EE_Admin_Page
                             'MTP_context'        => $set_column_values['MTP_context'],
                             'MTP_content'        => $set_column_values['MTP_content'],
                         ];
-                        if ($updated = $MTP->update($message_template_fields, [$where_cols_n_values])) {
-                            if ($updated === false) {
-                                EE_Error::add_error(
-                                    sprintf(
-                                        esc_html__('%s field was NOT updated for some reason', 'event_espresso'),
-                                        $template_field
-                                    ),
-                                    __FILE__,
-                                    __FUNCTION__,
-                                    __LINE__
-                                );
-                            } else {
-                                $success = 1;
-                            }
-                        } else {
-                            // only do this logic if we don't have a MTP_ID for this field
-                            if (empty($content['MTP_ID'])) {
-                                // this has already been through the template field validator and sanitized, so it will be
-                                // safe to insert this field.  Why insert?  This typically happens when we introduce a new
-                                // message template field in a messenger/message type and existing users don't have the
-                                // default setup for it.
-                                // @link https://events.codebasehq.com/projects/event-espresso/tickets/9465
-                                $updated = $MTP->insert($message_template_fields);
-                                if (! $updated || is_wp_error($updated)) {
-                                    EE_Error::add_error(
-                                        sprintf(
-                                            esc_html__('%s field could not be updated.', 'event_espresso'),
-                                            $template_field
-                                        ),
-                                        __FILE__,
-                                        __FUNCTION__,
-                                        __LINE__
-                                    );
-                                    $success = 0;
-                                } else {
-                                    $success = 1;
-                                }
-                            }
+
+                        $hasMtpID = ! empty($content['MTP_ID']);
+                        // if we have a MTP_ID for this field then update it, otherwise insert.
+                        // this has already been through the template field validator and sanitized, so it will be
+                        // safe to insert this field.  Why insert?  This typically happens when we introduce a new
+                        // message template field in a messenger/message type and existing users don't have the
+                        // default setup for it.
+                        // @link https://events.codebasehq.com/projects/event-espresso/tickets/9465
+                        $updated = $hasMtpID
+                            ? $MTP->update($message_template_fields, [['MTP_ID' => $content['MTP_ID']]])
+                            : $MTP->insert($message_template_fields);
+
+                        $insert_failed = ! $hasMtpID && ! $updated;
+                        // updates will return 0 if the field was not changed (ie: nothing actually updated)
+                        // but we won't consider that a problem, but if it returns false, then something went BOOM!
+                        $update_failed = ! $hasMtpID && $updated === false;
+
+                        if ($insert_failed || $update_failed) {
+                            EE_Error::add_error(
+                                sprintf(
+                                    esc_html__('%s field was NOT updated for some reason', 'event_espresso'),
+                                    $template_field
+                                ),
+                                __FILE__,
+                                __FUNCTION__,
+                                __LINE__
+                            );
+                            $success = 0;
                         }
-                        $action_desc = 'updated';
                     }
 
                     // we can use the last set_column_values for the MTPG update (because its the same for all of these specific MTPs)
@@ -2911,8 +2886,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                         ),
                     ];
 
-                    $mtpg_where = ['GRP_ID' => $set_column_values['GRP_ID']];
-                    $updated    = $MTPG->update($mtpg_fields, [$mtpg_where]);
+                    $updated = $MTPG->update($mtpg_fields, [['GRP_ID' => $set_column_values['GRP_ID']]]);
 
                     if ($updated === false) {
                         EE_Error::add_error(
@@ -2927,6 +2901,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                             __FUNCTION__,
                             __LINE__
                         );
+                        $success = 0;
                     } else {
                         // k now we need to ensure the template_pack and template_variation fields are set.
                         $template_pack      = $this->request->getRequestParam('MTP_template_pack', 'default');
@@ -2937,14 +2912,13 @@ class Messages_Admin_Page extends EE_Admin_Page
                             $mtpg_obj->set_template_pack_name($template_pack);
                             $mtpg_obj->set_template_pack_variation($template_variation);
                         }
-                        $success = 1;
                     }
                 }
             }
         }
 
         // we return things differently if doing ajax
-        if (defined('DOING_AJAX') && DOING_AJAX) {
+        if ($this->request->isAjax()) {
             $this->_template_args['success'] = $success;
             $this->_template_args['error']   = ! $success;
             $this->_template_args['content'] = '';
@@ -2973,15 +2947,42 @@ class Messages_Admin_Page extends EE_Admin_Page
             $override = true;
         }
 
-        if (empty($query_args)) {
-            $query_args = [
+        $query_args = ! empty($query_args)
+            ? $query_args
+            : [
                 'id'      => $GRP_ID,
                 'context' => $context_slug,
                 'action'  => 'edit_message_template',
             ];
-        }
 
         $this->_redirect_after_action($success, $item_desc, $action_desc, $query_args, $override);
+    }
+
+
+    /**
+     * recursively runs wp_kses() on message template content in a model safe manner
+     *
+     * @param array|string $content
+     * @return array|string
+     * @since   $VID:$
+     */
+    private function sanitizeMessageTemplateContent($content)
+    {
+        if (is_array($content)) {
+            foreach ($content as $key => $value) {
+                $content[ $key ] = $this->sanitizeMessageTemplateContent($value);
+            }
+            return $content;
+        }
+        // remove slashes so wp_kses() works properly
+        // wp_kses_stripslashes() only removes slashes from double-quotes,
+        // so attributes using single quotes always appear invalid.
+        $content = stripslashes($content);
+        $content = wp_kses($content, wp_kses_allowed_html('post'));
+        // But currently the models expect slashed data, so after wp_kses()
+        // runs we need to re-slash the data. Sheesh.
+        // See https://events.codebasehq.com/projects/event-espresso/tickets/11211#update-47321587
+        return addslashes($content);
     }
 
 
@@ -4204,17 +4205,17 @@ class Messages_Admin_Page extends EE_Admin_Page
                 EE_Error::add_error(
                     $message_type instanceof EE_message_type
                         ? sprintf(
-                            esc_html__(
-                                '%s message type was not successfully activated with the %s messenger',
-                                'event_espresso'
-                            ),
-                            ucwords($message_type->label['singular']),
-                            ucwords($messenger->label['singular'])
-                        )
-                        : sprintf(
-                            esc_html__('%s messenger was not successfully activated', 'event_espresso'),
-                            ucwords($messenger->label['singular'])
+                        esc_html__(
+                            '%s message type was not successfully activated with the %s messenger',
+                            'event_espresso'
                         ),
+                        ucwords($message_type->label['singular']),
+                        ucwords($messenger->label['singular'])
+                    )
+                        : sprintf(
+                        esc_html__('%s messenger was not successfully activated', 'event_espresso'),
+                        ucwords($messenger->label['singular'])
+                    ),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
