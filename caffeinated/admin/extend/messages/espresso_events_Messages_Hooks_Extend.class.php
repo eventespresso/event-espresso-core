@@ -224,6 +224,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      * @access public
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function create_new_custom()
     {
