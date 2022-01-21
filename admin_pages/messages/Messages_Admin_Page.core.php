@@ -2686,9 +2686,8 @@ class Messages_Admin_Page extends EE_Admin_Page
             'MTP_context'        => strtolower($this->request->getRequestParam('MTP_context', '')),
             'MTP_content'        => $this->request->getRequestParam(
                 "MTP_template_fields[{$index}][content]",
-                null,
-                'html',
-                true
+                '',
+                'html'
             ),
             'MTP_is_global'      => $this->request->getRequestParam('MTP_is_global', 0, 'int'),
             'MTP_is_override'    => $this->request->getRequestParam('MTP_is_override', 0, 'int'),
