@@ -2628,7 +2628,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected function _set_message_template_group()
     {
-        //get out if this is already set.
+        // get out if this is already set.
         if (! empty($this->_message_template_group)) {
             return;
         }
@@ -2963,7 +2963,6 @@ class Messages_Admin_Page extends EE_Admin_Page
                     ? $this->sanitizeMessageTemplateContent($field_data['content'])
                     : $field_data['content'],
             ];
-
     }
 
 
@@ -4370,7 +4369,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             } else {
                 EE_Error::add_error(
                     $message_type instanceof EE_message_type
-                        ? sprintf(
+                    ? sprintf(
                         esc_html__(
                             '%s message type was not successfully activated with the %s messenger',
                             'event_espresso'
@@ -4378,7 +4377,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                         ucwords($message_type->label['singular']),
                         ucwords($messenger->label['singular'])
                     )
-                        : sprintf(
+                    : sprintf(
                         esc_html__('%s messenger was not successfully activated', 'event_espresso'),
                         ucwords($messenger->label['singular'])
                     ),
