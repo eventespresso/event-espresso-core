@@ -29,5 +29,4 @@ class DataTypes
     const URL    = 'url';
 
     const STRING = 'string';
-
 }
