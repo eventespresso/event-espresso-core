@@ -224,7 +224,7 @@ class EE_Email_messenger extends EE_messenger
                 'input'      => 'text',
                 'label'      => esc_html__('Send a test email to', 'event_espresso'),
                 'type'       => 'email',
-                'required'   => true,
+                'required'   => false,
                 'validation' => true,
                 'css_class'  => 'large-text',
                 'format'     => '%s',
