@@ -1475,7 +1475,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     {
         $category_ID     = $update ? $this->request->getRequestParam('VEN_CAT_ID', '', 'int') : '';
         $category_name   = $this->request->getRequestParam('category_name', '');
-        $category_desc   = $this->request->getRequestParam('category_desc', '');
+        $category_desc   = $this->request->getRequestParam('category_desc', '', 'html');
         $category_parent = $this->request->getRequestParam('category_parent', 0, 'int');
 
         if (empty($category_name)) {
