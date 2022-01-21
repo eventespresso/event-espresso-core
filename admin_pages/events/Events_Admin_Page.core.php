@@ -2822,7 +2822,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * @throws EE_Error
-     * @deprecated $VID:$
+     * @deprecated 4.10.25.p
      */
     public function save_timezonestring_setting()
     {
