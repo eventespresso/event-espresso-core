@@ -223,11 +223,19 @@
     position: relative;
 }
 
-.ee-messages-shortcodes-chooser {
-    margin-top: 0;
-    font-size: 1.4em;
-    cursor: pointer;
+.wp-core-ui .button.ee-messages-shortcodes-chooser {
+    align-items: center;
+    display: inline-flex;
+    height: 30px;
+    justify-content: center;
+    padding: 0;
+    width: 30px;
 }
+.wp-core-ui .button.ee-messages-shortcodes-chooser .dashicons {
+    margin: 0;
+    top: unset;
+}
+
 .ee-messages-shortcodes-close-btn {
     border: none !important;
     background: none !important;
@@ -243,12 +251,9 @@
     color: hsla(207, 5%, 10%, 1);
 }
 
-.ee-messages-shortcodes-chooser .dashicons {
-    margin: 0 !important;
-}
 
-h4 + .ee-messages-shortcodes-chooser {
-    padding-top: 10px;
+h4 + .ee-messages-shortcodes-chooser-wrap {
+    top: 8px;
 }
 
 .ee-shortcode-chooser-open {
