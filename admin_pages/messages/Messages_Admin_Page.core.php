@@ -1478,10 +1478,8 @@ class Messages_Admin_Page extends EE_Admin_Page
                                 }
                             }
 
-                            $field_id                                  = $reference_field
-                                                                         . '-'
-                                                                         . $extra_field
-                                                                         . '-content';
+                            $field_id = $reference_field . '-' . $extra_field . '-content';
+
                             $template_form_fields[ $field_id ]         = $extra_array;
                             $template_form_fields[ $field_id ]['name'] = 'MTP_template_fields['
                                                                          . $reference_field
