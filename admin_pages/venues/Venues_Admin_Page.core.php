@@ -595,35 +595,36 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         $default_map_settings->use_google_maps    = true;
         $default_map_settings->google_map_api_key = '';
         // for event details pages (reg page)
-        $default_map_settings->event_details_map_width    =
-            585;                                                                                          // ee_map_width_single
-        $default_map_settings->event_details_map_height   =
-            362;                                                                                          // ee_map_height_single
-        $default_map_settings->event_details_map_zoom     =
-            14;                                                                                           // ee_map_zoom_single
-        $default_map_settings->event_details_display_nav  =
-            true;                                                                                         // ee_map_nav_display_single
-        $default_map_settings->event_details_nav_size     =
-            false;                                                                                        // ee_map_nav_size_single
-        $default_map_settings->event_details_control_type =
-            'default';                                                                                    // ee_map_type_control_single
-        $default_map_settings->event_details_map_align    =
-            'center';                                                                                     // ee_map_align_single
+        $default_map_settings->event_details_map_width    = 585;
+        // ee_map_width_single
+        $default_map_settings->event_details_map_height   = 362;
+        // ee_map_height_single
+        $default_map_settings->event_details_map_zoom     = 14;
+        // ee_map_zoom_single
+        $default_map_settings->event_details_display_nav  = true;
+        // ee_map_nav_display_single
+        $default_map_settings->event_details_nav_size     = false;
+        // ee_map_nav_size_single
+        $default_map_settings->event_details_control_type = 'default';
+        // ee_map_type_control_single
+        $default_map_settings->event_details_map_align    = 'center';
+        // ee_map_align_single
+
         // for event list pages
-        $default_map_settings->event_list_map_width    =
-            300;                                                                                          // ee_map_width
-        $default_map_settings->event_list_map_height   =
-            185;                                                                                          // ee_map_height
-        $default_map_settings->event_list_map_zoom     =
-            12;                                                                                           // ee_map_zoom
-        $default_map_settings->event_list_display_nav  =
-            false;                                                                                        // ee_map_nav_display
-        $default_map_settings->event_list_nav_size     =
-            true;                                                                                         // ee_map_nav_size
-        $default_map_settings->event_list_control_type =
-            'dropdown';                                                                                   // ee_map_type_control
-        $default_map_settings->event_list_map_align    =
-            'center';                                                                                     // ee_map_align
+        $default_map_settings->event_list_map_width    = 300;
+        // ee_map_width
+        $default_map_settings->event_list_map_height   = 185;
+        // ee_map_height
+        $default_map_settings->event_list_map_zoom     = 12;
+        // ee_map_zoom
+        $default_map_settings->event_list_display_nav  = false;
+        // ee_map_nav_display
+        $default_map_settings->event_list_nav_size     = true;
+        // ee_map_nav_size
+        $default_map_settings->event_list_control_type = 'dropdown';
+        // ee_map_type_control
+        $default_map_settings->event_list_map_align    = 'center';
+        // ee_map_align
 
         $this->_template_args['map_settings'] =
             isset(EE_Registry::instance()->CFG->map_settings)
