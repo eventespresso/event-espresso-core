@@ -265,7 +265,7 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     background-color: white;
     border: 2px hsl(207, 68%, 41%) solid;
     border-radius: .25rem;
-    box-shadow: 0 6px 6px -4px hsla(207, 5% 10%, .8), 0 0 16px -2px hsla(207, 5%, 10%, .4);
+    box-shadow: 0 6px 6px -4px hsla(207, 5%, 10%, .8), 0 0 16px -2px hsla(207, 5%, 10%, .4);
     color: hsla(207, 5%, 20%, .75);
     font-size: .8rem;
     font-weight: 600;
