@@ -1885,9 +1885,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             default:
                 $where['status'] = $status;
         }
-        // categories?
-        $category = $this->request->getRequestParam('EVT_CAT', 0, 'int');
-        if ($category) {
+        // categories? The default for all categories is -1
+        $category = $this->request->getRequestParam('EVT_CAT', -1, 'int');
+        if ($category !== -1) {
             $where['Term_Taxonomy.taxonomy'] = EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY;
             $where['Term_Taxonomy.term_id']  = $category;
         }
