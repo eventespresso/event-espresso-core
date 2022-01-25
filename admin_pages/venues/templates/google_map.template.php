@@ -106,10 +106,13 @@
                 </th>
                 <td>
                     <input id="event_details_map_zoom"
-                           type="text"
+                           type="number"
                            size=""
                            name="event_details_map_zoom"
                            value="<?php echo esc_attr($map_settings->event_details_map_zoom); ?>"
+                           min="1"
+                           max="19"
+                           step="1"
                     />
                 </td>
             </tr>
@@ -296,10 +299,13 @@
                 </th>
                 <td>
                     <input id="event_list_map_zoom"
-                           type="text"
+                           type="number"
                            size=""
                            name="event_list_map_zoom"
                            value="<?php echo esc_attr($map_settings->event_list_map_zoom); ?>"
+                           min="1"
+                           max="19"
+                           step="1"
                     />
                 </td>
             </tr>
