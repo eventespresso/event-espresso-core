@@ -1161,7 +1161,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 if (strpos($key, 'nonce') !== false) {
                     continue;
                 }
-                $args[ 'wp_referer[' . $key . ']' ] = (is_string($value) ? htmlspecialchars($value) : $value);
+                $args[ 'wp_referer[' . $key . ']' ] = is_string($value) ? htmlspecialchars($value) : $value;
             }
         }
         return EEH_URL::add_query_args_and_nonce($args, $url, $exclude_nonce);
