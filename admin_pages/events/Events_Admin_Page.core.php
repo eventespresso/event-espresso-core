@@ -2209,7 +2209,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     private function getEventIdsFromRequest()
     {
-        return $this->request->getRequestParam('EVT_IDs', [], 'int', true, ',');
+        if ($this->request->requestParamIsSet('EVT_IDs')) {
+            return $this->request->getRequestParam('EVT_IDs', [], 'int', true);
+        }
+        else {
+            return $this->request->getRequestParam('EVT_ID', [], 'int', true);
+        }
     }
 
 

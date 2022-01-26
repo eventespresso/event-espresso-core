@@ -226,7 +226,7 @@ class PreviewEventDeletion extends JobHandler
         $job_parameters->mark_processed($units_processed);
         // If the most-recently processed root node is complete, we must be all done because we're doing them
         // sequentially.
-        if (isset($root_node) && $root_node instanceof ModelObjNode && $root_node->isComplete()) {
+        if (! isset($root_node) || (isset($root_node) && $root_node instanceof ModelObjNode && $root_node->isComplete())) {
             $job_parameters->set_status(JobParameters::status_complete);
             // Show a full progress bar.
             $job_parameters->set_units_processed($job_parameters->job_size());
