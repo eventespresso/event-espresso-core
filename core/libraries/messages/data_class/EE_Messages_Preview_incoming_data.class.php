@@ -121,7 +121,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
             $this->_events[ $id ]['tkt_objs'] = $tickets;
             $this->_events[ $id ]['dtt_objs'] = [];
 
-            $dttcache = [];
             $tkts     = [];
             foreach ($tickets as $ticket) {
                 if (! $ticket instanceof EE_Ticket) {
@@ -140,7 +139,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                         $dtts[ $datetime->ID() ]['datetime']                 = $datetime;
                         $dtts[ $datetime->ID() ]['tkt_objs'][]               = $ticket;
                         $dtts[ $datetime->ID() ]['evt_objs'][]               = $event;
-                        $dttcache[ $datetime->ID() ]                         = $datetime;
                     }
                 }
             }
@@ -412,6 +410,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
         // if we have an evt_id then we want to make sure we use that for the preview
         // (because a specific event template is being viewed);
         $event_ids = $request->getRequestParam('evt_id', $event_ids, 'int', true);
+        // clear out any invalid IDs, like 0
+        $event_ids = array_filter($event_ids);
         $limit     = ! empty($event_ids)
             ? null
             : apply_filters('FHEE__EE_Messages_Preview_incoming_data___get_some_events__limit', '0,1');
