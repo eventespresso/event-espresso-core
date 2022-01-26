@@ -284,7 +284,7 @@ class EE_Messages_Processor
     public function queue_for_generation(EE_Message_To_Generate $message_to_generate, $test_send = false)
     {
         if ($message_to_generate->valid()) {
-            if ( ! $this->_generator->create_and_add_message_to_queue($message_to_generate, $test_send)) {
+            if (! $this->_generator->create_and_add_message_to_queue($message_to_generate, $test_send)) {
                 throw new RuntimeException(
                     esc_html__('Message failed to generate', 'event_espresso')
                 );
