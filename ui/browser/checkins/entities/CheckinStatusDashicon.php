@@ -16,7 +16,6 @@ use EE_Registration;
  */
 class CheckinStatusDashicon
 {
-
     /**
      * @var int $checkin_status
      */
