@@ -2211,8 +2211,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         if ($this->request->requestParamIsSet('EVT_IDs')) {
             return $this->request->getRequestParam('EVT_IDs', [], 'int', true);
-        }
-        else {
+        } else {
             return $this->request->getRequestParam('EVT_ID', [], 'int', true);
         }
     }
