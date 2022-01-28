@@ -17,7 +17,7 @@ class Critical_Pages_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Critical Pages Tour', 'event_espresso');
+        $this->_label = esc_html__('Critical Pages Tour', 'event_espresso');
         $this->_slug = 'critical-pages-joyride';
     }
 
@@ -69,14 +69,14 @@ class Critical_Pages_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Critical Pages', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Critical Pages', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This section lists the pages that Event Espresso needs in order to function. Should you wish to change a page that is used you will need to move the shortcode to the new page and then allocate it here. Otherwise your registrations will not work correctly.',
                         'event_espresso'
                     ) . '</p>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This section also provides a status of the page to show you at a glance if something is not right.',
                         'event_espresso'
                     ) . '</p>';
@@ -86,7 +86,7 @@ class Critical_Pages_Help_Tour extends EE_Help_Tour
     protected function _reg_page_id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This page processes the registrations and is required, even if it is not visible in your menus. ',
                    'event_espresso'
                ) . '</p>';
@@ -95,7 +95,7 @@ class Critical_Pages_Help_Tour extends EE_Help_Tour
     protected function _txn_page_id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This page processes payments. It should not be visible on your menus, and the page should not contain anything other than the shortcode.',
                    'event_espresso'
                ) . '</p>';
@@ -104,7 +104,7 @@ class Critical_Pages_Help_Tour extends EE_Help_Tour
     protected function _thank_you_page_id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This page is displayed after a successful transaction. Feel free to add extra content to this page to personalise it!',
                    'event_espresso'
                ) . '</p>';
@@ -113,7 +113,7 @@ class Critical_Pages_Help_Tour extends EE_Help_Tour
     protected function _cancel_page_id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This page is displayed after an unsuccessful transaction. Feel free to add extra content to this page to personalise it!',
                    'event_espresso'
                ) . '</p>';

@@ -11,10 +11,9 @@
  * @var EE_Transaction    $transaction
  */
 ?>
-    <div class="padding">
-        <table class="ee-payment-log-details widefat">
-            <tbody>
-
+<div class="padding">
+	<table class="ee-payment-log-details widefat">
+		<tbody>
             <tr>
                 <th>
                     <label>
@@ -22,7 +21,7 @@
                     </label>
                 </th>
                 <td>
-                    <?php echo $payment_log->ID() ?>
+                    <?php echo absint($payment_log->ID()) ?>
                 </td>
             </tr>
             <tr>
@@ -37,14 +36,10 @@
                         esc_html_e('Unknown', 'event_espresso');
                     } else {
                         echo $payment_method
-                        ? $payment_method->admin_name()
-                        : esc_html__(
-                            "No Longer Exists",
-                            'event_espresso'
-                        );
+                            ? esc_html($payment_method->admin_name())
+                            : esc_html__("No Longer Exists", 'event_espresso');
                     }
                     ?>
-
                 </td>
             </tr>
             <tr>
@@ -54,8 +49,10 @@
                     </label>
                 </th>
                 <td>
-                    <?php echo $transaction ? $transaction->ID() : esc_html__("Could not be determined", 'event_espresso'); ?>
-
+                    <?php echo $transaction instanceof EE_Transaction
+                        ? absint($transaction->ID())
+                        : esc_html__('Could not be determined', 'event_espresso');
+                    ?>
                 </td>
             </tr>
             <tr>
@@ -65,12 +62,9 @@
                     </label>
                 </th>
                 <td class='ee-payment-log-details__content'>
-                    <?php
-                    echo $payment_log->e('LOG_message', 'as_table');
-                    // EEH_Template::layout_array_as_table($payment_log->content())
-                    ?>
+                    <?php echo $payment_log->get_pretty('LOG_message', 'as_table'); // already escaped ?>
                 </td>
             </tr>
-            </tbody>
-        </table>
-    </div>
+        </tbody>
+    </table>
+</div>

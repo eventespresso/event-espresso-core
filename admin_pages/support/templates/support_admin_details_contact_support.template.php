@@ -2,10 +2,12 @@
     <h3><?php esc_html_e('Need help with Event Espresso?', 'event_espresso'); ?></h3>
 
     <h4>
-        <?php esc_html_e(
+        <?php
+        esc_html_e(
             'You may be able to find an answer for your question or concern here:',
             'event_espresso'
-        ); ?>
+        );
+        ?>
     </h4>
     <ol>
         <li>
@@ -50,18 +52,23 @@
                 );
             }
             ?>
-            <?php esc_html_e(
+            <?php
+            esc_html_e(
                 'If this solves the problem for you, then something in your theme is causing this issue. Check to see if an update is available for your WordPress theme or reach out to the theme author.',
                 'event_espresso'
-            ); ?>
+            );
+            ?>
         </li>
     </ol>
 
     <p>
-        <?php esc_html_e(
+        <?php
+        esc_html_e(
             'If none of the suggestions above help you find a solution, then feel free to reach out to the support team at Event Espresso.',
             'event_espresso'
-        ); ?></p>
+        );
+        ?>
+    </p>
     <p>
         <?php
         printf(

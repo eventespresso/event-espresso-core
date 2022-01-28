@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * This class contains all business logic related to generating, queuing, and scheduling of
  * messages in the EE_messages system.
@@ -70,14 +73,15 @@ class EE_Messages_Processor
     }
 
 
-
     /**
-     * This method can be utilized to process messages from a queue and they will be processed immediately on the same request.
-     * Please note that this method alone does not bypass the usual "locks" for generation/sending (it assumes client code
-     * has already filtered those if necessary).
+     * This method can be utilized to process messages from a queue and they will be processed immediately on the same
+     * request. Please note that this method alone does not bypass the usual "locks" for generation/sending (it assumes
+     * client code has already filtered those if necessary).
      *
      * @param EE_Messages_Queue $queue_to_process
      * @return bool  true for success false for error.
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function process_immediately_from_queue(EE_Messages_Queue $queue_to_process)
     {
@@ -377,7 +381,7 @@ class EE_Messages_Processor
     {
         if (! $message_to_generate->valid()) {
             EE_Error::add_error(
-                __('Unable to generate preview because of invalid data', 'event_espresso'),
+                esc_html__('Unable to generate preview because of invalid data', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -406,8 +410,11 @@ class EE_Messages_Processor
      * This queues for sending.
      * The messenger send now method is also verified to see if sending immediately is requested.
      * otherwise its just saved to the queue.
+     *
      * @param EE_Message_To_Generate $message_to_generate
      * @return bool true or false for success.
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function queue_for_sending(EE_Message_To_Generate $message_to_generate)
     {
@@ -444,7 +451,7 @@ class EE_Messages_Processor
             $sending_messenger = $message_to_generate->sending_messenger() instanceof EE_messenger
                 ? $message_to_generate->sending_messenger()
                 : new EE_Error(
-                    __(
+                    esc_html__(
                         'There was a specific sending messenger requested for the send action, but it was either invalid or not active at time of sending.',
                         'event_espresso'
                     )
@@ -512,12 +519,13 @@ class EE_Messages_Processor
     }
 
 
-
-
     /**
      * This accepts an array of EE_Message::MSG_ID values and will use that to retrieve the objects from the database
      * and send.
+     *
      * @param array $message_ids
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function setup_messages_from_ids_and_send($message_ids)
     {
@@ -546,24 +554,24 @@ class EE_Messages_Processor
     }
 
 
-
     /**
      * This method checks for registration IDs in the request via the given key and creates the messages to generate
      * objects from them, then returns the array of messages to generate objects.
      * Note, this sets up registrations for the registration family of message types.
      *
-     * @param string $registration_ids_key  This is used to indicate what represents the registration ids in the request.
+     * @param string $registration_ids_key This is used to indicate what represents the registration ids in the request.
      *
-     * @return EE_Message_To_Generate[]
+     * @return EE_Message_To_Generate[]|bool
+     * @throws EE_Error
      */
     public function setup_messages_to_generate_from_registration_ids_in_request($registration_ids_key = '_REG_ID')
     {
-        EE_Registry::instance()->load_core('Request_Handler');
-        EE_Registry::instance()->load_helper('MSG_Template');
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $regs_to_send = array();
-        $regIDs = EE_Registry::instance()->REQ->get($registration_ids_key);
+        $regIDs = $request->getRequestParam($registration_ids_key, [], 'int', true);
         if (empty($regIDs)) {
-            EE_Error::add_error(__('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(esc_html__('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
 
@@ -573,7 +581,7 @@ class EE_Messages_Processor
         foreach ($regIDs as $regID) {
             $reg = EEM_Registration::instance()->get_one_by_ID($regID);
             if (! $reg instanceof EE_Registration) {
-                EE_Error::add_error(sprintf(__('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $regID));
+                EE_Error::add_error(sprintf(esc_html__('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $regID));
                 return false;
             }
             $regs_to_send[ $reg->transaction_ID() ][ $reg->status_ID() ][] = $reg;

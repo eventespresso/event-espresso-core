@@ -6,8 +6,6 @@
  * @package     Event Espresso
  * @subpackage  /core/
  * @author      Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
 class EEH_Venue_View extends EEH_Base
 {
@@ -17,7 +15,6 @@ class EEH_Venue_View extends EEH_Base
      * @var EE_Venue
      */
     private static $_venue = null;
-
 
 
     /**
@@ -30,7 +27,9 @@ class EEH_Venue_View extends EEH_Base
      * @param bool $privacy_check   Defaults to true.
      *                              When false, means even if the venue is private we return it regardless of access.
      * @param bool $password_check
-     * @return \EE_Venue|null
+     * @return EE_Venue|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function get_venue($VNU_ID = 0, $look_in_event = true, $privacy_check = true, $password_check = true)
     {
@@ -59,9 +58,9 @@ class EEH_Venue_View extends EEH_Base
                     // the post already contains the related EE_Venue object AND one of the following is TRUE:
                     // the requested Venue ID matches the post ID OR...
                     // there was no specific Venue ID requested
-                    if (isset($post->EE_Venue) && ( $VNU_ID == $post->ID || ! $VNU_ID )) {
+                    if (isset($post->EE_Venue) && ($VNU_ID == $post->ID || ! $VNU_ID)) {
                         // use existing related EE_Venue object
-                        EEH_Venue_View::$_venue =  $post->EE_Venue;
+                        EEH_Venue_View::$_venue = $post->EE_Venue;
                     } elseif ($VNU_ID) {
                         // there WAS a specific Venue ID requested, but it's NOT the current post object
                         EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID($VNU_ID);
@@ -89,8 +88,8 @@ class EEH_Venue_View extends EEH_Base
                                     }
                                 }
                             }
-                        // no venue ID ?
-                        // then the global post is an events post and this function was called with no argument
+                            // no venue ID ?
+                            // then the global post is an events post and this function was called with no argument
                         } else {
                             // just grab the first related event venue
                             EEH_Venue_View::$_venue = reset($venues);
@@ -108,7 +107,6 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      * return a single venue
      *
@@ -116,6 +114,8 @@ class EEH_Venue_View extends EEH_Base
      *                              When false, means even if the venue is private we return it regardless of access.
      * @param bool $password_check
      * @return  EE_Venue
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected static function _get_venue($privacy_check = true, $password_check = true)
     {
@@ -140,12 +140,13 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      *  get_event_venues
      *
-     *  @access     public
-     *  @return     EE_Venue[]
+     * @access     public
+     * @return     EE_Venue[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function get_event_venues()
     {
@@ -155,39 +156,40 @@ class EEH_Venue_View extends EEH_Base
                 return $post->EE_Event->venue();
             }
         }
-        return array();
+        return [];
     }
-
-
 
 
     /**
      * Simply checks whether a venue for the given ID (or the internally derived venue is private).
      *
-     * Note: This will return true if its private, null if the venue doesn't exist, and false, if the venue exists but is not
-     *    private.  So it is important to do explicit boolean checks when using this conditional.
+     * Note: This will return true if its private, null if the venue doesn't exist, and false, if the venue exists but
+     * is not private.  So it is important to do explicit boolean checks when using this conditional.
      *
      * @param bool $VNU_ID venue to check (optional). If not included will use internally derived venue object.
      *
      * @return bool|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function is_venue_private($VNU_ID = false)
     {
-        $venue = EEH_Venue_View::get_venue($VNU_ID, true, true);
+        $venue = EEH_Venue_View::get_venue($VNU_ID);
         if (! $venue instanceof EE_Venue) {
             return null;
         }
 
-        return $venue->status() == 'private' ? true : false;
+        return $venue->status() == 'private';
     }
-
-
 
 
     /**
      * returns true or false if a venue is password protected or not
+     *
      * @param bool $VNU_ID venue to check (optional). If not included will use internally derived venue object.
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function is_venue_password_protected($VNU_ID = false)
     {
@@ -202,14 +204,15 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      * If a venue is password protected, this will return the password form for gaining access
      * returns an empty string otherwise
-
+     *
      * @param bool $VNU_ID venue to check (optional). If not included will use internally derived venue object.
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function password_protected_venue_form($VNU_ID = false)
     {
@@ -224,13 +227,14 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      *    venue_description
      *
      * @access    public
      * @param int $VNU_ID
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function venue_description($VNU_ID = 0)
     {
@@ -242,46 +246,59 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      *    venue_excerpt
      *
      * @access    public
      * @param int $VNU_ID
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function venue_excerpt($VNU_ID = 0)
     {
         $venue = EEH_Venue_View::get_venue($VNU_ID);
         if ($venue instanceof EE_Venue) {
-            $excerpt = $venue->excerpt() != null && $venue->excerpt() ? $venue->excerpt() : $venue->description();
-            $venue_link = ' ' . EEH_Venue_View::venue_details_link($venue->ID(), __('more', 'event_espresso') . '&hellip;');
+            $excerpt    = $venue->excerpt() != null && $venue->excerpt() ? $venue->excerpt() : $venue->description();
+            $venue_link = ' ' . EEH_Venue_View::venue_details_link(
+                $venue->ID(),
+                esc_html__('more', 'event_espresso') . '&hellip;'
+            );
             return ! empty($excerpt) ? wp_trim_words($excerpt, 25, '') . $venue_link : '';
         }
         return '';
     }
 
 
-
     /**
      *    venue_categories
      *
      * @access    public
-     * @param int $VNU_ID
+     * @param int  $VNU_ID
      * @param bool $hide_uncategorized
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function venue_categories($VNU_ID = 0, $hide_uncategorized = true)
     {
-        $category_links = array();
-        $venue = EEH_Venue_View::get_venue($VNU_ID);
+        $category_links = [];
+        $venue          = EEH_Venue_View::get_venue($VNU_ID);
         if ($venue instanceof EE_Venue) {
             // get category terms
             if ($venue_categories = get_the_terms($venue->ID(), 'espresso_venue_categories')) {
                 // loop thru terms and create links
                 foreach ($venue_categories as $term) {
                     $url = get_term_link($term, 'espresso_venue_categories');
-                    if (! is_wp_error($url) && (( $hide_uncategorized && strtolower($term->name) != __('uncategorized', 'event_espresso')) || ! $hide_uncategorized )) {
+                    if (
+                        ! is_wp_error($url)
+                        && (($hide_uncategorized
+                             && strtolower($term->name) != esc_html__(
+                                 'uncategorized',
+                                 'event_espresso'
+                             ))
+                            || ! $hide_uncategorized)
+                    ) {
                         $category_links[] = '<a href="' . esc_url($url) . '" rel="tag">' . $term->name . '</a> ';
                     }
                 }
@@ -291,16 +308,17 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      *    venue_address
      *
      * @access    public
      * @param string $type
-     * @param int $VNU_ID
-     * @param bool $use_schema
-     * @param bool $add_wrapper
+     * @param int    $VNU_ID
+     * @param bool   $use_schema
+     * @param bool   $add_wrapper
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function venue_address($type = 'multiline', $VNU_ID = 0, $use_schema = true, $add_wrapper = true)
     {
@@ -312,13 +330,14 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      *    venue_has_address
      *
      * @access    public
      * @param int $VNU_ID
      * @return bool|string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function venue_has_address($VNU_ID = 0)
     {
@@ -330,14 +349,16 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      *    venue_name
      *
      * @access    public
-     * @param    string $link_to - options( details, website, none ) whether to turn Venue name into a clickable link to the Venue's details page or website
-     * @param int $VNU_ID
+     * @param string $link_to - options( details, website, none ) whether to turn Venue name into a clickable link to
+     *                        the Venue's details page or website
+     * @param int    $VNU_ID
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function venue_name($link_to = 'details', $VNU_ID = 0)
     {
@@ -346,7 +367,7 @@ class EEH_Venue_View extends EEH_Base
             $venue_name = apply_filters(
                 'FHEE__EEH_Venue__venue_name__append_private_venue_name',
                 EEH_Venue_View::is_venue_private()
-                    ? EEH_Venue_View::$_venue->name() . "&nbsp;" . __('(Private)', 'event_espresso')
+                    ? EEH_Venue_View::$_venue->name() . "&nbsp;" . esc_html__('(Private)', 'event_espresso')
                     : EEH_Venue_View::$_venue->name(),
                 EEH_Venue_View::$_venue
             );
@@ -359,11 +380,9 @@ class EEH_Venue_View extends EEH_Base
             switch ($link_to) {
                 case 'details':
                     return EEH_Venue_View::venue_details_link($venue->ID(), $venue_name);
-                break;
 
                 case 'website':
                     return EEH_Venue_View::venue_website_link($venue->ID(), $venue_name);
-                break;
 
                 default:
                     return $venue_name;
@@ -373,14 +392,15 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      *    venue_details_link
      *
      * @access    public
-     * @param int $VNU_ID
-     * @param    string $text
+     * @param int    $VNU_ID
+     * @param string $text
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function venue_details_link($VNU_ID = 0, $text = '')
     {
@@ -392,26 +412,26 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      *    venue_website_link
      *
      * @access    public
-     * @param int $VNU_ID
-     * @param    string $text
+     * @param int    $VNU_ID
+     * @param string $text
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function venue_website_link($VNU_ID = 0, $text = '')
     {
         $venue = EEH_Venue_View::get_venue($VNU_ID);
         if ($venue instanceof EE_Venue) {
-            $url = $venue->venue_url();
+            $url  = $venue->venue_url();
             $text = ! empty($text) ? $text : $url;
-            return ! empty($url) ? EEH_Schema::url($url, $text) : '';
+            return ! empty($url) ? EEH_Schema::url($url, $text, ['target' => '_blank']) : '';
         }
         return '';
     }
-
 
 
     /**
@@ -420,6 +440,8 @@ class EEH_Venue_View extends EEH_Base
      * @access    public
      * @param int $VNU_ID
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function venue_phone($VNU_ID = 0)
     {
@@ -431,17 +453,18 @@ class EEH_Venue_View extends EEH_Base
     }
 
 
-
     /**
      *    venue_gmap
      *
      * @access    public
-     * @param int $VNU_ID
+     * @param int         $VNU_ID
      * @param bool|string $map_ID a unique identifier for this map
-     * @param    array $gmap map options
+     * @param array       $gmap   map options
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function venue_gmap($VNU_ID = 0, $map_ID = false, $gmap = array())
+    public static function venue_gmap($VNU_ID = 0, $map_ID = false, $gmap = [])
     {
 
         $venue = EEH_Venue_View::get_venue($VNU_ID);
@@ -454,34 +477,75 @@ class EEH_Venue_View extends EEH_Base
             // are maps enabled ?
             if ($map_cfg->use_google_maps && $venue->enable_for_gmap()) {
                 $details_page = is_single();
-                $options = array();
-                $options['map_ID'] = $map_ID && $map_ID != $venue->ID() ? $map_ID . '-' . $venue->ID()/* . '-' . $static_map_id*/ : $venue->ID()/* . '-' . $static_map_id*/;
+                $options      = [];
+
+                $options['map_ID'] = $map_ID && $map_ID != $venue->ID()
+                    ? $map_ID . '-' . $venue->ID()
+                    : $venue->ID();
 
                 $options['location'] = EEH_Address::format($venue, 'inline', false, false);
 
-                $options['ee_map_width'] = $details_page ? $map_cfg->event_details_map_width : $map_cfg->event_list_map_width;
-                $options['ee_map_width'] = isset($gmap['ee_map_width']) && ! empty($gmap['ee_map_width']) ? $gmap['ee_map_width'] : $options['ee_map_width'];
+                $options['ee_map_width'] = $details_page
+                    ? $map_cfg->event_details_map_width
+                    : $map_cfg->event_list_map_width;
 
-                $options['ee_map_height'] = $details_page ? $map_cfg->event_details_map_height : $map_cfg->event_list_map_height;
-                $options['ee_map_height'] = isset($gmap['ee_map_height']) && ! empty($gmap['ee_map_height']) ? $gmap['ee_map_height'] : $options['ee_map_height'];
+                $options['ee_map_width'] = isset($gmap['ee_map_width']) && ! empty($gmap['ee_map_width'])
+                    ? $gmap['ee_map_width']
+                    : $options['ee_map_width'];
 
-                $options['ee_map_zoom'] = $details_page ? $map_cfg->event_details_map_zoom : $map_cfg->event_list_map_zoom;
-                $options['ee_map_zoom'] = isset($gmap['ee_map_zoom']) && ! empty($gmap['ee_map_zoom']) ? $gmap['ee_map_zoom'] : $options['ee_map_zoom'];
+                $options['ee_map_height'] = $details_page
+                    ? $map_cfg->event_details_map_height
+                    : $map_cfg->event_list_map_height;
 
-                $options['ee_map_nav_display'] = $details_page ? $map_cfg->event_details_display_nav : $map_cfg->event_list_display_nav;
-                $options['ee_map_nav_display'] = isset($gmap['ee_map_nav_display']) && ! empty($gmap['ee_map_nav_display']) ? 'true' : $options['ee_map_nav_display'];
-                ;
+                $options['ee_map_height'] = isset($gmap['ee_map_height']) && ! empty($gmap['ee_map_height'])
+                    ? $gmap['ee_map_height']
+                    : $options['ee_map_height'];
 
-                $options['ee_map_nav_size'] = $details_page ? $map_cfg->event_details_nav_size : $map_cfg->event_list_nav_size;
-                $options['ee_map_nav_size'] =  isset($gmap['ee_map_nav_size']) && ! empty($gmap['ee_map_nav_size']) ? $gmap['ee_map_nav_size'] : $options['ee_map_nav_size'];
+                $options['ee_map_zoom'] = $details_page
+                    ? $map_cfg->event_details_map_zoom
+                    : $map_cfg->event_list_map_zoom;
 
-                $options['ee_map_type_control'] = $details_page ? $map_cfg->event_details_control_type : $map_cfg->event_list_control_type;
-                $options['ee_map_type_control'] =  isset($gmap['ee_map_type_control']) && ! empty($gmap['ee_map_type_control']) ? $gmap['ee_map_type_control'] : $options['ee_map_type_control'];
+                $options['ee_map_zoom'] = isset($gmap['ee_map_zoom']) && ! empty($gmap['ee_map_zoom'])
+                    ? $gmap['ee_map_zoom']
+                    : $options['ee_map_zoom'];
 
-                $options['ee_map_align'] = $details_page ? $map_cfg->event_details_map_align : $map_cfg->event_list_map_align;
-                $options['ee_map_align'] =  isset($gmap['ee_map_align']) && ! empty($gmap['ee_map_align']) ? $gmap['ee_map_align'] : $options['ee_map_align'];
+                $options['ee_map_nav_display'] = $details_page
+                    ? $map_cfg->event_details_display_nav
+                    : $map_cfg->event_list_display_nav;
 
-                $options['ee_static_url'] =  isset($gmap['ee_static_url']) && ! empty($gmap['ee_static_url']) ? (bool) absint($gmap['ee_static_url']) : $venue->google_map_link();
+                $options['ee_map_nav_display'] =
+                    isset($gmap['ee_map_nav_display']) && ! empty($gmap['ee_map_nav_display'])
+                        ? 'true'
+                        : $options['ee_map_nav_display'];
+
+                $options['ee_map_nav_size'] = $details_page
+                    ? $map_cfg->event_details_nav_size
+                    : $map_cfg->event_list_nav_size;
+
+                $options['ee_map_nav_size'] = isset($gmap['ee_map_nav_size']) && ! empty($gmap['ee_map_nav_size'])
+                    ? $gmap['ee_map_nav_size']
+                    : $options['ee_map_nav_size'];
+
+                $options['ee_map_type_control'] = $details_page
+                    ? $map_cfg->event_details_control_type
+                    : $map_cfg->event_list_control_type;
+
+                $options['ee_map_type_control'] =
+                    isset($gmap['ee_map_type_control']) && ! empty($gmap['ee_map_type_control'])
+                        ? $gmap['ee_map_type_control']
+                        : $options['ee_map_type_control'];
+
+                $options['ee_map_align'] = $details_page
+                    ? $map_cfg->event_details_map_align
+                    : $map_cfg->event_list_map_align;
+
+                $options['ee_map_align'] = isset($gmap['ee_map_align']) && ! empty($gmap['ee_map_align'])
+                    ? $gmap['ee_map_align']
+                    : $options['ee_map_align'];
+
+                $options['ee_static_url'] = isset($gmap['ee_static_url']) && ! empty($gmap['ee_static_url'])
+                    ? (bool) absint($gmap['ee_static_url'])
+                    : $venue->google_map_link();
 
                 return EEH_Maps::google_map($options);
             }
@@ -490,61 +554,82 @@ class EEH_Venue_View extends EEH_Base
         return '';
     }
 
+
     /**
      * Gets the HTML to display a static map of the venue
+     *
      * @param EE_Venue $venue
-     * @param array $atts like EEH_Maps::google_map_link
+     * @param array    $attributes like EEH_Maps::google_map_link
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function espresso_google_static_map(EE_Venue $venue, $atts = array())
+    public static function espresso_google_static_map(EE_Venue $venue, $attributes = [])
     {
-        $state = $venue->state_obj();
-        $country = $venue->country_obj();
-        $atts = shortcode_atts(
-            array(
-                    'id' => $venue->ID(),
-                    'address' => $venue->get('VNU_address'),
-                    'city' => $venue->get('VNU_city'),
-                    'state' => $state instanceof EE_State ? $state->name() : '',
-                    'zip' => $venue->get('VNU_zip'),
-                    'country' => $country instanceof EE_Country ? $country->name() : '',
-                    'type' => 'map',
-                    'map_w' => 200,
-                    'map_h' => 200
-                    ),
-            $atts
+        $state      = $venue->state_obj();
+        $country    = $venue->country_obj();
+        $attributes = shortcode_atts(
+            [
+                'id'      => $venue->ID(),
+                'address' => $venue->get('VNU_address'),
+                'city'    => $venue->get('VNU_city'),
+                'state'   => $state instanceof EE_State ? $state->name() : '',
+                'zip'     => $venue->get('VNU_zip'),
+                'country' => $country instanceof EE_Country ? $country->name() : '',
+                'type'    => 'map',
+                'map_w'   => 200,
+                'map_h'   => 200,
+            ],
+            $attributes
         );
-        return EEH_Maps::google_map_link($atts);
+        return EEH_Maps::google_map_link($attributes);
     }
-
 
 
     /**
      *    edit_venue_link
      *
      * @access    public
-     * @param int $VNU_ID
+     * @param int    $VNU_ID
      * @param string $link
      * @param string $before
      * @param string $after
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function edit_venue_link($VNU_ID = 0, $link = '', $before = '<p class="edit-venue-lnk small-txt">', $after = '</p>')
-    {
+    public static function edit_venue_link(
+        $VNU_ID = 0,
+        $link = '',
+        $before = '<p class="edit-venue-lnk small-txt">',
+        $after = '</p>'
+    ) {
         $venue = EEH_Venue_View::get_venue($VNU_ID);
         if ($venue instanceof EE_Venue) {
             // can the user edit this post ?
             if (current_user_can('edit_post', $venue->ID())) {
                 // set link text
-                $link = ! empty($link) ? $link : __('edit this venue', 'event_espresso');
+                $link = ! empty($link) ? $link : esc_html__('edit this venue', 'event_espresso');
                 // generate nonce
                 $nonce = wp_create_nonce('edit_nonce');
                 // generate url to venue editor for this venue
-                $url = add_query_arg(array( 'page' => 'espresso_venues', 'action' => 'edit', 'post' => $venue->ID(), 'edit_nonce' => $nonce ), admin_url('admin.php'));
+                $url =
+                    add_query_arg(
+                        [
+                            'page'       => 'espresso_venues',
+                            'action'     => 'edit',
+                            'post'       => $venue->ID(),
+                            'edit_nonce' => $nonce,
+                        ],
+                        admin_url('admin.php')
+                    );
                 // get edit CPT text
                 $post_type_obj = get_post_type_object('espresso_venues');
                 // build final link html
-                $link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr($post_type_obj->labels->edit_item) . '">' . $link . '</a>';
+                $link =
+                    '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr(
+                        $post_type_obj->labels->edit_item
+                    ) . '">' . $link . '</a>';
                 // put it all together
                 return $before . apply_filters('edit_post_link', $link, $venue->ID()) . $after;
             }

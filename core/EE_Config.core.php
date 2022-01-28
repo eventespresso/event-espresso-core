@@ -1,7 +1,12 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\RequestParams;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 
 /**
@@ -455,7 +460,9 @@ final class EE_Config implements ResettableInterface
     public function update_espresso_config($add_success = false, $add_error = true)
     {
         // don't allow config updates during WP heartbeats
-        if (\EE_Registry::instance()->REQ->get('action', '') === 'heartbeat') {
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        if ($request->isWordPressHeartbeat()) {
             return false;
         }
         // commented out the following re: https://events.codebasehq.com/projects/event-espresso/tickets/8197
@@ -493,7 +500,7 @@ final class EE_Config implements ResettableInterface
         if ($saved) {
             if ($add_success) {
                 EE_Error::add_success(
-                    __('The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso'),
+                    esc_html__('The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso'),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
@@ -503,7 +510,7 @@ final class EE_Config implements ResettableInterface
         } else {
             if ($add_error) {
                 EE_Error::add_error(
-                    __('The Event Espresso Configuration Settings were not updated.', 'event_espresso'),
+                    esc_html__('The Event Espresso Configuration Settings were not updated.', 'event_espresso'),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
@@ -543,7 +550,7 @@ final class EE_Config implements ResettableInterface
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
-                                        __(
+                                        esc_html__(
                                             'No configuration section has been provided while attempting to save "%s".',
                                             'event_espresso'
                                         ),
@@ -560,7 +567,7 @@ final class EE_Config implements ResettableInterface
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
-                                        __('The "%s" configuration section does not exist.', 'event_espresso'),
+                                        esc_html__('The "%s" configuration section does not exist.', 'event_espresso'),
                                         $section
                                     )
                                 );
@@ -576,7 +583,7 @@ final class EE_Config implements ResettableInterface
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
-                                        __(
+                                        esc_html__(
                                             'The "%s" configuration settings have not been formatted correctly.',
                                             'event_espresso'
                                         ),
@@ -592,7 +599,7 @@ final class EE_Config implements ResettableInterface
                         if (empty($name)) {
                             if ($display_errors) {
                                 throw new EE_Error(
-                                    __(
+                                    esc_html__(
                                         'No name has been provided for the specific configuration section.',
                                         'event_espresso'
                                     )
@@ -606,7 +613,7 @@ final class EE_Config implements ResettableInterface
                         if (empty($config_class)) {
                             if ($display_errors) {
                                 throw new EE_Error(
-                                    __(
+                                    esc_html__(
                                         'No class name has been provided for the specific configuration section.',
                                         'event_espresso'
                                     )
@@ -621,7 +628,7 @@ final class EE_Config implements ResettableInterface
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
-                                        __(
+                                        esc_html__(
                                             'The "%s" class does not exist. Please ensure that an autoloader has been set for it.',
                                             'event_espresso'
                                         ),
@@ -638,7 +645,7 @@ final class EE_Config implements ResettableInterface
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
-                                        __('No configuration has been set for "%1$s->%2$s".', 'event_espresso'),
+                                        esc_html__('No configuration has been set for "%1$s->%2$s".', 'event_espresso'),
                                         $section,
                                         $name
                                     )
@@ -656,7 +663,7 @@ final class EE_Config implements ResettableInterface
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
-                                        __(
+                                        esc_html__(
                                             'The configuration for "%1$s->%2$s" is not of the "%3$s" class.',
                                             'event_espresso'
                                         ),
@@ -675,7 +682,7 @@ final class EE_Config implements ResettableInterface
                             if ($display_errors) {
                                 throw new EE_Error(
                                     sprintf(
-                                        __('The "%s" class is not an instance of EE_Config_Base.', 'event_espresso'),
+                                        esc_html__('The "%s" class is not an instance of EE_Config_Base.', 'event_espresso'),
                                         print_r($config_obj, true)
                                     )
                                 );
@@ -764,7 +771,7 @@ final class EE_Config implements ResettableInterface
                 return $this->{$section}->{$name};
             } else {
                 EE_Error::add_error(
-                    sprintf(__('The "%s" could not be saved to the database.', 'event_espresso'), $config_class),
+                    sprintf(esc_html__('The "%s" could not be saved to the database.', 'event_espresso'), $config_class),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
@@ -789,7 +796,9 @@ final class EE_Config implements ResettableInterface
     public function update_config($section = '', $name = '', $config_obj = '', $throw_errors = true)
     {
         // don't allow config updates during WP heartbeats
-        if (\EE_Registry::instance()->REQ->get('action', '') === 'heartbeat') {
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        if ($request->isWordPressHeartbeat()) {
             return false;
         }
         $config_obj = maybe_unserialize($config_obj);
@@ -830,7 +839,7 @@ final class EE_Config implements ResettableInterface
             } elseif ($throw_errors) {
                 EE_Error::add_error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The "%1$s" object stored at"%2$s" was not successfully updated in the database.',
                             'event_espresso'
                         ),
@@ -884,7 +893,7 @@ final class EE_Config implements ResettableInterface
             return $this->{$section}->{$name};
         } else {
             EE_Error::add_error(
-                sprintf(__('The "%s" could not be retrieved from the database.', 'event_espresso'), $config_class),
+                sprintf(esc_html__('The "%s" could not be retrieved from the database.', 'event_espresso'), $config_class),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -921,12 +930,11 @@ final class EE_Config implements ResettableInterface
     {
         if (EE_Config::logging_enabled() && ! empty($config_option_name)) {
             $config_log = get_option(EE_Config::LOG_NAME, array());
-            // copy incoming $_REQUEST and sanitize it so we can save it
-            $_request = $_REQUEST;
-            array_walk_recursive($_request, 'sanitize_text_field');
+            /** @var RequestParams $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestParams::class);
             $config_log[ (string) microtime(true) ] = array(
                 'config_name' => $config_option_name,
-                'request'     => $_request,
+                'request'     => $request->requestParams(),
             );
             update_option(EE_Config::LOG_NAME, $config_log);
         }
@@ -966,7 +974,6 @@ final class EE_Config implements ResettableInterface
         if (! $page_for_posts) {
             return 'posts';
         }
-        /** @type WPDB $wpdb */
         global $wpdb;
         $SQL = "SELECT post_name from $wpdb->posts WHERE post_type='posts' OR post_type='page' AND post_status='publish' AND ID=%d";
         return $wpdb->get_var($wpdb->prepare($SQL, $page_for_posts));
@@ -1081,7 +1088,7 @@ final class EE_Config implements ResettableInterface
         // does the widget exist ?
         if (! is_readable($widget_path . '/' . $widget_class . $widget_ext)) {
             $msg = sprintf(
-                __(
+                esc_html__(
                     'The requested %s widget file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s',
                     'event_espresso'
                 ),
@@ -1095,7 +1102,7 @@ final class EE_Config implements ResettableInterface
         require_once($widget_path . '/' . $widget_class . $widget_ext);
         // verify that class exists
         if (! class_exists($widget_class)) {
-            $msg = sprintf(__('The requested %s widget class does not exist.', 'event_espresso'), $widget_class);
+            $msg = sprintf(esc_html__('The requested %s widget class does not exist.', 'event_espresso'), $widget_class);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return;
         }
@@ -1183,7 +1190,7 @@ final class EE_Config implements ResettableInterface
         // does the module exist ?
         if (! is_readable($module_path . '/' . $module_class . $module_ext)) {
             $msg = sprintf(
-                __(
+                esc_html__(
                     'The requested %s module file could not be found or is not readable due to file permissions.',
                     'event_espresso'
                 ),
@@ -1196,7 +1203,7 @@ final class EE_Config implements ResettableInterface
         require_once($module_path . $module_class . $module_ext);
         // verify that class exists
         if (! class_exists($module_class)) {
-            $msg = sprintf(__('The requested %s module class does not exist.', 'event_espresso'), $module_class);
+            $msg = sprintf(esc_html__('The requested %s module class does not exist.', 'event_espresso'), $module_class);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
@@ -1254,18 +1261,18 @@ final class EE_Config implements ResettableInterface
         $module = str_replace('EED_', '', $module);
         $module_class = 'EED_' . $module;
         if (! isset(EE_Registry::instance()->modules->{$module_class})) {
-            $msg = sprintf(__('The module %s has not been registered.', 'event_espresso'), $module);
+            $msg = sprintf(esc_html__('The module %s has not been registered.', 'event_espresso'), $module);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
         if (empty($route)) {
-            $msg = sprintf(__('No route has been supplied.', 'event_espresso'), $route);
+            $msg = sprintf(esc_html__('No route has been supplied.', 'event_espresso'), $route);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
         if (! method_exists('EED_' . $module, $method_name)) {
             $msg = sprintf(
-                __('A valid class method for the %s route has not been supplied.', 'event_espresso'),
+                esc_html__('A valid class method for the %s route has not been supplied.', 'event_espresso'),
                 $route
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
@@ -1323,21 +1330,21 @@ final class EE_Config implements ResettableInterface
         do_action('AHEE__EE_Config__register_forward', $route, $status, $forward);
         if (! isset(EE_Config::$_module_route_map[ $key ][ $route ]) || empty($route)) {
             $msg = sprintf(
-                __('The module route %s for this forward has not been registered.', 'event_espresso'),
+                esc_html__('The module route %s for this forward has not been registered.', 'event_espresso'),
                 $route
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
         if (empty($forward)) {
-            $msg = sprintf(__('No forwarding route has been supplied.', 'event_espresso'), $route);
+            $msg = sprintf(esc_html__('No forwarding route has been supplied.', 'event_espresso'), $route);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
         if (is_array($forward)) {
             if (! isset($forward[1])) {
                 $msg = sprintf(
-                    __('A class method for the %s forwarding route has not been supplied.', 'event_espresso'),
+                    esc_html__('A class method for the %s forwarding route has not been supplied.', 'event_espresso'),
                     $route
                 );
                 EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
@@ -1345,7 +1352,7 @@ final class EE_Config implements ResettableInterface
             }
             if (! method_exists($forward[0], $forward[1])) {
                 $msg = sprintf(
-                    __('The class method %s for the %s forwarding route is in invalid.', 'event_espresso'),
+                    esc_html__('The class method %s for the %s forwarding route is in invalid.', 'event_espresso'),
                     $forward[1],
                     $route
                 );
@@ -1354,7 +1361,7 @@ final class EE_Config implements ResettableInterface
             }
         } elseif (! function_exists($forward)) {
             $msg = sprintf(
-                __('The function %s for the %s forwarding route is in invalid.', 'event_espresso'),
+                esc_html__('The function %s for the %s forwarding route is in invalid.', 'event_espresso'),
                 $forward,
                 $route
             );
@@ -1408,7 +1415,7 @@ final class EE_Config implements ResettableInterface
         do_action('AHEE__EE_Config__register_view__begin', $route, $status, $view);
         if (! isset(EE_Config::$_module_route_map[ $key ][ $route ]) || empty($route)) {
             $msg = sprintf(
-                __('The module route %s for this view has not been registered.', 'event_espresso'),
+                esc_html__('The module route %s for this view has not been registered.', 'event_espresso'),
                 $route
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
@@ -1416,7 +1423,7 @@ final class EE_Config implements ResettableInterface
         }
         if (! is_readable($view)) {
             $msg = sprintf(
-                __(
+                esc_html__(
                     'The %s view file could not be found or is not readable due to file permissions.',
                     'event_espresso'
                 ),
@@ -1472,10 +1479,9 @@ final class EE_Config implements ResettableInterface
      */
     public static function getLegacyShortcodesManager()
     {
-
         if (! EE_Config::instance()->legacy_shortcodes_manager instanceof LegacyShortcodesManager) {
-            EE_Config::instance()->legacy_shortcodes_manager = new LegacyShortcodesManager(
-                EE_Registry::instance()
+            EE_Config::instance()->legacy_shortcodes_manager = LoaderFactory::getLoader()->getShared(
+                LegacyShortcodesManager::class
             );
         }
         return EE_Config::instance()->legacy_shortcodes_manager;
@@ -1493,7 +1499,7 @@ final class EE_Config implements ResettableInterface
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            __(
+            esc_html__(
                 'Usage is deprecated. Use \EventEspresso\core\services\shortcodes\LegacyShortcodesManager::registerShortcode() as direct replacement, or better yet, please see the new \EventEspresso\core\services\shortcodes\ShortcodesManager class.',
                 'event_espresso'
             ),
@@ -1516,14 +1522,14 @@ class EE_Config_Base
      *
      * @param string $property property name (checks to see if exists).
      * @return mixed if a detected type found return the escaped value, otherwise just the raw value is returned.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_pretty($property)
     {
         if (! property_exists($this, $property)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         '%1$s::get_pretty() has been called with the property %2$s which does not exist on the %1$s config class.',
                         'event_espresso'
                     ),
@@ -1704,7 +1710,7 @@ class EE_Core_Config extends EE_Config_Base
         $this->thank_you_page_url = '';
         $this->cancel_page_url = '';
         // cpt slugs
-        $this->event_cpt_slug = __('events', 'event_espresso');
+        $this->event_cpt_slug = esc_html__('events', 'event_espresso');
         // ueip constant check
         if (defined('EE_DISABLE_UXIP') && EE_DISABLE_UXIP) {
             $this->ee_ueip_optin = false;
@@ -1885,7 +1891,7 @@ class EE_Core_Config extends EE_Config_Base
      *
      * @param string $property property name (checks to see if exists).
      * @return mixed if a detected type found return the escaped value, otherwise just the raw value is returned.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_pretty($property)
     {
@@ -2115,11 +2121,12 @@ class EE_Currency_Config extends EE_Config_Base
      *
      * @access    public
      * @param string $CNT_ISO
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct($CNT_ISO = '')
     {
-        /** @var \EventEspresso\core\services\database\TableAnalysis $table_analysis */
+        /** @var TableAnalysis $table_analysis */
         $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
         // get country code from organization settings or use default
         $ORG_CNT = isset(EE_Registry::instance()->CFG->organization)
@@ -2154,8 +2161,8 @@ class EE_Currency_Config extends EE_Config_Base
         if (empty($this->code)) {
             // set default currency settings
             $this->code = 'USD';    // currency code: USD, CAD, EUR
-            $this->name = __('Dollar', 'event_espresso');    // Dollar
-            $this->plural = __('Dollars', 'event_espresso');    // Dollars
+            $this->name = esc_html__('Dollar', 'event_espresso');    // Dollar
+            $this->plural = esc_html__('Dollars', 'event_espresso');    // Dollars
             $this->sign = '$';    // currency sign: $
             $this->sign_b4 = true;    // currency sign before or after: $TRUE  or  FALSE$
             $this->dec_plc = 2;    // decimal places: 2 = 0.00  3 = 0.000
@@ -2416,8 +2423,8 @@ class EE_Registration_Config extends EE_Config_Base
      * constructed because that happens before we can get the privacy policy page's permalink.
      *
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function setDefaultCheckboxLabelText()
     {
@@ -3080,7 +3087,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $this->show_ticket_sale_columns = true;
         $this->show_ticket_details = true;
         $this->show_expired_tickets = true;
-        $this->show_datetime_selector = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
+        $this->show_datetime_selector = EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
         $this->datetime_selector_threshold = 3;
         $this->datetime_selector_max_checked = 10;
     }
@@ -3096,9 +3103,9 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     {
         // if the settings are NOT: don't show OR below threshold, THEN active = true
         return ! (
-            $this->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
+            $this->getShowDatetimeSelector() === EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
             || (
-                $this->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR
+                $this->getShowDatetimeSelector() === EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR
                 && count($datetimes) < $this->getDatetimeSelectorThreshold()
             )
         );
@@ -3122,15 +3129,15 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     {
         return $keys_only
             ? array(
-                \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
-                \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR,
+                EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
+                EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR,
             )
             : array(
-                \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR => esc_html__(
+                EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR => esc_html__(
                     'Do not show date & time filter',
                     'event_espresso'
                 ),
-                \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR  => esc_html__(
+                EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR  => esc_html__(
                     'Maybe show date & time filter',
                     'event_espresso'
                 ),
@@ -3149,7 +3156,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
             true
         )
             ? $show_datetime_selector
-            : \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
+            : EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
     }
 
 

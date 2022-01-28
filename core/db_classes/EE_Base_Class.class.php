@@ -1254,7 +1254,7 @@ abstract class EE_Base_Class
      */
     public function e($field_name, $extra_cache_ref = null)
     {
-        echo $this->get_pretty($field_name, $extra_cache_ref);
+        echo $this->get_pretty($field_name, $extra_cache_ref); // sanitized
     }
 
 

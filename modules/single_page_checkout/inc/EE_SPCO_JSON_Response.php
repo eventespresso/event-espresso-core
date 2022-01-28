@@ -411,7 +411,7 @@ class EE_SPCO_JSON_Response
 
     public function echoAndExit()
     {
-        echo $this;
+        echo $this; // already escaped
         exit();
     }
 }

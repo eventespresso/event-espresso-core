@@ -56,7 +56,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
             $this->_subsections = array_merge($this->_subsections, $this->_extra_meta_inputs);
         }
         $this->_subsections['PMD_button_url'] = new EE_Admin_File_Uploader_Input(
-            array('html_label_text' => __('Button URL', 'event_espresso'))
+            array('html_label_text' => esc_html__('Button URL', 'event_espresso'))
         );
         $this->_subsections['PMD_scope'] = new EE_Checkbox_Multi_Input(
             EEM_Payment_Method::instance()->scopes(),
@@ -69,13 +69,13 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
         $this->_subsections['Currency'] = new EE_Select_Multi_Model_Input(
             EEM_Currency::instance()->get_all_currencies_usable_by($this->_payment_method_type),
             array(
-                'html_label_text' => __('Currencies Supported', 'event_espresso'),
+                'html_label_text' => esc_html__('Currencies Supported', 'event_espresso'),
                 'required'        => true,
             )
         );
         $this->_subsections['PMD_order'] = new EE_Text_Input(array(
-            'html_label_text'        => __('Order', 'event_espresso'),
-            'html_help_text'         => __('Lowest numbers will be shown first', 'event_espresso'),
+            'html_label_text'        => esc_html__('Order', 'event_espresso'),
+            'html_help_text'         => esc_html__('Lowest numbers will be shown first', 'event_espresso'),
             'normalization_strategy' => new EE_Int_Normalization(),
             'validation_strategies'  => array(
                 new EE_Int_Validation_Strategy(),
@@ -86,7 +86,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
         parent::__construct($options_array);
         $debug_mode = isset($this->_subsections['PMD_debug_mode']) ? $this->_subsections['PMD_debug_mode'] : null;
         if ($debug_mode instanceof EE_Form_Input_Base) {
-            $debug_mode->set_html_help_text(__(
+            $debug_mode->set_html_help_text(esc_html__(
                 'This payment method has a Sandbox Server (also known as Testing Server, Development Server, Quality Assurance Server, etc). While in debug mode and using this sandbox server, real payments will not be processed.',
                 'event_espresso'
             ));
@@ -105,7 +105,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
     public function _construct_finalize($parent_form_section, $name)
     {
         if (! $this->_payment_method_type instanceof EE_PMT_Base) {
-            throw new EE_Error(sprintf(__(
+            throw new EE_Error(sprintf(esc_html__(
                 'Payment Method forms must have set their payment method type BEFORE calling _construct_finalize',
                 'event_espresso'
             )));
@@ -127,7 +127,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
     public function set_payment_method_type($payment_method_type)
     {
         if (! $payment_method_type instanceof EE_PMT_Base) {
-            throw new EE_Error(sprintf(__(
+            throw new EE_Error(sprintf(esc_html__(
                 "Payment Method forms MUST set a payment method type by using _set_payment_method_type",
                 "event_espresso"
             )));

@@ -683,12 +683,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             $beginning_date = new DateTime("now " . $period, $DateTimeZone);
             $ending_date = new DateTime("now", $DateTimeZone);
             $subtitle = sprintf(
-                _x('For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso'),
+                wp_strip_all_tags(
+                    _x('For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso')
+                ),
                 $beginning_date->format('Y-m-d'),
                 $ending_date->format('Y-m-d')
             );
         }
-        $report_title = esc_html__('Total Registrations per Day', 'event_espresso');
+        $report_title = wp_strip_all_tags(__('Total Registrations per Day', 'event_espresso'));
         $report_params = array(
             'title'     => $report_title,
             'subtitle'  => $subtitle,
@@ -696,9 +698,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'regs'      => $regs,
             'noResults' => empty($regs),
             'noRegsMsg' => sprintf(
-                esc_html__(
-                    '%sThere are currently no registration records in the last month for this report.%s',
-                    'event_espresso'
+                wp_strip_all_tags(
+                    __(
+                        '%sThere are currently no registration records in the last month for this report.%s',
+                        'event_espresso'
+                    )
                 ),
                 '<h2>' . $report_title . '</h2><p>',
                 '</p>'
@@ -756,12 +760,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             $beginning_date = new DateTime("now " . $period, $DateTimeZone);
             $ending_date = new DateTime("now", $DateTimeZone);
             $subtitle = sprintf(
-                _x('For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso'),
+                wp_strip_all_tags(
+                    _x('For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso')
+                ),
                 $beginning_date->format('Y-m-d'),
                 $ending_date->format('Y-m-d')
             );
         }
-        $report_title = esc_html__('Total Registrations per Event', 'event_espresso');
+        $report_title = wp_strip_all_tags(__('Total Registrations per Event', 'event_espresso'));
         $report_params = array(
             'title'     => $report_title,
             'subtitle'  => $subtitle,
@@ -769,9 +775,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'regs'      => $regs,
             'noResults' => empty($regs),
             'noRegsMsg' => sprintf(
-                esc_html__(
-                    '%sThere are currently no registration records in the last month for this report.%s',
-                    'event_espresso'
+                wp_strip_all_tags(
+                    __(
+                        '%sThere are currently no registration records in the last month for this report.%s',
+                        'event_espresso'
+                    )
                 ),
                 '<h2>' . $report_title . '</h2><p>',
                 '</p>'
@@ -1043,13 +1051,13 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         }
         if ($errors > 0) {
             EE_Error::add_error(
-                sprintf(__('There were %d records that did not delete successfully', 'event_espresso'), $errors),
+                sprintf(esc_html__('There were %d records that did not delete successfully', 'event_espresso'), $errors),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
             );
         } else {
-            EE_Error::add_success(__('Records were successfully deleted', 'event_espresso'));
+            EE_Error::add_success(esc_html__('Records were successfully deleted', 'event_espresso'));
         }
         $this->_redirect_after_action(false, '', '', $query_args, true);
     }
@@ -1080,7 +1088,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                     __LINE__
                 );
             } else {
-                EE_Error::add_success(__('Check-In record successfully deleted', 'event_espresso'));
+                EE_Error::add_success(esc_html__('Check-In record successfully deleted', 'event_espresso'));
             }
         } else {
             EE_Error::add_error(

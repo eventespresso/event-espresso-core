@@ -85,7 +85,7 @@ abstract class EE_Data_Migration_Class_Base
         if ($this->_pretty_name === null) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Please give a pretty name to the migration script stage %s by assigning the property _pretty_name in the constructor",
                         "event_espresso"
                     ),
@@ -134,7 +134,7 @@ abstract class EE_Data_Migration_Class_Base
         if ($this->_status === null) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Trying to get status of Migration class %s, but it has not been initialized yet. It should be set in the constructor.",
                         "event_espresso"
                     ),
@@ -225,7 +225,7 @@ abstract class EE_Data_Migration_Class_Base
     {
         EE_Error::doing_it_wrong(
             'is_borked',
-            __(
+            esc_html__(
                 'The cheeky "is_borked" method had been replaced with the more proper "is_broken"',
                 'event_espresso'
             ),
@@ -250,7 +250,7 @@ abstract class EE_Data_Migration_Class_Base
     {
         EE_Error::doing_it_wrong(
             'is_borked',
-            __(
+            esc_html__(
                 'The cheeky "is_borked" method had been replaced with the more proper "is_broken"',
                 'event_espresso'
             ),
@@ -293,7 +293,7 @@ abstract class EE_Data_Migration_Class_Base
     public function reattempt()
     {
         $this->_status = EE_Data_Migration_Manager::status_continue;
-        $this->add_error(__('Reattempt migration', 'event_espresso'), true);
+        $this->add_error(esc_html__('Reattempt migration', 'event_espresso'), true);
     }
 
     /**
@@ -348,7 +348,7 @@ abstract class EE_Data_Migration_Class_Base
             $new_columns_and_values_for_string[] = " $column => $value (" . $data_types[ $count++ ] . ")";
         }
         return sprintf(
-            __(
+            esc_html__(
                 'Received error "%6$s" inserting row %5$s %1$s %5$s into table %2$s.%5$s Data used was %5$s %3$s %5$s from table %4$s.',
                 'event_espresso'
             ),
@@ -395,7 +395,7 @@ abstract class EE_Data_Migration_Class_Base
         } else {
             throw new EE_Error(
                 sprintf(
-                    __('Table manager on migration class %1$s is not set properly.', 'event_espresso'),
+                    esc_html__('Table manager on migration class %1$s is not set properly.', 'event_espresso'),
                     get_class($this)
                 )
             );
@@ -415,7 +415,7 @@ abstract class EE_Data_Migration_Class_Base
         } else {
             throw new EE_Error(
                 sprintf(
-                    __('Table analysis class on migration class %1$s is not set properly.', 'event_espresso'),
+                    esc_html__('Table analysis class on migration class %1$s is not set properly.', 'event_espresso'),
                     get_class($this)
                 )
             );

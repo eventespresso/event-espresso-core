@@ -185,10 +185,10 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
         $payment->set_redirect_args($redirect_args);
         // log the results
         $this->log(
-            array(
+            [
                 'message'     => esc_html__('PayPal payment request initiated.', 'event_espresso'),
                 'transaction' => $payment->transaction()->model_field_array(),
-            ),
+			],
             $payment
         );
         return $payment;

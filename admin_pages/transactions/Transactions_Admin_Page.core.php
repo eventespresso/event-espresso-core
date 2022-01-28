@@ -46,9 +46,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _init_page_props()
     {
-        $this->page_slug = TXN_PG_SLUG;
-        $this->page_label = esc_html__('Transactions', 'event_espresso');
-        $this->_admin_base_url = TXN_ADMIN_URL;
+        $this->page_slug        = TXN_PG_SLUG;
+        $this->page_label       = esc_html__('Transactions', 'event_espresso');
+        $this->_admin_base_url  = TXN_ADMIN_URL;
         $this->_admin_base_path = TXN_ADMIN;
     }
 
@@ -60,9 +60,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _ajax_hooks()
     {
-        add_action('wp_ajax_espresso_apply_payment', array($this, 'apply_payments_or_refunds'));
-        add_action('wp_ajax_espresso_apply_refund', array($this, 'apply_payments_or_refunds'));
-        add_action('wp_ajax_espresso_delete_payment', array($this, 'delete_payment'));
+        add_action('wp_ajax_espresso_apply_payment', [$this, 'apply_payments_or_refunds']);
+        add_action('wp_ajax_espresso_apply_refund', [$this, 'apply_payments_or_refunds']);
+        add_action('wp_ajax_espresso_delete_payment', [$this, 'delete_payment']);
     }
 
 
@@ -74,13 +74,13 @@ class Transactions_Admin_Page extends EE_Admin_Page
     protected function _define_page_props()
     {
         $this->_admin_page_title = $this->page_label;
-        $this->_labels = array(
-            'buttons' => array(
+        $this->_labels           = [
+            'buttons' => [
                 'add'    => esc_html__('Add New Transaction', 'event_espresso'),
                 'edit'   => esc_html__('Edit Transaction', 'event_espresso'),
                 'delete' => esc_html__('Delete Transaction', 'event_espresso'),
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -104,76 +104,76 @@ class Transactions_Admin_Page extends EE_Admin_Page
             ? $this->_req_data['TXN_ID']
             : 0;
 
-        $this->_page_routes = array(
+        $this->_page_routes = [
 
-            'default' => array(
+            'default' => [
                 'func'       => '_transactions_overview_list_table',
                 'capability' => 'ee_read_transactions',
-            ),
+            ],
 
-            'view_transaction' => array(
+            'view_transaction' => [
                 'func'       => '_transaction_details',
                 'capability' => 'ee_read_transaction',
                 'obj_id'     => $txn_id,
-            ),
+            ],
 
-            'send_payment_reminder' => array(
+            'send_payment_reminder' => [
                 'func'       => '_send_payment_reminder',
                 'noheader'   => true,
                 'capability' => 'ee_send_message',
-            ),
+            ],
 
-            'espresso_apply_payment' => array(
+            'espresso_apply_payment' => [
                 'func'       => 'apply_payments_or_refunds',
                 'noheader'   => true,
                 'capability' => 'ee_edit_payments',
-            ),
+            ],
 
-            'espresso_apply_refund' => array(
+            'espresso_apply_refund' => [
                 'func'       => 'apply_payments_or_refunds',
                 'noheader'   => true,
                 'capability' => 'ee_edit_payments',
-            ),
+            ],
 
-            'espresso_delete_payment' => array(
+            'espresso_delete_payment' => [
                 'func'       => 'delete_payment',
                 'noheader'   => true,
                 'capability' => 'ee_delete_payments',
-            ),
+            ],
 
-            'espresso_recalculate_line_items' => array(
+            'espresso_recalculate_line_items' => [
                 'func'       => 'recalculateLineItems',
                 'noheader'   => true,
                 'capability' => 'ee_edit_payments',
-            ),
+            ],
 
-        );
+        ];
     }
 
 
     protected function _set_page_config()
     {
-        $this->_page_config = array(
-            'default'          => array(
-                'nav'           => array(
+        $this->_page_config = [
+            'default'          => [
+                'nav'           => [
                     'label' => esc_html__('Overview', 'event_espresso'),
                     'order' => 10,
-                ),
+                ],
                 'list_table'    => 'EE_Admin_Transactions_List_Table',
-                'help_tabs'     => array(
-                    'transactions_overview_help_tab'                       => array(
+                'help_tabs'     => [
+                    'transactions_overview_help_tab'                       => [
                         'title'    => esc_html__('Transactions Overview', 'event_espresso'),
                         'filename' => 'transactions_overview',
-                    ),
-                    'transactions_overview_table_column_headings_help_tab' => array(
+                    ],
+                    'transactions_overview_table_column_headings_help_tab' => [
                         'title'    => esc_html__('Transactions Table Column Headings', 'event_espresso'),
                         'filename' => 'transactions_overview_table_column_headings',
-                    ),
-                    'transactions_overview_views_filters_help_tab'         => array(
+                    ],
+                    'transactions_overview_views_filters_help_tab'         => [
                         'title'    => esc_html__('Transaction Views & Filters & Search', 'event_espresso'),
                         'filename' => 'transactions_overview_views_filters_search',
-                    ),
-                ),
+                    ],
+                ],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour'     => array('Transactions_Overview_Help_Tour'),
                 /**
@@ -182,42 +182,42 @@ class Transactions_Admin_Page extends EE_Admin_Page
                  */
                 // 'qtips' => array( 'Transactions_List_Table_Tips' ),
                 'require_nonce' => false,
-            ),
-            'view_transaction' => array(
-                'nav'       => array(
+            ],
+            'view_transaction' => [
+                'nav'       => [
                     'label'      => esc_html__('View Transaction', 'event_espresso'),
                     'order'      => 5,
                     'url'        => isset($this->_req_data['TXN_ID'])
-                        ? add_query_arg(array('TXN_ID' => $this->_req_data['TXN_ID']), $this->_current_page_view_url)
+                        ? add_query_arg(['TXN_ID' => $this->_req_data['TXN_ID']], $this->_current_page_view_url)
                         : $this->_admin_base_url,
                     'persistent' => false,
-                ),
-                'help_tabs' => array(
-                    'transactions_view_transaction_help_tab'                                              => array(
+                ],
+                'help_tabs' => [
+                    'transactions_view_transaction_help_tab'                                              => [
                         'title'    => esc_html__('View Transaction', 'event_espresso'),
                         'filename' => 'transactions_view_transaction',
-                    ),
-                    'transactions_view_transaction_transaction_details_table_help_tab'                    => array(
+                    ],
+                    'transactions_view_transaction_transaction_details_table_help_tab'                    => [
                         'title'    => esc_html__('Transaction Details Table', 'event_espresso'),
                         'filename' => 'transactions_view_transaction_transaction_details_table',
-                    ),
-                    'transactions_view_transaction_attendees_registered_help_tab'                         => array(
+                    ],
+                    'transactions_view_transaction_attendees_registered_help_tab'                         => [
                         'title'    => esc_html__('Attendees Registered', 'event_espresso'),
                         'filename' => 'transactions_view_transaction_attendees_registered',
-                    ),
-                    'transactions_view_transaction_views_primary_registrant_billing_information_help_tab' => array(
+                    ],
+                    'transactions_view_transaction_views_primary_registrant_billing_information_help_tab' => [
                         'title'    => esc_html__('Primary Registrant & Billing Information', 'event_espresso'),
                         'filename' => 'transactions_view_transaction_primary_registrant_billing_information',
-                    ),
-                ),
-                'qtips'     => array('Transaction_Details_Tips'),
+                    ],
+                ],
+                'qtips'     => ['Transaction_Details_Tips'],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour' => array('Transaction_Details_Help_Tour'),
-                'metaboxes' => array('_transaction_details_metaboxes'),
+                'metaboxes' => ['_transaction_details_metaboxes'],
 
                 'require_nonce' => false,
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -261,14 +261,14 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['error_occurred'] = esc_html__(
+        EE_Registry::$i18n_js_strings['error_occurred']          = esc_html__(
             'An error occurred! Please refresh the page and try again.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['txn_status_array'] = self::$_txn_status;
-        EE_Registry::$i18n_js_strings['pay_status_array'] = self::$_pay_status;
-        EE_Registry::$i18n_js_strings['payments_total'] = esc_html__('Payments Total', 'event_espresso');
-        EE_Registry::$i18n_js_strings['transaction_overpaid'] = esc_html__(
+        EE_Registry::$i18n_js_strings['txn_status_array']        = self::$_txn_status;
+        EE_Registry::$i18n_js_strings['pay_status_array']        = self::$_pay_status;
+        EE_Registry::$i18n_js_strings['payments_total']          = esc_html__('Payments Total', 'event_espresso');
+        EE_Registry::$i18n_js_strings['transaction_overpaid']    = esc_html__(
             'This transaction has been overpaid ! Payments Total',
             'event_espresso'
         );
@@ -329,7 +329,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     private function _get_payment_status_array()
     {
-        self::$_pay_status = EEM_Payment::instance()->status_array(true);
+        self::$_pay_status                      = EEM_Payment::instance()->status_array(true);
         $this->_template_args['payment_status'] = self::$_pay_status;
     }
 
@@ -361,7 +361,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         wp_register_style(
             'espresso_txn',
             TXN_ASSETS_URL . 'espresso_transactions_admin.css',
-            array(),
+            [],
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_style('espresso_txn');
@@ -369,7 +369,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         wp_register_script(
             'espresso_txn',
             TXN_ASSETS_URL . 'espresso_transactions_admin.js',
-            array(
+            [
                 'ee_admin_js',
                 'ee-datepicker',
                 'jquery-ui-datepicker',
@@ -377,7 +377,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'ee-dialog',
                 'ee-accounting',
                 'ee-serialize-full-array',
-            ),
+            ],
             EVENT_ESPRESSO_VERSION,
             true
         );
@@ -419,48 +419,48 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _set_list_table_views_default()
     {
-        $this->_views = array(
-            'all'        => array(
+        $this->_views = [
+            'all'        => [
                 'slug'  => 'all',
                 'label' => esc_html__('View All Transactions', 'event_espresso'),
                 'count' => 0,
-            ),
-            'abandoned'  => array(
+            ],
+            'abandoned'  => [
                 'slug'  => 'abandoned',
                 'label' => esc_html__('Abandoned Transactions', 'event_espresso'),
                 'count' => 0,
-            ),
-            'incomplete' => array(
+            ],
+            'incomplete' => [
                 'slug'  => 'incomplete',
                 'label' => esc_html__('Incomplete Transactions', 'event_espresso'),
                 'count' => 0,
-            ),
-        );
+            ],
+        ];
         if (
-/**
-         * Filters whether a link to the "Failed Transactions" list table
-         * appears on the Transactions Admin Page list table.
-         * List display can be turned back on via the following:
-         * add_filter(
-         *     'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
-         *     '__return_true'
-         * );
-         *
-         * @since 4.9.70.p
-         * @param boolean                 $display_failed_txns_list
-         * @param Transactions_Admin_Page $this
-         */
+            /**
+             * Filters whether a link to the "Failed Transactions" list table
+             * appears on the Transactions Admin Page list table.
+             * List display can be turned back on via the following:
+             * add_filter(
+             *     'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
+             *     '__return_true'
+             * );
+             *
+             * @param boolean                 $display_failed_txns_list
+             * @param Transactions_Admin_Page $this
+             * @since 4.9.70.p
+             */
             apply_filters(
                 'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
                 false,
                 $this
             )
         ) {
-            $this->_views['failed'] = array(
+            $this->_views['failed'] = [
                 'slug'  => 'failed',
                 'label' => esc_html__('Failed Transactions', 'event_espresso'),
                 'count' => 0,
-            );
+            ];
         }
     }
 
@@ -490,7 +490,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         // get transaction object
         $this->_transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
-        $this->_session = $this->_transaction instanceof EE_Transaction
+        $this->_session     = $this->_transaction instanceof EE_Transaction
             ? $this->_transaction->session_data()
             : null;
         if ($this->_transaction instanceof EE_Transaction) {
@@ -524,7 +524,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
     protected function _transaction_legend_items()
     {
         EE_Registry::instance()->load_helper('MSG_Template');
-        $items = array();
+        $items = [];
 
         if (
             EE_Registry::instance()->CAP->current_user_can(
@@ -537,10 +537,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 is_array($related_for_icon)
                 && isset($related_for_icon['css_class'], $related_for_icon['label'])
             ) {
-                $items['view_related_messages'] = array(
+                $items['view_related_messages'] = [
                     'class' => $related_for_icon['css_class'],
                     'desc'  => $related_for_icon['label'],
-                );
+                ];
             }
         }
 
@@ -548,28 +548,28 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'FHEE__Transactions_Admin_Page___transaction_legend_items__items',
             array_merge(
                 $items,
-                array(
-                    'view_details'          => array(
+                [
+                    'view_details'          => [
                         'class' => 'dashicons dashicons-cart',
                         'desc'  => esc_html__('View Transaction Details', 'event_espresso'),
-                    ),
-                    'view_invoice'          => array(
+                    ],
+                    'view_invoice'          => [
                         'class' => 'dashicons dashicons-media-spreadsheet',
                         'desc'  => esc_html__('View Transaction Invoice', 'event_espresso'),
-                    ),
-                    'view_receipt'          => array(
+                    ],
+                    'view_receipt'          => [
                         'class' => 'dashicons dashicons-media-default',
                         'desc'  => esc_html__('View Transaction Receipt', 'event_espresso'),
-                    ),
-                    'view_registration'     => array(
+                    ],
+                    'view_registration'     => [
                         'class' => 'dashicons dashicons-clipboard',
                         'desc'  => esc_html__('View Registration Details', 'event_espresso'),
-                    ),
-                    'payment_overview_link' => array(
+                    ],
+                    'payment_overview_link' => [
                         'class' => 'dashicons dashicons-money',
                         'desc'  => esc_html__('Make Payment on Frontend', 'event_espresso'),
-                    ),
-                )
+                    ],
+                ]
             )
         );
 
@@ -580,55 +580,60 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'espresso_transactions_send_payment_reminder'
             )
         ) {
-            $items['send_payment_reminder'] = array(
+            $items['send_payment_reminder'] = [
                 'class' => 'dashicons dashicons-email-alt',
                 'desc'  => esc_html__('Send Payment Reminder', 'event_espresso'),
-            );
+            ];
+        } else {
+            $items['blank*'] = [
+                'class' => '',
+                'desc'  => '',
+            ];
         }
         $more_items = apply_filters(
             'FHEE__Transactions_Admin_Page___transaction_legend_items__more_items',
-            array(
-                'overpaid'   => array(
+            [
+                'overpaid'   => [
                     'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::overpaid_status_code,
                         false,
                         'sentence'
                     ),
-                ),
-                'complete'   => array(
+                ],
+                'complete'   => [
                     'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::complete_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::complete_status_code,
                         false,
                         'sentence'
                     ),
-                ),
-                'incomplete' => array(
+                ],
+                'incomplete' => [
                     'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::incomplete_status_code,
                         false,
                         'sentence'
                     ),
-                ),
-                'abandoned'  => array(
+                ],
+                'abandoned'  => [
                     'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::abandoned_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::abandoned_status_code,
                         false,
                         'sentence'
                     ),
-                ),
-                'failed'     => array(
+                ],
+                'failed'     => [
                     'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::failed_status_code,
                         false,
                         'sentence'
                     ),
-                ),
-            )
+                ],
+            ]
         );
 
         return array_merge($items, $more_items);
@@ -649,8 +654,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _transactions_overview_list_table()
     {
-        $this->_admin_page_title = esc_html__('Transactions', 'event_espresso');
-        $event = isset($this->_req_data['EVT_ID'])
+        $this->_admin_page_title                   = esc_html__('Transactions', 'event_espresso');
+        $event                                     = isset($this->_req_data['EVT_ID'])
             ? EEM_Event::instance()->get_one_by_ID($this->_req_data['EVT_ID'])
             : null;
         $this->_template_args['admin_page_header'] = $event instanceof EE_Event
@@ -662,7 +667,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 '<h3>',
                 '<a href="'
                 . EE_Admin_Page::add_query_args_and_nonce(
-                    array('action' => 'edit', 'post' => $event->ID()),
+                    ['action' => 'edit', 'post' => $event->ID()],
                     EVENTS_ADMIN_URL
                 )
                 . '" title="'
@@ -674,7 +679,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 '</h3>'
             )
             : '';
-        $this->_template_args['after_list_table'] = $this->_display_legend($this->_transaction_legend_items());
+        $this->_template_args['after_list_table']  = $this->_display_legend($this->_transaction_legend_items());
         $this->display_admin_list_table_page_with_no_sidebar();
     }
 
@@ -699,7 +704,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         $this->_set_transaction_status_array();
 
-        $this->_template_args = array();
+        $this->_template_args                      = [];
         $this->_template_args['transactions_page'] = $this->_wp_page_slug;
 
         $this->_set_transaction_object();
@@ -708,7 +713,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             return;
         }
         $primary_registration = $this->_transaction->primary_registration();
-        $attendee = $primary_registration instanceof EE_Registration
+        $attendee             = $primary_registration instanceof EE_Registration
             ? $primary_registration->attendee()
             : null;
 
@@ -723,9 +728,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $this->_template_args['txn_status']['class'] = 'status-' . $this->_transaction->status_ID();
 
         $this->_template_args['grand_total'] = $this->_transaction->total();
-        $this->_template_args['total_paid'] = $this->_transaction->paid();
+        $this->_template_args['total_paid']  = $this->_transaction->paid();
 
-        $amount_due = $this->_transaction->total() - $this->_transaction->paid();
+        $amount_due                         = $this->_transaction->total() - $this->_transaction->paid();
         $this->_template_args['amount_due'] = EEH_Template::format_currency(
             $amount_due,
             true
@@ -765,36 +770,37 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
         // link back to overview
-        $this->_template_args['txn_overview_url'] = ! empty($_SERVER['HTTP_REFERER'])
-            ? $_SERVER['HTTP_REFERER']
-            : TXN_ADMIN_URL;
+        $this->_template_args['txn_overview_url'] = $this->request->getServerParam(
+            'HTTP_REFERER',
+            TXN_ADMIN_URL
+        );
 
 
         // next link
-        $next_txn = $this->_transaction->next(
+        $next_txn                                 = $this->_transaction->next(
             null,
-            array(array('STS_ID' => array('!=', EEM_Transaction::failed_status_code))),
+            [['STS_ID' => ['!=', EEM_Transaction::failed_status_code]]],
             'TXN_ID'
         );
         $this->_template_args['next_transaction'] = $next_txn
             ? $this->_next_link(
                 EE_Admin_Page::add_query_args_and_nonce(
-                    array('action' => 'view_transaction', 'TXN_ID' => $next_txn['TXN_ID']),
+                    ['action' => 'view_transaction', 'TXN_ID' => $next_txn['TXN_ID']],
                     TXN_ADMIN_URL
                 ),
                 'dashicons dashicons-arrow-right ee-icon-size-22'
             )
             : '';
         // previous link
-        $previous_txn = $this->_transaction->previous(
+        $previous_txn                                 = $this->_transaction->previous(
             null,
-            array(array('STS_ID' => array('!=', EEM_Transaction::failed_status_code))),
+            [['STS_ID' => ['!=', EEM_Transaction::failed_status_code]]],
             'TXN_ID'
         );
         $this->_template_args['previous_transaction'] = $previous_txn
             ? $this->_previous_link(
                 EE_Admin_Page::add_query_args_and_nonce(
-                    array('action' => 'view_transaction', 'TXN_ID' => $previous_txn['TXN_ID']),
+                    ['action' => 'view_transaction', 'TXN_ID' => $previous_txn['TXN_ID']],
                     TXN_ADMIN_URL
                 ),
                 'dashicons dashicons-arrow-left ee-icon-size-22'
@@ -818,13 +824,13 @@ class Transactions_Admin_Page extends EE_Admin_Page
             ) {
                 $this->_admin_page_title .= '<a id="add-new-registration" class="add-new-h2 button-primary" href="';
                 $this->_admin_page_title .= EE_Admin_Page::add_query_args_and_nonce(
-                    array(
+                    [
                         'page'     => 'espresso_registrations',
                         'action'   => 'new_registration',
                         'return'   => 'default',
                         'TXN_ID'   => $this->_transaction->ID(),
                         'event_id' => $this->_req_data['EVT_ID'],
-                    ),
+                    ],
                     REG_ADMIN_URL
                 );
                 $this->_admin_page_title .= '">';
@@ -840,7 +846,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         // grab messages at the last second
         $this->_template_args['notices'] = EE_Error::get_notices();
         // path to template
-        $template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_header.template.php';
+        $template_path                             = TXN_TEMPLATE_PATH . 'txn_admin_details_header.template.php';
         $this->_template_args['admin_page_header'] = EEH_Template::display_template(
             $template_path,
             $this->_template_args,
@@ -875,7 +881,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         add_meta_box(
             'edit-txn-details-mbox',
             esc_html__('Transaction Details', 'event_espresso'),
-            array($this, 'txn_details_meta_box'),
+            [$this, 'txn_details_meta_box'],
             $this->_wp_page_slug,
             'normal',
             'high'
@@ -883,16 +889,16 @@ class Transactions_Admin_Page extends EE_Admin_Page
         add_meta_box(
             'edit-txn-attendees-mbox',
             esc_html__('Attendees Registered in this Transaction', 'event_espresso'),
-            array($this, 'txn_attendees_meta_box'),
+            [$this, 'txn_attendees_meta_box'],
             $this->_wp_page_slug,
             'normal',
             'high',
-            array('TXN_ID' => $this->_transaction->ID())
+            ['TXN_ID' => $this->_transaction->ID()]
         );
         add_meta_box(
             'edit-txn-registrant-mbox',
             esc_html__('Primary Contact', 'event_espresso'),
-            array($this, 'txn_registrant_side_meta_box'),
+            [$this, 'txn_registrant_side_meta_box'],
             $this->_wp_page_slug,
             'side',
             'high'
@@ -900,7 +906,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         add_meta_box(
             'edit-txn-billing-info-mbox',
             esc_html__('Billing Information', 'event_espresso'),
-            array($this, 'txn_billing_info_side_meta_box'),
+            [$this, 'txn_billing_info_side_meta_box'],
             $this->_wp_page_slug,
             'side',
             'high'
@@ -924,13 +930,13 @@ class Transactions_Admin_Page extends EE_Admin_Page
     public function getActionButtons(EE_Transaction $transaction = null)
     {
         $content = '';
-        $actions = array();
+        $actions = [];
         if (! $transaction instanceof EE_Transaction) {
             return $content;
         }
         /** @var EE_Registration $primary_registration */
         $primary_registration = $transaction->primary_registration();
-        $attendee = $primary_registration instanceof EE_Registration
+        $attendee             = $primary_registration instanceof EE_Registration
             ? $primary_registration->attendee()
             : null;
 
@@ -947,11 +953,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 && $this->_transaction->status_ID() !== EEM_Transaction::overpaid_status_code
                     ? EEH_Template::get_button_or_link(
                         EE_Admin_Page::add_query_args_and_nonce(
-                            array(
-                                'action'      => 'send_payment_reminder',
-                                'TXN_ID'      => $this->_transaction->ID(),
-                                'redirect_to' => 'view_transaction',
-                            ),
+                            [
+                            'action'      => 'send_payment_reminder',
+                            'TXN_ID'      => $this->_transaction->ID(),
+                            'redirect_to' => 'view_transaction',
+                            ],
                             TXN_ADMIN_URL
                         ),
                         esc_html__(' Send Payment Reminder', 'event_espresso'),
@@ -969,11 +975,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
         ) {
             $actions['recalculate_line_items'] = EEH_Template::get_button_or_link(
                 EE_Admin_Page::add_query_args_and_nonce(
-                    array(
+                    [
                         'action'      => 'espresso_recalculate_line_items',
                         'TXN_ID'      => $this->_transaction->ID(),
                         'redirect_to' => 'view_transaction',
-                    ),
+                    ],
                     TXN_ADMIN_URL
                 ),
                 esc_html__(' Recalculate Taxes and Total', 'event_espresso'),
@@ -1033,11 +1039,12 @@ class Transactions_Admin_Page extends EE_Admin_Page
     public function txn_details_meta_box()
     {
         $this->_set_transaction_object();
-        $this->_template_args['TXN_ID'] = $this->_transaction->ID();
-        $this->_template_args['attendee'] = $this->_transaction->primary_registration() instanceof EE_Registration
-            ? $this->_transaction->primary_registration()->attendee()
-            : null;
-        $this->_template_args['can_edit_payments'] = EE_Registry::instance()->CAP->current_user_can(
+        $this->_template_args['TXN_ID']              = $this->_transaction->ID();
+        $this->_template_args['attendee']            =
+            $this->_transaction->primary_registration() instanceof EE_Registration
+                ? $this->_transaction->primary_registration()->attendee()
+                : null;
+        $this->_template_args['can_edit_payments']   = EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_payments',
             'apply_payment_or_refund_from_registration_details'
         );
@@ -1048,41 +1055,42 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         // get line table
         EEH_Autoloader::register_line_item_display_autoloaders();
-        $Line_Item_Display = new EE_Line_Item_Display(
+        $Line_Item_Display                       = new EE_Line_Item_Display(
             'admin_table',
             'EE_Admin_Table_Line_Item_Display_Strategy'
         );
         $this->_template_args['line_item_table'] = $Line_Item_Display->display_line_item(
             $this->_transaction->total_line_item()
         );
-        $this->_template_args['REG_code'] = $this->_transaction->primary_registration() instanceof EE_Registration
-            ? $this->_transaction->primary_registration()->reg_code()
-            : null;
+        $this->_template_args['REG_code']        =
+            $this->_transaction->primary_registration() instanceof EE_Registration
+                ? $this->_transaction->primary_registration()->reg_code()
+                : null;
         // process taxes
-        $taxes = $this->_transaction->line_items(array(array('LIN_type' => EEM_Line_Item::type_tax)));
+        $taxes                         = $this->_transaction->line_items([['LIN_type' => EEM_Line_Item::type_tax]]);
         $this->_template_args['taxes'] = ! empty($taxes) ? $taxes : false;
 
-        $this->_template_args['grand_total'] = EEH_Template::format_currency(
+        $this->_template_args['grand_total']     = EEH_Template::format_currency(
             $this->_transaction->total(),
             false,
             false
         );
         $this->_template_args['grand_raw_total'] = $this->_transaction->total();
-        $this->_template_args['TXN_status'] = $this->_transaction->status_ID();
+        $this->_template_args['TXN_status']      = $this->_transaction->status_ID();
 
         // process payment details
         $payments = $this->_transaction->payments();
         if (! empty($payments)) {
-            $this->_template_args['payments'] = $payments;
+            $this->_template_args['payments']              = $payments;
             $this->_template_args['existing_reg_payments'] = $this->_get_registration_payment_IDs($payments);
         } else {
-            $this->_template_args['payments'] = false;
-            $this->_template_args['existing_reg_payments'] = array();
+            $this->_template_args['payments']              = false;
+            $this->_template_args['existing_reg_payments'] = [];
         }
 
-        $this->_template_args['edit_payment_url'] = add_query_arg(array('action' => 'edit_payment'), TXN_ADMIN_URL);
+        $this->_template_args['edit_payment_url']   = add_query_arg(['action' => 'edit_payment'], TXN_ADMIN_URL);
         $this->_template_args['delete_payment_url'] = add_query_arg(
-            array('action' => 'espresso_delete_payment'),
+            ['action' => 'espresso_delete_payment'],
             TXN_ADMIN_URL
         );
 
@@ -1095,9 +1103,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
         }
 
         $this->_template_args['txn_details']['registration_session']['value']
-            = $this->_transaction->primary_registration() instanceof EE_Registration
-            ? $this->_transaction->primary_registration()->session_ID()
-            : null;
+                                                                              =
+            $this->_transaction->primary_registration() instanceof EE_Registration
+                ? $this->_transaction->primary_registration()->session_ID()
+                : null;
         $this->_template_args['txn_details']['registration_session']['label'] = esc_html__(
             'Registration Session',
             'event_espresso'
@@ -1148,7 +1157,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                               . '</li>';
             }
         }
-        $reg_steps .= '</ul>';
+        $reg_steps                                                 .= '</ul>';
         $this->_template_args['txn_details']['reg_steps']['value'] = $reg_steps;
         $this->_template_args['txn_details']['reg_steps']['label'] = esc_html__(
             'Registration Step Progress',
@@ -1161,25 +1170,25 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $this->_get_payment_status_array();
         $this->_get_reg_status_selection(); // sets up the template args for the reg status array for the transaction.
 
-        $this->_template_args['transaction_form_url'] = add_query_arg(
-            array(
+        $this->_template_args['transaction_form_url']    = add_query_arg(
+            [
                 'action'  => 'edit_transaction',
                 'process' => 'transaction',
-            ),
+            ],
             TXN_ADMIN_URL
         );
-        $this->_template_args['apply_payment_form_url'] = add_query_arg(
-            array(
+        $this->_template_args['apply_payment_form_url']  = add_query_arg(
+            [
                 'page'   => 'espresso_transactions',
                 'action' => 'espresso_apply_payment',
-            ),
+            ],
             WP_AJAX_URL
         );
         $this->_template_args['delete_payment_form_url'] = add_query_arg(
-            array(
+            [
                 'page'   => 'espresso_transactions',
                 'action' => 'espresso_delete_payment',
-            ),
+            ],
             WP_AJAX_URL
         );
 
@@ -1205,26 +1214,26 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _get_registration_payment_IDs($payments = array())
+    protected function _get_registration_payment_IDs($payments = [])
     {
-        $existing_reg_payments = array();
+        $existing_reg_payments = [];
         // get all reg payments for these payments
         $reg_payments = EEM_Registration_Payment::instance()->get_all(
-            array(
-                array(
-                    'PAY_ID' => array(
+            [
+                [
+                    'PAY_ID' => [
                         'IN',
                         array_keys($payments),
-                    ),
-                ),
-            )
+                    ],
+                ],
+            ]
         );
         if (! empty($reg_payments)) {
             foreach ($payments as $payment) {
                 if (! $payment instanceof EE_Payment) {
                     continue;
                 } elseif (! isset($existing_reg_payments[ $payment->ID() ])) {
-                    $existing_reg_payments[ $payment->ID() ] = array();
+                    $existing_reg_payments[ $payment->ID() ] = [];
                 }
                 foreach ($reg_payments as $reg_payment) {
                     if (
@@ -1257,18 +1266,18 @@ class Transactions_Admin_Page extends EE_Admin_Page
     protected function _get_registrations_to_apply_payment_to()
     {
         // we want any registration with an active status (ie: not deleted or cancelled)
-        $query_params = array(
-            array(
-                'STS_ID' => array(
+        $query_params                      = [
+            [
+                'STS_ID' => [
                     'IN',
-                    array(
+                    [
                         EEM_Registration::status_id_approved,
                         EEM_Registration::status_id_pending_payment,
                         EEM_Registration::status_id_not_approved,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
         $registrations_to_apply_payment_to = EEH_HTML::br() . EEH_HTML::div(
             '',
             'txn-admin-apply-payment-to-registrations-dv',
@@ -1290,22 +1299,22 @@ class Transactions_Admin_Page extends EE_Admin_Page
         );
         $registrations_to_apply_payment_to .= EEH_HTML::tbody();
         // get registrations for TXN
-        $registrations = $this->_transaction->registrations($query_params);
+        $registrations         = $this->_transaction->registrations($query_params);
         $existing_reg_payments = $this->_template_args['existing_reg_payments'];
         foreach ($registrations as $registration) {
             if ($registration instanceof EE_Registration) {
-                $attendee_name = $registration->attendee() instanceof EE_Attendee
+                $attendee_name                     = $registration->attendee() instanceof EE_Attendee
                     ? $registration->attendee()->full_name()
                     : esc_html__('Unknown Attendee', 'event_espresso');
-                $owing = $registration->final_price() - $registration->paid();
-                $taxable = $registration->ticket()->taxable()
+                $owing                             = $registration->final_price() - $registration->paid();
+                $taxable                           = $registration->ticket()->taxable()
                     ? ' <span class="smaller-text lt-grey-text"> ' . esc_html__('+ tax', 'event_espresso') . '</span>'
                     : '';
-                $checked = empty($existing_reg_payments)
-                           || in_array($registration->ID(), $existing_reg_payments, true)
+                $checked                           = empty($existing_reg_payments)
+                                                     || in_array($registration->ID(), $existing_reg_payments, true)
                     ? ' checked="checked"'
                     : '';
-                $disabled = $registration->final_price() > 0 ? '' : ' disabled';
+                $disabled                          = $registration->final_price() > 0 ? '' : ' disabled';
                 $registrations_to_apply_payment_to .= EEH_HTML::tr(
                     EEH_HTML::td($registration->ID()) .
                     EEH_HTML::td($attendee_name) .
@@ -1330,10 +1339,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 );
             }
         }
-        $registrations_to_apply_payment_to .= EEH_HTML::tbodyx();
-        $registrations_to_apply_payment_to .= EEH_HTML::tablex();
-        $registrations_to_apply_payment_to .= EEH_HTML::divx();
-        $registrations_to_apply_payment_to .= EEH_HTML::p(
+        $registrations_to_apply_payment_to                         .= EEH_HTML::tbodyx();
+        $registrations_to_apply_payment_to                         .= EEH_HTML::tablex();
+        $registrations_to_apply_payment_to                         .= EEH_HTML::divx();
+        $registrations_to_apply_payment_to                         .= EEH_HTML::p(
             esc_html__(
                 'The payment will only be applied to the registrations that have a check mark in their corresponding check box. Checkboxes for free registrations have been disabled.',
                 'event_espresso'
@@ -1341,7 +1350,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             '',
             'clear description'
         );
-        $registrations_to_apply_payment_to .= EEH_HTML::divx();
+        $registrations_to_apply_payment_to                         .= EEH_HTML::divx();
         $this->_template_args['registrations_to_apply_payment_to'] = $registrations_to_apply_payment_to;
     }
 
@@ -1349,20 +1358,20 @@ class Transactions_Admin_Page extends EE_Admin_Page
     /**
      * _get_reg_status_selection
      *
+     * @return void
+     * @throws EE_Error
      * @todo   this will need to be adjusted either once MER comes along OR we move default reg status to tickets
      *         instead of events.
      * @access protected
-     * @return void
-     * @throws EE_Error
      */
     protected function _get_reg_status_selection()
     {
         // first get all possible statuses
-        $statuses = EEM_Registration::reg_status_array(array(), true);
+        $statuses = EEM_Registration::reg_status_array([], true);
         // let's add a "don't change" option.
-        $status_array['NAN'] = esc_html__('Leave the Same', 'event_espresso');
-        $status_array = array_merge($status_array, $statuses);
-        $this->_template_args['status_change_select'] = EEH_Form_Fields::select_input(
+        $status_array['NAN']                                 = esc_html__('Leave the Same', 'event_espresso');
+        $status_array                                        = array_merge($status_array, $statuses);
+        $this->_template_args['status_change_select']        = EEH_Form_Fields::select_input(
             'txn_reg_status_change[reg_status]',
             $status_array,
             'NAN',
@@ -1394,25 +1403,25 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function _get_payment_methods($payments = array())
+    private function _get_payment_methods($payments = [])
     {
-        $payment_methods_of_payments = array();
+        $payment_methods_of_payments = [];
         foreach ($payments as $payment) {
             if ($payment instanceof EE_Payment) {
                 $payment_methods_of_payments[] = $payment->ID();
             }
         }
         if ($payment_methods_of_payments) {
-            $query_args = array(
-                array(
-                    'OR*payment_method_for_payment' => array(
-                        'PMD_ID'    => array('IN', $payment_methods_of_payments),
-                        'PMD_scope' => array('LIKE', '%' . EEM_Payment_Method::scope_admin . '%'),
-                    ),
-                ),
-            );
+            $query_args = [
+                [
+                    'OR*payment_method_for_payment' => [
+                        'PMD_ID'    => ['IN', $payment_methods_of_payments],
+                        'PMD_scope' => ['LIKE', '%' . EEM_Payment_Method::scope_admin . '%'],
+                    ],
+                ],
+            ];
         } else {
-            $query_args = array(array('PMD_scope' => array('LIKE', '%' . EEM_Payment_Method::scope_admin . '%')));
+            $query_args = [['PMD_scope' => ['LIKE', '%' . EEM_Payment_Method::scope_admin . '%']]];
         }
         $this->_template_args['payment_methods'] = EEM_Payment_Method::instance()->get_all($query_args);
     }
@@ -1433,17 +1442,17 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function txn_attendees_meta_box($post, $metabox = array('args' => array()))
+    public function txn_attendees_meta_box($post, $metabox = ['args' => []])
     {
 
         /** @noinspection NonSecureExtractUsageInspection */
         extract($metabox['args']);
-        $this->_template_args['post'] = $post;
-        $this->_template_args['event_attendees'] = array();
+        $this->_template_args['post']            = $post;
+        $this->_template_args['event_attendees'] = [];
         // process items in cart
         $line_items = $this->_transaction->get_many_related(
             'Line_Item',
-            array(array('LIN_type' => 'line-item'))
+            [['LIN_type' => 'line-item']]
         );
         if (! empty($line_items)) {
             foreach ($line_items as $item) {
@@ -1464,11 +1473,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
                                 EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
                                 $event_name = esc_html__('Unknown Event', 'event_espresso');
                             }
-                            $event_name .= ' - ' . $item->name();
+                            $event_name   .= ' - ' . $item->name();
                             $ticket_price = EEH_Template::format_currency($item->unit_price());
                             // now get all of the registrations for this transaction that use this ticket
                             $registrations = $ticket->registrations(
-                                array(array('TXN_ID' => $this->_transaction->ID()))
+                                [['TXN_ID' => $this->_transaction->ID()]]
                             );
                             foreach ($registrations as $registration) {
                                 if (! $registration instanceof EE_Registration) {
@@ -1499,10 +1508,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
                                     $this->_template_args['event_attendees'][ $registration->ID() ]['address']
                                         = EEH_Address::format($attendee, 'inline', false, false);
                                 } else {
-                                    $this->_template_args['event_attendees'][ $registration->ID() ]['att_id'] = '';
+                                    $this->_template_args['event_attendees'][ $registration->ID() ]['att_id']   = '';
                                     $this->_template_args['event_attendees'][ $registration->ID() ]['attendee'] = '';
-                                    $this->_template_args['event_attendees'][ $registration->ID() ]['email'] = '';
-                                    $this->_template_args['event_attendees'][ $registration->ID() ]['address'] = '';
+                                    $this->_template_args['event_attendees'][ $registration->ID() ]['email']    = '';
+                                    $this->_template_args['event_attendees'][ $registration->ID() ]['address']  = '';
                                 }
                             }
                             break;
@@ -1511,10 +1520,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
             }
 
             $this->_template_args['transaction_form_url'] = add_query_arg(
-                array(
+                [
                     'action'  => 'edit_transaction',
                     'process' => 'attendees',
-                ),
+                ],
                 TXN_ADMIN_URL
             );
             echo EEH_Template::display_template(
@@ -1523,7 +1532,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 true
             );
         } else {
-            echo sprintf(
+            printf(
                 esc_html__(
                     '%1$sFor some reason, there are no attendees registered for this transaction. Likely the registration was abandoned in process.%2$s',
                     'event_espresso'
@@ -1558,18 +1567,18 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'There is no attached contact for this transaction.  The transaction either failed due to an error or was abandoned.',
                 'event_espresso'
             );
-            $primary_att = EEM_Attendee::instance()->create_default_object();
+            $primary_att                           = EEM_Attendee::instance()->create_default_object();
         }
-        $this->_template_args['ATT_ID'] = $primary_att->ID();
-        $this->_template_args['prime_reg_fname'] = $primary_att->fname();
-        $this->_template_args['prime_reg_lname'] = $primary_att->lname();
-        $this->_template_args['prime_reg_email'] = $primary_att->email();
-        $this->_template_args['prime_reg_phone'] = $primary_att->phone();
+        $this->_template_args['ATT_ID']            = $primary_att->ID();
+        $this->_template_args['prime_reg_fname']   = $primary_att->fname();
+        $this->_template_args['prime_reg_lname']   = $primary_att->lname();
+        $this->_template_args['prime_reg_email']   = $primary_att->email();
+        $this->_template_args['prime_reg_phone']   = $primary_att->phone();
         $this->_template_args['edit_attendee_url'] = EE_Admin_Page::add_query_args_and_nonce(
-            array(
+            [
                 'action' => 'edit_attendee',
                 'post'   => $primary_att->ID(),
-            ),
+            ],
             REG_ADMIN_URL
         );
         // get formatted address for registrant
@@ -1594,9 +1603,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
     public function txn_billing_info_side_meta_box()
     {
 
-        $this->_template_args['billing_form'] = $this->_transaction->billing_info();
+        $this->_template_args['billing_form']     = $this->_transaction->billing_info();
         $this->_template_args['billing_form_url'] = add_query_arg(
-            array('action' => 'edit_transaction', 'process' => 'billing'),
+            ['action' => 'edit_transaction', 'process' => 'billing'],
             TXN_ADMIN_URL
         );
 
@@ -1620,9 +1629,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     public function apply_payments_or_refunds()
     {
-        $json_response_data = array('return_data' => false);
-        $valid_data = $this->_validate_payment_request_data();
-        $has_access = EE_Registry::instance()->CAP->current_user_can(
+        $json_response_data = ['return_data' => false];
+        $valid_data         = $this->_validate_payment_request_data();
+        $has_access         = EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_payments',
             'apply_payment_or_refund_from_registration_details'
         );
@@ -1685,16 +1694,16 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 __LINE__
             );
         }
-        $notices = EE_Error::get_notices(
+        $notices              = EE_Error::get_notices(
             false,
             false,
             false
         );
-        $this->_template_args = array(
+        $this->_template_args = [
             'data'    => $json_response_data,
             'error'   => $notices['errors'],
             'success' => $notices['success'],
-        );
+        ];
         $this->_return_json();
     }
 
@@ -1711,14 +1720,14 @@ class Transactions_Admin_Page extends EE_Admin_Page
     protected function _validate_payment_request_data()
     {
         if (! isset($this->_req_data['txn_admin_payment'])) {
-            return array();
+            return [];
         }
         $payment_form = $this->_generate_payment_form_section();
         try {
             if ($payment_form->was_submitted()) {
                 $payment_form->receive_form_submission();
                 if (! $payment_form->is_valid()) {
-                    $submission_error_messages = array();
+                    $submission_error_messages = [];
                     foreach ($payment_form->get_validation_errors_accumulated() as $validation_error) {
                         if ($validation_error instanceof EE_Validation_Error) {
                             $submission_error_messages[] = sprintf(
@@ -1734,12 +1743,12 @@ class Transactions_Admin_Page extends EE_Admin_Page
                         __FUNCTION__,
                         __LINE__
                     );
-                    return array();
+                    return [];
                 }
             }
         } catch (EE_Error $e) {
             EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
-            return array();
+            return [];
         }
 
         return $payment_form->valid_data();
@@ -1755,104 +1764,104 @@ class Transactions_Admin_Page extends EE_Admin_Page
     protected function _generate_payment_form_section()
     {
         return new EE_Form_Section_Proper(
-            array(
+            [
                 'name'        => 'txn_admin_payment',
-                'subsections' => array(
+                'subsections' => [
                     'PAY_ID'          => new EE_Text_Input(
-                        array(
+                        [
                             'default'               => 0,
                             'required'              => false,
                             'html_label_text'       => esc_html__('Payment ID', 'event_espresso'),
-                            'validation_strategies' => array(new EE_Int_Normalization()),
-                        )
+                            'validation_strategies' => [new EE_Int_Normalization()],
+                        ]
                     ),
                     'TXN_ID'          => new EE_Text_Input(
-                        array(
+                        [
                             'default'               => 0,
                             'required'              => true,
                             'html_label_text'       => esc_html__('Transaction ID', 'event_espresso'),
-                            'validation_strategies' => array(new EE_Int_Normalization()),
-                        )
+                            'validation_strategies' => [new EE_Int_Normalization()],
+                        ]
                     ),
                     'type'            => new EE_Text_Input(
-                        array(
+                        [
                             'default'               => 1,
                             'required'              => true,
                             'html_label_text'       => esc_html__('Payment or Refund', 'event_espresso'),
-                            'validation_strategies' => array(new EE_Int_Normalization()),
-                        )
+                            'validation_strategies' => [new EE_Int_Normalization()],
+                        ]
                     ),
                     'amount'          => new EE_Text_Input(
-                        array(
+                        [
                             'default'               => 0,
                             'required'              => true,
                             'html_label_text'       => esc_html__('Payment amount', 'event_espresso'),
-                            'validation_strategies' => array(new EE_Float_Normalization()),
-                        )
+                            'validation_strategies' => [new EE_Float_Normalization()],
+                        ]
                     ),
                     'status'          => new EE_Text_Input(
-                        array(
+                        [
                             'default'         => EEM_Payment::status_id_approved,
                             'required'        => true,
                             'html_label_text' => esc_html__('Payment status', 'event_espresso'),
-                        )
+                        ]
                     ),
                     'PMD_ID'          => new EE_Text_Input(
-                        array(
+                        [
                             'default'               => 2,
                             'required'              => true,
                             'html_label_text'       => esc_html__('Payment Method', 'event_espresso'),
-                            'validation_strategies' => array(new EE_Int_Normalization()),
-                        )
+                            'validation_strategies' => [new EE_Int_Normalization()],
+                        ]
                     ),
                     'date'            => new EE_Text_Input(
-                        array(
+                        [
                             'default'         => time(),
                             'required'        => true,
                             'html_label_text' => esc_html__('Payment date', 'event_espresso'),
-                        )
+                        ]
                     ),
                     'txn_id_chq_nmbr' => new EE_Text_Input(
-                        array(
+                        [
                             'default'               => '',
                             'required'              => false,
                             'html_label_text'       => esc_html__('Transaction or Cheque Number', 'event_espresso'),
-                            'validation_strategies' => array(
+                            'validation_strategies' => [
                                 new EE_Max_Length_Validation_Strategy(
                                     esc_html__('Input too long', 'event_espresso'),
                                     100
                                 ),
-                            ),
-                        )
+                            ],
+                        ]
                     ),
                     'po_number'       => new EE_Text_Input(
-                        array(
+                        [
                             'default'               => '',
                             'required'              => false,
                             'html_label_text'       => esc_html__('Purchase Order Number', 'event_espresso'),
-                            'validation_strategies' => array(
+                            'validation_strategies' => [
                                 new EE_Max_Length_Validation_Strategy(
                                     esc_html__('Input too long', 'event_espresso'),
                                     100
                                 ),
-                            ),
-                        )
+                            ],
+                        ]
                     ),
                     'accounting'      => new EE_Text_Input(
-                        array(
+                        [
                             'default'               => '',
                             'required'              => false,
                             'html_label_text'       => esc_html__('Extra Field for Accounting', 'event_espresso'),
-                            'validation_strategies' => array(
+                            'validation_strategies' => [
                                 new EE_Max_Length_Validation_Strategy(
                                     esc_html__('Input too long', 'event_espresso'),
                                     100
                                 ),
-                            ),
-                        )
+                            ],
+                        ]
                     ),
-                ),
-            )
+                ],
+            ]
         );
     }
 
@@ -1877,11 +1886,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
         // so multiplying amount by type will give a positive value for payments, and negative values for refunds
         $amount = $valid_data['type'] < 0 ? $amount * -1 : $amount;
         // for some reason the date string coming in has extra spaces between the date and time.  This fixes that.
-        $date = $valid_data['date']
+        $date    = $valid_data['date']
             ? preg_replace('/\s+/', ' ', $valid_data['date'])
             : date('Y-m-d g:i a', current_time('timestamp'));
         $payment = EE_Payment::new_instance(
-            array(
+            [
                 'TXN_ID'              => $valid_data['TXN_ID'],
                 'STS_ID'              => $valid_data['status'],
                 'PAY_timestamp'       => $date,
@@ -1893,9 +1902,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'PAY_extra_accntng'   => $valid_data['accounting'],
                 'PAY_details'         => $valid_data,
                 'PAY_ID'              => $PAY_ID,
-            ),
+            ],
             '',
-            array('Y-m-d', 'g:i a')
+            ['Y-m-d', 'g:i a']
         );
 
         if (! $payment->save()) {
@@ -1968,7 +1977,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _get_REG_IDs_to_apply_payment_to(EE_Payment $payment)
     {
-        $REG_IDs = array();
+        $REG_IDs = [];
         // grab array of IDs for specific registrations to apply changes to
         if (isset($this->_req_data['txn_admin_payment']['registrations'])) {
             $REG_IDs = (array) $this->_req_data['txn_admin_payment']['registrations'];
@@ -1976,7 +1985,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         // nothing specified ? then get all reg IDs
         if (empty($REG_IDs)) {
             $registrations = $payment->transaction()->registrations();
-            $REG_IDs = ! empty($registrations)
+            $REG_IDs       = ! empty($registrations)
                 ? array_keys($registrations)
                 : $this->_get_existing_reg_payment_REG_IDs($payment);
         }
@@ -2025,7 +2034,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             // but we only want the REG IDs, so grab the array keys
             $existing_reg_payment_REG_IDs = ! empty($existing_reg_payment_REG_IDs)
                 ? array_keys($existing_reg_payment_REG_IDs)
-                : array();
+                : [];
             $this->set_existing_reg_payment_REG_IDs($existing_reg_payment_REG_IDs);
         }
 
@@ -2064,12 +2073,12 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         return $transaction_payments->delete_registration_payments_and_update_registrations(
             $payment,
-            array(
-                array(
+            [
+                [
                     'PAY_ID' => $payment->ID(),
-                    'REG_ID' => array('IN', $existing_reg_payment_REG_IDs),
-                ),
-            )
+                    'REG_ID' => ['IN', $existing_reg_payment_REG_IDs],
+                ],
+            ]
         );
     }
 
@@ -2079,9 +2088,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * this applies the payments to the selected registrations
      * but only if they have not already been paid for
      *
-     * @param  EE_Transaction $transaction
-     * @param \EE_Payment     $payment
-     * @param array           $REG_IDs
+     * @param EE_Transaction $transaction
+     * @param \EE_Payment    $payment
+     * @param array          $REG_IDs
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -2093,21 +2102,21 @@ class Transactions_Admin_Page extends EE_Admin_Page
     protected function _update_registration_payments(
         EE_Transaction $transaction,
         EE_Payment $payment,
-        $REG_IDs = array()
+        $REG_IDs = []
     ) {
         // we can pass our own custom set of registrations to EE_Payment_Processor::process_registration_payments()
         // so let's do that using our set of REG_IDs from the form
-        $registration_query_where_params = array(
-            'REG_ID' => array('IN', $REG_IDs),
-        );
+        $registration_query_where_params = [
+            'REG_ID' => ['IN', $REG_IDs],
+        ];
         // but add in some conditions regarding payment,
         // so that we don't apply payments to registrations that are free or have already been paid for
         // but ONLY if the payment is NOT a refund ( ie: the payment amount is not negative )
         if (! $payment->is_a_refund()) {
-            $registration_query_where_params['REG_final_price'] = array('!=', 0);
-            $registration_query_where_params['REG_final_price*'] = array('!=', 'REG_paid', true);
+            $registration_query_where_params['REG_final_price']  = ['!=', 0];
+            $registration_query_where_params['REG_final_price*'] = ['!=', 'REG_paid', true];
         }
-        $registrations = $transaction->registrations(array($registration_query_where_params));
+        $registrations = $transaction->registrations([$registration_query_where_params]);
         if (! empty($registrations)) {
             /** @type EE_Payment_Processor $payment_processor */
             $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
@@ -2121,8 +2130,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * This processes requested registration status changes for all the registrations
      * on a given transaction and (optionally) sends out notifications for the changes.
      *
-     * @param  EE_Transaction $transaction
-     * @param array           $REG_IDs
+     * @param EE_Transaction $transaction
+     * @param array          $REG_IDs
      * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -2130,7 +2139,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _process_registration_status_change(EE_Transaction $transaction, $REG_IDs = array())
+    protected function _process_registration_status_change(EE_Transaction $transaction, $REG_IDs = [])
     {
         // first if there is no change in status then we get out.
         if (
@@ -2147,7 +2156,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         return $transaction_processor->manually_update_registration_statuses(
             $transaction,
             sanitize_text_field($this->_req_data['txn_reg_status_change']['reg_status']),
-            array(array('REG_ID' => array('IN', $REG_IDs)))
+            [['REG_ID' => ['IN', $REG_IDs]]]
         );
     }
 
@@ -2168,12 +2177,12 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _build_payment_json_response(
         EE_Payment $payment,
-        $REG_IDs = array(),
+        $REG_IDs = [],
         $delete_txn_reg_status_change = null
     ) {
         // was the payment deleted ?
         if (is_bool($delete_txn_reg_status_change)) {
-            return array(
+            return [
                 'PAY_ID'                       => $payment->ID(),
                 'amount'                       => $payment->amount(),
                 'total_paid'                   => $payment->transaction()->paid(),
@@ -2181,11 +2190,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'pay_status'                   => $payment->STS_ID(),
                 'registrations'                => $this->_registration_payment_data_array($REG_IDs),
                 'delete_txn_reg_status_change' => $delete_txn_reg_status_change,
-            );
+            ];
         } else {
             $this->_get_payment_status_array();
 
-            return array(
+            return [
                 'amount'           => $payment->amount(),
                 'total_paid'       => $payment->transaction()->paid(),
                 'txn_status'       => $payment->transaction()->status_ID(),
@@ -2204,7 +2213,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'po_number'        => $payment->po_number(),
                 'extra_accntng'    => $payment->extra_accntng(),
                 'registrations'    => $this->_registration_payment_data_array($REG_IDs),
-            );
+            ];
         }
     }
 
@@ -2223,11 +2232,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     public function delete_payment()
     {
-        $json_response_data = array('return_data' => false);
-        $PAY_ID = isset($this->_req_data['delete_txn_admin_payment']['PAY_ID'])
+        $json_response_data = ['return_data' => false];
+        $PAY_ID             = isset($this->_req_data['delete_txn_admin_payment']['PAY_ID'])
             ? absint($this->_req_data['delete_txn_admin_payment']['PAY_ID'])
             : 0;
-        $can_delete = EE_Registry::instance()->CAP->current_user_can(
+        $can_delete         = EE_Registry::instance()->CAP->current_user_can(
             'ee_delete_payments',
             'delete_payment_from_registration_details'
         );
@@ -2235,7 +2244,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             $delete_txn_reg_status_change = isset($this->_req_data['delete_txn_reg_status_change'])
                 ? $this->_req_data['delete_txn_reg_status_change']
                 : false;
-            $payment = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
+            $payment                      = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
             if ($payment instanceof EE_Payment) {
                 $REG_IDs = $this->_get_existing_reg_payment_REG_IDs($payment);
                 /** @type EE_Transaction_Payments $transaction_payments */
@@ -2250,7 +2259,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                         $this->_req_data['txn_reg_status_change'] = $delete_txn_reg_status_change;
                         // MAKE sure we also add the delete_txn_req_status_change to the
                         // $_REQUEST global because that's how messages will be looking for it.
-                        $_REQUEST['txn_reg_status_change'] = $delete_txn_reg_status_change;
+                        $this->request->setRequestParam('txn_reg_status_change', $delete_txn_reg_status_change);
                         $this->_maybe_send_notifications();
                         $this->_process_registration_status_change($payment->transaction(), $REG_IDs);
                     }
@@ -2284,13 +2293,13 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 __LINE__
             );
         }
-        $notices = EE_Error::get_notices(false, false, false);
-        $this->_template_args = array(
+        $notices              = EE_Error::get_notices(false, false, false);
+        $this->_template_args = [
             'data'      => $json_response_data,
             'success'   => $notices['success'],
             'error'     => $notices['errors'],
             'attention' => $notices['attention'],
-        );
+        ];
         $this->_return_json();
     }
 
@@ -2310,16 +2319,16 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _registration_payment_data_array($REG_IDs)
     {
-        $registration_payment_data = array();
+        $registration_payment_data = [];
         // if non empty reg_ids lets get an array of registrations and update the values for the apply_payment/refund rows.
         if (! empty($REG_IDs)) {
-            $registrations = EEM_Registration::instance()->get_all(array(array('REG_ID' => array('IN', $REG_IDs))));
+            $registrations = EEM_Registration::instance()->get_all([['REG_ID' => ['IN', $REG_IDs]]]);
             foreach ($registrations as $registration) {
                 if ($registration instanceof EE_Registration) {
-                    $registration_payment_data[ $registration->ID() ] = array(
+                    $registration_payment_data[ $registration->ID() ] = [
                         'paid'  => $registration->pretty_paid(),
                         'owing' => EEH_Template::format_currency($registration->final_price() - $registration->paid()),
-                    );
+                    ];
                 }
             }
         }
@@ -2381,12 +2390,12 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _send_payment_reminder()
     {
-        $TXN_ID = ! empty($this->_req_data['TXN_ID']) ? absint($this->_req_data['TXN_ID']) : false;
+        $TXN_ID      = ! empty($this->_req_data['TXN_ID']) ? absint($this->_req_data['TXN_ID']) : false;
         $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
-        $query_args = isset($this->_req_data['redirect_to']) ? array(
+        $query_args  = isset($this->_req_data['redirect_to']) ? [
             'action' => $this->_req_data['redirect_to'],
             'TXN_ID' => $this->_req_data['TXN_ID'],
-        ) : array();
+        ] : [];
         do_action(
             'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder',
             $transaction
@@ -2405,9 +2414,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
      *  get_transactions
      *    get transactions for given parameters (used by list table)
      *
-     * @param  int     $perpage how many transactions displayed per page
-     * @param  boolean $count   return the count or objects
-     * @param string   $view
+     * @param int     $perpage how many transactions displayed per page
+     * @param boolean $count   return the count or objects
+     * @param string  $view
      * @return mixed int = count || array of transaction objects
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -2425,22 +2434,22 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'm/d/Y',
                 strtotime('-10 year')
             );
-        $end_date = isset($this->_req_data['txn-filter-end-date'])
+        $end_date   = isset($this->_req_data['txn-filter-end-date'])
             ? wp_strip_all_tags($this->_req_data['txn-filter-end-date'])
             : date('m/d/Y');
 
         // make sure our timestamps start and end right at the boundaries for each day
         $start_date = date('Y-m-d', strtotime($start_date)) . ' 00:00:00';
-        $end_date = date('Y-m-d', strtotime($end_date)) . ' 23:59:59';
+        $end_date   = date('Y-m-d', strtotime($end_date)) . ' 23:59:59';
 
 
         // convert to timestamps
         $start_date = strtotime($start_date);
-        $end_date = strtotime($end_date);
+        $end_date   = strtotime($end_date);
 
         // makes sure start date is the lowest value and vice versa
         $start_date = min($start_date, $end_date);
-        $end_date = max($start_date, $end_date);
+        $end_date   = max($start_date, $end_date);
 
         // convert to correct format for query
         $start_date = EEM_Transaction::instance()->convert_datetime_for_query(
@@ -2448,7 +2457,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             date('Y-m-d H:i:s', $start_date),
             'Y-m-d H:i:s'
         );
-        $end_date = EEM_Transaction::instance()->convert_datetime_for_query(
+        $end_date   = EEM_Transaction::instance()->convert_datetime_for_query(
             'TXN_timestamp',
             date('Y-m-d H:i:s', $end_date),
             'Y-m-d H:i:s'
@@ -2472,18 +2481,18 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 $orderby = 'TXN_timestamp';
         }
 
-        $sort = ! empty($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
+        $sort         = ! empty($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
         $current_page = ! empty($this->_req_data['paged']) ? $this->_req_data['paged'] : 1;
-        $per_page = ! empty($perpage) ? $perpage : 10;
-        $per_page = ! empty($this->_req_data['perpage']) ? $this->_req_data['perpage'] : $per_page;
+        $per_page     = ! empty($perpage) ? $perpage : 10;
+        $per_page     = ! empty($this->_req_data['perpage']) ? $this->_req_data['perpage'] : $per_page;
 
         $offset = ($current_page - 1) * $per_page;
-        $limit = array($offset, $per_page);
+        $limit  = [$offset, $per_page];
 
-        $_where = array(
-            'TXN_timestamp'          => array('BETWEEN', array($start_date, $end_date)),
+        $_where = [
+            'TXN_timestamp'          => ['BETWEEN', [$start_date, $end_date]],
             'Registration.REG_count' => 1,
-        );
+        ];
 
         if (isset($this->_req_data['EVT_ID'])) {
             $_where['Registration.EVT_ID'] = $this->_req_data['EVT_ID'];
@@ -2491,36 +2500,36 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         if (isset($this->_req_data['s'])) {
             $search_string = '%' . $this->_req_data['s'] . '%';
-            $_where['OR'] = array(
-                'Registration.Event.EVT_name'         => array('LIKE', $search_string),
-                'Registration.Event.EVT_desc'         => array('LIKE', $search_string),
-                'Registration.Event.EVT_short_desc'   => array('LIKE', $search_string),
-                'Registration.Attendee.ATT_full_name' => array('LIKE', $search_string),
-                'Registration.Attendee.ATT_fname'     => array('LIKE', $search_string),
-                'Registration.Attendee.ATT_lname'     => array('LIKE', $search_string),
-                'Registration.Attendee.ATT_short_bio' => array('LIKE', $search_string),
-                'Registration.Attendee.ATT_email'     => array('LIKE', $search_string),
-                'Registration.Attendee.ATT_address'   => array('LIKE', $search_string),
-                'Registration.Attendee.ATT_address2'  => array('LIKE', $search_string),
-                'Registration.Attendee.ATT_city'      => array('LIKE', $search_string),
-                'Registration.REG_final_price'        => array('LIKE', $search_string),
-                'Registration.REG_code'               => array('LIKE', $search_string),
-                'Registration.REG_count'              => array('LIKE', $search_string),
-                'Registration.REG_group_size'         => array('LIKE', $search_string),
-                'Registration.Ticket.TKT_name'        => array('LIKE', $search_string),
-                'Registration.Ticket.TKT_description' => array('LIKE', $search_string),
-                'Payment.PAY_source'                  => array('LIKE', $search_string),
-                'Payment.Payment_Method.PMD_name'     => array('LIKE', $search_string),
-                'TXN_session_data'                    => array('LIKE', $search_string),
-                'Payment.PAY_txn_id_chq_nmbr'         => array('LIKE', $search_string),
-            );
+            $_where['OR']  = [
+                'Registration.Event.EVT_name'         => ['LIKE', $search_string],
+                'Registration.Event.EVT_desc'         => ['LIKE', $search_string],
+                'Registration.Event.EVT_short_desc'   => ['LIKE', $search_string],
+                'Registration.Attendee.ATT_full_name' => ['LIKE', $search_string],
+                'Registration.Attendee.ATT_fname'     => ['LIKE', $search_string],
+                'Registration.Attendee.ATT_lname'     => ['LIKE', $search_string],
+                'Registration.Attendee.ATT_short_bio' => ['LIKE', $search_string],
+                'Registration.Attendee.ATT_email'     => ['LIKE', $search_string],
+                'Registration.Attendee.ATT_address'   => ['LIKE', $search_string],
+                'Registration.Attendee.ATT_address2'  => ['LIKE', $search_string],
+                'Registration.Attendee.ATT_city'      => ['LIKE', $search_string],
+                'Registration.REG_final_price'        => ['LIKE', $search_string],
+                'Registration.REG_code'               => ['LIKE', $search_string],
+                'Registration.REG_count'              => ['LIKE', $search_string],
+                'Registration.REG_group_size'         => ['LIKE', $search_string],
+                'Registration.Ticket.TKT_name'        => ['LIKE', $search_string],
+                'Registration.Ticket.TKT_description' => ['LIKE', $search_string],
+                'Payment.PAY_source'                  => ['LIKE', $search_string],
+                'Payment.Payment_Method.PMD_name'     => ['LIKE', $search_string],
+                'TXN_session_data'                    => ['LIKE', $search_string],
+                'Payment.PAY_txn_id_chq_nmbr'         => ['LIKE', $search_string],
+            ];
         }
 
         // failed transactions
-        $failed = (! empty($this->_req_data['status']) && $this->_req_data['status'] === 'failed' && ! $count)
-                  || ($count && $view === 'failed');
-        $abandoned = (! empty($this->_req_data['status']) && $this->_req_data['status'] === 'abandoned' && ! $count)
-                     || ($count && $view === 'abandoned');
+        $failed     = (! empty($this->_req_data['status']) && $this->_req_data['status'] === 'failed' && ! $count)
+                      || ($count && $view === 'failed');
+        $abandoned  = (! empty($this->_req_data['status']) && $this->_req_data['status'] === 'abandoned' && ! $count)
+                      || ($count && $view === 'abandoned');
         $incomplete = (! empty($this->_req_data['status']) && $this->_req_data['status'] === 'incomplete' && ! $count)
                       || ($count && $view === 'incomplete');
 
@@ -2531,25 +2540,25 @@ class Transactions_Admin_Page extends EE_Admin_Page
         } elseif ($incomplete) {
             $_where['STS_ID'] = EEM_Transaction::incomplete_status_code;
         } else {
-            $_where['STS_ID'] = array('!=', EEM_Transaction::failed_status_code);
-            $_where['STS_ID*'] = array('!=', EEM_Transaction::abandoned_status_code);
+            $_where['STS_ID']  = ['!=', EEM_Transaction::failed_status_code];
+            $_where['STS_ID*'] = ['!=', EEM_Transaction::abandoned_status_code];
         }
 
         $query_params = apply_filters(
             'FHEE__Transactions_Admin_Page___get_transactions_query_params',
-            array(
+            [
                 $_where,
-                'order_by'                 => array($orderby => $sort),
+                'order_by'                 => [$orderby => $sort],
                 'limit'                    => $limit,
                 'default_where_conditions' => EEM_Base::default_where_conditions_this_only,
-            ),
+            ],
             $this->_req_data,
             $view,
             $count
         );
 
         $transactions = $count
-            ? $TXN->count(array($query_params[0]), 'TXN_ID', true)
+            ? $TXN->count([$query_params[0]], 'TXN_ID', true)
             : $TXN->get_all($query_params);
 
         return $transactions;
@@ -2557,31 +2566,31 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
 
     /**
-     * @since 4.9.79.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws RuntimeException
+     * @since 4.9.79.p
      */
     public function recalculateLineItems()
     {
         $TXN_ID = ! empty($this->_req_data['TXN_ID']) ? absint($this->_req_data['TXN_ID']) : false;
         /** @var EE_Transaction $transaction */
-        $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
+        $transaction     = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
         $total_line_item = $transaction->total_line_item(false);
-        $success = $transaction->recalculateLineItems();
+        $success         = $transaction->recalculateLineItems();
         $this->_redirect_after_action(
             (bool) $success,
             esc_html__('Transaction taxes and totals', 'event_espresso'),
             esc_html__('recalculated', 'event_espresso'),
             isset($this->_req_data['redirect_to'])
-                ? array(
+                ? [
                 'action' => $this->_req_data['redirect_to'],
                 'TXN_ID' => $this->_req_data['TXN_ID'],
-            )
-                : array(),
+            ]
+                : [],
             true
         );
     }

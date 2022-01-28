@@ -17,7 +17,7 @@ class Registration_Reports_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Registration Reports Tour', 'event_espresso');
+        $this->_label = esc_html__('Registration Reports Tour', 'event_espresso');
         $this->_slug = 'registration-reports-joyride';
     }
 
@@ -49,9 +49,9 @@ class Registration_Reports_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Registration Reports', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Registration Reports', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Registration Reports page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -60,11 +60,11 @@ class Registration_Reports_Help_Tour extends EE_Help_Tour
 
     protected function _reg_per_day_report_stop()
     {
-        return '<p>' . __('This graph shows registrations for each day.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('This graph shows registrations for each day.', 'event_espresso') . '</p>';
     }
 
     protected function _reg_per_event_report_stop()
     {
-        return '<p>' . __('This graph shows registrations for each event.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('This graph shows registrations for each event.', 'event_espresso') . '</p>';
     }
 }

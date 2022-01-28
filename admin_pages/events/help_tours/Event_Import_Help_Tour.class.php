@@ -17,7 +17,7 @@ class Event_Import_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Import Tour', 'event_espresso');
+        $this->_label = esc_html__('Import Tour', 'event_espresso');
         $this->_slug = 'event-import-joyride';
     }
 
@@ -44,15 +44,15 @@ class Event_Import_Help_Tour extends EE_Help_Tour
 
     protected function _stop_one()
     {
-        $content = '<h3>' . __('Import', 'event_espresso') . '</h3>';
-        $content .= '<p>' . __('Learn how to import information into Event Espresso.', 'event_espresso') . '</p>';
+        $content = '<h3>' . esc_html__('Import', 'event_espresso') . '</h3>';
+        $content .= '<p>' . esc_html__('Learn how to import information into Event Espresso.', 'event_espresso') . '</p>';
         return $content;
     }
 
     protected function _stop_two()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'A sample CSV file can be downloaded by creating an event through the Event Editor and then saving that event. Then return to the Event Overview screen and hover of the name of the event and click on Export.',
                    'event_espresso'
                ) . '</p>';
@@ -61,7 +61,7 @@ class Event_Import_Help_Tour extends EE_Help_Tour
     protected function _stop_three()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Click on Choose File and browse to the location of your CSV file on your computer.',
                    'event_espresso'
                ) . '</p>';
@@ -69,6 +69,6 @@ class Event_Import_Help_Tour extends EE_Help_Tour
 
     protected function _stop_four()
     {
-        return '<p>' . __('Click on Upload File.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Click on Upload File.', 'event_espresso') . '</p>';
     }
 }

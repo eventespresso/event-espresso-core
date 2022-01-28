@@ -6,7 +6,7 @@
  * @package     Event Espresso
  * @author      Seth Shoultes
  * @copyright   (c) 2008-2013 Event Espresso  All Rights Reserved.
- * @license     http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @license     https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @link        http://www.eventespresso.com
  * @version     4+
  */
@@ -16,21 +16,21 @@ if (have_posts()) :
             <h1 class="page-title">
                 <?php
                 if (is_day()) :
-                    printf(__('Today\'s Events: %s', 'event_espresso'), get_the_date());
+                    printf(esc_html__('Today\'s Events: %s', 'event_espresso'), get_the_date());
                 elseif (is_month()) :
                     printf(
-                        __('Events This Month: %s', 'event_espresso'),
+                        esc_html__('Events This Month: %s', 'event_espresso'),
                         get_the_date(_x('F Y', 'monthly archives date format', 'event_espresso'))
                     );
                 elseif (is_year()) :
                     printf(
-                        __('Events This Year: %s', 'event_espresso'),
+                        esc_html__('Events This Year: %s', 'event_espresso'),
                         get_the_date(_x('Y', 'yearly archives date format', 'event_espresso'))
                     );
                 else :
                     echo apply_filters(
                         'FHEE__archive_espresso_events_template__upcoming_events_h1',
-                        __('Upcoming Events', 'event_espresso')
+                        esc_html__('Upcoming Events', 'event_espresso')
                     );
                 endif;
                 ?>

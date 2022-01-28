@@ -48,8 +48,7 @@ class AttendeeFilterHeader extends AdminPageHeaderDecorator
     public function getHeaderText($text = '')
     {
         $ATT_ID = $this->request->getRequestParam('ATT_ID');
-        $ATT_ID = $this->request->getRequestParam('attendee_id', $ATT_ID);
-        $ATT_ID = absint($ATT_ID);
+        $ATT_ID = $this->request->getRequestParam('attendee_id', $ATT_ID, 'int');
         if ($ATT_ID) {
             $attendee = $this->attendee_model->get_one_by_ID($ATT_ID);
             if ($attendee instanceof EE_Attendee) {

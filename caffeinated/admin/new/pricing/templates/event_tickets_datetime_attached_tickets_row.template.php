@@ -6,14 +6,12 @@
  * @var int $DTT_ID
  * @var int $dtt_row
  * @var string $DTT_description
- * @var string $event_datetimes_name
  * @var string $show_tickets_row
  * @var string $datetime_tickets_list
+ * @var string $event_datetimes_name
  * @var string $add_new_datetime_ticket_help_link
  */
-
 ?>
-
 <tr id="advanced-dtt-edit-row-<?php echo $dtt_row; ?>" class="advanced-dtt-edit-row">
     <td colspan="7">
         <section id="edit-event-datetime-tickets-<?php echo $dtt_row; ?>"

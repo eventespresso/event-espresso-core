@@ -10,8 +10,6 @@
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * This is used to override any existing WP_UnitTestCase methods that need specific handling in EE.  We
@@ -283,7 +281,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if (!self::$accidental_txn_commit_noted && get_option('accidental_txn_commit_indicator', FALSE)) {
             global $wpdb;
             self::$accidental_txn_commit_noted = TRUE;
-            throw new EE_Error(sprintf(__("Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s", 'event_espresso'), print_r($wpdb->queries, TRUE), $this->getName()));
+            throw new EE_Error(sprintf(esc_html__("Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s", 'event_espresso'), print_r($wpdb->queries, TRUE), $this->getName()));
         }
     }
 
@@ -580,8 +578,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * will result in a date remaining in March.
      * see http://php.net/manual/en/datetime.sub.php#example-2469
      *
-     * @param \DateTime $now
-     * @param bool $adding_interval
+     * @param DateTime $now
+     * @param bool     $adding_interval
      * @return string
      */
     protected function _get_one_month_period_offset_in_days(DateTime $now, $adding_interval = true)
@@ -643,8 +641,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * correctly calculates a date that is slightly more than one month in the past from passed date
      *
-     * @param \DateTime $now
-     * @return \DateTime
+     * @param DateTime $now
+     * @return DateTime
+     * @throws Exception
      */
     protected function _get_date_one_month_ago(DateTime $now)
     {
@@ -662,8 +661,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * correctly calculates a date that is slightly more than one month in the future from passed date
      *
-     * @param \DateTime $now
-     * @return \DateTime
+     * @param DateTime $now
+     * @return DateTime
      */
     protected function _get_date_one_month_from_now(DateTime $now)
     {
@@ -681,7 +680,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param string $actual_date The actual date string in the given full_format date string format.
      * @param        $full_format
      * @param string $custom_error_message
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function assertDateWithinOneMinute($expected_date, $actual_date, $full_format, $custom_error_message = '')
     {
@@ -691,14 +690,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $date_parsing_error = '';
         if (!$expected_date_obj instanceof DateTime) {
             $date_parsing_error = sprintf(
-                __('Expected date %1$s could not be parsed into format %2$s', 'event_espresso'),
+                esc_html__('Expected date %1$s could not be parsed into format %2$s', 'event_espresso'),
                 print_r($expected_date, true),
                 $full_format
             );
         }
         if (!$actual_date_obj instanceof DateTime) {
             $date_parsing_error = sprintf(
-                __('Actual date %1$s could not be parsed into format %2$s', 'event_espresso'),
+                esc_html__('Actual date %1$s could not be parsed into format %2$s', 'event_espresso'),
                 print_r($actual_date, true),
                 $full_format
             );
@@ -710,7 +709,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $custom_error_message = !empty($custom_error_message)
             ? $custom_error_message
             : sprintf(
-                __(
+                esc_html__(
                     'The expected date "%1$s" differs from the actual date "%2$s" by more than one minute',
                     'event_espresso'
                 ),
@@ -807,7 +806,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if ($in_there) {
             $this->assertTrue(true);
         } else {
-            $this->assertTrue($in_there, sprintf(__('Array %1$s does not contain %2$s', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
+            $this->assertTrue($in_there, sprintf(esc_html__('Array %1$s does not contain %2$s', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
         }
     }
 
@@ -822,7 +821,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if ($not_in_there) {
             $this->assertTrue($not_in_there);
         } else {
-            $this->assertTrue($not_in_there, sprintf(__('Array %1$s DOES contain %2$s when it shouldn\'t', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
+            $this->assertTrue($not_in_there, sprintf(esc_html__('Array %1$s DOES contain %2$s when it shouldn\'t', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
         }
     }
 
@@ -836,7 +835,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if ($option) {
             $this->assertTrue(true);
         } else {
-            $this->assertNotNull($option, sprintf(__('The WP Option "%s" does not exist but should', 'event_espresso'), $option_name));
+            $this->assertNotNull($option, sprintf(esc_html__('The WP Option "%s" does not exist but should', 'event_espresso'), $option_name));
         }
     }
 
@@ -848,7 +847,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
     {
         $option = get_option($option_name, NULL);
         if ($option) {
-            $this->assertNull($option, sprintf(__('The WP Option "%s" exists but shouldn\'t', 'event_espresso'), $option_name));
+            $this->assertNull($option, sprintf(esc_html__('The WP Option "%s" exists but shouldn\'t', 'event_espresso'), $option_name));
         } else {
             $this->assertTrue(true);
         }
@@ -862,7 +861,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * @param EE_Base_Class|EE_Base_Class[] $expected_object
      * @param EE_Base_Class|EE_Base_Class[] $actual_object
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function assertEEModelObjectsEquals($expected_object, $actual_object)
     {
@@ -880,7 +879,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 if ($expected_value !== $actual_value) {
                     $this->fail(
                         sprintf(
-                            __('EE objects for the field %4$s of class "%1$s" did not match. They were: %2$s and %3$s.  The values for the field were %5$s and %6$s', 'event_espresso'),
+                            esc_html__('EE objects for the field %4$s of class "%1$s" did not match. They were: %2$s and %3$s.  The values for the field were %5$s and %6$s', 'event_espresso'),
                             get_class($expected_object),
                             print_r($expected_object->model_field_array(), true),
                             print_r($actual_object->model_field_array(), true),
@@ -938,7 +937,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             } elseif ($related_model_name === 'WP_User' && get_current_user_id()) {
                 $fk = $model->get_foreign_key_to($related_model_name);
                 if (! isset($args[$fk->get_name()])) {
-                    $obj = \EEM_WP_User::instance()->get_one_by_ID(get_current_user_id());
+                    $obj = EEM_WP_User::instance()->get_one_by_ID(get_current_user_id());
                     $args[$fk->get_name()] = $obj->ID();
                 }
             } elseif ($related_model_name === 'Country' && ! isset($args['CNT_ISO'])) {
@@ -1038,7 +1037,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 global $wpdb;
                 throw new EE_Error(
                     sprintf(
-                        __('Could not save %1$s using %2$s. Error was %3$s', 'event_espresso'),
+                        esc_html__('Could not save %1$s using %2$s. Error was %3$s', 'event_espresso'),
                         $model_name,
                         wp_json_encode($args),
                         $wpdb->last_error
@@ -1083,7 +1082,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if ($table_analysis->tableExists($table_name)) {
             $this->fail(
                 sprintf(
-                    __('Table like %1$s SHOULD NOT exist. It was apparently defined on the model "%2$s"', 'event_espresso'),
+                    esc_html__('Table like %1$s SHOULD NOT exist. It was apparently defined on the model "%2$s"', 'event_espresso'),
                     $table_name,
                     $model_name
                 )
@@ -1139,7 +1138,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @type string/int/Datetime $timestamp to use on the transaction and registration and payments etc
      * }
      * @return EE_Transaction
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function new_typical_transaction($options = array())
     {
@@ -1232,7 +1231,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @type int    $TKT_taxable       set the TKT_taxable to this value.
      *                                 }
      * @return EE_Ticket
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function new_ticket($options = array())
     {
@@ -1373,9 +1372,10 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     /**
      * increments the ticket and datetime sold values
-     * @param \EE_ticket $ticket
-     * @param int $qty
-     * @throws \EE_Error
+     *
+     * @param EE_ticket $ticket
+     * @param int       $qty
+     * @throws EE_Error
      */
     public function simulate_x_number_ticket_sales(EE_ticket $ticket, $qty = 1)
     {
@@ -1385,9 +1385,10 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     /**
      * decrements the ticket and datetime sold values
-     * @param \EE_ticket $ticket
+     *
+     * @param EE_ticket $ticket
      * @param int $qty
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function reverse_x_number_ticket_sales(EE_ticket $ticket, $qty = 1)
     {
@@ -1530,5 +1531,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
     protected function assertFilterNotSet($filter, callable $callback)
     {
         $this->assertHookIsSet($filter, $callback, false, false);
+    }
+
+
+    protected function resetRequestParams()
+    {
+        $request = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\tests\mocks\core\services\request\RequestMock'
+        );
+        $request->resetRequestParams($_GET, $_POST, $_COOKIE, $_SERVER, $_FILES);
     }
 }

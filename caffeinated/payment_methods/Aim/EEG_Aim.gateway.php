@@ -10,7 +10,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * @package            Event Espresso
  * @author             Seth Shoultes
  * @copyright          (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @license            https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @link               http://www.eventespresso.com
  * @version            4.3
  *
@@ -269,7 +269,7 @@ class EEG_Aim extends EE_Onsite_Gateway
             $payment->set_details(print_r($response, true));
         } else {
             $payment->set_status($this->_pay_model->failed_status());
-            $payment->set_gateway_response(__("There was no response from Authorize.net", 'event_espresso'));
+            $payment->set_gateway_response(esc_html__("There was no response from Authorize.net", 'event_espresso'));
             $payment->set_details(print_r($response, true));
         }
         return $payment;

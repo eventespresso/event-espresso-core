@@ -59,7 +59,7 @@ class EEH_Qtip_Loader extends EEH_Base
         if (did_action('wp_print_styles') || did_action('admin_head')) {
             EE_Error::doing_it_wrong(
                 'EEH_Qtip_Loader',
-                __(
+                esc_html__(
                     'This helper must be instantiated before or within a callback for the WordPress wp_enqueue_scripts hook action hook.',
                     'event_espresso'
                 ),
@@ -153,7 +153,7 @@ class EEH_Qtip_Loader extends EEH_Base
         if (did_action('wp_enqueue_scripts') || did_action('admin_enqueue_scripts')) {
             EE_Error::doing_it_wrong(
                 'EEH_Qtip_Loader->register()',
-                __(
+                esc_html__(
                     'EE_Qtip_Config objects must be registered before wp_enqueue_scripts is called.',
                     'event_espresso'
                 ),
@@ -206,7 +206,7 @@ class EEH_Qtip_Loader extends EEH_Base
             if (! is_readable($path)) {
                 throw new DomainException(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Unable to load the Qtip Config registered for this page (%s) because none of the file paths attempted are readable.  Please check the spelling of the paths you\'ve used in the registration',
                             'event_espresso'
                         ),
@@ -221,7 +221,7 @@ class EEH_Qtip_Loader extends EEH_Base
         if (! class_exists($qtip)) {
             throw new DomainException(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The Qtip_Config class being registered (%s) does not exist, please check the spelling.',
                         'event_espresso'
                     ),
@@ -289,7 +289,8 @@ class EEH_Qtip_Loader extends EEH_Base
             if (! $qt instanceof EE_Qtip) {
                 continue;
             }
-            $content[] = '<div class="ee-qtip-helper-content hidden" id="' . $qt->content_id . '">' . $qt->content . '</div>';
+            $content[] = '<div class="ee-qtip-helper-content hidden" id="' . esc_attr($qt->content_id) . '">' .
+                         $qt->content . '</div>';
         }
 
         return implode('<br />', $content);

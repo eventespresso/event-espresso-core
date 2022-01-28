@@ -9,15 +9,18 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * and also checks that the form is not being submitted either too fast or too slow
  * which can be an indication that the form was submitted by a bot
  *
- * @package               Event Espresso
- * @subpackage            /modules/bot_trap/
- * @author                Brent Christensen
+ * @package     Event Espresso
+ * @subpackage  /modules/bot_trap/
+ * @author      Brent Christensen
+ * @method EED_Bot_Trap get_instance($module_name)
  */
 class EED_Bot_Trap extends EED_Module
 {
 
     /**
-     * @return EED_Bot_Trap|EED_Module
+     * @return EED_Module|EED_Bot_Trap
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -78,8 +81,7 @@ class EED_Bot_Trap extends EED_Module
     public static function set_hooks_admin()
     {
         if (
-            defined('DOING_AJAX')
-            && DOING_AJAX
+            EED_Bot_Trap::getRequest()->isAjax()
             && apply_filters('FHEE__EED_Bot_Trap__set_hooks__use_bot_trap', true)
             && EE_Registry::instance()->CFG->registration->use_bot_trap
         ) {
@@ -119,13 +121,13 @@ class EED_Bot_Trap extends EED_Module
     public static function generate_bot_trap()
     {
         $do_not_enter = esc_html__('please do not enter anything in this input', 'event_espresso');
-        $time = microtime(true);
+        $time = esc_attr(microtime(true));
         $html = '<div class="tkt-slctr-request-processor-dv" style="float:left; margin:0 0 0 -999em; height: 0;">';
         $html .= '<label for="tkt-slctr-request-processor-email-' . $time . '">' . $do_not_enter . '</label>';
         $html .= '<input type="email" id="tkt-slctr-request-processor-email-';
         $html .= $time . '" name="tkt-slctr-request-processor-email" value=""/>';
         $html .= '</div><!-- .tkt-slctr-request-processor-dv -->';
-        echo $html;
+        echo $html; // already escaped
     }
 
 
@@ -141,8 +143,7 @@ class EED_Bot_Trap extends EED_Module
     public static function process_bot_trap($triggered_trap_callback = array())
     {
         // what's your email address Mr. Bot ?
-        $empty_trap = isset($_REQUEST['tkt-slctr-request-processor-email'])
-                      && $_REQUEST['tkt-slctr-request-processor-email'] === '';
+        $empty_trap = EED_Bot_Trap::getRequest()->getRequestParam('tkt-slctr-request-processor-email') === '';
         // are we human ?
         if ($empty_trap) {
             do_action('AHEE__EED_Bot_Trap__process_bot_trap__trap_not_triggered');
@@ -175,7 +176,7 @@ class EED_Bot_Trap extends EED_Module
             )
         );
         // if AJAX, return the redirect URL
-        if (defined('DOING_AJAX') && DOING_AJAX) {
+        if (EED_Bot_Trap::getRequest()->isAjax()) {
             echo wp_json_encode(
                 array_merge(
                     EE_Error::get_notices(false),
@@ -201,14 +202,14 @@ class EED_Bot_Trap extends EED_Module
     public static function display_bot_trap_success()
     {
         add_filter('FHEE__EED_Single_Page_Checkout__run', '__return_false');
-        $bot_notice = esc_html__(
-            'Thank you so much. Your ticket selections have been received for consideration.',
-            'event_espresso'
+        $bot_notice = EED_Bot_Trap::getRequest()->getRequestParam(
+            'ee-notice',
+            esc_html__(
+                'Thank you so much. Your ticket selections have been received for consideration.',
+                'event_espresso'
+            )
         );
-        $bot_notice = isset($_REQUEST['ee-notice']) && $_REQUEST['ee-notice'] !== ''
-            ? sanitize_text_field(stripslashes($_REQUEST['ee-notice']))
-            : $bot_notice;
-        EE_Registry::instance()->REQ->add_output(EEH_HTML::div($bot_notice, '', 'ee-attention'));
+        EED_Bot_Trap::getResponse()->addOutput(EEH_HTML::div($bot_notice, '', 'ee-attention'));
     }
 
 
@@ -228,7 +229,7 @@ class EED_Bot_Trap extends EED_Module
     public static function bot_trap_settings_form()
     {
         EED_Bot_Trap::_bot_trap_settings_form()->enqueue_js();
-        echo EED_Bot_Trap::_bot_trap_settings_form()->get_html();
+        echo EED_Bot_Trap::_bot_trap_settings_form()->get_html(); // already escaped
     }
 
 

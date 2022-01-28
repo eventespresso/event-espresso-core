@@ -270,7 +270,7 @@ class Registry
             }
             throw new InvalidArgumentException(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The value for %1$s is already set and it is not an array. The %2$s method can only be used to
                          push values to this data element when it is an array.',
                         'event_espresso'
@@ -308,7 +308,7 @@ class Registry
             }
             throw new InvalidArgumentException(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The %1$s key already exists for the templates array in the js data array.  No overrides are allowed.',
                         'event_espresso'
                     ),
@@ -365,7 +365,7 @@ class Registry
             if (is_array($this->jsdata[ $key ])) {
                 throw new InvalidArgumentException(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The value for %1$s already exists in the Registry::eejs object.
                             Overrides are not allowed. Since the value of this data is an array, you may want to use the
                             %2$s method to push your value to the array.',
@@ -378,7 +378,7 @@ class Registry
             }
             throw new InvalidArgumentException(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The value for %1$s already exists in the Registry::eejs object. Overrides are not
                         allowed.  Consider attaching your value to a different key',
                         'event_espresso'

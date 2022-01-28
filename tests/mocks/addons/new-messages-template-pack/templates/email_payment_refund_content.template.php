@@ -33,15 +33,15 @@
 <tbody>
 <tr>
 <td>
-<h2><?php printf( __('Hello, %s:', 'ee-new-messages-template-pack-test'),  '[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]' ); ?></h2>
-<p class="lead"><?php _e("We're just notifying you of a refund issued for the following transaction and tickets:", 'ee-new-messages-template-pack-test'); ?></p>
-<h3><?php _e('Refund Details:', 'ee-new-messages-template-pack-test'); ?></h3>
+<h2><?php printf( esc_html__('Hello, %s:', 'ee-new-messages-template-pack-test'),  '[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]' ); ?></h2>
+<p class="lead"><?php esc_html_e("We're just notifying you of a refund issued for the following transaction and tickets:", 'ee-new-messages-template-pack-test'); ?></p>
+<h3><?php esc_html_e('Refund Details:', 'ee-new-messages-template-pack-test'); ?></h3>
 <ul>
-	<li><strong><?php _e('This is just a test to verify the template pack works as expected', 'ee-new-messages-template-pack-test'); ?></strong></li>
-	<li><strong><?php _e('Payment Status:', 'ee-new-messages-template-pack-test'); ?></strong> [PAYMENT_STATUS]</li>
-	<li><strong><?php _e('Transaction ID:', 'ee-new-messages-template-pack-test'); ?></strong> [TXN_ID]</li>
-	<li><strong><?php _e('Total Cost:', 'ee-new-messages-template-pack-test'); ?></strong> [TOTAL_COST]</li>
-	<li><strong><?php _e('Refund Amount:', 'ee-new-messages-template-pack-test'); ?></strong> [AMOUNT_PAID]</li>
+	<li><strong><?php esc_html_e('This is just a test to verify the template pack works as expected', 'ee-new-messages-template-pack-test'); ?></strong></li>
+	<li><strong><?php esc_html_e('Payment Status:', 'ee-new-messages-template-pack-test'); ?></strong> [PAYMENT_STATUS]</li>
+	<li><strong><?php esc_html_e('Transaction ID:', 'ee-new-messages-template-pack-test'); ?></strong> [TXN_ID]</li>
+	<li><strong><?php esc_html_e('Total Cost:', 'ee-new-messages-template-pack-test'); ?></strong> [TOTAL_COST]</li>
+	<li><strong><?php esc_html_e('Refund Amount:', 'ee-new-messages-template-pack-test'); ?></strong> [AMOUNT_PAID]</li>
 </ul>
 [EVENT_LIST]
 </td>
@@ -68,8 +68,8 @@
 <tbody>
 <tr>
 <td>
-<h3><?php _e('Connect with Us:', 'ee-new-messages-template-pack-test'); ?></h3>
-<a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php _e('Facebook', 'ee-new-messages-template-pack-test'); ?></a> <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php _e('Twitter', 'ee-new-messages-template-pack-test'); ?></a></td>
+<h3><?php esc_html_e('Connect with Us:', 'ee-new-messages-template-pack-test'); ?></h3>
+<a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php esc_html_e('Facebook', 'ee-new-messages-template-pack-test'); ?></a> <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php esc_html_e('Twitter', 'ee-new-messages-template-pack-test'); ?></a></td>
 </tr>
 </tbody>
 </table>
@@ -80,10 +80,10 @@
 <tbody>
 <tr>
 <td>
-<h3><?php _e('Contact Info:', 'ee-new-messages-template-pack-test'); ?></h3>
-<?php _e('Phone:', 'ee-new-messages-template-pack-test'); ?> <strong>[CO_PHONE]</strong>
+<h3><?php esc_html_e('Contact Info:', 'ee-new-messages-template-pack-test'); ?></h3>
+<?php esc_html_e('Phone:', 'ee-new-messages-template-pack-test'); ?> <strong>[CO_PHONE]</strong>
 
-<?php _e('Email:', 'ee-new-messages-template-pack-test'); ?> <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
+<?php esc_html_e('Email:', 'ee-new-messages-template-pack-test'); ?> <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
 </tr>
 </tbody>
 </table>

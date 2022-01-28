@@ -44,7 +44,7 @@ $no_attendees_message =  apply_filters( 'FHEE__loop-espresso_attendees-shortcode
 				endforeach; ?>
 		</ul>
 	<?php else : ?>
-		<p><?php echo $no_attendees_message; ?></p>
+		<p><?php echo esc_html($no_attendees_message); ?></p>
 	<?php endif; ?>
     <?php do_action_ref_array(
         'AHEE__loop-espresso_event_attendees__after',

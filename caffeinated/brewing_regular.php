@@ -56,17 +56,17 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
     {
         add_filter(
             'FHEE__EE_Config__register_modules__modules_to_register',
-            array($this, 'caffeinated_modules_to_register')
+            [$this, 'caffeinated_modules_to_register']
         );
-        add_filter('FHEE__EE_Registry__load_helper__helper_paths', array($this, 'caf_helper_paths'), 10);
+        add_filter('FHEE__EE_Registry__load_helper__helper_paths', [$this, 'caf_helper_paths'], 10);
         add_filter(
             'AHEE__EE_System__load_core_configuration__complete',
             function () {
                 EE_Register_Payment_Method::register(
                     'caffeinated_payment_methods',
-                    array(
+                    [
                         'payment_method_paths' => glob(EE_CAF_PAYMENT_METHODS . '*', GLOB_ONLYDIR),
-                    )
+                    ]
                 );
             }
         );
@@ -79,11 +79,11 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
     private function setInitializationHooks()
     {
         // activation
-        add_action('AHEE__EEH_Activation__initialize_db_content', array($this, 'initialize_caf_db_content'));
+        add_action('AHEE__EEH_Activation__initialize_db_content', [$this, 'initialize_caf_db_content']);
         // load caff init
-        add_action('AHEE__EE_System__set_hooks_for_core', array($this, 'caffeinated_init'));
+        add_action('AHEE__EE_System__set_hooks_for_core', [$this, 'caffeinated_init']);
         // load caff scripts
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_caffeinated_scripts'), 10);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_caffeinated_scripts'], 10);
     }
 
 
@@ -141,58 +141,59 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
         global $wpdb;
         // use same method of getting creator id as the version introducing the change
         $default_creator_id = apply_filters('FHEE__EE_DMS_Core_4_5_0__get_default_creator_id', get_current_user_id());
-        $price_type_table = $wpdb->prefix . "esp_price_type";
-        $price_table = $wpdb->prefix . "esp_price";
+        $price_type_table   = $wpdb->prefix . "esp_price_type";
+        $price_table        = $wpdb->prefix . "esp_price";
         if ($this->_get_table_analysis()->tableExists($price_type_table)) {
-            $SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table . ' WHERE PBT_ID=4';// include trashed price types
+            $SQL                  =
+                'SELECT COUNT(PRT_ID) FROM ' . $price_type_table . ' WHERE PBT_ID=4';// include trashed price types
             $tax_price_type_count = $wpdb->get_var($SQL);
             if ($tax_price_type_count <= 1) {
                 $wpdb->insert(
                     $price_type_table,
-                    array(
-                        'PRT_name'       => __("Regional Tax", "event_espresso"),
+                    [
+                        'PRT_name'       => esc_html__("Regional Tax", "event_espresso"),
                         'PBT_ID'         => 4,
                         'PRT_is_percent' => true,
                         'PRT_order'      => 60,
                         'PRT_deleted'    => false,
                         'PRT_wp_user'    => $default_creator_id,
-                    ),
-                    array(
+                    ],
+                    [
                         '%s',// PRT_name
                         '%d',// PBT_id
                         '%d',// PRT_is_percent
                         '%d',// PRT_order
                         '%d',// PRT_deleted
                         '%d', // PRT_wp_user
-                    )
+                    ]
                 );
                 // federal tax
                 $result = $wpdb->insert(
                     $price_type_table,
-                    array(
-                        'PRT_name'       => __("Federal Tax", "event_espresso"),
+                    [
+                        'PRT_name'       => esc_html__("Federal Tax", "event_espresso"),
                         'PBT_ID'         => 4,
                         'PRT_is_percent' => true,
                         'PRT_order'      => 60,
                         'PRT_deleted'    => false,
                         'PRT_wp_user'    => $default_creator_id,
-                    ),
-                    array(
+                    ],
+                    [
                         '%s',// PRT_name
                         '%d',// PBT_id
                         '%d',// PRT_is_percent
                         '%d',// PRT_order
                         '%d',// PRT_deleted
                         '%d' // PRT_wp_user
-                    )
+                    ]
                 );
                 if ($result) {
                     $wpdb->insert(
                         $price_table,
-                        array(
+                        [
                             'PRT_ID'         => $wpdb->insert_id,
                             'PRC_amount'     => 15.00,
-                            'PRC_name'       => __("Sales Tax", "event_espresso"),
+                            'PRC_name'       => esc_html__("Sales Tax", "event_espresso"),
                             'PRC_desc'       => '',
                             'PRC_is_default' => true,
                             'PRC_overrides'  => null,
@@ -200,8 +201,8 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                             'PRC_order'      => 60,
                             'PRC_parent'     => null,
                             'PRC_wp_user'    => $default_creator_id,
-                        ),
-                        array(
+                        ],
+                        [
                             '%d',// PRT_id
                             '%f',// PRC_amount
                             '%s',// PRC_name
@@ -212,7 +213,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                             '%d',// PRC_order
                             '%d',// PRC_parent
                             '%d' // PRC_wp_user
-                        )
+                        ]
                     );
                 }
             }
@@ -227,7 +228,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      * @param array $modules_to_register
      * @return array
      */
-    public function caffeinated_modules_to_register($modules_to_register = array())
+    public function caffeinated_modules_to_register($modules_to_register = [])
     {
         if (is_readable(EE_CAFF_PATH . 'modules')) {
             $caffeinated_modules_to_register = glob(EE_CAFF_PATH . 'modules/*', GLOB_ONLYDIR);
@@ -251,21 +252,21 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
         // Custom Post Type hooks
         add_filter(
             'FHEE__EventEspresso_core_domain_entities_custom_post_types_TaxonomyDefinitions__getTaxonomies',
-            array($this, 'filter_taxonomies')
+            [$this, 'filter_taxonomies']
         );
         add_filter(
             'FHEE__EventEspresso_core_domain_entities_custom_post_types_CustomPostTypeDefinitions__getCustomPostTypes',
-            array($this, 'filter_cpts')
+            [$this, 'filter_cpts']
         );
         add_filter(
             'FHEE__EE_Admin__get_extra_nav_menu_pages_items',
-            array($this, 'nav_metabox_items')
+            [$this, 'nav_metabox_items']
         );
         EE_Registry::instance()->load_file(
             EE_CAFF_PATH,
             'EE_Caf_Messages',
             'class',
-            array(),
+            [],
             false
         );
         // caffeinated_init__complete hook
@@ -309,11 +310,11 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      */
     public function nav_metabox_items(array $menuitems)
     {
-        $menuitems[] = array(
-            'title'       => __('Venue List', 'event_espresso'),
+        $menuitems[] = [
+            'title'       => esc_html__('Venue List', 'event_espresso'),
             'url'         => get_post_type_archive_link('espresso_venues'),
-            'description' => __('Archive page for all venues.', 'event_espresso'),
-        );
+            'description' => esc_html__('Archive page for all venues.', 'event_espresso'),
+        ];
         return $menuitems;
     }
 
@@ -331,7 +332,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
         } else {
             throw new \EE_Error(
                 sprintf(
-                    __('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
+                    esc_html__('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
                     get_class($this)
                 )
             );
@@ -341,5 +342,5 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 
 
 $brewing = new EE_Brewing_Regular(
-    EE_Registry::instance()->create('TableAnalysis', array(), true)
+    EE_Registry::instance()->create('TableAnalysis', [], true)
 );

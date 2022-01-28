@@ -27,8 +27,8 @@
             <td></td>
             <td class="container" bgcolor="#FFFFFF">
                 <div class="content">
-                    <h1><?php _e('Registration(s) Require Approval', 'event_espresso'); ?></h1>
-                    <?php _e('The following registration(s) require your approval:', 'event_espresso'); ?>
+                    <h1><?php esc_html_e('Registration(s) Require Approval', 'event_espresso'); ?></h1>
+                    <?php esc_html_e('The following registration(s) require your approval:', 'event_espresso'); ?>
                     <table>
                         <tbody>
                             <tr>

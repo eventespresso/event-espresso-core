@@ -6,6 +6,7 @@ use EE_Error;
 use EEM_Registration;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\tests\mocks\core\domain\services\admin\registrations\list_table\QueryBuilderMock;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
 use InvalidArgumentException;
@@ -31,11 +32,10 @@ class QueryBuilderTest extends TestCase
      */
     private function getQueryBuilder(array $get_params)
     {
-        return new QueryBuilderMock(
-            [],
-            new RequestMock($get_params, [], [], [], []),
-            EEM_Registration::instance()
-        );
+        /** @var RequestMock $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestMock::class);
+        $request->resetRequestParams($get_params, [], [], [], []);
+        return new QueryBuilderMock($request, EEM_Registration::instance());
     }
 
 
@@ -82,10 +82,10 @@ class QueryBuilderTest extends TestCase
             [['ATT-ID' => 123], false, null],
             [['attendee-id' => 123], false, null],
             // invalid values
-            [['ATT_ID' => '<h1>big honkin cabbage</h1>'], true, 0],
-            [['ATT_ID' => $this->xss], true, 0],
-            [['attendee_id' => '<h1>big honkin cabbage</h1>'], true, 0],
-            [['attendee_id' => $this->xss], true, 0],
+            [['ATT_ID' => '<h1>big honkin cabbage</h1>'], false, 0],
+            [['ATT_ID' => $this->xss], false, 0],
+            [['attendee_id' => '<h1>big honkin cabbage</h1>'], false, 0],
+            [['attendee_id' => $this->xss], false, 0],
             // all good
             [['ATT_ID' => 123], true, 123],
             [['ATT_ID' => '123'], true, 123],
@@ -135,10 +135,10 @@ class QueryBuilderTest extends TestCase
             [['EVT-ID' => 123], false, null],
             [['event-id' => 123], false, null],
             // invalid values
-            [['EVT_ID' => '<h1>big honkin cabbage</h1>'], true, 0],
-            [['EVT_ID' => $this->xss], true, 0],
-            [['event_id' => '<h1>big honkin cabbage</h1>'], true, 0],
-            [['event_id' => $this->xss], true, 0],
+            [['EVT_ID' => '<h1>big honkin cabbage</h1>'], false, 0],
+            [['EVT_ID' => $this->xss], false, 0],
+            [['event_id' => '<h1>big honkin cabbage</h1>'], false, 0],
+            [['event_id' => $this->xss], false, 0],
             // all good
             [['EVT_ID' => 123], true, 123],
             [['EVT_ID' => '123'], true, 123],
@@ -239,10 +239,10 @@ class QueryBuilderTest extends TestCase
             [['datetime-id' => 123], false, null],
             [['Ticket.Datetime.DTT_ID' => 123], false, null],
             // invalid values
-            [['DTT_ID' => '<h1>big honkin cabbage</h1>'], true, 0],
-            [['DTT_ID' => $this->xss], true, 0],
-            [['datetime_id' => '<h1>big honkin cabbage</h1>'], true, 0],
-            [['datetime_id' => $this->xss], true, 0],
+            [['DTT_ID' => '<h1>big honkin cabbage</h1>'], false, 0],
+            [['DTT_ID' => $this->xss], false, 0],
+            [['datetime_id' => '<h1>big honkin cabbage</h1>'], false, 0],
+            [['datetime_id' => $this->xss], false, 0],
             // all good
             [['DTT_ID' => 123], true, 123],
             [['DTT_ID' => '123'], true, 123],
@@ -292,10 +292,10 @@ class QueryBuilderTest extends TestCase
             [['TKT-ID' => 123], false, null],
             [['ticket-id' => 123], false, null],
             // invalid values
-            [['TKT_ID' => '<h1>big honkin cabbage</h1>'], true, 0],
-            [['TKT_ID' => $this->xss], true, 0],
-            [['ticket_id' => '<h1>big honkin cabbage</h1>'], true, 0],
-            [['ticket_id' => $this->xss], true, 0],
+            [['TKT_ID' => '<h1>big honkin cabbage</h1>'], false, 0],
+            [['TKT_ID' => $this->xss], false, 0],
+            [['ticket_id' => '<h1>big honkin cabbage</h1>'], false, 0],
+            [['ticket_id' => $this->xss], false, 0],
             // all good
             [['TKT_ID' => 123], true, 123],
             [['TKT_ID' => '123'], true, 123],

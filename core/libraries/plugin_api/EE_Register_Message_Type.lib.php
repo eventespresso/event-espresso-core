@@ -52,7 +52,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API
             || empty($setup_args['autoloadpaths'])
         ) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register a message type with EE_Register_Message_Type::register, you must include a unique name for the message type, plus an array containing the following keys: "mtfilename", "autoloadpaths"',
                     'event_espresso'
                 )
@@ -72,7 +72,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API
             EE_Error::doing_it_wrong(
                 __METHOD__,
                 sprintf(
-                    __(
+                    esc_html__(
                         'A message type named "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular___messages_caf" hook.',
                         'event_espresso'
                     ),

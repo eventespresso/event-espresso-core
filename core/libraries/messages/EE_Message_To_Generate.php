@@ -8,89 +8,99 @@
  * @subpackage messages
  * @author     Darren Ethier
  * @since      4.9.0
-*/
+ */
 class EE_Message_To_Generate
 {
 
     /**
-     * @type string name of EE_messenger
+     * name of EE_messenger
+     *
+     * @var string
      */
-    protected $_messenger_name = null;
+    protected $_messenger_name;
 
     /**
-     * @type string name of EE_message_type
+     * name of EE_message_type
+     *
+     * @var string
      */
-    protected $_message_type_name = null;
+    protected $_message_type_name;
 
     /**
-     * @type EE_messenger
+     * @var EE_messenger
      */
-    protected $_messenger = null;
+    protected $_messenger;
 
     /**
-     * @type EE_message_type
+     * @var EE_message_type
      */
-    protected $_message_type = null;
+    protected $_message_type;
 
     /**
      * Identifier for the context the message is to be generated for.
-     * @type string
+     *
+     * @var string
      */
     protected $_context = '';
 
     /**
      * Data that will be used to generate message.
-     * @type array
+     *
+     * @var array
      */
-    protected $_data = array();
+    protected $_data = [];
 
     /**
      * Whether this message is for a preview or not.
-     * @type bool
+     *
+     * @var bool
      */
     protected $_preview = false;
 
     /**
-     * @type EE_Message $_message
+     * @var EE_Message
      */
-    protected $_message = null;
+    protected $_message;
 
     /**
      * This is set by the constructor to indicate whether the incoming messenger
      * and message type are valid.  This can then be checked by callers to determine whether
      * to generate this message or not.
-     * @type bool
+     *
+     * @var bool
      */
     protected $_valid = false;
 
     /**
      * If there are any errors (non exception errors) they get added to this array for callers to decide
      * how to handle.
-     * @type array
+     *
+     * @var array
      */
-    protected $_error_msg = array();
+    protected $_error_msg = [];
 
     /**
      * Can be accessed via the send_now() method, this is set in the validation
      * routine via the EE_messenger::send_now() method.
-     * @type bool
+     *
+     * @var bool
      */
     protected $_send_now = false;
 
     /**
      * Holds the classname for the data handler used by the current message type.
      * This is set on the first call to the public `get_data_handler_class_name()` method.
-     * @type string
+     *
+     * @var string
      */
     protected $_data_handler_class_name = '';
 
     /**
      * one of the message status constants on EEM_Message
      *
-     * @type string
+     * @var string
      */
     protected $_message_status = '';
-
 
 
     /**
@@ -106,21 +116,20 @@ class EE_Message_To_Generate
     public function __construct(
         $messenger_name,
         $message_type_name,
-        $data = array(),
+        $data = [],
         $context = '',
         $preview = false,
         $status = EEM_Message::status_incomplete
     ) {
-        $this->_messenger_name      = $messenger_name;
-        $this->_message_type_name   = $message_type_name;
-        $this->_data                = is_array($data) ? $data : array( $data );
-        $this->_context             = $context;
-        $this->_preview             = $preview;
-        $this->_status              = $status;
+        $this->_messenger_name    = $messenger_name;
+        $this->_message_type_name = $message_type_name;
+        $this->_data              = is_array($data) ? $data : [$data];
+        $this->_context           = $context;
+        $this->_preview           = $preview;
+        $this->_status            = $status;
         // attempt to generate message immediately
         $this->_message = $this->_generate_message();
     }
-
 
 
     /**
@@ -132,7 +141,6 @@ class EE_Message_To_Generate
     }
 
 
-
     /**
      * @return array
      */
@@ -140,7 +148,6 @@ class EE_Message_To_Generate
     {
         return $this->_data;
     }
-
 
 
     /**
@@ -152,7 +159,6 @@ class EE_Message_To_Generate
     }
 
 
-
     /**
      * @return EE_message_type
      */
@@ -160,7 +166,6 @@ class EE_Message_To_Generate
     {
         return $this->_message_type;
     }
-
 
 
     /**
@@ -172,7 +177,6 @@ class EE_Message_To_Generate
     }
 
 
-
     /**
      * @param boolean $preview
      */
@@ -182,7 +186,6 @@ class EE_Message_To_Generate
     }
 
 
-
     /**
      * @return bool
      */
@@ -190,7 +193,6 @@ class EE_Message_To_Generate
     {
         return $this->_send_now;
     }
-
 
 
     /**
@@ -204,40 +206,38 @@ class EE_Message_To_Generate
     }
 
 
-
     /**
      * generates an EE_Message using the supplied arguments and some defaults
      *
      * @param array $properties
      * @return string
      */
-    protected function _generate_message($properties = array())
+    protected function _generate_message($properties = [])
     {
         $message = EE_Message_Factory::create(
             array_merge(
-                array(
+                [
                     'MSG_messenger'    => $this->_messenger_name,
                     'MSG_message_type' => $this->_message_type_name,
                     'MSG_context'      => $this->_context,
                     'STS_ID'           => $this->_status,
-                ),
+                ],
                 $properties
             )
         );
         // validate the message, and if it's good, set some properties
         try {
             $message->is_valid_for_sending_or_generation(true);
-            $this->_valid = true;
-            $this->_messenger = $message->messenger_object();
+            $this->_valid        = true;
+            $this->_messenger    = $message->messenger_object();
             $this->_message_type = $message->message_type_object();
-            $this->_send_now = $message->send_now();
+            $this->_send_now     = $message->send_now();
         } catch (Exception $e) {
-            $this->_valid = false;
+            $this->_valid       = false;
             $this->_error_msg[] = $e->getMessage();
         }
         return $message;
     }
-
 
 
     /**
@@ -257,13 +257,12 @@ class EE_Message_To_Generate
     }
 
 
-
     /**
      * This returns the data_handler class name for the internal message type set.
      * Note: this also verifies that the data handler class exists.  If it doesn't then $_valid is set to false
      * and the data_handler_class name is set to an empty string.
      *
-     * @param   bool    $preview    Used to indicate that the preview data handler is to be returned.
+     * @param bool $preview Used to indicate that the preview data handler is to be returned.
      * @return  string
      */
     public function get_data_handler_class_name($preview = false)
@@ -274,14 +273,14 @@ class EE_Message_To_Generate
             $this->_data = $this->_message_type->get_data();
 
             // verify
-            $this->_data_handler_class_name = EE_Message_To_Generate::verify_and_retrieve_class_name_for_data_handler_reference($ref);
+            $this->_data_handler_class_name =
+                EE_Message_To_Generate::verify_and_retrieve_class_name_for_data_handler_reference($ref);
             if ($this->_data_handler_class_name === '') {
                 $this->_valid = false;
             }
         }
         return $this->_data_handler_class_name;
     }
-
 
 
     /**
@@ -297,7 +296,7 @@ class EE_Message_To_Generate
         if (! class_exists($class_name)) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The included data handler reference (%s) does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.',
                         'event_espresso'
                     ),

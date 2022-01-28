@@ -97,7 +97,7 @@ abstract class ChangesInBase
             if (! $success) {
                 throw new EE_Error(
                     sprintf(
-                        __('The class %1$s was misnamed. It name should match the regex "%2$s"', 'event_espresso'),
+                        esc_html__('The class %1$s was misnamed. It name should match the regex "%2$s"', 'event_espresso'),
                         get_class($this),
                         $regex
                     )

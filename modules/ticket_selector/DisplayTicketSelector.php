@@ -8,6 +8,7 @@ use EE_Error;
 use EE_Event;
 use EE_Registry;
 use EE_System;
+use EE_Tax_Config;
 use EE_Ticket;
 use EE_Ticket_Selector_Config;
 use EEH_Event_View;
@@ -20,6 +21,7 @@ use EventEspresso\core\domain\entities\users\CurrentUser;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\services\request\RequestInterface;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
@@ -38,6 +40,15 @@ use WP_Post;
  */
 class DisplayTicketSelector
 {
+    /**
+     * @var RequestInterface
+     */
+    protected $request;
+
+    /**
+     * @var EE_Ticket_Selector_Config
+     */
+    protected $config;
 
     /**
      * event that ticket selector is being generated for
@@ -86,13 +97,22 @@ class DisplayTicketSelector
      * DisplayTicketSelector constructor.
      *
      * @param CurrentUser $current_user
-     * @param bool        $iframe
+     * @param RequestInterface          $request
+     * @param EE_Ticket_Selector_Config $config
+     * @param bool                      $iframe
      */
-    public function __construct(CurrentUser $current_user, bool $iframe = false)
+    public function __construct(
+        CurrentUser $current_user,
+        RequestInterface $request,
+        EE_Ticket_Selector_Config $config,
+        bool $iframe = false
+    )
     {
         $this->current_user = $current_user;
+        $this->request     = $request;
+        $this->config      = $config;
         $this->setIframe($iframe);
-        $this->date_format  = apply_filters(
+        $this->date_format = apply_filters(
             'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format',
             get_option('date_format')
         );
@@ -390,12 +410,7 @@ class DisplayTicketSelector
      */
     protected function getTickets()
     {
-        $ticket_selector_config = EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector;
-        $show_expired_tickets = is_admin()
-            || (
-                $ticket_selector_config instanceof EE_Ticket_Selector_Config
-                && $ticket_selector_config->show_expired_tickets
-            );
+        $show_expired_tickets = is_admin() || $this->config->show_expired_tickets;
 
         $ticket_query_args = [
             [
@@ -412,7 +427,7 @@ class DisplayTicketSelector
         ];
         if (! $show_expired_tickets) {
             // use the correct applicable time query depending on what version of core is being run.
-            $current_time = method_exists('EEM_Datetime', 'current_time_for_query')
+            $current_time                         = method_exists('EEM_Datetime', 'current_time_for_query')
                 ? time()
                 : current_time('timestamp');
             $ticket_query_args[0]['TKT_end_date'] = ['>', $current_time];
@@ -457,7 +472,7 @@ class DisplayTicketSelector
      *
      * @param EE_Ticket[] $tickets
      * @param array       $template_args
-     * @return TicketSelector
+     * @return TicketSelectorSimple|TicketSelectorStandard
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -484,16 +499,19 @@ class DisplayTicketSelector
         $template_args['tickets']      = $tickets;
         $template_args['ticket_count'] = count($tickets);
         $ticket_selector               = $this->simpleTicketSelector($tickets, $template_args);
-        return $ticket_selector instanceof TicketSelectorSimple
-            ? $ticket_selector
-            : new TicketSelectorStandard(
-                $this->event,
-                $tickets,
-                $this->getMaxAttendees(),
-                $template_args,
-                $this->date_format,
-                $this->time_format
-            );
+        if ($ticket_selector instanceof TicketSelectorSimple) {
+            return $ticket_selector;
+        }
+        return new TicketSelectorStandard(
+            $this->config,
+            $this->getTaxConfig(),
+            $this->event,
+            $tickets,
+            $this->getMaxAttendees(),
+            $template_args,
+            $this->date_format,
+            $this->time_format
+        );
     }
 
 
@@ -829,7 +847,7 @@ class DisplayTicketSelector
      * handleMissingEvent
      * Returns either false or an error to display when no valid event is passed.
      *
-     * @return false|string
+     * @return string
      * @throws ExceptionStackTraceDisplay
      * @throws InvalidInterfaceException
      * @throws Exception
@@ -838,12 +856,12 @@ class DisplayTicketSelector
     {
         // If this is not an iFrame request, simply return false.
         if (! $this->isIframe()) {
-            return false;
+            return '';
         }
         // This is an iFrame so return an error.
         // Display stack trace if WP_DEBUG is enabled.
         if (WP_DEBUG === true && current_user_can('edit_pages')) {
-            $event_id = EE_Registry::instance()->REQ->get('event', 0);
+            $event_id = $this->request->getRequestParam('event', 0, 'int');
             new ExceptionStackTraceDisplay(
                 new InvalidArgumentException(
                     sprintf(
@@ -866,5 +884,18 @@ class DisplayTicketSelector
                 'event_espresso'
             )
         );
+    }
+
+
+    /**
+     * @return EE_Tax_Config
+     * @since   4.10.14.p
+     */
+    protected function getTaxConfig()
+    {
+        return isset(EE_Registry::instance()->CFG->tax_settings)
+               && EE_Registry::instance()->CFG->tax_settings instanceof EE_Tax_Config
+            ? EE_Registry::instance()->CFG->tax_settings
+            : new EE_Tax_Config();
     }
 }

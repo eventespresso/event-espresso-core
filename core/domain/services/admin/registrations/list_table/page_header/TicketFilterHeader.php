@@ -55,8 +55,7 @@ class TicketFilterHeader extends AdminPageHeaderDecorator
     public function getHeaderText($text = '')
     {
         $TKT_ID = $this->request->getRequestParam('TKT_ID');
-        $TKT_ID = $this->request->getRequestParam('ticket_id', $TKT_ID);
-        $TKT_ID = absint($TKT_ID);
+        $TKT_ID = $this->request->getRequestParam('ticket_id', $TKT_ID, 'int');
         if ($TKT_ID) {
             $ticket = $this->ticket_model->get_one_by_ID($TKT_ID);
             if ($ticket instanceof EE_Ticket) {
@@ -64,7 +63,7 @@ class TicketFilterHeader extends AdminPageHeaderDecorator
                 $ticket_details .= ! $ticket->is_free()
                     ? '<span class="ee-ticket-price">' . $ticket->pretty_price() . '</span>'
                     : '<span class="reg-overview-free-event-spn">'
-                      . __('free', 'event_espresso')
+                      . esc_html__('free', 'event_espresso')
                       . '</span>';
                 // remove the closing h3 heading tag if it exists
                 $text = str_replace(

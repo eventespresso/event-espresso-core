@@ -17,7 +17,7 @@ class Event_Edit_Category_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Edit Category Tour', 'event_espresso');
+        $this->_label = esc_html__('Edit Category Tour', 'event_espresso');
         $this->_slug = 'event-edit-category-joyride';
     }
 
@@ -61,9 +61,9 @@ class Event_Edit_Category_Help_Tour extends EE_Help_Tour
 
     protected function _stop_one()
     {
-        $content = '<h3>' . __('Edit Event Category', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Edit Event Category', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Edit Event Category page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -72,18 +72,18 @@ class Event_Edit_Category_Help_Tour extends EE_Help_Tour
 
     protected function _stop_two()
     {
-        return '<p>' . __('Edit the name for your category.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Edit the name for your category.', 'event_espresso') . '</p>';
     }
 
     protected function _stop_three()
     {
-        return '<p>' . __('The unique ID for your category cannot be changed.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('The unique ID for your category cannot be changed.', 'event_espresso') . '</p>';
     }
 
     protected function _stop_four()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The rich text editor can be used to edit information about your category. Images and links can also be added or removed along with your text.',
                    'event_espresso'
                ) . '</p>';

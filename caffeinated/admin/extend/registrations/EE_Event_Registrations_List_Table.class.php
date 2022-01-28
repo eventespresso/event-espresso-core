@@ -61,10 +61,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
     protected function _set_properties()
     {
+        $return_url = $this->getReturnUrl();
+
         $evt_id = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : null;
         $this->_wp_list_args = array(
-            'singular' => __('registrant', 'event_espresso'),
-            'plural'   => __('registrants', 'event_espresso'),
+            'singular' => esc_html__('registrant', 'event_espresso'),
+            'plural'   => esc_html__('registrants', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
@@ -72,13 +74,13 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         // $columns['_Reg_Status'] = '';
         $this->_columns = array(
             '_REG_att_checked_in' => '<span class="dashicons dashicons-yes ee-icon-size-18"></span>',
-            'ATT_name'            => __('Registrant', 'event_espresso'),
-            'ATT_email'           => __('Email Address', 'event_espresso'),
-            'Event'               => __('Event', 'event_espresso'),
-            'PRC_name'            => __('TKT Option', 'event_espresso'),
-            '_REG_final_price'    => __('Price', 'event_espresso'),
-            'TXN_paid'            => __('Paid', 'event_espresso'),
-            'TXN_total'           => __('Total', 'event_espresso'),
+            'ATT_name'            => esc_html__('Registrant', 'event_espresso'),
+            'ATT_email'           => esc_html__('Email Address', 'event_espresso'),
+            'Event'               => esc_html__('Event', 'event_espresso'),
+            'PRC_name'            => esc_html__('TKT Option', 'event_espresso'),
+            '_REG_final_price'    => esc_html__('Price', 'event_espresso'),
+            'TXN_paid'            => esc_html__('Paid', 'event_espresso'),
+            'TXN_total'           => esc_html__('Total', 'event_espresso'),
         );
         // Add/remove columns when an event has been selected
         if (! empty($evt_id)) {
@@ -104,7 +106,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     'extra_request' =>
                         array(
                             'EVT_ID'     => $evt_id,
-                            'return_url' => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
+                            'return_url' => $return_url,
                         ),
                 ),
             );
@@ -128,7 +130,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                         )
                     )
                 ),
-                'return_url'  => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
+                'return_url'  => $return_url,
             ),
         );
         $this->_sortable_columns = array(
@@ -196,7 +198,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             );
             $evts[] = array(
                 'id'   => 0,
-                'text' => __('To toggle Check-in status, select an event', 'event_espresso'),
+                'text' => esc_html__('To toggle Check-in status, select an event', 'event_espresso'),
             );
             $checked = 'checked';
             /** @var EE_Event $evt */
@@ -222,7 +224,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             $event_filter .= EEH_Form_Fields::select_input('event_id', $evts, $current_EVT_ID);
             $event_filter .= '<span class="ee-event-filter-toggle">';
             $event_filter .= '<input type="checkbox" id="js-ee-hide-expired-events" ' . $checked . '> ';
-            $event_filter .= __('Hide Expired Events', 'event_espresso');
+            $event_filter .= esc_html__('Hide Expired Events', 'event_espresso');
             $event_filter .= '</span>';
             $event_filter .= '</div>';
             $filters[] = $event_filter;
@@ -231,7 +233,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             // DTT datetimes filter
             $this->_cur_dtt_id = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : 0;
             if (count($this->_dtts_for_event) > 1) {
-                $dtts[0] = __('To toggle check-in status, select a datetime.', 'event_espresso');
+                $dtts[0] = esc_html__('To toggle check-in status, select a datetime.', 'event_espresso');
                 foreach ($this->_dtts_for_event as $dtt) {
                     $datetime_string = $dtt->name();
                     $datetime_string = ! empty($datetime_string) ? ' (' . $datetime_string . ')' : '';
@@ -359,7 +361,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     {
         $attendee = $item->attendee();
         if (! $attendee instanceof EE_Attendee) {
-            return __('No contact record for this registration.', 'event_espresso');
+            return esc_html__('No contact record for this registration.', 'event_espresso');
         }
         // edit attendee link
         $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
@@ -378,7 +380,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             ? '&nbsp;<sup><div class="dashicons dashicons-star-filled yellow-icon ee-icon-size-8"></div></sup>	'
             : '';
         // add group details
-        $name_link .= '&nbsp;' . sprintf(__('(%s of %s)', 'event_espresso'), $item->count(), $item->group_size());
+        $name_link .= '&nbsp;' . sprintf(esc_html__('(%s of %s)', 'event_espresso'), $item->count(), $item->group_size());
         // add regcode
         $link = EE_Admin_Page::add_query_args_and_nonce(
             array('action' => 'view_registration', '_REG_ID' => $item->ID()),
@@ -486,7 +488,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column_PRC_name(EE_Registration $item)
     {
-        return $item->ticket() instanceof EE_Ticket ? $item->ticket()->name() : __("Unknown", "event_espresso");
+        return $item->ticket() instanceof EE_Ticket ? $item->ticket()->name() : esc_html__("Unknown", "event_espresso");
     }
 
 
@@ -558,7 +560,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             $line_total_obj = $txn->total_line_item();
             $txn_total = $line_total_obj instanceof EE_Line_Item
                 ? $line_total_obj->get_pretty('LIN_total')
-                : __(
+                : esc_html__(
                     'View Transaction',
                     'event_espresso'
                 );

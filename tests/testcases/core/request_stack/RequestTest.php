@@ -5,6 +5,12 @@ namespace EventEspresso\tests\testcases\core\request_stack;
 use EE_Request;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
+
+defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
 /**
@@ -18,52 +24,56 @@ use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 class RequestTest extends EspressoPHPUnitFrameworkTestCase
 {
 
-    public function getParams(array $params = array())
+    public function getParams(array $params = [])
     {
-        return $params + array(
-            'action'         => 'edit',
-            'id'             => 123,
-            'event-name-123' => 'Event 123',
-        );
+        return $params + [
+                'action'         => 'edit',
+                'id'             => 123,
+                'event-name-123' => 'Event 123',
+            ];
     }
 
-    public function postParams(array $params = array())
+
+    public function postParams(array $params = [])
     {
-        return $params + array(
-            'input-a' => 'A',
-            'input-b' => 'B',
-            'sub' => array(
-                'sub-a'   => 'AA',
-                'sub-b'   => 'BB',
-                'sub-sub' => array(
-                    'sub-sub-a'   => 'AAA',
-                    'sub-sub-b'   => 'BBB',
-                )
-            ),
-        );
+        return $params + [
+                'input-a' => 'A',
+                'input-b' => 'B',
+                'sub'     => [
+                    'sub-a'   => 'AA',
+                    'sub-b'   => 'BB',
+                    'sub-sub' => [
+                        'sub-sub-a' => 'AAA',
+                        'sub-sub-b' => 'BBB',
+                    ],
+                ],
+            ];
     }
 
-    public function cookieParams(array $params = array())
+
+    public function cookieParams(array $params = [])
     {
-        return $params + array(
-            'PHPSESSID'   => 'abcdefghijklmnopqrstuvwxyz',
-            'cookie_test' => 'a1b2c3d4e5f6g7h8i9j0.12345678',
-        );
+        return $params + [
+                'PHPSESSID'   => 'abcdefghijklmnopqrstuvwxyz',
+                'cookie_test' => 'a1b2c3d4e5f6g7h8i9j0.12345678',
+            ];
     }
 
 
     /**
      * @param array $get
      * @param array $post
-     * @param array $cookie
+     * @param array $cookies
      * @param array $server
      * @param array $files
      * @return EE_Request
      */
-    private function getLegacyRequest(array $get, array $post, array $cookie, array $server, array $files = array())
+    private function getLegacyRequest(array $get, array $post, array $cookies, array $server, array $files = [])
     {
-        $request = new Request($get, $post, $cookie, $server, $files);
-        $legacy_request = new EE_Request(array(), array(), array());
+        $request_params = new RequestParams(new RequestSanitizer(), $get, $post);
+        $server_params  = new ServerParams(new ServerSanitizer(), $server);
+        $request        = new Request($request_params, $server_params, $cookies, $files);
+        $legacy_request = new EE_Request([], [], []);
         $legacy_request->setRequest($request);
         return $legacy_request;
     }
@@ -73,9 +83,9 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
     {
         $request = $this->getLegacyRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         $this->assertEquals(
             $this->getParams(),
@@ -83,13 +93,14 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
         );
     }
 
+
     public function testPostParams()
     {
         $request = $this->getLegacyRequest(
-            array(),
+            [],
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         $this->assertEquals(
             $this->postParams(),
@@ -97,13 +108,14 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
         );
     }
 
+
     public function testCookieParams()
     {
         $request = $this->getLegacyRequest(
-            array(),
-            array(),
+            [],
+            [],
             $this->cookieParams(),
-            array()
+            []
         );
         $this->assertEquals(
             $this->cookieParams(),
@@ -111,13 +123,14 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
         );
     }
 
+
     public function testParams()
     {
         $request = $this->getLegacyRequest(
             $this->getParams(),
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         $this->assertEquals(
             array_merge($this->getParams(), $this->postParams()),
@@ -125,29 +138,31 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
         );
     }
 
+
     public function testSet()
     {
         $request = $this->getLegacyRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
-        $key = 'new-key';
-        $value = 'ima noob';
+        $key     = 'new-key';
+        $value   = 'ima noob';
         $request->set($key, $value);
         $params = $request->params();
         $this->assertArrayHasKey($key, $params);
-        $this->assertEquals($value, $params[$key]);
+        $this->assertEquals($value, $params[ $key ]);
     }
+
 
     public function testSetEE()
     {
         $request = $this->getLegacyRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         $request->set('ee', 'module-route');
         $params = $request->params();
@@ -155,13 +170,14 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
         $this->assertEquals('module-route', $params['ee']);
     }
 
+
     public function testAlreadySetEE()
     {
         $request = $this->getLegacyRequest(
-            $this->getParams(array('ee' => 'existing-route')),
-            array(),
-            array(),
-            array()
+            $this->getParams(['ee' => 'existing-route']),
+            [],
+            [],
+            []
         );
         $request->set('ee', 'module-route');
         $params = $request->params();
@@ -170,13 +186,14 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
         $this->assertEquals('existing-route', $params['ee']);
     }
 
+
     public function testOverrideAlreadySetEE()
     {
         $request = $this->getLegacyRequest(
-            $this->getParams(array('ee' => 'existing-route')),
-            array(),
-            array(),
-            array()
+            $this->getParams(['ee' => 'existing-route']),
+            [],
+            [],
+            []
         );
         $request->set('ee', 'module-route', true);
         $params = $request->params();
@@ -185,20 +202,19 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
     }
 
 
-
     public function testGet()
     {
         $request = $this->getLegacyRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         // key exists
         $this->assertEquals('edit', $request->get('action'));
         // key does NOT exist and no default value set
         $this->assertNotEquals('edit', $request->get('me-no-key'));
-        $this->assertNull($request->get('me-no-key'));
+        $this->assertEquals('', $request->get('me-no-key'));
         // key does NOT exist but default value set
         $this->assertNotEquals(
             'edit',
@@ -211,14 +227,13 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
     }
 
 
-
     public function testGetWithDrillDown()
     {
         $request = $this->getLegacyRequest(
-            array(),
+            [],
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         // our post data looks like this:
         //  array(
@@ -243,34 +258,32 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
         $this->assertEquals('AAA', $request->get('sub[sub-sub][sub-sub-a]'));
         $this->assertEquals('BBB', $request->get('sub[sub-sub][sub-sub-b]'));
         // does not exist
-        $this->assertNull($request->get('input-c'));
-        $this->assertNull($request->get('sub[sub-c]'));
-        $this->assertNull($request->get('sub[sub-sub][sub-sub-c]'));
+        $this->assertEquals('', $request->get('input-c'));
+        $this->assertEquals('', $request->get('sub[sub-c]'));
+        $this->assertEquals('', $request->get('sub[sub-sub][sub-sub-c]'));
     }
-
 
 
     public function testIsSet()
     {
         $request = $this->getLegacyRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         $this->assertTrue($request->is_set('action'));
         $this->assertFalse($request->is_set('me-no-key'));
     }
 
 
-
     public function testIsSetWithDrillDown()
     {
         $request = $this->getLegacyRequest(
-            array(),
+            [],
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         // our post data looks like this:
         //  array(
@@ -301,18 +314,17 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
     }
 
 
-
     public function testUnSet()
     {
         // do the chevy shuffle with the $_REQUEST global
         // in case it's needed by other tests
         $EXISTING_REQUEST = $_REQUEST;
-        $_REQUEST = $this->getParams();
-        $request = $this->getLegacyRequest(
+        $_REQUEST         = $this->getParams();
+        $request          = $this->getLegacyRequest(
             $_REQUEST,
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         $this->assertTrue($request->is_set('action'));
         $request->un_set('action');
@@ -328,13 +340,12 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
     }
 
 
-
     public function testIpAddress()
     {
         // do the chevy shuffle with the $_SERVER global
         // in case it's needed by other tests
         $EXISTING_SERVER = $_SERVER;
-        $server_keys = array(
+        $server_keys     = [
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
             'HTTP_X_FORWARDED',
@@ -342,19 +353,19 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
             'HTTP_FORWARDED_FOR',
             'HTTP_FORWARDED',
             'REMOTE_ADDR',
-        );
-        $x = 0;
+        ];
+        $x               = 0;
         // let's test 100 random IP addresses
         while ($x < 100) {
             // first clear out entries from previous test
             foreach ($server_keys as $server_key) {
-                unset($_SERVER[$server_key]);
+                unset($_SERVER[ $server_key ]);
             }
             // randomly generate IP address. plz see: https://stackoverflow.com/a/39846883
             $ip_address = long2ip(mt_rand() + mt_rand() + mt_rand(0, 1));
             // then randomly populate one of the $_SERVER keys used to determine the IP
-            $_SERVER[$server_keys[mt_rand(0, 6)]] = $ip_address;
-            $request = $this->getLegacyRequest(array(), array(), array(), $_SERVER);
+            $_SERVER[ $server_keys[ mt_rand(0, 6) ] ] = $ip_address;
+            $request                                  = $this->getLegacyRequest([], [], [], $_SERVER);
             $this->assertEquals($ip_address, $request->ip_address());
             unset($request);
             $x++;
@@ -368,9 +379,9 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
     {
         $request = $this->getLegacyRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         $this->assertTrue($request->matches('event-*'));
         $this->assertTrue($request->matches('*-name-*'));
@@ -385,10 +396,10 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
     public function testMatchesWithDrillDown()
     {
         $request = $this->getLegacyRequest(
-        array(),
+            [],
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         // our post data looks like this:
         //  array(
@@ -418,13 +429,14 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
         $this->assertFalse($request->matches('sub[sub-sub-*][sub-sub-c]'));
     }
 
+
     public function testGetMatch()
     {
         $request = $this->getLegacyRequest(
-        $this->getParams(),
-            array(),
-            array(),
-            array()
+            $this->getParams(),
+            [],
+            [],
+            []
         );
         $this->assertEquals('Event 123', $request->getMatch('event-*'));
         $this->assertEquals('Event 123', $request->getMatch('*-name-*'));
@@ -432,7 +444,7 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
         $this->assertEquals('Event 123', $request->getMatch('event*name*'));
         $this->assertEquals('Event 123', $request->getMatch('event?name*'));
         $this->assertEquals('Event 123', $request->getMatch('event-name-123'));
-        $this->assertNull($request->getMatch('event-name-?'));
+        $this->assertEquals('', $request->getMatch('event-name-?'));
         // with default
         $this->assertEquals('default', $request->getMatch('event-name-?', 'default'));
     }
@@ -441,10 +453,10 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
     public function testGetMatchWithDrillDown()
     {
         $request = $this->getLegacyRequest(
-        array(),
+            [],
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         // our post data looks like this:
         //  array(
@@ -475,9 +487,9 @@ class RequestTest extends EspressoPHPUnitFrameworkTestCase
         // with default
         $this->assertEquals('default', $request->getMatch('sub[sub-sub][not-an-input-?]', 'default'));
         // not set
-        $this->assertNull($request->getMatch('input-c-*'));
-        $this->assertNull($request->getMatch('sub[sub-c-*]'));
-        $this->assertNull($request->getMatch('sub[sub-sub-*][sub-sub-c]'));
+        $this->assertEquals('', $request->getMatch('input-c-*'));
+        $this->assertEquals('', $request->getMatch('sub[sub-c-*]'));
+        $this->assertEquals('', $request->getMatch('sub[sub-sub-*][sub-sub-c]'));
     }
 }
 // Location: tests/testcases/core/request_stack/RequestTest.php

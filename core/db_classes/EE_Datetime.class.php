@@ -650,7 +650,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function e_date_range($dt_frmt = '', $conjunction = ' - ')
     {
-        echo $this->date_range($dt_frmt, $conjunction);
+        echo $this->date_range($dt_frmt, $conjunction); // sanitized
     }
 
 
@@ -758,7 +758,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function e_time_range($tm_format = '', $conjunction = ' - ')
     {
-        echo $this->time_range($tm_format, $conjunction);
+        echo $this->time_range($tm_format, $conjunction); // sanitized
     }
 
 
@@ -828,7 +828,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function e_date_and_time_range($dt_format = '', $tm_format = '', $conjunction = ' - ')
     {
-        echo $this->date_and_time_range($dt_format, $tm_format, $conjunction);
+        echo $this->date_and_time_range($dt_format, $tm_format, $conjunction); // sanitized
     }
 
 

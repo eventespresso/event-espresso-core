@@ -34,7 +34,7 @@ class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy
     public function __construct($validation_error_message = null, $model_name = '', $query_params = array(), $input_field_name = '')
     {
         if (! EE_Registry::instance()->is_model_name($model_name)) {
-            throw new EE_Error(sprintf(__('You must provide a valid model object ', 'event_espresso'), $model_name));
+            throw new EE_Error(sprintf(esc_html__('You must provide a valid model object ', 'event_espresso'), $model_name));
         }
         $this->_model = EE_Registry::instance()->load_model($model_name);
         $this->_query_params = $query_params;

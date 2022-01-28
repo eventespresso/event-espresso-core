@@ -157,7 +157,7 @@ class AdminOptionsSettings extends FormHandler
                         array(
                             'html_label_text' => sprintf(
                                 esc_html__('Event Espresso %1$sAffiliate%2$s ID', 'event_espresso'),
-                                '<a href="http://eventespresso.com/affiliates/" target="_blank">',
+                                '<a href="https://eventespresso.com/affiliates/" target="_blank">',
                                 '</a>'
                             ),
                             'html_help_text'  => esc_html__(

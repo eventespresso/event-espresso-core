@@ -15,7 +15,7 @@ class EE_DMS_4_6_0_billing_info extends EE_Data_Migration_Script_Stage_Table
     {
         global $wpdb;
         $this->_old_table = $wpdb->postmeta;
-        $this->_pretty_name = __('Billing Info', 'event_espresso');
+        $this->_pretty_name = esc_html__('Billing Info', 'event_espresso');
         $this->_extra_where_sql = "WHERE meta_key LIKE 'billing_info_%'";
         parent::__construct();
     }

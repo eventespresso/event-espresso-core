@@ -4,10 +4,10 @@ namespace EventEspresso\modules\ticket_selector;
 
 use EE_Error;
 use EE_Event;
-use EE_Registry;
 use EE_Tax_Config;
 use EE_Ticket;
 use EE_Ticket_Selector_Config;
+use ReflectionException;
 
 /**
  * Class TicketSelectorStandard
@@ -45,38 +45,29 @@ class TicketSelectorStandard extends TicketSelector
     /**
      * TicketSelectorSimple constructor.
      *
-     * @param EE_Event                       $event
-     * @param EE_Ticket[]                    $tickets
-     * @param int                            $max_attendees
-     * @param array                          $template_args
-     * @param string                         $date_format
-     * @param string                         $time_format
-     * @param EE_Ticket_Selector_Config|null $ticket_selector_config
-     * @param EE_Tax_Config|null             $tax_config
-     * @throws EE_Error
+     * @param EE_Ticket_Selector_Config $ticket_selector_config
+     * @param EE_Tax_Config             $tax_config
+     * @param EE_Event                  $event
+     * @param EE_Ticket[]               $tickets
+     * @param int                       $max_attendees
+     * @param array                     $template_args
+     * @param string                    $date_format
+     * @param string                    $time_format
      */
     public function __construct(
+        EE_Ticket_Selector_Config $ticket_selector_config,
+        EE_Tax_Config $tax_config,
         EE_Event $event,
         array $tickets,
         int $max_attendees,
         array $template_args,
         $date_format = 'Y-m-d',
-        $time_format = 'g:i a',
-        EE_Ticket_Selector_Config $ticket_selector_config = null,
-        EE_Tax_Config $tax_config = null
+        $time_format = 'g:i a'
     ) {
-        $this->date_format = $date_format;
-        $this->time_format = $time_format;
-        // get EE_Ticket_Selector_Config and TicketDetails
-        $this->ticket_selector_config = isset(EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector)
-            ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
-            : new EE_Ticket_Selector_Config();
-        // $template_settings->setDatetimeSelectorThreshold(2);
-        // \EEH_Debug_Tools::printr($template_settings->getShowDatetimeSelector(), 'getShowDatetimeSelector', __FILE__, __LINE__);
-        // \EEH_Debug_Tools::printr($template_settings->getDatetimeSelectorThreshold(), 'getDatetimeSelectorThreshold', __FILE__, __LINE__);
-        $this->tax_config = isset(EE_Registry::instance()->CFG->tax_settings)
-            ? EE_Registry::instance()->CFG->tax_settings
-            : new EE_Tax_Config();
+        $this->ticket_selector_config = $ticket_selector_config;
+        $this->tax_config             = $tax_config;
+        $this->date_format            = $date_format;
+        $this->time_format            = $time_format;
         parent::__construct($event, $tickets, $max_attendees, $template_args);
     }
 
@@ -86,22 +77,22 @@ class TicketSelectorStandard extends TicketSelector
      *
      * @return void
      * @throws EE_Error
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function addTemplateArgs()
     {
-        $row = 1;
-        $ticket_row_html = '';
+        $this->ticket_rows        = 0;
+        $all_ticket_rows_html     = '';
         $required_ticket_sold_out = false;
         // flag to indicate that at least one taxable ticket has been encountered
-        $taxable_tickets = false;
-        $datetime_selector = null;
+        $taxable_tickets                          = false;
+        $datetime_selector                        = null;
         $this->template_args['datetime_selector'] = '';
         if (
             $this->ticket_selector_config->getShowDatetimeSelector()
             !== EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
         ) {
-            $datetime_selector = new DatetimeSelector(
+            $datetime_selector                        = new DatetimeSelector(
                 $this->event,
                 $this->tickets,
                 $this->ticket_selector_config,
@@ -112,16 +103,17 @@ class TicketSelectorStandard extends TicketSelector
         }
         $total_tickets = count($this->tickets);
         // loop through tickets
-        foreach ($this->tickets as $TKT_ID => $ticket) {
+        foreach ($this->tickets as $ticket) {
             if ($ticket instanceof EE_Ticket) {
-                $cols = 2;
-                $taxable_tickets = $ticket->taxable() ? true : $taxable_tickets;
+                $this->ticket_rows++;
+                $cols                = 2;
+                $taxable_tickets     = $ticket->taxable() ? true : $taxable_tickets;
                 $ticket_selector_row = new TicketSelectorRowStandard(
                     new TicketDetails($ticket, $this->ticket_selector_config, $this->template_args),
                     $this->tax_config,
                     $total_tickets,
                     $this->max_attendees,
-                    $row,
+                    $this->ticket_rows,
                     $cols,
                     $required_ticket_sold_out,
                     $this->template_args['event_status'],
@@ -129,14 +121,23 @@ class TicketSelectorStandard extends TicketSelector
                         ? $datetime_selector->getTicketDatetimeClasses($ticket)
                         : ''
                 );
-                $ticket_row_html .= $ticket_selector_row->getHtml();
+                $ticket_row_html     = $ticket_selector_row->getHtml();
+                // check if something was actually returned
+                if (! empty($ticket_row_html)) {
+                    // add any output to the cumulative HTML
+                    $all_ticket_rows_html .= $ticket_row_html;
+                }
+                if (empty($ticket_row_html) || ! $ticket_selector_row->isOnSale()) {
+                    // decrement the ticket row count since it looks like one has been removed
+                    $this->ticket_rows--;
+                }
+
                 $required_ticket_sold_out = $ticket_selector_row->getRequiredTicketSoldOut();
-                $row++;
             }
         }
-        $this->template_args['row'] = $row;
-        $this->template_args['ticket_row_html'] = $ticket_row_html;
-        $this->template_args['taxable_tickets'] = $taxable_tickets;
+        $this->template_args['row']                              = $this->ticket_rows;
+        $this->template_args['ticket_row_html']                  = $all_ticket_rows_html;
+        $this->template_args['taxable_tickets']                  = $taxable_tickets;
         $this->template_args['prices_displayed_including_taxes'] = $this->tax_config->prices_displayed_including_taxes;
 
 

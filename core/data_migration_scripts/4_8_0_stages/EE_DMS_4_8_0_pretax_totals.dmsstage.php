@@ -23,7 +23,7 @@ class EE_DMS_4_8_0_pretax_totals extends EE_Data_Migration_Script_Stage
     {
         global $wpdb;
         $this->_line_item_table_name = $wpdb->prefix . "esp_line_item";
-        $this->_pretty_name = __('Pre-tax total line items', 'event_espresso');
+        $this->_pretty_name = esc_html__('Pre-tax total line items', 'event_espresso');
         parent::__construct();
     }
 

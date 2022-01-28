@@ -10,7 +10,6 @@
  * @var string $TKT_name
  * @var string $tkt_status_class
  */
-
 ?>
 
 <li data-datetime-row="<?php echo $dtt_row; ?>" data-context="datetime-ticket" data-ticket-row="<?php echo $tkt_row; ?>"

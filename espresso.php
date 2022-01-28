@@ -1,7 +1,7 @@
 <?php defined('ABSPATH') || exit('No direct script access allowed');
 /*
   Plugin Name:Event Espresso
-  Plugin URI: http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
+  Plugin URI: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: Manage events, sell tickets, and receive payments from your WordPress website. Reduce event administration time, cut-out ticketing fees, and own your customer data. | <a href="https://eventespresso.com/add-ons/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Extensions</a> | <a href="https://eventespresso.com/pricing/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Sales</a> | <a href="admin.php?page=espresso_support">Support</a>
   Version: 4.12.0.rc.001
   Author: Event Espresso
@@ -31,7 +31,7 @@
  * @package         Event Espresso
  * @author          Seth Shoultes
  * @copyright   (c) 2008-2018 Event Espresso  All Rights Reserved.
- * @license         {@link http://eventespresso.com/support/terms-conditions/}
+ * @license         {@link https://eventespresso.com/support/terms-conditions/}
  * @see             Plugin Licensing
  * @link            {@link http://www.eventespresso.com}
  * @since           4.0

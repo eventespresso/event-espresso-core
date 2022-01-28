@@ -610,11 +610,11 @@ label em, span.required {
 
 input.error,
 .requires-value {
-    border: 1px solid var(--ee-status-color-pink) !important;
+	border: 1px solid var(--ee-status-color-pink) !important;
 }
 
 label.error {
-    display: block;
+	display: block;
     color: var(--ee-status-color-pink) !important;
 }
 
@@ -738,8 +738,8 @@ label.error {
 .button-primary + .button-secondary,
 .button-secondary + .button-primary,
 .button-secondary + .button-secondary {
-    margin-left: 2em;
-    margin-right: 2em;
+    margin-inline-end: .25rem;
+    margin-inline-start: 1.5rem;
 }
 
 .espresso-admin .button .dashicons::before {
@@ -832,7 +832,7 @@ label.error {
 }
 
 .qtip-content .ee-list-table-legend {
-    padding: 0;
+    padding: 0 0 .5em;
     margin: 0;
 }
 
@@ -1703,5 +1703,419 @@ input.ee-register-button {
     }
     .ee-new-edtr-notice p {
         font-size: 1.1rem;
+    }
+}
+body.espresso-admin #screen-meta {
+    background: unset;
+    border: none;
+}
+
+body.espresso-admin #screen-meta-links .screen-meta-toggle {
+    z-index: 3;
+}
+
+body.espresso-admin #screen-meta-links .show-settings {
+    border-color: #c3c4c7 !important;
+    box-shadow: none !important;
+}
+
+body.espresso-admin #screen-options-wrap,
+body.espresso-admin #contextual-help-back {
+    background: #fff;
+    border: 1px solid #c3c4c7 !important;
+    z-index: 2;
+}
+
+body.espresso-admin #contextual-help-back {
+    left: 220px;
+}
+
+body.espresso-admin #contextual-help-wrap {
+    background: unset;
+    border: none;
+}
+
+body.espresso-admin .contextual-help-tabs-wrap {
+    padding: .75rem 1.5rem;
+    overflow: auto;
+    z-index: 2;
+    position: relative;
+}
+
+body.espresso-admin .contextual-help-tabs {
+    width: 220px;
+}
+
+body.espresso-admin .contextual-help-tabs ul {
+    margin: 0 -1px 0 0;
+    padding: 0;
+    position: relative;
+    z-index: 3;
+}
+
+body.espresso-admin .contextual-help-tabs li {
+    border: none transparent;
+    box-shadow: none !important;
+    margin: .25rem 0 !important;
+    padding: 0 !important;
+}
+
+body.espresso-admin .contextual-help-tabs a {
+    background: #ddd;
+    border: 1px solid #ddd;
+    border-left: 5px solid #ddd;
+    border-right: 1px solid #c3c4c7;
+    box-shadow: none !important;
+    color: #666;
+    font-size: 1rem;
+    outline: none !important;
+    padding: .5rem .5rem .5rem 1rem;
+}
+
+body.espresso-admin .contextual-help-tabs a:focus,
+body.espresso-admin .contextual-help-tabs a:hover {
+    background: #fff;
+    border-color: #fff;
+    border-right: 1px solid #c3c4c7;
+    color: #2271b1;
+}
+
+body.espresso-admin .contextual-help-tabs .active a {
+    background: #fff;
+    border-bottom: 1px solid #c3c4c7;
+    border-left: 5px solid #018cca;
+    border-right: 1px solid #fff;
+    border-top: 1px solid #c3c4c7;
+}
+
+body.espresso-admin #contextual-help-wrap h5 {
+    font-size: .95rem;
+    font-weight: 700;
+    margin-block-start: 1rem;
+    margin-block-end: .125rem;
+    padding: 0;
+}
+
+body.espresso-admin #contextual-help-wrap p {
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+body.espresso-admin #contextual-help-wrap p:not(.ee-attention) {
+    margin-block-start: 0;
+    margin-block-end: 1rem;
+    padding: 0;
+}
+
+body.espresso-admin #contextual-help-wrap strong {
+    color: #72626c;
+    font-weight: 700;
+}
+
+.about-wrap .ee-badge {
+    align-items: center;
+    background: #297abc;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+}
+
+.about-wrap .ee-badge .ee-icon-ee-cup-thick:before {
+    content: "\e60e";
+    font-size: 110px !important;
+    margin: 0 !important;
+}
+
+.ee-card {
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    position: relative;
+}
+
+.ee-highlight {
+    color: #272624;
+    display: block;
+    font-weight: 500;
+    padding-block: .75rem;
+    padding-inline: 1.5rem;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .75);
+}
+.ee-highlight.ee-highlight--info {
+    background: #d4e6ed;
+}
+.ee-highlight.ee-highlight--notice {
+    background: #fcf9c3;
+}
+
+.ee-card p,
+.ee-card li {
+    font-size: 1.1rem;
+    line-height: 1.75rem;
+    margin: 0;
+    margin-block-start: .5rem;
+    margin-block-end: 1rem;
+}
+
+.ee-card ul {
+    list-style: circle;
+    margin-inline-start: 2rem;
+}
+
+.ee-card img.alignright {
+    margin: 0;
+    margin-inline-start: 2rem;
+    margin-block-end: 1rem;
+}
+
+.ee-card.ee-add-on-card {
+    padding-block-start: .75rem;
+    padding-block-end: 1.5rem;
+    padding-inline: 1.5rem;
+    margin: 0;
+}
+
+.ee-card.ee-add-on-card.ee-new-add-on,
+.ee-card.ee-add-on-card.ee-add-on-card-big {
+    padding-block-start: 1.5rem;
+    padding-block-end: 2rem;
+    padding-inline: 3rem;
+    margin-block-end: 2rem;
+}
+
+.ee-card.ee-add-on-card h3,
+.ee-card.ee-add-on-card h4 {
+    color: #595959;
+    margin: 0;
+    font-weight: 700;
+    margin-block: 1rem;
+}
+
+.ee-card.ee-add-on-card h3 {
+    font-size: 2em;
+}
+
+.ee-card.ee-add-on-card h4 {
+    font-size: 1.75em;
+}
+
+.ee-card.ee-add-on-card h5 {
+    font-size: 1.4em;
+}
+
+.ee-card.ee-add-on-card h6 {
+    font-size: 1.2em;
+}
+
+.ee-card.ee-add-on-card .ee-add-on-card-img {
+    border: 2px solid transparent;
+    box-shadow: none !important;
+    float: right;
+    height: 152px;
+    margin-block-start: .25rem;
+    margin-block-end: 1rem;
+    margin-inline-start: 2rem;
+    outline: none !important;
+    width: 231px;
+}
+
+.ee-card.ee-add-on-card .ee-add-on-card-img img {
+    height: 152px;
+    margin: 0;
+    outline: none !important;
+    padding: 0;
+    width: 231px;
+}
+
+.ee-card.ee-add-on-card .ee-add-on-btn,
+.ee-card.ee-add-on-card .ee-add-on-btn:active,
+.ee-card.ee-add-on-card .ee-add-on-btn:visited {
+    background: #edebe7;
+    border: 2px solid #edebe7;
+    border-radius: 3px;
+    box-sizing: content-box;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+    color: #5b5c5f;
+    display: inline-block;
+    font-size: 1.1em;
+    font-weight: 400;
+    line-height: 1.5;
+    margin-block: 1rem;
+    padding-block-start: .6rem;
+    padding-inline: 2rem;
+    padding-block-end: .7rem;
+    text-decoration: none;
+}
+
+.ee-card.ee-add-on-card .ee-add-on-btn--small,
+.ee-card.ee-add-on-card .ee-add-on-btn--small:active,
+.ee-card.ee-add-on-card .ee-add-on-btn--small:visited {
+    box-shadow: none;
+    font-size: .9em;
+    line-height: 1.35;
+    padding-block-start: .3rem;
+    padding-inline: 1rem;
+    padding-block-end: .4rem;
+}
+
+.ee-card.ee-add-on-card .ee-add-on-btn--buy-now,
+.ee-card.ee-add-on-card .ee-add-on-btn--buy-now:active,
+.ee-card.ee-add-on-card .ee-add-on-btn--buy-now:visited {
+    background: #297abc;
+    border: 2px solid #297abc;
+    color: #fff;
+    font-weight: 600;
+}
+
+.ee-card.ee-add-on-card .ee-add-on-card-img:focus,
+.ee-card.ee-add-on-card .ee-add-on-btn:focus {
+    border-color: #297abc;
+}
+.ee-card.ee-add-on-card .ee-add-on-btn--buy-now:focus {
+    border-color: #003a7c;
+}
+
+.ee-card.ee-add-on-card .ee-add-on-card-img:hover,
+.ee-card.ee-add-on-card .ee-add-on-btn:hover {
+    border-color: #499adc;
+}
+
+.ee-card.ee-add-on-card .ee-add-on-btn.ee-btn--align-end {
+    float: right;
+    margin-inline-start: 2rem;
+}
+
+.ee-card.ee-add-on-card .ee-add-on-btn + .ee-add-on-btn {
+    margin-inline-start: 2rem;
+}
+
+.ee-card.ee-new-feature-card {
+    padding-block: 1rem;
+    padding-inline: 2rem;
+}
+
+.ee-card.ee-new-feature-card h4 {
+    background: #297abc;
+    box-sizing: content-box;
+    color: #fff;
+    font-size: 1.33rem;
+    inset-block-start: -1rem;
+    inset-inline-start: -2rem;
+    line-height: 1.5rem;
+    margin: 0;
+    padding-block: 1rem;
+    padding-inline: 2rem;
+    position: relative;
+    width: 100%;
+}
+
+.ee-card .action-links {
+    clear: both;
+    display: flex;
+    flex-direction: row-reverse;
+    font-size: 1.1rem;
+    justify-content: flex-start;
+    line-height: 1.75rem;
+}
+
+.ee-card.ee-add-on-card .action-links .ee-add-on-btn + .ee-add-on-btn {
+    margin-inline-end: 2rem;
+}
+
+@media only screen and (max-width: 960px) and (min-width: 769px) {
+    .ee-card.ee-add-on-card h4 {
+        text-align: center;
+    }
+    .ee-card.ee-add-on-card .ee-add-on-card-img {
+        display: flex;
+        float: unset;
+        justify-content: center;
+        margin-inline: unset;
+        width: 100%;
+    }
+    .ee-card.ee-add-on-card .ee-add-on-card-img img {
+        margin-inline: auto;
+    }
+
+    .ee-card .action-links {
+        flex-direction: column-reverse;
+        justify-content: center;
+    }
+    .ee-card.ee-add-on-card .action-links .ee-add-on-btn {
+        margin-inline-end: 0;
+        margin-inline: auto !important;
+        margin-block: .5rem;
+    }
+}
+
+.ee-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1rem;
+    row-gap: 1rem;
+}
+
+.ee-card-grid.ee-card-grid-3-cols {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.ee-card-grid .ee-card.ee-grid-col-span-2 {
+    grid-column: span 2;
+}
+
+.ee-card-grid .ee-card.ee-grid-col-span-3 {
+    grid-column: span 3;
+}
+
+.ee-card-grid .ee-card.ee-grid-row-span-2 {
+    grid-row: span 2;
+}
+
+.ee-card-grid .ee-card.ee-grid-row-span-3 {
+    grid-row: span 3;
+}
+
+@media only screen and (max-width: 1080px) {
+    .ee-card-grid.ee-card-grid-3-cols {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ee-card-grid .ee-card.ee-grid-col-span-2 {
+        grid-column: span 1;
+    }
+
+    .ee-card-grid .ee-card.ee-grid-col-span-3 {
+        grid-column: span 2;
+    }
+
+    .ee-card-grid .ee-card.ee-grid-row-span-2 {
+        grid-row: span 1;
+    }
+
+    .ee-card-grid .ee-card.ee-grid-row-span-3 {
+        grid-row: span 2;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .ee-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ee-card-grid.ee-card-grid-3-cols {
+        grid-template-columns: 1fr;
+    }
+
+    .ee-card-grid .ee-card.ee-grid-col-span-2,
+    .ee-card-grid .ee-card.ee-grid-col-span-3 {
+        grid-column: span 1;
+    }
+
+    .ee-card-grid .ee-card.ee-grid-row-span-2,
+    .ee-card-grid .ee-card.ee-grid-row-span-3 {
+        grid-row: span 1;
     }
 }

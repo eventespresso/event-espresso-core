@@ -168,7 +168,7 @@ class Base
      * @param array|WP_Error|Exception|RestException $response
      * @return WP_REST_Response
      */
-    public function sendResponse($response)
+    public function sendResponse($response): WP_REST_Response
     {
         if ($response instanceof RestException) {
             $response = new WP_Error($response->getStringCode(), $response->getMessage(), $response->getData());
@@ -328,7 +328,7 @@ class Base
         }
         if (! $success) {
             throw new EE_Error(
-                __('We could not parse the URL. Please contact Event Espresso Support', 'event_espresso'),
+                esc_html__('We could not parse the URL. Please contact Event Espresso Support', 'event_espresso'),
                 'endpoint_parsing_error'
             );
         }

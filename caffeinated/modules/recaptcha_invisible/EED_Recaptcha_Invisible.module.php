@@ -312,7 +312,7 @@ class EED_Recaptcha_Invisible extends EED_Module
         /** @var RequestInterface $request */
         $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
         if (! EED_Recaptcha_Invisible::verifyToken($request)) {
-            $event_id = $request->getRequestParam('tkt-slctr-event-id');
+            $event_id = $request->getRequestParam('tkt-slctr-event-id', 0, 'int');
             $return_url = $request->requestParamIsSet("tkt-slctr-return-url-{$event_id}")
                 ? $request->getRequestParam("tkt-slctr-return-url-{$event_id}")
                 : get_permalink($event_id);

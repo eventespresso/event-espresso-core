@@ -16,7 +16,7 @@ class EE_Int_Validation_Strategy extends EE_Validation_Strategy_Base
     public function __construct($validation_error_message = null)
     {
         if (! $validation_error_message) {
-            $validation_error_message = __("Only digits are allowed.", "event_espresso");
+            $validation_error_message = esc_html__("Only digits are allowed.", "event_espresso");
         }
         parent::__construct($validation_error_message);
     }

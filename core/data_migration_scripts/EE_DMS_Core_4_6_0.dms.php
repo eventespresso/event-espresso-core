@@ -42,7 +42,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
      */
     public function __construct(TableManager $table_manager = null, TableAnalysis $table_analysis = null)
     {
-        $this->_pretty_name = __("Data Update to Event Espresso 4.6.0", "event_espresso");
+        $this->_pretty_name = esc_html__("Data Update to Event Espresso 4.6.0", "event_espresso");
         $this->_priority = 10;
         $this->_migration_stages = array(
             new EE_DMS_4_6_0_gateways(),
@@ -542,18 +542,18 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
             $default_admin_only_payment_methods = apply_filters(
                 'FHEE__EEH_Activation__add_default_admin_only_payments__default_admin_only_payment_methods',
                 array(
-                    (string) __("Bank", 'event_espresso')        => __("Bank Draft", 'event_espresso'),
-                    (string) __("Cash", 'event_espresso')        => __("Cash Delivered Physically", 'event_espresso'),
-                    (string) __("Check", 'event_espresso')       => __("Paper Check", 'event_espresso'),
-                    (string) __("Credit Card", 'event_espresso') => __("Offline Credit Card Payment", 'event_espresso'),
-                    (string) __("Debit Card", 'event_espresso')  => __("Offline Debit Payment", 'event_espresso'),
-                    (string) __("Invoice", 'event_espresso')     => __(
+                    (string) esc_html__("Bank", 'event_espresso')        => esc_html__("Bank Draft", 'event_espresso'),
+                    (string) esc_html__("Cash", 'event_espresso')        => esc_html__("Cash Delivered Physically", 'event_espresso'),
+                    (string) esc_html__("Check", 'event_espresso')       => esc_html__("Paper Check", 'event_espresso'),
+                    (string) esc_html__("Credit Card", 'event_espresso') => esc_html__("Offline Credit Card Payment", 'event_espresso'),
+                    (string) esc_html__("Debit Card", 'event_espresso')  => esc_html__("Offline Debit Payment", 'event_espresso'),
+                    (string) esc_html__("Invoice", 'event_espresso')     => esc_html__(
                         "Invoice received with monies included",
                         'event_espresso'
                     ),
-                    (string) __("Money Order", 'event_espresso') => '',
-                    (string) __("Paypal", 'event_espresso')      => __("Paypal eCheck, Invoice, etc", 'event_espresso'),
-                    (string) __('Other', 'event_espresso')       => __('Other method of payment', 'event_espresso'),
+                    (string) esc_html__("Money Order", 'event_espresso') => '',
+                    (string) esc_html__("Paypal", 'event_espresso')      => esc_html__("Paypal eCheck, Invoice, etc", 'event_espresso'),
+                    (string) esc_html__('Other', 'event_espresso')       => esc_html__('Other method of payment', 'event_espresso'),
                 )
             );
             // make sure we hae payment method records for the following
@@ -586,7 +586,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
                         )
                     );
                     if (! $success) {
-                        $this->add_error(sprintf(__(
+                        $this->add_error(sprintf(esc_html__(
                             "Could not insert new admin-only payment method with values %s during migration",
                             "event_espresso"
                         ), $this->_json_encode($values)));

@@ -144,8 +144,8 @@ class EEH_Money extends EEH_Base
             default:
                 throw new EE_Error(
                     sprintf(
-                        __(
-                            'Unknown operator %s in EEH_Money::compare_floats()',
+                        esc_html__(
+                            "Unknown operator %s in EEH_Money::compare_floats()",
                             'event_espresso'
                         ),
                         $operator

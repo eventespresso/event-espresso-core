@@ -164,7 +164,7 @@ class EEM_Event extends EEM_CPT_Base
                 ),
                 'password' => new EE_Password_Field(
                     'post_password',
-                    __('Password', 'event_espresso'),
+                    esc_html__('Password', 'event_espresso'),
                     false,
                     '',
                     array(
@@ -336,7 +336,7 @@ class EEM_Event extends EEM_CPT_Base
         if (self::$_instance instanceof EEM_Event) {
             self::$_instance->_fields['Event_Meta']['EVT_additional_limit'] = new EE_Integer_Field(
                 'EVT_additional_limit',
-                __('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
+                esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
                 true,
                 self::$_default_additional_limit
             );
@@ -870,7 +870,7 @@ class EEM_Event extends EEM_CPT_Base
     public function assemble_array_of_groups_questions_and_options(EE_Registration $registration, $EVT_ID = 0)
     {
         if (empty($EVT_ID)) {
-            throw new EE_Error(__(
+            throw new EE_Error(esc_html__(
                 'An error occurred. No EVT_ID is included.  Needed to know which question groups to retrieve.',
                 'event_espresso'
             ));
@@ -940,5 +940,41 @@ class EEM_Event extends EEM_CPT_Base
             $this->set_timezone($classInstance->get_timezone());
         }
         return $classInstance;
+    }
+
+
+    /**
+     * Deletes the model objects that meet the query params. Note: this method is overridden
+     * in EEM_Soft_Delete_Base so that soft-deleted model objects are instead only flagged
+     * as archived, not actually deleted
+     *
+     * @param array   $query_params   @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
+     *                                that blocks it (ie, there' sno other data that depends on this data); if false,
+     *                                deletes regardless of other objects which may depend on it. Its generally
+     *                                advisable to always leave this as TRUE, otherwise you could easily corrupt your
+     *                                DB
+     * @return int                    number of rows deleted
+     * @throws EE_Error
+     */
+    public function delete_permanently($query_params, $allow_blocking = true)
+    {
+        $deleted = parent::delete_permanently($query_params, $allow_blocking);
+        if ($deleted) {
+            // get list of events with no prices
+            $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', []);
+            $where = isset($query_params[0]) ? $query_params[0] : [];
+            $where_event = isset($where['EVT_ID']) ? $where['EVT_ID'] : ['', ''];
+            $where_event_ids = isset($where_event[1]) ? $where_event[1] : '';
+            $event_ids = is_string($where_event_ids)
+                ? explode(',', $where_event_ids)
+                : (array) $where_event_ids;
+            array_walk($event_ids, 'trim');
+            $event_ids = array_filter($event_ids);
+            // remove events from list of events with no prices
+            $espresso_no_ticket_prices = array_diff($espresso_no_ticket_prices, $event_ids);
+            update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
+        }
+        return $deleted;
     }
 }

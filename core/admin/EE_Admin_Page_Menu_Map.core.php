@@ -91,10 +91,13 @@ abstract class EE_Admin_Page_Menu_Map
     public $menu_order;
 
 
-    const NONE = 0;
-    const BLOG_ADMIN_ONLY = 1;
+    const NONE                   = 0;
+
+    const BLOG_ADMIN_ONLY        = 1;
+
     const BLOG_AND_NETWORK_ADMIN = 2;
-    const NETWORK_ADMIN_ONLY = 3;
+
+    const NETWORK_ADMIN_ONLY     = 3;
 
 
     /**
@@ -118,8 +121,6 @@ abstract class EE_Admin_Page_Menu_Map
 
 
     /**
-     * Constructor.
-     *
      * @param array $menu_args            An array of arguments used to setup the menu
      *                                    properties on construct.
      * @param array $required             An array of keys that should be in the $menu_args, this
@@ -146,7 +147,7 @@ abstract class EE_Admin_Page_Menu_Map
         if (! empty($missing)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         '%s is missing some expected keys in the argument array.  The following keys are missing: %s',
                         'event_espresso'
                     ),
@@ -169,7 +170,7 @@ abstract class EE_Admin_Page_Menu_Map
                     ) {
                         throw new EE_Error(
                             sprintf(
-                                __(
+                                esc_html__(
                                     'The value for the "admin_init_page" argument must be an instance of an EE_Admin_Page_Init object.  Instead %s was given as the value.',
                                     'event_espresso'
                                 ),
@@ -188,7 +189,7 @@ abstract class EE_Admin_Page_Menu_Map
             if (! EEH_Class_Tools::has_property($this, $prop)) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The $menu_args coming into %s has a index key (%s) representing a property that is not defined by the class.  Perhaps there is a typo?',
                             'event_espresso'
                         ),
@@ -214,7 +215,7 @@ abstract class EE_Admin_Page_Menu_Map
 
         // if empty menu_callback let's set default (but only if we have admin page init object)
         if (empty($this->menu_callback) && $this->admin_init_page instanceof EE_Admin_Page_Init) {
-            $this->menu_callback = array($this->admin_init_page, 'initialize_admin_page');
+            $this->menu_callback = [$this->admin_init_page, 'initialize_admin_page'];
         }
     }
 
@@ -224,8 +225,8 @@ abstract class EE_Admin_Page_Menu_Map
      * and go ahead and define it.  Note that child classes MUST also return the result of
      * the function used to register the WordPress admin page (the wp_page_slug string)
      *
-     * @since  4.4.0
      * @return string wp_page_slug.
+     * @since  4.4.0
      */
     abstract protected function _add_menu_page();
 
@@ -240,22 +241,20 @@ abstract class EE_Admin_Page_Menu_Map
      */
     public function add_menu_page($network_admin = false)
     {
-
         $show_on_menu_int = (int) $this->show_on_menu;
         if (
             ($network_admin
              && in_array(
                  $show_on_menu_int,
-                 array(self::BLOG_AND_NETWORK_ADMIN, self::NETWORK_ADMIN_ONLY),
+                 [self::BLOG_AND_NETWORK_ADMIN, self::NETWORK_ADMIN_ONLY],
                  true
              ))
-            ||
-            (! $network_admin
-             && in_array(
-                 $show_on_menu_int,
-                 array(self::BLOG_AND_NETWORK_ADMIN, self::BLOG_ADMIN_ONLY),
-                 true
-             ))
+            || (! $network_admin
+                && in_array(
+                    $show_on_menu_int,
+                    [self::BLOG_AND_NETWORK_ADMIN, self::BLOG_ADMIN_ONLY],
+                    true
+                ))
         ) {
             $wp_page_slug = $this->_add_menu_page();
         } else {
@@ -269,153 +268,5 @@ abstract class EE_Admin_Page_Menu_Map
                 $e->get_error();
             }
         }
-    }
-}
-
-
-/**
- * This defines the menu map structure for a main menu item.
- *
- * @since       4.4.0
- * @package     Event Espresso
- * @subpackage  admin
- */
-class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map
-{
-
-    /**
-     * If included int incoming params, then this class will also register a Sub Menue Admin page with a different
-     * subtitle than the main menu item.
-     *
-     * @since 4.4.0
-     *
-     * @var string
-     */
-    public $subtitle;
-
-    /**
-     * The page to a icon used for this menu.
-     *
-     * @since  4.4.0
-     * @see    http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
-     *        for what can be set for this property.
-     * @var string
-     */
-    public $icon_url;
-
-
-    /**
-     * What position in the main menu order for the WP admin menu this menu item
-     * should show.
-     *
-     * @since  4.4.0
-     * @see    http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
-     *        for what can be set for this property.
-     * @var integer
-     */
-    public $position;
-
-
-    public function __construct($menu_args)
-    {
-        $required = array('menu_label', 'parent_slug', 'menu_slug', 'menu_group', 'menu_order', 'admin_init_page');
-
-        parent::__construct($menu_args, $required);
-
-        $this->position = ! empty($this->position) ? (int) $this->position : $this->position;
-    }
-
-
-    /**
-     * Uses the proper WP utility for registering a menu page for the main WP pages.
-     */
-    protected function _add_menu_page()
-    {
-        $main = add_menu_page(
-            $this->title,
-            $this->menu_label,
-            $this->capability,
-            $this->parent_slug,
-            $this->menu_callback,
-            $this->icon_url,
-            $this->position
-        );
-        if (! empty($this->subtitle)) {
-            add_submenu_page(
-                $this->parent_slug,
-                $this->subtitle,
-                $this->subtitle,
-                $this->capability,
-                $this->menu_slug,
-                $this->menu_callback
-            );
-        }
-        return $main;
-    }
-}
-
-
-/**
- * Defines the menu map structure for sub menu pages.
- *
- * @since      4.4.0
- * @package    Event Espresso
- * @subpackage admin
- */
-class EE_Admin_Page_Sub_Menu extends EE_Admin_Page_Main_Menu
-{
-
-    protected function _add_menu_page()
-    {
-        return add_submenu_page(
-            $this->parent_slug,
-            $this->title,
-            $this->menu_label,
-            $this->capability,
-            $this->menu_slug,
-            $this->menu_callback
-        );
-    }
-}
-
-
-/**
- * Defines the EE_Admin page menu group object used in EE_Admin_Page Loader for setting up EE
- * Admin menu groups.
- *
- * A menu group is a special heading that does not link to anything but allows for logical separate of
- * submenu elements.
- *
- * @since          4.4.0
- * @package        Event Espresso
- * @subpackage     admin
- */
-class EE_Admin_Page_Menu_Group extends EE_Admin_Page_Menu_Map
-{
-
-
-    public function __construct($menu_args = array())
-    {
-        $required = array('menu_label', 'menu_slug', 'menu_order', 'parent_slug');
-        parent::__construct($menu_args, $required);
-    }
-
-
-    protected function _add_menu_page()
-    {
-        return add_submenu_page(
-            $this->parent_slug,
-            $this->menu_label,
-            $this->_group_link(),
-            $this->capability,
-            $this->menu_slug,
-            '__return_false'
-        );
-    }
-
-
-    private function _group_link()
-    {
-        return '<span class="ee_menu_group"  onclick="return false;">' . $this->menu_label . '</span>';
     }
 }

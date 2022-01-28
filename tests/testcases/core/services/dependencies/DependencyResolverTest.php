@@ -9,6 +9,10 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\Request;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Oof;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Ouch;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Owie;
@@ -194,7 +198,9 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
      */
     public function getBoneHurtingJuice()
     {
-        $request = new Request($this->request_params, [], [], [], []);
+        $request_params = new RequestParams(new RequestSanitizer(), $this->request_params);
+        $server_params  = new ServerParams(new ServerSanitizer());
+        $request = new Request($request_params, $server_params);
         return new Owie(
             new Ouch(
                 new Oof($request),

@@ -131,9 +131,6 @@ class EE_Default_Where_Conditions
         string $model_relation_chain = ''
     ): array {
         $qualified_where_conditions = [];
-        // if (! is_array($where_conditions)) {
-        //     $where_conditions = [];
-        // }
         foreach ($where_conditions as $key => $value) {
             if ($this->isOrHasQueryOperator($key)) {
                 $qualified_where_conditions[ $key ] =

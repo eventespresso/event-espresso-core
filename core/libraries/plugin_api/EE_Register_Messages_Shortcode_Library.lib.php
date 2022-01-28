@@ -57,7 +57,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
         // required fields MUST be present, so let's make sure they are.
         if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['autoloadpaths'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register a messages shortcode library with EE_Register_Messages_Shortcode_Library::register, you must include a "name" (a unique identifier for this set of message shortcodes), and an array containing the following keys: : "autoload_paths"',
                     'event_espresso'
                 )
@@ -77,7 +77,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
             EE_Error::doing_it_wrong(
                 __METHOD__,
                 sprintf(
-                    __(
+                    esc_html__(
                         'Should be only called on the "EE_Brewing_Regular___messages_caf" hook (Trying to register a library named %s).',
                         'event_espresso'
                     ),

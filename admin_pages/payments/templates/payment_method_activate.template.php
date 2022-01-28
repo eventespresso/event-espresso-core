@@ -7,18 +7,22 @@
 <div class="padding">
     <table class="form-table">
         <tbody>
-        <tr>
-            <th>
-                <label><?php _e('Click to Activate', 'event_espresso'); ?></label>
-            </th>
-            <td>
-
-                <a id="activate_<?php echo $payment_method->slug() ?>" class="espresso-button-green button-primary"
-                   href="<?php echo $activate_url ?>">
-                    <?php printf(__("Activate %s Payment Method?", "event_espresso"), $payment_method->admin_name()); ?>
-                </a>
-            </td>
-        </tr>
+            <tr>
+                <th>
+                    <label><?php esc_html_e('Click to Activate', 'event_espresso'); ?></label>
+                </th>
+                <td>
+                    <a class='espresso-button-green button-primary'
+                       href="<?php echo esc_url_raw($activate_url) ?>"
+                       id="activate_<?php echo esc_attr($payment_method->slug()) ?>"
+                    >
+                        <?php printf(
+                            esc_html__("Activate %s Payment Method?", "event_espresso"),
+                            $payment_method->admin_name()
+                        ); ?>
+                    </a>
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>

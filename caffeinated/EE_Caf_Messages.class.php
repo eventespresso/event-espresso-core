@@ -349,7 +349,7 @@ class EE_Caf_Messages
 
     public function additional_attendee_shortcodes($shortcodes, $shortcode_parser)
     {
-        $shortcodes['[ANSWER_*]'] = __(
+        $shortcodes['[ANSWER_*]'] = esc_html__(
             'This is a special dynamic shortcode. Right after the "*", add the exact text of a existing question, and if there is an answer for that question for this registrant, that will take the place of this shortcode.',
             'event_espresso'
         );
@@ -420,15 +420,15 @@ class EE_Caf_Messages
      */
     public function additional_datetime_shortcodes($shortcodes, $shortcode_parser)
     {
-        $shortcodes['[DTT_NAME]'] = __(
+        $shortcodes['[DTT_NAME]'] = esc_html__(
             'This will be parsed to the Title given for a Datetime',
             'event_espresso'
         );
-        $shortcodes['[DTT_DESCRIPTION]'] = __(
+        $shortcodes['[DTT_DESCRIPTION]'] = esc_html__(
             'This will be parsed to the description for a Datetime',
             'event_espresso'
         );
-        $shortcodes['[DTT_NAME_OR_DATES]'] = __(
+        $shortcodes['[DTT_NAME_OR_DATES]'] = esc_html__(
             'When parsed, if the Datetime has a name, it is used, otherwise a formatted string including the start date and end date will be used.',
             'event_espresso'
         );
@@ -478,7 +478,7 @@ class EE_Caf_Messages
 
     public function additional_recipient_details_shortcodes($shortcodes, $shortcode_parser)
     {
-        $shortcodes['[RECIPIENT_QUESTION_LIST]'] = __(
+        $shortcodes['[RECIPIENT_QUESTION_LIST]'] = esc_html__(
             'This is used to indicate where you want the list of questions and answers to show for the person receiving the message.',
             'event_espresso'
         );
@@ -586,7 +586,7 @@ class EE_Caf_Messages
 
     public function additional_primary_registration_details_shortcodes($shortcodes, $shortcode_parser)
     {
-        $shortcodes['[PRIMARY_REGISTRANT_QUESTION_LIST]'] = __(
+        $shortcodes['[PRIMARY_REGISTRANT_QUESTION_LIST]'] = esc_html__(
             'This is used to indicate the questions and answers for the primary_registrant. It should be placed in the "[attendee_list]" field',
             'event_espresso'
         );

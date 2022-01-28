@@ -38,7 +38,7 @@
             <group>big_rest_tests</group>
         </exclude>
     </groups>
-    <php>
-        <ini name="display_errors" value="1"/>
-    </php>
+	<php>
+		<ini name="display_errors" value="1" />
+	</php>
 </phpunit>

@@ -17,7 +17,7 @@ class Templates_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Templates Tour', 'event_espresso');
+        $this->_label = esc_html__('Templates Tour', 'event_espresso');
         $this->_slug = 'templates-settings-joyride';
     }
 
@@ -132,9 +132,9 @@ class Templates_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Template Settings', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Template Settings', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Templates Page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -144,7 +144,7 @@ class Templates_Help_Tour extends EE_Help_Tour
     protected function _default_status_banner_single_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Specify whether event status banners should be shown next to the title on the single event page.',
                    'event_espresso'
                ) . '</p>';
@@ -152,13 +152,13 @@ class Templates_Help_Tour extends EE_Help_Tour
 
     protected function _default_view_stop()
     {
-        return '<p>' . __('Define how your basic event list will appear.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Define how your basic event list will appear.', 'event_espresso') . '</p>';
     }
 
     protected function _event_list_grid_size_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'If you have selected grid view in the option above, then you can use these settings to change the size of the grids.',
                    'event_espresso'
                ) . '</p>';
@@ -166,13 +166,13 @@ class Templates_Help_Tour extends EE_Help_Tour
 
     protected function _display_description_stop()
     {
-        return '<p>' . __('Specify whether descriptions be shown on the event list.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Specify whether descriptions be shown on the event list.', 'event_espresso') . '</p>';
     }
 
     protected function _display_address_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Specify whether  the venue address be displayed on the event list.',
                    'event_espresso'
                ) . '</p>';
@@ -181,7 +181,7 @@ class Templates_Help_Tour extends EE_Help_Tour
     protected function _display_venue_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Specify whether  the venue information be displayed on the event list.',
                    'event_espresso'
                ) . '</p>';
@@ -189,18 +189,18 @@ class Templates_Help_Tour extends EE_Help_Tour
 
     protected function _display_expired_events_stop()
     {
-        return '<p>' . __('Should expired events be shown on the default event list.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Should expired events be shown on the default event list.', 'event_espresso') . '</p>';
     }
 
     protected function _event_listings_url_stop()
     {
-        return '<p>' . __('This is the website address (URL) for your event listings page.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('This is the website address (URL) for your event listings page.', 'event_espresso') . '</p>';
     }
 
     protected function _reset_event_list_settings_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Notice: When this option is set to yes, any customization from the above settings will be lost and your event list settings will be set to default.',
                    'event_espresso'
                ) . '</p>';
@@ -209,7 +209,7 @@ class Templates_Help_Tour extends EE_Help_Tour
     protected function _display_status_banner_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Specify whether event status banners should be shown next to the title on the event list page.',
                    'event_espresso'
                ) . '</p>';
@@ -218,7 +218,7 @@ class Templates_Help_Tour extends EE_Help_Tour
     protected function _display_address_in_reg_form_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Specify whether the address for a venue be shown on the single registration page.',
                    'event_espresso'
                ) . '</p>';

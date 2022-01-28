@@ -17,7 +17,7 @@
         <a href='https://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_highlights_widget&utm_content=banner'
            target='_blank'>
             <img alt="<?php esc_html_e('manage events faster', 'event_espresso'); ?>"
-                 src='<?php echo EE_GLOBAL_ASSETS_URL; ?>images/manage-events-faster-240x240.jpg'
+                 src="<?php echo esc_url_raw(EE_GLOBAL_ASSETS_URL . 'images/manage-events-faster-240x240.jpg'); ?>"
             />
         </a>
     </p>

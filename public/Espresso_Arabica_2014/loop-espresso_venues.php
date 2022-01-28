@@ -5,7 +5,7 @@
  * @ package		Event Espresso
  * @ author		Seth Shoultes
  * @ copyright	(c) 2008-2013 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ license		https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link			http://www.eventespresso.com
  * @ version		4+
  */
@@ -14,7 +14,7 @@ if ( have_posts() ) : ?>
 
 	<header class="page-header">
 		<h1 class="page-title">
-			<?php echo __( 'Event Venues', 'event_espresso' ); ?>
+			<?php echo esc_html__( 'Event Venues', 'event_espresso' ); ?>
 		</h1>
 	</header><!-- .page-header -->
 	

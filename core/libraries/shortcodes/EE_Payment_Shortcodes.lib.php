@@ -20,28 +20,28 @@ class EE_Payment_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __('Payment Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to payments.', 'event_espresso');
+        $this->label = esc_html__('Payment Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to payments.', 'event_espresso');
         $this->_shortcodes = array(
-            '[PAYMENT_TIMESTAMP]' => __(
+            '[PAYMENT_TIMESTAMP]' => esc_html__(
                 'Outputs the date of the payment (using the default date format).',
                 'event_espresso'
             ),
-            '[PAYMENT_METHOD]' => __('Outputs a the payment method.', 'event_espresso'),
-            '[PAYMENT_AMOUNT]' => __('Outputs the payment amount (with currency symbol).', 'event_espresso'),
-            '[PAYMENT_GATEWAY]' => __('Outputs the gateway used for the payment.', 'event_espresso'),
-            '[PAYMENT_GATEWAY_RESPONSE]' => __('Outputs the payment gateway response.', 'event_espresso'),
-            '[PAYMENT_GATEWAY_TXN_ID]' => __(
+            '[PAYMENT_METHOD]' => esc_html__('Outputs a the payment method.', 'event_espresso'),
+            '[PAYMENT_AMOUNT]' => esc_html__('Outputs the payment amount (with currency symbol).', 'event_espresso'),
+            '[PAYMENT_GATEWAY]' => esc_html__('Outputs the gateway used for the payment.', 'event_espresso'),
+            '[PAYMENT_GATEWAY_RESPONSE]' => esc_html__('Outputs the payment gateway response.', 'event_espresso'),
+            '[PAYMENT_GATEWAY_TXN_ID]' => esc_html__(
                 'This will either be the gateway transaction ID, or the manual ID added with payment applied via the admin.',
                 'event_espresso'
             ),
-            '[PAYMENT_PO_NUMBER]' => __('Purchase Order number (if present)', 'event_espresso'),
-            '[PAYMENT_EXTRA_ACCOUNTING]' => __(
+            '[PAYMENT_PO_NUMBER]' => esc_html__('Purchase Order number (if present)', 'event_espresso'),
+            '[PAYMENT_EXTRA_ACCOUNTING]' => esc_html__(
                 'Any extra accounting messages. Typically added with payments made via the admin.',
                 'event_espresso'
             ),
-            '[PAYMENT_STATUS]' => __('The status of the payment.', 'event_espresso'),
-            // '[PAYMENT_STATUS_WITH_ICONS]' => __('The status of the payment including icons representing the status.', 'event_espresso')
+            '[PAYMENT_STATUS]' => esc_html__('The status of the payment.', 'event_espresso'),
+            // '[PAYMENT_STATUS_WITH_ICONS]' => esc_html__('The status of the payment including icons representing the status.', 'event_espresso')
         );
     }
 
@@ -74,7 +74,7 @@ class EE_Payment_Shortcodes extends EE_Shortcodes
                 if ($payment->payment_method() instanceof EE_Payment_Method) {
                     return $payment->payment_method()->name();
                 } else {
-                    return __('Unknown', 'event_espresso');
+                    return esc_html__('Unknown', 'event_espresso');
                 }
                 break;
 

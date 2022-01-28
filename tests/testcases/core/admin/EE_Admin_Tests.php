@@ -75,11 +75,11 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->setMaintenanceMode();
 		$main_file = EE_PLUGIN_BASENAME;
 		$original_link = array('link');
-		$expected = array(
-		    '<a href="admin.php?page=espresso_general_settings">' . __( 'Settings', 'event_espresso' ) . '</a>',
-            '<a href="admin.php?page=espresso_events">' . __( 'Events', 'event_espresso' ) . '</a>',
+		$expected =[
+			'<a href="admin.php?page=espresso_general_settings">' . esc_html__( 'Settings', 'event_espresso' ) . '</a>',
+            '<a href="admin.php?page=espresso_events">' . esc_html__( 'Events', 'event_espresso' ) . '</a>',
             'link'
-        );
+		];
 
 		//first test if plugin does NOT equal main file.
 		$filtered = EE_Admin::instance()->filter_plugin_actions( $original_link, 'fail' );
@@ -96,7 +96,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		//test if plugin DOES equal main file and maintenance mode level is 2.
 		$this->setMaintenanceMode(2);
-		$expected = array('<a href="admin.php?page=espresso_maintenance_settings" title="Event Espresso is in maintenance mode.  Click this link to learn why.">' . __('Maintenance Mode Active', 'event_espresso' ) . '</a>', 'link');
+		$expected = array('<a href="admin.php?page=espresso_maintenance_settings" title="Event Espresso is in maintenance mode.  Click this link to learn why.">' . esc_html__('Maintenance Mode Active', 'event_espresso' ) . '</a>', 'link');
 		$filtered = EE_Admin::instance()->filter_plugin_actions($original_link, $main_file);
 		$this->assertEquals( $expected, $filtered );
 
@@ -183,7 +183,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	public function test_enable_hidden_ee_nav_menu_metaboxes() {
 
 		//first we'll add dummy metabox to simulate our metaboxes.
-		add_meta_box( 'add-espresso_events', __('Event Espresso Pages', 'event_espresso'), '__return_true', 'nav-menus', 'side', 'core' );
+		add_meta_box( 'add-espresso_events', esc_html__('Event Espresso Pages', 'event_espresso'), '__return_true', 'nav-menus', 'side', 'core' );
 
 		//need to set the current user
 		//$current_user = get_current_user_id();
@@ -221,13 +221,13 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		//expected events dashboard items
 		$xpct_events_url = EEH_URL::add_query_args_and_nonce( array( 'page' => 'espresso_events'), admin_url('admin.php') );
 		$xpct_events_text = sprintf( _n( '%s Event', '%s Events', 10 ), number_format_i18n( 10 ) );
-		$xpct_events_title = __('Click to view all Events', 'event_espresso');
+		$xpct_events_title = esc_html__('Click to view all Events', 'event_espresso');
 		$xpct_event_assembled = sprintf( '<a class="ee-dashboard-link-events" href="%s" title="%s">%s</a>', $xpct_events_url, $xpct_events_title, $xpct_events_text );
 
 		//expected registration dashboard items
 		$xpct_registration_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_registrations' ), admin_url('admin.php') );
 		$xpct_registration_text = sprintf( _n( '%s Registration', '%s Registrations', 5 ), number_format_i18n(5) );
-		$xpct_registration_title = __('Click to view all registrations', 'event_espresso');
+		$xpct_registration_title = esc_html__('Click to view all registrations', 'event_espresso');
 		$xpct_registration_assembled = sprintf( '<a class="ee-dashboard-link-registrations" href="%s" title="%s">%s</a>', $xpct_registration_url, $xpct_registration_title, $xpct_registration_text );
 
 		$generated_items = EE_Admin::instance()->dashboard_glance_items( array() );

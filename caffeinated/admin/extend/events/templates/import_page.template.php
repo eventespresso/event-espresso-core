@@ -1,6 +1,6 @@
 <div class="import-area">
     <div class="important-notice">
-        <?php _e(
+        <?php esc_html_e(
             'The import feature has been disabled because of bugs. It is expected to be put back in place soon.',
             'event_espresso'
         ); ?>

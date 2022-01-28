@@ -150,10 +150,11 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
     /**
      * Overrides parent's _get_billing_values_from_form because we want to
      * get the country's 2-character ISO code, not the name like most gateways
+     *
      * @param EE_Billing_Info_Form $billing_form
      * @return array
      */
-    protected function _get_billing_values_from_form($billing_form)
+    protected function _get_billing_values_from_form(EE_Billing_Info_Form $billing_form)
     {
         $billing_values = parent::_get_billing_values_from_form($billing_form);
         $billing_values['country'] = $billing_form->get_input_value('country');
@@ -163,15 +164,16 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
 
     /**
      * Override parent to account for a change in extra meta inputs in 4.9.75.p
-     * @since 4.9.79.p
+     *
      * @param EE_Payment_Method $payment_method_instance
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     *@since 4.9.79.p
      */
-    public function set_instance($payment_method_instance)
+    public function set_instance(EE_Payment_Method $payment_method_instance)
     {
         // Check for the old extra meta inputs
         $old_extra_metas = EEM_Extra_Meta::instance()->get_all(

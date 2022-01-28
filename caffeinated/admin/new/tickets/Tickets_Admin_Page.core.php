@@ -32,9 +32,9 @@ class Tickets_Admin_Page extends EE_Admin_Page
         $this->_admin_page_title = TICKETS_LABEL;
         $this->_labels = array(
             'buttons' => array(
-                'add'    => __('Add New Default Ticket', 'event_espresso'),
-                'edit'   => __('Edit Default Ticket', 'event_espresso'),
-                'delete' => __('Delete Default Ticket', 'event_espresso'),
+                'add'    => esc_html__('Add New Default Ticket', 'event_espresso'),
+                'edit'   => esc_html__('Edit Default Ticket', 'event_espresso'),
+                'delete' => esc_html__('Delete Default Ticket', 'event_espresso'),
             ),
         );
     }
@@ -95,7 +95,7 @@ class Tickets_Admin_Page extends EE_Admin_Page
         $this->_page_config = array(
             'default' => array(
                 'nav'           => array(
-                    'label' => __('Default Tickets', 'event_espresso'),
+                    'label' => esc_html__('Default Tickets', 'event_espresso'),
                     'order' => 10,
                 ),
                 'list_table'    => 'Tickets_List_Table',
@@ -145,19 +145,19 @@ class Tickets_Admin_Page extends EE_Admin_Page
         $this->_views = array(
             'all'     => array(
                 'slug'        => 'all',
-                'label'       => __('All', 'event_espresso'),
+                'label'       => esc_html__('All', 'event_espresso'),
                 'count'       => 0,
                 'bulk_action' => array(
-                    'trash_tickets' => __('Move to Trash', 'event_espresso'),
+                    'trash_tickets' => esc_html__('Move to Trash', 'event_espresso'),
                 ),
             ),
             'trashed' => array(
                 'slug'        => 'trashed',
-                'label'       => __('Trash', 'event_espresso'),
+                'label'       => esc_html__('Trash', 'event_espresso'),
                 'count'       => 0,
                 'bulk_action' => array(
-                    'restore_tickets' => __('Restore from Trash', 'event_espresso'),
-                    'delete_tickets'  => __('Delete Permanently', 'event_espresso'),
+                    'restore_tickets' => esc_html__('Restore from Trash', 'event_espresso'),
+                    'delete_tickets'  => esc_html__('Delete Permanently', 'event_espresso'),
                 ),
             ),
         );
@@ -166,7 +166,7 @@ class Tickets_Admin_Page extends EE_Admin_Page
 
     public function _tickets_overview_list_table()
     {
-        $this->_search_btn_label = __('Tickets', 'event_espresso');
+        $this->_search_btn_label = esc_html__('Tickets', 'event_espresso');
         $this->display_admin_list_table_page_with_no_sidebar();
     }
 

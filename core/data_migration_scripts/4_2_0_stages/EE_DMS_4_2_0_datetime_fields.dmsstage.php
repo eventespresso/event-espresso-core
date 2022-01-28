@@ -11,7 +11,7 @@ class EE_DMS_4_2_0_datetime_fields extends EE_Data_Migration_Script_Stage_Table
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __("Datetime Fields", "event_espresso");
+        $this->_pretty_name = esc_html__("Datetime Fields", "event_espresso");
         $this->_old_table = $wpdb->prefix . "esp_datetime";
         parent::__construct();
     }
@@ -42,7 +42,7 @@ class EE_DMS_4_2_0_datetime_fields extends EE_Data_Migration_Script_Stage_Table
         if (false === $updated) {
             $this->add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Error in updating table %s setting DTT_name = '' and DTT_description = '' where DTT_ID = %d",
                         'event_espresso'
                     ),

@@ -1,5 +1,5 @@
 <?php
-//echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
+
 if (
 	( is_single() && espresso_display_venue_in_event_details() )
 	|| ( is_archive() && espresso_display_venue_in_event_list() )
@@ -14,22 +14,31 @@ if (
 ?>
 
 <div class="espresso-venue-dv<?php echo espresso_is_venue_private() ? ' espresso-private-venue-dv' : ''; ?>">
-	<h4><strong><?php _e( 'Venue:', 'event_espresso' ); ?></strong>&nbsp;&nbsp; <strong> <?php echo $venue_name; ?></strong></h4>
+	<h4>
+        <strong><?php esc_html_e( 'Venue:', 'event_espresso' ); ?></strong>&nbsp;&nbsp;
+        <strong> <?php echo $venue_name; // already escaped ?></strong>
+    </h4>
 	<p><span class="smaller-text tags-links"><?php echo espresso_venue_categories(); ?></span></p>
 <?php  if ( $venue_phone = espresso_venue_phone( $post->ID, FALSE )) : ?>
 	<p>
-		<span class="small-text"><strong><?php _e( 'Venue Phone:', 'event_espresso' ); ?></strong></span> <?php echo $venue_phone; ?>
+		<span class="small-text">
+            <strong><?php esc_html_e( 'Venue Phone:', 'event_espresso' ); ?></strong>
+        </span>
+        <?php echo $venue_phone; // already escaped ?>
 	</p>
 <?php endif;  ?>
 <?php if ( $venue_website = espresso_venue_website( $post->ID, FALSE )) : ?>
 	<p>
-		<span class="small-text"><strong><?php _e( 'Venue Website:', 'event_espresso' ); ?></strong></span> <?php echo $venue_website; ?>
+		<span class="small-text">
+            <strong><?php esc_html_e( 'Venue Website:', 'event_espresso' ); ?></strong>
+        </span>
+        <?php echo $venue_website; // already escaped ?>
 	</p>
 <?php endif; ?>
 <?php  if ( espresso_venue_has_address( $post->ID )) : ?>
-	<strong><span class="dashicons dashicons-location-alt"></span><?php _e( 'Address:', 'event_espresso' ); ?></strong>
-	<?php espresso_venue_address( 'inline' ); ?>
-	<?php espresso_venue_gmap( $post->ID ); ?>
+	<strong><span class="dashicons dashicons-location-alt"></span><?php esc_html_e( 'Address:', 'event_espresso' ); ?></strong>
+	<?php espresso_venue_address( 'inline' ); // already escaped ?>
+	<?php espresso_venue_gmap( $post->ID ); // already escaped ?>
 	<div class="clear"><br/></div>
 <?php endif;  ?>
 
@@ -38,7 +47,7 @@ if (
 		<?php $venue_description = espresso_venue_description( $VNU_ID, FALSE ); ?>
 		<?php if ( $venue_description ) : ?>
 	<p>
-		<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
+		<strong><?php esc_html_e( 'Description:', 'event_espresso' ); ?></strong><br/>
 		<?php echo do_shortcode( $venue_description ); ?>
 	</p>
 		<?php endif;  ?>
@@ -46,7 +55,7 @@ if (
 		<?php $venue_excerpt = espresso_venue_excerpt( $VNU_ID, FALSE ); ?>
 		<?php if ( $venue_excerpt ) : ?>
 	<p>
-		<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
+		<strong><?php esc_html_e( 'Description:', 'event_espresso' ); ?></strong><br/>
 		<?php echo $venue_excerpt; ?>
 	</p>
 			<?php endif;  ?>
@@ -60,7 +69,7 @@ else :
 ?>
 	<div class="espresso-venue-dv  espresso-password-protected-venue-dv" >
 		<h3 class="event-venues-h3 ee-event-h3">
-			<?php _e( 'Location', 'event_espresso' );?>
+			<?php esc_html_e( 'Location', 'event_espresso' );?>
 		</h3>
 		<?php echo espresso_password_protected_venue_form(); ?>
 	</div>

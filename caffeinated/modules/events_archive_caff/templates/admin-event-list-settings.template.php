@@ -3,16 +3,16 @@ add_filter('FHEE__EEH_Form_Fields__label_html', '__return_empty_string');
 
 $values = EEH_Form_Fields::prep_answer_options(
     array(
-        array('id' => 1, 'text' => __('Yes', 'event_espresso')),
-        array('id' => 0, 'text' => __('No', 'event_espresso')),
+        array('id' => 1, 'text' => esc_html__('Yes', 'event_espresso')),
+        array('id' => 0, 'text' => esc_html__('No', 'event_espresso')),
     )
 );
 
 $description = EEH_Form_Fields::prep_answer_options(
     array(
-        array('id' => 0, 'text' => __('none', 'event_espresso')),
-        array('id' => 1, 'text' => __('excerpt (short desc)', 'event_espresso')),
-        array('id' => 2, 'text' => __('full description', 'event_espresso')),
+        array('id' => 0, 'text' => esc_html__('none', 'event_espresso')),
+        array('id' => 1, 'text' => esc_html__('excerpt (short desc)', 'event_espresso')),
+        array('id' => 2, 'text' => esc_html__('full description', 'event_espresso')),
     )
 );
 
@@ -23,7 +23,7 @@ $description = EEH_Form_Fields::prep_answer_options(
 <br/>
 <br/>
 <h2 class="ee-admin-settings-hdr">
-    <?php _e('Event List Pages', 'event_espresso'); ?>
+    <?php esc_html_e('Event List Pages', 'event_espresso'); ?>
 </h2>
 <table class="form-table">
     <tbody>
@@ -31,7 +31,7 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="event_listings_url">
-                <?php _e('Event Listings URL', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                <?php esc_html_e('Event Listings URL', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                     'event_listings_url_info'
                 ); ?>
             </label>
@@ -46,7 +46,7 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="event_cpt_slug">
-                <?php _e('Event Slug', 'event_espresso'); ?>
+                <?php esc_html_e('Event Slug', 'event_espresso'); ?>
             </label>
         </th>
         <td>
@@ -59,7 +59,7 @@ $description = EEH_Form_Fields::prep_answer_options(
                               'regular'
                           ); ?></p>
             <p class="description"><?php
-                _e(
+                esc_html_e(
                     'This allows you to configure what slug is used for the url of all event pages.',
                     'event_espresso'
                 ); ?></p>
@@ -67,7 +67,7 @@ $description = EEH_Form_Fields::prep_answer_options(
                 <p class="important-notice">
                     <?php
                     sprintf(
-                        __(
+                        esc_html__(
                             'Usage of the %1$s FHEE__EE_Register_CPTs__register_CPT__rewrite %2$s filter has been detected.  Please be aware that while this filter is being used, this setting has no affect.',
                             'event_espresso'
                         ),
@@ -83,7 +83,7 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_status_banner">
-                <?php _e('Display Status Banner', 'event_espresso'); ?>
+                <?php esc_html_e('Display Status Banner', 'event_espresso'); ?>
             </label>
         </th>
         <td>
@@ -95,7 +95,7 @@ $description = EEH_Form_Fields::prep_answer_options(
                 'EED_Events_Archive_display_status_banner'
             ); ?>
             <p class="description"><?php
-                _e(
+                esc_html_e(
                     'Selecting "Yes" will inject an Event Status banner with the title whenever Events are displaying on the events archive page.',
                     'event_espresso'
                 ); ?></p>
@@ -105,7 +105,7 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_description">
-                <?php _e('Display Description', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                <?php esc_html_e('Display Description', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                     'display_description_info'
                 ); ?>
             </label>
@@ -124,7 +124,7 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_ticket_selector">
-                <?php _e('Display Ticket Selector', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                <?php esc_html_e('Display Ticket Selector', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                     'display_ticket_selector_info'
                 ); ?>
             </label>
@@ -143,7 +143,7 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_datetimes">
-                <?php _e('Display Datetimes', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                <?php esc_html_e('Display Datetimes', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                     'display_datetimes_info'
                 ); ?>
             </label>
@@ -162,7 +162,7 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_venue">
-                <?php _e('Display Venue Details', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                <?php esc_html_e('Display Venue Details', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                     'display_venue_details_info'
                 ); ?>
             </label>
@@ -181,7 +181,7 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_expired_events">
-                <?php _e('Display Expired Events', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                <?php esc_html_e('Display Expired Events', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                     'display_expired_events_info'
                 ); ?>
             </label>
@@ -200,7 +200,7 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_use_sortable_display_order">
-                <?php _e(
+                <?php esc_html_e(
                     'Use Custom Display Order?',
                     'event_espresso'
                 ); ?><?php // echo EEH_Template::get_help_tab_link('use_sortable_display_order_info');?>
@@ -219,7 +219,7 @@ $description = EEH_Form_Fields::prep_answer_options(
 
     <tr>
         <th>
-            <?php _e(
+            <?php esc_html_e(
                 'Display Order',
                 'event_espresso'
             ); ?><?php // echo EEH_Template::get_help_tab_link( 'event_archive_order_info' ); ?>
@@ -234,7 +234,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             <?php echo $event_archive_display_order; ?>
 
             <p class="description"><?php
-                _e(
+                esc_html_e(
                     'Drag and Drop the above to determine the display order of the Event Description, Date and Times, Ticket Selector, and Venue Information on the event archive page.',
                     'event_espresso'
                 ); ?></p>
@@ -245,7 +245,7 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_reset_event_list_settings">
-                <?php _e('Reset Event List Settings', 'event_espresso'); ?>
+                <?php esc_html_e('Reset Event List Settings', 'event_espresso'); ?>
             </label>
         </th>
         <td>

@@ -20,8 +20,8 @@
         <td></td>
         <td class="container" bgcolor="#FFFFFF">
             <div class="content">
-                <h1><?php _e('Registration Summary', 'event_espresso'); ?></h1>
-                <p><?php _e('Here\'s a summary of registrations recently completed and their status:', 'event_espresso'); ?></p>
+                <h1><?php esc_html_e('Registration Summary', 'event_espresso'); ?></h1>
+                <p><?php esc_html_e('Here\'s a summary of registrations recently completed and their status:', 'event_espresso'); ?></p>
                 <table>
                     <tr>
                         <td>

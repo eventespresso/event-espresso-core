@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\CurrentPage;
 
 /**
  * EE_Maintenance_Mode Class
@@ -65,9 +67,10 @@ class EE_Maintenance_Mode implements ResettableInterface
 
 
     /**
-     * Resets maintenance mode (mostly just re-checks whether or not we should be in maintenance mode)
+     * Resets maintenance mode (mostly just re-checks whether we should be in maintenance mode)
      *
      * @return EE_Maintenance_Mode
+     * @throws EE_Error
      */
     public static function reset()
     {
@@ -82,11 +85,11 @@ class EE_Maintenance_Mode implements ResettableInterface
     private function __construct()
     {
         // if M-Mode level 2 is engaged, we still need basic assets loaded
-        add_action('wp_enqueue_scripts', array($this, 'load_assets_required_for_m_mode'));
-        // shut 'er down down for maintenance ?
-        add_filter('the_content', array($this, 'the_content'), 2);
+        add_action('wp_enqueue_scripts', [$this, 'load_assets_required_for_m_mode']);
+        // shut 'er down for maintenance ?
+        add_filter('the_content', [$this, 'the_content'], 2);
         // add powered by EE msg
-        add_action('shutdown', array($this, 'display_maintenance_mode_notice'), 10);
+        add_action('shutdown', [$this, 'display_maintenance_mode_notice'], 10);
     }
 
 
@@ -102,7 +105,7 @@ class EE_Maintenance_Mode implements ResettableInterface
 
 
     /**
-     * Returns whether or not the models reportedly are able to run queries or not
+     * Returns whether the models reportedly are able to run queries or not
      * (ie, if the system thinks their tables are present and up-to-date).
      *
      * @return boolean
@@ -114,7 +117,7 @@ class EE_Maintenance_Mode implements ResettableInterface
 
 
     /**
-     * Determines whether or not we're in maintenance mode and what level. However, while the site
+     * Determines whether we're in maintenance mode and what level. However, while the site
      * is in level 1 maintenance, and an admin visits the frontend, this function makes it appear
      * to them as if teh site isn't in maintenance mode.
      * EE_Maintenance_Mode::level_0_not_in_maintenance => not in maintenance mode (in normal mode)
@@ -142,10 +145,11 @@ class EE_Maintenance_Mode implements ResettableInterface
      * Determines if we need to put EE in maintenance mode because the database needs updating
      *
      * @return boolean true if DB is old and maintenance mode was triggered; false otherwise
+     * @throws EE_Error
      */
     public function set_maintenance_mode_if_db_old()
     {
-        EE_Registry::instance()->load_core('Data_Migration_Manager');
+        LoaderFactory::getLoader()->getShared('Data_Migration_Manager');
         if (EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()) {
             update_option(self::option_name_maintenance_mode, self::level_2_complete_maintenance);
             return true;
@@ -176,7 +180,7 @@ class EE_Maintenance_Mode implements ResettableInterface
     /**
      * returns TRUE if M-Mode is engaged and the current request is not for the admin
      *
-     * @return    string
+     * @return bool
      */
     public static function disable_frontend_for_maintenance()
     {
@@ -196,14 +200,14 @@ class EE_Maintenance_Mode implements ResettableInterface
             wp_register_style(
                 'espresso_default',
                 EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css',
-                array('dashicons'),
+                ['dashicons'],
                 EVENT_ESPRESSO_VERSION
             );
             wp_enqueue_style('espresso_default');
             wp_register_script(
                 'espresso_core',
                 EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
-                array('jquery'),
+                ['jquery'],
                 EVENT_ESPRESSO_VERSION,
                 true
             );
@@ -221,7 +225,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      */
     public static function template_include()
     {
-        // shut 'er down down for maintenance ? then don't use any of our templates for our endpoints
+        // shut 'er down for maintenance ? then don't use any of our templates for our endpoints
         return get_template_directory() . '/index.php';
     }
 
@@ -257,13 +261,15 @@ class EE_Maintenance_Mode implements ResettableInterface
      */
     public function display_maintenance_mode_notice()
     {
+        /** @var CurrentPage $current_page */
+        $current_page = LoaderFactory::getLoader()->getShared(CurrentPage::class);
         // check if M-mode is engaged and for EE shortcode
         if (
             ! (defined('DOING_AJAX') && DOING_AJAX)
             && $this->real_level()
             && ! is_admin()
             && current_user_can('administrator')
-            && EE_Registry::instance()->REQ->is_espresso_page()
+            && $current_page->isEspressoPage()
         ) {
             printf(
                 esc_html__(
@@ -273,7 +279,7 @@ class EE_Maintenance_Mode implements ResettableInterface
                 '<div id="ee-m-mode-admin-notice-dv" class="ee-really-important-notice-dv"><a class="close-espresso-notice" title="',
                 '"><span class="dashicons dashicons-no"></span></a><p>',
                 ' &raquo; <a href="' . add_query_arg(
-                    array('page' => 'espresso_maintenance_settings'),
+                    ['page' => 'espresso_maintenance_settings'],
                     admin_url('admin.php')
                 ) . '">',
                 '</a></p></div>'
@@ -318,7 +324,7 @@ class EE_Maintenance_Mode implements ResettableInterface
 
     final public function __sleep()
     {
-        return array();
+        return [];
     }
 
 

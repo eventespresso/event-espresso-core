@@ -27,7 +27,7 @@ class InvalidClassException extends DomainException
     {
         if (empty($message)) {
             $message = sprintf(
-                __('The "%1$s" Class is either missing or invalid.', 'event_espresso'),
+                esc_html__('The "%1$s" Class is either missing or invalid.', 'event_espresso'),
                 $class_name
             );
         }

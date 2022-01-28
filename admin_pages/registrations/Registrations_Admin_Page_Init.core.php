@@ -40,7 +40,7 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_CPT_Init
 
     protected function _set_init_properties()
     {
-        $this->label = __('Registrations Overview', 'event_espresso');
+        $this->label = esc_html__('Registrations Overview', 'event_espresso');
     }
 
 
@@ -53,7 +53,7 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_CPT_Init
                 'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
                 'parent_slug'     => 'espresso_events',
                 'menu_slug'       => REG_PG_SLUG,
-                'menu_label'      => __('Registrations', 'event_espresso'),
+                'menu_label'      => esc_html__('Registrations', 'event_espresso'),
                 'capability'      => 'ee_read_registrations',
                 'admin_init_page' => $this,
             )

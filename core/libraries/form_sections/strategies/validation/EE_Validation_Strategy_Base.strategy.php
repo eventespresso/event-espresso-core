@@ -22,7 +22,7 @@ abstract class EE_Validation_Strategy_Base extends EE_Form_Input_Strategy_Base
     public function __construct($validation_error_message = null)
     {
         $this->_validation_error_message = $validation_error_message === null
-            ? __('Input invalid', 'event_espresso')
+            ? esc_html__('Input invalid', 'event_espresso')
             : $validation_error_message;
         parent::__construct();
     }

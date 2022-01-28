@@ -2,6 +2,13 @@
 
 /**
  * @deprecated 4.9.13
+ * @var string $attendee_address
+ * @var string $attendee_city
+ * @var string $attendee_state
+ * @var string $attendee_zip
+ * @var string $show_line_item_description
+ * @var string $amount_pd
+ * @var string $total_cost
  */
 
 ?>
@@ -22,15 +29,15 @@
                     </div>
                     <!-- adr -->
                     <div class="email">[email]</div>
-                    <div class="vat"><?php _e('VAT/Tax Number:', 'event_espresso') ?> [vat]</div>
+                    <div class="vat"><?php esc_html_e('VAT/Tax Number:', 'event_espresso') ?> [vat]</div>
                 </div>
             </td>
             <td>
                 <div id="invoice-info">
-                    <h2 id="invoice-hdr"><?php _e('Invoice', 'event_espresso') ?></h2>
-                    <h3><?php _e('Date:', 'event_espresso') ?> <span>[registration_date]</span></h3>
-                    <h3><?php _e('Registration Code:', 'event_espresso') ?> <span>[registration_code]</span></h3>
-                    <h3><?php _e('Transaction ID:', 'event_espresso') ?> <span>[transaction_id]</span></h3>
+                    <h2 id="invoice-hdr"><?php esc_html_e('Invoice', 'event_espresso') ?></h2>
+                    <h3><?php esc_html_e('Date:', 'event_espresso') ?> <span>[registration_date]</span></h3>
+                    <h3><?php esc_html_e('Registration Code:', 'event_espresso') ?> <span>[registration_code]</span></h3>
+                    <h3><?php esc_html_e('Transaction ID:', 'event_espresso') ?> <span>[transaction_id]</span></h3>
                 </div>
             </td>
         </tr>
@@ -40,29 +47,29 @@
             </td>
         </tr>
     </table>
-    <h2><?php _e('Bill To:', 'event_espresso') ?></h2>
+    <h2><?php esc_html_e('Bill To:', 'event_espresso') ?></h2>
     <div class="vcard" id="client-details">
         <div class="fn">[name]</div>
         <div class="adr">
-            <div class="street-address"><?php echo $attendee_address; ?></div>
-            <div class="locality"><?php echo $attendee_city; ?><?php echo $attendee_state; ?></div>
-            <div id="client-postcode"><?php echo $attendee_zip; ?></div>
+            <div class="street-address"><?php echo $attendee_address; // already escaped ?></div>
+            <div class="locality"><?php echo $attendee_city . ' ' . $attendee_state; // already escaped ?></div>
+            <div id="client-postcode"><?php echo $attendee_zip; // already escaped ?></div>
         </div>
     </div>
     <!--#client-details vcard-->
 
-    <h2><?php _e("Purchases", 'event_espresso') ?></h2>
+    <h2><?php esc_html_e("Purchases", 'event_espresso') ?></h2>
     <table class="invoice-amount">
 
         <thead>
         <tr class="header_row">
-            <th class="left ticket_th"><?php _e('Item', 'event_espresso'); ?></th>
+            <th class="left ticket_th"><?php esc_html_e('Item', 'event_espresso'); ?></th>
             <?php if ($show_line_item_description) { ?>
-                <th class="left event_th"><?php _e('Description', 'event_espresso'); ?></th>
+                <th class="left event_th"><?php esc_html_e('Description', 'event_espresso'); ?></th>
             <?php } ?>
-            <th class="quantity_th"><?php _e('Qty', 'event_espresso'); ?></th>
-            <th class="left event_th"><?php _e('Price', 'event_espresso'); ?></th>
-            <th class="subtotal_th item_r"><?php _e('Total', 'event_espresso'); ?></th>
+            <th class="quantity_th"><?php esc_html_e('Qty', 'event_espresso'); ?></th>
+            <th class="left event_th"><?php esc_html_e('Price', 'event_espresso'); ?></th>
+            <th class="subtotal_th item_r"><?php esc_html_e('Total', 'event_espresso'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -88,8 +95,8 @@
                     </tr>
                     <tr class="total_tr odd">
                         <td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
-                        <td colspan="2" class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
-                        <td class="total"><?php echo $line_item->total_no_code(); ?></td>
+                        <td colspan="2" class="total" id="total_currency"><?php esc_html_e('Total', 'event_espresso'); ?></td>
+                        <td class="total"><?php echo $line_item->total_no_code(); // already escaped ?></td>
                     </tr>
                     <?php
                     break;
@@ -103,11 +110,11 @@
                     <tr class="total_tr odd">
                         <td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
                         <td colspan="2" class="total" id="total_currency">
-                            <?php _e(
+                            <?php esc_html_e(
                                 'Sub-Total',
                                 'event_espresso'
                             ); ?></td>
-                        <td class="total"><?php echo $line_item->total_no_code(); ?></td>
+                        <td class="total"><?php echo $line_item->total_no_code(); // already escaped ?></td>
                     </tr>
                     <?php
                     break;
@@ -121,11 +128,11 @@
                     <tr class="total_tr odd">
                         <td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
                         <td colspan="2" class="total" id="total_currency">
-                            <?php _e(
+                            <?php esc_html_e(
                                 'Tax Total',
                                 'event_espresso'
                             ); ?></td>
-                        <td class="total"><?php echo $line_item->total_no_code(); ?></td>
+                        <td class="total"><?php echo $line_item->total_no_code(); // already escaped ?></td>
                     </tr>
                     <?php
                     break;
@@ -137,15 +144,15 @@
                     if ($has_subitems) {
                         ?>
                         <tr class="item <?php echo $odd ? 'odd' : ''; ?>">
-                            <td class="item_l"><?php echo $line_item->name() ?></td>
+                            <td class="item_l"><?php echo esc_html($line_item->name()) ?></td>
                             <?php if ($show_line_item_description) { ?>
-                                <td class="item_l"><?php echo $line_item->desc() ?></td>
+                                <td class="item_l"><?php echo esc_html($line_item->desc()) ?></td>
                             <?php } ?>
-                            <td class="item_l"><?php echo $line_item->quantity(); ?></td>
+                            <td class="item_l"><?php echo esc_html($line_item->quantity()); ?></td>
 
-                            <td class="item_c"><?php echo $line_item->unit_price_no_code() ?></td>
+                            <td class="item_c"><?php echo esc_html($line_item->unit_price_no_code()) ?></td>
 
-                            <td class="item_r"> <?php echo $line_item->total_no_code();
+                            <td class="item_r"> <?php echo $line_item->total_no_code(); // already escaped
                                 echo $line_item->is_taxable() ? '*' : '' ?> </td>
                             <?php // <td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings);
                             ?>
@@ -159,13 +166,13 @@
                     } else {// no subitems - just show this line item
                         ?>
                         <tr class="item <?php echo $odd ? 'odd' : ''; ?>">
-                            <td class="item_l"><?php echo $line_item->name() ?></td>
+                            <td class="item_l"><?php echo esc_html($line_item->name()); ?></td>
                             <?php if ($show_line_item_description) { ?>
-                                <td class="item_l"><?php echo $line_item->desc() ?></td>
+                                <td class="item_l"><?php echo esc_html($line_item->desc()); ?></td>
                             <?php } ?>
-                            <td class="item_l"><?php echo $line_item->quantity() ?></td>
-                            <td class="item_c"><?php echo $line_item->unit_price_no_code() ?></td>
-                            <td class="item_r"> <?php echo $line_item->total_no_code();
+                            <td class="item_l"><?php echo esc_html($line_item->quantity()); ?></td>
+                            <td class="item_c"><?php echo $line_item->unit_price_no_code(); // already escaped ?></td>
+                            <td class="item_r"> <?php echo $line_item->total_no_code(); // already escaped;
                                 echo $line_item->is_taxable() ? '*' : '' ?> </td>
                             <?php // <td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings);
                             ?>
@@ -176,31 +183,31 @@
                 case EEM_Line_Item::type_sub_line_item:
                     ?>
                     <tr class="item subitem-row">
-                        <td class="item_l subitem"><?php echo $line_item->name(); ?></td>
+                        <td class="item_l subitem"><?php echo esc_html($line_item->name()); ?></td>
                         <?php if ($show_line_item_description) { ?>
-                            <td class="item_l"><?php echo $line_item->desc() ?></td>
+                            <td class="item_l"><?php echo esc_html($line_item->desc()); ?></td>
                         <?php } ?>
                         <?php if ($line_item->is_percent()) { ?>
                             <td></td>
-                            <td class="item_c"><?php echo $line_item->percent(); ?>%</td>
+                            <td class="item_c"><?php echo esc_html($line_item->percent()); ?>%</td>
                         <?php } else {// flat discount/surcharge ?>
                             <td></td>
-                            <td class="item_c"><?php echo $line_item->unit_price_no_code(); ?></td>
+                            <td class="item_c"><?php echo $line_item->unit_price_no_code(); // already escaped ?></td>
                         <?php } ?>
-                        <td class="item_r"><?php echo $line_item->total_no_code(); ?></td>
+                        <td class="item_r"><?php echo $line_item->total_no_code(); // already escaped ?></td>
                     </tr>
                     <?php
                     break;
                 case EEM_Line_Item::type_tax:
                     ?>
                     <tr class="item sub-item tax-total">
-                    <td class="item_l"><?php echo $line_item->name(); ?></td>
+                    <td class="item_l"><?php echo esc_html($line_item->name()); ?></td>
                     <?php if ($show_line_item_description) { ?>
-                        <td class="item_l"><?php echo $line_item->desc() ?></td>
+                        <td class="item_l"><?php echo esc_html($line_item->desc()); ?></td>
                     <?php } ?>
-                    <td colspan="2" class="item_c"><?php echo $line_item->percent(); ?>%</td>
+                    <td colspan="2" class="item_c"><?php echo esc_html($line_item->percent()); ?>%</td>
 
-                    <td class="item_r"><?php echo $line_item->total_no_code(); ?></td>
+                    <td class="item_r"><?php echo $line_item->total_no_code(); // already escaped ?></td>
                     </tr><?php
                     break;
             }
@@ -224,17 +231,17 @@
         </tbody>
 
     </table>
-    <p><?php _e("* taxable items", "event_espresso"); ?></p>
-    <h2><?php _e("Payments", 'event_espresso') ?></h2>
+    <p><?php esc_html_e("* taxable items", "event_espresso"); ?></p>
+    <h2><?php esc_html_e("Payments", 'event_espresso') ?></h2>
     <table class="invoice-amount">
         <thead>
         <tr class="header_row">
-            <th><span class=""><?php _e('Payment Method', 'event_espresso'); ?></span></th>
-            <th class='left datetime_th'><?php _e("Date", 'event_espresso') ?></th>
-            <th><span class=""><?php _e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
-            <th><span class=""><?php _e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
-            <th><span class=""><?php _e('Status', 'event_espresso'); ?></span></th>
-            <th><?php _e('Amount', 'event_espresso'); ?></th>
+            <th><span class=""><?php esc_html_e('Payment Method', 'event_espresso'); ?></span></th>
+            <th class='left datetime_th'><?php esc_html_e("Date", 'event_espresso') ?></th>
+            <th><span class=""><?php esc_html_e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
+            <th><span class=""><?php esc_html_e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
+            <th><span class=""><?php esc_html_e('Status', 'event_espresso'); ?></span></th>
+            <th><?php esc_html_e('Amount', 'event_espresso'); ?></th>
         </tr>
         </thead>
         <tbody>
@@ -246,7 +253,7 @@
                 ?>
                 <tr class='item <?php echo(($c = ! $c) ? ' odd' : '') ?>'>
                     <td><?php $payment->e('PAY_gateway') ?></td>
-                    <td><?php echo $payment->timestamp('D M j, Y') ?></td>
+                    <td><?php echo $payment->timestamp('D M j, Y'); // already escaped ?></td>
                     <td><?php $payment->e('PAY_txn_id_chq_nmbr') ?></td>
                     <td><?php $payment->e('PAY_po_number') ?></td>
                     <td><?php $payment->e_pretty_status() ?></td>
@@ -257,7 +264,7 @@
             ?>
             <tr class='item'>
                 <td class='aln-cntr' colspan=6>
-                    <?php _e(
+                    <?php esc_html_e(
                         "No approved payments have been received",
                         'event_espresso'
                     ) ?></td>
@@ -268,13 +275,13 @@
         <tfoot>
         <tr class='total_tr'>
             <td colspan="4"></td>
-            <td class="item_r"><?php _e('Total Paid', 'event_espresso') ?></td>
+            <td class="item_r"><?php esc_html_e('Total Paid', 'event_espresso') ?></td>
             <td class="item_r"><?php echo EEH_Template::format_currency($amount_pd) ?> </td>
         </tr>
         <?php // echo $discount; ?>
         <tr class="total_tr">
             <td colspan="4"></td>
-            <td class="total" id="total_currency"><?php _e('Amount Owed', 'event_espresso'); ?></td>
+            <td class="total" id="total_currency"><?php esc_html_e('Amount Owed', 'event_espresso'); ?></td>
             <td class="total"><?php echo EEH_Template::format_currency($total_cost - $amount_pd) ?></td>
         </tr>
         </tfoot>

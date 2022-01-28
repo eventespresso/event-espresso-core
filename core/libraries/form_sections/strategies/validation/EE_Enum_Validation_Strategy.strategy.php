@@ -23,7 +23,7 @@ class EE_Enum_Validation_Strategy extends EE_Validation_Strategy_Base
     {
         parent::validate($normalized_value);
         if (! $this->_input instanceof EE_Form_Input_With_Options_Base) {
-            throw new EE_Error(sprintf(__("Cannot use Enum Validation Strategy with an input that doesn't have options", "event_espresso")));
+            throw new EE_Error(sprintf(esc_html__("Cannot use Enum Validation Strategy with an input that doesn't have options", "event_espresso")));
         }
         $enum_options = $this->_input->flat_options();
         if ($normalized_value === true) {
@@ -52,7 +52,7 @@ class EE_Enum_Validation_Strategy extends EE_Validation_Strategy_Base
         if (! $parent_validation_error_message) {
             $enum_options = $this->_input instanceof EE_Form_Input_With_Options_Base ? $this->_input->flat_options() : '';
             return sprintf(
-                __("This is not allowed option. Allowed options are %s.", "event_espresso"),
+                esc_html__("This is not allowed option. Allowed options are %s.", "event_espresso"),
                 implode(', ', $enum_options)
             );
         } else {

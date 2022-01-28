@@ -6,6 +6,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
+use EventEspresso\core\services\request\RequestInterface;
 
 // if you're a dev and want to receive all errors via email
 // add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
@@ -334,7 +335,7 @@ class EE_Error extends Exception
             $error_code = '';
             // process trace info
             if (empty($ex['trace'])) {
-                $trace_details .= __(
+                $trace_details .= esc_html__(
                     'Sorry, but no trace information was available for this exception.',
                     'event_espresso'
                 );
@@ -427,7 +428,7 @@ class EE_Error extends Exception
                            . $time
                            . '">
 					'
-                           . __('click to view backtrace and class/method details', 'event_espresso')
+                           . esc_html__('click to view backtrace and class/method details', 'event_espresso')
                            . '
 				</a><br />
 				<span class="small-text lt-grey-text">'
@@ -601,7 +602,7 @@ class EE_Error extends Exception
             EE_Error::doing_it_wrong(
                 'EE_Error::add_' . $type . '()',
                 sprintf(
-                    __(
+                    esc_html__(
                         'Notifications are not much use without a message! Please add a message to the EE_Error::add_%s() call made in %s on line %d',
                         'event_espresso'
                     ),
@@ -615,7 +616,7 @@ class EE_Error extends Exception
         if ($type === 'errors' && (empty($file) || empty($func) || empty($line))) {
             EE_Error::doing_it_wrong(
                 'EE_Error::add_error()',
-                __(
+                esc_html__(
                     'You need to provide the file name, function name, and line number that the error occurred on in order to better assist with debugging.',
                     'event_espresso'
                 ),
@@ -853,8 +854,10 @@ class EE_Error extends Exception
         $success_messages = '';
         $attention_messages = '';
         $error_messages = '';
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         // either save notices to the db
-        if ($save_to_transient || isset($_REQUEST['activate-selected'])) {
+        if ($save_to_transient || $request->requestParamIsSet('activate-selected')) {
             self::$_espresso_notices = array_merge(
                 EE_Error::getStoredNotices(),
                 self::$_espresso_notices
@@ -878,10 +881,10 @@ class EE_Error extends Exception
         // check for error messages
         if (self::$_espresso_notices['errors'] && ! empty(self::$_espresso_notices['errors'])) {
             $error_messages .= count(self::$_espresso_notices['errors']) > 1
-                ? __('The following errors have occurred:<br />', 'event_espresso')
-                : __('An error has occurred:<br />', 'event_espresso');
+                ? esc_html__('The following errors have occurred:', 'event_espresso')
+                : esc_html__('An error has occurred:', 'event_espresso');
             // combine messages
-            $error_messages .= implode('<br />', self::$_espresso_notices['errors']);
+            $error_messages .= '<br />' . implode('<br />', self::$_espresso_notices['errors']);
             $print_scripts = true;
         }
         if ($format_output) {
@@ -1088,7 +1091,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
         } catch (EE_Error $e) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Event Espresso error logging could not be setup because: %s',
                         'event_espresso'
                     ),
@@ -1166,7 +1169,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
         EE_Error::doing_it_wrong(
             __METHOD__,
             sprintf(
-                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
                 '\EventEspresso\core\domain\entities\notifications\PersistentAdminNotice'
             ),
             '4.9.27'
@@ -1195,7 +1198,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
         EE_Error::doing_it_wrong(
             __METHOD__,
             sprintf(
-                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
                 '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
             ),
             '4.9.27'
@@ -1214,7 +1217,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
         EE_Error::doing_it_wrong(
             __METHOD__,
             sprintf(
-                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
                 '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
             ),
             '4.9.27'
@@ -1231,7 +1234,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
         EE_Error::doing_it_wrong(
             __METHOD__,
             sprintf(
-                __('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
                 '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
             ),
             '4.9.27'

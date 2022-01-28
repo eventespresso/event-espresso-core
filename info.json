@@ -1,44 +1,44 @@
 {
-	"versionFile": "espresso.php",
-	"slug": "event-espresso-core-reg",
-	"textDomain": "event_espresso",
-	"wpOrgSlug": "event-espresso-decaf",
-	"wpOrgMainFileSlug": "espresso",
-	"wpOrgUser": "eventespresso",
-	"wpOrgRelease": "4.11.0.p",
-	"wpOrgPluginName": "Event Espresso 4 Decaf",
-	"wpOrgPluginUrl": "https:\/\/eventespresso.com\/pricing\/?ee_ver=ee4&utm_source=ee4_decaf_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link",
-	"name": "Event Espresso Core",
-	"jsBuildDirectory": ".\/",
-	"wpi18nJsPotFilePath": ".\/languages\/ee-js.pot",
-	"srcBuildFolderName": "event-espresso-core",
-	"releaseFilesRemove": [
+	"awsbucket": "",
+	"awsregion": "",
+	"decafFilesRemove": [
+		"src\/.babelrc",
+		"src\/.editorconfig",
+		"src\/.github\/**",
+		"src\/.travis.yml",
+		"src\/bin\/**",
+		"src\/caffeinated",
+		"src\/docs\/**",
+		"src\/info.json",
 		"src\/tests\/**",
+		"src\/wp-assets\/**"
+	],
+	"jsBuildDirectory": ".\/",
+	"name": "Event Espresso Core",
+	"releaseFilesRemove": [
+		"src\/.babelrc",
+		"src\/.editorconfig",
+		"src\/.github\/**",
+		"src\/.travis.yml",
 		"src\/bin\/**",
 		"src\/docs\/**",
 		"src\/info.json",
 		"src\/readme.txt",
-		"src\/wp-assets\/**",
-		"src\/.travis.yml",
-		"src\/.github\/**",
-		"src\/.babelrc",
-		"src\/.editorconfig"
-	],
-	"decafFilesRemove": [
 		"src\/tests\/**",
-		"src\/bin\/**",
-		"src\/docs\/**",
-		"src\/info.json",
-		"src\/.travis.yml",
-		"src\/caffeinated",
-		"src\/wp-assets\/**",
-		"src\/.github\/**",
-		"src\/.babelrc",
-		"src\/.editorconfig"
+		"src\/wp-assets\/**"
 	],
-	"awsbucket": "",
-	"awsregion": "",
 	"remoteNamesToPushTo": [
 		"demoee"
-	]
+	],
+	"slug": "event-espresso-core-reg",
+	"srcBuildFolderName": "event-espresso-core",
+	"textDomain": "event_espresso",
+	"versionFile": "espresso.php",
+	"wpi18nJsPotFilePath": ".\/languages\/ee-js.pot",
+	"wpOrgMainFileSlug": "espresso",
+	"wpOrgPluginName": "Event Espresso 4 Decaf",
+	"wpOrgPluginUrl": "https:\/\/eventespresso.com\/pricing\/?ee_ver=ee4&utm_source=ee4_decaf_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link",
+	"wpOrgRelease": "4.11.0.p",
+	"wpOrgSlug": "event-espresso-decaf",
+	"wpOrgUser": "eventespresso"
 }

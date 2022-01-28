@@ -40,7 +40,7 @@ class EE_Register_Module implements EEI_Plugin_API
         // required fields MUST be present, so let's make sure they are.
         if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['module_paths'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register Modules with EE_Register_Module::register(), you must include a "module_id" (a unique identifier for this set of modules), and an array containing the following keys: "module_paths" (an array of full server paths to folders that contain modules, or to the module files themselves)',
                     'event_espresso'
                 )
@@ -59,7 +59,7 @@ class EE_Register_Module implements EEI_Plugin_API
         ) {
             EE_Error::doing_it_wrong(
                 __METHOD__,
-                __(
+                esc_html__(
                     'An attempt to register modules has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__register_shortcodes_modules_and_widgets" hook to register modules.',
                     'event_espresso'
                 ),

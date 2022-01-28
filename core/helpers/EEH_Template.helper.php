@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 if (! function_exists('espresso_get_template_part')) {
     /**
@@ -12,7 +13,6 @@ if (! function_exists('espresso_get_template_part')) {
      *
      * @param string $slug The slug name for the generic template.
      * @param string $name The name of the specialised template.
-     * @return string        the html output for the formatted money value
      */
     function espresso_get_template_part($slug = null, $name = null)
     {
@@ -26,9 +26,11 @@ if (! function_exists('espresso_get_object_css_class')) {
      * espresso_get_object_css_class - attempts to generate a css class based on the type of EE object passed
      *
      * @param EE_Base_Class $object the EE object the css class is being generated for
-     * @param  string       $prefix added to the beginning of the generated class
-     * @param  string       $suffix added to the end of the generated class
+     * @param string        $prefix added to the beginning of the generated class
+     * @param string        $suffix added to the end of the generated class
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function espresso_get_object_css_class($object = null, $prefix = '', $suffix = '')
     {
@@ -48,7 +50,7 @@ if (! function_exists('espresso_get_object_css_class')) {
 class EEH_Template
 {
 
-    private static $_espresso_themes = array();
+    private static $_espresso_themes = [];
 
 
     /**
@@ -58,12 +60,13 @@ class EEH_Template
      */
     public static function is_espresso_theme()
     {
-        return wp_get_theme()->get('TextDomain') == 'event_espresso' ? true : false;
+        return wp_get_theme()->get('TextDomain') === 'event_espresso';
     }
+
 
     /**
      *    load_espresso_theme_functions - if current theme is an espresso theme, or uses ee theme template parts, then
-     *    load it's functions.php file ( if not already loaded )
+     *    load its functions.php file ( if not already loaded )
      *
      * @return void
      */
@@ -87,12 +90,12 @@ class EEH_Template
         if (empty(EEH_Template::$_espresso_themes)) {
             $espresso_themes = glob(EE_PUBLIC . '*', GLOB_ONLYDIR);
             if (empty($espresso_themes)) {
-                return array();
+                return [];
             }
             if (($key = array_search('global_assets', $espresso_themes)) !== false) {
                 unset($espresso_themes[ $key ]);
             }
-            EEH_Template::$_espresso_themes = array();
+            EEH_Template::$_espresso_themes = [];
             foreach ($espresso_themes as $espresso_theme) {
                 EEH_Template::$_espresso_themes[ basename($espresso_theme) ] = $espresso_theme;
             }
@@ -116,19 +119,21 @@ class EEH_Template
     public static function get_template_part(
         $slug = null,
         $name = null,
-        $template_args = array(),
+        $template_args = [],
         $return_string = false
     ) {
         do_action("get_template_part_{$slug}-{$name}", $slug, $name);
-        $templates = array();
+        $templates = [];
         $name      = (string) $name;
         if ($name != '') {
             $templates[] = "{$slug}-{$name}.php";
         }
-        // allow template parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );
+        // allow template parts to be turned off via something like:
+        // add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );
         if (apply_filters("FHEE__EEH_Template__get_template_part__display__{$slug}_{$name}", true)) {
-            EEH_Template::locate_template($templates, $template_args, true, $return_string);
+            return EEH_Template::locate_template($templates, $template_args, true, $return_string);
         }
+        return '';
     }
 
 
@@ -164,10 +169,10 @@ class EEH_Template
      *          and stopped there upon finding it in the second location
      *
      * @param array|string $templates       array of template file names including extension (or just a single string)
-     * @param  array       $template_args   an array of arguments to be extracted for use in the template
-     * @param  boolean     $load            whether to pass the located template path on to the
+     * @param array        $template_args   an array of arguments to be extracted for use in the template
+     * @param boolean      $load            whether to pass the located template path on to the
      *                                      EEH_Template::display_template() method or simply return it
-     * @param  boolean     $return_string   whether to send output immediately to screen, or capture and return as a
+     * @param boolean      $return_string   whether to send output immediately to screen, or capture and return as a
      *                                      string
      * @param boolean      $check_if_custom If TRUE, this flags this method to return boolean for whether this will
      *                                      generate a custom template or not. Used in places where you don't actually
@@ -179,8 +184,8 @@ class EEH_Template
      * @throws InvalidInterfaceException
      */
     public static function locate_template(
-        $templates = array(),
-        $template_args = array(),
+        $templates = [],
+        $template_args = [],
         $load = true,
         $return_string = true,
         $check_if_custom = false
@@ -196,10 +201,13 @@ class EEH_Template
         if (empty($template_path)) {
             // not even a template to look for ?
             if (empty($templates)) {
+                $loader = LoaderFactory::getLoader();
+                /** @var RequestInterface $request */
+                $request = $loader->getShared(RequestInterface::class);
                 // get post_type
-                $post_type = EE_Registry::instance()->REQ->get('post_type');
+                $post_type = $request->getRequestParam('post_type');
                 /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-                $custom_post_types = LoaderFactory::getLoader()->getShared(
+                $custom_post_types = $loader->getShared(
                     'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
                 );
                 // get array of EE Custom Post Types
@@ -215,23 +223,23 @@ class EEH_Template
             $current_theme = EE_Config::get_current_theme();
 
             // array of paths to folders that may contain templates
-            $template_folder_paths = array(
+            $template_folder_paths = [
                 // first check the /wp-content/uploads/espresso/templates/(current EE theme)/  folder for an EE theme template file
                 EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme,
                 // then in the root of the /wp-content/uploads/espresso/templates/ folder
                 EVENT_ESPRESSO_TEMPLATE_DIR,
-            );
+            ];
 
             // add core plugin folders for checking only if we're not $check_if_custom
             if (! $check_if_custom) {
-                $core_paths            = array(
+                $core_paths            = [
                     // in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
                     EE_PUBLIC . $current_theme,
                     // in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
                     EE_TEMPLATES . $current_theme,
                     // or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
                     EE_PLUGIN_DIR_PATH,
-                );
+                ];
                 $template_folder_paths = array_merge($template_folder_paths, $core_paths);
             }
 
@@ -240,10 +248,12 @@ class EEH_Template
                 'FHEE__EEH_Template__locate_template__template_folder_paths',
                 $template_folder_paths
             );
-            $templates             = is_array($templates) ? $templates : array($templates);
-            $template_folder_paths = is_array($template_folder_paths) ? $template_folder_paths : array($template_folder_paths);
+            $templates             = is_array($templates) ? $templates : [$templates];
+            $template_folder_paths =
+                is_array($template_folder_paths) ? $template_folder_paths : [$template_folder_paths];
             // array to hold all possible template paths
-            $full_template_paths = array();
+            $full_template_paths = [];
+            $file_name           = '';
 
             // loop through $templates
             foreach ($templates as $template) {
@@ -257,7 +267,7 @@ class EEH_Template
                     $template_folder_path = EEH_File::standardise_directory_separators($template_folder_path);
                     // determine if any common base path exists between the two paths
                     $common_base_path = EEH_Template::_find_common_base_path(
-                        array($template_folder_path, $template_path_minus_file_name)
+                        [$template_folder_path, $template_path_minus_file_name]
                     );
                     if ($common_base_path !== '') {
                         // both paths have a common base, so just tack the filename onto our search path
@@ -283,7 +293,7 @@ class EEH_Template
             // now loop through our final array of template location paths and check each location
             foreach ((array) $full_template_paths as $full_template_path) {
                 if (is_readable($full_template_path)) {
-                    $template_path = str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $full_template_path);
+                    $template_path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $full_template_path);
                     break;
                 }
             }
@@ -296,9 +306,8 @@ class EEH_Template
         if ($template_path && $load && ! $check_if_custom) {
             if ($return_string) {
                 return EEH_Template::display_template($template_path, $template_args, true);
-            } else {
-                EEH_Template::display_template($template_path, $template_args, false);
             }
+            EEH_Template::display_template($template_path, $template_args);
         }
         return $check_if_custom && ! empty($template_path) ? true : $template_path;
     }
@@ -324,7 +333,7 @@ class EEH_Template
                 }
             }
             $common_base_path .= $directory;
-            $last_offset = $index + 1;
+            $last_offset      = $index + 1;
         }
         return substr($common_base_path, 0, -1);
     }
@@ -333,17 +342,18 @@ class EEH_Template
     /**
      * load and display a template
      *
-     * @param bool|string $template_path server path to the file to be loaded, including file name and extension
-     * @param  array      $template_args an array of arguments to be extracted for use in the template
-     * @param  boolean    $return_string whether to send output immediately to screen, or capture and return as a string
+     * @param bool|string $template_path    server path to the file to be loaded, including file name and extension
+     * @param array       $template_args    an array of arguments to be extracted for use in the template
+     * @param boolean     $return_string    whether to send output immediately to screen, or capture and return as a
+     *                                      string
      * @param bool        $throw_exceptions if set to true, will throw an exception if the template is either
      *                                      not found or is not readable
-     * @return mixed string
-     * @throws \DomainException
+     * @return string
+     * @throws DomainException
      */
     public static function display_template(
         $template_path = false,
-        $template_args = array(),
+        $template_args = [],
         $return_string = false,
         $throw_exceptions = false
     ) {
@@ -362,32 +372,27 @@ class EEH_Template
 
         // you gimme nuttin - YOU GET NUTTIN !!
         if (! $template_path || ! is_readable($template_path)) {
+            // ignore whether template is accessible ?
+            if ($throw_exceptions) {
+                throw new DomainException(
+                    esc_html__('Invalid, unreadable, or missing file.', 'event_espresso')
+                );
+            }
             return '';
         }
         // if $template_args are not in an array, then make it so
         if (! is_array($template_args) && ! is_object($template_args)) {
-            $template_args = array($template_args);
+            $template_args = [$template_args];
         }
         extract($template_args, EXTR_SKIP);
-        // ignore whether template is accessible ?
-        if ($throw_exceptions && ! is_readable($template_path)) {
-            throw new \DomainException(
-                esc_html__(
-                    'Invalid, unreadable, or missing file.',
-                    'event_espresso'
-                )
-            );
-        }
-
 
         if ($return_string) {
             // because we want to return a string, we are going to capture the output
             ob_start();
             include($template_path);
             return ob_get_clean();
-        } else {
-            include($template_path);
         }
+        include($template_path);
         return '';
     }
 
@@ -396,9 +401,11 @@ class EEH_Template
      * get_object_css_class - attempts to generate a css class based on the type of EE object passed
      *
      * @param EE_Base_Class $object the EE object the css class is being generated for
-     * @param  string       $prefix added to the beginning of the generated class
-     * @param  string       $suffix added to the end of the generated class
+     * @param string        $prefix added to the beginning of the generated class
+     * @param string        $suffix added to the end of the generated class
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function get_object_css_class($object = null, $prefix = '', $suffix = '')
     {
@@ -424,19 +431,17 @@ class EEH_Template
     }
 
 
-
     /**
      * EEH_Template::format_currency
      * This helper takes a raw float value and formats it according to the default config country currency settings, or
      * the country currency settings from the supplied country ISO code
      *
-     * @param  float   $amount       raw money value
-     * @param  boolean $return_raw   whether to return the formatted float value only with no currency sign or code
-     * @param  boolean $display_code whether to display the country code (USD). Default = TRUE
-     * @param string   $CNT_ISO      2 letter ISO code for a country
-     * @param string   $cur_code_span_class
+     * @param float   $amount       raw money value
+     * @param boolean $return_raw   whether to return the formatted float value only with no currency sign or code
+     * @param boolean $display_code whether to display the country code (USD). Default = TRUE
+     * @param string  $CNT_ISO      2 letter ISO code for a country
+     * @param string  $cur_code_span_class
      * @return string        the html output for the formatted money value
-     * @throws \EE_Error
      */
     public static function format_currency(
         $amount = null,
@@ -447,55 +452,66 @@ class EEH_Template
     ) {
         // ensure amount was received
         if ($amount === null) {
-            $msg = __('In order to format currency, an amount needs to be passed.', 'event_espresso');
+            $msg = esc_html__('In order to format currency, an amount needs to be passed.', 'event_espresso');
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return '';
         }
         // ensure amount is float
-        $amount  = apply_filters('FHEE__EEH_Template__format_currency__raw_amount', (float) $amount);
+        $amount  = (float) apply_filters('FHEE__EEH_Template__format_currency__raw_amount', (float) $amount);
         $CNT_ISO = apply_filters('FHEE__EEH_Template__format_currency__CNT_ISO', $CNT_ISO, $amount);
         // filter raw amount (allows 0.00 to be changed to "free" for example)
         $amount_formatted = apply_filters('FHEE__EEH_Template__format_currency__amount', $amount, $return_raw);
-        // still a number or was amount converted to a string like "free" ?
-        if (is_float($amount_formatted)) {
+        // still a number, or was amount converted to a string like "free" ?
+        if (! is_float($amount_formatted)) {
+            return esc_html($amount_formatted);
+        }
+        try {
             // was a country ISO code passed ? if so generate currency config object for that country
             $mny = $CNT_ISO !== '' ? new EE_Currency_Config($CNT_ISO) : null;
-            // verify results
-            if (! $mny instanceof EE_Currency_Config) {
-                // set default config country currency settings
-                $mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
-                    ? EE_Registry::instance()->CFG->currency
-                    : new EE_Currency_Config();
-            }
-            // format float
-            $amount_formatted = number_format($amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds);
-            // add formatting ?
-            if (! $return_raw) {
-                // add currency sign
-                if ($mny->sign_b4) {
-                    if ($amount >= 0) {
-                        $amount_formatted = $mny->sign . $amount_formatted;
-                    } else {
-                        $amount_formatted = '-' . $mny->sign . str_replace('-', '', $amount_formatted);
-                    }
-                } else {
-                    $amount_formatted = $amount_formatted . $mny->sign;
-                }
-
-                // filter to allow global setting of display_code
-                $display_code = apply_filters('FHEE__EEH_Template__format_currency__display_code', $display_code);
-
-                // add currency code ?
-                $amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
-            }
-            // filter results
-            $amount_formatted = apply_filters(
-                'FHEE__EEH_Template__format_currency__amount_formatted',
-                $amount_formatted,
-                $mny,
-                $return_raw
-            );
+        } catch (Exception $e) {
+            // eat exception
+            $mny = null;
         }
+        // verify results
+        if (! $mny instanceof EE_Currency_Config) {
+            // set default config country currency settings
+            $mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
+                ? EE_Registry::instance()->CFG->currency
+                : new EE_Currency_Config();
+        }
+        // format float
+        $amount_formatted = number_format($amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds);
+        // add formatting ?
+        if (! $return_raw) {
+            // add currency sign
+            if ($mny->sign_b4) {
+                if ($amount >= 0) {
+                    $amount_formatted = $mny->sign . $amount_formatted;
+                } else {
+                    $amount_formatted = '-' . $mny->sign . str_replace('-', '', $amount_formatted);
+                }
+            } else {
+                $amount_formatted = $amount_formatted . $mny->sign;
+            }
+
+            // filter to allow global setting of display_code
+            $display_code = (bool) apply_filters(
+                'FHEE__EEH_Template__format_currency__display_code',
+                $display_code
+            );
+
+            // add currency code ?
+            $amount_formatted = $display_code
+                ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>'
+                : $amount_formatted;
+        }
+        // filter results
+        $amount_formatted = apply_filters(
+            'FHEE__EEH_Template__format_currency__amount_formatted',
+            $amount_formatted,
+            $mny,
+            $return_raw
+        );
         // clean up vars
         unset($mny);
         // return formatted currency amount
@@ -508,18 +524,17 @@ class EEH_Template
      * possibly plural).  The intended use of this function is only for cases where wanting a label outside of a
      * related status model or model object (i.e. in documentation etc.)
      *
-     * @param  string  $status_id Status ID matching a registered status in the esp_status table.  If there is no
+     * @param string  $status_id  Status ID matching a registered status in the esp_status table.  If there is no
      *                            match, then 'Unknown' will be returned.
-     * @param  boolean $plural    Whether to return plural or not
-     * @param  string  $schema    'UPPER', 'lower', or 'Sentence'
+     * @param boolean $plural     Whether to return plural or not
+     * @param string  $schema     'UPPER', 'lower', or 'Sentence'
      * @return string             The localized label for the status id.
+     * @throws EE_Error
      */
     public static function pretty_status($status_id, $plural = false, $schema = 'upper')
     {
-        /** @type EEM_Status $EEM_Status */
-        $EEM_Status = EE_Registry::instance()->load_model('Status');
-        $status     = $EEM_Status->localized_status(
-            array($status_id => __('unknown', 'event_espresso')),
+        $status = EEM_Status::instance()->localized_status(
+            [$status_id => esc_html__('unknown', 'event_espresso')],
             $plural,
             $schema
         );
@@ -530,11 +545,11 @@ class EEH_Template
     /**
      * This helper just returns a button or link for the given parameters
      *
-     * @param  string $url   the url for the link, note that `esc_url` will be called on it
-     * @param  string $label What is the label you want displayed for the button
-     * @param  string $class what class is used for the button (defaults to 'button-primary')
-     * @param string  $icon
-     * @param string  $title
+     * @param string $url   the url for the link, note that `esc_url` will be called on it
+     * @param string $label What is the label you want displayed for the button
+     * @param string $class what class is used for the button (defaults to 'button-primary')
+     * @param string $icon
+     * @param string $title
      * @return string the html output for the button
      */
     public static function get_button_or_link($url, $label, $class = 'button-primary', $icon = '', $title = '')
@@ -546,21 +561,25 @@ class EEH_Template
             $count     = count($dashicons);
             $icon_html .= $count > 1 ? '<span class="ee-composite-dashicon">' : '';
             foreach ($dashicons as $dashicon) {
-                $type = strpos($dashicon, 'ee-icon') !== false ? 'ee-icon ' : 'dashicons ';
+                $type      = strpos($dashicon, 'ee-icon') !== false ? 'ee-icon ' : 'dashicons ';
                 $icon_html .= '<span class="' . $type . $dashicon . '"></span>';
             }
             $icon_html .= $count > 1 ? '</span>' : '';
         }
-        $label  = ! empty($icon) ? $icon_html . $label : $label;
-        $button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . esc_url($url) . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
-        return $button;
+        // sanitize & escape
+        $id    = sanitize_title_with_dashes($label);
+        $url   = esc_url_raw($url);
+        $class = esc_attr($class);
+        $title = esc_attr($title);
+        $label = esc_html($label);
+        return "<a id='{$id}' href='{$url}' class='{$class}' title='{$title}'>{$icon_html}{$label}</a>";
     }
 
 
     /**
      * This returns a generated link that will load the related help tab on admin pages.
      *
-     * @param  string     $help_tab_id the id for the connected help tab
+     * @param string      $help_tab_id the id for the connected help tab
      * @param bool|string $page        The page identifier for the page the help tab is on
      * @param bool|string $action      The action (route) for the admin page the help tab is on.
      * @param bool|string $icon_style  (optional) include css class for the style you want to use for the help icon.
@@ -574,25 +593,28 @@ class EEH_Template
         $icon_style = false,
         $help_text = false
     ) {
-
-        if (! $page) {
-            $page = isset($_REQUEST['page']) && ! empty($_REQUEST['page']) ? sanitize_key($_REQUEST['page']) : $page;
-        }
-
-        if (! $action) {
-            $action = isset($_REQUEST['action']) && ! empty($_REQUEST['action']) ? sanitize_key($_REQUEST['action']) : $action;
-        }
-
-        $action = empty($action) ? 'default' : $action;
+        global $allowedtags;
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $page    = $page ?: $request->getRequestParam('page', '', 'key');
+        $action  = $action ?: $request->getRequestParam('action', 'default', 'key');
 
 
         $help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
         $icon         = ! $icon_style ? ' dashicons-editor-help' : $icon_style;
         $help_text    = ! $help_text ? '' : $help_text;
-        return '<a id="' . $help_tab_lnk . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22' . $icon . '" title="' . esc_attr__(
-            'Click to open the \'Help\' tab for more information about this feature.',
-            'event_espresso'
-        ) . '" > ' . $help_text . ' </a>';
+        return '<a id="'
+               . esc_attr($help_tab_lnk)
+               . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22'
+               . esc_attr($icon)
+               . '" title="'
+               . esc_attr__(
+                   'Click to open the \'Help\' tab for more information about this feature.',
+                   'event_espresso'
+               )
+               . '" > '
+               . wp_kses($help_text, $allowedtags)
+               . ' </a>';
     }
 
 
@@ -603,17 +625,24 @@ class EEH_Template
      * @see  EE_Admin_Page->_stop_callback() for the construct expected for the $stops param.
      * @param EE_Help_Tour
      * @return string         html
+     * @throws EE_Error
      */
     public static function help_tour_stops_generator(EE_Help_Tour $tour)
     {
+        global $allowedtags;
         $id    = $tour->get_slug();
         $stops = $tour->get_stops();
 
-        $content = '<ol style="display:none" id="' . $id . '">';
+        $content = '<ol style="display:none" id="' . esc_attr($id) . '">';
 
         foreach ($stops as $stop) {
-            $data_id    = ! empty($stop['id']) ? ' data-id="' . $stop['id'] . '"' : '';
-            $data_class = empty($data_id) && ! empty($stop['class']) ? ' data-class="' . $stop['class'] . '"' : '';
+            $data_id    = ! empty($stop['id'])
+                ? ' data-id="' . esc_attr($stop['id']) . '"'
+                : '';
+
+            $data_class = empty($data_id) && ! empty($stop['class'])
+                ? ' data-class="' . esc_attr($stop['class']) . '"'
+                : '';
 
             // if container is set to modal then let's make sure we set the options accordingly
             if (empty($data_id) && empty($data_class)) {
@@ -621,15 +650,19 @@ class EEH_Template
                 $stop['options']['expose'] = true;
             }
 
-            $custom_class  = ! empty($stop['custom_class']) ? ' class="' . $stop['custom_class'] . '"' : '';
-            $button_text   = ! empty($stop['button_text']) ? ' data-button="' . $stop['button_text'] . '"' : '';
-            $inner_content = isset($stop['content']) ? $stop['content'] : '';
+            $custom_class  = ! empty($stop['custom_class'])
+                ? ' class="' . esc_attr($stop['custom_class']) . '"'
+                : '';
+            $button_text   = ! empty($stop['button_text'])
+                ? ' data-button="' . esc_html($stop['button_text']) . '"'
+                : '';
+            $inner_content = isset($stop['content']) ? wp_kses($stop['content'], $allowedtags) : '';
 
             // options
             if (isset($stop['options']) && is_array($stop['options'])) {
                 $options = ' data-options="';
                 foreach ($stop['options'] as $option => $value) {
-                    $options .= $option . ':' . $value . ';';
+                    $options .= esc_attr($option) . ':' . esc_attr($value) . ';';
                 }
                 $options .= '"';
             } else {
@@ -637,7 +670,15 @@ class EEH_Template
             }
 
             // let's put all together
-            $content .= '<li' . $data_id . $data_class . $custom_class . $button_text . $options . '>' . $inner_content . '</li>';
+            $content .= '<li'
+                        . $data_id
+                        . $data_class
+                        . $custom_class
+                        . $button_text
+                        . $options
+                        . '>'
+                        . $inner_content
+                        . '</li>';
         }
 
         $content .= '</ol>';
@@ -650,45 +691,48 @@ class EEH_Template
      * Note this will only work if the incoming statuses have a key in the EEM_Status->localized_status() methods
      * status_array.
      *
-     * @param  array  $status_array  array of statuses that will make up the legend. In format:
+     * @param array  $status_array   array of statuses that will make up the legend. In format:
      *                               array(
      *                               'status_item' => 'status_name'
      *                               )
-     * @param  string $active_status This is used to indicate what the active status is IF that is to be highlighted in
+     * @param string $active_status  This is used to indicate what the active status is IF that is to be highlighted in
      *                               the legend.
-     * @throws EE_Error
      * @return string               html structure for status.
+     * @throws EE_Error
      */
     public static function status_legend($status_array, $active_status = '')
     {
         if (! is_array($status_array)) {
-            throw new EE_Error(esc_html__(
-                'The EEH_Template::status_legend helper required the incoming status_array argument to be an array!',
-                'event_espresso'
-            ));
-        }
-
-        $setup_array = array();
-        foreach ($status_array as $item => $status) {
-            $setup_array[ $item ] = array(
-                'class'  => 'ee-status-legend ee-status-legend-' . $status,
-                'desc'   => EEH_Template::pretty_status($status, false, 'sentence'),
-                'status' => $status,
+            throw new EE_Error(
+                esc_html__(
+                    'The EEH_Template::status_legend helper required the incoming status_array argument to be an array!',
+                    'event_espresso'
+                )
             );
         }
 
-        $content = '<div class="ee-list-table-legend-container">' . "\n";
-        $content .= '<h4 class="status-legend-title">' . esc_html__('Status Legend', 'event_espresso') . '</h4>' . "\n";
-        $content .= '<dl class="ee-list-table-legend">' . "\n\t";
-        foreach ($setup_array as $item => $details) {
-            $active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
-            $content .= '<dt id="ee-legend-item-tooltip-' . $item . '"' . $active_class . '>' . "\n\t\t";
-            $content .= '<span class="ee-legend-item-wrap"><span class="' . $details['class'] . '"></span></span>' . "\n\t\t";
-            $content .= '<span class="ee-legend-description">' . $details['desc'] . '</span>' . "\n\t";
-            $content .= '</dt>' . "\n";
+        $content = '
+            <div class="ee-list-table-legend-container">
+                <h4 class="status-legend-title">
+                    ' . esc_html__('Status Legend', 'event_espresso') . '
+                </h4>
+                <dl class="ee-list-table-legend">';
+
+        foreach ($status_array as $item => $status) {
+            $active_class = $active_status == $status ? 'class="ee-is-active-status"' : '';
+            $content      .= '
+                    <dt id="' . esc_attr('ee-legend-item-tooltip-' . $item) . '" ' . $active_class . '>
+                        <span class="' . esc_attr('ee-status-legend ee-status-legend-' . $status) . '"></span>
+                        <span class="ee-legend-description">
+                            ' . EEH_Template::pretty_status($status, false, 'sentence') . '
+                        </span>
+                    </dt>';
         }
-        $content .= '</dl>' . "\n";
-        $content .= '</div>' . "\n";
+
+        $content .= '
+                </dl>
+            </div>
+';
         return $content;
     }
 
@@ -707,28 +751,22 @@ class EEH_Template
         }
         ob_start();
         if (is_array($data)) {
-            if (EEH_Array::is_associative_array($data)) {
-                ?>
+            if (EEH_Array::is_associative_array($data)) { ?>
                 <table class="widefat">
                     <tbody>
-                    <?php
-                    foreach ($data as $data_key => $data_values) {
-                        ?>
+                    <?php foreach ($data as $data_key => $data_values) { ?>
                         <tr>
                             <td>
-                                <?php echo $data_key; ?>
+                                <?php echo esc_html($data_key); ?>
                             </td>
                             <td>
                                 <?php echo self::layout_array_as_table($data_values); ?>
                             </td>
                         </tr>
-                        <?php
-                    } ?>
+                    <?php } ?>
                     </tbody>
                 </table>
-                <?php
-            } else {
-                ?>
+            <?php } else { ?>
                 <ul>
                     <?php
                     foreach ($data as $datum) {
@@ -737,8 +775,7 @@ class EEH_Template
                         echo "</li>";
                     } ?>
                 </ul>
-                <?php
-            }
+            <?php }
         } else {
             // simple value
             echo esc_html($data);
@@ -750,8 +787,6 @@ class EEH_Template
     /**
      * wrapper for self::get_paging_html() that simply echos the generated paging html
      *
-     * @since 4.4.0
-     * @see   self:get_paging_html() for argument docs.
      * @param        $total_items
      * @param        $current
      * @param        $per_page
@@ -759,7 +794,8 @@ class EEH_Template
      * @param bool   $show_num_field
      * @param string $paged_arg_name
      * @param array  $items_label
-     * @return string
+     * @see   self:get_paging_html() for argument docs.
+     * @since 4.4.0
      */
     public static function paging_html(
         $total_items,
@@ -768,7 +804,7 @@ class EEH_Template
         $url,
         $show_num_field = true,
         $paged_arg_name = 'paged',
-        $items_label = array()
+        $items_label = []
     ) {
         echo self::get_paging_html(
             $total_items,
@@ -785,20 +821,20 @@ class EEH_Template
     /**
      * A method for generating paging similar to WP_List_Table
      *
-     * @since    4.4.0
-     * @see      wp-admin/includes/class-wp-list-table.php WP_List_Table::pagination()
-     * @param  integer $total_items     How many total items there are to page.
-     * @param  integer $current         What the current page is.
-     * @param  integer $per_page        How many items per page.
-     * @param  string  $url             What the base url for page links is.
-     * @param  boolean $show_num_field  Whether to show the input for changing page number.
-     * @param  string  $paged_arg_name  The name of the key for the paged query argument.
-     * @param  array   $items_label     An array of singular/plural values for the items label:
+     * @param integer $total_items      How many total items there are to page.
+     * @param integer $current          What the current page is.
+     * @param integer $per_page         How many items per page.
+     * @param string  $url              What the base url for page links is.
+     * @param boolean $show_num_field   Whether to show the input for changing page number.
+     * @param string  $paged_arg_name   The name of the key for the paged query argument.
+     * @param array   $items_label      An array of singular/plural values for the items label:
      *                                  array(
      *                                  'single' => 'item',
      *                                  'plural' => 'items'
      *                                  )
      * @return  string
+     * @since    4.4.0
+     * @see      wp-admin/includes/class-wp-list-table.php WP_List_Table::pagination()
      */
     public static function get_paging_html(
         $total_items,
@@ -807,9 +843,9 @@ class EEH_Template
         $url,
         $show_num_field = true,
         $paged_arg_name = 'paged',
-        $items_label = array()
+        $items_label = []
     ) {
-        $page_links     = array();
+        $page_links     = [];
         $disable_first  = $disable_last = '';
         $total_items    = (int) $total_items;
         $per_page       = (int) $per_page;
@@ -828,15 +864,15 @@ class EEH_Template
             || ! isset($items_label['single'])
             || ! isset($items_label['plural'])
         ) {
-            $items_label = array(
-                'single' => __('1 item', 'event_espresso'),
-                'plural' => __('%s items', 'event_espresso'),
-            );
+            $items_label = [
+                'single' => esc_html__('1 item', 'event_espresso'),
+                'plural' => esc_html__('%s items', 'event_espresso'),
+            ];
         } else {
-            $items_label = array(
+            $items_label = [
                 'single' => '1 ' . esc_html($items_label['single']),
                 'plural' => '%s ' . esc_html($items_label['plural']),
-            );
+            ];
         }
 
         $total_pages = ceil($total_items / $per_page);
@@ -860,7 +896,7 @@ class EEH_Template
             "<a class='%s' title='%s' href='%s'>%s</a>",
             'first-page' . $disable_first,
             esc_attr__('Go to the first page', 'event_espresso'),
-            esc_url(remove_query_arg($paged_arg_name, $url)),
+            esc_url_raw(remove_query_arg($paged_arg_name, $url)),
             '&laquo;'
         );
 
@@ -868,7 +904,7 @@ class EEH_Template
             '<a class="%s" title="%s" href="%s">%s</a>',
             'prev-page' . $disable_first,
             esc_attr__('Go to the previous page', 'event_espresso'),
-            esc_url(add_query_arg($paged_arg_name, max(1, $current - 1), $url)),
+            esc_url_raw(add_query_arg($paged_arg_name, max(1, $current - 1), $url)),
             '&lsaquo;'
         );
 
@@ -878,7 +914,7 @@ class EEH_Template
             $html_current_page = sprintf(
                 "<input class='current-page' title='%s' type='text' name=$paged_arg_name value='%s' size='%d' />",
                 esc_attr__('Current page', 'event_espresso'),
-                $current,
+                esc_attr($current),
                 strlen($total_pages)
             );
         }
@@ -899,7 +935,7 @@ class EEH_Template
             '<a class="%s" title="%s" href="%s">%s</a>',
             'next-page' . $disable_last,
             esc_attr__('Go to the next page', 'event_espresso'),
-            esc_url(add_query_arg($paged_arg_name, min($total_pages, $current + 1), $url)),
+            esc_url_raw(add_query_arg($paged_arg_name, min($total_pages, $current + 1), $url)),
             '&rsaquo;'
         );
 
@@ -907,7 +943,7 @@ class EEH_Template
             '<a class="%s" title="%s" href="%s">%s</a>',
             'last-page' . $disable_last,
             esc_attr__('Go to the last page', 'event_espresso'),
-            esc_url(add_query_arg($paged_arg_name, $total_pages, $url)),
+            esc_url_raw(add_query_arg($paged_arg_name, $total_pages, $url)),
             '&raquo;'
         );
 
@@ -928,12 +964,12 @@ class EEH_Template
      * @param string $wrap_id
      * @return string
      */
-    public static function powered_by_event_espresso($wrap_class = '', $wrap_id = '', array $query_args = array())
+    public static function powered_by_event_espresso($wrap_class = '', $wrap_id = '', array $query_args = [])
     {
         $admin = is_admin() && ! (defined('DOING_AJAX') && DOING_AJAX);
         if (
-            ! $admin &&
-            ! apply_filters(
+            ! $admin
+            && ! apply_filters(
                 'FHEE__EEH_Template__powered_by_event_espresso__show_reg_footer',
                 EE_Registry::instance()->CFG->admin->show_reg_footer
             )
@@ -947,12 +983,12 @@ class EEH_Template
             ? " class=\"{$wrap_class} powered-by-event-espresso-credit\""
             : ' class="powered-by-event-espresso-credit"';
         $query_args = array_merge(
-            array(
+            [
                 'ap_id'        => EE_Registry::instance()->CFG->admin->affiliate_id(),
                 'utm_source'   => 'powered_by_event_espresso',
                 'utm_medium'   => 'link',
                 'utm_campaign' => 'powered_by',
-            ),
+            ],
             $query_args
         );
         $powered_by = apply_filters(
@@ -977,9 +1013,18 @@ class EEH_Template
             $wrap_id
         );
     }
+
+
+    /**
+     * @param string $image_name
+     * @return string|null
+     * @since   4.10.14.p
+     */
+    public static function getScreenshotUrl($image_name)
+    {
+        return esc_url_raw(EE_GLOBAL_ASSETS_URL . 'images/screenshots/' . $image_name . '.jpg');
+    }
 }
-
-
 
 
 if (! function_exists('espresso_pagination')) {
@@ -994,7 +1039,7 @@ if (! function_exists('espresso_pagination')) {
         global $wp_query;
         $big        = 999999999; // need an unlikely integer
         $pagination = paginate_links(
-            array(
+            [
                 'base'         => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
                 'format'       => '?paged=%#%',
                 'current'      => max(1, get_query_var('paged')),
@@ -1003,12 +1048,12 @@ if (! function_exists('espresso_pagination')) {
                 'end_size'     => 10,
                 'mid_size'     => 6,
                 'prev_next'    => true,
-                'prev_text'    => __('&lsaquo; PREV', 'event_espresso'),
-                'next_text'    => __('NEXT &rsaquo;', 'event_espresso'),
+                'prev_text'    => esc_html__('&lsaquo; PREV', 'event_espresso'),
+                'next_text'    => esc_html__('NEXT &rsaquo;', 'event_espresso'),
                 'type'         => 'plain',
                 'add_args'     => false,
                 'add_fragment' => '',
-            )
+            ]
         );
         echo ! empty($pagination) ? '<div class="ee-pagination-dv ee-clear-float">' . $pagination . '</div>' : '';
     }

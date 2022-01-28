@@ -144,19 +144,19 @@ abstract class AbstractHelper implements HelperInterface
         }
         ?>
         <p>
-            <label for="timezone_string"><?php _e('timezone', 'event_espresso'); ?></label>
+            <label for="timezone_string"><?php esc_html_e('timezone', 'event_espresso'); ?></label>
             <select id="timezone_string" name="timezone_string">
                 <?php echo wp_timezone_choice($timezone_string); ?>
             </select>
             <br/>
-            <span class="description"><?php _e('Choose a city in the same timezone as the event.', 'event_espresso'); ?></span>
+            <span class="description"><?php esc_html_e('Choose a city in the same timezone as the event.', 'event_espresso'); ?></span>
         </p>
 
         <p>
         <span>
             <?php
             printf(
-                __('%1$sUTC%2$s time is %3$s', 'event_espresso'),
+                esc_html__('%1$sUTC%2$s time is %3$s', 'event_espresso'),
                 '<abbr title="Coordinated Universal Time">',
                 '</abbr>',
                 '<code>' . date_i18n($datetime_format, false, true) . '</code>'
@@ -164,7 +164,10 @@ abstract class AbstractHelper implements HelperInterface
             ?></span>
         <?php
         if (! empty($timezone_string) || ! empty($gmt_offset)) : ?>
-        <br/><span><?php printf(__('Local time is %1$s', 'event_espresso'), '<code>' . date_i18n($datetime_format) . '</code>'); ?></span>
+        <br/>
+		<span><?php
+		printf(esc_html__('Local time is %1$s', 'event_espresso'), '<code>' . date_i18n($datetime_format) . '</code>');
+		?></span>
             <?php
         endif; ?>
 
@@ -177,9 +180,9 @@ abstract class AbstractHelper implements HelperInterface
                 date_default_timezone_set($timezone_string);
                 $now = localtime(time(), true);
                 if ($now['tm_isdst']) {
-                    _e('This timezone is currently in daylight saving time.', 'event_espresso');
+                    esc_html_e('This timezone is currently in daylight saving time.', 'event_espresso');
                 } else {
-                    _e('This timezone is currently in standard time.', 'event_espresso');
+                    esc_html_e('This timezone is currently in standard time.', 'event_espresso');
                 }
                 ?>
             <br/>
@@ -198,8 +201,8 @@ abstract class AbstractHelper implements HelperInterface
                 }
                 if ($found) {
                     $message = $tr['isdst']
-                        ? __(' Daylight saving time begins on: %s.', 'event_espresso')
-                        : __(' Standard time begins  on: %s.', 'event_espresso');
+                        ? esc_html__(' Daylight saving time begins on: %s.', 'event_espresso')
+                        : esc_html__(' Standard time begins  on: %s.', 'event_espresso');
                     // Add the difference between the current offset and the new offset to ts to get the correct
                     // transition time from date_i18n().
                     printf(
@@ -207,7 +210,7 @@ abstract class AbstractHelper implements HelperInterface
                         '<code >' . date_i18n($datetime_format, $tr['ts'] + ($tz_offset - $tr['offset'])) . '</code >'
                     );
                 } else {
-                    _e('This timezone does not observe daylight saving time.', 'event_espresso');
+                    esc_html_e('This timezone does not observe daylight saving time.', 'event_espresso');
                 }
             }
             // Set back to UTC.

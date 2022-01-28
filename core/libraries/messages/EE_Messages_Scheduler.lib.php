@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * This class is used for setting scheduled tasks related to the EE_messages system.
  *
@@ -56,7 +59,7 @@ class EE_Messages_Scheduler extends EE_Base
     {
         $schedules['ee_message_cron'] = array(
             'interval' => self::message_cron_schedule,
-            'display'  => __(
+            'display'  => esc_html__(
                 'This is the cron time interval for EE Message schedules (defaults to once every 5 minutes)',
                 'event_espresso'
             ),
@@ -71,6 +74,8 @@ class EE_Messages_Scheduler extends EE_Base
      *
      * @param array $tasks already existing scheduled tasks
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function register_scheduled_tasks($tasks)
     {
@@ -105,7 +110,8 @@ class EE_Messages_Scheduler extends EE_Base
             );
             $request_args = array(
                 'timeout'     => 300,
-                'blocking'    => (defined('DOING_CRON') && DOING_CRON) || (defined('DOING_AJAX') && DOING_AJAX) ? true : false,
+                'blocking'    => (defined('DOING_CRON') && DOING_CRON)
+                                 || (defined('DOING_AJAX') && DOING_AJAX),
                 'sslverify'   => false,
                 'redirection' => 10,
             );
@@ -145,10 +151,12 @@ class EE_Messages_Scheduler extends EE_Base
      */
     public static function initiate_immediate_request_on_cron($task)
     {
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $request_args = EE_Messages_Scheduler::get_request_params($task);
         // set those request args in the request so it gets picked up
         foreach ($request_args as $request_key => $request_value) {
-            EE_Registry::instance()->REQ->set($request_key, $request_value);
+            $request->setRequestParam($request_key, $request_value);
         }
         EED_Messages::instance()->run_cron();
     }
@@ -190,8 +198,11 @@ class EE_Messages_Scheduler extends EE_Base
 
     /**
      * This is the callback for the `AHEE__EE_Messages_Scheduler__cleanup` scheduled event action.
-     * This runs once a day and if cleanup is active (set via messages settings), it will (by default) delete permanently
-     * from the database messages that have a MSG_modified date older than 30 days.
+     * This runs once a day and if cleanup is active (set via messages settings), it will (by default) delete
+     * permanently from the database messages that have a MSG_modified date older than 30 days.
+     *
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public static function cleanup()
     {

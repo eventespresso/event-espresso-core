@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * Class EE_SPCO_Reg_Step_Finalize_Registration
  * Description
@@ -16,15 +19,16 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
      *    class constructor
      *
      * @access    public
-     * @param    EE_Checkout $checkout
+     * @param EE_Checkout $checkout
      */
     public function __construct(EE_Checkout $checkout)
     {
-        $this->_slug = 'finalize_registration';
-        $this->_name = __('Finalize Registration', 'event_espresso');
+        $this->request             = EED_Single_Page_Checkout::getRequest();
+        $this->_slug               = 'finalize_registration';
+        $this->_name               = esc_html__('Finalize Registration', 'event_espresso');
         $this->_submit_button_text = $this->_name;
-        $this->_template = '';
-        $this->checkout = $checkout;
+        $this->_template           = '';
+        $this->checkout            = $checkout;
     }
 
 
@@ -45,9 +49,11 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
     {
         // there's actually no reg form to process if this is the final step
         if ($this->is_current_step()) {
-            $this->checkout->step = $_REQUEST['step'] = $this->slug();
-            $this->checkout->action = $_REQUEST['action'] = 'process_reg_step';
+            $this->checkout->step              = $this->slug();
+            $this->checkout->action            = 'process_reg_step';
             $this->checkout->generate_reg_form = false;
+            $this->request->setRequestParam('step', $this->checkout->step);
+            $this->request->setRequestParam('action', $this->checkout->action);
         }
         return true;
     }
@@ -55,7 +61,6 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
 
     /**
      * @return string
-     * @throws \EE_Error
      */
     public function generate_reg_form()
     {
@@ -67,8 +72,9 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
 
     /**
      * @return boolean
-     * @throws \RuntimeException
-     * @throws \EE_Error
+     * @throws RuntimeException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function process_reg_step()
     {
@@ -96,7 +102,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
             return false;
         }
         // you don't have to go home but you can't stay here !
-        $this->checkout->redirect = true;
+        $this->checkout->redirect     = true;
         $this->checkout->continue_reg = true;
         $this->checkout->json_response->set_redirect_url($this->checkout->redirect_url);
         if (
@@ -118,8 +124,9 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
      * ensures that all details and statuses for transaction, registration, and payments are updated
      *
      * @return array
-     * @throws \RuntimeException
-     * @throws \EE_Error
+     * @throws RuntimeException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _finalize_transaction()
     {
@@ -163,7 +170,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
      * then trigger notifications
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _set_notification_triggers()
     {
@@ -187,9 +195,11 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
                 /** @var EE_Gateway $gateway */
                 $gateway = $this->checkout->payment_method->type_obj()->get_gateway();
                 // and the gateway uses a separate request to process the IPN
+                /** @var RequestInterface $request */
+                $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
                 if (
                     $gateway instanceof EE_Offsite_Gateway
-                    && $gateway->handle_IPN_in_this_request(\EE_Registry::instance()->REQ->params(), true)
+                    && $gateway->handle_IPN_in_this_request($request->requestParams(), true)
                 ) {
                     // IPN request will handle triggering notifications
                     $deliver_notifications = false;
@@ -214,24 +224,25 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
      * check if transaction has a primary registrant and that it has a related Attendee object
      *
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _validate_primary_registrant()
     {
         if (! $this->checkout->transaction_has_primary_registrant()) {
             EE_Error::add_error(
-                __('A valid Primary Registration for this Transaction could not be found.', 'event_espresso'),
+                esc_html__('A valid Primary Registration for this Transaction could not be found.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
             );
-            $this->checkout->redirect = false;
+            $this->checkout->redirect     = false;
             $this->checkout->continue_reg = false;
             return false;
         }
         // setup URL for redirect
         $this->checkout->redirect_url = add_query_arg(
-            array('e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link()),
+            ['e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link()],
             $this->checkout->thank_you_page_url
         );
         return true;
@@ -245,7 +256,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
     {
         EE_Error::doing_it_wrong(
             __CLASS__ . '::' . __FILE__,
-            __(
+            esc_html__(
                 'Can not call update_reg_step() on the Finalize Registration reg step.',
                 'event_espresso'
             ),

@@ -6,6 +6,8 @@ use EventEspresso\core\exceptions\ExceptionLogger;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EE_Register_Addon
@@ -260,7 +262,7 @@ class EE_Register_Addon implements EEI_Plugin_API
     public static function register(string $addon_name = '', array $setup_args = []): bool
     {
         if (! self::$loader instanceof LoaderInterface) {
-            self::$loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
+            self::$loader = LoaderFactory::getLoader();
         }
         // make sure this was called in the right place!
         if (
@@ -577,7 +579,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             )
         ) {
             $incompatibility_message = sprintf(
-                __(
+                esc_html__(
                     '%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon is not compatible with this version of Event Espresso.%2$sPlease upgrade your "%1$s" addon to version %3$s or newer to resolve this issue.',
                     'event_espresso'
                 ),
@@ -591,7 +593,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             ! self::_meets_min_core_version_requirement($addon_settings['min_core_version'], espresso_version())
         ) {
             $incompatibility_message = sprintf(
-                __(
+                esc_html__(
                     '%5$sIMPORTANT!%6$sThe Event Espresso "%1$s" addon requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-activate "%1$s".',
                     'event_espresso'
                 ),
@@ -604,7 +606,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             );
         } elseif (version_compare($wp_version, $addon_settings['min_wp_version'], '<')) {
             $incompatibility_message = sprintf(
-                __(
+                esc_html__(
                     '%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon requires WordPress version "%2$s" or greater.%3$sPlease update your version of WordPress to use the "%1$s" addon and to keep your site secure.',
                     'event_espresso'
                 ),
@@ -618,7 +620,9 @@ class EE_Register_Addon implements EEI_Plugin_API
         if (! empty($incompatibility_message)) {
             // remove 'activate' from the REQUEST
             // so WP doesn't erroneously tell the user the plugin activated fine when it didn't
-            unset($_GET['activate'], $_REQUEST['activate']);
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $request->unSetRequestParam('activate', true);
             if (current_user_can('activate_plugins')) {
                 // show an error message indicating the plugin didn't activate properly
                 EE_Error::add_error($incompatibility_message, __FILE__, __FUNCTION__, __LINE__);
@@ -1082,7 +1086,7 @@ class EE_Register_Addon implements EEI_Plugin_API
     /**
      * @param string   $addon_name
      * @param EE_Addon $addon
-     * @since   $VID:$
+     * @since   4.10.13.p
      */
     private static function injectAddonDomain(string $addon_name, EE_Addon $addon)
     {
@@ -1267,6 +1271,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                     );
                 }
                 EE_Registry::instance()->removeAddon($class_name);
+                LoaderFactory::getLoader()->remove($class_name);
             } catch (OutOfBoundsException $addon_not_yet_registered_exception) {
                 // the add-on was not yet registered in the registry,
                 // so RegistryContainer::__get() throws this exception.

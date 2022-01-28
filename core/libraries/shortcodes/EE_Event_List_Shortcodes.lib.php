@@ -27,11 +27,11 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = esc_html__('Event List Shortcodes', 'event_espresso');
+        $this->label       = esc_html__('Event List Shortcodes', 'event_espresso');
         $this->description = esc_html__('All shortcodes specific to event lists', 'event_espresso');
-        $this->_shortcodes = array(
+        $this->_shortcodes = [
             '[EVENT_LIST]' => esc_html__('Will output a list of events', 'event_espresso'),
-        );
+        ];
     }
 
 
@@ -64,7 +64,8 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
 
         if ($this->_data['data'] instanceof EE_Messages_Addressee) {
             return $this->_get_event_list_for_main();
-        } elseif ($this->_data['data'] instanceof EE_Registration) {
+        }
+        if ($this->_data['data'] instanceof EE_Registration) {
             return $this->_get_event_list_for_registration();
         }
         // prevent recursive loop
@@ -80,7 +81,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
     private function _get_event_list_for_main()
     {
 
-        $valid_shortcodes = array(
+        $valid_shortcodes = [
             'event',
             'attendee_list',
             'ticket_list',
@@ -93,10 +94,10 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
             'primary_registration_details',
             'event_author',
             'organization',
-        );
-        $template = $this->_data['template'];
-        $data = $this->_data['data'];
-        $events = '';
+        ];
+        $template         = $this->_data['template'];
+        $data             = $this->_data['data'];
+        $events           = '';
 
         // now we need to loop through the events array in EE_Messages_Addressee and send data to the EE_Parser helper.
         foreach ($data->events as $event) {
@@ -120,7 +121,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
      */
     private function _get_event_list_for_registration()
     {
-        $valid_shortcodes = array(
+        $valid_shortcodes = [
             'event',
             'ticket_list',
             'datetime_list',
@@ -130,10 +131,11 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
             'recipient_list',
             'venue',
             'organization',
-        );
-        $template = is_array($this->_data['template']) && isset($this->_data['template']['event_list'])
-            ? $this->_data['template']['event_list'] : $this->_extra_data['template']['event_list'];
-        $registration = $this->_data['data'];
+        ];
+        $template         = is_array($this->_data['template']) && isset($this->_data['template']['event_list'])
+            ? $this->_data['template']['event_list']
+            : $this->_extra_data['template']['event_list'];
+        $registration     = $this->_data['data'];
 
         // let's remove any existing [ATTENDEE_LIST] shortcode from the event list template so that we don't get recursion.
         $template = str_replace('[ATTENDEE_LIST]', '', $template);
@@ -144,7 +146,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
         // we're NOT going to prepare a list of attendees this time around
         $events = '';
 
-        foreach ((array) $all_events as $event) {
+        foreach ($all_events as $event) {
             $events .= $this->_shortcode_helper->parse_event_list_template(
                 $template,
                 $event,
@@ -166,6 +168,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
     private function _get_events_from_registration(EE_Registration $registration)
     {
         return isset($this->_extra_data['data']->registrations)
-            ? array($this->_extra_data['data']->registrations[ $registration->ID() ]['evt_obj']) : array();
+            ? [$this->_extra_data['data']->registrations[ $registration->ID() ]['evt_obj']]
+            : [];
     }
 }

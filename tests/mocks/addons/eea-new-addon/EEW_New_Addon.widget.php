@@ -18,9 +18,9 @@ class EEW_New_Addon extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 			'ee-new_addon-widget',
-			__( 'Event Espresso New Addon Widget', 'event_espresso' ),
+			esc_html__( 'Event Espresso New Addon Widget', 'event_espresso' ),
 			 array(
-			 	'description' => __( 'Displays Espresso New Addon in a widget.', 'event_espresso' )
+			 	'description' => esc_html__( 'Displays Espresso New Addon in a widget.', 'event_espresso' )
 			 ),
 			array(
 				'width' => 300,
@@ -53,25 +53,25 @@ class EEW_New_Addon extends WP_Widget {
 
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );
 		$yes_no_values = array(
-			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))),
-			EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => __('Yes', 'event_espresso')))
+			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => esc_html__('No', 'event_espresso'))),
+			EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => esc_html__('Yes', 'event_espresso')))
 		);
 
 		?>
 
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>">
-				<?php _e('Title:', 'event_espresso'); ?>
+				<?php esc_html_e('Title:', 'event_espresso'); ?>
 			</label>
 			<input type="text" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" width="20" value="<?php echo $instance['title']; ?>" />
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('yes_or_no_question'); ?>">
-				<?php _e('Yes or No?', 'event_espresso'); ?>
+				<?php esc_html_e('Yes or No?', 'event_espresso'); ?>
 			</label>
 			<?php
 				echo EEH_Form_Fields::select(
-					 __('Yes or No?', 'event_espresso'),
+					 esc_html__('Yes or No?', 'event_espresso'),
 					$instance['yes_or_no_question'],
 					$yes_no_values,
 					$this->get_field_name('yes_or_no_question'),

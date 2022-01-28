@@ -8,7 +8,7 @@
  * @ package            Event Espresso
  * @ author             Event Espresso
  * @ copyright      (c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ license            https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link                   http://www.eventespresso.com
  *
  *
@@ -53,7 +53,7 @@ class EE_Receipt_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 //                  $html .= $this->display_line_item( $child_line_item, $options );
                 }
 //              $html .= $this->_separator_row( $options );
-//              $html .= $this->_total_row( $line_item, __('Total', 'event_espresso'), $options );
+//              $html .= $this->_total_row( $line_item, esc_html__('Total', 'event_espresso'), $options );
                 break;
 
 
@@ -63,7 +63,7 @@ class EE_Receipt_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     // recursively feed children back into this method
 //                  $html .= $this->display_line_item( $child_line_item, $options );
                 }
-//              $html .= $this->_total_row( $line_item, __('Sub-Total', 'event_espresso'), $options );
+//              $html .= $this->_total_row( $line_item, esc_html__('Sub-Total', 'event_espresso'), $options );
                 break;
 
 
@@ -73,7 +73,7 @@ class EE_Receipt_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     // recursively feed children back into this method
 //                  $html .= $this->display_line_item( $child_line_item, $options );
                 }
-//              $html .= $this->_total_row( $line_item, __('Tax Total', 'event_espresso'), $options );
+//              $html .= $this->_total_row( $line_item, esc_html__('Tax Total', 'event_espresso'), $options );
                 break;
 
 

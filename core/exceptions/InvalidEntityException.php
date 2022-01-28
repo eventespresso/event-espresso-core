@@ -32,7 +32,7 @@ class InvalidEntityException extends InvalidArgumentException
             var_dump($actual);
             $object = ob_get_clean();
             $message = sprintf(
-                __(
+                esc_html__(
                     'The supplied entity is an instance of "%1$s", but an instance of "%2$s" was expected. Object: %3$s',
                     'event_espresso'
                 ),

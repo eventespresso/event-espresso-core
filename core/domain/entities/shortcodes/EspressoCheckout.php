@@ -2,8 +2,9 @@
 
 namespace EventEspresso\core\domain\entities\shortcodes;
 
-use EE_Registry;
 use EED_Single_Page_Checkout;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\ResponseInterface;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
 
 /**
@@ -47,7 +48,6 @@ class EspressoCheckout extends EspressoShortcode
      * and need to enqueue assets for that module
      *
      * @return void
-     * @throws \EE_Error
      */
     public function initializeShortcode()
     {
@@ -67,6 +67,8 @@ class EspressoCheckout extends EspressoShortcode
      */
     public function processShortcode($attributes = array())
     {
-        return EE_Registry::instance()->REQ->get_output();
+        /** @var ResponseInterface $response */
+        $response = LoaderFactory::getLoader()->getShared(ResponseInterface::class);
+        return $response->getOutput();
     }
 }

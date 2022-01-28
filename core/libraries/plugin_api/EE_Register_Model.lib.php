@@ -51,7 +51,7 @@ class EE_Register_Model implements EEI_Plugin_API
         // required fields MUST be present, so let's make sure they are.
         if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['model_paths'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register Models with EE_Register_Model::register(), you must include a "model_id" (a unique identifier for this set of models), and an array containing the following keys: "model_paths" (an array of full server paths to folders that contain models)',
                     'event_espresso'
                 )
@@ -71,7 +71,7 @@ class EE_Register_Model implements EEI_Plugin_API
             EE_Error::doing_it_wrong(
                 __METHOD__,
                 sprintf(
-                    __(
+                    esc_html__(
                         'An attempt was made to register "%s" as a group models has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register models.',
                         'event_espresso'
                     ),
@@ -88,7 +88,7 @@ class EE_Register_Model implements EEI_Plugin_API
         ) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'You must register both "model_paths" AND "class_paths", not just one or the other You provided %s',
                         'event_espresso'
                     ),
@@ -131,7 +131,7 @@ class EE_Register_Model implements EEI_Plugin_API
         foreach ($setup_args as $unknown_key => $unknown_config) {
             self::deregister($addon_name);
             throw new EE_Error(
-                sprintf(__("The key '%s' is not a known key for registering a model", "event_espresso"), $unknown_key)
+                sprintf(esc_html__("The key '%s' is not a known key for registering a model", "event_espresso"), $unknown_key)
             );
         }
         return true;

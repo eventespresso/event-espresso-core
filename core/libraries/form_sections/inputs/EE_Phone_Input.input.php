@@ -21,7 +21,7 @@ class EE_Phone_Input extends EE_Text_Input
     {
         $this->_add_validation_strategy(
             new EE_Text_Validation_Strategy(
-                __('Please enter a valid phone number. Eg 123-456-7890 or 1234567890', 'event_espresso'),
+                esc_html__('Please enter a valid phone number. Eg 123-456-7890 or 1234567890', 'event_espresso'),
                 '~^(([\d]{10})|(^[\d]{3}-[\d]{3}-[\d]{4}))$~'
             )
         );

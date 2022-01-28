@@ -9,7 +9,7 @@
     <tbody>
     <?php
     foreach ($inputs as $ID => $input) {
-        echo EEH_Form_Fields::generate_form_input($input);
+        echo EEH_Form_Fields::generate_form_input($input); // already escaped
     }
     ?>
     <tr>

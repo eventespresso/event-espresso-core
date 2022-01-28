@@ -24,8 +24,8 @@ class EEM_Ticket_Price extends EEM_Base
      */
     protected function __construct($timezone)
     {
-        $this->singular_item = __('Ticket Price', 'event_espresso');
-        $this->plural_item = __('Ticket Prices', 'event_espresso');
+        $this->singular_item = esc_html__('Ticket Price', 'event_espresso');
+        $this->plural_item = esc_html__('Ticket Prices', 'event_espresso');
 
         $this->_tables = array(
             'Ticket_Price' => new EE_Primary_Table('esp_ticket_price', 'TKP_ID')

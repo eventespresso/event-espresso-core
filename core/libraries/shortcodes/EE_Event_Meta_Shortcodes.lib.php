@@ -8,7 +8,7 @@
  * @ package            Event Espresso
  * @ author                Seth Shoultes
  * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ license            https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link                http://www.eventespresso.com
  * @ version            4.0
  *
@@ -40,8 +40,8 @@ class EE_Event_Meta_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __('Event Meta Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes related to Event Meta data', 'event_espresso');
+        $this->label = esc_html__('Event Meta Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes related to Event Meta data', 'event_espresso');
         $this->_shortcodes = array();
     }
 

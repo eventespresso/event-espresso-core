@@ -22,16 +22,16 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __('Payment List Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to payment lists', 'event_espresso');
+        $this->label = esc_html__('Payment List Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to payment lists', 'event_espresso');
         $this->_shortcodes = array(
-            '[PAYMENT_LIST_*]' => __(
+            '[PAYMENT_LIST_*]' => esc_html__(
                 'Outputs a list of payment items. Note, this is a dynamic shortcode in that it accepts some attributes for setting certain defaults.  Attributes that are available are:',
                 'event_espresso'
             )
                                   . '<p><ul>' .
                                   '<li><strong>no_payments</strong>:' . sprintf(
-                                      __(
+                                      esc_html__(
                                           'Indicate with this attribute what will be used if there are no payments present.  Default is: "%sNo approved payments have been received.%s"',
                                           'event_espresso'
                                       ),
@@ -83,7 +83,7 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes
         // let's get any attributes that may be present and set the defaults.
         $atts = $this->_get_shortcode_attrs($shortcode);
 
-        $no_payments_msg = empty($atts['no_payments']) ? __(
+        $no_payments_msg = empty($atts['no_payments']) ? esc_html__(
             'No approved payments have been received.',
             'event_espresso'
         ) : $atts['no_payments'];

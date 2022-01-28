@@ -167,7 +167,7 @@ class Write extends Base
         if (! $new_id) {
             throw new RestException(
                 'rest_insertion_failed',
-                sprintf(__('Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name())
+                sprintf(esc_html__('Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name())
             );
         }
         return $this->returnModelObjAsJsonResponse($model_obj, $request);
@@ -205,7 +205,7 @@ class Write extends Base
         if (! $obj_id) {
             throw new RestException(
                 'rest_edit_failed',
-                sprintf(__('Could not edit %1$s', 'event_espresso'), $model->get_this_model_name())
+                sprintf(esc_html__('Could not edit %1$s', 'event_espresso'), $model->get_this_model_name())
             );
         }
         $model_data = ModelDataTranslator::prepareConditionsQueryParamsForModels(
@@ -219,7 +219,7 @@ class Write extends Base
             $lowercase_model_name = strtolower($model->get_this_model_name());
             throw new RestException(
                 sprintf('rest_%s_invalid_id', $lowercase_model_name),
-                sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
+                sprintf(esc_html__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
                 array('status' => 404)
             );
         }
@@ -262,7 +262,7 @@ class Write extends Base
             $lowercase_model_name = strtolower($model->get_this_model_name());
             throw new RestException(
                 sprintf('rest_%s_invalid_id', $lowercase_model_name),
-                sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
+                sprintf(esc_html__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
                 array('status' => 404)
             );
         }
@@ -604,7 +604,7 @@ class Write extends Base
         $lowercase_model_name = strtolower($model->get_this_model_name());
         throw new RestException(
             sprintf('rest_%s_invalid_id', $lowercase_model_name),
-            sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
+            sprintf(esc_html__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
             array('status' => 404)
         );
     }

@@ -451,7 +451,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
                 if ($throw_error) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'The field ATT_foobar is not on EEM_Attendee, but the extension should have added it. fields are: %s',
                                 'event_espresso'
                             ), implode(",", array_keys(EEM_Attendee::instance()->field_settings()))
@@ -464,7 +464,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
                 if ($throw_error) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'The relation of type New_Addon_Thing on EEM_Attendee, but the extension should have added it. fields are: %s',
                                 'event_espresso'
                             ), implode(",", array_keys(EEM_Attendee::instance()->field_settings()))

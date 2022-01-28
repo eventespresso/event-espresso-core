@@ -1,4 +1,4 @@
-<p><strong><?php _e('Messengers', 'event_espresso'); ?></strong></p>
+<p><strong><?php esc_html_e('Messengers', 'event_espresso'); ?></strong></p>
 <p>
     <?php
     printf(

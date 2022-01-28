@@ -11,7 +11,6 @@
  * @var string $tax_added
  * @var string $tax_amount
  */
-
 ?>
 
 <tr class="ticket-tax-row TKT-taxes-display"<?php echo $display_tax; ?>>

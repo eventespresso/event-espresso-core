@@ -361,7 +361,7 @@ class EEH_File extends EEH_Base implements EEHI_File
         $remote_path   = rtrim($remote_path, '/\\');
         if (! $wp_filesystem->is_writable($remote_path)) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                $msg = sprintf(__('The "%1$s" %2$s is not writable.', 'event_espresso'), $full_path, $file_or_folder);
+                $msg = sprintf(esc_html__('The "%1$s" %2$s is not writable.', 'event_espresso'), $full_path, $file_or_folder);
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_path);
                 EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
@@ -391,7 +391,7 @@ class EEH_File extends EEH_Base implements EEHI_File
             }
             if (! $wp_filesystem->touch(EEH_File::convert_local_filepath_to_remote_filepath($full_file_path))) {
                 if (defined('WP_DEBUG') && WP_DEBUG) {
-                    $msg = sprintf(__('The "%s" file could not be created.', 'event_espresso'), $full_file_path);
+                    $msg = sprintf(esc_html__('The "%s" file could not be created.', 'event_espresso'), $full_file_path);
                     $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_file_path);
                     EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
                 }

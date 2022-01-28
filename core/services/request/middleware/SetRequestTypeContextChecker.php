@@ -54,6 +54,15 @@ class SetRequestTypeContextChecker extends Middleware
             ]
         );
         $request_type_context = $request_type_context_detector->detectRequestTypeContext();
+
+        // make sure these constants are defined
+        if (! defined('EE_ADMIN_AJAX')) {
+            define('EE_ADMIN_AJAX', false);
+        }
+        if (! defined('EE_FRONT_AJAX')) {
+            define('EE_FRONT_AJAX', false);
+        }
+
         $request_type_context->setIsUnitTesting(defined('EE_TESTS_DIR'));
         $request_type_context_checker = $this->loader->getShared(
             'EventEspresso\core\domain\services\contexts\RequestTypeContextChecker',

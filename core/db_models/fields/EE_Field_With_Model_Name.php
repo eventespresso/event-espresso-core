@@ -42,7 +42,7 @@ abstract class EE_Field_With_Model_Name extends EE_Model_Field_Base
     {
         EE_Error::doing_it_wrong(
             'get_model_name_pointed_to',
-            __(
+            esc_html__(
                 'This method has been deprecated in favour of instead using get_model_names_pointed_to, which consistently returns an array',
                 'event_espresso'
             ),

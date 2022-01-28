@@ -4,9 +4,11 @@ namespace EventEspresso\modules\ticket_selector;
 
 use EE_Error;
 use EE_Tax_Config;
+use EE_Ticket_Selector_Config;
 use EEH_HTML;
 use EEH_Template;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use ReflectionException;
 
 /**
  * Class TicketSelectorRowStandard
@@ -19,42 +21,42 @@ class TicketSelectorRowStandard extends TicketSelectorRow
 {
 
     /**
-     * @var TicketDetails $ticket_details
+     * @var TicketDetails
      */
     protected $ticket_details;
 
     /**
-     * @var \EE_Ticket_Selector_Config $template_settings
+     * @var EE_Ticket_Selector_Config
      */
     protected $template_settings;
 
     /**
-     * @var EE_Tax_Config $tax_settings
+     * @var EE_Tax_Config
      */
     protected $tax_settings;
 
     /**
-     * @var boolean $prices_displayed_including_taxes
+     * @var boolean
      */
     protected $prices_displayed_including_taxes;
 
     /**
-     * @var int $row
+     * @var int
      */
     protected $row;
 
     /**
-     * @var int $cols
+     * @var int
      */
     protected $cols;
 
     /**
-     * @var boolean $hidden_input_qty
+     * @var boolean
      */
     protected $hidden_input_qty;
 
     /**
-     * @var string $ticket_datetime_classes
+     * @var string
      */
     protected $ticket_datetime_classes;
 
@@ -128,6 +130,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function getHtml()
     {
@@ -230,6 +233,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function ticketNameTableCell()
     {
@@ -288,11 +292,11 @@ class TicketSelectorRowStandard extends TicketSelectorRow
                 $this->ticket_bundle
                     ? apply_filters(
                         'FHEE__ticket_selector_chart_template__per_ticket_bundle_text',
-                        __(' / bundle', 'event_espresso')
+                        esc_html__(' / bundle', 'event_espresso')
                     )
                     : apply_filters(
                         'FHEE__ticket_selector_chart_template__per_ticket_text',
-                        __('', 'event_espresso')
+                        esc_html__('', 'event_espresso')
                     ),
                 '',
                 'smaller-text no-bold'

@@ -29,34 +29,34 @@
 //      );
 //      $this->_fields = array(
 //          'Venue_CPT'=>array(
-//              'VNU_ID'=>new EE_Primary_Key_Int_Field('ID', __("Venue ID", "event_espresso")),
-//              'VNU_name'=>new EE_Plain_Text_Field('post_title', __("Venue Name", "event_espresso"), false, ''),
-//              'VNU_desc'=>new EE_Simple_HTML_Field('post_content', __("Venue Description", "event_espresso"), true),
-//              'VNU_identifier'=>new EE_Slug_Field('post_name', __("Venue Identifier", "event_espresso"), false,''),
-//              'VNU_created'=>new EE_Datetime_Field('post_date', __("Date Venue Created", "event_espresso"), true,time()),
-//              'VNU_short_desc'=>new EE_Plain_Text_Field('post_excerpt', __("Short Description of Venue", "event_espresso"), true),
-//              'VNU_modified'=>new EE_Datetime_Field('post_modified', __("Venue Modified Date", "event_espresso"), true,time()),
-//              'VNU_wp_user'=>new EE_Integer_Field('post_author', __("Venue Creator", "event_espresso"), false, 1),
-//              'parent'=>new EE_Integer_Field('post_parent', __("Venue Parent ID", "event_espresso"), true),
-//              'VNU_order'=>new EE_Integer_Field('menu_order', __("Venue order", "event_espresso"), false, 1),
-//              'post_type'=>new EE_Plain_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'espresso_venues'),
+//              'VNU_ID'=>new EE_Primary_Key_Int_Field('ID', esc_html__("Venue ID", "event_espresso")),
+//              'VNU_name'=>new EE_Plain_Text_Field('post_title', esc_html__("Venue Name", "event_espresso"), false, ''),
+//              'VNU_desc'=>new EE_Simple_HTML_Field('post_content', esc_html__("Venue Description", "event_espresso"), true),
+//              'VNU_identifier'=>new EE_Slug_Field('post_name', esc_html__("Venue Identifier", "event_espresso"), false,''),
+//              'VNU_created'=>new EE_Datetime_Field('post_date', esc_html__("Date Venue Created", "event_espresso"), true,time()),
+//              'VNU_short_desc'=>new EE_Plain_Text_Field('post_excerpt', esc_html__("Short Description of Venue", "event_espresso"), true),
+//              'VNU_modified'=>new EE_Datetime_Field('post_modified', esc_html__("Venue Modified Date", "event_espresso"), true,time()),
+//              'VNU_wp_user'=>new EE_Integer_Field('post_author', esc_html__("Venue Creator", "event_espresso"), false, 1),
+//              'parent'=>new EE_Integer_Field('post_parent', esc_html__("Venue Parent ID", "event_espresso"), true),
+//              'VNU_order'=>new EE_Integer_Field('menu_order', esc_html__("Venue order", "event_espresso"), false, 1),
+//              'post_type'=>new EE_Plain_Text_Field('post_type', esc_html__("Venue post type", "event_espresso"), false, 'espresso_venues'),
 //              ),
 //          'Venue_Meta'=>array(
-//              'VNUM_ID'=>new EE_DB_Only_Int_Field('VNUM_ID', __("ID of Venue Meta Row", "event_espresso"), false),
-//              'VNU_ID_fk'=>new EE_DB_Only_Int_Field('VNU_ID', __("Foreign Key to Venue Post ", "event_espresso"), false),
-//              'VNU_address'=>new EE_Plain_Text_Field('VNU_address', __("Venue Address line 1", "event_espresso"), true, ''),
-//              'VNU_address2'=>new EE_Plain_Text_Field('VNU_address2', __("Venue Address line 2", "event_espresso"), true,''),
-//              'VNU_city'=>new EE_Plain_Text_Field('VNU_city', __("Venue City", "event_espresso"), true, ''),
-//              'STA_ID'=>new EE_Foreign_Key_Int_Field('STA_ID', __("State ID", "event_espresso"), true, null, 'State'),
-//              'CNT_ISO'=>new EE_Foreign_Key_String_Field('CNT_ISO', __("Country Code", "event_espresso"), true, null, 'Country'),
-//              'VNU_zip'=>new EE_Plain_Text_Field('VNU_zip', __("Venue Zip/Postal Code", "event_espresso"), true),
-//              'VNU_phone'=>new EE_Plain_Text_Field('VNU_phone', __("Venue Phone", "event_espresso"), true),
-//              'VNU_capacity'=>new EE_Integer_Field('VNU_capacity', __("Venue Capacity", "event_espresso"), true),
-//              'VNU_url'=>new EE_Plain_Text_Field('VNU_url', __('Venue Website', 'event_espresso'), true),
-//              'VNU_virtual_phone'=>new EE_Plain_Text_Field('VNU_virtual_phone', __('Call in Number', 'event_espresso'), true),
-//              'VNU_virtual_url'=>new EE_Plain_Text_Field('VNU_virtual_url', __('Virtual URL', 'event_espresso'), true ),
-//              'VNU_google_map_link'=>new EE_Plain_Text_Field('VNU_google_map_link', __('Google Map Link', 'event_espresso'), true ),
-//              'VNU_enable_for_gmap'=>new EE_Boolean_Field('VNU_enable_for_gmap', __('Show Google Map?', 'event_espresso'), false, false )
+//              'VNUM_ID'=>new EE_DB_Only_Int_Field('VNUM_ID', esc_html__("ID of Venue Meta Row", "event_espresso"), false),
+//              'VNU_ID_fk'=>new EE_DB_Only_Int_Field('VNU_ID', esc_html__("Foreign Key to Venue Post ", "event_espresso"), false),
+//              'VNU_address'=>new EE_Plain_Text_Field('VNU_address', esc_html__("Venue Address line 1", "event_espresso"), true, ''),
+//              'VNU_address2'=>new EE_Plain_Text_Field('VNU_address2', esc_html__("Venue Address line 2", "event_espresso"), true,''),
+//              'VNU_city'=>new EE_Plain_Text_Field('VNU_city', esc_html__("Venue City", "event_espresso"), true, ''),
+//              'STA_ID'=>new EE_Foreign_Key_Int_Field('STA_ID', esc_html__("State ID", "event_espresso"), true, null, 'State'),
+//              'CNT_ISO'=>new EE_Foreign_Key_String_Field('CNT_ISO', esc_html__("Country Code", "event_espresso"), true, null, 'Country'),
+//              'VNU_zip'=>new EE_Plain_Text_Field('VNU_zip', esc_html__("Venue Zip/Postal Code", "event_espresso"), true),
+//              'VNU_phone'=>new EE_Plain_Text_Field('VNU_phone', esc_html__("Venue Phone", "event_espresso"), true),
+//              'VNU_capacity'=>new EE_Integer_Field('VNU_capacity', esc_html__("Venue Capacity", "event_espresso"), true),
+//              'VNU_url'=>new EE_Plain_Text_Field('VNU_url', esc_html__('Venue Website', 'event_espresso'), true),
+//              'VNU_virtual_phone'=>new EE_Plain_Text_Field('VNU_virtual_phone', esc_html__('Call in Number', 'event_espresso'), true),
+//              'VNU_virtual_url'=>new EE_Plain_Text_Field('VNU_virtual_url', esc_html__('Virtual URL', 'event_espresso'), true ),
+//              'VNU_google_map_link'=>new EE_Plain_Text_Field('VNU_google_map_link', esc_html__('Google Map Link', 'event_espresso'), true ),
+//              'VNU_enable_for_gmap'=>new EE_Boolean_Field('VNU_enable_for_gmap', esc_html__('Show Google Map?', 'event_espresso'), false, false )
 //
 //          ));
  *
@@ -113,7 +113,7 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
     }
     public function __construct()
     {
-        $this->_pretty_name = __("Venues", "event_espresso");
+        $this->_pretty_name = esc_html__("Venues", "event_espresso");
         global $wpdb;
         $this->_old_table = $wpdb->prefix . "events_venue";
         $this->_new_table = $wpdb->posts;
@@ -217,7 +217,7 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
             $country = $this->get_migration_script()->get_or_create_country(stripslashes($old_venue['country']));
             $country_iso = $country['CNT_ISO'];
         } catch (EE_Error $e) {
-            $this->add_error(sprintf(__("%s for venue %s", "event_espresso"), $e->getMessage(), $this->_json_encode($old_venue)));
+            $this->add_error(sprintf(esc_html__("%s for venue %s", "event_espresso"), $e->getMessage(), $this->_json_encode($old_venue)));
             $country_iso = null;
         }
         // get a state with the same name, if possible
@@ -225,7 +225,7 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
             $state = $this->get_migration_script()->get_or_create_state(stripslashes($old_venue['state']), isset($country['CNT_name']) ? $country['CNT_name'] : strip_tags($old_venue['country']));
             $state_id = $state['STA_ID'];
         } catch (EE_Error $e) {
-            $this->add_error(sprintf(__("%s for venue %s", "event_espresso"), $e->getMessage(), $this->_json_encode($old_venue)));
+            $this->add_error(sprintf(esc_html__("%s for venue %s", "event_espresso"), $e->getMessage(), $this->_json_encode($old_venue)));
             $state_id = 0;
         }
         $meta = maybe_unserialize($old_venue['meta']);

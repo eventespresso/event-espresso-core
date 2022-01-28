@@ -1,4 +1,6 @@
-<p><strong><?php esc_html_e('Message Templates', 'event_espresso'); ?></strong></p>
+<p>
+    <strong><?php esc_html_e('Message Templates', 'event_espresso'); ?></strong>
+</p>
 <p>
     <?php
     printf(

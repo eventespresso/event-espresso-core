@@ -1033,39 +1033,45 @@ input.ee-register-button {
 }
 
 .ee-really-important-notice-dv {
-	position: fixed;
-	z-index: 9999;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	padding: .5em;
 	background: var(--ee-status-color-orange);
-	background: rgba( 255, 88, 44, .95 );
-	font-size: 12px;
-	font-weight: bold;
-	line-height: 1;
-	color: #fff;
-	text-align: center;
-	text-shadow:0 -1px 0  rgba( 0, 0, 0, 0.4 );
-	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	bottom: 0;
 	box-sizing: border-box;
+	color: #fff;
+	font-size: .85rem;
+	font-weight: 500;
+	left: 0;
+    letter-spacing: .025rem;
+	line-height: 1.25;
+	padding: .5rem 1.5rem;
+	position: fixed;
+	text-align: center;
+	text-shadow:
+        -1px -1px 0 rgba(0, 0, 0, 0.25),
+        -1px 1px 0 rgba(0, 0, 0, 0.25),
+        1px -1px 0 rgba(0, 0, 0, 0.25),
+        1px 1px 0 rgba(0, 0, 0, 0.25);
+	width: 100%;
+	z-index: 9999;
 }
 
 .ee-really-important-notice-dv p {
 	margin: 0;
 }
 .ee-really-important-notice-dv a {
-	color:#fad800;
-	text-shadow:0 1px 1px rgba( 0, 0, 0, 0.4 );
+	color: #efff20;
+    font-weight: 600;
+    text-shadow:
+        -1px -1px 0 rgba(0, 0, 0, 0.25),
+        1px -1px 0 rgba(0, 0, 0, 0.25),
+        -1px 1px 0 rgba(0, 0, 0, 0.25),
+        1px 1px 0 rgba(0, 0, 0, 0.25);
 }
 .ee-really-important-notice-dv a:hover {
-	color: #e3c500;
-	text-shadow:0 .5px 0  rgba( 0, 0, 0, 0.2 );
+	color: #eeff00;
+    text-shadow: none;
 }
 .ee-really-important-notice-dv a:active {
-	color: #c4a700;
-	text-shadow:0 -1px 0  rgba( 0, 0, 0, 0.4 );
+	color: #b6c300;
 }
 
 #espresso-registration-footer-dv {

@@ -44,7 +44,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
         }
         $this->url_validator = $url_validator;
         if (! $validation_error_message) {
-            $validation_error_message = __("Please enter a valid URL. Eg https://eventespresso.com", "event_espresso");
+            $validation_error_message = esc_html__("Please enter a valid URL. Eg https://eventespresso.com", "event_espresso");
         }
         $this->check_file_exists = $check_file_exists;
         parent::__construct($validation_error_message);
@@ -74,7 +74,9 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
                         )
                     )
                 ) {
-                    throw new EE_Validation_Error(sprintf(__("That URL seems to be broken. Please enter a valid URL", "event_espresso")));
+                    throw new EE_Validation_Error(
+						esc_html__("That URL seems to be broken. Please enter a valid URL", "event_espresso")
+					);
                 }
             }
         }

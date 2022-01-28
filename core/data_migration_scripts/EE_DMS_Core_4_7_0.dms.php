@@ -43,7 +43,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base
      */
     public function __construct(TableManager $table_manager = null, TableAnalysis $table_analysis = null)
     {
-        $this->_pretty_name = __("Data Update to Event Espresso 4.7.0", "event_espresso");
+        $this->_pretty_name = esc_html__("Data Update to Event Espresso 4.7.0", "event_espresso");
         $this->_priority = 10;
         $this->_migration_stages = array(
             new EE_DMS_4_7_0_Add_Taxes_To_REG_Final_Price(),

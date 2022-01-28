@@ -9,7 +9,7 @@ use PHPUnit_Framework_TestCase;
  * Class EspressoPHPUnitFrameworkTestCase
  * Description
  *
- * @package EETests\bootstrap\
+ * @package EventEspresso\tests\includes\
  * @author  Brent Christensen
  * @since   4.10.7.p
  */

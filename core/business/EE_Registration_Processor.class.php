@@ -7,7 +7,9 @@ use EventEspresso\core\domain\services\registration\CreateRegistrationService;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 EE_Registry::instance()->load_class('Processor_Base');
 
@@ -36,7 +38,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      *
      * @var array
      */
-    protected $_old_reg_status = array();
+    protected $_old_reg_status = [];
 
     /**
      * reg status at the end of the request after all processing.
@@ -44,7 +46,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      *
      * @var array
      */
-    protected $_new_reg_status = array();
+    protected $_new_reg_status = [];
 
     /**
      * amounts paid at the end of the request after all processing.
@@ -52,7 +54,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      *
      * @var array
      */
-    protected static $_amount_paid = array();
+    protected static $_amount_paid = [];
 
     /**
      * Cache of the reg final price for registrations corresponding to a ticket line item
@@ -63,25 +65,25 @@ class EE_Registration_Processor extends EE_Processor_Base
     protected $_reg_final_price_per_tkt_line_item;
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     protected $request;
 
 
     /**
      * @singleton method used to instantiate class object
-     * @param EE_Request|null $request
+     * @param RequestInterface|null $request
      * @return EE_Registration_Processor instance
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
-    public static function instance(EE_Request $request = null)
+    public static function instance(RequestInterface $request = null)
     {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_Registration_Processor) {
-            if (! $request instanceof EE_Request) {
-                $request = LoaderFactory::getLoader()->getShared('EE_Request');
+            if (! $request instanceof RequestInterface) {
+                $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\Request');
             }
             self::$_instance = new self($request);
         }
@@ -92,9 +94,9 @@ class EE_Registration_Processor extends EE_Processor_Base
     /**
      * EE_Registration_Processor constructor.
      *
-     * @param EE_Request $request
+     * @param RequestInterface $request
      */
-    public function __construct(EE_Request $request)
+    public function __construct(RequestInterface $request)
     {
         $this->request = $request;
     }
@@ -371,14 +373,14 @@ class EE_Registration_Processor extends EE_Processor_Base
     public function toggle_registration_status_if_no_monies_owing(
         EE_Registration $registration,
         $save = true,
-        array $additional_details = array()
+        array $additional_details = []
     ) {
         // set initial REG_Status
         $this->set_old_reg_status($registration->ID(), $registration->status_ID());
         // was a payment just made ?
-        $payment = isset($additional_details['payment_updates'], $additional_details['last_payment'])
-                   && $additional_details['payment_updates']
-                   && $additional_details['last_payment'] instanceof EE_Payment
+        $payment    = isset($additional_details['payment_updates'], $additional_details['last_payment'])
+                      && $additional_details['payment_updates']
+                      && $additional_details['last_payment'] instanceof EE_Payment
             ? $additional_details['last_payment']
             : null;
         $total_paid = array_sum(self::$_amount_paid);
@@ -448,7 +450,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @param array           $additional_details
      * @return void
      */
-    public function trigger_registration_update_notifications($registration, array $additional_details = array())
+    public function trigger_registration_update_notifications($registration, array $additional_details = [])
     {
         try {
             if (! $registration instanceof EE_Registration) {
@@ -495,7 +497,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      */
     public function update_registration_after_checkout_or_payment(
         EE_Registration $registration,
-        array $additional_details = array()
+        array $additional_details = []
     ) {
         // set initial REG_Status
         $this->set_old_reg_status($registration->ID(), $registration->status_ID());
@@ -529,6 +531,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws RuntimeException
+     * @throws ReflectionException
      */
     public function update_registration_final_prices($transaction, $save_regs = true)
     {
@@ -567,30 +570,30 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function fix_reg_final_price_rounding_issue($transaction)
     {
         $reg_final_price_sum = EEM_Registration::instance()->sum(
-            array(
-                array(
+            [
+                [
                     'TXN_ID' => $transaction->ID(),
-                ),
-            ),
+                ],
+            ],
             'REG_final_price'
         );
-        $diff = $transaction->total() - $reg_final_price_sum;
+        $diff                = $transaction->total() - $reg_final_price_sum;
         // ok then, just grab one of the registrations
-        if ($diff !== 0) {
+        if ($diff !== (float) 0) {
             $a_reg = EEM_Registration::instance()->get_one(
-                array(
-                    array(
+                [
+                    [
                         'TXN_ID' => $transaction->ID(),
-                    ),
-                )
+                    ],
+                ]
             );
             return $a_reg instanceof EE_Registration
-                ? (bool) $a_reg->save(array('REG_final_price' => $a_reg->final_price() + $diff))
-                : false;
+                   && $a_reg->save(['REG_final_price' => $a_reg->final_price() + $diff]);
         }
         return true;
     }
@@ -605,10 +608,11 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @return bool
      * @throws EE_Error
      * @throws RuntimeException
+     * @throws ReflectionException
      */
     public function update_registration_after_being_canceled_or_declined(
         EE_Registration $registration,
-        array $closed_reg_statuses = array(),
+        array $closed_reg_statuses = [],
         $update_reg = true
     ) {
         // these reg statuses should not be considered in any calculations involving monies owing
@@ -637,10 +641,11 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @return bool
      * @throws EE_Error
      * @throws RuntimeException
+     * @throws ReflectionException
      */
     public function update_canceled_or_declined_registration_after_being_reinstated(
         EE_Registration $registration,
-        array $closed_reg_statuses = array(),
+        array $closed_reg_statuses = [],
         $update_reg = true
     ) {
         // these reg statuses should not be considered in any calculations involving monies owing
@@ -681,16 +686,17 @@ class EE_Registration_Processor extends EE_Processor_Base
      * after SPCO has already been initialized. So if an additional ticket was added to the cart, you can simply pass
      * the line item to this method to add a second ticket, and in this case, you would not want to add 2 tickets.
      *
+     * @param EE_Line_Item   $line_item
+     * @param EE_Transaction $transaction
+     * @param int            $att_nmbr
+     * @param int            $total_ticket_count
+     * @return EE_Registration | null
+     * @throws OutOfRangeException
+     * @throws UnexpectedEntityException
+     * @throws EE_Error
+     * @throws ReflectionException
      * @deprecated
      * @since 4.9.1
-     * @param EE_Line_Item    $line_item
-     * @param \EE_Transaction $transaction
-     * @param int             $att_nmbr
-     * @param int             $total_ticket_count
-     * @return EE_Registration | null
-     * @throws \OutOfRangeException
-     * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
-     * @throws \EE_Error
      */
     public function generate_ONE_registration_from_line_item(
         EE_Line_Item $line_item,
@@ -737,12 +743,12 @@ class EE_Registration_Processor extends EE_Processor_Base
     /**
      * generates reg_url_link
      *
-     * @deprecated
-     * @since 4.9.1
      * @param int                   $att_nmbr
      * @param EE_Line_Item | string $item
-     * @return string
+     * @return RegUrlLink
      * @throws InvalidArgumentException
+     * @deprecated
+     * @since 4.9.1
      */
     public function generate_reg_url_link($att_nmbr, $item)
     {
@@ -762,13 +768,13 @@ class EE_Registration_Processor extends EE_Processor_Base
     /**
      * generates reg code
      *
-     * @deprecated
-     * @since 4.9.1
      * @param EE_Registration $registration
-     * @return string
+     * @return RegCode
      * @throws EE_Error
      * @throws EntityNotFoundException
      * @throws InvalidArgumentException
+     * @since 4.9.1
+     * @deprecated
      */
     public function generate_reg_code(EE_Registration $registration)
     {

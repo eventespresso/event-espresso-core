@@ -53,7 +53,7 @@ class Base extends Controller_Base
         if (! $this->model_version_info) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Cannot use model version info before setting the requested version in the controller',
                         'event_espresso'
                     )
@@ -99,7 +99,7 @@ class Base extends Controller_Base
             throw new RestException(
                 'endpoint_parsing_error',
                 sprintf(
-                    __(
+                    esc_html__(
                         'There is no model for endpoint %s. Please contact event espresso support',
                         'event_espresso'
                     ),

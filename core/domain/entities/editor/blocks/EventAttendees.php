@@ -63,7 +63,7 @@ class EventAttendees extends Block
             )
         );
         $EVT_ID = $this->request->getRequestParam('page') === 'espresso_events'
-            ? $this->request->getRequestParam('post', 0)
+            ? $this->request->getRequestParam('post', 0, 'int')
             : 0;
         $this->setAttributes(
             array(

@@ -34,7 +34,7 @@ class Read
             return new WP_Error(
                 'cannot_read_config',
                 sprintf(
-                    __(
+                    esc_html__(
                         'You do not have the necessary capabilities (%s) to read Event Espresso Configuration data',
                         'event_espresso'
                     ),

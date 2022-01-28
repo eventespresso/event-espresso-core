@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\entities\shortcodes;
 
+use EE_Error;
 use EE_Offsite_Gateway;
 use EE_Payment_Method;
 use EE_Payment_Processor;
@@ -9,7 +10,10 @@ use EE_Registry;
 use EE_Transaction;
 use EEM_Payment_Method;
 use EEM_Transaction;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
+use Exception;
 
 /**
  * Class EspressoTxnPage
@@ -51,20 +55,22 @@ class EspressoTxnPage extends EspressoShortcode
      * and need to enqueue assets for that module
      *
      * @return void
-     * @throws \Exception
-     * @throws \EE_Error
+     * @throws Exception
+     * @throws EE_Error
      */
     public function initializeShortcode()
     {
-        $transaction = null;
-        if (EE_Registry::instance()->REQ->is_set('e_reg_url_link')) {
+        $transaction  = null;
+        $request      = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $reg_url_link = $request->getRequestParam('e_reg_url_link');
+        if ($reg_url_link) {
             /** @var EEM_Transaction $EEM_Transaction */
             $EEM_Transaction = EE_Registry::instance()->load_model('Transaction');
-            $transaction = $EEM_Transaction->get_transaction_from_reg_url_link();
+            $transaction = $EEM_Transaction->get_transaction_from_reg_url_link($reg_url_link);
         }
         if ($transaction instanceof EE_Transaction) {
             $payment_method = null;
-            $payment_method_slug = EE_Registry::instance()->REQ->get('ee_payment_method', null);
+            $payment_method_slug = $request->getRequestParam('ee_payment_method');
             if ($payment_method_slug) {
                 $payment_method = EEM_Payment_Method::instance()->get_one_by_slug($payment_method_slug);
             }
@@ -73,13 +79,15 @@ class EspressoTxnPage extends EspressoShortcode
                 if (
                     $gateway instanceof EE_Offsite_Gateway
                     && $gateway->handle_IPN_in_this_request(
-                        \EE_Registry::instance()->REQ->params(),
+                        $request->requestParams(),
                         true
                     )
                 ) {
                     /** @type EE_Payment_Processor $payment_processor */
                     $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-                    $payment_processor->process_ipn($_REQUEST, $transaction, $payment_method);
+                    /** @var RequestInterface $request */
+                    $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+                    $payment_processor->process_ipn($request->requestParams(), $transaction, $payment_method);
                 }
             }
             // allow gateways to add a filter to stop rendering the page

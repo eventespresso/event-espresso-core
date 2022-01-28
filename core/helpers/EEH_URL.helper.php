@@ -1,13 +1,15 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EEH_URL helper
  * Helper class for URL-related PHP functions
  *
- * @package               Event Espresso
- * @subpackage            /helper/EEH_URL.helper.php
- * @author                Brent Christensen, Michael Nelson
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  /helper/EEH_URL.helper.php
+ * @author      Brent Christensen, Michael Nelson
  */
 class EEH_URL
 {
@@ -46,10 +48,11 @@ class EEH_URL
             }
         }
 
+        $action  = EEH_URL::getRequest()->getRequestParam('action');
         // finally, let's always add a return address (if present) :)
-        $args = ! empty($_REQUEST['action']) && ! isset($_REQUEST['return'])
-            ? array_merge($args, ['return' => $_REQUEST['action']])
-            : $args;
+        if ($action !== '') {
+            $args['return'] = $action;
+        }
 
         return add_query_arg($args, $url);
     }
@@ -75,16 +78,9 @@ class EEH_URL
                 $args
             )
         );
-        if (
-            ! $results instanceof WP_Error
-            && isset($results['response'])
-            && isset($results['response']['code'])
-            && $results['response']['code'] == '200'
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return ! $results instanceof WP_Error
+               && isset($results['response']['code'])
+               && $results['response']['code'] == '200';
     }
 
 
@@ -105,7 +101,7 @@ class EEH_URL
         // break apart incoming URL
         $url_bits = parse_url($url);
         // HTTP or HTTPS ?
-        $scheme = isset($url_bits['scheme']) ? $url_bits['scheme'] . '://' : 'http://';
+        $scheme = isset($url_bits['scheme']) ? $url_bits['scheme'] . '://' : 'https://';
         // domain
         $host = isset($url_bits['host']) ? $url_bits['host'] : '';
         // if only the base URL is requested, then return that now
@@ -213,8 +209,8 @@ class EEH_URL
         // whitelist INPUT_SERVER var
         if (isset($server_variables[ $server_variable ])) {
             $URL = filter_input(INPUT_SERVER, $server_variable, FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE);
-            if (empty($URL)) {
-                // fallback sanitization if the above fails
+            if (empty($URL) || $URL !== $_SERVER[ $server_variable ]) {
+                // fallback sanitization if the above fails or URL has changed after filtering
                 $URL = wp_sanitize_redirect($_SERVER[ $server_variable ]);
             }
         }
@@ -230,10 +226,13 @@ class EEH_URL
     public static function current_url(): string
     {
         $url = '';
-        if (isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
+        if (
+            EEH_URL::getRequest()->serverParamIsSet('HTTP_HOST')
+            && EEH_URL::getRequest()->serverParamIsSet('REQUEST_URI')
+        ) {
             $url = is_ssl() ? 'https://' : 'http://';
             $url .= EEH_URL::filter_input_server_url('HTTP_HOST');
-            $url .= EEH_URL::filter_input_server_url('REQUEST_URI');
+            $url .= EEH_URL::filter_input_server_url();
         }
         return $url;
     }
@@ -280,11 +279,20 @@ class EEH_URL
     {
         // url decode after sanitizing title to restore unicode characters,
         // see https://github.com/eventespresso/event-espresso-core/issues/575
-        return urldecode(
-            sanitize_title(
-                $text,
-                $fallback
-            )
-        );
+        return urldecode(sanitize_title($text, $fallback));
+    }
+
+
+    /**
+     * @return RequestInterface
+     * @since   4.10.14.p
+     */
+    protected static function getRequest()
+    {
+        static $request;
+        if (! $request instanceof RequestInterface) {
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        }
+        return $request;
     }
 }

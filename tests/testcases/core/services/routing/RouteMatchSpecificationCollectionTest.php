@@ -3,11 +3,20 @@
 namespace EventEspresso\tests\testcases\core\services\routing;
 
 use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\ServerParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
 use EventEspresso\core\services\routing\RouteMatchSpecificationCollection;
-use EventEspresso\tests\mocks\core\services\dependencies\composites\Oof;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
+use EventEspresso\tests\mocks\core\services\dependencies\composites\Oof;
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Exception;
 
 /**
  * Class RouteMatchSpecificationCollectionTest
@@ -21,7 +30,7 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
     /**
      * @since 4.9.71.p
      * @return RouteMatchSpecificationCollection
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     protected function getCollection()
     {
@@ -34,7 +43,9 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
      */
     protected function getRequest()
     {
-        return new Request(array(), array(), array(), array(), array());
+        $request_params = new RequestParams(new RequestSanitizer());
+        $server_params  = new ServerParams(new ServerSanitizer());
+        return new Request($request_params, $server_params);
     }
 
     /**
@@ -49,8 +60,8 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \PHPUnit\Framework\Exception
+     * @throws InvalidInterfaceException
+     * @throws Exception
      */
     public function test__construct()
     {
@@ -62,11 +73,11 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\services\collections\DuplicateCollectionIdentifierException
-     * @throws \PHPUnit\Framework\AssertionFailedError
-     * @throws \PHPUnit\Framework\Exception
+     * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
+     * @throws DuplicateCollectionIdentifierException
+     * @throws AssertionFailedError
+     * @throws Exception
      */
     public function testAdd()
     {
@@ -88,10 +99,10 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\services\collections\DuplicateCollectionIdentifierException
-     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws InvalidEntityException
+     * @throws InvalidInterfaceException
+     * @throws DuplicateCollectionIdentifierException
+     * @throws AssertionFailedError
      */
     public function testGetIdentifier()
     {

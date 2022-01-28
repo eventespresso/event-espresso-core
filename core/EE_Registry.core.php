@@ -69,7 +69,7 @@ class EE_Registry implements ResettableInterface
     public $NET_CFG;
 
     /**
-     * StdClass object for storing library classes in
+     * RegistryContainer for storing library classes in
      *
      * @var RegistryContainer $LIB
      */
@@ -77,6 +77,7 @@ class EE_Registry implements ResettableInterface
 
     /**
      * @var EE_Request_Handler $REQ
+     * @deprecated 4.10.14.p
      */
     public $REQ;
 
@@ -103,7 +104,7 @@ class EE_Registry implements ResettableInterface
     public $AssetsRegistry;
 
     /**
-     * StdClass object for holding addons which have registered themselves to work with EE core
+     * RegistryContainer for holding addons which have registered themselves to work with EE core
      *
      * @var EE_Addon[] $addons
      */
@@ -292,10 +293,26 @@ class EE_Registry implements ResettableInterface
     public function init()
     {
         // Get current page protocol
-        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        $protocol = is_ssl() ? 'https://' : 'http://';
         // Output admin-ajax.php URL with same protocol as current page
         self::$i18n_js_strings['ajax_url'] = admin_url('admin-ajax.php', $protocol);
-        self::$i18n_js_strings['wp_debug'] = defined('WP_DEBUG') ? WP_DEBUG : false;
+        self::$i18n_js_strings['wp_debug'] = defined('WP_DEBUG') && WP_DEBUG;
+    }
+
+
+    /**
+     * @return array
+     */
+    public static function sanitize_i18n_js_strings()
+    {
+        $i18n_js_strings = (array) self::$i18n_js_strings;
+        foreach ($i18n_js_strings as $key => $value) {
+            if (is_scalar($value)) {
+                $decoded_value           = html_entity_decode((string) $value, ENT_QUOTES, 'UTF-8');
+                $i18n_js_strings[ $key ] = wp_strip_all_tags($decoded_value);
+            }
+        }
+        return $i18n_js_strings;
     }
 
 
@@ -306,12 +323,7 @@ class EE_Registry implements ResettableInterface
      */
     public static function localize_i18n_js_strings()
     {
-        $i18n_js_strings = (array) self::$i18n_js_strings;
-        foreach ($i18n_js_strings as $key => $value) {
-            if (is_scalar($value)) {
-                $i18n_js_strings[ $key ] = html_entity_decode((string) $value, ENT_QUOTES, 'UTF-8');
-            }
-        }
+        $i18n_js_strings = EE_Registry::sanitize_i18n_js_strings();
         return '/* <![CDATA[ */ var eei18n = ' . wp_json_encode($i18n_js_strings) . '; /* ]]> */';
     }
 
@@ -329,7 +341,7 @@ class EE_Registry implements ResettableInterface
     {
         if ($module instanceof EED_Module) {
             $module_class = get_class($module);
-            $this->modules->{$module_class} = $module;
+            $this->modules->add($module_class, $module);
         } else {
             if (! class_exists('EE_Module_Request_Router', false)) {
                 $this->load_core('Module_Request_Router');
@@ -345,9 +357,7 @@ class EE_Registry implements ResettableInterface
      */
     public function get_module($module_name = '')
     {
-        return isset($this->modules->{$module_name})
-            ? $this->modules->{$module_name}
-            : null;
+        return $this->modules->get($module_name);
     }
 
 
@@ -372,8 +382,8 @@ class EE_Registry implements ResettableInterface
                 EE_CORE,
                 EE_ADMIN,
                 EE_CPTS,
+                EE_CORE . 'CPTs/',
                 EE_CORE . 'data_migration_scripts/',
-                EE_CORE . 'capabilities/',
                 EE_CORE . 'request_stack/',
                 EE_CORE . 'middleware/',
             )
@@ -959,12 +969,12 @@ class EE_Registry implements ResettableInterface
         if (isset($this->{$class_name})) {
             return $this->{$class_name};
         }
-        if ($class_prefix === 'addon' && isset($this->addons->{$class_name})) {
-            return $this->addons->{$class_name};
+        if ($class_prefix === 'addon' && $this->addons->has($class_name)) {
+            return $this->addons->get($class_name);
         }
         $object_identifier = $this->object_identifier->getIdentifier($class_name, $arguments);
-        if (isset($this->LIB->{$object_identifier})) {
-            return $this->LIB->{$object_identifier};
+        if ($this->LIB->has($object_identifier)) {
+            return $this->LIB->get($object_identifier);
         }
         foreach ($this->LIB as $key => $object) {
             if (
@@ -1004,13 +1014,13 @@ class EE_Registry implements ResettableInterface
             $this->{$class_name} = null;
             return true;
         }
-        if ($addon && isset($this->addons->{$class_name})) {
-            unset($this->addons->{$class_name});
+        if ($addon && $this->addons->has($class_name)) {
+            $this->addons->remove($class_name);
             return true;
         }
         $class_name = $this->object_identifier->getIdentifier($class_name, $arguments);
-        if (isset($this->LIB->{$class_name})) {
-            unset($this->LIB->{$class_name});
+        if ($this->LIB->has($class_name)) {
+            $this->LIB->remove($class_name);
             return true;
         }
         return false;
@@ -1055,12 +1065,12 @@ class EE_Registry implements ResettableInterface
             return;
         }
         if ($class_prefix === 'addon') {
-            $this->addons->{$class_name} = $class_obj;
+            $this->addons->add($class_name, $class_obj);
             return;
         }
         if (! $from_db) {
             $class_name = $this->object_identifier->getIdentifier($class_name, $arguments);
-            $this->LIB->{$class_name} = $class_obj;
+            $this->LIB->add($class_name, $class_obj);
         }
     }
 
@@ -1282,7 +1292,7 @@ class EE_Registry implements ResettableInterface
         // heh ? something's not right !
         throw new EE_Error(
             sprintf(
-                __('The %s file %s could not be instantiated.', 'event_espresso'),
+                esc_html__('The %s file %s could not be instantiated.', 'event_espresso'),
                 $type,
                 $class_name
             )
@@ -1356,7 +1366,7 @@ class EE_Registry implements ResettableInterface
                 ? $this->class_cache->getFqnForAlias($param_class, $class_name)
                 : $param_class;
             if (
-// param is not even a class
+                // param is not even a class
                 $param_class === null
                 // and something already exists in the incoming arguments for this param
                 && array_key_exists($index, $argument_keys)
@@ -1366,7 +1376,7 @@ class EE_Registry implements ResettableInterface
                 continue;
             }
             if (
-// parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
+                // parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
                 $param_class !== null
                 && isset($argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ])
                 && $arguments[ $argument_keys[ $index ] ] instanceof $param_class
@@ -1375,7 +1385,7 @@ class EE_Registry implements ResettableInterface
                 continue;
             }
             if (
-// parameter is type hinted as a class, and should be injected
+                // parameter is type hinted as a class, and should be injected
                 $param_class !== null
                 && $this->_dependency_map->has_dependency_for_class($class_name, $param_class)
             ) {
@@ -1387,11 +1397,17 @@ class EE_Registry implements ResettableInterface
                 );
             }
             if (empty($arguments[ $index ])) {
-                $arguments[ $index ] = $this->mirror->getParameterDefaultValue(
+                $default_value = $this->mirror->getParameterDefaultValue(
                     $param,
                     $class_name,
                     $index
                 );
+                // if there's no default value, and the incoming argument is an array (albeit empty), then use that
+                $arguments[ $index ] = $default_value === null
+                                 && isset($arguments[ $index ])
+                                 && is_array($arguments[ $index ])
+                    ? $arguments[ $index ]
+                    : $default_value;
             }
         }
         return $arguments;
@@ -1503,7 +1519,7 @@ class EE_Registry implements ResettableInterface
     public function removeAddon($class_name)
     {
         $class_name = str_replace('\\', '_', $class_name);
-        unset($this->addons->{$class_name});
+        $this->addons->remove($class_name);
     }
 
 
@@ -1563,17 +1579,17 @@ class EE_Registry implements ResettableInterface
         $model_class_name = strpos($model_name, 'EEM_') !== 0
             ? "EEM_{$model_name}"
             : $model_name;
-        if (! isset($this->LIB->{$model_class_name}) || ! $this->LIB->{$model_class_name} instanceof EEM_Base) {
+        if (! $this->LIB->has($model_class_name)) {
+            return null;
+        }
+        $model = $this->LIB->get($model_class_name);
+        if (! $model instanceof EEM_Base) {
             return null;
         }
         // get that model reset it and make sure we nuke the old reference to it
-        if (
-            $this->LIB->{$model_class_name} instanceof $model_class_name
-            && is_callable(
-                array($model_class_name, 'reset')
-            )
-        ) {
-            $this->LIB->{$model_class_name} = $this->LIB->{$model_class_name}->reset();
+        if ($model instanceof $model_class_name && is_callable([$model_class_name, 'reset'])) {
+            $this->LIB->remove($model_class_name);
+            $this->LIB->add($model_class_name, $model->reset());
         } else {
             throw new EE_Error(
                 sprintf(
@@ -1582,7 +1598,7 @@ class EE_Registry implements ResettableInterface
                 )
             );
         }
-        return $this->LIB->{$model_class_name};
+        return $model;
     }
 
 

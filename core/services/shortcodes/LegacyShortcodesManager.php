@@ -6,8 +6,12 @@ use EE_Config;
 use EE_Error;
 use EE_Front_controller;
 use EE_Registry;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\CurrentPage;
 use ReflectionClass;
+use ReflectionException;
 use WP;
+use WP_Post;
 use WP_Query;
 
 /**
@@ -20,6 +24,10 @@ use WP_Query;
  */
 class LegacyShortcodesManager
 {
+    /**
+     * @type CurrentPage
+     */
+    protected $current_page;
 
     /**
      * @var EE_Registry $registry
@@ -30,11 +38,13 @@ class LegacyShortcodesManager
     /**
      * LegacyShortcodesManager constructor.
      *
-     * @param \EE_Registry $registry
+     * @param EE_Registry $registry
+     * @param CurrentPage $current_page
      */
-    public function __construct(EE_Registry $registry)
+    public function __construct(EE_Registry $registry, CurrentPage $current_page)
     {
         $this->registry = $registry;
+        $this->current_page = $current_page;
     }
 
 
@@ -92,9 +102,8 @@ class LegacyShortcodesManager
 
 
     /**
-     *    register_shortcode - makes core aware of this shortcode
+     * register_shortcode - makes core aware of this shortcode
      *
-     * @access    public
      * @param    string $shortcode_path - full path up to and including shortcode folder
      * @return    bool
      */
@@ -165,7 +174,6 @@ class LegacyShortcodesManager
      *    _initialize_shortcodes
      *    allow shortcodes to set hooks for the rest of the system
      *
-     * @access private
      * @return void
      */
     public function addShortcodes()
@@ -204,8 +212,9 @@ class LegacyShortcodesManager
      * checks posts for EE shortcodes, and initializes them,
      * then toggles filter switch that loads core default assets
      *
-     * @param \WP_Query $wp_query
+     * @param WP_Query $wp_query
      * @return void
+     * @throws ReflectionException
      */
     public function initializeShortcodes(WP_Query $wp_query)
     {
@@ -219,13 +228,13 @@ class LegacyShortcodesManager
         }
         global $wp;
         /** @var EE_Front_controller $Front_Controller */
-        $Front_Controller = $this->registry->load_core('Front_Controller', array(), false);
+        $Front_Controller = LoaderFactory::getLoader()->getShared('EE_Front_Controller');
         do_action('AHEE__EE_Front_Controller__initialize_shortcodes__begin', $wp, $Front_Controller);
-        $Front_Controller->Request_Handler()->set_request_vars();
+        $this->current_page->parseQueryVars();
         // grab post_name from request
         $current_post = apply_filters(
             'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',
-            $Front_Controller->Request_Handler()->get('post_name')
+            $this->current_page->postName()
         );
         $show_on_front = get_option('show_on_front');
         // if it's not set, then check if frontpage is blog
@@ -246,14 +255,14 @@ class LegacyShortcodesManager
                         )
                     );
                     // set the current post slug to what it actually is
-                    $current_post = $page_on_front ? $page_on_front : $current_post;
+                    $current_post = $page_on_front ?: $current_post;
                 }
             }
         }
         // in case $current_post is hierarchical like: /parent-page/current-page
         $current_post = basename($current_post);
         if (
-// is current page/post the "blog" page ?
+            // is current page/post the "blog" page ?
             $current_post === EE_Config::get_page_for_posts()
             // or are we on a category page?
             || (
@@ -264,17 +273,22 @@ class LegacyShortcodesManager
             // initialize all legacy shortcodes
             $load_assets = $this->parseContentForShortcodes('', true);
         } else {
-            global $wpdb;
-            $post_content = $wpdb->get_var(
-                $wpdb->prepare(
-                    "SELECT post_content from {$wpdb->posts} WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND post_name=%s",
-                    $current_post
-                )
-            );
+            global $post;
+            if ($post instanceof WP_Post) {
+                $post_content = $post->post_content;
+            } else {
+                global $wpdb;
+                $post_content = $wpdb->get_var(
+                    $wpdb->prepare(
+                        "SELECT post_content from {$wpdb->posts} WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND post_name=%s",
+                        $current_post
+                    )
+                );
+            }
             $load_assets = $this->parseContentForShortcodes($post_content);
         }
         if ($load_assets) {
-            $this->registry->REQ->set_espresso_page(true);
+            $this->current_page->setEspressoPage(true);
             add_filter('FHEE_load_css', '__return_true');
             add_filter('FHEE_load_js', '__return_true');
         }
@@ -290,6 +304,7 @@ class LegacyShortcodesManager
      * @param string $content
      * @param bool   $load_all if true, then ALL active legacy shortcodes will be initialized
      * @return bool
+     * @throws ReflectionException
      */
     public function parseContentForShortcodes($content = '', $load_all = false)
     {
@@ -301,6 +316,10 @@ class LegacyShortcodesManager
                 $has_shortcode = true;
             }
         }
+        // one last test for an [espresso_*] shortcode
+        if (! $has_shortcode) {
+            $has_shortcode = strpos($content, '[espresso_') !== false;
+        }
         return $has_shortcode;
     }
 
@@ -310,6 +329,7 @@ class LegacyShortcodesManager
      *
      * @param string $shortcode_class
      * @param WP     $wp
+     * @throws ReflectionException
      */
     public function initializeShortcode($shortcode_class = '', WP $wp = null)
     {
@@ -423,6 +443,7 @@ class LegacyShortcodesManager
     /**
      * @param string $content
      * @return string
+     * @throws ReflectionException
      */
     public function doShortcode($content)
     {

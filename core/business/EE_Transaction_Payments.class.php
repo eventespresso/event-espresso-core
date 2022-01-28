@@ -64,7 +64,7 @@ class EE_Transaction_Payments
         if (! $total_line_item instanceof EE_Line_Item) {
             EE_Error::add_error(
                 sprintf(
-                    __('The Total Line Item for Transaction %1$d\'s was not found or is invalid.', 'event_espresso'),
+                    esc_html__('The Total Line Item for Transaction %1$d\'s was not found or is invalid.', 'event_espresso'),
                     $transaction->ID()
                 ),
                 __FILE__,
@@ -102,7 +102,7 @@ class EE_Transaction_Payments
         // verify transaction
         if (! $transaction instanceof EE_Transaction) {
             EE_Error::add_error(
-                __('Please provide a valid EE_Transaction object.', 'event_espresso'),
+                esc_html__('Please provide a valid EE_Transaction object.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -146,7 +146,7 @@ class EE_Transaction_Payments
         // verify transaction
         if (! $transaction instanceof EE_Transaction) {
             EE_Error::add_error(
-                __('Please provide a valid EE_Transaction object.', 'event_espresso'),
+                esc_html__('Please provide a valid EE_Transaction object.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -179,7 +179,7 @@ class EE_Transaction_Payments
         // verify payment
         if (! $payment instanceof EE_Payment) {
             EE_Error::add_error(
-                __('A valid Payment object was not received.', 'event_espresso'),
+                esc_html__('A valid Payment object was not received.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -191,7 +191,7 @@ class EE_Transaction_Payments
         }
         if (! $payment->delete()) {
             EE_Error::add_error(
-                __('The payment could not be deleted.', 'event_espresso'),
+                esc_html__('The payment could not be deleted.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -206,7 +206,7 @@ class EE_Transaction_Payments
             || $TXN_status === EEM_Transaction::failed_status_code
             || $payment->amount() === 0
         ) {
-            EE_Error::add_success(__('The Payment was successfully deleted.', 'event_espresso'));
+            EE_Error::add_success(esc_html__('The Payment was successfully deleted.', 'event_espresso'));
             return true;
         }
 
@@ -215,7 +215,7 @@ class EE_Transaction_Payments
         // however the payment was still deleted.
         if (! $this->calculate_total_payments_and_update_status($transaction)) {
             EE_Error::add_attention(
-                __(
+                esc_html__(
                     'It appears that the Payment was deleted but no change was recorded for the Transaction for an unknown reason. Please verify that all data for this Transaction looks correct..',
                     'event_espresso'
                 ),
@@ -227,7 +227,7 @@ class EE_Transaction_Payments
         }
 
         EE_Error::add_success(
-            __(
+            esc_html__(
                 'The Payment was successfully deleted, and the Transaction has been updated accordingly.',
                 'event_espresso'
             )
@@ -269,7 +269,7 @@ class EE_Transaction_Payments
                     } else {
                         EE_Error::add_error(
                             sprintf(
-                                __(
+                                esc_html__(
                                     'An invalid Registration object was associated with Registration Payment ID# %1$d.',
                                     'event_espresso'
                                 ),
@@ -284,7 +284,7 @@ class EE_Transaction_Payments
                 } else {
                     EE_Error::add_error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'An invalid Registration Payment object was associated with payment ID# %1$d.',
                                 'event_espresso'
                             ),
@@ -323,7 +323,7 @@ class EE_Transaction_Payments
         EE_Error::doing_it_wrong(
             __CLASS__ . '::' . __FUNCTION__,
             sprintf(
-                __('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+                esc_html__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
                 'EE_Transaction::update_status_based_on_total_paid()'
             ),
             '4.9.1',
@@ -332,7 +332,7 @@ class EE_Transaction_Payments
         // verify transaction
         if (! $transaction instanceof EE_Transaction) {
             EE_Error::add_error(
-                __('Please provide a valid EE_Transaction object.', 'event_espresso'),
+                esc_html__('Please provide a valid EE_Transaction object.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__

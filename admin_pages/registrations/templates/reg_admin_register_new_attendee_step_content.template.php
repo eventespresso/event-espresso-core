@@ -1,7 +1,16 @@
+<?php
+/**
+ * @var bool   $show_notification_toggle
+ * @var string $content
+ * @var string $step_button_text
+ * @var string $title
+ */
+?>
+
 <div class="ee-new-registration-step-content clearfix">
-    <h2 class="ee-new-registration-step-header"><?php echo $title ?></h2>
+    <h2 class="ee-new-registration-step-header"><?php echo esc_html($title) ?></h2>
     <div class="ee-new-registration-step-content">
-        <?php echo $content; ?>
+        <?php echo $content; // already escaped ?>
         <?php
         if (
             $show_notification_toggle
@@ -12,22 +21,26 @@
         ) : ?>
             <div class="ee-attention">
                 <label for="txn_reg_status_change" class="last">
-                    <?php _e(
-                        'Send Related Messages?',
-                        'event_espresso'
-                    ); ?></label>
-                <input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]" checked=checked>
-                <br/>
-                <br/>
+                    <?php esc_html_e('Send Related Messages?', 'event_espresso'); ?>
+                </label>
+                <input checked=checked
+                       id="txn_reg_status_change"
+                       name="txn_reg_status_change[send_notifications]"
+                       type="checkbox"
+                       value="1"
+                />
+                <br />
+                <br />
                 <p class="description">
-                    <?php _e(
-                        'Send a notification to registrants after processing?',
-                        'event_espresso'
-                    ); ?></p><br/>
-                <label></label>
+                    <?php esc_html_e('Send a notification to registrants after processing?', 'event_espresso'); ?>
+                </p>
+                <br />
             </div>
         <?php endif; ?>
-        <input id="ee-new-registration-step-button" class="right button button-primary button-large" type="submit"
-               value="<?php echo $step_button_text; ?>"/>
+        <input class='right button button-primary button-large'
+               id="ee-new-registration-step-button"
+               type="submit"
+               value="<?php echo esc_attr($step_button_text); ?>"
+        />
     </div>
 </div>

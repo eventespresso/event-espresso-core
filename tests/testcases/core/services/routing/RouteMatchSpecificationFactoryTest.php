@@ -2,10 +2,15 @@
 
 namespace EventEspresso\tests\testcases\core\services\routing;
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\routing\RouteMatchSpecificationFactory;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
+use InvalidArgumentException;
+use PHPUnit\Framework\Exception;
+use ReflectionException;
 
 /**
  * Class RouteMatchSpecificationFactoryTest
@@ -25,9 +30,9 @@ class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCas
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     protected function setUp()
     {
@@ -50,7 +55,7 @@ class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCas
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      */
     public function test__construct()
     {
@@ -62,9 +67,9 @@ class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCas
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws Exception
+     * @throws ReflectionException
      */
     public function testCreateNewRouteMatchSpecification()
     {
@@ -77,11 +82,11 @@ class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCas
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws Exception
+     * @throws ReflectionException
      */
     public function testCreate()
     {

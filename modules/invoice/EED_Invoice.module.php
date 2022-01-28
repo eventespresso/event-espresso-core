@@ -6,15 +6,16 @@
  * @package               Event Espresso
  * @subpackage            /modules/invoice/
  * @author                Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @method EED_Invoice get_instance($module_name)
  */
 class EED_Invoice extends EED_Module
 {
 
 
     /**
-     * @return EED_Invoice
+     * @return EED_Invoice|EED_Module
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -57,7 +58,7 @@ class EED_Invoice extends EED_Module
         if (is_readable(EE_MODULES . 'gateways/Invoice/lib/Invoice.class.php')) {
             require_once(EE_MODULES . 'gateways/Invoice/lib/Invoice.class.php');
         } else {
-            $msg = __('The Invoice.class.php file could not be loaded.', 'event_espresso');
+            $msg = esc_html__('The Invoice.class.php file could not be loaded.', 'event_espresso');
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
         }
     }
@@ -72,8 +73,9 @@ class EED_Invoice extends EED_Module
     public function launch_invoice()
     {
         $this->run(null);
-        if (EE_Registry::instance()->REQ->is_set('id')) {
-            $id = sanitize_key(EE_Registry::instance()->REQ->get('id'));
+        $request = self::getRequest();
+        if ($request->requestParamIsSet('id')) {
+            $id = $request->getRequestParam('id', '', 'key');
             $invoice = new Invoice($id);
             $invoice->send_invoice();
         }
@@ -89,9 +91,10 @@ class EED_Invoice extends EED_Module
     public function download_invoice()
     {
         $this->run(null);
-        if (EE_Registry::instance()->REQ->is_set('id')) {
-            $id = sanitize_key(EE_Registry::instance()->REQ->get('id'));
-            $invoice = new Invoice($_REQUEST['id']);
+        $request = self::getRequest();
+        if ($request->requestParamIsSet('id')) {
+            $id = $request->getRequestParam('id', '', 'key');
+            $invoice = new Invoice($id);
             // send invoice but force download
             $invoice->send_invoice(true);
         }

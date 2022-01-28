@@ -48,7 +48,7 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
         return apply_filters(
             'FHEE__EE_Gateway___partial_payment_desc',
             sprintf(
-                __('Payment of %1$s for %2$s', "event_espresso"),
+                esc_html__('Payment of %1$s for %2$s', "event_espresso"),
                 $payment->get_pretty('PAY_amount', 'no_currency_code'),
                 $payment->get_first_event_name()
             ),
@@ -115,7 +115,7 @@ class GatewayDataFormatter implements GatewayDataFormatterInterface
         return apply_filters(
             'FHEE__EE_Gateway___order_description',
             sprintf(
-                __('Event Registrations from %1$s for %2$s', "event_espresso"),
+                esc_html__('Event Registrations from %1$s for %2$s', "event_espresso"),
                 wp_specialchars_decode(get_bloginfo(), ENT_QUOTES),
                 $payment->get_first_event_name()
             ),

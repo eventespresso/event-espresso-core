@@ -1,6 +1,8 @@
 <?php
 namespace EETests\bootstrap;
 
+use EventEspresso\tests\includes\CoreLoader;
+
 class AddonLoader extends CoreLoader
 {
     protected $addon_tests_path;

@@ -126,6 +126,20 @@ final class EE_System implements ResettableInterface
      */
     private $router;
 
+    /**
+     * @param EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes
+     */
+    private $register_custom_post_types;
+
+    /**
+     * @param EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies
+     */
+    private $register_custom_taxonomies;
+
+    /**
+     * @param EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms
+     */
+    private $register_custom_taxonomy_terms;
 
     /**
      * @singleton method used to instantiate class object
@@ -232,6 +246,11 @@ final class EE_System implements ResettableInterface
         add_action(
             'AHEE__EE_Bootstrap__load_core_configuration',
             [$this, 'loadRouteMatchSpecifications']
+        );
+        // load specifications for custom post types
+        add_action(
+            'AHEE__EE_Bootstrap__load_core_configuration',
+            array($this, 'loadCustomPostTypes')
         );
         // load EE_Config, EE_Textdomain, etc
         add_action(
@@ -869,6 +888,30 @@ final class EE_System implements ResettableInterface
 
 
     /**
+     * loading CPT related classes earlier so that their definitions are available
+     * but not performing any actual registration with WP core until load_CPTs_and_session() is called
+     *
+     * @since   4.10.21.p
+     */
+    public function loadCustomPostTypes()
+    {
+        $this->register_custom_taxonomies = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies'
+        );
+        $this->register_custom_post_types = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes'
+        );
+        $this->register_custom_taxonomy_terms = $this->loader->getShared(
+            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms'
+        );
+        // integrate WP_Query with the EE models
+        $this->loader->getShared('EE_CPT_Strategy');
+        // load legacy EE_Request_Handler in case add-ons still need it
+        $this->loader->getShared('EE_Request_Handler');
+    }
+
+
+    /**
      * register_shortcodes_modules_and_widgets
      * generate lists of shortcodes and modules, then verify paths and classes
      * This is hooked into 'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets'
@@ -902,7 +945,7 @@ final class EE_System implements ResettableInterface
             'AHEE__EE_System__register_shortcodes_modules_and_addons'
         );
         if (! empty($class_names)) {
-            $msg = __(
+            $msg = esc_html__(
                 'The following plugins, addons, or modules appear to be incompatible with this version of Event Espresso and were automatically deactivated to avoid fatal errors:',
                 'event_espresso'
             );
@@ -916,7 +959,7 @@ final class EE_System implements ResettableInterface
                         ) . '</b></li>';
             }
             $msg .= '</ul>';
-            $msg .= __(
+            $msg .= esc_html__(
                 'Compatibility issues can be avoided and/or resolved by keeping addons and plugins updated to the latest version.',
                 'event_espresso'
             );
@@ -984,7 +1027,7 @@ final class EE_System implements ResettableInterface
             foreach ($active_plugins as $active_plugin) {
                 foreach ($incompatible_addons as $incompatible_addon) {
                     if (strpos($active_plugin, $incompatible_addon) !== false) {
-                        unset($_GET['activate']);
+                        $this->request->unSetRequestParams(['activate'], true);
                         espresso_deactivate_plugin($active_plugin);
                     }
                 }
@@ -1012,21 +1055,9 @@ final class EE_System implements ResettableInterface
     public function load_CPTs_and_session()
     {
         do_action('AHEE__EE_System__load_CPTs_and_session__start');
-        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies $register_custom_taxonomies */
-        $register_custom_taxonomies = $this->loader->getShared(
-            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies'
-        );
-        $register_custom_taxonomies->registerCustomTaxonomies();
-        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes $register_custom_post_types */
-        $register_custom_post_types = $this->loader->getShared(
-            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes'
-        );
-        $register_custom_post_types->registerCustomPostTypes();
-        /** @var EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms $register_custom_taxonomy_terms */
-        $register_custom_taxonomy_terms = $this->loader->getShared(
-            'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms'
-        );
-        $register_custom_taxonomy_terms->registerCustomTaxonomyTerms();
+        $this->register_custom_taxonomies->registerCustomTaxonomies();
+        $this->register_custom_post_types->registerCustomPostTypes();
+        $this->register_custom_taxonomy_terms->registerCustomTaxonomyTerms();
         // load legacy Custom Post Types and Taxonomies
         $this->loader->getShared('EE_Register_CPTs');
         do_action('AHEE__EE_System__load_CPTs_and_session__complete');

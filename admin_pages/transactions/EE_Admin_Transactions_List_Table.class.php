@@ -52,23 +52,23 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('transaction', 'event_espresso'),
-            'plural'   => __('transactions', 'event_espresso'),
+            'singular' => esc_html__('transaction', 'event_espresso'),
+            'plural'   => esc_html__('transactions', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
-        $ID_column_name = __('ID', 'event_espresso');
+        $ID_column_name = esc_html__('ID', 'event_espresso');
         $ID_column_name .= ' : <span class="show-on-mobile-view-only" style="float:none">';
-        $ID_column_name .= __('Transaction Date', 'event_espresso');
+        $ID_column_name .= esc_html__('Transaction Date', 'event_espresso');
         $ID_column_name .= '</span> ';
         $this->_columns = array(
             'TXN_ID'        => $ID_column_name,
-            'TXN_timestamp' => __('Transaction Date', 'event_espresso'),
-            'TXN_total'     => __('Total', 'event_espresso'),
-            'TXN_paid'      => __('Paid', 'event_espresso'),
-            'ATT_fname'     => __('Primary Registrant', 'event_espresso'),
-            'event_name'    => __('Event', 'event_espresso'),
-            'actions'       => __('Actions', 'event_espresso'),
+            'TXN_timestamp' => esc_html__('Transaction Date', 'event_espresso'),
+            'TXN_total'     => esc_html__('Total', 'event_espresso'),
+            'TXN_paid'      => esc_html__('Paid', 'event_espresso'),
+            'ATT_fname'     => esc_html__('Primary Registrant', 'event_espresso'),
+            'event_name'    => esc_html__('Event', 'event_espresso'),
+            'actions'       => esc_html__('Actions', 'event_espresso'),
         );
 
         $this->_sortable_columns = array(
@@ -131,11 +131,21 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         ob_start();
         ?>
         <label for="txn-filter-start-date">Display Transactions from </label>
-        <input id="txn-filter-start-date" class="datepicker" type="text" value="<?php echo $start_date; ?>"
-               name="txn-filter-start-date" size="15"/>
+        <input class="datepicker"
+               id="txn-filter-start-date"
+               name="txn-filter-start-date"
+               size="15"
+               type="text"
+               value="<?php echo esc_html($start_date); ?>"
+        />
         <label for="txn-filter-end-date"> until </label>
-        <input id="txn-filter-end-date" class="datepicker" type="text" value="<?php echo $end_date; ?>"
-               name="txn-filter-end-date" size="15"/>
+        <input class="datepicker"
+               id="txn-filter-end-date"
+               name="txn-filter-end-date"
+               size="15"
+               type="text"
+               value="<?php echo esc_html($end_date); ?>"
+        />
         <?php
         $filters[] = ob_get_contents();
         ob_end_clean();

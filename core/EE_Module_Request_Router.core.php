@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  *  Class EE_Module_Request_Router
@@ -16,7 +17,7 @@ final class EE_Module_Request_Router implements InterminableInterface
 {
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     private $request;
 
@@ -34,18 +35,18 @@ final class EE_Module_Request_Router implements InterminableInterface
     /**
      * EE_Module_Request_Router constructor.
      *
-     * @param EE_Request $request
+     * @param RequestInterface $request
      */
-    public function __construct(EE_Request $request)
+    public function __construct(RequestInterface $request)
     {
         $this->request = $request;
     }
 
 
     /**
-     * on the first call  to this method, it checks the EE_Request_Handler for a "route"
+     * on the first call  to this method, it checks the Request for a "route"
      * on subsequent calls to this method,
-     * instead of checking the EE_Request_Handler for a route, it checks the previous routes array,
+     * instead of checking the Request for a route, it checks the previous routes array,
      * and checks if the last called route has any forwarding routes registered for it
      *
      * @param WP_Query $WP_Query
@@ -73,7 +74,7 @@ final class EE_Module_Request_Router implements InterminableInterface
                 if (isset(self::$_previous_routes[ $current_route ])) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'An error occurred. The %s route has already been called, and therefore can not be forwarded to, because an infinite loop would be created and break the interweb.',
                                 'event_espresso'
                             ),
@@ -97,11 +98,11 @@ final class EE_Module_Request_Router implements InterminableInterface
                 // check request for module route
                 $route_found = $uses_wildcards
                     ? $this->request->matches($key)
-                    : $this->request->is_set($key);
+                    : $this->request->requestParamIsSet($key);
                 if ($route_found) {
                     $current_route = $uses_wildcards
                         ? $this->request->getMatch($key)
-                        : $this->request->get($key);
+                        : $this->request->getRequestParam($key);
                     $current_route = sanitize_text_field($current_route);
                     if ($current_route) {
                         $current_route = array($key, $current_route);
@@ -125,7 +126,7 @@ final class EE_Module_Request_Router implements InterminableInterface
      *
      * @param string $key
      * @param string $current_route
-     * @return mixed EED_Module | boolean
+     * @return EED_Module|object|boolean|null
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -136,7 +137,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         // verify result was returned
         if (empty($module_method)) {
             $msg = sprintf(
-                __('The requested route %s could not be mapped to any registered modules.', 'event_espresso'),
+                esc_html__('The requested route %s could not be mapped to any registered modules.', 'event_espresso'),
                 $current_route
             );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
@@ -144,7 +145,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         }
         // verify that result is an array
         if (! is_array($module_method)) {
-            $msg = sprintf(__('The %s  route has not been properly registered.', 'event_espresso'), $current_route);
+            $msg = sprintf(esc_html__('The %s  route has not been properly registered.', 'event_espresso'), $current_route);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
@@ -153,7 +154,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         // verify that a class method was registered properly
         if (! isset($module_method[1])) {
             $msg = sprintf(
-                __('A class method for the %s  route has not been properly registered.', 'event_espresso'),
+                esc_html__('A class method for the %s  route has not been properly registered.', 'event_espresso'),
                 $current_route
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
@@ -163,14 +164,14 @@ final class EE_Module_Request_Router implements InterminableInterface
         $method = $module_method[1];
         // verify that class exists
         if (! class_exists($module_name)) {
-            $msg = sprintf(__('The requested %s class could not be found.', 'event_espresso'), $module_name);
+            $msg = sprintf(esc_html__('The requested %s class could not be found.', 'event_espresso'), $module_name);
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
         // verify that method exists
         if (! method_exists($module_name, $method)) {
             $msg = sprintf(
-                __('The class method %s for the %s route is in invalid.', 'event_espresso'),
+                esc_html__('The class method %s for the %s route is in invalid.', 'event_espresso'),
                 $method,
                 $current_route
             );
@@ -187,14 +188,13 @@ final class EE_Module_Request_Router implements InterminableInterface
      *
      * @param string $module_name
      * @return EED_Module|object|null
-     * @throws ReflectionException
      */
     public static function module_factory($module_name)
     {
         if ($module_name === 'EED_Module') {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'EED_Module is an abstract parent class an can not be instantiated. Please provide a proper module name.',
                         'event_espresso'
                     ),
@@ -211,7 +211,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         // ensure that class is actually a module
         if (! $module instanceof EED_Module) {
             EE_Error::add_error(
-                sprintf(__('The requested %s module is not of the class EED_Module.', 'event_espresso'), $module_name),
+                sprintf(esc_html__('The requested %s module is not of the class EED_Module.', 'event_espresso'), $module_name),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -238,7 +238,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         if ($module instanceof EED_Module) {
             // and call whatever action the route was for
             try {
-                call_user_func(array($module, $method), $this->WP_Query);
+                $module->{$method}($this->WP_Query);
             } catch (EE_Error $e) {
                 $e->get_error();
                 return null;

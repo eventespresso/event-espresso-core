@@ -9,9 +9,12 @@ use EE_Secondary_Table;
 use EE_Table_Base;
 use EEM_Base;
 use EEM_CPT_Base;
+use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\CurrentPage;
 use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 use WP_Post;
@@ -27,6 +30,10 @@ use WP_Query;
  */
 class CptQueryModifier
 {
+    /**
+     * @var CurrentPage $current_page
+     */
+    protected $current_page;
 
     /**
      * @var string $post_type
@@ -91,7 +98,7 @@ class CptQueryModifier
      * @param string             $post_type
      * @param array              $cpt_details
      * @param WP_Query           $WP_Query
-     * @param EE_Request_Handler $request_handler
+     * @param CurrentPage $current_page
      * @param RequestInterface   $request
      * @param LoaderInterface    $loader
      * @throws EE_Error
@@ -100,13 +107,13 @@ class CptQueryModifier
         $post_type,
         array $cpt_details,
         WP_Query $WP_Query,
-        EE_Request_Handler $request_handler,
+        CurrentPage $current_page,
         RequestInterface $request,
         LoaderInterface $loader
     ) {
         $this->loader = $loader;
         $this->request = $request;
-        $this->request_handler = $request_handler;
+        $this->current_page = $current_page;
         $this->setWpQuery($WP_Query);
         $this->setPostType($post_type);
         $this->setCptDetails($cpt_details);
@@ -234,6 +241,9 @@ class CptQueryModifier
      */
     public function request()
     {
+        if (! $this->request_handler instanceof EE_Request_Handler) {
+            $this->request_handler = LoaderFactory::getLoader()->getShared('EE_Request_Handler');
+        }
         return $this->request_handler;
     }
 
@@ -277,7 +287,7 @@ class CptQueryModifier
             // if so then grab them, but we want the taxonomy name as the key
             $taxonomies = array_flip($this->cpt_details['args']['taxonomies']);
             // then grab the list of ALL taxonomies
-            /** @var \EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions
+            /** @var CustomTaxonomyDefinitions
              * $taxonomy_definitions
              */
             $taxonomy_definitions = $this->loader->getShared(
@@ -346,7 +356,7 @@ class CptQueryModifier
     protected function setAdditionalCptDetails()
     {
         // the post or category or term that is triggering EE
-        $this->cpt_details['espresso_page'] = $this->request_handler->is_espresso_page();
+        $this->cpt_details['espresso_page'] = $this->current_page->isEspressoPage();
         // requested post name
         $this->cpt_details['post_name'] = $this->request->getRequestParam('post_name');
         // add support for viewing 'private', 'draft', or 'pending' posts
@@ -407,7 +417,7 @@ class CptQueryModifier
         if (! $model instanceof EEM_Base) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The "%1$s" model could not be loaded.',
                         'event_espresso'
                     ),
@@ -513,7 +523,7 @@ class CptQueryModifier
         $CPT_class = $this->cpt_details['class_name'];
         // loop thru posts
         if (is_array($posts) && $this->model instanceof EEM_CPT_Base) {
-            foreach ($posts as $key => $post) {
+            foreach ($posts as $post) {
                 if ($post->post_type === $this->post_type) {
                     $post->{$CPT_class} = $this->model->instantiate_class_from_post_object($post);
                 }

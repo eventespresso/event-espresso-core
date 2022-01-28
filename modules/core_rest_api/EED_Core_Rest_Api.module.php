@@ -701,7 +701,7 @@ class EED_Core_Rest_Api extends EED_Module
                     'force' => [
                         'required'    => false,
                         'default'     => false,
-                        'description' => __(
+                        'description' => esc_html__(
                         // @codingStandardsIgnoreStart
                             'Whether to force toggle checkin, or to verify the registration status and allowed ticket uses',
                             // @codingStandardsIgnoreEnd
@@ -1177,7 +1177,7 @@ class EED_Core_Rest_Api extends EED_Module
         // they want to discover particular endpoints
         // also, we don't have access to the request so we have to just grab it from the superglobal
         $force_show_ee_namespace = ltrim(
-            EEH_Array::is_set($_REQUEST, 'force_show_ee_namespace', ''),
+            EED_Core_Rest_Api::getRequest()->getRequestParam('force_show_ee_namespace'),
             '/'
         );
         foreach (EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls) {
@@ -1273,7 +1273,7 @@ class EED_Core_Rest_Api extends EED_Module
                 $versions_served[ $key_versioned_endpoint ] = false;
             } elseif (
                 version_compare($key_versioned_endpoint, $lowest_compatible_version, '>=')
-                      && version_compare($key_versioned_endpoint, EED_Core_Rest_Api::core_version(), '<')
+                && version_compare($key_versioned_endpoint, EED_Core_Rest_Api::core_version(), '<')
             ) {
                 // include, but hide, previous versions which are still supported
                 $versions_served[ $key_versioned_endpoint ] = true;

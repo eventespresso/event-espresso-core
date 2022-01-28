@@ -17,7 +17,7 @@ class Your_Organization_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Your Organization Tour', 'event_espresso');
+        $this->_label = esc_html__('Your Organization Tour', 'event_espresso');
         $this->_slug = 'your-organization-joyride';
     }
 
@@ -92,9 +92,9 @@ class Your_Organization_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Organization Settings', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Organization Settings', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Your Organization page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -105,7 +105,7 @@ class Your_Organization_Help_Tour extends EE_Help_Tour
     protected function _site_license_key_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Enter your support license key here to enable one-click updates.',
                    'event_espresso'
                ) . '</p>';
@@ -114,7 +114,7 @@ class Your_Organization_Help_Tour extends EE_Help_Tour
     protected function _contact_information_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'You can change your business / organization information below. Be sure to keep this information updated as it is used in other areas of the site. Adjusting the country option here will update your currency settings. More options are available in the Countries tab.',
                    'event_espresso'
                ) . '</p>';
@@ -122,18 +122,18 @@ class Your_Organization_Help_Tour extends EE_Help_Tour
 
     protected function _upload_image_stop()
     {
-        return '<p>' . __('Add a logo. This can be used for invoices and tickets.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Add a logo. This can be used for invoices and tickets.', 'event_espresso') . '</p>';
     }
 
     protected function _organization_facebook_stop()
     {
-        return '<p>' . __('Add links to various social media networks.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Add links to various social media networks.', 'event_espresso') . '</p>';
     }
 
     protected function _ueip_option_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Help us to help you! Sign up to the User eXperience Improvement Program and send us anonymous data that will help us improve Event Espresso.',
                    'event_espresso'
                ) . '</p>';
@@ -142,7 +142,7 @@ class Your_Organization_Help_Tour extends EE_Help_Tour
     protected function _end_tour_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'You are almost done updating Your Organization information. Click on the Save button to save changes and then go to the Payment Methods screen so you can setup a payment gateway.',
                    'event_espresso'
                ) . '</p>';

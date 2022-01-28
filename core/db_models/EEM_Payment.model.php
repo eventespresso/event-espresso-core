@@ -61,28 +61,28 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment
     protected function __construct($timezone)
     {
 
-        $this->singular_item = __('Payment', 'event_espresso');
-        $this->plural_item = __('Payments', 'event_espresso');
+        $this->singular_item = esc_html__('Payment', 'event_espresso');
+        $this->plural_item = esc_html__('Payments', 'event_espresso');
 
         $this->_tables = array(
             'Payment' => new EE_Primary_Table('esp_payment', 'PAY_ID')
         );
         $this->_fields = array(
             'Payment' => array(
-                'PAY_ID' => new EE_Primary_Key_Int_Field('PAY_ID', __('Payment ID', 'event_espresso')),
-                'TXN_ID' => new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID', 'event_espresso'), false, 0, 'Transaction'),
-                'STS_ID' => new EE_Foreign_Key_String_Field('STS_ID', __('Status ID', 'event_espresso'), false, EEM_Payment::status_id_failed, 'Status'),
-                'PAY_timestamp' => new EE_Datetime_Field('PAY_timestamp', __('Timestamp of when payment was attempted', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
-                'PAY_source' => new EE_All_Caps_Text_Field('PAY_source', __('User-friendly description of payment', 'event_espresso'), false, 'CART'),
-                'PAY_amount' => new EE_Money_Field('PAY_amount', __('Amount Payment should be for', 'event_espresso'), false, 0),
-                'PMD_ID' => new EE_Foreign_Key_Int_Field('PMD_ID', __("Payment Method ID", 'event_espresso'), false, null, 'Payment_Method'),
-                'PAY_gateway_response' => new EE_Plain_Text_Field('PAY_gateway_response', __('Response from Gateway about the payment', 'event_espresso'), false, ''),
-                'PAY_txn_id_chq_nmbr' => new EE_Plain_Text_Field('PAY_txn_id_chq_nmbr', __('Gateway Transaction ID or Cheque Number', 'event_espresso'), true, ''),
-                'PAY_po_number' => new EE_Plain_Text_Field('PAY_po_number', __('Purchase or Sales Number', 'event_espresso'), true, ''),
-                'PAY_extra_accntng' => new EE_Simple_HTML_Field('PAY_extra_accntng', __('Extra Account Info', 'event_espresso'), true, ''),
-                'PAY_details' => new EE_Serialized_Text_Field('PAY_details', __('Full Gateway response about payment', 'event_espresso'), true, ''),
-                'PAY_redirect_url' => new EE_Plain_Text_Field('PAY_redirect_url', __("Redirect URL", 'event_espresso'), true),
-                'PAY_redirect_args' => new EE_Serialized_Text_Field('PAY_redirect_args', __("Key-Value POST vars to send along with redirect", 'event_espresso'), true)
+                'PAY_ID' => new EE_Primary_Key_Int_Field('PAY_ID', esc_html__('Payment ID', 'event_espresso')),
+                'TXN_ID' => new EE_Foreign_Key_Int_Field('TXN_ID', esc_html__('Transaction ID', 'event_espresso'), false, 0, 'Transaction'),
+                'STS_ID' => new EE_Foreign_Key_String_Field('STS_ID', esc_html__('Status ID', 'event_espresso'), false, EEM_Payment::status_id_failed, 'Status'),
+                'PAY_timestamp' => new EE_Datetime_Field('PAY_timestamp', esc_html__('Timestamp of when payment was attempted', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
+                'PAY_source' => new EE_All_Caps_Text_Field('PAY_source', esc_html__('User-friendly description of payment', 'event_espresso'), false, 'CART'),
+                'PAY_amount' => new EE_Money_Field('PAY_amount', esc_html__('Amount Payment should be for', 'event_espresso'), false, 0),
+                'PMD_ID' => new EE_Foreign_Key_Int_Field('PMD_ID', esc_html__("Payment Method ID", 'event_espresso'), false, null, 'Payment_Method'),
+                'PAY_gateway_response' => new EE_Plain_Text_Field('PAY_gateway_response', esc_html__('Response from Gateway about the payment', 'event_espresso'), false, ''),
+                'PAY_txn_id_chq_nmbr' => new EE_Plain_Text_Field('PAY_txn_id_chq_nmbr', esc_html__('Gateway Transaction ID or Cheque Number', 'event_espresso'), true, ''),
+                'PAY_po_number' => new EE_Plain_Text_Field('PAY_po_number', esc_html__('Purchase or Sales Number', 'event_espresso'), true, ''),
+                'PAY_extra_accntng' => new EE_Simple_HTML_Field('PAY_extra_accntng', esc_html__('Extra Account Info', 'event_espresso'), true, ''),
+                'PAY_details' => new EE_Serialized_Text_Field('PAY_details', esc_html__('Full Gateway response about payment', 'event_espresso'), true, ''),
+                'PAY_redirect_url' => new EE_Plain_Text_Field('PAY_redirect_url', esc_html__("Redirect URL", 'event_espresso'), true),
+                'PAY_redirect_args' => new EE_Serialized_Text_Field('PAY_redirect_args', esc_html__("Key-Value POST vars to send along with redirect", 'event_espresso'), true)
             )
         );
         $this->_model_relations = array(
@@ -169,7 +169,7 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment
         $timezone = empty($timezone) ? EEH_DTT_Helper::get_timezone() : $timezone;
         // if $start_date or $end date, verify $format is included.
         if (( ! empty($start_date) || ! empty($end_date) ) && empty($format)) {
-            throw new EE_Error(__('You included a start date and/or a end date for this method but did not include a format string.  The format string is needed for setting up the query', 'event_espresso'));
+            throw new EE_Error(esc_html__('You included a start date and/or a end date for this method but did not include a format string.  The format string is needed for setting up the query', 'event_espresso'));
         }
         $now = new DateTime('now');
         // setup timezone objects once

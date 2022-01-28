@@ -116,25 +116,25 @@ class EED_Event_Single extends EED_Module
         $template_parts = new EE_Template_Part_Manager();
         $template_parts->add_template_part(
             'tickets',
-            __('Ticket Selector', 'event_espresso'),
+            esc_html__('Ticket Selector', 'event_espresso'),
             'content-espresso_events-tickets.php',
             $config->display_order_tickets
         );
         $template_parts->add_template_part(
             'datetimes',
-            __('Dates and Times', 'event_espresso'),
+            esc_html__('Dates and Times', 'event_espresso'),
             'content-espresso_events-datetimes.php',
             $config->display_order_datetimes
         );
         $template_parts->add_template_part(
             'event',
-            __('Event Description', 'event_espresso'),
+            esc_html__('Event Description', 'event_espresso'),
             'content-espresso_events-details.php',
             $config->display_order_event
         );
         $template_parts->add_template_part(
             'venue',
-            __('Venue Information', 'event_espresso'),
+            esc_html__('Venue Information', 'event_espresso'),
             'content-espresso_events-venues.php',
             $config->display_order_venue
         );

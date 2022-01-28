@@ -17,10 +17,10 @@ class EE_Pending_Approval_message_type extends EE_Registration_Base_message_type
     public function __construct()
     {
         $this->name = 'pending_approval';
-        $this->description = __('This message type is used for recipients who have Pending Payment registration status.', 'event_espresso');
+        $this->description = esc_html__('This message type is used for recipients who have Pending Payment registration status.', 'event_espresso');
         $this->label = array(
-            'singular' => __('registration pending payment', 'event_espresso'),
-            'plural' => __('registrations pending payment', 'event_espresso')
+            'singular' => esc_html__('registration pending payment', 'event_espresso'),
+            'plural' => esc_html__('registrations pending payment', 'event_espresso')
             );
 
         $this->_master_templates = array(
@@ -42,19 +42,19 @@ class EE_Pending_Approval_message_type extends EE_Registration_Base_message_type
     protected function _set_contexts()
     {
         $this->_context_label = array(
-            'label' => __('recipient', 'event_espresso'),
-            'plural' => __('recipients', 'event_espresso'),
-            'description' => __('Recipient\'s are who will receive the template.  You may want different pending approval details sent out depending on who the recipient is.  To "turn off" a recipient from receiving message, simply remove any content from the "to" field in the template.', 'event_espresso')
+            'label' => esc_html__('recipient', 'event_espresso'),
+            'plural' => esc_html__('recipients', 'event_espresso'),
+            'description' => esc_html__('Recipient\'s are who will receive the template.  You may want different pending approval details sent out depending on who the recipient is.  To "turn off" a recipient from receiving message, simply remove any content from the "to" field in the template.', 'event_espresso')
             );
 
         $this->_contexts = array(
             'admin' => array(
-                'label' => __('Event Admin', 'event_espresso'),
-                'description' => __('This template is what event administrators will receive when a message is sent to registrants with the pending payment registration status.', 'event_espresso')
+                'label' => esc_html__('Event Admin', 'event_espresso'),
+                'description' => esc_html__('This template is what event administrators will receive when a message is sent to registrants with the pending payment registration status.', 'event_espresso')
                 ),
             'primary_attendee' => array(
-                'label' => __('Primary Registrant', 'event_espresso'),
-                'description' => __('This template is what the primary registrant (the person who completed the initial transaction) will receive on when their registration status is pending payment.', 'event_espresso')
+                'label' => esc_html__('Primary Registrant', 'event_espresso'),
+                'description' => esc_html__('This template is what the primary registrant (the person who completed the initial transaction) will receive on when their registration status is pending payment.', 'event_espresso')
                 )
             );
     }

@@ -237,7 +237,7 @@ class EE_Email_messenger extends EE_messenger
                 'required'   => false,
                 'validation' => false,
                 'format'     => '%s',
-                'value'      => sprintf(__('Test email sent from %s', 'event_espresso'), get_bloginfo('name')),
+                'value'      => sprintf(esc_html__('Test email sent from %s', 'event_espresso'), get_bloginfo('name')),
                 'default'    => '',
                 'css_class'  => '',
             ),
@@ -646,7 +646,7 @@ class EE_Email_messenger extends EE_messenger
         $settings = parent::get_existing_test_settings();
         // override subject if present because we always want it to be fresh.
         if (is_array($settings) && ! empty($settings['subject'])) {
-            $settings['subject'] = sprintf(__('Test email sent from %s', 'event_espresso'), get_bloginfo('name'));
+            $settings['subject'] = sprintf(esc_html__('Test email sent from %s', 'event_espresso'), get_bloginfo('name'));
         }
         return $settings;
     }

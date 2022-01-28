@@ -5,6 +5,10 @@ namespace EventEspresso\tests\testcases\core\services\request\files;
 use EventEspresso\core\services\request\files\FilesDataHandler;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
 
 /**
  * Class FilesDataHandlerTest
@@ -20,19 +24,29 @@ use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
  */
 class FilesDataHandlerTest extends EspressoPHPUnitFrameworkTestCase
 {
+
+    /**
+     * @param array $get
+     * @param array $post
+     * @param array $cookies
+     * @param array $server
+     * @param array $files
+     * @return Request
+     */
+    private function getRequest(array $get = [], array $post = [], array $cookies = [], array $server = [], array $files = [])
+    {
+        $request_params = new RequestParams(new RequestSanitizer(), $get, $post);
+        $server_params  = new ServerParams(new ServerSanitizer(), $server);
+        return new Request($request_params, $server_params, $cookies, $files);
+    }
+
+
     /**
      * @since 4.9.80.p
      */
     public function testGetOrganizedFilesEmptyArray()
     {
-        $request = new Request(
-            [],
-            [],
-            [],
-            [],
-            []
-        );
-        $files_data_handler = new FilesDataHandler($request);
+        $files_data_handler = new FilesDataHandler($this->getRequest());
         $this->assertNull($files_data_handler->getFileObject('doesnt-exist'));
     }
 
@@ -41,7 +55,7 @@ class FilesDataHandlerTest extends EspressoPHPUnitFrameworkTestCase
      */
     public function testGetOrganizedFiles2dArray()
     {
-        $request = new Request(
+        $request = $this->getRequest(
             [],
             [],
             [],
@@ -71,7 +85,7 @@ class FilesDataHandlerTest extends EspressoPHPUnitFrameworkTestCase
      */
     public function testGetOrganizedFiles3dArray()
     {
-        $request = new Request(
+        $request = $this->getRequest(
             [],
             [],
             [],
@@ -127,7 +141,7 @@ class FilesDataHandlerTest extends EspressoPHPUnitFrameworkTestCase
      */
     public function testGetOrganizedFiles2dAnd3dArray()
     {
-        $request = new Request(
+        $request = $this->getRequest(
             [],
             [],
             [],
@@ -185,7 +199,7 @@ class FilesDataHandlerTest extends EspressoPHPUnitFrameworkTestCase
      */
     public function testGetOrganizedFiles4dArray()
     {
-        $request = new Request(
+        $request = $this->getRequest(
             [],
             [],
             [],

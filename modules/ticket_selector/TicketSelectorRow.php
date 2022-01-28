@@ -7,6 +7,7 @@ use EE_Error;
 use EE_Ticket;
 use EEH_HTML;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use ReflectionException;
 
 /**
  * Class TicketSelectorRow
@@ -19,88 +20,95 @@ abstract class TicketSelectorRow
 {
 
     /**
-     * @var EE_Ticket $ticket
+     * @var EE_Ticket
      */
     protected $ticket;
 
     /**
-     * @var int $total_tickets
+     * @var int
      */
     protected $total_tickets;
 
     /**
-     * @var int $max_attendees
+     * @var int
      */
     protected $max_attendees;
 
     /**
-     * @var string $date_format
+     * @var string
      */
     protected $date_format;
 
     /**
-     * @var int $EVT_ID
+     * @var int
      */
     protected $EVT_ID;
 
     /**
-     * @var string $event_status
+     * @var string
      */
     protected $event_status;
 
     /**
-     * @var boolean $required_ticket_sold_out
+     * @var boolean|string
      */
     protected $required_ticket_sold_out;
 
     /**
-     * @var string $ticket_status_display
+     * @var string
      */
     protected $ticket_status_display;
 
     /**
-     * @var int $max
+     * @var int
      */
     protected $max = 0;
 
     /**
-     * @var int $min
+     * @var int
      */
     protected $min = 0;
 
     /**
-     * @var float $ticket_price
+     * @var float
      */
     protected $ticket_price = 0.00;
 
     /**
-     * @var bool $ticket_bundle
+     * @var bool
      */
     protected $ticket_bundle = false;
 
     /**
-     * @var string $ticket_status_id
+     * @var string
      */
     protected $ticket_status_id = EE_Ticket::sold_out;
 
     /**
-     * @var string $ticket_status_html
+     * @var string
      */
     protected $ticket_status_html = 'ticket-sales-sold-out';
 
     /**
-     * @var string $status_class
+     * @var string
      */
     protected $status_class = 'ticket-sales-sold-out lt-grey-text';
 
+    /**
+     * used as an alternate way to indicate that a ticket is not available for sale
+     *
+     * @var bool
+     */
+    protected $is_on_sale = true;
+
 
     /**
-     * @param EE_Ticket $ticket
-     * @param int       $max_attendees
-     * @param string    $date_format
-     * @param string    $event_status
-     * @param bool      $required_ticket_sold_out
-     * @param int       $total_tickets
+     * @param EE_Ticket      $ticket
+     * @param int            $max_attendees
+     * @param string         $date_format
+     * @param string         $event_status
+     * @param boolean|string $required_ticket_sold_out
+     * @param int            $total_tickets
      * @throws EE_Error
      * @throws UnexpectedEntityException
      */
@@ -196,6 +204,7 @@ abstract class TicketSelectorRow
      *
      * @param int $remaining
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function setTicketStatusDisplay($remaining)
     {
@@ -229,7 +238,7 @@ abstract class TicketSelectorRow
         return EEH_HTML::span(
             apply_filters(
                 'FHEE__ticket_selector_chart_template__ticket_closed_msg',
-                __('Closed', 'event_espresso')
+                esc_html__('Closed', 'event_espresso')
             ),
             '',
             'sold-out'
@@ -245,7 +254,7 @@ abstract class TicketSelectorRow
         return EEH_HTML::span(
             apply_filters(
                 'FHEE__ticket_selector_chart_template__ticket_sold_out_msg',
-                __('Sold&nbsp;Out', 'event_espresso')
+                esc_html__('Sold&nbsp;Out', 'event_espresso')
             ),
             '',
             'sold-out'
@@ -257,6 +266,7 @@ abstract class TicketSelectorRow
      * ticketsSalesPending
      *
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function ticketsSalesPending()
     {
@@ -264,7 +274,7 @@ abstract class TicketSelectorRow
             EEH_HTML::span(
                 apply_filters(
                     'FHEE__ticket_selector_chart_template__ticket_goes_on_sale_msg',
-                    __('Goes&nbsp;On&nbsp;Sale', 'event_espresso')
+                    esc_html__('Goes&nbsp;On&nbsp;Sale', 'event_espresso')
                 ),
                 '',
                 'ticket-pending'
@@ -296,7 +306,7 @@ abstract class TicketSelectorRow
             EEH_HTML::span(
                 apply_filters(
                     'FHEE__ticket_selector_chart_template__ticket_not_available_msg',
-                    __('Not Available', 'event_espresso')
+                    esc_html__('Not Available', 'event_espresso')
                 ),
                 '',
                 'archived-ticket small-text'
@@ -373,7 +383,7 @@ abstract class TicketSelectorRow
      */
     protected function getFilteredRowContents()
     {
-        return apply_filters(
+        $filtered_row_content = apply_filters(
             'FHEE__ticket_selector_chart_template__do_ticket_inside_row',
             false,
             $this->ticket,
@@ -386,5 +396,35 @@ abstract class TicketSelectorRow
             $this->status_class,
             $this
         );
+        // if the ticket row html is overridden but does NOT contain some kind of input...
+        if (
+            $filtered_row_content !== false
+            && strpos($filtered_row_content, '<input') === false
+            && strpos($filtered_row_content, '<select') === false
+        ) {
+            // then mark the ticket as not on sale
+            $this->setIsOnSale(false);
+        }
+        return $filtered_row_content;
+    }
+
+
+    /**
+     * @return bool
+     * @since 4.10.23.p
+     */
+    public function isOnSale()
+    {
+        return $this->is_on_sale;
+    }
+
+
+    /**
+     * @param bool $is_on_sale
+     * @since 4.10.23.p
+     */
+    public function setIsOnSale($is_on_sale = true)
+    {
+        $this->is_on_sale = filter_var($is_on_sale, FILTER_VALIDATE_BOOLEAN);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * Class EE_SPCO_Reg_Step
  * Description
@@ -99,7 +101,7 @@ abstract class EE_SPCO_Reg_Step
      * @access public
      * @var array $_valid_data
      */
-    protected $_valid_data = array();
+    protected $_valid_data = [];
 
     /**
      *    $reg_form - the registration form for this step
@@ -116,6 +118,11 @@ abstract class EE_SPCO_Reg_Step
      * @var EE_Checkout $checkout
      */
     public $checkout;
+
+    /**
+     * @var RequestInterface $request
+     */
+    protected $request;
 
 
     /**
@@ -137,7 +144,7 @@ abstract class EE_SPCO_Reg_Step
 
 
     /**
-     * @return string
+     * @return EE_Form_Section_Proper
      */
     abstract public function generate_reg_form();
 
@@ -226,12 +233,12 @@ abstract class EE_SPCO_Reg_Step
         } elseif ($this->checkout->next_step instanceof EE_SPCO_Reg_Step) {
             if ($this->checkout->revisit) {
                 $this->_submit_button_text = sprintf(
-                    __('Update %s', 'event_espresso'),
+                    esc_html__('Update %s', 'event_espresso'),
                     $this->checkout->current_step->name()
                 );
             } else {
                 $this->_submit_button_text = sprintf(
-                    __('Proceed to %s', 'event_espresso'),
+                    esc_html__('Proceed to %s', 'event_espresso'),
                     $this->checkout->next_step->name()
                 );
             }
@@ -268,7 +275,7 @@ abstract class EE_SPCO_Reg_Step
      */
     public function is_final_step()
     {
-        return $this instanceof EE_SPCO_Reg_Step_Finalize_Registration ? true : false;
+        return $this instanceof EE_SPCO_Reg_Step_Finalize_Registration;
     }
 
 
@@ -372,6 +379,8 @@ abstract class EE_SPCO_Reg_Step
 
     /**
      * @return array
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function valid_data()
     {
@@ -411,7 +420,7 @@ abstract class EE_SPCO_Reg_Step
      */
     public function reg_step_url($action = '')
     {
-        $query_args = array('step' => $this->slug());
+        $query_args = ['step' => $this->slug()];
         if (! empty($action)) {
             $query_args['action'] = $action;
         }
@@ -433,38 +442,38 @@ abstract class EE_SPCO_Reg_Step
      * creates the default hidden inputs section
      *
      * @return EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function reg_step_hidden_inputs()
     {
         // hidden inputs for admin registrations
         if ($this->checkout->admin_request) {
             return new EE_Form_Section_Proper(
-                array(
+                [
                     'layout_strategy' => new EE_Div_Per_Section_Layout(),
                     'html_id'         => 'ee-' . $this->slug() . '-hidden-inputs',
-                    'subsections'     => array(
+                    'subsections'     => [
                         'next_step' => new EE_Fixed_Hidden_Input(
-                            array(
+                            [
                                 'html_name' => 'next_step',
                                 'html_id'   => 'spco-' . $this->slug() . '-next-step',
                                 'default'   => $this->checkout->next_step instanceof EE_SPCO_Reg_Step
                                     ? $this->checkout->next_step->slug()
                                     : '',
-                            )
+                            ]
                         ),
-                    ),
-                )
+                    ],
+                ]
             );
         }
         // hidden inputs for frontend registrations
         return new EE_Form_Section_Proper(
-            array(
+            [
                 'layout_strategy' => new EE_Div_Per_Section_Layout(),
                 'html_id'         => 'ee-' . $this->slug() . '-hidden-inputs',
-                'subsections'     => array(
+                'subsections'     => [
                     'action'         => new EE_Fixed_Hidden_Input(
-                        array(
+                        [
                             'html_name' => 'action',
                             'html_id'   => 'spco-' . $this->slug() . '-action',
                             'default'   => apply_filters(
@@ -474,33 +483,33 @@ abstract class EE_SPCO_Reg_Step
                                     : 'update_reg_step',
                                 $this
                             ),
-                        )
+                        ]
                     ),
                     'next_step'      => new EE_Fixed_Hidden_Input(
-                        array(
+                        [
                             'html_name' => 'next_step',
                             'html_id'   => 'spco-' . $this->slug() . '-next-step',
                             'default'   => $this->checkout->next_step instanceof EE_SPCO_Reg_Step
                                 ? $this->checkout->next_step->slug()
                                 : '',
-                        )
+                        ]
                     ),
                     'e_reg_url_link' => new EE_Fixed_Hidden_Input(
-                        array(
+                        [
                             'html_name' => 'e_reg_url_link',
                             'html_id'   => 'spco-reg_url_link',
                             'default'   => $this->checkout->reg_url_link,
-                        )
+                        ]
                     ),
                     'revisit'        => new EE_Fixed_Hidden_Input(
-                        array(
+                        [
                             'html_name' => 'revisit',
                             'html_id'   => 'spco-revisit',
                             'default'   => $this->checkout->revisit,
-                        )
+                        ]
                     ),
-                ),
-            )
+                ],
+            ]
         );
     }
 
@@ -511,24 +520,24 @@ abstract class EE_SPCO_Reg_Step
      * @param array $actions
      * @return void
      */
-    public function generate_reg_form_for_actions($actions = array())
+    public function generate_reg_form_for_actions($actions = [])
     {
-        $actions = array_merge(
-            array(
+        $actions                           = array_merge(
+            [
                 'generate_reg_form',
                 'display_spco_reg_step',
                 'process_reg_step',
                 'update_reg_step',
-            ),
+            ],
             $actions
         );
-        $this->checkout->generate_reg_form = in_array($this->checkout->action, $actions, true) ? true : false;
+        $this->checkout->generate_reg_form = in_array($this->checkout->action, $actions, true);
     }
 
 
     /**
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function display_reg_form()
     {
@@ -536,7 +545,7 @@ abstract class EE_SPCO_Reg_Step
         if ($this->reg_form instanceof EE_Form_Section_Proper) {
             do_action('AHEE__EE_SPCO_Reg_Step__display_reg_form__reg_form', $this->reg_form, $this);
             $html .= ! $this->checkout->admin_request ? $this->reg_form->form_open($this->reg_step_url()) : '';
-            if (EE_Registry::instance()->REQ->ajax) {
+            if ($this->request->isAjax()) {
                 $this->reg_form->localize_validation_rules();
                 $this->checkout->json_response->add_validation_rules(EE_Form_Section_Proper::js_localization());
             }
@@ -552,7 +561,7 @@ abstract class EE_SPCO_Reg_Step
      * div_class - returns nothing for current step, but a css class of "hidden" for others
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function reg_step_submit_button()
     {
@@ -568,19 +577,19 @@ abstract class EE_SPCO_Reg_Step
         );
         $html = ob_get_clean();
         // generate submit button
-        $sbmt_btn = new EE_Submit_Input(
-            array(
+        $submit_btn = new EE_Submit_Input(
+            [
                 'html_name'             => 'spco-go-to-step-' . $this->checkout->next_step->slug(),
                 'html_id'               => 'spco-go-to-step-' . $this->checkout->next_step->slug(),
                 'html_class'            => 'spco-next-step-btn',
                 'other_html_attributes' => ' rel="' . $this->slug() . '"',
                 'default'               => $this->submit_button_text(),
-            )
+            ]
         );
-        $sbmt_btn->set_button_css_attributes(true, 'large');
-        $sbmt_btn_html = $sbmt_btn->get_html_for_input();
-        $html .= EEH_HTML::div(
-            apply_filters('FHEE__EE_SPCO_Reg_Step__reg_step_submit_button__sbmt_btn_html', $sbmt_btn_html, $this),
+        $submit_btn->set_button_css_attributes(true, 'large');
+        $submit_btn_html = $submit_btn->get_html_for_input();
+        $html            .= EEH_HTML::div(
+            apply_filters('FHEE__EE_SPCO_Reg_Step__reg_step_submit_button__sbmt_btn_html', $submit_btn_html, $this),
             'spco-' . $this->slug() . '-whats-next-buttons-dv',
             'spco-whats-next-buttons'
         );
@@ -606,7 +615,7 @@ abstract class EE_SPCO_Reg_Step
      */
     public function edit_lnk_url()
     {
-        return add_query_arg(array('step' => $this->slug()), $this->checkout->reg_page_base_url);
+        return add_query_arg(['step' => $this->slug()], $this->checkout->reg_page_base_url);
     }
 
 
@@ -625,7 +634,8 @@ abstract class EE_SPCO_Reg_Step
      * update_checkout with changes that have been made to the cart
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function update_checkout()
     {
@@ -646,6 +656,15 @@ abstract class EE_SPCO_Reg_Step
     public function __sleep()
     {
         // remove the reg form and the checkout
-        return array_diff(array_keys(get_object_vars($this)), array('reg_form', 'checkout'));
+        return array_diff(array_keys(get_object_vars($this)), ['reg_form', 'checkout']);
+    }
+
+
+    /**
+     * @param RequestInterface $request
+     */
+    public function setRequest(RequestInterface $request)
+    {
+        $this->request = $request;
     }
 }

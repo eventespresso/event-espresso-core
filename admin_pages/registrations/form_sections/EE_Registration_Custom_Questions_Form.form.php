@@ -2,6 +2,8 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  *
@@ -24,10 +26,13 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
      */
     protected $_registration = null;
 
+
     /**
      *
      * @param EE_Registration $reg
-     * @param array $options
+     * @param array           $options
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct(EE_Registration $reg, $options = array())
     {
@@ -64,7 +69,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
     {
         $reg = $this->get_registration();
         if (! $reg instanceof EE_Registration) {
-            throw new EE_Error(__('We cannot build the registration custom questions form because there is no registration set on it yet', 'event_espresso'));
+            throw new EE_Error(esc_html__('We cannot build the registration custom questions form because there is no registration set on it yet', 'event_espresso'));
         }
         // we want to get all their question groups
         $question_groups = EEM_Question_Group::instance()->get_all(
@@ -95,13 +100,13 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
     }
 
 
-
     /**
      *
      * @param EE_Question_Group $question_group
      * @param EE_Registration   $registration
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function build_subform_from_question_group($question_group, $registration)
     {
@@ -109,7 +114,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
             ! $question_group instanceof EE_Question_Group ||
             ! $registration instanceof EE_Registration
         ) {
-            throw new EE_Error(__('A valid question group and registration must be passed to EE_Registration_Custom_Question_Form', 'event_espresso'));
+            throw new EE_Error(esc_html__('A valid question group and registration must be passed to EE_Registration_Custom_Question_Form', 'event_espresso'));
         }
         $parts_of_subsection = array(
             'title' => new EE_Form_Section_HTML(
@@ -144,11 +149,11 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
                 EEH_HTML::table(
                     EEH_HTML::tr(
                         '<th/><td class="reg-admin-edit-attendee-question-td"><a class="reg-admin-edit-attendee-question-lnk" href="#" aria-label="' . esc_attr__('click to edit question', 'event_espresso') . '">
-		  			<span class="reg-admin-edit-question-group-spn">' . __('edit the above question group', 'event_espresso') . '</span>
+		  			<span class="reg-admin-edit-question-group-spn">' . esc_html__('edit the above question group', 'event_espresso') . '</span>
 		  			<div class="dashicons dashicons-edit"></div>
 		  		</a></td>'
                     ) .
-                    EEH_HTML::no_row('', 2)
+                    EEH_HTML::no_row()
                 )
             );
         }
@@ -160,11 +165,14 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
         );
     }
 
+
     /**
      * Overrides parent so if inputs were disabled, we leave those with their defaults
      * from the answers in the DB
+     *
      * @param array $req_data like $_POST
      * @return void
+     * @throws EE_Error
      */
     protected function _normalize($req_data)
     {
@@ -182,17 +190,21 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
     }
 
 
-
     /**
      * Performs validation on this form section and its subsections. For each subsection,
-     * calls _validate_{subsection_name} on THIS form (if the function exists) and passes it the subsection, then calls _validate on that subsection.
-     * If you need to perform validation on the form as a whole (considering multiple) you would be best to override this _validate method,
-     * calling parent::_validate() first.
+     * calls _validate_{subsection_name} on THIS form (if the function exists) and passes it the subsection, then calls
+     * _validate on that subsection. If you need to perform validation on the form as a whole (considering multiple)
+     * you would be best to override this _validate method, calling parent::_validate() first.
+     *
+     * @throws EE_Error
      */
     protected function _validate()
     {
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $form_data = $request->requestParams();
         foreach ($this->get_validatable_subsections() as $subsection_name => $subsection) {
-            if ($subsection->form_data_present_in(array_merge($_GET, $_POST))) {
+            if ($subsection->form_data_present_in($form_data)) {
                 if (method_exists($this, '_validate_' . $subsection_name)) {
                     call_user_func_array(array($this,'_validate_' . $subsection_name), array($subsection));
                 }

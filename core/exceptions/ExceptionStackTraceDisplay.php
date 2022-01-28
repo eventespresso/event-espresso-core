@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\exceptions;
 
+use EEH_File;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
@@ -59,7 +60,7 @@ class ExceptionStackTraceDisplay
         }
         // process trace info
         if (empty($trace)) {
-            $trace_details .= __(
+            $trace_details .= esc_html__(
                 'Sorry, but no trace information was available for this exception.',
                 'event_espresso'
             );
@@ -71,11 +72,11 @@ class ExceptionStackTraceDisplay
 					<th scope="col" align="right" style="width:2.5%;">#</th>
 					<th scope="col" align="right" style="width:3.5%;">Line</th>
 					<th scope="col" align="left" style="width:40%;">File</th>
-					<th scope="col" align="left">' . __('Class', 'event_espresso') . '->'
-                              . __(
-                                  'Method( arguments )',
-                                  'event_espresso'
-                              ) . '</th>
+					<th scope="col" align="left">
+					' . esc_html__('Class', 'event_espresso')
+                      . '->'
+                      . esc_html__('Method( arguments )', 'event_espresso') . '
+					</th>
 				</tr>';
             $last_on_stack = count($trace) - 1;
             // reverse array so that stack is in proper chronological order
@@ -107,7 +108,7 @@ class ExceptionStackTraceDisplay
                     $line = $exception->getLine() !== '' ? $exception->getLine() : $line;
                     $error_code = $this->generate_error_code($file, $trace['function'], $line);
                 }
-                $file = \EEH_File::standardise_directory_separators($file);
+                $file = EEH_File::standardise_directory_separators($file);
                 $nmbr = ! empty($nmbr) ? $nmbr : '&nbsp;';
                 $line = ! empty($line) ? $line : '&nbsp;';
                 $file = ! empty($file) ? $file : '&nbsp;';
@@ -161,7 +162,7 @@ class ExceptionStackTraceDisplay
 			<p class="ee-error-dev-msg-pg">
 				'
                        . sprintf(
-                           __('%1$sAn %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
+                           esc_html__('%1$sAn %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
                            '<strong class="ee-error-dev-msg-str">',
                            get_class($exception),
                            '</strong>  &nbsp; <span>',
@@ -177,13 +178,13 @@ class ExceptionStackTraceDisplay
                        . $time
                        . '">
 					'
-                       . __('click to view backtrace and class/method details', 'event_espresso')
+                       . esc_html__('click to view backtrace and class/method details', 'event_espresso')
                        . '
 				</a><br />
 				'
                        . $exception->getFile()
                        . sprintf(
-                           __('%1$s( line no: %2$s )%3$s', 'event_espresso'),
+                           esc_html__('%1$s( line no: %2$s )%3$s', 'event_espresso'),
                            ' &nbsp; <span class="small-text lt-grey-text">',
                            $exception->getLine(),
                            '</span>'
@@ -199,7 +200,7 @@ class ExceptionStackTraceDisplay
                 $output .= '
 				<div style="padding:3px; margin:0 0 1em; border:1px solid #999; background:#fff; border-radius:3px;">
 					<div style="padding:1em 2em; border:1px solid #999; background:#fcfcfc;">
-						<h3>' . __('Class Details', 'event_espresso') . '</h3>';
+						<h3>' . esc_html__('Class Details', 'event_espresso') . '</h3>';
                 $a = new ReflectionClass($class);
                 $output .= '
 						<pre>' . $a . '</pre>
@@ -224,7 +225,7 @@ class ExceptionStackTraceDisplay
             echo wp_json_encode(array('error' => $output));
             exit();
         }
-        echo $output;
+        echo $output; // already escaped
     }
 
 
@@ -413,9 +414,9 @@ class ExceptionStackTraceDisplay
 var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 /* ]]> */
 </script>
-<script src="' . includes_url() . 'js/jquery/jquery.js" type="text/javascript"></script>
-<script src="' . EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js' . '?ver=' . espresso_version() . '" type="text/javascript"></script>
-<script src="' . EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js' . '?ver=' . espresso_version() . '" type="text/javascript"></script>
+<script src="' . esc_url_raw(includes_url() . 'js/jquery/jquery.js') . '" type="text/javascript"></script>
+<script src="' . esc_url_raw(EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js' . '?ver=' . espresso_version()) . '" type="text/javascript"></script>
+<script src="' . esc_url_raw(EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js' . '?ver=' . espresso_version()) . '" type="text/javascript"></script>
 ';
         }
         return '';

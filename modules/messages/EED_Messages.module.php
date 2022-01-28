@@ -11,7 +11,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @package        Event Espresso
  * @subpackage     modules, messages
  * @author         Darren Ethier
- * ------------------------------------------------------------------------
+ * @method EED_Messages get_instance($module_name)
  */
 class EED_Messages extends EED_Module
 {
@@ -58,7 +58,9 @@ class EED_Messages extends EED_Module
 
 
     /**
-     * @return EED_Messages
+     * @return EED_Messages|EED_Module
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -192,12 +194,12 @@ class EED_Messages extends EED_Module
     {
         // ensure controller is loaded
         self::_load_controller();
-        $token = EE_Registry::instance()->REQ->get('token');
+        $token = self::getRequest()->getRequestParam('token');
         try {
             $mtg = new EE_Message_Generated_From_Token($token, 'html', self::$_message_resource_manager);
             self::$_MSG_PROCESSOR->generate_and_send_now($mtg);
         } catch (EE_Error $e) {
-            $error_msg = __(
+            $error_msg = esc_html__(
                 'Please note that a system message failed to send due to a technical issue.',
                 'event_espresso'
             );
@@ -222,7 +224,7 @@ class EED_Messages extends EED_Module
      */
     public function browser_error_trigger($WP)
     {
-        $token = EE_Registry::instance()->REQ->get('token');
+        $token = self::getRequest()->getRequestParam('token');
         if ($token) {
             $message = EEM_Message::instance()->get_one_by_token($token);
             if ($message instanceof EE_Message) {
@@ -259,7 +261,6 @@ class EED_Messages extends EED_Module
                 exit;
             }
         }
-        return;
     }
 
 
@@ -284,7 +285,7 @@ class EED_Messages extends EED_Module
             $message_to_generate = EE_Registry::instance()->load_lib('Message_To_Generate_From_Request');
             self::$_MSG_PROCESSOR->generate_and_send_now($message_to_generate);
         } catch (EE_Error $e) {
-            $error_msg = __(
+            $error_msg = esc_html__(
                 'Please note that a system message failed to send due to a technical issue.',
                 'event_espresso'
             );
@@ -315,9 +316,10 @@ class EED_Messages extends EED_Module
     public function run_cron()
     {
         self::_load_controller();
+        $request = self::getRequest();
         // get required vars
-        $cron_type = EE_Registry::instance()->REQ->get('type');
-        $transient_key = EE_Registry::instance()->REQ->get('key');
+        $cron_type = $request->getRequestParam('type');
+        $transient_key = $request->getRequestParam('key');
 
         // now let's verify transient, if not valid exit immediately
         if (! get_transient($transient_key)) {
@@ -344,7 +346,7 @@ class EED_Messages extends EED_Module
                 trigger_error(
                     esc_attr(
                         sprintf(
-                            __('There is no task corresponding to this route %s', 'event_espresso'),
+                            esc_html__('There is no task corresponding to this route %s', 'event_espresso'),
                             $cron_type
                         )
                     )
@@ -624,13 +626,12 @@ class EED_Messages extends EED_Module
         if (! $registration->is_primary_registrant()) {
             return false;
         }
+        $request = self::getRequest();
         // first we check if we're in admin and not doing front ajax
-        if (is_admin() && ! EE_FRONT_AJAX) {
+        if ($request->isAdmin() && ! $request->isFrontAjax()) {
+            $status_change = $request->getRequestParam('txn_reg_status_change', [], 'int', true);
             // make sure appropriate admin params are set for sending messages
-            if (
-                empty($_REQUEST['txn_reg_status_change']['send_notifications'])
-                || ! absint($_REQUEST['txn_reg_status_change']['send_notifications'])
-            ) {
+            if (! $status_change['send_notifications']) {
                 // no messages sent please.
                 return false;
             }
@@ -717,24 +718,24 @@ class EED_Messages extends EED_Module
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function process_resend($req_data)
+    public static function process_resend(array $req_data = [])
     {
         self::_load_controller();
-
+        $request = self::getRequest();
         // if $msgID in this request then skip to the new resend_message
-        if (EE_Registry::instance()->REQ->get('MSG_ID')) {
+        if ($request->getRequestParam('MSG_ID')) {
             return self::resend_message();
         }
 
-        // make sure any incoming request data is set on the REQ so that it gets picked up later.
-        $req_data = (array) $req_data;
-        foreach ($req_data as $request_key => $request_value) {
-            EE_Registry::instance()->REQ->set($request_key, $request_value);
+        // make sure any incoming request data is set on the request so that it gets picked up later.
+        foreach ((array) $req_data as $request_key => $request_value) {
+            if (! $request->requestParamIsSet($request_key)) {
+                $request->setRequestParam($request_key, $request_value);
+            }
         }
 
         if (
-            ! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request(
-            )
+            ! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request()
         ) {
             return false;
         }
@@ -747,7 +748,7 @@ class EED_Messages extends EED_Module
             return false;
         }
         EE_Error::add_success(
-            __('Messages have been successfully queued for generation and sending.', 'event_espresso')
+            esc_html__('Messages have been successfully queued for generation and sending.', 'event_espresso')
         );
         return true; // everything got queued.
     }
@@ -767,10 +768,10 @@ class EED_Messages extends EED_Module
     {
         self::_load_controller();
 
-        $msgID = EE_Registry::instance()->REQ->get('MSG_ID');
+        $msgID = self::getRequest()->getRequestParam('MSG_ID', 0, 'int');
         if (! $msgID) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'Something went wrong because there is no "MSG_ID" value in the request',
                     'event_espresso'
                 ),
@@ -897,8 +898,8 @@ class EED_Messages extends EED_Module
      */
     public static function send_newsletter_message($registrations, $grp_id)
     {
-        // make sure mtp is id and set it in the EE_Request Handler later messages setup.
-        EE_Registry::instance()->REQ->set('GRP_ID', (int) $grp_id);
+        // make sure mtp is id and set it in the request later messages setup.
+        self::getRequest()->setRequestParam('GRP_ID', (int) $grp_id);
         self::_load_controller();
         self::$_MSG_PROCESSOR->generate_for_all_active_messengers('newsletter', $registrations);
     }
@@ -1101,7 +1102,7 @@ class EED_Messages extends EED_Module
 
         if (! $generated_queue instanceof EE_Messages_Queue) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'The messages were not generated. This could mean there is already a batch being generated on a separate request, or because the selected messages are not ready for generation. Please wait a minute or two and try again.',
                     'event_espresso'
                 ),
@@ -1148,7 +1149,7 @@ class EED_Messages extends EED_Module
 
         if (! $sent_queue instanceof EE_Messages_Queue) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'The messages were not sent. This could mean there is already a batch being sent on a separate request, or because the selected messages are not sendable. Please wait a minute or two and try again.',
                     'event_espresso'
                 ),
@@ -1174,7 +1175,7 @@ class EED_Messages extends EED_Module
             } else {
                 EE_Error::overwrite_errors();
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'No message was sent because of problems with sending. Either all the messages you selected were not a sendable message, they were ALREADY sent on a different scheduled task, or there was an error.
 					If there was an error, you can look at the messages in the message activity list table for any error messages.',
                         'event_espresso'
@@ -1283,7 +1284,7 @@ class EED_Messages extends EED_Module
                 );
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.',
                         'event_espresso'
                     ),
@@ -1294,7 +1295,7 @@ class EED_Messages extends EED_Module
             }
         } else {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.',
                     'event_espresso'
                 ),

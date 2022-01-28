@@ -19,7 +19,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * This will hold the event object for event_details screen.
      *
-     * @access protected
      * @var EE_Event $_event
      */
     protected $_event;
@@ -812,7 +811,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         if (! $has_timezone_string && ! EEM_Event::instance()->exists([])) {
             EE_Error::add_attention(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Your website\'s timezone is currently set to a UTC offset. We recommend updating your timezone to a city or region near you before you create an event. Change your timezone now:%1$s%2$s%3$sChange Timezone%4$s',
                         'event_espresso'
                     ),
@@ -1452,6 +1451,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $id = absint($id);
             // get the ticket for this id
             $tkt_to_remove = EE_Registry::instance()->load_model('Ticket')->get_one_by_ID($id);
+            if (! $tkt_to_remove instanceof EE_Ticket) {
+                continue;
+            }
+
             // need to get all the related datetimes on this ticket and remove from every single one of them
             // (remember this process can ONLY kick off if there are NO tkts_sold)
             $dtts = $tkt_to_remove->get_many_related('Datetime');
@@ -1810,10 +1813,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'disabled'            => $skeleton || (! empty($ticket) && ! $ticket->get('TKT_deleted')) ? ''
                 : ' disabled=disabled',
         ];
-        $price         = $ticket->ID() !== 0
-            ? $ticket->get_first_related('Price', ['default_where_conditions' => 'none'])
-            : EE_Registry::instance()->load_model('Price')->create_default_object();
-        $price_args    = [
+        $price = $ticket->ID() !== 0
+            ? $ticket->get_first_related('Price', array('default_where_conditions' => 'none'))
+            : null;
+        $price = $price instanceof EE_Price
+            ? $price
+            : EEM_Price::instance()->create_default_object();
+        $price_args   = [
             'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
             'PRC_amount'            => $price->get('PRC_amount'),
             'PRT_ID'                => $price->get('PRT_ID'),
@@ -1872,10 +1878,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             true
         );
         // $template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
-        $template_args['_event']                          = $this->_cpt_model_obj;
-        $template_args['active_status']                   = $this->_cpt_model_obj->pretty_active_status(false);
-        $template_args['additional_limit']                = $this->_cpt_model_obj->additional_limit();
-        $template_args['default_registration_status']     = EEH_Form_Fields::select_input(
+        $template_args['_event'] = $this->_cpt_model_obj;
+        $template_args['event'] = $this->_cpt_model_obj;
+        $template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(false);
+        $template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
+        $template_args['default_registration_status'] = EEH_Form_Fields::select_input(
             'default_reg_status',
             $default_reg_status_values,
             $this->_cpt_model_obj->default_registration_status()
@@ -2217,11 +2224,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * _trash_or_restore_events
-     *
-     * @access  private
-     * @param int    $EVT_ID
-     * @param string $event_status
+     * @param  int    $EVT_ID
+     * @param  string $event_status
      * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -2269,7 +2273,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         // use class to change status
         $this->_cpt_model_obj->set_status($event_status);
         $success = $this->_cpt_model_obj->save();
-        if ($success === false) {
+        if (! $success) {
             $msg = sprintf(esc_html__('An error occurred. The event could not be %s.', 'event_espresso'), $action);
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
@@ -2282,13 +2286,35 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @param array $event_ids
+     * @return array
+     * @since   4.10.23.p
      */
-    protected function _delete_event()
+    private function cleanEventIds(array $event_ids)
     {
-        $this->generateDeletionPreview(isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : []);
+        return array_map('absint', $event_ids);
+    }
+
+
+    /**
+     * @return array
+     * @since   4.10.23.p
+     */
+    private function getEventIdsFromRequest()
+    {
+        $event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : [];
+        $event_ids = is_string($event_ids) ? explode(',', $event_ids) : (array) $event_ids;
+        return $this->cleanEventIds($event_ids);
+    }
+
+
+    /**
+     * @param bool $preview_delete
+     * @throws EE_Error
+     */
+    protected function _delete_event($preview_delete = true)
+    {
+        $this->_delete_events($preview_delete);
     }
 
 
@@ -2312,20 +2338,27 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
+     * @param bool $preview_delete
      * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws EE_Error
      */
-    protected function _delete_events()
+    protected function _delete_events($preview_delete = true)
     {
-        $this->generateDeletionPreview(isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : []);
+        $event_ids = $this->getEventIdsFromRequest();
+        if ($preview_delete) {
+            $this->generateDeletionPreview($event_ids);
+        } else {
+            EEM_Event::instance()->delete_permanently([['EVT_ID' => ['IN', $event_ids]]]);
+        }
     }
 
 
-    protected function generateDeletionPreview($event_ids)
+    /**
+     * @param array $event_ids
+     */
+    protected function generateDeletionPreview(array $event_ids)
     {
-        $event_ids = (array) $event_ids;
+        $event_ids = $this->cleanEventIds($event_ids);
         // Set a code we can use to reference this deletion task in the batch jobs and preview page.
         $deletion_job_code = $this->getModelObjNodeGroupPersister()->generateGroupCode();
         $return_url        = EE_Admin_Page::add_query_args_and_nonce(
@@ -2335,11 +2368,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ],
             $this->_admin_base_url
         );
-        $event_ids         = array_map(
-            'intval',
-            $event_ids
-        );
-
         EEH_URL::safeRedirectAndExit(
             EE_Admin_Page::add_query_args_and_nonce(
                 [
@@ -2562,7 +2590,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 EE_Registry::instance()->CFG->update_espresso_config();
                 EE_Error::overwrite_success();
                 EE_Error::add_success(
-                    __('Default Event Settings were updated', 'event_espresso')
+                    esc_html__('Default Event Settings were updated', 'event_espresso')
                 );
             }
         }

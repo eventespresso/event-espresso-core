@@ -1,14 +1,17 @@
-<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit(); }
+<?php
+
 /*
  * EES_New_Addon
  *
- * @package			Event Espresso
- * @subpackage		eea-new-addon
- * @author 				Brent Christensen
- * 
+ * @package     Event Espresso
+ * @subpackage  eea-new-addon
+ * @author      Brent Christensen
  *
- * ------------------------------------------------------------------------
  */
+
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 class EES_New_Addon  extends EES_Shortcode {
 
 
@@ -58,7 +61,9 @@ class EES_New_Addon  extends EES_Shortcode {
 		// this will trigger the EED_New_Addon module's run() method during the pre_get_posts hook point,
 		// this allows us to initialize things, enqueue assets, etc,
 		// as well, this saves an instantiation of the module in an array, using 'new_addon' as the key, so that we can retrieve it
-		EE_Registry::instance()->REQ->set( 'ee', 'new_addon' );
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $request->setRequestParam( 'ee', 'new_addon' );
 		EED_New_Addon::$shortcode_active = TRUE;
 	}
 

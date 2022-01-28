@@ -390,7 +390,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$tax_line_items = EEH_Line_Item::get_taxes_subtotal( $t->total_line_item() )->children();
 		$this->assertEquals( 1, count( $tax_line_items ) );
 		$only_tax = array_shift( $tax_line_items );
-		$this->assertEquals( __( 'Taxes', 'event_espresso' ), $only_tax->name() );
+		$this->assertEquals( esc_html__( 'Taxes', 'event_espresso' ), $only_tax->name() );
 		$this->assertEquals( EEM_Payment::status_id_approved, $p->status() );
 		$this->assertEquals( $t->total(), $p->amount() );
 		//check that the shipping surcharge is correct

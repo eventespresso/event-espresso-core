@@ -27,7 +27,7 @@ class CollectionDetailsException extends RuntimeException
     {
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     'The following error occurred during the collection details generation: %1$s %2$s',
                     'event_espresso'
                 ),

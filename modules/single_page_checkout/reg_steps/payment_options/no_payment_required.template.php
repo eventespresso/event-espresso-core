@@ -6,7 +6,7 @@ if (is_array($registrations_for_free_events) && ! empty($registrations_for_free_
     echo apply_filters(
         'FHEE__registration_page_payment_options__no_payment_required_hdr',
         sprintf(
-            __('%1$sNo Payment Required%2$s', 'event_espresso'),
+            esc_html__('%1$sNo Payment Required%2$s', 'event_espresso'),
             '<h6>',
             '</h6>'
         )
@@ -22,7 +22,7 @@ if (is_array($registrations_for_free_events) && ! empty($registrations_for_free_
                     <?php echo apply_filters(
                         'FHEE__registration_page_payment_options__no_payment_required_pg',
                         sprintf(
-                            __(
+                            esc_html__(
                                 '"%1$s" for "%2$s" is free, so no payment is required and no billing will occur.',
                                 'event_espresso'
                             ),
@@ -36,4 +36,3 @@ if (is_array($registrations_for_free_events) && ! empty($registrations_for_free_
         }
     }
 }
-?>

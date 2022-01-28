@@ -155,19 +155,19 @@ final class EE_Network_Config
         // if config remains the same or was updated successfully
         if ($saved) {
             if ($add_success) {
-                $msg = is_multisite() ? __(
+                $msg = is_multisite() ? esc_html__(
                     'The Event Espresso Network Configuration Settings have been successfully updated.',
                     'event_espresso'
-                ) : __('Extra Event Espresso Configuration settings were successfully updated.', 'event_espresso');
+                ) : esc_html__('Extra Event Espresso Configuration settings were successfully updated.', 'event_espresso');
                 EE_Error::add_success($msg);
             }
             return true;
         }
         if ($add_error) {
-            $msg = is_multisite() ? __(
+            $msg = is_multisite() ? esc_html__(
                 'The Event Espresso Network Configuration Settings were not updated.',
                 'event_espresso'
-            ) : __('Extra Event Espresso Network Configuration settings were not updated.', 'event_espresso');
+            ) : esc_html__('Extra Event Espresso Network Configuration settings were not updated.', 'event_espresso');
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
         }
         return false;

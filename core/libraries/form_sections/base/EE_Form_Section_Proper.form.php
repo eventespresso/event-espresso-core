@@ -2,6 +2,8 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * For containing info about a non-field form section, which contains other form sections/fields.
@@ -52,7 +54,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     protected $_form_submission_error_message = '';
 
     /**
-     * @var array like $_REQUEST
+     * @var array like post / request
      */
     protected $cached_request_data;
 
@@ -271,7 +273,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 $this
             );
             if ($req_data === null) {
-                $req_data = array_merge($_GET, $_POST);
+                /** @var RequestInterface $request */
+                $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+                $req_data = $request->requestParams();
             }
             $req_data = apply_filters(
                 'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data',
@@ -288,7 +292,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * After the form section is initially created, call this to sanitize the data in the submission
      * which relates to this form section, validate it, and set it as properties on the form.
      *
-     * @param array|null $req_data should usually be $_POST (the default).
+     * @param array|null $req_data should usually be post data (the default).
      *                             However, you CAN supply a different array.
      *                             Consider using set_defaults() instead however.
      *                             (If you rendered the form in the page using echo $form_x->get_html()
@@ -874,8 +878,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     private static function _get_localized_error_messages()
     {
         return array(
-            'validUrl' => esc_html__('This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg', 'event_espresso'),
-            'regex'    => esc_html__('Please check your input', 'event_espresso'),
+            'validUrl' => wp_strip_all_tags(__('This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg', 'event_espresso')),
+            'regex'    => wp_strip_all_tags(__('Please check your input', 'event_espresso'))
         );
     }
 
@@ -921,7 +925,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     /**
      * Sanitizes all the data and sets the sanitized value of each field
      *
-     * @param array $req_data like $_POST
+     * @param array $req_data
      * @return void
      * @throws EE_Error
      */
@@ -1493,7 +1497,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                     $label = esc_html__('Unknown', 'event_espresso');
                 }
                 $submission_error_messages[] = sprintf(
-                    __('%s : %s', 'event_espresso'),
+                    esc_html__('%s : %s', 'event_espresso'),
                     $label,
                     $validation_error->getMessage()
                 );

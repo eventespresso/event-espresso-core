@@ -1,19 +1,6 @@
 <?php
 
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package            Event Espresso
- * @ author                Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @linkense            {@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @linkk                    {@link http://www.eventespresso.com}
- * @ since                4.0
- *
- * ------------------------------------------------------------------------
- *
  * Tickets_Admin_Page_Init class
  *
  * This is the init for the EE Tickets Admin Pages.  See EE_Admin_Page_Init for method inline docs.
@@ -21,8 +8,6 @@
  * @package            Event Espresso
  * @subpackage         caffeinated/admin/new/tickets/Tickets_Admin_Page_Init.core.php
  * @author             Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Tickets_Admin_Page_Init extends EE_Admin_Page_Init
 {
@@ -41,7 +26,7 @@ class Tickets_Admin_Page_Init extends EE_Admin_Page_Init
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
         define('TICKETS_PG_SLUG', 'tickets');
-        define('TICKETS_LABEL', __('Default Tickets', 'event_espresso'));
+        define('TICKETS_LABEL', esc_html__('Default Tickets', 'event_espresso'));
         define('TICKETS_ADMIN', EE_CORE_CAF_ADMIN . 'new/' . TICKETS_PG_SLUG . '/');
         define('TICKETS_ADMIN_URL', admin_url('admin.php?page=' . TICKETS_PG_SLUG));
         define('TICKETS_ASSETS_PATH', TICKETS_ADMIN . 'assets/');

@@ -71,24 +71,26 @@ class EED_Invalid_Checkout_Access extends EED_Module
      * email_validation_settings_form
      *
      * @return    void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function display_invalid_checkout_access_form()
     {
-        $invalid_checkout_access_form = \EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
-        echo $invalid_checkout_access_form->getForm()->get_html();
+        $invalid_checkout_access_form = EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
+        echo $invalid_checkout_access_form->getForm()->get_html(); // already escaped
     }
 
 
     /**
      * email_validation_settings_form
      *
-     * @param \EE_Registration_Config $EE_Registration_Config
-     * @return \EE_Registration_Config
+     * @param EE_Registration_Config $EE_Registration_Config
+     * @return EE_Registration_Config
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function process_invalid_checkout_access_form(\EE_Registration_Config $EE_Registration_Config)
+    public static function process_invalid_checkout_access_form(EE_Registration_Config $EE_Registration_Config)
     {
-        $invalid_checkout_access_form = \EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
+        $invalid_checkout_access_form = EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
         return $invalid_checkout_access_form->processForm($EE_Registration_Config);
     }
 }

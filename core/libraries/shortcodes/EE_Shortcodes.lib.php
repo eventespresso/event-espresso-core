@@ -169,7 +169,7 @@ abstract class EE_Shortcodes extends EE_Base
         $this->_shortcodes = $this->get_shortcodes();
 
         // we need to setup any dynamic shortcodes so that they work with the array_key_exists
-        $sc = preg_match_all('/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches);
+        preg_match_all('/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches);
         $sc_to_verify = ! empty($matches[0]) ? $matches[0][0] . ']' : $shortcode;
 
         // first we want to make sure this is a valid shortcode
@@ -189,8 +189,7 @@ abstract class EE_Shortcodes extends EE_Base
         );
 
         // note the below filter applies to ALL shortcode parsers... be careful!
-        $parsed = apply_filters('FHEE__EE_Shortcodes__parser_after', $parsed, $shortcode, $data, $extra_data, $this);
-        return $parsed;
+        return apply_filters('FHEE__EE_Shortcodes__parser_after', $parsed, $shortcode, $data, $extra_data, $this);
     }
 
 
@@ -252,7 +251,7 @@ abstract class EE_Shortcodes extends EE_Base
         if (! is_array($this->_data)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Expecting an array for the data sent to %s. Instead it was %s',
                         'event_espresso'
                     ),
@@ -266,7 +265,7 @@ abstract class EE_Shortcodes extends EE_Base
         if (! isset($this->_data['template'])) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The incoming data does not have the required template index in its array',
                         'event_espresso'
                     )
@@ -277,7 +276,7 @@ abstract class EE_Shortcodes extends EE_Base
         // next test to make sure we've got got a data index in the incoming data array
         if (! isset($this->_data['data'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'The incoming data does not have the required data index in its array',
                     'event_espresso'
                 )

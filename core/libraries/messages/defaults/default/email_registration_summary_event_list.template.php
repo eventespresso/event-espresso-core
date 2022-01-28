@@ -3,7 +3,7 @@
         <tbody>
             <tr>
                 <td>
-                    <p class="callout"><strong><?php _e('Event:', 'event_espresso'); ?> [EVENT_LINK]</strong></p>
+                    <p class="callout"><strong><?php esc_html_e('Event:', 'event_espresso'); ?> [EVENT_LINK]</strong></p>
                 </td>
             </tr>
         </tbody>
@@ -16,7 +16,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <h3><?php _e('Registrant(s):', 'event_espresso'); ?></h3>
+                        <h3><?php esc_html_e('Registrant(s):', 'event_espresso'); ?></h3>
                         [ATTENDEE_LIST]
                     </td>
                 </tr>

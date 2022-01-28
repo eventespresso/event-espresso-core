@@ -31,8 +31,8 @@ class EEM_Event_Question_Group extends EEM_Base
 
     protected function __construct($timezone = null)
     {
-        $this->singular_item    = __('Event to Question Group Link', 'event_espresso');
-        $this->plural_item      = __('Event to Question Group Links', 'event_espresso');
+        $this->singular_item    = esc_html__('Event to Question Group Link', 'event_espresso');
+        $this->plural_item      = esc_html__('Event to Question Group Links', 'event_espresso');
         $this->_tables          = [
             'Event_Question_Group' => new EE_Primary_Table('esp_event_question_group', 'EQG_ID'),
         ];
@@ -40,25 +40,25 @@ class EEM_Event_Question_Group extends EEM_Base
             'Event_Question_Group' => [
                 'EQG_ID'         => new EE_Primary_Key_Int_Field(
                     'EQG_ID',
-                    __('Event to Question Group Link ID', 'event_espresso')
+                    esc_html__('Event to Question Group Link ID', 'event_espresso')
                 ),
                 'EVT_ID'         => new EE_Foreign_Key_Int_Field(
                     'EVT_ID',
-                    __('Event ID', 'event_espresso'),
+                    esc_html__('Event ID', 'event_espresso'),
                     false,
                     0,
                     'Event'
                 ),
                 'QSG_ID'         => new EE_Foreign_Key_Int_Field(
                     'QSG_ID',
-                    __('Question Group Id', 'event_espresso'),
+                    esc_html__('Question Group Id', 'event_espresso'),
                     false,
                     0,
                     'Question_Group'
                 ),
                 'EQG_additional' => new EE_Boolean_Field(
                     'EQG_additional',
-                    __(
+                    esc_html__(
                         'Flag indicating question is only for additional attendees',
                         'event_espresso'
                     ),
@@ -67,7 +67,7 @@ class EEM_Event_Question_Group extends EEM_Base
                 ),
                 'EQG_primary'    => new EE_Boolean_Field(
                     'EQG_primary',
-                    __(
+                    esc_html__(
                         'Flag indicating question is only for primary attendees',
                         'event_espresso'
                     ),
@@ -84,15 +84,14 @@ class EEM_Event_Question_Group extends EEM_Base
         // this model is generally available for reading
         $path_to_event = 'Event';
 
-        $this->_cap_restriction_generators[ EEM_Base::caps_read ]       =
-            new EE_Restriction_Generator_Event_Related_Public($path_to_event);
-        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] =
-            new EE_Restriction_Generator_Event_Related_Protected($path_to_event);
-        $this->_cap_restriction_generators[ EEM_Base::caps_edit ]       =
-            new EE_Restriction_Generator_Event_Related_Protected($path_to_event);
-        $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     =
-            new EE_Restriction_Generator_Event_Related_Protected($path_to_event, EEM_Base::caps_edit);
-
+        $caps[ EEM_Base::caps_read ]       = new EE_Restriction_Generator_Event_Related_Public($path_to_event);
+        $caps[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Event_Related_Protected($path_to_event);
+        $caps[ EEM_Base::caps_edit ]       = new EE_Restriction_Generator_Event_Related_Protected($path_to_event);
+        $caps[ EEM_Base::caps_delete ]     = new EE_Restriction_Generator_Event_Related_Protected(
+            $path_to_event,
+            EEM_Base::caps_edit
+        );
+        $this->_cap_restriction_generators = $caps;
         parent::__construct($timezone);
     }
 

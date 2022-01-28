@@ -7,16 +7,16 @@
  * legacy 3.1 questions and question groups related pages.  It is NOT optimized and will need
  * modification to fully use the new system (and also will need adjusted when Questions and Questions
  * groups model is implemented)
+ *
  * @package         Registration_Form_Admin_Page
  * @subpackage      includes/core/admin/Registration_Form_Admin_Page.core.php
  * @author          Darren Ethier
- *                  ------------------------------------------------------------------------
+ * @method EE_Question_Group[] get_all($query_params)
  */
 class Registration_Form_Admin_Page extends EE_Admin_Page
 {
 
     /**
-     * _question
      * holds the specific question object for the question details screen
      *
      * @var EE_Question $_question
@@ -24,7 +24,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
     protected $_question;
 
     /**
-     * _question_group
      * holds the specific question group object for the question group details screen
      *
      * @var EE_Question_Group $_question_group
@@ -49,13 +48,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
     /**
      * @Constructor
      * @param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
-     * @access public
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct($routing = true)
     {
         require_once(EE_MODELS . 'EEM_Question.model.php');
         require_once(EE_MODELS . 'EEM_Question_Group.model.php');
-        $this->_question_model = EEM_Question::instance();
+        $this->_question_model       = EEM_Question::instance();
         $this->_question_group_model = EEM_Question_Group::instance();
         parent::__construct($routing);
     }
@@ -63,9 +63,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
     protected function _init_page_props()
     {
-        $this->page_slug = REGISTRATION_FORM_PG_SLUG;
-        $this->page_label = esc_html__('Registration Form', 'event_espresso');
-        $this->_admin_base_url = REGISTRATION_FORM_ADMIN_URL;
+        $this->page_slug        = REGISTRATION_FORM_PG_SLUG;
+        $this->page_label       = esc_html__('Registration Form', 'event_espresso');
+        $this->_admin_base_url  = REGISTRATION_FORM_ADMIN_URL;
         $this->_admin_base_path = REGISTRATION_FORM_ADMIN;
     }
 
@@ -78,11 +78,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
     protected function _define_page_props()
     {
         $this->_admin_page_title = esc_html__('Registration Form', 'event_espresso');
-        $this->_labels = array(
-            'buttons' => array(
+        $this->_labels           = [
+            'buttons' => [
                 'edit_question' => esc_html__('Edit Question', 'event_espresso'),
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -91,107 +91,112 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      */
     protected function _set_page_routes()
     {
-        $qst_id = ! empty($this->_req_data['QST_ID']) ? $this->_req_data['QST_ID'] : 0;
-        $this->_page_routes = array(
-            'default' => array(
+        $qst_id             =
+            ! empty($this->_req_data['QST_ID'])
+                ? $this->_req_data['QST_ID']
+                : 0;
+        $this->_page_routes = [
+            'default' => [
                 'func'       => '_questions_overview_list_table',
                 'capability' => 'ee_read_questions',
-            ),
+            ],
 
-            'edit_question' => array(
+            'edit_question' => [
                 'func'       => '_edit_question',
                 'capability' => 'ee_edit_question',
                 'obj_id'     => $qst_id,
-                'args'       => array('edit'),
-            ),
+                'args'       => ['edit'],
+            ],
 
-            'question_groups' => array(
+            'question_groups' => [
                 'func'       => '_questions_groups_preview',
                 'capability' => 'ee_read_question_groups',
-            ),
+            ],
 
-            'update_question' => array(
+            'update_question' => [
                 'func'       => '_insert_or_update_question',
-                'args'       => array('new_question' => false),
+                'args'       => ['new_question' => false],
                 'capability' => 'ee_edit_question',
                 'obj_id'     => $qst_id,
                 'noheader'   => true,
-            ),
-        );
+            ],
+        ];
     }
 
 
     protected function _set_page_config()
     {
-        $this->_page_config = array(
-            'default' => array(
-                'nav'           => array(
+        $this->_page_config = [
+            'default' => [
+                'nav'           => [
                     'label' => esc_html__('Questions', 'event_espresso'),
                     'order' => 10,
-                ),
+                ],
                 'list_table'    => 'Registration_Form_Questions_Admin_List_Table',
                 'metaboxes'     => $this->_default_espresso_metaboxes,
-                'help_tabs'     => array(
-                    'registration_form_questions_overview_help_tab'                           => array(
+                'help_tabs'     => [
+                    'registration_form_questions_overview_help_tab'                           => [
                         'title'    => esc_html__('Questions Overview', 'event_espresso'),
                         'filename' => 'registration_form_questions_overview',
-                    ),
-                    'registration_form_questions_overview_table_column_headings_help_tab'     => array(
+                    ],
+                    'registration_form_questions_overview_table_column_headings_help_tab'     => [
                         'title'    => esc_html__('Questions Overview Table Column Headings', 'event_espresso'),
                         'filename' => 'registration_form_questions_overview_table_column_headings',
-                    ),
-                    'registration_form_questions_overview_views_bulk_actions_search_help_tab' => array(
+                    ],
+                    'registration_form_questions_overview_views_bulk_actions_search_help_tab' => [
                         'title'    => esc_html__('Question Overview Views & Bulk Actions & Search', 'event_espresso'),
                         'filename' => 'registration_form_questions_overview_views_bulk_actions_search',
-                    ),
-                ),
+                    ],
+                ],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour'     => array('Registration_Form_Questions_Overview_Help_Tour'),
                 'require_nonce' => false,
-                'qtips'         => array(
+                'qtips'         => [
                     'EE_Registration_Form_Tips',
-                )/**/
-            ),
+                ]/**/
+            ],
 
-            'question_groups' => array(
-                'nav'           => array(
+            'question_groups' => [
+                'nav'           => [
                     'label' => esc_html__('Question Groups', 'event_espresso'),
                     'order' => 20,
-                ),
+                ],
                 'metaboxes'     => $this->_default_espresso_metaboxes,
-                'help_tabs'     => array(
-                    'registration_form_question_groups_help_tab' => array(
+                'help_tabs'     => [
+                    'registration_form_question_groups_help_tab' => [
                         'title'    => esc_html__('Question Groups', 'event_espresso'),
                         'filename' => 'registration_form_question_groups',
-                    ),
-                ),
+                    ],
+                ],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour'     => array('Registration_Form_Question_Groups_Help_Tour'),
                 'require_nonce' => false,
-            ),
+            ],
 
-            'edit_question' => array(
-                'nav'           => array(
+            'edit_question' => [
+                'nav'           => [
                     'label'      => esc_html__('Edit Question', 'event_espresso'),
                     'order'      => 15,
                     'persistent' => false,
-                    'url'        => isset($this->_req_data['question_id']) ? add_query_arg(
-                        array('question_id' => $this->_req_data['question_id']),
-                        $this->_current_page_view_url
-                    ) : $this->_admin_base_url,
-                ),
-                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
-                'help_tabs'     => array(
-                    'registration_form_edit_question_group_help_tab' => array(
+                    'url'        => isset($this->_req_data['question_id'])
+                        ? add_query_arg(
+                            ['question_id' => $this->_req_data['question_id']],
+                            $this->_current_page_view_url
+                        )
+                        : $this->_admin_base_url,
+                ],
+                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
+                'help_tabs'     => [
+                    'registration_form_edit_question_group_help_tab' => [
                         'title'    => esc_html__('Edit Question', 'event_espresso'),
                         'filename' => 'registration_form_edit_question',
-                    ),
-                ),
+                    ],
+                ],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour'     => array('Registration_Form_Edit_Question_Help_Tour'),
                 'require_nonce' => false,
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -200,45 +205,52 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         // todo
     }
 
+
     protected function _add_screen_options_default()
     {
-        $page_title = $this->_admin_page_title;
+        $page_title              = $this->_admin_page_title;
         $this->_admin_page_title = esc_html__('Questions', 'event_espresso');
         $this->_per_page_screen_option();
         $this->_admin_page_title = $page_title;
     }
 
+
     protected function _add_screen_options_question_groups()
     {
-        $page_title = $this->_admin_page_title;
+        $page_title              = $this->_admin_page_title;
         $this->_admin_page_title = esc_html__('Question Groups', 'event_espresso');
         $this->_per_page_screen_option();
         $this->_admin_page_title = $page_title;
     }
+
 
     // none of the below group are currently used for Event Categories
     protected function _add_feature_pointers()
     {
     }
 
+
     public function load_scripts_styles()
     {
         wp_register_style(
             'espresso_registration',
             REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.css',
-            array(),
+            [],
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_style('espresso_registration');
     }
 
+
     public function admin_init()
     {
     }
 
+
     public function admin_notices()
     {
     }
+
 
     public function admin_footer_scripts()
     {
@@ -250,18 +262,29 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     public function load_scripts_styles_add_question()
     {
         $this->load_scripts_styles_question_details();
     }
 
+
+    /**
+     * @throws EE_Error
+     */
     public function load_scripts_styles_edit_question()
     {
         $this->load_scripts_styles_question_details();
     }
 
+
     /**
      * Loads the JS required for adding or editing a question
+     *
+     * @throws EE_Error
+     * @throws EE_Error
      */
     protected function load_scripts_styles_question_details()
     {
@@ -269,7 +292,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         wp_register_script(
             'espresso_registration_form_single',
             REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js',
-            array('jquery-ui-sortable'),
+            ['jquery-ui-sortable'],
             EVENT_ESPRESSO_VERSION,
             true
         );
@@ -277,10 +300,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         wp_localize_script(
             'espresso_registration_form_single',
             'ee_question_data',
-            array(
+            [
                 'question_types_with_max'    => EEM_Question::instance()->questionTypesWithMaxLength(),
                 'question_type_with_options' => EEM_Question::instance()->question_types_with_options(),
-            )
+            ]
         );
     }
 
@@ -288,7 +311,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
     public function recaptcha_info_help_tab()
     {
         $template = REGISTRATION_FORM_TEMPLATE_PATH . 'recaptcha_info_help_tab.template.php';
-        EEH_Template::display_template($template, array());
+        EEH_Template::display_template($template, []);
     }
 
 
@@ -303,13 +326,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
     protected function _set_list_table_views_default()
     {
-        $this->_views = array(
-            'all' => array(
+        $this->_views = [
+            'all' => [
                 'slug'  => 'all',
                 'label' => esc_html__('View All Questions', 'event_espresso'),
                 'count' => 0,
-            ),
-        );
+            ],
+        ];
 
         if (
             EE_Registry::instance()->CAP->current_user_can(
@@ -317,27 +340,30 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                 'espresso_registration_form_trash_questions'
             )
         ) {
-            $this->_views['trash'] = array(
+            $this->_views['trash'] = [
                 'slug'  => 'trash',
                 'label' => esc_html__('Trash', 'event_espresso'),
                 'count' => 0,
-            );
+            ];
         }
     }
+
 
     /**
      * This just previews the question groups tab that comes in caffeinated.
      *
-     * @return string html
+     * @return void html
+     * @throws EE_Error
      */
     protected function _questions_groups_preview()
     {
-        $this->_admin_page_title = esc_html__('Question Groups (Preview)', 'event_espresso');
-        $this->_template_args['preview_img'] = '<img src="' . REGISTRATION_FORM_ASSETS_URL . 'caf_reg_form_preview.jpg" alt="'
-                                               . esc_attr__(
-                                                   'Preview Question Groups Overview List Table screenshot',
-                                                   'event_espresso'
-                                               ) . '" />';
+        $this->_admin_page_title              = esc_html__('Question Groups (Preview)', 'event_espresso');
+        $this->_template_args['preview_img']  =
+            '<img src="' . REGISTRATION_FORM_ASSETS_URL . 'caf_reg_form_preview.jpg" alt="'
+            . esc_attr__(
+                'Preview Question Groups Overview List Table screenshot',
+                'event_espresso'
+            ) . '" />';
         $this->_template_args['preview_text'] = '<strong>'
                                                 . esc_html__(
                                                     'Question Groups is a feature that is only available in the premium version of Event Espresso 4 which is available with a support license purchase on EventEspresso.com. With the Question Groups feature you are able to create new question groups, edit existing question groups, and create and edit new questions and add them to question groups.',
@@ -357,7 +383,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
     protected function _set_column_values_for(EEM_Base $model)
     {
         $question_model = EEM_Question::instance();
-        $set_column_values = array();
+        $set_column_values = [];
 
         // some initial checks for proper values.
         // if QST_admin_only, then no matter what QST_required is we disable.
@@ -380,35 +406,42 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $this->_req_data['QST_max'] = null;
         }
         foreach ($model->field_settings() as $fieldName => $settings) {
+            // basically if QSG_identifier is empty or not set
             if (
-                // basically if QSG_identifier is empty or not set
                 $fieldName === 'QSG_identifier'
                 && (isset($this->_req_data['QSG_identifier']) && empty($this->_req_data['QSG_identifier']))
             ) {
-                $QSG_name = isset($this->_req_data['QSG_name']) ? $this->_req_data['QSG_name'] : '';
+                $QSG_name = isset($this->_req_data['QSG_name'])
+                    ? $this->_req_data['QSG_name']
+                    : '';
                 $set_column_values[ $fieldName ] = sanitize_title($QSG_name) . '-' . uniqid('', true);
             } elseif (
-                // if the admin label is blank, use a slug version of the question text
                 $fieldName === 'QST_admin_label'
                 && (isset($this->_req_data['QST_admin_label']) && empty($this->_req_data['QST_admin_label']))
             ) {
-                $QST_text = isset($this->_req_data['QST_display_text']) ? $this->_req_data['QST_display_text'] : '';
+                // the admin label is blank, use a slug version of the question text
+                $QST_text                        =
+                    isset($this->_req_data['QST_display_text'])
+                        ? $this->_req_data['QST_display_text']
+                        : '';
                 $set_column_values[ $fieldName ] = sanitize_title(wp_trim_words($QST_text, 10));
             } elseif ($fieldName === 'QST_admin_only' && (! isset($this->_req_data['QST_admin_only']))) {
                 $set_column_values[ $fieldName ] = 0;
             } elseif ($fieldName === 'QST_max') {
                 $qst_system = $question_model->get_var(
-                    array(
-                        array(
-                            'QST_ID' => isset($this->_req_data['QST_ID']) ? $this->_req_data['QST_ID'] : 0,
-                        ),
-                    ),
+                    [
+                        [
+                            'QST_ID' => isset($this->_req_data['QST_ID'])
+                                ? $this->_req_data['QST_ID']
+                                : 0,
+                        ],
+                    ],
                     'QST_system'
                 );
-                $max_max = $question_model->absolute_max_for_system_question((string) $qst_system);
+                $max_max    = $question_model->absolute_max_for_system_question((string) $qst_system);
                 if (
                     empty($this->_req_data['QST_max']) ||
-                    $this->_req_data['QST_max'] > $max_max
+					$this->_req_data['QST_max'] > $max_max
                 ) {
                     $set_column_values[ $fieldName ] = $max_max;
                 }
@@ -417,8 +450,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
             // only add a property to the array if it's not null (otherwise the model should just use the default value)
             if (
-                ! isset($set_column_values[ $fieldName ]) &&
-                isset($this->_req_data[ $fieldName ])
+                ! isset($set_column_values[ $fieldName ]) && isset($this->_req_data[ $fieldName ])
             ) {
                 $set_column_values[ $fieldName ] = $this->_req_data[ $fieldName ];
             }
@@ -430,6 +462,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
     /**
      *_questions_overview_list_table
+     *
+     * @throws EE_Error
      */
     protected function _questions_overview_list_table()
     {
@@ -440,13 +474,15 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
     /**
      * _edit_question
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _edit_question()
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $ID = isset($this->_req_data['QST_ID']) && ! empty($this->_req_data['QST_ID']) ? absint(
-            $this->_req_data['QST_ID']
-        ) : false;
+        $ID = isset($this->_req_data['QST_ID']) && ! empty($this->_req_data['QST_ID'])
+            ? absint($this->_req_data['QST_ID'])
+            : false;
 
         switch ($this->_req_action) {
             case 'add_question':
@@ -460,10 +496,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         }
 
         // add PRC_ID to title if editing
-        $this->_admin_page_title = $ID ? $this->_admin_page_title . ' # ' . $ID : $this->_admin_page_title;
+        $this->_admin_page_title =
+            $ID
+                ? $this->_admin_page_title . ' # ' . $ID
+                : $this->_admin_page_title;
         if ($ID) {
-            $question = $this->_question_model->get_one_by_ID($ID);
-            $additional_hidden_fields = array('QST_ID' => array('type' => 'hidden', 'value' => $ID));
+            $question                 = $this->_question_model->get_one_by_ID($ID);
+            $additional_hidden_fields = ['QST_ID' => ['type' => 'hidden', 'value' => $ID]];
             $this->_set_add_edit_form_tags('update_question', $additional_hidden_fields);
         } else {
             $question = EE_Question::new_instance();
@@ -474,23 +513,24 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $question_types = array_intersect_key(
                 EEM_Question::instance()->allowed_question_types(),
                 array_flip(
-                    array(
+                    [
                         EEM_Question::QST_type_text,
                         EEM_Question::QST_type_us_phone,
-                    )
+                    ]
                 )
             );
         } else {
-            $question_types = $question->has_answers() ? $this->_question_model->question_types_in_same_category(
-                $question->type()
-            ) : $this->_question_model->allowed_question_types();
+            $question_types = $question->has_answers()
+                ? $this->_question_model->question_types_in_same_category($question->type())
+                : $this->_question_model->allowed_question_types();
         }
-        $this->_template_args['QST_ID'] = $ID;
-        $this->_template_args['question'] = $question;
-        $this->_template_args['question_types'] = $question_types;
-        $this->_template_args['max_max'] = EEM_Question::instance()->absolute_max_for_system_question(
-            $question->system_ID()
-        );
+        $this->_template_args['QST_ID']                     = $ID;
+        $this->_template_args['question']                   = $question;
+        $this->_template_args['question_types']             = $question_types;
+        $this->_template_args['max_max']                    =
+            EEM_Question::instance()->absolute_max_for_system_question(
+                $question->system_ID()
+            );
         $this->_template_args['question_type_descriptions'] = $this->_get_question_type_descriptions();
         $this->_set_publish_post_box_vars('id', $ID);
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
@@ -506,15 +546,17 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
     /**
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_question_type_descriptions()
     {
         EE_Registry::instance()->load_helper('HTML');
-        $descriptions = '';
+        $descriptions               = '';
         $question_type_descriptions = EEM_Question::instance()->question_descriptions();
         foreach ($question_type_descriptions as $type => $question_type_description) {
             if ($type == 'HTML_TEXTAREA') {
-                $html = new EE_Simple_HTML_Validation_Strategy();
+                $html                      = new EE_Simple_HTML_Validation_Strategy();
                 $question_type_description .= sprintf(
                     esc_html__('%1$s(allowed tags: %2$s)', 'event_espresso'),
                     '<br/>',
@@ -534,14 +576,15 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
     /**
      * @param bool|true $new_question
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _insert_or_update_question($new_question = true)
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $set_column_values = $this->_set_column_values_for($this->_question_model);
         if ($new_question) {
-            $question = EE_Question::new_instance($set_column_values);
+            $question    = EE_Question::new_instance($set_column_values);
             $action_desc = 'added';
         } else {
             $question = EEM_Question::instance()->get_one_by_ID(absint($this->_req_data['QST_ID']));
@@ -551,7 +594,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $action_desc = 'updated';
         }
         $success = $question->save();
-        $ID = $question->ID();
+        $ID      = $question->ID();
         if ($ID && $question->should_have_question_options()) {
             // save the related options
             // trash removed options, save old ones
@@ -575,23 +618,22 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     continue;
                 }
                 // note we allow saving blank options.
-                if (
-                    empty($option_req_data['QSO_ID'])
-                ) {// no ID! save it!
+                if (empty($option_req_data['QSO_ID'])) {
+                    // no ID! save it!
                     $new_option = EE_Question_Option::new_instance(
-                        array(
+                        [
                             'QSO_value' => $option_req_data['QSO_value'],
                             'QSO_desc'  => $option_req_data['QSO_desc'],
                             'QSO_order' => $option_req_data['QSO_order'],
                             'QST_ID'    => $question->ID(),
-                        )
+                        ]
                     );
                     $new_option->save();
                 }
             }
         }
-        $query_args = array('action' => 'edit_question', 'QST_ID' => $ID);
-        if ($success !== false) {
+        $query_args = ['action' => 'edit_question', 'QST_ID' => $ID];
+        if ($success !== 0) {
             $msg = $new_question
                 ? sprintf(
                     esc_html__('The %s has been created', 'event_espresso'),
@@ -641,31 +683,43 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      * @param EEM_Base $model either EEM_Question or EEM_Question_Group
      * @param int      $per_page
      * @param int      $current_page
-     * @return array model query params, @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return array model query params, @see
+     *               https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     protected function get_query_params($model, $per_page = 10, $current_page = 10)
     {
-        $query_params = array();
-        $offset = ($current_page - 1) * $per_page;
-        $query_params['limit'] = array($offset, $per_page);
-        $order = (isset($this->_req_data['order']) && ! empty($this->_req_data['order'])) ? $this->_req_data['order']
-            : 'ASC';
-        $orderby_field = $model instanceof EEM_Question ? 'QST_ID' : 'QSG_order';
-        $field_to_order_by = empty($this->_req_data['orderby']) ? $orderby_field : $this->_req_data['orderby'];
-        $query_params['order_by'] = array($field_to_order_by => $order);
-        $search_string = array_key_exists('s', $this->_req_data) ? $this->_req_data['s'] : null;
+        $query_params             = [];
+        $offset                   = ($current_page - 1) * $per_page;
+        $query_params['limit']    = [$offset, $per_page];
+        $order                    =
+            (isset($this->_req_data['order']) && ! empty($this->_req_data['order']))
+                ? $this->_req_data['order']
+                : 'ASC';
+        $orderby_field            =
+            $model instanceof EEM_Question
+                ? 'QST_ID'
+                : 'QSG_order';
+        $field_to_order_by        =
+            empty($this->_req_data['orderby'])
+                ? $orderby_field
+                : $this->_req_data['orderby'];
+        $query_params['order_by'] = [$field_to_order_by => $order];
+        $search_string            =
+            array_key_exists('s', $this->_req_data)
+                ? $this->_req_data['s']
+                : null;
         if (! empty($search_string)) {
             if ($model instanceof EEM_Question_Group) {
-                $query_params[0] = array(
-                    'OR' => array(
-                        'QSG_name' => array('LIKE', "%$search_string%"),
-                        'QSG_desc' => array('LIKE', "%$search_string%"),
-                    ),
-                );
+                $query_params[0] = [
+                    'OR' => [
+                        'QSG_name' => ['LIKE', "%$search_string%"],
+                        'QSG_desc' => ['LIKE', "%$search_string%"],
+                    ],
+                ];
             } else {
-                $query_params[0] = array(
-                    'QST_display_text' => array('LIKE', "%$search_string%"),
-                );
+                $query_params[0] = [
+                    'QST_display_text' => ['LIKE', "%$search_string%"],
+                ];
             }
         }
 
@@ -708,14 +762,18 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      * @param int        $per_page
      * @param int        $current_page
      * @param bool|false $count
-     * @return \EE_Soft_Delete_Base_Class[]|int
+     * @return EE_Base_Class[]|EE_Question_Group[]|EE_Soft_Delete_Base_Class[]|int
+     * @throws EE_Error
      */
     public function get_questions($per_page = 10, $current_page = 1, $count = false)
     {
-        $QST = EEM_Question::instance();
+        $QST          = EEM_Question::instance();
         $query_params = $this->get_query_params($QST, $per_page, $current_page);
         if ($count) {
-            $where = isset($query_params[0]) ? array($query_params[0]) : array();
+            $where   =
+                isset($query_params[0])
+                    ? [$query_params[0]]
+                    : [];
             $results = $QST->count($where);
         } else {
             $results = $QST->get_all($query_params);
@@ -728,15 +786,19 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      * @param            $per_page
      * @param int        $current_page
      * @param bool|false $count
-     * @return \EE_Soft_Delete_Base_Class[]|int
+     * @return EE_Soft_Delete_Base_Class[]|int
+     * @throws EE_Error
      */
     public function get_trashed_questions($per_page, $current_page = 1, $count = false)
     {
         $query_params = $this->get_query_params(EEM_Question::instance(), $per_page, $current_page);
-        $where = isset($query_params[0]) ? array($query_params[0]) : array();
-        $questions = $count ? EEM_Question::instance()->count_deleted($where)
+        $where        =
+            isset($query_params[0])
+                ? [$query_params[0]]
+                : [];
+        return $count
+            ? EEM_Question::instance()->count_deleted($where)
             : EEM_Question::instance()->get_all_deleted($query_params);
-        return $questions;
     }
 
 
@@ -744,11 +806,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      * @param            $per_page
      * @param int        $current_page
      * @param bool|false $count
-     * @return \EE_Soft_Delete_Base_Class[]
+     * @return EE_Base_Class[]|EE_Question_Group[]|EE_Soft_Delete_Base_Class[]
+     * @throws EE_Error
      */
     public function get_question_groups($per_page, $current_page = 1, $count = false)
     {
-        /** @type EEM_Question_Group $questionGroupModel */
         $questionGroupModel = EEM_Question_Group::instance();
         // note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
         return $questionGroupModel->get_all(

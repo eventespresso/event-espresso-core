@@ -69,25 +69,25 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
     protected function __construct($timezone = null)
     {
         $this->base_types = array(
-            EEM_Price_Type::base_type_base_price => __('Price', 'event_espresso'),
-            EEM_Price_Type::base_type_discount => __('Discount', 'event_espresso'),
-            EEM_Price_Type::base_type_surcharge => __('Surcharge', 'event_espresso'),
-            EEM_Price_Type::base_type_tax => __('Tax', 'event_espresso') );
-        $this->singular_item = __('Price Type', 'event_espresso');
-        $this->plural_item = __('Price Types', 'event_espresso');
+            EEM_Price_Type::base_type_base_price => esc_html__('Price', 'event_espresso'),
+            EEM_Price_Type::base_type_discount => esc_html__('Discount', 'event_espresso'),
+            EEM_Price_Type::base_type_surcharge => esc_html__('Surcharge', 'event_espresso'),
+            EEM_Price_Type::base_type_tax => esc_html__('Tax', 'event_espresso') );
+        $this->singular_item = esc_html__('Price Type', 'event_espresso');
+        $this->plural_item = esc_html__('Price Types', 'event_espresso');
 
         $this->_tables = array(
             'Price_Type' => new EE_Primary_Table('esp_price_type', 'PRT_ID')
         );
         $this->_fields = array(
             'Price_Type' => array(
-                'PRT_ID' => new EE_Primary_Key_Int_Field('PRT_ID', __('Price Type ID', 'event_espresso')),
-                'PRT_name' => new EE_Plain_Text_Field('PRT_name', __('Price Type Name', 'event_espresso'), false, ''),
-                'PBT_ID' => new EE_Enum_Integer_Field('PBT_ID', __('Price Base type ID, 1 = Price , 2 = Discount , 3 = Surcharge , 4 = Tax', 'event_espresso'), false, EEM_Price_Type::base_type_base_price, $this->base_types),
-                'PRT_is_percent' => new EE_Boolean_Field('PRT_is_percent', __('Flag indicating price is a percentage', 'event_espresso'), false, false),
-                'PRT_order' => new EE_Integer_Field('PRT_order', __('Order in which price should be applied. ', 'event_espresso'), false, 0),
-                'PRT_deleted' => new EE_Trashed_Flag_Field('PRT_deleted', __('Flag indicating price type has been trashed', 'event_espresso'), false, false),
-                'PRT_wp_user' => new EE_WP_User_Field('PRT_wp_user', __('Price Type Creator ID', 'event_espresso'), false),
+                'PRT_ID' => new EE_Primary_Key_Int_Field('PRT_ID', esc_html__('Price Type ID', 'event_espresso')),
+                'PRT_name' => new EE_Plain_Text_Field('PRT_name', esc_html__('Price Type Name', 'event_espresso'), false, ''),
+                'PBT_ID' => new EE_Enum_Integer_Field('PBT_ID', esc_html__('Price Base type ID, 1 = Price , 2 = Discount , 3 = Surcharge , 4 = Tax', 'event_espresso'), false, EEM_Price_Type::base_type_base_price, $this->base_types),
+                'PRT_is_percent' => new EE_Boolean_Field('PRT_is_percent', esc_html__('Flag indicating price is a percentage', 'event_espresso'), false, false),
+                'PRT_order' => new EE_Integer_Field('PRT_order', esc_html__('Order in which price should be applied. ', 'event_espresso'), false, 0),
+                'PRT_deleted' => new EE_Trashed_Flag_Field('PRT_deleted', esc_html__('Flag indicating price type has been trashed', 'event_espresso'), false, false),
+                'PRT_wp_user' => new EE_WP_User_Field('PRT_wp_user', esc_html__('Price Type Creator ID', 'event_espresso'), false),
             )
         );
         $this->_model_relations = array(
@@ -152,7 +152,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
                 /* @var $price EE_Price */
                 $prices_names_and_ids[] = $price->name() . "(" . $price->ID() . ")";
             }
-            $msg = sprintf(__('The Price Type(s) could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.The prices are: %s', 'event_espresso'), implode(",", $prices_names_and_ids));
+            $msg = sprintf(esc_html__('The Price Type(s) could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.The prices are: %s', 'event_espresso'), implode(",", $prices_names_and_ids));
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }

@@ -5,15 +5,15 @@
  * we are to lay out.
  * Form layouts should add HTML content for each form section (eg a header and footer)
  * for the form section, and dictate how to layout all the inputs and proper subsections
- * (laying out where to put the input's label, the actual input widget, and its errors; and
- * stating where the proper subsections should be placed (but usually leaving them to layout
- * their own headers and footers etc).
+ * (laying out where to put the input's label, the actual input widget, and its errors;
+ * and stating where the proper subsections should be placed,
+ * but usually leaving them to lay out their own headers and footers etc.)
  */
 abstract class EE_Form_Section_Layout_Base
 {
 
     /**
-     * Form form section to lay out
+     * Form section to lay out
      *
      * @var EE_Form_Section_Proper
      */
@@ -83,8 +83,7 @@ abstract class EE_Form_Section_Layout_Base
             $this->layout_form_end(),
             $this->_form_section
         );
-        $html = $this->add_form_section_hooks_and_filters($html);
-        return $html;
+        return $this->add_form_section_hooks_and_filters($html);
     }
 
 
@@ -130,7 +129,7 @@ abstract class EE_Form_Section_Layout_Base
 
 
     /**
-     * Should be used to end the form section (eg a /table tag, or a /div tag, etc)
+     * Should be used to end the form section (eg a /table tag, or a /div tag, etc.)
      *
      * @return string
      */
@@ -139,7 +138,7 @@ abstract class EE_Form_Section_Layout_Base
 
 
     /**
-     * Should be used internally by layout_form() to layout each input (eg, if this layout
+     * Should be used internally by layout_form() to lay out each input (eg, if this layout
      * is putting each input in a row of its own, this should probably be called by a
      *  foreach loop in layout_form() (WITHOUT adding any content directly within layout_form()'s foreach loop.
      * Eg, this method should add the tr and td tags). This method is exposed in case you want to completely
@@ -155,8 +154,8 @@ abstract class EE_Form_Section_Layout_Base
 
     /**
      * Similar to layout_input(), should be used internally by layout_form() within a
-     * loop to layout each proper subsection. Unlike layout_input(), however, it is assumed
-     * that the proper subsection will layout its container, label, etc on its own.
+     * loop to lay out each proper subsection. Unlike layout_input(), however, it is assumed
+     * that the proper subsection will lay out its container, label, etc on its own.
      *
      * @param EE_Form_Section_Base $subsection
      * @return string html
@@ -164,12 +163,12 @@ abstract class EE_Form_Section_Layout_Base
     abstract public function layout_subsection($subsection);
 
 
-
     /**
      * Gets the HTML for the label tag and its contents for the input
      *
      * @param EE_Form_Input_Base $input
      * @return string
+     * @throws EE_Error
      */
     public function display_label($input)
     {
@@ -222,7 +221,6 @@ abstract class EE_Form_Section_Layout_Base
     }
 
 
-
     /**
      * returns the HTML for the server-side validation errors for the specified input
      * Note that if JS is enabled, it should remove these and instead
@@ -231,6 +229,7 @@ abstract class EE_Form_Section_Layout_Base
      *
      * @param EE_Form_Input_Base $input
      * @return string
+     * @throws EE_Error
      */
     public function display_errors($input)
     {
@@ -245,12 +244,12 @@ abstract class EE_Form_Section_Layout_Base
     }
 
 
-
     /**
      * Displays the help span for the specified input
      *
      * @param EE_Form_Input_Base $input
      * @return string
+     * @throws EE_Error
      */
     public function display_help_text($input)
     {
@@ -275,12 +274,12 @@ abstract class EE_Form_Section_Layout_Base
     }
 
 
-
     /**
      * Does an action and hook onto the end of teh form
      *
      * @param string $html
      * @return string
+     * @throws EE_Error
      */
     public function add_form_section_hooks_and_filters($html)
     {

@@ -2,8 +2,8 @@
 add_filter('FHEE__EEH_Form_Fields__label_html', '__return_empty_string');
 $values = EEH_Form_Fields::prep_answer_options(
     array(
-        array('id' => 1, 'text' => __('Yes', 'event_espresso')),
-        array('id' => 0, 'text' => __('No', 'event_espresso')),
+        array('id' => 1, 'text' => esc_html__('Yes', 'event_espresso')),
+        array('id' => 0, 'text' => esc_html__('No', 'event_espresso')),
     )
 );
 ?>
@@ -11,7 +11,7 @@ $values = EEH_Form_Fields::prep_answer_options(
 <!--*************************   Event Single  ****************************-->
 
 <h2 class="ee-admin-settings-hdr">
-    <?php _e(
+    <?php esc_html_e(
         'Single Event Pages',
         'event_espresso'
     ); ?><?php // echo EEH_Template::get_help_tab_link('event_single_settings_info');?>
@@ -21,7 +21,7 @@ $values = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="display_status_banner_single">
-                <?php _e('Display Status Banner', 'event_espresso'); ?>
+                <?php esc_html_e('Display Status Banner', 'event_espresso'); ?>
             </label>
         </th>
         <td>
@@ -33,7 +33,7 @@ $values = EEH_Form_Fields::prep_answer_options(
                 'display_status_banner_single'
             ); ?>
             <p class="description"><?php
-                _e(
+                esc_html_e(
                     'Selecting "Yes" will inject an Event Status banner with the title whenever Events are displaying on the single event page.',
                     'event_espresso'
                 ); ?></p>
@@ -43,7 +43,7 @@ $values = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="display_venue">
-                <?php _e('Display Venue Details', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                <?php esc_html_e('Display Venue Details', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                     'display_addresses_in_reg_form_info'
                 ); ?>
             </label>
@@ -57,7 +57,7 @@ $values = EEH_Form_Fields::prep_answer_options(
                 'display_venue'
             ); ?>
             <p class="description"><?php
-                _e(
+                esc_html_e(
                     'Do not use this if you are using the venue shortcodes in your event description.',
                     'event_espresso'
                 ); ?></p>
@@ -67,7 +67,7 @@ $values = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Single_use_sortable_display_order">
-                <?php _e('Use Custom Display Order?', 'event_espresso'); ?>
+                <?php esc_html_e('Use Custom Display Order?', 'event_espresso'); ?>
             </label>
         </th>
         <td>
@@ -85,7 +85,7 @@ $values = EEH_Form_Fields::prep_answer_options(
 
     <tr>
         <th>
-            <?php _e('Display Order', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+            <?php esc_html_e('Display Order', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                 'display_addresses_in_reg_form_info'
             ); ?>
         </th>
@@ -99,7 +99,7 @@ $values = EEH_Form_Fields::prep_answer_options(
             <?php echo $event_single_display_order; ?>
 
             <p class="description"><?php
-                _e(
+                esc_html_e(
                     'Drag and Drop the above to determine the display order of the Event Description, Date and Times, Ticket Selector, and Venue Information on the single event page.',
                     'event_espresso'
                 ); ?></p>

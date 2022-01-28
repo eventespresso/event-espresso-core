@@ -373,7 +373,7 @@ class EEH_Sideloader extends EEH_Base
     {
         EE_Error::doing_it_wrong(
             __CLASS__ . '::' . __FUNCTION__,
-            __(
+            esc_html__(
                 'EEH_Sideloader::set_upload_from was renamed to EEH_Sideloader::set_download_from',
                 'event_espresso'
             ),
@@ -392,7 +392,7 @@ class EEH_Sideloader extends EEH_Base
     {
         EE_Error::doing_it_wrong(
             __CLASS__ . '::' . __FUNCTION__,
-            __(
+            esc_html__(
                 'EEH_Sideloader::get_upload_from was renamed to EEH_Sideloader::get_download_from',
                 'event_espresso'
             ),

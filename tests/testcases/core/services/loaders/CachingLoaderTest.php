@@ -38,6 +38,7 @@ class CachingLoaderTest extends EE_UnitTestCase
      */
     public function setUp()
     {
+        remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
         //caching is turned off by default in the parent test case.  For tests in here where we're doing a number of
         //different persistence tests
         if (! CachingLoaderTest::$caching_loader instanceof LoaderDecorator) {
@@ -64,7 +65,8 @@ class CachingLoaderTest extends EE_UnitTestCase
      */
     public function testLoadCachingOff()
     {
-        $object = CachingLoaderTest::$caching_loader->load($this->getFqcnForTest());
+        self::$loader->setBypass(true);
+        $object = self::$loader->load($this->getFqcnForTest());
         $this->assertInstanceOf(
             $this->getFqcnForTest(),
             $object,
@@ -80,10 +82,11 @@ class CachingLoaderTest extends EE_UnitTestCase
         $obj2ID = spl_object_hash($object2);
         $this->assertNotEquals($obj1ID, $obj2ID);
 
-        //this time let's load the object with caching turned on so it gets in the cache and we'll send that objects
-        //hash along for the persistence test.
-        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
-        return spl_object_hash(CachingLoaderTest::$caching_loader->load($this->getFqcnForTest()));
+        // this time let's load the object with caching turned on so it gets in the cache
+        // and we'll send that objects hash along for the persistence test.
+        // add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
+        self::$loader->setBypass(false);
+        return spl_object_hash(self::$loader->load($this->getFqcnForTest()));
     }
 
 
@@ -94,7 +97,7 @@ class CachingLoaderTest extends EE_UnitTestCase
     public function testLoadCachingOn()
     {
         //turn caching on.
-        remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
+        self::$loader->setBypass(false);
         $this->assertEquals(
             spl_object_hash(CachingLoaderTest::$caching_loader->load($this->getFqcnForTest())),
             spl_object_hash(CachingLoaderTest::$caching_loader->load($this->getFqcnForTest()))
@@ -110,7 +113,7 @@ class CachingLoaderTest extends EE_UnitTestCase
     public function testResetCache()
     {
         // turn caching on again
-        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
+        self::$loader->setBypass(false);
         // add a few different objects this time, but confirm that they are getting cached
         $fqcn7 = '\EventEspresso\core\services\address\formatters\AddressFormatter';
         $object7 = CachingLoaderTest::$caching_loader->load($fqcn7);
@@ -143,7 +146,7 @@ class CachingLoaderTest extends EE_UnitTestCase
     public function testShare()
     {
         // turn caching on again
-        add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
+        self::$loader->setBypass(false);
         // create a context object
         $context1 = new EventEspresso\core\domain\entities\contexts\Context(
             'testShare',

@@ -9,7 +9,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @ package            Event Espresso
  * @ author                Seth Shoultes
  * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            {@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @ license            {@link https://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @ link                    {@link http://www.eventespresso.com}
  * @ since                4.0
  */
@@ -257,7 +257,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      */
     public function e_full_name()
     {
-        echo $this->full_name();
+        echo $this->full_name(); // sanitized
     }
 
 
@@ -704,7 +704,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     public function save_and_clean_billing_info_for_payment_method($billing_form, $payment_method)
     {
         if (! $billing_form instanceof EE_Billing_Attendee_Info_Form) {
-            EE_Error::add_error(__('Cannot save billing info because there is none.', 'event_espresso'));
+            EE_Error::add_error(esc_html__('Cannot save billing info because there is none.', 'event_espresso'));
             return false;
         }
         $billing_form->clean_sensitive_data();

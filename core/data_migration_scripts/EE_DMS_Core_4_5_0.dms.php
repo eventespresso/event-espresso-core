@@ -41,7 +41,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
      */
     public function __construct(TableManager $table_manager = null, TableAnalysis $table_analysis = null)
     {
-        $this->_pretty_name = __("Data Update to Event Espresso 4.5.0", "event_espresso");
+        $this->_pretty_name = esc_html__("Data Update to Event Espresso 4.5.0", "event_espresso");
         $this->_priority = 10;
         $this->_migration_stages = array(
             new EE_DMS_4_5_0_update_wp_user_for_tickets(),
@@ -488,11 +488,11 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
             if (! $price_types_exist) {
                 $user_id = EEH_Activation::get_default_creator_id();
                 $SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_wp_user, PRT_deleted ) VALUES
-							(1, '" . __('Base Price', 'event_espresso') . "', 1,  0, 0, $user_id, 0),
-							(2, '" . __('Percent Discount', 'event_espresso') . "', 2,  1, 20, $user_id, 0),
-							(3, '" . __('Dollar Discount', 'event_espresso') . "', 2,  0, 30, $user_id, 0),
-							(4, '" . __('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, $user_id,  0),
-							(5, '" . __('Dollar Surcharge', 'event_espresso') . "', 3,  0, 50, $user_id, 0);";
+							(1, '" . esc_html__('Base Price', 'event_espresso') . "', 1,  0, 0, $user_id, 0),
+							(2, '" . esc_html__('Percent Discount', 'event_espresso') . "', 2,  1, 20, $user_id, 0),
+							(3, '" . esc_html__('Dollar Discount', 'event_espresso') . "', 2,  0, 30, $user_id, 0),
+							(4, '" . esc_html__('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, $user_id,  0),
+							(5, '" . esc_html__('Dollar Surcharge', 'event_espresso') . "', 3,  0, 50, $user_id, 0);";
                 $SQL = apply_filters('FHEE__EE_DMS_4_5_0__insert_default_price_types__SQL', $SQL);
                 $wpdb->query($SQL);
             }
@@ -549,7 +549,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
                 $SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_required, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_wp_user, TKT_deleted ) VALUES
 					( 1, 0, '"
-                       . __("Free Ticket", "event_espresso")
+                       . esc_html__("Free Ticket", "event_espresso")
                        . "', '', 100, 0, -1, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, $user_id, 0);";
                 $SQL = apply_filters('FHEE__EE_DMS_4_5_0__insert_default_tickets__SQL', $SQL);
                 $wpdb->query($SQL);

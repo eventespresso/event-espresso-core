@@ -34,7 +34,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 	protected function _define_page_props() {
 		$this->_admin_page_title = NEW_ADDON_LABEL;
 		$this->_labels = array(
-			'publishbox' => __('Update Settings', 'event_espresso')
+			'publishbox' => esc_html__('Update Settings', 'event_espresso')
 		);
 	}
 
@@ -61,7 +61,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('Settings', 'event_espresso'),
+					'label' => esc_html__('Settings', 'event_espresso'),
 					'order' => 10
 					),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box') ),
@@ -69,7 +69,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 			),
 			'usage' => array(
 				'nav' => array(
-					'label' => __('New Addon Usage', 'event_espresso'),
+					'label' => esc_html__('New Addon Usage', 'event_espresso'),
 					'order' => 30
 					),
 				'require_nonce' => FALSE
@@ -88,7 +88,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 	}
 
 	public function admin_init() {
-		EE_Registry::$i18n_js_strings[ 'confirm_reset' ] = __( 'Are you sure you want to reset ALL your Event Espresso New Addon Information? This cannot be undone.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'confirm_reset' ] = esc_html__( 'Are you sure you want to reset ALL your Event Espresso New Addon Information? This cannot be undone.', 'event_espresso' );
 	}
 
 	public function admin_notices() {}
@@ -114,8 +114,8 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['new_addon_config'] = EE_Config::instance()->get_config( 'addons', 'EED_New_Addon', 'EE_New_Addon_Config' );
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );
 		$this->_template_args['yes_no_values'] = array(
-			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))),
-			EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => __('Yes', 'event_espresso')))
+			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => esc_html__('No', 'event_espresso'))),
+			EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => esc_html__('Yes', 'event_espresso')))
 		);
 
 		$this->_template_args['return_action'] = $this->_req_action;
@@ -203,7 +203,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 				return $value;
 			default:
 				$input_name = $second_level_key == NULL ? $top_level_key : $top_level_key."[".$second_level_key."]";
-				EE_Error::add_error(sprintf(__("Could not sanitize input '%s' because it has no entry in our sanitization methods array", "event_espresso"),$input_name), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(sprintf(esc_html__("Could not sanitize input '%s' because it has no entry in our sanitization methods array", "event_espresso"),$input_name), __FILE__, __FUNCTION__, __LINE__ );
 				return NULL;
 
 		}

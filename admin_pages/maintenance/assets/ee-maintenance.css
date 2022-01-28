@@ -8,7 +8,7 @@ Styling the progress bar and migration page
 
 /* GENERAL DISPLAY STUFF */
 .espresso-header {
-    padding:.75em 1.5em .5em;
+    padding: .75em 1.5em .5em;
     background: #fff;
     color: #444;
 }
@@ -31,6 +31,7 @@ Styling the progress bar and migration page
     float: left;
 
 }
+
 /* Progress bar containers */
 figure {
     position: relative;
@@ -61,11 +62,11 @@ figure {
     color: #59595B;
 }
 
-table.widefat tbody>tr>td:first-child{
+table.widefat tbody > tr > td:first-child {
     width: 20%;
 }
 
-textarea.system_status_info{
+textarea.system_status_info {
     width: 80%;
     height: 100px;
     overflow-y: scroll;
@@ -73,11 +74,13 @@ textarea.system_status_info{
 
 #migration-options-dv table td {
 }
+
 #migration-options-dv .display-the-hidden,
 #migration-options-dv .hide-the-displayed {
     float: right;
     margin: .5em 0 0;
 }
+
 #migration-risks {
     cursor: pointer;
 }
@@ -85,4 +88,201 @@ textarea.system_status_info{
 /** Datetime Tools Styling **/
 #datetime-offset-fix-option input.large-text {
     max-width: 200px;
+}
+
+.ee-system-stati-dv {
+    --ee-stat-gutter: 220px;
+}
+
+@media only screen and (max-width: 960px) {
+    .ee-system-stati-dv {
+        --ee-stat-gutter: 76px;
+    }
+}
+
+@media only screen and (max-width: 782px) {
+    .ee-system-stati-dv {
+        --ee-stat-gutter: 0;
+    }
+}
+
+.ee-system-stati-dv {
+    --ee-stat-pad-mod: .75rem;
+    --ee-stat-dv-width: calc(100vw - var(--ee-stat-gutter));
+    --ee-stat-table-1-width: var(--ee-stat-dv-width);
+    --ee-stat-table-1-ltd-width: calc(var(--ee-stat-table-1-width) * .825);
+    --ee-stat-table-2-width: calc(var(--ee-stat-table-1-ltd-width) - var(--ee-stat-pad-mod));
+    --ee-stat-table-2-ltd-width: calc(var(--ee-stat-table-2-width) * .825);
+    --ee-stat-table-3-width: calc(var(--ee-stat-table-2-ltd-width) - var(--ee-stat-pad-mod));
+    --ee-stat-table-3-ltd-width: calc(var(--ee-stat-table-3-width) * .825);
+    --ee-stat-table-4-width: calc(var(--ee-stat-table-3-ltd-width) - var(--ee-stat-pad-mod));
+    --ee-stat-table-4-ltd-width: calc(var(--ee-stat-table-4-width) * .825);
+    --ee-stat-table-5-width: calc(var(--ee-stat-table-4-ltd-width) - var(--ee-stat-pad-mod));
+    --ee-stat-table-5-ltd-width: calc(var(--ee-stat-table-5-width) * .825);
+    --ee-stat-table-6-width: calc(var(--ee-stat-table-5-ltd-width) - var(--ee-stat-pad-mod));
+    --ee-stat-table-6-ltd-width: calc(var(--ee-stat-table-6-width) * .825);
+    --ee-stat-label-width: calc(var(--ee-stat-table-1-width) * .175);
+    clear: both;
+    margin: 0;
+    padding: 0;
+    width: var(--ee-stat-dv-width);
+}
+
+.ee-system-stati {
+    box-shadow: none;
+    border-spacing: 0;
+    box-sizing: border-box !important;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    padding-inline: .25rem;
+}
+
+.ee-system-stati tbody {
+    display: flex;
+    flex-direction: column;
+}
+
+.ee-system-stati tr {
+    display: flex;
+}
+
+.ee-system-stati > tbody > li:nth-child(odd),
+.ee-system-stati > tbody > tr:nth-child(odd),
+.ee-system-stati tr:nth-child(even) > td > .ee-system-stati {
+    background-color: #fff;
+    border-block: .25rem solid #fff;
+}
+
+.ee-system-stati > tbody > li:nth-child(even),
+.ee-system-stati > tbody > tr:nth-child(even),
+.ee-system-stati tr:nth-child(odd) > td > .ee-system-stati {
+    background-color: #f0f3f3;
+    border-block: .25rem solid #f0f3f3;
+}
+
+
+.ee-system-stati-1,
+.ee-system-stati-3,
+.ee-system-stati-5,
+.ee-system-stati li:nth-child(odd),
+.ee-system-stati-2 tr:nth-child(odd),
+.ee-system-stati-4 tr:nth-child(odd),
+.ee-system-stati-6 tr:nth-child(odd) {
+    background-color: #fff;
+    border-block: .25rem solid #fff;
+}
+
+.ee-system-stati-1,
+.ee-system-stati-3,
+.ee-system-stati-5,
+.ee-system-stati li:nth-child(even),
+.ee-system-stati-2 tr:nth-child(even),
+.ee-system-stati-4 tr:nth-child(even),
+.ee-system-stati-6 tr:nth-child(even) {
+    background-color: #f0f3f3;
+    border-block: .25rem solid #fff;
+}
+
+.ee-system-stati li,
+.ee-system-stati td {
+    box-sizing: border-box !important;
+    display: inline-block;
+    margin: 0;
+    overflow-wrap: break-word;
+    padding: 0;
+}
+
+.ee-system-stati li,
+.ee-system-stati .ee-system-stati-key,
+.ee-system-stati td.ee-system-stati-value {
+    padding-block: .75rem;
+    padding-inline: 1rem;
+}
+
+.ee-system-stati-1 {
+    max-width: 100vw;
+    width: var(--ee-stat-table-1-width);
+}
+
+.ee-system-stati-2 {
+    max-width: var(--ee-stat-table-2-width);
+    width: var(--ee-stat-table-2-width);
+}
+
+.ee-system-stati-3 {
+    max-width: var(--ee-stat-table-3-width);
+    width: var(--ee-stat-table-3-width);
+}
+
+.ee-system-stati-4 {
+    max-width: var(--ee-stat-table-4-width);
+    width: var(--ee-stat-table-4-width);
+}
+
+.ee-system-stati-5 {
+    max-width: var(--ee-stat-table-5-width);
+    width: var(--ee-stat-table-5-width);
+}
+
+.ee-system-stati-6 {
+    max-width: var(--ee-stat-table-6-width);
+    width: var(--ee-stat-table-6-width);
+}
+
+.ee-system-stati .ee-system-stati-label {
+    font-weight: 600;
+    vertical-align: top;
+}
+
+.ee-system-stati .ee-system-stati-count {
+    color: #999;
+    font-weight: 200;
+    margin-inline-start: .25rem;
+}
+
+.ee-system-stati-1 .ee-system-stati-key,
+.ee-system-stati-2 .ee-system-stati-key,
+.ee-system-stati-3 .ee-system-stati-key,
+.ee-system-stati-4 .ee-system-stati-key,
+.ee-system-stati-5 .ee-system-stati-key,
+.ee-system-stati-6 .ee-system-stati-key {
+    max-width: var(--ee-stat-label-width);
+    width: var(--ee-stat-label-width);
+}
+
+.ee-system-stati-1 td:last-child {
+    max-width: var(--ee-stat-table-1-ltd-width);
+    width: var(--ee-stat-table-1-ltd-width);
+}
+
+.ee-system-stati-2 td:last-child {
+    max-width: var(--ee-stat-table-2-ltd-width);
+    width: var(--ee-stat-table-2-ltd-width);
+}
+
+.ee-system-stati-3 td:last-child {
+    max-width: var(--ee-stat-table-3-ltd-width);
+    width: var(--ee-stat-table-3-ltd-width);
+}
+
+.ee-system-stati-4 td:last-child {
+    max-width: var(--ee-stat-table-4-ltd-width);
+    width: var(--ee-stat-table-4-ltd-width);
+}
+
+.ee-system-stati-5 td:last-child {
+    max-width: var(--ee-stat-table-5-ltd-width);
+    width: var(--ee-stat-table-5-ltd-width);
+}
+
+.ee-system-stati-6 td:last-child {
+    max-width: var(--ee-stat-table-6-ltd-width);
+    width: var(--ee-stat-table-6-ltd-width);
+}
+
+.ee-system-stati mark.error {
+    padding: .375rem .75rem;
+    background-color: #ffff66;
 }

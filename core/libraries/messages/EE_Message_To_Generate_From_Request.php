@@ -1,8 +1,11 @@
 <?php
 
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * This class is the signature for an object representing prepped message for queueing.
- * The difference with this class from its parent, is that it contains info from a url.  Thus it has the following differences:
+ * The difference with this class from its parent, is that it contains info from a url.  Thus it has the following
+ * differences:
  *
  * - Includes a sending messenger
  * - Data is prepped from the corresponding message type.
@@ -27,6 +30,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 
     /**
      * Holds the token from the request.
+     *
      * @type string
      */
     public $token = '';
@@ -36,27 +40,28 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
      * Constructor
      * This instantiates the object using arguments from the given request and calling the parent constructor.
      *
-     * @param   EE_Message_Resource_Manager $message_resource_manager
-     * @param   EE_Request_Handler          $request
+     * @param EE_Message_Resource_Manager $message_resource_manager
+     * @param RequestInterface            $request
+     * @throws EE_Error
      */
-    public function __construct(EE_Message_Resource_Manager $message_resource_manager, EE_Request_Handler $request)
+    public function __construct(EE_Message_Resource_Manager $message_resource_manager, RequestInterface $request)
     {
         parent::__construct(
-            $request->get('gen_msgr'),
-            $request->get('message_type'),
-            array(),
-            $request->get('context')
+            $request->getRequestParam('gen_msgr'),
+            $request->getRequestParam('message_type'),
+            [],
+            $request->getRequestParam('context')
         );
         if (! $this->valid()) {
             return;
         }
-        $this->_sending_messenger = $message_resource_manager->get_active_messenger($request->get('snd_msgr'));
-        $this->token = $request->get('token');
+        $this->token              = $request->getRequestParam('token');
+        $this->_sending_messenger = $message_resource_manager->get_active_messenger(
+            $request->getRequestParam('snd_msgr')
+        );
         $this->_validate_request();
-        $this->_data = $this->_get_data_from_request($request->get('id'));
+        $this->_data = $this->_get_data_from_request($request->getRequestParam('id'));
     }
-
-
 
 
     /**
@@ -68,9 +73,9 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
     }
 
 
-
     /**
      * This validates set properties from the incoming request.
+     *
      * @throws EE_Error
      */
     protected function _validate_request()
@@ -82,39 +87,42 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
             || empty($this->_context)
             || empty($this->token)
         ) {
-            throw new EE_Error(__('The request for the "msg_url_trigger" route has a malformed url.', 'event_espresso'));
+            throw new EE_Error(esc_html__(
+                'The request for the "msg_url_trigger" route has a malformed url.',
+                'event_espresso'
+            ));
         }
     }
 
 
-
     /**
      * This returns the data property according to what is expected from the request.
+     *
      * @param $id
-     * @throws EE_Error
      * @return mixed (whatever the data is returned from the message type).
+     * @throws EE_Error
      */
     protected function _get_data_from_request($id)
     {
         // get the EE_Registration from the token
         /** @type EE_Registration $registration */
-        $registration = EEM_Registration::instance()->get_one(array( array( 'REG_url_link' => $this->token ) ));
+        $registration = EEM_Registration::instance()->get_one([['REG_url_link' => $this->token]]);
         // if no registration then bail early.
         if (! $registration instanceof EE_Registration) {
-            throw new EE_Error(__('Unable to complete the request because the token is invalid.', 'event_espresso'));
+            throw new EE_Error(esc_html__('Unable to complete the request because the token is invalid.', 'event_espresso'));
         }
 
         return $this->_get_data_to_use($registration, $id);
     }
 
 
-
     /**
      * This uses the set message type to retrieve the data in the correct format as it came from the url.
-     * @throws EE_Error
+     *
      * @param EE_Registration $registration
-     * @param int             $data_id   This is sometimes used for secondary data a message type requires.
+     * @param int             $data_id This is sometimes used for secondary data a message type requires.
      * @return mixed   Data prepared as needed for generating this message.
+     * @throws EE_Error
      */
     protected function _get_data_to_use($registration, $data_id)
     {

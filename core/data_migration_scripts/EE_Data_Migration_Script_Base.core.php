@@ -401,7 +401,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
         $feedback_message_array = array();
         foreach ($records_migrated_per_stage as $migration_stage_name => $num_records_migrated) {
             $feedback_message_array[] = sprintf(
-                __("Migrated %d records successfully during %s", "event_espresso"),
+                esc_html__("Migrated %d records successfully during %s", "event_espresso"),
                 $num_records_migrated,
                 $migration_stage_name
             );
@@ -683,7 +683,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "The DMS slug '%s' should correspond to the addon's name, which should also be '%s', but no such addon was registered. These are the registered addons' names: %s",
                             "event_espresso"
                         ),

@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -44,6 +45,15 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page
 
 
     /**
+     * @param array $req_data
+     */
+    public function setReqData($req_data)
+    {
+        $this->_req_data = $req_data;
+    }
+
+
+    /**
      * Mock for _set_registration_status_from_request
      *
      * @param bool|false $status
@@ -60,7 +70,6 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page
      */
     public function set_registration_status_from_request($status = false, $notify = false)
     {
-        $this->_req_data = array_merge($_POST, $_REQUEST);
         return $this->_set_registration_status_from_request($status, $notify);
     }
 

@@ -30,7 +30,7 @@
  * @ package		Event Espresso
  * @ author			Event Espresso
  * @ copyright	(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ license		https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link				http://www.eventespresso.com
  * @ version	 	EE4
  *
@@ -98,7 +98,7 @@ function espresso_new_addon_activation_error() {
   deactivate_plugins( plugin_basename( EE_NEW_ADDON_PLUGIN_FILE ) );
   ?>
   <div class="error">
-    <p><?php printf( __( 'Event Espresso New Addon could not be activated. Please ensure that Event Espresso version %1$s or higher is running', 'event_espresso' ), EE_NEW_ADDON_CORE_VERSION_REQUIRED ); ?></p>
+    <p><?php printf( esc_html__( 'Event Espresso New Addon could not be activated. Please ensure that Event Espresso version %1$s or higher is running', 'event_espresso' ), EE_NEW_ADDON_CORE_VERSION_REQUIRED ); ?></p>
   </div>
 <?php
 }

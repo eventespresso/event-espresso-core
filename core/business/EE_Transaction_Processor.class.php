@@ -272,7 +272,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
         } catch (EE_Error $e) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The Ticket Line Item for Registration %1$d could not be reinstated because :%2$s%3$s',
                         'event_espresso'
                     ),
@@ -333,7 +333,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
         } catch (EE_Error $e) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The Ticket Line Item for Registration %1$d could not be cancelled because :%2$s%3$s',
                         'event_espresso'
                     ),
@@ -368,7 +368,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
         if (! $transaction instanceof EE_Transaction) {
             throw new EE_Error(
                 sprintf(
-                    __('The Transaction for Registration %1$d was not found or is invalid.', 'event_espresso'),
+                    esc_html__('The Transaction for Registration %1$d was not found or is invalid.', 'event_espresso'),
                     $registration->ID()
                 )
             );
@@ -398,7 +398,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
         if (! $ticket_line_item instanceof EE_Line_Item) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The Line Item for Transaction %1$d and Ticket %2$d was not found or is invalid.',
                         'event_espresso'
                     ),
@@ -480,7 +480,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
         $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
         // check that method exists
         if (! method_exists($registration_processor, $method_name)) {
-            throw new EE_Error(__('Method does not exist.', 'event_espresso'));
+            throw new EE_Error(esc_html__('Method does not exist.', 'event_espresso'));
         }
         // make sure some query params are set for retrieving registrations
         $this->_set_registration_query_params($registration_query_params);
@@ -554,7 +554,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
                                 $PMD_ID = $first_payment_method->ID();
                             } else {
                                 EE_Error::add_error(
-                                    __(
+                                    esc_html__(
                                         'A valid Payment Method could not be determined. Please ensure that at least one Payment Method is activated.',
                                         'event_espresso'
                                     ),
@@ -568,7 +568,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
                         $transaction->save();
                     } else {
                         EE_Error::add_error(
-                            __(
+                            esc_html__(
                                 'Please activate at least one Payment Method in order for things to operate correctly.',
                                 'event_espresso'
                             ),

@@ -246,7 +246,7 @@ class EE_Checkout
     /**
      *    if a payment method was selected that uses an on-site gateway, then this is the billing form
      *
-     * @var EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form
+     * @var EE_Billing_Info_Form|EE_Billing_Attendee_Info_Form
      */
     public $billing_form;
 
@@ -283,7 +283,8 @@ class EE_Checkout
         $this->thank_you_page_url = EE_Registry::instance()->CFG->core->thank_you_page_url();
         $this->cancel_page_url = EE_Registry::instance()->CFG->core->cancel_page_url();
         $this->continue_reg = apply_filters('FHEE__EE_Checkout___construct___continue_reg', true);
-        $this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->ajax;
+
+        $this->admin_request = is_admin() && ! EED_Single_Page_Checkout::getRequest()->isAjax();
         $this->reg_cache_where_params = array(
             0          => array('REG_deleted' => false),
             'order_by' => array('REG_count' => 'ASC'),
@@ -360,11 +361,12 @@ class EE_Checkout
     {
         $this->process_form_submission = false;
         $this->continue_reg = apply_filters('FHEE__EE_Checkout___construct___continue_reg', true);
-        $this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->front_ajax;
+        $this->admin_request = is_admin() && ! EED_Single_Page_Checkout::getRequest()->isFrontAjax();
         $this->continue_reg = true;
         $this->redirect = false;
         // don't reset the cached redirect form if we're about to be asked to display it !!!
-        if (EE_Registry::instance()->REQ->get('action', 'display_spco_reg_step') !== 'redirect_form') {
+        $action = EED_Single_Page_Checkout::getRequest()->getRequestParam('action', 'display_spco_reg_step');
+        if ($action !== 'redirect_form') {
             $this->redirect_form = '';
         }
         $this->redirect_url = '';
@@ -406,7 +408,7 @@ class EE_Checkout
             // advance to the next step
             $this->set_current_step($this->next_step->slug());
             // also reset the step param in the request in case any other code references that directly
-            EE_Registry::instance()->REQ->set('step', $this->current_step->slug());
+            EED_Single_Page_Checkout::getRequest()->setRequestParam('step', $this->current_step->slug());
             // since we are skipping a step and setting the current step to be what was previously the next step,
             // we need to check that the next step is now correct, and not still set to the current step.
             if ($this->current_step->slug() === $this->next_step->slug()) {
@@ -486,7 +488,7 @@ class EE_Checkout
             $this->current_step->set_is_current_step(true);
         } else {
             EE_Error::add_error(
-                __('The current step could not be set.', 'event_espresso'),
+                esc_html__('The current step could not be set.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -644,7 +646,7 @@ class EE_Checkout
                 if (WP_DEBUG) {
                     EE_Error::add_error(
                         sprintf(
-                            __('The "%1$s" registration step was not initialized properly.', 'event_espresso'),
+                            esc_html__('The "%1$s" registration step was not initialized properly.', 'event_espresso'),
                             $reg_step->name()
                         ),
                         __FILE__,
@@ -684,7 +686,7 @@ class EE_Checkout
     public function reset_reg_steps()
     {
         $this->sort_reg_steps();
-        $this->set_current_step(EE_Registry::instance()->REQ->get('step'));
+        $this->set_current_step(EED_Single_Page_Checkout::getRequest()->getRequestParam('step'));
         $this->set_next_step();
         // the text that appears on the reg step form submit button
         $this->current_step->set_submit_button_text();
@@ -896,7 +898,7 @@ class EE_Checkout
         } else {
             if ($show_errors) {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'A valid Transaction was not found when attempting to save your registration information.',
                         'event_espresso'
                     ),
@@ -939,7 +941,7 @@ class EE_Checkout
                 if (! $this->transaction->update_cache_after_object_save('Registration', $registration)) {
                     if ($show_errors) {
                         EE_Error::add_error(
-                            __(
+                            esc_html__(
                                 'The newly saved Registration object could not be cached on the Transaction.',
                                 'event_espresso'
                             ),
@@ -953,7 +955,7 @@ class EE_Checkout
         } else {
             if ($show_errors) {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'An invalid Registration object was discovered when attempting to save your registration information.',
                         'event_espresso'
                     ),
@@ -982,7 +984,7 @@ class EE_Checkout
             if (! $registration->update_cache_after_object_save('Attendee', $registration->attendee())) {
                 if ($show_errors) {
                     EE_Error::add_error(
-                        __(
+                        esc_html__(
                             'The newly saved Attendee object could not be cached on the registration.',
                             'event_espresso'
                         ),
@@ -997,7 +999,7 @@ class EE_Checkout
                 EE_Error::add_error(
                     sprintf(
                         '%1$s||%1$s $attendee = %2$s',
-                        __(
+                        esc_html__(
                             'Either no Attendee information was found, or an invalid Attendee object was discovered when attempting to save your registration information.',
                             'event_espresso'
                         ),
@@ -1031,7 +1033,7 @@ class EE_Checkout
                 if (! $registration->update_cache_after_object_save('Answer', $answer, $cache_key)) {
                     if ($show_errors) {
                         EE_Error::add_error(
-                            __(
+                            esc_html__(
                                 'The newly saved Answer object could not be cached on the registration.',
                                 'event_espresso'
                             ),
@@ -1044,7 +1046,7 @@ class EE_Checkout
             } else {
                 if ($show_errors) {
                     EE_Error::add_error(
-                        __(
+                        esc_html__(
                             'An invalid Answer object was discovered when attempting to save your registration information.',
                             'event_espresso'
                         ),
@@ -1069,6 +1071,7 @@ class EE_Checkout
      */
     public function refresh_all_entities($from_db = false)
     {
+        $this->current_step->setRequest(EED_Single_Page_Checkout::getRequest());
         $from_db = $this->current_step->is_final_step() || $this->action === 'process_gateway_response'
             ? true
             : $from_db;
@@ -1110,7 +1113,7 @@ class EE_Checkout
             $this->cart = $this->get_cart_for_transaction($this->transaction);
         } else {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'A valid Transaction was not found when attempting to update the model entity mapper.',
                     'event_espresso'
                 ),
@@ -1145,7 +1148,7 @@ class EE_Checkout
                 }
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'An invalid Registration object was discovered when attempting to update the model entity mapper.',
                         'event_espresso'
                     ),
@@ -1192,7 +1195,7 @@ class EE_Checkout
             );
         } else {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'A valid Transaction was not found when attempting to update the model entity mapper.',
                     'event_espresso'
                 ),
@@ -1216,7 +1219,7 @@ class EE_Checkout
                 $this->cart = EE_Cart::instance($grand_total);
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'A valid Cart was not found when attempting to update the model entity mapper.',
                         'event_espresso'
                     ),
@@ -1252,7 +1255,7 @@ class EE_Checkout
             $registration->get_model()->refresh_entity_map_with($reg_cache_ID, $registration);
         } else {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'An invalid Registration object was discovered when attempting to update the model entity mapper.',
                     'event_espresso'
                 ),
@@ -1306,7 +1309,7 @@ class EE_Checkout
                 }
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'An invalid Answer object was discovered when attempting to update the model entity mapper.',
                         'event_espresso'
                     ),
@@ -1387,7 +1390,6 @@ class EE_Checkout
                 'txn_status_updated'      => $this->transaction->txn_status_updated(),
                 'reg_status_updated'      => $this->reg_status_updated,
                 'reg_url_link'            => $this->reg_url_link,
-                'REQ'                     => $display_request ? $_REQUEST : '',
             );
             if ($this->transaction instanceof EE_Transaction) {
                 $default_data['TXN_status'] = $this->transaction->status_ID();

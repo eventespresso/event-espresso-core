@@ -34,6 +34,10 @@
  *    class and start the plugin update engine!
  * }
  */
+
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 if (! class_exists('PluginUpdateEngineChecker')):
     /**
      * A custom plugin update checker.
@@ -424,7 +428,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 switch ($type) {
                     case 'options':
                         $msg .= sprintf(
-                            __(
+                            esc_html__(
                                 'Plugin Update Engine is unable to setup correctly for the plugin with the slug "%s" because there are the following keys missing from the options array sent to the PluginUpdateEngineChecker class when it is instantiated:',
                                 $this->lang_domain
                             ),
@@ -438,21 +442,21 @@ if (! class_exists('PluginUpdateEngineChecker')):
                         break;
 
                     case 'slug_array_invalid':
-                        $msg .= __(
+                        $msg .= esc_html__(
                             'An array was sent to the PluginUpdateEngineChecker class as the value for the $plugin_slug property, however the array is missing the "premium" index.',
                             $this->lang_domain
                         );
                         break;
 
                     case 'slug_string_invalid':
-                        $msg .= __(
+                        $msg .= esc_html__(
                             'A string was sent to the PluginUpdateEngineChecker class as the value for the $plugin_slug property, however the string is empty',
                             $this->lang_domain
                         );
                         break;
 
                     case 'no_version_present':
-                        $msg .= __(
+                        $msg .= esc_html__(
                             'For some reason PUE is unable to determine the current version of the plugin. It is possible that the incorrect value was sent for the "plugin_basename" key in the <strong>$options</strong> array.',
                             $this->lang_domain
                         );
@@ -462,7 +466,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                         //Old method for plugin name is just to use the slug and manipulate
                         $pluginname = ucwords(str_replace('-', ' ', $this->_incoming_slug));
                         $msg .= sprintf(
-                            __(
+                            esc_html__(
                                 'The following plugin needs to be updated in order to work with this version of our plugin update script: <strong>%s</strong></p><p>You will have to update this manually.  Contact support for further instructions',
                                 $this->lang_domain
                             ),
@@ -474,14 +478,14 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 $slug = $this->slug;
                 if (empty($this->slug)) {
                     $msg .= sprintf(
-                        __(
+                        esc_html__(
                             'Automatic updates cannot be setup for an EE addon because of an error in the file.  Please contact support, and include a list of EE addons recently installed/updated.',
                             $this->lang_domain
                         )
                     ) . '</p><p>';
                 } else {
                     $msg .= sprintf(
-                        __(
+                        esc_html__(
                             'Unable to setup automatic updates for the plugin with the slug "%s" because of an error with the code. Please contact EE support and give them this error message.',
                             $this->lang_domain
                         ),
@@ -878,23 +882,26 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         private function trigger_update_check()
         {
-            //we're just using this to trigger a PUE ping whenever an option matching the given $this->option_key
-            // is saved..
-            $has_triggered = false;
+            // we're just using this to trigger a PUE ping
+            // whenever an option matching the given $this->option_key is saved..
 
             if ((defined('DOING_WP_CRON') && DOING_WP_CRON)
                 || (defined('DOING_AJAX') && DOING_AJAX)
             ) {
-                return $has_triggered;
+                return false;
             }
 
-            if (! empty($_POST) && ! empty($this->option_key)) {
-                foreach ($_POST as $key => $value) {
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $post_params = $request->postParams();
+
+            $has_triggered = false;
+            if (! empty($post_params) && ! empty($this->option_key)) {
+                foreach ($post_params as $key => $value) {
                     $triggered = $this->maybe_trigger_update($value, $key, $this->option_key);
                     $has_triggered = $triggered && ! $has_triggered ? true : $has_triggered;
                 }
             }
-
             return $has_triggered;
         }
 
@@ -1150,9 +1157,10 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         public function dismiss_persistent_notice()
         {
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $type  = $request->getRequestParam('type');
             //if no $type in the request then exit
-            $type = isset($_REQUEST['type']) ? $_REQUEST['type'] : null;
-
             if (empty($type)) {
                 return;
             }
@@ -1227,7 +1235,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     <?php echo $this->_sanitize_notices($errors); ?>
                     <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );"
                        style="float:right; margin-bottom: 10px;">
-                        <?php _e('Dismiss'); ?>
+                        <?php esc_html_e('Dismiss'); ?>
                     </a>
                     <div style="clear:both"></div>
                 </div>
@@ -1243,7 +1251,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     <?php echo $this->_sanitize_notices($attentions); ?>
                     <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );"
                        style="float:right; margin-bottom: 10px;">
-                        <?php _e('Dismiss'); ?>
+                        <?php esc_html_e('Dismiss'); ?>
                     </a>
                     <div style="clear:both"></div>
                 </div>
@@ -1259,7 +1267,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     <?php echo $this->_sanitize_notices($successes); ?>
                     <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );"
                        style="float:right; margin-bottom: 10px;">
-                        <?php _e('Dismiss'); ?>
+                        <?php esc_html_e('Dismiss'); ?>
                     </a>
                     <div style="clear:both"></div>
                 </div>
@@ -1435,7 +1443,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
 
             //add in pue_verification_error option for when the api_key is blank
             if (empty($this->api_secret_key)) {
-                update_site_option($ver_option_key, __('No API key is present', $this->lang_domain));
+                update_site_option($ver_option_key, esc_html__('No API key is present', $this->lang_domain));
             }
 
             if ($pluginInfo->api_invalid) {
@@ -1469,7 +1477,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 <div class="updated" style="padding:15px; position:relative;"
                      id="pu_dashboard_message"><?php echo $this->_sanitize_notices($msg); ?>
                     <a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();"
-                       style='float:right;'><?php _e("Dismiss") ?></a>
+                       style='float:right;'><?php esc_html_e("Dismiss") ?></a>
                     <div style="clear:both;"></div>
                 </div>
                 <script type="text/javascript">
@@ -1563,7 +1571,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 $msg = str_replace('%plugin_name%', $this->pluginName, $this->json_error->api_invalid_message);
                 $msg = str_replace('%version%', $this->json_error->version, $msg);
                 $msg = sprintf(
-                    __(
+                    esc_html__(
                         'It appears you\'ve tried entering an api key to upgrade to the premium version of %s, however, the key does not appear to be valid.  This is the message received back from the server:',
                         $this->lang_domain
                     ),
@@ -1575,7 +1583,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 $show_dismissal_button = true;
             } else {
                 $msg = sprintf(
-                    __(
+                    esc_html__(
                         'Congratulations!  You have entered in a valid api key for the premium version of %s.  You can click the button below to upgrade to this version immediately.',
                         $this->lang_domain
                     ),
@@ -1590,7 +1598,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 'upgrade-plugin_' . $this->pluginFile
             );
             $button = '<a href="' . $button_link . '" class="button-secondary pue-upgrade-now-button" value="no">'
-                      . __('Upgrade Now', $this->lang_domain)
+                      . esc_html__('Upgrade Now', $this->lang_domain)
                       . '</a>';
 
             $content = '<div class="updated" style="padding:15px; position:relative;" id="pue_update_now_container"><p>'
@@ -1598,7 +1606,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
             $content .= empty($this->json_error) ? $button : '';
             $content .= $show_dismissal_button
                 ? '<a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();" '
-                    .'style="float:right;">' . __("Dismiss") . '</a>'
+                    .'style="float:right;">' . esc_html__("Dismiss") . '</a>'
                 : '';
             $content .= '<div style="clear:both;"></div></div>';
             $content .= $show_dismissal_button
@@ -1626,7 +1634,9 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 $os_ary = array();
             }
 
-            $os_ary[] = $_POST['version'];
+            /** @var RequestInterface $request */
+            $request  = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $os_ary[] = $request->getRequestParam('version');
             update_site_option($this->dismiss_upgrade, $os_ary);
         }
 

@@ -2,14 +2,15 @@
 
 namespace EventEspresso\core\services\progress_steps;
 
-use EE_Request;
+use EEH_Template;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\collections\CollectionInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\progress_steps\display_strategies\ProgressStepsDisplayInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class ProgressStepManager
@@ -27,12 +28,12 @@ class ProgressStepManager
 {
 
     /**
-     * @var ProgressStepInterface[] $collection
+     * @var ProgressStepInterface[]
      */
     private $collection;
 
     /**
-     * @var string $default_step
+     * @var string
      */
     private $default_step;
 
@@ -40,17 +41,17 @@ class ProgressStepManager
      * the key used for the URL param that denotes the current form step
      * defaults to 'ee-form-step'
      *
-     * @var string $form_step_url_key
+     * @var string
      */
     private $form_step_url_key = '';
 
     /**
-     * @var ProgressStepsDisplayInterface $display_strategy
+     * @var ProgressStepsDisplayInterface
      */
     private $display_strategy;
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface
      */
     private $request;
 
@@ -62,17 +63,14 @@ class ProgressStepManager
      * @param string              $default_step
      * @param string              $form_step_url_key
      * @param CollectionInterface $collection
-     * @param \EE_Request         $request
-     * @throws InvalidClassException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @param RequestInterface    $request
      */
     public function __construct(
         $display_strategy_name = 'number_bubbles',
         $default_step = '',
         $form_step_url_key = '',
         CollectionInterface $collection = null,
-        EE_Request $request = null
+        RequestInterface $request = null
     ) {
         $this->setDisplayStrategy($display_strategy_name);
         $this->setDefaultStep($default_step);
@@ -81,8 +79,9 @@ class ProgressStepManager
             $collection = new Collection('\EventEspresso\core\services\progress_steps\ProgressStepInterface');
         }
         $this->collection = $collection;
-        if (! $request instanceof EE_Request) {
-            $request = \EE_Registry::instance()->load_core('Request');
+        if (! $request instanceof RequestInterface) {
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\Request');
         }
         $this->request = $request;
     }
@@ -115,7 +114,7 @@ class ProgressStepManager
             throw new InvalidClassException(
                 $display_strategy_class,
                 sprintf(
-                    __('The "%1$s" Class needs to be an implementation of the "%1$s" Interface.', 'event_espresso'),
+                    esc_html__('The "%1$s" Class needs to be an implementation of the "%1$s" Interface.', 'event_espresso'),
                     $display_strategy_class,
                     '\EventEspresso\core\services\progress_steps\display_strategies\ProgressStepsDisplayInterface'
                 )
@@ -160,7 +159,7 @@ class ProgressStepManager
         // use incoming value if it's set, otherwise use request param if it's set, otherwise use default
         $step = ! empty($step)
             ? $step
-            : $this->request->get($this->form_step_url_key, $this->default_step);
+            : $this->request->getRequestParam($this->form_step_url_key, $this->default_step);
         // grab the step previously known as current, in case we need to revert
         $current_current_step = $this->collection->current();
         // verify that requested step exists
@@ -233,7 +232,7 @@ class ProgressStepManager
      */
     public function displaySteps()
     {
-        return \EEH_Template::display_template(
+        return EEH_Template::display_template(
             $this->display_strategy->getTemplate(),
             array('progress_steps' => $this->collection),
             true
@@ -243,7 +242,7 @@ class ProgressStepManager
 
     /**
      * @param bool $completed
-     * @return \EventEspresso\core\services\progress_steps\ProgressStepInterface
+     * @return ProgressStepInterface
      */
     public function setCurrentStepCompleted($completed = true)
     {

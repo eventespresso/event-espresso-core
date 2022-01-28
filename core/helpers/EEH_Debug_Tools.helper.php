@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\core\services\Benchmark;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EEH_Debug_Tools
@@ -50,7 +52,11 @@ class EEH_Debug_Tools
     private function __construct()
     {
         // load Kint PHP debugging library
-        if (! class_exists('Kint') && file_exists(EE_PLUGIN_DIR_PATH . 'tests/kint/Kint.class.php')) {
+        if (
+            defined('EE_LOAD_KINT')
+            && ! class_exists('Kint')
+            && file_exists(EE_PLUGIN_DIR_PATH . 'tests/kint/Kint.class.php')
+        ) {
             // despite EE4 having a check for an existing copy of the Kint debugging class,
             // if another plugin was loaded AFTER EE4 and they did NOT perform a similar check,
             // then hilarity would ensue as PHP throws a "Cannot redeclare class Kint" error
@@ -58,9 +64,6 @@ class EEH_Debug_Tools
             // plz use https://wordpress.org/plugins/kint-debugger/  if testing production versions of EE
             require_once(EE_PLUGIN_DIR_PATH . 'tests/kint/Kint.class.php');
         }
-        // if ( ! defined('DOING_AJAX') || $_REQUEST['noheader'] !== 'true' || ! isset( $_REQUEST['noheader'], $_REQUEST['TB_iframe'] ) ) {
-        // add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
-        // }
         $plugin = basename(EE_PLUGIN_DIR_PATH);
         add_action("activate_{$plugin}", array('EEH_Debug_Tools', 'ee_plugin_activation_errors'));
         add_action('activated_plugin', array('EEH_Debug_Tools', 'ee_plugin_activation_errors'));
@@ -131,17 +134,18 @@ class EEH_Debug_Tools
                 trigger_error("Nothing found for '$tag' hook", E_USER_WARNING);
                 return;
             }
-            echo '<h5>For Tag: ' . $tag . '</h5>';
+            echo '<h5>For Tag: ' . esc_html($tag) . '</h5>';
         } else {
             $hook = is_array($wp_filter) ? $wp_filter : array($wp_filter);
             ksort($hook);
         }
         foreach ($hook as $tag_name => $priorities) {
-            echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>$tag_name</strong><br />";
+            echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>esc_html($tag_name)</strong><br />";
             ksort($priorities);
             foreach ($priorities as $priority => $function) {
-                echo $priority;
+                echo esc_html($priority);
                 foreach ($function as $name => $properties) {
+                    $name = esc_html($name);
                     echo "\t$name<br />";
                 }
             }
@@ -201,7 +205,7 @@ class EEH_Debug_Tools
                 } catch (EE_Error $e) {
                     EE_Error::add_error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'The Event Espresso activation errors file could not be setup because: %s',
                                 'event_espresso'
                             ),
@@ -265,7 +269,7 @@ class EEH_Debug_Tools
         $version = $version === null
             ? ''
             : sprintf(
-                __('(This message was added in version %s of Event Espresso)', 'event_espresso'),
+                esc_html__('(This message was added in version %s of Event Espresso)', 'event_espresso'),
                 $version
             );
         $error_message = sprintf(
@@ -283,8 +287,9 @@ class EEH_Debug_Tools
                 'This is a doing_it_wrong message that was triggered during an ajax request.  The request params on this request were: ',
                 'event_espresso'
             );
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
             $error_message .= '<ul><li>';
-            $error_message .= implode('</li><li>', EE_Registry::instance()->REQ->params());
+            $error_message .= implode('</li><li>', $request->requestParams());
             $error_message .= '</ul>';
             EE_Error::add_error($error_message, 'debug::doing_it_wrong', $function, '42');
             // now we set this on the transient so it shows up on the next request.
@@ -310,8 +315,6 @@ class EEH_Debug_Tools
      * @param bool   $display_request
      * @param string $debug_index
      * @param string $debug_key
-     * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
      */
     public static function log(
         $class = '',
@@ -327,7 +330,6 @@ class EEH_Debug_Tools
             $debug_data = get_option($debug_key, array());
             $default_data = array(
                 $class => $func . '() : ' . $line,
-                'REQ'  => $display_request ? $_REQUEST : '',
             );
             // don't serialize objects
             $info = self::strip_objects($info);
@@ -416,11 +418,10 @@ class EEH_Debug_Tools
         return $heading_tag > 0 && $heading_tag < 7 ? "h{$heading_tag}" : 'h5';
     }
 
-
     protected static function headingSpacer($heading_tag)
     {
         return EEH_Debug_Tools::plainOutput() && ($heading_tag === 'h1' || $heading_tag === 'h2')
-            ? "\n"
+            ? self::lineBreak()
             : '';
     }
 
@@ -545,7 +546,7 @@ class EEH_Debug_Tools
         var_dump($var);
         $var = ob_get_clean();
         if (EEH_Debug_Tools::plainOutput()) {
-            return $var;
+            return str_replace("\n", '', $var);
         }
         return '<pre style="color: #9C3; display: inline-block; padding:.4em .6em; background: #334">' . $var . '</pre>';
     }
@@ -577,17 +578,14 @@ class EEH_Debug_Tools
             $line = '';
         }
         $margin = is_admin() ? ' 180px' : '0';
-        // $print_r = false;
         if (is_string($var)) {
             EEH_Debug_Tools::printv($var, $var_name, $file, $line, $heading_tag, $die, $margin);
             return;
         }
         if (is_object($var)) {
             $var_name = ! $var_name ? 'object' : $var_name;
-            // $print_r = true;
         } elseif (is_array($var)) {
             $var_name = ! $var_name ? 'array' : $var_name;
-            // $print_r = true;
         } elseif (is_numeric($var)) {
             $var_name = ! $var_name ? 'numeric' : $var_name;
         } elseif ($var === null) {

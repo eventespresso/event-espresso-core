@@ -17,9 +17,7 @@
  * @var string $new_available_datetime_ticket_list_item
  * @var string $new_available_ticket_datetime_list_item
  */
-
 ?>
-
 <!-- edit datetime base form -->
 <table id="edit-datetime-form-holder" class="hidden">
     <tbody>

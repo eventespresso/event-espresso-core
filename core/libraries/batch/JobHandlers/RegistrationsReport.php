@@ -46,7 +46,7 @@ class RegistrationsReport extends JobHandlerFile
     {
         $event_id = intval($job_parameters->request_datum('EVT_ID', '0'));
         if (! \EE_Capabilities::instance()->current_user_can('ee_read_registrations', 'generating_report')) {
-            throw new BatchRequestException(__('You do not have permission to view registrations', 'event_espresso'));
+            throw new BatchRequestException(esc_html__('You do not have permission to view registrations', 'event_espresso'));
         }
         $filepath = $this->create_file_from_job_with_name(
             $job_parameters->job_id(),
@@ -54,7 +54,7 @@ class RegistrationsReport extends JobHandlerFile
         );
         $job_parameters->add_extra_data('filepath', $filepath);
         if ($job_parameters->request_datum('use_filters', false)) {
-            $query_params = maybe_unserialize(stripslashes($job_parameters->request_datum('filters', array())));
+            $query_params = maybe_unserialize($job_parameters->request_datum('filters', array()));
         } else {
             $query_params = apply_filters('FHEE__EE_Export__report_registration_for_event', array(
                 array(
@@ -113,7 +113,7 @@ class RegistrationsReport extends JobHandlerFile
         }
         return new JobStepResponse(
             $job_parameters,
-            __('Registrations report started successfully...', 'event_espresso')
+            esc_html__('Registrations report started successfully...', 'event_espresso')
         );
     }
 
@@ -226,7 +226,7 @@ class RegistrationsReport extends JobHandlerFile
 
         return new JobStepResponse(
             $job_parameters,
-            sprintf(__('Wrote %1$s rows to report CSV file...', 'event_espresso'), count((array) $csv_data)),
+            sprintf(esc_html__('Wrote %1$s rows to report CSV file...', 'event_espresso'), count((array) $csv_data)),
             $extra_response_data
         );
     }
@@ -279,9 +279,9 @@ class RegistrationsReport extends JobHandlerFile
                 $reg_csv_array = array();
                 if (! $event_id) {
                     // get the event's name and Id
-                    $reg_csv_array[ (string) __('Event', 'event_espresso') ] = sprintf(
+                    $reg_csv_array[ (string) esc_html__('Event', 'event_espresso') ] = sprintf(
                         /* translators: 1: event name, 2: event ID */
-                        __('%1$s (%2$s)', 'event_espresso'),
+                        esc_html__('%1$s (%2$s)', 'event_espresso'),
                         EEH_Export::prepare_value_from_db_for_display(
                             EEM_Event::instance(),
                             'EVT_name',
@@ -304,7 +304,7 @@ class RegistrationsReport extends JobHandlerFile
                     } elseif ($field_name == 'REG_count') {
                         $value = sprintf(
                             /* translators: 1: number of registration in group (REG_count), 2: registration group size (REG_group_size) */
-                            __('%1$s of %2$s', 'event_espresso'),
+                            esc_html__('%1$s of %2$s', 'event_espresso'),
                             EEH_Export::prepare_value_from_db_for_display(
                                 $reg_model,
                                 'REG_count',
@@ -333,29 +333,29 @@ class RegistrationsReport extends JobHandlerFile
                     $reg_csv_array[ EEH_Export::get_column_name_for_field($field) ] = $value;
                     if ($field_name == 'REG_final_price') {
                         // add a column named Currency after the final price
-                        $reg_csv_array[ (string) __("Currency", "event_espresso") ] = \EE_Config::instance()->currency->code;
+                        $reg_csv_array[ (string) esc_html__("Currency", "event_espresso") ] = \EE_Config::instance()->currency->code;
                     }
                 }
                 // get pretty status
                 $stati = EEM_Status::instance()->localized_status(
                     array(
-                        $reg_row['Registration.STS_ID']     => __('unknown', 'event_espresso'),
-                        $reg_row['TransactionTable.STS_ID'] => __('unknown', 'event_espresso'),
+                        $reg_row['Registration.STS_ID']     => esc_html__('unknown', 'event_espresso'),
+                        $reg_row['TransactionTable.STS_ID'] => esc_html__('unknown', 'event_espresso'),
                     ),
                     false,
                     'sentence'
                 );
-                $reg_csv_array[ (string) __("Registration Status", 'event_espresso') ] = $stati[ $reg_row['Registration.STS_ID'] ];
+                $reg_csv_array[ (string) esc_html__("Registration Status", 'event_espresso') ] = $stati[ $reg_row['Registration.STS_ID'] ];
                 // get pretty transaction status
-                $reg_csv_array[ (string) __("Transaction Status", 'event_espresso') ] = $stati[ $reg_row['TransactionTable.STS_ID'] ];
-                $reg_csv_array[ (string) __('Transaction Amount Due', 'event_espresso') ] = $is_primary_reg
+                $reg_csv_array[ (string) esc_html__("Transaction Status", 'event_espresso') ] = $stati[ $reg_row['TransactionTable.STS_ID'] ];
+                $reg_csv_array[ (string) esc_html__('Transaction Amount Due', 'event_espresso') ] = $is_primary_reg
                     ? EEH_Export::prepare_value_from_db_for_display(
                         EEM_Transaction::instance(),
                         'TXN_total',
                         $reg_row['TransactionTable.TXN_total'],
                         'localized_float'
                     ) : '0.00';
-                $reg_csv_array[ (string) __('Amount Paid', 'event_espresso') ] = $is_primary_reg
+                $reg_csv_array[ (string) esc_html__('Amount Paid', 'event_espresso') ] = $is_primary_reg
                     ? EEH_Export::prepare_value_from_db_for_display(
                         EEM_Transaction::instance(),
                         'TXN_paid',
@@ -379,21 +379,21 @@ class RegistrationsReport extends JobHandlerFile
                     );
                     foreach ($payments_info as $payment_method_and_gateway_txn_id) {
                         $payment_methods[] = isset($payment_method_and_gateway_txn_id['name'])
-                            ? $payment_method_and_gateway_txn_id['name'] : __('Unknown', 'event_espresso');
+                            ? $payment_method_and_gateway_txn_id['name'] : esc_html__('Unknown', 'event_espresso');
                         $gateway_txn_ids_etc[] = isset($payment_method_and_gateway_txn_id['gateway_txn_id'])
                             ? $payment_method_and_gateway_txn_id['gateway_txn_id'] : '';
                         $payment_times[] = isset($payment_method_and_gateway_txn_id['payment_time'])
                             ? $payment_method_and_gateway_txn_id['payment_time'] : '';
                     }
                 }
-                $reg_csv_array[ (string) __('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
-                $reg_csv_array[ (string) __('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
-                $reg_csv_array[ (string) __('Gateway Transaction ID(s)', 'event_espresso') ] = implode(
+                $reg_csv_array[ (string) esc_html__('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
+                $reg_csv_array[ (string) esc_html__('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
+                $reg_csv_array[ (string) esc_html__('Gateway Transaction ID(s)', 'event_espresso') ] = implode(
                     ',',
                     $gateway_txn_ids_etc
                 );
                 // get whether or not the user has checked in
-                $reg_csv_array[ (string) __("Check-Ins", "event_espresso") ] = $reg_model->count_related(
+                $reg_csv_array[ (string) esc_html__("Check-Ins", "event_espresso") ] = $reg_model->count_related(
                     $reg_row['Registration.REG_ID'],
                     'Checkin'
                 );
@@ -422,11 +422,11 @@ class RegistrationsReport extends JobHandlerFile
                         );
                     }
                 } else {
-                    $ticket_name = __('Unknown', 'event_espresso');
-                    $datetimes_strings = array(__('Unknown', 'event_espresso'));
+                    $ticket_name = esc_html__('Unknown', 'event_espresso');
+                    $datetimes_strings = array(esc_html__('Unknown', 'event_espresso'));
                 }
                 $reg_csv_array[ (string) $ticket_model->field_settings_for('TKT_name')->get_nicename() ] = $ticket_name;
-                $reg_csv_array[ (string) __("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
+                $reg_csv_array[ (string) esc_html__("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
                 // get datetime(s) of registration
                 // add attendee columns
                 foreach ($att_fields_to_include as $att_field_name) {
@@ -478,7 +478,7 @@ class RegistrationsReport extends JobHandlerFile
                             $answer_row['Question.QST_admin_label']
                         );
                     } else {
-                        $question_label = sprintf(__('Question $s', 'event_espresso'), $answer_row['Answer.QST_ID']);
+                        $question_label = sprintf(esc_html__('Question $s', 'event_espresso'), $answer_row['Answer.QST_ID']);
                     }
                     if (
                         isset($answer_row['Question.QST_type'])
@@ -566,6 +566,6 @@ class RegistrationsReport extends JobHandlerFile
             true,
             'd'
         );
-        return new JobStepResponse($job_parameters, __('Cleaned up temporary file', 'event_espresso'));
+        return new JobStepResponse($job_parameters, esc_html__('Cleaned up temporary file', 'event_espresso'));
     }
 }

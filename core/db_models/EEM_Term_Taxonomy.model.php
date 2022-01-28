@@ -18,8 +18,8 @@ class EEM_Term_Taxonomy extends EEM_Base
 
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Term Taxonomy', 'event_espresso');
-        $this->plural_item = __('Term Taxonomy', 'event_espresso');
+        $this->singular_item = esc_html__('Term Taxonomy', 'event_espresso');
+        $this->plural_item = esc_html__('Term Taxonomy', 'event_espresso');
         $this->_tables = array(
             'Term_Taxonomy' => new EE_Primary_Table('term_taxonomy', 'term_taxonomy_id'),
         );
@@ -27,31 +27,31 @@ class EEM_Term_Taxonomy extends EEM_Base
             'Term_Taxonomy' => array(
                 'term_taxonomy_id' => new EE_Primary_Key_Int_Field(
                     'term_taxonomy_id',
-                    __('Term-Taxonomy ID', 'event_espresso')
+                    esc_html__('Term-Taxonomy ID', 'event_espresso')
                 ),
                 'term_id'          => new EE_Foreign_Key_Int_Field(
                     'term_id',
-                    __("Term Id", "event_espresso"),
+                    esc_html__("Term Id", "event_espresso"),
                     false,
                     0,
                     'Term'
                 ),
                 'taxonomy'         => new EE_Plain_Text_Field(
                     'taxonomy',
-                    __('Taxonomy Name', 'event_espresso'),
+                    esc_html__('Taxonomy Name', 'event_espresso'),
                     false,
                     'category'
                 ),
                 'description'      => new EE_Post_Content_Field(
                     'description',
-                    __("Description of Term", "event_espresso"),
+                    esc_html__("Description of Term", "event_espresso"),
                     false,
                     ''
                 ),
-                'parent'           => new EE_Integer_Field('parent', __("Parent Term ID", "event_espresso"), false, 0),
+                'parent'           => new EE_Integer_Field('parent', esc_html__("Parent Term ID", "event_espresso"), false, 0),
                 'term_count'       => new EE_Integer_Field(
                     'count',
-                    __("Count of Objects attached", 'event_espresso'),
+                    esc_html__("Count of Objects attached", 'event_espresso'),
                     false,
                     0
                 ),

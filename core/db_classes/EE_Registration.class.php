@@ -924,7 +924,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function e_invoice_url($type = 'launch')
     {
-        echo $this->invoice_url($type);
+        echo esc_url_raw($this->invoice_url($type));
     }
 
 
@@ -933,7 +933,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function e_payment_overview_url()
     {
-        echo $this->payment_overview_url();
+        echo esc_url_raw($this->payment_overview_url());
     }
 
 
@@ -1177,7 +1177,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function e_pretty_status($show_icons = false)
     {
-        echo $this->pretty_status($show_icons);
+        echo $this->pretty_status($show_icons); // already escaped
     }
 
 
@@ -1703,22 +1703,22 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         $attendee = $this->get_first_related('Attendee');
         if ($attendee instanceof EE_Attendee) {
             if ($error) {
-                return sprintf(__("%s's check-in status was not changed.", "event_espresso"), $attendee->full_name());
+                return sprintf(esc_html__("%s's check-in status was not changed.", "event_espresso"), $attendee->full_name());
             }
             $cur_status = $this->check_in_status_for_datetime($DTT_ID);
             // what is the status message going to be?
             switch ($cur_status) {
                 case EE_Checkin::status_checked_never:
                     return sprintf(
-                        __("%s has been removed from Check-in records", "event_espresso"),
+                        esc_html__("%s has been removed from Check-in records", "event_espresso"),
                         $attendee->full_name()
                     );
                     break;
                 case EE_Checkin::status_checked_in:
-                    return sprintf(__('%s has been checked in', 'event_espresso'), $attendee->full_name());
+                    return sprintf(esc_html__('%s has been checked in', 'event_espresso'), $attendee->full_name());
                     break;
                 case EE_Checkin::status_checked_out:
-                    return sprintf(__('%s has been checked out', 'event_espresso'), $attendee->full_name());
+                    return sprintf(esc_html__('%s has been checked out', 'event_espresso'), $attendee->full_name());
                     break;
             }
         }
@@ -2118,11 +2118,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * Returns the contact's name (or "Unknown" if there is no contact.)
-<<<<<<< HEAD
-     * @since $VID:$
-=======
      * @since 4.10.12.p
->>>>>>> master
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException

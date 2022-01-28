@@ -43,7 +43,7 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init
      */
     protected function _set_init_properties()
     {
-        $this->label = __('Transactions Overview', 'event_espresso');
+        $this->label = esc_html__('Transactions Overview', 'event_espresso');
     }
 
 
@@ -61,7 +61,7 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init
                 'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
                 'parent_slug'     => 'espresso_events',
                 'menu_slug'       => TXN_PG_SLUG,
-                'menu_label'      => __('Transactions', 'event_espresso'),
+                'menu_label'      => esc_html__('Transactions', 'event_espresso'),
                 'capability'      => 'ee_read_transactions',
                 'admin_init_page' => $this,
             )

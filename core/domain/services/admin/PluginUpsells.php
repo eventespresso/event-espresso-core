@@ -64,9 +64,9 @@ class PluginUpsells
                      . esc_html__('Upgrade for Support', 'event_espresso')
                      . '</button>
                 </a>
-            </div>                 
+            </div>
         </td>
-        <td class="column-description"> 
+        <td class="column-description">
             <div class="ee-upsell-col plugin-description" style="font-size: .85rem; line-height: 1.2rem; padding:5px 0;">'
                  . sprintf(
                      esc_html__(
