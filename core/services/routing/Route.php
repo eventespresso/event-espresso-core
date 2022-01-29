@@ -143,8 +143,7 @@ abstract class Route implements RouteInterface
     public function matchesCurrentRequest(): bool
     {
         return $this->specification instanceof RouteMatchSpecificationInterface
-            ? $this->specification->isMatchingRoute()
-            : false;
+               && $this->specification->isMatchingRoute();
     }
 
 

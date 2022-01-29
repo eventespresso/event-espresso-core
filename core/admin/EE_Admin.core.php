@@ -100,7 +100,6 @@ final class EE_Admin implements InterminableInterface
             // admin hooks
             add_filter('plugin_action_links', [$this, 'filter_plugin_actions'], 10, 2);
             add_filter('admin_footer_text', [$this, 'espresso_admin_footer']);
-            add_action('load-plugins.php', [$this, 'hookIntoWpPluginsPage']);
             add_action('display_post_states', [$this, 'displayStateForCriticalPages'], 10, 2);
             add_filter('plugin_row_meta', [$this, 'addLinksToPluginRowMeta'], 10, 2);
         }
@@ -202,8 +201,13 @@ final class EE_Admin implements InterminableInterface
         // - it is a regular non ajax admin request
         // - we are doing an ee admin ajax request
         if ($this->request->isAdmin() || $this->request->isAdminAjax()) {
-            // this loads the controller for the admin pages which will setup routing etc
-            $this->loader->getShared('EE_Admin_Page_Loader', [$this->loader]);
+            try {
+                // this loads the controller for the admin pages which will setup routing etc
+                $admin_page_loader = $this->loader->getShared('EE_Admin_Page_Loader', [$this->loader]);
+                $admin_page_loader->init();
+            } catch (EE_Error $e) {
+                $e->get_error();
+            }
         }
         if ($this->request->isAjax()) {
             return;
@@ -788,22 +792,6 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * Callback on load-plugins.php hook for setting up anything hooking into the wp plugins page.
-     *
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public function hookIntoWpPluginsPage()
-    {
-        $this->loader->getShared('EventEspresso\core\domain\services\admin\ExitModal');
-        $this->loader
-             ->getShared('EventEspresso\core\domain\services\admin\PluginUpsells')
-             ->decafUpsells();
-    }
-
-
-    /**
      * Hooks into the "post states" filter in a wp post type list table.
      *
      * @param array   $post_states
@@ -1015,5 +1003,13 @@ final class EE_Admin implements InterminableInterface
             '$VID:$'
         );
         return $this->request;
+    }
+
+
+    /**
+     * @deprecated $VID:$
+     */
+    public function hookIntoWpPluginsPage()
+    {
     }
 }

@@ -7,7 +7,6 @@ use EventEspresso\core\services\graphql\GraphQLEndpoint;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 use InvalidArgumentException;
-use WPGraphQL\Router;
 
 /**
  * Class RequestTypeContextDetector
@@ -72,9 +71,7 @@ class RequestTypeContextDetector
      */
     private function getGlobalRouteCondition(string $globalRouteCondition, $default)
     {
-        return isset($this->globalRouteConditions[ $globalRouteCondition ])
-            ? $this->globalRouteConditions[ $globalRouteCondition ]
-            : $default;
+        return $this->globalRouteConditions[ $globalRouteCondition ] ?? $default;
     }
 
 
@@ -82,7 +79,7 @@ class RequestTypeContextDetector
      * @return RequestTypeContext
      * @throws InvalidArgumentException
      */
-    public function detectRequestTypeContext()
+    public function detectRequestTypeContext(): RequestTypeContext
     {
         // Detect error scrapes
         if ($this->isWordPressErrorScrape()) {
@@ -136,7 +133,7 @@ class RequestTypeContextDetector
     /**
      * @return RequestTypeContext
      */
-    private function isAjaxRequest()
+    private function isAjaxRequest(): RequestTypeContext
     {
         if (
             $this->request->getRequestParam('ee_front_ajax', false, 'bool')
@@ -172,23 +169,22 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
-    private function isWordPressErrorScrape()
+    private function isWordPressErrorScrape(): bool
     {
         return (
-                   $this->request->getRequestParam('wp_scrape_key') !== null
-                   && $this->request->getRequestParam('wp_scrape_nonce') !== null
-               )
-               || (
-                   $this->request->getRequestParam('action') === 'error_scrape'
-                   && $this->request->getRequestParam('_wpnonce') !== null
-               );
+            $this->request->getRequestParam('wp_scrape_key') !== ''
+            && $this->request->getRequestParam('wp_scrape_nonce') !== ''
+        ) || (
+            $this->request->getRequestParam('action') === 'error_scrape'
+            && $this->request->getRequestParam('_wpnonce') !== ''
+        );
     }
 
 
     /**
      * @return bool
      */
-    private function isWordPressActivationRequest()
+    private function isWordPressActivationRequest(): bool
     {
         $action = $this->request->getRequestParam('action');
         $plugins_page_actions = [
@@ -211,14 +207,11 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
-    private function isEspressoRestApiRequest()
+    private function isEspressoRestApiRequest(): bool
     {
         // Check for URLs like http://mysite.com/?rest_route=/ee... and http://mysite.com/wp-json/ee/...
-        return strpos(
-            $this->request->getRequestParam('rest_route'),
-            '/' . Domain::API_NAMESPACE
-        ) === 0
-            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+        return strpos($this->request->getRequestParam('rest_route'), '/' . Domain::API_NAMESPACE) === 0
+               || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
     }
 
 
@@ -227,7 +220,7 @@ class RequestTypeContextDetector
      *
      * @return bool
      */
-    private function isEspressoGraphQLRequest()
+    private function isEspressoGraphQLRequest(): bool
     {
         if ($this->gql_endpoint->isGraphqlRequest()) {
             return true;
@@ -240,7 +233,7 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
-    private function isWordPressRestApiRequest()
+    private function isWordPressRestApiRequest(): bool
     {
         // Check for URLs like http://mysite.com/?rest_route=/.. and http://mysite.com/wp-json/...
         return $this->request->getRequestParam('rest_route') !== ''
@@ -251,7 +244,7 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
-    private function isCronRequest()
+    private function isCronRequest(): bool
     {
         return $this->uriPathMatches('wp-cron.php');
     }
@@ -260,7 +253,7 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
-    private function isFeedRequest()
+    private function isFeedRequest(): bool
     {
         return $this->uriPathMatches('feed');
     }
@@ -272,7 +265,7 @@ class RequestTypeContextDetector
      * @param string $component
      * @return bool
      */
-    private function uriPathMatches($component)
+    private function uriPathMatches(string $component): bool
     {
         $request_uri = $this->request->requestUri(true);
         $parts = explode('?', $request_uri);
@@ -284,7 +277,7 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
-    private function isIframeRoute()
+    private function isIframeRoute(): bool
     {
         $is_iframe_route = apply_filters(
             'FHEE__EventEspresso_core_domain_services_contexts_RequestTypeContextDetector__isIframeRoute',

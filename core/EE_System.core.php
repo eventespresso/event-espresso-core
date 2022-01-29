@@ -1093,8 +1093,6 @@ final class EE_System implements ResettableInterface
     public function core_loaded_and_ready()
     {
         $this->router->coreLoadedAndReady();
-        // integrate WP_Query with the EE models
-        $this->loader->getShared('EE_CPT_Strategy');
         do_action('AHEE__EE_System__core_loaded_and_ready');
         // always load template tags, because it's faster than checking if it's a front-end request, and many page
         // builders require these even on the front-end

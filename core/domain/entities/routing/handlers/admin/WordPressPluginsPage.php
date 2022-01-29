@@ -3,7 +3,6 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData;
 use EventEspresso\core\domain\services\assets\WordPressPluginsPageAssetManager;
 use EventEspresso\core\services\routing\Route;
 use EventEspresso\core\domain\entities\routing\data_nodes\domains\WordPressPluginsPageData;

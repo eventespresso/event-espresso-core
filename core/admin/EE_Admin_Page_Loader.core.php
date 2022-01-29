@@ -77,20 +77,15 @@ class EE_Admin_Page_Loader
      */
     public $hook_file;
 
-    /**
-     * @var LoaderInterface
-     */
-    protected $loader;
-
 
     /**
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function __construct(LoaderInterface $loader)
+    public function __construct(?LoaderInterface $loader)
     {
-        $this->loader = LoaderFactory::getLoader();
+        $this->loader = $loader instanceof LoaderInterface ? $loader : LoaderFactory::getLoader();
     }
 
 

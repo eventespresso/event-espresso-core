@@ -616,11 +616,7 @@ class EEH_Event_View extends EEH_Base
                 // build final link html
                 $link = '<a class="post-edit-link" href="' . $url . '" ';
                 $link .= ' title="' . esc_attr($post_type_obj->labels->edit_item) . '"';
-<<<<<<< HEAD
-                $link .= \EED_Events_Archive::link_target();
-=======
                 $link .= EED_Events_Archive::link_target();
->>>>>>> master
                 $link .= '>' . $link_text . '</a>';
                 // put it all together
                 return $before . apply_filters('edit_post_link', $link, $event->ID()) . $after;

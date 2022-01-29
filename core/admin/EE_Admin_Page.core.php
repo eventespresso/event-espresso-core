@@ -941,9 +941,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // and that the requested page route exists
         if (array_key_exists($this->_req_action, $this->_page_routes)) {
             $this->_route        = $this->_page_routes[ $this->_req_action ];
-            $this->_route_config = isset($this->_page_config[ $this->_req_action ])
-                ? $this->_page_config[ $this->_req_action ]
-                : [];
+            $this->_route_config = $this->_page_config[ $this->_req_action ] ?? [];
         } else {
             // user error msg
             $error_msg = sprintf(

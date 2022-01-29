@@ -487,11 +487,6 @@ class EE_Dependency_Map
             'EE_Cart'                                                                                                     => [
                 'EE_Session' => EE_Dependency_Map::load_from_cache,
             ],
-            'EE_Front_Controller'                                                                                         => [
-                'EE_Registry'                                     => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\request\CurrentPage' => EE_Dependency_Map::load_from_cache,
-                'EE_Module_Request_Router'                        => EE_Dependency_Map::load_from_cache,
-            ],
             'EE_Messenger_Collection_Loader'                                                                              => [
                 'EE_Messenger_Collection' => EE_Dependency_Map::load_new_object,
             ],

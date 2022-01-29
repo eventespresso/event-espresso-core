@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
@@ -15,11 +17,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EE_Admin_Page_Init extends EE_Base
 {
-
-    /**
-     * @var LoaderInterface $loader
-     */
-    protected $loader;
 
     // identity properties (set in _set_defaults and _set_init_properties)
     public $label;
@@ -55,7 +52,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
     protected $_file_name;
 
-    public $hook_file;
+    public    $hook_file;
 
     protected $_wp_page_slug;
 
@@ -96,7 +93,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
      */
     public function __construct(RequestInterface $request = null)
     {
-        $this->loader = LoaderFactory::getLoader();
+        $this->loader  = LoaderFactory::getLoader();
         $this->request = $request instanceof RequestInterface
             ? $request
             : $this->loader->getShared(RequestInterface::class);
@@ -224,7 +221,8 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * EE_Admin_Init class.
      *
      * @return void
-     * @uses    _initialize_admin_page()
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initialize_admin_page()
     {
@@ -278,11 +276,10 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * before the load-page... hook. Note, the page loads are happening around the wp_init hook.
      *
      * @return void
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
+     * @throws EE_Error
      */
     public function do_initial_loads()
     {
@@ -371,17 +368,17 @@ abstract class EE_Admin_Page_Init extends EE_Base
             $hook_file = $extend
                 ? str_replace(EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . '/', '', $file)
                 : str_replace($this->_folder_path, '', $file);
-            $replace         = $extend
+            $replace   = $extend
                 ? '_' . $this->_file_name . '_Hooks_Extend.class.php'
                 : '_' . $this->_file_name . '_Hooks.class.php';
-            $rel_admin       = str_replace($replace, '', $hook_file);
-            $rel_admin       = strtolower($rel_admin);
+            $rel_admin = str_replace($replace, '', $hook_file);
+            $rel_admin = strtolower($rel_admin);
             // make sure we haven't already got a hook setup for this page path
             if (in_array($rel_admin, $this->_files_hooked)) {
                 continue;
             }
             $this->hook_file = $hook_file;
-            $rel_admin_hook = 'FHEE_do_other_page_hooks_' . $rel_admin;
+            $rel_admin_hook  = 'FHEE_do_other_page_hooks_' . $rel_admin;
             add_filter($rel_admin_hook, [$this, 'load_admin_hook']);
             $this->_files_hooked[] = $rel_admin;
         }
@@ -399,17 +396,14 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * _initialize_admin_page
      *
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @see  initialize_admin_page() for info
      */
     protected function _initialize_admin_page()
     {
         // JUST CHECK WE'RE ON RIGHT PAGE.
-        $page = $this->request->getRequestParam('page');
-        $page = $this->request->getRequestParam('current_page', $page);
+        $page      = $this->request->getRequestParam('page');
+        $page      = $this->request->getRequestParam('current_page', $page);
         $menu_slug = $this->_menu_map->menu_slug;
 
 
@@ -445,6 +439,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
         do_action("AHEE__EE_Admin_Page___initialize_admin_page__before_initialization_{$menu_slug}");
         require_once($path_to_file);
         $this->_loaded_page_object = $this->loader->getShared($admin_page, [$this->_routing]);
+        $this->_loaded_page_object->initializePage();
 
         do_action('AHEE__EE_Admin_Page___initialize_admin_page__after_initialization');
         do_action("AHEE__EE_Admin_Page___initialize_admin_page__after_initialization_{$menu_slug}");
@@ -458,12 +453,13 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
 
     /**
-     * @return mixed
+     * @return EE_Admin_Page
      */
     public function loaded_page_object()
     {
         return $this->_loaded_page_object;
     }
+
 
     /**
      * _check_user_access

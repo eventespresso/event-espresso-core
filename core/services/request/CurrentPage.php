@@ -142,7 +142,7 @@ class CurrentPage
      */
     private function getPostId(WP $WP = null): ?int
     {
-        $post_id = null;
+        $post_id = 0;
         if ($WP instanceof WP) {
             // look for the post ID in the aptly named 'p' query var
             if (isset($WP->query_vars['p'])) {
@@ -175,7 +175,7 @@ class CurrentPage
     private function getPostName(WP $WP = null): ?string
     {
         global $wpdb;
-        $post_name = null;
+        $post_name = '';
         if ($WP instanceof WP) {
             // if this is a post, then is the post name set?
             if (isset($WP->query_vars['name']) && ! empty($WP->query_vars['name'])) {

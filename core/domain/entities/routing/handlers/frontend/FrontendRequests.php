@@ -39,9 +39,9 @@ class FrontendRequests extends PublicRoute
         $this->dependency_map->registerDependencies(
             'EE_Front_Controller',
             [
-                'EE_Registry'              => EE_Dependency_Map::load_from_cache,
-                'EE_Request_Handler'       => EE_Dependency_Map::load_from_cache,
-                'EE_Module_Request_Router' => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'                                     => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\CurrentPage' => EE_Dependency_Map::load_from_cache,
+                'EE_Module_Request_Router'                        => EE_Dependency_Map::load_from_cache,
             ]
         );
     }

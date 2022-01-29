@@ -1223,11 +1223,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             return $link;
         }
         $query_args = [
-            'action' => isset($this->_cpt_edit_routes[ $post->post_type ])
-                ? $this->_cpt_edit_routes[ $post->post_type ]
-                : 'edit',
+            'action' => $this->_cpt_edit_routes[ $post->post_type ] ?? 'edit',
             'post'   => $id,
-        );
+        ];
         return EE_Admin_Page_CPT::add_query_args_and_nonce($query_args, $this->_admin_base_url);
     }
 
