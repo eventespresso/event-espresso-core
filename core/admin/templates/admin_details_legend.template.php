@@ -44,6 +44,7 @@ $count = 1;
             </span>
                 <?php
             } ?>
+            </span>
             <span class="ee-legend-description"><?php echo esc_html($details['desc']); ?></span>
         </dt>
             <?php $count++;

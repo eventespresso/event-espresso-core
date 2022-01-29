@@ -228,12 +228,12 @@ div.TB-ee-frame a {
 /******************* DASHICONS ****************** */
 
 @font-face {
-	font-family: 'ee-dashicons';
-	src:url('../../templates/global_assets/fonts/ee-dashicons.eot');
-	src:url('../../templates/global_assets/fonts/ee-dashicons.eot?#iefix') format('embedded-opentype'),
-		url('../../templates/global_assets/fonts/ee-dashicons.ttf') format('truetype'),
-		url('../../templates/global_assets/fonts/ee-dashicons.woff') format('woff'),
-		url('../../templates/global_assets/fonts/ee-dashicons.svg#ee-dashicons') format('svg');
+	font-family: "ee-dashicons";
+	src:url("../../templates/global_assets/fonts/ee-dashicons.eot");
+	src:url("../../templates/global_assets/fonts/ee-dashicons.eot?#iefix") format("embedded-opentype"),
+		url("../../templates/global_assets/fonts/ee-dashicons.ttf") format("truetype"),
+		url("../../templates/global_assets/fonts/ee-dashicons.woff") format("woff"),
+		url("../../templates/global_assets/fonts/ee-dashicons.svg#ee-dashicons") format("svg");
 	font-weight: normal;
 	font-style: normal;
 }
@@ -250,7 +250,7 @@ div.TB-ee-frame a {
 
 .ee-icon:before, .ee-dashicons, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
 	display: inline-block;
-	font-family: 'ee-dashicons' !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
+	font-family: "ee-dashicons" !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
  	font-style: normal;
 	font-weight: 400;
 	font-variant: normal;
@@ -284,7 +284,7 @@ div.TB-ee-frame a {
  * used for those times when want to use the default dashicons font but not inherit any styles that may be assigned in in a particular location
  */
 .ee-dashicons {
-	font-family: 'dashicons' !important;
+	font-family: "dashicons" !important;
 }
 
 #toplevel_page_espresso_events div.wp-menu-image:before,
@@ -390,7 +390,7 @@ div.TB-ee-frame a {
 	content: "\74";
 }
 .checkedin-status-2:before {
-	font-family: 'dashicons' !important;
+	font-family: "dashicons" !important;
 	/* ! **using important b / c wp has dashicons setup with important and I had to override **!*/
 	content: "\f158";
 }
@@ -534,7 +534,7 @@ div.TB-ee-frame a {
 .ee-lock-icon:before, .ee-collapsible:before {
 	display: inline-block;
 	-webkit-font-smoothing: antialiased;
-	font: normal 16px/1 'dashicons';
+	font: normal 16px/1 "dashicons";
 	vertical-align: top;
 	margin-top: 3px;
 }
@@ -579,43 +579,31 @@ div.TB-ee-frame a {
   user-select: none;
 }
 input.ee-toggle-round-flat + label {
-  padding: 2px;
-  width: 50px;
-  height: 25px;
-  background-color: var(--ee-status-color-light-grey);
-  border-radius: 25px;
+  width: 2.2rem;
+  height: 1.2rem;
+  background-color: var(--ee-status-color-grey);
+  border-radius: .6rem;
   transition: background 0.4s;
 }
-input.ee-toggle-round-flat + label:before,
 input.ee-toggle-round-flat + label:after {
   display: block;
   position: absolute;
   content: "";
 }
-input.ee-toggle-round-flat + label:before {
-  top: 2px;
-  left: 2px;
-  bottom: 2px;
-  right: 2px;
-  background-color: #fff;
-  border-radius: 25px;
-  transition: background 0.4s;
-}
 input.ee-toggle-round-flat + label:after {
-  top: 4px;
-  left: 4px;
-  bottom: 4px;
-  width: 22px;
-  background-color: var(--ee-status-color-light-grey);
-  border-radius: 20px;
+  top: .2rem;
+  left: .2rem;
+  bottom: .2rem;
+  width: .8rem;
+  background-color: #FFF;
+  border-radius: .4rem;
   transition: margin 0.4s, background 0.4s;
 }
 input.ee-toggle-round-flat:checked + label {
-  background-color: var(--ee-status-color-light-blue);
+  background-color: var(--ee-status-color-blue);
 }
 input.ee-toggle-round-flat:checked + label:after {
-  margin-left: 25px;
-  background-color: var(--ee-status-color-light-blue);
+  margin-left: 1rem;
 }
 
 

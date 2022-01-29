@@ -1,89 +1,77 @@
+<?php
+$tEEm_members = [
+    esc_html__('Founders', 'event_espresso') => [
+        'garth-koyle' => [
+            'email' => 'garth@eventespresso.com',
+            'name'  => 'Garth Koyle',
+            'desc'  => esc_html__('Co-Founder', 'event_espresso'),
+        ],
+    ],
+    esc_html__('Core Developers', 'event_espresso') => [
+        'brent-christensen' => [
+            'email' => 'brent@eventespresso.com',
+            'name'  => 'Brent Christensen',
+            'desc'  => esc_html__('Lead Developer', 'event_espresso'),
+        ],
+        'nazar-kolivoshka' => [
+            'email' => 'nazar@eventespresso.com',
+            'name'  => 'Nazar Kolivoshka',
+            'desc'  => esc_html__('Core Developer', 'event_espresso'),
+        ],
+        'marlon-hario' => [
+            'email' => 'marlon@eventespresso.com',
+            'name'  => 'Marlon Hario',
+            'desc'  => esc_html__('Core Developer', 'event_espresso'),
+        ],
+        'hossein-rafiei' => [
+            'email' => 'hossein@eventespresso.com',
+            'name'  => 'Hossein Rafiei',
+            'desc'  => esc_html__('Core Developer', 'event_espresso'),
+        ],
+    ],
+    esc_html__('Support Staff', 'event_espresso') => [
+        'tony-warwick' => [
+            'email' => 'tony@eventespresso.com',
+            'name'  => 'Tony Warwick',
+            'desc'  => esc_html__('Support', 'event_espresso'),
+        ],
+        'lorenzo-caum' => [
+            'email' => 'lorenzo@eventespresso.com',
+            'name'  => 'Lorenzo Caum',
+            'desc'  => esc_html__('Sales & Support', 'event_espresso'),
+        ],
+        'janice-gutierrez' => [
+            'email' => 'janice@eventespresso.com',
+            'name'  => 'Janice Gutierrez',
+            'desc'  => esc_html__('Support', 'event_espresso'),
+        ],
+        'chinny-love-verana' => [
+            'email' => 'chinny@eventespresso.com',
+            'name'  => 'Chinny Love Verana',
+            'desc'  => esc_html__('Sales & Support', 'event_espresso'),
+        ],
+    ],
+];
+?>
+
 <p class="about-description">
     <?php esc_html_e(
         'Event Espresso is created by an international team of passionate individuals with a drive to empower your events!',
         'event_espresso'
     ); ?>
 </p>
-<h3 class="wp-people-group"><?php esc_html_e('Founders', 'event_espresso'); ?></h3>
-<ul class="wp-people-group" id="ee-people-group-owners">
-    <li class="wp-person" id="ee-person-sshoultes">
-        <a href="<?php esp_gravatar_profile('seth@eventespresso.com'); ?>" target="_blank">
-            <?php esp_gravatar_image('seth@eventespresso.com', 'Seth Shoultes'); ?>
-        </a>
-        <a class="web" href="<?php esp_gravatar_profile('seth@eventespresso.com'); ?>" target='_blank'>
-            Seth Shoultes
-        </a>
-        <span class="title"><?php esc_html_e('Co-Founder', 'event_espresso'); ?></span>
-    </li>
-    <li class="wp-person" id="ee-person-gkoyle">
-        <a href="<?php esp_gravatar_profile('garth@eventespresso.com'); ?>" target='_blank'>
-            <?php esp_gravatar_image('garth@eventespresso.com', 'Garth Koyle'); ?>
-        </a>
-        <a class="web" href="<?php esp_gravatar_profile('garth@eventespresso.com'); ?>" target='_blank'>
-            Garth Koyle
-        </a>
-        <span class="title"><?php esc_html_e('Co-Founder', 'event_espresso'); ?></span>
-    </li>
-</ul>
-<h3 class="wp-people-group"><?php esc_html_e('Core Developers', 'event_espresso'); ?></h3>
-<ul class="wp-people-group" id="ee-people-group-core-developers">
-    <li class="wp-person" id="ee-person-bchristensen">
-        <a href="<?php esp_gravatar_profile('brent@eventespresso.com'); ?>" target='_blank'>
-            <?php esp_gravatar_image('brent@eventespresso.com', 'Brent Christensen'); ?>
-        </a>
-        <a class="web" href="<?php esp_gravatar_profile('brent@eventespresso.com'); ?>" target='_blank'>
-            Brent Christensen
-        </a>
-        <span class="title"><?php esc_html_e('Lead Developer', 'event_espresso'); ?></span>
-    </li>
-    <li class="wp-person" id="ee-person-nkolivoshka">
-        <a href="<?php esp_gravatar_profile('nazar@eventespresso.com'); ?>" target='_blank'>
-            <?php esp_gravatar_image('nazar@eventespresso.com', 'Nazar Kolivoshka'); ?>
-        </a>
-        <a class="web" href="<?php esp_gravatar_profile('nazar@eventespresso.com'); ?>" target='_blank'>
-            Nazar Kolivoshka
-        </a>
-        <span class="title"><?php esc_html_e('Core Developer', 'event_espresso'); ?></span>
-    </li>
-    <li class='wp-person' id='ee-person-mwani'>
-        <a href="<?php
-        esp_gravatar_profile('manzoor@eventespresso.com'); ?>" target='_blank'>
-            <?php esp_gravatar_image('manzoor@eventespresso.com', 'Manzoor Ahmad Wani'); ?>
-        </a>
-        <a class="web" href="<?php esp_gravatar_profile('manzoor@eventespresso.com'); ?>" target='_blank'>
-            Manzoor Ahmad Wani
-        </a>
-        <span class="title"><?php esc_html_e('Core Developer', 'event_espresso'); ?></span>
-    </li>
-</ul>
-<h3 class="wp-people-group"><?php esc_html_e('Support Staff', 'event_espresso'); ?></h3>
-<ul class="wp-people-group" id="ee-people-group-support-staff">
-    <li class="wp-person" id="ee-person-jfeck">
-        <a href="<?php esp_gravatar_profile('josh@eventespresso.com'); ?>" target='_blank'>
-            <?php esp_gravatar_image('josh@eventespresso.com', 'Josh Feck'); ?>
-        </a>
-        <a class="web" href="<?php esp_gravatar_profile('josh@eventespresso.com'); ?>" target='_blank'>
-            Josh Feck
-        </a>
-    </li>
-    <li class="wp-person" id="ee-person-twarwick">
-        <a href="<?php esp_gravatar_profile('tony@eventespresso.com'); ?>" target='_blank'>
-            <?php esp_gravatar_image('tony@eventespresso.com', 'Tony Warwick'); ?>
-        </a>
-        <a class="web" href="<?php esp_gravatar_profile('tony@eventespresso.com'); ?>" target='_blank'>
-            Tony Warwick
-        </a>
-    </li>
-    <li class="wp-person" id="ee-person-lcaum">
-        <a href="<?php esp_gravatar_profile('lorenzo@eventespresso.com'); ?>" target='_blank'>
-            <?php esp_gravatar_image('lorenzo@eventespresso.com', 'Lorenzo Caum'); ?>
-        </a>
-        <a class="web" href="<?php esp_gravatar_profile('lorenzo@eventespresso.com'); ?>" target='_blank'>
-            Lorenzo Caum
-        </a>
-    </li>
-
-</ul>
+<?php
+foreach ($tEEm_members as $tEEm => $members) {
+    echo '
+<h3 class="wp-people-group">' . $tEEm .'</h3>
+<ul class="ee-card-grid ee-card-grid-4-cols ee-credits-tEEm" id="' . sanitize_key($tEEm) .'">';
+    foreach ($members as $id => $person) {
+        echo espressoPerson($id, $person['email'], $person['name'], $person['desc']);
+    }
+    echo '
+</ul>';
+}
+?>
 <h3 class="wp-people-group"><?php esc_html_e('Contributor Recognition', 'event_espresso'); ?></h3>
 <p class="description">
     <?php
@@ -133,9 +121,22 @@
 </p>
 
 <?php
+function espressoPerson($id, $email, $name, $desc): string
+{
+    return '
+    <li class="ee-card ee-credits-person" id="ee-person-' . $id . '">
+        <a href="' . esp_gravatar_profile($email) . '" target="_blank">
+            ' . esp_gravatar_image($email, $name) . '
+        </a>
+        <p>
+            <a class="web" href="' . esp_gravatar_profile($email) . '" target="_blank">' . $name . '</a>
+            <span class="title">' . $desc . '</span>
+        </p>
+    </li>';
+}
 function esp_gravatar_profile($email)
 {
-    echo esc_url_raw('https://www.gravatar.com/' . md5($email));
+    return esc_url_raw('https://www.gravatar.com/' . md5($email));
 }
 
 function esp_gravatar_image($email, $name)
@@ -143,5 +144,5 @@ function esp_gravatar_image($email, $name)
     $email = md5($email);
     $name = esc_attr($name);
     $url = esc_url_raw("https://0.gravatar.com/avatar/{$email}?s=60");
-    echo "<img src='{$url}' class='gravatar' alt='{$name}'/>";
+    return "<img src='{$url}' class='gravatar' alt='{$name}'/>";
 }

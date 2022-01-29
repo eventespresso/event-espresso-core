@@ -453,7 +453,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .ee-spinner {
-    font-family: 'dashicons';
+    font-family: "dashicons";
     display: inline-block;
     font-style: normal;
     font-weight: normal;
@@ -897,7 +897,7 @@ label.error {
     color: white;
     border: 0 solid transparent;
     font-size: 11px;
-    font-family: 'Lucida Grande', sans-serif;
+    font-family: "Lucida Grande", sans-serif;
     font-weight: bold;
     line-height: 16px;
     text-shadow: none !important;
@@ -1055,7 +1055,7 @@ label.error {
 }
 
 .ee-collapsible:before {
-    font: normal 22px/1 'dashicons';
+    font: normal 22px/1 "dashicons";
     vertical-align: top;
     margin-top: -3px;
 }
@@ -1680,7 +1680,7 @@ input.ee-register-button {
     font-weight: bold;
     font-size: 2.4rem;
     margin-right: 0.5rem;
-    font-family: 'Abril Fatface', serif;
+    font-family: "Abril Fatface", serif;
     line-height: 1;
     opacity: .375;
 }
@@ -1829,12 +1829,15 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .ee-card {
-    background: white;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     position: relative;
 }
+.ee-card:not(.ee-card--blank) {
+    background: white;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
 
 .ee-highlight {
     color: #272624;
@@ -2025,6 +2028,9 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-inline-end: 2rem;
 }
 
+.espresso-admin.about-wrap.full-width-layout {
+    max-width: unset;
+}
 @media only screen and (max-width: 960px) and (min-width: 769px) {
     .ee-card.ee-add-on-card h4 {
         text-align: center;
@@ -2062,6 +2068,10 @@ body.espresso-admin #contextual-help-wrap strong {
     grid-template-columns: 1fr 1fr 1fr;
 }
 
+.ee-card-grid.ee-card-grid-4-cols {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
 .ee-card-grid .ee-card.ee-grid-col-span-2 {
     grid-column: span 2;
 }
@@ -2078,9 +2088,121 @@ body.espresso-admin #contextual-help-wrap strong {
     grid-row: span 3;
 }
 
+
+.ee-card-grid.ee-credits-tEEm {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.ee-card.ee-credits-person {
+    align-items: center;
+    color: #5B5C5F;
+    display: flex;
+    height: 4rem;
+    justify-content: flex-start;
+    padding-block: .75rem;
+    padding-inline: 1rem;
+    margin: 0;
+    min-width: 18rem;
+}
+
+.ee-card.ee-credits-person p {
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    line-height: 1.1;
+    margin-inline-start: 1rem;
+}
+
+.ee-card.ee-credits-person p a {
+    font-weight: 600;
+    margin-block-start: 1rem;
+    margin-block-end: .5rem;
+    text-decoration: none;
+}
+
+.ee-card.ee-credits-person p span {
+    font-weight: 400;
+    margin-block-end: .5rem;
+    text-decoration: none;
+}
+
+.ee-card.ee-credits-person img {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    margin-inline-end: 1rem;
+    height: 4rem;
+    width: 4rem;
+}
+
+
+.ee-card-grid.feature-section {
+
+}
+
+.ee-card.ee-card__review {
+    color: #5B5C5F;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-block-start: 2rem;
+    padding-block-end: 1rem;
+    padding-inline: 1.5rem;
+}
+.ee-card.ee-card__review h3 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+}
+.ee-card.ee-card__review a {
+    text-decoration: none;
+}
+.ee-card.ee-card__review a:hover {
+    text-decoration: underline;
+}
+
+.ee-card.ee-card__review .review-body {
+    line-height: 1.75;
+    padding: 1rem;
+}
+.ee-card.ee-card__review .review-body img.avatar:not(.no-round) {
+    border-radius: 50%;
+}
+.ee-card.ee-card__review .wporg-ratings {
+    margin-block: 1rem;
+    text-align: center;
+    width: 100%;
+}
+
+.ee-card.ee-card__review .wporg-ratings .dashicons-star-filled::before {
+    font-size: 2.5rem;
+}
+
+.ee-card.ee-card__buy-now {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    margin: 2rem;
+}
+
+.ee-card.ee-card__buy-now .button.button-hero {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+.ee-card.ee-card__buy-now .button.button-hero .dashicons::before {
+    font-size: 2.2rem;
+    font-weight: 100;
+}
+
+
+
 @media only screen and (max-width: 1080px) {
     .ee-card-grid.ee-card-grid-3-cols {
         grid-template-columns: 1fr 1fr;
+    }
+    .ee-card-grid.ee-card-grid-4-cols {
+        grid-template-columns: 1fr 1fr 1fr;
     }
 
     .ee-card-grid .ee-card.ee-grid-col-span-2 {
@@ -2091,12 +2213,20 @@ body.espresso-admin #contextual-help-wrap strong {
         grid-column: span 2;
     }
 
+    .ee-card-grid .ee-card.ee-grid-col-span-4 {
+        grid-column: span 3;
+    }
+
     .ee-card-grid .ee-card.ee-grid-row-span-2 {
         grid-row: span 1;
     }
 
     .ee-card-grid .ee-card.ee-grid-row-span-3 {
         grid-row: span 2;
+    }
+
+    .ee-card-grid .ee-card.ee-grid-row-span-4 {
+        grid-row: span 3;
     }
 }
 
@@ -2109,13 +2239,19 @@ body.espresso-admin #contextual-help-wrap strong {
         grid-template-columns: 1fr;
     }
 
-    .ee-card-grid .ee-card.ee-grid-col-span-2,
-    .ee-card-grid .ee-card.ee-grid-col-span-3 {
-        grid-column: span 1;
+    .ee-card-grid.ee-card-grid-4-cols {
+        grid-template-columns: 1fr 1fr;
     }
 
-    .ee-card-grid .ee-card.ee-grid-row-span-2,
-    .ee-card-grid .ee-card.ee-grid-row-span-3 {
+    .ee-card-grid .ee-card.ee-grid-col-span-2,
+    .ee-card-grid .ee-card.ee-grid-col-span-3,
+    .ee-card-grid .ee-card.ee-grid-row-span-4 {
         grid-row: span 1;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .ee-card-grid.ee-card-grid-4-cols {
+        grid-template-columns: 1fr;
     }
 }
