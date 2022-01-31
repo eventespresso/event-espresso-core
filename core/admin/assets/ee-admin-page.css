@@ -1617,7 +1617,6 @@ input.ee-register-button {
 .ee-form-wide-errors {
     display: block;
     color: #FE2a00;
-    vertical-align: middle;
 }
 
 .ee-new-edtr-notice {
@@ -2133,11 +2132,6 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-inline-end: 1rem;
     height: 4rem;
     width: 4rem;
-}
-
-
-.ee-card-grid.feature-section {
-
 }
 
 .ee-card.ee-card__review {

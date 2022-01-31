@@ -9,9 +9,9 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestParams;
-use EventEspresso\core\services\request\ServerParams;
 use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
 use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
 use EventEspresso\core\services\routing\RouteMatchSpecificationCollection;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Oof;

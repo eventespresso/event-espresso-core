@@ -303,10 +303,11 @@ abstract class EE_PMT_Base
         if (
             apply_filters(
                 'FHEE__populate_billing_form_fields_from_attendee',
-                ($this->_billing_form instanceof EE_Billing_Attendee_Info_Form
-                 && $transaction instanceof EE_Transaction
-                 && $transaction->primary_registration() instanceof EE_Registration
-                 && $transaction->primary_registration()->attendee() instanceof EE_Attendee
+                (
+                    $this->_billing_form instanceof EE_Billing_Attendee_Info_Form
+                    && $transaction instanceof EE_Transaction
+                    && $transaction->primary_registration() instanceof EE_Registration
+                    && $transaction->primary_registration()->attendee() instanceof EE_Attendee
                 ),
                 $this->_billing_form,
                 $transaction

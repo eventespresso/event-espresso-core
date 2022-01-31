@@ -59,6 +59,14 @@ interface LoaderInterface
 
 
     /**
+     * @param FullyQualifiedName|string $fqcn
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function remove($fqcn);
+
+
+    /**
      * calls reset() on loader if method exists
      */
     public function reset();

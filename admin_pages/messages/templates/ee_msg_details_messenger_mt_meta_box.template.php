@@ -10,14 +10,14 @@
 
 <div class="<?php echo esc_attr($messenger); ?>-content">
     <?php echo $content; // already escaped ?>
-    <?php if (empty($inactive_message_types) && empty($active_message_types)) : ?>
-        <p>
-             <?php echo esc_html__(
+    <?php if (empty($inactive_message_types) && empty($active_message_types)) :
+        echo '<p>'
+             . esc_html__(
                  'This messenger is not currently used with any message types for templates but merely adds to the shortcodes available for templates on other messenger and message types.',
                  'event_espresso'
-			 ); ?>
-		</p>
-    <?php else : ?>
+             )
+             . '</p>';
+    else : ?>
         <p class="active-on-message <?php echo esc_attr($hide_on_message); ?>">
             <?php printf(
                 esc_html__(
@@ -26,7 +26,8 @@
                 ),
                 '<strong>',
                 '</strong>'
-            ); ?>
+            );
+            ?>
         <p>
         <div<?php if ($active) : ?>
             id="active-message-types"

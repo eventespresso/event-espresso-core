@@ -140,8 +140,7 @@ class EEH_File extends EEH_Base implements EEHI_File
              * than the server user. But both of these issues should exist in 4.4 and earlier too
              */
             // if (false && ! did_action('wp_loaded')) {
-            //     $msg =
-            //         esc_html__(
+            //     $msg = esc_html__(
             //             'An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.',
             //             'event_espresso'
             //         );
@@ -466,12 +465,11 @@ class EEH_File extends EEH_Base implements EEHI_File
         $folder         = EEH_File::remove_filename_from_filepath($full_file_path);
         if (! EEH_File::verify_is_writable($folder)) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                $msg =
-                    sprintf(
-                        esc_html__('The %1$sfile located at "%2$s" is not writable.', 'event_espresso'),
-                        $file_type,
-                        $full_file_path
-                    );
+                $msg = sprintf(
+                    esc_html__('The %1$sfile located at "%2$s" is not writable.', 'event_espresso'),
+                    $file_type,
+                    $full_file_path
+				);
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_file_path);
                 EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
@@ -487,12 +485,11 @@ class EEH_File extends EEH_Base implements EEHI_File
             )
         ) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                $msg =
-                    sprintf(
-                        esc_html__('The %1$sfile located at "%2$s" could not be written to.', 'event_espresso'),
-                        $file_type,
-                        $full_file_path
-                    );
+                $msg = sprintf(
+                    esc_html__('The %1$sfile located at "%2$s" could not be written to.', 'event_espresso'),
+                    $file_type,
+                    $full_file_path
+                );
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_file_path, 'f');
                 EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }

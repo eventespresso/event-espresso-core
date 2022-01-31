@@ -93,10 +93,10 @@
                                         <?php
                                         esc_html_e( "Description",  'event_espresso'); ?>
 									</th>
-                                    <th class="number-column item_c">
+                                    <th class="number-column item_r">
 										<?php esc_html_e("Quantity", "event_espresso"); ?>
 									</th>
-                                    <th class="number-column item_c">
+                                    <th class="number-column item_r">
 										<?php esc_html_e("Price", "event_espresso"); ?>
 									</th>
                                     <th class="number-column item_r">
@@ -122,10 +122,10 @@
                                                 ); ?>
                                             </p>
                                         </td>
-                                        <td class="item_c">
+                                        <td class="item_r">
 											<?php echo esc_html($line_item->quantity()); ?>
 										</td>
-                                        <td class="item_c">
+                                        <td class="item_r">
 											<?php echo $line_item->unit_price_no_code(); // already escaped ?>
 										</td>
                                         <td class="item_r">

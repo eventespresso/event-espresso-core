@@ -220,4 +220,9 @@ class RequestMockBlank implements RequestInterface
     public function slug()
     {
     }
+
+
+    public function mergeRequestParams(array $request_params)
+    {
+    }
 }

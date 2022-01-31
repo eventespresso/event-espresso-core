@@ -887,6 +887,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table
     {
         $host = $this->_admin_page->get_request()->getServerParam('HTTP_HOST');
         $uri  = $this->_admin_page->get_request()->getServerParam('REQUEST_URI');
-        return urlencode("//{$host}{$uri}");
+        return urlencode(esc_url_raw("//{$host}{$uri}"));
     }
 }

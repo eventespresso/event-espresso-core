@@ -84,7 +84,6 @@ class CachingLoaderTest extends EE_UnitTestCase
 
         // this time let's load the object with caching turned on so it gets in the cache
         // and we'll send that objects hash along for the persistence test.
-        // add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
         self::$loader->setBypass(false);
         return spl_object_hash(self::$loader->load($this->getFqcnForTest()));
     }

@@ -252,6 +252,11 @@ final class EE_System implements ResettableInterface
             'AHEE__EE_Bootstrap__load_core_configuration',
             array($this, 'loadCustomPostTypes')
         );
+        // load specifications for custom post types
+        add_action(
+            'AHEE__EE_Bootstrap__load_core_configuration',
+            array($this, 'loadCustomPostTypes')
+        );
         // load EE_Config, EE_Textdomain, etc
         add_action(
             'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets',

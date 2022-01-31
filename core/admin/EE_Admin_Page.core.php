@@ -1250,7 +1250,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 if (strpos($key, 'nonce') !== false) {
                     continue;
                 }
-                $args[ 'wp_referer[' . $key . ']' ] = $value;
+                $args[ 'wp_referer[' . $key . ']' ] = is_string($value) ? htmlspecialchars($value) : $value;
             }
         }
         return EEH_URL::add_query_args_and_nonce($args, $url, $exclude_nonce);
@@ -2496,7 +2496,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 // Get RSS Feed(s)
                 EE_Admin_Page::cached_rss_display(
                     'espresso_news_post_box_content',
-                    urlencode(
+                    esc_url_raw(
                         apply_filters(
                             'FHEE__EE_Admin_Page__espresso_news_post_box__feed_url',
                             'https://eventespresso.com/feed/'
@@ -2719,7 +2719,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return void
      */
-    private function _display_espresso_notices()
+    protected function _display_espresso_notices()
     {
         $notices = $this->_get_transient(true);
         echo stripslashes($notices);

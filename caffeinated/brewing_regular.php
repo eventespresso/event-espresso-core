@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * the purpose of this file is to simply contain any action/filter hook callbacks etc for specific aspects of EE
+ * related to caffeinated (regular) use.  Before putting any code in here, First be certain that it isn't better to
+ * define and use the hook in a specific caffeinated/whatever class or file.
+ */
+
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;

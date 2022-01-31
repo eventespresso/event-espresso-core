@@ -546,7 +546,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function ID()
     {
-        return $this->get('TKT_ID');
+        return (int) $this->get('TKT_ID');
     }
 
 

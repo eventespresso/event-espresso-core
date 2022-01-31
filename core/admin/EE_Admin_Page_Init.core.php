@@ -52,7 +52,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
     protected $_file_name;
 
-    public    $hook_file;
+    public $hook_file;
 
     protected $_wp_page_slug;
 
@@ -368,11 +368,11 @@ abstract class EE_Admin_Page_Init extends EE_Base
             $hook_file = $extend
                 ? str_replace(EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . '/', '', $file)
                 : str_replace($this->_folder_path, '', $file);
-            $replace   = $extend
+            $replace         = $extend
                 ? '_' . $this->_file_name . '_Hooks_Extend.class.php'
                 : '_' . $this->_file_name . '_Hooks.class.php';
-            $rel_admin = str_replace($replace, '', $hook_file);
-            $rel_admin = strtolower($rel_admin);
+            $rel_admin       = str_replace($replace, '', $hook_file);
+            $rel_admin       = strtolower($rel_admin);
             // make sure we haven't already got a hook setup for this page path
             if (in_array($rel_admin, $this->_files_hooked)) {
                 continue;

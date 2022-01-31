@@ -3,8 +3,8 @@
 /**
  * template args in use
  *
- * @var int $dtt_row
- * @var int $tkt_row
+ * @var string $dtt_row
+ * @var string $tkt_row
  * @var string $datetime_ticket_checked
  * @var string $ticket_selected
  * @var string $TKT_name

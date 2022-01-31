@@ -22,7 +22,7 @@ class EE_DMS_4_6_0_state_system_question extends EE_Data_Migration_Script_Stage_
     public function __construct()
     {
         global $wpdb;
-         $this->_pretty_name = esc_html__('State - System Question', 'event_espresso');
+        $this->_pretty_name = esc_html__('State - System Question', 'event_espresso');
         $this->_old_table = $wpdb->prefix . 'esp_question';
         $this->_extra_where_sql = "WHERE QST_system = 'state'";
         parent::__construct();

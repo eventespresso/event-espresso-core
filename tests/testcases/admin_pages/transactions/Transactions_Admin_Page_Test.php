@@ -64,6 +64,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
                 'TXN_paid'  => 0,
             )
         );
+        $transaction->save();
         if ($reg_count) {
             $registrations = $this->factory->registration->create_many(
                 $reg_count,
@@ -74,12 +75,11 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
             );
             foreach ($registrations as $registration) {
                 if ($registration instanceof EE_Registration) {
-                    $transaction->_add_relation_to($registration, 'Registration');
                     $registration->save();
+                    $transaction->_add_relation_to($registration, 'Registration');
                 }
             }
         }
-        $transaction->save();
         return $transaction;
     }
 
@@ -331,7 +331,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
     public function test_get_REG_IDs_to_apply_payment_to_for_all_registrations_and_new_payment()
     {
         $this->_admin_page = new Transactions_Admin_Page_Mock();
-        //echo "\n\n " . __METHOD__ . "() \n";
+        $this->_admin_page->get_request()->unSetRequestParam('txn_admin_payment');
         $this->_setup_standard_transaction_and_payment(40.00, 4, 10.00);
         $REG_IDs = $this->_admin_page->get_REG_IDs_to_apply_payment_to($this->_payment);
         foreach ($this->_transaction->registrations() as $registration) {
@@ -754,8 +754,5 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
         $this->assertEquals($no_dollars, $registration_payment_data['paid']);
         $this->assertEquals($ten_dollars, $registration_payment_data['owing']);
     }
-
-
 }
-// End of file Transactions_Admin_Page_Test.php
 // Location: /tests/testcases/admin_pages/transactions/Transactions_Admin_Page_Test.php

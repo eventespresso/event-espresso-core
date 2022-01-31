@@ -217,4 +217,14 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
      * @since   $VID:$
      */
     public function currentPageIs($uri_segment);
+
+
+    /**
+     * merges the incoming array of parameters into the existing request parameters
+     *
+     * @param array $request_params
+     * @return mixed
+     * @since   4.10.24.p
+     */
+    public function mergeRequestParams(array $request_params);
 }

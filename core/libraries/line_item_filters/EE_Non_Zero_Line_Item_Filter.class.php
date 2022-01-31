@@ -49,7 +49,10 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
                     continue;
                 }
                 if (
-                    $child_line_item->type() === EEM_Line_Item::type_sub_total
+                    (
+                        $child_line_item instanceof EEI_Line_Item
+                        && $child_line_item->type() === EEM_Line_Item::type_sub_total
+                    )
                     || (
                         $child_line_item->type() === EEM_Line_Item::type_line_item
                         && $child_line_item->OBJ_type() === 'Ticket'
@@ -104,7 +107,7 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
     protected function _filter_zero_subtotal_line_item(EE_Line_Item $line_item, int $ticket_children = 0): ?EE_Line_Item
     {
         if (
-            $ticket_children === 0
+            (int) $ticket_children === 0
             && $line_item->type() === EEM_Line_Item::type_sub_total
         ) {
             return null;

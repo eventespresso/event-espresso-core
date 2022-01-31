@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\tests\mocks\core\services\request\RequestMock;
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -33,6 +36,7 @@ class Transactions_Admin_Page_Mock extends Transactions_Admin_Page {
 			define( 'TXN_TEMPLATE_URL', str_replace( '\\', '/', EE_PLUGIN_DIR_URL . 'admin_pages/transactions/templates/') );
 		}
 		parent::__construct( false );
+        $this->request = LoaderFactory::getLoader()->getNew(RequestMock::class);
 	}
 
 
@@ -41,20 +45,23 @@ class Transactions_Admin_Page_Mock extends Transactions_Admin_Page {
 	 * set_request_data
 	 *
 	 * @param array $request_data
-	 * @return \EE_Payment
+	 * @return void
 	 */
 	public function set_request_data( $request_data ) {
-		$this->_req_data += $request_data;
+        foreach($request_data as $key => $value) {
+            $this->request->setRequestParam($key, $value);
+        }
 	}
 
 
-
-	/**
-	 * create_payment_from_request_data
-	 *
-	 * @param array $request_data
-	 * @return \EE_Payment
-	 */
+    /**
+     * create_payment_from_request_data
+     *
+     * @param array $request_data
+     * @return EE_Payment
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function create_payment_from_request_data( $request_data ) {
         return $this->_create_payment_from_request_data($request_data);
 	}
@@ -64,116 +71,123 @@ class Transactions_Admin_Page_Mock extends Transactions_Admin_Page {
 	/**
 	 * _process_transaction_payments
 	 *
-	 * @param \EE_Transaction $transaction
+	 * @param EE_Transaction $transaction
 	 */
 	public function process_transaction_payments( EE_Transaction $transaction ) {
 		$this->_process_transaction_payments( $transaction );
 	}
 
 
-
-	/**
-	 * _get_REG_IDs_to_apply_payment_to
-	 *
-	 * returns a list of registration IDs that the payment will apply to
-	 *
-	 * @param \EE_Payment $payment
-	 * @return array
-	 */
+    /**
+     * _get_REG_IDs_to_apply_payment_to
+     *
+     * returns a list of registration IDs that the payment will apply to
+     *
+     * @param EE_Payment $payment
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function get_REG_IDs_to_apply_payment_to( EE_Payment $payment ) {
 		return $this->_get_REG_IDs_to_apply_payment_to( $payment );
 	}
 
 
-
-	/**
-	 * _get_existing_reg_payment_REG_IDs
-	 *
-	 * returns a list of registration IDs that the payment is currently related to
-	 * as recorded in the database
-	 *
-	 * @param \EE_Payment $payment
-	 * @return array
-	 */
+    /**
+     * _get_existing_reg_payment_REG_IDs
+     *
+     * returns a list of registration IDs that the payment is currently related to
+     * as recorded in the database
+     *
+     * @param EE_Payment $payment
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function get_existing_reg_payment_REG_IDs( EE_Payment $payment ) {
 		return $this->_get_existing_reg_payment_REG_IDs( $payment );
 	}
 
 
-
-	/**
-	 * _remove_existing_registration_payments
-	 *
-	 * this calculates the difference between existing relations
-	 * to the supplied payment and the new list registration IDs,
-	 * removes any related registrations that no longer apply,
-	 * and then updates the registration paid fields
-	 *
-	 * @param \EE_Payment $payment
-	 * @param int         $PAY_ID
-	 * @return bool;
-	 */
+    /**
+     * _remove_existing_registration_payments
+     *
+     * this calculates the difference between existing relations
+     * to the supplied payment and the new list registration IDs,
+     * removes any related registrations that no longer apply,
+     * and then updates the registration paid fields
+     *
+     * @param EE_Payment $payment
+     * @param int        $PAY_ID
+     * @return bool;
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function remove_existing_registration_payments( EE_Payment $payment, $PAY_ID = 0 ) {
 		return $this->_remove_existing_registration_payments( $payment, $PAY_ID );
 	}
 
 
-
-	/**
-	 * _update_registration_payments
-	 *
-	 * this applies the payments to the selected registrations
-	 * but only if they have not already been paid for
-	 *
-	 * @param  EE_Transaction $transaction
-	 * @param \EE_Payment     $payment
-	 * @param array           $REG_IDs
-	 * @return void
-	 */
+    /**
+     * _update_registration_payments
+     *
+     * this applies the payments to the selected registrations
+     * but only if they have not already been paid for
+     *
+     * @param EE_Transaction $transaction
+     * @param EE_Payment     $payment
+     * @param array          $REG_IDs
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function update_registration_payments( EE_Transaction $transaction, EE_Payment $payment, $REG_IDs = array() ) {
 		$this->_update_registration_payments( $transaction, $payment, $REG_IDs );
 	}
 
 
-
-	/**
-	 * _process_registration_status_change
-	 *
-	 * This processes requested registration status changes for all the registrations
-	 * on a given transaction and (optionally) sends out notifications for the changes.
-	 *
-	 * @param  EE_Transaction $transaction
-	 * @param array           $REG_IDs
-	 * @return bool
-	 */
+    /**
+     * _process_registration_status_change
+     *
+     * This processes requested registration status changes for all the registrations
+     * on a given transaction and (optionally) sends out notifications for the changes.
+     *
+     * @param EE_Transaction $transaction
+     * @param array          $REG_IDs
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function process_registration_status_change( EE_Transaction $transaction, $REG_IDs = array() ) {
 		return $this->_process_registration_status_change( $transaction, $REG_IDs );
 	}
 
 
-
-	/**
-	 * _build_payment_json_response
-	 *
-	 * @access public
-	 * @param \EE_Payment $payment
-	 * @param array       $REG_IDs
-	 * @param bool | null $delete_txn_reg_status_change
-	 * @return array
-	 */
+    /**
+     * _build_payment_json_response
+     *
+     * @access public
+     * @param EE_Payment  $payment
+     * @param array       $REG_IDs
+     * @param bool | null $delete_txn_reg_status_change
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function build_payment_json_response( EE_Payment $payment, $REG_IDs = array(), $delete_txn_reg_status_change = null ) {
 		return $this->_build_payment_json_response( $payment, $REG_IDs, $delete_txn_reg_status_change );
 	}
 
 
-
-	/**
-	 * _registration_payment_data_array
-	 * adds info for 'owing' and 'paid' for each registration to the json response
-	 *
-	 * @param array $REG_IDs
-	 * @return array
-	 */
+    /**
+     * _registration_payment_data_array
+     * adds info for 'owing' and 'paid' for each registration to the json response
+     *
+     * @param array $REG_IDs
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function registration_payment_data_array( $REG_IDs ) {
 		return $this->_registration_payment_data_array( $REG_IDs );
 	}

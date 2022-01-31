@@ -81,8 +81,11 @@ class ModelObjNode extends BaseNode
                     $this->dont_traverse_models
                 );
             } elseif (
-                $relation instanceof EE_HABTM_Relation
-                && ! in_array($relation->get_join_model()->get_this_model_name(), $this->dont_traverse_models)
+                $relation instanceof EE_HABTM_Relation &&
+                ! in_array(
+                    $relation->get_join_model()->get_this_model_name(),
+                    $this->dont_traverse_models
+                )
             ) {
                 $this->nodes[ $relation->get_join_model()->get_this_model_name() ] = new RelationNode(
                     $this->id,

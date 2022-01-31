@@ -1,12 +1,12 @@
 jQuery(document).ready(function($) {
 
-	var $message = $('#ee-error-message');
-	var $notices = $('#espresso-notices');
-    var $body = $('body');
+	const $message = $('#ee-error-message');
+	const $notices = $('#espresso-notices');
+	const $body = $('body');
 
-    var target;
+	let target;
 
-	if ($message.length ) {
+	if ($message.length) {
         $message.remove();
 		if ($notices.length) {
 			target = $notices;
@@ -15,17 +15,19 @@ jQuery(document).ready(function($) {
 		} else if ( $('#wpbody-content').length ) {
 			target = $('#wpbody-content');
 		} else {
-			target = $body;
+			target = {};
 		}
 
-		$( target ).html($message).css(
-            {
-                'position': 'relative',
-                'top': 0, 'left': 0,
-                'margin': '3em 1em 0 0',
-                'z-index': 5
-            }
-		);
+		if (target.length) {
+			$(target).html($message).css(
+				{
+					'position': 'relative',
+					'top': 0, 'left': 0,
+					'margin': '3em 1em 0 0',
+					'z-index': 5
+				}
+			);
+		}
 		//set from wp_localize_script in php
 		if( ee_settings.wp_debug !== '1' ) {
 			$( '.ee-error-trace-dv').hide();
@@ -34,7 +36,7 @@ jQuery(document).ready(function($) {
         $body.on( 'click', '.display-ee-error-trace-lnk', function(e) {
 			e.preventDefault();
 			e.stopPropagation();
-			var traceTable = '#' + $(this).attr('rel') +'-dv';
+			const traceTable = '#' + $(this).attr('rel') +'-dv';
 			$( traceTable ).slideToggle();
 		});
 
@@ -42,7 +44,7 @@ jQuery(document).ready(function($) {
 
 
 	$('.dismiss-ee-nag-notice').click(function(event) {
-		var nag_notice = $(this).data('target');
+		const nag_notice = $(this).data('target');
 		if ( $('#'+nag_notice).length ) {
 			event.preventDefault();
 			$.ajax({
@@ -70,7 +72,7 @@ jQuery(document).ready(function($) {
 				},
 				error: function() {
 					$('#'+nag_notice).fadeOut('fast');
-					var msg = {};
+					const msg = {};
 					msg.errors = ee_dismiss.unknown_error;
 					console.log( msg );
 					window.show_admin_page_ajax_msg( msg );
@@ -78,7 +80,5 @@ jQuery(document).ready(function($) {
 				});
 		}
 	});
-
-
 
 });

@@ -1,11 +1,4 @@
 <?php
-/**
- * EE's extension of WP_UnitTestCase for writing all EE_Tests
- *
- * @since        4.3.0
- * @package        Event Espresso
- * @subpackage    tests
- */
 
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;

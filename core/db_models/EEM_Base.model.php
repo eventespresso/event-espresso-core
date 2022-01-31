@@ -3917,7 +3917,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     private function _construct_default_select_sql(EE_Model_Query_Info_Carrier $model_query_info)
     {
         $selects = $this->_get_columns_to_select_for_this_model();
-        foreach ($model_query_info->get_model_names_included() as $model_relation_chain => $name_of_other_model_included) {
+        foreach (
+            $model_query_info->get_model_names_included() as $model_relation_chain => $name_of_other_model_included
+        ) {
             $other_model_included = $this->get_related_model_obj($name_of_other_model_included);
             $other_model_selects = $other_model_included->_get_columns_to_select_for_this_model($model_relation_chain);
             foreach ($other_model_selects as $key => $value) {

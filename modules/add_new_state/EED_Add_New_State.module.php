@@ -412,7 +412,8 @@ class EED_Add_New_State extends EED_Module
                                     'submit-' . $new_state_submit_id,
                                     'ee-form-add-new-state-submit button button-secondary',
                                     '',
-                                    'data-target="' . $new_state_submit_id . '" data-value-field-name="' . $input->valueFieldName() . '"'
+                                    'data-target="' . $new_state_submit_id . '" ' .
+                                    'data-value-field-name="' . $input->valueFieldName() . '"'
                                 )
                             )
                         ),
@@ -692,7 +693,7 @@ class EED_Add_New_State extends EED_Module
 
     /**
      * @param EE_State[]                            $state_options
-     * @param EE_SPCO_Reg_Step_Attendee_Information|StateOptions $deprecated
+     * @param EE_SPCO_Reg_Step_Attendee_Information|StateOptions|null $deprecated
      * @param EE_Registration                       $registration
      * @param EE_Question                           $question
      * @param                                       $answer
@@ -701,7 +702,7 @@ class EED_Add_New_State extends EED_Module
      * @throws ReflectionException
      */
     public static function inject_new_reg_state_into_options(
-        $state_options = array(),
+        array $state_options = array(),
         $deprecated,
         EE_Registration $registration,
         EE_Question $question,
@@ -733,7 +734,7 @@ class EED_Add_New_State extends EED_Module
 
     /**
      * @param EE_Country[]                          $country_options
-     * @param EE_SPCO_Reg_Step_Attendee_Information|CountryOptions $deprecated
+     * @param EE_SPCO_Reg_Step_Attendee_Information|CountryOptions|null $deprecated
      * @param EE_Registration                       $registration
      * @param EE_Question                           $question
      * @param                                       $answer
@@ -745,7 +746,7 @@ class EED_Add_New_State extends EED_Module
      * @throws ReflectionException
      */
     public static function inject_new_reg_country_into_options(
-        $country_options = array(),
+        array $country_options = array(),
         $deprecated,
         EE_Registration $registration,
         EE_Question $question,

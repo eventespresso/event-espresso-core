@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * test class for /core/admin/EE_Admin_Hooks.core.php
  *

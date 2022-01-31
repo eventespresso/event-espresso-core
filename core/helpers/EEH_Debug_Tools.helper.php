@@ -426,6 +426,12 @@ class EEH_Debug_Tools
     }
 
 
+    protected static function lineBreak()
+    {
+        return defined('DOING_AJAX') && DOING_AJAX ? '<br />' : "\n";
+    }
+
+
     protected static function plainOutput()
     {
         return defined('EE_TESTS_DIR')
