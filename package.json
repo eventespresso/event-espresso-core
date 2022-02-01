@@ -82,7 +82,7 @@
 		"@wordpress/blocks": "^11.1.4",
 		"@wordpress/browserslist-config": "^4.1.0",
 		"@wordpress/components": "^19.1.5",
-		"@wordpress/compose": "^5.0.6",
+		"@wordpress/compose": "^5.1.0",
 		"@wordpress/core-data": "^4.0.8",
 		"@wordpress/data": "^6.1.4",
 		"@wordpress/date": "^4.2.3",
