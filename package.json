@@ -113,7 +113,7 @@
 		"deep-freeze": "0.0.1",
 		"del": "git+https://github.com/sindresorhus/del.git",
 		"equivalent-key-map": "^0.2.2",
-		"eslint": "^8.4.1",
+		"eslint": "^8.8.0",
 		"eslint-plugin-jest": "25.3.0",
 		"eslint-plugin-react-hooks": "^4.3.0",
 		"handlebars": "^4.7.7",
