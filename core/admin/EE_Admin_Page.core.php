@@ -1040,7 +1040,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $args['admin_page_object'] = $this;
             }
             if (
-// is it a method on a class that doesn't work?
+                // is it a method on a class that doesn't work?
                 (
                     (
                         method_exists($class, $method)

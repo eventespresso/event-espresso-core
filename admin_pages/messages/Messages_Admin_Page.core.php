@@ -457,7 +457,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'capability' => 'ee_read_messages',
             ],
             'add_new_message_template'         => [
-                'func'       => '_add_message_template',
+                'func'       => 'add_message_template',
                 'capability' => 'ee_edit_messages',
                 'noheader'   => true,
             ],
