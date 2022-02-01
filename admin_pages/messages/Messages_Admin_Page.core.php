@@ -158,8 +158,10 @@ class Messages_Admin_Page extends EE_Admin_Page
         $this->_admin_base_url  = EE_MSG_ADMIN_URL;
         $this->_admin_base_path = EE_MSG_ADMIN;
 
-        $this->_active_messenger_name    = $this->request->getRequestParam('messenger', '');
-        $this->_active_message_type_name = $this->request->getRequestParam('message_type', '');
+        $messenger    = $this->request->getRequestParam('messenger', '');
+        $message_type = $this->request->getRequestParam('message_type', '');
+        $this->_active_messenger_name    = $this->request->getRequestParam('MTP_messenger', $messenger);
+        $this->_active_message_type_name = $this->request->getRequestParam('MTP_message_type', $message_type);
 
         $this->_load_message_resource_manager();
     }
