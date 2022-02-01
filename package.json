@@ -70,7 +70,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "7.16.5",
-		"@babel/plugin-proposal-class-properties": "^7.16.5",
+		"@babel/plugin-proposal-class-properties": "^7.16.7",
 		"@babel/runtime-corejs3": "^7.16.5",
 		"@wordpress/a11y": "^3.2.4",
 		"@wordpress/api-fetch": "^5.2.6",
