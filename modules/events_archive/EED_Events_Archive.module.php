@@ -395,7 +395,9 @@ class EED_Events_Archive extends EED_Module
     {
         global $post;
         if ($post instanceof WP_Post) {
-            return in_the_loop() && $post->ID == $id ? espresso_event_status_banner($post->ID) . $title : $title;
+            return ((function_exists('wp_is_block_theme') && wp_is_block_theme()) || in_the_loop()) && $post->ID == $id
+            ? espresso_event_status_banner($post->ID) . $title
+            : $title;
         }
         return $title;
     }

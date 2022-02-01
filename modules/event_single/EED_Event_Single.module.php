@@ -224,7 +224,7 @@ class EED_Event_Single extends EED_Module
     public static function the_title($title = '', $id = 0)
     {
         global $post;
-        return in_the_loop() && $post->ID === (int) $id
+        return ((function_exists('wp_is_block_theme') && wp_is_block_theme()) || in_the_loop()) && $post->ID === (int) $id
             ? espresso_event_status_banner($post->ID) . $title
             : $title;
     }
