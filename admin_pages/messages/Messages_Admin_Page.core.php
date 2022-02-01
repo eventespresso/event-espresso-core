@@ -3140,7 +3140,7 @@ class Messages_Admin_Page extends EE_Admin_Page
     private function performTestSendAfterUpdate($messenger, $message_type, $context)
     {
         // was a test send triggered?
-        if ($this->request->getRequestParam('test_button', false, 'bool')) {
+        if ($this->request->requestParamIsSet('test_button')) {
             EE_Error::overwrite_success();
             $this->_do_test_send($context, $messenger, $message_type);
             return true;
