@@ -2,7 +2,7 @@
 
 namespace EventEspresso\tests;
 
-use EventEspresso\tests\includes\CoreLoader;
+use EventEspresso\tests\bootstrap\CoreLoader;
 
 /**
  * Bootstrap for EE Unit Tests

@@ -2,12 +2,7 @@
 
 namespace EventEspresso\tests\testcases\core\services\request;
 
-use EventEspresso\core\services\request\Request;
-use EventEspresso\core\services\request\RequestParams;
-use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
-use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
-use EventEspresso\core\services\request\ServerParams;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 
 /**
@@ -18,7 +13,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  *
  */
-class RequestTest extends PHPUnit_Framework_TestCase
+class RequestTest extends EspressoPHPUnitFrameworkTestCase
 {
 
     public function getParams(array $params = [])
@@ -54,22 +49,6 @@ class RequestTest extends PHPUnit_Framework_TestCase
                 'PHPSESSID'   => 'abcdefghijklmnopqrstuvwxyz',
                 'cookie_test' => 'a1b2c3d4e5f6g7h8i9j0.12345678',
             ];
-    }
-
-
-    /**
-     * @param array $get
-     * @param array $post
-     * @param array $cookies
-     * @param array $server
-     * @param array $files
-     * @return Request
-     */
-    private function getRequest(array $get, array $post, array $cookies, array $server, array $files = [])
-    {
-        $request_params = new RequestParams(new RequestSanitizer(), $get, $post);
-        $server_params  = new ServerParams(new ServerSanitizer(), $server);
-        return new Request($request_params, $server_params, $cookies, $files);
     }
 
 

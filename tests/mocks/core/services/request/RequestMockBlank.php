@@ -107,7 +107,7 @@ class RequestMockBlank implements RequestInterface
     }
 
 
-    public function requestUri($relativeToWpRoot = false)
+    public function requestUri($relativeToWpRoot = false, $remove_query_params = false)
     {
     }
 
@@ -223,6 +223,26 @@ class RequestMockBlank implements RequestInterface
 
 
     public function mergeRequestParams(array $request_params)
+    {
+    }
+
+
+    public function requestPath()
+    {
+    }
+
+
+    public function currentPageIs($uri_segment)
+    {
+    }
+
+
+    public function isGQL()
+    {
+    }
+
+
+    public function isUnitTesting()
     {
     }
 }

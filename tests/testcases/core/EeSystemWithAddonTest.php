@@ -7,7 +7,7 @@ use EventEspresso\tests\includes\EeAddonTestCase;
  * Tests various aspect of addon interactions with EE_System.
  *
  * @package EventEspresso
- * @subpackage \testcases
+ * @subpackage testcases/core/EeSystemWithAddonTest.php
  * @author  Darren Ethier
  * @since   4.9.38.rc
  * @group addonsNew
@@ -17,9 +17,7 @@ class EeSystemWithAddonTest extends EeAddonTestCase
     public function testDetectActivationsOrUpgradesOnReactivation()
     {
         global $wp_actions;
-        $times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__EE_NewAddonMock__reactivation"])
-            ? $wp_actions["AHEE__EE_NewAddonMock__reactivation"]
-            : 0;
+        $times_its_new_install_hook_fired_before = $wp_actions["AHEE__EE_NewAddonMock__reactivation"] ?? 0;
         $this->pretendReactivation();
         //do our assertions
         $this->assertWPOptionExists($this->addon->get_activation_indicator_option_name());

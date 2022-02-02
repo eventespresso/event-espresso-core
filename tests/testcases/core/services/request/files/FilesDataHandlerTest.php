@@ -3,17 +3,12 @@
 namespace EventEspresso\tests\testcases\core\services\request\files;
 
 use EventEspresso\core\services\request\files\FilesDataHandler;
-use EventEspresso\core\services\request\Request;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
-use EventEspresso\core\services\request\RequestParams;
-use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
-use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
-use EventEspresso\core\services\request\ServerParams;
 
 /**
  * Class FilesDataHandlerTest
  *
- * Tests FilesDataHandler. Uses PHPUnit_Framework_TestCase because it doesn't depend on anything from the EE
+ * Tests FilesDataHandler. Uses PHPUnit\Framework\TestCase because it doesn't depend on anything from the EE
  * or WP environment.
  *
  * @package     Event Espresso
@@ -24,22 +19,6 @@ use EventEspresso\core\services\request\ServerParams;
  */
 class FilesDataHandlerTest extends EspressoPHPUnitFrameworkTestCase
 {
-
-    /**
-     * @param array $get
-     * @param array $post
-     * @param array $cookies
-     * @param array $server
-     * @param array $files
-     * @return Request
-     */
-    private function getRequest(array $get = [], array $post = [], array $cookies = [], array $server = [], array $files = [])
-    {
-        $request_params = new RequestParams(new RequestSanitizer(), $get, $post);
-        $server_params  = new ServerParams(new ServerSanitizer(), $server);
-        return new Request($request_params, $server_params, $cookies, $files);
-    }
-
 
     /**
      * @since 4.9.80.p

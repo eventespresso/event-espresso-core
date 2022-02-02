@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EEH_File_Test extends EE_UnitTestCase
 {
-    function setUp()
+    public function setUp()
     {
         parent::setUp();
         add_filter('filesystem_method_file', array($this, 'filter_abstraction_file'));
@@ -28,7 +28,7 @@ class EEH_File_Test extends EE_UnitTestCase
         $wp_filesystem->init('/');
     }
 
-    function tearDown()
+    public function tearDown()
     {
         remove_action('wp_footer', array('EE_Error', 'enqueue_error_scripts'), 1);
         // restore to using the normal WP filesystem
@@ -39,12 +39,12 @@ class EEH_File_Test extends EE_UnitTestCase
         parent::tearDown();
     }
 
-    function filter_fs_method($method)
+    public function filter_fs_method($method)
     {
         return 'MockEEFS';
     }
 
-    function filter_abstraction_file($file)
+    public function filter_abstraction_file($file)
     {
         return EE_TESTS_DIR . '/includes/mock-ee-fs.php';
     }
@@ -53,7 +53,7 @@ class EEH_File_Test extends EE_UnitTestCase
      * Just makes sure we're really using the mock filesystem, not the real fileysstem
      * @global type $wp_filesystem
      */
-    function test_is_MockFS_sane()
+    public function test_is_MockFS_sane()
     {
         global $wp_filesystem;
         $this->assertTrue(is_a($wp_filesystem, 'WP_Filesystem_MockEEFS'));
@@ -83,14 +83,8 @@ class EEH_File_Test extends EE_UnitTestCase
         $this->assertTrue($wp_filesystem->is_dir('/test/'));
         $this->assertTrue(EEH_File::verify_filepath_and_permissions('/test/'));
         $wp_filesystem->chmod('/test/', '000');
-        try {
-            EEH_File::verify_filepath_and_permissions('/test/');
-            $this->fail(sprintf(esc_html__('An exception SHOULD have been thrown but wasn\'t', 'event_espresso')));
-        } catch (EE_Error $e) {
-            $this->assertTrue(TRUE);
-        }
-
-
+        $this->assertFalse(EEH_File::verify_filepath_and_permissions('/test/'));
+        $this->assertEspressoErrorsGenerated();
     }
 
     /**
@@ -106,26 +100,17 @@ class EEH_File_Test extends EE_UnitTestCase
         $this->assertTrue(EEH_File::ensure_folder_exists_and_is_writable($folder_path));
         $this->assertTrue(EEH_File::verify_is_writable($folder_path));
         $wp_filesystem->chmod($folder_path, '000');
-        try {
-            $this->assertFalse(EEH_File::ensure_folder_exists_and_is_writable($folder_path));
-            $this->fail(sprintf(esc_html__('An exception SHOULD have been thrown but wasn\'t', 'event_espresso')));
-        } catch (EE_Error $e) {
-            $this->assertTrue(TRUE);
-        }
-        try {
-            $this->assertFalse(EEH_File::verify_is_writable($folder_path));
-            $this->fail(sprintf(esc_html__('An exception SHOULD have been thrown but wasn\'t', 'event_espresso')));
-        } catch (EE_Error $e) {
-            $this->assertTrue(TRUE);
-        }
-
+        $this->assertFalse(EEH_File::ensure_folder_exists_and_is_writable($folder_path));
+        $this->assertEspressoErrorsGenerated();
+        $this->assertFalse(EEH_File::verify_is_writable($folder_path));
+        $this->assertEspressoErrorsGenerated();
     }
 
     /**
      * @group 9059
      * @global type $wp_filesystem
      */
-    function test_ensure_folder_exists_and_is_writable__recursive_folders()
+    public function test_ensure_folder_exists_and_is_writable__recursive_folders()
     {
         global $wp_filesystem;
         $folder_path = '/test/new/thing';
@@ -142,7 +127,7 @@ class EEH_File_Test extends EE_UnitTestCase
      * @group 9059
      * @global type $wp_filesystem
      */
-    function test_ensure_file_exists_and_is_writable__recursive_folders()
+    public function test_ensure_file_exists_and_is_writable__recursive_folders()
     {
         global $wp_filesystem;
         $folder_path = '/test/new/thing.txt';
@@ -168,19 +153,10 @@ class EEH_File_Test extends EE_UnitTestCase
         $this->assertTrue(EEH_File::ensure_file_exists_and_is_writable($file_path));
         $this->assertTrue(EEH_File::verify_is_writable($file_path));
         $wp_filesystem->chmod($file_path, '000');
-        try {
-            $this->assertFalse(EEH_File::ensure_file_exists_and_is_writable($file_path));
-            $this->fail(sprintf(esc_html__('An exception SHOULD have been thrown but wasn\'t', 'event_espresso')));
-        } catch (EE_Error $e) {
-            $this->assertTrue(TRUE);
-        }
-        try {
-            $this->assertFalse(EEH_File::verify_is_writable($file_path));
-            $this->fail(sprintf(esc_html__('An exception SHOULD have been thrown but wasn\'t', 'event_espresso')));
-        } catch (EE_Error $e) {
-            $this->assertTrue(TRUE);
-        }
-
+        $this->assertFalse(EEH_File::ensure_file_exists_and_is_writable($file_path));
+        $this->assertEspressoErrorsGenerated();
+        $this->assertFalse(EEH_File::verify_is_writable($file_path));
+        $this->assertEspressoErrorsGenerated();
     }
 
     /**
@@ -311,8 +287,4 @@ class EEH_File_Test extends EE_UnitTestCase
             '/var/something/',
             EEH_File::get_parent_folder('/var/something/somewhere/'));
     }
-
-
 }
-
-// End of file EEH_File_Test.php

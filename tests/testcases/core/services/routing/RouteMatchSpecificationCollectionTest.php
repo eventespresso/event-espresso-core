@@ -38,17 +38,6 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
     }
 
     /**
-     * @since 4.9.71.p
-     * @return Request
-     */
-    protected function getRequest()
-    {
-        $request_params = new RequestParams(new RequestSanitizer());
-        $server_params  = new ServerParams(new ServerSanitizer());
-        return new Request($request_params, $server_params);
-    }
-
-    /**
      * @param RequestInterface $request
      * @since 4.9.71.p
      * @return EspressoEventEditorEdit

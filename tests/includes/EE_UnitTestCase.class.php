@@ -3,6 +3,10 @@
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\Response;
+use EventEspresso\core\services\request\ResponseInterface;
 
 /**
  * This is used to override any existing WP_UnitTestCase methods that need specific handling in EE.  We
@@ -63,14 +67,19 @@ class EE_UnitTestCase extends WP_UnitTestCase
     protected $dependency_map;
 
     /**
-     * @var RequestInterface $request
+     * @var LoaderInterface
+     */
+    protected $loader;
+
+    /**
+     * @var RequestInterface
      */
     protected $request;
 
     /**
-     * @var LoaderInterface $loader
+     * @var ResponseInterface
      */
-    protected $loader;
+    protected $response;
 
     // /**
     //  * basically used for displaying the test case class while tests are running.
@@ -247,6 +256,20 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 break;
         }
         $router->handleRoutesForCurrentRequest();
+    }
+
+
+    /**
+     * @return ResponseInterface
+     */
+    public function getResponse(): ResponseInterface
+    {
+        if (! $this->response instanceof ResponseInterface) {
+            $this->response = $this->loader->getShared(
+                'EventEspresso\core\services\request\Response'
+            );
+        }
+        return $this->response;
     }
 
     protected function loadTestScenarios()
@@ -1533,5 +1556,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
             'EventEspresso\tests\mocks\core\services\request\RequestMock'
         );
         $request->resetRequestParams($_GET, $_POST, $_COOKIE, $_SERVER, $_FILES);
+    }
+
+
+    public function assertEspressoErrorsGenerated($msg = '')
+    {
+        $msg = $msg ?: esc_html__('An EE_Error SHOULD have been generated but was not!', 'event_espresso');
+        $notices = EE_Error::get_notices(false);
+        EE_Error::reset_notices();
+        $this->assertNotEmpty($notices['errors'], $msg);
     }
 }

@@ -3,7 +3,7 @@
 namespace EventEspresso\tests\testcases\core\helpers;
 
 use EEH_URL;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EEH_URL_Test
@@ -13,7 +13,7 @@ use PHPUnit_Framework_TestCase;
  * @since   4.10.15.p
  * @group   URL
  */
-class EEH_URL_Test extends PHPUnit_Framework_TestCase
+class EEH_URL_Test extends TestCase
 {
     /**
      * @return string[][]

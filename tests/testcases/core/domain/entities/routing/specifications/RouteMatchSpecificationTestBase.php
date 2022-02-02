@@ -1,9 +1,7 @@
 <?php
+
 namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications;
 
-use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
-use EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
-use EventEspresso\core\services\request\Request;
 use EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 use PHPUnit\Framework\Exception;
@@ -25,11 +23,12 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
      * @param string $page_now
      * @since $VID:$
      */
-    public function setUp($page_now = 'admin.php')
+    public function setUp(string $page_now = 'admin.php')
     {
+        parent::setUp();
         global $pagenow;
         $this->pagenow = $pagenow;
-        $pagenow = $page_now;
+        $pagenow       = $page_now;
     }
 
 
@@ -37,7 +36,9 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
     {
         global $pagenow;
         $pagenow = $this->pagenow;
+        parent::tearDown();
     }
+
 
     /**
      * @param array $get
@@ -49,12 +50,12 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
      * @since 4.9.71.p
      */
     protected function getRouteMatchSpecification(
-        array $get = array(),
-        array $post = array(),
-        array $cookie = array(),
-        array $server = array(),
-        array $files = array()
-    ) {
+        array $get = [],
+        array $post = [],
+        array $cookie = [],
+        array $server = [],
+        array $files = []
+    ): RouteMatchSpecificationMock {
         return new RouteMatchSpecificationMock(
             $this->getRequest($get, $post, $cookie, $server, $files)
         );
@@ -62,38 +63,8 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
 
 
     /**
-     * @param array  $get
-     * @param array  $post
-     * @param array  $cookie
-     * @param array  $server
-     * @param array  $files
-     * @param string $request_type_slug
-     * @return Request
-     * @since 4.9.71.p
-     */
-    protected function getRequest(
-        array $get = array(),
-        array $post = array(),
-        array $cookie = array(),
-        array $server = array(),
-        array $files = array(),
-        $request_type_slug = RequestTypeContext::ADMIN
-    ) {
-        $request = new Request($get, $post, $cookie, $server, $files);
-        $request->setRequestTypeContextChecker(
-            new RequestTypeContextChecker(
-                new RequestTypeContext(
-                    $request_type_slug,
-                    'mock request type'
-                )
-            )
-        );
-        return $request;
-    }
-
-    /**
-     * @since 4.9.71.p
      * @throws Exception
+     * @since 4.9.71.p
      */
     public function test__construct()
     {

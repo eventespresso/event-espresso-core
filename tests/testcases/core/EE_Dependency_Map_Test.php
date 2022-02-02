@@ -106,7 +106,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 						'The "%1$s" class has "%2$s" set as its loader, but instead of an object, we received "%3$s"',
 						$class,
 						$loader instanceof Closure ? print_r( $loader, true ) : $loader,
-						print_r( $dependency, true )
+						is_object($dependency) ? get_class($dependency) : print_r( $dependency, true )
 					)
 				);
 			}

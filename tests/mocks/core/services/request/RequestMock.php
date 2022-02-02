@@ -2,7 +2,9 @@
 
 namespace EventEspresso\tests\mocks\core\services\request;
 
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+use EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
+use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestParams;
 use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
@@ -20,18 +22,32 @@ use EventEspresso\core\services\request\ServerParams;
 class RequestMock extends Request
 {
 
+    const UNSET_REQUEST_TYPE = 'UNSET_REQUEST_TYPE';
+
+    /**
+     * @param array  $get
+     * @param array  $post
+     * @param array $cookies
+     * @param array  $server
+     * @param array  $files
+     * @param string|null $request_type_slug
+     */
 	public function __construct(
         array $get = [],
         array $post = [],
         array $cookies = [],
         array $server = [],
-        array $files = []
+        array $files = [],
+        string $request_type_slug = RequestTypeContext::ADMIN
     ) {
         $request_params = new RequestParams(new RequestSanitizer(), $get, $post);
         $server_params  = new ServerParams(new ServerSanitizer(), $server);
         parent::__construct($request_params, $server_params);
-        $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\Request');
-        $this->setRequestTypeContextChecker($request->getRequestType());
+        if ($request_type_slug === RequestMock::UNSET_REQUEST_TYPE) {
+            $this->unsetRequestType();
+        } else {
+            $this->setRequestType($request_type_slug);
+        }
         $this->cookies = ! empty($cookies) ? $cookies : $this->cookies;
         $this->files   = ! empty($files) ? $files : $this->files;
     }
@@ -70,22 +86,29 @@ class RequestMock extends Request
     }
 
 
-    /**
-     * @param bool $relativeToWpRoot
-     * @param bool $remove_query_params
-     * @return string
-     */
-    public function requestUri($relativeToWpRoot = false, $remove_query_params = false)
+    public function setRequestType(string $request_type_slug)
     {
-        return isset($this->server['REQUEST_URI']) ? $this->server['REQUEST_URI'] : '';
+        $request_type_slug = $request_type_slug ?: RequestTypeContext::ADMIN;
+        $this->setRequestTypeContextChecker(
+            new RequestTypeContextChecker(
+                new RequestTypeContext(
+                    $request_type_slug,
+                    'mock request type'
+                )
+            )
+        );
     }
 
 
-    /**
-     * @param string $user_agent
-     */
-    public function setUserAgent($user_agent = '')
+    public function unsetRequestType()
     {
-        $this->user_agent = $user_agent;
+        $this->request_type = null;
+    }
+
+
+
+    public function requestTypeIsSet(): bool
+    {
+        return $this->request_type instanceof RequestTypeContextCheckerInterface;
     }
 }

@@ -402,6 +402,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     {
         global $wp_actions;
         unset(
+            $wp_actions['AHEE__EE_Admin__loaded'],
             $wp_actions['AHEE__EEM_Attendee__construct__end'],
             $wp_actions['AHEE__EE_System__load_core_configuration__begin'],
             $wp_actions['AHEE__EE_System__register_shortcodes_modules_and_widgets'],

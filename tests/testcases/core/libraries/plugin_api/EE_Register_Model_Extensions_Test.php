@@ -20,8 +20,12 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @group problem
  */
 class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
+
 	private $_reg_args;
+
 	private $_model_group;
+
+
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
 		$this->_reg_args = array(
 			'model_extension_paths' => array( EE_MOCKS_DIR . 'core/db_model_extensions/' ),
@@ -30,6 +34,8 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		$this->_model_group = 'Mock';
 		parent::__construct($name, $data, $dataName);
 	}
+
+
 	/**
 	 * Determines if the attendee class has been extended by teh mock extension
 	 * @return boolean
@@ -90,7 +96,7 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		try{
 			EE_Register_Model_Extensions::register($this->_model_group, $this->_reg_args);
 			$this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
-		}catch(EE_Error $e){
+		}catch(Exception $e){
 			$this->assertTrue(True);
 		}
 		//verify they still haven't been extended
@@ -106,7 +112,7 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		try{
 			EE_Register_Model_Extensions::register($this->_model_group, array('foo' => 'bar'));
 			$this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
-		}catch(EE_Error $e){
+		}catch(Exception $e){
 			$this->assertTrue(True);
 		}
 		//verify they still haven't been extended
@@ -116,7 +122,10 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 
 	protected function _pretend_addon_hook_time() {
 		global $wp_actions;
-		unset( $wp_actions['AHEE__EEM_Attendee__construct__end'] );
+		unset(
+            $wp_actions['AHEE__EE_Admin__loaded'],
+            $wp_actions['AHEE__EEM_Attendee__construct__end']
+        );
 		parent::_pretend_addon_hook_time();
 	}
 

@@ -65,8 +65,8 @@ class CachingLoaderTest extends EE_UnitTestCase
      */
     public function testLoadCachingOff()
     {
-        self::$loader->setBypass(true);
-        $object = self::$loader->load($this->getFqcnForTest());
+        CachingLoaderTest::$caching_loader->setBypass(true);
+        $object = CachingLoaderTest::$caching_loader->load($this->getFqcnForTest());
         $this->assertInstanceOf(
             $this->getFqcnForTest(),
             $object,
@@ -84,8 +84,8 @@ class CachingLoaderTest extends EE_UnitTestCase
 
         // this time let's load the object with caching turned on so it gets in the cache
         // and we'll send that objects hash along for the persistence test.
-        self::$loader->setBypass(false);
-        return spl_object_hash(self::$loader->load($this->getFqcnForTest()));
+        CachingLoaderTest::$caching_loader->setBypass(false);
+        return spl_object_hash(CachingLoaderTest::$caching_loader->load($this->getFqcnForTest()));
     }
 
 
@@ -96,7 +96,7 @@ class CachingLoaderTest extends EE_UnitTestCase
     public function testLoadCachingOn()
     {
         //turn caching on.
-        self::$loader->setBypass(false);
+        CachingLoaderTest::$caching_loader->setBypass(false);
         $this->assertEquals(
             spl_object_hash(CachingLoaderTest::$caching_loader->load($this->getFqcnForTest())),
             spl_object_hash(CachingLoaderTest::$caching_loader->load($this->getFqcnForTest()))
@@ -112,7 +112,7 @@ class CachingLoaderTest extends EE_UnitTestCase
     public function testResetCache()
     {
         // turn caching on again
-        self::$loader->setBypass(false);
+        CachingLoaderTest::$caching_loader->setBypass(false);
         // add a few different objects this time, but confirm that they are getting cached
         $fqcn7 = '\EventEspresso\core\services\address\formatters\AddressFormatter';
         $object7 = CachingLoaderTest::$caching_loader->load($fqcn7);
@@ -145,7 +145,7 @@ class CachingLoaderTest extends EE_UnitTestCase
     public function testShare()
     {
         // turn caching on again
-        self::$loader->setBypass(false);
+        CachingLoaderTest::$caching_loader->setBypass(false);
         // create a context object
         $context1 = new EventEspresso\core\domain\entities\contexts\Context(
             'testShare',

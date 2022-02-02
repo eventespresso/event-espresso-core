@@ -2,6 +2,7 @@
 
 namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications\admin;
 
+use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorAddNew;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\tests\testcases\core\domain\entities\routing\specifications\RouteMatchSpecificationTestBase;
@@ -19,34 +20,44 @@ class EspressoEventEditorAddNewTest extends RouteMatchSpecificationTestBase
 
     /**
      * @param array $request_params
-     * @since 4.9.71.p
      * @return EspressoEventEditorAddNew
      * @throws InvalidEntityException
+     * @since 4.9.71.p
      */
-    public function getMultiRouteSpecification(array $request_params)
+    public function getMultiRouteSpecification(array $request_params): EspressoEventEditorAddNew
     {
-        return new EspressoEventEditorAddNew($this->getRequest($request_params));
+        return new EspressoEventEditorAddNew(
+            $this->getRequest(
+                $request_params,
+                [],
+                [],
+                [],
+                [],
+                RequestTypeContext::ADMIN
+            )
+        );
     }
 
+
     /**
-     * @since 4.9.71.p
      * @throws AssertionFailedError
      * @throws InvalidEntityException
+     * @since 4.9.71.p
      */
     public function testIsMatchingRoute()
     {
         $route_match_specification = $this->getMultiRouteSpecification(
-            array(
-                'page' => 'espresso_events',
+            [
+                'page'   => 'espresso_events',
                 'action' => 'create_new',
-            )
+            ]
         );
         $this->assertTrue($route_match_specification->isMatchingRoute());
         $route_match_specification = $this->getMultiRouteSpecification(
-            array(
-                'page' => 'not_espresso_page',
+            [
+                'page'   => 'not_espresso_page',
                 'action' => 'WSOD',
-            )
+            ]
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
     }

@@ -36,7 +36,6 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
         parent::setUp();
         if (PHP_VERSION_ID < 70100) {
             $this->markTestSkipped('WP GraphQL compatible with PHP 7+ only');
-            return;
         }
     }
 }

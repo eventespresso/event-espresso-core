@@ -43,7 +43,7 @@ class RouteMatchSpecificationDependencyResolverTest extends EspressoPHPUnitFrame
      * @throws ReflectionException
      * @throws AssertionFailedError
      */
-    protected function setUp()
+    public function setUp()
     {
         $this->loader = LoaderFactory::getLoader();
         $this->dependency_map = $this->loader->getShared('EE_Dependency_Map');

@@ -113,7 +113,8 @@ class EeAddonTestCase extends EE_UnitTestCase
     {
         $addon_count = EE_Registry::instance()->addons->count();
         EE_Register_Addon::deregister($addon_name);
-        $this->assertCount(absint($addon_count - 1), EE_Registry::instance()->addons);
+        $new_count = min(absint($addon_count - 1), 0);
+        $this->assertCount($new_count, EE_Registry::instance()->addons);
     }
 
 

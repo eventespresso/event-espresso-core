@@ -1,6 +1,6 @@
 <?php
 
-namespace EETests\bootstrap;
+namespace EventEspresso\tests\bootstrap;
 
 use DomainException;
 use EE_Dependency_Map;
@@ -13,6 +13,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\Benchmark;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\tests\mocks\core\domain\entities\routing\handlers\shared\GQLRequestsMock;
+use EventEspresso\tests\mocks\core\services\request\RequestMock;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -234,7 +235,7 @@ class CoreLoader
         tests_add_filter(
             'EE_Load_Espresso_Core__handle_request__initialize_core_loading',
             [$this, 'setupDependencyMap'],
-            15
+            5
         );
         // Bootstrap EE
         require EE_PLUGIN_DIR . 'espresso.php';
@@ -273,6 +274,15 @@ class CoreLoader
      */
     public function setupDependencyMap()
     {
+        /** @var RequestMock $mock */
+        $mock = LoaderFactory::getLoader()->getShared(RequestMock::class);
+        EE_Dependency_Map::register_class_loader(
+            'EventEspresso\core\services\request\Request',
+            function () use ($mock) {
+                return $mock;
+            },
+            true
+        );
         EE_Dependency_Map::register_class_loader('EE_Session_Mock');
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\core\services\session\SessionStartHandler',
@@ -290,14 +300,6 @@ class CoreLoader
         );
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\core\services\cache\BasicCacheManager',
-            [
-                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EE_Session_Mock'                                         => EE_Dependency_Map::load_from_cache,
-            ],
-            true
-        );
-        EE_Dependency_Map::register_dependencies(
-            'EventEspresso\core\services\cache\PostRelatedCacheManager',
             [
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
                 'EE_Session_Mock'                                         => EE_Dependency_Map::load_from_cache,

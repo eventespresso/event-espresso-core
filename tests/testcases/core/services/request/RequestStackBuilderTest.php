@@ -7,8 +7,6 @@ use EE_UnitTestCase;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\request\InvalidRequestStackMiddlewareException;
-use EventEspresso\core\services\request\Request;
-use EventEspresso\core\services\request\Response;
 use EventEspresso\tests\mocks\core\services\request\RequestStackBuilderMock;
 use EventEspresso\tests\mocks\core\services\request\RequestStackCoreAppMock;
 use Exception;
@@ -43,7 +41,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
         parent::setUp();
         $this->request_stack_builder = $this->loader->getShared(
             'EventEspresso\tests\mocks\core\services\request\RequestStackBuilderMock',
-            array($this->loader)
+            [$this->loader]
         );
     }
 
@@ -51,7 +49,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
     /**
      * @return RequestStackCoreAppMock
      */
-    public function getCoreApp()
+    public function getCoreApp(): RequestStackCoreAppMock
     {
         return $this->loader->getShared(
             'EventEspresso\tests\mocks\core\services\request\RequestStackCoreAppMock'
@@ -60,34 +58,12 @@ class RequestStackBuilderTest extends EE_UnitTestCase
 
 
     /**
-     * @return Request
-     */
-    public function getRequest()
-    {
-        return $this->loader->getShared(
-            'EventEspresso\core\services\request\Request'
-        );
-    }
-
-
-    /**
-     * @return Response
-     */
-    public function getResponse()
-    {
-        return $this->loader->getShared(
-            'EventEspresso\core\services\request\Response'
-        );
-    }
-
-
-    /**
      * @return array
      */
-    public function getNotices()
+    public function getNotices(): array
     {
         $notices = EE_Error::get_vanilla_notices();
-        if(isset($notices['errors']['RequestStackCoreAppMock - handleRequest - 34'])) {
+        if (isset($notices['errors']['RequestStackCoreAppMock - handleRequest - 34'])) {
             $notices['errors'][] = str_replace(
                 '<br/><span class="tiny-text">RequestStackCoreAppMock - handleRequest - 34</span>',
                 '',
@@ -113,15 +89,15 @@ class RequestStackBuilderTest extends EE_UnitTestCase
      * @param bool $legacy
      * @return void
      */
-    public function addMiddleware($legacy = false)
+    public function addMiddleware(bool $legacy = false)
     {
         $this->setMiddlewareFQCNs();
-        if($legacy){
-            $this->request_stack_builder->push(array(0, $this->general_grievous));
-            $this->request_stack_builder->push(array(1, $this->obi_wan_kenobi));
+        if ($legacy) {
+            $this->request_stack_builder->push([0, $this->general_grievous]);
+            $this->request_stack_builder->push([1, $this->obi_wan_kenobi]);
         } else {
-            $this->request_stack_builder->push(array($this->general_grievous, array()));
-            $this->request_stack_builder->push(array($this->obi_wan_kenobi, array()));
+            $this->request_stack_builder->push([$this->general_grievous, []]);
+            $this->request_stack_builder->push([$this->obi_wan_kenobi, []]);
         }
     }
 
@@ -133,10 +109,10 @@ class RequestStackBuilderTest extends EE_UnitTestCase
     {
         $this->addMiddleware();
         // list should be FILO, so first in is at bottom of the stack
-        $first = $this->request_stack_builder->bottom();
+        $first      = $this->request_stack_builder->bottom();
         $first_fqcn = reset($first);
         $this->assertEquals($this->general_grievous, $first_fqcn);
-        $last = $this->request_stack_builder->top();
+        $last      = $this->request_stack_builder->top();
         $last_fqcn = reset($last);
         $this->assertEquals($this->obi_wan_kenobi, $last_fqcn);
     }
@@ -150,26 +126,26 @@ class RequestStackBuilderTest extends EE_UnitTestCase
      *
      * @return array
      */
-    public function middlewareAppProvider()
+    public function middlewareAppProvider(): array
     {
         $this->setMiddlewareFQCNs();
-        return array(
+        return [
             // empty array
-            array(array(), false, null),
+            [[], false, ''],
             // arguments in wrong order
-            array(array(array(), $this->obi_wan_kenobi), true, $this->obi_wan_kenobi),
+            [[[], $this->obi_wan_kenobi], true, $this->obi_wan_kenobi],
             // arguments in wrong order, no recurse
-            array(array(array(), $this->obi_wan_kenobi), false, null),
+            [[[], $this->obi_wan_kenobi], false, ''],
             // legacy middleware
-            array(array(0, $this->obi_wan_kenobi), true, $this->obi_wan_kenobi),
+            [[0, $this->obi_wan_kenobi], true, $this->obi_wan_kenobi],
             // legacy middleware, no recurse
-            array(array(0, $this->obi_wan_kenobi), false, null),
+            [[0, $this->obi_wan_kenobi], false, ''],
             // invalid FQCN
-            array(array('invalid/FQCN', array()), false, null),
+            [['invalid/FQCN', []], false, ''],
             // all good
-            array(array($this->obi_wan_kenobi, array()), true, $this->obi_wan_kenobi),
-            array(array($this->general_grievous, array()), true, $this->general_grievous),
-        );
+            [[$this->obi_wan_kenobi, []], true, $this->obi_wan_kenobi],
+            [[$this->general_grievous, []], true, $this->general_grievous],
+        ];
     }
 
 
@@ -180,10 +156,10 @@ class RequestStackBuilderTest extends EE_UnitTestCase
      * @param string $expected
      * @throws InvalidRequestStackMiddlewareException
      */
-    public function testValidateMiddlewareAppDetails(array $middleware_app, $recurse, $expected)
+    public function testValidateMiddlewareAppDetails(array $middleware_app, bool $recurse, string $expected)
     {
-        if($recurse === false) {
-            $this->setExpectedException('EventEspresso\core\services\request\InvalidRequestStackMiddlewareException');
+        if ($recurse === false) {
+            $this->setExceptionExpected('EventEspresso\core\services\request\InvalidRequestStackMiddlewareException');
             $middleware_app_class = $this->request_stack_builder->validateMiddlewareAppDetails(
                 $middleware_app
             );
@@ -194,7 +170,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
             );
             return;
         }
-        $middleware_app = $this->request_stack_builder->validateMiddlewareAppDetails(
+        $middleware_app       = $this->request_stack_builder->validateMiddlewareAppDetails(
             $middleware_app,
             true
         );
@@ -212,6 +188,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
         $this->addMiddleware();
         $this->TheBattleOfUtapau();
     }
+
 
     /**
      * @return void
@@ -236,7 +213,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
             $request_stack
         );
         $this->assertEquals(0, EE_Error::has_notices());
-        $request_stack->handleRequest($this->getRequest(), $this->getResponse());
+        $request_stack->handleRequest($this->request, $this->getResponse());
         $notices = $this->getNotices();
         $this->assertCount(1, $notices['success']);
         $this->assertEquals('Hello There!', $notices['success'][0]);
