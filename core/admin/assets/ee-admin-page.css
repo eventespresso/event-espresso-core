@@ -3012,7 +3012,7 @@ body.espresso-admin #contextual-help-wrap strong {
     border: none;
     background: unset;
     font-family: sans-serif;
-    font-size: .8rem;
+    font-size: 0.95rem;
     vertical-align: middle;
 }
 
@@ -3163,6 +3163,11 @@ body.espresso-admin #contextual-help-wrap strong {
     align-items: center;
 }
 
+.espresso-admin .tablenav input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]) {
+max-width: 16rem;
+}
+
+
 .espresso-admin .pagination-links .button,
 .espresso-admin .pagination-links > span + span {
   margin-inline-start: 0.5rem;
@@ -3192,6 +3197,8 @@ body.espresso-admin #contextual-help-wrap strong {
     display: flex;
     float: right;
     margin: 0;
+    margin-block-end: 0.5rem;
+    padding: 0;
 }
 .espresso-admin p.search-box input[name="s"] {
   float: unset;
@@ -3276,4 +3283,8 @@ body.espresso-admin #contextual-help-wrap strong {
     padding-block: .375rem;
     padding-inline-start: 1.5rem;
     padding-inline-end: .75rem;
+}
+
+.event-espresso_page_espresso_registrations .postbox-container-1 {
+      margin-block-start: -1rem;
 }
