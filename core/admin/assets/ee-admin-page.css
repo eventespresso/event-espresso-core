@@ -2225,12 +2225,12 @@ body.espresso-admin #contextual-help-wrap strong {
 .ee-card.ee-add-on-card .ee-add-on-btn,
 .ee-card.ee-add-on-card .ee-add-on-btn:active,
 .ee-card.ee-add-on-card .ee-add-on-btn:visited {
-    background: #edebe7;
-    border: 2px solid #edebe7;
+    background: var(--ee-btn-secondary);
+    border: 2px solid var(--ee-btn-secondary);
     border-radius: 3px;
     box-sizing: content-box;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
-    color: #5b5c5f;
+    box-shadow: var(--ee-button-box-shadow);
+    color: var(--ee-font-color);
     display: inline-block;
     font-size: 1.1em;
     font-weight: 400;
@@ -2245,7 +2245,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .ee-card.ee-add-on-card .ee-add-on-btn--small,
 .ee-card.ee-add-on-card .ee-add-on-btn--small:active,
 .ee-card.ee-add-on-card .ee-add-on-btn--small:visited {
-    box-shadow: none;
+    box-shadow: var(--ee-button-box-shadow);
     font-size: .9em;
     line-height: 1.35;
     padding-block-start: .3rem;
@@ -2320,7 +2320,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.about-wrap.full-width-layout {
     max-width: unset;
 }
-@media only screen and (max-width: 960px) and (min-width: 769px) {
+@media only screen and (max-width: 500px) {
     .ee-card.ee-add-on-card h4 {
         text-align: center;
     }
@@ -2481,7 +2481,7 @@ body.espresso-admin #contextual-help-wrap strong {
 
 
 
-@media only screen and (max-width: 1080px) {
+@media only screen and (max-width: 1800px) {
     .ee-card-grid.ee-card-grid-3-cols {
         grid-template-columns: 1fr 1fr;
     }
@@ -2514,7 +2514,7 @@ body.espresso-admin #contextual-help-wrap strong {
     }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 960px) {
     .ee-card-grid {
         grid-template-columns: 1fr;
     }
