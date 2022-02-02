@@ -16,24 +16,29 @@ class Router
 {
 
     /**
-     * @var EE_Dependency_Map $dependency_map
+     * @var EE_Dependency_Map
      */
     protected $dependency_map;
 
     /**
-     * @var LoaderInterface $loader
+     * @var LoaderInterface
      */
     protected $loader;
 
     /**
-     * @var RouteHandler $route_handler
+     * @var RouteHandler
      */
     protected $route_handler;
 
     /**
-     * @var string $route_request_type
+     * @var string
      */
     protected $route_request_type;
+
+    /**
+     * @var array
+     */
+    protected $routes_loaded;
 
 
     /**
@@ -56,6 +61,9 @@ class Router
      */
     public function loadPrimaryRoutes()
     {
+        if (isset($this->routes_loaded[ __FUNCTION__ ])) {
+            return;
+        }
         do_action(
             'AHEE__EventEspresso_core_services_routing_Router__loadPrimaryRoutes',
             $this->route_handler,
@@ -74,6 +82,7 @@ class Router
         $this->route_handler->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\ActivationRequests');
         $this->route_handler->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RegularRequests');
         $this->route_request_type = $this->route_handler->getRouteRequestType();
+        $this->routes_loaded[__FUNCTION__] = true;
     }
 
 
@@ -83,6 +92,9 @@ class Router
      */
     public function registerShortcodesModulesAndWidgets()
     {
+        if (isset($this->routes_loaded[ __FUNCTION__ ])) {
+            return;
+        }
         do_action(
             'AHEE__EventEspresso_core_services_routing_Router__registerShortcodesModulesAndWidgets',
             $this->route_handler,
@@ -98,18 +110,19 @@ class Router
                 );
                 break;
         }
+        $this->routes_loaded[ __FUNCTION__ ] = true;
     }
 
 
     /**
      *
      * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
      */
     public function brewEspresso()
     {
+        if (isset($this->routes_loaded[ __FUNCTION__ ])) {
+            return;
+        }
         do_action(
             'AHEE__EventEspresso_core_services_routing_Router__brewEspresso',
             $this->route_handler,
@@ -131,24 +144,19 @@ class Router
                 );
                 break;
         }
+        $this->routes_loaded[ __FUNCTION__ ] = true;
     }
 
 
     /**
      *
      * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
-     * @throws Exception
      */
     public function loadControllers()
     {
+        if (isset($this->routes_loaded[ __FUNCTION__ ])) {
+            return;
+        }
         do_action(
             'AHEE__EventEspresso_core_services_routing_Router__loadControllers',
             $this->route_handler,
@@ -188,16 +196,19 @@ class Router
                 );
                 break;
         }
+        $this->routes_loaded[ __FUNCTION__ ] = true;
     }
 
 
     /**
      *
      * @throws Exception
-     * @throws Exception
      */
     public function coreLoadedAndReady()
     {
+        if (isset($this->routes_loaded[ __FUNCTION__ ])) {
+            return;
+        }
         do_action(
             'AHEE__EventEspresso_core_services_routing_Router__coreLoadedAndReady',
             $this->route_handler,
@@ -216,6 +227,7 @@ class Router
                 );
                 break;
         }
+        $this->routes_loaded[ __FUNCTION__ ] = true;
     }
 
 
@@ -225,6 +237,9 @@ class Router
      */
     public function initializeLast()
     {
+        if (isset($this->routes_loaded[ __FUNCTION__ ])) {
+            return;
+        }
         do_action(
             'AHEE__EventEspresso_core_services_routing_Router__initializeLast',
             $this->route_handler,
@@ -240,5 +255,6 @@ class Router
                 );
                 break;
         }
+        $this->routes_loaded[ __FUNCTION__ ] = true;
     }
 }
