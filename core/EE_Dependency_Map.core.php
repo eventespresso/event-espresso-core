@@ -243,27 +243,29 @@ class EE_Dependency_Map
 
 
     /**
-     * @param string $class_name
-     * @param string $loader
-     * @param bool   $overwrite
+     * @param string          $class_name
+     * @param callable|string $loader
+     * @param bool            $overwrite
      * @return bool
      * @throws DomainException
      */
-    public static function register_class_loader(string $class_name, string $loader = 'load_core', bool $overwrite =
-    false): bool
-    {
+    public static function register_class_loader(
+        string $class_name,
+        $loader = 'load_core',
+        bool $overwrite = false
+    ): bool {
         return EE_Dependency_Map::$_instance->registerClassLoader($class_name, $loader, $overwrite);
     }
 
 
     /**
      * @param string $class_name
-     * @param string $loader
+     * @param Closure|string $loader
      * @param bool   $overwrite
      * @return bool
      * @throws DomainException
      */
-    public function registerClassLoader(string $class_name, string $loader = 'load_core', bool $overwrite = false): bool
+    public function registerClassLoader(string $class_name, $loader = 'load_core', bool $overwrite = false): bool
     {
         if (! $loader instanceof Closure && strpos($class_name, '\\') !== false) {
             throw new DomainException(
@@ -641,7 +643,7 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\services\assets\Registry'                                                                 => [
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\I18nRegistry'    => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetManifest'   => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\entities\shortcodes\EspressoCancelled'                                             => [
                 'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
