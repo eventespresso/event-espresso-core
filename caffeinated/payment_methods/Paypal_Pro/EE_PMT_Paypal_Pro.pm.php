@@ -147,14 +147,16 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
         );
     }
 
+
     /**
      * Overrides parent's _get_billing_values_from_form because we want to
      * get the country's 2-character ISO code, not the name like most gateways
      *
      * @param EE_Billing_Info_Form $billing_form
      * @return array
+     * @throws EE_Error
      */
-    protected function _get_billing_values_from_form(EE_Billing_Info_Form $billing_form)
+    protected function _get_billing_values_from_form($billing_form)
     {
         $billing_values = parent::_get_billing_values_from_form($billing_form);
         $billing_values['country'] = $billing_form->get_input_value('country');

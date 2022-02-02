@@ -483,13 +483,11 @@ abstract class EE_PMT_Base
      * @return array
      * @throws EE_Error
      */
-    protected function _get_billing_values_from_form(EE_Billing_Info_Form $billing_form)
+    protected function _get_billing_values_from_form($billing_form)
     {
-        if ($billing_form instanceof EE_Form_Section_Proper) {
-            return $billing_form->input_pretty_values(true);
-        } else {
-            return null;
-        }
+        return $billing_form instanceof EE_Form_Section_Proper
+            ? $billing_form->input_pretty_values(true)
+            : [];
     }
 
 

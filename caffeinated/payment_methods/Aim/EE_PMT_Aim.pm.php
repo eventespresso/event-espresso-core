@@ -230,7 +230,7 @@ class EE_PMT_Aim extends EE_PMT_Base
      * @param EE_Billing_Info_Form $billing_form
      * @return array
      */
-    protected function _get_billing_values_from_form(EE_Billing_Info_Form $billing_form)
+    protected function _get_billing_values_from_form($billing_form)
     {
         $all_billing_values_empty = array();
         foreach (array_keys($this->billing_input_names()) as $input_name) {
