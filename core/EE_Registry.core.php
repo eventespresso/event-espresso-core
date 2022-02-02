@@ -1645,9 +1645,6 @@ class EE_Registry implements ResettableInterface
         $instance->CFG = EE_Config::reset($hard, $reinstantiate);
         $instance->CART = null;
         $instance->MRM = null;
-        $instance->AssetsRegistry = LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\services\assets\Registry'
-        );
         // messages reset
         EED_Messages::reset();
         // handle of objects cached on LIB
