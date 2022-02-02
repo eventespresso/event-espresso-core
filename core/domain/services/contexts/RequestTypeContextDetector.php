@@ -205,13 +205,28 @@ class RequestTypeContextDetector
 
 
     /**
+     * @param string $extra_path
+     * @return bool
+     */
+    private function isRestApiRequest(string $extra_path = ''): bool
+    {
+        $rest_route = $this->request->getRequestParam('rest_route');
+        return (
+            $this->request->getRequestParam('rest_route') !== ''
+            && ( $extra_path === '' || strpos($rest_route, $extra_path) !== 0 )
+        )
+        || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . $extra_path);
+    }
+
+
+    /**
      * @return bool
      */
     private function isEspressoRestApiRequest(): bool
     {
+        $api_namespace = '/' . ltrim(Domain::API_NAMESPACE, '/');
         // Check for URLs like http://mysite.com/?rest_route=/ee... and http://mysite.com/wp-json/ee/...
-        return strpos($this->request->getRequestParam('rest_route'), '/' . Domain::API_NAMESPACE) === 0
-               || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+        return $this->isRestApiRequest($api_namespace);
     }
 
 
@@ -236,8 +251,7 @@ class RequestTypeContextDetector
     private function isWordPressRestApiRequest(): bool
     {
         // Check for URLs like http://mysite.com/?rest_route=/.. and http://mysite.com/wp-json/...
-        return $this->request->getRequestParam('rest_route') !== ''
-            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/'));
+        return $this->isRestApiRequest();
     }
 
 
