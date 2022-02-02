@@ -89,6 +89,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
                 ),
                 '4.3'
             );
+            return false;
         }
 
         self::$_registry[ $addon_name ]   = $setup_args;
