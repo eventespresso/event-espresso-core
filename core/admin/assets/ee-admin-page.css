@@ -3150,8 +3150,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .tablenav {
     height: auto;
     padding: 0;
-    padding-block-start: .5rem;
-    padding-block-end: .25rem;
+    padding-block: 0.25rem;
     margin: 0;
 }
 
@@ -3189,6 +3188,16 @@ body.espresso-admin #contextual-help-wrap strong {
     padding-inline-start: 1rem;
 }
 
+.espresso-admin p.search-box  {
+    display: flex;
+    float: right;
+    margin: 0;
+}
+.espresso-admin p.search-box input[name="s"] {
+  float: unset;
+  margin: 0;
+  margin-inline-end: 0.5rem;
+}
 
 .espresso-admin .wp-list-table .ee-responsive-table-cell {
     display: flex;
