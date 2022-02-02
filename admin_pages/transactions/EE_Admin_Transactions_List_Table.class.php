@@ -58,16 +58,17 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
         $ID_column_name = esc_html__('ID', 'event_espresso');
-        $ID_column_name .= ' : <span class="show-on-mobile-view-only" style="float:none">';
-        $ID_column_name .= esc_html__('Transaction Date', 'event_espresso');
+        $ID_column_name .= '<span class="show-on-mobile-view-only" style="float:none">';
+        $ID_column_name .= ' : ' . esc_html__('Transaction Date', 'event_espresso');
         $ID_column_name .= '</span> ';
         $this->_columns = array(
+            'status'        => '',
             'TXN_ID'        => $ID_column_name,
             'TXN_timestamp' => esc_html__('Transaction Date', 'event_espresso'),
-            'TXN_total'     => esc_html__('Total', 'event_espresso'),
-            'TXN_paid'      => esc_html__('Paid', 'event_espresso'),
-            'ATT_fname'     => esc_html__('Primary Registrant', 'event_espresso'),
             'event_name'    => esc_html__('Event', 'event_espresso'),
+            'ATT_fname'     => esc_html__('Primary Registrant', 'event_espresso'),
+            'TXN_paid'      => esc_html__('Paid', 'event_espresso'),
+            'TXN_total'     => esc_html__('Total', 'event_espresso'),
             'actions'       => esc_html__('Actions', 'event_espresso'),
         );
 
@@ -88,15 +89,16 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
      * This simply sets up the row class for the table rows.
      * Allows for easier overriding of child methods for setting up sorting.
      *
-     * @param  EE_Transaction $transaction the current item
+     * @param EE_Transaction $transaction the current item
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_row_class($transaction)
     {
         $class = parent::_get_row_class($transaction);
         // add status class
-        $class .= ' ee-status-strip txn-status-' . $transaction->status_ID();
+        $class .= ' txn-status-' . $transaction->status_ID();
         if ($this->_has_checkbox_column) {
             $class .= ' has-checkbox-column';
         }
@@ -165,6 +167,20 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
 
 
     /**
+     *    column status
+     *
+     * @param EE_Transaction $transaction
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_status(EE_Transaction $transaction)
+    {
+        return '<span class="ee-status-dot ee-status-dot--' . esc_attr($transaction->status_ID()) . '"></span>';
+    }
+
+
+    /**
      *    column TXN_ID
      *
      * @param \EE_Transaction $transaction
@@ -208,7 +224,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         ) {
             $timestamp = esc_html__('TXN in progress...', 'event_espresso');
         } else {
-            $timestamp = $transaction->get_i18n_datetime('TXN_timestamp');
+            $timestamp = $transaction->get_i18n_datetime('TXN_timestamp', 'M jS Y g:i a');
         }
         return $timestamp;
     }
@@ -323,14 +339,14 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                    . $transaction->get_pretty('TXN_paid')
                    . '</span>';
         if ($transaction_paid > 0) {
-            $content .= '<br><span class="ee-status-text-small">'
+            $content .= ' <span class="ee-status-text-small">'
                         . sprintf(
                             esc_html__('...via %s', 'event_espresso'),
                             $payment_method_name
                         )
                         . '</span>';
         }
-        return $content;
+        return "<div>{$content}</div>";
     }
 
 

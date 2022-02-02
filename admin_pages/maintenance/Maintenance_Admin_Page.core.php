@@ -432,13 +432,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'reset_reservations',
             'reset_reservations',
             [],
-            'button button-primary ee-confirm'
+            'button button--primary ee-confirm'
         );
         $this->_template_args['reset_capabilities_button'] = $this->get_action_link_or_button(
             'reset_capabilities',
             'reset_capabilities',
             [],
-            'button button-primary ee-confirm'
+            'button button--primary ee-confirm'
         );
         $this->_template_args['delete_db_url']             = EE_Admin_Page::add_query_args_and_nonce(
             ['action' => 'delete_db'],

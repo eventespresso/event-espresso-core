@@ -353,7 +353,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                          && isset($this->_labels['publishbox'][ $this->_req_action ])
                 ? $this->_labels['publishbox'][ $this->_req_action ]
                 : $this->_labels['publishbox'];
-            add_meta_box(
+            $this->addMetaBox(
                 'submitdiv',
                 $box_label,
                 'post_submit_meta_box',
@@ -364,7 +364,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         }
         // let's add page_templates metabox if this cpt added support for it.
         if ($this->_supports_page_templates($this->_cpt_object->name)) {
-            add_meta_box(
+            $this->addMetaBox(
                 'page_templates',
                 esc_html__('Page Template', 'event_espresso'),
                 [$this, 'page_template_meta_box'],
@@ -529,7 +529,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if ('publish' !== get_post_status($post)) {
             $return .= '<span_id="view-post-btn"><a target="_blank" href="'
                        . get_preview_post_link($id)
-                       . '" class="button button-small">'
+                       . '" class="button button--secondary button--small">'
                        . esc_html__('Preview', 'event_espresso')
                        . '</a></span>'
                        . "\n";

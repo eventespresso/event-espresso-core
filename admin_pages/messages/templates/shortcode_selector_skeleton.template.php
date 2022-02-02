@@ -12,7 +12,7 @@
 
 if (! empty($shortcodes)) : ?>
 <div class="ee-messages-shortcodes-chooser-wrap">
-    <button class="ee-messages-shortcodes-chooser js-open-list-trigger button button-secondary"
+    <button class="button button--secondary ee-messages-shortcodes-chooser js-open-list-trigger button button-secondary"
             aria-label="<?php echo esc_html__('open shortcode selector', 'event_espresso'); ?>"
     >
         <span class="dashicons dashicons-shortcode"></span>
@@ -21,7 +21,7 @@ if (! empty($shortcodes)) : ?>
         <button class='ee-messages-shortcodes-close-btn js-close-list-trigger'
                 aria-label="<?php esc_html_e('close shortcode selector', 'event_espresso'); ?>"
         >
-            <span class='dashicons dashicons-no'></span> 
+            <span class='dashicons dashicons-no'></span>
         </button>
         <h6>
             <?php esc_html_e('Available Message Template Shortcodes', 'event_espresso'); ?>

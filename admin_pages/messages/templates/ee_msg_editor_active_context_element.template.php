@@ -33,7 +33,6 @@ $context = esc_attr($context);
 ?>
 
 <div class="context-active-control-container">
-    <span class="spinner"></span>
     <div class="activate_context_on_off_toggle_container">
         <span id="on-off-nonce-<?php echo esc_attr($context); ?>" class="hidden">
             <?php echo $nonce; // already escaped ?>
@@ -55,5 +54,6 @@ $context = esc_attr($context);
             />
             <label for="ee-on-off-toggle-<?php echo esc_attr($context); ?>"></label>
         </div>
+        <span class='spinner'></span>
     </div>
 </div>

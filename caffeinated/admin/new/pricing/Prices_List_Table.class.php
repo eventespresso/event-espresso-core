@@ -54,6 +54,7 @@ class Prices_List_Table extends EE_Admin_List_Table
 
         $this->_columns = array(
             'cb'          => '<input type="checkbox" />', // Render a checkbox instead of text
+            'id'          => esc_html__('ID', 'event_espresso'),
             'name'        => esc_html__('Name', 'event_espresso'),
             'type'        => esc_html__('Price Type', 'event_espresso'),
             'description' => esc_html__('Description', 'event_espresso'),
@@ -95,16 +96,13 @@ class Prices_List_Table extends EE_Admin_List_Table
      */
     protected function _get_row_class($item)
     {
-        static $row_class = '';
-        $row_class = ($row_class == '' ? 'alternate' : '');
-
-        $new_row = $row_class;
+        $row_class = '';
 
         if ($item->type_obj()->base_type() !== 1 && $item->type_obj()->base_type() !== 4) {
-            $new_row .= ' rowsortable';
+            $row_class .= 'rowsortable';
         }
 
-        return ' class="' . $new_row . '"';
+        return ' class="' . $row_class . '"';
     }
 
 
@@ -117,6 +115,20 @@ class Prices_List_Table extends EE_Admin_List_Table
             );
         }
         return '';
+    }
+
+
+    /**
+     * @param EE_Price $item
+     * @return mixed|string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_id(EE_Price $item)
+    {
+        $content = $item->ID();
+        $content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
+        return $this->columnContent('id', $content, 'end');
     }
 
 

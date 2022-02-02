@@ -793,7 +793,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     $EVT_ID
                 )
             ) {
-                $this->_admin_page_title .= '<a id="add-new-registration" class="add-new-h2 button-primary" href="';
+                $this->_admin_page_title .= '<a id="add-new-registration" class="add-new-h2 button--primary" href="';
                 $this->_admin_page_title .= EE_Admin_Page::add_query_args_and_nonce(
                     [
                         'page'     => 'espresso_registrations',
@@ -849,38 +849,36 @@ class Transactions_Admin_Page extends EE_Admin_Page
         if (! $this->_transaction instanceof EE_Transaction) {
             return;
         }
-        add_meta_box(
+        $this->addMetaBox(
             'edit-txn-details-mbox',
-            esc_html__('Transaction Details', 'event_espresso'),
+            '<span>' . esc_html__('Transaction Details', 'event_espresso')
+            . '&nbsp;<span class="dashicons dashicons-cart" ></span></span>',
             [$this, 'txn_details_meta_box'],
-            $this->_wp_page_slug,
-            'normal',
-            'high'
+            $this->_wp_page_slug
         );
-        add_meta_box(
+        $this->addMetaBox(
             'edit-txn-attendees-mbox',
-            esc_html__('Attendees Registered in this Transaction', 'event_espresso'),
+            '<span>' . esc_html__('Attendees Registered in this Transaction', 'event_espresso')
+            . '&nbsp;<span class="dashicons dashicons-groups" ></span></span>',
             [$this, 'txn_attendees_meta_box'],
             $this->_wp_page_slug,
             'normal',
             'high',
             ['TXN_ID' => $this->_transaction->ID()]
         );
-        add_meta_box(
+        $this->addMetaBox(
             'edit-txn-registrant-mbox',
             esc_html__('Primary Contact', 'event_espresso'),
             [$this, 'txn_registrant_side_meta_box'],
             $this->_wp_page_slug,
-            'side',
-            'high'
+            'side'
         );
-        add_meta_box(
+        $this->addMetaBox(
             'edit-txn-billing-info-mbox',
             esc_html__('Billing Information', 'event_espresso'),
             [$this, 'txn_billing_info_side_meta_box'],
             $this->_wp_page_slug,
-            'side',
-            'high'
+            'side'
         );
     }
 
@@ -932,7 +930,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                             TXN_ADMIN_URL
                         ),
                         esc_html__(' Send Payment Reminder', 'event_espresso'),
-                        'button secondary-button',
+                        'button button--secondary',
                         'dashicons dashicons-email-alt'
                     )
                     : '';
@@ -954,7 +952,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     TXN_ADMIN_URL
                 ),
                 esc_html__(' Recalculate Taxes and Total', 'event_espresso'),
-                'button secondary-button',
+                'button button--secondary',
                 'dashicons dashicons-update'
             );
         }
@@ -966,8 +964,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
             $actions['receipt'] = EEH_Template::get_button_or_link(
                 $primary_registration->receipt_url(),
                 esc_html__('View Receipt', 'event_espresso'),
-                'button secondary-button',
-                'dashicons dashicons-media-default'
+                'button button--secondary',
+                'dashicons dashicons-media-text'
             );
         }
 
@@ -978,7 +976,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             $actions['invoice'] = EEH_Template::get_button_or_link(
                 $primary_registration->invoice_url(),
                 esc_html__('View Invoice', 'event_espresso'),
-                'button secondary-button',
+                'button button--secondary',
                 'dashicons dashicons-media-spreadsheet'
             );
         }
@@ -986,9 +984,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
             apply_filters('FHEE__Transactions_Admin_Page__getActionButtons__actions', $actions, $transaction)
         );
         if ($actions) {
-            $content = '<ul>';
-            $content .= '<li>' . implode('</li><li>', $actions) . '</li>';
-            $content .= '</uL>';
+            // $content = '<ul>';
+            // $content .= '<li>' . implode('</li><li>', $actions) . '</li>';
+            // $content .= '</uL>';
+            $content .= implode('', $actions);
         }
         return $content;
     }
@@ -1552,7 +1551,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
             REG_ADMIN_URL
         );
         // get formatted address for registrant
-        $this->_template_args['formatted_address'] = EEH_Address::format($primary_att);
+        $formatted_address = EEH_Address::format($primary_att);
+        $formatted_address = $formatted_address !== '<div class="espresso-address-dv"><div></div></div>'
+            ? $formatted_address
+            : '';
+        $this->_template_args['formatted_address'] = $formatted_address;
         echo EEH_Template::display_template(
             TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_registrant.template.php',
             $this->_template_args,

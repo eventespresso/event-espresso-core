@@ -1,24 +1,381 @@
-#espresso-default-admin {
-    padding-top: 10px;
-    min-width: 763px;
+/* CONSTANTS */
+
+:root {
+
+    --ee-font-color-hue: 207;
+    --ee-font-color-sat: 5;
+    --ee-font-color-lit: 20;
+    --ee-font-color-alpha: 1;
+
+    --ee-color-white: hsla(207, 0%, 100%, 1);
+    --ee-color-almost-white: hsla(207, 0%, 95%, 1);
+    --ee-color-off-white: hsla(207, 0%, 90%, 1);
+    --ee-status-color-red: hsla(340, 55%, 55%, 1);
+    --ee-status-color-orange: hsla(18, 75%, 50%, 1);
+    --ee-status-color-yellow: hsla(49, 95%, 45%, 1);
+    --ee-status-color-green: hsla(140, 95%, 30%, 1);
+    --ee-status-color-blue: hsla(203, 50%, 45%, 1);
+    --ee-status-color-lt-blue: hsla(203, 50%, 65%, 1);
+    --ee-status-color-pale-blue: hsla(203, 35%, 85%, 1);
+    --ee-status-color-purple: hsla(279, 25%, 50%, 1);
+    --ee-status-color-lt-grey: hsla(219, 2%, 55%, 1);
+    --ee-status-color-grey: hsla(225, 2%, 37.5%, 1);
+    --ee-status-color-drk-grey: hsla(225, 2%, 20%, 1);
+
+    --ee-font-color: hsla(
+        var(--ee-font-color-hue),
+        calc(var(--ee-font-color-sat) * 1%),
+        calc((var(--ee-font-color-lit) + 7.5) * 1%),
+        var(--ee-font-color-alpha)
+    );
+    --ee-font-color-light: hsla(
+        var(--ee-font-color-hue),
+        calc(var(--ee-font-color-sat) * 1%),
+        calc((var(--ee-font-color-lit) + 15) * 1%),
+        var(--ee-font-color-alpha)
+    );
+    --ee-font-color-dark: hsla(
+        var(--ee-font-color-hue),
+        calc(var(--ee-font-color-sat) * 1%),
+        calc(var(--ee-font-color-lit) * 1%),
+        var(--ee-font-color-alpha)
+    );
+
+    /* PRIMARY BUTTON COLORS */
+    --ee-btn-primary-hue: 207;
+    --ee-btn-primary-sat: 65;
+    --ee-btn-primary-lit: 45;
+    --ee-btn-primary-alpha: 1;
+
+    --ee-btn-primary: hsla(
+        var(--ee-btn-primary-hue),
+        calc(var(--ee-btn-primary-sat) * 1%),
+        calc(var(--ee-btn-primary-lit) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
+    --ee-btn-primary-low-constrast: hsla(
+        var(--ee-btn-primary-hue),
+        calc((var(--ee-btn-primary-sat) + 5) * 1%),
+        calc((var(--ee-btn-primary-lit) + 15) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
+    --ee-btn-primary-high-constrast: hsla(
+        var(--ee-btn-primary-hue),
+        calc((var(--ee-btn-primary-sat) + 20) * 1%),
+        calc((var(--ee-btn-primary-lit) - 10) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
+    --ee-btn-primary-hover: var(--ee-btn-primary-low-constrast);
+    --ee-btn-primary-focus: var(--ee-btn-primary-high-constrast);
+
+    /* SECONDARY BUTTON COLORS */
+    --ee-btn-secondary-hue: 203;
+    --ee-btn-secondary-sat: 2;
+    --ee-btn-secondary-lit: 90;
+    --ee-btn-secondary-alpha: 1;
+
+    --ee-btn-secondary: hsla(
+        var(--ee-btn-secondary-hue),
+        calc(var(--ee-btn-secondary-sat) * 1%),
+        calc(var(--ee-btn-secondary-lit) * 1%),
+        var(--ee-btn-secondary-alpha)
+    );
+    --ee-btn-secondary-hover: hsla(
+        var(--ee-btn-secondary-hue),
+        calc(var(--ee-btn-secondary-sat) * 1%),
+        calc((var(--ee-btn-secondary-lit) - 20) * 1%),
+        var(--ee-btn-secondary-alpha)
+    );
+    --ee-btn-secondary-focus: hsla(
+        var(--ee-btn-secondary-hue),
+        calc(var(--ee-btn-secondary-sat) * 1%),
+        calc((var(--ee-btn-secondary-lit) - 40) * 1%),
+        var(--ee-btn-secondary-alpha)
+    );
+
+    --ee-box-shadow: 0 2px 3px -2px hsla(0, 0%, 0%, .5);
+    --ee-box-shadow-big: 0 3px 6px hsla(0, 0%, 0%, .5);
+    --ee-button-box-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.375), -1px -1px 1px hsla(0, 0%, 100%, 0.75);
+    --ee-button-box-shadow-alt: 0 0 2px hsla(0, 0%, 0%, 0.35), -1px -1px 2px hsla(0, 0%, 100%, 0.75);
+
+
+    --ee-border-color: hsla(var(--ee-btn-secondary-hue), 2%, 70%, 1);
+    --ee-border-color-table-row: hsla(var(--ee-btn-secondary-hue), 0%, 90%, 1);
+
+    --ee-admin-sidebar-width: 360px;
+
+    --ee-attention-bg-color: hsl(51, 68%, 76%);
+    --ee-attention-color: hsla(46, 24%, 9%, .85);
+
 }
 
-#espresso-default-admin .postbox-container {
-    width: 100%;
+@media screen and (min-width: 1920px) {
+    :root {
+        --ee-admin-sidebar-width: 480px;
+    }
 }
 
-#espresso-default-admin #post-body.columns-2 {
-    margin-right: 300px;
+/** STATUS COLORS */
+
+/*  txn failed,  payment declined, reg declined, dtt cancelled*/
+.status-DTC,
+.status-PDC,
+.status-RDC,
+.status-TFL,
+.ee-status-color-DTC,
+.ee-status-color-PDC,
+.ee-status-color-RDC,
+.ee-status-color-TFL {
+    color: var(--ee-status-color-red);
 }
 
-@media only screen and (max-width: 850px) {
-    #espresso-default-admin #post-body.columns-2 {
+/* txn overpaid, payment fail, reg not approved */
+.status-DTP,
+.status-PFL,
+.status-RNA,
+.status-TOP,
+.ee-status-color-DTP,
+.ee-status-color-PFL,
+.ee-status-color-RNA,
+.ee-status-color-TOP {
+    color: var(--ee-status-color-orange);
+}
+
+/* txn abandoned, reg incomplete, dtt sold out */
+.status-RIC,
+.status-TAB,
+.ee-status-color-RIC,
+.ee-status-color-TAB {
+    color: var(--ee-status-color-yellow);
+}
+
+/* txn complete, payment approved, reg approved, dtt active*/
+.status-DTA,
+.status-PAP,
+.status-RAP,
+.status-TCM,
+.ee-status-color-DTA,
+.ee-status-color-PAP,
+.ee-status-color-RAP,
+.ee-status-color-TCM {
+    color: var(--ee-status-color-green);
+}
+
+/* txn open, payment pending, reg pending payment, dtt upcoming */
+.status-DTU,
+.status-PPN,
+.status-RPP,
+.status-TIN,
+.ee-status-color-DTU,
+.ee-status-color-PPN,
+.ee-status-color-RPP,
+.ee-status-color-TIN {
+    color: var(--ee-status-color-blue);
+}
+
+/* dtt postponed */
+.status-DTS,
+.status-RWL,
+.ee-status-color-DTS,
+.ee-status-color-RWL {
+    color: var(--ee-status-color-purple);
+}
+
+/* payment cancelled, reg cancelled, dtt expired */
+.status-DTE,
+.status-PCN,
+.status-RCN,
+.ee-status-color-DTE,
+.ee-status-color-PCN,
+.ee-status-color-RCN {
+    color: var(--ee-status-color-lt-grey);
+}
+
+/* dtt inactive */
+.status-DTI,
+.ee-status-color-DTI {
+    color: var(--ee-status-color-grey);
+}
+
+.espresso-admin.wrap {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 99%;
+}
+
+/*.espresso-admin nav.nav-tab-wrapper {
+    border-bottom: 1px solid var(--ee-border-color);
+    margin: 0;
+    padding: 0;
+    padding-block-start: 1rem;
+    padding-block-end: 0;
+}
+.espresso-admin nav.nav-tab-wrapper .nav-tab {
+    border-bottom: none;
+    border-start-start-radius: .125rem;
+    border-start-end-radius: .125rem;
+    background: var(--ee-border-color-table-row);
+    color: var(--ee-status-color-grey);
+}
+.espresso-admin nav.nav-tab-wrapper .nav-tab.nav-tab-active {
+    border-bottom: 1px solid hsl(240, 3%, 94%);
+    background: hsl(240, 3%, 94%);
+    color: hsl(0, 0%, 0%);
+}*/
+
+.espresso-admin #poststuff,
+.espresso-admin #espresso-default-admin,
+.espresso-admin.wrap #wpbody-content .metabox-holder {
+    padding-top: unset;
+    min-width: unset;
+}
+
+
+.espresso-admin #post-body.columns-2,
+.espresso-admin #poststuff #post-body.columns-2 {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: 360px 1fr 1fr var(--ee-admin-sidebar-width);
+    grid-template-areas:
+    "post-body post-body post-body post-body"
+    "postbox-2 postbox-2 postbox-2 postbox-1";
+    padding-block-start: 1rem;
+}
+
+.espresso-admin.post-type-espresso_events #post-body.columns-2,
+.espresso-admin.post-type-espresso_events #poststuff #post-body.columns-2,
+.espresso-admin.toplevel_page_espresso_events #post-body.columns-2,
+.espresso-admin.toplevel_page_espresso_events #poststuff #post-body.columns-2,
+.espresso-admin.post-type-espresso_venues #post-body.columns-2,
+.espresso-admin.post-type-espresso_venues #poststuff #post-body.columns-2,
+.espresso-admin.event-espresso_page_espresso_messages #post-body.columns-2,
+.espresso-admin.event-espresso_page_espresso_messages #poststuff #post-body.columns-2,
+.espresso-admin.event-espresso_page_espresso_registration_form #post-body.columns-2,
+.espresso-admin.event-espresso_page_espresso_registration_form #poststuff #post-body.columns-2,
+.espresso-admin.event-espresso_page_espresso_general_settings #post-body.columns-2,
+.espresso-admin.event-espresso_page_espresso_general_settings #poststuff #post-body.columns-2,
+.espresso-admin.event-espresso_page_espresso_payment_settings #post-body.columns-2,
+.espresso-admin.event-espresso_page_espresso_payment_settings #poststuff #post-body.columns-2,
+.espresso-admin.event-espresso_page_pricing #post-body.columns-2,
+.espresso-admin.event-espresso_page_pricing #poststuff #post-body.columns-2,
+.espresso-admin.event-espresso_page_espresso_support #post-body.columns-2,
+.espresso-admin.event-espresso_page_espresso_support #poststuff #post-body.columns-2 {
+    grid-template-areas:
+    "post-body post-body post-body postbox-1"
+    "postbox-2 postbox-2 postbox-2 postbox-1";
+}
+
+.espresso-admin #post-body,
+.espresso-admin #post-body-content,
+.espresso-admin #postbox-container-2,
+.espresso-admin #postbox-container-1,
+.espresso-admin.columns-2 #postbox-container-2,
+.espresso-admin #post-body.columns-2 #postbox-container-1,
+.espresso-admin #poststuff #post-body,
+.espresso-admin #poststuff #post-body-content,
+.espresso-admin #poststuff #postbox-container-2,
+.espresso-admin #poststuff #postbox-container-1,
+.espresso-admin.columns-2 #poststuff #postbox-container-2,
+.espresso-admin #poststuff #post-body.columns-2 #postbox-container-1 {
+    float: unset;
+    margin: 0;
+    min-width: unset;
+    width: unset;
+}
+.espresso-admin #post-body,
+.espresso-admin #post-body-content {
+    grid-area: post-body;
+    margin-block-end: 1rem;
+}
+.espresso-admin #postbox-container-1 {
+    grid-area: postbox-1;
+}
+.espresso-admin #postbox-container-2,
+.event-espresso_page_espresso_venues #post-body-content,
+.espresso-admin #update_category_event_form #post-body-content ,
+.espresso-admin #update_google_map_settings_event_form #post-body-content {
+    grid-area: postbox-2;
+    margin-block-start: -1rem;
+}
+
+.espresso-admin #post-body.columns-2 #postbox-container-1,
+.espresso-admin #post-body.columns-2 #postbox-container-1 .postbox {
+    width: var(--ee-admin-sidebar-width);
+}
+
+
+.espresso-admin .postbox .inside {
+    margin: 0;
+    margin-block: 1rem;
+    padding: 0;
+    padding-inline: 1.5rem;
+    padding-block-end: 1rem;
+}
+.espresso-admin .ee-admin-page-form #post-body-content {
+    margin: 0;
+    padding: 0;
+    padding-inline: 1.5rem;
+    padding-block-end: 1rem;
+}
+
+#update_category_event_form #post-body-content {
+    margin: 0;
+    padding: 0;
+    padding-inline: 1.5rem;
+    padding-block-start: 1rem;
+}
+
+/*.espresso-admin #wp-content-editor-tools {
+    background-color: unset;
+}*/
+
+
+@media only screen and (max-width: 1024px) {
+    .espresso-admin #post-body.columns-2 {
+        flex-direction: column;
         margin: 0;
+        width: unset;
     }
 
-    #espresso-default-admin {
+    .espresso-admin #postbox-container-2 {
+        margin-inline-end: unset;
+        width: 100%;
+    }
+
+    .espresso-admin #post-body.columns-2 #postbox-container-1 {
+        width: 100%;
+    }
+
+    .espresso-admin #post-body.columns-2 #postbox-container-1 .meta-box-sortables {
+        display: grid;
+        grid-gap: 1rem;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .espresso-admin {
         min-width: 0;
     }
+}
+
+@media only screen and (max-width: 600px) {
+    .espresso-admin #post-body.columns-2 #postbox-container-1 .meta-box-sortables {
+        grid-template-columns: 1fr;
+    }
+}
+
+.espresso-admin #edit-slug-box {
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+    padding: 1px 10px;
+}
+.espresso-admin #edit-slug-box > a,
+.espresso-admin #edit-slug-box > input,
+.espresso-admin #edit-slug-box > span,
+.espresso-admin #edit-slug-box > .button.button-small {
+    margin-inline-start: 0;
+    margin-inline-end: 1rem;
 }
 
 .espresso-admin .add-new-h2,
@@ -60,7 +417,7 @@
     margin: 0 0 1em;
 }
 
-#espresso_major_buttons_wrapper .button-primary, #event-editor-floating-save-btns .button-primary {
+#espresso_major_buttons_wrapper .button--primary, #event-editor-floating-save-btns .button--primary {
     margin-right: 5px;
     float: right;
 }
@@ -121,12 +478,15 @@
 }
 
 .ee-attention {
-    padding: 2em 1.5em;
+    padding: 1.5em 2em;
     margin: 2em 0 1em;
-    background-color: #FFFFE0;
-    border: 1px solid var(--ee-status-color-yellow);
+    background-color: var(--ee-attention-bg-color);
+    border: none;
     border-radius: 3px;
-    text-shadow: 0 1px #FFFFFF;
+    color: var(--ee-attention-color);
+    font-size: 1rem;
+    font-weight: 600;
+    text-shadow: none;
 }
 
 .ee-attention h6 {
@@ -134,8 +494,9 @@
 }
 
 .ee-info-box {
-    background: #FFFFFF;
-    border: 1px solid lightblue;
+    background: var(--ee-color-white);
+    /*border: 1px solid lightblue;*/
+    border: 1px solid var(--ee-status-color-pale-blue);
     margin: 0 0 1em;
     padding: 1em 2em;
 }
@@ -217,7 +578,7 @@ table .espresso-radio-btn-options-ul .tiny-lbl,
 table .espresso-radio-btn-options-ul .small-lbl,
 .inside table .espresso-radio-btn-options-ul .small-lbl {
     display: inline-block;
-    width: 33.2%;
+    width: 33%;
     min-width: 162px;
     max-width: 321px;
 }
@@ -370,7 +731,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .lt-grey-text {
-    color: var(--ee-status-color-light-grey);
+    color: var(--ee-status-color-lt-grey);
 }
 
 .grey-text {
@@ -378,7 +739,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .drk-grey-text {
-    color: var(--ee-status-color-dark-grey);
+    color: var(--ee-status-color-drk-grey);
 }
 
 .important-notice {
@@ -396,13 +757,13 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .underline-hdr {
     padding: 0 0 .05em;
     margin: 2em 0 1em;
-    border-bottom: 2px solid #EEEEEE;
+    border-bottom: 2px solid var(--ee-color-off-white);
 }
 
 .overline-hdr {
     padding: .5em 0 0;
     margin: 2em 0 1em;
-    border-top: 2px solid #EEEEEE;
+    border-top: 2px solid var(--ee-color-off-white);
 }
 
 .no-bold {
@@ -411,7 +772,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 
 .currency-code {
     font-size: .7em;
-    color: var(--ee-status-color-grey);
+    color: var(--ee-status-color-lt-grey);
     vertical-align: text-top;
 }
 
@@ -566,7 +927,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .lt-grey-txt {
-    color: var(--ee-status-color-grey) !important;
+    color: var(--ee-status-color-lt-grey) !important;
     text-shadow: none;
 }
 
@@ -734,19 +1095,12 @@ label.error {
     margin: 2em 0;
 }
 
-.button-primary + .button-primary,
-.button-primary + .button-secondary,
-.button-secondary + .button-primary,
-.button-secondary + .button-secondary {
+.button--primary + .button--primary,
+.button--primary + .button--secondary,
+.button--secondary + .button--primary,
+.button--secondary + .button--secondary {
     margin-inline-end: .25rem;
     margin-inline-start: 1.5rem;
-}
-
-.espresso-admin .button .dashicons::before {
-    position: relative;
-    font-size: 20px;
-    top: 0;
-    vertical-align: middle;
 }
 
 .espresso-admin .button .dashicons-email-alt::before {
@@ -771,7 +1125,7 @@ label.error {
 
 .ee-composite-dashicon span:nth-child(even) {
     color: #222;
-    text-shadow: -1px -1px 1px #fff;
+    text-shadow: -1px -1px 1px var(--ee-color-white);
     z-index: 20;
 }
 
@@ -821,7 +1175,7 @@ label.error {
     margin-bottom: .25rem;
 }
 
-.list-table-bottom-buttons a.button-secondary, .list-table-bottom-buttons button.button-secondary {
+.list-table-bottom-buttons a.button--secondary, .list-table-bottom-buttons button.button--secondary {
     display: inline-block;
     margin: inherit;
 }
@@ -844,8 +1198,9 @@ label.error {
 .qtip-content .ee-list-table-legend .ee-is-active-status {
     background-color: rgba(255, 255, 255, .25);
     border-radius: 2px;
-    margin: 0 0 0 -.25rem;
-    padding: .25rem;
+    color: #403A3A;
+    margin: .1em 0 .15em;
+    text-shadow: -1px -1px 0px var(--ee-color-white);
 }
 
 .ee-status-legend {
@@ -948,10 +1303,6 @@ label.error {
     width: 230px;
 }
 
-.espresso-admin .wp-list-table .show-on-mobile-view-only {
-    display: none;
-}
-
 
 /*wp-list-table media query*/
 @media screen and ( max-width: 782px ) {
@@ -990,7 +1341,9 @@ label.error {
     padding: 10px;
 }
 
-#ee-admin-caf-preview-container .button-large {
+#ee-admin-caf-preview-container .button--big {
+    font-size: 1.5em;
+    line-height: 1.4;
     height: 50px;
     font-size: 1.5em;
     padding: 10px 15px 0;
@@ -1027,7 +1380,7 @@ label.error {
     height: auto;
     padding: 3em 4em 2em;
     z-index: 9999991;
-    background: #FFFFFF;
+    background: var(--ee-color-white);
     border: 1px solid #DDDDDD;
     border-radius: 5px;
 }
@@ -1048,7 +1401,7 @@ label.error {
     text-align: center;
 }
 
-.button-primary.trigger-ee-help-tour {
+.button--primary.trigger-ee-help-tour {
     margin: 5px;
     height: auto;
     white-space: normal;
@@ -1107,7 +1460,7 @@ label.error {
 }
 
 .admin-color-sunrise .ee-alternate-color {
-    color: #CCAF0B;
+    color: var(--ee-status-color-yellow);
 }
 
 /* Admin Sidebar*/
@@ -1122,7 +1475,7 @@ label.error {
 }
 
 .dashicons-star-filled::before {
-    color: #e6b800;
+    color: var(--ee-status-color-yellow);
     font-size: 18px;
 }
 
@@ -1137,33 +1490,33 @@ label.error {
     text-decoration: none;
     font-weight: 500;
     text-align: center;
-    background-color: #E44064;
+    background-color: var(--ee-status-color-red);
 }
 
-.ee-status-strip, .button-secondary.ee-status-strip, .button-primary.ee-status-strip {
-    display: inline-block;
-    border-left: solid 5px #E6E6E6;
-}
+/*.ee-status-strip, .button--secondary.ee-status-strip, .button--primary.ee-status-strip {*/
+/*    display: inline-block;*/
+/*    border-left: solid 5px #E6E6E6;*/
+/*}*/
 
-.ee-status-strip-td {
-    height: 100%;
-    min-height: 20px;
-}
+/*.ee-status-strip-td {*/
+/*    height: 100%;*/
+/*    min-height: 20px;*/
+/*}*/
 
-.wp-list-table .ee-status-strip .check-column {
-    border-left-style: solid;
-    border-left-width: 4px;
-}
+/*.wp-list-table .ee-status-strip .check-column {*/
+/*    border-left-style: solid;*/
+/*    border-left-width: 4px;*/
+/*}*/
 
-.wp-list-table tr.ee-status-strip {
-    display: table-row;
-    border: none;
-}
+/*.wp-list-table tr.ee-status-strip {*/
+/*    display: table-row;*/
+/*    border: none;*/
+/*}*/
 
-.espresso-admin .wp-list-table td {
-    overflow: hidden !important;
-    position: relative;
-}
+/*.espresso-admin .wp-list-table td {*/
+/*    overflow: hidden !important;*/
+/*    position: relative;*/
+/*}*/
 
 .wp-list-table .ee-status-strip-td {
     display: block !important;
@@ -1180,7 +1533,7 @@ label.error {
 }
 
 .ee-table-wrap {
-    background: none repeat scroll 0 0 #FFFFFF;
+    background: none repeat scroll 0 0 var(--ee-color-white);
     border: 1px solid #DFDFDF;
     border-radius: 3px;
     margin: 0 0 2em;
@@ -1205,7 +1558,7 @@ label.error {
 }
 
 div.updated.ee-notices-attention {
-    border-left: 4px solid #E6DB55;
+    border-left: 4px solid var(--ee-status-color-yellow);
 }
 
 
@@ -1260,7 +1613,7 @@ input.mid-text {
     border-bottom: 1px solid rgba(0, 0, 0, 0.25) !important;
     font-weight: normal;
     cursor: pointer;
-    color: #fff !important;
+    color: var(--ee-color-white) !important;
     text-decoration: none !important;
     text-align: center;
     line-height: 1em;
@@ -1274,7 +1627,7 @@ input.mid-text {
 }
 
 .ee-button:hover {
-    color: #fff !important;
+    color: var(--ee-color-white) !important;
     background-color: #00c7e3; /*4EBFDE*/
 }
 
@@ -1433,80 +1786,17 @@ input.ee-register-button {
 }
 
 
-/**
- * All status colors for various EE related elements
- */
-
-/* txn complete, payment approved, reg approved, dtt active*/
-.ee-status-color-TCM,
-.ee-status-color-PAP,
-.ee-status-color-RAP,
-.ee-status-color-DTA {
-    color: #70CC50;
-}
-
-/*  txn failed,  payment declined, reg declined, dtt cancelled*/
-.ee-status-color-TFL,
-.ee-status-color-PDC,
-.ee-status-color-RDC,
-.ee-status-color-DTC {
-    color: #E44064;
-}
-
-/* txn open, payment pending, reg pending payment, dtt upcoming */
-.ee-status-color-TIN,
-.ee-status-color-PPN,
-.ee-status-color-RPP,
-.ee-status-color-DTU {
-    color: #00B1CA;
-}
-
-/* txn overpaid, payment fail, reg not approved */
-.ee-status-color-TOP,
-.ee-status-color-PFL,
-.ee-status-color-RNA {
-    color: #E76700;
-}
-
-/* payment cancelled, reg cancelled, dtt expired */
-.ee-status-color-PCN,
-.ee-status-color-RCN,
-.ee-status-color-DTE {
-    color: #AC9D9C;
-}
-
-
-/* txn abandoned, reg incomplete, dtt sold out */
-.ee-status-color-TAB,
-.ee-status-color-RIC,
-.ee-status-color-DTS {
-    color: #FCB93C;
-}
-
-
-/* dtt inactive */
-.ee-status-color-DTI {
-    color: #403A3A;
-}
-
-
-/* dtt postponed */
-.ee-status-color-DTP {
-    color: #8A549A;
-}
-
-
 /** other styling - footnotes etc **/
 .ee-footnote-text {
+    color: var(--ee-status-color-lt-grey);
     font-style: italic;
     font-size: .8em;
-    color: #dcc;
     font-weight: normal;
 }
 
 /** Google Chart adjustments **/
 .admin-report-chart-dv {
-    background: #fff;
+    background: var(--ee-color-white);
     padding: 10px;
 }
 
@@ -1519,12 +1809,12 @@ input.ee-register-button {
 
 /* Zebra striping */
 .ee-responsive-table tr:nth-of-type(even) {
-    background: #f9f9f9;
+    background: var(--ee-color-almost-white);
 }
 
 .ee-responsive-table th {
-    background: #ddd;
-    color: #444;
+    background: var(--ee-color-off-white);
+    color: var(--ee-status-color-drk-grey);
     font-weight: bold;
     text-align: center;
 }
@@ -1532,11 +1822,11 @@ input.ee-register-button {
 .ee-responsive-table th,
 .ee-responsive-table td {
     padding: 6px;
-    border: 1px solid #eee;
+    border: 1px solid var(--ee-color-off-white);
 }
 
 .ee-responsive-table td {
-    color: #777;
+    color: var(--ee-status-color-grey);
     text-align: left;
 }
 
@@ -1561,13 +1851,13 @@ input.ee-register-button {
     }
 
     .ee-responsive-table tr {
-        border: 1px solid #ccc;
+        border: 1px solid var(--ee-border-color-table-row);
     }
 
     .ee-responsive-table td {
         /* Behave  like a "row" */
         border: none;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--ee-color-off-white);
         position: relative;
         padding-left: 50%;
     }
@@ -1616,7 +1906,7 @@ input.ee-register-button {
 
 .ee-form-wide-errors {
     display: block;
-    color: #FE2a00;
+    color: var(--ee-status-color-orange);
 }
 
 .ee-new-edtr-notice {
@@ -1714,14 +2004,14 @@ body.espresso-admin #screen-meta-links .screen-meta-toggle {
 }
 
 body.espresso-admin #screen-meta-links .show-settings {
-    border-color: #c3c4c7 !important;
+    border-color: var(--ee-border-color) !important;
     box-shadow: none !important;
 }
 
 body.espresso-admin #screen-options-wrap,
 body.espresso-admin #contextual-help-back {
-    background: #fff;
-    border: 1px solid #c3c4c7 !important;
+    background: var(--ee-color-white);
+    border: 1px solid var(--ee-border-color) !important;
     z-index: 2;
 }
 
@@ -1760,12 +2050,12 @@ body.espresso-admin .contextual-help-tabs li {
 }
 
 body.espresso-admin .contextual-help-tabs a {
-    background: #ddd;
-    border: 1px solid #ddd;
-    border-left: 5px solid #ddd;
-    border-right: 1px solid #c3c4c7;
+    background: var(--ee-border-color);
+    border: 1px solid var(--ee-border-color);
+    border-left: 5px solid var(--ee-border-color);
+    border-right: 1px solid var(--ee-border-color);
     box-shadow: none !important;
-    color: #666;
+    color: var(--ee-status-color-grey);
     font-size: 1rem;
     outline: none !important;
     padding: .5rem .5rem .5rem 1rem;
@@ -1773,18 +2063,18 @@ body.espresso-admin .contextual-help-tabs a {
 
 body.espresso-admin .contextual-help-tabs a:focus,
 body.espresso-admin .contextual-help-tabs a:hover {
-    background: #fff;
-    border-color: #fff;
-    border-right: 1px solid #c3c4c7;
-    color: #2271b1;
+    background: var(--ee-color-white);
+    border-color: var(--ee-color-white);
+    border-right: 1px solid var(--ee-border-color);
+    color: var(--ee-status-color-blue);
 }
 
 body.espresso-admin .contextual-help-tabs .active a {
-    background: #fff;
-    border-bottom: 1px solid #c3c4c7;
-    border-left: 5px solid #018cca;
-    border-right: 1px solid #fff;
-    border-top: 1px solid #c3c4c7;
+    background: var(--ee-color-white);
+    border-bottom: 1px solid var(--ee-border-color);
+    border-left: 5px solid var(--ee-status-color-blue);
+    border-right: 1px solid var(--ee-color-white);
+    border-top: 1px solid var(--ee-border-color);
 }
 
 body.espresso-admin #contextual-help-wrap h5 {
@@ -1813,7 +2103,7 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .about-wrap .ee-badge {
     align-items: center;
-    background: #297abc;
+    background: var(--ee-status-color-blue);
     border-radius: 3px;
     display: flex;
     flex-direction: column;
@@ -1966,15 +2256,15 @@ body.espresso-admin #contextual-help-wrap strong {
 .ee-card.ee-add-on-card .ee-add-on-btn--buy-now,
 .ee-card.ee-add-on-card .ee-add-on-btn--buy-now:active,
 .ee-card.ee-add-on-card .ee-add-on-btn--buy-now:visited {
-    background: #297abc;
-    border: 2px solid #297abc;
-    color: #fff;
+    background: var(--ee-status-color-blue);
+    border: 2px solid var(--ee-status-color-blue);
+    color: var(--ee-color-white);
     font-weight: 600;
 }
 
 .ee-card.ee-add-on-card .ee-add-on-card-img:focus,
 .ee-card.ee-add-on-card .ee-add-on-btn:focus {
-    border-color: #297abc;
+    border-color: var(--ee-status-color-blue);
 }
 .ee-card.ee-add-on-card .ee-add-on-btn--buy-now:focus {
     border-color: #003a7c;
@@ -2000,9 +2290,9 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .ee-card.ee-new-feature-card h4 {
-    background: #297abc;
+    background: var(--ee-status-color-blue);
     box-sizing: content-box;
-    color: #fff;
+    color: var(--ee-color-white);
     font-size: 1.33rem;
     inset-block-start: -1rem;
     inset-inline-start: -2rem;
@@ -2244,8 +2534,718 @@ body.espresso-admin #contextual-help-wrap strong {
     }
 }
 
-@media only screen and (max-width: 400px) {
-    .ee-card-grid.ee-card-grid-4-cols {
+
+
+.ee-admin-container,
+.espresso-admin .postbox,
+/*#update_question_event_form #post-body-content,*/
+/*#update_category_event_form #post-body-content,*/
+/*#update_question_group_event_form #post-body-content,*/
+/*#update_wp_user_settings_event_form #post-body-content,*/
+/*#update_reg_form_settings_event_form #post-body-content */
+.espresso-admin .ee-admin-page-form #post-body-content {
+    background: var(--ee-color-white);
+    border: none;
+    border-radius: .125rem;
+    box-shadow: var(--ee-box-shadow);
+    color: var(--ee-font-color);
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    outline: none;
+}
+
+#update_question_group_event_form #post-body-content {
+    display: flex;
+    flex-direction: row;
+}
+
+.ee-admin-container p,
+.espresso-admin .postbox p,
+.espresso-admin .ee-admin-page-form #post-body-content p {
+    font-size: 1rem;
+}
+
+.espresso-admin .admin-primary-mbox-h4,
+.espresso-admin .ee-admin-container h2.hndle,
+.espresso-admin .postbox h2.hndle {
+    color: var(--ee-font-color-light);
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1;
+    padding: .75rem 1rem;
+}
+
+.espresso-admin #postbox-container-1 .admin-primary-mbox-h4,
+.espresso-admin #postbox-container-1 .ee-admin-container h2.hndle {
+    font-size: 1.2rem;
+}
+
+.ee-admin-page-nav-strip-wrap {
+    display: flex;
+    font-size: .8rem;
+    justify-content: space-between;
+    margin: 0 0 0.5rem;
+}
+.ee-admin-page-nav-strip-item {
+    margin-inline-start: 2rem;
+}
+
+
+.ee-admin-page-header-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr 1fr var(--ee-admin-sidebar-width);
+    grid-gap: 1rem;
+}
+
+@media screen and (max-width: 1024px) {
+    .ee-admin-page-header-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .ee-admin-page-header-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.ee-admin-page-header-grid div {
+    color: var(--ee-font-color-light);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    padding-block-start: 0.75rem;
+}
+
+.ee-admin-page-header-grid label {
+    font-size: .7rem;
+    font-weight: 400;
+    padding-block-end: 0.5rem;
+}
+
+.ee-admin-page-header-grid span {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.ee-status-dot {
+    aspect-ratio: 1;
+    border: none;
+    /*border-radius: 50%;*/
+    display: inline-block;
+    height: .75rem;
+    margin: .25rem 0;
+    width: .75rem;
+}
+
+.ee-aria-tooltip[aria-label] {
+    position: relative;
+}
+
+.ee-aria-tooltip[aria-label]:after {
+    background: var(--ee-attention-bg-color);
+    border-radius: .125rem;
+    box-shadow: var(--ee-box-shadow);
+    color: var(--ee-attention-color);
+    content: attr(aria-label);
+    display: block;
+    font-size: .75rem;
+    font-weight: 500;
+    left: -1rem;
+    letter-spacing: .1rem;
+    line-height: 1;
+    opacity: 0;
+    overflow: visible;
+    padding: 0.5rem 0.75rem 0.4rem;
+    pointer-events: none;
+    position: absolute;
+    text-decoration: none;
+    text-indent: 0;
+    text-shadow: none;
+    top: -2rem;
+    transition: opacity 250ms;
+    white-space: nowrap;
+    z-index: 5000;
+}
+
+.ee-aria-tooltip[aria-label]:hover:after,
+.ee-aria-tooltip[aria-label]:focus:after {
+    opacity: 1;
+}
+
+/*  txn failed,  payment declined, reg declined, dtt cancelled*/
+.ee-status-dot--DTC,
+.ee-status-dot--MFL,
+.ee-status-dot--PDC,
+.ee-status-dot--RDC,
+.ee-status-dot--TFL,
+.ee-admin-page-header-grid .ee-admin-container.status-TFL,
+.ee-admin-page-header-grid .ee-admin-container.status-PDC,
+.ee-admin-page-header-grid .ee-admin-container.status-RDC,
+.ee-admin-page-header-grid .ee-admin-container.status-DTC,
+.ee-admin-page-header-grid .ee-admin-container.ee-txn-amount-owing {
+    background-color: var(--ee-status-color-red);
+    color: var(--ee-color-white) !important;
+}
+
+/* txn overpaid, payment fail, reg not approved */
+.ee-status-dot--MRT,
+.ee-status-dot--PFL,
+.ee-status-dot--RNA,
+.ee-status-dot--TOP,
+.ee-admin-page-header-grid .ee-admin-container.status-TOP,
+.ee-admin-page-header-grid .ee-admin-container.status-PFL,
+.ee-admin-page-header-grid .ee-admin-container.status-RNA {
+    background-color: var(--ee-status-color-orange);
+    color: var(--ee-color-white) !important;
+}
+
+
+/* txn abandoned, reg incomplete, dtt sold out */
+.ee-status-dot--MRS,
+.ee-status-dot--RIC,
+.ee-status-dot--TAB,
+.ee-admin-page-header-grid .ee-admin-container.status-TAB,
+.ee-admin-page-header-grid .ee-admin-container.status-RIC,
+.ee-admin-page-header-grid .ee-admin-container.status-DTS {
+    background-color: var(--ee-status-color-yellow);
+}
+
+.ee-status-dot--DTA,
+.ee-status-dot--MSN,
+.ee-status-dot--PAP,
+.ee-status-dot--RAP,
+.ee-status-dot--TCM,
+.ee-admin-page-header-grid .ee-admin-container.status-DTA,
+.ee-admin-page-header-grid .ee-admin-container.status-PAP,
+.ee-admin-page-header-grid .ee-admin-container.status-RAP,
+.ee-admin-page-header-grid .ee-admin-container.status-TCM {
+    background-color: var(--ee-status-color-green);
+    color: var(--ee-color-white) !important;
+}
+
+/* txn open, payment pending, reg pending payment, dtt upcoming */
+.ee-status-dot--DTU,
+.ee-status-dot--MID,
+.ee-status-dot--PPN,
+.ee-status-dot--RPP,
+.ee-status-dot--TIN,
+.ee-admin-page-header-grid .ee-admin-container.status-TIN,
+.ee-admin-page-header-grid .ee-admin-container.status-PPN,
+.ee-admin-page-header-grid .ee-admin-container.status-RPP,
+.ee-admin-page-header-grid .ee-admin-container.status-DTU {
+    background-color: var(--ee-status-color-blue);
+    color: var(--ee-color-white) !important;
+}
+
+/* dtt postponed */
+.ee-status-dot--DTS,
+.ee-status-dot--MEX,
+.ee-admin-page-header-grid .ee-admin-container.status-DTP {
+    background-color: var(--ee-status-color-purple);
+    color: var(--ee-color-white) !important;
+}
+
+/* payment cancelled, reg cancelled, dtt expired */
+.ee-status-dot--DTE,
+.ee-status-dot--PCN,
+.ee-status-dot--RCN,
+.ee-admin-page-header-grid .ee-admin-container.status-PCN,
+.ee-admin-page-header-grid .ee-admin-container.status-RCN,
+.ee-admin-page-header-grid .ee-admin-container.status-DTE {
+    background-color: var(--ee-status-color-lt-grey);
+    color: var(--ee-color-white) !important;
+}
+
+/* dtt inactive */
+.ee-status-dot--DTI,
+.ee-status-dot--MIC,
+.ee-admin-page-header-grid .ee-admin-container.status-DTI {
+    background-color: var(--ee-status-color-grey);
+    color: var(--ee-color-white) !important;
+}
+
+
+/* BUTTONS */
+
+.espresso-admin input[type="submit"],
+.espresso-admin .pagination-links .button,
+.espresso-admin .button.button--primary,
+.espresso-admin .button.button--secondary,
+.espresso-admin #edit-slug-box .button.button-small {
+    -webkit-user-select: none;
+    align-content: center;
+    align-items: center;
+    appearance: none;
+    background-color: transparent;
+    border-radius: .25em;
+    border: 2px solid transparent;
+    box-shadow: var(--ee-button-box-shadow);
+    box-sizing: border-box;
+    color: var(--ee-font-color);
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 1em;
+    font-weight: 600;
+    height: 36px;
+    justify-content: center;
+    line-height: 1;
+    min-height: unset;
+    outline: 0;
+    padding: .4em .8em;
+    position: relative;
+    text-align: start;
+    touch-action: manipulation;
+    user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.espresso-admin input[type="submit"],
+.espresso-admin .button.button--primary.button--small:not(a),
+.espresso-admin .button.button--secondary.button--small:not(a) {
+    line-height: 0;
+}
+.espresso-admin .button.button--primary.button--small,
+.espresso-admin .button.button--secondary.button--small,
+.espresso-admin #edit-slug-box .button.button-small {
+    font-size: .85em;
+    height: 30px;
+    padding: .6em 1.2em;
+}
+.espresso-admin .button.button--primary.button--big,
+.espresso-admin .button.button--secondary.button--big {
+    font-size: 1.3em;
+    height: 42px;
+    padding: .8em 1.6em;
+}
+
+
+.espresso-admin .pagination-links .button {
+    aspect-ratio: 1;
+    font-size: .6rem;
+    height: 30px;
+    padding: 1.2em;
+    width: 30px;
+}
+
+.espresso-admin .pagination-links .button:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+}
+
+.espresso-admin .pagination-links .button:not([disabled]),
+.espresso-admin .button.button--primary:active:not([disabled]),
+.espresso-admin .button.button--secondary:active:not([disabled]) {
+    box-shadow: var(--ee-button-box-shadow-alt);
+}
+
+.espresso-admin .button.button--primary,
+.espresso-admin .publishing-action input[type="submit"] {
+    background-color: var(--ee-btn-primary);
+    border-color: var(--ee-btn-primary);
+    color: var(--ee-color-white);
+}
+.espresso-admin .button.button--primary:hover {
+    border-color: var(--ee-btn-primary-hover);
+}
+.espresso-admin .button.button--primary:focus {
+    border-color: var(--ee-btn-primary-focus);
+}
+
+.espresso-admin input[type="submit"],
+.espresso-admin .pagination-links .button,
+.espresso-admin .button.button--secondary,
+.espresso-admin #edit-slug-box .button.button-small {
+    background-color: var(--ee-btn-secondary);
+    border-color: var(--ee-btn-secondary);
+}
+
+.espresso-admin .pagination-links .button:hover,
+.espresso-admin .button.button--secondary:hover,
+.espresso-admin #edit-slug-box .button.button-small:hover {
+    border-color: var(--ee-btn-secondary-hover);
+}
+
+.espresso-admin .pagination-links .button:focus,
+.espresso-admin .button.button--secondary:focus,
+.espresso-admin #edit-slug-box .button.button-small:focus {
+    border-color: var(--ee-btn-secondary-focus);
+}
+
+.espresso-admin .button.button--primary .dashicons,
+.espresso-admin .button.button--secondary .dashicons {
+    font-size: 1.6em;
+    margin-inline-start: -.25rem;
+    top: 1px;
+}
+.espresso-admin input[type="submit"] .dashicons,
+.espresso-admin .button.button--primary.button--small .dashicons,
+.espresso-admin .button.button--secondary.button--small .dashicons {
+    font-size: 1.4em;
+    margin-inline-start: -.2rem;
+    top: 0;
+}
+.espresso-admin .button.button--primary.button--big .dashicons,
+.espresso-admin .button.button--secondary.button--big .dashicons {
+    font-size: 2em;
+    margin-inline-start: -.325rem;
+}
+.espresso-admin input.button.button--primary,
+.espresso-admin input.button.button--secondary {
+    line-height: 0;
+}
+/*.espresso-admin .button.button--primary .dashicons.dashicons-email-alt,*/
+/*.espresso-admin .button.button--secondary .dashicons.dashicons-email-alt {*/
+/*    top: 1px;*/
+/*}*/
+
+/* INPUTS */
+
+.espresso-admin select,
+.espresso-admin input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]) {
+    -webkit-user-select: none;
+    align-content: center;
+    align-items: center;
+    appearance: none;
+    background-color: var(--ee-color-white);
+    border-radius: .25em;
+    border: 2px solid var(--ee-border-color);
+    box-shadow: none;
+    box-sizing: border-box;
+    /*color: #363636;*/
+    color: var(--ee-font-color);
+    cursor: pointer;
+    display: inline-flex;
+    font-size: .8rem;
+    height: 36px;
+    justify-content: center;
+    line-height: 1;
+    margin-inline: 0.25rem;
+    outline: 0;
+    padding: .4em .8em;
+    position: relative;
+    text-align: start;
+    touch-action: manipulation;
+    user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.espresso-admin select {
+    padding-inline-end: 2em;
+    max-width: 12rem;
+}
+
+.espresso-admin input[type="checkbox"],
+.espresso-admin input[type="radio"] {
+    align-content: center;
+    align-items: center;
+    aspect-ratio: 1;
+    background-color: var(--ee-color-white);
+    border-radius: .25em;
+    border: 2px solid var(--ee-border-color);
+    display: inline-flex;
+    height: 1.35em;
+    justify-content: center;
+    margin: 0;
+    margin-inline: 0.25rem;
+    padding: .4em;
+    width: 1.3em;
+}
+
+.espresso-admin input[type="radio"] {
+    border-radius: 50%;
+}
+
+.espresso-admin input[type="checkbox"]:checked::before {
+    background-image: url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%233582c4%27%2F%3E%3C%2Fsvg%3E);
+    background-size: 1.5rem 1.5rem;
+    display: inline-block;
+    height: 1.5rem;
+    width: 1.5rem;
+    content: "";
+    margin: 0.05rem 0 0 -0.425rem;
+}
+
+.espresso-admin .ee-admin-radio-lbl {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: row;
+    margin: 0;
+    margin-inline-end: 2rem;
+}
+
+.espresso-admin .ee-admin-radio-lbl input[type="radio"] {
+    margin: 0;
+    margin-inline-end: 0.5rem;
+    top: unset;
+}
+
+/* LIST TABLES */
+
+.espresso-admin .admin-modal-dialog-wrap,
+.espresso-admin .wp-list-table,
+.espresso-admin .admin-primary-mbox-tbl,
+.espresso-admin .admin-primary-mbox-tbl-wrap,
+.espresso-admin .admin-primary-mbox-tbl-wrap-inner {
+    padding: unset;
+    background: var(--ee-color-white);
+    border: none;
+    border-radius: unset;
+    margin-block-start: 1rem;
+    margin-block-end: 2rem;
+}
+
+
+.espresso-admin .wp-list-table th,
+.espresso-admin .wp-list-table td,
+.espresso-admin .admin-primary-mbox-tbl th,
+.espresso-admin .admin-primary-mbox-tbl td {
+    padding: unset;
+    padding-block: 1rem;
+    padding-inline: .75rem;
+    margin: 0;
+    border: none;
+    background: unset;
+    font-family: sans-serif;
+    font-size: .8rem;
+    vertical-align: middle;
+}
+
+@media screen and (max-width: 782px) {
+    .espresso-admin .wp-list-table td:not(:first-of-type) {
+        padding-block: .5rem;
+    }
+}
+
+.espresso-admin .wp-list-table th,
+.espresso-admin .wp-list-table td {
+    box-sizing: content-box;
+    position: relative;
+    vertical-align: top;
+}
+
+.admin-primary-mbox-tbl td:first-child,
+.admin-primary-mbox-tbl th:first-child,
+.espresso-admin .wp-list-table td:first-child,
+.espresso-admin .wp-list-table th:first-child {
+    padding-inline-start: 1.5rem;
+}
+
+.espresso-admin .wp-list-table .column-status,
+.espresso-admin .wp-list-table th:first-child.column-status,
+.espresso-admin .wp-list-table td:first-child.column-status {
+    text-align: center;
+    width: 1rem;
+}
+
+.espresso-admin .wp-list-table.widefat th.check-column,
+.espresso-admin .wp-list-table.widefat td.check-column {
+    padding: 0;
+    padding-block: 1rem;
+    padding-inline-start: 1.5rem;
+    padding-inline-end: 0.75rem;
+    text-align: center;
+    width: 1rem;
+}
+
+.espresso-admin .wp-list-table.widefat th.check-column .dashicons-lock,
+.espresso-admin .wp-list-table.widefat td.check-column .dashicons-lock,
+.espresso-admin .wp-list-table.widefat th.check-column input[type="checkbox"],
+.espresso-admin .wp-list-table.widefat td.check-column input[type="checkbox"] {
+    margin: 0;
+}
+
+.espresso-admin .wp-list-table.widefat th.check-column input[type="checkbox"],
+.espresso-admin .wp-list-table.widefat td.check-column input[type="checkbox"] {
+    margin: 0;
+    margin-block-end: .5rem;
+}
+
+.espresso-admin .wp-list-table.widefat th.check-column .dashicons-lock,
+.espresso-admin .wp-list-table.widefat td.check-column .dashicons-lock {
+    inset-inline-start: -.125rem;
+}
+
+.admin-primary-mbox-tbl td:last-child,
+.admin-primary-mbox-tbl th:last-child,
+.espresso-admin .wp-list-table td:last-child,
+.espresso-admin .wp-list-table th:last-child {
+    /*padding-inline-end: 1.5rem;*/
+}
+
+
+.espresso-admin .wp-list-table th.column-primary,
+.espresso-admin .wp-list-table td.column-primary {
+    max-width: 6rem;
+    min-width: 3rem;
+    padding-inline: 1rem;
+    width: 4.5rem;
+}
+
+.espresso-admin .wp-list-table th.column-primary {
+    padding-inline-end: 0;
+}
+
+.admin-primary-mbox-tbl thead th,
+.espresso-admin .wp-list-table thead th {
+    color: var(--ee-font-color-light);
+    font-size: .9rem;
+    font-weight: 800;
+}
+
+.admin-primary-mbox-tbl tbody tr,
+.admin-primary-mbox-tbl tfoot tr,
+.espresso-admin .wp-list-table tbody tr,
+.espresso-admin .wp-list-table tfoot tr {
+    border-top: unset;
+    border-block-start: 1px solid var(--ee-border-color-table-row) !important;
+}
+
+.espresso-admin .wp-list-table td.no-pad,
+.espresso-admin .wp-list-table th.no-pad,
+.espresso-admin .admin-primary-mbox-tbl td.no-pad,
+.espresso-admin .admin-primary-mbox-tbl th.no-pad {
+    padding: 0;
+}
+
+.espresso-admin .wp-list-table td.no-pad:first-child,
+.espresso-admin .wp-list-table th.no-pad:first-child,
+.espresso-admin .admin-primary-mbox-tbl td.no-pad:first-child,
+.espresso-admin .admin-primary-mbox-tbl th.no-pad:first-child {
+    padding-inline-start: 0.5rem;
+}
+
+.espresso-admin .wp-list-table th.sortable a,
+.espresso-admin .wp-list-table th.sorted a {
+    padding: 0;
+}
+
+.espresso-admin .wp-list-table th.column-primary.sorted > a,
+.espresso-admin .wp-list-table th.column-primary.sortable > a {
+    align-content: center;
+    align-items: center;
+    display: flex;
+    float: unset;
+    justify-content: flex-end;
+}
+.espresso-admin .wp-list-table th.sorted > a,
+.espresso-admin .wp-list-table th.sortable > a {
+    align-content: center;
+    align-items: center;
+    display: flex;
+    float: unset;
+}
+
+.espresso-admin .wp-list-table .column-actions {
+    max-width: 16rem;
+    min-width: 8rem;
+    width: 15%;
+}
+
+.espresso-admin .tablenav,
+.espresso-admin .pagination-links,
+.espresso-admin .tablenav .tablenav-pages {
+    display: flex;
+    align-content: center;
+    align-items: center;
+}
+
+/*.espresso-admin .tablenav input {*/
+/*    margin-inline-end: 0.25rem;*/
+/*}*/
+
+/*.espresso-admin .tablenav input,*/
+.espresso-admin .pagination-links .button {
+    margin-inline-start: 0.25rem;
+}
+
+
+.espresso-admin .tablenav .tablenav-pages {
+    float: unset;
+    margin: 0;
+    margin-inline-start: auto;
+}
+
+.espresso-admin .wp-list-table .ee-responsive-table-cell {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.espresso-admin .wp-list-table .ee-responsive-table-cell__heading {
+    display: none;
+}
+.espresso-admin .wp-list-table .ee-responsive-table-cell__content {
+    display: flex;
+    flex-direction: column;
+}
+.espresso-admin .wp-list-table .ee-responsive-table-cell--start {
+    align-items: flex-start;
+    text-align: start;
+}
+.espresso-admin .wp-list-table .ee-responsive-table-cell--center {
+    align-items: center;
+    text-align: center;
+}
+
+.espresso-admin .wp-list-table .ee-responsive-table-cell--end {
+    align-items: flex-end;
+    text-align: end;
+}
+
+.espresso-admin .wp-list-table .show-on-mobile-view-only,
+.espresso-admin .wp-list-table th.sorted a span.show-on-mobile-view-only,
+.espresso-admin .wp-list-table th.sortable a span.show-on-mobile-view-only {
+    display: none;
+}
+
+@media screen and (max-width: 782px) {
+    .espresso-admin .wp-list-table .column-primary .ee-responsive-table-cell {
+        flex-direction: row;
+        margin: 3px;
+    }
+    .espresso-admin .wp-list-table .column-primary .ee-responsive-table-cell__heading {
+        margin-inline-end: 1rem;
+    }
+    .espresso-admin .wp-list-table .ee-responsive-table-cell__heading {
+        display: inline-block;
+    }
+
+    .espresso-admin .wp-list-table .ee-responsive-table-cell__content {
+        display: block;
+    }
+
+    .espresso-admin .wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.column-primary)::before {
+        display: none !important;
+    }
+}
+
+.espresso-admin  .ee-admin-attendee-avatar {
+    display: inline-flex;
+    justify-content: center;
+}
+.espresso-admin  .ee-admin-attendee-avatar img {
+    aspect-ratio: 1;
+    border-radius: 100%;
+    height: 3rem;
+    width: 3rem;
+}
+
+.espresso-admin .ee-admin-container .ee-admin-button-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-block: .25rem;
+}
+
+.espresso-admin .ee-admin-container .ee-admin-button-row + .ee-admin-button-row {
+    margin-block-start: 2rem;
+}
+.espresso-admin .qtip-content {
+    padding-block: .375rem;
+    padding-inline-start: 1.5rem;
+    padding-inline-end: .75rem;
 }

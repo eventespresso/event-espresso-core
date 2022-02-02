@@ -125,7 +125,7 @@ jQuery(document).ready(function($) {
 			invalidHandler: function( event, validator ) {
 				//toggle the wpjs indicators
 				$('.spinner').hide();
-				$('#publish').removeClass('button-primary-disabled');
+				$('#publish').removeClass('button--primary-disabled');
 			}
 		});/**/
 	} catch(err) {

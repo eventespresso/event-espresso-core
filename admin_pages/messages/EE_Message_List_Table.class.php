@@ -39,6 +39,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
 
         $this->_columns = array(
             'cb'           => '<input type="checkbox" />',
+            'status' => '',
             'to'           => esc_html__('To', 'event_espresso'),
             'from'         => esc_html__('From', 'event_espresso'),
             'messenger'    => esc_html__('Messenger', 'event_espresso'),
@@ -78,7 +79,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
     {
         $class = parent::_get_row_class($item);
         // add status class
-        $class .= ' ee-status-strip msg-status-' . $item->STS_ID();
+        $class .= ' msg-status-' . $item->STS_ID();
         if ($this->_has_checkbox_column) {
             $class .= ' has-checkbox-column';
         }
@@ -126,9 +127,21 @@ class EE_Message_List_Table extends EE_Admin_List_Table
 
 
     /**
+     *    column status
+     *
+     * @param EE_Message $message
+     * @return string
+     */
+    public function column_status(EE_Message $message)
+    {
+        return '<span class="ee-status-dot ee-status-dot--' . esc_attr($message->STS_ID()) . '"></span>';
+    }
+
+
+    /**
      * @param EE_Message $message
      * @return string   checkbox
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_cb($message)
     {

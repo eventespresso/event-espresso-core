@@ -146,7 +146,7 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config
             ),
             130 => array(
                 'content_id' => 'ticket-lock-icon',
-                'target'     => '.ticket-archived .ee-lock-icon',
+                'target'     => '.ticket-archived .dashicons-lock',
                 'content'    => esc_html__(
                     'This ticket was automatically locked and archived because it has a sold quantity and the price was modified. Existing ticket holders will still be verified using these ticket details. However, Event Espresso has automatically created a new active ticket with the modified price for new registrants. This lock is meant to prevent accidental trashing of this ticket. Certain details of this ticket can still be edited (non disabled inputs).',
                     'event_espresso'
@@ -154,7 +154,7 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config
             ),
             135 => array(
                 'content_id' => 'ticket-lock-icon-event-editor',
-                'target'     => '.ee-lock-icon',
+                'target'     => '.dashicons-lock',
                 'content'    => esc_html__(
                     'This datetime can no longer be duplicated or deleted because tickets associated with this datetime have already been sold.',
                     'event_espresso'

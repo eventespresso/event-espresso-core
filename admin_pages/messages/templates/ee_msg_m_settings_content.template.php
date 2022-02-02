@@ -46,7 +46,7 @@
             } ?>
             <input type="submit"
                    value="<?php esc_attr_e('Submit', 'event_espresso'); ?>"
-                   class="button-secondary no-drag"
+                   class="button--secondary no-drag"
             />
         </form>
     </div>

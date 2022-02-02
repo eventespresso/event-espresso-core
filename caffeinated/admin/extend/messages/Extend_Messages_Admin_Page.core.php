@@ -146,7 +146,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page
         );
         $create_link = EE_Admin_Page::add_query_args_and_nonce($create_args, EE_MSG_ADMIN_URL);
         echo sprintf(
-            '<a href="%s" class="button button-small">%s</a>',
+            '<a href="%s" class="button button--secondary button--small">%s</a>',
             $create_link,
             esc_html__('Create Custom', 'event_espresso')
         );

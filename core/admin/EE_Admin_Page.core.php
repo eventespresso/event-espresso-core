@@ -1543,6 +1543,26 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     }
 
 
+    protected function addMetaBox(
+        $box_id,
+        $title,
+        $callback,
+        $screen,
+        $context = 'normal',
+        $priority = 'default',
+        $callback_args = null
+    ) {
+        add_meta_box($box_id, $title, $callback, $screen, $context, $priority, $callback_args);
+        add_filter(
+            "postbox_classes_{$this->_wp_page_slug}_{$box_id}",
+            function ($classes) {
+                array_push($classes, 'ee-admin-container');
+                return $classes;
+            }
+        );
+    }
+
+
     /**
      * admin_init_global
      * This runs all the code that we want executed within the WP admin_init hook.
@@ -2077,7 +2097,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 					</select>
 					entries
 				</label>
-				<input id="entries-per-page-btn" class="button-secondary" type="submit" value="Go" >
+				<input id="entries-per-page-btn" class="button--secondary" type="submit" value="Go" >
 			</div>
 		';
         return $entries_per_page_dropdown;
@@ -2211,7 +2231,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title',
             esc_html__('New @ Event Espresso', 'event_espresso')
         );
-        add_meta_box(
+        $this->addMetaBox(
             'espresso_news_post_box',
             $news_box_title,
             [
@@ -2236,7 +2256,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             'FHEE__EE_Admin_Page___espresso_news_post_box__news_box_title',
             esc_html__('Keep Event Espresso Decaf Free', 'event_espresso')
         );
-        add_meta_box(
+        $this->addMetaBox(
             'espresso_ratings_request',
             $ratings_box_title,
             [
@@ -2314,7 +2334,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     private function _espresso_links_post_box()
     {
         // Hiding until we actually have content to put in here...
-        // add_meta_box('espresso_links_post_box', esc_html__('Helpful Plugin Links', 'event_espresso'), array( $this, 'espresso_links_post_box'), $this->_wp_page_slug, 'side');
+        // $this->addMetaBox('espresso_links_post_box', esc_html__('Helpful Plugin Links', 'event_espresso'), array( $this, 'espresso_links_post_box'), $this->_wp_page_slug, 'side');
     }
 
 
@@ -2330,7 +2350,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function _espresso_sponsors_post_box()
     {
         if (apply_filters('FHEE_show_sponsors_meta_box', true)) {
-            add_meta_box(
+            $this->addMetaBox(
                 'espresso_sponsors_post_box',
                 esc_html__('Event Espresso Highlights', 'event_espresso'),
                 [$this, 'espresso_sponsors_post_box'],
@@ -2367,7 +2387,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $this->_req_action,
             $this
         );
-        add_meta_box(
+        $this->addMetaBox(
             $meta_box_ref,
             $box_label,
             [$this, 'editor_overview'],
@@ -2556,7 +2576,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
-     * facade for add_meta_box
+     * facade for $this->addMetaBox()
      *
      * @param string  $action        where the metabox gets displayed
      * @param string  $title         Title of Metabox (output in metabox header)
@@ -2597,7 +2617,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 );
             }
             : $callback;
-        add_meta_box(
+        $this->addMetaBox(
             str_replace('_', '-', $action) . '-mbox',
             $title,
             $call_back_func,
@@ -2766,7 +2786,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 '',
                 'buy_now',
                 [],
-                'button-primary button-large',
+                'button--primary button--big',
                 esc_url_raw($buy_now_url),
                 true
             )
@@ -3186,7 +3206,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         foreach ($button_text as $key => $button) {
             $ref     = $default_names[ $key ];
             $name    = ! empty($actions) ? $actions[ $key ] : $ref;
-            $buttons .= '<input type="submit" class="button-primary ' . $ref . '" '
+            $buttons .= '<input type="submit" class="button--primary ' . $ref . '" '
                         . 'value="' . $button . '" name="' . $name . '" '
                         . 'id="' . $this->_current_view . '_' . $ref . '" />';
             if (! $both) {
@@ -3238,11 +3258,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             EE_Error::add_error($user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__);
         }
         // open form
-        $this->_template_args['before_admin_page_content'] = '<form name="form" method="post" action="'
-                                                             . $this->_admin_base_url
-                                                             . '" id="'
-                                                             . $route
-                                                             . '_event_form" >';
+        $action = $this->_admin_base_url;
+        $this->_template_args['before_admin_page_content'] = "
+            <form name='form' method='post' action='{$action}' id='{$route}_event_form' class='ee-admin-page-form' >
+            ";
         // add nonce
         $nonce                                             =
             wp_nonce_field($route . '_nonce', $route . '_nonce', false, false);
@@ -3528,7 +3547,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string $type          accepted strings must be defined in the $_labels['button'] array(as the key)
      *                              property.
      * @param array  $extra_request if the button requires extra params you can include them in $key=>$value pairs.
-     * @param string $class         Use this to give the class for the button. Defaults to 'button-primary'
+     * @param string $class         Use this to give the class for the button. Defaults to 'button--primary'
      * @param string $base_url      If this is not provided
      *                              the _admin_base_url will be used as the default for the button base_url.
      *                              Otherwise this value will be used.
@@ -3543,7 +3562,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $action,
         $type = 'add',
         $extra_request = [],
-        $class = 'button-primary',
+        $class = 'button--primary',
         $base_url = '',
         $exclude_nonce = false
     ) {

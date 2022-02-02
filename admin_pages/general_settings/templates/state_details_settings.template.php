@@ -48,7 +48,7 @@
     </tbody>
 </table>
 <br/>
-<input class="button-primary save right"
+<input class="button--primary save right"
        id='country_settings_save3'
        type="submit"
        name="save"
@@ -86,7 +86,7 @@
     </tr>
     <tr>
         <td colspan="2">
-            <input class="secondary-button button right"
+            <input class="button--secondary button right"
                    id='add-new-state-btn'
                    type='submit'
                    value="<?php esc_html_e('Add New State/Province', 'event_espresso'); ?>"

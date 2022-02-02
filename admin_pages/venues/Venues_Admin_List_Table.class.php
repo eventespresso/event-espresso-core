@@ -79,7 +79,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
     {
 
         return $item->count_related('Event') > 0 && $item->get('status') === 'trash'
-            ? '<span class="ee-lock-icon"></span>'
+            ? '<span class="dashicons dashicons-lock"></span>'
             : sprintf(
                 '<input type="checkbox" name="venue_id[]" value="%s" />',
                 $item->ID()

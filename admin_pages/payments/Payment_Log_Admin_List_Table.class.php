@@ -56,7 +56,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
      */
     public function add_download_logs_checkbox()
     {
-        echo "<input type='submit' class='button-primary' id='download_results' name='download_results' value='"
+        echo "<input type='submit' class='button--primary' id='download_results' name='download_results' value='"
              . esc_html__('Download Results', 'event_espresso') . "'>";
     }
 

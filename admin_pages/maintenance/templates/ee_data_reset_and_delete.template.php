@@ -58,7 +58,7 @@
         ); ?>
     </p>
     <div class="float-right">
-        <a class="button button-primary ee-confirm" href="<?php echo esc_url_raw($reset_db_url); ?>">
+        <a class="button button--primary ee-confirm" href="<?php echo esc_url_raw($reset_db_url); ?>">
             <?php esc_html_e('Reset Event Espresso Tables', 'event_espresso'); ?>
         </a>
     </div>
@@ -136,7 +136,7 @@
         </li>
     </ol>
     <div class="float-right">
-        <a href="<?php echo esc_url_raw($delete_db_url); ?>" id="delete-all-data-btn" class="button-primary ee-confirm">
+        <a href="<?php echo esc_url_raw($delete_db_url); ?>" id="delete-all-data-btn" class="button--primary ee-confirm">
             <?php esc_html_e('Permanently Delete All Event Espresso Data', 'event_espresso'); ?>
         </a>
     </div>

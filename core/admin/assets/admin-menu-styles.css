@@ -566,7 +566,7 @@ div.TB-ee-frame a {
 /**
  * fancy toggles
  */
-.ee-on-off-toggle{
+.ee-on-off-toggle {
   position: absolute;
   margin-left: -9999px;
   visibility: hidden;

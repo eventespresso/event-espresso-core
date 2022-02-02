@@ -62,7 +62,7 @@ use EventEspresso\core\domain\Domain;
             '<span class="dashicons dashicons-search"></span>',
             '<span class="dashicons dashicons-businessman"></span>',
             '<span class="ee-icon ee-icon-email-send"></span>',
-            '<span class="ee-icon ee-icon-cash"></span>'
+            '<span class="dashicons dashicons-money-alt"></span>'
         ); ?>
     </li>
 </ul>

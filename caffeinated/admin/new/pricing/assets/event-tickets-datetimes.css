@@ -149,7 +149,7 @@
     margin-left: 0;
 }
 
-.ticket-table .ticket-row .ee-lock-icon:before {
+.ticket-table .ticket-row .dashicons-lock:before {
     margin-left: 5px;
     margin-top: 5px;
 }
@@ -186,7 +186,7 @@
 .clone-icon:before,
 .trash-icon:before,
 .gear-icon:before,
-.datetime-edit-table .ee-lock-icon:before,
+.datetime-edit-table .dashicons-lock:before,
 .datetime-edit-table .dashicons-groups:before {
     font-size: 18px;
     margin-left: 4px;
@@ -200,7 +200,7 @@
 .ee-edit-editing .clone-icon:before,
 .ee-edit-editing .trash-icon:before,
 .ee-edit-editing .gear-icon:before,
-.ee-edit-editing .datetime-edit-table .ee-lock-icon:before,
+.ee-edit-editing .datetime-edit-table .dashicons-lock:before,
 .ee-edit-editing .datetime-edit-table .dashicons-groups:before {
     margin-left: 3px;
     margin-right: 3px;
@@ -558,7 +558,7 @@
     float: right;
 }
 
-.save-cancel-button-container .button-secondary {
+.save-cancel-button-container .button--secondary {
     margin-left: 5px;
     margin-right: 5px;
 }
@@ -567,7 +567,7 @@
     margin-top: 20px;
 }
 
-.ticket-fieldset .button-secondary {
+.ticket-fieldset .button--secondary {
     margin-top: -5px;
 }
 

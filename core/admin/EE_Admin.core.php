@@ -406,6 +406,13 @@ final class EE_Admin implements InterminableInterface
             'side',
             'core'
         );
+        add_filter(
+            "postbox_classes_nav-menus_add-extra-nav-menu-pages",
+            function ($classes) {
+                array_push($classes, 'ee-admin-container');
+                return $classes;
+            }
+        );
     }
 
 

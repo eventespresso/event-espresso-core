@@ -26,36 +26,32 @@
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
-    <h3 class="admin-primary-mbox-h4 hdr-has-icon">
-        <span class="dashicons dashicons-cart"></span><?php esc_html_e('Transaction Items', 'event_espresso'); ?>
-    </h3>
-
     <div class="admin-primary-mbox-tbl-wrap">
         <?php echo $line_item_table; // already escaped ?>
         <span id="txn-admin-grand-total" class="hidden"><?php echo esc_html($grand_raw_total); ?></span>
     </div>
-    <div id="additional-transaction-actions-dv">
+    <div id="additional-transaction-actions-dv" class='ee-admin-button-row'>
         <?php echo $action_buttons; // already escaped ?>
     </div>
-
-    <a id="display-additional-transaction-session-info"
-       class="display-the-hidden smaller-text"
-       rel="additional-transaction-session-info"
-    >
-        <span class="dashicons dashicons-plus-alt"></span>
-        <?php esc_html_e('view additional transaction session details', 'event_espresso'); ?>
-    </a>
+    <div class='ee-admin-button-row'>
+        <a id='display-additional-transaction-session-info'
+           class='display-the-hidden smaller-text'
+           rel='additional-transaction-session-info'
+        >
+            <span class="dashicons dashicons-plus-alt"></span>
+            <?php esc_html_e('view additional transaction session details', 'event_espresso'); ?>
+        </a>
+        <a id='hide-additional-transaction-session-info'
+           class='hide-the-displayed hidden smaller-text'
+           rel='additional-transaction-session-info'
+        >
+            <span class='dashicons dashicons-dismiss'></span>
+            <?php esc_html_e('hide additional transaction session details', 'event_espresso'); ?>
+        </a>
+    </div>
 
     <div id="additional-transaction-session-info-dv" class="hidden">
 
-        <a id="hide-additional-transaction-session-info"
-           class="hide-the-displayed hidden smaller-text"
-           rel="additional-transaction-session-info"
-        >
-            <span class="dashicons dashicons-dismiss"></span>
-            <?php esc_html_e('hide additional transaction session details', 'event_espresso'); ?>
-        </a>
-        <br class="clear" />
 
         <h3 class="admin-primary-mbox-h4">
             <?php esc_html_e('Transaction Session Details', 'event_espresso'); ?>
@@ -97,28 +93,43 @@
         ?>
 
         <h3 class="admin-primary-mbox-h4 hdr-has-icon">
-            <span class="ee-icon ee-icon-cash"></span><?php
-            esc_html_e('Payment Details', 'event_espresso'); ?>
+            <?php esc_html_e('Payment Details', 'event_espresso'); ?>
+            <span class='dashicons dashicons-money-alt'></span>
         </h3>
 
         <div class="admin-primary-mbox-tbl-wrap">
             <table id="txn-admin-payments-tbl" class="admin-primary-mbox-tbl">
                 <thead>
                     <tr>
-                        <th></th>
-                        <th class="jst-cntr"></th>
-                        <th class="jst-cntr"><?php esc_html_e('ID', 'event_espresso'); ?></th>
-                        <th class="jst-left"><?php esc_html_e('Date', 'event_espresso'); ?></th>
-                        <th class="jst-left"><?php esc_html_e('Method', 'event_espresso'); ?></th>
-                        <th class="jst-left"><?php esc_html_e('Gateway Response', 'event_espresso'); ?></th>
-                        <th class="jst-left"><?php esc_html_e('TXN&nbsp;ID / CHQ&nbsp;#', 'event_espresso'); ?></th>
-                        <th class="jst-left"><?php esc_html_e('P.O. / S.O.&nbsp;#', 'event_espresso'); ?></th>
-                        <th class="jst-left"><?php esc_html_e(
-                            'Notes / Extra&nbsp;Accounting',
-                            'event_espresso'
-                        ); ?></th>
+                        <th class='jst-cntr no-pad'></th>
+                        <th class="jst-cntr">
+                            <?php esc_html_e('ID', 'event_espresso'); ?>
+                        </th>
+                        <th class="txn-admin-payment-date-col jst-left">
+                            <?php esc_html_e('Date', 'event_espresso');?>
+                        </th>
+                        <th class='jst-cntr'>
+                            <?php esc_html_e('Amount', 'event_espresso'); ?>
+                        </th>
+                        <th class="jst-left">
+                            <?php esc_html_e('Method', 'event_espresso'); ?>
+                        </th>
+                        <th class="jst-left">
+                            <?php esc_html_e('Gateway Response', 'event_espresso'); ?>
+                        </th>
+                        <th class="jst-left">
+                            <?php esc_html_e('TXN&nbsp;ID / CHQ&nbsp;#', 'event_espresso'); ?>
+                        </th>
+                        <th class="jst-left">
+                            <?php esc_html_e('P.O. / S.O.&nbsp;#', 'event_espresso'); ?>
+                        </th>
+                        <th class="jst-left">
+                            <?php esc_html_e('Notes / Extra Accounting', 'event_espresso'); ?>
+                        </th>
                         <!--<th class="jst-left"><?php esc_html_e('Details', 'event_espresso'); ?></th>-->
-                        <th class="jst-cntr"><?php esc_html_e('Amount', 'event_espresso'); ?></th>
+                        <th class='jst-left'>
+                            <?php esc_html_e('Actions', 'event_espresso'); ?>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -128,47 +139,21 @@
                             if (! $payment instanceof EE_Payment) {
                                 continue;
                             }
-                            $PAY_ID = absint($PAY_ID);
                             $existing_reg_payment_json = isset($existing_reg_payments[ $PAY_ID ])
                                 ? wp_json_encode($existing_reg_payments[ $PAY_ID ])
                                 : '{}';
                             ?>
-                            <tr id="txn-admin-payment-tr-<?php echo absint($PAY_ID); ?>">
-                                <td>
-                <span id="payment-status-<?php echo absint($PAY_ID); ?>"
-                      class="ee-status-strip-td ee-status-strip pymt-status-<?php echo esc_attr($payment->STS_ID()); ?>"
-                >
-                </span>
+                            <tr id="txn-admin-payment-tr-<?php echo absint($PAY_ID); ?>" class=' jst-cntr'>
+                                <td class="jst-cntr no-pad">
+                                    <span id="payment-status-<?php echo absint($PAY_ID); ?>"
+                                          class="ee-status-dot ee-status-dot--<?php echo esc_attr($payment->STS_ID()); ?>">
+                                    </span>
                                     <div id="payment-STS_ID-<?php echo absint($PAY_ID); ?>" class="hidden">
                                         <?php echo esc_html($payment->STS_ID()); ?>
                                     </div>
                                     <div id="reg-payments-<?php echo absint($PAY_ID); ?>" class="hidden">
                                         <?php echo esc_html($existing_reg_payment_json); ?>
                                     </div>
-                                </td>
-                                <td class=" jst-cntr">
-                                    <ul class="txn-overview-actions-ul">
-                                        <li>
-                                            <?php if ($can_edit_payments) : ?>
-                                                <a class="txn-admin-payment-action-edit-lnk"
-                                                   title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
-                                                   data-payment-id="<?php echo absint($PAY_ID); ?>"
-                                                >
-                                                    <div class="dashicons dashicons-edit" style="margin: 0;"></div>
-                                                </a>
-                                            <?php endif; ?>
-                                        </li>
-                                        <li>
-                                            <?php if ($can_delete_payments) : ?>
-                                                <a class="txn-admin-payment-action-delete-lnk"
-                                                   title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
-                                                   data-payment-id="<?php echo absint($PAY_ID); ?>"
-                                                >
-                                                    <div class="dashicons dashicons-trash" style="margin: 0;"></div>
-                                                </a>
-                                            <?php endif; ?>
-                                        </li>
-                                    </ul>
                                 </td>
                                 <td class=" jst-rght">
                                     <div id="payment-id-<?php echo absint($PAY_ID); ?>">
@@ -180,6 +165,25 @@
                                     <div id="payment-date-<?php echo absint($PAY_ID); ?>" class="payment-date-dv">
                                         <?php echo esc_html($payment->timestamp('Y-m-d', 'g:i a')); ?>
                                     </div>
+                                </td>
+                                <td class=' jst-rght'>
+                                    <?php
+                                    $payment_class = $payment->amount() > 0
+                                        ? 'txn-admin-payment-status-' . $payment->STS_ID()
+                                        : 'txn-admin-payment-status-PDC';
+                                    ?>
+                                    <span class="<?php echo esc_attr($payment_class); ?>">
+                                        <span id="payment-amount-<?php echo $escaped_pay_id; ?>"
+                                              style="display:inline;"
+                                        >
+                                        <?php echo EEH_Template::format_currency(
+                                            $payment->amount(),
+                                            false,
+                                            false
+                                        ); // already escaped
+                                        ?>
+                                        </span>
+                                    </span>
                                 </td>
                                 <td class=" jst-left">
                                     <div id="payment-method-<?php echo absint($PAY_ID); ?>">
@@ -234,6 +238,30 @@
                                         ?>
                                         </span>
                                     </span>
+                                </td>
+                                <td class='jst-left'>
+                                    <ul class='txn-overview-actions-ul'>
+                                        <li>
+                                            <?php if ($can_edit_payments) : ?>
+                                                <a class="txn-admin-payment-action-edit-lnk"
+                                                   title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
+                                                   data-payment-id="<?php echo absint($PAY_ID); ?>"
+                                                >
+                                                    <div class="dashicons dashicons-edit" style="margin: 0;"></div>
+                                                </a>
+                                            <?php endif; ?>
+                                        </li>
+                                        <li>
+                                            <?php if ($can_delete_payments) : ?>
+                                                <a class="txn-admin-payment-action-delete-lnk"
+                                                   title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
+                                                   data-payment-id="<?php echo absint($PAY_ID); ?>"
+                                                >
+                                                    <div class="dashicons dashicons-trash" style="margin: 0;"></div>
+                                                </a>
+                                            <?php endif; ?>
+                                        </li>
+                                    </ul>
                                 </td>
                             </tr>
                             <?php $payment_total += $payment->STS_ID() == 'PAP' ? $payment->amount() : 0; ?>
@@ -301,31 +329,15 @@
                             <span id="payment-status-PAY_ID" class="ee-status-strip-td ee-status-strip"></span>
                             <div id="payment-STS_ID-PAY_ID" class="hidden"></div>
                         </td>
-                        <td class=" jst-cntr">
-                            <ul class="txn-overview-actions-ul">
-                                <li>
-                                    <a class="txn-admin-payment-action-edit-lnk"
-                                       title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
-                                       data-payment-id="PAY_ID"
-                                    >
-                                        <div class="dashicons dashicons-edit" style="margin: 0;"></div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="txn-admin-payment-action-delete-lnk"
-                                       title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
-                                       data-payment-id="PAY_ID"
-                                    >
-                                        <div class="dashicons dashicons-trash" style="margin: 0;"></div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </td>
                         <td class=" jst-rght">
                             <div id="payment-id-PAY_ID">PAY_ID</div>
                         </td>
                         <td class=" jst-left">
                             <div id="payment-date-PAY_ID" class="payment-date-dv"></div>
+                        </td>
+                        <td class=' jst-rght'>
+                            <div id='payment-amount-PAY_ID' style='display:inline;'>
+                            </div>
                         </td>
                         <td class=" jst-left">
                             <div id="payment-method-PAY_ID"></div>
@@ -345,9 +357,25 @@
                         <td class=" jst-left">
                             <div id="payment-accntng-PAY_ID"></div>
                         </td>
-                        <td class=" jst-rght">
-                            <div id="payment-amount-PAY_ID" style="display:inline;">
-                            </div>
+                        <td class=' jst-cntr'>
+                            <ul class='txn-overview-actions-ul'>
+                                <li>
+                                    <a class='txn-admin-payment-action-edit-lnk button button--secondary'
+                                       title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
+                                       data-payment-id='PAY_ID'
+                                    >
+                                        <div class='dashicons dashicons-edit' style='margin: 0;'></div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class='txn-admin-payment-action-delete-lnk button button--secondary'
+                                       title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
+                                       data-payment-id='PAY_ID'
+                                    >
+                                        <div class='dashicons dashicons-trash' style='margin: 0;'></div>
+                                    </a>
+                                </li>
+                            </ul>
                         </td>
                     </tr>
 
@@ -360,7 +388,7 @@
                 ?>
                 <li>
                     <a id="display-txn-admin-apply-payment"
-                       class="button-primary no-icon no-hide"
+                       class="button button--primary no-icon no-hide"
                        rel="txn-admin-apply-payment"
                     > <!--display-the-hidden -->
                         <?php esc_html_e('Apply Payment', 'event_espresso'); ?>
@@ -368,7 +396,7 @@
                 </li>
                 <li>
                     <a id="display-txn-admin-apply-refund"
-                       class="button-secondary no-icon no-hide"
+                       class="button button--secondary no-icon no-hide"
                        rel="txn-admin-apply-refund"
                     >  <!--display-the-hidden -->
                         <?php esc_html_e('Apply Refund', 'event_espresso'); ?>
@@ -396,43 +424,42 @@
             <h2 id="admin-modal-dialog-apply-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon"
                 style="display:none;"
             >
-                <div class="ee-icon ee-icon-cash-add float-left"></div>
-                <?php
-                echo esc_html__('Apply a Payment to Transaction #', 'event_espresso') . esc_html($txn_nmbr['value']); ?>
+                <?php echo esc_html__('Apply a Payment to Transaction #', 'event_espresso') . esc_html($txn_nmbr['value']); ?>
+                <span class='dashicons dashicons-money-alt'></span>
             </h2>
 
             <h2 id="admin-modal-dialog-edit-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon"
                 style="display:none;"
             >
-                <div class="ee-icon ee-icon-cash-edit float-left"></div>
                 <?php
                 printf(
                     esc_html__('Edit Payment #%s for Transaction #%s', 'event_espresso'),
-                    '<span></span>',
+                    '<span class="ee-admin-payment-id"></span>',
                     $txn_nmbr['value']
                 );
                 ?>
+                <span class='dashicons dashicons-money-alt'></span>
             </h2>
 
             <h2 id="admin-modal-dialog-edit-refund-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
-                <div class="ee-icon ee-icon-cash-edit float-left"></div>
                 <?php
                 printf(
                     esc_html__('Edit Refund #%s for Transaction #%s', 'event_espresso'),
-                    '<span></span>',
+                    '<span class="ee-admin-payment-id"></span>',
                     $txn_nmbr['value']
                 );
                 ?>
+                <span class='dashicons dashicons-money-alt'></span>
             </h2>
 
             <h2 id="admin-modal-dialog-apply-refund-h2" class="admin-modal-dialog-h2 hdr-has-icon"
                 style="display:none;"
             >
-                <div class="ee-icon ee-icon-cash-remove float-left"></div>
                 <?php
                 echo esc_html__('Apply a Refund to Transaction #', 'event_espresso');
                 echo esc_html($txn_nmbr['value']);
                 ?>
+                <span class='dashicons dashicons-money-alt'></span>
             </h2>
 
             <form name="txn-admin-apply-payment-frm"
@@ -759,7 +786,7 @@
                 <ul id="admin-modal-dialog-options-ul">
                     <li>
                         <a id="txn-admin-modal-dialog-apply-payment-lnk"
-                           class="button-primary no-icon"
+                           class="button button--primary no-icon"
                            style="display:none;"
                         >
                             <?php esc_html_e('Apply Payment', 'event_espresso'); ?>
@@ -767,7 +794,7 @@
                     </li>
                     <li>
                         <a id="txn-admin-modal-dialog-edit-payment-lnk"
-                           class="button-primary no-icon"
+                           class="button button--primary no-icon"
                            style="display:none;"
                         >
                             <?php esc_html_e('Save Payment Details', 'event_espresso'); ?>
@@ -775,7 +802,7 @@
                     </li>
                     <li>
                         <a id="txn-admin-modal-dialog-edit-refund-lnk"
-                           class="button-primary no-icon"
+                           class="button button--primary no-icon"
                            style="display:none;"
                         >
                             <?php esc_html_e('Save Refund Details', 'event_espresso'); ?>
@@ -783,14 +810,14 @@
                     </li>
                     <li>
                         <a id="txn-admin-modal-dialog-apply-refund-lnk"
-                           class="button-primary no-icon"
+                           class="button button--primary no-icon"
                            style="display:none;"
                         >
                             <?php esc_html_e('Apply Refund', 'event_espresso'); ?>
                         </a>
                     </li>
                     <li>
-                        <a id="txn-admin-modal-dialog-cancel-lnk" class="button-secondary no-icon">
+                        <a id="txn-admin-modal-dialog-cancel-lnk" class="button button--secondary no-icon">
                             <?php esc_html_e('Cancel', 'event_espresso'); ?>
                         </a>
                     </li>
@@ -811,12 +838,12 @@
             <h2 id="admin-modal-dialog-delete-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon"
                 style="display:none;"
             >
-                <span class="ee-icon ee-icon-cash-add"></span>
                 <?php printf(
                     esc_html__('Delete Payment/Refund for Transaction #', 'event_espresso'),
                     $txn_nmbr['value']
                 );
                 ?>
+                <span class='dashicons dashicons-money-alt'></span>
             </h2>
 
             <form name="txn-admin-delete-payment-frm"
@@ -885,12 +912,12 @@
 
                 <ul id="del-admin-modal-dialog-options-ul">
                     <li>
-                        <a id="txn-admin-modal-dialog-delete-lnk" class="button-primary no-icon" style="display:none;">
+                        <a id="txn-admin-modal-dialog-delete-lnk" class="button button--primary no-icon" style="display:none;">
                             <?php esc_html_e('Delete', 'event_espresso'); ?>
                         </a>
                     </li>
                     <li>
-                        <a id="del-txn-admin-modal-dialog-cancel-lnk" class="button-secondary no-icon">
+                        <a id="del-txn-admin-modal-dialog-cancel-lnk" class="button button--secondary no-icon">
                             <?php esc_html_e('Cancel', 'event_espresso'); ?>
                         </a>
                     </li>
@@ -912,8 +939,8 @@
         $delivered_messages = get_option('EED_Messages__payment', []);
         if (isset($delivered_messages[ $TXN_ID ])) { ?>
             <h4 class="admin-primary-mbox-h4 hdr-has-icon">
-                <span class="dashicons dashicons-email-alt"></span>
                 <?php esc_html_e('Messages Sent to Primary Registrant', 'event_espresso'); ?>
+                <span class="dashicons dashicons-email-alt"></span>
             </h4>
             <div class="admin-primary-mbox-tbl-wrap">
                 <table class="admin-primary-mbox-tbl">

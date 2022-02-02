@@ -73,7 +73,7 @@
                     </td>
                     <td>
                         <a id="db-backed-up"
-                           class="toggle-migration-monitor button-primary"
+                           class="toggle-migration-monitor button--primary"
                         >
                             <?php echo esc_html(
                                 apply_filters(
@@ -175,7 +175,7 @@
                     </td>
                     <td>
                         <a id="do-not-migrate"
-                           class="do-not-migrate button-primary"
+                           class="do-not-migrate button--primary"
                            href="<?php echo esc_url_raw($reset_db_page_link); ?>"
                         >
                             <?php echo esc_html(

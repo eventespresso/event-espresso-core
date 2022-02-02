@@ -1790,7 +1790,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             ],
             $this->_admin_base_url
         );
-        $preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">'
+        $preview_button = '<a href="' . $preview_url . '" class="button--secondary messages-preview-button">'
                           . esc_html__('Preview', 'event_espresso')
                           . '</a>';
 
@@ -1819,12 +1819,14 @@ class Messages_Admin_Page extends EE_Admin_Page
             $this->_learn_more_about_message_templates_link();
 
 
-        $this->_template_args['before_admin_page_content'] = $this->add_context_switcher();
+        $this->_template_args['before_admin_page_content'] = '<div class="ee-msg-admin-header">';
         $this->_template_args['before_admin_page_content'] .= $this->add_active_context_element(
             $message_template_group,
             $context,
             $context_label
         );
+        $this->_template_args['before_admin_page_content'] .= $this->add_context_switcher();
+        $this->_template_args['before_admin_page_content'] .= '</div>';
         $this->_template_args['before_admin_page_content'] .= $this->_add_form_element_before();
         $this->_template_args['after_admin_page_content']  = $this->_add_form_element_after();
 
@@ -2204,7 +2206,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         $go_back_url            = parent::add_query_args_and_nonce($query_args, $this->_admin_base_url);
         $preview_button         = '<a href="'
                                   . $go_back_url
-                                  . '" class="button-secondary messages-preview-go-back-button">'
+                                  . '" class="button--secondary messages-preview-go-back-button">'
                                   . esc_html__('Go Back to Edit', 'event_espresso')
                                   . '</a>';
         $message_types          = $this->get_installed_message_types();
@@ -2288,14 +2290,14 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected function _register_edit_meta_boxes()
     {
-        add_meta_box(
+        $this->addMetaBox(
             'mtp_valid_shortcodes',
             esc_html__('Valid Shortcodes', 'event_espresso'),
             [$this, 'shortcode_meta_box'],
             $this->_current_screen->id,
             'side'
         );
-        add_meta_box(
+        $this->addMetaBox(
             'mtp_extra_actions',
             esc_html__('Extra Actions', 'event_espresso'),
             [$this, 'extra_actions_meta_box'],
@@ -2303,7 +2305,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'side',
             'high'
         );
-        add_meta_box(
+        $this->addMetaBox(
             'mtp_templates',
             esc_html__('Template Styles', 'event_espresso'),
             [$this, 'template_pack_meta_box'],
@@ -2461,7 +2463,7 @@ class Messages_Admin_Page extends EE_Admin_Page
 
         // print out $test_settings_fields
         if (! empty($test_settings_html)) {
-            $test_settings_html .= '<input type="submit" class="button-primary mtp-test-button alignright" ';
+            $test_settings_html .= '<input type="submit" class="button--primary mtp-test-button alignright" ';
             $test_settings_html .= 'name="test_button" value="';
             $test_settings_html .= esc_html__('Test Send', 'event_espresso');
             $test_settings_html .= '" /><div style="clear:both"></div>';
@@ -2476,7 +2478,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'reset_to_default',
             'reset',
             $extra_args,
-            'button-primary reset-default-button'
+            'button--primary reset-default-button'
         );
         $test_settings_html .= '</div><div style="clear:both"></div>';
         echo $test_settings_html; // already escaped
@@ -2693,7 +2695,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                     esc_html__('Switch %s', 'event_espresso'),
                     ucwords($context_label['label'])
                 ); ?>
-                <input class='button-secondary'
+                <input class='button--secondary'
                        id="submit-msg-context-switcher-sbmt"
                        type="submit"
                        value="<?php echo esc_attr($button_text); ?>"
@@ -2702,8 +2704,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             <?php echo $args['extra']; // already escaped
             ?>
         </div> <!-- end .ee-msg-switcher-container -->
-        <?php
-        $this->_context_switcher = ob_get_clean();
+        <?php $this->_context_switcher = ob_get_clean();
     }
 
 
@@ -3654,7 +3655,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         foreach ($m_boxes as $box => $label) {
             $callback_args = ['template_path' => $m_template_path, 'template_args' => $m_template_args[ $box ]];
             $msgr          = str_replace('_a_box', '', $box);
-            add_meta_box(
+            $this->addMetaBox(
                 'espresso_' . $msgr . '_settings',
                 $label,
                 function ($post, $metabox) {
@@ -3678,7 +3679,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'template_args' => $mt_template_args[ $box ],
             ];
             $mt            = str_replace('_i_box', '', $box);
-            add_meta_box(
+            $this->addMetaBox(
                 'espresso_' . $mt . '_inactive_mts',
                 $label,
                 function ($post, $metabox) {
@@ -3697,7 +3698,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         // register metabox for global messages settings but only when on the main site.  On single site installs this
         // will always result in the metabox showing, on multisite installs the metabox will only show on the main site.
         if (is_main_site()) {
-            add_meta_box(
+            $this->addMetaBox(
                 'espresso_global_message_settings',
                 esc_html__('Global Message Settings', 'event_espresso'),
                 [$this, 'global_messages_settings_metabox_content'],

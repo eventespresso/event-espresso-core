@@ -107,7 +107,7 @@ class Stats
                 <span class="dashicons dashicons-admin-site"></span>
                 <span class="data-optin-text"><?php self::optinText(); ?></span>
                 <span style="display: none" id="data-optin-nonce"><?php echo wp_create_nonce('ee-data-optin'); ?></span>
-                <button class="button-secondary data-optin-button" value="no">
+                <button class="button--secondary data-optin-button" value="no">
                     <?php esc_html_e('Dismiss', 'event_espresso'); ?>
                 </button>
                 <div style="clear:both"></div>

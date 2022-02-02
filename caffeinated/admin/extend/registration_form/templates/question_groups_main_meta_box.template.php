@@ -139,93 +139,100 @@ $id = ! empty($QST_system) ? '_disabled' : '';
     </table>
 </div>
 
-<div id="group-questions" class="edit-group padding question-group-questions-container postbox">
-    <div class="handlediv" title="<?php esc_attr_e('Click to toggle', 'event_espresso'); ?>"><br></div>
-    <h2 class="handle"><?php esc_html_e('Questions', 'event_espresso'); ?></h2>
+<div id="group-questions" class="edit-group padding question-group-questions-container">
+    <h2><?php esc_html_e('Questions', 'event_espresso'); ?></h2>
     <div class="form-table question-group-questions inside">
-        <div class="padding">
-            <p><span class="description"><?php
-                    esc_html_e(
-                        'Select which questions should be shown in this group by checking or unchecking boxes. You can drag and drop questions to reorder them. Your changes will be updated when you save.',
-                        'event_espresso'
-                    ); ?></span></p>
-            <div>
-                <ul class="question-list-sortable">
-                    <?php
-                    $question_order = 0;
-                    $question_group_questions = $question_group->questions();
-                    foreach ($all_questions as $question_ID => $question) {
-                        if ($question instanceof EE_Question) {
-                            /*@var $question EE_Question*/
-                            $checked = isset($question_group_questions[ $question_ID ]) ? 'checked' : '';
-                            // disable questions from the personal information question group
-                            // is it required in the current question group? if so don't allow admins to remove it
-                            $disabled = in_array(
+        <p>
+            <span class="description"><?php
+                esc_html_e(
+                    'Select which questions should be shown in this group by checking or unchecking boxes. You can drag and drop questions to reorder them. Your changes will be updated when you save.',
+                    'event_espresso'
+                ); ?></span>
+            </p>
+        <div>
+            <ul class="question-list-sortable">
+                <?php
+                $question_order = 0;
+                $question_group_questions = $question_group->questions();
+                foreach ($all_questions as $question_ID => $question) {
+                    if ($question instanceof EE_Question) {
+                        /*@var $question EE_Question*/
+                        $checked = isset($question_group_questions[ $question_ID ]) ? ' checked="checked"' : '';
+                        // disable questions from the personal information question group
+                        // is it required in the current question group? if so don't allow admins to remove it
+                        $disabled = in_array(
+                            $question->system_ID(),
+                            EEM_Question::instance()->required_system_questions_in_system_question_group(
+                                $QSG_system
+                            )
+                        ) ? 'disabled' : '';
+                        // limit where system questions can appear
+                        if (
+                            $question->system_ID() &&
+                            ! in_array(
                                 $question->system_ID(),
-                                EEM_Question::instance()->required_system_questions_in_system_question_group(
+                                EEM_Question::instance()->allowed_system_questions_in_system_question_group(
                                     $QSG_system
                                 )
-                            ) ? 'disabled' : '';
-                            // limit where system questions can appear
+                            )
+                        ) {
+                            continue; // skip over system question not assigned to this group except for the address system group cause we want the address questions to display even if they aren't selected (but still not show the personal system questions).  The third condition checks if we're displaying a non system question group and the question is a system question, then we skip because for non-system question groups we only want to show non-system questions.
+                        }
+                        ?>
+                        <li class="ee-question-sortable">
+                            <label for="question-<?php echo absint($question_ID); ?>">
+                                <input type="checkbox"
+                                    name="questions[<?php echo absint($question_ID); ?>]"
+                                    id="question-<?php echo absint($question_ID); ?>"
+                                    value="<?php echo absint($question_ID); ?>"
+                                    <?php echo esc_attr($disabled); ?>
+                                    <?php echo esc_attr($checked); ?>
+                                />
+                                <span class="question-text">
+                                    <?php
+                                        $trimmed_text = trim($question->display_text());
+                                        $trimmed_text .= strlen($trimmed_text) >= 95 ? "&hellip;" : '';
+                                        echo esc_html($trimmed_text);
+                                    ?>
+                                </span>
+                                <input type="hidden"
+                                        class="question-group-QGQ_order"
+                                        name="question_orders[<?php echo absint($question_ID); ?>]"
+                                        value="<?php echo esc_attr($question_order); ?>"
+                                >
+                            </label>
+                            <?php
                             if (
-                                $question->system_ID() &&
-                                ! in_array(
-                                    $question->system_ID(),
-                                    EEM_Question::instance()->allowed_system_questions_in_system_question_group(
-                                        $QSG_system
-                                    )
+                                EE_Registry::instance()->CAP->current_user_can(
+                                    'ee_edit_question',
+                                    'espresso_registration_form_edit_question',
+                                    $question->ID()
                                 )
                             ) {
-                                continue; // skip over system question not assigned to this group except for the address system group cause we want the address questions to display even if they aren't selected (but still not show the personal system questions).  The third condition checks if we're displaying a non system question group and the question is a system question, then we skip because for non-system question groups we only want to show non-system questions.
-                            }
-                            ?>
-                            <li class="ee-question-sortable">
-                                <label for="question-<?php echo absint($question_ID); ?>">
-                                    <input type="checkbox" name="questions[<?php echo absint($question_ID); ?>]"
-                                           id="question-<?php echo absint($question_ID); ?>"
-                                           value="<?php echo absint($question_ID); ?>" <?php echo esc_attr($disabled); ?> <?php echo esc_attr($checked); ?>/>
-                                    <span class="question-text"><?php
-                                        echo trim($question->display_text())
-                                             . (95 <= strlen(trim($question->display_text()))
-                                                ? "&hellip;"
-                                                : '');
-                                                                ?>
-                                    </span>
-                                    <input class="question-group-QGQ_order" type="hidden"
-                                           name="question_orders[<?php echo absint($question_ID); ?>]"
-                                           value="<?php echo esc_attr($question_order); ?>">
-                                </label>
-                                <?php
-                                if (
-                                    EE_Registry::instance()->CAP->current_user_can(
-                                        'ee_edit_question',
-                                        'espresso_registration_form_edit_question',
-                                        $question->ID()
-                                    )
-                                ) {
-                                    $edit_query_args = array(
+                                $edit_link = EE_Admin_Page::add_query_args_and_nonce(
+                                    [
                                         'action' => 'edit_question',
                                         'QST_ID' => $question->ID(),
-                                    );
-                                    $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_FORMS_ADMIN_URL);
+                                    ],
+                                    EE_FORMS_ADMIN_URL
+                                );
 
-                                    echo '<a href="' . $edit_link . '" target="_blank" title="' .
-                                        sprintf(
-                                            esc_attr__('Edit %s', 'event_espresso'),
-                                            $question->admin_label()
-                                        )
-                                        . '"><span class="dashicons dashicons-edit"></span>
-                                        </a>';
-                                }
-                                ?>
-                            </li>
-                            <?php
-                            $question_order++;
-                        }
+                                echo '<a href="' . esc_url_raw($edit_link) . '" target="_blank" title="' .
+                                    sprintf(
+                                        esc_attr__('Edit %s', 'event_espresso'),
+                                        $question->admin_label()
+                                    )
+                                    . '"><span class="dashicons dashicons-edit"></span>
+                                    </a>';
+                            }
+                            ?>
+                        </li>
+                        <?php
+                        $question_order++;
                     }
-                    ?>
-                </ul>
-            </div>
+                }
+                ?>
+            </ul>
         </div>
     </div>
 </div>

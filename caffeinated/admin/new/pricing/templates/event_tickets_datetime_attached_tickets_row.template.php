@@ -120,12 +120,16 @@
                                 : ''; ?></span>
                     </div>
                     <div class="save-cancel-button-container">
-                        <button data-context="short-ticket" data-datetime-row="<?php echo absint($dtt_row); ?>"
-                                class="button-primary ee-create-button">
+                        <button class="button button--primary ee-create-button"
+                                data-context="short-ticket"
+                                data-datetime-row="<?php echo absint($dtt_row); ?>"
+                        >
                             <?php esc_html_e('Create Ticket', 'event_espresso'); ?>
                         </button>
-                        <button data-context="short-ticket" data-datetime-row="<?php echo absint($dtt_row); ?>"
-                                class="button-secondary ee-cancel-button add-edit">
+                        <button class="button button--secondary ee-cancel-button add-edit"
+                                data-context="short-ticket"
+                                data-datetime-row="<?php echo absint($dtt_row); ?>"
+                        >
                             <?php esc_html_e('Close', 'event_espresso'); ?>
                         </button>
                     </div>

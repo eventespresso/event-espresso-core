@@ -33,7 +33,7 @@
             </a>
         </span>
         <span class="add-to-menu">
-            <input class='button-secondary submit-add-to-menu right'
+            <input class='button--secondary submit-add-to-menu right'
                    id="<?php echo esc_attr('submit-posttype-extra-nav-menu-pages'); ?>"
                    name="add-post-type-menu-item"
                    type="submit"

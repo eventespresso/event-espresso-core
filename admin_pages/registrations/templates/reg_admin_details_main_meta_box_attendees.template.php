@@ -15,6 +15,7 @@
             <table id="reg-admin-transaction-attendees-table" class="admin-primary-mbox-tbl">
                 <thead>
                     <tr>
+                        <th class="jst-cntr no-pad"></th>
                         <th class="jst-left"><?php esc_html_e('#', 'event_espresso'); ?></th>
                         <th class="jst-left"><?php esc_html_e('Event Name', 'event_espresso'); ?></th>
                         <th class="jst-left"><?php esc_html_e('Attendee', 'event_espresso'); ?></th>
@@ -26,13 +27,18 @@
                 <tbody>
                     <?php
                     foreach ($attendees as $att_nmbr => $attendee) : ?>
-                        <tr class="ee-status-strip reg-status-<?php echo esc_attr($attendee['STS_ID']); ?>"
-                            style='display: table-row;'>
+                        <tr>
+                            <th class='jst-cntr no-pad'>
+                                <span class="ee-status-dot ee-status-dot--<?php echo esc_attr($attendee['STS_ID']); ?> ee-aria-tooltip"
+                                      aria-label="<?php echo esc_attr(EEH_Template::pretty_status($attendee['STS_ID'], false, "sentence" ));?>">
+                                </span>
+                            </th>
                             <td class="jst-left"><?php echo esc_html($att_nmbr); ?></td>
                             <td class="jst-left"><?php echo esc_html($attendee['event_name']); ?></td>
                             <td class="jst-left">
                                 <a href="<?php echo esc_url_raw($attendee['att_link']); ?>"
-                                   title="<?php esc_attr_e('View details for this attendee', 'event_espresso'); ?>"
+                                   aria-label="<?php esc_attr_e('View details for this attendee', 'event_espresso'); ?>"
+                                   class="ee-aria-tooltip"
                                 >
                                     <?php echo esc_html($attendee['fname'] . ' ' . $attendee['lname']); ?>
                                 </a>

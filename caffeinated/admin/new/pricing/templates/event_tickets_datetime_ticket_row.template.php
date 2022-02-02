@@ -245,8 +245,11 @@ if (WP_DEBUG) {
                     </tr>
                     </tbody>
                 </table>
-                <button data-context="price-create" class="button-secondary ee-create-button ee-price-create-button"
-                        data-ticket-row="<?php echo absint($tkt_row); ?>"<?php echo $show_price_mod_button; ?>>
+                <button class="button button--secondary ee-create-button ee-price-create-button"
+                        data-context="price-create"
+                        data-ticket-row="<?php echo absint($tkt_row); ?>"
+                        <?php echo $show_price_mod_button; ?>
+                >
                     <?php esc_html_e('Add Price Modifier', 'event_espresso'); ?>
                 </button>
                 <div class="ticket-is-required-container">
@@ -386,12 +389,11 @@ if (WP_DEBUG) {
                                 : ''; ?>>
                     <input type="hidden"
                            name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_is_default]"
-                           class="edit-ticket-TKT_is_default" value="<?php echo esc_attr($TKT_is_default); ?>">
-                    <!--<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo absint($tkt_row); ?>"><?php esc_html_e(
-                        'Update Ticket',
-                        'event_espresso'
-                    ); ?></button>-->
-                    <button class="button-secondary ee-cancel-button" data-context="ticket"
+                           class="edit-ticket-TKT_is_default"
+                           value="<?php echo esc_attr($TKT_is_default); ?>"
+                    >
+                    <button class="button button--secondary ee-cancel-button"
+                            data-context="ticket"
                             data-ticket-row="<?php echo absint($tkt_row); ?>"><?php
                                     esc_html_e('Close', 'event_espresso'); ?></button>
                 </div>
