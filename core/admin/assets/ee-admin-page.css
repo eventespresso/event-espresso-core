@@ -3155,9 +3155,21 @@ body.espresso-admin #contextual-help-wrap strong {
     align-items: center;
 }
 
-/*.espresso-admin .tablenav input {*/
-/*    margin-inline-end: 0.25rem;*/
-/*}*/
+.espresso-admin .tablenav .actions,
+.espresso-admin .tablenav .tablenav-pages {
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+.espresso-admin .tablenav .actions {
+  padding-inline-end: 1rem;
+}
+.espresso-admin .tablenav .tablenav-pages {
+    float: unset;
+    margin: 0;
+    margin-inline-start: auto;
+    padding-inline-start: 1rem;
+}
 
 /*.espresso-admin .tablenav input,*/
 .espresso-admin .pagination-links .button {
@@ -3165,11 +3177,6 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 
-.espresso-admin .tablenav .tablenav-pages {
-    float: unset;
-    margin: 0;
-    margin-inline-start: auto;
-}
 
 .espresso-admin .wp-list-table .ee-responsive-table-cell {
     display: flex;
