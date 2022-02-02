@@ -28,7 +28,7 @@
     <?php echo $event_datetime_help_link; ?>
     <div class="event-datetimes-container">
         <div class="save-cancel-button-container">
-            <button class="button-secondary ee-create-button datetime-create-button" data-context="datetime">
+            <button class="button--secondary ee-create-button datetime-create-button" data-context="datetime">
                 <?php esc_html_e('Add Datetime', 'event_espresso'); ?>
             </button>
         </div>
@@ -124,10 +124,10 @@
                 </tr>
             </table>
             <div class="save-cancel-button-container th-adjust">
-                <button data-context="datetime-create" class="button-primary ee-create-button">
+                <button data-context="datetime-create" class="button--primary ee-create-button">
                     <?php esc_html_e('Create Datetime', 'event_espresso'); ?>
                 </button>
-                <button data-context="datetime-create" class="button-secondary ee-cancel-button">
+                <button data-context="datetime-create" class="button--secondary ee-cancel-button">
                     <?php esc_html_e('Cancel', 'event_espresso'); ?>
                 </button>
             </div>
@@ -152,7 +152,7 @@
         </h3>
         <div class="event-tickets-container ee-create-ticket-button"<?php
         echo $show_tickets_container; ?>>
-            <button class="ee-create-ticket-button button-secondary ee-create-button" data-context="ticket">
+            <button class="ee-create-ticket-button button--secondary ee-create-button" data-context="ticket">
                 <?php esc_html_e('Create Ticket', 'event_espresso'); ?>
             </button>
         </div>

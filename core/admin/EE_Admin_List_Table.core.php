@@ -471,13 +471,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             echo $filter; // already escaped
         }
         // add filter button at end
-        echo '<input type="submit" class="button-secondary" value="'
+        echo '<input type="submit" class="button button--secondary button--small" value="'
              . esc_html__('Filter', 'event_espresso')
              . '" id="post-query-submit" />';
         // add reset filters button at end
-        echo '<a class="button button-secondary"  href="'
+        echo '<a class="button button--secondary button--small"  href="'
              . esc_url_raw($this->_admin_page->get_current_page_view_url())
-             . '" style="display:inline-block">'
+             . '">'
              . esc_html__('Reset Filters', 'event_espresso')
              . '</a>';
     }
@@ -789,7 +789,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
                     $route,
                     $type,
                     $extra_request,
-                    'button button-secondary'
+                    'button button--secondary'
                 );
             }
             do_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen);
@@ -888,5 +888,29 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         $host = $this->_admin_page->get_request()->getServerParam('HTTP_HOST');
         $uri  = $this->_admin_page->get_request()->getServerParam('REQUEST_URI');
         return urlencode(esc_url_raw("//{$host}{$uri}"));
+    }
+
+
+    /**
+     * @param string $id
+     * @param string $content
+     * @param string $align     start (default), center, end
+     * @return string
+     * @since   $VID:$
+     */
+    protected function columnContent($id, $content, $align = 'start')
+    {
+        if (! isset($this->_columns[ $id ])) {
+            throw new DomainException('missing column id');
+        }
+        $heading = $id !== 'cb' ? $this->_columns[ $id ] : '';
+        $align = in_array($align, ['start', 'center', 'end']) ? $align : 'start';
+        $align = "ee-responsive-table-cell--{$align}";
+
+        $html = "<div id='ee-responsive-table-cell-{$id}' class='ee-responsive-table-cell {$align}'>";
+        $html .= "<div class='ee-responsive-table-cell__heading'>{$heading}</div>";
+        $html .= "<div class='ee-responsive-table-cell__content'>{$content}</div>";
+        $html .= "</div>";
+        return $html;
     }
 }

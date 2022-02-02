@@ -121,11 +121,11 @@
                     </div>
                     <div class="save-cancel-button-container">
                         <button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>"
-                                class="button-primary ee-create-button">
+                                class="button--primary ee-create-button">
                             <?php esc_html_e('Create Ticket', 'event_espresso'); ?>
                         </button>
                         <button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>"
-                                class="button-secondary ee-cancel-button add-edit">
+                                class="button--secondary ee-cancel-button add-edit">
                             <?php esc_html_e('Close', 'event_espresso'); ?>
                         </button>
                     </div>

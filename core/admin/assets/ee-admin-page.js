@@ -98,10 +98,10 @@ jQuery(document).ready(function($) {
 		if( typeof(offset) !== 'undefined' && offset !== null && typeof(offset.top) !== 'undefined' ) {
 			if ( (scrollTop+33) > offset.top ) {
 				$('#event-editor-floating-save-btns').removeClass('hidden');
-				$('#espresso_major_buttons_wrapper .button-primary').addClass('hidden');
+				$('#espresso_major_buttons_wrapper .button--primary').addClass('hidden');
 			} else {
 				$('#event-editor-floating-save-btns').addClass('hidden');
-				$('#espresso_major_buttons_wrapper .button-primary').removeClass('hidden');
+				$('#espresso_major_buttons_wrapper .button--primary').removeClass('hidden');
 			}
 		}
 	});

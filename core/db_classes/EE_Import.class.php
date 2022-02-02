@@ -113,7 +113,7 @@ class EE_Import implements ResettableInterface
                 <input type="hidden" name="csv_submitted" value="TRUE" id="<?php echo esc_attr(time()); ?>">
                 <input name="import" type="hidden" value="<?php echo esc_attr($type); ?>"/>
                 <input type="file" name="file[]" size="90">
-                <input class="button-primary" type="submit" value="<?php esc_html_e('Upload File', 'event_espresso'); ?>">
+                <input class="button--primary" type="submit" value="<?php esc_html_e('Upload File', 'event_espresso'); ?>">
             </form>
 
             <p class="ee-attention">

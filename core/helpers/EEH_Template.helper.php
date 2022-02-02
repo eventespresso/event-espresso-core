@@ -547,12 +547,12 @@ class EEH_Template
      *
      * @param string $url   the url for the link, note that `esc_url` will be called on it
      * @param string $label What is the label you want displayed for the button
-     * @param string $class what class is used for the button (defaults to 'button-primary')
+     * @param string $class what class is used for the button (defaults to 'button--primary')
      * @param string $icon
      * @param string $title
      * @return string the html output for the button
      */
-    public static function get_button_or_link($url, $label, $class = 'button-primary', $icon = '', $title = '')
+    public static function get_button_or_link($url, $label, $class = 'button--primary', $icon = '', $title = '')
     {
         $icon_html = '';
         if (! empty($icon)) {

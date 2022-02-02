@@ -27,10 +27,10 @@
  * status strips
  */
 
-.wp-list-table .ee-status-strip td:first-child {
-    border-left-style: solid;
-    border-left-width: 4px;
-}
+/*.wp-list-table .ee-status-strip td:first-child {*/
+/*    border-left-style: solid;*/
+/*    border-left-width: 4px;*/
+/*}*/
 
 /*txn complete, pymt approved*/
 .reg-status-RAP,
@@ -76,6 +76,7 @@
 }
 
 
+
 /*.ee-status-strip-td {*/
 /*padding: 0;*/
 /*min-height: 50px;*/
@@ -84,12 +85,11 @@
 /*margin: 0 0 -5px;*/
 /*}*/
 
-.widefat td.column-STS_ID,
-.widefat th.column-STS_ID {
-    width: 2%;
-    padding: 0;
-    margin: 0;
-}
+/*.transactions.wp-list-table .column-STS_ID {*/
+/*    width: 2%;*/
+/*    padding: 0;*/
+/*    margin: 0;*/
+/*}*/
 
 /** txn & payment status legend **/
 .ee-status-legend-TCM,
@@ -123,19 +123,50 @@
 
 /* TABLE COLUMNS */
 
-.column-TXN_ID { width:3%; }
-td.column-TXN_ID { padding: 4px 7px  29px; }
-.column-TXN_timestamp { width:10%; }
-
+.transactions.wp-list-table .column-TXN_ID {
+    text-align: end;
+    width: 2rem;
+    /*padding: 4px 7px 29px;*/
+}
 
 /* #TXN_total, #TXN_paid { text-align:center; } */
+.transactions.wp-list-table .column-TXN_timestamp {
+    width: 10rem;
+}
+.transactions.wp-list-table .column-TXN_total,
+.transactions.wp-list-table .column-TXN_paid {
+    text-align: end;
+    width: 9rem;
+}
+.transactions.wp-list-table th.column-TXN_total,
+.transactions.wp-list-table th.column-TXN_paid {
+    text-align: center;
+}
+.transactions.wp-list-table .column-TXN_total > div,
+.transactions.wp-list-table .column-TXN_paid > div {
+    align-content: flex-end;
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
 
-.column-TXN_total, .column-TXN_paid { width:6%; text-align:right; }
-.txn-pad-rght { display:block; padding-right:1em; }
+/*.txn-pad-rght {*/
+/*    display: block;*/
+/*    padding-right: 1em;*/
+/*}*/
 
-.column-ATT_fname { width:20%; }
-.column-event_name { width: 15% }
-.column-actions { width:15%; }
+.transactions.wp-list-table .column-ATT_fname {
+    /*width: 20%;*/
+}
+
+.transactions.wp-list-table .column-event_name {
+    /*width: 15%*/
+}
+
+.transactions.wp-list-table .column-actions {
+    width: 15%;
+}
 
 .txn-overview-free-event-spn {
     display: block; text-align:center;
@@ -144,25 +175,47 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .txn-overview-actions-ul { list-style:none; margin:0; }
 .txn-overview-actions-ul li { display: inline-block; float: left; margin:0; }
 .txn-overview-actions-ul li + li { margin-left:6px; }/**/
-.button-secondary.no-icon {
+.button--secondary.no-icon {
     vertical-align: baseline;
 }
 
 #txn-admin-payments-tbl .txn-overview-actions-ul { width:32px; }
-#txn-admin-payments-tbl th:first-child, #txn-admin-payments-tbl td:first-child {
-    margin: 0;
-    padding: 0;
-    width: 0;
-}
+/*#txn-admin-payments-tbl th:first-child, #txn-admin-payments-tbl td:first-child {*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    width: 0;*/
+/*}*/
 
 .txn-admin-payment-action-edit-lnk,
 .txn-admin-payment-action-delete-lnk { cursor:pointer; }
-.payment-date-dv { display: table-caption; }
+.payment-date-dv {
+    display: table-caption;
+    min-width: 8rem;
+}
 
 .admin-side-mbox-dv { margin:1em 0 2em; }
-.admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; color:#333; text-shadow:0 1px 0 #fff; }
+.admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; }
 .admin-side-mbox-label-spn { width:30%; padding-right:.5em; text-align:right; }
-.admin-side-mbox-text-dv { padding-left:.5em; margin:0 0 1em 30%; }
+.admin-side-mbox-text-dv { padding-left:.5em; margin:0 0 1em 1em; }
+.admin-side-mbox-dv .ee-admin-attendee-avatar { margin:0 0 1em .5em; }
+
+#admin-side-mbox-primary-registrant-dv,
+.admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon {
+    display: flex;
+}
+.admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon .dashicons {
+    color: var(--ee-status-color-lt-grey);
+    margin-block-start: .35rem;
+}
+
+.admin-side-mbox-text-dv .ee-admin-attendee-name {
+    font-size: 1.2rem;
+}
+.admin-side-mbox-text-dv .ee-admin-attendee-email,
+.admin-side-mbox-text-dv .ee-admin-attendee-phone,
+.admin-side-mbox-text-dv .ee-admin-attendee-address {
+    margin-block-start: .5rem;
+}
 
 .ee-admin-dialog-container .admin-modal-dialog-h2 { font-size:2em; margin:.25em 0;  }
 .admin-primary-mbox-h4 { margin:2em 0 .25em; font-size:1.3em;  }
@@ -170,18 +223,25 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .admin-modal-dialog-wrap,
 .admin-primary-mbox-tbl-wrap,
 .admin-primary-mbox-tbl-wrap-inner {
-    padding:3px; margin:0 0 2em;
-    background:#fff; border:1px solid #dfdfdf;
-    border-radius:3px;
+    /*padding:3px; margin:0 0 2em;*/
+    /*background:#fff; */
+    /*border:1px solid #dfdfdf;*/
+    /*border-radius:3px;*/
 }
 .admin-primary-mbox-tbl {
     width:100%; border-spacing: 0; border-collapse:collapse;
 }
 .admin-primary-mbox-tbl th, .admin-primary-mbox-tbl td {
-    padding:6px 12px; margin: 0;
-    border:1px solid #dfdfdf; background:#fcfcfc;
-    font-family: sans-serif; font-size: 1em; vertical-align:middle;
-}.admin-primary-mbox-tbl.borderless th { padding:6px 6px 0; border:none; background:none; }
+    /*padding:6px 12px;*/
+    /*margin: 0;*/
+    /*border: 1px solid #dfdfdf;*/
+    /*background:#fcfcfc;*/
+    /*font-family: sans-serif;*/
+    /*font-size: 1em;*/
+    /*vertical-align:middle;*/
+}
+
+.admin-primary-mbox-tbl.borderless th { padding:6px 6px 0; border:none; background:none; }
 .admin-primary-mbox-tbl.borderless td { padding:0 6px 6px; border:none; background:none; }
 .admin-primary-mbox-tbl tr + tr { border-top:none; }
 .admin-primary-mbox-tbl th + th,
@@ -194,7 +254,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 
 .admin-primary-mbox-taxes-tr { font-size:1.1em; }
 .admin-primary-mbox-total-tr { font-size:1.4em; }
-.admin-primary-mbox-total-tr td .important-notice { display: block; padding: 1em; font-size:.75em; }
+.admin-primary-mbox-total-tr td .important-notice { display: block; padding: 1em; font-size: 1rem; }
 
 
 .ee-line-item-id {
@@ -203,9 +263,15 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
     font-style: italic;
 }
 
+.ee-line-item-name-td {
+    display: flex;
+    align-items: baseline;
+}
+
 .ee-line-item-name {
     font-size: 1.1em;
     font-weight: 600;
+    margin-inline-end: 1rem;
 }
 
 
@@ -285,10 +351,6 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 
 .txn-admin-apply-payment-to-registrations-lbl input {
     margin: 2px 1em 0 0;
-}
-
-.txn-navigation-strip {
-
 }
 
 .txn-date-h2, .txn-status-h2, .txn-amount-due-h2, .txn-selected-method-of-payment-h3 {

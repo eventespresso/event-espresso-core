@@ -123,7 +123,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
             );
             $create_link = EE_Admin_Page::add_query_args_and_nonce($create_args, EE_MSG_ADMIN_URL);
             return sprintf(
-                '<p><a href="%s" class="button button-small">%s</a></p>',
+                '<p><a href="%s" class="button button--secondary button--small">%s</a></p>',
                 $create_link,
                 esc_html__('Create Custom', 'event_espresso')
             );

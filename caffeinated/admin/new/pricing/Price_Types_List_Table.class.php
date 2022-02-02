@@ -44,13 +44,14 @@ class Price_Types_List_Table extends EE_Admin_List_Table
 
         $this->_columns = array(
             'cb'        => '<input type="checkbox" />', // Render a checkbox instead of text
+            'id' => esc_html__('ID', 'event_espresso'),
             'name'      => esc_html__('Name', 'event_espresso'),
             'base_type' => '<div class="jst-cntr">' . esc_html__('Base Type', 'event_espresso') . '</div>',
             'percent'   => '<div class="jst-cntr">'
                            . sprintf(
                                /* translators: 1: HTML new line, 2: open span tag, 3: close span tag */
                                esc_html__('Applied %1$s as %2$s%%%3$s or %2$s$%3$s', 'event_espresso'),
-                               '<br/>',
+                               '',
                                '<span class="big-text">',
                                '</span>'
                            )
@@ -59,7 +60,7 @@ class Price_Types_List_Table extends EE_Admin_List_Table
                            . sprintf(
                                /* translators: HTML new line */
                                esc_html__('Order of %s Application', 'event_espresso'),
-                               '<br/>'
+                               ''
                            )
                            . '</div>',
         );
@@ -101,6 +102,20 @@ class Price_Types_List_Table extends EE_Admin_List_Table
             );
         }
         return '';
+    }
+
+
+    /**
+     * @param EE_Price_Type $item
+     * @return mixed|string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_id(EE_Price_Type $item)
+    {
+        $content = $item->ID();
+        $content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
+        return $this->columnContent('id', $content, 'end');
     }
 
 

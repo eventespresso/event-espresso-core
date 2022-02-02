@@ -35,7 +35,7 @@
                     $REG_ID
                 )
             ) : ?>
-                <input class='button-primary'
+                <input class='button--primary'
                        id="reg-admin-attendee-questions-submit"
                        type="submit"
                        value="<?php esc_html_e('Update Registration Questions', 'event_espresso'); ?>"

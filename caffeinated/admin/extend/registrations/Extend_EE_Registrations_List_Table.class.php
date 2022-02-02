@@ -47,7 +47,8 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
               . '">' . esc_html__('View Check-ins', 'event_espresso') . '</a>'
             : esc_html__('View Check-ins', 'event_espresso');
 
-        return sprintf('%1$s %2$s', $date_linked, $this->row_actions($actions));
+        $content = sprintf('%1$s %2$s', $date_linked, $this->row_actions($actions));
+        return $this->columnContent('DTT_EVT_start', $content);
     }
 
 
@@ -98,11 +99,11 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
                 // close "title" tag and end of "a" tag opening
                 $datetime_string .= '">';
                 // link text
-                $datetime_string .= $datetime->get_i18n_datetime('DTT_EVT_start');
+                $datetime_string .= $datetime->get_i18n_datetime('DTT_EVT_start', 'M jS Y g:i a');
                 // close "a" tag
                 $datetime_string .= '</a>';
             } else {
-                $datetime_string .= $datetime->get_i18n_datetime('DTT_EVT_start');
+                $datetime_string .= $datetime->get_i18n_datetime('DTT_EVT_start', 'M jS Y g:i a');
             }
             // add a "View Registrations" link that filters list by event AND datetime
             $datetime_string .= $this->row_actions(

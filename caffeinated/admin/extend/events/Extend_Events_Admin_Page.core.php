@@ -307,7 +307,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                        . $href
                        . '" title="'
                        . $title
-                       . '" id="ee-duplicate-event-button" class="button button-small"  value="duplicate_event">'
+                       . '" id="ee-duplicate-event-button" class="button button--secondary button--small"  value="duplicate_event">'
                        . $title
                        . '</a>';
         }
@@ -951,7 +951,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             ! $this->admin_config->useAdvancedEditor()
             || ! $this->feature->allowed('use_reg_options_meta_box')
         ) {
-            add_meta_box(
+            $this->addMetaBox(
                 'espresso_event_editor_event_options',
                 esc_html__('Event Registration Options', 'event_espresso'),
                 [$this, 'registration_options_meta_box'],

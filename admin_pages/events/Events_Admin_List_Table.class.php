@@ -33,6 +33,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
 
     /**
      * Set up of additional properties for the list table.
+     *
+     * @throws EE_Error
      */
     protected function _set_properties()
     {
@@ -43,7 +45,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
         $this->_columns = array(
-            'cb'              => '<input type="checkbox" />', // <-- this checkbox is actually replaced by WP core
+            'cb'              => '<input type="checkbox" />',
+            'status'          => '',
             'id'              => esc_html__('ID', 'event_espresso'),
             'name'            => esc_html__('Name', 'event_espresso'),
             'author'          => esc_html__('Author', 'event_espresso'),
@@ -107,15 +110,10 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     /**
      * @param EE_Event $item
      * @return string
-     * @throws EE_Error
      */
     protected function _get_row_class($item)
     {
         $class = parent::_get_row_class($item);
-        // add status class
-        $class .= $item instanceof EE_Event
-            ? ' ee-status-strip event-status-' . $item->get_active_status()
-            : '';
         if ($this->_has_checkbox_column) {
             $class .= ' has-checkbox-column';
         }
@@ -124,22 +122,23 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param EE_Event $item
+     * @param EE_Event $event
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function column_status(EE_Event $item)
+    public function column_status(EE_Event $event)
     {
-        return '<span class="ee-status-strip ee-status-strip-td event-status-'
-               . $item->get_active_status()
-               . '"></span>';
+        return '<span class="ee-status-dot ee-status-dot--' . esc_attr($event->get_active_status()) . ' ee-aria-tooltip"
+        aria-label="' . EEH_Template::pretty_status($event->get_active_status(), false, "sentence") . '"></span>';
     }
 
 
     /**
-     * @param  EE_Event $item
+     * @param EE_Event $item
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_cb($item)
     {
@@ -147,10 +146,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             return '';
         }
         $this->_dtt = $item->primary_datetime(); // set this for use in other columns
-        return sprintf(
-            '<input type="checkbox" name="EVT_IDs[]" value="%s" class="ee-event-list-bulk-select-event"/>',
+        $content = sprintf(
+            '<input type="checkbox" name="EVT_IDs[]" value="%s" />',
             $item->ID()
         );
+        return $this->columnContent('cb', $content, 'center');
     }
 
 
@@ -158,12 +158,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @param EE_Event $item
      * @return mixed|string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_id(EE_Event $item)
     {
         $content = $item->ID();
         $content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
-        return $content;
+        return $this->columnContent('id', $content, 'end');
     }
 
 
@@ -174,6 +175,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function column_name(EE_Event $item)
     {
@@ -184,12 +186,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EVENTS_ADMIN_URL);
         $actions = $this->_column_name_action_setup($item);
         $status = ''; // $item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
-        $content = '<strong><a class="row-title" href="'
-                   . $edit_link . '">'
-                   . $item->name()
-                   . '</a></strong>'
+        $content = '<strong>
+                        <a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a>
+                    </strong>'
                    . $status;
-        $content .= '<br><span class="ee-status-text-small">'
+        $content .= '<span class="ee-status-text-small">'
                     . EEH_Template::pretty_status(
                         $item->get_active_status(),
                         false,
@@ -197,7 +198,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                     )
                     . '</span>';
         $content .= $this->row_actions($actions);
-        return $content;
+        return $this->columnContent('name', $content);
     }
 
 
@@ -210,6 +211,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _column_name_action_setup(EE_Event $item)
     {
@@ -233,8 +235,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 'post'   => $item->ID(),
             );
             $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EVENTS_ADMIN_URL);
-            $actions['edit'] = '<a href="' . $edit_link . '"'
-                               . ' title="' . esc_attr__('Edit Event', 'event_espresso') . '">'
+            $actions['edit'] = '<a href="' . $edit_link . '" class="ee-aria-tooltip" '
+                               . ' aria-label="' . esc_attr__('Edit Event', 'event_espresso') . '">'
                                . esc_html__('Edit', 'event_espresso')
                                . '</a>';
         }
@@ -254,8 +256,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 'event_id' => $item->ID(),
             );
             $attendees_link = EE_Admin_Page::add_query_args_and_nonce($attendees_query_args, REG_ADMIN_URL);
-            $actions['attendees'] = '<a href="' . $attendees_link . '"'
-                                    . ' title="' . esc_attr__('View Registrations', 'event_espresso') . '">'
+            $actions['attendees'] = '<a href="' . $attendees_link . '" class="ee-aria-tooltip"'
+                                    . ' aria-label="' . esc_attr__('View Registrations', 'event_espresso') . '">'
                                     . esc_html__('Registrations', 'event_espresso')
                                     . '</a>';
         }
@@ -308,8 +310,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             );
         }
         $view_link = get_permalink($item->ID());
-        $actions['view'] = '<a href="' . $view_link . '"'
-                           . ' title="' . esc_attr__('View Event', 'event_espresso') . '">'
+        $actions['view'] = '<a href="' . $view_link . '" class="ee-aria-tooltip"'
+                           . ' aria-label="' . esc_attr__('View Event', 'event_espresso') . '">'
                            . esc_html__('View', 'event_espresso')
                            . '</a>';
         if ($item->get('status') === 'trash') {
@@ -320,8 +322,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                     $item->ID()
                 )
             ) {
-                $actions['restore_from_trash'] = '<a href="' . $restore_event_link . '"'
-                                                 . ' title="' . esc_attr__('Restore from Trash', 'event_espresso')
+                $actions['restore_from_trash'] = '<a href="' . $restore_event_link . '" class="ee-aria-tooltip"'
+                                                 . ' aria-label="' . esc_attr__('Restore from Trash', 'event_espresso')
                                                  . '">'
                                                  . esc_html__('Restore from Trash', 'event_espresso')
                                                  . '</a>';
@@ -333,8 +335,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                     $item->ID()
                 )
             ) {
-                $actions['delete'] = '<a href="' . $delete_event_link . '"'
-                                     . ' title="' . esc_attr__('Delete Permanently', 'event_espresso') . '">'
+                $actions['delete'] = '<a href="' . $delete_event_link . '" class="ee-aria-tooltip"'
+                                     . ' aria-label="' . esc_attr__('Delete Permanently', 'event_espresso') . '">'
                                      . esc_html__('Delete Permanently', 'event_espresso')
                                      . '</a>';
             }
@@ -346,8 +348,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                     $item->ID()
                 )
             ) {
-                $actions['move to trash'] = '<a href="' . $trash_event_link . '"'
-                                            . ' title="' . esc_attr__('Trash Event', 'event_espresso') . '">'
+                $actions['move to trash'] = '<a href="' . $trash_event_link . '" class="ee-aria-tooltip"'
+                                            . ' aria-label="' . esc_attr__('Trash Event', 'event_espresso') . '">'
                                             . esc_html__('Trash', 'event_espresso')
                                             . '</a>';
             }
@@ -360,6 +362,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @param EE_Event $item
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_author(EE_Event $item)
     {
@@ -372,10 +375,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             'EVT_wp_user' => $item->wp_user(),
         );
         $filter_url = EE_Admin_Page::add_query_args_and_nonce($query_args, EVENTS_ADMIN_URL);
-        return $gravatar . '  <a href="' . $filter_url . '"'
-               . ' title="' . esc_attr__('Click to filter events by this author.', 'event_espresso') . '">'
+        $content = $gravatar . '  <a href="' . $filter_url . '" class="ee-aria-tooltip"'
+               . ' aria-label="' . esc_attr__('Click to filter events by this author.', 'event_espresso') . '">'
                . $event_author->display_name
                . '</a>';
+        return $this->columnContent('author', $content);
     }
 
 
@@ -383,11 +387,12 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @param EE_Event $event
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_event_category(EE_Event $event)
     {
         $event_categories = $event->get_all_event_categories();
-        return implode(
+        $content = implode(
             ', ',
             array_map(
                 function (EE_Term $category) {
@@ -396,6 +401,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 $event_categories
             )
         );
+        return $this->columnContent('event_category', $content);
     }
 
 
@@ -403,13 +409,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @param EE_Event $item
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_venue(EE_Event $item)
     {
         $venue = $item->get_first_related('Venue');
-        return ! empty($venue)
+        $content = ! empty($venue)
             ? $venue->name()
             : '';
+        return $this->columnContent('venue', $content);
     }
 
 
@@ -417,12 +425,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @param EE_Event $item
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_start_date_time(EE_Event $item)
     {
-        return $this->_dtt instanceof EE_Datetime
+        $content = $this->_dtt instanceof EE_Datetime
             ? $this->_dtt->get_i18n_datetime('DTT_EVT_start')
             : esc_html__('No Date was saved for this Event', 'event_espresso');
+        return $this->columnContent('start_date_time', $content);
     }
 
 
@@ -430,13 +440,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @param EE_Event $item
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_reg_begins(EE_Event $item)
     {
         $reg_start = $item->get_ticket_with_earliest_start_time();
-        return $reg_start instanceof EE_Ticket
+        $content = $reg_start instanceof EE_Ticket
             ? $reg_start->get_i18n_datetime('TKT_start_date')
             : esc_html__('No Tickets have been setup for this Event', 'event_espresso');
+        return $this->columnContent('reg_begins', $content);
     }
 
 
@@ -447,6 +459,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function column_attendees(EE_Event $item)
     {
@@ -456,7 +469,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         );
         $attendees_link = EE_Admin_Page::add_query_args_and_nonce($attendees_query_args, REG_ADMIN_URL);
         $registered_attendees = EEM_Registration::instance()->get_event_registration_count($item->ID());
-        return EE_Registry::instance()->CAP->current_user_can(
+        $content = EE_Registry::instance()->CAP->current_user_can(
             'ee_read_event',
             'espresso_registrations_view_registration',
             $item->ID()
@@ -467,6 +480,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                )
             ? '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>'
             : $registered_attendees;
+        return $this->columnContent('attendees', $content, 'end');
     }
 
 
@@ -477,10 +491,12 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function column_tkts_sold(EE_Event $item)
     {
-        return EEM_Ticket::instance()->sum(array(array('Datetime.EVT_ID' => $item->ID())), 'TKT_sold');
+        $content = EEM_Ticket::instance()->sum(array(array('Datetime.EVT_ID' => $item->ID())), 'TKT_sold');
+        return $this->columnContent('tkts_sold', $content);
     }
 
 
@@ -491,6 +507,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function column_actions(EE_Event $item)
     {
@@ -500,8 +517,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         }
         $action_links = array();
         $view_link = get_permalink($item->ID());
-        $action_links[] = '<a href="' . $view_link . '"'
-                          . ' title="' . esc_attr__('View Event', 'event_espresso') . '" target="_blank">';
+        $action_links[] = '<a href="' . $view_link . '" class="ee-aria-tooltip"'
+                          . ' aria-label="' . esc_attr__('View Event', 'event_espresso') . '" target="_blank">';
         $action_links[] = '<div class="dashicons dashicons-search"></div></a>';
         if (
             EE_Registry::instance()->CAP->current_user_can(
@@ -515,8 +532,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 'post'   => $item->ID(),
             );
             $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EVENTS_ADMIN_URL);
-            $action_links[] = '<a href="' . $edit_link . '"'
-                              . ' title="' . esc_attr__('Edit Event', 'event_espresso') . '">'
+            $action_links[] = '<a href="' . $edit_link . '" class="ee-aria-tooltip"'
+                              . ' aria-label="' . esc_attr__('Edit Event', 'event_espresso') . '">'
                               . '<div class="ee-icon ee-icon-calendar-edit"></div>'
                               . '</a>';
         }
@@ -535,8 +552,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 'event_id' => $item->ID(),
             );
             $attendees_link = EE_Admin_Page::add_query_args_and_nonce($attendees_query_args, REG_ADMIN_URL);
-            $action_links[] = '<a href="' . $attendees_link . '"'
-                              . ' title="' . esc_attr__('View Registrants', 'event_espresso') . '">'
+            $action_links[] = '<a href="' . $attendees_link . '" class="ee-aria-tooltip"'
+                              . ' aria-label="' . esc_attr__('View Registrants', 'event_espresso') . '">'
                               . '<div class="dashicons dashicons-groups"></div>'
                               . '</a>';
         }
@@ -545,11 +562,12 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             $action_links,
             $item
         );
-        return $this->_action_string(
+        $content = $this->_action_string(
             implode("\n\t", $action_links),
             $item,
             'div'
         );
+        return $this->columnContent('actions', $content);
     }
 
 

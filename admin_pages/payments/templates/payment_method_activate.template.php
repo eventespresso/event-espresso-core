@@ -12,7 +12,7 @@
                     <label><?php esc_html_e('Click to Activate', 'event_espresso'); ?></label>
                 </th>
                 <td>
-                    <a class='espresso-button-green button-primary'
+                    <a class='espresso-button-green button--primary'
                        href="<?php echo esc_url_raw($activate_url) ?>"
                        id="activate_<?php echo esc_attr($payment_method->slug()) ?>"
                     >

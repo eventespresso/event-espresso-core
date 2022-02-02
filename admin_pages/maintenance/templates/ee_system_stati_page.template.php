@@ -125,7 +125,7 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
 
 <h1>
     <?php esc_html_e("System Information", "event_espresso"); ?>
-    <a class='button-secondary'
+    <a class='button--secondary'
        href="<?php echo esc_url_raw($download_system_status_url); ?>"
     >
         <?php esc_html_e('Download to File', 'event_espresso'); ?>

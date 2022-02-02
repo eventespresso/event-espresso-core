@@ -396,7 +396,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                     esc_html__('Send Batch Message (%s selected)', 'event_espresso'),
                     '<span class="send-selected-newsletter-count">0</span>'
                 );
-                echo '<button id="selected-batch-send-trigger" class="button secondary-button">'
+                echo '<button id="selected-batch-send-trigger" class="button button--secondary">'
                      . '<span class="dashicons dashicons-email "></span>'
                      . $button_text
                      . '</button>';

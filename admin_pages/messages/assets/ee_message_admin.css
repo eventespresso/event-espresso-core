@@ -1,5 +1,20 @@
-.ee-msg-switcher-container {
-    margin-top: 8px;
+.espresso-admin .wp-list-table th.column-primary.column-to.sorted > a,
+.espresso-admin .wp-list-table th.column-primary.column-to.sortable > a {
+    justify-content: flex-start;
+}
+
+.ee-msg-admin-header {
+    display: grid;
+    grid-gap: 0;
+    grid-template-columns: 2fr 1.5fr 5rem var(--ee-admin-sidebar-width);
+    grid-template-areas:
+    "msg-header-1 msg-header-2 postbox-1";
+    margin-block-start: 1rem;
+    margin-block-end: -4rem;
+}
+
+.espresso-admin #ee-msg-edit-frm #post-body.columns-2 #postbox-container-1 {
+    margin-top: -24px;
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {
@@ -48,7 +63,10 @@
 }
 
 .ee-msg-switcher-container {
-    margin-top: 8px;
+    background: white;
+    grid-area: msg-header-2;
+    margin: 0;
+    padding: 1rem 1rem 1rem 0;
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {
@@ -225,9 +243,16 @@
 }
 
 
-.ee-messages-shortcodes-chooser-wrap {
-    float:right;
+.ee_shortcode_chooser_container_wrap {
+    float: right;
+    padding: 0.125rem;
     position: relative;
+}
+
+.ee-messages-shortcodes-chooser {
+    margin-top: 0;
+    font-size: 1.4em;
+    cursor: pointer;
 }
 
 .wp-core-ui .button.ee-messages-shortcodes-chooser {
@@ -269,20 +294,22 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
 }
 
 .ee_shortcode_chooser_container {
-    background-color: white;
-    border: 2px hsl(207, 68%, 41%) solid;
+    background-color: var(--ee-color-white);
+    border: 2px solid var(--ee-status-color-blue);
     border-radius: .25rem;
     box-shadow: 0 6px 6px -4px hsla(207, 5%, 10%, .8), 0 0 16px -2px hsla(207, 5%, 10%, .4);
-    color: hsla(207, 5%, 20%, .75);
+    /*box-shadow: 0 3px 6px -1px hsla(0, 0%, 0%, .75), 0 0 20px -2px hsla(0, 0%, 0%, .15);*/
     font-size: .8rem;
     font-weight: 600;
     height: auto;
     margin: 0;
     max-height: 300px;
+    min-height: 150px;
+    min-width: 300px;
     overflow: scroll;
-    padding: 1rem;
+    padding: 1rem !important;
     text-align:left;
-    width: 300px;
+    width: fit-content;
     z-index: 4000;
 }
 
@@ -294,8 +321,9 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     margin: 0;
     margin-block-end: .5rem;
 }
-#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container h4 {
-    color: hsla(207, 5%, 66%, 1);
+
+#ee-msg-edit-frm .ee_shortcode_chooser_container h5 {
+    color: var(--ee-border-color);
     font-size: 1.6rem;
     font-weight: 800;
     line-height: 1;
@@ -303,6 +331,7 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     margin-block-end: 1rem;
 }
 
+/*
 #ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container ul {
     margin: 0;
     padding: 0;
@@ -329,14 +358,10 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     cursor: not-allowed;
 }
 
-/*#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection.ee-shortcode-selected:hover {*/
-/*    background-color: hsla(330, 30%, 41%, .1);*/
-/*    color: hsla(330, 100%, 15%, 1);*/
-/*}*/
-
 #ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container li:last-of-type {
     margin-bottom: 0;
 }
+*/
 
 #ee-msg-edit-frm .admin-primary-mbox-dv ul,
 #ee-msg-edit-frm .admin-primary-mbox-dv li {
@@ -361,26 +386,27 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     width: 94%;
 }
 
-/*#ee-msg-edit-frm #to-content {*/
-/*    width: 90%*/
-/*}*/
-
 /** context toggle **/
-.context-active-control-container {
-    max-width: 550px;
+ .context-active-control-container {
+    align-items: center;
+    background: white;
+    display: flex;
+    grid-area: msg-header-1;
+    padding: 1rem 0 1rem 1rem;
+    --ee-switch-size: 1.5rem;
+    --ee-switch-size-btn: calc(var(--ee-switch-size) * .75);
+    --ee-switch-size-width: calc(var(--ee-switch-size) * 2);
 }
-.context-active-control-container .spinner {
-    margin-top: 15px;
-
+ .context-active-control-container .spinner {
+     margin: 0;
+     margin-inline: 1rem;
 }
 .activate_context_on_off_toggle_container {
-    background: white;
-    margin-top: 10px;
-    padding: 15px;
-    width: auto;
-    max-width: 500px;
+    display: flex;
 }
-.activate_context_on_off_toggle_container .switch {
-    float:right;
-    margin-top: -5px;
+.activate_context_on_off_toggle_container .ee-on-off-toggle-label {
+    width: 24rem;
+}
+.activate_context_on_off_toggle_container #ee-on-off-toggle-primary_attendee {
+    display: none;
 }

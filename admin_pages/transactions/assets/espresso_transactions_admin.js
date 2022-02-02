@@ -57,7 +57,7 @@ jQuery(document).ready(function($) {
 		} else {
 			//payment
 			$('.txn-reg-status-change-reg-status').val('NAN');
-			$('#admin-modal-dialog-edit-payment-h2').show().find('span').html(PAY_ID);
+			$('#admin-modal-dialog-edit-payment-h2').show().find('.ee-admin-payment-id').html(PAY_ID);
 			// transfer values from table to modal box form
 			$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
             $('#txn-admin-payment-type-inp').val(1);

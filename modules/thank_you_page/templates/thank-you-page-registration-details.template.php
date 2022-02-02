@@ -72,7 +72,7 @@
                                    'event_espresso'
                                ); ?>"
                             >
-                                <span class="ee-icon ee-icon-user-edit"></span>
+                                <span class="dashicons dashicons-groups"></span>
                                 <?php esc_html_e('edit info', 'event_espresso'); ?>
                             </a>
                         <?php } ?>

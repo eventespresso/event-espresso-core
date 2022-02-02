@@ -323,7 +323,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         );
         foreach ($payment_methods as $payment_method) {
             if ($payment_method instanceof EE_Payment_Method) {
-                add_meta_box(
+                $this->addMetaBox(
                     // html id
                     'espresso_' . $payment_method->slug() . '_payment_settings',
                     // title
@@ -694,7 +694,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                             $link_text_and_title,
                             $link_text_and_title,
                             'deactivate_' . $payment_method->slug(),
-                            'espresso-button button-secondary'
+                            'espresso-button button--secondary'
                         )
                     )
                 )
@@ -753,7 +753,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                                             $link_text_and_title,
                                             $link_text_and_title,
                                             'activate_' . $payment_method->slug(),
-                                            'espresso-button-green button-primary'
+                                            'espresso-button-green button--primary'
                                         )
                                     )
                                 )

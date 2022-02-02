@@ -20,7 +20,7 @@ class Registration_List_Table_Tips extends EE_Qtip_Config
         $this->_qtipsa = array(
             0 => array(
                 'content_id' => 'registration-trash-lock',
-                'target'     => '.ee-lock-icon',
+                'target'     => '.dashicons-lock',
                 'content'    => $this->_registration_trash_message(),
             ),
             /** removing status strips for now because they are triggered anywhere on the row. */

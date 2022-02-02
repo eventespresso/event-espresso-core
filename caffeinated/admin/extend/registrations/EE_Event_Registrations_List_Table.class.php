@@ -198,7 +198,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             );
             $evts[] = array(
                 'id'   => 0,
-                'text' => esc_html__('To toggle Check-in status, select an event', 'event_espresso'),
+                'text' => esc_html__(' - select an event - ', 'event_espresso'),
             );
             $checked = 'checked';
             /** @var EE_Event $evt */
@@ -221,10 +221,15 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 }
             }
             $event_filter = '<div class="ee-event-filter">';
+            $event_filter .= '<label for="event_id">';
+            $event_filter .= esc_html__('Check-in Status for', 'event_espresso');
+            $event_filter .= '</label>&nbsp;&nbsp;';
             $event_filter .= EEH_Form_Fields::select_input('event_id', $evts, $current_EVT_ID);
             $event_filter .= '<span class="ee-event-filter-toggle">';
-            $event_filter .= '<input type="checkbox" id="js-ee-hide-expired-events" ' . $checked . '> ';
+            $event_filter .= '<label for="js-ee-hide-expired-events">';
+            $event_filter .= '<input type="checkbox" id="js-ee-hide-expired-events" ' . $checked . '>&nbsp;&nbsp;';
             $event_filter .= esc_html__('Hide Expired Events', 'event_espresso');
+            $event_filter .= '</label>';
             $event_filter .= '</span>';
             $event_filter .= '</div>';
             $filters[] = $event_filter;

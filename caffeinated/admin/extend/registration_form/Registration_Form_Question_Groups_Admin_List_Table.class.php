@@ -112,8 +112,8 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
         $system_group = $item->get('QSG_system');
         $has_questions_with_answers = $item->has_questions_with_answers();
         $lock_icon = $system_group === 0 && $this->_view == 'trash' && $has_questions_with_answers
-            ? 'ee-lock-icon ee-alternate-color'
-            : 'ee-lock-icon ee-system-lock';
+            ? 'dashicons dashicons-lock ee-alternate-color'
+            : 'dashicons dashicons-lock ee-system-lock';
         return $system_group > 0
                || ($system_group === 0
                     && $this->_view == 'trash'

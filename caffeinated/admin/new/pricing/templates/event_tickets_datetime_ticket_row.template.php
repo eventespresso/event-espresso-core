@@ -246,7 +246,7 @@ if (WP_DEBUG) {
                     </tr>
                     </tbody>
                 </table>
-                <button data-context="price-create" class="button-secondary ee-create-button ee-price-create-button"
+                <button data-context="price-create" class="button--secondary ee-create-button ee-price-create-button"
                         data-ticket-row="<?php echo $tkt_row; ?>"<?php echo $show_price_mod_button; ?>>
                     <?php esc_html_e('Add Price Modifier', 'event_espresso'); ?>
                 </button>
@@ -388,11 +388,11 @@ if (WP_DEBUG) {
                     <input type="hidden"
                            name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default]"
                            class="edit-ticket-TKT_is_default" value="<?php echo $TKT_is_default; ?>">
-                    <!--<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php esc_html_e(
+                    <!--<button class="button--primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php esc_html_e(
                         'Update Ticket',
                         'event_espresso'
                     ); ?></button>-->
-                    <button class="button-secondary ee-cancel-button" data-context="ticket"
+                    <button class="button--secondary ee-cancel-button" data-context="ticket"
                             data-ticket-row="<?php echo $tkt_row; ?>"><?php
                                     esc_html_e('Close', 'event_espresso'); ?></button>
                 </div>

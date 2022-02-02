@@ -628,7 +628,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     protected function _price_details_meta_boxes()
     {
-        add_meta_box(
+        $this->addMetaBox(
             'edit-price-details-mbox',
             esc_html__('Default Price Details', 'event_espresso'),
             array($this, '_edit_price_details_meta_box'),
@@ -1082,7 +1082,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     protected function _price_type_details_meta_boxes()
     {
-        add_meta_box(
+        $this->addMetaBox(
             'edit-price-details-mbox',
             esc_html__('Price Type Details', 'event_espresso'),
             array($this, '_edit_price_type_details_meta_box'),

@@ -796,7 +796,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     '<select id="timezone_string" name="timezone_string" aria-describedby="timezone-description">'
                     . EEH_DTT_Helper::wp_timezone_choice('', EEH_DTT_Helper::get_user_locale())
                     . '</select>',
-                    '<button class="button button-secondary timezone-submit">',
+                    '<button class="button button--secondary timezone-submit">',
                     '</button><span class="spinner"></span>'
                 ),
                 __FILE__,
@@ -935,8 +935,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         // make sure this is only when editing
         if (! empty($id)) {
-            $post   = get_post($id);
-            $return .= '<a class="button button-small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">'
+            $post = get_post($id);
+            $return .= '<a class="button button--secondary button--small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">'
                        . esc_html__('Shortcode', 'event_espresso')
                        . '</a> ';
             $return .= '<input id="shortcode" type="hidden" value="[ESPRESSO_TICKET_SELECTOR event_id='
@@ -1631,7 +1631,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $use_advanced_editor = $this->admin_config->useAdvancedEditor();
         // check if the new EDTR reg options meta box is being used, and if so, don't load the legacy version
         if (! $use_advanced_editor || ! $this->feature->allowed('use_reg_options_meta_box')) {
-            add_meta_box(
+            $this->addMetaBox(
                 'espresso_event_editor_event_options',
                 esc_html__('Event Registration Options', 'event_espresso'),
                 [$this, 'registration_options_meta_box'],
@@ -1640,7 +1640,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             );
         }
         if (! $use_advanced_editor) {
-            add_meta_box(
+            $this->addMetaBox(
                 'espresso_event_editor_tickets',
                 esc_html__('Event Datetime & Ticket', 'event_espresso'),
                 [$this, 'ticket_metabox'],
@@ -1683,7 +1683,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'existing_ticket_ids'      => '',
             'total_ticket_rows'        => 1,
             'ticket_js_structure'      => '',
-            'trash_icon'               => 'ee-lock-icon',
+            'trash_icon'               => 'dashicons dashicons-lock',
             'disabled'                 => '',
         ];
         $event_id      = is_object($this->_cpt_model_obj) ? $this->_cpt_model_obj->ID() : null;
@@ -1780,7 +1780,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'TKT_sold'            => $skeleton ? 0 : $ticket->get('TKT_sold'),
             'trash_icon'          => ($skeleton || (! empty($ticket) && ! $ticket->get('TKT_deleted')))
                                      && (! empty($ticket) && $ticket->get('TKT_sold') === 0)
-                ? 'trash-icon dashicons dashicons-post-trash clickable' : 'ee-lock-icon',
+                ? 'trash-icon dashicons dashicons-post-trash clickable' : 'dashicons dashicons-lock',
             'disabled'            => $skeleton || (! empty($ticket) && ! $ticket->get('TKT_deleted')) ? ''
                 : ' disabled=disabled',
         ];

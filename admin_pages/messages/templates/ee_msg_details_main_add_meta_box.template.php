@@ -58,6 +58,6 @@
             </select>
         <?php endif; ?>
 
-        <input id="submit-msg-add-sbmt" class="button-secondary" type="submit" value="Generate Templates">
+        <input id="submit-msg-add-sbmt" class="button--secondary" type="submit" value="Generate Templates">
     </form>
 </div> <!-- end #admin-primary-mbox-dv -->

@@ -1029,7 +1029,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function set_button_css_attributes($primary = true, $button_size = '', $other_attributes = '')
     {
         $button_css_attributes = 'button';
-        $button_css_attributes .= $primary === true ? ' button-primary' : ' button-secondary';
+        $button_css_attributes .= $primary === true ? ' button--primary' : ' button--secondary';
         switch ($button_size) {
             case 'xs':
             case 'extra-small':

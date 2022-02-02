@@ -19,7 +19,7 @@
                 echo $field['field']; // already escaped
             }
             ?>
-            <input class='button-secondary mt-settings-submit no-drag'
+            <input class='button--secondary mt-settings-submit no-drag'
                    type="submit"
                    value="<?php esc_attr_e('Submit', 'event_espresso'); ?>"
             />

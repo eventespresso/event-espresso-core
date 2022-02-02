@@ -9,37 +9,37 @@
  * @var string[] $txn_datetime
  * @var string[] $txn_status
  */
+$amount_due_class = $amount_due ? 'ee-txn-amount-owing' : '';
 ?>
 
-<h3 class="txn-navigation-strip">
-    <?php
-    echo $previous_transaction . '&nbsp;'; // already escaped
-    echo esc_html__('Transaction # ', 'event_espresso');
-    echo esc_html($txn_nmbr['value']);
-    echo '&nbsp;' . $next_transaction; // already escaped
-    ?>
-</h3>
+<div class="ee-admin-page-nav-strip-wrap">
+    <div class='ee-admin-page-nav-strip'>
+        <?php
+        echo $previous_transaction; // already escaped
+        echo '<span>';
+        echo esc_html__('Transaction # ', 'event_espresso');
+        echo esc_html($txn_nmbr['value']);
+        echo '</span>';
+        echo $next_transaction; // already escaped
+        ?>
+    </div>
+</div>
 
-<h2 id="txn-date-h2" class="txn-date-h2">
-    <?php echo esc_html($txn_datetime['value']); ?>
-</h2>
-
-<h2 id="txn-status-h2" class="txn-status-h2">
-    <?php echo esc_html__('Transaction Status: ', 'event_espresso'); ?>
-    <span id="txn-status" class="<?php echo esc_attr($txn_status['class']); ?>">
-        <?php echo esc_html($txn_status['value']); ?>
-    </span>
-</h2>
-
-<?php $attributes = $amount_due ? 'class="txn-amount-due-h2"' : 'class="txn-amount-due-h2 hidden"'; ?>
-<h2 id="txn-amount-due-h2" <?php echo esc_attr($attributes); ?>>
-    <?php echo esc_html__('Total Amount Due: ', 'event_espresso'); ?>
-    <span id="txn-admin-total-amount-due" class="<?php echo esc_attr($amount_due_class); ?>">
-        <?php echo esc_html($amount_due); ?>
-    </span>
-</h2>
-
-<h3 id="txn-selected-method-of-payment-h3" class="txn-selected-method-of-payment-h3">
-    <?php echo esc_html__('Last Method of Payment: ', 'event_espresso'); ?>
-    <?php echo esc_html($method_of_payment_name); ?>
-</h3>
+<div class="ee-admin-page-header-grid">
+    <div class='ee-admin-container'>
+        <label><?php echo esc_html__('Transaction Date', 'event_espresso'); ?></label>
+        <span><?php echo esc_html($txn_datetime['value']); ?></span>
+    </div>
+    <div class='ee-admin-container <?php echo esc_attr($txn_status['class']); ?>'>
+        <label><?php echo esc_html__('Transaction Status: ', 'event_espresso'); ?></label>
+        <span><?php echo esc_html($txn_status['value']); ?></span>
+    </div>
+    <div class='ee-admin-container <?php echo esc_attr($amount_due_class); ?>'>
+        <label><?php echo esc_html__('Total Amount Due: ', 'event_espresso'); ?></label>
+        <span><?php echo esc_html($amount_due); ?></span>
+    </div>
+    <div class='ee-admin-container'>
+        <label><?php echo esc_html__('Last Method of Payment: ', 'event_espresso'); ?></label>
+        <span><?php echo esc_html($method_of_payment_name); ?></span>
+    </div>
+</div>

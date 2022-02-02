@@ -456,7 +456,7 @@ function espressoUpgradeNow()
     <div class="ee-card ee-card__buy-now ee-grid-col-span-3 ee-card--blank">
         <a href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=reviews+tab"
            target="_blank"
-           class="button button-primary button-hero"
+           class="button button--primary button-hero"
         >
             <span class="dashicons dashicons-cart"></span>
             ' . esc_html__('Upgrade Now!', 'event_espresso') . '
