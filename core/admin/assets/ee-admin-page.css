@@ -3147,12 +3147,30 @@ body.espresso-admin #contextual-help-wrap strong {
     width: 15%;
 }
 
+.espresso-admin .tablenav {
+    height: auto;
+    padding: 0;
+    padding-block-start: .5rem;
+    padding-block-end: .25rem;
+    margin: 0;
+}
+
 .espresso-admin .tablenav,
 .espresso-admin .pagination-links,
-.espresso-admin .tablenav .tablenav-pages {
+.espresso-admin .tablenav .tablenav-pages,
+.espresso-admin .paging-input,
+.espresso-admin .tablenav-paging-text {
     display: flex;
-    align-content: center;
     align-items: center;
+}
+
+.espresso-admin .pagination-links .button,
+.espresso-admin .pagination-links > span + span {
+  margin-inline-start: 0.5rem;
+}
+.espresso-admin .tablenav-paging-text {
+    justify-content: space-evenly;
+    min-width: 3rem;
 }
 
 .espresso-admin .tablenav .actions,
@@ -3170,12 +3188,6 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-inline-start: auto;
     padding-inline-start: 1rem;
 }
-
-/*.espresso-admin .tablenav input,*/
-.espresso-admin .pagination-links .button {
-    margin-inline-start: 0.25rem;
-}
-
 
 
 .espresso-admin .wp-list-table .ee-responsive-table-cell {
