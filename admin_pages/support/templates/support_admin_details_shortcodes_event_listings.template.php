@@ -40,7 +40,7 @@
                     'event_espresso'
                 ); ?>
             </strong>
-			<br/>
+            <br />
             [ESPRESSO_EVENTS limit=5]
         </li>
         <li>
@@ -85,7 +85,7 @@
                     'event_espresso'
                 ); ?>
             </strong>
-			<br/>
+            <br />
             [ESPRESSO_EVENTS order_by=start_date,id]
         </li>
     </ul>

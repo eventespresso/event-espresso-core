@@ -70,7 +70,7 @@
         ?>
     </li>
     <li>
-		<strong><?php esc_html_e('Usable From', 'event_espresso'); ?></strong>
+        <strong><?php esc_html_e('Usable From', 'event_espresso'); ?></strong>
         <br />
         <?php esc_html_e('Where this payment method can be used from.', 'event_espresso'); ?>
         <ul>

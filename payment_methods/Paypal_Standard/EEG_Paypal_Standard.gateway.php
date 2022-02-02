@@ -188,7 +188,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
             [
                 'message'     => esc_html__('PayPal payment request initiated.', 'event_espresso'),
                 'transaction' => $payment->transaction()->model_field_array(),
-			],
+            ],
             $payment
         );
         return $payment;

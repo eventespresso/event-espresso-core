@@ -67,7 +67,10 @@
                 ) ?>
                 <span class="plain-text"><?php echo $event->name(); ?></span>
                 <span class="small-text link">
-                [ <a href='<?php echo esc_url_raw($event->get_permalink()) ?>'><?php esc_html_e('view', 'event_espresso'); ?></a> ]
+                [ <a href='<?php echo esc_url_raw($event->get_permalink()) ?>'><?php esc_html_e(
+                    'view',
+                    'event_espresso'
+                ); ?></a> ]
             </span>
             </h3>
             <?php if (strlen($event->description() > 1)) { ?>
@@ -78,8 +81,8 @@
                 foreach ($ticket_line_items_per_event[ $event_id ] as $line_item_id => $line_item) {
                     $ticket       = $line_item->ticket();
                     $taxable_html = $ticket->taxable()
-                            ? '*'
-                            : '';
+                        ? '*'
+                        : '';
                     $subitems     = $line_item->children();
                     $ticket_uses  = $ticket->get_pretty('TKT_uses', esc_html__("any", "event_espresso"));
                     ?>
@@ -87,113 +90,113 @@
                         <div class="ticket-details">
                             <table class="invoice-amount">
                                 <thead>
-                                <tr class="header_row">
-                                    <th class="name-column"><?php esc_html_e("Ticket", "event_espresso"); ?></th>
-                                    <th colspan="2" class="desc-column">
-                                        <?php
-                                        esc_html_e( "Description",  'event_espresso'); ?>
-									</th>
-                                    <th class="number-column item_r">
-										<?php esc_html_e("Quantity", "event_espresso"); ?>
-									</th>
-                                    <th class="number-column item_r">
-										<?php esc_html_e("Price", "event_espresso"); ?>
-									</th>
-                                    <th class="number-column item_r">
-										<?php esc_html_e("Total", "event_espresso"); ?>
-									</th>
-                                </tr>
+                                    <tr class="header_row">
+                                        <th class="name-column"><?php esc_html_e("Ticket", "event_espresso"); ?></th>
+                                        <th colspan="2" class="desc-column">
+                                            <?php
+                                            esc_html_e("Description", 'event_espresso'); ?>
+                                        </th>
+                                        <th class="number-column item_r">
+                                            <?php esc_html_e("Quantity", "event_espresso"); ?>
+                                        </th>
+                                        <th class="number-column item_r">
+                                            <?php esc_html_e("Price", "event_espresso"); ?>
+                                        </th>
+                                        <th class="number-column item_r">
+                                            <?php esc_html_e("Total", "event_espresso"); ?>
+                                        </th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <?php
-                                if (count($subitems) < 2) { ?>
-                                    <tr class="item">
-                                        <td><?php echo esc_html($line_item->name() . $taxable_html); ?></td>
-                                        <td colspan="2">
-                                            <?php echo esc_html($line_item->desc()); ?>
-                                            <p class="ticket-note">
-                                                <?php
-                                                echo sprintf(
-                                                    esc_html__(
-                                                        'This ticket can be used once at %s of the dates/times below.',
-                                                        'event_espresso'
-                                                    ),
-                                                    $ticket_uses
-                                                ); ?>
-                                            </p>
-                                        </td>
-                                        <td class="item_r">
-											<?php echo esc_html($line_item->quantity()); ?>
-										</td>
-                                        <td class="item_r">
-											<?php echo $line_item->unit_price_no_code(); // already escaped ?>
-										</td>
-                                        <td class="item_r">
-											<?php echo $line_item->total_no_code() // already escaped ?>
-										</td>
-                                    </tr>
                                     <?php
-                                } else { ?>
-                                    <tr class="item">
-                                        <td class="aln-left">
-                                            <?php echo esc_html($line_item->name() . $taxable_html); ?>
-                                        </td>
-                                        <td colspan="2">
-											<?php echo esc_html($line_item->desc()); ?>
-                                            <p class="ticket-note">
-                                                <?php
-                                                echo sprintf(
-                                                    esc_html__(
-                                                        'This ticket can be used once at %s of the dates/times below.',
-                                                        'event_espresso'
-                                                    ),
-                                                    $ticket_uses
-                                                ); ?>
-                                            </p>
-                                        </td>
-                                        <td class="item_c">
-                                            <?php echo esc_html($line_item->quantity()); ?>
-                                        </td>
-                                        <td class="item_c">
-                                            <?php echo $line_item->unit_price_no_code(); // already escaped ?>
-                                        </td>
-                                        <td class="item_r">
-                                            <?php echo $line_item->total_no_code(); // already escaped ?>
-                                        </td>
-                                    </tr>
-                                    <?php
-                                    foreach ($subitems as $sub_line_item) {
-                                        $is_percent = $sub_line_item->is_percent(); ?>
-                                        <tr class="subitem-row">
-                                            <td class="subitem">
-                                                <?php echo esc_html($sub_line_item->name()); ?>
+                                    if (count($subitems) < 2) { ?>
+                                        <tr class="item">
+                                            <td><?php echo esc_html($line_item->name() . $taxable_html); ?></td>
+                                            <td colspan="2">
+                                                <?php echo esc_html($line_item->desc()); ?>
+                                                <p class="ticket-note">
+                                                    <?php
+                                                    echo sprintf(
+                                                        esc_html__(
+                                                            'This ticket can be used once at %s of the dates/times below.',
+                                                            'event_espresso'
+                                                        ),
+                                                        $ticket_uses
+                                                    ); ?>
+                                                </p>
+                                            </td>
+                                            <td class="item_r">
+                                                <?php echo esc_html($line_item->quantity()); ?>
+                                            </td>
+                                            <td class="item_r">
+                                                <?php echo $line_item->unit_price_no_code(); // already escaped ?>
+                                            </td>
+                                            <td class="item_r">
+                                                <?php echo $line_item->total_no_code() // already escaped ?>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    } else { ?>
+                                        <tr class="item">
+                                            <td class="aln-left">
+                                                <?php echo esc_html($line_item->name() . $taxable_html); ?>
                                             </td>
                                             <td colspan="2">
-                                                <?php echo esc_html($sub_line_item->desc()) ?>
+                                                <?php echo esc_html($line_item->desc()); ?>
+                                                <p class="ticket-note">
+                                                    <?php
+                                                    echo sprintf(
+                                                        esc_html__(
+                                                            'This ticket can be used once at %s of the dates/times below.',
+                                                            'event_espresso'
+                                                        ),
+                                                        $ticket_uses
+                                                    ); ?>
+                                                </p>
                                             </td>
                                             <td class="item_c">
-                                                <?php // echo $is_percent ? '' : $sub_line_item->quantity()?>
+                                                <?php echo esc_html($line_item->quantity()); ?>
                                             </td>
-                                            <td class="item_c"><?php
-                                                echo $is_percent
-                                                    ? $sub_line_item->percent() . "%"
-                                                    : $sub_line_item->unit_price_no_code(); // already escaped ?>
+                                            <td class="item_c">
+                                                <?php echo $line_item->unit_price_no_code(); // already escaped ?>
                                             </td>
-                                            <td class="item_r"><?php echo $sub_line_item->total_no_code() ?></td>
+                                            <td class="item_r">
+                                                <?php echo $line_item->total_no_code(); // already escaped ?>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                        foreach ($subitems as $sub_line_item) {
+                                            $is_percent = $sub_line_item->is_percent(); ?>
+                                            <tr class="subitem-row">
+                                                <td class="subitem">
+                                                    <?php echo esc_html($sub_line_item->name()); ?>
+                                                </td>
+                                                <td colspan="2">
+                                                    <?php echo esc_html($sub_line_item->desc()) ?>
+                                                </td>
+                                                <td class="item_c">
+                                                    <?php // echo $is_percent ? '' : $sub_line_item->quantity()?>
+                                                </td>
+                                                <td class="item_c"><?php
+                                                    echo $is_percent
+                                                        ? $sub_line_item->percent() . "%"
+                                                        : $sub_line_item->unit_price_no_code(); // already escaped ?>
+                                                </td>
+                                                <td class="item_r"><?php echo $sub_line_item->total_no_code() ?></td>
+                                            </tr>
+                                            <?php
+                                        } ?>
+                                        <tr class="total_tr odd">
+                                            <td colspan="4"></td>
+                                            <td class="total" nowrap="nowrap">
+                                                <?php esc_html_e("Ticket Total:", "event_espresso"); ?>
+                                            </td>
+                                            <td class="item_r">
+                                                <?php echo $line_item->total_no_code(); // already escaped ?>
+                                            </td>
                                         </tr>
                                         <?php
                                     } ?>
-                                    <tr class="total_tr odd">
-                                        <td colspan="4"></td>
-                                        <td class="total" nowrap="nowrap">
-                                            <?php esc_html_e("Ticket Total:", "event_espresso"); ?>
-                                        </td>
-                                        <td class="item_r">
-                                            <?php echo $line_item->total_no_code(); // already escaped ?>
-                                        </td>
-                                    </tr>
-                                    <?php
-                                } ?>
                                 </tbody>
                             </table>
 
@@ -202,7 +205,9 @@
                             <div class="ticket-time-and-place-details">
                                 <div class="ticket-time-details">
                                     <h4 class="sub-section-title no-bottom-margin">
-                                        <img class="icon" src="<?php echo esc_url_raw(EE_IMAGES_URL . 'clock-16x16.png'); ?>">
+                                        <img class="icon"
+                                             src="<?php echo esc_url_raw(EE_IMAGES_URL . 'clock-16x16.png'); ?>"
+                                        >
                                         <?php
                                         echo _n(
                                             "Date/Time:",
@@ -236,7 +241,8 @@
                                     <div class="ticket-place-details">
                                         <h4 class="sub-section-title no-bottom-margin">
                                             <img class="icon" src="<?php
-                                            echo esc_url_raw(EE_IMAGES_URL . 'location-pin-16x16.png'); ?>">
+                                            echo esc_url_raw(EE_IMAGES_URL . 'location-pin-16x16.png'); ?>"
+                                            >
                                             <?php
                                             echo _n(
                                                 "Venue:",
@@ -247,17 +253,17 @@
                                         <ul class="event-venues">
                                             <?php
                                             foreach ($event->venues() as $venue) { ?>
-											<li>
-												<?php echo esc_html($venue->name()) ?>
-												<span class="small-text">
-													[
-													<a href='<?php echo esc_url_raw($venue->get_permalink()) ?>'>
-														<?php esc_html_e('view', 'event_espresso'); ?>
-													</a>
-													]
-												</span>
-											</li>
-											<?php  } ?>
+                                                <li>
+                                                    <?php echo esc_html($venue->name()) ?>
+                                                    <span class="small-text">
+                                                    [
+                                                    <a href='<?php echo esc_url_raw($venue->get_permalink()) ?>'>
+                                                        <?php esc_html_e('view', 'event_espresso'); ?>
+                                                    </a>
+                                                    ]
+                                                </span>
+                                                </li>
+                                            <?php } ?>
                                         </ul>
                                     </div>
                                     <?php
@@ -266,7 +272,8 @@
                             <div class="ticket-registrations-area">
                                 <h4 class="sub-section-title">
                                     <img class="icon" src="<?php
-                                    echo esc_url_raw(EE_IMAGES_URL . 'users-16x16.png'); ?>">
+                                    echo esc_url_raw(EE_IMAGES_URL . 'users-16x16.png'); ?>"
+                                    >
                                     <?php
                                     echo esc_html__("Registration Details", "event_espresso"); ?>
                                     <span class="small-text link">[
@@ -314,10 +321,13 @@
                                                         ?>
                                                         <tr>
                                                             <th>
-                                                                <?php echo $question->display_text(); // already escaped ?>
+                                                                <?php echo $question->display_text(
+                                                                ); // already escaped ?>
                                                             </th>
                                                             <td>
-                                                                <?php echo $registration->answer_value_to_question($question); // already escaped?>
+                                                                <?php echo $registration->answer_value_to_question(
+                                                                    $question
+                                                                ); // already escaped?>
                                                             </td>
                                                         </tr>
                                                     <?php }
@@ -354,28 +364,28 @@
             <h3 class="section-title"><?php esc_html_e("Taxes", 'event_espresso') ?></h3>
             <table class="invoice-amount">
                 <thead>
-                <tr class="header_row">
-                    <th class="left ticket_th"><?php esc_html_e("Tax Name", "event_espresso"); ?></th>
-                    <th class="left"><?php esc_html_e('Description', 'event_espresso'); ?></th>
-                    <th class="event_th item_c"><?php esc_html_e('Rate', 'event_espresso'); ?></th>
-                    <th class="subtotal_th"><?php esc_html_e('Tax Amount', 'event_espresso'); ?></th>
-                </tr>
+                    <tr class="header_row">
+                        <th class="left ticket_th"><?php esc_html_e("Tax Name", "event_espresso"); ?></th>
+                        <th class="left"><?php esc_html_e('Description', 'event_espresso'); ?></th>
+                        <th class="event_th item_c"><?php esc_html_e('Rate', 'event_espresso'); ?></th>
+                        <th class="subtotal_th"><?php esc_html_e('Tax Amount', 'event_espresso'); ?></th>
+                    </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($tax_total_line_item->children() as $child_tax) { ?>
-                    <tr>
-                        <td><?php echo esc_html($child_tax->name()); ?></td>
-                        <td><?php echo esc_html($child_tax->desc()); ?></td>
-                        <td class="item_c"><?php echo esc_html($child_tax->percent()); ?>%
-                        </td>
-                        <td class="item_r"><?php echo $child_tax->total_no_code(); // already escaped ?></td>
+                    <?php foreach ($tax_total_line_item->children() as $child_tax) { ?>
+                        <tr>
+                            <td><?php echo esc_html($child_tax->name()); ?></td>
+                            <td><?php echo esc_html($child_tax->desc()); ?></td>
+                            <td class="item_c"><?php echo esc_html($child_tax->percent()); ?>%
+                            </td>
+                            <td class="item_r"><?php echo $child_tax->total_no_code(); // already escaped ?></td>
+                        </tr>
+                    <?php } ?>
+                    <tr class="total_tr odd">
+                        <td class="total_tr" colspan="2"></td>
+                        <td class="total"><?php esc_html_e("Tax Total:", "event_espresso"); ?></td>
+                        <td class="item_r"><?php echo $tax_total_line_item->total_no_code(); // already escaped ?></td>
                     </tr>
-                <?php } ?>
-                <tr class="total_tr odd">
-                    <td class="total_tr" colspan="2"></td>
-                    <td class="total"><?php esc_html_e("Tax Total:", "event_espresso"); ?></td>
-                    <td class="item_r"><?php echo $tax_total_line_item->total_no_code(); // already escaped ?></td>
-                </tr>
                 </tbody>
             </table>
         <?php } ?>
@@ -395,67 +405,68 @@
         <p>[instructions]</p>
         <table class="invoice-amount">
             <thead>
-            <tr class="header_row">
-                <th><span class=""><?php esc_html_e('Payment Method', 'event_espresso'); ?></span></th>
-                <th class='left datetime_th'><?php esc_html_e("Date", 'event_espresso') ?></th>
-                <th><span class=""><?php esc_html_e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
-                <th><span class=""><?php esc_html_e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
-                <th><span class=""><?php esc_html_e('Status', 'event_espresso'); ?></span></th>
-                <th><?php esc_html_e('Amount', 'event_espresso'); ?></th>
-            </tr>
+                <tr class="header_row">
+                    <th><span class=""><?php esc_html_e('Payment Method', 'event_espresso'); ?></span></th>
+                    <th class='left datetime_th'><?php esc_html_e("Date", 'event_espresso') ?></th>
+                    <th><span class=""><?php esc_html_e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
+                    <th><span class=""><?php esc_html_e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
+                    <th><span class=""><?php esc_html_e('Status', 'event_espresso'); ?></span></th>
+                    <th><?php esc_html_e('Amount', 'event_espresso'); ?></th>
+                </tr>
             </thead>
             <tbody>
-            <?php
-            $c = false;
-            if (! empty($payments)) {
-                foreach ($payments as $payment) {
-                    /* @var $payment EE_Payment */ ?>
-                    <tr class='item <?php echo(($c = ! $c)
-                        ? ' odd'
-                        : '') ?>'>
-                        <td><?php $payment->e('PAY_gateway') ?></td>
-                        <td><?php echo esc_html($payment->timestamp()); ?></td>
-                        <td><?php $payment->e('PAY_txn_id_chq_nmbr') ?></td>
-                        <td><?php $payment->e('PAY_po_number') ?></td>
-                        <td><?php $payment->e_pretty_status() ?></td>
-                        <td class='item_r'><?php echo $payment->amount_no_code(); // already escaped ?></td>
+                <?php
+                $c = false;
+                if (! empty($payments)) {
+                    foreach ($payments as $payment) {
+                        /* @var $payment EE_Payment */ ?>
+                        <tr class='item <?php echo(($c = ! $c)
+                            ? ' odd'
+                            : '') ?>'
+                        >
+                            <td><?php $payment->e('PAY_gateway') ?></td>
+                            <td><?php echo esc_html($payment->timestamp()); ?></td>
+                            <td><?php $payment->e('PAY_txn_id_chq_nmbr') ?></td>
+                            <td><?php $payment->e('PAY_po_number') ?></td>
+                            <td><?php $payment->e_pretty_status() ?></td>
+                            <td class='item_r'><?php echo $payment->amount_no_code(); // already escaped ?></td>
+                        </tr>
+                    <?php }
+                } else { ?>
+                    <tr class='item'>
+                        <td class='aln-cntr' colspan="6">
+                            <?php
+                            esc_html_e(
+                                "No approved payments have been received.",
+                                'event_espresso'
+                            ) ?>
+                        </td>
                     </tr>
-                <?php }
-            } else { ?>
-                <tr class='item'>
+                <?php } ?>
+                <tr class="item">
                     <td class='aln-cntr' colspan="6">
-                        <?php
-                        esc_html_e(
-                            "No approved payments have been received.",
-                            'event_espresso'
-                        ) ?>
+                        <?php if ($amount_owed) { ?>
+                            <a class="noPrint" href='<?php echo $retry_payment_url ?>'>
+                                <?php esc_html_e("Please make a payment.", "event_espresso"); ?>
+                            </a>
+                        <?php } ?>
                     </td>
                 </tr>
-            <?php } ?>
-            <tr class="item">
-                <td class='aln-cntr' colspan="6">
-                    <?php if ($amount_owed) { ?>
-                        <a class="noPrint" href='<?php echo $retry_payment_url ?>'>
-                            <?php esc_html_e("Please make a payment.", "event_espresso"); ?>
-                        </a>
-                    <?php } ?>
-                </td>
-            </tr>
             </tbody>
             <tfoot>
-            <tr class='total_tr'>
-                <td colspan="4">&nbsp;</td>
-                <td class="item_r"><?php esc_html_e('Total Paid', 'event_espresso') ?></td>
-                <td class="item_r">
-                    <?php echo EEH_Template::format_currency($amount_pd, false, false) ?>
-                </td>
-            </tr>
-            <?php // echo $discount; ?>
-            <tr class="total_tr odd">
-                <td colspan="4">&nbsp;</td>
-                <td class="total" id="total_currency"><?php esc_html_e('Amount Owed:', 'event_espresso'); ?></td>
-                <td class="total"><?php echo EEH_Template::format_currency($amount_owed) ?></td>
-            </tr>
+                <tr class='total_tr'>
+                    <td colspan="4">&nbsp;</td>
+                    <td class="item_r"><?php esc_html_e('Total Paid', 'event_espresso') ?></td>
+                    <td class="item_r">
+                        <?php echo EEH_Template::format_currency($amount_pd, false, false) ?>
+                    </td>
+                </tr>
+                <?php // echo $discount; ?>
+                <tr class="total_tr odd">
+                    <td colspan="4">&nbsp;</td>
+                    <td class="total" id="total_currency"><?php esc_html_e('Amount Owed:', 'event_espresso'); ?></td>
+                    <td class="total"><?php echo EEH_Template::format_currency($amount_owed) ?></td>
+                </tr>
             </tfoot>
         </table>
     </div>
@@ -463,30 +474,30 @@
         <h3 class="section-title"><?php esc_html_e("Additional Information:", "event_espresso"); ?></h3>
         <div class="additional-info">
             <?php if ($venues_for_events) { ?>
-            <h2>
-                <?php
-                echo _n("Venue Details:", "Venues Details:", count($venues_for_events), "event_espresso"); ?>
-            </h2>
-            <table class="venue-list">
-                <?php foreach ($venues_for_events as $venue) { ?>
-                <tr class="venue-details">
-                    <td class="venue-details-part venue-address-dv">
-                        <h3>
-                            <a href='<?php echo esc_url_raw($venue->get_permalink()) ?>'>
-                                <?php echo esc_html($venue->name()); ?>
-                            </a>
-                        </h3>
-                        <p><?php echo $venue->description(); // already escaped ?></p>
-                        <?php echo EEH_Address::format($venue); ?>
-                    </td>
-                    <?php if ($venue->enable_for_gmap()) { ?>
-                    <td class="venue-details-part venue-image-dv">
-                        <?php echo EEH_Venue_View::espresso_google_static_map($venue); ?>
-                    </td>
+                <h2>
+                    <?php
+                    echo _n("Venue Details:", "Venues Details:", count($venues_for_events), "event_espresso"); ?>
+                </h2>
+                <table class="venue-list">
+                    <?php foreach ($venues_for_events as $venue) { ?>
+                        <tr class="venue-details">
+                            <td class="venue-details-part venue-address-dv">
+                                <h3>
+                                    <a href='<?php echo esc_url_raw($venue->get_permalink()) ?>'>
+                                        <?php echo esc_html($venue->name()); ?>
+                                    </a>
+                                </h3>
+                                <p><?php echo $venue->description(); // already escaped ?></p>
+                                <?php echo EEH_Address::format($venue); ?>
+                            </td>
+                            <?php if ($venue->enable_for_gmap()) { ?>
+                                <td class="venue-details-part venue-image-dv">
+                                    <?php echo EEH_Venue_View::espresso_google_static_map($venue); ?>
+                                </td>
+                            <?php } ?>
+                        </tr>
                     <?php } ?>
-                </tr>
-                <?php } ?>
-            </table>
+                </table>
             <?php } ?>
         </div>
     </div>

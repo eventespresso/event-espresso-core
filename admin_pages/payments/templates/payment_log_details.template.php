@@ -12,8 +12,8 @@
  */
 ?>
 <div class="padding">
-	<table class="ee-payment-log-details widefat">
-		<tbody>
+    <table class="ee-payment-log-details widefat">
+        <tbody>
             <tr>
                 <th>
                     <label>

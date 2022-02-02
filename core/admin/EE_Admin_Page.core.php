@@ -547,7 +547,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function _global_ajax_hooks()
     {
         // for lazy loading of metabox content
-		add_action('wp_ajax_espresso-ajax-content', [$this, 'ajax_metabox_content'], 10);
+        add_action('wp_ajax_espresso-ajax-content', [$this, 'ajax_metabox_content'], 10);
 
         add_action(
             'wp_ajax_espresso_hide_status_change_notice',
@@ -1129,7 +1129,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $args['admin_page_object'] = $this;
             }
             if (
-				// is it a method on a class that doesn't work?
+                // is it a method on a class that doesn't work?
                 (
                     (
                         method_exists($class, $method)

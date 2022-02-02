@@ -411,19 +411,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                 $fieldName === 'QSG_identifier'
                 && (isset($this->_req_data['QSG_identifier']) && empty($this->_req_data['QSG_identifier']))
             ) {
-                $QSG_name = isset($this->_req_data['QSG_name'])
-                    ? $this->_req_data['QSG_name']
-                    : '';
+                $QSG_name = $this->_req_data['QSG_name'] ?? '';
                 $set_column_values[ $fieldName ] = sanitize_title($QSG_name) . '-' . uniqid('', true);
             } elseif (
                 $fieldName === 'QST_admin_label'
                 && (isset($this->_req_data['QST_admin_label']) && empty($this->_req_data['QST_admin_label']))
             ) {
                 // the admin label is blank, use a slug version of the question text
-                $QST_text                        =
-                    isset($this->_req_data['QST_display_text'])
-                        ? $this->_req_data['QST_display_text']
-                        : '';
+                $QST_text = $this->_req_data['QST_display_text'] ?? '';
                 $set_column_values[ $fieldName ] = sanitize_title(wp_trim_words($QST_text, 10));
             } elseif ($fieldName === 'QST_admin_only' && (! isset($this->_req_data['QST_admin_only']))) {
                 $set_column_values[ $fieldName ] = 0;
@@ -431,18 +426,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                 $qst_system = $question_model->get_var(
                     [
                         [
-                            'QST_ID' => isset($this->_req_data['QST_ID'])
-                                ? $this->_req_data['QST_ID']
-                                : 0,
+                            'QST_ID' => $this->_req_data['QST_ID'] ?? 0,
                         ],
                     ],
                     'QST_system'
                 );
                 $max_max    = $question_model->absolute_max_for_system_question((string) $qst_system);
-                if (
-                    empty($this->_req_data['QST_max']) ||
-					$this->_req_data['QST_max'] > $max_max
-                ) {
+                if (empty($this->_req_data['QST_max']) || $this->_req_data['QST_max'] > $max_max) {
                     $set_column_values[ $fieldName ] = $max_max;
                 }
             }

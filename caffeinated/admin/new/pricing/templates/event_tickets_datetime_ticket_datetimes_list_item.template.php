@@ -13,7 +13,7 @@
 ?>
 
 <li class="datetime-ticket clickable<?php echo $ticket_datetime_selected; ?><?php echo $tkt_status_class; ?>"
-	data-context="ticket-datetime"
+    data-context="ticket-datetime"
     data-datetime-row="<?php echo $dtt_row; ?>"
     data-ticket-row="<?php echo $tkt_row; ?>"
 >

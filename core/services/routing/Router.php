@@ -82,7 +82,7 @@ class Router
         $this->route_handler->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\ActivationRequests');
         $this->route_handler->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RegularRequests');
         $this->route_request_type = $this->route_handler->getRouteRequestType();
-        $this->routes_loaded[__FUNCTION__] = true;
+        $this->routes_loaded[ __FUNCTION__ ] = true;
     }
 
 

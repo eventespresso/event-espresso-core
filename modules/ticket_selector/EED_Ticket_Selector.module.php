@@ -167,11 +167,11 @@ class EED_Ticket_Selector extends EED_Module
             EED_Ticket_Selector::$ticket_selector = LoaderFactory::getLoader()->getShared(
                 DisplayTicketSelector::class,
                 [
-					null,
-                	EED_Ticket_Selector::getRequest(),
-                	EED_Ticket_Selector::ticketConfig(),
-                	EED_Events_Archive::is_iframe(),
-				]
+                    null,
+                    EED_Ticket_Selector::getRequest(),
+                    EED_Ticket_Selector::ticketConfig(),
+                    EED_Events_Archive::is_iframe(),
+                ]
             );
         }
         return EED_Ticket_Selector::$ticket_selector;

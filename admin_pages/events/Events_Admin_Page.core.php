@@ -987,8 +987,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             esc_html__('View Event Archive Page', 'event_espresso'),
             'button'
         );
-        $after_list_table['legend'] = $this->_display_legend($this->_event_legend_items());
-        $this->_admin_page_title    .= ' ' . $this->get_action_link_or_button(
+        $after_list_table['legend']                 = $this->_display_legend($this->_event_legend_items());
+        $this->_admin_page_title                    .= ' ' . $this->get_action_link_or_button(
             'create_new',
             'add',
             [],
@@ -1052,11 +1052,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         ];
         // check if the new EDTR reg options meta box is being used, and if so, don't run updates for legacy version
         if (! $this->admin_config->useAdvancedEditor() || ! $this->feature->allowed('use_reg_options_meta_box')) {
-            $event_values['EVT_display_ticket_selector'] = $this->request->getRequestParam(
+            $event_values['EVT_display_ticket_selector']     = $this->request->getRequestParam(
                 'display_ticket_selector',
                 false,
                 'bool'
-			);
+            );
             $event_values['EVT_additional_limit']            = min(
                 apply_filters('FHEE__EE_Events_Admin__insert_update_cpt_item__EVT_additional_limit_max', 255),
                 $this->request->getRequestParam('additional_limit', null, 'int')
@@ -1065,9 +1065,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'EVT_default_registration_status',
                 EE_Registry::instance()->CFG->registration->default_STS_ID
             );
-            $event_values['EVT_external_URL']                = $this->request->getRequestParam('externalURL');
-            $event_values['EVT_phone']                       = $this->request->getRequestParam('event_phone');
-            $event_values['EVT_display_desc']                       = $this->request->getRequestParam('display_desc', false, 'bool');
+
+            $event_values['EVT_external_URL'] = $this->request->getRequestParam('externalURL');
+            $event_values['EVT_phone']        = $this->request->getRequestParam('event_phone');
+            $event_values['EVT_display_desc'] = $this->request->getRequestParam('display_desc', false, 'bool');
         }
         // update event
         $success = $this->_event_model()->update_by_ID($event_values, $post_id);
@@ -1101,13 +1102,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $event_update_callbacks
         );
 
-		$att_success = true;
+        $att_success = true;
         foreach ($event_update_callbacks as $e_callback) {
             $_success = is_callable($e_callback)
                 ? $e_callback($event, $this->request->requestParams())
                 : false;
             // if ANY of these updates fail then we want the appropriate global error message
-            $att_success = $results !== false ? $att_success : false;
+            $att_success = $_success !== false ? $att_success : false;
         }
         // any errors?
         if ($success && $att_success === false) {
@@ -1358,13 +1359,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 $ticket_sold = $existing_ticket->count_related(
                     'Registration',
                     [
-                        [
-                            'STS_ID' => [
-                                'NOT IN',
-                                [EEM_Registration::status_id_incomplete],
+                            [
+                                'STS_ID' => [
+                                    'NOT IN',
+                                    [EEM_Registration::status_id_incomplete],
+                                ],
                             ],
-                        ],
-                    ]
+                        ]
                 ) > 0;
                 // let's just check the total price for the existing ticket and determine if it matches the new total price.
                 // if they are different then we create a new ticket (if $ticket_sold)
@@ -2514,9 +2515,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     'Default Maximum Tickets Allowed Per Order:',
                                     'event_espresso'
                                 )
-                                . EEH_Template::get_help_tab_link(
-                                    'default_maximum_tickets_help_tab"'
-                                ),
+                                                     . EEH_Template::get_help_tab_link(
+                                                         'default_maximum_tickets_help_tab"'
+                                                     ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to indicate what will be the default for the maximum number of tickets per order when creating new events.',
                                     'event_espresso'
@@ -2822,9 +2823,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         } else {
             $category_ID = $insert_ids['term_id'];
             $msg         = sprintf(
-				esc_html__('The category %s was successfully saved', 'event_espresso'),
-				$category_name
-			);
+                esc_html__('The category %s was successfully saved', 'event_espresso'),
+                $category_name
+            );
             EE_Error::add_success($msg);
         }
         return $category_ID;

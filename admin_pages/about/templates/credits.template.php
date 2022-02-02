@@ -63,8 +63,8 @@ $tEEm_members = [
 <?php
 foreach ($tEEm_members as $tEEm => $members) {
     echo '
-<h3 class="wp-people-group">' . $tEEm .'</h3>
-<ul class="ee-card-grid ee-card-grid-4-cols ee-credits-tEEm" id="' . sanitize_key($tEEm) .'">';
+<h3 class="wp-people-group">' . $tEEm . '</h3>
+<ul class="ee-card-grid ee-card-grid-4-cols ee-credits-tEEm" id="' . sanitize_key($tEEm) . '">';
     foreach ($members as $id => $person) {
         echo espressoPerson($id, $person['email'], $person['name'], $person['desc']);
     }

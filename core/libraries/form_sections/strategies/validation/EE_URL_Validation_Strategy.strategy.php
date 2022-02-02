@@ -75,8 +75,8 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
                     )
                 ) {
                     throw new EE_Validation_Error(
-						esc_html__("That URL seems to be broken. Please enter a valid URL", "event_espresso")
-					);
+                        esc_html__("That URL seems to be broken. Please enter a valid URL", "event_espresso")
+                    );
                 }
             }
         }

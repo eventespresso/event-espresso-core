@@ -569,15 +569,15 @@ final class EE_Admin implements InterminableInterface
 
 
         if (! $this->request->isAjax()) {
-			/**
-			 * This code excludes EE critical pages anywhere `wp_dropdown_pages` is used to create a dropdown for selecting
-			 * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical
-			 * Pages" tab in the EE General Settings Admin page.
-			 * This is for user-proofing.
-			 */
-			add_filter('wp_dropdown_pages', [$this, 'modify_dropdown_pages']);
-			if (EE_Maintenance_Mode::instance()->models_can_query()) {
-				$this->adminInitModelsReady();
+            /**
+             * This code excludes EE critical pages anywhere `wp_dropdown_pages` is used to create a dropdown for selecting
+             * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical
+             * Pages" tab in the EE General Settings Admin page.
+             * This is for user-proofing.
+             */
+            add_filter('wp_dropdown_pages', [$this, 'modify_dropdown_pages']);
+            if (EE_Maintenance_Mode::instance()->models_can_query()) {
+                $this->adminInitModelsReady();
             }
         }
     }

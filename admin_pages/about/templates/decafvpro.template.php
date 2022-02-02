@@ -7,7 +7,7 @@
         '<a href="https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
         '</a>'
     ); ?>
-	</p>
+    </p>
     <br>
 
     <?php

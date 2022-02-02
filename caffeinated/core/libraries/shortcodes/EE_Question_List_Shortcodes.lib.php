@@ -60,7 +60,7 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes
     {
         $this->_validate_list_requirements();
 
-		// for when [QUESTION_LIST] is used in the [attendee_list] field.
+        // for when [QUESTION_LIST] is used in the [attendee_list] field.
         if ($this->_data['data'] instanceof EE_Registration) {
             return $this->_get_question_answer_list_for_attendee();
         }

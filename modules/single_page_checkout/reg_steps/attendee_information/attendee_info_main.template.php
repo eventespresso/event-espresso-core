@@ -46,27 +46,27 @@ if (count($registrations) > 0) {
                     </h4>
                 <?php } ?>
                 <?php if (! $revisit && $registration->ticket()->ID() !== $prev_ticket) { ?>
-					<div class="spco-ticket-info-dv">
-						<table class="spco-ticket-details">
-							<thead>
-								<tr>
-									<th scope="col" width="" class="jst-left"></th>
-									<th scope="col" width="7.5%" class="jst-rght">
-										<?php esc_html_e('Qty', 'event_espresso'); ?>
-									</th>
-									<th scope="col" width="17.5%" class="jst-rght">
-										<?php esc_html_e('Price', 'event_espresso'); ?>
-									</th>
-									<th scope="col" width="17.5%" class="jst-rght">
-										<?php esc_html_e('Total', 'event_espresso'); ?>
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php echo $ticket_line_item[ $registration->ticket()->ID() ]; // already escaped ?>
-							</tbody>
-						</table>
-					</div>
+                    <div class="spco-ticket-info-dv">
+                        <table class="spco-ticket-details">
+                            <thead>
+                                <tr>
+                                    <th scope="col" width="" class="jst-left"></th>
+                                    <th scope="col" width="7.5%" class="jst-rght">
+                                        <?php esc_html_e('Qty', 'event_espresso'); ?>
+                                    </th>
+                                    <th scope="col" width="17.5%" class="jst-rght">
+                                        <?php esc_html_e('Price', 'event_espresso'); ?>
+                                    </th>
+                                    <th scope="col" width="17.5%" class="jst-rght">
+                                        <?php esc_html_e('Total', 'event_espresso'); ?>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $ticket_line_item[ $registration->ticket()->ID() ]; // already escaped ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php } ?>
 
                 <?php

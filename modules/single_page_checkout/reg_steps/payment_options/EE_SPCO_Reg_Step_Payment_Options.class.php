@@ -1425,8 +1425,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             apply_filters(
                 'FHEE__populate_billing_form_fields_from_attendee',
                 (
-					$this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
-					&& $this->checkout->transaction_has_primary_registrant()
+                    $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
+                    && $this->checkout->transaction_has_primary_registrant()
                 ),
                 $this->checkout->billing_form,
                 $this->checkout->transaction

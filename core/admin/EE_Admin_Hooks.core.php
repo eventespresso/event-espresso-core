@@ -229,9 +229,9 @@ abstract class EE_Admin_Hooks extends EE_Base
         if (
             ! isset($this->_req_data['page'])
             || (
-				isset($this->_req_data['page'])
+                isset($this->_req_data['page'])
                 && $this->_adminpage_obj->page_slug != $this->_req_data['page']
-			)
+            )
         ) {
             return;
         }

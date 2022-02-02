@@ -165,9 +165,9 @@ abstract class AbstractHelper implements HelperInterface
         <?php
         if (! empty($timezone_string) || ! empty($gmt_offset)) : ?>
         <br/>
-		<span><?php
-		printf(esc_html__('Local time is %1$s', 'event_espresso'), '<code>' . date_i18n($datetime_format) . '</code>');
-		?></span>
+        <span><?php
+        printf(esc_html__('Local time is %1$s', 'event_espresso'), '<code>' . date_i18n($datetime_format) . '</code>');
+        ?></span>
             <?php
         endif; ?>
 

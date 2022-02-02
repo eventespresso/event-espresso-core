@@ -106,8 +106,7 @@ class DisplayTicketSelector
         RequestInterface $request,
         EE_Ticket_Selector_Config $config,
         bool $iframe = false
-    )
-    {
+    ) {
         $this->current_user = $current_user;
         $this->request     = $request;
         $this->config      = $config;

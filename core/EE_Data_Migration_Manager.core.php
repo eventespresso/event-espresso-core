@@ -398,7 +398,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         if (empty($this->dms_folders)) {
             $this->dms_folders = apply_filters(
                 'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
-            	['Core' => EE_CORE . 'data_migration_scripts']
+                ['Core' => EE_CORE . 'data_migration_scripts']
             );
         }
         return $this->dms_folders;

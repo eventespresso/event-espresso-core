@@ -469,7 +469,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                     esc_html__('The %1$sfile located at "%2$s" is not writable.', 'event_espresso'),
                     $file_type,
                     $full_file_path
-				);
+                );
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_file_path);
                 EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }

@@ -52,7 +52,7 @@ class Invoice
         );
         /** @var EEM_Registration $reg_model */
         $reg_model = EE_Registry::instance()->load_model('Registration');
-		$this->registration = $reg_model->get_registration_for_reg_url_link($url_link);
+        $this->registration = $reg_model->get_registration_for_reg_url_link($url_link);
         if ($this->registration instanceof EE_Registration) {
             $this->transaction = $this->registration->transaction();
             EE_Config::instance()->gateway->payment_settings;
