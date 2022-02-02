@@ -77,11 +77,6 @@ class EE_Admin_Page_Loader
      */
     public $hook_file;
 
-    /**
-     * @var LoaderInterface
-     */
-    protected $loader;
-
 
     /**
      * @throws InvalidArgumentException

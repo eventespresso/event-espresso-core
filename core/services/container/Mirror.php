@@ -174,46 +174,6 @@ class Mirror
 
     /**
      * @param ReflectionParameter $param
-     * @return string|null
-     * @since   4.10.13.p
-     */
-    private function getParameterClassNameLegacy(ReflectionParameter $param)
-    {
-        $reflection_class = $param->getClass();
-        return $reflection_class instanceof ReflectionClass
-            ? $reflection_class->getName()
-            : null;
-    }
-
-
-    /**
-     * ReflectionParameter::getClass() is deprecated in PHP 8+,
-     * so the class name for a parameter needs to be extracted from the ReflectionType,
-     * which can either be a ReflectionNamedType or ReflectionUnionType
-     *
-     * @param ReflectionParameter $param
-     * @return null
-     * @since   4.10.13.p
-     */
-    private function getParameterClassNamePhp8(ReflectionParameter $param)
-    {
-        $reflection_type = $param->getType();
-        if ($reflection_type instanceof \ReflectionNamedType) {
-            return $reflection_type->getName();
-        }
-        if ($reflection_type instanceof \ReflectionUnionType) {
-            $reflection_types = $reflection_type->getTypes();
-            if (is_array($reflection_types)) {
-                $first = reset($reflection_types);
-                return $first->getName();
-            }
-        }
-        return null;
-    }
-
-
-    /**
-     * @param ReflectionParameter $param
      * @param string              $class_name
      * @param string              $index
      * @return string|null
