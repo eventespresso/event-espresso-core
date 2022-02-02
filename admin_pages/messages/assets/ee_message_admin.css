@@ -125,38 +125,58 @@
 
 
 /** overview table styles **/
-
-#Custom_Messages_Template_List_Table-table-frm .column-name {
-    width: 14%;
+.espresso-admin .wp-list-table.messages  th.column-primary.column-to,
+.espresso-admin .wp-list-table.messages  td.column-primary.column-to,
+.espresso-admin .wp-list-table.messagetemplate  th.column-primary.column-to,
+.espresso-admin .wp-list-table.messagetemplate  td.column-primary.column-to {
+  max-width: unset;
+  min-width: unset;
+  padding-inline: 1rem;
+  width: 15%;
 }
 
-#Messages_Template_List_Table-table-frm .column-messenger,
-#Custom_Messages_Template_List_Table-table-frm .column-messenger {
-    width: 30%;
-}
-
-#Messages_Template_List_Table-table-frm .column-message_type,
-#Custom_Messages_Template_List_Table-table-frm .column-message_type {
+.espresso-admin .wp-list-table.messages .column-name,
+.espresso-admin .wp-list-table.messagetemplate .column-name {
     width: 15%;
 }
 
-#Messages_Template_List_Table-table-frm .column-description {
+.espresso-admin .wp-list-table.messages .column-messenger,
+.espresso-admin .wp-list-table.messagetemplate .column-messenger {
+    width: 7.5%;
+}
+
+.espresso-admin .wp-list-table.messages .column-message_type,
+.espresso-admin .wp-list-table.messagetemplate .column-message_type {
+    width: 15%;
+}
+
+.espresso-admin .wp-list-table.messages .column-recipients,
+.espresso-admin .wp-list-table.messagetemplate .column-recipients {
+    width: 15%;
+}
+
+.espresso-admin .wp-list-table.messages .column-description,
+.espresso-admin .wp-list-table.messagetemplate .column-description {
     width: 40%;
 }
 
-#Custom_Messages_Template_List_Table-table-frm .column-description {
+.espresso-admin .wp-list-table.messages .column-description,
+.espresso-admin .wp-list-table.messagetemplate .column-description {
     width: 35%;
 }
 
-#Custom_Messages_Template_List_Table-table-frm .column-actions {
+.espresso-admin .wp-list-table.messages .column-actions,
+.espresso-admin .wp-list-table.messagetemplate .column-actions {
     width: 15%;
 }
 
-#Messages_Template_List_Table-table-frm .column-actions {
+.espresso-admin .wp-list-table.messages.column-actions,
+.espresso-admin .wp-list-table.messagetemplate.column-actions {
     width: 15%;
 }
 
-#Custom_Messages_Template_List_Table-table-frm .column-events {
+.espresso-admin .wp-list-table.messages .column-events,
+.espresso-admin .wp-list-table.messagetemplate .column-events {
     width: 10%;
     text-align: center;
 }
