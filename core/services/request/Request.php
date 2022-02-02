@@ -551,7 +551,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * @return RequestTypeContextCheckerInterface
      */
-    public function getRequestType()
+    public function getRequestType(): RequestTypeContextCheckerInterface
     {
         return $this->request_type;
     }

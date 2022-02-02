@@ -415,7 +415,7 @@ class Read extends Base
      *                                                            relations will be based
      * @param EE_Model_Relation_Base $relation
      * @param WP_REST_Request        $request
-     * @return array
+     * @return array|null
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -431,7 +431,7 @@ class Read extends Base
         array $primary_model_query_params,
         EE_Model_Relation_Base $relation,
         WP_REST_Request $request
-    ): array {
+    ) {
         $context       = $this->validateContext($request->get_param('caps'));
         $model         = $relation->get_this_model();
         $related_model = $relation->get_other_model();
@@ -919,7 +919,7 @@ class Read extends Base
      * @param EE_Model_Field_Base $field_obj
      * @param mixed               $value  as it's stored on a model object
      * @param string              $format valid values are 'normal' (default), 'pretty', 'datetime_obj'
-     * @return array
+     * @return array|int
      * @throws RestException if $value contains a PHP object
      * @throws EE_Error
      */
@@ -927,7 +927,7 @@ class Read extends Base
         EE_Model_Field_Base $field_obj,
         $value,
         string $format = 'normal'
-    ): array {
+    ) {
         $value = $field_obj->prepare_for_set_from_db($value);
         switch ($format) {
             case 'pretty':
@@ -1306,10 +1306,10 @@ class Read extends Base
      * If a context is provided which isn't valid, maybe it was added in a future
      * version so just treat it as a default read
      *
-     * @param string $context
+     * @param string|null $context
      * @return string array key of EEM_Base::cap_contexts_to_cap_action_map()
      */
-    public function validateContext(string $context): string
+    public function validateContext(?string $context): string
     {
         if (! $context) {
             $context = EEM_Base::caps_read;

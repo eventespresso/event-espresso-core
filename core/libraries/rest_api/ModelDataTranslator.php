@@ -94,7 +94,7 @@ class ModelDataTranslator
      * @param EE_Model_Field_Base $field_obj
      * @param mixed               $original_value_maybe_array
      * @param string              $request_version (eg 4.8.36)
-     * @return array
+     * @return array|int|string
      * @throws EE_Error
      * @throws EE_Error
      */
