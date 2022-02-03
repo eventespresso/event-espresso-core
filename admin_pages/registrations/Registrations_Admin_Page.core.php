@@ -1032,7 +1032,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         $fc_items = [
             'star-icon'        => [
-                'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
+                'class' => 'dashicons dashicons-star-filled gold-icon ee-icon-size-8',
                 'desc'  => esc_html__('This is the Primary Registrant', 'event_espresso'),
             ],
             'view_details'     => [
@@ -1081,7 +1081,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         }
         $sc_items = [
             'approved_status'   => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_approved,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_approved,
                     false,
@@ -1089,7 +1089,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'pending_status'    => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_pending_payment,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_pending_payment,
                     false,
@@ -1097,7 +1097,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'wait_list'         => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_wait_list,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_wait_list,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_wait_list,
                     false,
@@ -1105,7 +1105,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'incomplete_status' => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_incomplete,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_incomplete,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_incomplete,
                     false,
@@ -1113,7 +1113,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'not_approved'      => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_not_approved,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_not_approved,
                     false,
@@ -1121,7 +1121,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'declined_status'   => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_declined,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_declined,
                     false,
@@ -1129,7 +1129,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'cancelled_status'  => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_cancelled,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_cancelled,
                     false,
@@ -2530,6 +2530,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             ],
             REG_ADMIN_URL
         );
+        $this->_template_args['att_edit_title'] = esc_html__('View details for this contact.', 'event_espresso');
         $this->_template_args['att_edit_label'] = esc_html__('View/Edit Contact', 'event_espresso');
         // create link
         $this->_template_args['create_link']  = $primary_registration instanceof EE_Registration

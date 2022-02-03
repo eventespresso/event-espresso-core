@@ -577,7 +577,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'FHEE__Transactions_Admin_Page___transaction_legend_items__more_items',
             [
                 'overpaid'   => [
-                    'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
+                    'class' => 'ee-status-legend ee-status-legend--' . EEM_Transaction::overpaid_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::overpaid_status_code,
                         false,
@@ -585,7 +585,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ),
                 ],
                 'complete'   => [
-                    'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::complete_status_code,
+                    'class' => 'ee-status-legend ee-status-legend--' . EEM_Transaction::complete_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::complete_status_code,
                         false,
@@ -593,7 +593,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ),
                 ],
                 'incomplete' => [
-                    'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
+                    'class' => 'ee-status-legend ee-status-legend--' . EEM_Transaction::incomplete_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::incomplete_status_code,
                         false,
@@ -601,7 +601,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ),
                 ],
                 'abandoned'  => [
-                    'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::abandoned_status_code,
+                    'class' => 'ee-status-legend ee-status-legend--' . EEM_Transaction::abandoned_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::abandoned_status_code,
                         false,
@@ -609,7 +609,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ),
                 ],
                 'failed'     => [
-                    'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
+                    'class' => 'ee-status-legend ee-status-legend--' . EEM_Transaction::failed_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::failed_status_code,
                         false,
@@ -1254,7 +1254,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'clear: both; margin: 1.5em 0 0; display: none;'
         );
         $registrations_to_apply_payment_to .= EEH_HTML::br() . EEH_HTML::div('', '', 'admin-primary-mbox-tbl-wrap');
-        $registrations_to_apply_payment_to .= EEH_HTML::table('', '', 'admin-primary-mbox-tbl');
+        $registrations_to_apply_payment_to .= EEH_HTML::table('', '', 'admin-primary-mbox-tbl striped');
         $registrations_to_apply_payment_to .= EEH_HTML::thead(
             EEH_HTML::tr(
                 EEH_HTML::th(esc_html__('ID', 'event_espresso')) .

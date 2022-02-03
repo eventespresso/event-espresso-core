@@ -654,7 +654,7 @@ class EEH_Template
             $active_class = $active_status == $status ? 'class="ee-is-active-status"' : '';
             $content      .= '
                     <dt id="' . esc_attr('ee-legend-item-tooltip-' . $item) . '" ' . $active_class . '>
-                        <span class="' . esc_attr('ee-status-legend ee-status-legend-' . $status) . '"></span>
+                        <span class="' . esc_attr('ee-status-legend ee-status-legend--' . $status) . '"></span>
                         <span class="ee-legend-description">
                             ' . EEH_Template::pretty_status($status, false, 'sentence') . '
                         </span>
