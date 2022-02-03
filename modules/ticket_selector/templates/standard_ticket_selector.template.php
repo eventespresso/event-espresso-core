@@ -37,7 +37,8 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
                 ?>
             </th>
             <?php if (apply_filters('FHEE__ticket_selector_chart_template__display_ticket_price_details', true)) { ?>
-                <th id="price-<?php echo $esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-price-th cntr">
+                <th id="price-<?php echo esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-price-th
+                 cntr">
                     <?php echo $table_header_price; ?>
                 </th>
             <?php } ?>
