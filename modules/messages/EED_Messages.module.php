@@ -636,7 +636,10 @@ class EED_Messages extends EED_Module
         ) {
             $status_change = $request->getRequestParam('txn_reg_status_change', [], 'int', true);
             // make sure appropriate admin params are set for sending messages
-            if (! $status_change['send_notifications']) {
+            if (
+                ! isset($status_change['send_notifications'])
+                || (isset($status_change['send_notifications']) && ! $status_change['send_notifications'])
+            ) {
                 // no messages sent please.
                 return false;
             }

@@ -722,6 +722,10 @@
                                 <?php esc_html_e('Send Related Messages?', 'event_espresso'); ?>
                             </label>
                             <label class="txn-admin-payment-send-notifications-lbl">
+                                <input type="hidden"
+                                       value="0"
+                                       name="txn_payments[send_notifications]"
+                                />
                                 <input type="checkbox"
                                        value="1"
                                        name="txn_payments[send_notifications]"
@@ -732,6 +736,10 @@
                                 <?php esc_html_e('Payment Messages?', 'event_espresso'); ?>
                             </label>
                             <label class="txn-admin-payment-send-notifications-lbl">
+                                <input type="hidden"
+                                       value="0"
+                                       name="txn_reg_status_change[send_notifications]"
+                                />
                                 <input type="checkbox"
                                        value="1"
                                        name="txn_reg_status_change[send_notifications]"
@@ -867,6 +875,10 @@
                             <label for="delete-txn-admin-payment-accounting-inp" class="last">
                                 <?php esc_html_e('Send Related Messages?', 'event_espresso'); ?>
                             </label>
+                            <input type="hidden"
+                                   value="0"
+                                   name="delete_txn_reg_status_change[send_notifications]"
+                            />
                             <input type="checkbox"
                                    value="1"
                                    name="delete_txn_reg_status_change[send_notifications]"
