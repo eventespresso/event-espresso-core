@@ -2,10 +2,7 @@
 
 exports[`ModelSelect Snapshot with default options (with required modelName) should render and match snapshot 1`] = `
 <Fragment>
-  <StateManager
-    defaultInputValue=""
-    defaultMenuIsOpen={false}
-    defaultValue={null}
+  <ForwardRef
     isClearable={true}
     isLoading={true}
     name="model-select-1"
