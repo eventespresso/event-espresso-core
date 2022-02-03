@@ -6,7 +6,7 @@
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
     <br />
     <div class="admin-primary-mbox-tbl-wrap">
-        <table id="txn-admin-transaction-attendees-table" class="admin-primary-mbox-tbl">
+        <table id="txn-admin-transaction-attendees-table" class="admin-primary-mbox-tbl striped">
             <thead>
                 <tr>
                     <th class="jst-cntr no-pad"></th>

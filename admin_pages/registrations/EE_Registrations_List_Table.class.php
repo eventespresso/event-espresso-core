@@ -182,8 +182,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     protected function _get_row_class($item)
     {
         $class = parent::_get_row_class($item);
-        // add status class
-        $class .= ' reg-status-' . $item->status_ID();
         if ($this->_has_checkbox_column) {
             $class .= ' has-checkbox-column';
         }
@@ -683,7 +681,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
               . '</a>'
             : $attendee_name;
         $link          .= $item->count() === 1
-            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>'
+            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled gold-icon ee-icon-size-8"></div></sup>'
             : '';
         $t             = $item->get_first_related('Transaction');
         $payment_count = $t instanceof EE_Transaction

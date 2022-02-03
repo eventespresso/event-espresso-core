@@ -12,8 +12,6 @@ use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
  * @package            Event Espresso
  * @subpackage         includes/core/admin/registrations/EE_Registration_CheckIn_List_Table
  * @author             Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
 {

@@ -12,7 +12,7 @@
     <?php echo esc_html($attendee_notice); ?>
     <?php if (! empty($attendees)) : ?>
         <div class="admin-primary-mbox-tbl-wrap">
-            <table id="reg-admin-transaction-attendees-table" class="admin-primary-mbox-tbl">
+            <table id="reg-admin-transaction-attendees-table" class="admin-primary-mbox-tbl striped">
                 <thead>
                     <tr>
                         <th class="jst-cntr no-pad"></th>

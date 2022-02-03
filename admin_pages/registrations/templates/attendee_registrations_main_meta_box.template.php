@@ -7,7 +7,7 @@
 <div class="admin-primary-mbox-dv">
     <br />
     <div class="admin-primary-mbox-tbl-wrap">
-        <table class="admin-primary-mbox-tbl">
+        <table class="admin-primary-mbox-tbl striped">
             <thead>
                 <tr>
                     <th class="jst-left"><?php esc_html_e('Event Name', 'event_espresso'); ?></th>
