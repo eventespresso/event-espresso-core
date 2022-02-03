@@ -20,35 +20,37 @@ $count = 1;
         echo $status_change_notice;
     }
     ?>
-    <dl class="alignleft ee-list-table-legend">
-        <?php foreach ($items as $item => $details) :
-            if ($per_col < $count) : ?>
-    </dl>
-    <dl class="alignleft ee-list-table-legend">
-                <?php $count = 1;
-            endif; ?>
-        <dt id="ee-legend-item-<?php echo esc_attr($item); ?>">
-            <?php $class = ! empty($details['class']) ? $details['class'] : 'ee-legend-img-container'; ?>
-            <span class="ee-legend-item-wrap">
-            <?php
-            if (strpos($details['class'], '<span') !== false) {
-                echo $class; // already escaped
-            } else { ?>
-            <span class="<?php echo esc_attr($class); ?>">
-                <?php if (! empty($details['icon'])) : ?>
-                    <img alt="<?php echo esc_attr($details['desc']); ?>"
-                         class="ee-legend-icon"
-                         src="<?php echo esc_url_raw($details['icon']); ?>"
-                    />
-                <?php endif; ?>
-            </span>
+    <div class="ee-list-table-legend-wrap">
+        <dl class="ee-list-table-legend">
+            <?php foreach ($items as $item => $details) :
+                if ($per_col < $count) : ?>
+        </dl>
+        <dl class="ee-list-table-legend">
+                    <?php $count = 1;
+                endif; ?>
+            <dt id="ee-legend-item-<?php echo esc_attr($item); ?>">
+                <?php $class = ! empty($details['class']) ? $details['class'] : 'ee-legend-img-container'; ?>
+                <span class="ee-legend-item-wrap">
                 <?php
-            } ?>
-            </span>
-            <span class="ee-legend-description"><?php echo esc_html($details['desc']); ?></span>
-        </dt>
-            <?php $count++;
-        endforeach; ?>
-    </dl>
+                if (strpos($details['class'], '<span') !== false) {
+                    echo $class; // already escaped
+                } else { ?>
+                <span class="<?php echo esc_attr($class); ?>">
+                    <?php if (! empty($details['icon'])) : ?>
+                        <img alt="<?php echo esc_attr($details['desc']); ?>"
+                             class="ee-legend-icon"
+                             src="<?php echo esc_url_raw($details['icon']); ?>"
+                        />
+                    <?php endif; ?>
+                </span>
+                    <?php
+                } ?>
+                </span>
+                <span class="ee-legend-description"><?php echo esc_html($details['desc']); ?></span>
+            </dt>
+                <?php $count++;
+            endforeach; ?>
+        </dl>
+    </div>
     <div style="clear:both"></div>
 </div>
