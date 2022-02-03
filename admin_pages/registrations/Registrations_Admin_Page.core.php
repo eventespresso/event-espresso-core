@@ -3276,15 +3276,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 )
             );
         } else {
-            $new_request_args = [
+            // Pull the current request params
+            $request_args = $this->request->requestParams();
+            // Set the required request_args to be passed to the export
+            $required_request_args = [
                 'export' => 'report',
                 'action' => 'registrations_report_for_event',
                 'EVT_ID' => $EVT_ID,
             ];
-            $this->request->mergeRequestParams($new_request_args);
+            // Merge required request args, overriding any currently set
+            $request_args = array_merge($request_args, $required_request_args);
             if (is_readable(EE_CLASSES . 'EE_Export.class.php')) {
                 require_once(EE_CLASSES . 'EE_Export.class.php');
-                $EE_Export = EE_Export::instance($this->request->requestParams());
+                $EE_Export = EE_Export::instance($request_args);
                 $EE_Export->export();
             }
         }

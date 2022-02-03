@@ -474,7 +474,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             ? $instance['date_range']
             : false;
         $this->limit        = isset($instance['limit']) ? absint($instance['limit']) : 10;
-        $this->order        = isset($instance['order']) && $instance['order'] === 'DESC'
+        $this->order        = isset($instance['sort']) && $instance['sort'] === 'DESC'
             ? 'DESC'
             : 'ASC';
     }
