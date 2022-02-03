@@ -276,7 +276,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                        . $href
                        . '" title="'
                        . $title
-                       . '" id="ee-duplicate-event-button" class="button button--secondary button--small"  value="duplicate_event">'
+                       . '" id="ee-duplicate-event-button" class="button button--secondary"  value="duplicate_event">'
                        . $title
                        . '</a>';
         }

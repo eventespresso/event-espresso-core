@@ -98,7 +98,7 @@
         </h3>
 
         <div class="admin-primary-mbox-tbl-wrap">
-            <table id="txn-admin-payments-tbl" class="admin-primary-mbox-tbl">
+            <table id="txn-admin-payments-tbl" class="admin-primary-mbox-tbl striped">
                 <thead>
                     <tr>
                         <th class='jst-cntr no-pad'></th>
@@ -943,7 +943,7 @@
                 <span class="dashicons dashicons-email-alt"></span>
             </h4>
             <div class="admin-primary-mbox-tbl-wrap">
-                <table class="admin-primary-mbox-tbl">
+                <table class="admin-primary-mbox-tbl striped">
                     <thead>
                         <tr>
                             <th class="jst-left"><?php esc_html_e('Date & Time', 'event_espresso'); ?></th>

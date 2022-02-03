@@ -69,11 +69,11 @@ if (
     )
 ) : ?>
     <div class='ee-admin-button-row'>
-        <a class="button button--secondary button--small" href="<?php echo esc_url_raw($edit_attendee_url); ?>"
+        <a class="button button--secondary" href="<?php echo esc_url_raw($edit_attendee_url); ?>"
            title="<?php esc_attr_e('View details for this contact.', 'event_espresso'); ?>"
         >
             <span class="dashicons dashicons-groups"></span>
-            <?php esc_html_e('View / Edit this Contact', 'event_espresso'); ?>
+            <?php esc_html_e('View/Edit Contact', 'event_espresso'); ?>
         </a>
     </div>
 <?php endif;

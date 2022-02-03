@@ -68,7 +68,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // set some default options and merge with incoming
         $default_options = array(
             'use_table_wrapper' => true,
-            'table_css_class' => 'admin-primary-mbox-tbl',
+            'table_css_class' => 'admin-primary-mbox-tbl striped',
             'taxes_tr_css_class' => 'admin-primary-mbox-taxes-tr',
             'total_tr_css_class' => 'admin-primary-mbox-total-tr'
         );

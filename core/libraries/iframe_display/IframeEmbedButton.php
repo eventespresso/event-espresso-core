@@ -102,10 +102,7 @@ abstract class IframeEmbedButton
             if ($post->post_type !== 'espresso_events') {
                 return $permalink_string;
             }
-            $permalink_string .= $this->embedButtonHtml(
-                array($this->slug => $id),
-                'button--small'
-            );
+            $permalink_string .= $this->embedButtonHtml([$this->slug => $id]);
         }
         return $permalink_string;
     }

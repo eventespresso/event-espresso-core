@@ -471,11 +471,11 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             echo $filter; // already escaped
         }
         // add filter button at end
-        echo '<input type="submit" class="button button--secondary button--small" value="'
+        echo '<input type="submit" class="button button--secondary" value="'
              . esc_html__('Filter', 'event_espresso')
              . '" id="post-query-submit" />';
         // add reset filters button at end
-        echo '<a class="button button--secondary button--small"  href="'
+        echo '<a class="button button--secondary"  href="'
              . esc_url_raw($this->_admin_page->get_current_page_view_url())
              . '">'
              . esc_html__('Reset Filters', 'event_espresso')
