@@ -14,20 +14,6 @@
 
 .column-_REG_date { width : 12.5%; }
 
-.status-TCM,
-.status-RAP,
-.reg-overview-full-payment-spn { color : var(--ee-status-color-dark-green); font-weight : bold; }
-
-.status-TPN,
-.status-RPP,
-.reg-overview-part-payment-spn { color : var(--ee-status-color-orange); font-weight : bold; }
-
-.status-TFL, .status-TIN, .status-TOP,
-.status-RCN, .status-RFL, .status-RNA,
-.reg-overview-no-payment-spn { color : var(--ee-status-color-red); font-weight : bold; }
-
-/*.status-RAP, .status-RPP, .status-RCN, .status-RFL, .status-RNA { font-size : .9em; }*/
-
 .wp-list-table .column-event_name {
     min-width: 10%;
 }
@@ -89,7 +75,13 @@
 /*    width : 3%;*/
 /*}*/
 
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in {
+.espresso-admin #EE_Event_Registrations_List_Table-table-frm .wp-list-table ._REG_att_checked_in {
+    padding: 0;
+    padding-block: 1rem;
+    padding-inline-start: 1.5rem;
+    padding-inline-end: 0.75rem;
+    text-align: center;
+    width: 1rem;
     min-width  : 3%;
     margin : 0;
 }
@@ -136,12 +128,8 @@
 
 .reg-pad-rght { display : block; padding-right : .5em; }
 
-/*.wp-list-table .column-actions,*/
 .wp-list-table .column-CHK_in { width : 11%; }
 
-/*.wp-list-table.attendees .column-actions {*/
-/*width : 7%;*/
-/*}*/
 
 .reg-overview-free-event-spn { display : block; text-align : center; }
 
@@ -160,10 +148,10 @@
 
 #reg-admin-approve-decline-reg-status-spn a { margin-left : 1em; margin-right : 1em; vertical-align : baseline; }
 
-.admin-side-mbox-dv { margin : 1em 0 2em; }
+/* .admin-side-mbox-dv { margin : 1em 0 2em; }
 
 .admin-side-mbox-dv p,
-.admin-side-mbox-dv > div { margin : .5em 0; line-height : 1.2em; color : #333; text-shadow : 0 1px 0 #FFF; }
+.admin-side-mbox-dv > div { margin : .5em 0; line-height : 1.2em; color : #333; text-shadow : 0 1px 0 #FFF; } */
 
 .admin-side-mbox-label-spn { width : 30%; padding-right : .5em; text-align : right; }
 
@@ -171,7 +159,7 @@
 
 .admin-primary-mbox-h4 { margin : 2em 0 .25em; }
 
-.admin-primary-mbox-tbl-wrap {
+/* .admin-primary-mbox-tbl-wrap {
     padding       : 3px; margin : 0 0 2em;
     background    : #FFF; border : 1px solid #DFDFDF;
     border-radius : 3px;
@@ -198,7 +186,7 @@
 
 .form-table.skinny-rows th, .form-table.skinny-rows td { padding : 3px 10px; }
 
-.admin-primary-mbox-total-tr { font-size : 1.1em; }
+.admin-primary-mbox-total-tr { font-size : 1.1em; }*/
 
 .jqplot-title {
     font-size : 24px; text-align : left !important; margin : 1em 0 0 1em;
@@ -212,16 +200,41 @@
     box-shadow    : 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
 }
 
+
+
+.admin-side-mbox-dv { margin:1em 0 2em; }
+.admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; }
+.admin-side-mbox-label-spn { width:30%; padding-right:.5em; text-align:right; }
+.admin-side-mbox-text-dv { padding-left:.5em; margin:0 0 1em 1em; }
+.admin-side-mbox-dv .ee-admin-attendee-avatar { margin:0 0 1em .5em; }
+
+#admin-side-mbox-primary-registrant-dv,
+.admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon {
+    display: flex;
+}
+.admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon .dashicons {
+    color: var(--ee-status-color-light-grey);
+    margin-block-start: .35rem;
+}
+
+.admin-side-mbox-text-dv .ee-admin-attendee-name {
+    font-size: 1.2rem;
+}
+.admin-side-mbox-text-dv .ee-admin-attendee-email,
+.admin-side-mbox-text-dv .ee-admin-attendee-phone,
+.admin-side-mbox-text-dv .ee-admin-attendee-address {
+    margin-block-start: .5rem;
+}
+
+
+
 .reg-admin-edit-question-group-spn { position : relative; top : -4px; padding : 4px; vertical-align : middle; }
 
 .reg-admin-edit-attendee-question-lnk { padding : 4px; text-decoration : none; outline : none; }
 
 .reg-admin-edit-attendee-question-lnk:focus { outline : none; }
 
-.reg-admin-edit-attendee-question-lnk img { }
 
-/*.display-the-hidden { float:right; padding-left:16px; cursor:pointer; }
-.hide-the-displayed { float:right; padding-left:16px; cursor:pointer; }*/
 
 .tkt-slctr-tbl { min-width : 530px; margin-bottom : 1em; border : none; border-bottom : 1px solid #EDEDED; border-collapse : collapse; border-spacing : 0; }
 
@@ -300,12 +313,6 @@
 /**
  * status strips
  */
-
-.wp-list-table .ee-status-strip ._REG_att_checked_in {
-    border-left-style: solid;
-    border-left-width: 4px;
-}
-
 .wp-list-table .ee-status-strip.has-checkbox-column ._REG_att_checked_in {
     border-left: none;
 }
@@ -329,70 +336,6 @@
 }
 
 
-/*pending payment*/
-.reg-status-RPP,
-.button--secondary.reg-status-RPP,
-.button--primary.reg-status-RPP,
-.reg-status-RPP ._REG_att_checked_in,
-.reg-status-RPP .check-column{
-    border-left-color : var(--ee-status-color-blue);
-}
-
-/*cancelled*/
-.reg-status-RCN,
-.tr-ee-reg-status-RCN,
-.button--secondary.reg-status-RCN,
-.button--primary.reg-status-RCN,
-.reg-status-RCN ._REG_att_checked_in,
-.reg-status-RCN .check-column{
-    border-left-color : var(--ee-status-color-lt-grey);
-}
-
-/*declined*/
-.reg-status-RDC,
-.button--secondary.reg-status-RDC,
-.button--primary.reg-status-RDC,
-.reg-status-RDC ._REG_att_checked_in,
-.reg-status-RDC .check-column{
-    border-left-color : var(--ee-status-color-red);
-}
-
-/*approved*/
-.reg-status-RAP,
-.button--secondary.reg-status-RAP,
-.button--primary.reg-status-RAP,
-.reg-status-RAP ._REG_att_checked_in,
-.reg-status-RAP .check-column{
-    border-left-color : var(--ee-status-color-green); /* prev: #70CC50 */
-}
-
-/*not-approved*/
-.reg-status-RNA,
-.button--secondary.reg-status-RNA,
-.button--primary.reg-status-RNA,
-.reg-status-RNA ._REG_att_checked_in,
-.reg-status-RNA .check-column{
-    border-left-color : var(--ee-status-color-orange); /* prev: #E76700 */
-}
-
-/*not-approved*/
-.reg-status-RIC,
-.button--secondary.reg-status-RIC,
-.button--primary.reg-status-RIC,
-.reg-status-RIC ._REG_att_checked_in,
-.reg-status-RIC .check-column{
-    border-left-color : var(--ee-status-color-yellow);  /* prev: #FCB93C */
-}
-
-/*wait-list*/
-.reg-status-RWL,
-.button--secondary.reg-status-RWL,
-.button--primary.reg-status-RWL,
-.reg-status-RWL ._REG_att_checked_in,
-.reg-status-RWL .check-column{
-    border-left-color : var(--ee-status-color-purple);  /* prev: #8A549A */
-}
-
 .widefat td.column-_Reg_Status,
 .widefat th.column-_Reg_Status {
     width : 10px;
@@ -401,48 +344,6 @@
     height: 100%;
 }
 
-/** reg status legend **/
-.ee-status-legend-RPP {
-    background-color : var(--ee-status-color-blue);
-}
-
-.ee-status-legend-RCN {
-    background-color : var(--ee-status-color-lt-grey);
-}
-
-.ee-status-legend-RDC {
-    background-color : var(--ee-status-color-red);
-}
-
-.ee-status-legend-RAP {
-    background-color : var(--ee-status-color-green); /* prev: #70CC50 */
-}
-
-.ee-status-legend-RNA {
-    background-color : var(--ee-status-color-orange); /* prev: #E76700 */
-}
-
-.ee-status-legend-RIC {
-    background-color : var(--ee-status-color-yellow);  /* prev: #FCB93C */
-}
-
-.ee-status-legend-RWL {
-    background-color : var(--ee-status-color-purple);  /* prev: #8A549A */
-}
-
-/*.status-RPP { color : var(--ee-status-color-blue); } */
-
-/*.status-RCN { color : var(--ee-status-color-grey);  } */
-
-/*.status-RDC { color : var(--ee-status-color-pink);  font-weight : bold; }*/
-
-/*.status-RAP { color : var(--ee-status-color-green); }*/
-
-/*.status-RNA { color : var(--ee-status-color-orange); }*/
-
-/*.status-RIC { color : var(--ee-status-color-yellow); }*/
-
-/*.status-RWL { color : var(--ee-status-color-purple); }*/
 
 #admin-primary-mbox-reg-details-dv .button {
     margin : 10px 0;
@@ -516,13 +417,6 @@
 }
 
 
-/*#reg-admin-approve-decline-reg-status-dv {*/
-/*border: 1px solid #ddd;*/
-/*padding: 0 1em 1em;*/
-/*margin: 0 0 2em;*/
-/*background: #fff;*/
-/*}*/
-
 #send-related-messages-dv label {
     position: relative;
     top: 3px;
@@ -563,7 +457,6 @@
 /** REGISTRATION LIST TABLE EVENT-DATE COLUMNS **/
 .ee-more-datetimes-toggle {
     float: left;
-    display: inline-block;
     margin-top: 2px;
     cursor: pointer;
 }

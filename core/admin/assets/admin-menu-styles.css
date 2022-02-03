@@ -2,23 +2,128 @@
 * Event Espresso admin menu styles
 */
 
+/* CONSTANTS */
 :root {
-    --ee-status-color-red: #fc1922;
-    --ee-status-color-pink: #e65983;
-    --ee-status-color-orange: #ff582c;
-    --ee-status-color-gold: #fdad02;
-    --ee-status-color-yellow: #fad800;
-    --ee-status-color-green: #7ab540;
-    --ee-status-color-green-high-contrast: #699f34;
-    --ee-status-color-dark-green: #01873a;
-    --ee-status-color-dark-green-low-contrast: #02ac4a;
-    --ee-status-color-light-blue: #94d5ff;
-    --ee-status-color-blue: #008dcb;
-    --ee-status-color-purple: #795d9d;
-    --ee-status-color-light-grey: #d4d4d4;
-    --ee-status-color-grey: #9b9b9b;
-    --ee-status-color-dark-grey: #626262;
-    --ee-status-color-charcoal: #292929;
+
+    --ee-font-color-hue: 207;
+    --ee-font-color-sat: 5;
+    --ee-font-color-lit: 20;
+    --ee-font-color-alpha: 1;
+
+    --ee-color-white: hsl(207, 0%, 100%);
+    --ee-color-almost-white: hsl(207, 0%, 95%);
+    --ee-color-off-white: hsl(207, 0%, 90%);
+    --ee-status-color-pink: hsl(340, 100%, 85%);
+    --ee-status-color-red: hsl(340, 60%, 55%);
+    --ee-status-color-orange: hsl(18, 70%, 50%);
+    --ee-status-color-gold: hsl(41, 98%, 50%);
+    --ee-status-color-yellow: hsl(49, 95%, 45%);
+    --ee-status-color-green: hsl(140, 70%, 35%);
+    --ee-status-color-green-high-contrast: hsl(140, 90%, 25%);
+    --ee-status-color-dark-green: hsl(95, 100%, 20%);
+    --ee-status-color-dark-green-low-contrast: hsl(95, 100%, 30%);
+    --ee-status-color-blue: hsl(203, 50%, 50%);
+    --ee-status-color-light-blue: hsl(203, 90%, 70%);
+    --ee-status-color-pale-blue: hsl(203, 35%, 85%);
+    --ee-status-color-purple: hsl(279, 25%, 50%);
+    --ee-status-color-light-grey: hsl(219, 2%, 55%);
+    --ee-status-color-grey: hsl(225, 2%, 37.5%);
+    --ee-status-color-dark-grey: hsl(225, 2%, 20%);
+    --ee-status-color-charcoal: hsl(225, 0%, 15%);
+
+
+
+    --ee-font-color: hsla(
+        var(--ee-font-color-hue),
+        calc(var(--ee-font-color-sat) * 1%),
+        calc((var(--ee-font-color-lit) + 7.5) * 1%),
+        var(--ee-font-color-alpha)
+    );
+    --ee-font-color-light: hsla(
+        var(--ee-font-color-hue),
+        calc(var(--ee-font-color-sat) * 1%),
+        calc((var(--ee-font-color-lit) + 15) * 1%),
+        var(--ee-font-color-alpha)
+    );
+    --ee-font-color-dark: hsla(
+        var(--ee-font-color-hue),
+        calc(var(--ee-font-color-sat) * 1%),
+        calc(var(--ee-font-color-lit) * 1%),
+        var(--ee-font-color-alpha)
+    );
+
+    /* PRIMARY BUTTON COLORS */
+    --ee-btn-primary-hue: 207;
+    --ee-btn-primary-sat: 65;
+    --ee-btn-primary-lit: 45;
+    --ee-btn-primary-alpha: 1;
+
+    --ee-btn-primary: hsla(
+        var(--ee-btn-primary-hue),
+        calc(var(--ee-btn-primary-sat) * 1%),
+        calc(var(--ee-btn-primary-lit) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
+    --ee-btn-primary-low-constrast: hsla(
+        var(--ee-btn-primary-hue),
+        calc((var(--ee-btn-primary-sat) + 5) * 1%),
+        calc((var(--ee-btn-primary-lit) + 15) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
+    --ee-btn-primary-high-constrast: hsla(
+        var(--ee-btn-primary-hue),
+        calc((var(--ee-btn-primary-sat) + 20) * 1%),
+        calc((var(--ee-btn-primary-lit) - 10) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
+    --ee-btn-primary-hover: var(--ee-btn-primary-low-constrast);
+    --ee-btn-primary-focus: var(--ee-btn-primary-high-constrast);
+
+    /* SECONDARY BUTTON COLORS */
+    --ee-btn-secondary-hue: 203;
+    --ee-btn-secondary-sat: 2;
+    --ee-btn-secondary-lit: 90;
+    --ee-btn-secondary-alpha: 1;
+
+    --ee-btn-secondary: hsla(
+        var(--ee-btn-secondary-hue),
+        calc(var(--ee-btn-secondary-sat) * 1%),
+        calc(var(--ee-btn-secondary-lit) * 1%),
+        var(--ee-btn-secondary-alpha)
+    );
+    --ee-btn-secondary-hover: hsla(
+        var(--ee-btn-secondary-hue),
+        calc(var(--ee-btn-secondary-sat) * 1%),
+        calc((var(--ee-btn-secondary-lit) - 20) * 1%),
+        var(--ee-btn-secondary-alpha)
+    );
+    --ee-btn-secondary-focus: hsla(
+        var(--ee-btn-secondary-hue),
+        calc(var(--ee-btn-secondary-sat) * 1%),
+        calc((var(--ee-btn-secondary-lit) - 40) * 1%),
+        var(--ee-btn-secondary-alpha)
+    );
+
+    --ee-box-shadow: 0 2px 3px -2px hsla(0, 0%, 0%, .5);
+    --ee-box-shadow-big: 0 3px 6px hsla(0, 0%, 0%, .5);
+    --ee-button-box-shadow: 0 1px 1px hsla(0, 0%, 0%, 0.35), 1px 1px 2px hsla(0, 0%, 0%, 0.1), -1px -1px 1px hsla(0, 0%, 100%, 0.75);
+    --ee-button-box-shadow-alt: 0 0 2px hsla(0, 0%, 0%, 0.35), -1px -1px 2px hsla(0, 0%, 100%, 0.75);
+
+
+    --ee-border-color: hsla(var(--ee-btn-secondary-hue), 2%, 70%, 1);
+    --ee-border-color-table-row: hsla(var(--ee-btn-secondary-hue), 0%, 90%, 1);
+
+    --ee-admin-sidebar-width: 360px;
+
+    --ee-attention-bg-color: hsl(51, 68%, 76%);
+    --ee-attention-color: hsla(46, 24%, 9%, .85);
+
+}
+
+@media screen and (min-width: 1920px) {
+    :root {
+        --ee-admin-sidebar-width: 480px;
+    }
 }
 
 .ee_menu_group {
@@ -37,7 +142,7 @@
 	margin: 3px -12px -3px -12px;
 	border-left: 3px solid var(--ee-status-color-blue);
 	background-color: var(--ee-status-color-charcoal);
-	color: #fff;
+	color: var(--ee-color-white);
 	font-weight: normal;
 }
 .version-3-8.admin-color-blue .ee_menu_group {
@@ -45,7 +150,7 @@
 	margin: 3px -12px -3px -12px;
 	border-left: 3px solid var(--ee-status-color-light-blue);
 	background-color: var(--ee-status-color-blue);
-	color: #fff;
+	color: var(--ee-color-white);
 	font-weight: normal;
 }
 .version-3-8.admin-color-light .ee_menu_group {
@@ -59,9 +164,9 @@
 .version-3-8.admin-color-midnight .ee_menu_group {
 	padding-left: 8px;
 	margin: 3px -12px -3px -12px;
-	background-color: #363B3F;
+	background-color: var(--ee-status-color-charcoal);
 	border-left: 3px solid var(--ee-status-color-orange);
-	color: #fff;
+	color: var(--ee-color-white);
 	font-weight: normal;
 }
 
@@ -421,14 +526,14 @@ div.TB-ee-frame a {
 .drk-green-icon:before, .drk-green, .drk-green a { color: var(--ee-status-color-dark-green); }
 .red-icon:before, .red, .red a { color: var(--ee-status-color-red); }
 .orange-icon:before, .orange, .orange a { color: var(--ee-status-color-orange); }
-.lt-blue-icon:before, .lt-blue, lt-blue a { color: var(--ee-status-color-light-blue); }
+.lt-blue-icon:before, .lt-blue, .lt-blue a { color: var(--ee-status-color-light-blue); }
 .blue-icon:before, .blue, .blue a { color: var(--ee-status-color-blue); }
 .yellow-icon:before, .yellow, .yellow a { color: var(--ee-status-color-yellow); }
-.lt-grey-icon:before, .lt-grey, lt-grey a { color: var(--ee-status-color-light-grey); }
+.lt-grey-icon:before, .lt-grey, .lt-grey a { color: var(--ee-status-color-light-grey); }
 .grey-icon:before, .grey, .grey a { color: var(--ee-status-color-grey); }
 .drk-grey-icon:before, .drk-grey, .drk-grey a { color: var(--ee-status-color-dark-grey); }
 .black-icon:before, .black, .black a { color: var(--ee-status-color-charcoal); }
-.white-icon:before, .white, .white a { color: #fff; }
+.white-icon:before, .white, .white a { color: var(--ee-color-white); }
 
 /** corresponding background colors **/
 .pink-bg, .reg-status-bg-RDC, .txn-status-bg-TFL, .pymt-status-bg-PDC { background-color: var(--ee-status-color-pink); }
