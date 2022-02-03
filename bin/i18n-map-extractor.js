@@ -138,7 +138,7 @@ class wpi18nExtractor {
 				chunkName = options.aliases.hasOwnProperty( chunk.name ) ?
 					options.aliases[ chunk.name ] :
 					chunk.name;
-				if (chunk._modules) {
+				if (chunk.hasOwnProperty('_modules')) {
 					parseSourcesToMap( chunk._modules, chunkName, extractor );
 				}
 			}
