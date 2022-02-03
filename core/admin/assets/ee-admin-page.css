@@ -1,119 +1,3 @@
-/* CONSTANTS */
-
-:root {
-
-    --ee-font-color-hue: 207;
-    --ee-font-color-sat: 5;
-    --ee-font-color-lit: 20;
-    --ee-font-color-alpha: 1;
-
-    --ee-color-white: hsla(207, 0%, 100%, 1);
-    --ee-color-almost-white: hsla(207, 0%, 95%, 1);
-    --ee-color-off-white: hsla(207, 0%, 90%, 1);
-    --ee-status-color-red: hsla(340, 55%, 55%, 1);
-    --ee-status-color-orange: hsla(18, 75%, 50%, 1);
-    --ee-status-color-yellow: hsla(49, 95%, 45%, 1);
-    --ee-status-color-green: hsla(140, 95%, 30%, 1);
-    --ee-status-color-blue: hsla(203, 50%, 45%, 1);
-    --ee-status-color-lt-blue: hsla(203, 50%, 65%, 1);
-    --ee-status-color-pale-blue: hsla(203, 35%, 85%, 1);
-    --ee-status-color-purple: hsla(279, 25%, 50%, 1);
-    --ee-status-color-lt-grey: hsla(219, 2%, 55%, 1);
-    --ee-status-color-grey: hsla(225, 2%, 37.5%, 1);
-    --ee-status-color-drk-grey: hsla(225, 2%, 20%, 1);
-
-    --ee-font-color: hsla(
-        var(--ee-font-color-hue),
-        calc(var(--ee-font-color-sat) * 1%),
-        calc((var(--ee-font-color-lit) + 7.5) * 1%),
-        var(--ee-font-color-alpha)
-    );
-    --ee-font-color-light: hsla(
-        var(--ee-font-color-hue),
-        calc(var(--ee-font-color-sat) * 1%),
-        calc((var(--ee-font-color-lit) + 15) * 1%),
-        var(--ee-font-color-alpha)
-    );
-    --ee-font-color-dark: hsla(
-        var(--ee-font-color-hue),
-        calc(var(--ee-font-color-sat) * 1%),
-        calc(var(--ee-font-color-lit) * 1%),
-        var(--ee-font-color-alpha)
-    );
-
-    /* PRIMARY BUTTON COLORS */
-    --ee-btn-primary-hue: 207;
-    --ee-btn-primary-sat: 65;
-    --ee-btn-primary-lit: 45;
-    --ee-btn-primary-alpha: 1;
-
-    --ee-btn-primary: hsla(
-        var(--ee-btn-primary-hue),
-        calc(var(--ee-btn-primary-sat) * 1%),
-        calc(var(--ee-btn-primary-lit) * 1%),
-        var(--ee-btn-primary-alpha)
-    );
-    --ee-btn-primary-low-constrast: hsla(
-        var(--ee-btn-primary-hue),
-        calc((var(--ee-btn-primary-sat) + 5) * 1%),
-        calc((var(--ee-btn-primary-lit) + 15) * 1%),
-        var(--ee-btn-primary-alpha)
-    );
-    --ee-btn-primary-high-constrast: hsla(
-        var(--ee-btn-primary-hue),
-        calc((var(--ee-btn-primary-sat) + 20) * 1%),
-        calc((var(--ee-btn-primary-lit) - 10) * 1%),
-        var(--ee-btn-primary-alpha)
-    );
-    --ee-btn-primary-hover: var(--ee-btn-primary-low-constrast);
-    --ee-btn-primary-focus: var(--ee-btn-primary-high-constrast);
-
-    /* SECONDARY BUTTON COLORS */
-    --ee-btn-secondary-hue: 203;
-    --ee-btn-secondary-sat: 2;
-    --ee-btn-secondary-lit: 90;
-    --ee-btn-secondary-alpha: 1;
-
-    --ee-btn-secondary: hsla(
-        var(--ee-btn-secondary-hue),
-        calc(var(--ee-btn-secondary-sat) * 1%),
-        calc(var(--ee-btn-secondary-lit) * 1%),
-        var(--ee-btn-secondary-alpha)
-    );
-    --ee-btn-secondary-hover: hsla(
-        var(--ee-btn-secondary-hue),
-        calc(var(--ee-btn-secondary-sat) * 1%),
-        calc((var(--ee-btn-secondary-lit) - 20) * 1%),
-        var(--ee-btn-secondary-alpha)
-    );
-    --ee-btn-secondary-focus: hsla(
-        var(--ee-btn-secondary-hue),
-        calc(var(--ee-btn-secondary-sat) * 1%),
-        calc((var(--ee-btn-secondary-lit) - 40) * 1%),
-        var(--ee-btn-secondary-alpha)
-    );
-
-    --ee-box-shadow: 0 2px 3px -2px hsla(0, 0%, 0%, .5);
-    --ee-box-shadow-big: 0 3px 6px hsla(0, 0%, 0%, .5);
-    --ee-button-box-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.375), -1px -1px 1px hsla(0, 0%, 100%, 0.75);
-    --ee-button-box-shadow-alt: 0 0 2px hsla(0, 0%, 0%, 0.35), -1px -1px 2px hsla(0, 0%, 100%, 0.75);
-
-
-    --ee-border-color: hsla(var(--ee-btn-secondary-hue), 2%, 70%, 1);
-    --ee-border-color-table-row: hsla(var(--ee-btn-secondary-hue), 0%, 90%, 1);
-
-    --ee-admin-sidebar-width: 360px;
-
-    --ee-attention-bg-color: hsl(51, 68%, 76%);
-    --ee-attention-color: hsla(46, 24%, 9%, .85);
-
-}
-
-@media screen and (min-width: 1920px) {
-    :root {
-        --ee-admin-sidebar-width: 480px;
-    }
-}
 
 /** STATUS COLORS */
 
@@ -188,7 +72,7 @@
 .ee-status-color-DTE,
 .ee-status-color-PCN,
 .ee-status-color-RCN {
-    color: var(--ee-status-color-lt-grey);
+    color: var(--ee-status-color-light-grey);
 }
 
 /* dtt inactive */
@@ -204,26 +88,6 @@
     width: 99%;
 }
 
-/*.espresso-admin nav.nav-tab-wrapper {
-    border-bottom: 1px solid var(--ee-border-color);
-    margin: 0;
-    padding: 0;
-    padding-block-start: 1rem;
-    padding-block-end: 0;
-}
-.espresso-admin nav.nav-tab-wrapper .nav-tab {
-    border-bottom: none;
-    border-start-start-radius: .125rem;
-    border-start-end-radius: .125rem;
-    background: var(--ee-border-color-table-row);
-    color: var(--ee-status-color-grey);
-}
-.espresso-admin nav.nav-tab-wrapper .nav-tab.nav-tab-active {
-    border-bottom: 1px solid hsl(240, 3%, 94%);
-    background: hsl(240, 3%, 94%);
-    color: hsl(0, 0%, 0%);
-}*/
-
 .espresso-admin #poststuff,
 .espresso-admin #espresso-default-admin,
 .espresso-admin.wrap #wpbody-content .metabox-holder {
@@ -232,15 +96,15 @@
 }
 
 
-.espresso-admin #post-body.columns-2,
-.espresso-admin #poststuff #post-body.columns-2 {
+.espresso-admin #post-body,
+.espresso-admin #poststuff #post-body {
     display: grid;
     grid-gap: 1rem;
     grid-template-columns: 360px 1fr 1fr var(--ee-admin-sidebar-width);
     grid-template-areas:
     "post-body post-body post-body post-body"
     "postbox-2 postbox-2 postbox-2 postbox-1";
-    padding-block-start: 1rem;
+    padding-block-start: 1.25rem;
 }
 
 .espresso-admin.post-type-espresso_events #post-body.columns-2,
@@ -296,12 +160,25 @@
 .espresso-admin #update_category_event_form #post-body-content ,
 .espresso-admin #update_google_map_settings_event_form #post-body-content {
     grid-area: postbox-2;
-    margin-block-start: -1rem;
+}
+
+.espresso-admin.event-espresso_page_pricing #postbox-container-2 {
+    grid-area: post-body;
 }
 
 .espresso-admin #post-body.columns-2 #postbox-container-1,
 .espresso-admin #post-body.columns-2 #postbox-container-1 .postbox {
     width: var(--ee-admin-sidebar-width);
+}
+
+.espresso-admin.toplevel_page_espresso_events #poststuff #post-body.columns-2 #post-body-content,
+.espresso-admin.event-espresso_page_espresso_messages #post-body.columns-2 #postbox-container-2,
+.espresso-admin.event-espresso_page_espresso_messages #poststuff #post-body.columns-2 #postbox-container-2,
+.espresso-admin.event-espresso_page_espresso_payment_settings #post-body.columns-2 #postbox-container-2,
+.espresso-admin.event-espresso_page_espresso_payment_settings #poststuff #post-body.columns-2 #postbox-container-2,
+.espresso-admin.event-espresso_page_espresso_support #post-body.columns-2 #postbox-container-2,
+.espresso-admin.event-espresso_page_espresso_support #poststuff #post-body.columns-2 #postbox-container-2 {
+    margin-block-start: -1rem;
 }
 
 
@@ -320,15 +197,14 @@
 }
 
 #update_category_event_form #post-body-content {
-    margin: 0;
-    padding: 0;
-    padding-inline: 1.5rem;
+    margin-block-start: -1rem;
     padding-block-start: 1rem;
 }
 
-/*.espresso-admin #wp-content-editor-tools {
-    background-color: unset;
-}*/
+.espresso-admin.event-espresso_page_espresso_venues #update_category_event_form #postbox-container-1 {
+    margin-block-start: -1rem;
+}
+
 
 
 @media only screen and (max-width: 1024px) {
@@ -731,7 +607,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .lt-grey-text {
-    color: var(--ee-status-color-lt-grey);
+    color: var(--ee-status-color-light-grey);
 }
 
 .grey-text {
@@ -739,7 +615,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .drk-grey-text {
-    color: var(--ee-status-color-drk-grey);
+    color: var(--ee-status-color-dark-grey);
 }
 
 .important-notice {
@@ -772,7 +648,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 
 .currency-code {
     font-size: .7em;
-    color: var(--ee-status-color-lt-grey);
+    color: var(--ee-status-color-light-grey);
     vertical-align: text-top;
 }
 
@@ -927,7 +803,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .lt-grey-txt {
-    color: var(--ee-status-color-lt-grey) !important;
+    color: var(--ee-status-color-light-grey) !important;
     text-shadow: none;
 }
 
@@ -1152,15 +1028,20 @@ label.error {
 }
 
 /** LIST-TABLE-LEGEND **/
+
+.ee-list-table-legend-wrap {
+    display: flex;
+    flex-flow: row wrap;
+    font-size: 1rem;
+}
+
 .ee-list-table-legend {
     display: flex;
     flex-flow: column;
-    height: 200px;
     justify-content: start;
     line-height: 1rem;
     margin-top: 0;
-    margin-right: 20px;
-    width: 240px;
+    margin-inline-end: 20px;
 }
 
 .ee-list-table-legend dt {
@@ -1214,10 +1095,11 @@ label.error {
     border-radius: 6px;
     box-sizing: border-box;
     display: inline-flex;
-    height: 1.75rem;
+    height: 2rem;
     justify-content: center;
-    margin: 0 0.25rem 0 0;
-    width: 1.75rem;
+    margin: 0;
+    margin-inline-end: 0.5rem;
+    width: 2rem;
 }
 
 .qtip-content .ee-list-table-legend-container {
@@ -1239,12 +1121,6 @@ label.error {
     height: 1.1rem;
     margin: 0;
     width: 1.1rem;
-}
-
-.ee-legend-item-wrap span.dashicons,
-.ee-legend-item-wrap span.ee-icon:before {
-    margin: 0;
-    top: unset;
 }
 
 .qtip-tipsy {
@@ -1273,10 +1149,17 @@ label.error {
     float: left;
 }
 
+.ee-legend-item-wrap span.dashicons,
+.ee-legend-item-wrap span.ee-icon:before,
 .ee-list-table-legend-container .dashicons,
+.ee-list-table-legend-container .ee-dashicons,
 .ee-list-table-legend-container .ee-icon {
-    font-size: 18px;
+    font-size: 1.2rem;
+    height: 1.25rem;
+    margin: 0;
+    top: unset;
     vertical-align: middle;
+    width: 1.25rem;
 }
 
 .ee-list-table-legend-container .ee-icon-size-8 {
@@ -1493,30 +1376,6 @@ label.error {
     background-color: var(--ee-status-color-red);
 }
 
-/*.ee-status-strip, .button--secondary.ee-status-strip, .button--primary.ee-status-strip {*/
-/*    display: inline-block;*/
-/*    border-left: solid 5px #E6E6E6;*/
-/*}*/
-
-/*.ee-status-strip-td {*/
-/*    height: 100%;*/
-/*    min-height: 20px;*/
-/*}*/
-
-/*.wp-list-table .ee-status-strip .check-column {*/
-/*    border-left-style: solid;*/
-/*    border-left-width: 4px;*/
-/*}*/
-
-/*.wp-list-table tr.ee-status-strip {*/
-/*    display: table-row;*/
-/*    border: none;*/
-/*}*/
-
-/*.espresso-admin .wp-list-table td {*/
-/*    overflow: hidden !important;*/
-/*    position: relative;*/
-/*}*/
 
 .wp-list-table .ee-status-strip-td {
     display: block !important;
@@ -1788,7 +1647,7 @@ input.ee-register-button {
 
 /** other styling - footnotes etc **/
 .ee-footnote-text {
-    color: var(--ee-status-color-lt-grey);
+    color: var(--ee-status-color-light-grey);
     font-style: italic;
     font-size: .8em;
     font-weight: normal;
@@ -1814,7 +1673,7 @@ input.ee-register-button {
 
 .ee-responsive-table th {
     background: var(--ee-color-off-white);
-    color: var(--ee-status-color-drk-grey);
+    color: var(--ee-status-color-dark-grey);
     font-weight: bold;
     text-align: center;
 }
@@ -2676,27 +2535,41 @@ body.espresso-admin #contextual-help-wrap strong {
 
 /*  txn failed,  payment declined, reg declined, dtt cancelled*/
 .ee-status-dot--DTC,
+.ee-status-legend--DTC,
+.event-active-status--DTC,
 .ee-status-dot--MFL,
+.ee-status-legend--MFL,
 .ee-status-dot--PDC,
+.ee-status-legend--PDC,
 .ee-status-dot--RDC,
+.ee-status-legend--RDC,
 .ee-status-dot--TFL,
-.ee-admin-page-header-grid .ee-admin-container.status-TFL,
+.ee-status-legend--TFL,
+.ee-admin-page-header-grid .ee-admin-container.status-DTC,
 .ee-admin-page-header-grid .ee-admin-container.status-PDC,
 .ee-admin-page-header-grid .ee-admin-container.status-RDC,
-.ee-admin-page-header-grid .ee-admin-container.status-DTC,
+.ee-admin-page-header-grid .ee-admin-container.status-TFL,
 .ee-admin-page-header-grid .ee-admin-container.ee-txn-amount-owing {
     background-color: var(--ee-status-color-red);
     color: var(--ee-color-white) !important;
 }
 
 /* txn overpaid, payment fail, reg not approved */
+.ee-status-dot--DTP,
+.ee-status-legend--DTP,
+.event-active-status--DTP,
 .ee-status-dot--MRT,
+.ee-status-legend--MRT,
 .ee-status-dot--PFL,
+.ee-status-legend--PFL,
 .ee-status-dot--RNA,
+.ee-status-legend--RNA,
 .ee-status-dot--TOP,
-.ee-admin-page-header-grid .ee-admin-container.status-TOP,
+.ee-status-legend--TOP,
+.ee-admin-page-header-grid .ee-admin-container.status-DTP,
 .ee-admin-page-header-grid .ee-admin-container.status-PFL,
-.ee-admin-page-header-grid .ee-admin-container.status-RNA {
+.ee-admin-page-header-grid .ee-admin-container.status-RNA,
+.ee-admin-page-header-grid .ee-admin-container.status-TOP {
     background-color: var(--ee-status-color-orange);
     color: var(--ee-color-white) !important;
 }
@@ -2704,19 +2577,28 @@ body.espresso-admin #contextual-help-wrap strong {
 
 /* txn abandoned, reg incomplete, dtt sold out */
 .ee-status-dot--MRS,
+.ee-status-legend--MRS,
 .ee-status-dot--RIC,
+.ee-status-legend--RIC,
 .ee-status-dot--TAB,
-.ee-admin-page-header-grid .ee-admin-container.status-TAB,
+.ee-status-legend--TAB,
+.ee-admin-page-header-grid .ee-admin-container.status-DTS,
 .ee-admin-page-header-grid .ee-admin-container.status-RIC,
-.ee-admin-page-header-grid .ee-admin-container.status-DTS {
+.ee-admin-page-header-grid .ee-admin-container.status-TAB {
     background-color: var(--ee-status-color-yellow);
 }
 
 .ee-status-dot--DTA,
+.ee-status-legend--DTA,
+.event-active-status--DTA,
 .ee-status-dot--MSN,
+.ee-status-legend--MSN,
 .ee-status-dot--PAP,
+.ee-status-legend--PAP,
 .ee-status-dot--RAP,
+.ee-status-legend--RAP,
 .ee-status-dot--TCM,
+.ee-status-legend--TCM,
 .ee-admin-page-header-grid .ee-admin-container.status-DTA,
 .ee-admin-page-header-grid .ee-admin-container.status-PAP,
 .ee-admin-page-header-grid .ee-admin-container.status-RAP,
@@ -2727,40 +2609,58 @@ body.espresso-admin #contextual-help-wrap strong {
 
 /* txn open, payment pending, reg pending payment, dtt upcoming */
 .ee-status-dot--DTU,
+.ee-status-legend--DTU,
+.event-active-status--DTU,
 .ee-status-dot--MID,
+.ee-status-legend--MID,
 .ee-status-dot--PPN,
+.ee-status-dlegendot--PPN,
 .ee-status-dot--RPP,
+.ee-status-legend--RPP,
 .ee-status-dot--TIN,
-.ee-admin-page-header-grid .ee-admin-container.status-TIN,
+.ee-status-legend--TIN,
+.ee-admin-page-header-grid .ee-admin-container.status-DTU,
 .ee-admin-page-header-grid .ee-admin-container.status-PPN,
 .ee-admin-page-header-grid .ee-admin-container.status-RPP,
-.ee-admin-page-header-grid .ee-admin-container.status-DTU {
+.ee-admin-page-header-grid .ee-admin-container.status-TIN {
     background-color: var(--ee-status-color-blue);
     color: var(--ee-color-white) !important;
 }
 
-/* dtt postponed */
+/* dtt sold out */
 .ee-status-dot--DTS,
+.ee-status-legend--DTS,
+.event-active-status--DTS,
 .ee-status-dot--MEX,
-.ee-admin-page-header-grid .ee-admin-container.status-DTP {
+.ee-status-legend--MEX,
+.ee-status-dot--RWL,
+.ee-status-legend--RWL,
+.ee-admin-page-header-grid .ee-admin-container.status-DTS {
     background-color: var(--ee-status-color-purple);
     color: var(--ee-color-white) !important;
 }
 
 /* payment cancelled, reg cancelled, dtt expired */
 .ee-status-dot--DTE,
+.ee-status-legend--DTE,
+.event-active-status--DTE,
 .ee-status-dot--PCN,
+.ee-status-legend--PCN,
 .ee-status-dot--RCN,
+.ee-status-legend--RCN,
+.ee-admin-page-header-grid .ee-admin-container.status-DTE,
 .ee-admin-page-header-grid .ee-admin-container.status-PCN,
-.ee-admin-page-header-grid .ee-admin-container.status-RCN,
-.ee-admin-page-header-grid .ee-admin-container.status-DTE {
-    background-color: var(--ee-status-color-lt-grey);
+.ee-admin-page-header-grid .ee-admin-container.status-RCN {
+    background-color: var(--ee-status-color-light-grey);
     color: var(--ee-color-white) !important;
 }
 
 /* dtt inactive */
 .ee-status-dot--DTI,
+.ee-status-legend--DTI,
+.event-active-status--DTI,
 .ee-status-dot--MIC,
+.ee-status-legend--MIC,
 .ee-admin-page-header-grid .ee-admin-container.status-DTI {
     background-color: var(--ee-status-color-grey);
     color: var(--ee-color-white) !important;
@@ -2769,6 +2669,8 @@ body.espresso-admin #contextual-help-wrap strong {
 
 /* BUTTONS */
 
+.espresso-admin #doaction,
+.espresso-admin #search-submit,
 .espresso-admin input[type="submit"],
 .espresso-admin .pagination-links .button,
 .espresso-admin .button.button--primary,
@@ -2788,7 +2690,7 @@ body.espresso-admin #contextual-help-wrap strong {
     display: inline-flex;
     font-size: 1em;
     font-weight: 600;
-    height: 36px;
+    height: 2.25rem;
     justify-content: center;
     line-height: 1;
     min-height: unset;
@@ -2807,39 +2709,41 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .button.button--secondary.button--small:not(a) {
     line-height: 0;
 }
+
 .espresso-admin .button.button--primary.button--small,
 .espresso-admin .button.button--secondary.button--small,
 .espresso-admin #edit-slug-box .button.button-small {
-    font-size: .85em;
-    height: 30px;
+    font-size: .8em;
+    height: 1.75rem;
     padding: .6em 1.2em;
 }
 .espresso-admin .button.button--primary.button--big,
 .espresso-admin .button.button--secondary.button--big {
-    font-size: 1.3em;
-    height: 42px;
+    font-size: 1.5em;
+    height: 3rem;
     padding: .8em 1.6em;
 }
 
 
 .espresso-admin .pagination-links .button {
     aspect-ratio: 1;
-    font-size: .6rem;
-    height: 30px;
-    padding: 1.2em;
-    width: 30px;
+    width: 2.25rem;
+}
+
+/* .espresso-admin .pagination-links .button span {
+    left: 1px;
+    position: relative;
+    top: -3px;
+} */
+
+.espresso-admin span.tablenav-pages-navspan.button.disabled {
+  padding-block-start: 0.25rem;
 }
 
 .espresso-admin .pagination-links .button:after {
     content: "";
     display: block;
     padding-bottom: 100%;
-}
-
-.espresso-admin .pagination-links .button:not([disabled]),
-.espresso-admin .button.button--primary:active:not([disabled]),
-.espresso-admin .button.button--secondary:active:not([disabled]) {
-    box-shadow: var(--ee-button-box-shadow-alt);
 }
 
 .espresso-admin .button.button--primary,
@@ -2855,6 +2759,8 @@ body.espresso-admin #contextual-help-wrap strong {
     border-color: var(--ee-btn-primary-focus);
 }
 
+.espresso-admin #doaction,
+.espresso-admin #search-submit,
 .espresso-admin input[type="submit"],
 .espresso-admin .pagination-links .button,
 .espresso-admin .button.button--secondary,
@@ -2915,15 +2821,15 @@ body.espresso-admin #contextual-help-wrap strong {
     border: 2px solid var(--ee-border-color);
     box-shadow: none;
     box-sizing: border-box;
-    /*color: #363636;*/
     color: var(--ee-font-color);
     cursor: pointer;
     display: inline-flex;
     font-size: .8rem;
-    height: 36px;
+    height: 2.25rem;
     justify-content: center;
     line-height: 1;
-    margin-inline: 0.25rem;
+    margin: 0;
+    margin-inline: 0.5rem;
     outline: 0;
     padding: .4em .8em;
     position: relative;
@@ -2967,7 +2873,7 @@ body.espresso-admin #contextual-help-wrap strong {
     height: 1.5rem;
     width: 1.5rem;
     content: "";
-    margin: 0.05rem 0 0 -0.425rem;
+    margin: 0.05rem 0 0 -0.35rem;
 }
 
 .espresso-admin .ee-admin-radio-lbl {
@@ -2995,9 +2901,11 @@ body.espresso-admin #contextual-help-wrap strong {
     padding: unset;
     background: var(--ee-color-white);
     border: none;
+    border-collapse: collapse;
     border-radius: unset;
     margin-block-start: 1rem;
     margin-block-end: 2rem;
+    width: 100%;
 }
 
 
@@ -3009,7 +2917,6 @@ body.espresso-admin #contextual-help-wrap strong {
     padding-block: 1rem;
     padding-inline: .75rem;
     margin: 0;
-    border: none;
     background: unset;
     font-family: sans-serif;
     font-size: 0.95rem;
@@ -3092,10 +2999,25 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .admin-primary-mbox-tbl thead th,
-.espresso-admin .wp-list-table thead th {
+.admin-primary-mbox-tbl tfoot th,
+.espresso-admin .wp-list-table thead th,
+.espresso-admin .wp-list-table tfoot th {
     color: var(--ee-font-color-light);
     font-size: .9rem;
     font-weight: 800;
+}
+
+.admin-primary-mbox-tbl thead td,
+.admin-primary-mbox-tbl thead th,
+.espresso-admin .wp-list-table thead td,
+.espresso-admin .wp-list-table thead th {
+    border-block-end: 2px solid var(--ee-border-color-table-row);
+}
+.admin-primary-mbox-tbl tfoot td,
+.admin-primary-mbox-tbl tfoot th,
+.espresso-admin .wp-list-table tfoot td,
+.espresso-admin .wp-list-table tfoot th {
+    border-block-start: 2px solid var(--ee-border-color-table-row);
 }
 
 .admin-primary-mbox-tbl tbody tr,
@@ -3103,7 +3025,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .wp-list-table tbody tr,
 .espresso-admin .wp-list-table tfoot tr {
     border-top: unset;
-    border-block-start: 1px solid var(--ee-border-color-table-row) !important;
+    /* border-block-start: 1px solid var(--ee-border-color-table-row) !important; */
 }
 
 .espresso-admin .wp-list-table td.no-pad,
@@ -3169,8 +3091,10 @@ max-width: 16rem;
 
 
 .espresso-admin .pagination-links .button,
+.espresso-admin .pagination-links .paging-input,
+.espresso-admin .pagination-links #table-paging,
 .espresso-admin .pagination-links > span + span {
-  margin-inline-start: 0.5rem;
+    margin-inline-start: 0.5rem;
 }
 .espresso-admin .tablenav-paging-text {
     justify-content: space-evenly;

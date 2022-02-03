@@ -109,80 +109,7 @@
 	text-align: left;
 }
 
-/** sold out **/
-.event-active-status-DTS, .ee-status-legend-DTS {
-	background-color: var(--ee-status-color-purple);  /* prev: #FCB93C */
-}
 
-/** active **/
-.event-active-status-DTA, .ee-status-legend-DTA {
-	background-color: var(--ee-status-color-green);  /* prev: #70CC50 */
-}
-
-/** upcoming **/
-.event-active-status-DTU, .ee-status-legend-DTU {
-	background-color: var(--ee-status-color-blue);  /* prev: #00B1CA */
-}
-
-/** postponed **/
-.event-active-status-DTP, .ee-status-legend-DTP {
-	background-color: var(--ee-status-color-yellow);  /* prev: #8A549A */
-}
-
-/** cancelled **/
-.event-active-status-DTC, .ee-status-legend-DTC {
-	background-color: var(--ee-status-color-pink);  /* prev: #E44064 */
-}
-
-/** expired **/
-.event-active-status-DTE, .ee-status-legend-DTE {
-	background-color: var(--ee-status-color-grey);  /* prev: #AC9D9C */
-}
-
-/** inactive **/
-.event-active-status-DTI, .ee-status-legend-DTI {
-	background-color: var(--ee-status-color-charcoal);  /* prev: #403A3A */
-}
-
-
-
-/**status strips**/
-.event-status-DTS,
-.event-status-DTS .check-column {
-	border-left-color: var(--ee-status-color-purple);  /* prev: #FCB93C */
-}
-.event-status-DTA,
-.event-status-DTA .check-column {
-	border-left-color:  var(--ee-status-color-green);  /* prev: #70CC50 */
-}
-.event-status-DTU,
-.event-status-DTU .check-column {
-	border-left-color: var(--ee-status-color-blue);  /* prev: #00B1CA */
-}
-.event-status-DTP,
-.event-status-DTP .check-column {
-	border-left-color: var(--ee-status-color-yellow);  /* prev: #8A549A */
-}
-.event-status-DTC,
-.event-status-DTC .check-column {
-	border-left-color: var(--ee-status-color-pink);  /* prev: #E44064 */
-}
-.event-status-DTE,
-.event-status-DTE .check-column {
-	border-left-color: var(--ee-status-color-grey);  /* prev: #AC9D9C */
-}
-.event-status-DTI,
-.event-status-DTI .check-column {
-	border-left-color: var(--ee-status-color-charcoal);  /* prev: #403A3A */
-}
-
-
-
-/*.widefat td.column-status, .widefat th.column-status {*/
-/*	width: 2%;*/
-/*	padding: 0;*/
-/*	margin: 0;*/
-/*}*/
 
 
 .inside .ee-status {
@@ -194,15 +121,6 @@
 	display: inline-block;
 	vertical-align: top;
 }
-
-
-/*.avatar {*/
-/*	-webkit-border-radius: 50%;*/
-/*	-moz-border-radius: 50%;*/
-/*	-ms-border-radius: 50%;*/
-/*	-o-border-radius: 50%;*/
-/*	border-radius: 50%;*/
-/*}*/
 
 #message .spinner {
     float: none;
