@@ -71,9 +71,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
         $columns = array();
-        // $columns['_Reg_Status'] = '';
         $this->_columns = array(
             '_REG_att_checked_in' => '<span class="dashicons dashicons-yes ee-icon-size-18"></span>',
+            'status' => '',
             'ATT_name'            => esc_html__('Registrant', 'event_espresso'),
             'ATT_email'           => esc_html__('Email Address', 'event_espresso'),
             'Event'               => esc_html__('Event', 'event_espresso'),
@@ -293,12 +293,18 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param \EE_Registration $item
+     *    column status
+     *
+     * @param EE_Registration $registration
      * @return string
+     * @throws EE_Error
      */
-    public function column__Reg_Status(EE_Registration $item)
+    public function column_status(EE_Registration $registration)
     {
-        return '<span class="ee-status-strip ee-status-strip-td reg-status-' . $item->status_ID() . '"></span>';
+        return '
+        <span class="ee-status-dot ee-status-dot--' . esc_attr($registration->status_ID()) . ' ee-aria-tooltip" 
+        aria-label="' . EEH_Template::pretty_status($registration->status_ID(), false, 'sentence') . '">        
+        </span>';
     }
 
 
@@ -382,7 +388,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
               . '</a>'
             : $item->attendee()->full_name();
         $name_link .= $item->count() === 1
-            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled yellow-icon ee-icon-size-8"></div></sup>	'
+            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled gold-icon ee-icon-size-8"></div></sup>	'
             : '';
         // add group details
         $name_link .= '&nbsp;' . sprintf(esc_html__('(%s of %s)', 'event_espresso'), $item->count(), $item->group_size());
