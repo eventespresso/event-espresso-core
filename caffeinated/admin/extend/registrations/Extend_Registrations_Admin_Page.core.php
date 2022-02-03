@@ -1129,7 +1129,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $checked_never = new CheckinStatusDashicon(EE_Checkin::status_checked_never);
         $legend_items = array(
             'star-icon'        => array(
-                'class' => 'dashicons dashicons-star-filled yellow-icon ee-icon-size-8',
+                'class' => 'dashicons dashicons-star-filled gold-icon ee-icon-size-8',
                 'desc'  => esc_html__('This Registrant is the Primary Registrant', 'event_espresso'),
             ),
             'checkin'          => array(
@@ -1145,27 +1145,27 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 'desc'  => $checked_never->legendLabel(),
             ),
             'approved_status'  => array(
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_approved,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_approved, false, 'sentence'),
             ),
             'cancelled_status' => array(
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_cancelled,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_cancelled, false, 'sentence'),
             ),
             'declined_status'  => array(
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_declined,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_declined, false, 'sentence'),
             ),
             'not_approved'     => array(
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_not_approved,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_not_approved, false, 'sentence'),
             ),
             'pending_status'   => array(
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_pending_payment,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_pending_payment, false, 'sentence'),
             ),
             'wait_list'        => array(
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_wait_list,
+                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_wait_list,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_wait_list, false, 'sentence'),
             ),
         );
@@ -1201,12 +1201,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         // if no datetime, then we're on the initial view, so let's give some helpful instructions on what the status
         // column represents
         if (! $datetime instanceof EE_Datetime) {
-            $this->_template_args['before_list_table'] .= '<br><p class="description">'
+            $this->_template_args['before_list_table'] .= '<h3 class="description">'
                                                           . esc_html__(
                                                               'In this view, the check-in status represents the latest check-in record for the registration in that row.',
                                                               'event_espresso'
                                                           )
-                                                          . '</p>';
+                                                          . '</h3>';
         }
         $this->display_admin_list_table_page_with_no_sidebar();
     }
