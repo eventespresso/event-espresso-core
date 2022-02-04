@@ -2,13 +2,13 @@
 
 exports[`EditorTicketSelect() matches snapshot with default props 1`] = `
 <div
-  class="components-base-control css-wdf2ti-Wrapper e1puf3u0"
+  class="components-base-control css-wdf2ti-Wrapper e1puf3u4"
 >
   <div
-    class="components-base-control__field css-11vcxb9-StyledField e1puf3u1"
+    class="components-base-control__field css-igk9ll-StyledField e1puf3u3"
   >
     <label
-      class="components-base-control__label css-pezhm9-StyledLabel e1puf3u2"
+      class="components-base-control__label css-eweeby-StyledLabel-labelStyles e1puf3u2"
       for="inspector-select-ticket-control-0"
     >
       Select Ticket

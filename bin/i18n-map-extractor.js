@@ -138,7 +138,9 @@ class wpi18nExtractor {
 				chunkName = options.aliases.hasOwnProperty( chunk.name ) ?
 					options.aliases[ chunk.name ] :
 					chunk.name;
-				parseSourcesToMap( chunk._modules, chunkName, extractor );
+				if (chunk.hasOwnProperty('_modules')) {
+					parseSourcesToMap( chunk._modules, chunkName, extractor );
+				}
 			}
 		} );
 		//get existing json and merge
