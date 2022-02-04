@@ -38,10 +38,6 @@
             <span id="send-related-messages-dv">
                 <label for="txn-reg-status-send-notifications-inp" class="important-notice">
                     <?php esc_html_e('...and send related messages ?', 'event_espresso'); ?>
-                    <input name="txn_reg_status_change[send_notifications]"
-                           type="hidden"
-                           value="0"
-                    />
                     <input id='txn-reg-status-send-notifications-inp'
                            name="txn_reg_status_change[send_notifications]"
                            type="checkbox"

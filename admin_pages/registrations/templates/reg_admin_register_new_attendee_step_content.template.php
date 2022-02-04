@@ -23,10 +23,6 @@
                 <label for="txn_reg_status_change" class="last">
                     <?php esc_html_e('Send Related Messages?', 'event_espresso'); ?>
                 </label>
-                <input name="txn_reg_status_change[send_notifications]"
-                       type="hidden"
-                       value="0"
-                />
                 <input checked=checked
                        id="txn_reg_status_change"
                        name="txn_reg_status_change[send_notifications]"
