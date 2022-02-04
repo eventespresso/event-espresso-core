@@ -1367,7 +1367,7 @@ class EE_Registry implements ResettableInterface
                 : $param_class;
             if (
                 // param is not even a class
-                $param_class === null
+                ($param_class === null || $this->parameterIsPrimitive($param_class))
                 // and something already exists in the incoming arguments for this param
                 && array_key_exists($index, $argument_keys)
                 && array_key_exists($argument_keys[ $index ], $arguments)
@@ -1733,5 +1733,19 @@ class EE_Registry implements ResettableInterface
     public function get_ReflectionClass($class_name)
     {
         return $this->mirror->getReflectionClass($class_name);
+    }
+
+    private function parameterIsPrimitive(?string $param_class): bool
+    {
+        return in_array(
+            $param_class,
+            [
+                'array',
+                'bool',
+                'float',
+                'int',
+                'string',
+            ]
+        );
     }
 }
