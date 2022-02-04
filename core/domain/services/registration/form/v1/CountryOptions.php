@@ -110,12 +110,12 @@ class CountryOptions
             $answer = EE_Answer::new_instance();
         }
         $this->country_options[ $this->action ] = apply_filters(
-            'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options',
+            'FHEE__EventEspresso_core_domain_services_registration_form_v1_CountryOptions__generateLegacyCountryOptions__country_options',
             $country_options,
-            $this,
             $registration,
             $question,
-            $answer
+            $answer,
+            $this
         );
     }
 }

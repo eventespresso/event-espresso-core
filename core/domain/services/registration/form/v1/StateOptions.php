@@ -97,12 +97,12 @@ class StateOptions
             }
         }
         $this->state_options[ $this->action ] = apply_filters(
-            'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options',
+            'FHEE__EventEspresso_core_domain_services_registration_form_v1_StateOptions__generateLegacyStateOptions__state_options',
             $state_options,
-            $this,
             $registration,
             $question,
-            $answer
+            $answer,
+            $this
         );
     }
 }

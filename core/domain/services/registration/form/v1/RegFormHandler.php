@@ -150,7 +150,7 @@ class RegFormHandler
              */
             if (
                 apply_filters(
-                    'FHEE__EE_SPCO_Reg_Step_Attendee_Information___process_registrations__pre_registration_process',
+                    'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegFormHandler__processRegistrations__bypass',
                     false,
                     $this->registrant_data->attendeeCount(),
                     $registration,
@@ -194,10 +194,10 @@ class RegFormHandler
 
 
     /**
-     * @param EE_Registration $registration
+     * @param EE_Registration|null $registration
      * @return bool
      */
-    private function isValidRegistration(EE_Registration $registration): bool
+    private function isValidRegistration(?EE_Registration $registration): bool
     {
         // verify EE_Registration object
         if ($registration instanceof EE_Registration) {
@@ -278,8 +278,9 @@ class RegFormHandler
             $this->registrant_data->setCopyPrimary($copy_primary);
             // filter form input data for this registration
             $reg_form_data[ $reg_url_link ] = (array) apply_filters(
-                'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item',
-                $reg_form_data[ $reg_url_link ]
+                'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegFormHandler__processRegFormData__registrant_form_data',
+                $reg_form_data[ $reg_url_link ],
+                $registration
             );
             if (isset($reg_form_data['primary_attendee'])) {
                 $primary_reg_url_link = $reg_form_data['primary_attendee'] ?? '';

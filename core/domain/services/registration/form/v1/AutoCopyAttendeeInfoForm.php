@@ -17,7 +17,7 @@ class AutoCopyAttendeeInfoForm extends EE_Form_Section_HTML
             EEH_Template::locate_template(
                 SPCO_REG_STEPS_PATH . $slug . '/_auto_copy_attendee_info.template.php',
                 apply_filters(
-                    'FHEE__EE_SPCO_Reg_Step_Attendee_Information__auto_copy_attendee_info__template_args',
+                    'FHEE__EventEspresso_core_domain_services_registration_form_v1_AutoCopyAttendeeInfoForm__construct__template_args',
                     []
                 ),
                 true,

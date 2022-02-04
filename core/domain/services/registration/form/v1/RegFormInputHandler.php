@@ -122,7 +122,7 @@ class RegFormInputHandler
         // For plugins to bypass normal processing here, they just need to return a truthy value.
         if (
             apply_filters(
-                'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input',
+                'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegFormInputHandler__saveRegistrationFormInput',
                 false,
                 $registration,
                 $form_input,

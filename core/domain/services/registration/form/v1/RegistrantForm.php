@@ -10,12 +10,18 @@ use EE_Form_Section_Proper;
 use EE_Hidden_Input;
 use EE_Question_Group;
 use EE_Registration;
+use EE_SPCO_Reg_Step_Attendee_Information;
 use EEM_Event_Question_Group;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use ReflectionException;
 
 class RegistrantForm extends EE_Form_Section_Proper
 {
+
+    /**
+     * @var EE_SPCO_Reg_Step_Attendee_Information
+     */
+    public $reg_step;
 
     /**
      * @var EEM_Event_Question_Group
@@ -32,23 +38,24 @@ class RegistrantForm extends EE_Form_Section_Proper
      * RegistrantForm constructor.
      *
      * @param EE_Registration          $registration
-     * @param bool                     $admin_request
      * @param bool                     $copy_attendee_info
      * @param callable                 $enablePrintCopyInfo
+     * @param EE_SPCO_Reg_Step_Attendee_Information $reg_step
      * @param EEM_Event_Question_Group $event_question_group_model
      * @throws EE_Error
      * @throws ReflectionException
      */
     public function __construct(
         EE_Registration $registration,
-        bool $admin_request,
         bool $copy_attendee_info,
         callable $enablePrintCopyInfo,
+        EE_SPCO_Reg_Step_Attendee_Information $reg_step,
         EEM_Event_Question_Group $event_question_group_model
     ) {
+        $this->reg_step = $reg_step;
         $this->event_question_group_model = $event_question_group_model;
         parent::__construct(
-            $this->generateFormArgs($registration, $admin_request, $copy_attendee_info, $enablePrintCopyInfo)
+            $this->generateFormArgs($registration, $copy_attendee_info, $enablePrintCopyInfo)
         );
     }
 
@@ -64,7 +71,6 @@ class RegistrantForm extends EE_Form_Section_Proper
 
     /**
      * @param EE_Registration $registration
-     * @param bool            $admin_request
      * @param bool            $copy_attendee_info
      * @param callable        $enablePrintCopyInfo
      * @return array
@@ -73,7 +79,6 @@ class RegistrantForm extends EE_Form_Section_Proper
      */
     private function generateFormArgs(
         EE_Registration $registration,
-        bool $admin_request,
         bool $copy_attendee_info,
         callable $enablePrintCopyInfo
     ): array {
@@ -86,9 +91,7 @@ class RegistrantForm extends EE_Form_Section_Proper
             );
             $question_groups = $registration->event()->question_groups(
                 apply_filters(
-                    // @codingStandardsIgnoreStart
-                    'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form__question_groups_query_parameters',
-                    // @codingStandardsIgnoreEnd
+                    'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegistrantForm__generateFormArgs__question_groups_query_parameters',
                     [
                         [
                             'Event.EVT_ID' => $registration->event()->ID(),
@@ -105,7 +108,7 @@ class RegistrantForm extends EE_Form_Section_Proper
                 $form_args = [
                     'html_id'         => 'ee-registration-' . $registration->reg_url_link(),
                     'html_class'      => 'ee-reg-form-attendee-dv',
-                    'html_style'      => $admin_request
+                    'html_style'      => $this->reg_step->checkout->admin_request
                         ? 'padding:0em 2em 1em; margin:3em 0 0; border:1px solid #ddd;'
                         : '',
                     'subsections'     => [],
@@ -127,10 +130,10 @@ class RegistrantForm extends EE_Form_Section_Proper
                     if ($question_group instanceof EE_Question_Group) {
                         $question_group_reg_form = LoaderFactory::getNew(
                             RegFormQuestionGroup::class,
-                            [$registration, $question_group, $admin_request]
+                            [$registration, $question_group, $this->reg_step]
                         );
                         $form_args['subsections'][ $question_group->identifier() ] = apply_filters(
-                            'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form',
+                            'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegistrantForm__generateFormArgs__question_group_reg_form',
                             $question_group_reg_form,
                             $registration,
                             $question_group,
@@ -145,9 +148,11 @@ class RegistrantForm extends EE_Form_Section_Proper
 
                 // If we have question groups for additional attendees, then display the copy options
                 $printCopyInfo = apply_filters(
-                    'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form___printCopyInfo',
+                    'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegistrantForm__generateFormArgs__printCopyInfo',
                     $attendee_nmbr > 1 && $copy_attendee_info,
-                    $attendee_nmbr
+                    $attendee_nmbr,
+                    $registration,
+                    $this
                 );
                 if ($printCopyInfo) {
                     $enablePrintCopyInfo();

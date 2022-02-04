@@ -162,7 +162,7 @@ class RegistrantData
         // add address info to critical details?
         if (
             apply_filters(
-                'FHEE__EE_SPCO_Reg_Step_Attendee_Information__merge_address_details_with_critical_attendee_details',
+                'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegistrantData__ensureCriticalRegistrantDataIsSet',
                 false
             )
         ) {
