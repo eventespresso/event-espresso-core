@@ -380,7 +380,7 @@ abstract class EE_PMT_Base
     public function process_payment(
         EE_Transaction $transaction,
         float $amount = null,
-        EE_Billing_Info_Form $billing_info = null,
+        ?EE_Billing_Info_Form $billing_info = null,
         string $return_url = null,
         string $fail_url = '',
         string $method = 'CART',

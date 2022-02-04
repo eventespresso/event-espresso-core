@@ -2263,7 +2263,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 $payment_method,
                 $this->checkout->transaction,
                 $this->checkout->amount_owing,
-                $this->checkout->billing_form,
+                $this->checkout->billing_form instanceof EE_Billing_Info_Form
+                    ? $this->checkout->billing_form
+                    : null,
                 $this->_get_return_url($payment_method),
                 'CART',
                 $this->checkout->admin_request,
