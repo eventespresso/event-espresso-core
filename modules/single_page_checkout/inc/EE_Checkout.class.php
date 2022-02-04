@@ -486,6 +486,7 @@ class EE_Checkout
                 return;
             }
             $this->current_step->set_is_current_step(true);
+            $this->current_step->setRequest(EED_Single_Page_Checkout::getRequest());
         } else {
             EE_Error::add_error(
                 esc_html__('The current step could not be set.', 'event_espresso'),
