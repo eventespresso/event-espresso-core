@@ -195,9 +195,9 @@ class RegForm extends EE_Form_Section_Proper
                         RegistrantForm::class,
                         [
                             $registration,
-                            $this->reg_step->checkout->admin_request,
                             $this->reg_config->copyAttendeeInfo(),
                             [$this, 'enablePrintCopyInfo'],
+                            $this->reg_step,
                         ]
                     );
                     // Increment the reg forms number if form is valid.

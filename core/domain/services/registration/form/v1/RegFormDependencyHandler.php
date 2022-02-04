@@ -22,6 +22,7 @@ class RegFormDependencyHandler extends DependencyHandler
                 null,
                 null,
                 null,
+                null,
                 'EEM_Event_Question_Group' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionFactory' => [
