@@ -31,6 +31,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * Extend_Events_Admin_Page constructor.
      *
      * @param bool $routing
+     * @throws EE_Error
      * @throws ReflectionException
      */
     public function __construct($routing = true)
@@ -49,29 +50,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * Sets routes.
      *
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws Exception
      */
     protected function _extend_page_config()
     {
         $this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'events';
         // is there a evt_id in the request?
-        $evt_id = ! empty($this->_req_data['EVT_ID']) && ! is_array($this->_req_data['EVT_ID'])
-            ? $this->_req_data['EVT_ID']
-            : 0;
-        $evt_id = ! empty($this->_req_data['post']) ? $this->_req_data['post'] : $evt_id;
-        // tkt_id?
-        $tkt_id                                          =
-            ! empty($this->_req_data['TKT_ID']) && ! is_array($this->_req_data['TKT_ID'])
-                ? $this->_req_data['TKT_ID']
-                : 0;
-        $new_page_routes                                 = [
+        $EVT_ID             = $this->request->getRequestParam('EVT_ID', 0, 'int');
+        $EVT_ID             = $this->request->getRequestParam('post', $EVT_ID, 'int');
+        $TKT_ID             = $this->request->getRequestParam('TKT_ID', 0, 'int');
+        $new_page_routes    = [
             'duplicate_event'          => [
                 'func'       => '_duplicate_event',
                 'capability' => 'ee_edit_event',
-                'obj_id'     => $evt_id,
+                'obj_id'     => $EVT_ID,
                 'noheader'   => true,
             ],
             'import_page'              => [
@@ -127,7 +118,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'trash_ticket'    => [
                     'func'       => '_trash_or_restore_ticket',
                     'capability' => 'ee_delete_default_ticket',
-                    'obj_id'     => $tkt_id,
+                    'obj_id'     => $TKT_ID,
                     'noheader'   => true,
                     'args'       => ['trash' => true],
                 ],
@@ -140,7 +131,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'restore_ticket'  => [
                     'func'       => '_trash_or_restore_ticket',
                     'capability' => 'ee_delete_default_ticket',
-                    'obj_id'     => $tkt_id,
+                    'obj_id'     => $TKT_ID,
                     'noheader'   => true,
                 ],
                 'restore_tickets' => [
@@ -151,7 +142,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'delete_ticket'   => [
                     'func'       => '_delete_ticket',
                     'capability' => 'ee_delete_default_ticket',
-                    'obj_id'     => $tkt_id,
+                    'obj_id'     => $TKT_ID,
                     'noheader'   => true,
                 ],
                 'delete_tickets'  => [
@@ -168,12 +159,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
         $this->_page_config['default']['list_table']      = 'Extend_Events_Admin_List_Table';
         // add tickets tab but only if there are more than one default ticket!
-        $tkt_count = EEM_Ticket::instance()->count_deleted_and_undeleted(
+        $ticket_count = EEM_Ticket::instance()->count_deleted_and_undeleted(
             [['TKT_is_default' => 1]],
             'TKT_ID',
             true
         );
-        if ($tkt_count > 1) {
+        if ($ticket_count > 1) {
             $new_page_config = [
                 'ticket_list_table' => [
                     'nav'           => [
@@ -241,7 +232,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 
     private function getRequestAction()
     {
-        return isset($this->_req_data['action']) ? sanitize_key($this->_req_data['action']) : null;
+        return $this->request->getRequestParam('action);
     }
 
 
@@ -378,9 +369,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * Returns template for the additional datetime.
      *
-     * @param $template
-     * @param $template_args
-     * @return mixed
+     * @param string $template
+     * @param array  $template_args
+     * @return string
      * @throws DomainException
      */
     public function add_additional_datetime_button($template, $template_args)
@@ -398,7 +389,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      *
      * @param $template
      * @param $template_args
-     * @return mixed
+     * @return string
      * @throws DomainException
      */
     public function add_datetime_clone_button($template, $template_args)
@@ -416,7 +407,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      *
      * @param $template
      * @param $template_args
-     * @return mixed
+     * @return string
      * @throws DomainException
      */
     public function datetime_timezones_template($template, $template_args)
@@ -466,9 +457,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @param EE_Event $event
      * @return array
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function extra_list_table_actions(array $action_links, EE_Event $event)
@@ -545,9 +533,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      *
      * @return void
      * @throws EE_Error If EE_Event is not available with given ID
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @access protected
      */
@@ -555,7 +540,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     {
         // first make sure the ID for the event is in the request.
         //  If it isn't then we need to bail and redirect back to overview list table (cause how did we get here?)
-        if (! isset($this->_req_data['EVT_ID'])) {
+        $EVT_ID = $this->request->getRequestParam('EVT_ID', 0, 'int');
+        if (! $EVT_ID) {
             EE_Error::add_error(
                 esc_html__(
                     'In order to duplicate an event an Event ID is required.  None was given.',
@@ -569,12 +555,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             return;
         }
         // k we've got EVT_ID so let's use that to get the event we'll duplicate
-        $orig_event = EEM_Event::instance()->get_one_by_ID($this->_req_data['EVT_ID']);
+        $orig_event = EEM_Event::instance()->get_one_by_ID($EVT_ID);
         if (! $orig_event instanceof EE_Event) {
             throw new EE_Error(
                 sprintf(
                     esc_html__('An EE_Event object could not be retrieved for the given ID (%s)', 'event_espresso'),
-                    $this->_req_data['EVT_ID']
+                    $EVT_ID
                 )
             );
         }
@@ -616,7 +602,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             [['Event_Question_Group.EQG_primary' => true]]
         );
         if (! empty($orig_primary_qgs)) {
-            foreach ($orig_primary_qgs as $id => $obj) {
+            foreach ($orig_primary_qgs as $obj) {
                 if ($obj instanceof EE_Question_Group) {
                     $new_event->_add_relation_to($obj, 'Question_Group', ['EQG_primary' => true]);
                 }
@@ -628,7 +614,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             [['Event_Question_Group.EQG_additional' => true]]
         );
         if (! empty($orig_additional_qgs)) {
-            foreach ($orig_additional_qgs as $id => $obj) {
+            foreach ($orig_additional_qgs as $obj) {
                 if ($obj instanceof EE_Question_Group) {
                     $new_event->_add_relation_to($obj, 'Question_Group', ['EQG_additional' => true]);
                 }
@@ -643,8 +629,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             if (! $orig_dtt instanceof EE_Datetime) {
                 continue;
             }
-            $new_dtt   = clone $orig_dtt;
-            $orig_tkts = $orig_dtt->tickets();
+            $new_dtt      = clone $orig_dtt;
+            $orig_tickets = $orig_dtt->tickets();
             // save new dtt then add to event
             $new_dtt->set('DTT_ID', 0);
             $new_dtt->set('DTT_sold', 0);
@@ -653,40 +639,40 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             $new_event->_add_relation_to($new_dtt, 'Datetime');
             $new_event->save();
             // now let's get the ticket relations setup.
-            foreach ((array) $orig_tkts as $orig_tkt) {
+            foreach ((array) $orig_tickets as $orig_ticket) {
                 // it's possible a datetime will have no tickets so let's verify we HAVE a ticket first.
-                if (! $orig_tkt instanceof EE_Ticket) {
+                if (! $orig_ticket instanceof EE_Ticket) {
                     continue;
                 }
                 // is this ticket archived?  If it is then let's skip
-                if ($orig_tkt->get('TKT_deleted')) {
+                if ($orig_ticket->get('TKT_deleted')) {
                     continue;
                 }
                 // does this original ticket already exist in the clone_tickets cache?
                 //  If so we'll just use the new ticket from it.
-                if (isset($cloned_tickets[ $orig_tkt->ID() ])) {
-                    $new_tkt = $cloned_tickets[ $orig_tkt->ID() ];
+                if (isset($cloned_tickets[ $orig_ticket->ID() ])) {
+                    $new_ticket = $cloned_tickets[ $orig_ticket->ID() ];
                 } else {
-                    $new_tkt = clone $orig_tkt;
-                    // get relations on the $orig_tkt that we need to setup.
-                    $orig_prices = $orig_tkt->prices();
-                    $new_tkt->set('TKT_ID', 0);
-                    $new_tkt->set('TKT_sold', 0);
-                    $new_tkt->set('TKT_reserved', 0);
-                    $new_tkt->save(); // make sure new ticket has ID.
+                    $new_ticket = clone $orig_ticket;
+                    // get relations on the $orig_ticket that we need to setup.
+                    $orig_prices = $orig_ticket->prices();
+                    $new_ticket->set('TKT_ID', 0);
+                    $new_ticket->set('TKT_sold', 0);
+                    $new_ticket->set('TKT_reserved', 0);
+                    $new_ticket->save(); // make sure new ticket has ID.
                     // price relations on new ticket need to be setup.
                     foreach ($orig_prices as $orig_price) {
                         $new_price = clone $orig_price;
                         $new_price->set('PRC_ID', 0);
                         $new_price->save();
-                        $new_tkt->_add_relation_to($new_price, 'Price');
-                        $new_tkt->save();
+                        $new_ticket->_add_relation_to($new_price, 'Price');
+                        $new_ticket->save();
                     }
 
                     do_action(
                         'AHEE__Extend_Events_Admin_Page___duplicate_event__duplicate_ticket__after',
-                        $orig_tkt,
-                        $new_tkt,
+                        $orig_ticket,
+                        $new_ticket,
                         $orig_prices,
                         $orig_event,
                         $orig_dtt,
@@ -696,9 +682,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 // k now we can add the new ticket as a relation to the new datetime
                 // and make sure its added to our cached $cloned_tickets array
                 // for use with later datetimes that have the same ticket.
-                $new_dtt->_add_relation_to($new_tkt, 'Ticket');
+                $new_dtt->_add_relation_to($new_ticket, 'Ticket');
                 $new_dtt->save();
-                $cloned_tickets[ $orig_tkt->ID() ] = $new_tkt;
+                $cloned_tickets[ $orig_ticket->ID() ] = $new_ticket;
             }
         }
         // clone taxonomy information
@@ -757,11 +743,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * Generates output for the import page.
      *
-     * @throws DomainException
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     protected function _import_page()
     {
@@ -770,26 +752,28 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'If you have a previously exported Event Espresso 4 information in a Comma Separated Value (CSV) file format, you can upload the file here: ',
             'event_espresso'
         );
-        $form_url                                   = EVENTS_ADMIN_URL;
-        $action                                     = 'import_events';
-        $type                                       = 'csv';
-        $this->_template_args['form']               = EE_Import::instance()->upload_form(
+
+        $form_url = EVENTS_ADMIN_URL;
+        $action   = 'import_events';
+        $type     = 'csv';
+
+        $this->_template_args['form'] = EE_Import::instance()->upload_form(
             $title,
             $intro,
             $form_url,
             $action,
             $type
         );
+
         $this->_template_args['sample_file_link']   = EE_Admin_Page::add_query_args_and_nonce(
             ['action' => 'sample_export_file'],
             $this->_admin_base_url
         );
-        $content                                    = EEH_Template::display_template(
+        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             EVENTS_CAF_TEMPLATE_PATH . 'import_page.template.php',
             $this->_template_args,
             true
         );
-        $this->_template_args['admin_page_content'] = $content;
         $this->display_admin_page_with_sidebar();
     }
 
@@ -800,15 +784,18 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      *
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     protected function _import_events()
     {
         require_once(EE_CLASSES . 'EE_Import.class.php');
         $success = EE_Import::instance()->import();
-        $this->_redirect_after_action($success, 'Import File', 'ran', ['action' => 'import_page'], true);
+        $this->_redirect_after_action(
+            $success,
+            esc_html__('Import File', 'event_espresso'),
+            'ran',
+            ['action' => 'import_page'],
+            true
+        );
     }
 
 
@@ -821,26 +808,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     protected function _events_export()
     {
-        if (isset($this->_req_data['EVT_ID'])) {
-            $event_ids = $this->_req_data['EVT_ID'];
-        } elseif (isset($this->_req_data['EVT_IDs'])) {
-            $event_ids = $this->_req_data['EVT_IDs'];
-        } else {
-            $event_ids = null;
-        }
-        // todo: I don't like doing this but it'll do until we modify EE_Export Class.
-        $new_request_args = [
-            'export' => 'report',
-            'action' => 'all_event_data',
-            'EVT_ID' => $event_ids,
-        ];
-        $this->_req_data  = array_merge($this->_req_data, $new_request_args);
+        $EVT_ID = $this->request->getRequestParam('EVT_ID', 0, 'int');
+        $EVT_ID = $this->request->getRequestParam('EVT_IDs', $EVT_ID, 'int');
+        $this->request->mergeRequestParams(
+            [
+                'export' => 'report',
+                'action' => 'all_event_data',
+                'EVT_ID' => $EVT_ID,
+            ]
+        );
         if (is_readable(EE_CLASSES . 'EE_Export.class.php')) {
             require_once(EE_CLASSES . 'EE_Export.class.php');
-            $EE_Export = EE_Export::instance($this->_req_data);
-            if ($EE_Export instanceof EE_Export) {
-                $EE_Export->export();
-            }
+            $EE_Export = EE_Export::instance($this->request->requestParams());
+            $EE_Export->export();
         }
     }
 
@@ -852,19 +832,18 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     protected function _categories_export()
     {
-        // todo: I don't like doing this but it'll do until we modify EE_Export Class.
-        $new_request_args = [
-            'export'       => 'report',
-            'action'       => 'categories',
-            'category_ids' => $this->_req_data['EVT_CAT_ID'],
-        ];
-        $this->_req_data  = array_merge($this->_req_data, $new_request_args);
+        $EVT_ID = $this->request->getRequestParam('EVT_CAT_ID', 0, 'int');
+        $this->request->mergeRequestParams(
+            [
+                'export' => 'report',
+                'action' => 'categories',
+                'EVT_ID' => $EVT_ID,
+            ]
+        );
         if (is_readable(EE_CLASSES . 'EE_Export.class.php')) {
             require_once(EE_CLASSES . 'EE_Export.class.php');
-            $EE_Export = EE_Export::instance($this->_req_data);
-            if ($EE_Export instanceof EE_Export) {
-                $EE_Export->export();
-            }
+            $EE_Export = EE_Export::instance($this->request->requestParams());
+            $EE_Export->export();
         }
     }
 
@@ -917,9 +896,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * Handler for updating template settings.
      *
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     protected function _update_template_settings()
     {
@@ -930,15 +906,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         EE_Registry::instance()->CFG->template_settings = apply_filters(
             'FHEE__General_Settings_Admin_Page__update_template_settings__data',
             EE_Registry::instance()->CFG->template_settings,
-            $this->_req_data
+            $this->request->requestParams()
         );
         // update custom post type slugs and detect if we need to flush rewrite rules
-        $old_slug                                          = EE_Registry::instance()->CFG->core->event_cpt_slug;
-        EE_Registry::instance()->CFG->core->event_cpt_slug = empty($this->_req_data['event_cpt_slug'])
+        $old_slug = EE_Registry::instance()->CFG->core->event_cpt_slug;
+
+        $event_cpt_slug = $this->request->getRequestParam('event_cpt_slug');
+
+        EE_Registry::instance()->CFG->core->event_cpt_slug = $event_cpt_slug
             ? EE_Registry::instance()->CFG->core->event_cpt_slug
-            : EEH_URL::slugify($this->_req_data['event_cpt_slug'], 'events');
-        $what                                              = 'Template Settings';
-        $success                                           = $this->_update_espresso_configuration(
+            : EEH_URL::slugify($event_cpt_slug, 'events');
+
+        $what    = esc_html__('Template Settings', 'event_espresso');
+        $success = $this->_update_espresso_configuration(
             $what,
             EE_Registry::instance()->CFG->template_settings,
             __FILE__,
@@ -963,9 +943,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @access protected
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     protected function _premium_event_editor_meta_boxes()
@@ -992,16 +969,17 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * override caf metabox
      *
      * @return void
-     * @throws DomainException
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function registration_options_meta_box()
     {
-        $yes_no_values                                    = [
+        $yes_no_values = [
             ['id' => true, 'text' => esc_html__('Yes', 'event_espresso')],
             ['id' => false, 'text' => esc_html__('No', 'event_espresso')],
         ];
-        $default_reg_status_values                        = EEM_Registration::reg_status_array(
+
+        $default_reg_status_values = EEM_Registration::reg_status_array(
             [
                 EEM_Registration::status_id_cancelled,
                 EEM_Registration::status_id_declined,
@@ -1010,9 +988,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             ],
             true
         );
-        $template_args['active_status']                   = $this->_cpt_model_obj->pretty_active_status(false);
-        $template_args['_event']                          = $this->_cpt_model_obj;
-        $template_args['additional_limit']                = $this->_cpt_model_obj->additional_limit();
+
+        $template_args['active_status']    = $this->_cpt_model_obj->pretty_active_status(false);
+        $template_args['_event']           = $this->_cpt_model_obj;
+        $template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
+
         $template_args['default_registration_status']     = EEH_Form_Fields::select_input(
             'default_reg_status',
             $default_reg_status_values,
@@ -1062,9 +1042,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @param array $list_table_obj the list table object
      * @return array                  new filters
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function list_table_filters($old_filters, $list_table_obj)
@@ -1072,15 +1049,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $filters = [];
         // first month/year filters
         $filters[] = $this->espresso_event_months_dropdown();
-        $status    = isset($this->_req_data['status']) ? $this->_req_data['status'] : null;
+        $status    = $this->request->getRequestParam('status');
         // active status dropdown
         if ($status !== 'draft') {
-            $filters[] = $this->active_status_dropdown(
-                isset($this->_req_data['active_status']) ? $this->_req_data['active_status'] : ''
-            );
-            $filters[] = $this->venuesDropdown(
-                isset($this->_req_data['venue']) ? $this->_req_data['venue'] : ''
-            );
+            $filters[] = $this->active_status_dropdown($this->request->getRequestParam('active_status'));
+            $filters[] = $this->venuesDropdown($this->request->getRequestParam('venue'));
         }
         // category filter
         $filters[] = $this->category_dropdown();
@@ -1093,20 +1066,18 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      *
      * @access public
      * @return string                dropdown listing month/year selections for events.
+     * @throws EE_Error
      */
     public function espresso_event_months_dropdown()
     {
         // what we need to do is get all PRIMARY datetimes for all events to filter on.
         // Note we need to include any other filters that are set!
-        $status = isset($this->_req_data['status']) ? $this->_req_data['status'] : null;
-        // categories?
-        $category = isset($this->_req_data['EVT_CAT']) && $this->_req_data['EVT_CAT'] > 0
-            ? $this->_req_data['EVT_CAT']
-            : null;
-        // active status?
-        $active_status = isset($this->_req_data['active_status']) ? $this->_req_data['active_status'] : null;
-        $cur_date      = isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '';
-        return EEH_Form_Fields::generate_event_months_dropdown($cur_date, $status, $category, $active_status);
+        return EEH_Form_Fields::generate_event_months_dropdown(
+            $this->request->getRequestParam('month_range'),
+            $this->request->getRequestParam('status'),
+            $this->request->getRequestParam('EVT_CAT', 0, 'int'),
+            $this->request->getRequestParam('active_status')
+        );
     }
 
 
@@ -1137,26 +1108,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @param string $current_value whatever the current active status is
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     protected function venuesDropdown($current_value = '')
     {
-        $select_name = 'venue';
-        $values      = [
-            '' => esc_html__('All Venues', 'event_espresso'),
-        ];
+        $values = ['' => esc_html__('All Venues', 'event_espresso')];
         // populate the list of venues.
-        $venue_model = EE_Registry::instance()->load_model('Venue');
-        $venues      = $venue_model->get_all(['order_by' => ['VNU_name' => 'ASC']]);
+        $venues = EEM_Venue::instance()->get_all(['order_by' => ['VNU_name' => 'ASC']]);
 
         foreach ($venues as $venue) {
             $values[ $venue->ID() ] = $venue->name();
         }
 
-        return EEH_Form_Fields::select_input($select_name, $values, $current_value, '', 'wide');
+        return EEH_Form_Fields::select_input('venue', $values, $current_value, '', 'wide');
     }
 
 
@@ -1165,11 +1129,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      *
      * @access  public
      * @return string html
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function category_dropdown()
     {
-        $cur_cat = isset($this->_req_data['EVT_CAT']) ? $this->_req_data['EVT_CAT'] : -1;
-        return EEH_Form_Fields::generate_event_category_dropdown($cur_cat);
+        return EEH_Form_Fields::generate_event_category_dropdown(
+            $this->request->getRequestParam('EVT_CAT', -1, 'int')
+        );
     }
 
 
@@ -1244,11 +1211,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * Output default tickets list table view.
      *
-     * @throws DomainException
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public function _tickets_overview_list_table()
     {
@@ -1276,14 +1239,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @param bool $trashed
      * @return EE_Soft_Delete_Base_Class[]|int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public function get_default_tickets($per_page = 10, $count = false, $trashed = false)
     {
-        $orderby = empty($this->_req_data['orderby']) ? 'TKT_name' : $this->_req_data['orderby'];
-        $order   = empty($this->_req_data['order']) ? 'ASC' : $this->_req_data['order'];
+        $orderby = $this->request->getRequestParam('orderby', 'TKT_name');
+        $order   = $this->request->getRequestParam('order', 'ASC');
         switch ($orderby) {
             case 'TKT_name':
                 $orderby = ['TKT_name' => $order];
@@ -1304,35 +1264,35 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 $orderby = ['TKT_qty' => $order];
                 break;
         }
-        $current_page = isset($this->_req_data['paged']) && ! empty($this->_req_data['paged'])
-            ? $this->_req_data['paged']
-            : 1;
-        $per_page     = isset($this->_req_data['perpage']) && ! empty($this->_req_data['perpage'])
-            ? $this->_req_data['perpage']
-            : $per_page;
-        $_where       = [
+
+        $current_page = $this->request->getRequestParam('paged', 1, 'int');
+        $per_page     = $this->request->getRequestParam('perpage', $per_page, 'int');
+        $offset       = ($current_page - 1) * $per_page;
+
+        $where = [
             'TKT_is_default' => 1,
             'TKT_deleted'    => $trashed,
         ];
-        $offset       = ($current_page - 1) * $per_page;
-        $limit        = [$offset, $per_page];
-        if (isset($this->_req_data['s'])) {
-            $sstr         = '%' . $this->_req_data['s'] . '%';
-            $_where['OR'] = [
-                'TKT_name'        => ['LIKE', $sstr],
-                'TKT_description' => ['LIKE', $sstr],
+
+        $search_term = $this->request->getRequestParam('s');
+        if ($search_term) {
+            $search_term = '%' . $search_term . '%';
+            $where['OR'] = [
+                'TKT_name'        => ['LIKE', $search_term],
+                'TKT_description' => ['LIKE', $search_term],
             ];
         }
-        $query_params = [
-            $_where,
-            'order_by' => $orderby,
-            'limit'    => $limit,
-            'group_by' => 'TKT_ID',
-        ];
-        if ($count) {
-            return EEM_Ticket::instance()->count_deleted_and_undeleted([$_where]);
-        }
-        return EEM_Ticket::instance()->get_all_deleted_and_undeleted($query_params);
+
+        return $count
+            ? EEM_Ticket::instance()->count_deleted_and_undeleted([$where])
+            : EEM_Ticket::instance()->get_all_deleted_and_undeleted(
+                [
+                    $where,
+                    'order_by' => $orderby,
+                    'limit'    => [$offset, $per_page],
+                    'group_by' => 'TKT_ID',
+                ]
+            );
     }
 
 
@@ -1348,11 +1308,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $success = 1;
         $TKT     = EEM_Ticket::instance();
         // checkboxes?
-        if (! empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
+        $checkboxes = $this->request->getRequestParam('checkbox', [], 'int', true);
+        if (! empty($checkboxes)) {
             // if array has more than one element then success message should be plural
-            $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
+            $success = count($checkboxes) > 1 ? 2 : 1;
             // cycle thru the boxes
-            foreach ($this->_req_data['checkbox'] as $TKT_ID) {
+            while (list($TKT_ID, $value) = each($checkboxes)) {
                 if ($trash) {
                     if (! $TKT->delete_by_ID($TKT_ID)) {
                         $success = 0;
@@ -1363,7 +1324,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             }
         } else {
             // grab single id and trash
-            $TKT_ID = absint($this->_req_data['TKT_ID']);
+            $TKT_ID = $this->request->getRequestParam('TKT_ID', 0, 'int');
             if ($trash) {
                 if (! $TKT->delete_by_ID($TKT_ID)) {
                     $success = 0;
@@ -1377,7 +1338,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'action' => 'ticket_list_table',
             'status' => $trash ? '' : 'trashed',
         ];
-        $this->_redirect_after_action($success, 'Tickets', $action_desc, $query_args);
+        $this->_redirect_after_action($success, esc_html__('Tickets', 'event_espresso'), $action_desc, $query_args);
     }
 
 
@@ -1385,20 +1346,18 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * Handles trashing default ticket.
      *
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     protected function _delete_ticket()
     {
         $success = 1;
         // checkboxes?
-        if (! empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
+        $checkboxes = $this->request->getRequestParam('checkbox', [], 'int', true);
+        if (! empty($checkboxes)) {
             // if array has more than one element then success message should be plural
-            $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
+            $success = count($checkboxes) > 1 ? 2 : 1;
             // cycle thru the boxes
-            foreach ($this->_req_data['checkbox'] as $TKT_ID) {
+            while (list($TKT_ID, $value) = each($checkboxes)) {
                 // delete
                 if (! $this->_delete_the_ticket($TKT_ID)) {
                     $success = 0;
@@ -1406,25 +1365,27 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             }
         } else {
             // grab single id and trash
-            $TKT_ID = absint($this->_req_data['TKT_ID']);
+            $TKT_ID = $this->request->getRequestParam('TKT_ID', 0, 'int');
             if (! $this->_delete_the_ticket($TKT_ID)) {
                 $success = 0;
             }
         }
         $action_desc = 'deleted';
+        $query_args  = [
+            'action' => 'ticket_list_table',
+            'status' => 'trashed',
+        ];
         // fail safe.  If the default ticket count === 1 then we need to redirect to event overview.
-        $ticket_count = EEM_Ticket::instance()->count_deleted_and_undeleted(
-            [['TKT_is_default' => 1]],
-            'TKT_ID',
-            true
-        );
-        $query_args   = $ticket_count
-            ? []
-            : [
-                'action' => 'ticket_list_table',
-                'status' => 'trashed',
-            ];
-        $this->_redirect_after_action($success, 'Tickets', $action_desc, $query_args);
+        if (
+            EEM_Ticket::instance()->count_deleted_and_undeleted(
+                [['TKT_is_default' => 1]],
+                'TKT_ID',
+                true
+            )
+        ) {
+            $query_args = [];
+        }
+        $this->_redirect_after_action($success, esc_html__('Tickets', 'event_espresso'), $action_desc, $query_args);
     }
 
 
@@ -1432,9 +1393,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @param int $TKT_ID
      * @return bool|int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     protected function _delete_the_ticket($TKT_ID)

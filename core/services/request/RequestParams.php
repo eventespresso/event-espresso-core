@@ -110,7 +110,7 @@ class RequestParams
      */
     public function mergeRequestParams(array $request_params)
     {
-        $this->request = array_merge_recursive($this->request, $request_params);
+        $this->request = array_merge($this->request, $request_params);
     }
 
 

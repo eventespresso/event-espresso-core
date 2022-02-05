@@ -467,7 +467,10 @@ class EE_Registration_Processor extends EE_Processor_Base
             //     false,
             //     'EE_Transaction: ' . $registration->transaction()->ID()
             // );
-            if (! $registration->is_primary_registrant()) {
+            if (
+                ! $this->request->getRequestParam('non_primary_reg_notification', 0, 'int')
+                && ! $registration->is_primary_registrant()
+            ) {
                 return;
             }
             do_action(

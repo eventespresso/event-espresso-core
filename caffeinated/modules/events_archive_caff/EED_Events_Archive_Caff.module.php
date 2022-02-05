@@ -178,15 +178,16 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
      */
     public static function update_template_settings($CFG, $REQ)
     {
-        /** @var EE_Events_Archive_Config $config */
-        $config = $CFG->EED_Events_Archive instanceof EE_Events_Archive_Config
-            ? $CFG->EED_Events_Archive
-            : new EE_Events_Archive_Config();
         // unless we are resetting the config...
         if (
             ! isset($REQ['EED_Events_Archive_reset_event_list_settings'])
             || absint($REQ['EED_Events_Archive_reset_event_list_settings']) !== 1
         ) {
+            /** @var EE_Events_Archive_Config $config */
+            $config = $CFG->EED_Events_Archive instanceof EE_Events_Archive_Config
+                ? $CFG->EED_Events_Archive
+                : new EE_Events_Archive_Config();
+
             $config->display_status_banner = isset($REQ['EED_Events_Archive_display_status_banner'])
                 ? absint($REQ['EED_Events_Archive_display_status_banner'])
                 : 0;
@@ -224,7 +225,10 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
                                            && $config->use_sortable_display_order
                 ? $config->display_order_venue
                 : EED_Events_Archive::EVENT_VENUES_PRIORITY;
+        } else {
+            $config = new EE_Events_Archive_Config();
         }
+
         $CFG->EED_Events_Archive = $config;
         do_action('AHEE__EED_Events_Archive__update_template_settings__after_update', $CFG, $REQ);
         return $CFG;
