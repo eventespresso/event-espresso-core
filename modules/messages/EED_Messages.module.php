@@ -625,10 +625,13 @@ class EED_Messages extends EED_Module
         EE_Registration $registration,
         $extra_details = array()
     ) {
-        if (! $registration->is_primary_registrant()) {
+        $request = self::getRequest();
+        if (
+            ! $request->getRequestParam('non_primary_reg_notification', 0, 'int')
+            && ! $registration->is_primary_registrant()
+        ) {
             return false;
         }
-        $request = self::getRequest();
         // first we check if we're in admin and not doing front ajax
         if (
             ($request->isAdmin() || $request->isAdminAjax())
@@ -636,7 +639,10 @@ class EED_Messages extends EED_Module
         ) {
             $status_change = $request->getRequestParam('txn_reg_status_change', [], 'int', true);
             // make sure appropriate admin params are set for sending messages
-            if (! $status_change['send_notifications']) {
+            if (
+                ! isset($status_change['send_notifications'])
+                || (isset($status_change['send_notifications']) && ! $status_change['send_notifications'])
+            ) {
                 // no messages sent please.
                 return false;
             }
