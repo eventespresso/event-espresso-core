@@ -25,7 +25,7 @@
             </p>
             <div id="titlediv">
                 <div id="titlewrap">
-                    <label for="title" class="label-MTP_name" style="visibility:hidden">
+                    <label for="title" class="label-MTP_name ee-msg-small-label" >
                         <?php esc_html_e('Message Template Name:', 'event_espresso'); ?>
                     </label>
                     <input class='regular-text'
@@ -37,9 +37,8 @@
                 </div>
             </div>
             <p>
-                <label class='label-MTP_description'
+                <label class='label-MTP_description ee-msg-small-label'
                        for="ee-msg-non-global-fields-MTP_description"
-                       style="visibility:hidden;"
                 >
                     <?php esc_html_e('Message Template Description:', 'event_espresso'); ?>
                 </label>
