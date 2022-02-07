@@ -935,7 +935,11 @@ class Payments_Admin_Page extends EE_Admin_Page
         $form = $this->getPaymentSettingsForm();
         $this->_set_add_edit_form_tags('update_payment_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
-        $this->_template_args['admin_page_content'] =  $form->get_html_and_js();
+        $this->_template_args['admin_page_content'] = EEH_HTML::div(
+            $form->get_html_and_js(),
+            '',
+            'padding'
+        );
         $this->display_admin_page_with_sidebar();
     }
 

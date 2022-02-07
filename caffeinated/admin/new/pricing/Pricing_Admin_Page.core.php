@@ -1322,6 +1322,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             array(
                 'name'            => 'tax_settings_form',
                 'html_id'         => 'tax_settings_form',
+                'html_class'      => 'padding',
                 'layout_strategy' => new EE_Div_Per_Section_Layout(),
                 'subsections'     => apply_filters(
                     'FHEE__Pricing_Admin_Page__tax_settings_form__form_subsections',

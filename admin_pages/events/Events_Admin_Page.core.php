@@ -2444,7 +2444,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $this->_set_add_edit_form_tags('update_default_event_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
-        $this->_template_args['admin_page_content'] = $this->_default_event_settings_form()->get_html();
+        $this->_template_args['admin_page_content'] = EEH_HTML::div(
+            $this->_default_event_settings_form()->get_html(),
+            '',
+            'padding'
+        );
         $this->display_admin_page_with_sidebar();
     }
 
