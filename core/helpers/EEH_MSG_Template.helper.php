@@ -823,7 +823,7 @@ class EEH_MSG_Template
             )
         );
 
-        return '<a href="' . $url . '" ' . $title . '><span class="' . esc_attr($icon_css['css_class']) . '"></span></a>';
+        return '<a href="' . $url . '" ' . $title . ' class="button button--small button--icon-only"><span class="' . esc_attr($icon_css['css_class']) . '"></span></a>';
     }
 
 

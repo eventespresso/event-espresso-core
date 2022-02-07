@@ -6,15 +6,14 @@
 .ee-msg-admin-header {
     display: grid;
     grid-gap: 0;
-    grid-template-columns: 2fr 1.5fr 5rem var(--ee-admin-sidebar-width);
+    grid-template-columns: 2fr 1.5fr 1.5rem var(--ee-admin-sidebar-width);
     grid-template-areas:
     "msg-header-1 msg-header-2 postbox-1";
-    margin-block-start: 1rem;
-    margin-block-end: -4rem;
+    margin-block-start: 2.25rem;
 }
 
-.espresso-admin #ee-msg-edit-frm #post-body.columns-2 #postbox-container-1 {
-    margin-top: -24px;
+.espresso-admin #ee-msg-edit-frm  #post-body.columns-2 #postbox-container-1 {
+    margin-block-start: -5.5rem;
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {
@@ -55,11 +54,7 @@
 }
 
 .non-global-mtp-fields {
-    background-color: #dfdfdf;
-    padding: 10px;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 6px;
+    padding-block: 1rem;
 }
 
 .ee-msg-switcher-container {
@@ -106,20 +101,28 @@
     height: 150px;
 }
 
-.non-global-mtp-fields {
-    background-color: #dfdfdf;
-    padding: 10px;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 6px;
+
+#ee-msg-edit-frm h4,
+#ee-msg-edit-frm .admin-primary-mbox-dv label {
+    display: block;
+    font-size: 1.25em;
+    font-weight: 600;
+    margin: 0;
+    margin-block-end: .5rem;
+}
+#ee-msg-edit-frm h4 {
+    margin-block-start: 1.5rem;
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv label > span {
+    color: var(--ee-status-color-red);
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
-#ee-msg-edit-frm h4 {
-    font-size: 1.5em;
-    margin: 0;
-    margin-block-start: 1rem;
-    margin-block-end: .5rem;
-
+#ee-msg-edit-frm .admin-primary-mbox-dv label.ee-msg-small-label {
+    font-size: 1.1em;
+    font-weight: 400;
+    margin-block-end: .375rem;
 }
 
 
@@ -317,8 +320,7 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     background-color: var(--ee-color-white);
     border: 2px solid var(--ee-status-color-blue);
     border-radius: .25rem;
-    box-shadow: 0 6px 6px -4px hsla(207, 5%, 10%, .8), 0 0 16px -2px hsla(207, 5%, 10%, .4);
-    /*box-shadow: 0 3px 6px -1px hsla(0, 0%, 0%, .75), 0 0 20px -2px hsla(0, 0%, 0%, .15);*/
+    box-shadow: 0 3px 6px -1px hsla(0, 0%, 0%, .75), 0 0 20px -2px hsla(0, 0%, 0%, .15);
     font-size: .8rem;
     font-weight: 600;
     height: auto;
@@ -328,7 +330,7 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     min-width: 300px;
     overflow: scroll;
     padding: 1rem !important;
-    text-align:left;
+    text-align: left;
     width: fit-content;
     z-index: 4000;
 }
@@ -390,20 +392,30 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     padding-block: 1px;
 }
 #ee-msg-edit-frm .admin-primary-mbox-dv li {
-    margin-block-end: 1rem;
+    margin-block-end: 2.5rem;
 }
 #ee-msg-edit-frm .admin-primary-mbox-dv li ul {
     margin-block-start: 1rem;
 }
 
-#ee-msg-edit-frm .admin-primary-mbox-dv label {
-    display: block;
+#ee-msg-edit-frm .admin-primary-mbox-dv input.large-text,
+#ee-msg-edit-frm .admin-primary-mbox-dv textarea.large-text {
+    margin-inline: 0;
+    width: 100%;
 }
 
-#ee-msg-edit-frm .admin-primary-mbox-dv input[type="text"],
-#ee-msg-edit-frm .admin-primary-mbox-dv .wp-editor-wrap,
-#ee-msg-edit-frm .admin-primary-mbox-dv textarea {
-    width: 94%;
+#ee-msg-edit-frm .admin-primary-mbox-dv li .wp-editor-wrap,
+#ee-msg-edit-frm .admin-primary-mbox-dv li input.large-text,
+#ee-msg-edit-frm .admin-primary-mbox-dv li textarea.large-text {
+    margin-inline: 0;
+    width: calc(100% - 2rem - var(--ee-admin-height));
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv li .wp-editor-wrap {
+    background: var(--ee-color-almost-white);
+    border-radius: .5rem;
+    margin-block-start: .5rem;
+    padding: 1rem;
+    width: calc(100% - (5rem - 4px) - var(--ee-admin-height));
 }
 
 /** context toggle **/

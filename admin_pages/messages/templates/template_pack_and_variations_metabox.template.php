@@ -22,11 +22,11 @@
     <span class="spinner"></span>
     <p class="description">
         <?php echo $template_pack_description; // already escaped ?>
-    <p>
-        <label for="MTP_template_variation">
-            <?php echo $template_variation_label; // already escaped ?>:&nbsp;
-        </label>
-        <?php echo $variations_selector; // already escaped ?>
+    </p>
+    <label for="MTP_template_variation">
+        <?php echo $template_variation_label; // already escaped ?>:&nbsp;
+    </label>
+    <?php echo $variations_selector; // already escaped ?>
     <p class="description">
         <?php echo $template_variation_description; // already escaped ?>
     </p>
