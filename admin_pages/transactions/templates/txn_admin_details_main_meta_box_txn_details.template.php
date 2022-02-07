@@ -225,28 +225,24 @@
                                     </div>
                                 </td>
                                 <td class='jst-left'>
-                                    <ul class='txn-overview-actions-ul'>
-                                        <li>
+                                    <div class='txn-overview-actions ee-list-table-actions'>
                                             <?php if ($can_edit_payments) : ?>
-                                                <a class="txn-admin-payment-action-edit-lnk"
+                                                <a class="txn-admin-payment-action-edit-lnk button button--small button--icon-only"
                                                    title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
                                                    data-payment-id="<?php echo $escaped_pay_id; ?>"
                                                 >
-                                                    <div class="dashicons dashicons-edit" style="margin: 0;"></div>
+                                                    <span class="dashicons dashicons-edit"></span>
                                                 </a>
                                             <?php endif; ?>
-                                        </li>
-                                        <li>
                                             <?php if ($can_delete_payments) : ?>
-                                                <a class="txn-admin-payment-action-delete-lnk"
+                                                <a class="txn-admin-payment-action-delete-lnk button button--small button--icon-only"
                                                    title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
                                                    data-payment-id="<?php echo $escaped_pay_id; ?>"
                                                 >
-                                                    <div class="dashicons dashicons-trash" style="margin: 0;"></div>
+                                                    <span class="dashicons dashicons-trash"></span>
                                                 </a>
                                             <?php endif; ?>
-                                        </li>
-                                    </ul>
+                                    </div>
                                 </td>
                             </tr>
                             <?php $payment_total += $payment->STS_ID() == 'PAP' ? $payment->amount() : 0; ?>
@@ -343,24 +339,20 @@
                             <div id="payment-accntng-PAY_ID"></div>
                         </td>
                         <td class=' jst-cntr'>
-                            <ul class='txn-overview-actions-ul'>
-                                <li>
-                                    <a class='txn-admin-payment-action-edit-lnk button button--secondary'
+                            <div class='txn-overview-actions ee-list-table-actions'>
+                                    <a class='txn-admin-payment-action-edit-lnk button button--small button--icon-only'
                                        title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
                                        data-payment-id='PAY_ID'
                                     >
-                                        <div class='dashicons dashicons-edit' style='margin: 0;'></div>
+                                        <span class='dashicons dashicons-edit'></span>
                                     </a>
-                                </li>
-                                <li>
-                                    <a class='txn-admin-payment-action-delete-lnk button button--secondary'
+                                    <a class='txn-admin-payment-action-delete-lnk button button--small button--icon-only'
                                        title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
                                        data-payment-id='PAY_ID'
                                     >
-                                        <div class='dashicons dashicons-trash' style='margin: 0;'></div>
+                                        <span class='dashicons dashicons-trash'></span>
                                     </a>
-                                </li>
-                            </ul>
+                            </div>
                         </td>
                     </tr>
 

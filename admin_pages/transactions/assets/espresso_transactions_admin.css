@@ -172,26 +172,8 @@
     display: block; text-align:center;
 }
 
-.txn-overview-actions-ul { list-style:none; margin:0; }
-.txn-overview-actions-ul li { display: inline-block; float: left; margin:0; }
-.txn-overview-actions-ul li + li { margin-left:6px; }/**/
-.button--secondary.no-icon {
-    vertical-align: baseline;
-}
 
-#txn-admin-payments-tbl .txn-overview-actions-ul { width:32px; }
-/*#txn-admin-payments-tbl th:first-child, #txn-admin-payments-tbl td:first-child {*/
-/*    margin: 0;*/
-/*    padding: 0;*/
-/*    width: 0;*/
-/*}*/
 
-.txn-admin-payment-action-edit-lnk,
-.txn-admin-payment-action-delete-lnk { cursor:pointer; }
-.payment-date-dv {
-    display: table-caption;
-    min-width: 8rem;
-}
 
 .admin-side-mbox-dv { margin:1em 0 2em; }
 .admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; }
@@ -279,19 +261,12 @@
 #txn-admin-payment-options-ul li + li, #del-admin-modal-dialog-options-ul li + li { margin-left:1em; }
 
 #admin-modal-dialog-options-ul .hidden, #del-admin-modal-dialog-options-ul .hidden { display:none !important; }
-/*.txn-admin-payment-option-lnk {
-    display:block; width:auto; padding:3px 6px;; margin:0;
-    background: none repeat scroll 0 0 #FFFFFF; border: 1px solid #DFDFDF; border-radius: 3px 3px 3px 3px;
-    color: #666; cursor: pointer; vertical-align:middle;
-
-}*/
 
 
 #txn-admin-apply-payment-dv, #txn-admin-delete-payment-dv {
     position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:9999;
     background:#fff; border:1px solid #ddd; border-radius:5px;
 }
-#txn-admin-apply-payment-frm { }
 
 #txn-admin-apply-payment-tbl { width:auto; }
 #txn-admin-apply-payment-tbl label { padding-left:3px; }

@@ -61,7 +61,11 @@
 }
 
 .ee-event-filter {
-    display: inline-block;
+    align-items: center;
+    display: flex;
+}
+.ee-event-filter label {
+    font-size: 1rem;
 }
 
 .ee-event-filter .ee-event-filter-toggle {
@@ -133,11 +137,6 @@
 
 .reg-overview-free-event-spn { display : block; text-align : center; }
 
-.reg-overview-actions-ul { list-style : none; margin : 0; }
-
-.reg-overview-actions-ul li { display : inline; margin : 0; }
-
-.reg-overview-actions-ul li + li { margin-left : 0; }
 
 #reg-admin-reg-details-reg-date-hdr,
 #reg-admin-reg-details-reg-status-hdr { padding : 0; margin : 0 0 .5em !important; }

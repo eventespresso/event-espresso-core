@@ -454,8 +454,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function column_status(EE_Registration $registration)
     {
         return '
-        <span class="ee-status-dot ee-status-dot--' . esc_attr($registration->status_ID()) . ' ee-aria-tooltip" 
-        aria-label="' .  EEH_Template::pretty_status( $registration->status_ID(), false, "sentence" ) . '">        
+        <span class="ee-status-dot ee-status-dot--' . esc_attr($registration->status_ID()) . ' ee-aria-tooltip"
+        aria-label="' .  EEH_Template::pretty_status( $registration->status_ID(), false, "sentence" ) . '">
         </span>';
     }
 
@@ -988,13 +988,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 REG_ADMIN_URL
             );
             $actions['view_lnk'] = '
-            <li>
                 <a href="' . $view_lnk_url . '" aria-label="'
                 . esc_attr__('View Registration Details', 'event_espresso')
-                . '" class="ee-aria-tooltip tiny-text">
-				    <div class="dashicons dashicons-clipboard"></div>
-			    </a>
-			</li>';
+                . '" class="ee-aria-tooltip button button--small button--icon-only">
+				    <span class="dashicons dashicons-clipboard"></span>
+			    </a>';
         }
 
         if (
@@ -1012,13 +1010,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 REG_ADMIN_URL
             );
             $actions['edit_lnk'] = '
-			<li>
                 <a href="' . $edit_lnk_url . '" aria-label="'
                 . esc_attr__('Edit Contact Details', 'event_espresso')
-                . '" class="ee-aria-tooltip tiny-text">
-                    <div class="dashicons dashicons-groups ee-icon-size-16"></div>
-                </a>
-			</li>';
+                . '" class="ee-aria-tooltip button button--small button--icon-only">
+                    <span class="dashicons dashicons-groups"></span>
+                </a>';
         }
 
         if (
@@ -1038,13 +1034,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 true
             );
             $actions['resend_reg_lnk'] = '
-			<li>
 			    <a href="' . $resend_reg_lnk_url . '" aria-label="'
                 . esc_attr__('Resend Registration Details', 'event_espresso')
-                . '" class="ee-aria-tooltip tiny-text">
-			        <div class="dashicons dashicons-email-alt"></div>
-			    </a>
-            </li>';
+                . '" class="ee-aria-tooltip button button--small button--icon-only">
+			        <span class="dashicons dashicons-email-alt"></span>
+			    </a>';
         }
 
         if (
@@ -1062,13 +1056,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 TXN_ADMIN_URL
             );
             $actions['view_txn_lnk'] = '
-			<li>
                 <a class="ee-aria-tooltip ee-status-color-' . $this->_transaction_details['status']
-                . ' tiny-text" href="' . $view_txn_lnk_url
+                . ' button button--small button--icon-only" href="' . $view_txn_lnk_url
                 . '"  aria-label="' . $this->_transaction_details['title_attr'] . '">
-                    <div class="dashicons dashicons-cart"></div>
-                </a>
-			</li>';
+                    <span class="dashicons dashicons-cart"></span>
+                </a>';
         }
 
         // only show invoice link if message type is active.
@@ -1078,12 +1070,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             && EEH_MSG_Template::is_mt_active('invoice')
         ) {
             $actions['dl_invoice_lnk'] = '
-            <li>
                 <a aria-label="' . esc_attr__('View Transaction Invoice', 'event_espresso')
-                . '" target="_blank" href="' . $item->invoice_url() . '" class="ee-aria-tooltip tiny-text">
-                    <span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
-                </a>
-            </li>';
+                . '" target="_blank" href="' . $item->invoice_url() . '" class="ee-aria-tooltip button button--small button--icon-only">
+                    <span class="dashicons dashicons-media-spreadsheet"></span>
+                </a>';
         }
 
         // message list table link (filtered by REG_ID
@@ -1091,17 +1081,20 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             EE_Registry::instance()->CAP->current_user_can('ee_read_global_messages', 'view_filtered_messages')
         ) {
             $actions['filtered_messages_link'] = '
-            <li>
                 ' . EEH_MSG_Template::get_message_action_link(
                 'see_notifications_for',
                 null,
                 ['_REG_ID' => $item->ID()]
-            ) . '
-            </li>';
+            );
         }
 
         $actions = apply_filters('FHEE__EE_Registrations_List_Table__column_actions__actions', $actions, $item, $this);
-        $content = $this->_action_string(implode('', $actions), $item, 'ul', 'reg-overview-actions-ul');
+        $content = $this->_action_string(
+            implode('', $actions),
+            $item,
+            'div',
+            'reg-overview-actions ee-list-table-actions'
+        );
         return $this->columnContent('actions', $content);
     }
 }

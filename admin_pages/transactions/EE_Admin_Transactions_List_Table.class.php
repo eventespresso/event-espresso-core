@@ -514,8 +514,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             . $this->get_payment_overview_link($transaction)
             . $this->get_related_messages_link($transaction),
             $transaction,
-            'ul',
-            'txn-overview-actions-ul'
+            'div',
+            'txn-overview-actions ee-list-table-actions'
         );
     }
 
@@ -537,12 +537,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             TXN_ADMIN_URL
         );
         return '
-			<li>
 				<a href="' . $url . '"'
-               . ' title="' . esc_attr__('View Transaction Details', 'event_espresso') . '" class="tiny-text">
+               . ' title="' . esc_attr__('View Transaction Details', 'event_espresso') . '" class="button button--small button--icon-only">
 					<span class="dashicons dashicons-cart"></span>
-				</a>
-			</li>';
+				</a>';
     }
 
 
@@ -564,12 +562,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 && EEH_MSG_Template::is_mt_active('invoice')
             ) {
                 return '
-                <li>
                     <a title="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '"'
-                       . ' target="_blank" href="' . $url . '" class="tiny-text">
-                        <span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
-                    </a>
-                </li>';
+                       . ' target="_blank" href="' . $url . '" class="button button--small button--icon-only">
+                        <span class="dashicons dashicons-media-spreadsheet"></span>
+                    </a>';
             }
         }
         return '';
@@ -594,12 +590,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 && EEH_MSG_Template::is_mt_active('receipt')
             ) {
                 return '
-			<li>
 				<a title="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
-                       . ' target="_blank" href="' . $url . '" class="tiny-text">
-					<span class="dashicons dashicons-media-default ee-icon-size-18"></span>
-				</a>
-			</li>';
+                       . ' target="_blank" href="' . $url . '" class="button button--small button--icon-only">
+					<span class="dashicons dashicons-media-default"></span>
+				</a>';
             }
         }
         return '';
@@ -633,12 +627,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 $registration->ID()
             )
                 ? '
-				<li>
 					<a href="' . $url . '"'
-                  . ' title="' . esc_attr__('View Registration Details', 'event_espresso') . '" class="tiny-text">
+                  . ' title="' . esc_attr__('View Registration Details', 'event_espresso') . '" class="button button--small button--icon-only">
 						<span class="dashicons dashicons-clipboard"></span>
-					</a>
-				</li>'
+					</a>'
                 : '';
         }
         return '';
@@ -680,12 +672,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 TXN_ADMIN_URL
             );
             return '
-            <li>
                 <a href="' . $url . '"'
-                   . ' title="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" class="tiny-text">
+                   . ' title="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" class="button button--small button--icon-only">
                     <span class="dashicons dashicons-email-alt"></span>
-                </a>
-            </li>';
+                </a>';
         }
         return '';
     }
@@ -703,16 +693,15 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
      */
     protected function get_related_messages_link(EE_Transaction $transaction)
     {
-        $url = EEH_MSG_Template::get_message_action_link(
-            'see_notifications_for',
-            null,
-            array('TXN_ID' => $transaction->ID())
-        );
         return EE_Registry::instance()->CAP->current_user_can(
             'ee_read_global_messages',
             'view_filtered_messages'
         )
-            ? '<li>' . $url . '</li>'
+            ? EEH_MSG_Template::get_message_action_link(
+                'see_notifications_for',
+                null,
+                array('TXN_ID' => $transaction->ID())
+            )
             : '';
     }
 
@@ -733,14 +722,11 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             && $registration->owes_monies_and_can_pay()
         ) {
             return '
-            <li>
                 <a title="' . esc_attr__('Make Payment from the Frontend.', 'event_espresso') . '"'
                    . ' target="_blank" href="' . $registration->payment_overview_url(true) . '"'
-                   . ' class="tiny-text">
-                    <span class="dashicons dashicons-money ee-icon-size-18"></span>
-                </a>
-            </li>
-            ';
+                   . ' class="button button--small button--icon-only">
+                    <span class="dashicons dashicons-money"></span>
+                </a>';
         }
         return '';
     }

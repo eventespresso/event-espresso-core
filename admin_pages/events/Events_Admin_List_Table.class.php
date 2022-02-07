@@ -517,9 +517,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         }
         $action_links = array();
         $view_link = get_permalink($item->ID());
-        $action_links[] = '<a href="' . $view_link . '" class="ee-aria-tooltip"'
+        $action_links[] = '<a href="' . $view_link . '" class="ee-aria-tooltip button button--small button--icon-only"'
                           . ' aria-label="' . esc_attr__('View Event', 'event_espresso') . '" target="_blank">';
-        $action_links[] = '<div class="dashicons dashicons-search"></div></a>';
+        $action_links[] = '<span class="dashicons dashicons-search"></span></a>';
         if (
             EE_Registry::instance()->CAP->current_user_can(
                 'ee_edit_event',
@@ -532,9 +532,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 'post'   => $item->ID(),
             );
             $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EVENTS_ADMIN_URL);
-            $action_links[] = '<a href="' . $edit_link . '" class="ee-aria-tooltip"'
+            $action_links[] = '<a href="' . $edit_link . '" class="ee-aria-tooltip button button--small button--icon-only"'
                               . ' aria-label="' . esc_attr__('Edit Event', 'event_espresso') . '">'
-                              . '<div class="ee-icon ee-icon-calendar-edit"></div>'
+                              . '<span class="ee-icon ee-icon-calendar-edit"></span>'
                               . '</a>';
         }
         if (
@@ -552,9 +552,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 'event_id' => $item->ID(),
             );
             $attendees_link = EE_Admin_Page::add_query_args_and_nonce($attendees_query_args, REG_ADMIN_URL);
-            $action_links[] = '<a href="' . $attendees_link . '" class="ee-aria-tooltip"'
+            $action_links[] = '<a href="' . $attendees_link . '" class="ee-aria-tooltip button button--small button--icon-only"'
                               . ' aria-label="' . esc_attr__('View Registrants', 'event_espresso') . '">'
-                              . '<div class="dashicons dashicons-groups"></div>'
+                              . '<span class="dashicons dashicons-groups"></span>'
                               . '</a>';
         }
         $action_links = apply_filters(
@@ -565,7 +565,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $content = $this->_action_string(
             implode("\n\t", $action_links),
             $item,
-            'div'
+            'div',
+            'event-overview-actions ee-list-table-actions'
         );
         return $this->columnContent('actions', $content);
     }
