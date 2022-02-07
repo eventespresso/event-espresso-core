@@ -232,7 +232,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 
     private function getRequestAction()
     {
-        return $this->request->getRequestParam('action);
+        return $this->request->getRequestParam('action');
     }
 
 
