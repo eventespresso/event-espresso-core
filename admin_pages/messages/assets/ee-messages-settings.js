@@ -414,13 +414,13 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 
 		//first set all content as hidden and other text links as not active
-		$('.ee-text-link-li').each( function() {
+		$('.ee-text-link').each( function() {
 			$(this).removeClass('item_display');
-			messenger = $('a', this).attr('href');
+			messenger = $(this).attr('href');
 			MSG_helper.init().toggle(messenger, 'inactive');
 		});
 
-		$(this).parent().addClass('item_display');
+		$(this).addClass('item_display');
 		//show new box
 		var this_messenger = $(this).attr('href');
 		MSG_helper.toggle(this_messenger);
@@ -428,8 +428,19 @@ jQuery(document).ready(function($) {
 
 
 	$('.activate_messages_on_off_toggle_container').on('click', '.ee-on-off-toggle', function(e) {
-		var messenger = $(this).attr('id').replace('ee-on-off-toggle-',''),
-		status = $(this).prop('checked') ? 'on' : 'off';
+		const messenger = $(this).attr('id').replace('ee-on-off-toggle-','')
+		const status = $(this).prop('checked') ? 'on' : 'off';
+		// change dashicon on text link
+		const $target = $('.ee-messenger-' + messenger + ' span');
+		if ($target.length) {
+			if (status === 'on') {
+				$target.addClass('dashicons-yes-alt');
+				$target.removeClass('dashicons-remove');
+			} else {
+				$target.removeClass('dashicons-yes-alt');
+				$target.addClass('dashicons-remove');
+			}
+		}
 		e.stopPropagation();
 		MSG_helper.messenger_toggle(messenger, status, e)
 	});
