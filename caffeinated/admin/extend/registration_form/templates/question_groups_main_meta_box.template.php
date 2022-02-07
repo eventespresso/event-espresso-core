@@ -94,34 +94,33 @@ $id = ! empty($QST_system) ? '_disabled' : '';
 
         <tr>
             <th>
-                <label>
+                <label for="QSG_show_group_name">
                     <?php esc_html_e('Show Name', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                         'show_group_name_info'
                     ); ?>
                 </label>
             </th>
             <td>
-                <label for="QSG_show_group_name">
                     <?php echo EEH_Form_Fields::select_input(
                         'QSG_show_group_name',
                         $values,
                         $question_group->show_group_name()
                     ); ?>
-                    <p class="description"><?php esc_html_e('Show Group Name on Registration Page?', 'event_espresso'); ?></p>
-                </label>
+                    <p class="description">
+                        <?php esc_html_e('Show Group Name on Registration Page?', 'event_espresso'); ?>
+                    </p>
             </td>
         </tr>
 
         <tr>
             <th>
-                <label>
+                <label for="QSG_show_group_order">
                     <?php esc_html_e(' Show Description', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                         'show_group_description_info'
                     ); ?>
                 </label>
             </th>
             <td>
-                <label for="QSG_show_group_order">
                     <?php echo EEH_Form_Fields::select_input(
                         'QSG_show_group_desc',
                         $values,
@@ -130,7 +129,6 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                     <p class="description"><?php
                         esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
                     ?></p>
-                </label>
                 <input type="hidden" name="QSG_system" value="<?php echo esc_attr($question_group->system_group()); ?>">
             </td>
         </tr>

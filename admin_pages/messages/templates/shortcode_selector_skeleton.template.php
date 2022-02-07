@@ -12,7 +12,7 @@
 
 if (! empty($shortcodes)) : ?>
 <div class="ee-messages-shortcodes-chooser-wrap">
-    <button class="button button--secondary ee-messages-shortcodes-chooser js-open-list-trigger button button-secondary"
+    <button class="button button--secondary button--icon-only ee-messages-shortcodes-chooser js-open-list-trigger"
             aria-label="<?php echo esc_html__('open shortcode selector', 'event_espresso'); ?>"
     >
         <span class="dashicons dashicons-shortcode"></span>
