@@ -3453,15 +3453,18 @@ class Messages_Admin_Page extends EE_Admin_Page
         // assemble the array for the _tab_text_links helper
 
         foreach ($messengers as $messenger) {
+            $active = $this->_message_resource_manager->is_messenger_active($messenger->name);
+            $class = 'ee-messenger-' .  sanitize_key($messenger->label['singular']);
             $this->_m_mt_settings['messenger_tabs'][ $messenger->name ] = [
                 'label' => ucwords($messenger->label['singular']),
-                'class' => $this->_message_resource_manager->is_messenger_active($messenger->name)
-                    ? 'messenger-active'
-                    : '',
+                'class' => $active ? "{$class} messenger-active" : $class,
                 'href'  => $messenger->name,
                 'title' => esc_html__('Modify this Messenger', 'event_espresso'),
                 'slug'  => $messenger->name,
                 'obj'   => $messenger,
+                'icon' => $active
+                    ? '<span class="dashicons dashicons-yes-alt"></span>'
+                    : '<span class="dashicons dashicons-remove"></span>',
             ];
 
 
