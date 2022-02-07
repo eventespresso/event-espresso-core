@@ -438,7 +438,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             $organization_settings_form                 = $this->loader->getShared(
                 'EventEspresso\admin_pages\general_settings\OrganizationSettings'
             );
-            $this->_template_args['admin_page_content'] = $organization_settings_form->display();
+            $this->_template_args['admin_page_content'] = EEH_HTML::div(
+                $organization_settings_form->display(),
+                '',
+                'padding'
+            );
         } catch (Exception $e) {
             EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
         }
@@ -503,7 +507,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             $this->_template_args['values'] = $this->_yes_no_values;
             // also need to account for the do_action that was in the old template
             $admin_options_settings_form->setTemplateArgs($this->_template_args);
-            $this->_template_args['admin_page_content'] = $admin_options_settings_form->display();
+            $this->_template_args['admin_page_content'] = EEH_HTML::div(
+                $admin_options_settings_form->display(),
+                '',
+                'padding'
+            );
         } catch (Exception $e) {
             EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
         }
@@ -1403,7 +1411,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $this->_set_publish_post_box_vars(null, false, false, null, false);
         $form_handler                               =
             $this->loader->getShared('EventEspresso\core\domain\services\admin\privacy\forms\PrivacySettingsFormHandler');
-        $this->_template_args['admin_page_content'] = $form_handler->display();
+        $this->_template_args['admin_page_content'] = EEH_HTML::div(
+            $form_handler->display(),
+            '',
+            'padding'
+        );
         $this->display_admin_page_with_sidebar();
     }
 
