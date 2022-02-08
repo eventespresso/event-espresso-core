@@ -408,14 +408,14 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
 #ee-msg-edit-frm .admin-primary-mbox-dv li input.large-text,
 #ee-msg-edit-frm .admin-primary-mbox-dv li textarea.large-text {
     margin-inline: 0;
-    width: calc(100% - 2rem - var(--ee-admin-height));
+    width: calc(100% - 2rem - var(--ee-button-height));
 }
 #ee-msg-edit-frm .admin-primary-mbox-dv li .wp-editor-wrap {
     background: var(--ee-color-almost-white);
     border-radius: .5rem;
     margin-block-start: .5rem;
     padding: 1rem;
-    width: calc(100% - (5rem - 4px) - var(--ee-admin-height));
+    width: calc(100% - (5rem - 4px) - var(--ee-button-height));
 }
 
 /** context toggle **/
