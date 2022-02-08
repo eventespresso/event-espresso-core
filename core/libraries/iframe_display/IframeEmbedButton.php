@@ -205,7 +205,7 @@ abstract class IframeEmbedButton
                 \EEH_Inflector::add_indefinite_article($this->iframe_name)
             ),
             esc_attr($this->route_name) . "-iframe-embed-trigger-js",
-            'iframe-embed-trigger-js button button--secondary ' . esc_attr($button_class),
+            'iframe-embed-trigger-js button button--small button--secondary ' . esc_attr($button_class),
             '',
             ' data-iframe_embed_button="#' . esc_attr($this->route_name) . '-iframe-js" tabindex="-1"'
         );
