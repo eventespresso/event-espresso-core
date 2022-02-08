@@ -4325,7 +4325,13 @@ class Messages_Admin_Page extends EE_Admin_Page
         }
 
         // if messenger was html or message type was invoice then let's make sure we deactivate invoice payment method.
-        if ($messenger->name === 'html' || $message_type_name === 'invoice') {
+        if (
+            $messenger->name === 'html'
+            && (
+                is_null($message_type)
+                || $message_type_name === 'invoice'
+            )
+        ) {
             EE_Registry::instance()->load_lib('Payment_Method_Manager');
             $count_updated = EE_Payment_Method_Manager::instance()->deactivate_payment_method('invoice');
             if ($count_updated > 0) {
