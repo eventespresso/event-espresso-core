@@ -1320,25 +1320,25 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
         // page status
         if (isset($ee_page->post_status) && $ee_page->post_status == 'publish') {
-            $pg_colour = 'green';
+            $pg_class = 'ee-page-status--ok';
             $pg_status = sprintf(esc_html__('Page%sStatus%sOK', 'event_espresso'), '&nbsp;', '&nbsp;');
         } else {
-            $pg_colour = 'red';
+            $pg_class = 'ee-page-status--error';
             $pg_status = sprintf(esc_html__('Page%sVisibility%sProblem', 'event_espresso'), '&nbsp;', '&nbsp;');
         }
 
         // shortcode status
         if (isset($ee_page->post_content) && strpos($ee_page->post_content, $shortcode) !== false) {
-            $sc_colour = 'green';
+            $sc_class = 'ee-page-status--ok';
             $sc_status = sprintf(esc_html__('Shortcode%sOK', 'event_espresso'), '&nbsp;');
         } else {
-            $sc_colour = 'red';
+            $sc_class = 'ee-page-status--error';
             $sc_status = sprintf(esc_html__('Shortcode%sProblem', 'event_espresso'), '&nbsp;');
         }
 
-        return '<span style="color:' . $pg_colour . '; margin-right:2em;"><strong>'
-               . $pg_status
-               . '</strong></span><span style="color:' . $sc_colour . '"><strong>' . $sc_status . '</strong></span>';
+        return '
+        <span class="ee-page-status ' . $pg_class . '"><strong>' . $pg_status . '</strong></span>
+        <span class="ee-page-status ' . $sc_class . '"><strong>' . $sc_status . '</strong></span>';
     }
 
 
