@@ -69,7 +69,7 @@ if (
     )
 ) : ?>
     <div class='ee-admin-button-row'>
-        <a class="button button--secondary" href="<?php echo esc_url_raw($edit_attendee_url); ?>"
+        <a class="button button--small button--secondary" href="<?php echo esc_url_raw($edit_attendee_url); ?>"
            title="<?php esc_attr_e('View details for this contact.', 'event_espresso'); ?>"
         >
             <span class="dashicons dashicons-groups"></span>
