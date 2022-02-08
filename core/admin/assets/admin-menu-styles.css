@@ -36,13 +36,13 @@
     --ee-font-color: hsla(
         var(--ee-font-color-hue),
         calc(var(--ee-font-color-sat) * 1%),
-        calc((var(--ee-font-color-lit) + 7.5) * 1%),
+        calc((var(--ee-font-color-lit) + 10) * 1%),
         var(--ee-font-color-alpha)
     );
     --ee-font-color-light: hsla(
         var(--ee-font-color-hue),
         calc(var(--ee-font-color-sat) * 1%),
-        calc((var(--ee-font-color-lit) + 15) * 1%),
+        calc((var(--ee-font-color-lit) + 17.5) * 1%),
         var(--ee-font-color-alpha)
     );
     --ee-font-color-dark: hsla(
@@ -79,6 +79,35 @@
     --ee-btn-primary-hover: var(--ee-btn-primary-low-constrast);
     --ee-btn-primary-focus: var(--ee-btn-primary-high-constrast);
 
+
+    /* PRIMARY ALT  */
+
+    --ee-btn-primary-alt-hue: 140;
+    --ee-btn-primary-alt-sat: 70;
+    --ee-btn-primary-alt-lit: 35;
+    --ee-btn-primary-alt-alpha: 1;
+
+    --ee-btn-primary-alt: hsla(
+        var(--ee-btn-primary-alt-hue),
+        calc(var(--ee-btn-primary-alt-sat) * 1%),
+        calc(var(--ee-btn-primary-alt-lit) * 1%),
+        var(--ee-btn-primary-alt-alpha)
+    );
+    --ee-btn-primary-alt-low-constrast: hsla(
+        var(--ee-btn-primary-alt-hue),
+        calc((var(--ee-btn-primary-alt-sat) + 5) * 1%),
+        calc((var(--ee-btn-primary-alt-lit) + 15) * 1%),
+        var(--ee-btn-primary-alt-alpha)
+    );
+    --ee-btn-primary-alt-high-constrast: hsla(
+        var(--ee-btn-primary-alt-hue),
+        calc((var(--ee-btn-primary-alt-sat) + 20) * 1%),
+        calc((var(--ee-btn-primary-alt-lit) - 10) * 1%),
+        var(--ee-btn-primary-alt-alpha)
+    );
+    --ee-btn-primary-alt-hover: var(--ee-btn-primary-alt-low-constrast);
+    --ee-btn-primary-alt-focus: var(--ee-btn-primary-alt-high-constrast);
+
     /* SECONDARY BUTTON COLORS */
     --ee-btn-secondary-hue: 203;
     --ee-btn-secondary-sat: 2;
@@ -112,12 +141,25 @@
 
     --ee-border-color: hsla(var(--ee-btn-secondary-hue), 2%, 70%, 1);
     --ee-border-color-table-row: hsla(var(--ee-btn-secondary-hue), 0%, 90%, 1);
+    --ee-table-row-stripe-bg: hsl(207, 0%, 97.5%);
 
-    --ee-admin-sidebar-width: 360px;
+    --ee-admin-sidebar-width: 100%;
 
     --ee-attention-bg-color: hsl(51, 68%, 76%);
     --ee-attention-color: hsla(46, 24%, 9%, .85);
 
+    --ee-admin-height: 2.85em;
+    --ee-admin-height-half: calc(var(--ee-admin-height) / 2);
+    --ee-admin-height-forth: calc(var(--ee-admin-height) / 4);
+    --ee-admin-height-sixth: calc(var(--ee-admin-height) / 6);
+    --ee-admin-height-shim: calc(var(--ee-admin-height) / 18);
+
+}
+
+@media screen and (min-width: 960px) {
+    :root {
+        --ee-admin-sidebar-width: 320px;
+    }
 }
 
 @media screen and (min-width: 1920px) {
@@ -318,7 +360,7 @@ div.TB-ee-frame a {
 }
 
 .featured-section .button-hero .dashicons{
-    font-size:16px;
+    font-size: 1rem;
     vertical-align:middle;
 }
 
@@ -343,7 +385,13 @@ div.TB-ee-frame a {
 	font-style: normal;
 }
 
-.dashicons, .ee-dashicons, .ee-icon:before, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
+.dashicons,
+.ee-dashicons,
+.ee-icon:before,
+.checkin-icons:before,
+#wpadminbar .ee-icon:before,
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
 	position: relative;
 	top: -2px;
 	font-size: inherit;
@@ -632,10 +680,6 @@ div.TB-ee-frame a {
 	cursor: pointer;
 }
 
-.wp-list-table .ee-icon {
-	margin-right: .25em !important;
-}
-
 .ee-lock-icon:before, .ee-collapsible:before {
 	display: inline-block;
 	-webkit-font-smoothing: antialiased;
@@ -684,10 +728,10 @@ div.TB-ee-frame a {
   user-select: none;
 }
 input.ee-toggle-round-flat + label {
-  width: 2.2rem;
-  height: 1.2rem;
-  background-color: var(--ee-status-color-grey);
-  border-radius: .6rem;
+  width: 3.6rem;
+  height: 1.8rem;
+  background-color: var(--ee-status-color-light-grey);
+  border-radius: 1.9rem;
   transition: background 0.4s;
 }
 input.ee-toggle-round-flat + label:after {
@@ -696,19 +740,20 @@ input.ee-toggle-round-flat + label:after {
   content: "";
 }
 input.ee-toggle-round-flat + label:after {
-  top: .2rem;
-  left: .2rem;
-  bottom: .2rem;
-  width: .8rem;
+  top: .3rem;
+  left: .3rem;
+  bottom: .3rem;
+  height: 1.2rem;
+  width: 1.2rem;
   background-color: #FFF;
-  border-radius: .4rem;
+  border-radius: .6rem;
   transition: margin 0.4s, background 0.4s;
 }
 input.ee-toggle-round-flat:checked + label {
   background-color: var(--ee-status-color-blue);
 }
 input.ee-toggle-round-flat:checked + label:after {
-  margin-left: 1rem;
+  margin-left: 1.8rem;
 }
 
 
