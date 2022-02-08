@@ -10,18 +10,18 @@
 .datepicker { width:125px; }
 
 /* green text */
-.status-TCM { color:var(--ee-status-color-green); /* prev: #70CC50 */ font-size:.85em; font-weight:bold; }
-.txn-overview-full-payment-spn { color:var(--ee-status-color-green); /* prev: #70CC50 */  }
+.status-TCM { color:var(--ee-status-color-green);   font-size:.85em; font-weight: 600; }
+.txn-overview-full-payment-spn { color:var(--ee-status-color-green); font-weight: 600;   }
 /* blue text */
-.status-TIN { color:var(--ee-status-color-blue); /* prev: #00B1CA */ font-size:.85em; font-weight:bold; }
-.txn-overview-part-payment-spn { color:var(--ee-status-color-blue); /* prev: #00B1CA */ font-weight:bold;  }
+.status-TIN { color:var(--ee-status-color-blue);  font-size:.85em; font-weight:600; }
+.txn-overview-part-payment-spn { color:var(--ee-status-color-blue);  font-weight:600;  }
 /* orange text */
-.status-TOP { color:var(--ee-status-color-orange); /* prev: #E76700 */ font-size:.85em; font-weight:bold; }
-.txn-overview-no-payment-spn { color:var(--ee-status-color-orange); /* prev: #E76700 */ font-weight:bold; }
+.status-TOP { color:var(--ee-status-color-orange);   font-size:.85em; font-weight:600; }
+.txn-overview-no-payment-spn { color:var(--ee-status-color-orange);  font-weight:600; }
 /* red text */
-.status-TFL { color:var(--ee-status-color-pink);  /* prev: #E44064 */ font-size:.85em; }
+.status-TFL { color:var(--ee-status-color-pink);   font-size:.85em; }
 /* yellow text */
-.status-TAB { color:var(--ee-status-color-yellow);  /* prev: #FCB93C */ font-size:.85em; }
+.status-TAB { color:var(--ee-status-color-yellow); font-size:.85em; }
 
 /**
  * status strips
