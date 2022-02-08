@@ -9,7 +9,7 @@
 #Events_Admin_List_Table-table-frm .column-reg_begins,
 #Extend_Events_Admin_List_Table-table-frm .column-reg_begins { width:15%; }
 #Events_Admin_List_Table-table-frm .column-attendees,
-#Extend_Events_Admin_List_Table-table-frm .column-attendees { width: 5%;}
+#Extend_Events_Admin_List_Table-table-frm .column-attendees { text-align: center; width: 5%;}
 
 
 .remove-item { cursor: pointer; vertical-align: middle; }

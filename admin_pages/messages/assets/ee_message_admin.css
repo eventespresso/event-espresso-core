@@ -168,16 +168,6 @@
     width: 35%;
 }
 
-.espresso-admin .wp-list-table.messages .column-actions,
-.espresso-admin .wp-list-table.messagetemplate .column-actions {
-    width: 15%;
-}
-
-.espresso-admin .wp-list-table.messages.column-actions,
-.espresso-admin .wp-list-table.messagetemplate.column-actions {
-    width: 15%;
-}
-
 .espresso-admin .wp-list-table.messages .column-events,
 .espresso-admin .wp-list-table.messagetemplate .column-events {
     width: 10%;

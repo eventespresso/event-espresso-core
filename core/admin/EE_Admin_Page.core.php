@@ -1840,6 +1840,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             wp_enqueue_script('dashboard');
         }
 
+        wp_enqueue_script(EspressoLegacyAdminAssetManager::JS_HANDLE_EE_ADMIN);
         // LOCALIZED DATA
         // localize script for ajax lazy loading
         wp_localize_script(

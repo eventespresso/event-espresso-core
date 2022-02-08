@@ -1032,7 +1032,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         $fc_items = [
             'star-icon'        => [
-                'class' => 'dashicons dashicons-star-filled gold-icon ee-icon-size-8',
+                'class' => 'dashicons dashicons-star-filled gold-icon',
                 'desc'  => esc_html__('This is the Primary Registrant', 'event_espresso'),
             ],
             'view_details'     => [
@@ -1040,7 +1040,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'desc'  => esc_html__('View Registration Details', 'event_espresso'),
             ],
             'edit_attendee'    => [
-                'class' => 'dashicons dashicons-groups ee-icon-size-16',
+                'class' => 'dashicons dashicons-groups',
                 'desc'  => esc_html__('Edit Contact Details', 'event_espresso'),
             ],
             'view_transaction' => [

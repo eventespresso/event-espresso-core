@@ -10,7 +10,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @package                   Event Espresso
  * @subpackage                includes/admin_screens/Transactions_List_Table.class.php
  * @author                    Brent Christensen
- * ------------------------------------------------------------------------
  */
 class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
 {
@@ -24,10 +23,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param \Transactions_Admin_Page $admin_page
-     * @param SessionLifespan          $lifespan
+     * @param Transactions_Admin_Page $admin_page
+     * @param SessionLifespan         $lifespan
      */
-    public function __construct(\Transactions_Admin_Page $admin_page, SessionLifespan $lifespan)
+    public function __construct(Transactions_Admin_Page $admin_page, SessionLifespan $lifespan)
     {
         parent::__construct($admin_page);
         $this->session_lifespan = $lifespan;
@@ -62,18 +61,17 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         $ID_column_name .= ' : ' . esc_html__('Transaction Date', 'event_espresso');
         $ID_column_name .= '</span> ';
         $this->_columns = array(
-            'status'        => '',
-            'TXN_ID'        => $ID_column_name,
+            'id'        => $ID_column_name,
             'TXN_timestamp' => esc_html__('Transaction Date', 'event_espresso'),
             'event_name'    => esc_html__('Event', 'event_espresso'),
             'ATT_fname'     => esc_html__('Primary Registrant', 'event_espresso'),
             'TXN_paid'      => esc_html__('Paid', 'event_espresso'),
             'TXN_total'     => esc_html__('Total', 'event_espresso'),
-            'actions'       => esc_html__('Actions', 'event_espresso'),
+            'actions' => $this->actionsColumnHeader(),
         );
 
         $this->_sortable_columns = array(
-            'TXN_ID'        => array('TXN_ID' => false),
+            'id'        => array('TXN_ID' => false),
             'event_name'    => array('event_name' => false),
             'ATT_fname'     => array('ATT_fname' => false),
             'TXN_timestamp' => array('TXN_timestamp' => true) // true means its already sorted
@@ -167,27 +165,13 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
 
 
     /**
-     *    column status
+     *    column TXN_ID
      *
      * @param EE_Transaction $transaction
      * @return string
      * @throws EE_Error
-     * @throws ReflectionException
      */
-    public function column_status(EE_Transaction $transaction)
-    {
-        return '<span class="ee-status-dot ee-status-dot--' . esc_attr($transaction->status_ID()) . '"></span>';
-    }
-
-
-    /**
-     *    column TXN_ID
-     *
-     * @param \EE_Transaction $transaction
-     * @return string
-     * @throws \EE_Error
-     */
-    public function column_TXN_ID(EE_Transaction $transaction)
+    public function column_id(EE_Transaction $transaction)
     {
         $view_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
             array(
@@ -196,19 +180,19 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             ),
             TXN_ADMIN_URL
         );
-        $content = '<a href="' . $view_lnk_url . '"'
-                   . ' title="' . esc_attr__('Go to Transaction Details', 'event_espresso') . '">'
+        $content = '<a class="ee-aria-tooltip" href="' . $view_lnk_url . '"'
+                   . ' aria-label="' . esc_attr__('Go to Transaction Details', 'event_espresso') . '">'
                    . $transaction->ID()
                    . '</a>';
 
         // txn timestamp
         $content .= '  <span class="show-on-mobile-view-only">' . $this->_get_txn_timestamp($transaction) . '</span>';
-        return $content;
+        return $this->columnContent('id', $content, 'center');
     }
 
 
     /**
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -233,9 +217,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_cb
      *
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_cb($transaction)
     {
@@ -250,9 +234,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_TXN_timestamp
      *
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_TXN_timestamp(EE_Transaction $transaction)
     {
@@ -263,29 +248,27 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             ),
             TXN_ADMIN_URL
         );
-        $txn_date = '<a href="' . $view_lnk_url . '"'
-                    . ' title="'
-                    . esc_attr__('View Transaction Details for TXN #', 'event_espresso') . $transaction->ID() . '">'
-                    . $this->_get_txn_timestamp($transaction)
-                    . '</a>';
-        // status
-        $txn_date .= '<br><span class="ee-status-text-small">'
-                    . EEH_Template::pretty_status(
-                        $transaction->status_ID(),
-                        false,
-                        'sentence'
-                    )
-                     . '</span>';
-        return $txn_date;
+        $status        = esc_attr($transaction->status_ID());
+        $pretty_status = EEH_Template::pretty_status($status, false, 'sentence' );
+        return '
+            <div class="ee-layout-row">
+                <span aria-label="' . $pretty_status . '"  class="ee-status-dot ee-status-dot--' . $status . ' ee-aria-tooltip"></span>
+                <a  href="' . $view_lnk_url . '"                     
+                    class="row-title status-' . $status . ' ee-aria-tooltip"
+                    aria-label="' . esc_attr__('View Transaction Details for TXN #', 'event_espresso') . $transaction->ID
+            () . '">
+                ' . $this->_get_txn_timestamp($transaction) . '
+                </a>
+            </div>';
     }
 
 
     /**
      *    column_TXN_total
      *
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_TXN_total(EE_Transaction $transaction)
     {
@@ -306,22 +289,22 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_TXN_paid
      *
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return mixed|string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_TXN_paid(EE_Transaction $transaction)
     {
         $transaction_total = $transaction->get('TXN_total');
         $transaction_paid = $transaction->get('TXN_paid');
 
-        if (\EEH_Money::compare_floats($transaction_total, 0, '>')) {
+        if (EEH_Money::compare_floats($transaction_total, 0, '>')) {
             // monies owing
             $span_class = 'txn-overview-part-payment-spn';
-            if (\EEH_Money::compare_floats($transaction_paid, $transaction_total, '>=')) {
+            if (EEH_Money::compare_floats($transaction_paid, $transaction_total, '>=')) {
                 // paid in full
                 $span_class = 'txn-overview-full-payment-spn';
-            } elseif (\EEH_Money::compare_floats($transaction_paid, 0, '==')) {
+            } elseif (EEH_Money::compare_floats($transaction_paid, 0, '==')) {
                 // no payments made
                 $span_class = 'txn-overview-no-payment-spn';
             }
@@ -353,7 +336,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_ATT_fname
      *
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -378,7 +361,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 $primary_reg->ID()
             )
                 ? '<a href="' . $edit_lnk_url . '"'
-                  . ' title="' . esc_attr__('View Registration Details', 'event_espresso') . '">'
+                  . ' aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '">'
                   . $attendee->full_name()
                   . '</a>'
                 : $attendee->full_name();
@@ -397,9 +380,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_ATT_email
      *
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_ATT_email(EE_Transaction $transaction)
     {
@@ -422,7 +405,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_event_name
      *
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -455,8 +438,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                     $event->ID()
                 )
             ) {
-                $actions['filter_by_event'] = '<a href="' . $txn_by_event_lnk . '"'
-                                              . ' title="' . esc_attr__(
+                $actions['filter_by_event'] = '<a class="ee-aria-tooltip" href="' . $txn_by_event_lnk . '"'
+                                              . ' aria-label="' . esc_attr__(
                                                   'Filter transactions by this event',
                                                   'event_espresso'
                                               ) . '">'
@@ -471,8 +454,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                     'espresso_events_edit',
                     $event->ID()
                 )
-                    ? '<a href="' . $edit_event_url . '"'
-                      . ' title="'
+                    ? '<a class="ee-aria-tooltip" href="' . $edit_event_url . '"'
+                      . ' aria-label="'
                       . sprintf(
                           esc_attr__('Edit Event: %s', 'event_espresso'),
                           $event->get('EVT_name')
@@ -499,23 +482,25 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      *    column_actions
      *
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_actions(EE_Transaction $transaction)
     {
-        return $this->_action_string(
-            $this->get_transaction_details_link($transaction)
-            . $this->get_invoice_link($transaction)
-            . $this->get_receipt_link($transaction)
-            . $this->get_primary_registration_details_link($transaction)
-            . $this->get_send_payment_reminder_trigger_link($transaction)
-            . $this->get_payment_overview_link($transaction)
-            . $this->get_related_messages_link($transaction),
-            $transaction,
-            'div',
-            'txn-overview-actions ee-list-table-actions'
+        return $this->actionsModalMenu(
+            $this->_action_string(
+                $this->get_transaction_details_link($transaction)
+                . $this->get_invoice_link($transaction)
+                . $this->get_receipt_link($transaction)
+                . $this->get_primary_registration_details_link($transaction)
+                . $this->get_send_payment_reminder_trigger_link($transaction)
+                . $this->get_payment_overview_link($transaction)
+                . $this->get_related_messages_link($transaction),
+                $transaction,
+                'div',
+                'txn-overview-actions ee-list-table-actions'
+            )
         );
     }
 
@@ -537,8 +522,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             TXN_ADMIN_URL
         );
         return '
-				<a href="' . $url . '"'
-               . ' title="' . esc_attr__('View Transaction Details', 'event_espresso') . '" class="button button--small button--icon-only">
+				<a class="ee-aria-tooltip" href="' . $url . '"'
+               . ' aria-label="' . esc_attr__('View Transaction Details', 'event_espresso') . '" class="button button--small button--icon-only">
 					<span class="dashicons dashicons-cart"></span>
 				</a>';
     }
@@ -562,7 +547,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 && EEH_MSG_Template::is_mt_active('invoice')
             ) {
                 return '
-                    <a title="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '"'
+                    <a class="ee-aria-tooltip" aria-label="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '"'
                        . ' target="_blank" href="' . $url . '" class="button button--small button--icon-only">
                         <span class="dashicons dashicons-media-spreadsheet"></span>
                     </a>';
@@ -590,7 +575,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 && EEH_MSG_Template::is_mt_active('receipt')
             ) {
                 return '
-				<a title="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
+				<a class="ee-aria-tooltip" aria-label="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
                        . ' target="_blank" href="' . $url . '" class="button button--small button--icon-only">
 					<span class="dashicons dashicons-text-page"></span>
 				</a>';
@@ -627,8 +612,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 $registration->ID()
             )
                 ? '
-					<a href="' . $url . '"'
-                  . ' title="' . esc_attr__('View Registration Details', 'event_espresso') . '" class="button button--small button--icon-only">
+					<a class="ee-aria-tooltip" href="' . $url . '"'
+                  . ' aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '" class="button button--small button--icon-only">
 						<span class="dashicons dashicons-clipboard"></span>
 					</a>'
                 : '';
@@ -672,8 +657,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 TXN_ADMIN_URL
             );
             return '
-                <a href="' . $url . '"'
-                   . ' title="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" class="button button--small button--icon-only">
+                <a class="ee-aria-tooltip" href="' . $url . '"'
+                   . ' aria-label="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" class="button button--small button--icon-only">
                     <span class="dashicons dashicons-email-alt"></span>
                 </a>';
         }
@@ -722,7 +707,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             && $registration->owes_monies_and_can_pay()
         ) {
             return '
-                <a title="' . esc_attr__('Make Payment from the Frontend.', 'event_espresso') . '"'
+                <a class="ee-aria-tooltip" aria-label="' . esc_attr__('Make Payment from the Frontend.', 'event_espresso') . '"'
                    . ' target="_blank" href="' . $registration->payment_overview_url(true) . '"'
                    . ' class="button button--small button--icon-only">
                     <span class="dashicons dashicons-money"></span>

@@ -302,8 +302,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     public function column_status(EE_Registration $registration)
     {
         return '
-        <span class="ee-status-dot ee-status-dot--' . esc_attr($registration->status_ID()) . ' ee-aria-tooltip" 
-        aria-label="' . EEH_Template::pretty_status($registration->status_ID(), false, 'sentence') . '">        
+        <span class="ee-status-dot ee-status-dot--' . esc_attr($registration->status_ID()) . ' ee-aria-tooltip"
+        aria-label="' . EEH_Template::pretty_status($registration->status_ID(), false, 'sentence') . '">
         </span>';
     }
 
@@ -383,12 +383,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'ee_edit_contacts',
             'espresso_registrations_edit_attendee'
         )
-            ? '<a href="' . $edit_lnk_url . '" title="' . esc_attr__('View Registration Details', 'event_espresso') . '">'
+            ? '<a class="ee-aria-tooltip" href="' . $edit_lnk_url . '" aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '">'
               . $item->attendee()->full_name()
               . '</a>'
             : $item->attendee()->full_name();
         $name_link .= $item->count() === 1
-            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled gold-icon ee-icon-size-8"></div></sup>	'
+            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled gold-icon"></div></sup>	'
             : '';
         // add group details
         $name_link .= '&nbsp;' . sprintf(esc_html__('(%s of %s)', 'event_espresso'), $item->count(), $item->group_size());
@@ -403,7 +403,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'view_registration',
             $item->ID()
         )
-            ? '<a href="' . $link . '" title="' . esc_attr__('View Registration Details', 'event_espresso') . '">'
+            ? '<a class="ee-aria-tooltip" href="' . $link . '" aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '">'
               . $item->reg_code()
               . '</a>'
             : $item->reg_code();
@@ -441,7 +441,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     : esc_html__('Checked Out', 'event_espresso');
                 // get timestamp string
                 $timestamp_string = $last_timestamp->get_datetime('CHK_timestamp');
-                $actions['checkin'] = '<a href="' . $checkin_list_url . '" title="'
+                $actions['checkin'] = '<a class="ee-aria-tooltip" href="' . $checkin_list_url . '" aria-label="'
                                       . esc_attr__(
                                           'View this registrant\'s check-ins/checkouts for the datetime',
                                           'event_espresso'
@@ -481,7 +481,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             $event_label = EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_checkins',
                 'espresso_registrations_registration_checkins'
-            ) ? '<a href="' . $chkin_lnk_url . '" title="'
+            ) ? '<a class="ee-aria-tooltip" href="' . $chkin_lnk_url . '" aria-label="'
                 . esc_attr__(
                     'View Checkins for this Event',
                     'event_espresso'
@@ -537,11 +537,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     'espresso_transactions_view_transaction'
                 ) ? '
 				<span class="reg-pad-rght">
-					<a class="status-'
+					<a class="ee-aria-tooltip status-'
                     . $item->transaction()->status_ID()
                     . '" href="'
                     . $view_txn_lnk_url
-                    . '"  title="'
+                    . '"  aria-label="'
                     . esc_attr__('View Transaction', 'event_espresso')
                     . '">
 						'
@@ -578,9 +578,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             return EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_transaction',
                 'espresso_transactions_view_transaction'
-            ) ? '<a href="'
+            ) ? '<a class="ee-aria-tooltip" href="'
                 . $view_txn_url
-                . '" title="'
+                . '" aria-label="'
                 . esc_attr__('View Transaction', 'event_espresso')
                 . '"><span class="reg-pad-rght">'
                 . $txn_total

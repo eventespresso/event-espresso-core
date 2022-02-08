@@ -807,7 +807,9 @@ class EEH_MSG_Template
     {
         $url = EEH_MSG_Template::get_message_action_url($type, $message, $query_params);
         $icon_css = EEH_MSG_Template::get_message_action_icon($type);
-        $title = isset($icon_css['label']) ? 'title="' . $icon_css['label'] . '"' : '';
+        $label = $icon_css['label'] ?? null;
+        $label = $label ? 'aria-label="' . $label . '"' : '';
+        $class = $label ? ' ee-aria-tooltip' : '';
 
         if (empty($url) || empty($icon_css) || ! isset($icon_css['css_class'])) {
             return '';
@@ -823,7 +825,10 @@ class EEH_MSG_Template
             )
         );
 
-        return '<a href="' . $url . '" ' . $title . ' class="button button--small button--icon-only"><span class="' . esc_attr($icon_css['css_class']) . '"></span></a>';
+        return '
+            <a href="' . $url . '" ' . $label . ' class="button button--small button--icon-only' . $class . '">
+                <span class="' . esc_attr($icon_css['css_class']) . '"></span>
+            </a>';
     }
 
 
