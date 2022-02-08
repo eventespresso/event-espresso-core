@@ -2676,14 +2676,14 @@ body.espresso-admin #contextual-help-wrap strong {
     color: var(--ee-font-color);
     cursor: pointer;
     display: inline-flex;
-    font-size: calc(var(--ee-admin-height-half) - var(--ee-admin-height-shim));
-    height: calc(var(--ee-admin-height) + 2px);
+    font-size: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
+    height: calc(var(--ee-button-height) + 2px);
     justify-content: center;
     line-height: 2;
     margin: 0;
     outline: 0;
     padding: 0;
-    padding-inline: var(--ee-admin-height-forth);
+    padding-inline: var(--ee-button-height-forth);
     position: relative;
     text-align: start;
     touch-action: manipulation;
@@ -2698,7 +2698,7 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin select {
-    padding-inline-end: var(--ee-admin-height);
+    padding-inline-end: var(--ee-button-height);
     max-width: 12rem;
 }
 
@@ -2714,16 +2714,16 @@ body.espresso-admin #contextual-help-wrap strong {
     justify-content: center;
     margin: 0;
     margin-inline: 0.25rem;
-    width: var(--ee-admin-height-half);
+    width: var(--ee-button-height-half);
 }
 .espresso-admin input[type="checkbox"] {
-    height: calc(var(--ee-admin-height-half) + 1px);
+    height: calc(var(--ee-button-height-half) + 1px);
 }
 
 .espresso-admin input[type="radio"] {
     aspect-ratio: 1;
     border-radius: 100%;
-    height: var(--ee-admin-height-half);
+    height: var(--ee-button-height-half);
 }
 
 .espresso-admin input[type="checkbox"]:checked::before {
@@ -2863,9 +2863,9 @@ body.espresso-admin #contextual-help-wrap strong {
     color: var(--ee-font-color);
     cursor: pointer;
     display: inline-flex;
-    font-size: calc(var(--ee-admin-height-half) - var(--ee-admin-height-shim));
+    font-size: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
     font-weight: 600;
-    height: var(--ee-admin-height);
+    height: var(--ee-button-height);
     justify-content: center;
     line-height: 2;
     margin: 0;
@@ -2873,7 +2873,7 @@ body.espresso-admin #contextual-help-wrap strong {
     min-height: unset;
     outline: 0;
     padding: 0;
-    padding-inline: var(--ee-admin-height-half);
+    padding-inline: var(--ee-button-height-third);
     position: relative;
     text-align: start;
     touch-action: manipulation;
@@ -2910,12 +2910,12 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button.button--small,
 .espresso-admin.wp-core-ui #edit-slug-box .button,
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button.button-small {
-    --ee-admin-height: 2em;
+    --ee-button-height: 2em;
 }
 
 .espresso-admin.wp-core-ui .button.button--big,
 .espresso-admin.wp-core-ui .button.button--big {
-    --ee-admin-height: 4em;
+    --ee-button-height: 4em;
 }
 
 .espresso-admin.wp-core-ui .pagination-links .button:after {
@@ -3026,7 +3026,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .qt-dfw button .mce-caret,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn-group .mce-btn .mce-caret,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn-group .mce-btn button .mce-caret  {
-    right: var(--ee-admin-height-forth);
+    right: var(--ee-button-height-forth);
 }
 .espresso-admin.wp-core-ui .qt-dfw.active button .mce-caret,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn-group .mce-btn:active,
@@ -3037,8 +3037,8 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn.mce-listbox button {
     aspect-ratio: unset;
     line-height: unset;
-    padding-inline-start: var(--ee-admin-height-forth);
-    padding-inline-end: var(--ee-admin-height-half);
+    padding-inline-start: var(--ee-button-height-forth);
+    padding-inline-end: var(--ee-button-height-half);
 }
 
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button {
@@ -3387,7 +3387,10 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin .ee-admin-container .ee-admin-button-row {
     display: flex;
+    flex-flow: row wrap;
     justify-content: flex-end;
+}
+.espresso-admin .ee-admin-container .ee-admin-button-row button {
     margin-block: .25rem;
 }
 

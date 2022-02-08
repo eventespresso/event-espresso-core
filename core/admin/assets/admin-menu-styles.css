@@ -148,11 +148,12 @@
     --ee-attention-bg-color: hsl(51, 68%, 76%);
     --ee-attention-color: hsla(46, 24%, 9%, .85);
 
-    --ee-admin-height: 2.85em;
-    --ee-admin-height-half: calc(var(--ee-admin-height) / 2);
-    --ee-admin-height-forth: calc(var(--ee-admin-height) / 4);
-    --ee-admin-height-sixth: calc(var(--ee-admin-height) / 6);
-    --ee-admin-height-shim: calc(var(--ee-admin-height) / 18);
+    --ee-button-height: 2.85em;
+    --ee-button-height-half: calc(var(--ee-button-height) / 2);
+    --ee-button-height-third: calc(var(--ee-button-height) / 3);
+    --ee-button-height-forth: calc(var(--ee-button-height) / 4);
+    --ee-button-height-sixth: calc(var(--ee-button-height) / 6);
+    --ee-button-height-shim: calc(var(--ee-button-height) / 18);
 
 }
 
