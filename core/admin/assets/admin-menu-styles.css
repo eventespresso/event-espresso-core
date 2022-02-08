@@ -153,7 +153,7 @@
     --ee-button-height-third: calc(var(--ee-button-height) / 3);
     --ee-button-height-forth: calc(var(--ee-button-height) / 4);
     --ee-button-height-sixth: calc(var(--ee-button-height) / 6);
-    --ee-button-height-shim: calc(var(--ee-button-height) / 18);
+    --ee-button-height-shim: calc(var(--ee-button-height) / 12);
 
 }
 

@@ -131,16 +131,17 @@
 
 /* #TXN_total, #TXN_paid { text-align:center; } */
 .transactions.wp-list-table .column-TXN_timestamp {
-    width: 10rem;
+    min-width: 12rem;
 }
 .transactions.wp-list-table .column-TXN_total,
 .transactions.wp-list-table .column-TXN_paid {
+    min-width: 10rem;
+    padding-inline-end: 1.5rem;
     text-align: end;
-    width: 9rem;
 }
 .transactions.wp-list-table th.column-TXN_total,
 .transactions.wp-list-table th.column-TXN_paid {
-    text-align: center;
+    padding-inline-end: 4rem;
 }
 .transactions.wp-list-table .column-TXN_total > div,
 .transactions.wp-list-table .column-TXN_paid > div {

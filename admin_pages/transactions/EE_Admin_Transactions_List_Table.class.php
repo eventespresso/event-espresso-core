@@ -592,7 +592,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 return '
 				<a title="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
                        . ' target="_blank" href="' . $url . '" class="button button--small button--icon-only">
-					<span class="dashicons dashicons-media-default"></span>
+					<span class="dashicons dashicons-text-page"></span>
 				</a>';
             }
         }

@@ -242,7 +242,7 @@
     padding: 1px 10px;
 }
 
-.espresso-admin.wp-core-ui #edit-slug-box,
+
 .espresso-admin.wp-core-ui #add-new-comment {
     font-size: .8rem;
 }
@@ -2413,7 +2413,11 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin #post-body-content .ee-admin-settings-hdr {
     padding-inline: 0;
 }
-.espresso-admin h2:not(.hndle) {
+
+.espresso-admin #poststuff h2,
+.espresso-admin h2:not(.hndle),
+.espresso-admin #post-body-content h2,
+.espresso-admin .admin-primary-mbox-h4 {
     margin-block-start: 2.5rem;
     margin-block-end: .25rem;
 }
@@ -2868,7 +2872,7 @@ body.espresso-admin #contextual-help-wrap strong {
     display: inline-flex;
     font-size: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
     font-weight: 600;
-    height: var(--ee-button-height);
+    height: calc(var(--ee-button-height) + var(--ee-button-height-shim));
     justify-content: center;
     line-height: 2;
     margin: 0;
@@ -2898,6 +2902,7 @@ body.espresso-admin #contextual-help-wrap strong {
     display: inline-flex;
 }
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons {
+    font-size: 20px;
     margin: 0 !important;
     top: unset !important;
 }
@@ -2914,6 +2919,8 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui #edit-slug-box .button,
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button.button-small {
     --ee-button-height: 2em;
+    font-size: calc((var(--ee-button-height) *.6) - var(--ee-button-height-shim));
+    padding-block: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
 }
 
 .espresso-admin.wp-core-ui .button.button--big,
@@ -3129,13 +3136,18 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .wp-list-table.widefat th.check-column input[type="checkbox"],
 .espresso-admin .wp-list-table.widefat td.check-column input[type="checkbox"] {
     margin: 0;
-    margin-block-end: .5rem;
 }
 
 .espresso-admin .wp-list-table.widefat th.check-column .dashicons-lock,
 .espresso-admin .wp-list-table.widefat td.check-column .dashicons-lock {
-    inset-inline-start: -.125rem;
+    inset-inline-start: -.1rem;
 }
+
+.espresso-admin .wp-list-table.widefat th.check-column input[type="checkbox"] + .dashicons-lock,
+.espresso-admin .wp-list-table.widefat td.check-column input[type="checkbox"] + .dashicons-lock {
+    margin-block-start: .5rem;
+}
+
 
 
 .espresso-admin .wp-list-table th.column-primary,
@@ -3155,8 +3167,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .wp-list-table thead th,
 .espresso-admin .wp-list-table tfoot th {
     color: var(--ee-font-color-light);
-    font-size: .9rem;
+    font-size: 1rem;
     font-weight: 800;
+    padding-block-start: 1rem;
 }
 
 .admin-primary-mbox-tbl thead td,
@@ -3221,19 +3234,23 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 .espresso-admin .wp-list-table .column-actions .ee-list-table-actions {
     display: flex;
+    flex-flow: row wrap;
     margin:0;
 }
 .espresso-admin .wp-list-table .column-actions .ee-list-table-actions .button {
-    margin: 0;
+    margin-block-end: .5rem;
+    margin-inline: .25rem;
 }
+
+
+
 .espresso-admin .tablenav label {
     margin-inline-end: 0.5rem;
 }
 
 .espresso-admin .tablenav input + label,
 .espresso-admin .tablenav input + .button,
-.espresso-admin .tablenav #post-query-submit,
-.espresso-admin .wp-list-table .column-actions .ee-list-table-actions .button + .button {
+.espresso-admin .tablenav #post-query-submit {
     margin-inline-start: .5rem;
 }
 .espresso-admin .wp-list-table .column-actions .ee-list-table-actions .button .ee-icon,
