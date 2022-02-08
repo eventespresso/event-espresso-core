@@ -346,6 +346,9 @@ class Payments_Admin_Page extends EE_Admin_Page
                     'href'  => 'espresso_' . $payment_method->slug() . '_payment_settings',
                     'title' => esc_html__('Modify this Payment Method', 'event_espresso'),
                     'slug'  => $payment_method->slug(),
+                    'icon'  => $payment_method->active()
+                        ? '<span class="dashicons dashicons-yes-alt"></span>'
+                        : '<span class="dashicons dashicons-remove"></span>',
                 );
             }
         }
@@ -694,7 +697,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                             $link_text_and_title,
                             $link_text_and_title,
                             'deactivate_' . $payment_method->slug(),
-                            'espresso-button button--secondary'
+                            'button button--secondary'
                         )
                     )
                 )
@@ -753,7 +756,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                                             $link_text_and_title,
                                             $link_text_and_title,
                                             'activate_' . $payment_method->slug(),
-                                            'espresso-button-green button--primary'
+                                            'button button--primary-alt'
                                         )
                                     )
                                 )
