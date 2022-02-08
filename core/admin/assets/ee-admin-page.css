@@ -3390,7 +3390,7 @@ body.espresso-admin #contextual-help-wrap strong {
     flex-flow: row wrap;
     justify-content: flex-end;
 }
-.espresso-admin .ee-admin-container .ee-admin-button-row button {
+.espresso-admin.wp-core-ui .ee-admin-container .ee-admin-button-row .button {
     margin-block: .25rem;
 }
 
