@@ -541,7 +541,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                         'desc'  => esc_html__('View Transaction Invoice', 'event_espresso'),
                     ],
                     'view_receipt'          => [
-                        'class' => 'dashicons dashicons-media-default',
+                        'class' => 'dashicons dashicons-text-page',
                         'desc'  => esc_html__('View Transaction Receipt', 'event_espresso'),
                     ],
                     'view_registration'     => [
@@ -965,7 +965,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 $primary_registration->receipt_url(),
                 esc_html__('View Receipt', 'event_espresso'),
                 'button button--secondary',
-                'dashicons dashicons-media-text'
+                'dashicons dashicons-text-page'
             );
         }
 
