@@ -40,7 +40,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
 
         $this->_columns = array(
             'cb'                 => '<input type="checkbox" />', // Render a checkbox instead of text
-            'ATT_ID'             => esc_html__('ID', 'event_espresso'),
+            'id'             => esc_html__('ID', 'event_espresso'),
             'ATT_fname'          => esc_html__('First Name', 'event_espresso'),
             'ATT_lname'          => esc_html__('Last Name', 'event_espresso'),
             'ATT_email'          => esc_html__('Email Address', 'event_espresso'),
@@ -53,7 +53,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
         );
 
         $this->_sortable_columns = array(
-            'ATT_ID'             => array('ATT_ID' => false),
+            'id'             => array('id' => false),
             'ATT_lname'          => array('ATT_lname' => true), // true means its already sorted
             'ATT_fname'          => array('ATT_fname' => false),
             'ATT_email'          => array('ATT_email' => false),
@@ -140,18 +140,16 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * ATT_ID column
-     *
      * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error
      */
-    public function column_ATT_ID(EE_Attendee $attendee)
+    public function column_id(EE_Attendee $attendee)
     {
         $content = $attendee->ID();
         $attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
         $content .= '  <span class="show-on-mobile-view-only">' . $attendee_name . '</span>';
-        return $content;
+        return $this->columnContent('id', $content, 'center');
     }
 
 

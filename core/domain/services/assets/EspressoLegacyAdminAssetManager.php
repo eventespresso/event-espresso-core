@@ -80,7 +80,6 @@ class EspressoLegacyAdminAssetManager extends AssetManager
                 JqueryAssetManager::JS_HANDLE_JQUERY_UI_DRAGGABLE,
             ]
         );
-
         $this->addJavascript(
             EspressoLegacyAdminAssetManager::JS_HANDLE_EE_ADMIN,
             EE_ADMIN_URL . 'assets/ee-admin-page.js',

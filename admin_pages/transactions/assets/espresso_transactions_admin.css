@@ -165,10 +165,6 @@
     /*width: 15%*/
 }
 
-.transactions.wp-list-table .column-actions {
-    width: 15%;
-}
-
 .txn-overview-free-event-spn {
     display: block; text-align:center;
 }

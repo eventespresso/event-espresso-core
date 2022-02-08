@@ -711,7 +711,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function single_row_columns($item)
     {
-        list($columns, $hidden, $sortable, $primary) = $this->get_column_info();
+        [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
 
         foreach ($columns as $column_name => $column_display_name) {
 
@@ -907,10 +907,37 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         $align = in_array($align, ['start', 'center', 'end']) ? $align : 'start';
         $align = "ee-responsive-table-cell--{$align}";
 
-        $html = "<div id='ee-responsive-table-cell-{$id}' class='ee-responsive-table-cell {$align}'>";
+        $html = "<div id='ee-responsive-table-cell-{$id}' class='ee-responsive-table-cell {$align} ee-layout-stack'>";
         $html .= "<div class='ee-responsive-table-cell__heading'>{$heading}</div>";
-        $html .= "<div class='ee-responsive-table-cell__content'>{$content}</div>";
+        $html .= "<div class='ee-responsive-table-cell__content ee-layout-stack'>{$content}</div>";
         $html .= "</div>";
         return $html;
+    }
+
+
+    protected function actionsModalMenu($actions): string
+    {
+        return '
+        <div class="ee-modal-menu">
+            <button class="ee-modal-menu__button button button--small button--icon-only ee-aria-tooltip"
+                    aria-label="' . esc_attr__('list table actions menu', 'event_espresso') . '"
+            >
+                <span class="dashicons dashicons-menu"></span>
+            </button>
+            <div class="ee-modal-menu__content ee-admin-container">
+                <span class="ee-modal-menu__close dashicons dashicons-no"></span>
+                ' . $actions . '
+            </div>
+        </div>';
+    }
+
+
+    protected function actionsColumnHeader(): string
+    {
+        return '
+            <span class="ee-actions-column-header-wrap">
+                <span class="dashicons dashicons-screenoptions"></span>
+                <span class="ee-actions-column-header">' . esc_html__('Actions', 'event_espresso') . '</span>
+            </span>';
     }
 }

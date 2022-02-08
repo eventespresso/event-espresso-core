@@ -1,8 +1,8 @@
-
 /** STATUS COLORS */
 
 /*  txn failed,  payment declined, reg declined, dtt cancelled*/
 .status-DTC,
+.status-MFL,
 .status-PDC,
 .status-RDC,
 .status-TFL,
@@ -15,6 +15,7 @@
 
 /* txn overpaid, payment fail, reg not approved */
 .status-DTP,
+.status-MRT,
 .status-PFL,
 .status-RNA,
 .status-TOP,
@@ -26,6 +27,7 @@
 }
 
 /* txn abandoned, reg incomplete, dtt sold out */
+.status-MRS,
 .status-RIC,
 .status-TAB,
 .ee-status-color-RIC,
@@ -35,6 +37,7 @@
 
 /* txn complete, payment approved, reg approved, dtt active*/
 .status-DTA,
+.status-MSN,
 .status-PAP,
 .status-RAP,
 .status-TCM,
@@ -47,6 +50,7 @@
 
 /* txn open, payment pending, reg pending payment, dtt upcoming */
 .status-DTU,
+.status-MID,
 .status-PPN,
 .status-RPP,
 .status-TIN,
@@ -59,6 +63,7 @@
 
 /* dtt postponed */
 .status-DTS,
+.status-MEX,
 .status-RWL,
 .ee-status-color-DTS,
 .ee-status-color-RWL {
@@ -77,8 +82,163 @@
 
 /* dtt inactive */
 .status-DTI,
+.status-MIC,
 .ee-status-color-DTI {
     color: var(--ee-status-color-grey);
+}
+
+
+
+/*  txn failed,  payment declined, reg declined, dtt cancelled*/
+.ee-page-status--error,
+.ee-status-dot--DTC,
+.ee-status-legend--DTC,
+.event-active-status--DTC,
+.ee-status-dot--MFL,
+.ee-status-legend--MFL,
+.ee-status-dot--PDC,
+.ee-status-legend--PDC,
+.ee-status-dot--RDC,
+.ee-status-legend--RDC,
+.ee-status-dot--TFL,
+.ee-status-legend--TFL,
+.ee-admin-page-header-grid .ee-admin-container.status-DTC,
+.ee-admin-page-header-grid .ee-admin-container.status-PDC,
+.ee-admin-page-header-grid .ee-admin-container.status-RDC,
+.ee-admin-page-header-grid .ee-admin-container.status-TFL,
+.ee-admin-page-header-grid .ee-admin-container.ee-txn-amount-owing {
+    background-color: var(--ee-status-color-red);
+    color: var(--ee-color-white) !important;
+}
+
+/* txn overpaid, payment fail, reg not approved */
+.ee-status-dot--DTP,
+.ee-status-legend--DTP,
+.event-active-status--DTP,
+.ee-status-dot--MRT,
+.ee-status-legend--MRT,
+.ee-status-dot--PFL,
+.ee-status-legend--PFL,
+.ee-status-dot--RNA,
+.ee-status-legend--RNA,
+.ee-status-dot--TOP,
+.ee-status-legend--TOP,
+.ee-admin-page-header-grid .ee-admin-container.status-DTP,
+.ee-admin-page-header-grid .ee-admin-container.status-PFL,
+.ee-admin-page-header-grid .ee-admin-container.status-RNA,
+.ee-admin-page-header-grid .ee-admin-container.status-TOP {
+    background-color: var(--ee-status-color-orange);
+    color: var(--ee-color-white) !important;
+}
+
+
+/* txn abandoned, reg incomplete, dtt sold out */
+.ee-status-dot--MRS,
+.ee-status-legend--MRS,
+.ee-status-dot--RIC,
+.ee-status-legend--RIC,
+.ee-status-dot--TAB,
+.ee-status-legend--TAB,
+.ee-admin-page-header-grid .ee-admin-container.status-DTS,
+.ee-admin-page-header-grid .ee-admin-container.status-RIC,
+.ee-admin-page-header-grid .ee-admin-container.status-TAB {
+    background-color: var(--ee-status-color-yellow);
+}
+
+.ee-page-status--ok,
+.ee-status-dot--DTA,
+.ee-status-legend--DTA,
+.event-active-status--DTA,
+.ee-status-dot--MSN,
+.ee-status-legend--MSN,
+.ee-status-dot--PAP,
+.ee-status-legend--PAP,
+.ee-status-dot--RAP,
+.ee-status-legend--RAP,
+.ee-status-dot--TCM,
+.ee-status-legend--TCM,
+.ee-admin-page-header-grid .ee-admin-container.status-DTA,
+.ee-admin-page-header-grid .ee-admin-container.status-PAP,
+.ee-admin-page-header-grid .ee-admin-container.status-RAP,
+.ee-admin-page-header-grid .ee-admin-container.status-TCM {
+    background-color: var(--ee-status-color-green);
+    color: var(--ee-color-white) !important;
+}
+
+/* txn open, payment pending, reg pending payment, dtt upcoming */
+.ee-status-dot--DTU,
+.ee-status-legend--DTU,
+.event-active-status--DTU,
+.ee-status-dot--MID,
+.ee-status-legend--MID,
+.ee-status-dot--PPN,
+.ee-status-dlegendot--PPN,
+.ee-status-dot--RPP,
+.ee-status-legend--RPP,
+.ee-status-dot--TIN,
+.ee-status-legend--TIN,
+.ee-admin-page-header-grid .ee-admin-container.status-DTU,
+.ee-admin-page-header-grid .ee-admin-container.status-PPN,
+.ee-admin-page-header-grid .ee-admin-container.status-RPP,
+.ee-admin-page-header-grid .ee-admin-container.status-TIN {
+    background-color: var(--ee-status-color-blue);
+    color: var(--ee-color-white) !important;
+}
+
+/* dtt sold out */
+.ee-status-dot--DTS,
+.ee-status-legend--DTS,
+.event-active-status--DTS,
+.ee-status-dot--MEX,
+.ee-status-legend--MEX,
+.ee-status-dot--RWL,
+.ee-status-legend--RWL,
+.ee-admin-page-header-grid .ee-admin-container.status-DTS {
+    background-color: var(--ee-status-color-purple);
+    color: var(--ee-color-white) !important;
+}
+
+/* payment cancelled, reg cancelled, dtt expired */
+.ee-status-dot--DTE,
+.ee-status-legend--DTE,
+.event-active-status--DTE,
+.ee-status-dot--PCN,
+.ee-status-legend--PCN,
+.ee-status-dot--RCN,
+.ee-status-legend--RCN,
+.ee-admin-page-header-grid .ee-admin-container.status-DTE,
+.ee-admin-page-header-grid .ee-admin-container.status-PCN,
+.ee-admin-page-header-grid .ee-admin-container.status-RCN {
+    background-color: var(--ee-status-color-light-grey);
+    color: var(--ee-color-white) !important;
+}
+
+/* dtt inactive */
+.ee-status-dot--DTI,
+.ee-status-legend--DTI,
+.event-active-status--DTI,
+.ee-status-dot--MIC,
+.ee-status-legend--MIC,
+.ee-admin-page-header-grid .ee-admin-container.status-DTI {
+    background-color: var(--ee-status-color-grey);
+    color: var(--ee-color-white) !important;
+}
+
+/** LAYOUT */
+
+.ee-layout-row,
+.ee-layout-stack {
+    display: flex;
+}
+.ee-layout-row {
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+.ee-layout-stack {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .ee-page-status {
@@ -100,7 +260,7 @@
 .espresso-admin #post-body,
 .espresso-admin #poststuff #post-body {
     padding-block-start: 1.25rem;
-    margin-right: unset;
+    margin-inline-end: unset;
 }
 
 .espresso-admin #post-body,
@@ -157,15 +317,16 @@
 .espresso-admin #ee-msg-edit-frm  #post-body.columns-1 #post-body-content > div.admin-primary-mbox-dv,
 .espresso-admin #ee-msg-edit-frm  #post-body.columns-2 #post-body-content > div.admin-primary-mbox-dv {
     margin: 0;
-    padding-block: 1rem;
-    padding-inline: 1.5rem;
+    padding-block-start: 1rem;
+    padding-block-end: 2rem;
+    padding-inline: 3rem;
 }
 
 
 .espresso-admin #poststuff #post-body.columns-2 #side-sortables,
 .espresso-admin #post-body.columns-2 #postbox-container-1,
 .espresso-admin #post-body.columns-2 #postbox-container-1 > div {
-  margin-right: unset;
+  margin-inline-end: unset;
   width: var(--ee-admin-sidebar-width);
 }
 
@@ -257,16 +418,8 @@
 
 .espresso-admin .add-new-h2,
 .espresso-admin .add-new-h2:active {
-    margin-left: 20px;
+    margin-inline-start: 20px;
     top: 0;
-}
-
-.espresso-admin .tablenav div {
-    margin-right: 1rem;
-}
-
-.espresso-admin .tablenav select {
-    margin-inline: .5rem;
 }
 
 /*** Save buttons ***/
@@ -295,14 +448,14 @@
 }
 
 #espresso_major_buttons_wrapper .button--primary, #event-editor-floating-save-btns .button--primary {
-    margin-right: 5px;
+    margin-inline-end: 5px;
     float: right;
 }
 
 .poststuff .ee-nav-tabs .nav-tab-wrapper,
 #poststuff .ee-nav-tabs .nav-tab-wrapper,
 .ee-nav-tabs .nav-tab-wrapper {
-    margin-bottom: 0;
+    margin-block-end: 0;
     padding-bottom: 0;
     padding-left: 0;
 }
@@ -342,7 +495,7 @@
 }
 
 .metabox-holder .ee-admin-settings-hdr + .ee-attention {
-    margin-top: 0;
+    margin-block-start: 0;
 }
 
 .ee-attention {
@@ -644,7 +797,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .check-column .lock-icon {
-    margin-left: 6px;
+    margin-inline-start: 6px;
 }
 
 /** end common icons **/
@@ -656,7 +809,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
     position: absolute;
     top: 50%;
     left: 50%;
-    margin-left: -15px;
+    margin-inline-start: -15px;
     padding: 0;
     z-index: 9999999;
     font-size: 48px;
@@ -833,7 +986,7 @@ label em, span.required {
     font-weight: bold;
     font-size: 1.2em;
     color: var(--ee-status-color-pink);
-    margin-left: .25em;
+    margin-inline-start: .25em;
 }
 
 input.error,
@@ -886,7 +1039,7 @@ label.error {
 
 .ui-slider-horizontal .ui-slider-handle {
     top: -.3em;
-    margin-left: -.6em;
+    margin-inline-start: -.6em;
 }
 
 .ui-slider-horizontal .ui-slider-range {
@@ -909,8 +1062,8 @@ label.error {
 
 .ui-slider-vertical .ui-slider-handle {
     left: -.3em;
-    margin-left: 0;
-    margin-bottom: -.6em;
+    margin-inline-start: 0;
+    margin-block-end: -.6em;
 }
 
 .ui-slider-vertical .ui-slider-range {
@@ -927,7 +1080,7 @@ label.error {
 }
 
 .ui-timepicker-div .ui-widget-header {
-    margin-bottom: 8px;
+    margin-block-end: 8px;
 }
 
 .ui-timepicker-div dl {
@@ -936,7 +1089,7 @@ label.error {
 
 .ui-timepicker-div dl dt {
     height: 25px;
-    margin-bottom: -25px;
+    margin-block-end: -25px;
 }
 
 .ui-timepicker-div dl dd {
@@ -987,7 +1140,7 @@ label.error {
 .ee-composite-dashicon .ee-icon + .dashicons,
 .ee-composite-dashicon .dashicons + .ee-icon,
 .ee-composite-dashicon .dashicons + .dashicons {
-    margin-left: -17px !important;
+    margin-inline-start: -17px !important;
 }
 
 .ee-composite-dashicon span:nth-child(even) {
@@ -1002,20 +1155,20 @@ label.error {
 
 .help-tab-content .left {
     float: left;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin-inline-end: 10px;
+    margin-block-end: 10px;
 }
 
 .help-tab-content .right {
     float: right;
-    margin-left: 10px;
-    margin-bottom: 10px;
+    margin-inline-start: 10px;
+    margin-block-end: 10px;
 }
 
 .help-tab-content .inline-text {
     vertical-align: middle;
-    margin-right: 5px;
-    margin-left: 5px;
+    margin-inline-end: 5px;
+    margin-inline-start: 5px;
 }
 
 /** LIST-TABLE-LEGEND **/
@@ -1031,7 +1184,7 @@ label.error {
     flex-flow: column;
     justify-content: start;
     line-height: 1rem;
-    margin-top: 0;
+    margin-block-start: 0;
     margin-inline-end: 20px;
 }
 
@@ -1044,7 +1197,7 @@ label.error {
 }
 
 .ee-list-table-legend-container h4 {
-    margin-bottom: .25rem;
+    margin-block-end: .25rem;
 }
 
 .list-table-bottom-buttons a.button--secondary, .list-table-bottom-buttons button.button--secondary {
@@ -1130,7 +1283,7 @@ label.error {
 	background-color: #EEEEE6;
 	padding: 0 4px 3px 4px;
 	color: black;
-	margin-left: -4px;
+	margin-inline-start: -4px;
 	text-shadow: none;
 }*/
 
@@ -1153,13 +1306,13 @@ label.error {
     width: 1.25rem;
 }
 
-.ee-list-table-legend-container .ee-icon-size-8 {
+/* .ee-list-table-legend-container .ee-icon-size-8 {
     vertical-align: top;
     margin: 0 0 .55rem 1px !important;
-}
+} */
 
 .ee-legend-description {
-    margin-left: .75rem;
+    margin-inline-start: .75rem;
 }
 
 /**
@@ -1169,9 +1322,6 @@ label.error {
     font-size: 20px;
 }
 
-.espresso-admin .wp-list-table td.column-actions a {
-    display: inline-block;
-}
 
 .espresso-admin .form-table th {
     width: 230px;
@@ -1267,8 +1417,8 @@ label.error {
  * ee-help-tour stuff
  **/
 .ee-abs-container {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-block-start: 20px;
+    margin-block-end: 20px;
 }
 
 .ee-help-tour-restart-buttons {
@@ -1284,7 +1434,7 @@ label.error {
 .ee-collapsible:before {
     font: normal 22px/1 "dashicons";
     vertical-align: top;
-    margin-top: -3px;
+    margin-block-start: -3px;
 }
 
 .ee-collapsible-open:before {
@@ -1817,7 +1967,7 @@ input.ee-register-button {
     content: counter(edtr-notice-counter);
     font-weight: bold;
     font-size: 2.4rem;
-    margin-right: 0.5rem;
+    margin-inline-end: 0.5rem;
     font-family: "Abril Fatface", serif;
     line-height: 1;
     opacity: .375;
@@ -2417,10 +2567,17 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin #poststuff h2,
 .espresso-admin h2:not(.hndle),
 .espresso-admin #post-body-content h2,
-.espresso-admin .admin-primary-mbox-h4 {
+.espresso-admin .admin-primary-mbox-h4,
+.espresso-admin .ee-admin-container h2:not(.hndle),
+.espresso-admin #post-body-content .ee-admin-settings-hdr {
     margin-block-start: 2.5rem;
     margin-block-end: .25rem;
 }
+/* .espresso-admin #poststuff h2:first-of-type,
+.espresso-admin #post-body-content h2:first-of-type,
+.espresso-admin .admin-primary-mbox-h4 h4:first-of-type  {
+    margin-block-start: .5rem;
+} */
 
 .espresso-admin #post-body-content .ee-admin-settings-hdr--new-features {
     background-color: var(--ee-btn-primary);
@@ -2485,10 +2642,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .ee-status-dot {
     aspect-ratio: 1;
     border: none;
-    /*border-radius: 50%;*/
     display: inline-block;
     height: .75rem;
-    margin: .25rem 0;
+    margin: 0;
     width: .75rem;
 }
 
@@ -2527,141 +2683,6 @@ body.espresso-admin #contextual-help-wrap strong {
 .ee-aria-tooltip[aria-label]:focus:after {
     opacity: 1;
     transition-delay: 750ms;
-}
-
-/*  txn failed,  payment declined, reg declined, dtt cancelled*/
-.ee-page-status--error,
-.ee-status-dot--DTC,
-.ee-status-legend--DTC,
-.event-active-status--DTC,
-.ee-status-dot--MFL,
-.ee-status-legend--MFL,
-.ee-status-dot--PDC,
-.ee-status-legend--PDC,
-.ee-status-dot--RDC,
-.ee-status-legend--RDC,
-.ee-status-dot--TFL,
-.ee-status-legend--TFL,
-.ee-admin-page-header-grid .ee-admin-container.status-DTC,
-.ee-admin-page-header-grid .ee-admin-container.status-PDC,
-.ee-admin-page-header-grid .ee-admin-container.status-RDC,
-.ee-admin-page-header-grid .ee-admin-container.status-TFL,
-.ee-admin-page-header-grid .ee-admin-container.ee-txn-amount-owing {
-    background-color: var(--ee-status-color-red);
-    color: var(--ee-color-white) !important;
-}
-
-/* txn overpaid, payment fail, reg not approved */
-.ee-status-dot--DTP,
-.ee-status-legend--DTP,
-.event-active-status--DTP,
-.ee-status-dot--MRT,
-.ee-status-legend--MRT,
-.ee-status-dot--PFL,
-.ee-status-legend--PFL,
-.ee-status-dot--RNA,
-.ee-status-legend--RNA,
-.ee-status-dot--TOP,
-.ee-status-legend--TOP,
-.ee-admin-page-header-grid .ee-admin-container.status-DTP,
-.ee-admin-page-header-grid .ee-admin-container.status-PFL,
-.ee-admin-page-header-grid .ee-admin-container.status-RNA,
-.ee-admin-page-header-grid .ee-admin-container.status-TOP {
-    background-color: var(--ee-status-color-orange);
-    color: var(--ee-color-white) !important;
-}
-
-
-/* txn abandoned, reg incomplete, dtt sold out */
-.ee-status-dot--MRS,
-.ee-status-legend--MRS,
-.ee-status-dot--RIC,
-.ee-status-legend--RIC,
-.ee-status-dot--TAB,
-.ee-status-legend--TAB,
-.ee-admin-page-header-grid .ee-admin-container.status-DTS,
-.ee-admin-page-header-grid .ee-admin-container.status-RIC,
-.ee-admin-page-header-grid .ee-admin-container.status-TAB {
-    background-color: var(--ee-status-color-yellow);
-}
-
-.ee-page-status--ok,
-.ee-status-dot--DTA,
-.ee-status-legend--DTA,
-.event-active-status--DTA,
-.ee-status-dot--MSN,
-.ee-status-legend--MSN,
-.ee-status-dot--PAP,
-.ee-status-legend--PAP,
-.ee-status-dot--RAP,
-.ee-status-legend--RAP,
-.ee-status-dot--TCM,
-.ee-status-legend--TCM,
-.ee-admin-page-header-grid .ee-admin-container.status-DTA,
-.ee-admin-page-header-grid .ee-admin-container.status-PAP,
-.ee-admin-page-header-grid .ee-admin-container.status-RAP,
-.ee-admin-page-header-grid .ee-admin-container.status-TCM {
-    background-color: var(--ee-status-color-green);
-    color: var(--ee-color-white) !important;
-}
-
-/* txn open, payment pending, reg pending payment, dtt upcoming */
-.ee-status-dot--DTU,
-.ee-status-legend--DTU,
-.event-active-status--DTU,
-.ee-status-dot--MID,
-.ee-status-legend--MID,
-.ee-status-dot--PPN,
-.ee-status-dlegendot--PPN,
-.ee-status-dot--RPP,
-.ee-status-legend--RPP,
-.ee-status-dot--TIN,
-.ee-status-legend--TIN,
-.ee-admin-page-header-grid .ee-admin-container.status-DTU,
-.ee-admin-page-header-grid .ee-admin-container.status-PPN,
-.ee-admin-page-header-grid .ee-admin-container.status-RPP,
-.ee-admin-page-header-grid .ee-admin-container.status-TIN {
-    background-color: var(--ee-status-color-blue);
-    color: var(--ee-color-white) !important;
-}
-
-/* dtt sold out */
-.ee-status-dot--DTS,
-.ee-status-legend--DTS,
-.event-active-status--DTS,
-.ee-status-dot--MEX,
-.ee-status-legend--MEX,
-.ee-status-dot--RWL,
-.ee-status-legend--RWL,
-.ee-admin-page-header-grid .ee-admin-container.status-DTS {
-    background-color: var(--ee-status-color-purple);
-    color: var(--ee-color-white) !important;
-}
-
-/* payment cancelled, reg cancelled, dtt expired */
-.ee-status-dot--DTE,
-.ee-status-legend--DTE,
-.event-active-status--DTE,
-.ee-status-dot--PCN,
-.ee-status-legend--PCN,
-.ee-status-dot--RCN,
-.ee-status-legend--RCN,
-.ee-admin-page-header-grid .ee-admin-container.status-DTE,
-.ee-admin-page-header-grid .ee-admin-container.status-PCN,
-.ee-admin-page-header-grid .ee-admin-container.status-RCN {
-    background-color: var(--ee-status-color-light-grey);
-    color: var(--ee-color-white) !important;
-}
-
-/* dtt inactive */
-.ee-status-dot--DTI,
-.ee-status-legend--DTI,
-.event-active-status--DTI,
-.ee-status-dot--MIC,
-.ee-status-legend--MIC,
-.ee-admin-page-header-grid .ee-admin-container.status-DTI {
-    background-color: var(--ee-status-color-grey);
-    color: var(--ee-color-white) !important;
 }
 
 
@@ -2872,7 +2893,7 @@ body.espresso-admin #contextual-help-wrap strong {
     display: inline-flex;
     font-size: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
     font-weight: 600;
-    height: calc(var(--ee-button-height) + var(--ee-button-height-shim));
+    height: calc(var(--ee-button-height) - var(--ee-button-height-shim));
     justify-content: center;
     line-height: 2;
     margin: 0;
@@ -3069,8 +3090,7 @@ body.espresso-admin #contextual-help-wrap strong {
     border: none;
     border-collapse: collapse;
     border-radius: unset;
-    margin-block-start: 1rem;
-    margin-block-end: 2rem;
+    margin-block: .5rem;
     width: 100%;
 }
 
@@ -3150,12 +3170,12 @@ body.espresso-admin #contextual-help-wrap strong {
 
 
 
-.espresso-admin .wp-list-table th.column-primary,
-.espresso-admin .wp-list-table td.column-primary {
+.espresso-admin .wp-list-table th.column-id,
+.espresso-admin .wp-list-table td.column-id {
     max-width: 6rem;
     min-width: 3rem;
     padding-inline: 1rem;
-    width: 4.5rem;
+    width: 3.6rem;
 }
 
 .espresso-admin .wp-list-table th.column-primary {
@@ -3227,10 +3247,34 @@ body.espresso-admin #contextual-help-wrap strong {
     float: unset;
 }
 
-.espresso-admin .wp-list-table .column-actions{
-    max-width: 16rem;
-    min-width: 8rem;
-    width: 15%;
+.espresso-admin .wp-list-table th:not(.column-primary),
+.espresso-admin .wp-list-table td > div:not(.column-primary) {
+    max-width: 100%;
+    min-width: 3.6rem;
+}
+.espresso-admin .wp-list-table .row-title {
+    font-size: 1rem !important;
+}
+.espresso-admin .wp-list-table .dashicons-star-filled,
+.espresso-admin .wp-list-table .dashicons-star-filled:before {
+    font-size: .8rem !important;
+}
+.espresso-admin .wp-list-table .ee-status-dot {
+    margin-inline-end: 0.5rem;
+}
+
+.espresso-admin .wp-list-table .column-actions {
+    text-align: center;
+    width:  3.6rem;
+}
+.espresso-admin .wp-list-table .column-actions > div {
+    max-width: 100%;
+}
+.ee-actions-column-header {
+    display: none;
+}
+.espresso-admin .wp-list-table td.column-actions a {
+    display: inline-block;
 }
 .espresso-admin .wp-list-table .column-actions .ee-list-table-actions {
     display: flex;
@@ -3241,8 +3285,33 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-block-end: .5rem;
     margin-inline: .25rem;
 }
+.espresso-admin .wp-list-table .column-author .avatar {
+    border-radius: 50%;
+}
+
+@media screen and (min-width: 1600px) {
+    .ee-actions-column-header {
+        display: inline-block;
+    }
+    .espresso-admin .wp-list-table .column-actions {
+        text-align: start;
+        width: 17.5%;
+    }
+    .espresso-admin .wp-list-table .column-actions > div {
+        min-width: calc(((var(--ee-button-height) + .5rem) * 3) + 1.5rem);
+    }
+}
 
 
+.espresso-admin .tablenav div {
+    margin-inline-end: 1rem;
+    margin-block: 0.25rem;
+}
+
+.espresso-admin .tablenav select {
+    margin-inline: .5rem;
+    margin-block: 0.25rem;
+}
 
 .espresso-admin .tablenav label {
     margin-inline-end: 0.5rem;
@@ -3282,6 +3351,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .tablenav-paging-text {
     align-items: center;
     display: flex;
+    flex-flow: row wrap;
     font-size: .8rem;
 }
 
@@ -3294,6 +3364,10 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin .tablenav input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]) {
     max-width: 16rem;
+}
+
+.espresso-admin .tablenav input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]).current-page {
+    text-align: end;
 }
 
 
@@ -3317,13 +3391,13 @@ body.espresso-admin #contextual-help-wrap strong {
   padding: 0;
   display: flex;
   align-items: center;
+    margin-block: 0.25rem;
 }
 .espresso-admin .tablenav .actions {
   padding-inline-end: 1rem;
 }
 .espresso-admin .tablenav .tablenav-pages {
     float: unset;
-    margin: 0;
     margin-inline-start: auto;
     padding-inline-start: 1rem;
 }
@@ -3342,16 +3416,13 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin .wp-list-table .ee-responsive-table-cell {
-    display: flex;
-    flex-direction: column;
     height: 100%;
 }
 .espresso-admin .wp-list-table .ee-responsive-table-cell__heading {
     display: none;
 }
 .espresso-admin .wp-list-table .ee-responsive-table-cell__content {
-    display: flex;
-    flex-direction: column;
+    line-height: 1.5;
 }
 .espresso-admin .wp-list-table .ee-responsive-table-cell--start {
     align-items: flex-start;
@@ -3425,4 +3496,68 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .event-espresso_page_espresso_registrations .postbox-container-1 {
       margin-block-start: -1rem;
+}
+
+/* MODAL MENU */
+
+.espresso-admin .ee-modal-menu {
+  position: relative;
+  display: inline-block;
+}
+.espresso-admin .ee-modal-menu__content {
+    box-shadow: var(--ee-box-shadow-big);
+    display: none;
+    inset-block-start: -3rem;
+    inset-inline-end: -1rem;
+    min-width: calc((var(--ee-button-height) + .5rem) * 3);
+    opacity: 0;
+    padding: 0;
+    padding-block-start: 2rem;
+    padding-block-end: 1rem;
+    padding-inline: 1rem;
+    position: absolute;
+    transition: opacity 250ms ease-in-out;
+    z-index: 1;
+}
+.espresso-admin .ee-modal-menu.active .ee-modal-menu__content {
+    display: block;
+    opacity: 1;
+}
+.espresso-admin .ee-modal-menu__close {
+    cursor: pointer;
+    inset-block-start: .5rem;
+    inset-inline-end: 0rem;
+    opacity: .5;
+    position: absolute;
+    transition: opacity 200ms ease-in-out;
+}
+.espresso-admin .ee-modal-menu__close:hover {
+    opacity: 1;
+}
+.espresso-admin .ee-modal-menu.active .ee-modal-menu__button.ee-aria-tooltip[aria-label]:after {
+    display: none;
+}
+@media screen and (min-width: 1600px) {
+    .espresso-admin .ee-modal-menu .ee-modal-menu__content.ee-admin-container {
+        display: block;
+        opacity: 1;
+        background: transparent;
+        border: none;
+        border-radius: unset;
+        box-shadow: none;
+        color: inherit;
+        padding: 0;
+        padding-block-start: unset;
+        padding-block-end: unset;
+        padding-inline: unset;
+        position: unset;
+        transition: unset;
+        inset-block-start: unset;
+        inset-inline-start: unset;
+        min-width: unset;
+    }
+    .espresso-admin .ee-modal-menu .ee-modal-menu__close,
+    .espresso-admin .ee-modal-menu .ee-modal-menu__button {
+        display: none !important;
+    }
 }

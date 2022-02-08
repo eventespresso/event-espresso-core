@@ -4,6 +4,8 @@ jQuery(document).ready(function($) {
 	// clear firefox and safari cache
 	$(window).on("unload", function() {});
 
+	const $wpContent = $('#wpcontent');
+
 
 	function validate_form_inputs( submittedForm ) {
 
@@ -216,8 +218,7 @@ jQuery(document).ready(function($) {
 	});
 
 
-
-	$('#wpcontent').on( 'click', '.espresso-help-tab-lnk', function(){
+	$wpContent.on( 'click', '.espresso-help-tab-lnk', function(){
 		var target_help_tab = '#tab-link-' + $(this).attr('id') + ' a';
 		if ( $('#contextual-help-wrap').css('display') === 'none' ) {
 			$('#contextual-help-link').trigger('click');
@@ -260,10 +261,19 @@ jQuery(document).ready(function($) {
 		espressoAjaxPopulate();
 	}
 
+	const espressoCloseModalMenus = function() {
+		$('.ee-modal-menu').each(function () {
+			$(this).removeClass('active');
+		});
+	}
 
-
-
-
-
+	$wpContent.on( 'click', '.ee-modal-menu__button', function(e) {
+		e.preventDefault();
+		espressoCloseModalMenus();
+		$(this).parent().toggleClass('active');
+	});
+	$wpContent.on('click', '.ee-modal-menu__close', function () {
+		espressoCloseModalMenus();
+	});
 
 });

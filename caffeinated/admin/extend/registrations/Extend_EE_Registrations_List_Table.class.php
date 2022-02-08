@@ -39,8 +39,8 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             'ee_read_checkins',
             'espresso_registrations_registration_checkins'
         )
-            ? '<a href="' . $check_in_url . '"'
-              . ' title="' . esc_attr__(
+            ? '<a class="ee-aria-tooltip" href="' . $check_in_url . '"'
+              . ' aria-label="' . esc_attr__(
                   'The Check-In List allows you to easily toggle check-in status for this event',
                   'event_espresso'
               )
@@ -80,7 +80,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
                 )
             ) {
                 // open "a" tag and "href"
-                $datetime_string .= '<a href="';
+                $datetime_string .= '<a class="ee-aria-tooltip" href="';
                 // checkin URL
                 $datetime_string .= EE_Admin_Page::add_query_args_and_nonce(
                     array(
@@ -93,7 +93,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
                 // close "href"
                 $datetime_string .= '"';
                 // open "title" tag
-                $datetime_string .= ' title="';
+                $datetime_string .= ' aria-label="';
                 // link title text
                 $datetime_string .= esc_attr__('View Checkins for this Event', 'event_espresso');
                 // close "title" tag and end of "a" tag opening
@@ -108,11 +108,11 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             // add a "View Registrations" link that filters list by event AND datetime
             $datetime_string .= $this->row_actions(
                 array(
-                    'event_datetime_filter' => '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
+                    'event_datetime_filter' => '<a class="ee-aria-tooltip" href="' . EE_Admin_Page::add_query_args_and_nonce(
                         array('event_id' => $EVT_ID, 'datetime_id' => $datetime->ID()),
                         REG_ADMIN_URL
                     )
-                                               . '" title="' . sprintf(
+                                               . '" aria-label="' . sprintf(
                                                    esc_attr__(
                                                        'Filter this list to only show registrations for this datetime %s',
                                                        'event_espresso'

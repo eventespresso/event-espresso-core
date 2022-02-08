@@ -639,7 +639,7 @@ div.TB-ee-frame a {
 }
 
 .ee-icon-color-ee-red:before {
-	color: var(--ee-status-color-pink);
+	color: var(--ee-status-color-red);
 }
 
 .ee-icon-color-ee-purple:before {
