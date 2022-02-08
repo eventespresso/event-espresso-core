@@ -2472,6 +2472,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'subsections'     => apply_filters(
                     'FHEE__Events_Admin_Page___default_event_settings_form__form_subsections',
                     [
+                        'defaults_section_header' => new EE_Form_Section_HTML(
+                            EEH_HTML::h2(
+                                esc_html__('Default Settings', 'event_espresso'),
+                                '',
+                                'ee-admin-settings-hdr'
+                            )
+                        ),
                         'default_reg_status'  => new EE_Select_Input(
                             $registration_stati_for_selection,
                             [
