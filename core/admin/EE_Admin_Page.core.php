@@ -2724,23 +2724,18 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_template_args['admin_page_wrapper_div_id'] = $this->_cpt_route
             ? 'poststuff'
             : 'espresso-default-admin';
-        $template_path                                     = $sidebar
+
+        $template_path = $sidebar
             ? EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php'
             : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
         if ($this->request->isAjax()) {
             $template_path = EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar_ajax.template.php';
         }
-        $template_path                                     = ! empty($this->_column_template_path)
-            ? $this->_column_template_path : $template_path;
-        $this->_template_args['post_body_content']         = isset($this->_template_args['admin_page_content'])
-            ? $this->_template_args['admin_page_content']
-            : '';
-        $this->_template_args['before_admin_page_content'] = isset($this->_template_args['before_admin_page_content'])
-            ? $this->_template_args['before_admin_page_content']
-            : '';
-        $this->_template_args['after_admin_page_content']  = isset($this->_template_args['after_admin_page_content'])
-            ? $this->_template_args['after_admin_page_content']
-            : '';
+        $template_path = ! empty($this->_column_template_path) ? $this->_column_template_path : $template_path;
+
+        $this->_template_args['post_body_content']         = $this->_template_args['admin_page_content'] ?? '';
+        $this->_template_args['before_admin_page_content'] = $this->_template_args['before_admin_page_content'] ?? '';
+        $this->_template_args['after_admin_page_content']  = $this->_template_args['after_admin_page_content'] ?? '';
         $this->_template_args['admin_page_content']        = EEH_Template::display_template(
             $template_path,
             $this->_template_args,

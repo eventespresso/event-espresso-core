@@ -522,7 +522,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             TXN_ADMIN_URL
         );
         return '
-				<a class="ee-aria-tooltip" href="' . $url . '"'
+				<a class="ee-aria-tooltip button button--small button--icon-only" href="' . $url . '"'
                . ' aria-label="' . esc_attr__('View Transaction Details', 'event_espresso') . '" class="button button--small button--icon-only">
 					<span class="dashicons dashicons-cart"></span>
 				</a>';
@@ -547,8 +547,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 && EEH_MSG_Template::is_mt_active('invoice')
             ) {
                 return '
-                    <a class="ee-aria-tooltip" aria-label="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '"'
-                       . ' target="_blank" href="' . $url . '" class="button button--small button--icon-only">
+                    <a aria-label="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '"'
+                       . ' target="_blank" href="' . $url . '" class="ee-aria-tooltip button button--small button--icon-only">
                         <span class="dashicons dashicons-media-spreadsheet"></span>
                     </a>';
             }
@@ -575,8 +575,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 && EEH_MSG_Template::is_mt_active('receipt')
             ) {
                 return '
-				<a class="ee-aria-tooltip" aria-label="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
-                       . ' target="_blank" href="' . $url . '" class="button button--small button--icon-only">
+				<a aria-label="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
+                       . ' target="_blank" href="' . $url . '" class="ee-aria-tooltip button button--small button--icon-only">
 					<span class="dashicons dashicons-text-page"></span>
 				</a>';
             }
@@ -612,8 +612,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 $registration->ID()
             )
                 ? '
-					<a class="ee-aria-tooltip" href="' . $url . '"'
-                  . ' aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '" class="button button--small button--icon-only">
+					<a href="' . $url . '"
+					    aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '" 
+					    class="ee-aria-tooltip button button--small button--icon-only"
+                    >
 						<span class="dashicons dashicons-clipboard"></span>
 					</a>'
                 : '';
@@ -657,8 +659,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 TXN_ADMIN_URL
             );
             return '
-                <a class="ee-aria-tooltip" href="' . $url . '"'
-                   . ' aria-label="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" class="button button--small button--icon-only">
+                <a href="' . $url . '" 
+                    aria-label="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" 
+                    class="ee-aria-tooltip button button--small button--icon-only"
+                >
                     <span class="dashicons dashicons-email-alt"></span>
                 </a>';
         }
@@ -707,9 +711,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             && $registration->owes_monies_and_can_pay()
         ) {
             return '
-                <a class="ee-aria-tooltip" aria-label="' . esc_attr__('Make Payment from the Frontend.', 'event_espresso') . '"'
+                <a aria-label="' . esc_attr__('Make Payment from the Frontend.', 'event_espresso') . '"'
                    . ' target="_blank" href="' . $registration->payment_overview_url(true) . '"'
-                   . ' class="button button--small button--icon-only">
+                   . ' class="ee-aria-tooltip button button--small button--icon-only">
                     <span class="dashicons dashicons-money"></span>
                 </a>';
         }
