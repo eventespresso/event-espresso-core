@@ -1488,9 +1488,18 @@ label.error {
 }
 
 /* Admin Sidebar*/
+.espresso-rss-display li {
+    margin: 0;
+    margin-block-end: 1.25rem;
+}
 .espresso-rss-display a.rsswidget {
-    font-size: 13px;
-    font-weight: normal;
+    color: var(--ee-status-color-blue);
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+.espresso-rss-display a.rsswidget:hover {
+    text-decoration: underline;
 }
 
 #ee-ads-iframe {
