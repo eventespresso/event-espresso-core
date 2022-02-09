@@ -48,7 +48,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             : esc_html__('View Check-ins', 'event_espresso');
 
         $content = sprintf('%1$s %2$s', $date_linked, $this->row_actions($actions));
-        return $this->columnContent('DTT_EVT_start', $content);
+        return $this->columnContent('_REG_date', $content);
     }
 
 
@@ -125,6 +125,9 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             );
             $datetimes_for_display[] = $datetime_string;
         }
-        return $this->generateDisplayForDateTimes($datetimes_for_display);
+        return $this->columnContent(
+            'DTT_EVT_start',
+            $this->generateDisplayForDateTimes($datetimes_for_display)
+        );
     }
 }

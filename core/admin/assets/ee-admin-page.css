@@ -3423,17 +3423,19 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 .espresso-admin .wp-list-table .ee-responsive-table-cell__content {
     line-height: 1.5;
+    width: 100%;
 }
 .espresso-admin .wp-list-table .ee-responsive-table-cell--start {
     align-items: flex-start;
     text-align: start;
 }
-.espresso-admin .wp-list-table .ee-responsive-table-cell--center {
+.espresso-admin .wp-list-table .ee-responsive-table-cell--center,
+.espresso-admin .wp-list-table .ee-responsive-table-cell--center .ee-layout-stack {
     align-items: center;
     text-align: center;
 }
-
-.espresso-admin .wp-list-table .ee-responsive-table-cell--end {
+.espresso-admin .wp-list-table .ee-responsive-table-cell--end,
+.espresso-admin .wp-list-table .ee-responsive-table-cell--end .ee-layout-stack {
     align-items: flex-end;
     text-align: end;
 }

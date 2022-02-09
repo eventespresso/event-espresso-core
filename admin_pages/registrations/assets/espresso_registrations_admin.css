@@ -1,42 +1,65 @@
-#entries-per-page-dv { display : inline; }
+#entries-per-page-dv {
+    display: inline;
+}
 
-.wrap .nav-tab-wrapper { margin-bottom : 1em; }
+.wrap .nav-tab-wrapper {
+    margin-bottom: 1em;
+}
 
-.wrap .subsubsub { margin : 0; }
+.wrap .subsubsub {
+    margin: 0;
+}
 
-#reg-filters-dv { clear : both; padding : 1.5em 0; }
+#reg-filters-dv {
+    clear: both;
+    padding: 1.5em 0;
+}
 
-.datepicker { width : 125px; }
+.datepicker {
+    width: 125px;
+}
 
 /* TABLE COLUMNS */
 
-.column-_REG_ID { width : 4%; }
+.column-_REG_ID {
+    width: 4%;
+}
 
-.column-_REG_date { width : 12.5%; }
+.column-_REG_date {
+    width: 12.5%;
+}
 
 .wp-list-table .column-event_name {
-    min-width: 10%;
+    width: 10%;
 }
 
 .wp-list-table .column-_REG_date,
 .wp-list-table .column-DTT_EVT_start {
-    min-width: 13%;
+    width: 10%;
 }
 
 .wp-list-table .column-ATT_fname {
-    min-width: 15%;
+    width: 15%;
+}
+
+.wp-list-table .column-ATT_fname .row-title {
+    margin-inline-end: .5rem;
+}
+
+.wp-list-table .column-ATT_fname .reg-count-group-size {
+    white-space: nowrap;
 }
 
 .wp-list-table .column-ATT_email {
-    min-width: 10%;
+    width: 10%;
 }
 
 .wp-list-table .column-_REG_att_checked_in {
-    min-width: 5%;
+    width: 5%;
 }
 
 .wp-list-table .column-DTT_reg_limit {
-    min-width: 4.25%;
+    width: 4.25%;
 }
 
 
@@ -45,7 +68,7 @@
 .wp-list-table th.column-_REG_paid,
 .wp-list-table th.column-TXN_total,
 .wp-list-table th.column-TXN_paid {
-    min-width: 7.5%;
+    width: 7.5%;
     text-align: center;
 }
 
@@ -54,16 +77,23 @@
 .wp-list-table td.column-_REG_paid,
 .wp-list-table td.column-TXN_total,
 .wp-list-table td.column-TXN_paid {
-    min-width : 7.5%; text-align : end; }
+    width: 7.5%;
+    text-align: end;
+}
 
-.wp-list-table .column-_REG_final_price {
-    min-width: 10%;
+/*.wp-list-table .column-_REG_final_price {*/
+/*    min-width: 10%;*/
+/*}*/
+
+.espresso-admin .wp-list-table .TXN_paid .dashicons-yes:before {
+    font-size: 2rem;
 }
 
 .ee-event-filter {
     align-items: center;
     display: flex;
 }
+
 .ee-event-filter label {
     font-size: 1rem;
 }
@@ -86,77 +116,111 @@
     padding-inline-end: 0.75rem;
     text-align: center;
     width: 1rem;
-    min-width  : 3%;
-    margin : 0;
+    min-width: 3%;
+    margin: 0;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in .dashicons {
-    margin-left : 10px;
+    margin-left: 10px;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_count {
-    min-width : 4%;
+    min-width: 4%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_name {
-    min-width : 11%;
+    min-width: 11%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_email {
-    min-width : 14%;
+    min-width: 14%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #Event {
-    min-width : 14%;
+    min-width: 14%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_code {
-    min-width : 8%;
+    min-width: 8%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_final_price {
-    min-width : 6%;
+    min-width: 6%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_paid {
-    min-width : 6%;
+    min-width: 6%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_total {
-    min-width : 6%;
+    min-width: 6%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #PRC_name {
-    min-width : 8%;
+    min-width: 8%;
 }
 
-.reg-pad-rght { display : block; padding-right : .5em; }
+.reg-pad-rght {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+    padding-inline-end: .5em;
+    width: 100%;
+}
 
-.wp-list-table .column-CHK_in { width : 11%; }
+.wp-list-table .column-CHK_in {
+    width: 11%;
+}
 
 
-.reg-overview-free-event-spn { display : block; text-align : center; }
+.reg-overview-free-event-spn {
+    display: block;
+    text-align: center;
+}
 
 
 #reg-admin-reg-details-reg-date-hdr,
-#reg-admin-reg-details-reg-status-hdr { padding : 0; margin : 0 0 .5em !important; }
+#reg-admin-reg-details-reg-status-hdr {
+    padding: 0;
+    margin: 0 0 .5em !important;
+}
 
-#reg-admin-approve-decline-reg-status-dv h2 span { font-size: 1.3em; margin-left: .5em; }
+#reg-admin-approve-decline-reg-status-dv h2 span {
+    font-size: 1.3em;
+    margin-left: .5em;
+}
 
-#reg-admin-approve-decline-reg-status-spn { position : relative; top : -4px; display : block; }
+#reg-admin-approve-decline-reg-status-spn {
+    position: relative;
+    top: -4px;
+    display: block;
+}
 
-#reg-admin-approve-decline-reg-status-spn a { margin-left : 1em; margin-right : 1em; vertical-align : baseline; }
+#reg-admin-approve-decline-reg-status-spn a {
+    margin-left: 1em;
+    margin-right: 1em;
+    vertical-align: baseline;
+}
 
 /* .admin-side-mbox-dv { margin : 1em 0 2em; }
 
 .admin-side-mbox-dv p,
 .admin-side-mbox-dv > div { margin : .5em 0; line-height : 1.2em; color : #333; text-shadow : 0 1px 0 #FFF; } */
 
-.admin-side-mbox-label-spn { width : 30%; padding-right : .5em; text-align : right; }
+.admin-side-mbox-label-spn {
+    width: 30%;
+    padding-right: .5em;
+    text-align: right;
+}
 
-.admin-side-mbox-text-dv { padding-left : .5em; margin : 0 0 1em 30%; }
+.admin-side-mbox-text-dv {
+    padding-left: .5em;
+    margin: 0 0 1em 30%;
+}
 
-.admin-primary-mbox-h4 { margin : 2em 0 .25em; }
+.admin-primary-mbox-h4 {
+    margin: 2em 0 .25em;
+}
 
 /* .admin-primary-mbox-tbl-wrap {
     padding       : 3px; margin : 0 0 2em;
@@ -188,29 +252,51 @@
 .admin-primary-mbox-total-tr { font-size : 1.1em; }*/
 
 .jqplot-title {
-    font-size : 24px; text-align : left !important; margin : 1em 0 0 1em;
+    font-size: 24px;
+    text-align: left !important;
+    margin: 1em 0 0 1em;
 }
 
 .jqplot-point-label {
-    padding       : 0 .5em;
-    background    : #FFF; border : 1px solid #DDD;
-    border-radius : 3px;
-    font-size     : 12px; color : #333;
-    box-shadow    : 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
+    padding: 0 .5em;
+    background: #FFF;
+    border: 1px solid #DDD;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #333;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
 }
 
 
+.admin-side-mbox-dv {
+    margin: 1em 0 2em;
+}
 
-.admin-side-mbox-dv { margin:1em 0 2em; }
-.admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; }
-.admin-side-mbox-label-spn { width:30%; padding-right:.5em; text-align:right; }
-.admin-side-mbox-text-dv { padding-left:.5em; margin:0 0 1em 1em; }
-.admin-side-mbox-dv .ee-admin-attendee-avatar { margin:0 0 1em .5em; }
+.admin-side-mbox-dv p {
+    margin: .5em 0;
+    line-height: 1.2em;
+}
+
+.admin-side-mbox-label-spn {
+    width: 30%;
+    padding-right: .5em;
+    text-align: right;
+}
+
+.admin-side-mbox-text-dv {
+    padding-left: .5em;
+    margin: 0 0 1em 1em;
+}
+
+.admin-side-mbox-dv .ee-admin-attendee-avatar {
+    margin: 0 0 1em .5em;
+}
 
 #admin-side-mbox-primary-registrant-dv,
 .admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon {
     display: flex;
 }
+
 .admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon .dashicons {
     color: var(--ee-status-color-light-grey);
     margin-block-start: .35rem;
@@ -219,6 +305,7 @@
 .admin-side-mbox-text-dv .ee-admin-attendee-name {
     font-size: 1.2rem;
 }
+
 .admin-side-mbox-text-dv .ee-admin-attendee-email,
 .admin-side-mbox-text-dv .ee-admin-attendee-phone,
 .admin-side-mbox-text-dv .ee-admin-attendee-address {
@@ -226,22 +313,52 @@
 }
 
 
+.reg-admin-edit-question-group-spn {
+    position: relative;
+    top: -4px;
+    padding: 4px;
+    vertical-align: middle;
+}
 
-.reg-admin-edit-question-group-spn { position : relative; top : -4px; padding : 4px; vertical-align : middle; }
+.reg-admin-edit-attendee-question-lnk {
+    padding: 4px;
+    text-decoration: none;
+    outline: none;
+}
 
-.reg-admin-edit-attendee-question-lnk { padding : 4px; text-decoration : none; outline : none; }
+.reg-admin-edit-attendee-question-lnk:focus {
+    outline: none;
+}
 
-.reg-admin-edit-attendee-question-lnk:focus { outline : none; }
 
+.tkt-slctr-tbl {
+    min-width: 530px;
+    margin-bottom: 1em;
+    border: none;
+    border-bottom: 1px solid #EDEDED;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
 
+.tkt-slctr-tbl th {
+    padding: .5em 1em .5em 0;
+    border: none;
+    font-size: 1em;
+    line-height: 1em;
+    text-align: left;
+}
 
-.tkt-slctr-tbl { min-width : 530px; margin-bottom : 1em; border : none; border-bottom : 1px solid #EDEDED; border-collapse : collapse; border-spacing : 0; }
+.tkt-slctr-tbl td {
+    padding: .5em 1em .5em 0;
+    border: none;
+    border-top: 1px solid #EDEDED;
+    font-size: 1em;
+    line-height: 1em;
+}
 
-.tkt-slctr-tbl th { padding : .5em 1em .5em 0; border : none; font-size : 1em; line-height : 1em; text-align : left; }
-
-.tkt-slctr-tbl td { padding : .5em 1em .5em 0; border : none; border-top : 1px solid #EDEDED; font-size : 1em; line-height : 1em; }
-
-.tkt-slctr-tbl .tckt-slctr-tbl-td-qty { padding-right : 0; }
+.tkt-slctr-tbl .tckt-slctr-tbl-td-qty {
+    padding-right: 0;
+}
 
 @media only screen and (max-width: 600px) {
     .tkt-slctr-tbl {
@@ -253,9 +370,8 @@
 
 /**never checked in**/
 .wp-list-table ._REG_att_checked_in {
-    padding-left : 20px;
+    padding-left: 20px;
 }
-
 
 
 /**
@@ -264,49 +380,49 @@
  */
 
 #titlediv .title-prompt-text {
-    color     : #BBB;
-    position  : absolute;
-    font-size : 1.7em;
-    padding   : 11px 10px;
+    color: #BBB;
+    position: absolute;
+    font-size: 1.7em;
+    padding: 11px 10px;
 }
 
 #title-wrap .title-prompt-text {
-    font-size : 1.3em;
-    padding   : 5px 8px;
+    font-size: 1.3em;
+    padding: 5px 8px;
 }
 
 #titlediv .smaller-text-field, #titlediv .main-text-field {
-    padding     : 3px 8px;
-    font-size   : 1.7em;
-    line-height : 100%;
-    height      : 1.7em;
-    width       : 49.3%;
-    outline     : none;
-    margin      : 1px 6px 1px 0;
-    float       : left;
+    padding: 3px 8px;
+    font-size: 1.7em;
+    line-height: 100%;
+    height: 1.7em;
+    width: 49.3%;
+    outline: none;
+    margin: 1px 6px 1px 0;
+    float: left;
 }
 
 #titlediv .main-text-field {
-    width : 100%;
-    float : none;
+    width: 100%;
+    float: none;
 }
 
 .espresso-question-group-wrap table th {
-    width     : inherit;
-    min-width : 200px;
+    width: inherit;
+    min-width: 200px;
 }
 
 #attendee_details_address label.espresso-form-input-lbl {
-    display : block;
+    display: block;
 }
 
 #attendee_details_address input.all-options {
-    width : 100%;
+    width: 100%;
 }
 
 #attendee_details_address #ATT_zip {
-    width     : 10%;
-    min-width : 150px;
+    width: 10%;
+    min-width: 150px;
 }
 
 /**
@@ -337,67 +453,67 @@
 
 .widefat td.column-_Reg_Status,
 .widefat th.column-_Reg_Status {
-    width : 10px;
-    padding : 0;
-    margin  : 0;
+    width: 10px;
+    padding: 0;
+    margin: 0;
     height: 100%;
 }
 
 
 #admin-primary-mbox-reg-details-dv .button {
-    margin : 10px 0;
+    margin: 10px 0;
 }
 
 #additional-registration-actions-dv ul li {
-    display      : inline-block;
-    margin-right : 10px;
+    display: inline-block;
+    margin-right: 10px;
 }
 
 #reg_status_change_form {
-    margin-top : 1em;
+    margin-top: 1em;
 }
 
 #reg_status_change_form .button--secondary {
-    margin-right : 0;
+    margin-right: 0;
 }
 
 #reg_status_change_form .ee-attention {
-    position : absolute;
-    width    : 50%;
-    top      : -100px;
-    right    : 0;
-    padding  : 15px 10px 0 10px;
+    position: absolute;
+    width: 50%;
+    top: -100px;
+    right: 0;
+    padding: 15px 10px 0 10px;
 }
 
 .espresso-admin .wp-list-table .ee-icon-size-22:before {
-    font-size : 22px;
+    font-size: 22px;
 }
 
 /**newsletter send css**/
 .ee-batch-message-send-form h3 {
-    font-size : 2em;
+    font-size: 2em;
 }
 
 .ee-batch-message-send-form .batch-message-edit-fields {
-    background-color : #E3E3E3;
-    padding          : 10px;
-    margin-top       : 20px;
-    border-radius    : 4px;
+    background-color: #E3E3E3;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 4px;
 }
 
 .ee-batch-message-send-form .batch-message-input, .ee-batch-message-send-form .batch-message-textarea {
-    width : 100%;
+    width: 100%;
 }
 
 .ee-batch-message-send-form .batch-message-textarea {
-    height : 200px;
+    height: 200px;
 }
 
 .ee-batch-message-send-form .shortcodes-info-container {
-    padding          : 5px 20px 5px 20px;;
-    margin-bottom    : 10px;
-    background-color : #F5F5F5;
-    border-radius    : 4px;
+    padding: 5px 20px 5px 20px;;
+    margin-bottom: 10px;
+    background-color: #F5F5F5;
+    border-radius: 4px;
 }
 
 .contact-details-buttons a.button--small {
@@ -419,8 +535,9 @@
 #send-related-messages-dv label {
     position: relative;
     top: 3px;
-    left:1em;
+    left: 1em;
 }
+
 #send-related-messages-dv input[type=checkbox] {
     margin: 0 1em;
 }
@@ -428,7 +545,7 @@
 /** line item table styles **/
 .ee-line-item-id {
     font-size: .9em;
-    color: #bbb;
+    color: #BBB;
     font-style: italic;
 }
 
@@ -438,14 +555,15 @@
 }
 
 #ee-add-reg-back-button-dv {
-    background: #fff;
+    background: #FFF;
     color: #666;
     font-size: 1.2em;
-    line-height:1.75em;
+    line-height: 1.75em;
     padding: 1.5em 1.5em 2em;
     text-align: center;
 }
-#ee-add-reg-back-button-dv h3{
+
+#ee-add-reg-back-button-dv h3 {
     margin: .5em 0 0;
 }
 
@@ -461,7 +579,7 @@
 }
 
 .ee-registration-event-datetimes-container .left {
-    float:left;
+    float: left;
     max-width: 81%;
 }
 
@@ -469,7 +587,7 @@
 
 .spco-ticket-details {
     font-size: 16px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #DDD;
     padding: 30px 0 15px;
     width: 100%;
 }

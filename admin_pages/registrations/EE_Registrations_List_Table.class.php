@@ -428,6 +428,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function column_cb($registration)
     {
         /** checkbox/lock **/
+        $REG_ID = $registration->ID();
         $transaction   = $registration->get_first_related('Transaction');
         $payment_count = $transaction instanceof EE_Transaction
             ? $transaction->count_related('Payment')
@@ -435,11 +436,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $content = $payment_count > 0 || ! EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_registration',
             'registration_list_table_checkbox_input',
-            $registration->ID()
+            $REG_ID
         )
-            ? sprintf('<input disabled type="checkbox" name="_REG_ID[]" value="%1$d" />', $registration->ID())
-              . '<span class="dashicons dashicons-lock"></span>'
-            : sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$d" />', $registration->ID());
+            ? '<input disabled type="checkbox" name="_REG_ID[]" value="' . $REG_ID . '" /><span class="dashicons dashicons-lock"></span>'
+            : '<input type="checkbox" name="_REG_ID[]" value="' . $REG_ID . '" />';
 
         return $this->columnContent('cb', $content, 'center');
     }
@@ -459,24 +459,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $content  = $registration->ID();
         $attendee = $registration->attendee();
 
-        $content  .= '<br>';
         $content .= '<span class="show-on-mobile-view-only">';
-        // $content .= esc_html__('Registrant Name', 'event_espresso');
-        // $content  .= '<div class="show-on-mobile-view-only">';
-        // $content  .= '&nbsp;';
         $content  .= $attendee instanceof EE_Attendee
             ? $attendee->full_name()
             : '';
-        // $content .= '</span> ';
-        // $content  .= '&nbsp;';
-        // $content  .= sprintf(
-        //     esc_html__('(%1$s / %2$s)', 'event_espresso'),
-        //     $registration->count(),
-        //     $registration->group_size()
-        // );
-        // $content  .= '<br>';
-        // $content  .= sprintf(esc_html__('Reg Code: %s', 'event_espresso'), $registration->get('REG_code'));
-        // $content  .= '</div>';
 
         return $this->columnContent('id', $content, 'center');
     }
@@ -658,7 +644,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
 
         $content       = '
         <div class="ee-layout-row">
-            <span aria-label="' . $pretty_status . '" class="ee-status-dot ee-status-dot--' . $status . ' ee-aria-tooltip"></span>';
+            <span aria-label="' . $pretty_status . '" 
+                  class="ee-status-dot ee-status-dot--' . $status . ' ee-aria-tooltip"
+            ></span>';
+
         $content .= EE_Registry::instance()->CAP->current_user_can(
             'ee_read_registration',
             'espresso_registrations_view_registration',
@@ -671,13 +660,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             >
                 ' . $attendee_name . '
             </a>'
-            : '
-            <span aria-label="' . $pretty_status . '" class="row-title status-' . $status . ' ee-aria-tooltip">
-                ' . $status_dot . $attendee_name . '
-            </span>';
+            : $attendee_name;
 
         $content .= $registration->count() === 1
-            ? '&nbsp;<sup><span class="dashicons dashicons-star-filled gold-icon"></span></sup>'
+            ? '<sup><span class="dashicons dashicons-star-filled gold-icon"></span></sup>'
             : '';
 
         $transaction = $registration->get_first_related('Transaction');
@@ -686,8 +672,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             : 0;
 
         // append group count to name
-        $content .= '&nbsp;' . sprintf(esc_html__('(%1$s / %2$s)', 'event_espresso'), $registration->count(), $registration->group_size());
-        $content .= '
+        $content .= '<span class="reg-count-group-size">';
+        $content .= sprintf(
+            esc_html__('(%1$s / %2$s)', 'event_espresso'),
+            $registration->count(),
+            $registration->group_size()
+        );
+        $content .= '</span>
         </div>';
 
         // append reg_code
@@ -807,17 +798,15 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     {
         $ticket   = $registration->ticket();
         $req_data = $this->_admin_page->get_request_data();
+
         $content  = isset($req_data['event_id']) && $ticket instanceof EE_Ticket
-            ? '<span class="TKT_name">' . $ticket->name() . '</span><br />'
+            ? '<div class="TKT_name">' . $ticket->name() . '</div>'
             : '';
-        if ($registration->final_price() > 0) {
-            $content .= '<span class="reg-pad-rght">' . $registration->pretty_final_price() . '</span>';
-        } else {
+
+        $content .= $registration->final_price() > 0
+            ? '<span class="reg-overview-paid-event-spn">' . $registration->pretty_final_price() . '</span>'
             // free event
-            $content .= '<span class="reg-overview-free-event-spn reg-pad-rght">'
-                        . esc_html__('free', 'event_espresso')
-                        . '</span>';
-        }
+            : '<span class="reg-overview-free-event-spn">' . esc_html__('free', 'event_espresso') . '</span>';
 
         return $this->columnContent('PRC_amount', $content, 'end');
     }
@@ -836,7 +825,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $content  = isset($req_data['event_id']) || ! $ticket instanceof EE_Ticket
             ? ''
             : '<span class="TKT_name">' . $ticket->name() . '</span> ';
-        $content  .= '<span class="reg-pad-rght">' . $registration->pretty_final_price() . '</span>';
+        $content  .= '<span class="reg-overview-paid-event-spn">' . $registration->pretty_final_price() . '</span>';
         return $this->columnContent('_REG_final_price', $content, 'end');
     }
 
@@ -852,7 +841,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $payment_method_name = $payment_method instanceof EE_Payment_Method
             ? $payment_method->admin_name()
             : esc_html__('Unknown', 'event_espresso');
-        $content             = '<span class="reg-pad-rght">' . $registration->pretty_paid() . '</span> ';
+        $content             = $registration->pretty_paid();
         if ($registration->paid() > 0) {
             $content .= '<span class="ee-status-text-small">'
                         . sprintf(
@@ -890,16 +879,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_transactions_view_transaction',
                 $registration->transaction_ID()
             )
-                ? '<span class="reg-pad-rght"><a class="ee-aria-tooltip status-'
-                  . $registration->transaction()->status_ID()
-                  . '" href="'
-                  . $view_txn_lnk_url
-                  . '"  aria-label="'
-                  . esc_attr__('View Transaction', 'event_espresso')
-                  . '">'
-                  . $registration->transaction()->pretty_total()
-                  . '</a></span>'
-                : '<span class="reg-pad-rght">' . $registration->transaction()->pretty_total() . '</span>';
+                ? '
+                    <a class="ee-aria-tooltip status-' . $registration->transaction()->status_ID() . '" 
+                        href="' . $view_txn_lnk_url . '" 
+                        aria-label="' . esc_attr__('View Transaction', 'event_espresso') . '"
+                    >
+                        ' . $registration->transaction()->pretty_total() . '
+                    </a>'
+                : $registration->transaction()->pretty_total();
         } else {
             $content = esc_html__("None", "event_espresso");
         }
@@ -920,12 +907,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function column_TXN_paid(EE_Registration $registration)
     {
         $content = '&nbsp;';
+        $align = 'end';
         if ($registration->count() === 1) {
             $transaction = $registration->transaction()
                 ? $registration->transaction()
                 : EE_Transaction::new_instance();
             if ($transaction->paid() >= $transaction->total()) {
-                $content = '<span class="reg-pad-rght"><div class="dashicons dashicons-yes green-icon"></div></span>';
+                $align = 'center';
+                $content = '<span class="dashicons dashicons-yes green-icon"></span>';
             } else {
                 $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                     [
@@ -939,19 +928,17 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                     'espresso_transactions_view_transaction',
                     $registration->transaction_ID()
                 )
-                    ? '<span class="reg-pad-rght"><a class="ee-aria-tooltip status-'
-                      . $transaction->status_ID()
-                      . '" href="'
-                      . $view_txn_lnk_url
-                      . '"  aria-label="'
-                      . esc_attr__('View Transaction', 'event_espresso')
-                      . '">'
-                      . $registration->transaction()->pretty_paid()
-                      . '</a><span>'
-                    : '<span class="reg-pad-rght">' . $registration->transaction()->pretty_paid() . '</span>';
+                    ? '
+                    <a class="ee-aria-tooltip status-' . $transaction->status_ID() . '" 
+                        href="' . $view_txn_lnk_url . '"  
+                        aria-label="' . esc_attr__('View Transaction', 'event_espresso') . '"
+                    >
+                        ' . $registration->transaction()->pretty_paid() . '
+                    </a>'
+                    :  $registration->transaction()->pretty_paid();
             }
         }
-        return $this->columnContent('TXN_paid', $content, 'end');
+        return $this->columnContent('TXN_paid', $content, $align);
     }
 
 
