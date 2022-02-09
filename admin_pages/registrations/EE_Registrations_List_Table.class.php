@@ -841,7 +841,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $payment_method_name = $payment_method instanceof EE_Payment_Method
             ? $payment_method->admin_name()
             : esc_html__('Unknown', 'event_espresso');
-        $content             = $registration->pretty_paid();
+        $content             =
+            '<span class="reg-overview-paid-event-spn">' . $registration->pretty_paid() . '</span>';
         if ($registration->paid() > 0) {
             $content .= '<span class="ee-status-text-small">'
                         . sprintf(
