@@ -187,7 +187,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
 
         // txn timestamp
         $content .= '  <span class="show-on-mobile-view-only">' . $this->_get_txn_timestamp($transaction) . '</span>';
-        return $this->columnContent('id', $content, 'center');
+        return $this->columnContent('id', $content, 'end');
     }
 
 

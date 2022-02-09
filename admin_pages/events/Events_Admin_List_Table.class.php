@@ -150,7 +150,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     {
         $content = $item->ID();
         $content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
-        return $this->columnContent('id', $content, 'center');
+        return $this->columnContent('id', $content, 'end');
     }
 
 

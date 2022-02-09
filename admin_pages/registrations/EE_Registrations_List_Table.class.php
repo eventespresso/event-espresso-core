@@ -464,7 +464,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             ? $attendee->full_name()
             : '';
 
-        return $this->columnContent('id', $content, 'center');
+        return $this->columnContent('id', $content, 'end');
     }
 
 

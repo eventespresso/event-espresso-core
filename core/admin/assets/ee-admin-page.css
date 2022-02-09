@@ -3143,7 +3143,7 @@ body.espresso-admin #contextual-help-wrap strong {
     padding-inline-start: 1.5rem;
     padding-inline-end: 0.75rem;
     text-align: center;
-    width: 1rem;
+    width: 2.5%;
 }
 
 .espresso-admin .wp-list-table.widefat th.check-column .dashicons-lock,
@@ -3175,7 +3175,7 @@ body.espresso-admin #contextual-help-wrap strong {
     max-width: 6rem;
     min-width: 3rem;
     padding-inline: 1rem;
-    width: 3.6rem;
+    width: 4%;
 }
 
 .espresso-admin .wp-list-table th.column-primary {
@@ -3295,7 +3295,7 @@ body.espresso-admin #contextual-help-wrap strong {
     }
     .espresso-admin .wp-list-table .column-actions {
         text-align: start;
-        width: 17.5%;
+        width: 15%;
     }
     .espresso-admin .wp-list-table .column-actions > div {
         min-width: calc(((var(--ee-button-height) + .5rem) * 3) + 1.5rem);

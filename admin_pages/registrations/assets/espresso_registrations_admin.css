@@ -81,9 +81,10 @@
     text-align: end;
 }
 
-/*.wp-list-table .column-_REG_final_price {*/
-/*    min-width: 10%;*/
-/*}*/
+.wp-list-table th.column-_REG_paid,
+.wp-list-table .column-_REG_paid {
+    width: 10%;
+}
 
 .espresso-admin .wp-list-table .TXN_paid .dashicons-yes:before {
     font-size: 2rem;
