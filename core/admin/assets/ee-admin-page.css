@@ -3356,6 +3356,7 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin label,
+.espresso-admin .subsubsub,
 .espresso-admin .tablenav label,
 .espresso-admin .tablenav .displaying-num,
 .espresso-admin .tablenav .tablenav-paging-text  {
@@ -3372,6 +3373,7 @@ body.espresso-admin #contextual-help-wrap strong {
 
 
 
+.espresso-admin .subsubsub,
 .espresso-admin .pagination-links .button,
 .espresso-admin .pagination-links .paging-input,
 .espresso-admin .pagination-links #table-paging,
