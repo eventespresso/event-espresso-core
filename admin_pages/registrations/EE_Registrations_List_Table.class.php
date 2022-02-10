@@ -116,10 +116,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'DTT_EVT_start'    => esc_html__('Event Date', 'event_espresso'),
                 '_REG_final_price' => esc_html__('Price', 'event_espresso'),
                 '_REG_paid'        => esc_html__('Paid', 'event_espresso'),
-                'actions' => '<span class="ee-actions-column-header">'
-                             . '<span class="dashicons dashicons-screenoptions"></span>'
-                             . esc_html__('Actions', 'event_espresso')
-                             . '</span>',
+                'actions' => $this->actionsColumnHeader(),
             ];
             $this->_bottom_buttons = [
                 'report_all' => [
