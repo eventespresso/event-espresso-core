@@ -148,12 +148,16 @@
     --ee-attention-bg-color: hsl(51, 68%, 76%);
     --ee-attention-color: hsla(46, 24%, 9%, .85);
 
-    --ee-button-height: 2.85em;
+    --ee-button-height: 2.625rem;
+    --ee-button-height-three-quarter: calc(var(--ee-button-height) * .75);
     --ee-button-height-half: calc(var(--ee-button-height) / 2);
     --ee-button-height-third: calc(var(--ee-button-height) / 3);
     --ee-button-height-forth: calc(var(--ee-button-height) / 4);
     --ee-button-height-sixth: calc(var(--ee-button-height) / 6);
     --ee-button-height-shim: calc(var(--ee-button-height) / 12);
+
+
+    --ee-checkbox-height: 1.5rem;
 
 }
 
