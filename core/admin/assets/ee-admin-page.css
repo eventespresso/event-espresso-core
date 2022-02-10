@@ -3318,8 +3318,9 @@ body.espresso-admin #contextual-help-wrap strong {
     float: unset;
 }
 
-.espresso-admin .wp-list-table th:not(.column-primary),
-.espresso-admin .wp-list-table td > div:not(.column-primary) {
+.espresso-admin .wp-list-table th:not(.column-id):not(.column-actions),
+.espresso-admin .wp-list-table td:not(.column-id):not(.column-actions) > div,
+.espresso-admin .wp-list-table td:not(.column-id):not(.column-actions) > span {
     max-width: 100%;
     min-width: 3.6rem;
 }
@@ -3520,7 +3521,14 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 @media screen and (max-width: 782px) {
+    .espresso-admin .wp-list-table th.column-primary.sorted > a,
+    .espresso-admin .wp-list-table th.column-primary.sortable > a,
+    .espresso-admin .wp-list-table .ee-responsive-table-cell--end,
+    .espresso-admin .wp-list-table .ee-responsive-table-cell--end .ee-layout-stack,
     .espresso-admin .wp-list-table .column-primary .ee-responsive-table-cell {
+        align-items: center;
+        text-align: start;
+        justify-content: flex-start;
         flex-direction: row;
         margin: 3px;
     }
@@ -3531,10 +3539,7 @@ body.espresso-admin #contextual-help-wrap strong {
         display: inline-block;
     }
 
-    .espresso-admin .wp-list-table .ee-responsive-table-cell__content {
-        display: block;
-    }
-
+    .espresso-admin .wp-list-table .ee-actions-column-header-wrap .dashicons-screenoptions,
     .espresso-admin .wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.column-primary)::before {
         display: none !important;
     }
