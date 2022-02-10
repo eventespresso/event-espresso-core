@@ -164,7 +164,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 : ['ATT_fname' => false],
             'event_name'    => ['event_name' => false],
             'DTT_EVT_start' => ['DTT_EVT_start' => false],
-            'id'       => ['id' => false],
+            'id'       => ['REG_ID' => false],
         ];
         $this->_hidden_columns   = [];
     }
