@@ -276,4 +276,64 @@ jQuery(document).ready(function($) {
 		espressoCloseModalMenus();
 	});
 
+
+	$wpContent.on('mouseenter', '.ee-aria-tooltip', function () {
+		const label = $(this).attr('aria-label');
+		const tooltip = '<span class="ee-tooltip">' + label + '</span>';
+
+		const $tooltip = $(this).append(tooltip).find('.ee-tooltip').hide();
+
+		let windowTop = $(window).scrollTop();
+		const windowBottom = windowTop + $(window).height();
+		let windowWidth = $(window).width() ;
+
+		// modify window because of toolbars, scrollbars, etc
+		windowTop += 32;
+		windowWidth -= 32;
+		const $adminBar = $('#wpadminbar');
+		if ($adminBar.length && $adminBar.css('position') === 'fixed') {
+			windowTop += 16;
+		}
+
+		// console.log({windowTop, windowBottom, windowWidth});
+
+		const tooltipHeight = $tooltip.height();
+		const tooltipWidth = $tooltip.width();
+		const tooltipPosition = $(this).offset();
+
+		const tooltipLeft = tooltipPosition.left;
+		const tooltipRight = tooltipLeft + tooltipWidth;
+		const tooltipTop = tooltipPosition.top;
+		const tooltipBottom = tooltipTop + tooltipHeight;
+
+		// console.log({tooltipLeft, tooltipWidth, tooltipRight});
+		// console.log({tooltipTop, tooltipHeight, tooltipBottom});
+
+		let shiftLeft = -16;
+		let shiftTop = -32
+
+		if (tooltipTop < windowTop) {
+			shiftTop = (shiftTop - (windowTop - tooltipTop)) * -1;
+		} else if (tooltipBottom > windowBottom) {
+			shiftTop -= tooltipBottom - windowBottom;
+		}
+
+		if (tooltipLeft < 0) {
+			shiftLeft = (shiftTop - tooltipLeft) * -1;
+		} else if (tooltipRight > windowWidth) {
+			shiftLeft -= tooltipRight - windowWidth;
+		}
+
+		// console.log({shiftTop, shiftLeft});
+		$tooltip.css({
+			left: $tooltip.position().left + shiftLeft + "px",
+			top: $tooltip.position().top + shiftTop + "px"
+		});
+
+		$tooltip.delay(500).fadeIn(250);
+	});
+
+	$wpContent.on('mouseleave', '.ee-aria-tooltip', function () {
+		$(this).find('.ee-tooltip').fadeOut(125).remove();
+	});
 });
