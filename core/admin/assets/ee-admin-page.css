@@ -3455,6 +3455,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .tablenav input {
     margin-inline:  0.5rem;
 }
+.espresso-admin .tablenav select {
+    min-width: 4rem;
+}
 .espresso-admin .tablenav-paging-text {
     justify-content: space-evenly;
     min-width: 3rem;
