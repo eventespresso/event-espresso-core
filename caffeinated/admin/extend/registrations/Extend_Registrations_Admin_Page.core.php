@@ -1145,27 +1145,27 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 'desc'  => $checked_never->legendLabel(),
             ),
             'approved_status'  => array(
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_approved,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_approved,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_approved, false, 'sentence'),
             ),
             'cancelled_status' => array(
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_cancelled,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_cancelled,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_cancelled, false, 'sentence'),
             ),
             'declined_status'  => array(
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_declined,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_declined,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_declined, false, 'sentence'),
             ),
             'not_approved'     => array(
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_not_approved,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_not_approved,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_not_approved, false, 'sentence'),
             ),
             'pending_status'   => array(
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_pending_payment,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_pending_payment,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_pending_payment, false, 'sentence'),
             ),
             'wait_list'        => array(
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_wait_list,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_wait_list,
                 'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_wait_list, false, 'sentence'),
             ),
         );

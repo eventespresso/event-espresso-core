@@ -444,7 +444,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                                   . $reports_link
                                   . '" title="'
                                   . esc_attr__('View Report', 'event_espresso')
-                                  . '"  class="ee-aria-tooltip button button--small button--icon-only"><span class="dashicons dashicons-chart-bar"></span></a>'
+                                  . '"  class="ee-aria-tooltip button button--icon-only"><span class="dashicons dashicons-chart-bar"></span></a>'
                                   . "\n\t";
         }
         if (EE_Registry::instance()->CAP->current_user_can('ee_read_global_messages', 'view_filtered_messages')) {
