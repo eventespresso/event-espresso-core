@@ -198,7 +198,9 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $name_html = $name_link ? '<a href="' . $name_link . '">' . $name_html . '</a>' : $name_html;
         $name_html .= $line_item->is_taxable() ? ' *' : '';
         // maybe preface with icon?
-        $name_html = $line_item_related_object instanceof EEI_Has_Icon ? $line_item_related_object->get_icon() . $name_html : $name_html;
+        $name_html = $line_item_related_object instanceof EEI_Has_Icon
+            ? $line_item_related_object->get_icon() . '&nbsp;' . $name_html
+            : $name_html;
         $name_html = '<span class="ee-line-item-name linked">' . $name_html . '</span><br>';
         $name_html .=  sprintf(
             _x('%1$sfor the %2$s: %3$s%4$s', 'eg. "for the Event: My Cool Event"', 'event_espresso'),

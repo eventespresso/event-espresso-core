@@ -5,12 +5,8 @@
  * where each item itself is an array of 'icon' and 'desc'.
  *
  * @var string[][] $items
- * @var int|null $per_column
  */
 
-// figure out the columns based on the count of items (we want a max of 6 items per column).
-$per_col = isset($per_column) ? absint($per_column) : 5;
-$count = 1;
 ?>
 
 <div class="ee-list-table-legend-container">
@@ -22,12 +18,7 @@ $count = 1;
     ?>
     <div class="ee-list-table-legend-wrap">
         <dl class="ee-list-table-legend">
-            <?php foreach ($items as $item => $details) :
-                if ($per_col < $count) : ?>
-        </dl>
-        <dl class="ee-list-table-legend">
-                    <?php $count = 1;
-                endif; ?>
+            <?php foreach ($items as $item => $details) : ?>
             <dt id="ee-legend-item-<?php echo esc_attr($item); ?>">
                 <?php $class = ! empty($details['class']) ? $details['class'] : 'ee-legend-img-container'; ?>
                 <span class="ee-legend-item-wrap">
@@ -48,8 +39,7 @@ $count = 1;
                 </span>
                 <span class="ee-legend-description"><?php echo esc_html($details['desc']); ?></span>
             </dt>
-                <?php $count++;
-            endforeach; ?>
+            <?php endforeach; ?>
         </dl>
     </div>
     <div style="clear:both"></div>

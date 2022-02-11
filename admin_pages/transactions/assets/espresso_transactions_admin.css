@@ -350,3 +350,24 @@
     max-width: 3rem;
     word-wrap: break-word;
 }
+
+
+#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.display-the-hidden:not(.hidden),
+#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.hide-the-displayed:not(.hidden) {
+    align-items: center;
+    display: inline-flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.display-the-hidden:not(.hidden) > .dashicons,
+#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.hide-the-displayed:not(.hidden) > .dashicons {
+    margin-inline-end: .5rem;
+}
+#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.display-the-hidden > .dashicons-plus-alt:before {
+    position: relative;
+    top: 1px;
+}
+#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.hide-the-displayed > .dashicons-dismiss:before {
+    position: relative;
+    top: -3px;
+}
