@@ -54,19 +54,10 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.DTT_EVT_start').on('click', '.ee-more-datetimes-toggle', function(e){
+	$('#wpcontent').on('click', '.ee-more-datetimes-toggle', function(e){
 	    e.preventDefault();
-	    var show = $(this).hasClass('dashicons-plus'),
-            addIcon = show ? 'dashicons-minus' : 'dashicons-plus',
-            removeIcon = show ? 'dashicons-plus' : 'dashicons-minus',
-            $moreItems = $('.more-items', $(this).parent());
-
-	    $(this).removeClass(removeIcon).addClass(addIcon);
-	    if (show) {
-	        $moreItems.removeClass('hidden');
-        } else {
-	        $moreItems.addClass('hidden');
-        }
+		$(this).toggleClass('open');
+		$(this).next('.more-items').toggleClass('hidden').slideToggle();
     });
 
 
@@ -76,10 +67,9 @@ jQuery(document).ready(function($) {
 	 * @return string (new html for checkin)
 	 */
 	$('.trigger-checkin', '#the-list').on('click', function() {
-		var content;
-		var itemdata = $(this).data();
-		var thisitem = $(this);
-		var data = {
+		const itemdata = $(this).data();
+		const thisitem = $(this);
+		const data = {
 			_regid : itemdata._regid,
 			dttid : itemdata.dttid,
 			checkinnonce : itemdata.nonce,
@@ -88,7 +78,7 @@ jQuery(document).ready(function($) {
 			page : 'espresso_registrations'
 		};
 
-		var setup = {
+		const setup = {
 			where: '#ajax-notices-container',
 			what: 'clear'
 		};
@@ -98,20 +88,20 @@ jQuery(document).ready(function($) {
 			url: ajaxurl,
 			data: data,
 			success: function( response, status, xhr ) {
-				var ct = xhr.getResponseHeader("content-type") || "";
+				const ct = xhr.getResponseHeader("content-type") || "";
 					if (ct.indexOf('html') > -1) {
 						$(setup.where).html(response);
 					}
 
 					if (ct.indexOf('json') > -1 ) {
-						var resp = response,
+						const resp = response,
 						content = resp.error ? resp.error : resp.content;
 						if ( resp.error ) {
 							$(setup.where).html(content);
 						} else {
 							$(setup.where).html(resp.notices);
 							$('.espresso-notices').show();
-							thisitem.attr('class', content);
+							thisitem.find('.dashicons').attr('class', content);
 						}
 					}
 			}

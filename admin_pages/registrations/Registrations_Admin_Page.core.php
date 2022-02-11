@@ -1040,7 +1040,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'desc'  => esc_html__('View Registration Details', 'event_espresso'),
             ],
             'edit_attendee'    => [
-                'class' => 'dashicons dashicons-groups',
+                'class' => 'dashicons dashicons-admin-users',
                 'desc'  => esc_html__('Edit Contact Details', 'event_espresso'),
             ],
             'view_transaction' => [
@@ -1081,7 +1081,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         }
         $sc_items = [
             'approved_status'   => [
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_approved,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_approved,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_approved,
                     false,
@@ -1089,7 +1089,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'pending_status'    => [
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_pending_payment,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_pending_payment,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_pending_payment,
                     false,
@@ -1097,7 +1097,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'wait_list'         => [
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_wait_list,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_wait_list,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_wait_list,
                     false,
@@ -1105,7 +1105,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'incomplete_status' => [
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_incomplete,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_incomplete,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_incomplete,
                     false,
@@ -1113,7 +1113,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'not_approved'      => [
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_not_approved,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_not_approved,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_not_approved,
                     false,
@@ -1121,7 +1121,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'declined_status'   => [
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_declined,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_declined,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_declined,
                     false,
@@ -1129,7 +1129,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'cancelled_status'  => [
-                'class' => 'ee-status-legend ee-status-legend--' . EEM_Registration::status_id_cancelled,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_cancelled,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_cancelled,
                     false,

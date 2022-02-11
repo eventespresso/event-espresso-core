@@ -29,7 +29,7 @@
                     foreach ($attendees as $att_nmbr => $attendee) : ?>
                         <tr>
                             <th class='jst-cntr no-pad'>
-                                <span class="ee-status-dot ee-status-dot--<?php echo esc_attr($attendee['STS_ID']); ?> ee-aria-tooltip"
+                                <span class="ee-status-dot ee-status-bg--<?php echo esc_attr($attendee['STS_ID']); ?> ee-aria-tooltip"
                                       aria-label="<?php echo esc_attr(EEH_Template::pretty_status($attendee['STS_ID'], false, "sentence" ));?>">
                                 </span>
                             </th>
