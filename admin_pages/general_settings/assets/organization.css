@@ -91,3 +91,7 @@
     width: 90%;
     margin-right: 10px;
 }
+#site_license_key + .dashicons.dashicons-admin-network {
+    font-size: 2rem;
+    margin: .25rem
+}
