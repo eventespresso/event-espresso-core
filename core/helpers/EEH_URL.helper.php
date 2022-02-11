@@ -48,7 +48,7 @@ class EEH_URL
             }
         }
 
-        $action  = EEH_URL::getRequest()->getRequestParam('action');
+        $action  = EEH_URL::getRequest()->getRequestParam('action', '');
         // finally, let's always add a return address (if present) :)
         if ($action !== '') {
             $args['return'] = $action;

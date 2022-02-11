@@ -11,14 +11,21 @@ use EventEspresso\core\services\request\RequestInterface;
  * @package        espresso_events_Messages_Hooks_Extend
  * @subpackage     caffeinated/admin/extend/messages/espresso_events_Messages_Hooks_Extend.class.php
  * @author         Darren Ethier
- * ------------------------------------------------------------------------
  */
 class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hooks
 {
+
+    /**
+     * @var Messages_Admin_Page
+     */
+    protected $_page_object;
+
+
     /**
      * espresso_events_Messages_Hooks_Extend constructor.
      *
-     * @param \EE_Admin_Page $admin_page
+     * @param EE_Admin_Page $admin_page
+     * @throws EE_Error
      */
     public function __construct(EE_Admin_Page $admin_page)
     {
@@ -35,12 +42,12 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         }
         add_filter(
             'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks',
-            array($this, 'caf_updates'),
+            [$this, 'caf_updates'],
             10
         );
         add_action(
             'AHEE__Extend_Events_Admin_Page___duplicate_event__after',
-            array($this, 'duplicate_custom_message_settings'),
+            [$this, 'duplicate_custom_message_settings'],
             10,
             2
         );
@@ -57,41 +64,39 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
     protected function _extend_properties()
     {
         define('EE_MSGS_EXTEND_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/');
-        $this->_ajax_func = array(
-            'ee_msgs_create_new_custom' => 'create_new_custom',
-        );
-        $this->_metaboxes = array(
-            0 => array(
-                'page_route' => array('edit', 'create_new'),
+        $this->_ajax_func = ['ee_msgs_create_new_custom' => 'create_new_custom'];
+        $this->_metaboxes = [
+            0 => [
+                'page_route' => ['edit', 'create_new'],
                 'func'       => 'messages_metabox',
                 'label'      => esc_html__('Notifications', 'event_espresso'),
                 'priority'   => 'high',
-            ),
-        );
+            ],
+        ];
 
         // see explanation for layout in EE_Admin_Hooks
-        $this->_scripts_styles = array(
-            'registers' => array(
-                'events_msg_admin'     => array(
+        $this->_scripts_styles = [
+            'registers' => [
+                'events_msg_admin'     => [
                     'url'     => EE_MSGS_EXTEND_ASSETS_URL . 'events_messages_admin.js',
-                    'depends' => array('ee-dialog', 'ee-parse-uri', 'ee-serialize-full-array'),
-                ),
-                'events_msg_admin_css' => array(
+                    'depends' => ['ee-dialog', 'ee-parse-uri', 'ee-serialize-full-array'],
+                ],
+                'events_msg_admin_css' => [
                     'url'  => EE_MSGS_EXTEND_ASSETS_URL . 'ee_msg_events_admin.css',
                     'type' => 'css',
-                ),
-            ),
-            'enqueues'  => array(
-                'events_msg_admin'     => array('edit', 'create_new'),
-                'events_msg_admin_css' => array('edit', 'create_new'),
-            ),
-        );
+                ],
+            ],
+            'enqueues'  => [
+                'events_msg_admin'     => ['edit', 'create_new'],
+                'events_msg_admin_css' => ['edit', 'create_new'],
+            ],
+        ];
     }
 
 
     public function caf_updates($update_callbacks)
     {
-        $update_callbacks['attach_evt_message_templates'] = array($this, 'attach_evt_message_templates');
+        $update_callbacks[] = [$this, 'attach_evt_message_templates'];
         return $update_callbacks;
     }
 
@@ -135,34 +140,32 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      * @param $event
      * @param $callback_args
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function messages_metabox($event, $callback_args)
     {
-        // let's get the active messengers (b/c messenger objects have the active message templates)
         // convert 'evt_id' to 'EVT_ID'
-        $this->_req_data['EVT_ID'] = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null;
-        $this->_req_data['EVT_ID'] = isset($this->_req_data['post']) && empty($this->_req_data['EVT_ID'])
-            ? $this->_req_data['post']
-            : $this->_req_data['EVT_ID'];
+        $EVT_ID = $this->request->getRequestParam('EVT_ID', 0, 'int');
+        $EVT_ID = $this->request->getRequestParam('post', $EVT_ID, 'int');
+        $EVT_ID = $this->request->getRequestParam('evt_id', $EVT_ID, 'int');
+        $this->request->setRequestParam('EVT_ID', $EVT_ID);
 
-        $this->_req_data['EVT_ID'] = empty($this->_req_data['EVT_ID']) && isset($this->_req_data['evt_id'])
-            ? $this->_req_data['evt_id']
-            : $this->_req_data['EVT_ID'];
+        // get the active messengers (b/c messenger objects have the active message templates)
         /** @type EE_Message_Resource_Manager $message_resource_manager */
         $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
-        $active_messengers = $message_resource_manager->active_messengers();
-        $tabs = array();
+        $active_messengers        = $message_resource_manager->active_messengers();
+        $tabs                     = [];
 
         // empty messengers?
         // Note message types will always have at least one available because every messenger has a default message type
         // associated with it (payment) if no other message types are selected.
         if (empty($active_messengers)) {
             $msg_activate_url = EE_Admin_Page::add_query_args_and_nonce(
-                array('action' => 'settings'),
+                ['action' => 'settings'],
                 EE_MSG_ADMIN_URL
             );
-            $error_msg = sprintf(
+            $error_msg        = sprintf(
                 esc_html__(
                     'There are no active messengers. So no notifications will go out for %1$sany%2$s events.  You will want to %3$sActivate a Messenger%4$s.',
                     'event_espresso'
@@ -172,7 +175,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
                 '<a href="' . $msg_activate_url . '">',
                 '</a>'
             );
-            $error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
+            $error_content    = '<div class="error"><p>' . $error_msg . '</p></div>';
             $internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
 
             echo $error_content;
@@ -180,7 +183,6 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             return '';
         }
 
-        $event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : null;
         // get content for active messengers
         foreach ($active_messengers as $name => $messenger) {
             // first check if there are any active message types for this messenger.
@@ -192,7 +194,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             $tab_content = $messenger->get_messenger_admin_page_content(
                 'events',
                 'edit',
-                array('event' => $event_id)
+                ['event' => $EVT_ID]
             );
 
             if (! empty($tab_content)) {
@@ -209,9 +211,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 
         $notices = '
 	<div id="espresso-ajax-loading" class="ajax-loader-grey">
-		<span class="ee-spinner ee-spin"></span><span class="hidden">'
-                   . esc_html__('loading...', 'event_espresso')
-                   . '</span>
+		<span class="ee-spinner ee-spin"></span>
+		<span class="hidden">' . esc_html__('loading...', 'event_espresso') . '</span>
 	</div>
 	<div class="ee-notices"></div>';
 
@@ -222,6 +223,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         do_action('AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__before_content');
         echo $notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>';
         do_action('AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__after_content');
+        return '';
     }
 
 
@@ -231,8 +233,9 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      * to create a new custom template based off of the incoming GRP_ID.
      *
      * @access public
-     * @return string either an html string will be returned or a success message
+     * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function create_new_custom()
     {
@@ -244,14 +247,9 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
 
         // let's clean up the request data a bit for downstream usage of name and description.
-        $templateName = ! empty($this->_req_data['custom_template_args']['MTP_name'])
-            ? $this->_req_data['custom_template_args']['MTP_name']
-            : '';
+        $templateName = $this->request->getRequestParam('custom_template_args[MTP_name]', '');
         $request->setRequestParam('templateName', $templateName);
-
-        $templateDescription = ! empty($this->_req_data['custom_template_args']['MTP_description'])
-            ? $this->_req_data['custom_template_args']['MTP_description']
-            : '';
+        $templateDescription = $this->request->getRequestParam('custom_template_args[MTP_description]', '');
         $request->setRequestParam('templateDescription', $templateDescription);
 
         // set EE_Admin_Page object (see method details in EE_Admin_Hooks parent
@@ -261,9 +259,9 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         $this->_page_object->set_hook_object($this);
 
         $this->_page_object->add_message_template(
-            $this->_req_data['messageType'],
-            $this->_req_data['messenger'],
-            $this->_req_data['group_ID']
+            $this->request->getRequestParam('messageType', ''),
+            $this->request->getRequestParam('messenger', ''),
+            $this->request->getRequestParam('group_ID', 0, 'int')
         );
     }
 
@@ -278,7 +276,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      * This is the dynamic method for this class
      * that will end up hooking into the 'admin_footer' hook on the 'edit_event' route in the events page.
      *
-     * @return string
+     * @return void
      * @throws DomainException
      */
     public function edit_admin_footer()
@@ -296,6 +294,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      * @param EE_Event $new_event
      * @param EE_Event $original_event
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function duplicate_custom_message_settings(EE_Event $new_event, EE_Event $original_event)
     {

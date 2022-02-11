@@ -211,4 +211,23 @@ class EEH_Array extends EEH_Base
     {
         return empty($array) || array_keys($array) === range(0, count($array) - 1);
     }
+
+
+    /**
+     * recursively walks through an array and adds slashes to all no array elements
+     *
+     * @param mixed $element
+     * @return array|string
+     * @since   $VID:$
+     */
+    public static function addSlashesRecursively($element)
+    {
+        if (is_array($element)) {
+            foreach ($element as $key => $value) {
+                $element[ $key ] = EEH_Array::addSlashesRecursively($value);
+            }
+            return $element;
+        }
+        return is_string($element) ? addslashes($element) : $element;
+    }
 }

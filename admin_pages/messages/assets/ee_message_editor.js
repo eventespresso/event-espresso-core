@@ -158,15 +158,23 @@ jQuery(document).ready(function($) {
 	/**
 	 * messages shortcode picker
 	 */
-	$('#ee-msg-edit-frm').on( 'click', '.js-open-list-trigger', function(e) {
+
+	const $messagesForm = $('#ee-msg-edit-frm');
+	$messagesForm.on( 'click', '.js-open-list-trigger', function(e) {
+		e.preventDefault();
 		e.stopPropagation();
 		shortCodePicker(this);
+	});
+	$messagesForm.on( 'click', '.js-close-list-trigger', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		closeShortCodePicker();
 	});
 
 	/**
 	 * Hide shortcode picker on leaving the window.
 	 */
-	var eeShortcodeHover = false;
+	let eeShortcodeHover = false;
 	$('.ee_shortcode_chooser_container','#ee-msg-edit-frm').hover( function(e) {
 		e.stopPropagation();
 		eeShortcodeHover = true;
@@ -177,22 +185,44 @@ jQuery(document).ready(function($) {
 
 	jQuery('body').mouseup( function() {
 		if ( ! eeShortcodeHover ) {
-			$('.ee_shortcode_chooser_container').addClass('hidden').removeClass('ee-shortcode-chooser-open');
+			closeShortCodePicker();
 		}
 	});
 });
 
 
 
+function closeShortCodePicker() {
+	jQuery('.ee_shortcode_chooser_container').addClass('hidden').removeClass('ee-shortcode-chooser-open');
+}
+
+
 function shortCodePicker( el ) {
-	var itemClicked = jQuery(el);
-	var shortcodeContainer = jQuery( '.ee_shortcode_chooser_container', itemClicked );
+	const itemClicked = jQuery(el);
+	const shortcodeContainer = itemClicked.next( '.ee_shortcode_chooser_container' );
 	shortcodeContainer.removeClass('hidden' ).addClass('ee-shortcode-chooser-open');
+	shortcodeContainer.find('.js-shortcode-selection').each(function () {
+		const shortcodeRequested = jQuery(this).data('value');
+		const input = jQuery(this).data('linkedInputId');
+		const currentShortcodes = document.getElementById(input).value;
+		if (currentShortcodes && currentShortcodes.includes(shortcodeRequested)) {
+			jQuery(this).addClass('ee-shortcode-selected');
+		} else {
+			jQuery(this).removeClass('ee-shortcode-selected');
+		}
+	});
 
 	//set click event but unbind any existing first. Also namespace.
 	jQuery( '.js-shortcode-selection', shortcodeContainer ).off('click.shortcodeClick').on('click.shortcodeClick', function(e) {
 		e.stopPropagation();
-		shortCodePickerClickEvent( this, shortcodeContainer );
+		const shortcodeRequested = jQuery(this).data('value');
+		const input = jQuery(this).data('linkedInputId');
+		if (jQuery(this).hasClass('ee-shortcode-selected')) {
+			return;
+		}
+		shortCodePickerClickEvent(shortcodeRequested, input );
+		jQuery(this).addClass('ee-shortcode-selected');
+		shortcodeContainer.addClass('hidden').removeClass('ee-shortcode-chooser-open');
 	});
 
 	//capture any ctrl-s keypress for shortcode picker
@@ -200,22 +230,17 @@ function shortCodePicker( el ) {
 
 
 
-function shortCodePickerClickEvent( el, shortcodeContainer ) {
-	var shortcodeRequested = jQuery(el).data('value');
-	var input = jQuery(el).data('linkedInputId');
-
+function shortCodePickerClickEvent(shortcodeRequested, input ) {
 	//if linked input has `wp-editor-area` class then use WP Editor insert function
 	if ( jQuery('#' + input ).hasClass('wp-editor-area' ) ) {
 		AddVariableToWPEditor( input, shortcodeRequested );
 	} else {
 		AddVariableToInput( input, shortcodeRequested );
 	}
-	shortcodeContainer.addClass('hidden').removeClass('ee-shortcode-chooser-open');
 }
 
 
 function AddVariableToInput(element_id, value) {
-
 	var input = document.getElementById (element_id);
 	var $input = jQuery(input);
 
@@ -223,8 +248,7 @@ function AddVariableToInput(element_id, value) {
 		// Go the IE way
 		$input[0].focus();
 		document.selection.createRange().text=value;
-	}
-	else if('selectionStart' in input) {
+	} else if('selectionStart' in input) {
 		var startPos = input.selectionStart;
 		input.value = input.value.substr(0, startPos) + value + input.value.substr(input.selectionEnd, input.value.length);
 		input.selectionStart = startPos + input.value.length;

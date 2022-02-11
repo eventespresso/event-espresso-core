@@ -13,15 +13,11 @@ class EE_Message_To_Generate
 {
 
     /**
-     * name of EE_messenger
-     *
      * @var string
      */
     protected $_messenger_name;
 
     /**
-     * name of EE_message_type
-     *
      * @var string
      */
     protected $_message_type_name;
@@ -99,6 +95,15 @@ class EE_Message_To_Generate
      * one of the message status constants on EEM_Message
      *
      * @var string
+     * @since $VID:$
+     */
+    protected $_status = '';
+
+    /**
+     * use $_status var above
+     *
+     * @var string
+     * @deprecated $VID:$
      */
     protected $_message_status = '';
 
@@ -210,7 +215,7 @@ class EE_Message_To_Generate
      * generates an EE_Message using the supplied arguments and some defaults
      *
      * @param array $properties
-     * @return string
+     * @return EE_Message
      */
     protected function _generate_message($properties = [])
     {
