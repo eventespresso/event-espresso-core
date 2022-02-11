@@ -252,9 +252,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         $pretty_status = EEH_Template::pretty_status($status, false, 'sentence' );
         return '
             <div class="ee-layout-row">
-                <span aria-label="' . $pretty_status . '"  class="ee-status-dot ee-status-dot--' . $status . ' ee-aria-tooltip"></span>
+                <span aria-label="' . $pretty_status . '"  class="ee-status-dot ee-status-bg--' . $status . ' ee-aria-tooltip"></span>
                 <a  href="' . $view_lnk_url . '"                     
-                    class="row-title status-' . $status . ' ee-aria-tooltip"
+                    class="row-title ee-status-color--' . $status . ' ee-aria-tooltip"
                     aria-label="' . esc_attr__('View Transaction Details for TXN #', 'event_espresso') . $transaction->ID
             () . '">
                 ' . $this->_get_txn_timestamp($transaction) . '
@@ -428,7 +428,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 array(
                     'action' => 'default',
                     'EVT_ID' => $event->ID(),
-                )
+                ),
+                TXN_ADMIN_URL
             );
             if (
                 empty($this->_req_data['EVT_ID'])
@@ -522,8 +523,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             TXN_ADMIN_URL
         );
         return '
-				<a class="ee-aria-tooltip button button--small button--icon-only" href="' . $url . '"'
-               . ' aria-label="' . esc_attr__('View Transaction Details', 'event_espresso') . '" class="button button--small button--icon-only">
+				<a class="ee-aria-tooltip button button--icon-only" href="' . $url . '"'
+               . ' aria-label="' . esc_attr__('View Transaction Details', 'event_espresso') . '" class="button button--icon-only">
 					<span class="dashicons dashicons-cart"></span>
 				</a>';
     }
@@ -548,7 +549,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             ) {
                 return '
                     <a aria-label="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '"'
-                       . ' target="_blank" href="' . $url . '" class="ee-aria-tooltip button button--small button--icon-only">
+                       . ' target="_blank" href="' . $url . '" class="ee-aria-tooltip button button--icon-only">
                         <span class="dashicons dashicons-media-spreadsheet"></span>
                     </a>';
             }
@@ -576,7 +577,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             ) {
                 return '
 				<a aria-label="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
-                       . ' target="_blank" href="' . $url . '" class="ee-aria-tooltip button button--small button--icon-only">
+                       . ' target="_blank" href="' . $url . '" class="ee-aria-tooltip button button--icon-only">
 					<span class="dashicons dashicons-text-page"></span>
 				</a>';
             }
@@ -614,7 +615,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 ? '
 					<a href="' . $url . '"
 					    aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '" 
-					    class="ee-aria-tooltip button button--small button--icon-only"
+					    class="ee-aria-tooltip button button--icon-only"
                     >
 						<span class="dashicons dashicons-clipboard"></span>
 					</a>'
@@ -661,7 +662,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             return '
                 <a href="' . $url . '" 
                     aria-label="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" 
-                    class="ee-aria-tooltip button button--small button--icon-only"
+                    class="ee-aria-tooltip button button--icon-only"
                 >
                     <span class="dashicons dashicons-email-alt"></span>
                 </a>';
@@ -713,7 +714,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             return '
                 <a aria-label="' . esc_attr__('Make Payment from the Frontend.', 'event_espresso') . '"'
                    . ' target="_blank" href="' . $registration->payment_overview_url(true) . '"'
-                   . ' class="ee-aria-tooltip button button--small button--icon-only">
+                   . ' class="ee-aria-tooltip button button--icon-only">
                     <span class="dashicons dashicons-money"></span>
                 </a>';
         }

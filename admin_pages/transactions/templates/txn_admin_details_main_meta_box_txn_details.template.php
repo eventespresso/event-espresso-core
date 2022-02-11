@@ -148,7 +148,7 @@
                             <tr id="txn-admin-payment-tr-<?php echo $escaped_pay_id; ?>" class=' jst-cntr'>
                                 <td class="jst-cntr no-pad">
                                     <span id="payment-status-<?php echo $escaped_pay_id; ?>"
-                                          class="ee-status-dot ee-status-dot--<?php echo esc_attr($payment->STS_ID()); ?>">
+                                          class="ee-status-dot ee-status-bg--<?php echo esc_attr($payment->STS_ID()); ?>">
                                     </span>
                                     <div id="payment-STS_ID-<?php echo $escaped_pay_id; ?>" class="hidden">
                                         <?php echo esc_html($payment->STS_ID()); ?>
