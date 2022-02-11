@@ -856,7 +856,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $items    = [
             'view_details'   => [
-                'class' => 'dashicons dashicons-search',
+                'class' => 'dashicons dashicons-visibility',
                 'desc'  => esc_html__('View Event', 'event_espresso'),
             ],
             'edit_event'     => [

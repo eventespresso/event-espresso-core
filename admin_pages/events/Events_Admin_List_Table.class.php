@@ -507,7 +507,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $view_link = get_permalink($event->ID());
         $action_links[] = '<a href="' . $view_link . '" class="ee-aria-tooltip button button--icon-only"'
                           . ' aria-label="' . esc_attr__('View Event', 'event_espresso') . '" target="_blank">
-                          <span class="dashicons dashicons-search"></span></a>';
+                          <span class="dashicons dashicons-visibility"></span></a>';
         if (
             EE_Registry::instance()->CAP->current_user_can(
                 'ee_edit_event',

@@ -656,7 +656,7 @@ class EEH_MSG_Template
             array(
                 'view' => array(
                     'label' => esc_html__('View Message', 'event_espresso'),
-                    'css_class' => 'dashicons dashicons-welcome-view-site',
+                    'css_class' => 'dashicons dashicons-visibility',
                 ),
                 'error' => array(
                     'label' => esc_html__('View Error Message', 'event_espresso'),

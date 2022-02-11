@@ -59,10 +59,10 @@ use EventEspresso\core\domain\Domain;
                 'Using the action buttons you can View Registration Details %1$s, Edit Contact Details %2$s, Resend Registration Details %3$s, and View Transaction Details %4$s.',
                 'event_espresso'
             ),
-            '<span class="dashicons dashicons-search"></span>',
-            '<span class="dashicons dashicons-businessman"></span>',
-            '<span class="ee-icon ee-icon-email-send"></span>',
-            '<span class="dashicons dashicons-money-alt"></span>'
+            '<span class="dashicons dashicons-clipboard"></span>',
+            '<span class="dashicons dashicons-admin-users"></span>',
+            '<span class="dashicons dashicons-email-alt"></span>',
+            '<span class="dashicons dashicons-cart"></span>'
         ); ?>
     </li>
 </ul>
