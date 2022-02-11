@@ -577,7 +577,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'FHEE__Transactions_Admin_Page___transaction_legend_items__more_items',
             [
                 'overpaid'   => [
-                    'class' => 'ee-status-legend ee-status-legend--' . EEM_Transaction::overpaid_status_code,
+                    'class' => 'ee-status-legend ee-status-bg--' . EEM_Transaction::overpaid_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::overpaid_status_code,
                         false,
@@ -585,7 +585,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ),
                 ],
                 'complete'   => [
-                    'class' => 'ee-status-legend ee-status-legend--' . EEM_Transaction::complete_status_code,
+                    'class' => 'ee-status-legend ee-status-bg--' . EEM_Transaction::complete_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::complete_status_code,
                         false,
@@ -593,7 +593,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ),
                 ],
                 'incomplete' => [
-                    'class' => 'ee-status-legend ee-status-legend--' . EEM_Transaction::incomplete_status_code,
+                    'class' => 'ee-status-legend ee-status-bg--' . EEM_Transaction::incomplete_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::incomplete_status_code,
                         false,
@@ -601,7 +601,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ),
                 ],
                 'abandoned'  => [
-                    'class' => 'ee-status-legend ee-status-legend--' . EEM_Transaction::abandoned_status_code,
+                    'class' => 'ee-status-legend ee-status-bg--' . EEM_Transaction::abandoned_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::abandoned_status_code,
                         false,
@@ -609,7 +609,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ),
                 ],
                 'failed'     => [
-                    'class' => 'ee-status-legend ee-status-legend--' . EEM_Transaction::failed_status_code,
+                    'class' => 'ee-status-legend ee-status-bg--' . EEM_Transaction::failed_status_code,
                     'desc'  => EEH_Template::pretty_status(
                         EEM_Transaction::failed_status_code,
                         false,
@@ -698,7 +698,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         $this->_template_args['txn_status']['value'] = self::$_txn_status[ $this->_transaction->status_ID() ];
         $this->_template_args['txn_status']['label'] = esc_html__('Transaction Status', 'event_espresso');
-        $this->_template_args['txn_status']['class'] = 'status-' . $this->_transaction->status_ID();
+        $this->_template_args['txn_status']['class'] = $this->_transaction->status_ID();
 
         $this->_template_args['grand_total'] = $this->_transaction->total();
         $this->_template_args['total_paid']  = $this->_transaction->paid();

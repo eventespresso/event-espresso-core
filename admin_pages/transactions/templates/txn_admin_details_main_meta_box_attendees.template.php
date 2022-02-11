@@ -22,7 +22,7 @@
                     <?php foreach ($event_attendees as $registration => $attendee) : ?>
                         <tr style="display: table-row;" >
                             <td class="jst-cntr no-pad">
-                                <span class="ee-status-dot ee-status-dot--<?php echo esc_attr($attendee['STS_ID']);?>">
+                                <span class="ee-status-dot ee-status-bg--<?php echo esc_attr($attendee['STS_ID']);?>">
                                 </span>
                             </td>
                             <td class='jst-left'><?php echo esc_html($attendee['event_ticket_name']); ?></td>

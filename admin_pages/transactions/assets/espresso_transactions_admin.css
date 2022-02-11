@@ -7,7 +7,6 @@
 .wrap .subsubsub { margin:0; }
 
 #txn-filters-dv { clear:both; padding:1em 0; }
-.datepicker { width:125px; }
 
 /* green text */
 .status-TCM { color:var(--ee-status-color-green);   font-size:.85em; font-weight: 600; }
@@ -274,7 +273,17 @@
     /*font-family: sans-serif; font-size: 1em; vertical-align:middle;*/
 }
 .admin-modal-dialog-row { clear:both; margin:0 0 2em; }
-.admin-modal-dialog-inner label { display:inline-block; float:left; width:250px; padding-top:.4em; margin:0 1em .5em 0; vertical-align:top; font-weight: bold; }
+
+.admin-modal-dialog-inner label {
+    display: inline-block;
+    float: left;
+    width: clamp(16rem, 25%, 32rem);
+    padding-top: .4em;
+    margin: 0 1em .5em 0;
+    vertical-align: top;
+    font-weight: bold;
+}
+
 .admin-modal-dialog-inner .txn-admin-payment-reg-to-apply-lbl { width:auto; font-weight: normal; }
 .admin-modal-dialog-inner .left-250 { display:inline-block; padding-left:250px; margin-left:1em; }
 .admin-modal-dialog-inner .description { vertical-align:top; color: var(--ee-status-color-grey); }

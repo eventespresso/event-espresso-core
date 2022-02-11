@@ -146,8 +146,7 @@
                             <tr id="txn-admin-payment-tr-<?php echo absint($PAY_ID); ?>" class=' jst-cntr'>
                                 <td class="jst-cntr no-pad">
                                     <span id="payment-status-<?php echo absint($PAY_ID); ?>"
-                                          class="ee-status-dot ee-status-dot--<?php echo esc_attr($payment->STS_ID()); ?>">
-                                    </span>
+                                        class="ee-status-dot ee-status-bg--<?php echo esc_attr($payment->STS_ID()); ?>" ></span>
                                     <div id="payment-STS_ID-<?php echo absint($PAY_ID); ?>" class="hidden">
                                         <?php echo esc_html($payment->STS_ID()); ?>
                                     </div>
@@ -157,8 +156,7 @@
                                 </td>
                                 <td class=" jst-rght">
                                     <div id="payment-id-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo $PAY_ID; // sanitized
-                                        ?>
+                                        <?php echo absint($PAY_ID); ?>
                                     </div>
                                 </td>
                                 <td class=" jst-left">

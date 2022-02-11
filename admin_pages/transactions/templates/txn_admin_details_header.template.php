@@ -30,7 +30,7 @@ $amount_due_class = $amount_due ? 'ee-txn-amount-owing' : '';
         <label><?php echo esc_html__('Transaction Date', 'event_espresso'); ?></label>
         <span><?php echo esc_html($txn_datetime['value']); ?></span>
     </div>
-    <div class='ee-admin-container <?php echo esc_attr($txn_status['class']); ?>'>
+    <div class='ee-admin-container ee-status-bg--<?php echo esc_attr($txn_status['class']); ?>'>
         <label><?php echo esc_html__('Transaction Status: ', 'event_espresso'); ?></label>
         <span><?php echo esc_html($txn_status['value']); ?></span>
     </div>
