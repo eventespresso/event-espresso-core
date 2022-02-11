@@ -1655,7 +1655,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function get_icon()
     {
-        return '<span class="dashicons dashicons-tickets-alt"/>';
+        return '<span class="dashicons dashicons-tickets-alt"></span>';
     }
 
 
