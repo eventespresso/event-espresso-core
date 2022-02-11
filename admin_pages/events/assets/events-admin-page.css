@@ -69,8 +69,12 @@
 	#event-dates-and-times td { padding:1px; }
 	#event-dates-and-times .dtm-inp { width:150px; }
 }
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 782px) {
 	#event-dates-and-times .dtm-inp { width:100%; }
+
+    .espresso-admin .wp-list-table tr.is-expanded td.column-attendees .ee-responsive-table-cell__heading .show-on-mobile-view-only {
+        display: inline-block;
+    }
 }
 
 #event-dates-and-times .dtm-inp.small-text { width:75px; }
@@ -105,21 +109,19 @@
 .input-disabled { color:var(--ee-status-color-grey) !important; }
 
 
-#espresso_event_editor_event_options .inside {
+#espresso_event_editor_event_options .inside p {
+    display: flex;
+    flex-flow: row nowrap;
 	text-align: left;
 }
 
-
-
-
-.inside .ee-status {
-	float: right;
+#espresso_event_editor_event_options .inside p label {
+    margin-inline-end: 2.5%;
+	width: 55%;
 }
-
-#espresso_event_editor_event_options label {
-	width: 73%;
-	display: inline-block;
-	vertical-align: top;
+#espresso_event_editor_event_options .inside p input,
+#espresso_event_editor_event_options .inside p select {
+	width: 42.5%;
 }
 
 #message .spinner {
