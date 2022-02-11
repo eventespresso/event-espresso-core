@@ -256,7 +256,7 @@
 }
 
 
-.ee_shortcode_chooser_container_wrap {
+.ee-messages-shortcodes-chooser-wrap {
     float: right;
     padding: 0.125rem;
     position: relative;
@@ -311,7 +311,7 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     border: 2px solid var(--ee-status-color-blue);
     border-radius: .25rem;
     box-shadow: 0 3px 6px -1px hsla(0, 0%, 0%, .75), 0 0 20px -2px hsla(0, 0%, 0%, .15);
-    font-size: .8rem;
+    font-size: .9rem;
     font-weight: 600;
     height: auto;
     margin: 0;
@@ -322,36 +322,38 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     padding: 1rem !important;
     text-align: left;
     width: fit-content;
+    white-space: nowrap;
     z-index: 4000;
 }
 
 #ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container h6 {
-    color: hsla(207, 5%, 40%, 1);
-    font-size: .75rem;
+    color: var(--ee-font-color-light);
+    font-size: .9rem;
     font-weight: 800;
     line-height: 1.25;
-    margin: 0;
-    margin-block-end: .5rem;
-}
-
-#ee-msg-edit-frm .ee_shortcode_chooser_container h5 {
-    color: var(--ee-border-color);
-    font-size: 1.6rem;
-    font-weight: 800;
-    line-height: 1;
     margin: 0;
     margin-block-end: 1rem;
 }
 
-/*
-#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container ul {
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container h4 {
+    color: var(--ee-border-color);
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
     margin: 0;
-    padding: 0;
+    margin-block-end: 1.75rem;
 }
+
+
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container ul,
 #ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container li {
     margin: 0;
-    margin-block-end: .5rem;
     padding: 0;
+    padding-block: 1px;
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container li {
+    margin-block-end: .5rem;
 }
 
 #ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection {
@@ -362,31 +364,18 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
 }
 
 #ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection:not(.ee-shortcode-selected):hover {
-    background-color: hsla(207, 30%, 41%, .1);
-    color: hsla(207, 100%, 5%, 1);
+    background-color: var(--ee-status-color-pale-blue);
+    color: var(--ee-font-color-dark);
 }
 #ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection.ee-shortcode-selected {
-    color: hsla(207, 5%, 70%, .75);
+    color: var(--ee-border-color);
     cursor: not-allowed;
 }
 
 #ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container li:last-of-type {
     margin-bottom: 0;
 }
-*/
 
-#ee-msg-edit-frm .admin-primary-mbox-dv ul,
-#ee-msg-edit-frm .admin-primary-mbox-dv li {
-    margin-block: 0;
-    margin-inline: 0;
-    padding-block: 1px;
-}
-#ee-msg-edit-frm .admin-primary-mbox-dv li {
-    margin-block-end: 2.5rem;
-}
-#ee-msg-edit-frm .admin-primary-mbox-dv li ul {
-    margin-block-start: 1rem;
-}
 
 #ee-msg-edit-frm .admin-primary-mbox-dv input.large-text,
 #ee-msg-edit-frm .admin-primary-mbox-dv textarea.large-text {
@@ -427,7 +416,8 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     display: flex;
 }
 .activate_context_on_off_toggle_container .ee-on-off-toggle-label {
-    width: 24rem;
+    /* width: 24rem; */
+    margin-inline-end: 1rem;
 }
 .activate_context_on_off_toggle_container #ee-on-off-toggle-primary_attendee {
     display: none;
