@@ -1320,19 +1320,19 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
         // page status
         if (isset($ee_page->post_status) && $ee_page->post_status == 'publish') {
-            $pg_class = 'ee-page-status--ok';
+            $pg_class = 'ee-status-bg--success';
             $pg_status = sprintf(esc_html__('Page%sStatus%sOK', 'event_espresso'), '&nbsp;', '&nbsp;');
         } else {
-            $pg_class = 'ee-page-status--error';
+            $pg_class = 'ee-status-bg--error';
             $pg_status = sprintf(esc_html__('Page%sVisibility%sProblem', 'event_espresso'), '&nbsp;', '&nbsp;');
         }
 
         // shortcode status
         if (isset($ee_page->post_content) && strpos($ee_page->post_content, $shortcode) !== false) {
-            $sc_class = 'ee-page-status--ok';
+            $sc_class = 'ee-status-bg--success';
             $sc_status = sprintf(esc_html__('Shortcode%sOK', 'event_espresso'), '&nbsp;');
         } else {
-            $sc_class = 'ee-page-status--error';
+            $sc_class = 'ee-status-bg--error';
             $sc_status = sprintf(esc_html__('Shortcode%sProblem', 'event_espresso'), '&nbsp;');
         }
 
