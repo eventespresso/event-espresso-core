@@ -737,7 +737,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                     <button aria-label="' . esc_attr__('Click to view all dates', 'event_espresso') . '" 
                           class="ee-aria-tooltip button button--secondary button--tiny button--icon-only ee-js ee-more-datetimes-toggle"
                     >
-                        <span class="dashicons dashicons-arrow-left"></span>
+                        <span class="dashicons dashicons-admin-collapse"></span>
                     </button>
                     <div class="ee-registration-event-datetimes-container more-items hidden">
                         ' . implode("", $datetime_strings) . '
