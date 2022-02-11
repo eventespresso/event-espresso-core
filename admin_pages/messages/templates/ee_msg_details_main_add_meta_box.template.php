@@ -8,13 +8,15 @@
  * @var string     $action_message
  * @var string     $edit_message_template_form_url
  */
+$header = $event_name ? esc_html($event_name . ' Custom Template') : '';
 ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
-
-    <h4 class="admin-primary-mbox-h4">
-        <?php echo $event_name ? esc_html($event_name . ' Custom Template') : ''; ?>
-    </h4>
+    <?php if ($header) : ?>
+        <h3 class="admin-primary-mbox-h4">
+            <?php echo $header; ?>
+        </h3>
+    <?php endif; ?>
     <p><?php echo $action_message; // already escaped ?></p>
 
     <form action="<?php echo esc_url_raw($edit_message_template_form_url); ?>"

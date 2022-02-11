@@ -5,24 +5,29 @@
  * @var string                    $event_name
  * @var string[]                  $template_fields
  */
+$header = isset($event_name) ? sprintf(esc_html__('%1$s Custom Template'), $event_name) : '';
 ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
+    <?php if ($header) :?>
     <h3 class="admin-primary-mbox-h4">
-        <?php echo isset($event_name) ? sprintf(esc_html__('%1$s Custom Template'), $event_name) : ''; ?>
+        <?php echo $header; ?>
     </h3>
+    <?php endif; ?>
     <input type="hidden" id="ee-msg-current-context" name="MTP_context" value="<?php echo esc_attr($context); ?>" />
     <!-- if this is not a global template then let's show the name and description fields -->
     <?php
     if (! $MTP->is_global()) : ?>
         <div class="non-global-mtp-fields">
-            <p>
-                <?php esc_html_e(
-                    'This is a custom template.  Custom Templates have an editable name and description to help you differentiate between templates.',
-                    'event_espresso'
-                ); ?>
-            </p>
+            <div class="ee-info-box">
+                <p>
+                    <?php esc_html_e(
+                        'This is a custom template.  Custom Templates have an editable name and description to help you differentiate between templates.',
+                        'event_espresso'
+                    ); ?>
+                </p>
+            </div>
             <div id="titlediv">
                 <div id="titlewrap">
                     <label for="title" class="label-MTP_name ee-msg-small-label" >
