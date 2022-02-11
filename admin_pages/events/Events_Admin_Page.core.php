@@ -877,31 +877,31 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $items    = apply_filters('FHEE__Events_Admin_Page___event_legend_items__items', $items);
         $statuses = [
             'sold_out_status'  => [
-                'class' => 'ee-status-legend ee-status-legend--' . EE_Datetime::sold_out,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::sold_out,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::sold_out, false, 'sentence'),
             ],
             'active_status'    => [
-                'class' => 'ee-status-legend ee-status-legend--' . EE_Datetime::active,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::active,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::active, false, 'sentence'),
             ],
             'upcoming_status'  => [
-                'class' => 'ee-status-legend ee-status-legend--' . EE_Datetime::upcoming,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::upcoming,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::upcoming, false, 'sentence'),
             ],
             'postponed_status' => [
-                'class' => 'ee-status-legend ee-status-legend--' . EE_Datetime::postponed,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::postponed,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::postponed, false, 'sentence'),
             ],
             'cancelled_status' => [
-                'class' => 'ee-status-legend ee-status-legend--' . EE_Datetime::cancelled,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::cancelled,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::cancelled, false, 'sentence'),
             ],
             'expired_status'   => [
-                'class' => 'ee-status-legend ee-status-legend--' . EE_Datetime::expired,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::expired,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::expired, false, 'sentence'),
             ],
             'inactive_status'  => [
-                'class' => 'ee-status-legend ee-status-legend--' . EE_Datetime::inactive,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::inactive,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::inactive, false, 'sentence'),
             ],
         ];
