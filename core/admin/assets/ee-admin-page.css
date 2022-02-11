@@ -1,11 +1,8 @@
 /** STATUS COLORS */
 
 /*  txn failed,  payment declined, reg declined, dtt cancelled*/
-/* .status-DTC,
-.status-MFL,
-.status-PDC,
-.status-RDC,
-.status-TFL, */
+
+.ee-status--error,
 .ee-status-color--DTC,
 .ee-status-color--MFL,
 .ee-status-color--PDC,
@@ -15,11 +12,7 @@
 }
 
 /* txn overpaid, payment fail, reg not approved */
-/* .status-DTP,
-.status-MRT,
-.status-PFL,
-.status-RNA,
-.status-TOP, */
+.ee-status--warning,
 .ee-status-color--DTP,
 .ee-status-color--MRT,
 .ee-status-color--PFL,
@@ -29,9 +22,7 @@
 }
 
 /* txn abandoned, reg incomplete, dtt sold out */
-/* .status-MRS,
-.status-RIC,
-.status-TAB, */
+.ee-status--attention,
 .ee-status-color--MRS,
 .ee-status-color--RIC,
 .ee-status-color--TAB {
@@ -39,11 +30,7 @@
 }
 
 /* txn complete, payment approved, reg approved, dtt active*/
-/* .status-DTA,
-.status-MSN,
-.status-PAP,
-.status-RAP,
-.status-TCM, */
+.ee-status--success,
 .ee-status-color--DTA,
 .ee-status-color--MSN,
 .ee-status-color--PAP,
@@ -54,11 +41,8 @@
 }
 
 /* txn open, payment pending, reg pending payment, dtt upcoming */
-/* .status-DTU,
-.status-MID,
-.status-PPN,
-.status-RPP,
-.status-TIN, */
+.ee-status--ok,
+.ee-status--info,
 .ee-status-color--DTU,
 .ee-status-color--MID,
 .ee-status-color--PPN,
@@ -68,9 +52,6 @@
 }
 
 /* dtt postponed */
-/* .status-DTS,
-.status-MEX,
-.status-RWL, */
 .ee-status-color--DTS,
 .ee-status-color--MEX,
 .ee-status-color--RWL {
@@ -78,9 +59,6 @@
 }
 
 /* payment cancelled, reg cancelled, dtt expired */
-/* .status-DTE,
-.status-PCN,
-.status-RCN, */
 .ee-status-color--DTE,
 .ee-status-color--PCN,
 .ee-status-color--RCN {
@@ -88,8 +66,6 @@
 }
 
 /* dtt inactive */
-/* .status-DTI,
-.status-MIC, */
 .ee-status-color--DTI,
 .ee-status-color--MIC {
     color: var(--ee-status-color-grey) !important;
@@ -98,7 +74,7 @@
 
 
 /*  txn failed,  payment declined, reg declined, dtt cancelled*/
-.ee-page-status--error,
+.ee-status-bg--error,
 .ee-status-bg--DTC,
 .ee-status-bg--MFL,
 .ee-status-bg--PDC,
@@ -110,6 +86,7 @@
 }
 
 /* txn overpaid, payment fail, reg not approved */
+.ee-status-bg--warning,
 .ee-status-bg--DTP,
 .ee-status-bg--MRT,
 .ee-status-bg--MRT,
@@ -122,13 +99,14 @@
 
 
 /* txn abandoned, reg incomplete, dtt sold out */
+.ee-status-bg--attention,
 .ee-status-bg--MRS,
 .ee-status-bg--RIC,
 .ee-status-bg--TAB {
     background-color: var(--ee-status-color-yellow) !important;
 }
 
-.ee-page-status--ok,
+.ee-status-bg--success,
 .ee-status-bg--DTA,
 .ee-status-bg--MSN,
 .ee-status-bg--PAP,
@@ -140,6 +118,8 @@
 }
 
 /* txn open, payment pending, reg pending payment, dtt upcoming */
+.ee-status-bg--ok,
+.ee-status-bg--info,
 .ee-status-bg--DTU,
 .ee-status-bg--MID,
 .ee-status-bg--PPN,
@@ -171,6 +151,24 @@
     background-color: var(--ee-status-color-grey) !important;
     color: var(--ee-color-white) !important;
 }
+
+.ee-status--outline.ee-status--error {
+    border-color: var(--ee-status-color-red) !important;
+}
+.ee-status--outline.ee-status--warning {
+    border-color: var(--ee-status-color-orange) !important;
+}
+.ee-status--outline.ee-status--attention {
+    border-color: var(--ee-status-color-yellow) !important;
+}
+.ee-status--outline.ee-status--success {
+    border-color: var(--ee-status-color-green) !important;
+}
+.ee-status--outline.ee-status--ok,
+.ee-status--outline.ee-status--info {
+    border-color: var(--ee-status-color-blue) !important;
+}
+
 
 /** LAYOUT */
 
@@ -257,7 +255,7 @@
     outline:   1px solid var(--ee-btn-primary-hover);
 }
 .espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):focus,
-.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not(.button--secondary):not(.ee-filter-tag__close-btn):not(.toggle-row):focus {
+.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not(.button--secondary):not(.ee-filter-tag__close-btn):not(.toggle-row):not(.wp-switch-editor):focus {
     color: var(--ee-btn-primary-focus);
     box-shadow: none;
     outline:   1px solid var(--ee-btn-primary);
@@ -1252,23 +1250,47 @@ label.error {
 /** LIST-TABLE-LEGEND **/
 
 .ee-list-table-legend-wrap {
-    display: flex;
-    flex-flow: row wrap;
     font-size: 1rem;
 }
 
 .ee-list-table-legend {
-    display: flex;
-    flex-flow: column;
-    justify-content: start;
+    display: grid;
+    font-size: 1rem;
+    grid-gap: 1rem;
+    grid-template-columns: 1fr;
     line-height: 1rem;
     margin-block-start: 0;
-    margin-inline-end: 20px;
+}
+
+@media screen and ( min-width: 414px ) {
+    .ee-list-table-legend {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media screen and ( min-width: 800px ) {
+    .ee-list-table-legend {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media screen and ( min-width: 1280px ) {
+    .ee-list-table-legend {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media screen and ( min-width: 1600px ) {
+    .ee-list-table-legend {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+@media screen and ( min-width: 2160px ) {
+    .ee-list-table-legend {
+        grid-template-columns: repeat(6, 1fr);
+    }
 }
 
 .ee-list-table-legend dt {
     align-items: center;
-    display: flex;
+    display: inline-flex;
     flex-flow: row nowrap;
     justify-content: start;
     margin: 0 0 .25rem 0;
@@ -1398,6 +1420,9 @@ label.error {
 .espresso-admin .form-table th,
 .espresso-admin .form-table td p {
     font-size: unset;
+}
+.espresso-admin .form-table td p.description {
+  clear: both;
 }
 
 
@@ -3030,7 +3055,7 @@ body.espresso-admin #contextual-help-wrap strong {
     text-align: start;
     text-decoration: none;
     touch-action: manipulation;
-    transition: all 250ms ease-in-out;
+    transition: all 200ms ease-in-out;
     user-select: none;
     vertical-align: middle;
     white-space: nowrap;
@@ -3051,10 +3076,11 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 
-.espresso-admin.wp-core-ui .button.button--small,
+.espresso-admin.wp-core-ui .button.button-small,
 .espresso-admin.wp-core-ui .button.button--small,
 .espresso-admin.wp-core-ui .submitdelete,
 .espresso-admin.wp-core-ui #edit-slug-box .button,
+.espresso-admin.wp-core-ui #edit-slug-box .button.button-small,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a,
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button.button-small {
     --ee-button-height: 2rem;
@@ -3064,15 +3090,14 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin.wp-core-ui .button.button--icon-only {
     height: var(--ee-button-height);
-    /* padding: var(--ee-button-height-shim); */
     width: var(--ee-button-height);
+    padding: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
 }
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons,
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons:before {
     font-size: calc(var(--ee-button-height-half) + var(--ee-button-height-shim));
     height: calc(var(--ee-button-height-half) + var(--ee-button-height-shim));
     width: calc(var(--ee-button-height-half) + var(--ee-button-height-shim));
-    /* font-size: 20px; */
     margin: 0;
     top: unset;
 }
@@ -3086,60 +3111,96 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button,
 .espresso-admin.wp-core-ui #doaction,
 .espresso-admin.wp-core-ui #search-submit,
+.espresso-admin.wp-core-ui #edit-slug-box .button,
 .espresso-admin.wp-core-ui .pagination-links .button,
 .espresso-admin.wp-core-ui .button.button--secondary,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a,
-.espresso-admin.wp-core-ui #edit-slug-box .button,
-.espresso-admin.wp-core-ui #edit-slug-box .button.button-small,
+.espresso-admin.wp-core-ui .wp-editor-tabs button.wp-switch-editor,
 .espresso-admin.wp-core-ui input[type="submit"]:not(.button-primary),
 .espresso-admin.wp-core-ui input[type="submit"]:not(.button--primary),
 .espresso-admin.wp-core-ui .wp-editor-tools button.insert-media.add_media,
-.espresso-admin.wp-core-ui .quicktags-toolbar input.button.ed_button
+.espresso-admin.wp-core-ui .quicktags-toolbar input.button.ed_button,
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button:not([type="checkbox"]):not([type="radio"]):not([type="submit"]) {
     background-color: var(--ee-btn-secondary);
     border-color: var(--ee-btn-secondary);
 }
 .espresso-admin.wp-core-ui .button:hover,
+.espresso-admin.wp-core-ui #doaction:hover,
+.espresso-admin.wp-core-ui #search-submit:hover,
+.espresso-admin.wp-core-ui #edit-slug-box .button:hover,
 .espresso-admin.wp-core-ui .pagination-links .button:hover,
 .espresso-admin.wp-core-ui .button.button--secondary:hover,
+.espresso-admin.wp-core-ui .mce-toolbar .mce-btn button:hover,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a:hover,
-.espresso-admin.wp-core-ui  #edit-slug-box .button.button-small:hover {
+.espresso-admin.wp-core-ui .wp-editor-tabs button.wp-switch-editor:hover,
+.espresso-admin.wp-core-ui input[type="submit"]:not(.button-primary):hover,
+.espresso-admin.wp-core-ui input[type="submit"]:not(.button--primary):hover,
+.espresso-admin.wp-core-ui .wp-editor-tools button.insert-media.add_media:hover,
+.espresso-admin.wp-core-ui .quicktags-toolbar input.button.ed_button:hover,
+.espresso-admin.wp-core-ui .quicktags-toolbar input.button:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):hover {
     border-color: var(--ee-btn-secondary-hover);
 }
 
 .espresso-admin.wp-core-ui .button:focus,
+.espresso-admin.wp-core-ui #doaction:focus,
+.espresso-admin.wp-core-ui #search-submit:focus,
+.espresso-admin.wp-core-ui #edit-slug-box .button:focus,
 .espresso-admin.wp-core-ui .pagination-links .button:focus,
 .espresso-admin.wp-core-ui .button.button--secondary:focus,
+.espresso-admin.wp-core-ui .mce-toolbar .mce-btn button:focus,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a:focus,
-.espresso-admin.wp-core-ui  #edit-slug-box .button.button-small:focus {
+.espresso-admin.wp-core-ui .wp-editor-tabs button.wp-switch-editor:focus,
+.espresso-admin.wp-core-ui input[type="submit"]:not(.button-primary):focus,
+.espresso-admin.wp-core-ui input[type="submit"]:not(.button--primary):focus,
+.espresso-admin.wp-core-ui .wp-editor-tools button.insert-media.add_media:focus,
+.espresso-admin.wp-core-ui .quicktags-toolbar input.button.ed_button:focus,
+.espresso-admin.wp-core-ui .quicktags-toolbar input.button:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):focus {
     border-color: var(--ee-btn-secondary-focus);
 }
 
 
 
-.espresso-admin.wp-core-ui .button.button--primary,
 .espresso-admin.wp-core-ui .button.button-primary,
+.espresso-admin.wp-core-ui .button.button--primary,
+.espresso-admin.wp-core-ui .publishing-action input[type="submit"],
 .espresso-admin.wp-core-ui input[type="submit"].button.button-primary,
 .espresso-admin.wp-core-ui input[type="submit"].button.button--primary,
-.espresso-admin.wp-core-ui .publishing-action input[type="submit"],
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn-group .mce-btn.mce-active button,
-.espresso-admin.wp-core-ui .mce-toolbar .mce-btn-group .mce-btn:active, .qt-dfw.active button,
+.espresso-admin.wp-core-ui .html-active .wp-editor-tabs button.wp-switch-editor.switch-html,
 .espresso-admin.wp-core-ui .tmce-active .wp-editor-tabs button.wp-switch-editor.switch-tmce,
-.espresso-admin.wp-core-ui .html-active .wp-editor-tabs button.wp-switch-editor.switch-html {
+.espresso-admin.wp-core-ui .mce-toolbar .mce-btn-group .mce-btn:active, .qt-dfw.active button {
     background-color: var(--ee-btn-primary);
     border-color: var(--ee-btn-primary);
     color: var(--ee-color-white);
 }
 
 .espresso-admin.wp-core-ui .button.button-primary:hover,
-.espresso-admin.wp-core-ui input[type="submit"].button.button-primary:hover {
+.espresso-admin.wp-core-ui .button.button--primary:hover,
+.espresso-admin.wp-core-ui .publishing-action input[type="submit"]:hover,
+.espresso-admin.wp-core-ui input[type="submit"].button.button-primary:hover,
+.espresso-admin.wp-core-ui input[type="submit"].button.button--primary:hover,
+.espresso-admin.wp-core-ui .mce-toolbar .mce-btn-group .mce-btn.mce-active button:hover,
+.espresso-admin.wp-core-ui .html-active .wp-editor-tabs button.wp-switch-editor.switch-html:hover,
+.espresso-admin.wp-core-ui .tmce-active .wp-editor-tabs button.wp-switch-editor.switch-tmce:hover,
+.espresso-admin.wp-core-ui .mce-toolbar .mce-btn-group .mce-btn:active, .qt-dfw.active button:hover {
+    background-color: var(--ee-btn-primary-hover);
     border-color: var(--ee-btn-primary-hover);
 }
+.espresso-admin.wp-core-ui .button.button-primary:focus,
 .espresso-admin.wp-core-ui .button.button--primary:focus,
-.espresso-admin.wp-core-ui input[type="submit"].button.button-primary:focus {
+.espresso-admin.wp-core-ui .publishing-action input[type="submit"]:focus,
+.espresso-admin.wp-core-ui input[type="submit"].button.button-primary:focus,
+.espresso-admin.wp-core-ui input[type="submit"].button.button--primary:focus,
+.espresso-admin.wp-core-ui .mce-toolbar .mce-btn-group .mce-btn.mce-active button:focus,
+.espresso-admin.wp-core-ui .html-active .wp-editor-tabs button.wp-switch-editor.switch-html:focus,
+.espresso-admin.wp-core-ui .tmce-active .wp-editor-tabs button.wp-switch-editor.switch-tmce:focus,
+.espresso-admin.wp-core-ui .mce-toolbar .mce-btn-group .mce-btn:active, .qt-dfw.active button:focus {
+    background-color: var(--ee-btn-primary-focus);
     border-color: var(--ee-btn-primary-focus);
 }
+
+
 .espresso-admin.wp-core-ui .button.button--primary-alt {
     background-color: var(--ee-btn-primary-alt);
     border-color: var(--ee-btn-primary-alt);
@@ -3157,20 +3218,16 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button.button--caution {
     background-color: var(--ee-color-white);
     border-color: transparent;
-    /* color: var(--ee-status-color-red); */
-    color: hsl(340, 60%, 55%);
+    color: var(--ee-btn-caution);
 }
 .espresso-admin.wp-core-ui .submitdelete:focus,
 .espresso-admin.wp-core-ui .button.button--caution:focus {
-    /* border-color: var(--ee-status-color-red);
-    color: var(--ee-status-color-red); */
-    border-color: hsl(340, 60%, 55%);
-    color: hsl(340, 60%, 55%);
+    border-color: var(--ee-btn-caution);
+    color: var(--ee-btn-caution);
 }
 .espresso-admin.wp-core-ui .submitdelete:hover,
 .espresso-admin.wp-core-ui .button.button--caution:hover {
-    /* background-color: var(--ee-status-color-red); */
-    background-color: hsl(340, 60%, 55%);
+    background-color: var(--ee-btn-caution);
     color: var(--ee-color-white);
 }
 
@@ -3204,8 +3261,8 @@ body.espresso-admin #contextual-help-wrap strong {
 
 
 .espresso-admin.wp-core-ui .wp-editor-tabs button.wp-switch-editor {
-    background-color: var(--ee-btn-secondary);
-    border-color: var(--ee-btn-secondary);
+    /* background-color: var(--ee-btn-secondary);
+    border-color: var(--ee-btn-secondary); */
     margin: 0;
     margin-inline-start: 1rem;
 }
@@ -3282,7 +3339,7 @@ body.espresso-admin #contextual-help-wrap strong {
     font-family: sans-serif;
     font-size: 1rem;
     overflow: unset !important;
-    vertical-align: middle;
+    vertical-align: baseline;
 }
 
 @media screen and (max-width: 782px) {
@@ -3709,6 +3766,7 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin .ee-admin-container .ee-admin-button-row {
+    align-items: center;
     display: flex;
     flex-flow: row wrap;
     justify-content: flex-end;
