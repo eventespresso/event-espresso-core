@@ -336,6 +336,7 @@
 }
 
 .espresso-admin #post-body .postbox .inside,
+.espresso-admin #post-body #post-body-content > .form-table,
 .espresso-admin #post-body.columns-1 #post-body-content > .padding,
 .espresso-admin #post-body.columns-2 #post-body-content > .padding,
 .espresso-admin #post-body.columns-1 #postbox-container-2 > .padding,
@@ -347,6 +348,12 @@
     padding-block-start: 1rem;
     padding-block-end: 2rem;
     padding-inline: 3rem;
+}
+.espresso-admin #post-body #post-body-content > .form-table {
+    margin-block-start: 1rem;
+    margin-block-end: 2rem;
+    margin-inline: 3rem;
+    width: calc(100% - 6rem);
 }
 
 .espresso-admin #postbox-container-1 .postbox .inside,
@@ -3017,6 +3024,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui #search-submit,
 .espresso-admin.wp-core-ui input[type="submit"],
 .espresso-admin.wp-core-ui .submitdelete,
+.espresso-admin.wp-core-ui .ee-list-table-actions a,
 .espresso-admin.wp-core-ui #edit-slug-box .button,
 .espresso-admin.wp-core-ui .pagination-links .button,
 .espresso-admin.wp-core-ui .button.button--primary,
@@ -3060,6 +3068,7 @@ body.espresso-admin #contextual-help-wrap strong {
     vertical-align: middle;
     white-space: nowrap;
 }
+.espresso-admin.wp-core-ui .ee-list-table-actions a,
 .espresso-admin.wp-core-ui .pagination-links .button,
 .espresso-admin.wp-core-ui .button.button--icon-only,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button,
@@ -3088,11 +3097,13 @@ body.espresso-admin #contextual-help-wrap strong {
     padding-block: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
 }
 
+.espresso-admin.wp-core-ui .ee-list-table-actions a,
 .espresso-admin.wp-core-ui .button.button--icon-only {
     height: var(--ee-button-height);
     width: var(--ee-button-height);
     padding: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
 }
+.espresso-admin.wp-core-ui .ee-list-table-actions a .dashicons,
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons,
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons:before {
     font-size: calc(var(--ee-button-height-half) + var(--ee-button-height-shim));
@@ -3111,6 +3122,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button,
 .espresso-admin.wp-core-ui #doaction,
 .espresso-admin.wp-core-ui #search-submit,
+.espresso-admin.wp-core-ui .ee-list-table-actions a,
 .espresso-admin.wp-core-ui #edit-slug-box .button,
 .espresso-admin.wp-core-ui .pagination-links .button,
 .espresso-admin.wp-core-ui .button.button--secondary,
@@ -3128,6 +3140,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button:hover,
 .espresso-admin.wp-core-ui #doaction:hover,
 .espresso-admin.wp-core-ui #search-submit:hover,
+.espresso-admin.wp-core-ui .ee-list-table-actions a:hover,
 .espresso-admin.wp-core-ui #edit-slug-box .button:hover,
 .espresso-admin.wp-core-ui .pagination-links .button:hover,
 .espresso-admin.wp-core-ui .button.button--secondary:hover,
@@ -3145,6 +3158,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button:focus,
 .espresso-admin.wp-core-ui #doaction:focus,
 .espresso-admin.wp-core-ui #search-submit:focus,
+.espresso-admin.wp-core-ui .ee-list-table-actions a:focus,
 .espresso-admin.wp-core-ui #edit-slug-box .button:focus,
 .espresso-admin.wp-core-ui .pagination-links .button:focus,
 .espresso-admin.wp-core-ui .button.button--secondary:focus,
