@@ -234,7 +234,7 @@ class CurrentPage
                 : [];
         }
         if (empty($post_types) && $this->request->requestParamIsSet('post_type')) {
-            $post_types = $this->request->getRequestParam('post_type', [], 'string', true);
+            $post_types = $this->request->getRequestParam('post_type', [], DataType::STRING, true);
         }
         return (array) $post_types;
     }

@@ -13,8 +13,6 @@ use EventEspresso\core\exceptions\SendMessageException;
  */
 class EE_Messages_Queue
 {
-
-
     /**
      * @type    string  reference for sending action
      */
@@ -61,14 +59,14 @@ class EE_Messages_Queue
      *
      * @type array
      */
-    protected $_did_hook = array();
+    protected $_did_hook = [];
 
 
     /**
      * Constructor.
      * Setup all the initial properties and load a EE_Message_Repository.
      *
-     * @param \EE_Message_Repository $message_repository
+     * @param EE_Message_Repository $message_repository
      */
     public function __construct(EE_Message_Repository $message_repository)
     {
@@ -84,12 +82,12 @@ class EE_Messages_Queue
      * @param array      $data         This will be an array of data to attach to the object in the repository.  If the
      *                                 object is persisted, this data will be saved on an extra_meta object related to
      *                                 EE_Message.
-     * @param  bool      $preview      Whether this EE_Message represents a preview or not.
-     * @param  bool      $test_send    This indicates whether to do a test send instead of actual send. A test send will
+     * @param bool       $preview      Whether this EE_Message represents a preview or not.
+     * @param bool       $test_send    This indicates whether to do a test send instead of actual send. A test send will
      *                                 use the messenger send method but typically is based on preview data.
      * @return bool          Whether the message was successfully added to the repository or not.
      */
-    public function add(EE_Message $message, $data = array(), $preview = false, $test_send = false)
+    public function add(EE_Message $message, $data = [], $preview = false, $test_send = false)
     {
         $data['preview']   = $preview;
         $data['test_send'] = $test_send;
@@ -127,7 +125,7 @@ class EE_Messages_Queue
     /**
      * Persists all queued EE_Message objects to the db.
      *
-     * @param bool $do_hooks_only       @see EE_Message_Repository::saveAll
+     * @param bool $do_hooks_only @see EE_Message_Repository::saveAll
      * @return array @see EE_Messages_Repository::saveAll() for return values.
      */
     public function save($do_hooks_only = false)
@@ -156,22 +154,24 @@ class EE_Messages_Queue
      * removed.
      *
      * @return bool  true if successfully retrieved batch, false no batch ready.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_batch_to_generate()
     {
-        if ($this->is_locked(EE_Messages_Queue::action_generating)) {
+        if ($this->is_locked()) {
             return false;
         }
 
         // lock batch generation to prevent race conditions.
-        $this->lock_queue(EE_Messages_Queue::action_generating);
+        $this->lock_queue();
 
-        $query_args = array(
+        $query_args = [
             // key 0 = where conditions
-            0          => array('STS_ID' => EEM_Message::status_incomplete),
+            0          => ['STS_ID' => EEM_Message::status_incomplete],
             'order_by' => $this->_get_priority_orderby(),
             'limit'    => $this->_batch_count,
-        );
+        ];
         $messages   = EEM_Message::instance()->get_all($query_args);
 
         if (! $messages) {
@@ -204,6 +204,8 @@ class EE_Messages_Queue
      *               successfully completed. On true, client may want to call $this->count_STS_in_queue(
      *               EEM_Message::status_failed ) to see if any failed EE_Message objects.  Each failed message object
      *               will also have a saved error message on it to assist with notifying user.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_to_send_batch_and_send()
     {
@@ -219,12 +221,12 @@ class EE_Messages_Queue
 
         $batch = $this->_batch_count < $rate_limit ? $this->_batch_count : $rate_limit;
 
-        $query_args = array(
+        $query_args = [
             // key 0 = where conditions
-            0          => array('STS_ID' => array('IN', EEM_Message::instance()->stati_indicating_to_send())),
+            0          => ['STS_ID' => ['IN', EEM_Message::instance()->stati_indicating_to_send()]],
             'order_by' => $this->_get_priority_orderby(),
             'limit'    => $batch,
-        );
+        ];
 
         $messages_to_send = EEM_Message::instance()->get_all($query_args);
 
@@ -259,7 +261,7 @@ class EE_Messages_Queue
     /**
      * Locks the queue so that no other queues can call the "batch" methods.
      *
-     * @param   string $type The type of queue being locked.
+     * @param string $type The type of queue being locked.
      */
     public function lock_queue($type = EE_Messages_Queue::action_generating)
     {
@@ -270,7 +272,7 @@ class EE_Messages_Queue
     /**
      * Unlocks the queue so that batch methods can be used.
      *
-     * @param   string $type The type of queue being unlocked.
+     * @param string $type The type of queue being unlocked.
      */
     public function unlock_queue($type = EE_Messages_Queue::action_generating)
     {
@@ -342,10 +344,10 @@ class EE_Messages_Queue
      */
     protected function _get_priority_orderby()
     {
-        return array(
+        return [
             'MSG_priority' => 'ASC',
             'MSG_modified' => 'DESC',
-        );
+        ];
     }
 
 
@@ -353,7 +355,7 @@ class EE_Messages_Queue
      * Returns whether batch methods are "locked" or not, and if models an currently be used to query the database.
      * Return true when batch methods should not be used; returns false when they can be.
      *
-     * @param  string $type The type of lock being checked for.
+     * @param string $type The type of lock being checked for.
      * @return bool
      */
     public function is_locked($type = EE_Messages_Queue::action_generating)
@@ -394,23 +396,23 @@ class EE_Messages_Queue
      * Retrieves the rate limit that may be cached as a transient.
      * If the rate limit is not set, then this sets the default rate limit and expiry and returns it.
      *
-     * @param bool $return_expiry  If true then return the expiry time not the rate_limit.
+     * @param bool $return_expiry If true then return the expiry time not the rate_limit.
      * @return int
      */
     protected function get_rate_limit($return_expiry = false)
     {
-        $stored_rate_info = get_option($this->_get_rate_limit_key(), array());
-        $rate_limit = isset($stored_rate_info[0])
+        $stored_rate_info = get_option($this->_get_rate_limit_key(), []);
+        $rate_limit       = isset($stored_rate_info[0])
             ? (int) $stored_rate_info[0]
             : 0;
-        $expiry = isset($stored_rate_info[1])
+        $expiry           = isset($stored_rate_info[1])
             ? (int) $stored_rate_info[1]
             : 0;
         // set the default for tracking?
         if (empty($stored_rate_info) || time() > $expiry) {
-            $expiry = $this->_get_rate_limit_expiry();
+            $expiry     = $this->_get_rate_limit_expiry();
             $rate_limit = $this->_default_rate_limit();
-            update_option($this->_get_rate_limit_key(), array($rate_limit, $expiry));
+            update_option($this->_get_rate_limit_key(), [$rate_limit, $expiry]);
         }
         return $return_expiry ? $expiry : $rate_limit;
     }
@@ -425,11 +427,11 @@ class EE_Messages_Queue
     {
         // first get the most up to date rate limit (in case its expired and reset)
         $rate_limit = $this->get_rate_limit();
-        $expiry = $this->get_rate_limit(true);
+        $expiry     = $this->get_rate_limit(true);
         $new_limit  = $rate_limit - $batch_completed;
         // updating the transient option directly to avoid resetting the expiry.
 
-        update_option($this->_get_rate_limit_key(), array($new_limit, $expiry));
+        update_option($this->_get_rate_limit_key(), [$new_limit, $expiry]);
     }
 
 
@@ -441,6 +443,9 @@ class EE_Messages_Queue
      *
      * @param string $task     This indicates what type of request is going to be initiated.
      * @param int    $priority This indicates the priority that triggers initiating the request.
+     * @return bool|EE_Messages_Queue|void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initiate_request_by_priority($task = 'generate', $priority = EEM_Message::priority_high)
     {
@@ -482,9 +487,9 @@ class EE_Messages_Queue
     /**
      *  Loops through the EE_Message objects in the _queue and calls the messenger send methods for each message.
      *
-     * @param   bool     $save                    Used to indicate whether to save the message queue after sending
+     * @param bool     $save                      Used to indicate whether to save the message queue after sending
      *                                            (default will save).
-     * @param   mixed    $sending_messenger       (optional) When the sending messenger is different than
+     * @param mixed    $sending_messenger         (optional) When the sending messenger is different than
      *                                            what is on the EE_Message object in the queue.
      *                                            For instance, showing the browser view of an email message,
      *                                            or giving a pdf generated view of an html document.
@@ -493,22 +498,24 @@ class EE_Messages_Queue
      *                                            intending it to be a sending messenger but a valid one could not be
      *                                            retrieved then send in an instance of EE_Error that contains the
      *                                            related error message.
-     * @param   bool|int $by_priority             When set, this indicates that only messages
+     * @param bool|int $by_priority               When set, this indicates that only messages
      *                                            matching the given priority should be executed.
      * @return int        Number of messages sent.  Note, 0 does not mean that no messages were processed.
      *                                            Also, if the messenger is an request type messenger (or a preview),
      *                                            its entirely possible that the messenger will exit before
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function execute($save = true, $sending_messenger = null, $by_priority = false)
     {
         $messages_sent   = 0;
-        $this->_did_hook = array();
+        $this->_did_hook = [];
         $this->_message_repository->rewind();
 
         while ($this->_message_repository->valid()) {
-            $error_messages = array();
-            /** @type EE_Message $message */
-            $message = $this->_message_repository->current();
+            $error_messages = [];
+            $message        = $this->_message_repository->current();
+
             // only process things that are queued for sending
             if (! in_array($message->STS_ID(), EEM_Message::instance()->stati_indicating_to_send())) {
                 $this->_message_repository->next();
@@ -614,7 +621,7 @@ class EE_Messages_Queue
     public function count_STS_in_queue($status)
     {
         $count  = 0;
-        $status = is_array($status) ? $status : array($status);
+        $status = is_array($status) ? $status : [$status];
         $this->_message_repository->rewind();
         foreach ($this->_message_repository as $message) {
             if (in_array($message->STS_ID(), $status)) {
@@ -688,6 +695,7 @@ class EE_Messages_Queue
      *
      * @param EE_Message $message
      * @param array      $error_messages the response from the messenger.
+     * @throws EE_Error
      */
     protected function _set_error_message(EE_Message $message, $error_messages)
     {
@@ -700,7 +708,7 @@ class EE_Messages_Queue
             );
             if ($notices === 1) {
                 $notices           = EE_Error::get_vanilla_notices();
-                $notices['errors'] = isset($notices['errors']) ? $notices['errors'] : array();
+                $notices['errors'] = isset($notices['errors']) ? $notices['errors'] : [];
                 $error_messages[]  = implode("\n", $notices['errors']);
             }
         }

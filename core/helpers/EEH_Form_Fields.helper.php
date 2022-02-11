@@ -55,11 +55,11 @@ class EEH_Form_Fields
      *                          'append_content' => '' //this allows you to send in html content to append to the
      *                          field.
      *                          )
-     * @param array $id         - used for defining unique identifiers for the form.
+     * @param array $form_id    - used for defining unique identifiers for the form.
      * @return string
      * @todo   : at some point we can break this down into other static methods to abstract it a bit better.
      */
-    public static function get_form_fields($input_vars = [], $id = false)
+    public static function get_form_fields($input_vars = [], $form_id = false)
     {
 
         if (empty($input_vars)) {
@@ -110,7 +110,7 @@ class EEH_Form_Fields
             $type           = $input_value['input'];
             $value          = $input_value['value'];
 
-            $id    = $id ? $id . '-' . $input_key : $input_key;
+            $id    = $form_id ? $form_id . '-' . $input_key : $input_key;
             $class = $required ? 'required ' . $css_class : $css_class;
 
             // what type of input are we dealing with ?

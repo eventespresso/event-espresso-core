@@ -1040,7 +1040,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $args['admin_page_object'] = $this;
             }
             if (
-// is it a method on a class that doesn't work?
+                // is it a method on a class that doesn't work?
                 (
                     (
                         method_exists($class, $method)
@@ -1748,7 +1748,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     )
                 );
             }
-            // we're good so let'd setup the template vars and then assign parsed template content to our content.
+            // we're good so let's setup the template vars and then assign parsed template content to our content.
             $template_args = [
                 'help_popup_id'      => $trigger,
                 'help_popup_title'   => $help['title'],
@@ -1825,7 +1825,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     'event_espresso'
                 ),
             ];
-            $help_content              = $this->_set_help_popup_content($help_array, false);
+            $help_content              = $this->_set_help_popup_content($help_array);
         }
         // let's setup the trigger
         $content = '<a class="ee-dialog" href="?height='
@@ -1990,8 +1990,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             'google-charts',
             'https://www.gstatic.com/charts/loader.js',
             [],
-            EVENT_ESPRESSO_VERSION,
-            false
+            EVENT_ESPRESSO_VERSION
         );
         // ENQUEUE ALL BASICS BY DEFAULT
         wp_enqueue_style('ee-admin-css');
@@ -2767,7 +2766,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * facade for add_meta_box
      *
-     * @param string  $action        where the metabox get's displayed
+     * @param string  $action        where the metabox gets displayed
      * @param string  $title         Title of Metabox (output in metabox header)
      * @param string  $callback      If not empty and $create_fun is set to false then we'll use a custom callback
      *                               instead of the one created in here.
@@ -3239,12 +3238,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_nav_tabs                                   = $this->_get_main_nav_tabs();
         $this->_template_args['nav_tabs']                  = $this->_nav_tabs;
         $this->_template_args['admin_page_title']          = $this->_admin_page_title;
+
         $this->_template_args['before_admin_page_content'] = apply_filters(
             "FHEE_before_admin_page_content{$this->_current_page}{$this->_current_view}",
             isset($this->_template_args['before_admin_page_content'])
                 ? $this->_template_args['before_admin_page_content']
                 : ''
         );
+
         $this->_template_args['after_admin_page_content']  = apply_filters(
             "FHEE_after_admin_page_content{$this->_current_page}{$this->_current_view}",
             isset($this->_template_args['after_admin_page_content'])
@@ -3252,24 +3253,22 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 : ''
         );
         $this->_template_args['after_admin_page_content']  .= $this->_set_help_popup_content();
-        // load settings page wrapper template
-        $template_path = ! $this->request->isAjax()
-            ? EE_ADMIN_TEMPLATE . 'admin_wrapper.template.php'
-            : EE_ADMIN_TEMPLATE . 'admin_wrapper_ajax.template.php';
-        // about page?
-        $template_path = $about
-            ? EE_ADMIN_TEMPLATE . 'about_admin_wrapper.template.php'
-            : $template_path;
+
         if ($this->request->isAjax()) {
             $this->_template_args['admin_page_content'] = EEH_Template::display_template(
-                $template_path,
+                // $template_path,
+                EE_ADMIN_TEMPLATE . 'admin_wrapper_ajax.template.php',
                 $this->_template_args,
                 true
             );
             $this->_return_json();
-        } else {
-            EEH_Template::display_template($template_path, $this->_template_args);
         }
+        // load settings page wrapper template
+        $template_path = $about
+            ? EE_ADMIN_TEMPLATE . 'about_admin_wrapper.template.php'
+            : EE_ADMIN_TEMPLATE . 'admin_wrapper.template.php';
+
+        EEH_Template::display_template($template_path, $this->_template_args);
     }
 
 
@@ -3342,13 +3341,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // make sure $text and $actions are in an array
         $text          = (array) $text;
         $actions       = (array) $actions;
-        $referrer_url  = empty($referrer)
-            ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="'
-              . $this->request->getServerParam('REQUEST_URI')
-              . '" />'
-            : '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="'
-              . $referrer
-              . '" />';
+        $referrer_url  = ! empty($referrer) ? $referrer : $this->request->getServerParam('REQUEST_URI');
         $button_text   = ! empty($text)
             ? $text
             : [
@@ -3356,23 +3349,22 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 esc_html__('Save and Close', 'event_espresso'),
             ];
         $default_names = ['save', 'save_and_close'];
-        // add in a hidden index for the current page (so save and close redirects properly)
-        $this->_template_args['save_buttons'] = $referrer_url;
+        $buttons = '';
         foreach ($button_text as $key => $button) {
-            $ref                                  = $default_names[ $key ];
-            $this->_template_args['save_buttons'] .= '<input type="submit" class="button-primary '
-                                                     . $ref
-                                                     . '" value="'
-                                                     . $button
-                                                     . '" name="'
-                                                     . (! empty($actions) ? $actions[ $key ] : $ref)
-                                                     . '" id="'
-                                                     . $this->_current_view . '_' . $ref
-                                                     . '" />';
+            $ref     = $default_names[ $key ];
+            $name    = ! empty($actions) ? $actions[ $key ] : $ref;
+            $buttons .= '<input type="submit" class="button-primary ' . $ref . '" '
+                        . 'value="' . $button . '" name="' . $name . '" '
+                        . 'id="' . $this->_current_view . '_' . $ref . '" />';
             if (! $both) {
                 break;
             }
         }
+        // add in a hidden index for the current page (so save and close redirects properly)
+        $buttons .= '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="'
+                   . $referrer_url
+                   . '" />';
+        $this->_template_args['save_buttons'] = $buttons;
     }
 
 
@@ -3433,7 +3425,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // generate form fields
         $form_fields = $this->_generate_admin_form_fields($hidden_fields, 'array');
         // add fields to form
-        foreach ((array) $form_fields as $field_name => $form_field) {
+        foreach ((array) $form_fields as $form_field) {
             $this->_template_args['before_admin_page_content'] .= "\n\t" . $form_field['field'];
         }
         // close form
@@ -4097,7 +4089,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             update_option('ee_ueip_has_notified', true);
         }
         // and save it (note we're also doing the network save here)
-        $net_saved    = is_main_site() ? EE_Network_Config::instance()->update_config(false, false) : true;
+        $net_saved    = ! is_main_site() || EE_Network_Config::instance()->update_config(false, false);
         $config_saved = EE_Config::instance()->update_espresso_config(false, false);
         if ($config_saved && $net_saved) {
             EE_Error::add_success(sprintf(esc_html__('"%s" have been successfully updated.', 'event_espresso'), $tab));

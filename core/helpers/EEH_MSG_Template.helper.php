@@ -69,29 +69,31 @@ class EEH_MSG_Template
 
         EEH_MSG_Template::_set_autoloader();
         foreach ($message_types as $message_type) {
-            // if global then let's attempt to get the GRP_ID for this combo IF GRP_ID is empty.
-            if ($global && empty($GRP_ID)) {
-                $GRP_ID = EEM_Message_Template_Group::instance()->get_one(
-                    array(
-                        array(
-                            'MTP_messenger'    => $messenger,
-                            'MTP_message_type' => $message_type,
-                            'MTP_is_global'    => true,
-                        ),
-                    )
-                );
-                $GRP_ID = $GRP_ID instanceof EE_Message_Template_Group ? $GRP_ID->ID() : 0;
-            }
             // if this is global template generation.
-            // First let's determine if we already HAVE global templates for this messenger and message_type combination.
-            //  If we do then NO generation!!
-            if ($global && EEH_MSG_Template::already_generated($messenger, $message_type, $GRP_ID)) {
-                $templates[] = array(
-                    'GRP_ID' => $GRP_ID,
-                    'MTP_context' => '',
-                );
-                // we already have generated templates for this so let's go to the next message type.
-                continue;
+            if ($global) {
+                // let's attempt to get the GRP_ID for this combo IF GRP_ID is empty.
+                if (empty($GRP_ID)) {
+                    $GRP_ID = EEM_Message_Template_Group::instance()->get_one(
+                        array(
+                            array(
+                                'MTP_messenger'    => $messenger,
+                                'MTP_message_type' => $message_type,
+                                'MTP_is_global'    => true,
+                            ),
+                        )
+                    );
+                    $GRP_ID = $GRP_ID instanceof EE_Message_Template_Group ? $GRP_ID->ID() : 0;
+                }
+                // First let's determine if we already HAVE global templates for this messenger and message_type combination.
+                //  If we do then NO generation!!
+                if (EEH_MSG_Template::already_generated($messenger, $message_type, $GRP_ID)) {
+                    $templates[] = array(
+                        'GRP_ID' => $GRP_ID,
+                        'MTP_context' => '',
+                    );
+                    // we already have generated templates for this so let's go to the next message type.
+                    continue;
+                }
             }
             $new_message_template_group = EEH_MSG_Template::create_new_templates($messenger, $message_type, $GRP_ID, $global);
 

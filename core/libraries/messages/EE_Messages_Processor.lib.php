@@ -32,8 +32,6 @@ class EE_Messages_Processor
     protected $_generator;
 
 
-
-
     /**
      * constructor
      *
@@ -46,8 +44,6 @@ class EE_Messages_Processor
     }
 
 
-
-
     /**
      * This method sets (or resets) the various properties for use.
      *
@@ -57,14 +53,13 @@ class EE_Messages_Processor
     protected function _init_queue_and_generator()
     {
         $this->_generator = EE_Registry::factory('EE_Messages_Generator');
-        $this->_queue = $this->_generator->generation_queue();
+        $this->_queue     = $this->_generator->generation_queue();
     }
-
-
 
 
     /**
      * This returns the current set queue.
+     *
      * @return EE_Messages_Queue
      */
     public function get_queue()
@@ -81,13 +76,13 @@ class EE_Messages_Processor
      * @param EE_Messages_Queue $queue_to_process
      * @return bool  true for success false for error.
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function process_immediately_from_queue(EE_Messages_Queue $queue_to_process)
     {
-        $success = false;
-        $messages_to_send = array();
-        $messages_to_generate = array();
+        $success              = false;
+        $messages_to_send     = [];
+        $messages_to_generate = [];
         // loop through and setup the various messages from the queue so we know what is being processed
         $queue_to_process->get_message_repository()->rewind();
         foreach ($queue_to_process->get_message_repository() as $message) {
@@ -98,7 +93,6 @@ class EE_Messages_Processor
 
             if (in_array($message->STS_ID(), EEM_Message::instance()->stati_indicating_to_send())) {
                 $messages_to_send[] = $message;
-                continue;
             }
         }
 
@@ -122,13 +116,15 @@ class EE_Messages_Processor
     /**
      * Calls the EE_Messages_Queue::get_batch_to_generate() method and sends to EE_Messages_Generator.
      *
-     * @param  EE_Message[] $messages    Array of EE_Message objects (optional) to build the queue with.
-     * @param  bool         $clear_queue Whether to ensure a fresh queue or not.
+     * @param EE_Message[] $messages    Array of EE_Message objects (optional) to build the queue with.
+     * @param bool         $clear_queue Whether to ensure a fresh queue or not.
      *
      * @return bool|EE_Messages_Queue return false if nothing generated.  This returns a new EE_Message_Queue with
      *                                   generated messages.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function batch_generate_from_queue($messages = array(), $clear_queue = false)
+    public function batch_generate_from_queue($messages = [], $clear_queue = false)
     {
         if ($this->_build_queue_for_generation($messages, $clear_queue)) {
             $new_queue = $this->_generator->generate();
@@ -144,19 +140,20 @@ class EE_Messages_Processor
     }
 
 
-
     /**
      * This method preps a queue for generation.
      *
-     * @since    4.9.0
-     *
      * @param EE_Message[] $messages    Array of EE_Message objects to build the queue with
      *
-     * @param   bool       $clear_queue This indicates whether the existing queue should be dumped or not.
+     * @param bool         $clear_queue This indicates whether the existing queue should be dumped or not.
      *
      * @return bool true means queue prepped, false means there was a lock so no generation please.
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since    4.9.0
+     *
      */
-    protected function _build_queue_for_generation($messages = array(), $clear_queue = false)
+    protected function _build_queue_for_generation($messages = [], $clear_queue = false)
     {
 
         if ($clear_queue) {
@@ -170,7 +167,7 @@ class EE_Messages_Processor
             }
 
             $this->_queue->lock_queue();
-            $messages = is_array($messages) ? $messages : array( $messages );
+            $messages = is_array($messages) ? $messages : [$messages];
             foreach ($messages as $message) {
                 if ($message instanceof EE_Message) {
                     $data = $message->all_extra_meta_array();
@@ -188,7 +185,7 @@ class EE_Messages_Processor
      * This method preps a queue for sending.
      *
      * @param EE_Message[] $messages
-     * @param bool  $clear_queue Used to indicate whether to start with a fresh queue or not.
+     * @param bool         $clear_queue Used to indicate whether to start with a fresh queue or not.
      *
      * @return bool true means queue prepped, false means there was a lock so no queue prepped.
      */
@@ -205,7 +202,7 @@ class EE_Messages_Processor
             $this->_init_queue_and_generator();
         }
 
-        $messages = is_array($messages) ? $messages : array( $messages );
+        $messages = is_array($messages) ? $messages : [$messages];
 
         foreach ($messages as $message) {
             $this->_queue->add($message);
@@ -215,16 +212,18 @@ class EE_Messages_Processor
 
 
     /**
-     * Calls the EE_Message_Queue::get_to_send_batch_and_send() method and then immediately just calls EE_Message_Queue::execute()
-     * to iterate and send unsent messages.
+     * Calls the EE_Message_Queue::get_to_send_batch_and_send() method and then immediately just calls
+     * EE_Message_Queue::execute() to iterate and send unsent messages.
      *
      * @param EE_Message[] $messages    If an array of messages is sent in then use it.
      *
      * @param bool         $clear_queue Whether to initialize a new queue or keep the existing one.
      *
      * @return EE_Messages_Queue
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function batch_send_from_queue($messages = array(), $clear_queue = false)
+    public function batch_send_from_queue($messages = [], $clear_queue = false)
     {
 
         if ($messages && $this->_build_queue_for_sending($messages, $clear_queue)) {
@@ -240,10 +239,6 @@ class EE_Messages_Processor
     }
 
 
-
-
-
-
     /**
      * This immediately generates messages using the given array of EE_Message_To_Generate objects and returns the
      * EE_Message_Queue with the generated messages for the caller to work with.  Note, this does NOT save the generated
@@ -251,6 +246,8 @@ class EE_Messages_Processor
      *
      * @param EE_Message_To_Generate[] $messages_to_generate
      * @return EE_Messages_Queue
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_and_return($messages_to_generate)
     {
@@ -260,12 +257,14 @@ class EE_Messages_Processor
     }
 
 
-
-
     /**
      * Executes the generator generate method on the current internal queue, and returns the generated queue.
-     * @param  bool     $persist    Indicate whether to instruct the generator to persist the generated queue (true) or not (false).
+     *
+     * @param bool $persist Indicate whether to instruct the generator to persist the generated queue (true) or not
+     *                      (false).
      * @return EE_Messages_Queue
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_queue($persist = true)
     {
@@ -273,31 +272,30 @@ class EE_Messages_Processor
     }
 
 
-
-
     /**
-     * Queue for generation.  Note this does NOT persist to the db.  Client code should call get_message_repository()->save() if desire
-     * to persist.  This method is provided to client code to decide what it wants to do with queued messages for generation.
+     * Queue for generation.  Note this does NOT persist to the db.  Client code should call
+     * get_message_repository()->save() if desire to persist.  This method is provided to client code to decide what it
+     * wants to do with queued messages for generation.
+     *
      * @param EE_Message_To_Generate $message_to_generate
-     * @param bool                   $test_send             Whether this item is for a test send or not.
-     * @return  EE_Messages_Queue
+     * @param bool                   $test_send Whether this item is for a test send or not.
+     * @return void
      */
     public function queue_for_generation(EE_Message_To_Generate $message_to_generate, $test_send = false)
     {
         if ($message_to_generate->valid()) {
-            $this->_generator->create_and_add_message_to_queue($message_to_generate, $test_send);
+            if (! $this->_generator->create_and_add_message_to_queue($message_to_generate, $test_send)) {
+                throw new RuntimeException(
+                    esc_html__('Message failed to generate', 'event_espresso')
+                );
+            }
         }
     }
 
 
-
-
-
-
-
     /**
-     * This receives an array of EE_Message_To_Generate objects, converts them to EE_Message adds them to the generation queue
-     * and then persists to storage.
+     * This receives an array of EE_Message_To_Generate objects, converts them to EE_Message adds them to the
+     * generation queue and then persists to storage.
      *
      * @param EE_Message_To_Generate[] $messages_to_generate
      */
@@ -309,24 +307,18 @@ class EE_Messages_Processor
     }
 
 
-
-
-
-
     /**
-     * This receives an array of EE_Message_To_Generate objects, converts them to EE_Message and adds them to the generation
-     * queue.  Does NOT persist to storage (unless there is an error.
-     * Client code can retrieve the generated queue by calling EEM_Messages_Processor::get_queue()
+     * This receives an array of EE_Message_To_Generate objects, converts them to EE_Message and adds them to the
+     * generation queue.  Does NOT persist to storage (unless there is an error. Client code can retrieve the generated
+     * queue by calling EEM_Messages_Processor::get_queue()
      *
-     * @param EE_Message_To_Generate[]  $messages_to_generate
+     * @param EE_Message_To_Generate[] $messages_to_generate
      */
     public function batch_queue_for_generation_no_persist($messages_to_generate)
     {
         $this->_init_queue_and_generator();
         $this->_queue_for_generation_loop($messages_to_generate);
     }
-
-
 
 
     /**
@@ -339,7 +331,7 @@ class EE_Messages_Processor
     {
         // make sure is in an array.
         if (! is_array($messages_to_generate)) {
-            $messages_to_generate = array( $messages_to_generate );
+            $messages_to_generate = [$messages_to_generate];
         }
 
         foreach ($messages_to_generate as $message_to_generate) {
@@ -350,32 +342,31 @@ class EE_Messages_Processor
     }
 
 
-
-
-
     /**
      * Receives an array of EE_Message_To_Generate objects and generates the EE_Message objects, then persists (so its
      * queued for sending).
-     * @param  EE_Message_To_Generate[]
+     *
+     * @param EE_Message_To_Generate[]
      * @return EE_Messages_Queue
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_and_queue_for_sending($messages_to_generate)
     {
         $this->_init_queue_and_generator();
         $this->_queue_for_generation_loop($messages_to_generate);
-        return $this->_generator->generate(true);
+        return $this->_generator->generate();
     }
-
-
-
 
 
     /**
      * Generate for preview and execute right away.
      *
-     * @param   EE_Message_To_Generate $message_to_generate
-     * @param   bool                   $test_send                Whether this is a test send or not.
+     * @param EE_Message_To_Generate $message_to_generate
+     * @param bool                   $test_send Whether this is a test send or not.
      * @return  EE_Messages_Queue | bool   false if unable to generate otherwise the generated queue.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_for_preview(EE_Message_To_Generate $message_to_generate, $test_send = false)
     {
@@ -396,13 +387,11 @@ class EE_Messages_Processor
         if ($generated_queue->execute(false)) {
             // the first queue item should be the preview
             $generated_queue->get_message_repository()->rewind();
-            if (! $generated_queue->get_message_repository()->valid()) {
+            if ($generated_queue->get_message_repository()->valid()) {
                 return $generated_queue;
             }
-            return $generated_queue;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -414,7 +403,7 @@ class EE_Messages_Processor
      * @param EE_Message_To_Generate $message_to_generate
      * @return bool true or false for success.
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function queue_for_sending(EE_Message_To_Generate $message_to_generate)
     {
@@ -435,8 +424,11 @@ class EE_Messages_Processor
 
     /**
      * This generates and sends from the given EE_Message_To_Generate class immediately.
+     *
      * @param EE_Message_To_Generate $message_to_generate
      * @return EE_Messages_Queue | null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_and_send_now(EE_Message_To_Generate $message_to_generate)
     {
@@ -466,7 +458,7 @@ class EE_Messages_Processor
             $this->_queue->execute(false, $sending_messenger);
             return $this->_queue;
         } elseif ($message_to_generate->get_EE_Message()->STS_ID() === EEM_Message::status_incomplete) {
-            $generated_queue = $this->generate_and_return(array( $message_to_generate ));
+            $generated_queue = $this->generate_and_return([$message_to_generate]);
             $generated_queue->execute(false, $sending_messenger);
             return $generated_queue;
         }
@@ -474,15 +466,16 @@ class EE_Messages_Processor
     }
 
 
-
-
     /**
      * Creates mtg objects for all active messengers and queues for generation.
-     * This method also calls the execute by priority method on the queue which will optionally kick off a new non-blocking
-     * request to complete the action if the priority for the message requires immediate action.
+     * This method also calls the execute by priority method on the queue which will optionally kick off a new
+     * non-blocking request to complete the action if the priority for the message requires immediate action.
+     *
      * @param string $message_type
-     * @param mixed  $data   The data being used for generation.
-     * @param bool   $persist   Whether to persist the queued messages to the db or not.
+     * @param mixed  $data    The data being used for generation.
+     * @param bool   $persist Whether to persist the queued messages to the db or not.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_for_all_active_messengers($message_type, $data, $persist = true)
     {
@@ -496,11 +489,10 @@ class EE_Messages_Processor
     }
 
 
-
-
     /**
      * This simply loops through all active messengers and takes care of setting up the
      * EE_Message_To_Generate objects.
+     *
      * @param $message_type
      * @param $data
      *
@@ -508,7 +500,7 @@ class EE_Messages_Processor
      */
     public function setup_mtgs_for_all_active_messengers($message_type, $data)
     {
-        $messages_to_generate = array();
+        $messages_to_generate = [];
         foreach ($this->_message_resource_manager->active_messengers() as $messenger_slug => $messenger_object) {
             $message_to_generate = new EE_Message_To_Generate($messenger_slug, $message_type, $data);
             if ($message_to_generate->valid()) {
@@ -520,28 +512,30 @@ class EE_Messages_Processor
 
 
     /**
-     * This accepts an array of EE_Message::MSG_ID values and will use that to retrieve the objects from the database
-     * and send.
+     * This accepts an array of EE_Message::MSG_ID values
+     * and will use that to retrieve the objects from the database and send.
      *
      * @param array $message_ids
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function setup_messages_from_ids_and_send($message_ids)
     {
         $this->_init_queue_and_generator();
-        $messages = EEM_Message::instance()->get_all(array(
-            array(
-                'MSG_ID' => array( 'IN', $message_ids ),
-                'STS_ID' => array(
-                    'IN',
-                    array_merge(
-                        EEM_Message::instance()->stati_indicating_sent(),
-                        array( EEM_Message::status_retry )
-                    ),
-                ),
-            ),
-        ));
+        $messages = EEM_Message::instance()->get_all(
+            [
+                 [
+                     'MSG_ID' => ['IN', $message_ids],
+                     'STS_ID' => [
+                         'IN',
+                         array_merge(
+                             EEM_Message::instance()->stati_indicating_sent(),
+                             [EEM_Message::status_retry]
+                         ),
+                     ],
+                 ],
+             ]
+        );
         // set the Messages to resend.
         foreach ($messages as $message) {
             if ($message instanceof EE_Message) {
@@ -567,27 +561,40 @@ class EE_Messages_Processor
     public function setup_messages_to_generate_from_registration_ids_in_request($registration_ids_key = '_REG_ID')
     {
         /** @var RequestInterface $request */
-        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-        $regs_to_send = array();
-        $regIDs = $request->getRequestParam($registration_ids_key, [], 'int', true);
+        $request      = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $regs_to_send = [];
+        $regIDs       = $request->getRequestParam($registration_ids_key, [], 'int', true);
         if (empty($regIDs)) {
-            EE_Error::add_error(esc_html__('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(
+                esc_html__('Something went wrong because we\'re missing the registration ID', 'event_espresso'),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
             return false;
         }
 
         // make sure is an array
-        $regIDs = is_array($regIDs) ? $regIDs : array( $regIDs );
+        $regIDs = is_array($regIDs) ? $regIDs : [$regIDs];
 
         foreach ($regIDs as $regID) {
             $reg = EEM_Registration::instance()->get_one_by_ID($regID);
             if (! $reg instanceof EE_Registration) {
-                EE_Error::add_error(sprintf(esc_html__('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $regID));
+                EE_Error::add_error(
+                    sprintf(
+                        esc_html__(
+                            'Unable to retrieve a registration object for the given reg id (%s)',
+                            'event_espresso'
+                        ),
+                        $regID
+                    )
+                );
                 return false;
             }
             $regs_to_send[ $reg->transaction_ID() ][ $reg->status_ID() ][] = $reg;
         }
 
-        $messages_to_generate = array();
+        $messages_to_generate = [];
 
         foreach ($regs_to_send as $status_group) {
             foreach ($status_group as $status_id => $registrations) {
@@ -599,7 +606,7 @@ class EE_Messages_Processor
                     $messages_to_generate,
                     $this->setup_mtgs_for_all_active_messengers(
                         $message_type,
-                        array( $registrations, $status_id )
+                        [$registrations, $status_id]
                     )
                 );
             }

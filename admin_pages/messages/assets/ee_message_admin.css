@@ -218,15 +218,42 @@
 }
 
 
-.ee-messages-shortcodes-chooser {
+.ee-messages-shortcodes-chooser-wrap {
     float:right;
-    margin-top: 0px;
-    font-size: 1.4em;
-    cursor: pointer;
+    position: relative;
 }
 
-h4 + .ee-messages-shortcodes-chooser {
-    padding-top: 10px;
+.wp-core-ui .button.ee-messages-shortcodes-chooser {
+    align-items: center;
+    display: inline-flex;
+    height: 30px;
+    justify-content: center;
+    padding: 0;
+    width: 30px;
+}
+.wp-core-ui .button.ee-messages-shortcodes-chooser .dashicons {
+    margin: 0;
+    top: unset;
+}
+
+.ee-messages-shortcodes-close-btn {
+    border: none !important;
+    background: none !important;
+    color: hsla(207, 5%, 10%, .5);
+    cursor: pointer;
+    font-size: 1.5rem;
+    position: absolute;
+    inset-block-start: 0.25rem;
+    inset-inline-end: 0;
+    transition: all 150ms;
+}
+.ee-messages-shortcodes-close-btn:hover {
+    color: hsla(207, 5%, 10%, 1);
+}
+
+
+h4 + .ee-messages-shortcodes-chooser-wrap {
+    top: 8px;
 }
 
 .ee-shortcode-chooser-open {
@@ -236,18 +263,72 @@ h4 + .ee-messages-shortcodes-chooser {
 
 .ee_shortcode_chooser_container {
     background-color: white;
-    font-size: .7em;
-    text-align:left;
-    z-index: 4000;
-    height: 200px;
-    width: 250px;
+    border: 2px hsl(207, 68%, 41%) solid;
+    border-radius: .25rem;
+    box-shadow: 0 6px 6px -4px hsla(207, 5%, 10%, .8), 0 0 16px -2px hsla(207, 5%, 10%, .4);
+    color: hsla(207, 5%, 20%, .75);
+    font-size: .8rem;
+    font-weight: 600;
+    height: auto;
+    margin: 0;
+    max-height: 300px;
     overflow: scroll;
-    padding: 15px;
-    border: 1px grey solid;
+    padding: 1rem;
+    text-align:left;
+    width: 300px;
+    z-index: 4000;
 }
 
-.ee_shortcode_chooser_container li:last-of-type {
-    padding-bottom: 15px;
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container h6 {
+    color: hsla(207, 5%, 40%, 1);
+    font-size: .75rem;
+    font-weight: 800;
+    line-height: 1.25;
+    margin: 0;
+    margin-block-end: .5rem;
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container h4 {
+    color: hsla(207, 5%, 66%, 1);
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+    margin-block-end: 1rem;
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container ul {
+    margin: 0;
+    padding: 0;
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container li {
+    margin: 0;
+    margin-block-end: .5rem;
+    padding: 0;
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection {
+    cursor: pointer;
+    display: inline-block;
+    padding: .25rem .5rem;
+    transition: all 150ms;
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection:not(.ee-shortcode-selected):hover {
+    background-color: hsla(207, 30%, 41%, .1);
+    color: hsla(207, 100%, 5%, 1);
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection.ee-shortcode-selected {
+    color: hsla(207, 5%, 70%, .75);
+    cursor: not-allowed;
+}
+
+/*#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection.ee-shortcode-selected:hover {*/
+/*    background-color: hsla(330, 30%, 41%, .1);*/
+/*    color: hsla(330, 100%, 15%, 1);*/
+/*}*/
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container li:last-of-type {
+    margin-bottom: 0;
 }
 
 #ee-msg-edit-frm .admin-primary-mbox-dv ul,
