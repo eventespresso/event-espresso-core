@@ -638,6 +638,9 @@
 }
 
 .espresso-admin .ee-event-filter-link .dashicons.dashicons--small {
+    margin-inline-end: 0.25rem;
+}
+.espresso-admin .ee-event-filter-link .dashicons.dashicons--small:before {
     top: -2px;
 }
 

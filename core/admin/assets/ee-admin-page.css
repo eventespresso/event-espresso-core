@@ -585,10 +585,13 @@
 }
 
 .ee-info-box {
-    background: var(--ee-color-white);
-    border: 1px solid var(--ee-status-color-pale-blue);
-    margin: 0 0 1rem;
-    padding: 1rem 2rem;
+    color: var(--ee-status-color-grey);
+    background: var(--ee-status-color-pale-blue);
+    border: 2px solid var(--ee-status-color-light-blue);
+    margin-block-start: 1rem;
+    margin-block-end: 2rem;
+    padding-block: 1rem;
+    padding-inline: 2rem;
 }
 
 .ee-info-box h4 {
@@ -597,7 +600,12 @@
 }
 
 .ee-info-box p {
-    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+.ee-info-box p + p {
+    margin-block-start: 1rem;
 }
 
 .admin-state,
@@ -3445,9 +3453,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .ee-actions-column-header {
     display: none;
 }
-.espresso-admin .wp-list-table td.column-actions a {
+/* .espresso-admin .wp-list-table td.column-actions a {
     display: inline-block;
-}
+} */
 .espresso-admin .wp-list-table .column-actions .ee-list-table-actions {
     display: flex;
     flex-flow: row wrap;
@@ -3496,19 +3504,11 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 
-.espresso-admin.wp-core-ui .wp-list-table .column-actions .ee-list-table-actions .button .ee-icon,
-.espresso-admin.wp-core-ui .wp-list-table .column-actions .ee-list-table-actions .button .ee-icon:before,
-.espresso-admin.wp-core-ui .wp-list-table .column-actions .ee-list-table-actions .button .dashicons,
-.espresso-admin.wp-core-ui .wp-list-table .column-actions .ee-list-table-actions .button .dashicons:before {
-    font-size: 1.6rem;
-    margin: 0;
-    top: unset;
-}
-
 .espresso-admin.wp-core-ui .dashicons.dashicons--small,
 .espresso-admin.wp-core-ui .dashicons.dashicons--small:before {
     font-size: 1.25rem;
     height: 1.25rem;
+    position: relative;
     top: 1px;
     width: 1.25rem;
 }
