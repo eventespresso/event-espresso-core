@@ -866,7 +866,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'desc'  => esc_html__('View Event', 'event_espresso'),
             ],
             'edit_event'     => [
-                'class' => 'ee-icon ee-icon-calendar-edit',
+                'class' => 'dashicons dashicons-calendar-alt',
                 'desc'  => esc_html__('Edit Event Details', 'event_espresso'),
             ],
             'view_attendees' => [
