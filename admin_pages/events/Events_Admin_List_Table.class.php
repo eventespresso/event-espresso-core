@@ -522,7 +522,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EVENTS_ADMIN_URL);
             $action_links[] = '<a href="' . $edit_link . '" class="ee-aria-tooltip button button--icon-only"'
                               . ' aria-label="' . esc_attr__('Edit Event', 'event_espresso') . '">'
-                              . '<span class="ee-icon ee-icon-calendar-edit"></span>'
+                              . '<span class="dashicons dashicons-calendar-alt"></span>'
                               . '</a>';
         }
         if (

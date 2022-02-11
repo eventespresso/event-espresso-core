@@ -466,17 +466,21 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 $event->ID()
             )
         ) {
-            $reports_query_args = [
-                'action' => 'reports',
-                'EVT_ID' => $event->ID(),
-            ];
-            $reports_link       = EE_Admin_Page::add_query_args_and_nonce($reports_query_args, REG_ADMIN_URL);
-            $action_links[]     = '<a href="'
-                                  . $reports_link
-                                  . '" title="'
-                                  . esc_attr__('View Report', 'event_espresso')
-                                  . '"  class="ee-aria-tooltip button button--icon-only"><span class="dashicons dashicons-chart-bar"></span></a>'
-                                  . "\n\t";
+            $reports_link = EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action' => 'reports',
+                    'EVT_ID' => $event->ID(),
+                ],
+                REG_ADMIN_URL
+            );
+
+            $action_links[]     = '
+                <a href="' . $reports_link . '" 
+                    aria-label="' . esc_attr__('View Report', 'event_espresso') . '" 
+                    class="ee-aria-tooltip button button--icon-only"
+                >
+                    <span class="dashicons dashicons-chart-bar"></span>
+                </a>';
         }
         if (EE_Registry::instance()->CAP->current_user_can('ee_read_global_messages', 'view_filtered_messages')) {
             EE_Registry::instance()->load_helper('MSG_Template');
