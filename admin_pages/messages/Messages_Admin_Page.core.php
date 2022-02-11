@@ -2547,7 +2547,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                     'You can view the shortcodes usable in your template by clicking the %s icon next to each field.',
                     'event_espresso'
                 ),
-                '<span class="dashicons dashicons-menu"></span>'
+                '<span class="dashicons dashicons-shortcode"></span>'
             ); ?>
         </p>
         <?php
@@ -2722,7 +2722,7 @@ class Messages_Admin_Page extends EE_Admin_Page
 
         // if this is "new" then we need to generate the default contexts
         // for the selected messenger/message_type for user to edit.
-        list($success, $query_args) = $new
+        [$success, $query_args] = $new
             ? $this->generateNewTemplates($GRP_ID, $messenger, $message_type)
             : $this->updateExistingTemplates($GRP_ID, $messenger, $message_type, $context, $form_data);
 

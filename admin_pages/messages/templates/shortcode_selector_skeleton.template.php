@@ -24,7 +24,7 @@ if (! empty($shortcodes)) : ?>
             <span class='dashicons dashicons-no'></span>
         </button>
         <h6>
-            <?php esc_html_e('Available Message Template Shortcodes', 'event_espresso'); ?>
+            <?php esc_html_e('Message Template Shortcodes', 'event_espresso'); ?>
         </h6>
         <h4>
             <?php
