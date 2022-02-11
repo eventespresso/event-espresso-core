@@ -533,10 +533,11 @@ class OrganizationSettings extends FormHandler
      */
     private function getSiteLicenseKeyField()
     {
-        $text_input = new EE_Text_Input(
+        return new EE_Text_Input(
             array(
                 'html_name' => 'ee_site_license_key',
                 'html_id' => 'site_license_key',
+                'html_class' => 'ee-status--outline ' . $this->getValidationClass(),
                 'html_label_text' => esc_html__('Support License Key', 'event_espresso'),
                 /** phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText */
                 'html_help_text'  => sprintf(
@@ -548,9 +549,7 @@ class OrganizationSettings extends FormHandler
                     '</strong>'
                 ),
                 /** phpcs:enable */
-                'default'         => isset($this->network_core_config->site_license_key)
-                    ? $this->network_core_config->site_license_key
-                    : '',
+                'default'         => $this->network_core_config->site_license_key ?? '',
                 'required'        => false,
                 'form_html_filter' => new VsprintfFilter(
                     '%2$s %1$s',
@@ -558,7 +557,15 @@ class OrganizationSettings extends FormHandler
                 )
             )
         );
-        return $text_input;
+    }
+
+
+    /**
+     * @return string
+     */
+    private function getValidationClass()
+    {
+        return $this->licenseKeyVerified() ? 'ee-status--success' : 'ee-status--error';
     }
 
 
@@ -567,7 +574,6 @@ class OrganizationSettings extends FormHandler
      */
     private function getValidationIndicator()
     {
-        $verified_class = $this->licenseKeyVerified() ? 'ee-icon-color-ee-green' : 'ee-icon-color-ee-red';
-        return '<span class="dashicons dashicons-admin-network ' . $verified_class . ' ee-icon-size-20"></span>';
+        return '<span class="dashicons dashicons-admin-network ' . $this->getValidationClass() . '"></span>';
     }
 }
