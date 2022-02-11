@@ -10,12 +10,9 @@
  * @package         Venues_Admin_Page
  * @subpackage      caffeinated/admin/new/Venues_Admin_Page.core.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Venues_Admin_Page extends EE_Admin_Page_CPT
 {
-
 
     /**
      * _venue
@@ -43,21 +40,24 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     protected $_venue_model;
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _init_page_props()
     {
         require_once(EE_MODELS . 'EEM_Venue.model.php');
-        $this->page_slug = EE_VENUES_PG_SLUG;
-        $this->_admin_base_url = EE_VENUES_ADMIN_URL;
+        $this->page_slug        = EE_VENUES_PG_SLUG;
+        $this->_admin_base_url  = EE_VENUES_ADMIN_URL;
         $this->_admin_base_path = EE_ADMIN_PAGES . 'venues';
-        $this->page_label = esc_html__('Event Venues', 'event_espresso');
-        $this->_cpt_model_names = array(
+        $this->page_label       = esc_html__('Event Venues', 'event_espresso');
+        $this->_cpt_model_names = [
             'create_new' => 'EEM_Venue',
             'edit'       => 'EEM_Venue',
-        );
-        $this->_cpt_edit_routes = array(
+        ];
+        $this->_cpt_edit_routes = [
             'espresso_venues' => 'edit',
-        );
-        $this->_venue_model = EEM_Venue::instance();
+        ];
+        $this->_venue_model     = EEM_Venue::instance();
     }
 
 
@@ -70,26 +70,26 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     protected function _define_page_props()
     {
         $this->_admin_page_title = $this->page_label;
-        $this->_labels = array(
-            'buttons'      => array(
+        $this->_labels           = [
+            'buttons'      => [
                 'add'             => esc_html__('Add New Venue', 'event_espresso'),
                 'edit'            => esc_html__('Edit Venue', 'event_espresso'),
                 'delete'          => esc_html__('Delete Venue', 'event_espresso'),
                 'add_category'    => esc_html__('Add New Category', 'event_espresso'),
                 'edit_category'   => esc_html__('Edit Category', 'event_espresso'),
                 'delete_category' => esc_html__('Delete Category', 'event_espresso'),
-            ),
-            'editor_title' => array(
+            ],
+            'editor_title' => [
                 'espresso_venues' => esc_html__('Enter Venue name here', 'event_espresso'),
-            ),
-            'publishbox'   => array(
+            ],
+            'publishbox'   => [
                 'create_new'          => esc_html__('Save New Venue', 'event_espresso'),
                 'edit'                => esc_html__('Update Venue', 'event_espresso'),
                 'add_category'        => esc_html__('Save New Category', 'event_espresso'),
                 'edit_category'       => esc_html__('Update Category', 'event_espresso'),
                 'google_map_settings' => esc_html__('Update Settings', 'event_espresso'),
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -100,319 +100,319 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         // load field generator helper
 
         // is there a vnu_id in the request?
-        $vnu_id = ! empty($this->_req_data['VNU_ID']) && ! is_array($this->_req_data['VNU_ID'])
-            ? $this->_req_data['VNU_ID'] : 0;
-        $vnu_id = ! empty($this->_req_data['post']) ? $this->_req_data['post'] : $vnu_id;
+        $VNU_ID = $this->request->getRequestParam('VNU_ID', 0, 'int');
+        $VNU_ID = $this->request->getRequestParam('post', $VNU_ID, 'int');
 
-        $this->_page_routes = array(
-            'default'                    => array(
+        $this->_page_routes = [
+            'default'                    => [
                 'func'       => '_overview_list_table',
                 'capability' => 'ee_read_venues',
-            ),
-            'create_new'                 => array(
+            ],
+            'create_new'                 => [
                 'func'       => '_create_new_cpt_item',
                 'capability' => 'ee_edit_venues',
-            ),
-            'edit'                       => array(
+            ],
+            'edit'                       => [
                 'func'       => '_edit_cpt_item',
                 'capability' => 'ee_edit_venue',
-                'obj_id'     => $vnu_id,
-            ),
-            'trash_venue'                => array(
+                'obj_id'     => $VNU_ID,
+            ],
+            'trash_venue'                => [
                 'func'       => '_trash_or_restore_venue',
-                'args'       => array('venue_status' => 'trash'),
+                'args'       => ['venue_status' => 'trash'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venue',
-                'obj_id'     => $vnu_id,
-            ),
-            'trash_venues'               => array(
+                'obj_id'     => $VNU_ID,
+            ],
+            'trash_venues'               => [
                 'func'       => '_trash_or_restore_venues',
-                'args'       => array('venue_status' => 'trash'),
+                'args'       => ['venue_status' => 'trash'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venues',
-            ),
-            'restore_venue'              => array(
+            ],
+            'restore_venue'              => [
                 'func'       => '_trash_or_restore_venue',
-                'args'       => array('venue_status' => 'draft'),
+                'args'       => ['venue_status' => 'draft'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venue',
-                'obj_id'     => $vnu_id,
-            ),
-            'restore_venues'             => array(
+                'obj_id'     => $VNU_ID,
+            ],
+            'restore_venues'             => [
                 'func'       => '_trash_or_restore_venues',
-                'args'       => array('venue_status' => 'draft'),
+                'args'       => ['venue_status' => 'draft'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venues',
-            ),
-            'delete_venues'              => array(
+            ],
+            'delete_venues'              => [
                 'func'       => '_delete_venues',
                 'noheader'   => true,
                 'capability' => 'ee_delete_venues',
-            ),
-            'delete_venue'               => array(
+            ],
+            'delete_venue'               => [
                 'func'       => '_delete_venue',
                 'noheader'   => true,
                 'capability' => 'ee_delete_venue',
-                'obj_id'     => $vnu_id,
-            ),
+                'obj_id'     => $VNU_ID,
+            ],
             // settings related
-            'google_map_settings'        => array(
+            'google_map_settings'        => [
                 'func'       => '_google_map_settings',
                 'capability' => 'manage_options',
-            ),
-            'update_google_map_settings' => array(
+            ],
+            'update_google_map_settings' => [
                 'func'       => '_update_google_map_settings',
                 'capability' => 'manage_options',
                 'noheader'   => true,
-            ),
+            ],
             // venue category tab related
-            'add_category'               => array(
+            'add_category'               => [
                 'func'       => '_category_details',
-                'args'       => array('add'),
+                'args'       => ['add'],
                 'capability' => 'ee_edit_venue_category',
-            ),
-            'edit_category'              => array(
+            ],
+            'edit_category'              => [
                 'func'       => '_category_details',
-                'args'       => array('edit'),
+                'args'       => ['edit'],
                 'capability' => 'ee_edit_venue_category',
-            ),
-            'delete_categories'          => array(
+            ],
+            'delete_categories'          => [
                 'func'       => '_delete_categories',
                 'noheader'   => true,
                 'capability' => 'ee_delete_venue_category',
-            ),
+            ],
 
-            'delete_category' => array(
+            'delete_category' => [
                 'func'       => '_delete_categories',
                 'noheader'   => true,
                 'capability' => 'ee_delete_venue_category',
-            ),
+            ],
 
-            'insert_category' => array(
+            'insert_category' => [
                 'func'       => '_insert_or_update_category',
-                'args'       => array('new_category' => true),
+                'args'       => ['new_category' => true],
                 'noheader'   => true,
                 'capability' => 'ee_edit_venue_category',
-            ),
+            ],
 
-            'update_category'   => array(
+            'update_category'   => [
                 'func'       => '_insert_or_update_category',
-                'args'       => array('new_category' => false),
+                'args'       => ['new_category' => false],
                 'noheader'   => true,
                 'capability' => 'ee_edit_venue_category',
-            ),
-            'export_categories' => array(
+            ],
+            'export_categories' => [
                 'func'       => '_categories_export',
                 'noheader'   => true,
                 'capability' => 'export',
-            ),
-            'import_categories' => array(
+            ],
+            'import_categories' => [
                 'func'       => '_import_categories',
                 'capability' => 'import',
-            ),
-            'category_list'     => array(
+            ],
+            'category_list'     => [
                 'func'       => '_category_list_table',
                 'capability' => 'ee_manage_venue_categories',
-            ),
-        );
+            ],
+        ];
     }
 
 
     protected function _set_page_config()
     {
-        $this->_page_config = array(
-            'default'             => array(
-                'nav'           => array(
+        $VNU_ID     = $this->request->getRequestParam('post', 0, 'int');
+        $EVT_CAT_ID = $this->request->getRequestParam('EVT_CAT_ID', 0, 'int');
+
+        $this->_page_config = [
+            'default'             => [
+                'nav'           => [
                     'label' => esc_html__('Overview', 'event_espresso'),
                     'order' => 10,
-                ),
+                ],
                 'list_table'    => 'Venues_Admin_List_Table',
-                'help_tabs'     => array(
-                    'venues_overview_help_tab'                           => array(
+                'help_tabs'     => [
+                    'venues_overview_help_tab'                           => [
                         'title'    => esc_html__('Venues Overview', 'event_espresso'),
                         'filename' => 'venues_overview',
-                    ),
-                    'venues_overview_table_column_headings_help_tab'     => array(
+                    ],
+                    'venues_overview_table_column_headings_help_tab'     => [
                         'title'    => esc_html__('Venues Overview Table Column Headings', 'event_espresso'),
                         'filename' => 'venues_overview_table_column_headings',
-                    ),
-                    'venues_overview_views_bulk_actions_search_help_tab' => array(
+                    ],
+                    'venues_overview_views_bulk_actions_search_help_tab' => [
                         'title'    => esc_html__('Venues Overview Views & Bulk Actions & Search', 'event_espresso'),
                         'filename' => 'venues_overview_views_bulk_actions_search',
-                    ),
-                ),
+                    ],
+                ],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour'     => array('Venues_Overview_Help_Tour'),
-                'metaboxes'     => array('_espresso_news_post_box', '_espresso_links_post_box'),
+                'metaboxes'     => ['_espresso_news_post_box', '_espresso_links_post_box'],
                 'require_nonce' => false,
-            ),
-            'create_new'          => array(
-                'nav'           => array(
+            ],
+            'create_new'          => [
+                'nav'           => [
                     'label'      => esc_html__('Add Venue', 'event_espresso'),
                     'order'      => 5,
                     'persistent' => false,
-                ),
-                'help_tabs'     => array(
-                    'venues_editor_help_tab'                                               => array(
+                ],
+                'help_tabs'     => [
+                    'venues_editor_help_tab'                                               => [
                         'title'    => esc_html__('Venue Editor', 'event_espresso'),
                         'filename' => 'venues_editor',
-                    ),
-                    'venues_editor_title_richtexteditor_help_tab'                          => array(
+                    ],
+                    'venues_editor_title_richtexteditor_help_tab'                          => [
                         'title'    => esc_html__('Venue Title & Rich Text Editor', 'event_espresso'),
                         'filename' => 'venues_editor_title_richtexteditor',
-                    ),
-                    'venues_editor_tags_categories_help_tab'                               => array(
+                    ],
+                    'venues_editor_tags_categories_help_tab'                               => [
                         'title'    => esc_html__('Venue Tags & Categories', 'event_espresso'),
                         'filename' => 'venues_editor_tags_categories',
-                    ),
-                    'venues_editor_physical_location_google_map_virtual_location_help_tab' => array(
+                    ],
+                    'venues_editor_physical_location_google_map_virtual_location_help_tab' => [
                         'title'    => esc_html__(
                             'Venue Editor Physical Location & Google Map & Virtual Location',
                             'event_espresso'
                         ),
                         'filename' => 'venues_editor_physical_location_google_map_virtual_location',
-                    ),
-                    'venues_editor_save_new_venue_help_tab'                                => array(
+                    ],
+                    'venues_editor_save_new_venue_help_tab'                                => [
                         'title'    => esc_html__('Save New Venue', 'event_espresso'),
                         'filename' => 'venues_editor_save_new_venue',
-                    ),
-                    'venues_editor_other_help_tab'                                         => array(
+                    ],
+                    'venues_editor_other_help_tab'                                         => [
                         'title'    => esc_html__('Venue Editor Other', 'event_espresso'),
                         'filename' => 'venues_editor_other',
-                    ),
-                ),
+                    ],
+                ],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour'     => array('Venues_Add_Venue_Help_Tour'),
-                'metaboxes'     => array('_venue_editor_metaboxes'),
+                'metaboxes'     => ['_venue_editor_metaboxes'],
                 'require_nonce' => false,
-            ),
-            'edit'                => array(
-                'nav'           => array(
+            ],
+            'edit'                => [
+                'nav'           => [
                     'label'      => esc_html__('Edit Venue', 'event_espresso'),
                     'order'      => 5,
                     'persistent' => false,
-                    'url'        => isset($this->_req_data['post']) ? add_query_arg(
-                        array('post' => $this->_req_data['post']),
-                        $this->_current_page_view_url
-                    ) : $this->_admin_base_url,
-                ),
-                'help_tabs'     => array(
-                    'venues_editor_help_tab'                                               => array(
+                    'url'        => $VNU_ID
+                        ? add_query_arg(['post' => $VNU_ID], $this->_current_page_view_url)
+                        : $this->_admin_base_url,
+                ],
+                'help_tabs'     => [
+                    'venues_editor_help_tab'                                               => [
                         'title'    => esc_html__('Venue Editor', 'event_espresso'),
                         'filename' => 'venues_editor',
-                    ),
-                    'venues_editor_title_richtexteditor_help_tab'                          => array(
+                    ],
+                    'venues_editor_title_richtexteditor_help_tab'                          => [
                         'title'    => esc_html__('Venue Title & Rich Text Editor', 'event_espresso'),
                         'filename' => 'venues_editor_title_richtexteditor',
-                    ),
-                    'venues_editor_tags_categories_help_tab'                               => array(
+                    ],
+                    'venues_editor_tags_categories_help_tab'                               => [
                         'title'    => esc_html__('Venue Tags & Categories', 'event_espresso'),
                         'filename' => 'venues_editor_tags_categories',
-                    ),
-                    'venues_editor_physical_location_google_map_virtual_location_help_tab' => array(
+                    ],
+                    'venues_editor_physical_location_google_map_virtual_location_help_tab' => [
                         'title'    => esc_html__(
                             'Venue Editor Physical Location & Google Map & Virtual Location',
                             'event_espresso'
                         ),
                         'filename' => 'venues_editor_physical_location_google_map_virtual_location',
-                    ),
-                    'venues_editor_save_new_venue_help_tab'                                => array(
+                    ],
+                    'venues_editor_save_new_venue_help_tab'                                => [
                         'title'    => esc_html__('Save New Venue', 'event_espresso'),
                         'filename' => 'venues_editor_save_new_venue',
-                    ),
-                    'venues_editor_other_help_tab'                                         => array(
+                    ],
+                    'venues_editor_other_help_tab'                                         => [
                         'title'    => esc_html__('Venue Editor Other', 'event_espresso'),
                         'filename' => 'venues_editor_other',
-                    ),
-                ),
+                    ],
+                ],
                 /*'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),*/
-                'metaboxes'     => array('_venue_editor_metaboxes'),
+                'metaboxes'     => ['_venue_editor_metaboxes'],
                 'require_nonce' => false,
-            ),
-            'google_map_settings' => array(
-                'nav'           => array(
+            ],
+            'google_map_settings' => [
+                'nav'           => [
                     'label' => esc_html__('Google Maps', 'event_espresso'),
                     'order' => 40,
-                ),
-                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
-                'help_tabs'     => array(
-                    'general_settings_google_maps_help_tab' => array(
+                ],
+                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
+                'help_tabs'     => [
+                    'general_settings_google_maps_help_tab' => [
                         'title'    => esc_html__('Google Maps', 'event_espresso'),
                         'filename' => 'general_settings_google_maps',
-                    ),
-                ),
+                    ],
+                ],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour'     => array('Google_Maps_Help_Tour'),
                 'require_nonce' => false,
-            ),
+            ],
             // venue category stuff
-            'add_category'        => array(
-                'nav'           => array(
+            'add_category'        => [
+                'nav'           => [
                     'label'      => esc_html__('Add Category', 'event_espresso'),
                     'order'      => 15,
                     'persistent' => false,
-                ),
-                'metaboxes'     => array('_publish_post_box'),
-                'help_tabs'     => array(
-                    'venues_add_category_help_tab' => array(
+                ],
+                'metaboxes'     => ['_publish_post_box'],
+                'help_tabs'     => [
+                    'venues_add_category_help_tab' => [
                         'title'    => esc_html__('Add New Venue Category', 'event_espresso'),
                         'filename' => 'venues_add_category',
-                    ),
-                ),
+                    ],
+                ],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour'     => array('Venues_Add_Category_Help_Tour'),
                 'require_nonce' => false,
-            ),
-            'edit_category'       => array(
-                'nav'           => array(
+            ],
+            'edit_category'       => [
+                'nav'           => [
                     'label'      => esc_html__('Edit Category', 'event_espresso'),
                     'order'      => 15,
                     'persistent' => false,
-                    'url'        => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(
-                        array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID']),
-                        $this->_current_page_view_url
-                    ) : $this->_admin_base_url,
-                ),
-                'metaboxes'     => array('_publish_post_box'),
-                'help_tabs'     => array(
-                    'venues_edit_category_help_tab' => array(
+                    'url'        => $EVT_CAT_ID
+                        ? add_query_arg(['EVT_CAT_ID' => $EVT_CAT_ID], $this->_current_page_view_url)
+                        : $this->_admin_base_url,
+                ],
+                'metaboxes'     => ['_publish_post_box'],
+                'help_tabs'     => [
+                    'venues_edit_category_help_tab' => [
                         'title'    => esc_html__('Edit Venue Category', 'event_espresso'),
                         'filename' => 'venues_edit_category',
-                    ),
-                ),
+                    ],
+                ],
                 /*'help_tour' => array( 'Venues_Edit_Category_Help_Tour' ),*/
                 'require_nonce' => false,
-            ),
-            'category_list'       => array(
-                'nav'           => array(
+            ],
+            'category_list'       => [
+                'nav'           => [
                     'label' => esc_html__('Categories', 'event_espresso'),
                     'order' => 20,
-                ),
+                ],
                 'list_table'    => 'Venue_Categories_Admin_List_Table',
-                'help_tabs'     => array(
-                    'venues_categories_help_tab'                       => array(
+                'help_tabs'     => [
+                    'venues_categories_help_tab'                       => [
                         'title'    => esc_html__('Venue Categories', 'event_espresso'),
                         'filename' => 'venues_categories',
-                    ),
-                    'venues_categories_table_column_headings_help_tab' => array(
+                    ],
+                    'venues_categories_table_column_headings_help_tab' => [
                         'title'    => esc_html__('Venue Categories Table Column Headings', 'event_espresso'),
                         'filename' => 'venues_categories_table_column_headings',
-                    ),
-                    'venues_categories_views_help_tab'                 => array(
+                    ],
+                    'venues_categories_views_help_tab'                 => [
                         'title'    => esc_html__('Venue Categories Views', 'event_espresso'),
                         'filename' => 'venues_categories_views',
-                    ),
-                    'venues_categories_other_help_tab'                 => array(
+                    ],
+                    'venues_categories_other_help_tab'                 => [
                         'title'    => esc_html__('Venue Categories Other', 'event_espresso'),
                         'filename' => 'venues_categories_other',
-                    ),
-                ),
+                    ],
+                ],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour'     => array('Venues_Categories_Help_Tour'),
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -430,7 +430,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
 
     protected function _add_screen_options_category_list()
     {
-        $page_title = $this->_admin_page_title;
+        $page_title              = $this->_admin_page_title;
         $this->_admin_page_title = esc_html__('Venue Categories', 'event_espresso');
         $this->_per_page_screen_option();
         $this->_admin_page_title = $page_title;
@@ -442,13 +442,16 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     {
     }
 
+
     public function admin_init()
     {
     }
 
+
     public function admin_notices()
     {
     }
+
 
     public function admin_footer_scripts()
     {
@@ -463,7 +466,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
 
     public function load_scripts_styles()
     {
-        wp_register_style('ee-cat-admin', EVENTS_ASSETS_URL . 'ee-cat-admin.css', array(), EVENT_ESPRESSO_VERSION);
+        wp_register_style('ee-cat-admin', EVENTS_ASSETS_URL . 'ee-cat-admin.css', [], EVENT_ESPRESSO_VERSION);
         wp_enqueue_style('ee-cat-admin');
     }
 
@@ -486,7 +489,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         wp_register_style(
             'espresso_venues',
             EE_VENUES_ASSETS_URL . 'ee-venues-admin.css',
-            array(),
+            [],
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_style('espresso_venues');
@@ -495,47 +498,50 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
 
     protected function _set_list_table_views_default()
     {
-        $this->_views = array(
-            'all' => array(
+        $this->_views = [
+            'all' => [
                 'slug'        => 'all',
                 'label'       => esc_html__('View All Venues', 'event_espresso'),
                 'count'       => 0,
-                'bulk_action' => array(),
-            ),
-        );
+                'bulk_action' => [],
+            ],
+        ];
 
         if (EE_Registry::instance()->CAP->current_user_can('ee_delete_venues', 'espresso_venues_trash_venues')) {
-            $this->_views['all']['bulk_action'] = array(
+            $this->_views['all']['bulk_action'] = [
                 'trash_venues' => esc_html__('Move to Trash', 'event_espresso'),
-            );
-            $this->_views['trash'] = array(
+            ];
+            $this->_views['trash']              = [
                 'slug'        => 'trash',
                 'label'       => esc_html__('Trash', 'event_espresso'),
                 'count'       => 0,
-                'bulk_action' => array(
+                'bulk_action' => [
                     'restore_venues' => esc_html__('Restore from Trash', 'event_espresso'),
                     'delete_venues'  => esc_html__('Delete', 'event_espresso'),
-                ),
-            );
+                ],
+            ];
         }
     }
 
 
     protected function _set_list_table_views_category_list()
     {
-        $this->_views = array(
-            'all' => array(
+        $this->_views = [
+            'all' => [
                 'slug'        => 'all',
                 'label'       => esc_html__('All', 'event_espresso'),
                 'count'       => 0,
-                'bulk_action' => array(
+                'bulk_action' => [
                     'delete_categories' => esc_html__('Delete Permanently', 'event_espresso'),
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _overview_list_table()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
@@ -544,51 +550,81 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             esc_html__("View Venue Archive Page", "event_espresso"),
             'button'
         );
-        $this->_admin_page_title .= ' ' . $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
-        $this->_search_btn_label = esc_html__('Venues', 'event_espresso');
+
+        $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
+            'create_new',
+            'add',
+            [],
+            'add-new-h2'
+        );
+
+        $this->_search_btn_label  = esc_html__('Venues', 'event_espresso');
         $this->display_admin_list_table_page_with_sidebar();
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function extra_misc_actions_publish_box()
     {
-        $extra_rows = array(
+        $extra_rows = [
             'vnu_capacity' => $this->_cpt_model_obj->get_f('VNU_capacity'),
             'vnu_url'      => $this->_cpt_model_obj->get_f('VNU_url'),
             'vnu_phone'    => $this->_cpt_model_obj->get_f('VNU_phone'),
-        );
-        $template = EE_VENUES_TEMPLATE_PATH . 'venue_publish_box_extras.template.php';
+        ];
+        $template   = EE_VENUES_TEMPLATE_PATH . 'venue_publish_box_extras.template.php';
         EEH_Template::display_template($template, $extra_rows);
     }
 
 
-    /*************        Google Maps        *************/
+    /*************        Google Maps        *************
+     *
+     * @throws EE_Error
+     * @throws EE_Error
+     */
 
 
     protected function _google_map_settings()
     {
 
 
-        $this->_template_args['values'] = $this->_yes_no_values;
-        $default_map_settings = new stdClass();
-        $default_map_settings->use_google_maps = true;
+        $this->_template_args['values']           = $this->_yes_no_values;
+        $default_map_settings                     = new stdClass();
+        $default_map_settings->use_google_maps    = true;
         $default_map_settings->google_map_api_key = '';
         // for event details pages (reg page)
-        $default_map_settings->event_details_map_width = 585;            // ee_map_width_single
-        $default_map_settings->event_details_map_height = 362;            // ee_map_height_single
-        $default_map_settings->event_details_map_zoom = 14;            // ee_map_zoom_single
-        $default_map_settings->event_details_display_nav = true;            // ee_map_nav_display_single
-        $default_map_settings->event_details_nav_size = false;            // ee_map_nav_size_single
-        $default_map_settings->event_details_control_type = 'default';        // ee_map_type_control_single
-        $default_map_settings->event_details_map_align = 'center';            // ee_map_align_single
+        $default_map_settings->event_details_map_width    = 585;
+        // ee_map_width_single
+        $default_map_settings->event_details_map_height   = 362;
+        // ee_map_height_single
+        $default_map_settings->event_details_map_zoom     = 14;
+        // ee_map_zoom_single
+        $default_map_settings->event_details_display_nav  = true;
+        // ee_map_nav_display_single
+        $default_map_settings->event_details_nav_size     = false;
+        // ee_map_nav_size_single
+        $default_map_settings->event_details_control_type = 'default';
+        // ee_map_type_control_single
+        $default_map_settings->event_details_map_align    = 'center';
+        // ee_map_align_single
+
         // for event list pages
-        $default_map_settings->event_list_map_width = 300;            // ee_map_width
-        $default_map_settings->event_list_map_height = 185;        // ee_map_height
-        $default_map_settings->event_list_map_zoom = 12;            // ee_map_zoom
-        $default_map_settings->event_list_display_nav = false;        // ee_map_nav_display
-        $default_map_settings->event_list_nav_size = true;            // ee_map_nav_size
-        $default_map_settings->event_list_control_type = 'dropdown';        // ee_map_type_control
-        $default_map_settings->event_list_map_align = 'center';            // ee_map_align
+        $default_map_settings->event_list_map_width    = 300;
+        // ee_map_width
+        $default_map_settings->event_list_map_height   = 185;
+        // ee_map_height
+        $default_map_settings->event_list_map_zoom     = 12;
+        // ee_map_zoom
+        $default_map_settings->event_list_display_nav  = false;
+        // ee_map_nav_display
+        $default_map_settings->event_list_nav_size     = true;
+        // ee_map_nav_size
+        $default_map_settings->event_list_control_type = 'dropdown';
+        // ee_map_type_control
+        $default_map_settings->event_list_map_align    = 'center';
+        // ee_map_align
 
         $this->_template_args['map_settings'] =
             isset(EE_Registry::instance()->CFG->map_settings)
@@ -609,95 +645,42 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         $this->display_admin_page_with_sidebar();
     }
 
+
+    /**
+     * @throws EE_Error
+     */
     protected function _update_google_map_settings()
     {
+        $map_settings = EE_Registry::instance()->CFG->map_settings;
 
-        EE_Registry::instance()->CFG->map_settings->use_google_maps =
-            isset($this->_req_data['use_google_maps'])
-                ? absint($this->_req_data['use_google_maps'])
-                : EE_Registry::instance()->CFG->map_settings->use_google_maps;
+        $settings = [
+            'use_google_maps'            => 'int',
+            'google_map_api_key'         => 'string',
+            'event_details_map_width'    => 'int',
+            'event_details_map_zoom'     => 'int',
+            'event_details_display_nav'  => 'int',
+            'event_details_nav_size'     => 'int',
+            'event_details_control_type' => 'string',
+            'event_details_map_align'    => 'string',
+            'event_list_map_width'       => 'int',
+            'event_list_map_height'      => 'int',
+            'event_list_map_zoom'        => 'int',
+            'event_list_display_nav'     => 'int',
+            'event_list_nav_size'        => 'int',
+            'event_list_control_type'    => 'string',
+            'event_list_map_align'       => 'string',
+        ];
 
-        EE_Registry::instance()->CFG->map_settings->google_map_api_key =
-            isset($this->_req_data['google_map_api_key'])
-                ? sanitize_text_field($this->_req_data['google_map_api_key'])
-                : EE_Registry::instance()->CFG->map_settings->google_map_api_key;
-
-        EE_Registry::instance()->CFG->map_settings->event_details_map_width =
-            isset($this->_req_data['event_details_map_width'])
-                ? absint($this->_req_data['event_details_map_width'])
-                : EE_Registry::instance()->CFG->map_settings->event_details_map_width;
-
-        EE_Registry::instance()->CFG->map_settings->event_details_map_height =
-            isset($this->_req_data['event_details_map_height'])
-                ? absint($this->_req_data['event_details_map_height'])
-                : EE_Registry::instance()->CFG->map_settings->event_details_map_height;
-
-        EE_Registry::instance()->CFG->map_settings->event_details_map_zoom =
-            isset($this->_req_data['event_details_map_zoom'])
-                ? absint($this->_req_data['event_details_map_zoom'])
-                : EE_Registry::instance()->CFG->map_settings->event_details_map_zoom;
-
-        EE_Registry::instance()->CFG->map_settings->event_details_display_nav =
-            isset($this->_req_data['event_details_display_nav'])
-                ? absint($this->_req_data['event_details_display_nav'])
-                : EE_Registry::instance()->CFG->map_settings->event_details_display_nav;
-
-        EE_Registry::instance()->CFG->map_settings->event_details_nav_size =
-            isset($this->_req_data['event_details_nav_size'])
-                ? absint($this->_req_data['event_details_nav_size'])
-                : EE_Registry::instance()->CFG->map_settings->event_details_nav_size;
-
-        EE_Registry::instance()->CFG->map_settings->event_details_control_type =
-            isset($this->_req_data['event_details_control_type'])
-                ? sanitize_text_field($this->_req_data['event_details_control_type'])
-                : EE_Registry::instance()->CFG->map_settings->event_details_control_type;
-
-        EE_Registry::instance()->CFG->map_settings->event_details_map_align =
-            isset($this->_req_data['event_details_map_align'])
-                ? sanitize_text_field($this->_req_data['event_details_map_align'])
-                : EE_Registry::instance()->CFG->map_settings->event_details_map_align;
-
-        EE_Registry::instance()->CFG->map_settings->event_list_map_width =
-            isset($this->_req_data['event_list_map_width'])
-                ? absint($this->_req_data['event_list_map_width'])
-                : EE_Registry::instance()->CFG->map_settings->event_list_map_width;
-
-        EE_Registry::instance()->CFG->map_settings->event_list_map_height =
-            isset($this->_req_data['event_list_map_height'])
-                ? absint($this->_req_data['event_list_map_height'])
-                : EE_Registry::instance()->CFG->map_settings->event_list_map_height;
-
-        EE_Registry::instance()->CFG->map_settings->event_list_map_zoom =
-            isset($this->_req_data['event_list_map_zoom'])
-                ? absint($this->_req_data['event_list_map_zoom'])
-                : EE_Registry::instance()->CFG->map_settings->event_list_map_zoom;
-
-        EE_Registry::instance()->CFG->map_settings->event_list_display_nav =
-            isset($this->_req_data['event_list_display_nav'])
-                ? absint($this->_req_data['event_list_display_nav'])
-                : EE_Registry::instance()->CFG->map_settings->event_list_display_nav;
-
-        EE_Registry::instance()->CFG->map_settings->event_list_nav_size =
-            isset($this->_req_data['event_list_nav_size'])
-                ? absint($this->_req_data['event_list_nav_size'])
-                : EE_Registry::instance()->CFG->map_settings->event_list_nav_size;
-
-        EE_Registry::instance()->CFG->map_settings->event_list_control_type =
-            isset($this->_req_data['event_list_control_type'])
-                ? sanitize_text_field($this->_req_data['event_list_control_type'])
-                : EE_Registry::instance()->CFG->map_settings->event_list_control_type;
-
-        EE_Registry::instance()->CFG->map_settings->event_list_map_align =
-            isset($this->_req_data['event_list_map_align'])
-                ? sanitize_text_field($this->_req_data['event_list_map_align'])
-                : EE_Registry::instance()->CFG->map_settings->event_list_map_align;
+        foreach ($settings as $setting => $type) {
+            $map_settings->{$setting} = $this->request->getRequestParam($setting, $map_settings->{$setting}, $type);
+        }
 
         EE_Registry::instance()->CFG->map_settings = apply_filters(
             'FHEE__Extend_General_Settings_Admin_Page___update_google_map_settings__CFG_map_settings',
-            EE_Registry::instance()->CFG->map_settings
+            $map_settings
         );
 
-        $what = 'Google Map Settings';
+        $what    = 'Google Map Settings';
         $success = $this->_update_espresso_configuration(
             $what,
             EE_Registry::instance()->CFG->map_settings,
@@ -705,10 +688,14 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             __FUNCTION__,
             __LINE__
         );
-        $this->_redirect_after_action($success, $what, 'updated', array('action' => 'google_map_settings'));
+        $this->_redirect_after_action($success, $what, 'updated', ['action' => 'google_map_settings']);
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _venue_editor_metaboxes()
     {
         $this->verify_cpt_object();
@@ -716,78 +703,90 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         add_meta_box(
             'espresso_venue_address_options',
             esc_html__('Physical Location', 'event_espresso'),
-            array($this, 'venue_address_metabox'),
+            [$this, 'venue_address_metabox'],
             $this->page_slug,
-            'side',
-            'default'
+            'side'
         );
         add_meta_box(
             'espresso_venue_gmap_options',
             esc_html__('Google Map', 'event_espresso'),
-            array($this, 'venue_gmap_metabox'),
+            [$this, 'venue_gmap_metabox'],
             $this->page_slug,
-            'side',
-            'default'
+            'side'
         );
         add_meta_box(
             'espresso_venue_virtual_loc_options',
             esc_html__('Virtual Location', 'event_espresso'),
-            array($this, 'venue_virtual_loc_metabox'),
+            [$this, 'venue_virtual_loc_metabox'],
             $this->page_slug,
-            'side',
-            'default'
+            'side'
         );
     }
 
 
     public function venue_gmap_metabox()
     {
-        $template_args = array(
+        $template_args = [
             'vnu_enable_for_gmap' => EEH_Form_Fields::select_input(
                 'vnu_enable_for_gmap',
                 $this->get_yes_no_values(),
-                $this->_cpt_model_obj->enable_for_gmap()
+                $this->_cpt_model_obj instanceof EE_Venue ? $this->_cpt_model_obj->enable_for_gmap() : false
             ),
             'vnu_google_map_link' => $this->_cpt_model_obj->google_map_link(),
-        );
-        $template = EE_VENUES_TEMPLATE_PATH . 'venue_gmap_metabox_content.template.php';
+        ];
+        $template      = EE_VENUES_TEMPLATE_PATH . 'venue_gmap_metabox_content.template.php';
         EEH_Template::display_template($template, $template_args);
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function venue_address_metabox()
     {
-
         $template_args['_venue'] = $this->_cpt_model_obj;
 
-        $template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input(
-            $QFI = new EE_Question_Form_Input(
+        $template_args['states_dropdown']    = EEH_Form_Fields::generate_form_input(
+            new EE_Question_Form_Input(
                 EE_Question::new_instance(
-                    array('QST_display_text' => esc_html__('State', 'event_espresso'), 'QST_system' => 'state')
+                    ['QST_display_text' => esc_html__('State', 'event_espresso'), 'QST_system' => 'state']
                 ),
-                EE_Answer::new_instance(array('ANS_value' => $this->_cpt_model_obj->state_ID())),
-                array(
+                EE_Answer::new_instance(
+                    [
+                        'ANS_value' => $this->_cpt_model_obj instanceof EE_Venue
+                            ? $this->_cpt_model_obj->state_ID()
+                            : 0,
+                    ]
+                ),
+                [
                     'input_name'     => 'sta_id',
                     'input_id'       => 'sta_id',
                     'input_class'    => '',
                     'input_prefix'   => '',
                     'append_qstn_id' => false,
-                )
+                ]
             )
         );
         $template_args['countries_dropdown'] = EEH_Form_Fields::generate_form_input(
-            $QFI = new EE_Question_Form_Input(
+            new EE_Question_Form_Input(
                 EE_Question::new_instance(
-                    array('QST_display_text' => esc_html__('Country', 'event_espresso'), 'QST_system' => 'country')
+                    ['QST_display_text' => esc_html__('Country', 'event_espresso'), 'QST_system' => 'country']
                 ),
-                EE_Answer::new_instance(array('ANS_value' => $this->_cpt_model_obj->country_ID())),
-                array(
+                EE_Answer::new_instance(
+                    [
+                        'ANS_value' => $this->_cpt_model_obj instanceof EE_Venue
+                            ? $this->_cpt_model_obj->country_ID()
+                            : 0,
+                    ]
+                ),
+                [
                     'input_name'     => 'cnt_iso',
                     'input_id'       => 'cnt_iso',
                     'input_class'    => '',
                     'input_prefix'   => '',
                     'append_qstn_id' => false,
-                )
+                ]
             )
         );
 
@@ -798,10 +797,10 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
 
     public function venue_virtual_loc_metabox()
     {
-        $template_args = array(
+        $template_args = [
             '_venue' => $this->_cpt_model_obj,
-        );
-        $template = EE_VENUES_TEMPLATE_PATH . 'venue_virtual_location_metabox_content.template.php';
+        ];
+        $template      = EE_VENUES_TEMPLATE_PATH . 'venue_virtual_location_metabox_content.template.php';
         EEH_Template::display_template($template, $template_args);
     }
 
@@ -818,8 +817,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Handles updates for venue cpts
      *
-     * @param  int    $post_id ID of Venue CPT
-     * @param  object $post    Post object (with "blessed" WP properties)
+     * @param int    $post_id ID of Venue CPT
+     * @param object $post    Post object (with "blessed" WP properties)
      * @return void
      */
     protected function _insert_update_cpt_item($post_id, $post)
@@ -829,51 +828,44 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             return;// get out we're not processing the saving of venues.
         }
 
-        $wheres = array($this->_venue_model->primary_key_name() => $post_id);
+        $wheres = [$this->_venue_model->primary_key_name() => $post_id];
 
-        $venue_values = array(
-            'VNU_address'         => ! empty($this->_req_data['vnu_address']) ? $this->_req_data['vnu_address'] : null,
-            'VNU_address2'        => ! empty($this->_req_data['vnu_address2']) ? $this->_req_data['vnu_address2']
-                : null,
-            'VNU_city'            => ! empty($this->_req_data['vnu_city']) ? $this->_req_data['vnu_city'] : null,
-            'STA_ID'              => ! empty($this->_req_data['sta_id']) ? $this->_req_data['sta_id'] : null,
-            'CNT_ISO'             => ! empty($this->_req_data['cnt_iso']) ? $this->_req_data['cnt_iso'] : null,
-            'VNU_zip'             => ! empty($this->_req_data['vnu_zip']) ? $this->_req_data['vnu_zip'] : null,
-            'VNU_phone'           => ! empty($this->_req_data['vnu_phone']) ? $this->_req_data['vnu_phone'] : null,
-            'VNU_capacity'        => ! empty($this->_req_data['vnu_capacity']) ? str_replace(
-                ',',
-                '',
-                $this->_req_data['vnu_capacity']
-            ) : EE_INF,
-            'VNU_url'             => ! empty($this->_req_data['vnu_url']) ? $this->_req_data['vnu_url'] : null,
-            'VNU_virtual_phone'   => ! empty($this->_req_data['vnu_virtual_phone'])
-                ? $this->_req_data['vnu_virtual_phone'] : null,
-            'VNU_virtual_url'     => ! empty($this->_req_data['vnu_virtual_url']) ? $this->_req_data['vnu_virtual_url']
-                : null,
-            'VNU_enable_for_gmap' => ! empty($this->_req_data['vnu_enable_for_gmap']) ? true : false,
-            'VNU_google_map_link' => ! empty($this->_req_data['vnu_google_map_link'])
-                ? $this->_req_data['vnu_google_map_link'] : null,
-        );
+        $venue_values = [
+            'VNU_address'         => $this->request->getRequestParam('vnu_address'),
+            'VNU_address2'        => $this->request->getRequestParam('vnu_address2'),
+            'VNU_city'            => $this->request->getRequestParam('vnu_city'),
+            'STA_ID'              => $this->request->getRequestParam('sta_id'),
+            'CNT_ISO'             => $this->request->getRequestParam('cnt_iso'),
+            'VNU_zip'             => $this->request->getRequestParam('vnu_zip'),
+            'VNU_phone'           => $this->request->getRequestParam('vnu_phone'),
+            'VNU_capacity'        => $this->request->requestParamIsSet('vnu_capacity')
+                ? str_replace(',', '', $this->request->getRequestParam('vnu_capacity'))
+                : EE_INF,
+            'VNU_url'             => $this->request->getRequestParam('vnu_url'),
+            'VNU_virtual_phone'   => $this->request->getRequestParam('vnu_virtual_phone'),
+            'VNU_virtual_url'     => $this->request->getRequestParam('vnu_virtual_url'),
+            'VNU_enable_for_gmap' => $this->request->getRequestParam('vnu_enable_for_gmap', false, 'bool'),
+            'VNU_google_map_link' => $this->request->getRequestParam('vnu_google_map_link'),
+        ];
 
         // update venue
-        $success = $this->_venue_model->update($venue_values, array($wheres));
+        $success = $this->_venue_model->update($venue_values, [$wheres]);
 
         // get venue_object for other metaboxes that might be added via the filter... though it would seem to make sense to just use $this->_venue_model->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
-        $get_one_where = array($this->_venue_model->primary_key_name() => $post_id, 'status' => $post->post_status);
-        $venue = $this->_venue_model->get_one(array($get_one_where));
+        $get_one_where = [$this->_venue_model->primary_key_name() => $post_id, 'status' => $post->post_status];
+        $venue         = $this->_venue_model->get_one([$get_one_where]);
 
         // notice we've applied a filter for venue metabox callbacks but we don't actually have any default venue metaboxes in use.  So this is just here for addons to more easily hook into venue saves.
         $venue_update_callbacks = apply_filters(
             'FHEE__Venues_Admin_Page___insert_update_cpt_item__venue_update_callbacks',
-            array()
+            []
         );
-
-        $att_success = true;
-
+        $att_success            = true;
         foreach ($venue_update_callbacks as $v_callback) {
-            $_succ = call_user_func_array($v_callback, array($venue, $this->_req_data));
-            $att_success = ! $att_success ? $att_success
-                : $_succ; // if ANY of these updates fail then we want the appropriate global error message
+            // if ANY of these updates fail then we want the appropriate global error message
+            $att_success = call_user_func_array($v_callback, [$venue, $this->request->requestParams()])
+                ? $att_success
+                : false;
         }
 
         // any errors?
@@ -898,23 +890,38 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @param int $post_id
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function trash_cpt_item($post_id)
     {
-        $this->_req_data['VNU_ID'] = $post_id;
+        $this->request->setRequestParam('VNU_ID', $post_id);
         $this->_trash_or_restore_venue('trash', false);
     }
 
 
+    /**
+     * @param int $post_id
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function restore_cpt_item($post_id)
     {
-        $this->_req_data['VNU_ID'] = $post_id;
+        $this->request->setRequestParam('VNU_ID', $post_id);
         $this->_trash_or_restore_venue('draft', false);
     }
 
 
+    /**
+     * @param int $post_id
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function delete_cpt_item($post_id)
     {
-        $this->_req_data['VNU_ID'] = $post_id;
+        $this->request->setRequestParam('VNU_ID', $post_id);
         $this->_delete_venue(false);
     }
 
@@ -925,9 +932,13 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _trash_or_restore_venue($venue_status = 'trash', $redirect_after = true)
     {
-        $VNU_ID = isset($this->_req_data['VNU_ID']) ? absint($this->_req_data['VNU_ID']) : false;
+        $VNU_ID = $this->request->getRequestParam('VNU_ID', 0, 'int');
 
         // loop thru venues
         if ($VNU_ID) {
@@ -938,7 +949,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
                 $success = $this->_change_venue_status($VNU_ID, $venue_status);
             } else {
                 $success = false;
-                $msg = esc_html__(
+                $msg     = esc_html__(
                     'An error occurred. The venue could not be moved to the trash because a valid venue status was not not supplied.',
                     'event_espresso'
                 );
@@ -946,7 +957,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             }
         } else {
             $success = false;
-            $msg = esc_html__(
+            $msg     = esc_html__(
                 'An error occurred. The venue could not be moved to the trash because a valid venue ID was not not supplied.',
                 'event_espresso'
             );
@@ -955,11 +966,15 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         $action = $venue_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
 
         if ($redirect_after) {
-            $this->_redirect_after_action($success, 'Venue', $action, array('action' => 'default'));
+            $this->_redirect_after_action($success, 'Venue', $action, ['action' => 'default']);
         }
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _trash_or_restore_venues($venue_status = 'trash')
     {
         // clean status
@@ -968,7 +983,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         if (! empty($venue_status)) {
             $success = true;
             // determine the event id and set to array.
-            $VNU_IDs = isset($this->_req_data['venue_id']) ? (array) $this->_req_data['venue_id'] : array();
+            $VNU_IDs = $this->request->getRequestParam('venue_id', [], 'int', true);
             // loop thru events
             foreach ($VNU_IDs as $VNU_ID) {
                 if ($VNU_ID = absint($VNU_ID)) {
@@ -988,7 +1003,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             }
         } else {
             $success = false;
-            $msg = esc_html__(
+            $msg     = esc_html__(
                 'An error occurred. The venue could not be moved to the trash because a valid venue status was not not supplied.',
                 'event_espresso'
             );
@@ -996,8 +1011,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         }
         // in order to force a pluralized result message we need to send back a success status greater than 1
         $success = $success ? 2 : false;
-        $action = $venue_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
-        $this->_redirect_after_action($success, 'Venues', $action, array('action' => 'default'));
+        $action  = $venue_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
+        $this->_redirect_after_action($success, 'Venues', $action, ['action' => 'default']);
     }
 
 
@@ -1009,9 +1024,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
      * accepting a certain number of params.
      *
      * @access  private
-     * @param  int    $VNU_ID
-     * @param  string $venue_status
-     * @return void
+     * @param int    $VNU_ID
+     * @param string $venue_status
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _change_venue_status($VNU_ID = 0, $venue_status = '')
     {
@@ -1028,7 +1045,10 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         $venue_status = sanitize_key($venue_status);
         // grab status
         if (! $venue_status) {
-            $msg = esc_html__('An error occurred. No Venue Status or an invalid Venue Status was received.', 'event_espresso');
+            $msg = esc_html__(
+                'An error occurred. No Venue Status or an invalid Venue Status was received.',
+                'event_espresso'
+            );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
@@ -1037,15 +1057,15 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         switch ($venue_status) {
             case 'draft':
                 $action = 'restored from the trash';
-                $hook = 'AHEE_venue_restored_from_trash';
+                $hook   = 'AHEE_venue_restored_from_trash';
                 break;
             case 'trash':
                 $action = 'moved to the trash';
-                $hook = 'AHEE_venue_moved_to_trash';
+                $hook   = 'AHEE_venue_moved_to_trash';
                 break;
             default:
                 $action = 'updated';
-                $hook = false;
+                $hook   = false;
         }
         // use class to change status
         $this->_cpt_model_obj->set_status($venue_status);
@@ -1064,38 +1084,43 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * @param  bool $redirect_after
+     * @param bool $redirect_after
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _delete_venue($redirect_after = true)
     {
         // determine the venue id and set to array.
-        $VNU_ID = isset($this->_req_data['VNU_ID']) ? absint($this->_req_data['VNU_ID']) : null;
-        $VNU_ID = isset($this->_req_data['post']) ? absint($this->_req_data['post']) : $VNU_ID;
-
+        $VNU_ID = $this->request->getRequestParam('VNU_ID', 0, 'int');
+        $VNU_ID = $this->request->getRequestParam('post', $VNU_ID, 'int');
 
         // loop thru venues
         if ($VNU_ID) {
             $success = $this->_delete_or_trash_venue($VNU_ID);
         } else {
             $success = false;
-            $msg = esc_html__(
+            $msg     = esc_html__(
                 'An error occurred. An venue could not be deleted because a valid venue ID was not not supplied.',
                 'event_espresso'
             );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
         }
         if ($redirect_after) {
-            $this->_redirect_after_action($success, 'Venue', 'deleted', array('action' => 'default'));
+            $this->_redirect_after_action($success, 'Venue', 'deleted', ['action' => 'default']);
         }
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _delete_venues()
     {
         $success = true;
         // determine the event id and set to array.
-        $VNU_IDs = isset($this->_req_data['venue_id']) ? (array) $this->_req_data['venue_id'] : array();
+        $VNU_IDs = $this->request->getRequestParam('venue_id', [], 'int', true);
         // loop thru events
         foreach ($VNU_IDs as $VNU_ID) {
             if ($VNU_ID = absint($VNU_ID)) {
@@ -1103,7 +1128,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
                 $success = $results !== false ? $success : false;
             } else {
                 $success = false;
-                $msg = esc_html__(
+                $msg     = esc_html__(
                     'An error occurred. An venue could not be deleted because a valid venue ID was not not supplied.',
                     'event_espresso'
                 );
@@ -1116,12 +1141,18 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             $success,
             esc_html__('Venues', 'event_espresso'),
             esc_html__('deleted', 'event_espresso'),
-            array('action' => 'default')
+            ['action' => 'default']
         );
     }
 
 
     // todo: put in parent
+
+
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     private function _delete_or_trash_venue($VNU_ID = false)
     {
         // grab event id
@@ -1141,7 +1172,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             $msg = sprintf(esc_html__('Venue ID # %d has been deleted.', 'event_espresso'), $VNU_ID);
             EE_Error::add_success($msg);
         } else {
-            $msg = sprintf(esc_html__('An error occurred. Venue ID # %d could not be deleted.', 'event_espresso'), $VNU_ID);
+            $msg =
+                sprintf(
+                    esc_html__('An error occurred. Venue ID # %d could not be deleted.', 'event_espresso'),
+                    $VNU_ID
+                );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
@@ -1159,9 +1194,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     public function get_venues($per_page = 10, $count = false)
     {
 
-        $_orderby = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
+        $orderby = $this->request->getRequestParam('orderby', '');
 
-        switch ($_orderby) {
+        switch ($orderby) {
             case 'id':
                 $orderby = 'VNU_ID';
                 break;
@@ -1178,37 +1213,34 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
                 $orderby = 'VNU_name';
         }
 
-
-        $sort = (isset($this->_req_data['order']) && ! empty($this->_req_data['order'])) ? $this->_req_data['order']
-            : 'ASC';
-
-        $current_page = isset($this->_req_data['paged']) && ! empty($this->_req_data['paged'])
-            ? $this->_req_data['paged'] : 1;
-        $per_page = isset($per_page) && ! empty($per_page) ? $per_page : 10;
-        $per_page = isset($this->_req_data['perpage']) && ! empty($this->_req_data['perpage'])
-            ? $this->_req_data['perpage'] : $per_page;
-
+        $sort         = $this->request->getRequestParam('order', 'ASC');
+        $current_page = $this->request->getRequestParam('paged', 1, 'int');
+        $per_page     = ! empty($per_page) ? $per_page : 10;
+        $per_page     = $this->request->getRequestParam('perpage', $per_page, 'int');
 
         $offset = ($current_page - 1) * $per_page;
-        $limit = array($offset, $per_page);
+        $limit  = [$offset, $per_page];
 
-        $category = isset($this->_req_data['category']) && $this->_req_data['category'] > 0
-            ? $this->_req_data['category'] : null;
-        $where = array();
+        $category = $this->request->getRequestParam('category');
+        $category = $category > 0 ? $category : null;
+
+        $where = [];
 
         // only set initial status if it is in the incoming request.  Otherwise the "all" view display's all statuses.
-        if (isset($this->_req_data['status']) && $this->_req_data['status'] != 'all') {
-            $where['status'] = $this->_req_data['status'];
+        $status = $this->request->getRequestParam('status');
+        if ($status && $status !== 'all') {
+            $where['status'] = $status;
         }
 
-        if (isset($this->_req_data['venue_status'])) {
-            $where['status'] = $this->_req_data['venue_status'];
+        $venue_status = $this->request->getRequestParam('venue_status');
+        if ($venue_status) {
+            $where['status'] = $venue_status;
         }
 
 
         if ($category) {
             $where['Term_Taxonomy.taxonomy'] = 'espresso_venue_categories';
-            $where['Term_Taxonomy.term_id'] = $category;
+            $where['Term_Taxonomy.term_id']  = $category;
         }
 
 
@@ -1216,47 +1248,45 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             $where['VNU_wp_user'] = get_current_user_id();
         } else {
             if (! EE_Registry::instance()->CAP->current_user_can('ee_read_private_venues', 'get_venues')) {
-                $where['OR'] = array(
-                    'status*restrict_private' => array('!=', 'private'),
-                    'AND'                     => array(
-                        'status*inclusive' => array('=', 'private'),
+                $where['OR'] = [
+                    'status*restrict_private' => ['!=', 'private'],
+                    'AND'                     => [
+                        'status*inclusive' => ['=', 'private'],
                         'VNU_wp_user'      => get_current_user_id(),
-                    ),
-                );
+                    ],
+                ];
             }
         }
 
-
-        if (isset($this->_req_data['s'])) {
-            $sstr = '%' . $this->_req_data['s'] . '%';
-            $where['OR'] = array(
-                'VNU_name'               => array('LIKE', $sstr),
-                'VNU_desc'               => array('LIKE', $sstr),
-                'VNU_short_desc'         => array('LIKE', $sstr),
-                'VNU_address'            => array('LIKE', $sstr),
-                'VNU_address2'           => array('LIKE', $sstr),
-                'VNU_city'               => array('LIKE', $sstr),
-                'VNU_zip'                => array('LIKE', $sstr),
-                'VNU_phone'              => array('LIKE', $sstr),
-                'VNU_url'                => array('LIKE', $sstr),
-                'VNU_virtual_phone'      => array('LIKE', $sstr),
-                'VNU_virtual_url'        => array('LIKE', $sstr),
-                'VNU_google_map_link'    => array('LIKE', $sstr),
-                'Event.EVT_name'         => array('LIKE', $sstr),
-                'Event.EVT_desc'         => array('LIKE', $sstr),
-                'Event.EVT_phone'        => array('LIKE', $sstr),
-                'Event.EVT_external_URL' => array('LIKE', $sstr),
-            );
+        $search_term = $this->request->getRequestParam('s');
+        if ($search_term) {
+            $search_term = '%' . $search_term . '%';
+            $where['OR'] = [
+                'VNU_name'               => ['LIKE', $search_term],
+                'VNU_desc'               => ['LIKE', $search_term],
+                'VNU_short_desc'         => ['LIKE', $search_term],
+                'VNU_address'            => ['LIKE', $search_term],
+                'VNU_address2'           => ['LIKE', $search_term],
+                'VNU_city'               => ['LIKE', $search_term],
+                'VNU_zip'                => ['LIKE', $search_term],
+                'VNU_phone'              => ['LIKE', $search_term],
+                'VNU_url'                => ['LIKE', $search_term],
+                'VNU_virtual_phone'      => ['LIKE', $search_term],
+                'VNU_virtual_url'        => ['LIKE', $search_term],
+                'VNU_google_map_link'    => ['LIKE', $search_term],
+                'Event.EVT_name'         => ['LIKE', $search_term],
+                'Event.EVT_desc'         => ['LIKE', $search_term],
+                'Event.EVT_phone'        => ['LIKE', $search_term],
+                'Event.EVT_external_URL' => ['LIKE', $search_term],
+            ];
         }
 
 
-        $venues = $count
-            ? $this->_venue_model->count(array($where), 'VNU_ID')
+        return $count
+            ? $this->_venue_model->count([$where], 'VNU_ID')
             : $this->_venue_model->get_all(
-                array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $sort)
+                [$where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $sort]
             );
-
-        return $venues;
     }
 
 
@@ -1280,39 +1310,42 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         $this->_set_empty_category_object();
 
         // only set if we've got an id
-        if (! isset($this->_req_data['VEN_CAT_ID'])) {
+        $category_ID = $this->request->getRequestParam('VEN_CAT_ID', 0, 'int');
+        if (! $category_ID) {
             return;
         }
 
-        $category_id = absint($this->_req_data['VEN_CAT_ID']);
-        $term = get_term($category_id, 'espresso_venue_categories');
+        $term = get_term($category_ID, 'espresso_venue_categories');
 
 
         if (! empty($term)) {
-            $this->_category->category_name = $term->name;
+            $this->_category->category_name       = $term->name;
             $this->_category->category_identifier = $term->slug;
-            $this->_category->category_desc = $term->description;
-            $this->_category->id = $term->term_id;
-            $this->_category->parent = $term->parent;
+            $this->_category->category_desc       = $term->description;
+            $this->_category->id                  = $term->term_id;
+            $this->_category->parent              = $term->parent;
         }
     }
 
 
     private function _set_empty_category_object()
     {
-        $this->_category = new stdClass();
+        $this->_category                = new stdClass();
         $this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc = '';
-        $this->_category->id = $this->_category->parent = 0;
+        $this->_category->id            = $this->_category->parent = 0;
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _category_list_table()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
             'add_category',
             'add_category',
-            array(),
+            [],
             'add-new-h2'
         );
         $this->_search_btn_label = esc_html__('Venue Categories', 'event_espresso');
@@ -1320,6 +1353,9 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _category_details($view)
     {
 
@@ -1334,7 +1370,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
 
         $delete_action = 'delete_category';
 
-        $redirect = EE_Admin_Page::add_query_args_and_nonce(array('action' => 'category_list'), $this->_admin_base_url);
+        $redirect = EE_Admin_Page::add_query_args_and_nonce(['action' => 'category_list'], $this->_admin_base_url);
 
         $this->_set_publish_post_box_vars('VEN_CAT_ID', $id, $delete_action, $redirect);
 
@@ -1346,29 +1382,29 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
 
     protected function _category_details_content()
     {
-        $editor_args['category_desc'] = array(
+        $editor_args['category_desc'] = [
             'type'          => 'wp_editor',
             'value'         => EEH_Formatter::admin_format_content($this->_category->category_desc),
             'class'         => 'my_editor_custom',
-            'wpeditor_args' => array('media_buttons' => false),
-        );
-        $_wp_editor = $this->_generate_admin_form_fields($editor_args, 'array');
+            'wpeditor_args' => ['media_buttons' => false],
+        ];
+        $_wp_editor                   = $this->_generate_admin_form_fields($editor_args, 'array');
 
         $all_terms = get_terms(
-            array('espresso_venue_categories'),
-            array('hide_empty' => 0, 'exclude' => array($this->_category->id))
+            ['espresso_venue_categories'],
+            ['hide_empty' => 0, 'exclude' => [$this->_category->id]]
         );
 
         // setup category select for term parents.
-        $category_select_values[] = array(
+        $category_select_values[] = [
             'text' => esc_html__('No Parent', 'event_espresso'),
             'id'   => 0,
-        );
+        ];
         foreach ($all_terms as $term) {
-            $category_select_values[] = array(
+            $category_select_values[] = [
                 'text' => $term->name,
                 'id'   => $term->term_id,
-            );
+            ];
         }
 
         $category_select = EEH_Form_Fields::select_input(
@@ -1376,32 +1412,35 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             $category_select_values,
             $this->_category->parent
         );
-        $template_args = array(
+        $template_args   = [
             'category'                 => $this->_category,
             'category_select'          => $category_select,
             'unique_id_info_help_link' => $this->_get_help_tab_link('unique_id_info'),
             'category_desc_editor'     => $_wp_editor['category_desc']['field'],
             'disable'                  => '',
             'disabled_message'         => false,
-        );
-        $template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
+        ];
+        $template        = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
         return EEH_Template::display_template($template, $template_args, true);
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _delete_categories()
     {
-        $cat_ids = isset($this->_req_data['VEN_CAT_ID']) ? (array) $this->_req_data['VEN_CAT_ID']
-            : (array) $this->_req_data['category_id'];
+        $category_ID  = $this->request->getRequestParam('category_id', 0, 'int');
+        $category_IDs = $this->request->getRequestParam('VEN_CAT_ID', [$category_ID], 'int', true);
 
-        foreach ($cat_ids as $cat_id) {
+        foreach ($category_IDs as $cat_id) {
             $this->_delete_category($cat_id);
         }
 
         // doesn't matter what page we're coming from... we're going to the same place after delete.
-        $query_args = array(
+        $query_args = [
             'action' => 'category_list',
-        );
+        ];
         $this->_redirect_after_action(0, '', '', $query_args);
     }
 
@@ -1413,18 +1452,21 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _insert_or_update_category($new_category)
     {
 
-        $cat_id = $new_category ? $this->_insert_category() : $this->_insert_category(true);
+        $cat_id  = $new_category ? $this->_insert_category() : $this->_insert_category(true);
         $success = 0; // we already have a success message so lets not send another.
         if ($cat_id) {
-            $query_args = array(
+            $query_args = [
                 'action'     => 'edit_category',
                 'VEN_CAT_ID' => $cat_id,
-            );
+            ];
         } else {
-            $query_args = array('action' => 'add_category');
+            $query_args = ['action' => 'add_category'];
         }
         $this->_redirect_after_action($success, '', '', $query_args, true);
     }
@@ -1432,10 +1474,10 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
 
     private function _insert_category($update = false)
     {
-        $cat_id = $update ? $this->_req_data['VEN_CAT_ID'] : '';
-        $category_name = isset($this->_req_data['category_name']) ? $this->_req_data['category_name'] : '';
-        $category_desc = isset($this->_req_data['category_desc']) ? $this->_req_data['category_desc'] : '';
-        $category_parent = isset($this->_req_data['category_parent']) ? $this->_req_data['category_parent'] : 0;
+        $category_ID     = $update ? $this->request->getRequestParam('VEN_CAT_ID', '', 'int') : '';
+        $category_name   = $this->request->getRequestParam('category_name', '');
+        $category_desc   = $this->request->getRequestParam('category_desc', '', 'html');
+        $category_parent = $this->request->getRequestParam('category_parent', 0, 'int');
 
         if (empty($category_name)) {
             $msg = esc_html__('You must add a name for the category.', 'event_espresso');
@@ -1444,14 +1486,14 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         }
 
 
-        $term_args = array(
+        $term_args = [
             'name'        => $category_name,
             'description' => $category_desc,
             'parent'      => $category_parent,
-        );
+        ];
 
         $insert_ids = $update
-            ? wp_update_term($cat_id, 'espresso_venue_categories', $term_args)
+            ? wp_update_term($category_ID, 'espresso_venue_categories', $term_args)
             : wp_insert_term(
                 $category_name,
                 'espresso_venue_categories',
@@ -1459,38 +1501,45 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             );
 
         if (! is_array($insert_ids)) {
-            $msg = esc_html__('An error occurred and the category has not been saved to the database.', 'event_espresso');
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(
+                esc_html__('An error occurred and the category has not been saved to the database.', 'event_espresso'),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
         } else {
-            $cat_id = $insert_ids['term_id'];
-            $msg = sprintf(esc_html__('The category %s was successfully created', 'event_espresso'), $category_name);
-            EE_Error::add_success($msg);
+            $category_ID = $insert_ids['term_id'];
+            EE_Error::add_success(
+                sprintf(
+                    esc_html__('The category %s was successfully created', 'event_espresso'),
+                    $category_name
+                )
+            );
         }
 
-        return $cat_id;
+        return $category_ID;
     }
 
 
     /**
      * TODO handle category exports()
      *
-     * @return file export
+     * @return void
      */
     protected function _categories_export()
     {
-
         // todo: I don't like doing this but it'll do until we modify EE_Export Class.
-        $new_request_args = array(
-            'export'       => 'report',
-            'action'       => 'categories',
-            'category_ids' => $this->_req_data['VEN_CAT_ID'],
+        $this->request->mergeRequestParams(
+            [
+                'export'       => 'report',
+                'action'       => 'categories',
+                'category_ids' => $this->request->getRequestParam('VEN_CAT_ID', 0, 'int'),
+            ]
         );
-
-        $this->_req_data = array_merge($this->_req_data, $new_request_args);
 
         if (is_readable(EE_CLASSES . 'EE_Export.class.php')) {
             require_once(EE_CLASSES . 'EE_Export.class.php');
-            $EE_Export = EE_Export::instance($this->_req_data);
+            $EE_Export = EE_Export::instance($this->request->requestParams());
             $EE_Export->export();
         }
     }
@@ -1504,33 +1553,36 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     public function get_categories($per_page = 10, $current_page = 1, $count = false)
     {
 
         // testing term stuff
-        $orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'Term.term_id';
-        $order = isset($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
-        $limit = ($current_page - 1) * $per_page;
-        $where = array('taxonomy' => 'espresso_venue_categories');
-        if (isset($this->_req_data['s'])) {
-            $sstr = '%' . $this->_req_data['s'] . '%';
-            $where['OR'] = array(
-                'Term.name'   => array('LIKE', $sstr),
-                'description' => array('LIKE', $sstr),
-            );
+        $orderby     = $this->request->getRequestParam('orderby', 'Term.term_id');
+        $order       = $this->request->getRequestParam('order', 'DESC');
+        $limit       = ($current_page - 1) * $per_page;
+        $where       = ['taxonomy' => 'espresso_venue_categories'];
+        $search_term = $this->request->getRequestParam('s');
+        if ($search_term) {
+            $search_term = '%' . $search_term . '%';
+            $where['OR'] = [
+                'Term.name'   => ['LIKE', $search_term],
+                'description' => ['LIKE', $search_term],
+            ];
         }
 
-        $query_params = array(
+        $query_params = [
             $where,
-            'order_by'   => array($orderby => $order),
+            'order_by'   => [$orderby => $order],
             'limit'      => $limit . ',' . $per_page,
-            'force_join' => array('Term'),
-        );
+            'force_join' => ['Term'],
+        ];
 
-        $categories = $count ? EEM_Term_Taxonomy::instance()->count($query_params, 'term_id')
+        return $count
+            ? EEM_Term_Taxonomy::instance()->count($query_params, 'term_id')
             : EEM_Term_Taxonomy::instance()->get_all($query_params);
-
-        return $categories;
     }
 
 
