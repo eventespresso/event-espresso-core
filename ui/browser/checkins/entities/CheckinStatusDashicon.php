@@ -87,10 +87,10 @@ class CheckinStatusDashicon
     public function cssClasses()
     {
         if ($this->checkin_status === EE_Checkin::status_checked_in) {
-            return "ee-dashicons ee-icon-check-in checkin-icons checkedin-status-{$this->checkin_status}";
+            return "dashicons dashicons-yes-alt checkin-icons checkedin-status-{$this->checkin_status}";
         }
         if ($this->checkin_status === EE_Checkin::status_checked_out) {
-            return "ee-dashicons ee-icon-check-out checkin-icons checkedin-status-{$this->checkin_status}";
+            return "dashicons dashicons-marker checkin-icons checkedin-status-{$this->checkin_status}";
         }
         return "dashicons dashicons-no checkin-icons checkedin-status-{$this->checkin_status}";
     }

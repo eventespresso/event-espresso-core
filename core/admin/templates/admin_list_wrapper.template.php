@@ -14,7 +14,7 @@
       id="<?php echo esc_attr($list_table_class); ?>-table-frm"
       method="get"
 >
-    <?php $list_table->search_box($search['btn_label'], $current_page); ?><br/>
+    <?php $list_table->search_box($search['btn_label'], $current_page); ?>
     <?php echo $sortable_list_table_form_fields; // already escaped ?>
     <?php $list_table->display_views(); ?>
     <?php $list_table->display(); ?>
