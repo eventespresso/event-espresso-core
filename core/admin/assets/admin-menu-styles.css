@@ -76,6 +76,12 @@
         calc((var(--ee-btn-primary-lit) - 10) * 1%),
         var(--ee-btn-primary-alpha)
     );
+    --ee-btn-primary-disabled: hsla(
+        var(--ee-btn-primary-hue),
+        calc((var(--ee-btn-primary-sat) - 30) * 1%),
+        calc((var(--ee-btn-primary-lit) + 15) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
     --ee-btn-primary-hover: var(--ee-btn-primary-low-constrast);
     --ee-btn-primary-focus: var(--ee-btn-primary-high-constrast);
 
@@ -390,10 +396,9 @@ div.TB-ee-frame a {
 	font-style: normal;
 }
 
-.dashicons,
+/* .dashicons, */
 .ee-dashicons,
 .ee-icon:before,
-.checkin-icons:before,
 #wpadminbar .ee-icon:before,
 #toplevel_page_espresso_events div.wp-menu-image:before,
 #toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
@@ -406,20 +411,24 @@ div.TB-ee-frame a {
 	width: auto;
 }
 
-.ee-icon:before, .ee-dashicons, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
-	display: inline-block;
-	font-family: "ee-dashicons" !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
- 	font-style: normal;
-	font-weight: 400;
-	font-variant: normal;
-	line-height: 1;
-	speak: none;
-	text-align: center;
-	text-decoration: inherit;
-	text-transform: none;
-	/* Better Font Rendering =========== */
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+.ee-icon:before,
+.ee-dashicons,
+#wpadminbar .ee-icon:before,
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
+    display: inline-block;
+    font-family: "ee-dashicons" !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    line-height: 1;
+    speak: none;
+    text-align: center;
+    text-decoration: inherit;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 @media screen and (max-width: 782px) {
