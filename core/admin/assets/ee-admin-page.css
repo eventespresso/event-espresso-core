@@ -220,29 +220,8 @@
 .espresso-admin.wp-core-ui ul.add-menu-item-tabs li.tabs {
     background-color: var(--ee-color-almost-white);
 }
-/* .espresso-admin.wp-core-ui ul.wp-tab-bar li a,
-.espresso-admin.wp-core-ui ul.category-tabs li a,
-.espresso-admin.wp-core-ui ul.add-menu-item-tabs li a,
-.espresso-admin.wp-core-ui #side-sortables .category-tabs .tabs a,
-.espresso-admin.wp-core-ui #side-sortables .add-menu-item-tabs .tabs a,
-.espresso-admin.wp-core-ui .wp-tab-bar .wp-tab-active a,
-.espresso-admin.wp-core-ui #post-body ul.category-tabs li.tabs a,
-.espresso-admin.wp-core-ui #post-body ul.add-menu-item-tabs li.tabs a {
-    font-weight: 600;
-}
-.espresso-admin.wp-core-ui ul.wp-tab-bar li a:focus,
-.espresso-admin.wp-core-ui ul.category-tabs li a:focus,
-.espresso-admin.wp-core-ui ul.add-menu-item-tabs li a:focus,
-.espresso-admin.wp-core-ui #side-sortables .category-tabs .tabs a:focus,
-.espresso-admin.wp-core-ui #side-sortables .add-menu-item-tabs .tabs a:focus,
-.espresso-admin.wp-core-ui .wp-tab-bar .wp-tab-active a:focus,
-.espresso-admin.wp-core-ui #post-body ul.category-tabs li.tabs a:focus,
-.espresso-admin.wp-core-ui #post-body ul.add-menu-item-tabs li.tabs a:focus {
-    color: var(--ee-btn-primary);
-    box-shadow: none;
-    outline: none;
-} */
-.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete ) {
+
+.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.ee-add-on-btn) {
     color: var(--ee-btn-primary);
     font-weight: 600;
     outline: none;
@@ -349,7 +328,8 @@
     padding-block-end: 2rem;
     padding-inline: 3rem;
 }
-.espresso-admin #post-body #post-body-content > .form-table {
+.espresso-admin #post-body #post-body-content > .form-table,
+.espresso-admin #post-body #post-body-content > form > .form-table {
     margin-block-start: 1rem;
     margin-block-end: 2rem;
     margin-inline: 3rem;
@@ -2561,8 +2541,10 @@ body.espresso-admin #contextual-help-wrap strong {
     text-align: center;
     width: 100%;
 }
-
-.ee-card.ee-card__review .wporg-ratings .dashicons-star-filled::before {
+.ee-card.ee-card__review .wporg-ratings .dashicons-star-filled {
+    margin-inline: 1rem;
+}
+.ee-card.ee-card__review .wporg-ratings .dashicons-star-filled:before {
     font-size: 2.5rem;
 }
 
@@ -3076,6 +3058,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button:not([type="checkbox"]):not([type="radio"]):not([type="submit"]) {
     aspect-ratio: 1;
     padding: 0;
+}
+.espresso-admin.wp-core-ui .ee-list-table-actions a {
+  color: var(--ee-font-color) !important;
 }
 
 .espresso-admin.wp-core-ui input[type="submit"],
