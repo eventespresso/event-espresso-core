@@ -51,7 +51,7 @@
         <label><?php echo esc_html__('Registration Date', 'event_espresso'); ?></label>
         <span><?php echo esc_html($reg_datetime['value']); ?></span>
     </div>
-    <div class='ee-admin-container status-<?php echo esc_attr($registration->status_ID()); ?>'>
+    <div class='ee-admin-container ee-status-bg--<?php echo esc_attr($registration->status_ID()); ?>'>
         <label><?php echo esc_html__('Registration Status: ', 'event_espresso'); ?></label>
         <span><?php echo esc_html($registration->pretty_status()); ?></span>
     </div>

@@ -35,7 +35,7 @@
 
 .wp-list-table .column-_REG_date,
 .wp-list-table .column-DTT_EVT_start {
-    width: 10%;
+    width: 12.5%;
 }
 
 .wp-list-table .column-ATT_fname .row-title {
@@ -50,8 +50,20 @@
     width: 10%;
 }
 
-.wp-list-table .column-_REG_att_checked_in {
-    width: 5%;
+.espresso-admin .wp-list-table th.column-primary.column-_REG_att_checked_in,
+.espresso-admin .wp-list-table td.column-primary.column-_REG_att_checked_in {
+    padding-inline-end: .75rem;
+    width: 4% !important;
+}
+
+.checkedin-status-0 {
+    color: var(--ee-status-color-red);
+}
+.checkedin-status-1 {
+    color: var(--ee-status-color-green);
+}
+.checkedin-status-2 {
+    color: var(--ee-status-color-grey);
 }
 
 .wp-list-table .column-DTT_reg_limit {
@@ -106,20 +118,20 @@
 /*    width : 3%;*/
 /*}*/
 
-.espresso-admin #EE_Event_Registrations_List_Table-table-frm .wp-list-table ._REG_att_checked_in {
-    padding: 0;
-    padding-block: 1rem;
-    padding-inline-start: 1.5rem;
-    padding-inline-end: 0.75rem;
-    text-align: center;
-    width: 1rem;
-    min-width: 3%;
-    margin: 0;
-}
+/*.espresso-admin #EE_Event_Registrations_List_Table-table-frm .wp-list-table ._REG_att_checked_in {*/
+/*    padding: 0;*/
+/*    padding-block: 1rem;*/
+/*    padding-inline-start: 1.5rem;*/
+/*    padding-inline-end: 0.75rem;*/
+/*    text-align: center;*/
+/*    width: 1rem;*/
+/*    min-width: 3%;*/
+/*    margin: 0;*/
+/*}*/
 
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in .dashicons {
-    margin-left: 10px;
-}
+/*#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in .dashicons {*/
+/*    margin-left: 10px;*/
+/*}*/
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_count {
     min-width: 4%;
@@ -165,9 +177,9 @@
     width: 100%;
 }
 
-.wp-list-table .column-CHK_in {
-    width: 11%;
-}
+/*.wp-list-table .column-CHK_in {*/
+/*    width: 11%;*/
+/*}*/
 
 
 .reg-overview-free-event-spn {
@@ -569,15 +581,64 @@
 }
 
 /** REGISTRATION LIST TABLE EVENT-DATE COLUMNS **/
-.ee-more-datetimes-toggle {
-    float: left;
-    margin-top: 2px;
-    cursor: pointer;
+
+.ee-responsive-table-cell__content > .ee-reg-list-dates-list-date {
+    padding-inline-end: 2rem;
+    position: relative;
 }
 
-.ee-registration-event-datetimes-container .left {
-    float: left;
-    max-width: 81%;
+.ee-registration-event-datetimes-container-wrap {
+    box-sizing: border-box;
+    display: flex;
+    padding: 0;
+    padding-inline-end: 2rem;
+    /*position: relative;*/
+    width: 100%;
+}
+.ee-registration-event-datetimes-container {
+    display: none;
+    flex-flow: column nowrap;
+    /*transition: all 250ms ease-in-out;*/
+}
+
+
+.ee-reg-list-dates-list-date {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+
+.espresso-admin.wp-core-ui .button.button--icon-only.ee-more-datetimes-toggle {
+    background: none !important;
+    border: none !important;
+    border-radius: 100%;
+    box-shadow: none !important;
+    margin: 0;
+    margin-inline-end: .5rem;
+    position: absolute;
+    inset-block-start: .75rem;
+    inset-inline-end: .75rem;
+    /*inset-block-start: 0;*/
+    /*inset-inline-end: 0;*/
+}
+
+.espresso-admin .wp-list-table .ee-more-datetimes-toggle > .dashicons,
+.espresso-admin .wp-list-table .ee-more-datetimes-toggle > .dashicons:before {
+    font-size: 2rem;
+    height: 2rem;
+    width: 2rem;
+}
+
+.ee-more-datetimes-toggle > .dashicons {
+    transition: transform 250ms ease-in-out;
+}
+
+.ee-more-datetimes-toggle.open > .dashicons {
+    transform: rotate(-90deg);
+}
+
+.espresso-admin .ee-event-filter-link .dashicons.dashicons--small {
+    top: -2px;
 }
 
 /** Add a bit of style to tickets details table **/
@@ -596,4 +657,14 @@
 .ee-new-registration-step-content .ee-attention {
     margin: 2em 0 1em;
     padding: 1.5em 0 0;
+}
+
+.event-espresso_page_espresso_registrations #post-body-content > h2 {
+    margin-block-start: .5rem;
+    margin-block-end: .25rem;
+    padding: 1px 0;
+}
+
+.event-espresso_page_espresso_registrations #post-body-content > h2 .dashicons.dashicons-calendar {
+    margin-inline: 1rem;
 }
