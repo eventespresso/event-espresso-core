@@ -169,8 +169,8 @@ class EE_Message_List_Table extends EE_Admin_List_Table
         $pretty_status = EEH_Template::pretty_status($status, false, 'sentence');
         return '
         <div class="ee-layout-row">
-            <span class="row-title status-' . $status . ' ee-aria-tooltip" aria-label="' . $pretty_status . '">
-                <span class="ee-status-dot ee-status-dot--' . $status . '"></span>
+            <span class="row-title ee-status-color--' . $status . ' ee-aria-tooltip" aria-label="' . $pretty_status . '">
+                <span class="ee-status-dot ee-status-bg--' . $status . '"></span>
                 ' . esc_html($message->to()) . '
             </span>
         </div>' . $this->row_actions($actions);
