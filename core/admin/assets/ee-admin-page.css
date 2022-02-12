@@ -462,7 +462,10 @@
     padding: 1px 10px;
 }
 
-.espresso-admin #edit-slug-box a.button{
+.espresso-admin #edit-slug-box button,
+.espresso-admin #edit-slug-box a.button,
+.espresso-admin #edit-slug-box > strong,
+.espresso-admin #edit-slug-box #sample-permalink {
     margin-block-end: .5rem !important;
 }
 
@@ -858,8 +861,23 @@ table .espresso-radio-btn-options-ul .big-lbl,
 }
 
 .important-notice {
-    font-weight: bold;
-    color: var(--ee-status-color-orange);
+   font-weight: bold;
+   color: var(--ee-status-color-orange);
+}
+.ee-important-notice {
+  padding: 1.5rem 2rem;
+  margin: 2rem 0 1rem;
+  /* background-color: var(--ee-color-white); */
+  background-color: var(--ee-status-color-yellow);
+  border: 4px solid var(--ee-status-color-yellow);
+  border-radius: 3px;
+  color: var(--ee-attention-color);
+  font-size: 1rem;
+  font-weight: 700;
+  text-shadow: none;
+  display: inline-flex;
+  letter-spacing: 0.125rem;
+  word-spacing: 0.25rem;
 }
 
 .tiny-link {
@@ -3111,7 +3129,7 @@ body.espresso-admin #contextual-help-wrap strong {
     display: inline-flex;
     font-size: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
     font-weight: 600;
-    height: min(var(--ee-button-height), auto);
+    height: min(calc(var(--ee-button-height) - 4px), auto);
     justify-content: center;
     line-height: 1.25;
     margin: 0;
@@ -3123,13 +3141,13 @@ body.espresso-admin #contextual-help-wrap strong {
     padding: 0;
     /* padding-inline: var(--ee-button-height-third); */
     /* padding-inline: calc(var(--ee-button-height-half) - var(--ee-button-height-shim)); */
-padding-block: var(--ee-button-height-forth);
+padding-block: var(--ee-button-height-sixth);
 padding-inline: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
     position: relative;
     text-align: center;
     text-decoration: none;
     touch-action: manipulation;
-    transition: all 200ms ease-in-out;
+    transition: all 175ms ease-in-out;
     user-select: none;
     vertical-align: middle;
     white-space: normal;

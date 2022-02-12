@@ -39,6 +39,12 @@ Styling the progress bar and migration page
     margin-block-start: 2rem;
     margin-block-end: 1rem;
 }
+/*.ee-reset-delete-data-actions .ee-attention {*/
+/*    display: inline-flex;*/
+/*}*/
+/*.ee-reset-delete-data-actions .ee-attention em {*/
+/*    margin-inline-start: 1rem;*/
+/*}*/
 
 
 #migration-options-dv {
