@@ -2684,9 +2684,9 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-block-start: 1.5rem;
 }
 
-.espresso-admin .postbox .inside div p,
+.espresso-admin .postbox .inside div:not(.progress-step-bubble) > p,
 .espresso-admin .postbox .inside br + div,
-.espresso-admin .postbox .inside div + div:not(.tabs-panel)  {
+.espresso-admin .postbox .inside div + div:not(.tabs-panel):not(.progress-step-bubble)  {
     margin-block-start: 1rem;
 }
 
