@@ -104,7 +104,7 @@
     --ee-btn-primary-alt-low-constrast: hsla(
         var(--ee-btn-primary-alt-hue),
         calc((var(--ee-btn-primary-alt-sat) + 5) * 1%),
-        calc((var(--ee-btn-primary-alt-lit) + 15) * 1%),
+        calc((var(--ee-btn-primary-alt-lit) + 2.5) * 1%),
         var(--ee-btn-primary-alt-alpha)
     );
     --ee-btn-primary-alt-high-constrast: hsla(
