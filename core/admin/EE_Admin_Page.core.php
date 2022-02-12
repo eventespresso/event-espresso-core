@@ -2098,7 +2098,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 					</select>
 					entries
 				</label>
-				<input id="entries-per-page-btn" class="button--secondary" type="submit" value="Go" >
+				<input id="entries-per-page-btn" class="button button--secondary" type="submit" value="Go" >
 			</div>
 		';
         return $entries_per_page_dropdown;
@@ -2490,7 +2490,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $delete,
                 $delete,
                 $delete_link_args,
-                'submitdelete deletion button button--small button--caution'
+                'submitdelete deletion button button--small  button--outline button--caution'
             );
         }
         $this->_template_args['publish_delete_link'] = ! empty($id) ? $delete : '';
@@ -2718,10 +2718,23 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         do_action('AHEE__EE_Admin_Page___display_admin_page__modify_metaboxes');
         // set current wp page slug - looks like: event-espresso_page_event_categories
         // keep in mind "event-espresso" COULD be something else if the top level menu label has been translated.
+
+        $post_body_content = $this->_template_args['before_admin_page_content'] ?? '';
+
+        $this->_template_args['add_page_frame'] = $this->_req_action !== 'system_status'
+                                                 && $this->_req_action !== 'data_reset'
+                                                 && $this->_wp_page_slug !== 'event-espresso_page_espresso_packages'
+                                                 && strpos($post_body_content, 'wp-list-table') === false;
+
         $this->_template_args['current_page']              = $this->_wp_page_slug;
         $this->_template_args['admin_page_wrapper_div_id'] = $this->_cpt_route
             ? 'poststuff'
             : 'espresso-default-admin';
+        $this->_template_args['admin_page_wrapper_div_class'] = str_replace(
+                'event-espresso_page_espresso_',
+                '',
+                $this->_wp_page_slug
+            ) . ' ' . $this->_req_action . '-route';
 
         $template_path = $sidebar
             ? EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php'
@@ -2732,7 +2745,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $template_path = ! empty($this->_column_template_path) ? $this->_column_template_path : $template_path;
 
         $this->_template_args['post_body_content']         = $this->_template_args['admin_page_content'] ?? '';
-        $this->_template_args['before_admin_page_content'] = $this->_template_args['before_admin_page_content'] ?? '';
+        $this->_template_args['before_admin_page_content'] = $post_body_content;
         $this->_template_args['after_admin_page_content']  = $this->_template_args['after_admin_page_content'] ?? '';
         $this->_template_args['admin_page_content']        = EEH_Template::display_template(
             $template_path,
@@ -2780,7 +2793,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 '',
                 'buy_now',
                 [],
-                'button--primary button--big',
+                'button button--primary button--big',
                 esc_url_raw($buy_now_url),
                 true
             )
@@ -3200,7 +3213,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         foreach ($button_text as $key => $button) {
             $ref     = $default_names[ $key ];
             $name    = ! empty($actions) ? $actions[ $key ] : $ref;
-            $buttons .= '<input type="submit" class="button--primary ' . $ref . '" '
+            $buttons .= '<input type="submit" class="button button--primary ' . $ref . '" '
                         . 'value="' . $button . '" name="' . $name . '" '
                         . 'id="' . $this->_current_view . '_' . $ref . '" />';
             if (! $both) {
