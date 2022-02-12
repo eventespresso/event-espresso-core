@@ -33,7 +33,9 @@
     width: 10%;
 }
 
-.wp-list-table .column-_REG_date,
+.wp-list-table .column-_REG_date {
+    width: 10%;
+}
 .wp-list-table .column-DTT_EVT_start {
     width: 12.5%;
 }
