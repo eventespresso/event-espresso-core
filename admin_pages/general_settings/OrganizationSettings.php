@@ -65,14 +65,15 @@ class OrganizationSettings extends FormHandler
      */
     protected $countrySubRegionDao;
 
+
     /**
      * Form constructor.
      *
-     * @param EE_Registry             $registry
-     * @param EE_Organization_Config  $organization_config
-     * @param EE_Core_Config          $core_config
+     * @param EE_Registry            $registry
+     * @param EE_Organization_Config $organization_config
+     * @param EE_Core_Config         $core_config
      * @param EE_Network_Core_Config $network_core_config
-     * @param CountrySubRegionDao $countrySubRegionDao
+     * @param CountrySubRegionDao    $countrySubRegionDao
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws DomainException
@@ -85,7 +86,7 @@ class OrganizationSettings extends FormHandler
         CountrySubRegionDao $countrySubRegionDao
     ) {
         $this->organization_config = $organization_config;
-        $this->core_config = $core_config;
+        $this->core_config         = $core_config;
         $this->network_core_config = $network_core_config;
         $this->countrySubRegionDao = $countrySubRegionDao;
         parent::__construct(
@@ -112,15 +113,15 @@ class OrganizationSettings extends FormHandler
     public function generate()
     {
         $has_sub_regions = EEM_State::instance()->count(
-            array(array('Country.CNT_ISO' => $this->organization_config->CNT_ISO))
+            [['Country.CNT_ISO' => $this->organization_config->CNT_ISO]]
         );
-        $form = new EE_Form_Section_Proper(
-            array(
+        $form            = new EE_Form_Section_Proper(
+            [
                 'name'            => 'organization_settings',
                 'html_id'         => 'organization_settings',
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
-                'subsections'     => array(
-                    'contact_information_hdr'        => new EE_Form_Section_HTML(
+                'subsections'     => [
+                    'contact_information_hdr' => new EE_Form_Section_HTML(
                         EEH_HTML::h2(
                             esc_html__('Contact Information', 'event_espresso')
                             . ' '
@@ -129,9 +130,9 @@ class OrganizationSettings extends FormHandler
                             'contact-information-hdr'
                         )
                     ),
-                    'organization_name'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_name',
+                    'organization_name'       => new EE_Text_Input(
+                        [
+                            'html_name'       => 'organization_name',
                             'html_label_text' => esc_html__('Organization Name', 'event_espresso'),
                             'html_help_text'  => esc_html__(
                                 'Displayed on all emails and invoices.',
@@ -139,41 +140,41 @@ class OrganizationSettings extends FormHandler
                             ),
                             'default'         => $this->organization_config->get_pretty('name'),
                             'required'        => false,
-                        )
+                        ]
                     ),
-                    'organization_address_1'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_address_1',
+                    'organization_address_1'  => new EE_Text_Input(
+                        [
+                            'html_name'       => 'organization_address_1',
                             'html_label_text' => esc_html__('Street Address', 'event_espresso'),
                             'default'         => $this->organization_config->get_pretty('address_1'),
                             'required'        => false,
-                        )
+                        ]
                     ),
-                    'organization_address_2'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_address_2',
+                    'organization_address_2'  => new EE_Text_Input(
+                        [
+                            'html_name'       => 'organization_address_2',
                             'html_label_text' => esc_html__('Street Address 2', 'event_espresso'),
                             'default'         => $this->organization_config->get_pretty('address_2'),
                             'required'        => false,
-                        )
+                        ]
                     ),
-                    'organization_city'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_city',
+                    'organization_city'       => new EE_Text_Input(
+                        [
+                            'html_name'       => 'organization_city',
                             'html_label_text' => esc_html__('City', 'event_espresso'),
                             'default'         => $this->organization_config->get_pretty('city'),
                             'required'        => false,
-                        )
+                        ]
                     ),
-                    'organization_country'      => new EE_Country_Select_Input(
+                    'organization_country'    => new EE_Country_Select_Input(
                         null,
-                        array(
+                        [
                             EE_Country_Select_Input::OPTION_GET_KEY => EE_Country_Select_Input::OPTION_GET_ALL,
-                            'html_name'       => 'organization_country',
-                            'html_label_text' => esc_html__('Country', 'event_espresso'),
-                            'default'         => $this->organization_config->CNT_ISO,
-                            'required'        => false,
-                            'html_help_text'  => sprintf(
+                            'html_name'                             => 'organization_country',
+                            'html_label_text'                       => esc_html__('Country', 'event_espresso'),
+                            'default'                               => $this->organization_config->CNT_ISO,
+                            'required'                              => false,
+                            'html_help_text'                        => sprintf(
                                 esc_html__(
                                     '%1$sThe Country set here will have the effect of setting the currency used for all ticket prices.%2$s',
                                     'event_espresso'
@@ -181,16 +182,16 @@ class OrganizationSettings extends FormHandler
                                 '<span class="reminder-spn">',
                                 '</span>'
                             ),
-                        )
+                        ]
                     ),
-                    'organization_state' => new EE_State_Select_Input(
+                    'organization_state'      => new EE_State_Select_Input(
                         null,
-                        array(
+                        [
                             'html_name'       => 'organization_state',
                             'html_label_text' => esc_html__('State/Province', 'event_espresso'),
                             'default'         => $this->organization_config->STA_ID,
                             'required'        => false,
-                            'html_help_text' => empty($this->organization_config->STA_ID) || ! $has_sub_regions
+                            'html_help_text'  => empty($this->organization_config->STA_ID) || ! $has_sub_regions
                                 ? sprintf(
                                     esc_html__(
                                         'If the States/Provinces for the selected Country do not appear in this list, then click "Save".%3$sIf data exists, then the list will be populated when the page reloads and you will be able to make a selection at that time.%3$s%1$sMake sure you click "Save" again after selecting a State/Province that has just been loaded in order to keep that selection.%2$s',
@@ -201,19 +202,19 @@ class OrganizationSettings extends FormHandler
                                     '<br />'
                                 )
                                 : '',
-                        )
+                        ]
                     ),
-                    'organization_zip'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_zip',
+                    'organization_zip'        => new EE_Text_Input(
+                        [
+                            'html_name'       => 'organization_zip',
                             'html_label_text' => esc_html__('Zip/Postal Code', 'event_espresso'),
                             'default'         => $this->organization_config->get_pretty('zip'),
                             'required'        => false,
-                        )
+                        ]
                     ),
                     'organization_email'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_email',
+                        [
+                            'html_name'       => 'organization_email',
                             'html_label_text' => esc_html__('Primary Contact Email', 'event_espresso'),
                             'html_help_text'  => sprintf(
                                 esc_html__(
@@ -225,11 +226,11 @@ class OrganizationSettings extends FormHandler
                             ),
                             'default'         => $this->organization_config->get_pretty('email'),
                             'required'        => false,
-                        )
+                        ]
                     ),
                     'organization_phone'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_phone',
+                        [
+                            'html_name'       => 'organization_phone',
                             'html_label_text' => esc_html__('Phone Number', 'event_espresso'),
                             'html_help_text'  => esc_html__(
                                 'The phone number for your organization.',
@@ -237,11 +238,11 @@ class OrganizationSettings extends FormHandler
                             ),
                             'default'         => $this->organization_config->get_pretty('phone'),
                             'required'        => false,
-                        )
+                        ]
                     ),
-                    'organization_vat'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_vat',
+                    'organization_vat'        => new EE_Text_Input(
+                        [
+                            'html_name'       => 'organization_vat',
                             'html_label_text' => esc_html__('VAT/Tax Number', 'event_espresso'),
                             'html_help_text'  => esc_html__(
                                 'The VAT/Tax Number may be displayed on invoices and receipts.',
@@ -249,7 +250,7 @@ class OrganizationSettings extends FormHandler
                             ),
                             'default'         => $this->organization_config->get_pretty('vat'),
                             'required'        => false,
-                        )
+                        ]
                     ),
                     'company_logo_hdr'        => new EE_Form_Section_HTML(
                         EEH_HTML::h2(
@@ -260,9 +261,9 @@ class OrganizationSettings extends FormHandler
                             'company-logo-hdr'
                         )
                     ),
-                    'organization_logo_url'      => new EE_Admin_File_Uploader_Input(
-                        array(
-                            'html_name' => 'organization_logo_url',
+                    'organization_logo_url'   => new EE_Admin_File_Uploader_Input(
+                        [
+                            'html_name'       => 'organization_logo_url',
                             'html_label_text' => esc_html__('Upload New Logo', 'event_espresso'),
                             'html_help_text'  => esc_html__(
                                 'Your logo will be used on custom invoices, tickets, certificates, and payment templates.',
@@ -270,7 +271,7 @@ class OrganizationSettings extends FormHandler
                             ),
                             'default'         => $this->organization_config->get_pretty('logo_url'),
                             'required'        => false,
-                        )
+                        ]
                     ),
                     'social_links_hdr'        => new EE_Form_Section_HTML(
                         EEH_HTML::h2(
@@ -290,57 +291,57 @@ class OrganizationSettings extends FormHandler
                             'social-links-hdr'
                         )
                     ),
-                    'organization_facebook'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_facebook',
-                            'html_label_text' => esc_html__('Facebook', 'event_espresso'),
+                    'organization_facebook'   => new EE_Text_Input(
+                        [
+                            'html_name'             => 'organization_facebook',
+                            'html_label_text'       => esc_html__('Facebook', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="facebook.com/profile.name"',
-                            'default'         => $this->organization_config->get_pretty('facebook'),
-                            'required'        => false,
-                        )
+                            'default'               => $this->organization_config->get_pretty('facebook'),
+                            'required'              => false,
+                        ]
                     ),
-                    'organization_twitter'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_twitter',
-                            'html_label_text' => esc_html__('Twitter', 'event_espresso'),
+                    'organization_twitter'    => new EE_Text_Input(
+                        [
+                            'html_name'             => 'organization_twitter',
+                            'html_label_text'       => esc_html__('Twitter', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="twitter.com/twitterhandle"',
-                            'default'         => $this->organization_config->get_pretty('twitter'),
-                            'required'        => false,
-                        )
+                            'default'               => $this->organization_config->get_pretty('twitter'),
+                            'required'              => false,
+                        ]
                     ),
-                    'organization_linkedin'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_linkedin',
-                            'html_label_text' => esc_html__('LinkedIn', 'event_espresso'),
+                    'organization_linkedin'   => new EE_Text_Input(
+                        [
+                            'html_name'             => 'organization_linkedin',
+                            'html_label_text'       => esc_html__('LinkedIn', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="linkedin.com/in/profilename"',
-                            'default'         => $this->organization_config->get_pretty('linkedin'),
-                            'required'        => false,
-                        )
+                            'default'               => $this->organization_config->get_pretty('linkedin'),
+                            'required'              => false,
+                        ]
                     ),
-                    'organization_pinterest'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_pinterest',
-                            'html_label_text' => esc_html__('Pinterest', 'event_espresso'),
+                    'organization_pinterest'  => new EE_Text_Input(
+                        [
+                            'html_name'             => 'organization_pinterest',
+                            'html_label_text'       => esc_html__('Pinterest', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="pinterest.com/profilename"',
-                            'default'         => $this->organization_config->get_pretty('pinterest'),
-                            'required'        => false,
-                        )
+                            'default'               => $this->organization_config->get_pretty('pinterest'),
+                            'required'              => false,
+                        ]
                     ),
-                    'organization_instagram'      => new EE_Text_Input(
-                        array(
-                            'html_name' => 'organization_instagram',
-                            'html_label_text' => esc_html__('Instagram', 'event_espresso'),
+                    'organization_instagram'  => new EE_Text_Input(
+                        [
+                            'html_name'             => 'organization_instagram',
+                            'html_label_text'       => esc_html__('Instagram', 'event_espresso'),
                             'other_html_attributes' => ' placeholder="instagram.com/handle"',
-                            'default'         => $this->organization_config->get_pretty('instagram'),
-                            'required'        => false,
-                        )
+                            'default'               => $this->organization_config->get_pretty('instagram'),
+                            'required'              => false,
+                        ]
                     ),
-                ),
-            )
+                ],
+            ]
         );
         if (is_main_site()) {
             $form->add_subsections(
-                array(
+                [
                     'site_license_key_hdr' => new EE_Form_Section_HTML(
                         EEH_HTML::h2(
                             esc_html__('Your Event Espresso License Key', 'event_espresso')
@@ -352,20 +353,20 @@ class OrganizationSettings extends FormHandler
                             'site-license-key-hdr'
                         )
                     ),
-                    'site_license_key' => $this->getSiteLicenseKeyField()
-                )
+                    'site_license_key'     => $this->getSiteLicenseKeyField(),
+                ]
             );
             $form->add_subsections(
-                array(
+                [
                     'uxip_optin_hdr' => new EE_Form_Section_HTML(
                         $this->uxipOptinText()
                     ),
-                    'ueip_optin' => new EE_Checkbox_Multi_Input(
-                        array(
-                            true => esc_html__('Yes! I want to help improve Event Espresso!', 'event_espresso')
-                        ),
-                        array(
-                            'html_name' => EE_Core_Config::OPTION_NAME_UXIP,
+                    'ueip_optin'     => new EE_Checkbox_Multi_Input(
+                        [
+                            true => esc_html__('Yes! I want to help improve Event Espresso!', 'event_espresso'),
+                        ],
+                        [
+                            'html_name'       => EE_Core_Config::OPTION_NAME_UXIP,
                             'html_label_text' => esc_html__(
                                 'UXIP Opt In?',
                                 'event_espresso'
@@ -374,9 +375,9 @@ class OrganizationSettings extends FormHandler
                                 ? filter_var($this->core_config->ee_ueip_optin, FILTER_VALIDATE_BOOLEAN)
                                 : false,
                             'required'        => false,
-                        )
+                        ]
                     ),
-                ),
+                ],
                 'organization_instagram',
                 false
             );
@@ -416,7 +417,7 @@ class OrganizationSettings extends FormHandler
      * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
-    public function process($form_data = array())
+    public function process($form_data = [])
     {
         // process form
         $valid_data = (array) parent::process($form_data);
@@ -429,58 +430,58 @@ class OrganizationSettings extends FormHandler
                 ? sanitize_text_field($form_data['ee_site_license_key'])
                 : $this->network_core_config->site_license_key;
         }
-        $this->organization_config->name = isset($form_data['organization_name'])
+        $this->organization_config->name         = isset($form_data['organization_name'])
             ? sanitize_text_field($form_data['organization_name'])
             : $this->organization_config->name;
-        $this->organization_config->address_1 = isset($form_data['organization_address_1'])
+        $this->organization_config->address_1    = isset($form_data['organization_address_1'])
             ? sanitize_text_field($form_data['organization_address_1'])
             : $this->organization_config->address_1;
-        $this->organization_config->address_2 = isset($form_data['organization_address_2'])
+        $this->organization_config->address_2    = isset($form_data['organization_address_2'])
             ? sanitize_text_field($form_data['organization_address_2'])
             : $this->organization_config->address_2;
-        $this->organization_config->city = isset($form_data['organization_city'])
+        $this->organization_config->city         = isset($form_data['organization_city'])
             ? sanitize_text_field($form_data['organization_city'])
             : $this->organization_config->city;
-        $this->organization_config->STA_ID = isset($form_data['organization_state'])
+        $this->organization_config->STA_ID       = isset($form_data['organization_state'])
             ? absint($form_data['organization_state'])
             : $this->organization_config->STA_ID;
-        $this->organization_config->CNT_ISO = isset($form_data['organization_country'])
+        $this->organization_config->CNT_ISO      = isset($form_data['organization_country'])
             ? sanitize_text_field($form_data['organization_country'])
             : $this->organization_config->CNT_ISO;
-        $this->organization_config->zip = isset($form_data['organization_zip'])
+        $this->organization_config->zip          = isset($form_data['organization_zip'])
             ? sanitize_text_field($form_data['organization_zip'])
             : $this->organization_config->zip;
-        $this->organization_config->email = isset($form_data['organization_email'])
+        $this->organization_config->email        = isset($form_data['organization_email'])
             ? sanitize_email($form_data['organization_email'])
             : $this->organization_config->email;
-        $this->organization_config->vat = isset($form_data['organization_vat'])
+        $this->organization_config->vat          = isset($form_data['organization_vat'])
             ? sanitize_text_field($form_data['organization_vat'])
             : $this->organization_config->vat;
-        $this->organization_config->phone = isset($form_data['organization_phone'])
+        $this->organization_config->phone        = isset($form_data['organization_phone'])
             ? sanitize_text_field($form_data['organization_phone'])
             : $this->organization_config->phone;
-        $this->organization_config->logo_url = isset($form_data['organization_logo_url'])
+        $this->organization_config->logo_url     = isset($form_data['organization_logo_url'])
             ? esc_url_raw($form_data['organization_logo_url'])
             : $this->organization_config->logo_url;
-        $this->organization_config->facebook = isset($form_data['organization_facebook'])
+        $this->organization_config->facebook     = isset($form_data['organization_facebook'])
             ? esc_url_raw($form_data['organization_facebook'])
             : $this->organization_config->facebook;
-        $this->organization_config->twitter = isset($form_data['organization_twitter'])
+        $this->organization_config->twitter      = isset($form_data['organization_twitter'])
             ? esc_url_raw($form_data['organization_twitter'])
             : $this->organization_config->twitter;
-        $this->organization_config->linkedin = isset($form_data['organization_linkedin'])
+        $this->organization_config->linkedin     = isset($form_data['organization_linkedin'])
             ? esc_url_raw($form_data['organization_linkedin'])
             : $this->organization_config->linkedin;
-        $this->organization_config->pinterest = isset($form_data['organization_pinterest'])
+        $this->organization_config->pinterest    = isset($form_data['organization_pinterest'])
             ? esc_url_raw($form_data['organization_pinterest'])
             : $this->organization_config->pinterest;
-        $this->organization_config->google = isset($form_data['organization_google'])
+        $this->organization_config->google       = isset($form_data['organization_google'])
             ? esc_url_raw($form_data['organization_google'])
             : $this->organization_config->google;
-        $this->organization_config->instagram = isset($form_data['organization_instagram'])
+        $this->organization_config->instagram    = isset($form_data['organization_instagram'])
             ? esc_url_raw($form_data['organization_instagram'])
             : $this->organization_config->instagram;
-        $this->core_config->ee_ueip_optin = isset($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0])
+        $this->core_config->ee_ueip_optin        = isset($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0])
             ? filter_var($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0], FILTER_VALIDATE_BOOLEAN)
             : false;
         $this->core_config->ee_ueip_has_notified = true;
@@ -512,6 +513,7 @@ class OrganizationSettings extends FormHandler
 
     /**
      * Return whether the site license key has been verified or not.
+     *
      * @return bool
      */
     private function licenseKeyVerified()
@@ -520,11 +522,9 @@ class OrganizationSettings extends FormHandler
             return false;
         }
         $ver_option_key = 'puvererr_' . basename(EE_PLUGIN_BASENAME);
-        $verify_fail = get_option($ver_option_key, false);
+        $verify_fail    = get_option($ver_option_key, false);
         return $verify_fail === false
-                  || (! empty($this->network_core_config->site_license_key)
-                        && $verify_fail === false
-                  );
+               || ! empty($this->network_core_config->site_license_key);
     }
 
 
@@ -533,14 +533,15 @@ class OrganizationSettings extends FormHandler
      */
     private function getSiteLicenseKeyField()
     {
+        $class = $this->licenseKeyVerified() ? 'ee-status-outline--success' : 'ee-status-outline--error';
         return new EE_Text_Input(
-            array(
-                'html_name' => 'ee_site_license_key',
-                'html_id' => 'site_license_key',
-                'html_class' => 'ee-status--outline ' . $this->getValidationClass(),
-                'html_label_text' => esc_html__('Support License Key', 'event_espresso'),
+            [
+                'html_name'        => 'ee_site_license_key',
+                'html_id'          => 'site_license_key',
+                'html_class'       => 'ee-status-outline ' . $class,
+                'html_label_text'  => esc_html__('Support License Key', 'event_espresso'),
                 /** phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText */
-                'html_help_text'  => sprintf(
+                'html_help_text'   => sprintf(
                     esc_html__(
                         'Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed add-ons. If this is a Development or Test site, %sDO NOT%s enter your Support License Key.',
                         'event_espresso'
@@ -549,23 +550,14 @@ class OrganizationSettings extends FormHandler
                     '</strong>'
                 ),
                 /** phpcs:enable */
-                'default'         => $this->network_core_config->site_license_key ?? '',
-                'required'        => false,
+                'default'          => $this->network_core_config->site_license_key ?? '',
+                'required'         => false,
                 'form_html_filter' => new VsprintfFilter(
                     '%2$s %1$s',
-                    array($this->getValidationIndicator())
-                )
-            )
+                    [$this->getValidationIndicator()]
+                ),
+            ]
         );
-    }
-
-
-    /**
-     * @return string
-     */
-    private function getValidationClass()
-    {
-        return $this->licenseKeyVerified() ? 'ee-status--success' : 'ee-status--error';
     }
 
 
@@ -574,6 +566,7 @@ class OrganizationSettings extends FormHandler
      */
     private function getValidationIndicator()
     {
-        return '<span class="dashicons dashicons-admin-network ' . $this->getValidationClass() . '"></span>';
+        $class = $this->licenseKeyVerified() ? 'ee-status--success' : 'ee-status--error';
+        return '<span class="dashicons dashicons-admin-network ' . $class . '"></span>';
     }
 }
