@@ -8,16 +8,43 @@
 /****                                               ****/
 /*******************************************************/
 
+:root {
+
+    --ee-color-white: hsl(207, 0%, 100%);
+    --ee-color-almost-white: hsl(207, 0%, 95%);
+    --ee-color-off-white: hsl(207, 0%, 90%);
+    --ee-status-color-pink: hsl(340, 100%, 85%);
+    --ee-status-color-red: hsl(340, 60%, 55%);
+    --ee-status-color-orange: hsl(18, 70%, 50%);
+    --ee-status-color-gold: hsl(39, 98%, 50%);
+    --ee-status-color-yellow: hsl(50, 95%, 45%);
+    --ee-status-color-dark-green: hsl(90, 100%, 15%);
+    --ee-status-color-green: hsl(140, 70%, 35%);
+    --ee-status-color-green-high-contrast: hsl(140, 90%, 25%);
+    --ee-status-color-blue-green: hsl(172, 95%, 25%);
+    --ee-status-color-blue: hsl(203, 50%, 50%);
+    --ee-status-color-light-blue: hsl(203, 90%, 70%);
+    --ee-status-color-pale-blue: hsl(203, 50%, 95%);
+    --ee-status-color-violet: hsl(239, 35%, 60%);
+    --ee-status-color-purple: hsl(279, 35%, 50%);
+    --ee-status-color-pale-grey: hsl(219, 2%, 75%);
+    --ee-status-color-light-grey: hsl(219, 2%, 55%);
+    --ee-status-color-grey: hsl(225, 2%, 37.5%);
+    --ee-status-color-dark-grey: hsl(225, 2%, 20%);
+    --ee-status-color-charcoal: hsl(225, 0%, 15%);
+
+}
+
 
 /******************* DASHICONS ****************** */
 
 @font-face {
-	font-family: 'ee-dashicons';
-	src:url('../fonts/ee-dashicons.eot');
-	src:url('../fonts/ee-dashicons.eot?#iefix') format('embedded-opentype'),
-		url('../fonts/ee-dashicons.ttf') format('truetype'),
-		url('../fonts/ee-dashicons.woff') format('woff'),
-		url('../fonts/ee-dashicons.svg#ee-dashicons') format('svg');
+	font-family: "ee-dashicons";
+	src:url("../fonts/ee-dashicons.eot");
+	src:url("../fonts/ee-dashicons.eot?#iefix") format("embedded-opentype"),
+		url("../fonts/ee-dashicons.ttf") format("truetype"),
+		url("../fonts/ee-dashicons.woff") format("woff"),
+		url("../fonts/ee-dashicons.svg#ee-dashicons") format("svg");
 	font-weight: normal;
 	font-style: normal;
 }
@@ -35,7 +62,7 @@
 
 .ee-icon {
 	display: inline-block;
-	font-family: 'ee-dashicons', sans-serif !important;
+	font-family: "ee-dashicons", sans-serif !important;
  	font-style: normal;
 	font-weight: 400;
 	font-variant: normal;
@@ -229,7 +256,7 @@
 .tags-links a:before {
 	content: "\f318";
 	display: inline-block;
-	font-family: 'dashicons', sans-serif;
+	font-family: "dashicons", sans-serif;
 	font-style: normal;
 	font-weight: 400;
 	line-height: 1;
@@ -608,7 +635,7 @@ input.ee-register-button {
 	/*content: "\f463";*/
 }
 .ee-spinner {
-	font-family: 'dashicons', sans-serif;
+	font-family: "dashicons", sans-serif;
 	display: inline-block;
     	font-style: normal;
     	font-weight: normal;
@@ -843,17 +870,17 @@ input.ee-register-button {
 .tiny-text {
 	font-size: .5em;
 	line-height: 1.1em;
-	letter-spacing: .75px;
+	letter-spacing: 0.04167rem;
 }
 .smaller-text {
 	font-size: .8em;
 	line-height: 1.2em;
-	letter-spacing: .5px;
+	letter-spacing: 0.03125rem;
 }
 .small-text {
 	font-size: .85em;
 	line-height: 1.4em;
-	letter-spacing: .25px;
+	letter-spacing: 0.015625rem;
 }
 .big-text {
 	font-size: 1.2em;
@@ -1151,7 +1178,7 @@ article .espresso_venues {
 
 .ee-ical-sbmt {
 	display: inline-block;
-	font-family : 'dashicons', sans-serif !important;
+	font-family : "dashicons", sans-serif !important;
 	font-size: .9em;
  	font-style: normal;
 	font-weight: 400;
