@@ -85,10 +85,10 @@
                 'event_espresso'
             ); ?>
         </p>
-        <p class="important-notice">
+        <p class="ee-important-notice">
             <?php printf(
                 esc_html__('Please note: %sThis is permanent and can NOT be undone.%s', 'event_espresso'),
-                '<em>',
+                '&nbsp;<em>',
                 '</em>'
             ); ?>
             <br />
