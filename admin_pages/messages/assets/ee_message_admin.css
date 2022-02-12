@@ -256,6 +256,20 @@
 }
 
 
+#ee-msg-edit-frm .admin-primary-mbox-dv > ul,
+#ee-msg-edit-frm .admin-primary-mbox-dv >ul > li {
+    margin: 0;
+    padding: 0;
+    padding-block: 1px;
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv >ul {
+    margin-block-start: 1rem;
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv >ul > li {
+    margin-block-end: 3rem;
+}
+
+
 .ee-messages-shortcodes-chooser-wrap {
     float: right;
     padding: 0.125rem;
@@ -343,6 +357,8 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     margin: 0;
     margin-block-end: 1.75rem;
 }
+
+
 
 
 
