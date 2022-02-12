@@ -240,7 +240,7 @@
     background-color: var(--ee-color-almost-white);
 }
 
-.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.ee-add-on-btn):not(.add-new-h2) {
+.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.ee-add-on-btn):not(.add-new-h2):not(.page-title-action) {
     color: var(--ee-btn-primary);
     font-weight: 600;
     outline: none;
@@ -252,7 +252,7 @@
     color: var(--ee-btn-primary-hover);
     outline:   1px solid var(--ee-btn-primary-hover);
 }
-.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.add-new-h2):focus,
+.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.add-new-h2):not(.page-title-action):focus,
 .espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not(.button--secondary):not(.ee-filter-tag__close-btn):not(.toggle-row):not(.wp-switch-editor):focus {
     color: var(--ee-btn-primary-focus);
     box-shadow: none;
@@ -483,6 +483,7 @@
 }
 
 .espresso-admin .add-new-h2,
+.espresso-admin .page-title-action,
 .espresso-admin .add-new-h2:active {
     margin-inline-start: 20px;
     top: 0;
@@ -3101,6 +3102,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .submitdelete,
 .espresso-admin.wp-core-ui #search-submit,
 .espresso-admin.wp-core-ui .wrap .add-new-h2,
+.espresso-admin.wp-core-ui .wrap .page-title-action,
 .espresso-admin.wp-core-ui input[type="submit"],
 .espresso-admin.wp-core-ui .ee-list-table-actions a,
 .espresso-admin.wp-core-ui #edit-slug-box .button,
@@ -3175,6 +3177,7 @@ padding-inline: calc(var(--ee-button-height-half) - var(--ee-button-height-shim)
 .espresso-admin.wp-core-ui .button.button--small,
 .espresso-admin.wp-core-ui .submitdelete,
 .espresso-admin.wp-core-ui .wrap .add-new-h2,
+.espresso-admin.wp-core-ui .wrap .page-title-action,
 .espresso-admin.wp-core-ui #edit-slug-box .button,
 .espresso-admin.wp-core-ui #edit-slug-box .button.button-small,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a,
@@ -3309,18 +3312,21 @@ padding-inline: calc(var(--ee-button-height-half) - var(--ee-button-height-shim)
 
 
 .espresso-admin.wp-core-ui .wrap .add-new-h2,
+.espresso-admin.wp-core-ui .wrap .page-title-action,
 .espresso-admin.wp-core-ui .button.button--primary-alt {
     background-color: var(--ee-color-white);
     border-color: var(--ee-btn-primary-alt);
     color: var(--ee-btn-primary-alt);
 }
 .espresso-admin.wp-core-ui .wrap .add-new-h2:hover,
+.espresso-admin.wp-core-ui .wrap .page-title-action:hover,
 .espresso-admin.wp-core-ui .button.button--primary-alt:hover {
     background-color: var(--ee-btn-primary-alt);
     border-color: var(--ee-btn-primary-alt);
     color: var(--ee-color-white);
 }
 .espresso-admin.wp-core-ui .wrap .add-new-h2:focus,
+.espresso-admin.wp-core-ui .wrap .page-title-action:focus,
 .espresso-admin.wp-core-ui .button.button--primary-alt:focus {
     background-color: var(--ee-btn-primary-alt-focus);
     border-color: var(--ee-btn-primary-alt-focus);
