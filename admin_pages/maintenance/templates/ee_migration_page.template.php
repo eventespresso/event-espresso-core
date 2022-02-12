@@ -30,7 +30,7 @@ if ($show_backup_db_text) { ?>
     <div id="migration-prep">
 
         <?php if ($script_names) { ?>
-            <h3 class="espresso-header">
+            <h3 class="espresso-header ee-status-bg--info">
                 <span class="dashicons dashicons-flag ee-icon-size-22"></span>
                 <?php
                 echo esc_html(
@@ -48,7 +48,7 @@ if ($show_backup_db_text) { ?>
                 ?>
             </h3>
         <?php } elseif ($show_most_recent_migration) { ?>
-            <h3 class="espresso-header">
+            <h3 class="espresso-header ee-status-bg--info">
                 <span class="dashicons dashicons-awards ee-icon-size-22"></span>
                 <?php echo esc_html(
                     apply_filters(
@@ -101,7 +101,7 @@ if ($show_backup_db_text) { ?>
             if ($most_recent_migration instanceof EE_Data_Migration_Script_Base) {
                 if ($most_recent_migration->can_continue()) {
                     // tell the user they should continue their migration because it appears to be unfinished... well, assuming there were no errors ?>
-                    <h3 class="espresso-header">
+                    <h3 class="espresso-header ee-status-bg--info">
                         <span class="dashicons dashicons-star-half ee-icon-size-22"></span>
                         <?php printf(
                             esc_html__(
@@ -114,7 +114,7 @@ if ($show_backup_db_text) { ?>
                     <?php
                 } elseif ($most_recent_migration->is_broken()) {
                     // tell the user the migration failed, and they should notify EE?>
-                    <h3 class="espresso-header">
+                    <h3 class="espresso-header ee-status-bg--info">
                         <span class="dashicons dashicons-no ee-icon-size-22"></span>
                         <?php echo esc_html($most_recent_migration->get_feedback_message()) ?>
                     </h3>
@@ -180,7 +180,7 @@ if ($show_backup_db_text) { ?>
                 <?php
             } ?>
             <div id='progress-area'>
-                <h3 class="espresso-header">
+                <h3 class="espresso-header ee-status-bg--info">
                     <?php
                     echo sprintf(
                         _n(
