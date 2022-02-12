@@ -3323,15 +3323,17 @@ padding-inline: calc(var(--ee-button-height-half) - var(--ee-button-height-shim)
 .espresso-admin.wp-core-ui .button.button--caution {
     background-color: var(--ee-btn-caution);
     border-color: var(--ee-btn-caution);
-    color: var(--ee-color-white) !important;
+    color: var(--ee-color-white);
 }
 .espresso-admin.wp-core-ui .button.button--caution:focus {
     background-color: var(--ee-btn-caution-focus);
     border-color: var(--ee-btn-caution-focus);
+    color: var(--ee-color-white);
 }
 .espresso-admin.wp-core-ui .button.button--caution:hover {
     background-color: var(--ee-btn-caution-hover);
     border-color: var(--ee-btn-caution-hover);
+    color: var(--ee-color-white);
 }
 
 
