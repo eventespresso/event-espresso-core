@@ -603,30 +603,38 @@ input.ee-register-button {
 	box-shadow: none;
 }
 
+.ee-status-bg--DTC,
 .ee-status.event-active-status-DTC {
     background-color: var(--ee-status-color-red);
 }
 
-.ee-status.event-active-status-DTS {
-    background-color: var(--ee-status-color-yellow);
+.ee-status-bg--DTP,
+.ee-status.event-active-status-DTP {
+    background-color: var(--ee-status-color-orange);
 }
 
+
+.ee-status-bg--DTA,
 .ee-status.event-active-status-DTA {
     background-color: var(--ee-status-color-green);
 }
 
+.ee-status-bg--DTU,
 .ee-status.event-active-status-DTU {
     background-color: var(--ee-status-color-blue);
 }
 
-.ee-status.event-active-status-DTP {
+.ee-status-bg--DTS,
+.ee-status.event-active-status-DTS {
     background-color: var(--ee-status-color-purple);
 }
 
+.ee-status-bg--DTE,
 .ee-status.event-active-status-DTE {
     background-color: var(--ee-status-color-grey);
 }
 
+.ee-status-bg--DTI,
 .ee-status.event-active-status-DTI {
     background-color: var(--ee-status-color-charcoal);
 }
