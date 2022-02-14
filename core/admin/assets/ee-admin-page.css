@@ -3705,7 +3705,8 @@ body.espresso-admin #contextual-help-wrap strong {
     margin: 0 !important;
 }
 .espresso-admin.wp-core-ui .ee-list-table-actions > li > a,
-.espresso-admin .wp-list-table .column-actions .ee-list-table-actions .button {
+.espresso-admin .wp-list-table .column-actions .ee-list-table-actions .button,
+.espresso-admin  .wp-list-table .column-actions a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.ee-add-on-btn):not(.add-new-h2):not(.page-title-action) {
     margin: 0;
     margin-block-end: .5rem;
     margin-inline: .25rem;
