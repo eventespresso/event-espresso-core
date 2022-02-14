@@ -1406,8 +1406,8 @@ label.error {
 
 .ee-legend-item-wrap {
     align-items: center;
+    aspect-ratio: 1;
     background: white;
-    /* border: 1px solid var(--ee-status-color-pale-grey); */
     border-radius: 6px;
     box-sizing: border-box;
     box-shadow: var(--ee-button-box-shadow);
