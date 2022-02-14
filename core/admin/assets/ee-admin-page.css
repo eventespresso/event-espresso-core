@@ -3750,6 +3750,10 @@ body.espresso-admin #contextual-help-wrap strong {
     font-size: .8rem;
 }
 
+.espresso-admin .paging-input {
+    flex-wrap: nowrap;
+}
+
 .espresso-admin.wp-core-ui #search-submit,
 .espresso-admin.wp-core-ui .tablenav #doaction,
 .espresso-admin.wp-core-ui .tablenav #doaction2,
