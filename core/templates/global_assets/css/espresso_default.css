@@ -603,6 +603,33 @@ input.ee-register-button {
 	box-shadow: none;
 }
 
+.ee-status.event-active-status-DTC {
+    background-color: var(--ee-status-color-red);
+}
+
+.ee-status.event-active-status-DTS {
+    background-color: var(--ee-status-color-yellow);
+}
+
+.ee-status.event-active-status-DTA {
+    background-color: var(--ee-status-color-green);
+}
+
+.ee-status.event-active-status-DTU {
+    background-color: var(--ee-status-color-blue);
+}
+
+.ee-status.event-active-status-DTP {
+    background-color: var(--ee-status-color-purple);
+}
+
+.ee-status.event-active-status-DTE {
+    background-color: var(--ee-status-color-grey);
+}
+
+.ee-status.event-active-status-DTI {
+    background-color: var(--ee-status-color-charcoal);
+}
 
 .ee-status-size-12 { font-size: 12px; }
 .ee-status-size-14 { font-size: 14px; }
