@@ -3750,7 +3750,8 @@ body.espresso-admin #contextual-help-wrap strong {
     font-size: .8rem;
 }
 
-.espresso-admin .paging-input {
+.espresso-admin .paging-input,
+.espresso-admin .pagination-links {
     flex-wrap: nowrap;
 }
 
