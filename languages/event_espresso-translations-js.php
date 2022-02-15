@@ -2141,6 +2141,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Untrash.tsx:8
 	__( 'untrash', 'event_espresso' ),
 
+	// Reference: packages/ui-components/src/EntityList/RegistrationsLink/index.tsx:12
+	__( 'click to open the registrations admin page in a new tab or window', 'event_espresso' ),
+
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:22
 	__( 'card view', 'event_espresso' ),
 
