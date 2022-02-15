@@ -3716,7 +3716,7 @@ body.espresso-admin #contextual-help-wrap strong {
     }
     .espresso-admin .wp-list-table .column-actions {
         text-align: start;
-        width: 15%;
+        width: clamp(3.6rem, 18%, 30rem);
     }
     .espresso-admin .wp-list-table .column-actions > div {
         min-width: calc(((var(--ee-button-height) + .5rem) * 3) + 1.5rem);
