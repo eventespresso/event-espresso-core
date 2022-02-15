@@ -3558,7 +3558,7 @@ body.espresso-admin #contextual-help-wrap strong {
     padding-inline-start: 1.5rem;
     padding-inline-end: 0.75rem;
     text-align: center;
-    width: 2.5%;
+    width: 1.5rem;
 }
 
 .espresso-admin .wp-list-table.widefat th.check-column .dashicons-lock,
