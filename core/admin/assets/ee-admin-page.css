@@ -3079,6 +3079,7 @@ body.espresso-admin #contextual-help-wrap strong {
     background: none;
     border: none;
     box-shadow: none;
+    margin: 0;
     padding: 0;
 }
 
@@ -3435,12 +3436,6 @@ body.espresso-admin #contextual-help-wrap strong {
     line-height: 0;
 }
 
-
-.espresso-admin.wp-core-ui .wp-editor-tabs button.wp-switch-editor {
-    margin: 0;
-    margin-inline-start: 1rem;
-}
-
 .espresso-admin.wp-core-ui .pagination-links .button,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn:not(.mce-listbox) button {
     aspect-ratio: 1;
@@ -3483,8 +3478,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button,
 .espresso-admin.wp-core-ui .wp-editor-tabs button.wp-switch-editor,
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button:not([type="checkbox"]):not([type="radio"]):not([type="submit"])  {
-    margin-block: .5rem;
-    margin-inline-end: .5rem;
+    margin-block-end: .5rem;
 }
 
 
