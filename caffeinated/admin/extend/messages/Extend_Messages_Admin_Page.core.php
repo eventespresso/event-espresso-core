@@ -56,7 +56,6 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page
                     'filename' => 'messages_overview_other',
                 ),
             ),
-            'help_tour'     => array(),
             'require_nonce' => false,
         );
 
