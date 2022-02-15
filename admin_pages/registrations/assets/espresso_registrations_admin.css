@@ -25,19 +25,12 @@
     width: 4%;
 }
 
-.column-_REG_date {
-    width: 12.5%;
+.wp-list-table .column-ATT_fname {
+    width: max(15%, 20rem);
 }
 
-.wp-list-table .column-event_name {
-    width: 10%;
-}
-
-.wp-list-table .column-_REG_date {
-    width: 10%;
-}
-.wp-list-table .column-DTT_EVT_start {
-    width: 12.5%;
+.wp-list-table .column-ATT_fname .ee-layout-row {
+    flex-wrap: wrap;
 }
 
 .wp-list-table .column-ATT_fname .row-title {
@@ -46,6 +39,13 @@
 
 .wp-list-table .column-ATT_fname .reg-count-group-size {
     white-space: nowrap;
+}
+
+.wp-list-table .column-_REG_date {
+    width: max(10%, 12.5rem);
+}
+.wp-list-table .column-DTT_EVT_start {
+    width: max(12.5%, 15.25rem);
 }
 
 .wp-list-table .column-ATT_email {
@@ -78,7 +78,7 @@
 .wp-list-table th.column-_REG_paid,
 .wp-list-table th.column-TXN_total,
 .wp-list-table th.column-TXN_paid {
-    width: 7.5%;
+    width: max(7.5%, 12rem);
     text-align: center;
 }
 
@@ -87,13 +87,13 @@
 .wp-list-table td.column-_REG_paid,
 .wp-list-table td.column-TXN_total,
 .wp-list-table td.column-TXN_paid {
-    width: 7.5%;
+    width: max(7.5%, 12rem);
     text-align: end;
 }
 
-.wp-list-table th.column-_REG_paid,
-.wp-list-table .column-_REG_paid {
-    width: 10%;
+.espresso-admin .wp-list-table th.column-_REG_final_price,
+.espresso-admin .wp-list-table td.column-_REG_final_price {
+    width: max(10%, 14rem);
 }
 
 .espresso-admin .wp-list-table .TXN_paid .dashicons-yes:before {
@@ -115,25 +115,6 @@
     margin-right: 20px;
     margin-top: 5px;
 }
-
-/*#EE_Event_Registrations_List_Table-table-frm .wp-list-table #cb {*/
-/*    width : 3%;*/
-/*}*/
-
-/*.espresso-admin #EE_Event_Registrations_List_Table-table-frm .wp-list-table ._REG_att_checked_in {*/
-/*    padding: 0;*/
-/*    padding-block: 1rem;*/
-/*    padding-inline-start: 1.5rem;*/
-/*    padding-inline-end: 0.75rem;*/
-/*    text-align: center;*/
-/*    width: 1rem;*/
-/*    min-width: 3%;*/
-/*    margin: 0;*/
-/*}*/
-
-/*#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in .dashicons {*/
-/*    margin-left: 10px;*/
-/*}*/
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_count {
     min-width: 4%;
@@ -179,10 +160,6 @@
     width: 100%;
 }
 
-/*.wp-list-table .column-CHK_in {*/
-/*    width: 11%;*/
-/*}*/
-
 
 .reg-overview-free-event-spn {
     display: block;
@@ -213,10 +190,6 @@
     vertical-align: baseline;
 }
 
-/* .admin-side-mbox-dv { margin : 1em 0 2em; }
-
-.admin-side-mbox-dv p,
-.admin-side-mbox-dv > div { margin : .5em 0; line-height : 1.2em; color : #333; text-shadow : 0 1px 0 #FFF; } */
 
 .admin-side-mbox-label-spn {
     width: 30%;
@@ -233,34 +206,6 @@
     margin: 2em 0 .25em;
 }
 
-/* .admin-primary-mbox-tbl-wrap {
-    padding       : 3px; margin : 0 0 2em;
-    background    : #FFF; border : 1px solid #DFDFDF;
-    border-radius : 3px;
-}
-
-.admin-primary-mbox-tbl {
-    width : 100%; border-spacing : 0; border-collapse : collapse;
-}
-
-.admin-primary-mbox-tbl th, .admin-primary-mbox-tbl td {
-    padding     : 6px 12px; margin : 0;
-    border      : 1px solid #DFDFDF; background : #FCFCFC;
-    font-family : sans-serif; font-size : 1em; vertical-align : middle;
-}
-
-.admin-primary-mbox-tbl tr + tr { border-top : none; }
-
-.admin-primary-mbox-tbl th + th,
-.admin-primary-mbox-tbl td + td { border-left : none; }
-
-.admin-primary-mbox-tbl th { font-size : .9em; font-weight : bold; }
-
-.admin-primary-mbox-tbl caption { display : none; }
-
-.form-table.skinny-rows th, .form-table.skinny-rows td { padding : 3px 10px; }
-
-.admin-primary-mbox-total-tr { font-size : 1.1em; }*/
 
 .jqplot-title {
     font-size: 24px;
@@ -585,7 +530,6 @@
 /** REGISTRATION LIST TABLE EVENT-DATE COLUMNS **/
 
 .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date {
-    padding-inline-end: 2rem;
     position: relative;
 }
 
@@ -594,13 +538,11 @@
     display: flex;
     padding: 0;
     padding-inline-end: 2rem;
-    /*position: relative;*/
     width: 100%;
 }
 .ee-registration-event-datetimes-container {
     display: none;
     flex-flow: column nowrap;
-    /*transition: all 250ms ease-in-out;*/
 }
 
 
@@ -616,12 +558,9 @@
     border-radius: 100%;
     box-shadow: none !important;
     margin: 0;
-    margin-inline-end: .5rem;
     position: absolute;
     inset-block-start: .75rem;
     inset-inline-end: .75rem;
-    /*inset-block-start: 0;*/
-    /*inset-inline-end: 0;*/
 }
 
 .espresso-admin .wp-list-table .ee-more-datetimes-toggle > .dashicons,

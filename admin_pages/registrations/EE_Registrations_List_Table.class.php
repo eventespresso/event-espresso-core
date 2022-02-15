@@ -629,9 +629,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
               . '</a>'
             : $registration->get_i18n_datetime('REG_date');
 
-        $content .= ' <span class="ee-status-text-small">'
-                    . EEH_Template::pretty_status($this->_transaction_details['status'], false, 'sentence')
-                    . '</span>';
+        // $content .= ' <span class="ee-status-text-small">'
+        //             . EEH_Template::pretty_status($this->_transaction_details['status'], false, 'sentence')
+        //             . '</span>';
 
         return $prep_content ? $this->columnContent('_REG_date', $content) : $content;
     }

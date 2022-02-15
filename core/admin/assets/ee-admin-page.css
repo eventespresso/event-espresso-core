@@ -2175,6 +2175,7 @@ body.espresso-admin #screen-meta-links .screen-meta-toggle {
 body.espresso-admin #screen-meta-links .show-settings {
     border-color: var(--ee-border-color) !important;
     box-shadow: none !important;
+    margin-block-start: 0 !important;
 }
 
 body.espresso-admin #screen-options-wrap,
@@ -3466,7 +3467,6 @@ body.espresso-admin #contextual-help-wrap strong {
     aspect-ratio: unset;
     line-height: 0;
     min-height: var(--ee-button-height);
-    /* padding-inline: var(--ee-button-height-forth); */
 }
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn.mce-listbox button {
     line-height: unset;
@@ -3553,7 +3553,8 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .wp-list-table.widefat th.check-column,
 .espresso-admin .wp-list-table.widefat td.check-column {
     padding: 0;
-    padding-block: 1rem;
+    padding-block-start: .7rem;
+    padding-block-end: .5rem;
     padding-inline-start: 1.5rem;
     padding-inline-end: 0.75rem;
     text-align: center;
@@ -3702,7 +3703,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .wp-list-table .column-actions .ee-list-table-actions .button,
 .espresso-admin  .wp-list-table .column-actions a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.ee-add-on-btn):not(.add-new-h2):not(.page-title-action) {
     margin: 0;
-    margin-block-end: .5rem;
+    margin-block: .25rem;
     margin-inline: .25rem;
 }
 .espresso-admin .wp-list-table .column-author .avatar {
