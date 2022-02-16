@@ -42,6 +42,12 @@
 		"php": ">=7.2",
 		"ext-json": "*"
 	},
+	"allow-plugins": {
+		"eventespresso/*": true,
+		"composer/installers": true,
+		"roave/security-advisories": true,
+		"yoast/phpunit-polyfills": true
+	},
 	"scripts": {
 		"config-eventespressocs": [
 			"\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
