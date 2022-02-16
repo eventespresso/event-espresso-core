@@ -403,6 +403,7 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
 #ee-msg-edit-frm .admin-primary-mbox-dv li input.large-text,
 #ee-msg-edit-frm .admin-primary-mbox-dv li textarea.large-text {
     margin-inline: 0;
+    max-width: unset;
     width: calc(100% - 2rem - var(--ee-button-height));
 }
 #ee-msg-edit-frm .admin-primary-mbox-dv li .wp-editor-wrap {
