@@ -346,8 +346,7 @@ class OrganizationSettings extends FormHandler
                             esc_html__('Your Event Espresso License Key', 'event_espresso')
                             . ' '
                             . EEH_HTML::span(
-                                EEH_Template::get_help_tab_link('site_license_key_info'),
-                                'help_tour_activation'
+                                EEH_Template::get_help_tab_link('site_license_key_info')
                             ),
                             '',
                             'site-license-key-hdr'

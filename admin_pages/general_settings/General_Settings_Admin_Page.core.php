@@ -160,8 +160,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                         'filename' => 'general_settings_critical_pages',
                     ],
                 ],
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Critical_Pages_Help_Tour'),
                 'require_nonce' => false,
             ],
             'default'               => [
@@ -175,8 +173,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                         'filename' => 'general_settings_your_organization',
                     ],
                 ],
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Your_Organization_Help_Tour'),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
                 'require_nonce' => false,
             ],
@@ -192,8 +188,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                         'filename' => 'general_settings_admin_options',
                     ],
                 ],
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Admin_Options_Help_Tour'),
                 'require_nonce' => false,
             ],
             'country_settings'      => [
@@ -207,8 +201,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                         'filename' => 'general_settings_countries',
                     ],
                 ],
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Countries_Help_Tour'),
                 'require_nonce' => false,
             ],
             'privacy_settings'      => [

@@ -69,31 +69,6 @@ class AdminOptionsSettings extends FormHandler
                 'html_id'         => 'admin_option_settings',
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
                 'subsections'     => array(
-                    // 'help_tour_activation_hdr' => new EE_Form_Section_HTML(
-                    //     EEH_HTML::h2(
-                    //         esc_html__('Help Tour Global Activation', 'event_espresso')
-                    //         . ' '
-                    //         . EEH_HTML::span(
-                    //             EEH_Template::get_help_tab_link('help_tour_activation_info'),
-                    //             'help_tour_activation'
-                    //         ),
-                    //         '',
-                    //         'ee-admin-settings-hdr'
-                    //     )
-                    // ),
-                    // 'help_tour_activation'     => new EE_Yes_No_Input(
-                    //     array(
-                    //         'html_label_text' => esc_html__('Activate Global Help Tours?', 'event_espresso'),
-                    //         'html_help_text'  => esc_html__(
-                    //             'This toggles whether the Event Espresso help tours are active globally or not.',
-                    //             'event_espresso'
-                    //         ),
-                    //         'default'         => isset($this->registry->CFG->admin->help_tour_activation)
-                    //             ? filter_var($this->registry->CFG->admin->help_tour_activation, FILTER_VALIDATE_BOOLEAN)
-                    //             : true,
-                    //         'required'        => false,
-                    //     )
-                    // ),
                     'compatibility_hdr'        => new EE_Form_Section_HTML(
                         EEH_HTML::h2(
                             esc_html__('Compatibility Settings', 'event_espresso'),
@@ -172,7 +147,6 @@ class AdminOptionsSettings extends FormHandler
                         )
                     ),
                 ),
-                // 'help_tour_activation_hdr'
                 'compatibility_hdr'
             );
         }
@@ -234,9 +208,6 @@ class AdminOptionsSettings extends FormHandler
         $this->registry->CFG->admin->affiliate_id = isset($form_data['affiliate_id'])
             ? sanitize_text_field($form_data['affiliate_id'])
             : $this->registry->CFG->admin->affiliate_id;
-        // $this->registry->CFG->admin->help_tour_activation = isset($form_data['help_tour_activation'])
-        //     ? absint($form_data['help_tour_activation'])
-        //     : $this->registry->CFG->admin->help_tour_activation;
         if (isset($form_data['encode_session_data'])) {
             $this->registry->CFG->admin->set_encode_session_data($form_data['encode_session_data']);
         }
