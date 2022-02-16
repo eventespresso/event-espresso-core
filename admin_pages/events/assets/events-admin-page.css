@@ -1,15 +1,3 @@
-#Events_Admin_List_Table-table-frm .column-name,
-#Extend_Events_Admin_List_Table-table-frm .column-name {
-    width: 16%;
-}
-
-#Events_Admin_List_Table-table-frm .column-author,
-#Extend_Events_Admin_List_Table-table-frm .column-author,
-#Events_Admin_List_Table-table-frm .column-venue,
-#Extend_Events_Admin_List_Table-table-frm .column-venue {
-    width: 12%;
-}
-
 #Events_Admin_List_Table-table-frm .column-start_date_time,
 #Extend_Events_Admin_List_Table-table-frm .column-start_date_time,
 #Events_Admin_List_Table-table-frm .column-reg_begins,
