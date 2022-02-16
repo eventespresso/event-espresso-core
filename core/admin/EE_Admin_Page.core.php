@@ -2731,10 +2731,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             ? 'poststuff'
             : 'espresso-default-admin';
         $this->_template_args['admin_page_wrapper_div_class'] = str_replace(
-                'event-espresso_page_espresso_',
-                '',
-                $this->_wp_page_slug
-            ) . ' ' . $this->_req_action . '-route';
+            'event-espresso_page_espresso_',
+            '',
+            $this->_wp_page_slug
+        ) . ' ' . $this->_req_action . '-route';
 
         $template_path = $sidebar
             ? EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php'

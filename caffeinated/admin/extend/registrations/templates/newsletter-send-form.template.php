@@ -60,9 +60,9 @@
                     <div id="shortcode-container-subject"
                          class="shortcodes-info-container ee_shortcode_chooser_container" style="display:none">
                         <h4><?php esc_html_e(
-                                'Message Template Shortcodes for the "subject" field:',
-                                'event_espresso'
-                            ); ?></h4>
+                            'Message Template Shortcodes for the "subject" field:',
+                            'event_espresso'
+                        ); ?></h4>
                         <p><?php echo $shortcodes['Subject']; ?></p>
                     </div>
                     <input type="text" name="batch_message[subject]" id="batch-message-subject"
@@ -75,9 +75,9 @@
                     <div id="shortcode-container-content"
                          class="shortcodes-info-container ee_shortcode_chooser_container" style="display:none">
                         <h4><?php esc_html_e(
-                                'Message Template Shortcodes for the "content" field:',
-                                'event_espresso'
-                            ); ?></h4>
+                            'Message Template Shortcodes for the "content" field:',
+                            'event_espresso'
+                        ); ?></h4>
                         <p><?php echo $shortcodes['[NEWSLETTER_CONTENT]']; ?></p>
                     </div>
                     <textarea name="batch_message[content]" id="batch-message-content"

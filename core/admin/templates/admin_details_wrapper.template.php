@@ -24,17 +24,17 @@ do_action('add_meta_boxes', (string) $post_type, $post);
         <?php
         if (! empty($post_body_content)) :
             if ($add_page_frame) {
-               if (
-                   strpos($post_body_content, 'class="padding"') === false
-                   || strpos($post_body_content, 'class="padding"') < 120
-               ) {
-                   $post_body_content = '<div class="padding">' . $post_body_content . '</div>';
-               }
-               if (strpos($post_body_content, '<div class="ee-admin-container">') === false) {
-                   $post_body_content = '<div class="ee-admin-container">' . $post_body_content . '</div>';
-               }
+                if (
+                    strpos($post_body_content, 'class="padding"') === false
+                    || strpos($post_body_content, 'class="padding"') < 120
+                ) {
+                    $post_body_content = '<div class="padding">' . $post_body_content . '</div>';
+                }
+                if (strpos($post_body_content, '<div class="ee-admin-container">') === false) {
+                    $post_body_content = '<div class="ee-admin-container">' . $post_body_content . '</div>';
+                }
             }
-        ?>
+            ?>
             <div id="post-body-content">
                 <?php echo $post_body_content; // already escaped ?>
             </div>

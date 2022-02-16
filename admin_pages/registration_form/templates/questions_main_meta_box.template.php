@@ -443,7 +443,6 @@ if ($QST_system === 'country') {
                             $question->required(),
                             'id="QST_required' . $id . '"' . $disabled_attr,
                             'ee-input--small'
-
                         ); // already escaped
                         ?>
                         <p>

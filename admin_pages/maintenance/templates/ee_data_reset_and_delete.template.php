@@ -20,9 +20,9 @@
             <?php esc_html_e('Reset Ticket and Datetime Reserved Counts', 'event_espresso'); ?>
         </h4>
         <p><?php esc_html_e(
-                'Use this to reset the counts for ticket and datetime reservations.',
-                'event_espresso'
-            ); ?></p>
+            'Use this to reset the counts for ticket and datetime reservations.',
+            'event_espresso'
+        ); ?></p>
         <div class="ee-admin-button-row"><?php echo $reset_reservations_button; // already escaped ?></div>
     </div>
 

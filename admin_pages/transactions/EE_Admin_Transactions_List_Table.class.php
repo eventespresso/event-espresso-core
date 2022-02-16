@@ -249,14 +249,14 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             TXN_ADMIN_URL
         );
         $status        = esc_attr($transaction->status_ID());
-        $pretty_status = EEH_Template::pretty_status($status, false, 'sentence' );
+        $pretty_status = EEH_Template::pretty_status($status, false, 'sentence');
         return '
             <div class="ee-layout-row">
                 <span aria-label="' . $pretty_status . '"  class="ee-status-dot ee-status-bg--' . $status . ' ee-aria-tooltip"></span>
                 <a  href="' . $view_lnk_url . '"                     
                     class="row-title ee-status-color--' . $status . ' ee-aria-tooltip"
-                    aria-label="' . esc_attr__('View Transaction Details for TXN #', 'event_espresso') . $transaction->ID
-            () . '">
+                    aria-label="' . esc_attr__('View Transaction Details for TXN #', 'event_espresso') . $transaction->ID(
+                    ) . '">
                 ' . $this->_get_txn_timestamp($transaction) . '
                 </a>
             </div>';

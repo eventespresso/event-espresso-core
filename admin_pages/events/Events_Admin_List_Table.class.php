@@ -469,12 +469,12 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         ];
         $attendees_link       = EE_Admin_Page::add_query_args_and_nonce($attendees_query_args, REG_ADMIN_URL);
         $registered_attendees = EEM_Registration::instance()->get_event_registration_count($event->ID());
+
         $content              = EE_Registry::instance()->CAP->current_user_can(
             'ee_read_event',
             'espresso_registrations_view_registration',
             $event->ID()
-        )
-                                && EE_Registry::instance()->CAP->current_user_can(
+        ) && EE_Registry::instance()->CAP->current_user_can(
             'ee_read_registrations',
             'espresso_registrations_view_registration'
         )
