@@ -122,7 +122,7 @@ class CoreLoader
                 return $wp_root;
             }
         }
-        echo "The PHPUnit Polyfills could not be found.";
+        echo "\n\nThe PHPUnit Polyfills could not be found.";
         return null;
     }
 
