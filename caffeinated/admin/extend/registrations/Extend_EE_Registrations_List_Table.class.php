@@ -42,9 +42,9 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             <a  class="ee-aria-tooltip ee-event-filter-link" 
                 href="' . $check_in_url . '"
                 aria-label="' . esc_attr__(
-                   'The Check-In List allows you to easily toggle check-in status for this event',
-                   'event_espresso'
-               ) . '"
+                    'The Check-In List allows you to easily toggle check-in status for this event',
+                    'event_espresso'
+                ) . '"
             >
                 <span class="dashicons dashicons-groups dashicons--small"></span>'
                 . esc_html__('View Check-ins', 'event_espresso') . '
@@ -106,12 +106,12 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
                     <a class="ee-aria-tooltip ee-event-filter-link" 
                         href="' . $filter_list_url . '" 
                         aria-label="' . sprintf(
-                        esc_attr__(
-                            'Filter this list to only show registrations for this datetime %s',
-                            'event_espresso'
-                        ),
-                        $datetime->name()
-                    ) . '">
+                            esc_attr__(
+                                'Filter this list to only show registrations for this datetime %s',
+                                'event_espresso'
+                            ),
+                            $datetime->name()
+                        ) . '">
                         <span class="dashicons dashicons-groups dashicons--small"></span>
                     </a>',
                 )

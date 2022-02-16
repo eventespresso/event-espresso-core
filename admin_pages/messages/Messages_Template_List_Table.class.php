@@ -184,7 +184,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
             /* $1%s */
             ucwords($item->messenger_obj()->label['singular']),
             /* $2%s */
-            $item->GRP_ID(),
+            $item->GRP_ID()
         );
     }
 

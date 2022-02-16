@@ -468,10 +468,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $group_count = '
             <span class="reg-count-group-size" >
                 ' . sprintf(
-                esc_html__('(%1$s / %2$s)', 'event_espresso'),
-                $registration->count(),
-                $registration->group_size()
-            ) . '
+            esc_html__('(%1$s / %2$s)', 'event_espresso'),
+            $registration->count(),
+            $registration->group_size()
+        ) . '
             </span >';
 
         $content = '
@@ -771,7 +771,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 $align   = 'center';
                 $content = '<span class="dashicons dashicons-yes green-icon"></span>';
             } else {
-
                 $content = $this->caps_handler->userCanViewTransaction()
                     ? '
                     <a class="ee-aria-tooltip ee-status-color--' . $transaction->status_ID() . '" 
@@ -812,8 +811,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'dl_invoice_lnk'         => $this->viewTransactionInvoiceAction($registration, $attendee),
                 'filtered_messages_link' => $this->viewNotificationsAction($registration),
             ],
-             $registration,
-             $this
+            $registration,
+            $this
         );
 
         $content = $this->_action_string(
@@ -831,7 +830,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function viewRegistrationUrl( EE_Registration $registration ): string {
+    private function viewRegistrationUrl(EE_Registration $registration): string
+    {
         return EE_Admin_Page::add_query_args_and_nonce(
             [
                 'action'  => 'view_registration',
@@ -870,7 +870,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function viewRegistrationAction( EE_Registration $registration ): string {
+    private function viewRegistrationAction(EE_Registration $registration): string
+    {
         return $this->caps_handler->userCanReadRegistration($registration)
             ? '
             <a  href="' . $this->viewRegistrationUrl($registration) . '"  
@@ -883,7 +884,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
-    private function editContactAction( EE_Registration $registration, ?EE_Attendee $attendee = null ): string {
+    private function editContactAction(EE_Registration $registration, ?EE_Attendee $attendee = null): string
+    {
 
         if ($attendee instanceof EE_Attendee && $this->caps_handler->userCanEditContacts()) {
             $edit_link_url = EE_Admin_Page::add_query_args_and_nonce(
@@ -936,12 +938,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     private function viewTransactionUrl(): string
     {
         return EE_Admin_Page::add_query_args_and_nonce(
-                [
+            [
                     'action' => 'view_transaction',
                     'TXN_ID' => $this->_transaction_details['id'],
                 ],
-                TXN_ADMIN_URL
-            );
+            TXN_ADMIN_URL
+        );
     }
 
 
@@ -988,7 +990,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @throws ReflectionException
      * @throws EE_Error
      */
-    private function viewNotificationsAction( EE_Registration $registration ): string {
+    private function viewNotificationsAction(EE_Registration $registration): string
+    {
         // message list table link (filtered by REG_ID
         return $this->caps_handler->userCanReadGlobalMessages()
             ? EEH_MSG_Template::get_message_action_link(
@@ -1097,8 +1100,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
-    private function editEventLink( int $EVT_ID, string $event_name ): string {
-        if ( ! $EVT_ID || ! $this->caps_handler->userCanEditEvent($EVT_ID)  ) {
+    private function editEventLink(int $EVT_ID, string $event_name): string
+    {
+        if (! $EVT_ID || ! $this->caps_handler->userCanEditEvent($EVT_ID)) {
             return $event_name;
         }
         $edit_event_url = EE_Admin_Page::add_query_args_and_nonce(

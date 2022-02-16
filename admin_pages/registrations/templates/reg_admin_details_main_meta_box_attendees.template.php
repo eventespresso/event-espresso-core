@@ -30,7 +30,7 @@
                         <tr>
                             <th class='jst-cntr no-pad'>
                                 <span class="ee-status-dot ee-status-bg--<?php echo esc_attr($attendee['STS_ID']); ?> ee-aria-tooltip"
-                                      aria-label="<?php echo esc_attr(EEH_Template::pretty_status($attendee['STS_ID'], false, "sentence" ));?>">
+                                      aria-label="<?php echo esc_attr(EEH_Template::pretty_status($attendee['STS_ID'], false, "sentence"));?>">
                                 </span>
                             </th>
                             <td class="jst-left"><?php echo esc_html($att_nmbr); ?></td>

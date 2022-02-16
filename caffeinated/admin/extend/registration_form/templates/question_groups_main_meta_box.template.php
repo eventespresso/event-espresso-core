@@ -152,7 +152,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                         ); ?>
                         <p class="description"><?php
                             esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
-                            ?></p>
+                        ?></p>
                         <input type="hidden" name="QSG_system" value="<?php echo $question_group->system_group(); ?>">
                     </td>
                 </tr>
@@ -212,7 +212,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                                          . (95 <= strlen(trim($question->display_text()))
                                             ? "&hellip;"
                                             : '');
-                                    ?>
+                                                            ?>
                             </span>
                                 <input class="question-group-QGQ_order"
                                        name="question_orders[<?php echo $question_ID; ?>]"
