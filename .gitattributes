@@ -1,13 +1,14 @@
 # Set default behaviour, in case users don't have core.autocrlf set.
 * text=auto
+* text eol=lf
 
-# Explicitly declare text files we want to always be normalized and converted 
+# Explicitly declare text files we want to always be normalized and converted
 # to native line endings on checkout. But on commit, they should be given unix-style line endings (LFs)
 *.c text
 *.h text
 *.php text
 *.js text
-*.html text 
+*.html text
 *.css text
 *.txt text
 *.md text
