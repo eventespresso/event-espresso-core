@@ -1,127 +1,260 @@
 #Events_Admin_List_Table-table-frm .column-name,
-#Extend_Events_Admin_List_Table-table-frm .column-name { width: 20%;  }
+#Extend_Events_Admin_List_Table-table-frm .column-name {
+    width: 16%;
+}
+
+#Events_Admin_List_Table-table-frm .column-author,
+#Extend_Events_Admin_List_Table-table-frm .column-author,
 #Events_Admin_List_Table-table-frm .column-venue,
-#Extend_Events_Admin_List_Table-table-frm .column-venue  { width:15%; }
-#Extend_Events_Admin_List_Table-table-frm .column-event_category,
-#Events_Admin_List_Table-table-frm .column-event_category { width: 15% }
+#Extend_Events_Admin_List_Table-table-frm .column-venue {
+    width: 12%;
+}
+
 #Events_Admin_List_Table-table-frm .column-start_date_time,
-#Extend_Events_Admin_List_Table-table-frm .column-start_date_time { width:15%; }
+#Extend_Events_Admin_List_Table-table-frm .column-start_date_time,
 #Events_Admin_List_Table-table-frm .column-reg_begins,
-#Extend_Events_Admin_List_Table-table-frm .column-reg_begins { width:15%; }
+#Extend_Events_Admin_List_Table-table-frm .column-reg_begins {
+    width: 10%;
+}
+
+#Extend_Events_Admin_List_Table-table-frm .column-event_category,
+#Events_Admin_List_Table-table-frm .column-event_category {
+    width: 8%;
+}
+
 #Events_Admin_List_Table-table-frm .column-attendees,
-#Extend_Events_Admin_List_Table-table-frm .column-attendees { text-align: center; width: 5%;}
+#Extend_Events_Admin_List_Table-table-frm .column-attendees {
+    text-align: center;
+    width: 3.6rem;
+}
 
 
-.remove-item { cursor: pointer; vertical-align: middle; }
+.remove-item {
+    cursor: pointer;
+    vertical-align: middle;
+}
 
-.small-screen-table-label { display:none; }
-#event-dates-and-times { }
-#event-dates-and-times .dtm-inp { width:200px; margin-right:1em; }
+.small-screen-table-label {
+    display: none;
+}
+
+#event-dates-and-times {
+}
+
+#event-dates-and-times .dtm-inp {
+    width: 200px;
+    margin-right: 1em;
+}
 
 #timezones-datetimes-dv {
-	margin: 2em 0 1em;
+    margin: 2em 0 1em;
 }
 
-#change-date-time-lnk{
-	margin-left: 2em;
+#change-date-time-lnk {
+    margin-left: 2em;
 }
 
-.manual-venue { width: 33%; }
+.manual-venue {
+    width: 33%;
+}
+
 .manual-venue input,
-.manual-venue textarea { width: 90%; }
-.form-table td.manual-venue { vertical-align: top }
+.manual-venue textarea {
+    width: 90%;
+}
 
-@media only screen and (max-width: 1425px) { #event-dates-and-times .dtm-inp { width:175px; } }
-@media only screen and (max-width: 1325px) { #event-dates-and-times .dtm-inp { width:150px; } }
-@media only screen and (max-width: 1225px) { #event-dates-and-times .dtm-inp { width:125px; } }
+.form-table td.manual-venue {
+    vertical-align: top
+}
+
+@media only screen and (max-width: 1425px) {
+    #event-dates-and-times .dtm-inp {
+        width: 175px;
+    }
+}
+
+@media only screen and (max-width: 1325px) {
+    #event-dates-and-times .dtm-inp {
+        width: 150px;
+    }
+}
+
+@media only screen and (max-width: 1225px) {
+    #event-dates-and-times .dtm-inp {
+        width: 125px;
+    }
+}
+
 @media only screen and (max-width: 1125px) {
-	/* Force table to not be like tables anymore */
-	#event-dates-and-times,
-	#event-dates-and-times thead,
-	#event-dates-and-times tbody,
-	#event-dates-and-times th,
-	#event-dates-and-times td,
-	#event-dates-and-times tr {
-		display: block;
-	}
+    /* Force table to not be like tables anymore */
+    #event-dates-and-times,
+    #event-dates-and-times thead,
+    #event-dates-and-times tbody,
+    #event-dates-and-times th,
+    #event-dates-and-times td,
+    #event-dates-and-times tr {
+        display: block;
+    }
 
-	/* Hide table headers */
-	#event-dates-and-times thead tr {  display:none; }
-	/* Display replacements for table headers */
-	.small-screen-table-label { display:inline-block; float:left; width:30%; padding-right: 15px; text-align:right; }
-	#event-dates-and-times tr { padding-bottom:5px; margin-bottom:5px; border-bottom: 1px solid #eee;  }
-	#event-dates-and-times td { padding-bottom:5px; }
-	#event-dates-and-times .dtm-inp { width:175px; }
+    /* Hide table headers */
+    #event-dates-and-times thead tr {
+        display: none;
+    }
+
+    /* Display replacements for table headers */
+    .small-screen-table-label {
+        display: inline-block;
+        float: left;
+        width: 30%;
+        padding-right: 15px;
+        text-align: right;
+    }
+
+    #event-dates-and-times tr {
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+        border-bottom: 1px solid #EEE;
+    }
+
+    #event-dates-and-times td {
+        padding-bottom: 5px;
+    }
+
+    #event-dates-and-times .dtm-inp {
+        width: 175px;
+    }
 }
+
 @media only screen and (max-width: 850px) {
-	/* Force tables back into tables */
-	#event-dates-and-times { display:table; }
-	#event-dates-and-times thead { display:table-header-group; }
-	#event-dates-and-times thead tr {  display: table-row; }
-	#event-dates-and-times tbody { display:table-row-group; }
-	#event-dates-and-times tr { display:table-row; }
-	#event-dates-and-times th { display:table-cell; }
-	#event-dates-and-times td { display:table-cell; }
+    /* Force tables back into tables */
+    #event-dates-and-times {
+        display: table;
+    }
 
-	/* Display replacements for table headers */
-	.small-screen-table-label { display:none; }
-	#event-dates-and-times tr { padding:0; margin:0; border: none;  }
-	#event-dates-and-times td { padding:1px; }
-	#event-dates-and-times .dtm-inp { width:150px; }
+    #event-dates-and-times thead {
+        display: table-header-group;
+    }
+
+    #event-dates-and-times thead tr {
+        display: table-row;
+    }
+
+    #event-dates-and-times tbody {
+        display: table-row-group;
+    }
+
+    #event-dates-and-times tr {
+        display: table-row;
+    }
+
+    #event-dates-and-times th {
+        display: table-cell;
+    }
+
+    #event-dates-and-times td {
+        display: table-cell;
+    }
+
+    /* Display replacements for table headers */
+    .small-screen-table-label {
+        display: none;
+    }
+
+    #event-dates-and-times tr {
+        padding: 0;
+        margin: 0;
+        border: none;
+    }
+
+    #event-dates-and-times td {
+        padding: 1px;
+    }
+
+    #event-dates-and-times .dtm-inp {
+        width: 150px;
+    }
 }
+
 @media only screen and (max-width: 782px) {
-	#event-dates-and-times .dtm-inp { width:100%; }
+    #event-dates-and-times .dtm-inp {
+        width: 100%;
+    }
 
     .espresso-admin .wp-list-table tr.is-expanded td.column-attendees .ee-responsive-table-cell__heading .show-on-mobile-view-only {
         display: inline-block;
     }
 }
 
-#event-dates-and-times .dtm-inp.small-text { width:75px; }
-
+#event-dates-and-times .dtm-inp.small-text {
+    width: 75px;
+}
 
 
 /*  TICKET PRICES  */
 
 #no-ticket-prices-msg-dv {
-	padding: 0 0.6em; margin: 1em 0; background-color: #ffebe8; border: 1px solid var(--ee-status-color-red); border-radius: 3px 3px 3px 3px; color: var(--ee-status-color-charcoal);
+    padding: 0 0.6em;
+    margin: 1em 0;
+    background-color: #FFEBE8;
+    border: 1px solid var(--ee-status-color-red);
+    border-radius: 3px 3px 3px 3px;
+    color: var(--ee-status-color-charcoal);
 }
-#no-ticket-prices-msg-dv p { padding: 2px; margin: 0.5em 0; }
+
+#no-ticket-prices-msg-dv p {
+    padding: 2px;
+    margin: 0.5em 0;
+}
 
 #add-new-ticket-price-dv,
 .event-price-settings-dv {
-	padding:5px 60px 10px 15px; margin:10px 0 20px;
-	background:#fcfcfc; border:1px solid #C8E1EC; border-radius:5px;
+    padding: 5px 60px 10px 15px;
+    margin: 10px 0 20px;
+    background: #FCFCFC;
+    border: 1px solid #C8E1EC;
+    border-radius: 5px;
 }
 
 .cancel-event-price-btn {
-	/*display:inline-block; float:right; position:relative; top:5px; right:-50px; padding:3px 6px;
-	background:#fff; border:1px solid #C8E1EC; border-radius:3px;
-	color:#666; cursor:pointer;*/
+    /*display:inline-block; float:right; position:relative; top:5px; right:-50px; padding:3px 6px;
+    background:#fff; border:1px solid #C8E1EC; border-radius:3px;
+    color:#666; cursor:pointer;*/
 }
-.cancel-event-price-btn:hover { border-color: var(--ee-status-color-orange); }
 
-.inactive-price { margin-right:1em; color: #ff9a81; }
+.cancel-event-price-btn:hover {
+    border-color: var(--ee-status-color-orange);
+}
+
+.inactive-price {
+    margin-right: 1em;
+    color: #FF9A81;
+}
 
 .price-date-status-img {
-	position:relative; top:5px; left:4px;
+    position: relative;
+    top: 5px;
+    left: 4px;
 }
-.input-disabled { color:var(--ee-status-color-grey) !important; }
+
+.input-disabled {
+    color: var(--ee-status-color-grey) !important;
+}
 
 
 #espresso_event_editor_event_options .inside p {
     display: flex;
     flex-flow: row nowrap;
-	text-align: left;
+    text-align: left;
 }
 
 #espresso_event_editor_event_options .inside p label {
     margin-inline-end: 2.5%;
-	width: 55%;
+    width: 55%;
 }
+
 #espresso_event_editor_event_options .inside p input,
 #espresso_event_editor_event_options .inside p select {
-	width: 42.5%;
+    width: 42.5%;
 }
 
 #message .spinner {
