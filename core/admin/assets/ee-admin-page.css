@@ -3096,10 +3096,6 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-inline-end: 1rem;
 }
 
-.espresso-admin.wp-core-ui:not(.event-espresso_page_espresso_messages) .tmce-active .mce-tinymce > .mce-container-body > .mce-edit-area.mce-container.mce-panel.mce-stack-layout-item {
-    padding-block-start: 4.1rem !important;
-}
-
 .espresso-admin .quicktags-toolbar,
 .espresso-admin .wp-editor-container,
 .espresso-admin .wp-editor-tabs button.wp-switch-editor,
