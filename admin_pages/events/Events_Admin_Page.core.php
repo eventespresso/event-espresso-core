@@ -962,15 +962,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _events_overview_list_table()
     {
         $after_list_table                           = [];
-        $after_list_table['view_event_list_button'] = EEH_HTML::div(
+        $links_html = EEH_HTML::div('', '', 'ee-admin-section ee-layout-stack');
+        $links_html .= EEH_HTML::h3(esc_html__('Links', 'event_espresso'));
+        $links_html .= EEH_HTML::div(
             EEH_Template::get_button_or_link(
                 get_post_type_archive_link('espresso_events'),
                 esc_html__('View Event Archive Page', 'event_espresso'),
                 'button button--small button--secondary'
             ),
             '',
-            'ee-admin-button-row'
+            'ee-admin-button-row ee-admin-button-row--align-start'
         );
+        $links_html .= EEH_HTML::divx();
+
+        $after_list_table['view_event_list_button'] = $links_html;
 
         $after_list_table['legend'] = $this->_display_legend($this->_event_legend_items());
         $this->_admin_page_title                    .= ' ' . $this->get_action_link_or_button(

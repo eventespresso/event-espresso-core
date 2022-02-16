@@ -44,6 +44,7 @@
 .wp-list-table .column-_REG_date {
     width: max(10%, 12.5rem);
 }
+
 .wp-list-table .column-DTT_EVT_start {
     width: max(12.5%, 15.25rem);
 }
@@ -61,9 +62,11 @@
 .checkedin-status-0 {
     color: var(--ee-status-color-red);
 }
+
 .checkedin-status-1 {
     color: var(--ee-status-color-green);
 }
+
 .checkedin-status-2 {
     color: var(--ee-status-color-grey);
 }
@@ -215,8 +218,8 @@
 
 .jqplot-point-label {
     padding: 0 .5em;
-    background: #FFF;
-    border: 1px solid #DDD;
+    background: var(--ee-color-white);
+    border: 1px solid var(--ee-border-color);
     border-radius: 3px;
     font-size: 12px;
     color: #333;
@@ -254,7 +257,7 @@
 }
 
 .admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon .dashicons {
-    color: var(--ee-status-color-light-grey);
+    color: var(--ee-font-color-light);
     margin-block-start: .35rem;
 }
 
@@ -291,7 +294,7 @@
     min-width: 530px;
     margin-bottom: 1em;
     border: none;
-    border-bottom: 1px solid #EDEDED;
+    border-bottom: 1px solid var(--ee-border-color);
     border-collapse: collapse;
     border-spacing: 0;
 }
@@ -307,7 +310,7 @@
 .tkt-slctr-tbl td {
     padding: .5em 1em .5em 0;
     border: none;
-    border-top: 1px solid #EDEDED;
+    border-top: 1px solid var(--ee-border-color);
     font-size: 1em;
     line-height: 1em;
 }
@@ -336,7 +339,7 @@
  */
 
 #titlediv .title-prompt-text {
-    color: #BBB;
+    color: var(--ee-font-color-light);
     position: absolute;
     font-size: 1.7em;
     padding: 11px 10px;
@@ -451,7 +454,7 @@
 }
 
 .ee-batch-message-send-form .batch-message-edit-fields {
-    background-color: #E3E3E3;
+    background-color: var(--ee-color-off-white);
     padding: 10px;
     margin-top: 20px;
     border-radius: 4px;
@@ -468,7 +471,7 @@
 .ee-batch-message-send-form .shortcodes-info-container {
     padding: 5px 20px 5px 20px;;
     margin-bottom: 10px;
-    background-color: #F5F5F5;
+    background-color: var(--ee-color-almost-white);
     border-radius: 4px;
 }
 
@@ -501,7 +504,7 @@
 /** line item table styles **/
 .ee-line-item-id {
     font-size: .9em;
-    color: #BBB;
+    color: var(--ee-font-color-light);
     font-style: italic;
 }
 
@@ -511,8 +514,8 @@
 }
 
 #ee-add-reg-back-button-dv {
-    background: #FFF;
-    color: #666;
+    background: var(--ee-color-white);
+    color: var(--ee-font-color);
     font-size: 1.2em;
     line-height: 1.75em;
     padding: 1.5em 1.5em 2em;
@@ -524,7 +527,7 @@
 }
 
 #reg-admin-transaction-attendees-table .reg-status-RCN {
-    color: #999;
+    color: var(--ee-font-color-light);
 }
 
 /** REGISTRATION LIST TABLE EVENT-DATE COLUMNS **/
@@ -540,6 +543,7 @@
     padding-inline-end: 2rem;
     width: 100%;
 }
+
 .ee-registration-event-datetimes-container {
     display: none;
     flex-flow: column nowrap;
@@ -581,6 +585,7 @@
 .espresso-admin .ee-event-filter-link .dashicons.dashicons--small {
     margin-inline-end: 0.25rem;
 }
+
 .espresso-admin .ee-event-filter-link .dashicons.dashicons--small:before {
     top: -2px;
 }
@@ -589,7 +594,7 @@
 
 .spco-ticket-details {
     font-size: 16px;
-    border-top: 1px solid #DDD;
+    border-top: 1px solid var(--ee-border-color-table-row);
     padding: 30px 0 15px;
     width: 100%;
 }

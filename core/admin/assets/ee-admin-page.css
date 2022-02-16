@@ -157,6 +157,16 @@
     color: var(--ee-color-white) !important;
 }
 
+.espresso-admin .ee-status-pill,
+.espresso-admin .postbox .inside .ee-status-pill {
+    border-radius: .5rem;
+    display: inline-flex;
+    margin-block: .25rem;
+    margin-inline: .25rem;
+    padding-block: .25rem;
+    padding-inline: 1rem;
+}
+
 .ee-status-outline {
     border: 2px solid transparent;
     padding-block: 1rem;
@@ -320,6 +330,7 @@
     .espresso-admin #post-body.columns-2 #postbox-container-2,
     .espresso-admin #poststuff #post-body.columns-2 #post-body-content,
     .espresso-admin #poststuff #post-body.columns-2 #postbox-container-2 {
+        margin-block-end: 1rem;
         width: 100%;
     }
 }
@@ -355,6 +366,10 @@
     margin-block-end: 2rem;
     margin-inline: 3rem;
     width: calc(100% - 6rem);
+}
+
+.ee-admin-section {
+    margin-block: 1rem;
 }
 
 .ee-admin-block {
@@ -399,7 +414,13 @@
     display: flex;
     flex-direction: column;
     font-size: 1rem;
+    margin: 0;
     outline: none;
+}
+
+
+.espresso-admin .postbox + .postbox {
+    margin-block-start: 1rem;
 }
 
 .post-type-espresso_events #wpcontent {
@@ -432,7 +453,7 @@
 
     .espresso-admin #post-body.columns-2 #postbox-container-1 > div {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         grid-gap: 1rem;
         width: unset;
     }
@@ -461,9 +482,6 @@
         flex-direction: column;
         margin: 0;
         width: unset;
-    }
-    .espresso-admin #post-body.columns-2 #postbox-container-1 > div {
-        grid-template-columns: 1fr;
     }
 
     .espresso-admin .ee-admin-container > .padding,
@@ -2739,7 +2757,7 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin .postbox .inside div:not(.progress-step-bubble) > p,
 .espresso-admin .postbox .inside br + div,
-.espresso-admin .postbox .inside div + div:not(.tabs-panel):not(.progress-step-bubble)  {
+.espresso-admin .postbox .inside div + div:not(.tabs-panel):not(.progress-step-bubble):not(.ee-status-pill)  {
     margin-block-start: 1rem;
 }
 
@@ -2896,7 +2914,8 @@ body.espresso-admin #contextual-help-wrap strong {
     justify-content: center;
     line-height: 2;
     margin: 0.25rem;
-    min-width: max(4rem, 25%);
+    min-width: clamp(4rem, 25%, 16rem);
+    max-width: 100%;
     outline: none !important;
     padding: 0;
     padding-inline: var(--ee-button-height-forth);
@@ -2906,6 +2925,22 @@ body.espresso-admin #contextual-help-wrap strong {
     user-select: none;
     vertical-align: middle;
     white-space: nowrap;
+    width: 100%;;
+}
+    .espresso-admin select.ee-input--small,
+    .espresso-admin textarea.ee-input--small,
+    .espresso-admin input.ee-input--small:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+        min-width: clamp(4rem, 12.5%, 8rem);
+        max-width: clamp(8rem, 25%, 16rem);
+    }
+
+@media screen and (min-width: 782px) {
+    .espresso-admin select,
+    .espresso-admin textarea:not(.wp-editor-area),
+    .espresso-admin input:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+        min-width: clamp(4rem, 25%, 16rem);
+        max-width: clamp(21rem, 100%, 40rem);
+    }
 }
 
 .espresso-admin td > select:first-child,
@@ -2928,7 +2963,6 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin select {
     padding-inline-end: var(--ee-button-height);
-    max-width: 16rem;
 }
 
 
@@ -2949,7 +2983,6 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 .espresso-admin input[type="checkbox"] {
     border-radius: .25rem;
-    /* height: calc(var(--ee-checkbox-height) + 1px); */
 }
 .espresso-admin input[type="radio"] {
     aspect-ratio: 1;
@@ -3024,7 +3057,7 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-block-start: .5rem;
     padding: 1rem;
 }
-.espresso-admin #wp-content-wrap {
+.espresso-admin #wp-content-wrap:not(.wp-editor-wrap) {
     margin-block-start: 1rem;
     margin-block-end: -1.5rem;
 }
@@ -3036,6 +3069,8 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin #wp-content-wrap .wp-editor-container .wp-editor-area {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
     margin-block-start: .5rem !important;
 }
 .espresso-admin.wp-core-ui:not(.event-espresso_page_espresso_messages) .tmce-active .quicktags-toolbar {
@@ -3842,7 +3877,9 @@ body.espresso-admin #contextual-help-wrap strong {
     min-width: 4rem;
 }
 .espresso-admin .tablenav select {
-    min-width: 4rem;
+    min-width: clamp(4rem, 12.5%, 8rem);
+    max-width: clamp(16rem, 25%, 20rem);
+    width: fit-content;
 }
 .espresso-admin .tablenav-paging-text {
     justify-content: space-evenly;
@@ -3851,10 +3888,11 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin .tablenav .actions,
 .espresso-admin .tablenav .tablenav-pages {
-  padding: 0;
-  display: flex;
-  align-items: center;
+    align-items: center;
+    display: inline-flex;
+    float: unset;
     margin-block: 0.25rem;
+    padding: 0;
 }
 .espresso-admin .tablenav .actions {
   padding-inline-end: 1rem;
@@ -3875,8 +3913,6 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 .espresso-admin p.search-box input[type="search"][name="s"]:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
     float: unset;
-    max-width: 100%;
-    min-width: min(20rem, calc(100% - 2rem));
 }
 
 
@@ -4021,13 +4057,18 @@ body.espresso-admin #contextual-help-wrap strong {
     flex-flow: row wrap;
     justify-content: flex-end;
 }
+.espresso-admin .ee-admin-button-row.ee-admin-button-row--align-start {
+    justify-content: flex-start;
+}
 .espresso-admin.wp-core-ui .ee-admin-button-row .button {
     margin-block: .25rem;
 }
-
 .espresso-admin .ee-admin-button-row + .ee-admin-button-row {
     margin-block-start: 2rem;
 }
+
+
+
 .espresso-admin .qtip-content {
     padding-block: .375rem;
     padding-inline-start: 1.5rem;
