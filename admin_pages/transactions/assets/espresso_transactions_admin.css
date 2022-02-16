@@ -1,26 +1,68 @@
-.espresso-admin .form-table th { max-width: 30%!important; min-width: 20%!important; }
-.espresso-admin .form-table td { max-width: 79%!important; min-width: 69%!important; }
-.espresso-admin .regular-text { width: 98%!important; }
-#entries-per-page-dv { display:inline; }
 
-.wrap .nav-tab-wrapper { margin-bottom:1em; }
-.wrap .subsubsub { margin:0; }
+#entries-per-page-dv {
+    display: inline;
+}
 
-#txn-filters-dv { clear:both; padding:1em 0; }
+.wrap .nav-tab-wrapper {
+    margin-bottom: 1em;
+}
+
+.wrap .subsubsub {
+    margin: 0;
+}
+
+#txn-filters-dv {
+    clear: both;
+    padding: 1em 0;
+}
 
 /* green text */
-.status-TCM { color:var(--ee-status-color-green);   font-size:.85em; font-weight: 600; }
-.txn-overview-full-payment-spn { color:var(--ee-status-color-green); font-weight: 600;   }
+.status-TCM {
+    color: var(--ee-status-color-green);
+    font-size: .85em;
+    font-weight: 600;
+}
+
+.txn-overview-full-payment-spn {
+    color: var(--ee-status-color-green);
+    font-weight: 600;
+}
+
 /* blue text */
-.status-TIN { color:var(--ee-status-color-blue);  font-size:.85em; font-weight:600; }
-.txn-overview-part-payment-spn { color:var(--ee-status-color-blue);  font-weight:600;  }
+.status-TIN {
+    color: var(--ee-status-color-blue);
+    font-size: .85em;
+    font-weight: 600;
+}
+
+.txn-overview-part-payment-spn {
+    color: var(--ee-status-color-blue);
+    font-weight: 600;
+}
+
 /* orange text */
-.status-TOP { color:var(--ee-status-color-orange);   font-size:.85em; font-weight:600; }
-.txn-overview-no-payment-spn { color:var(--ee-status-color-orange);  font-weight:600; }
+.status-TOP {
+    color: var(--ee-status-color-orange);
+    font-size: .85em;
+    font-weight: 600;
+}
+
+.txn-overview-no-payment-spn {
+    color: var(--ee-status-color-orange);
+    font-weight: 600;
+}
+
 /* red text */
-.status-TFL { color:var(--ee-status-color-pink);   font-size:.85em; }
+.status-TFL {
+    color: var(--ee-status-color-pink);
+    font-size: .85em;
+}
+
 /* yellow text */
-.status-TAB { color:var(--ee-status-color-yellow); font-size:.85em; }
+.status-TAB {
+    color: var(--ee-status-color-yellow);
+    font-size: .85em;
+}
 
 /**
  * status strips
@@ -41,15 +83,16 @@
 
 .reg-status-RIC,
 .txn-status-TAB,
-.txn-status-TAB td:first-child  {
-    border-left-color: var(--ee-status-color-yellow);  /* prev: #FCB93C */
+.txn-status-TAB td:first-child {
+    border-left-color: var(--ee-status-color-yellow); /* prev: #FCB93C */
 }
+
 /*txn incomplete, pymt declined*/
 .reg-status-RDC,
 .txn-status-TFL,
 .pymt-status-PDC,
 .txn-status-TFL td:first-child {
-    border-left-color: var(--ee-status-color-pink);  /* prev: #E44064 */
+    border-left-color: var(--ee-status-color-pink); /* prev: #E44064 */
 }
 
 /*txn open, pymt pending*/
@@ -71,9 +114,8 @@
 /*pymt cancelled*/
 .reg-status-RCN,
 .pymt-status-PCN {
-    border-left-color: var(--ee-status-color-grey);  /* prev: #A39D9C */
+    border-left-color: var(--ee-status-color-grey); /* prev: #A39D9C */
 }
-
 
 
 /*.ee-status-strip-td {*/
@@ -96,13 +138,13 @@
     background-color: var(--ee-status-color-green); /* prev: #70CC50 */
 }
 
-.ee-status-legend-TAB  {
-    background-color: var(--ee-status-color-yellow);  /* prev: #FCB93C */
+.ee-status-legend-TAB {
+    background-color: var(--ee-status-color-yellow); /* prev: #FCB93C */
 }
 
 .ee-status-legend-TFL,
 .ee-status-legend-PDC {
-    background-color: var(--ee-status-color-pink);  /* prev: #E44064 */
+    background-color: var(--ee-status-color-pink); /* prev: #E44064 */
 }
 
 .ee-status-legend-TIN,
@@ -116,7 +158,7 @@
 }
 
 .ee-status-legend-PCN {
-    background-color: var(--ee-status-color-grey);  /* prev: #A39D9C */
+    background-color: var(--ee-status-color-grey); /* prev: #A39D9C */
 }
 
 
@@ -132,16 +174,19 @@
 .transactions.wp-list-table .column-TXN_timestamp {
     min-width: 12rem;
 }
+
 .transactions.wp-list-table .column-TXN_total,
 .transactions.wp-list-table .column-TXN_paid {
     min-width: 10rem;
     padding-inline-end: 1.5rem;
     text-align: end;
 }
+
 .transactions.wp-list-table th.column-TXN_total,
 .transactions.wp-list-table th.column-TXN_paid {
     padding-inline-end: 4rem;
 }
+
 .transactions.wp-list-table .column-TXN_total > div,
 .transactions.wp-list-table .column-TXN_paid > div {
     align-content: flex-end;
@@ -165,22 +210,40 @@
 }
 
 .txn-overview-free-event-spn {
-    display: block; text-align:center;
+    display: block;
+    text-align: center;
 }
 
 
+.admin-side-mbox-dv {
+    margin: 1em 0 2em;
+}
 
+.admin-side-mbox-dv p {
+    margin: .5em 0;
+    line-height: 1.2em;
+}
 
-.admin-side-mbox-dv { margin:1em 0 2em; }
-.admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; }
-.admin-side-mbox-label-spn { width:30%; padding-right:.5em; text-align:right; }
-.admin-side-mbox-text-dv { padding-left:.5em; margin:0 0 1em 1em; }
-.admin-side-mbox-dv .ee-admin-attendee-avatar { margin:0 0 1em .5em; }
+.admin-side-mbox-label-spn {
+    width: 30%;
+    padding-right: .5em;
+    text-align: right;
+}
+
+.admin-side-mbox-text-dv {
+    padding-left: .5em;
+    margin: 0 0 1em 1em;
+}
+
+.admin-side-mbox-dv .ee-admin-attendee-avatar {
+    margin: 0 0 1em .5em;
+}
 
 #admin-side-mbox-primary-registrant-dv,
 .admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon {
     display: flex;
 }
+
 .admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon .dashicons {
     color: var(--ee-status-color-light-grey);
     margin-block-start: .35rem;
@@ -189,38 +252,83 @@
 .admin-side-mbox-text-dv .ee-admin-attendee-name {
     font-size: 1.2rem;
 }
+
 .admin-side-mbox-text-dv .ee-admin-attendee-email,
 .admin-side-mbox-text-dv .ee-admin-attendee-phone,
 .admin-side-mbox-text-dv .ee-admin-attendee-address {
     margin-block-start: .5rem;
 }
 
-.ee-admin-dialog-container .admin-modal-dialog-h2 { font-size:2em; margin:.25em 0;  }
-.admin-primary-mbox-h4 { margin:2em 0 .25em; font-size:1.3em;  }
-
-.admin-primary-mbox-tbl {
-    width:100%; border-spacing: 0; border-collapse:collapse;
+.ee-admin-dialog-container .admin-modal-dialog-h2 {
+    font-size: 2em;
+    margin: .25em 0;
 }
 
-.admin-primary-mbox-tbl.borderless th { padding:6px 6px 0; border:none; background:none; }
-.admin-primary-mbox-tbl.borderless td { padding:0 6px 6px; border:none; background:none; }
-.admin-primary-mbox-tbl tr + tr { border-top:none; }
+.admin-primary-mbox-h4 {
+    margin: 2em 0 .25em;
+    font-size: 1.3em;
+}
+
+.admin-primary-mbox-tbl {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.admin-primary-mbox-tbl.borderless th {
+    padding: 6px 6px 0;
+    border: none;
+    background: none;
+}
+
+.admin-primary-mbox-tbl.borderless td {
+    padding: 0 6px 6px;
+    border: none;
+    background: none;
+}
+
+.admin-primary-mbox-tbl tr + tr {
+    border-top: none;
+}
+
 .admin-primary-mbox-tbl th + th,
-.admin-primary-mbox-tbl td + td { border-left:none; }
+.admin-primary-mbox-tbl td + td {
+    border-left: none;
+}
+
 .admin-primary-mbox-tbl th,
-.admin-primary-mbox-tbl-wrap-inner label { font-size:.9em; font-weight:bold; line-height:1em; }
-.admin-primary-mbox-tbl caption { display:none; }
+.admin-primary-mbox-tbl-wrap-inner label {
+    font-size: .9em;
+    font-weight: bold;
+    line-height: 1em;
+}
 
-.form-table.skinny-rows th, .form-table.skinny-rows td { padding:3px 10px; }
+.admin-primary-mbox-tbl caption {
+    display: none;
+}
 
-.admin-primary-mbox-taxes-tr { font-size:1.1em; }
-.admin-primary-mbox-total-tr { font-size:1.4em; }
-.admin-primary-mbox-total-tr td .important-notice { display: block; padding: 1em; font-size: 1rem; }
+.form-table.skinny-rows th, .form-table.skinny-rows td {
+    padding: 3px 10px;
+}
+
+.admin-primary-mbox-taxes-tr {
+    font-size: 1.1em;
+}
+
+.admin-primary-mbox-total-tr {
+    font-size: 1.4em;
+}
+
+.admin-primary-mbox-total-tr td .important-notice {
+    display: block;
+    padding: 1em;
+    font-size: 1rem;
+}
 
 
 .ee-line-item-id {
     font-size: .9em;
-    color: #bbb;
+    color: #BBB;
     font-style: italic;
 }
 
@@ -236,43 +344,88 @@
 }
 
 
-.truncate-50 { width:50px; height:1em; overflow:hidden; }
+.truncate-50 {
+    width: 50px;
+    height: 1em;
+    overflow: hidden;
+}
 
 #txn-admin-gateway-img {
-    position:absolute; top:0; right:2em;
+    position: absolute;
+    top: 0;
+    right: 2em;
 }
 
 
-.hdr-has-icon { padding:4px 0; }
-.hdr-has-icon img { position:relative; top:1px; margin-right:.5em; }
-#cash-single { position:relative; top:2px; }
+.hdr-has-icon {
+    padding: 4px 0;
+}
+
+.hdr-has-icon img {
+    position: relative;
+    top: 1px;
+    margin-right: .5em;
+}
+
+#cash-single {
+    position: relative;
+    top: 2px;
+}
 
 #admin-modal-dialog-options-ul,
-#txn-admin-payment-options-ul, #del-admin-modal-dialog-options-ul { float:right; list-style:none; margin:0 .5em 1em; }
+#txn-admin-payment-options-ul, #del-admin-modal-dialog-options-ul {
+    float: right;
+    list-style: none;
+    margin: 0 .5em 1em;
+}
 
 #admin-modal-dialog-options-ul li,
-#txn-admin-payment-options-ul li, #del-admin-modal-dialog-options-ul li { display:inline-block; }
+#txn-admin-payment-options-ul li, #del-admin-modal-dialog-options-ul li {
+    display: inline-block;
+}
 
 #admin-modal-dialog-options-ul li + li,
-#txn-admin-payment-options-ul li + li, #del-admin-modal-dialog-options-ul li + li { margin-left:1em; }
+#txn-admin-payment-options-ul li + li, #del-admin-modal-dialog-options-ul li + li {
+    margin-left: 1em;
+}
 
-#admin-modal-dialog-options-ul .hidden, #del-admin-modal-dialog-options-ul .hidden { display:none !important; }
+#admin-modal-dialog-options-ul .hidden, #del-admin-modal-dialog-options-ul .hidden {
+    display: none !important;
+}
 
 
 #txn-admin-apply-payment-dv, #txn-admin-delete-payment-dv {
-    position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:9999;
-    background:#fff; border:1px solid #ddd; border-radius:5px;
+    position: absolute;
+    top: 50px;
+    left: 25%;
+    width: 75%;
+    height: auto;
+    padding: 3em 4em 2em;
+    z-index: 9999;
+    background: #FFF;
+    border: 1px solid #DDD;
+    border-radius: 5px;
 }
 
-#txn-admin-apply-payment-tbl { width:auto; }
-#txn-admin-apply-payment-tbl label { padding-left:3px; }
+#txn-admin-apply-payment-tbl {
+    width: auto;
+}
+
+#txn-admin-apply-payment-tbl label {
+    padding-left: 3px;
+}
 
 .admin-modal-dialog-inner {
-    padding:2em 2em 1em; margin: 0;
-    border:1px solid #dfdfdf; background:#fcfcfc;
-    /*font-family: sans-serif; font-size: 1em; vertical-align:middle;*/
+    padding: 2em 2em 1em;
+    margin: 0;
+    border: 1px solid #DFDFDF;
+    background: #FCFCFC;
 }
-.admin-modal-dialog-row { clear:both; margin:0 0 2em; }
+
+.admin-modal-dialog-row {
+    clear: both;
+    margin: 0 0 2em;
+}
 
 .admin-modal-dialog-inner label {
     display: inline-block;
@@ -284,14 +437,37 @@
     font-weight: bold;
 }
 
-.admin-modal-dialog-inner .txn-admin-payment-reg-to-apply-lbl { width:auto; font-weight: normal; }
-.admin-modal-dialog-inner .left-250 { display:inline-block; padding-left:250px; margin-left:1em; }
-.admin-modal-dialog-inner .description { vertical-align:top; color: var(--ee-status-color-grey); }
-.admin-modal-dialog-inner input,
-.admin-modal-dialog-inner select { vertical-align:top; }
-.validation-notice-dv { display:none; padding:0 0 0 250px; margin-left:1em; color: var(--ee-status-color-red); }
+.admin-modal-dialog-inner .txn-admin-payment-reg-to-apply-lbl {
+    width: auto;
+    font-weight: normal;
+}
 
-.requires-value { border:1px solid var(--ee-status-color-red) !important; }
+.admin-modal-dialog-inner .left-250 {
+    display: inline-block;
+    padding-left: 250px;
+    margin-left: 1em;
+}
+
+.admin-modal-dialog-inner .description {
+    vertical-align: top;
+    color: var(--ee-status-color-grey);
+}
+
+.admin-modal-dialog-inner input,
+.admin-modal-dialog-inner select {
+    vertical-align: top;
+}
+
+.validation-notice-dv {
+    display: none;
+    padding: 0 0 0 250px;
+    margin-left: 1em;
+    color: var(--ee-status-color-red);
+}
+
+.requires-value {
+    border: 1px solid var(--ee-status-color-red) !important;
+}
 
 /*.admin-modal-dialog-inner label.last { margin-bottom:8em; }*/
 
@@ -302,14 +478,18 @@
 
 
 .admin-modal-dialog-inner input[type=text],
-.admin-modal-dialog-inner select { width:100%; min-width:150px; max-width:250px; }
+.admin-modal-dialog-inner select {
+    width: 100%;
+    min-width: 150px;
+    max-width: 250px;
+}
+
 .admin-modal-dialog-inner input[type=checkbox] {
     margin: 6px 1em .5em 0
 }
 
 .admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox],
 .admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox]:checked {
-    /*margin: 2px 1em .5em 0*/
     margin: 0
 }
 
@@ -318,30 +498,35 @@
 }
 
 .txn-date-h2, .txn-status-h2, .txn-amount-due-h2, .txn-selected-method-of-payment-h3 {
-    padding:0;
-    margin:0 0 1em;
+    padding: 0;
+    margin: 0 0 1em;
 }
 
 
 .jqplot-title {
-    font-size:24px; text-align:left !important; margin: 1em 0 0 1em;
+    font-size: 24px;
+    text-align: left !important;
+    margin: 1em 0 0 1em;
 }
+
 .jqplot-point-label {
-    padding:0 .5em;
-    background:#fff; border:1px solid #ddd;
-    border-radius:3px;
-    font-size:12px; color:#333;
-    -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1);
-    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1);
-    box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1);
+    padding: 0 .5em;
+    background: #FFF;
+    border: 1px solid #DDD;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #333;
+    -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
+    -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
 }
 
 #txn-admin-transaction-attendees-table .reg-status-RCN {
-	color: var(--ee-status-color-grey);
+    color: var(--ee-status-color-grey);
 }
 
 #additional-transaction-actions-dv ul li {
-    display:inline-block;
+    display: inline-block;
     margin-right: 10px;
 }
 
@@ -359,15 +544,22 @@
     flex-flow: row wrap;
     justify-content: flex-start;
 }
+
 #edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.display-the-hidden:not(.hidden) > .dashicons,
 #edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.hide-the-displayed:not(.hidden) > .dashicons {
     margin-inline-end: .5rem;
 }
+
 #edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.display-the-hidden > .dashicons-plus-alt:before {
     position: relative;
     top: 1px;
 }
+
 #edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.hide-the-displayed > .dashicons-dismiss:before {
     position: relative;
     top: -3px;
+}
+
+.ee-txn-reg-step-status-steps {
+    flex-flow: row wrap !important;
 }

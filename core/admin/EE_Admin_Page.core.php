@@ -2882,16 +2882,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $sortable_list_table_form_fields = '';
         }
         $this->_template_args['sortable_list_table_form_fields'] = $sortable_list_table_form_fields;
-        $hidden_form_fields                                      =
-            isset($this->_template_args['list_table_hidden_fields'])
-                ? $this->_template_args['list_table_hidden_fields']
-                : '';
-        $nonce_ref                                               = $this->_req_action . '_nonce';
-        $hidden_form_fields                                      .= '<input type="hidden" name="'
-                                                                    . $nonce_ref
-                                                                    . '" value="'
-                                                                    . wp_create_nonce($nonce_ref)
-                                                                    . '">';
+
+        $hidden_form_fields = $this->_template_args['list_table_hidden_fields'] ?? '';
+
+        $nonce_ref          = $this->_req_action . '_nonce';
+        $hidden_form_fields .= '
+            <input type="hidden" name="' . $nonce_ref . '" value="' . wp_create_nonce($nonce_ref) . '">';
+
         $this->_template_args['list_table_hidden_fields']        = $hidden_form_fields;
         // display message about search results?
         $search = $this->request->getRequestParam('s');

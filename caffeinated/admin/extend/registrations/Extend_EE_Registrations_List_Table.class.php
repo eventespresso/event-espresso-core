@@ -15,41 +15,41 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
 
     /**
      * @param EE_Registration $registration
+     * @param bool            $prep_content
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
-    public function column__REG_date(EE_Registration $registration, $prep_content = true)
+    public function column__REG_date(EE_Registration $registration, bool $prep_content = true): string
     {
+        $actions['check_in'] = '';
         $date_linked = parent::column__REG_date($registration, false);
         $actions = array();
-        // Build row actions
-        $check_in_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action'   => 'event_registrations',
-            'event_id' => $registration->event_ID(),
-        ), REG_ADMIN_URL);
-        $actions['check_in'] = EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_registration',
-            'espresso_registrations_registration_checkins',
-            $registration->ID()
-        ) && EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_checkins',
-            'espresso_registrations_registration_checkins'
-        )
-            ? '
-            <a class="ee-aria-tooltip ee-event-filter-link" href="' . $check_in_url . '"'
-              . ' aria-label="' . esc_attr__(
-                  'The Check-In List allows you to easily toggle check-in status for this event',
-                  'event_espresso'
-              )
-              . '">
-                  <span class="dashicons dashicons-groups dashicons--small"></span>'
+
+        if (
+            $this->caps_handler->userCanReadRegistrationCheckins()
+            && $this->caps_handler->userCanReadRegistrationCheckin($registration)
+        ) {
+            $check_in_url = EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action' => 'event_registrations',
+                    'event_id' => $registration->event_ID(),
+                ],
+                REG_ADMIN_URL
+            );
+
+            $actions['check_in'] = '
+            <a  class="ee-aria-tooltip ee-event-filter-link" 
+                href="' . $check_in_url . '"
+                aria-label="' . esc_attr__(
+                   'The Check-In List allows you to easily toggle check-in status for this event',
+                   'event_espresso'
+               ) . '"
+            >
+                <span class="dashicons dashicons-groups dashicons--small"></span>'
                 . esc_html__('View Check-ins', 'event_espresso') . '
-            </a>'
-            : '';
+            </a>';
+        }
 
         $content = sprintf('%1$s %2$s', $date_linked, $this->row_actions($actions));
 
@@ -58,9 +58,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
 
 
     /**
-     *        column_default
-     *
-     * @param \EE_Registration $registration
+     * @param EE_Registration $registration
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -68,7 +66,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function column_DTT_EVT_start(EE_Registration $registration)
+    public function column_DTT_EVT_start(EE_Registration $registration): string
     {
         $remove_defaults = array('default_where_conditions' => 'none');
         $ticket = $registration->ticket();
@@ -77,13 +75,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
         $datetimes_for_display = array();
         foreach ($datetimes as $datetime) {
             $datetime_string = '<div class="ee-reg-list-dates-list-date">';
-            if (
-                EE_Registry::instance()->CAP->current_user_can(
-                    'ee_read_checkin',
-                    'espresso_registrations_registration_checkins',
-                    $registration->ID()
-                )
-            ) {
+            if ($this->caps_handler->userCanReadRegistrationCheckin($registration)) {
                 $checkins_url = EE_Admin_Page::add_query_args_and_nonce(
                     [
                         'action'   => 'event_registrations',

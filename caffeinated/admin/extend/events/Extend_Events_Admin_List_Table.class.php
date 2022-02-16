@@ -12,15 +12,14 @@
 class Extend_Events_Admin_List_Table extends Events_Admin_List_Table
 {
 
-    protected function _column_name_action_setup(EE_Event $item)
+    protected function _column_name_action_setup(EE_Event $event): array
     {
         $export_query_args = array(
             'action' => 'export_events',
-            'EVT_ID' => $item->ID(),
+            'EVT_ID' => $event->ID(),
         );
         $export_event_link = EE_Admin_Page::add_query_args_and_nonce($export_query_args, EVENTS_ADMIN_URL);
 
-        $actions = parent::_column_name_action_setup($item);
-        return $actions;
+        return parent::_column_name_action_setup($event);
     }
 }

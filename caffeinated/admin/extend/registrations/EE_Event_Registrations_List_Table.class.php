@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
@@ -11,6 +12,10 @@ use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
  */
 class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 {
+    /**
+     * @var Extend_Registrations_Admin_Page
+     */
+    protected $_admin_page;
 
     /**
      * This property will hold the related Datetimes on an event IF the event id is included in the request.
@@ -19,14 +24,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected $_dtts_for_event = [];
 
-
     /**
      * The event if one is specified in the request
      *
      * @var EE_Event
      */
     protected $_evt = null;
-
 
     /**
      * The DTT_ID if the current view has a specified datetime.
@@ -44,26 +47,33 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     public function __construct($admin_page)
     {
         parent::__construct($admin_page);
-        $this->_status = $this->_admin_page->get_registration_status_array();
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _setup_data()
     {
-        $this->_data           = $this->_view !== 'trash' ? $this->_admin_page->get_event_attendees($this->_per_page)
+        $this->_data = $this->_view !== 'trash'
+            ? $this->_admin_page->get_event_attendees($this->_per_page)
             : $this->_admin_page->get_event_attendees($this->_per_page, false, true);
-        $this->_all_data_count = $this->_view !== 'trash' ? $this->_admin_page->get_event_attendees(
-            $this->_per_page,
-            true
-        ) : $this->_admin_page->get_event_attendees($this->_per_page, true, true);
+
+        $this->_all_data_count = $this->_view !== 'trash'
+            ? $this->_admin_page->get_event_attendees($this->_per_page, true)
+            : $this->_admin_page->get_event_attendees($this->_per_page, true, true);
     }
 
 
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
     protected function _set_properties()
     {
         $return_url = $this->getReturnUrl();
+        $evt_id     = $this->_req_data['event_id'] ?? null;
 
-        $evt_id              = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : null;
         $this->_wp_list_args = [
             'singular' => esc_html__('registrant', 'event_espresso'),
             'plural'   => esc_html__('registrants', 'event_espresso'),
@@ -158,12 +168,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param EE_Registration $registration
+     * @param EE_Registration $item
      * @return string
      */
-    protected function _get_row_class($registration)
+    protected function _get_row_class($item): string
     {
-        $class = parent::_get_row_class($registration);
+        $class = parent::_get_row_class($item);
         if ($this->_has_checkbox_column) {
             $class .= ' has-checkbox-column';
         }
@@ -176,7 +186,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_table_filters()
+    protected function _get_table_filters(): array
     {
         $filters        = $where = [];
         $current_EVT_ID = isset($this->_req_data['event_id']) ? (int) $this->_req_data['event_id'] : 0;
@@ -189,33 +199,33 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             if (! EE_Registry::instance()->CAP->current_user_can('ee_read_others_events', 'get_events')) {
                 $where['EVT_wp_user'] = get_current_user_id();
             }
-            $events  = EEM_Event::instance()->get_all(
+            $events   = EEM_Event::instance()->get_all(
                 [
                     $where,
                     'order_by' => ['Datetime.DTT_EVT_start' => 'DESC'],
                 ]
             );
-            $evts[]  = [
+            $events[] = [
                 'id'   => 0,
                 'text' => esc_html__(' - select an event - ', 'event_espresso'),
             ];
-            $checked = 'checked';
-            /** @var EE_Event $evt */
-            foreach ($events as $evt) {
+            $checked  = 'checked';
+            /** @var EE_Event $event */
+            foreach ($events as $event) {
                 // any registrations for this event?
-                if (! $evt->get_count_of_all_registrations()) {
+                if (! $event->get_count_of_all_registrations()) {
                     continue;
                 }
-                $evts[] = [
-                    'id'    => $evt->ID(),
+                $events[] = [
+                    'id'    => $event->ID(),
                     'text'  => apply_filters(
                         'FHEE__EE_Event_Registrations___get_table_filters__event_name',
-                        $evt->get('EVT_name'),
-                        $evt
+                        $event->get('EVT_name'),
+                        $event
                     ),
-                    'class' => $evt->is_expired() ? 'ee-expired-event' : '',
+                    'class' => $event->is_expired() ? 'ee-expired-event' : '',
                 ];
-                if ($evt->ID() === $current_EVT_ID && $evt->is_expired()) {
+                if ($event->ID() === $current_EVT_ID && $event->is_expired()) {
                     $checked = '';
                 }
             }
@@ -223,7 +233,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             $event_filter .= '<label for="event_id">';
             $event_filter .= esc_html__('Check-in Status for', 'event_espresso');
             $event_filter .= '</label>&nbsp;&nbsp;';
-            $event_filter .= EEH_Form_Fields::select_input('event_id', $evts, $current_EVT_ID);
+            $event_filter .= EEH_Form_Fields::select_input('event_id', $events, $current_EVT_ID);
             $event_filter .= '<span class="ee-event-filter-toggle">';
             $event_filter .= '<label for="js-ee-hide-expired-events">';
             $event_filter .= '<input type="checkbox" id="js-ee-hide-expired-events" ' . $checked . '>&nbsp;&nbsp;';
@@ -235,18 +245,18 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         }
         if (! empty($this->_dtts_for_event)) {
             // DTT datetimes filter
-            $this->_cur_dtt_id = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : 0;
+            $this->_cur_dtt_id = $this->_req_data['DTT_ID'] ?? 0;
             if (count($this->_dtts_for_event) > 1) {
-                $dtts[0] = esc_html__('To toggle check-in status, select a datetime.', 'event_espresso');
-                foreach ($this->_dtts_for_event as $dtt) {
-                    $datetime_string    = $dtt->name();
-                    $datetime_string    = ! empty($datetime_string) ? ' (' . $datetime_string . ')' : '';
-                    $datetime_string    =
-                        $dtt->start_date_and_time() . ' - ' . $dtt->end_date_and_time() . $datetime_string;
-                    $dtts[ $dtt->ID() ] = $datetime_string;
+                $datetimes[0] = esc_html__('To toggle check-in status, select a datetime.', 'event_espresso');
+                foreach ($this->_dtts_for_event as $datetime) {
+                    $datetime_string              = $datetime->name();
+                    $datetime_string              = ! empty($datetime_string) ? ' (' . $datetime_string . ')' : '';
+                    $datetime_string              =
+                        $datetime->start_date_and_time() . ' - ' . $datetime->end_date_and_time() . $datetime_string;
+                    $datetimes[ $datetime->ID() ] = $datetime_string;
                 }
                 $input     = new EE_Select_Input(
-                    $dtts,
+                    $datetimes,
                     [
                         'html_name' => 'DTT_ID',
                         'html_id'   => 'DTT_ID',
@@ -261,6 +271,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _add_view_counts()
     {
         $this->_views['all']['count'] = $this->_get_total_event_attendees();
@@ -272,7 +286,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_total_event_attendees()
+    protected function _get_total_event_attendees(): int
     {
         $EVT_ID       = isset($this->_req_data['event_id']) ? absint($this->_req_data['event_id']) : false;
         $DTT_ID       = $this->_cur_dtt_id;
@@ -294,14 +308,14 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param EE_Registration $registration
+     * @param EE_Registration $item
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_cb($registration)
+    public function column_cb($item): string
     {
-        return sprintf('<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />', $registration->ID());
+        return sprintf('<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />', $item->ID());
     }
 
 
@@ -316,7 +330,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function column__REG_att_checked_in(EE_Registration $registration)
+    public function column__REG_att_checked_in(EE_Registration $registration): string
     {
         $attendee      = $registration->attendee();
         $attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
@@ -360,7 +374,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_ATT_name(EE_Registration $registration)
+    public function column_ATT_name(EE_Registration $registration): string
     {
         $attendee = $registration->attendee();
         if (! $attendee instanceof EE_Attendee) {
@@ -420,7 +434,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $actions                 = [];
         $DTT_ID                  = $this->_cur_dtt_id;
         $latest_related_datetime =
-            empty($DTT_ID) && ! empty($this->_req_data['event_id']) && $registration instanceof EE_Registration
+            empty($DTT_ID) && ! empty($this->_req_data['event_id'])
                 ? $registration->get_latest_related_datetime()
                 : null;
         $DTT_ID                  = $latest_related_datetime instanceof EE_Datetime
@@ -467,7 +481,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws EE_Error
      */
-    public function column_ATT_email(EE_Registration $registration)
+    public function column_ATT_email(EE_Registration $registration): string
     {
         $attendee = $registration->attendee();
         return $attendee instanceof EE_Attendee ? $attendee->email() : '';
@@ -483,20 +497,20 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     public function column_Event(EE_Registration $registration)
     {
         try {
-            $event         = $this->_evt instanceof EE_Event ? $this->_evt : $registration->event();
-            $chkin_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+            $event            = $this->_evt instanceof EE_Event ? $this->_evt : $registration->event();
+            $checkin_link_url = EE_Admin_Page::add_query_args_and_nonce(
                 ['action' => 'event_registrations', 'event_id' => $event->ID()],
                 REG_ADMIN_URL
             );
-            $event_label   = EE_Registry::instance()->CAP->current_user_can(
+            $event_label      = EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_checkins',
                 'espresso_registrations_registration_checkins'
-            ) ? '<a class="ee-aria-tooltip" href="' . $chkin_lnk_url . '" aria-label="'
+            ) ? '<a class="ee-aria-tooltip" href="' . $checkin_link_url . '" aria-label="'
                 . esc_attr__(
                     'View Checkins for this Event',
                     'event_espresso'
                 ) . '">' . $event->name() . '</a>' : $event->name();
-        } catch (\EventEspresso\core\exceptions\EntityNotFoundException $e) {
+        } catch (EntityNotFoundException $e) {
             $event_label = esc_html__('Unknown', 'event_espresso');
         }
         return $event_label;
@@ -505,9 +519,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
     /**
      * @param EE_Registration $registration
-     * @return mixed|string|void
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function column_PRC_name(EE_Registration $registration)
+    public function column_PRC_name(EE_Registration $registration): string
     {
         return $registration->ticket() instanceof EE_Ticket
             ? $registration->ticket()->name()
@@ -524,9 +540,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @param EE_Registration $registration
      * @return string
      * @throws EE_Error
-     * @throws EE_Error
      */
-    public function column__REG_final_price(EE_Registration $registration)
+    public function column__REG_final_price(EE_Registration $registration): string
     {
         return '<span class="reg-pad-rght">' . ' ' . $registration->pretty_final_price() . '</span>';
     }
@@ -540,7 +555,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_TXN_paid(EE_Registration $registration)
+    public function column_TXN_paid(EE_Registration $registration): string
     {
         if ($registration->count() === 1) {
             if ($registration->transaction()->paid() >= $registration->transaction()->total()) {
@@ -582,7 +597,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_TXN_total(EE_Registration $registration)
+    public function column_TXN_total(EE_Registration $registration): string
     {
         $txn          = $registration->transaction();
         $view_txn_url = add_query_arg(['action' => 'view_transaction', 'TXN_ID' => $txn->ID()], TXN_ADMIN_URL);

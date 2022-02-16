@@ -984,9 +984,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
             apply_filters('FHEE__Transactions_Admin_Page__getActionButtons__actions', $actions, $transaction)
         );
         if ($actions) {
-            // $content = '<ul>';
-            // $content .= '<li>' . implode('</li><li>', $actions) . '</li>';
-            // $content .= '</uL>';
             $content .= implode('', $actions);
         }
         return $content;
@@ -1081,33 +1078,29 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'event_espresso'
         );
 
-        $this->_template_args['txn_details']['ip_address']['value'] = isset($this->_session['ip_address'])
-            ? $this->_session['ip_address']
-            : '';
+        $this->_template_args['txn_details']['ip_address']['value'] = $this->_session['ip_address'] ?? '';
         $this->_template_args['txn_details']['ip_address']['label'] = esc_html__(
             'Transaction placed from IP',
             'event_espresso'
         );
 
-        $this->_template_args['txn_details']['user_agent']['value'] = isset($this->_session['user_agent'])
-            ? $this->_session['user_agent']
-            : '';
+        $this->_template_args['txn_details']['user_agent']['value'] = $this->_session['user_agent'] ?? '';
         $this->_template_args['txn_details']['user_agent']['label'] = esc_html__(
             'Registrant User Agent',
             'event_espresso'
         );
 
-        $reg_steps = '<ul>';
+        $reg_steps = '<div class="ee-txn-reg-step-status-steps ee-layout-row">';
         foreach ($this->_transaction->reg_steps() as $reg_step => $reg_step_status) {
             if ($reg_step_status === true) {
-                $reg_steps .= '<li style="color:#70cc50">'
+                $reg_steps .= '<div class="ee-status-pill ee-status-bg--success">'
                               . sprintf(
                                   esc_html__('%1$s : Completed', 'event_espresso'),
                                   ucwords(str_replace('_', ' ', $reg_step))
                               )
-                              . '</li>';
+                              . '</div>';
             } elseif ($reg_step_status !== false && is_numeric($reg_step_status)) {
-                $reg_steps .= '<li style="color:#2EA2CC">'
+                $reg_steps .= '<div class="ee-status-pill ee-status-bg--attention">'
                               . sprintf(
                                   esc_html__('%1$s : Initiated %2$s', 'event_espresso'),
                                   ucwords(str_replace('_', ' ', $reg_step)),
@@ -1116,14 +1109,14 @@ class Transactions_Admin_Page extends EE_Admin_Page
                                       $reg_step_status + (get_option('gmt_offset') * HOUR_IN_SECONDS)
                                   )
                               )
-                              . '</li>';
+                              . '</div>';
             } else {
-                $reg_steps .= '<li style="color:#E76700">'
+                $reg_steps .= '<div class="ee-status-pill ee-status-bg--error">'
                               . sprintf(
                                   esc_html__('%1$s : Never Initiated', 'event_espresso'),
                                   ucwords(str_replace('_', ' ', $reg_step))
                               )
-                              . '</li>';
+                              . '</div>';
             }
         }
         $reg_steps                                                 .= '</ul>';

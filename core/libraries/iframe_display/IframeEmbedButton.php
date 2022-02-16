@@ -226,7 +226,7 @@ abstract class IframeEmbedButton
                 'display:none;'
             ),
             '',
-            'ee-admin-button-row'
+            'ee-admin-button-row ee-admin-button-row--align-start'
         );
     }
 
@@ -271,7 +271,7 @@ abstract class IframeEmbedButton
             return '';
         }
         // add button for iframe code to event editor.
-        $html = EEH_HTML::br(2);
+        $html = EEH_HTML::div('', '', 'ee-admin-section ee-iframe-embed-buttons');
         $html .= EEH_HTML::h3(esc_html__('iFrame Embed Code', 'event_espresso'));
         $html .= EEH_HTML::p(
             esc_html__(
@@ -280,7 +280,7 @@ abstract class IframeEmbedButton
             )
         );
         $html .= ' &nbsp; ' . implode(' &nbsp; ', $embed_buttons) . ' ';
-        $html .= EEH_HTML::br(2);
+        $html .= EEH_HTML::divx();
         return $html;
     }
 }

@@ -221,6 +221,7 @@ if ($QST_system === 'country') {
                                name="QST_max"
                                type="number"
                                value="<?php echo esc_attr($question->get_f('QST_max')); ?>"
+                               class="ee-input--small"
                         />
                         <p>
                             <span class="description">
@@ -440,7 +441,9 @@ if ($QST_system === 'country') {
                             'QST_required' . $id,
                             $requiredOptions,
                             $question->required(),
-                            'id="QST_required' . $id . '"' . $disabled_attr
+                            'id="QST_required' . $id . '"' . $disabled_attr,
+                            'ee-input--small'
+
                         ); // already escaped
                         ?>
                         <p>
@@ -462,7 +465,11 @@ if ($QST_system === 'country') {
                             </span>
                         </p>
                         <?php if (! empty($disabled_attr) && in_array($QST_system, $system_required)) { ?>
-                            <input type="hidden" id="QST_required" name="QST_required" value="1" />
+                            <input id="QST_required"
+                                   name="QST_required"
+                                   type='hidden'
+                                   value="1"
+                            />
                             <p>
                             <span class="description" style="color:#D54E21;">
                                 <?php esc_html_e('System question! This field cannot be changed.', 'event_espresso') ?>
