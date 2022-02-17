@@ -849,7 +849,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $event_cpt_slug = $this->request->getRequestParam('event_cpt_slug');
 
         EE_Registry::instance()->CFG->core->event_cpt_slug = $event_cpt_slug
-            ? EE_Registry::instance()->CFG->core->event_cpt_slug
+            ? $event_cpt_slug
             : EEH_URL::slugify($event_cpt_slug, 'events');
 
         $what    = esc_html__('Template Settings', 'event_espresso');
