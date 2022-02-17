@@ -22,5 +22,6 @@ class EE_Yes_No_Input extends EE_Select_Input
             ],
             $options
         );
+        $this->set_html_class($this->html_class() . ' ee-input--tiny');
     }
 }
