@@ -171,8 +171,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
                         'filename' => 'transactions_overview_views_filters_search',
                     ],
                 ],
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Transactions_Overview_Help_Tour'),
                 /**
                  * commented out because currently we are not displaying tips for transaction list table status but this
                  * may change in a later iteration so want to keep the code for then.
@@ -208,8 +206,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ],
                 ],
                 'qtips'     => ['Transaction_Details_Tips'],
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour' => array('Transaction_Details_Help_Tour'),
                 'metaboxes' => ['_transaction_details_metaboxes'],
 
                 'require_nonce' => false,
