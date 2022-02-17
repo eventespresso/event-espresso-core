@@ -138,8 +138,6 @@ class Payments_Admin_Page extends EE_Admin_Page
                 ),
                 $this->_add_payment_method_help_tabs()
             ),
-            // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-            // 'help_tour'     => array('Payment_Methods_Selection_Help_Tour'),
             'require_nonce' => false,
         );
         $this->_page_config = array(
@@ -155,7 +153,6 @@ class Payments_Admin_Page extends EE_Admin_Page
                         'filename' => 'payment_methods_settings',
                     ),
                 ),
-                // 'help_tour' => array( 'Payment_Methods_Settings_Help_Tour' ),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
                 'require_nonce' => false,
             ),

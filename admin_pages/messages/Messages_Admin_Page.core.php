@@ -621,8 +621,6 @@ class Messages_Admin_Page extends EE_Admin_Page
                         'filename' => 'messages_overview_messengers',
                     ],
                 ],
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Messages_Overview_Help_Tour'),
                 'require_nonce' => false,
             ],
             'custom_mtps'              => [
@@ -631,8 +629,6 @@ class Messages_Admin_Page extends EE_Admin_Page
                     'order' => 30,
                 ],
                 'help_tabs'     => [],
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array(),
                 'require_nonce' => false,
             ],
             'add_new_message_template' => [
@@ -658,8 +654,6 @@ class Messages_Admin_Page extends EE_Admin_Page
                 ],
                 'metaboxes'     => ['_publish_post_box', '_register_edit_meta_boxes'],
                 'has_metaboxes' => true,
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Message_Templates_Edit_Help_Tour'),
                 'help_tabs'     => [
                     'edit_message_template'            => [
                         'title'    => esc_html__('Message Template Editor', 'event_espresso'),
@@ -719,8 +713,6 @@ class Messages_Admin_Page extends EE_Admin_Page
                         'filename' => 'messages_settings_messengers',
                     ],
                 ],
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Messages_Settings_Help_Tour'),
                 'require_nonce' => false,
             ],
         ];

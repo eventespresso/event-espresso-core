@@ -7,12 +7,9 @@
 <p>
     <strong><?php esc_html_e('Recommendations', 'event_espresso'); ?></strong>
     <br />
-    <?php printf(
-        esc_html__(
-            'Want to see a tour of this screen? Click on the Venues Overview Tour button which appears on the right side of the page. %1$sTo learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.',
-            'event_espresso'
-        ),
-        '<br />'
+    <?php esc_html_e(
+        'To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.',
+        'event_espresso'
     ); ?>
 </p>
 <p>

@@ -1248,7 +1248,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             //  Otherwise we instantiate a new object for save.
             if (! empty($datetime_data['DTT_ID'])) {
                 $datetime = EEM_Datetime::instance($event_timezone)->get_one_by_ID($datetime_data['DTT_ID']);
-                if (! $datetime instanceof EE_Ticket) {
+                if (! $datetime instanceof EE_Datetime) {
                     throw new RuntimeException(
                         sprintf(
                             esc_html__(

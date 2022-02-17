@@ -26,8 +26,8 @@
 		}
 	],
 	"require": {
-		"composer/installers": "~1.0",
-		"php": ">=7.1",
+		"composer/installers": "~2.0",
+		"php": ">=7.2",
 		"ext-json": "*"
 	},
 	"require-dev": {
