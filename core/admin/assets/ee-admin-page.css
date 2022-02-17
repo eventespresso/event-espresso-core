@@ -505,11 +505,15 @@
     }
 }
 
-.espresso-admin #edit-slug-box {
+
+.espresso-admin #edit-slug-box,
+.espresso-admin #edit-slug-box #view-post-btn {
     align-items: center;
     display: flex;
     flex-flow: row wrap;
     justify-content: flex-start;
+}
+.espresso-admin #edit-slug-box {
     padding: 1px 10px;
 }
 

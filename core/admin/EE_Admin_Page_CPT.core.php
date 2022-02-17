@@ -527,7 +527,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         $post = get_post($id);
         if ('publish' !== get_post_status($post)) {
-            $return .= '<span_id="view-post-btn"><a target="_blank" href="'
+            $return .= '<span id="view-post-btn"><a target="_blank" href="'
                        . get_preview_post_link($id)
                        . '" class="button button--secondary">'
                        . esc_html__('Preview', 'event_espresso')
