@@ -214,8 +214,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                         'filename' => 'registration_form_question_groups_views_bulk_actions_search',
                     ),
                 ),
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Registration_Form_Question_Groups_Help_Tour'),
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
                 'qtips'         => array(
@@ -236,8 +234,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                         'filename' => 'registration_form_add_question',
                     ),
                 ),
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Registration_Form_Add_Question_Help_Tour'),
                 'require_nonce' => false,
             ),
 
@@ -254,8 +250,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                         'filename' => 'registration_form_add_question_group',
                     ),
                 ),
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Registration_Form_Add_Question_Group_Help_Tour'),
                 'require_nonce' => false,
             ),
 
@@ -276,8 +270,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                         'filename' => 'registration_form_edit_question_group',
                     ),
                 ),
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Registration_Form_Edit_Question_Group_Help_Tour'),
                 'require_nonce' => false,
             ),
 
@@ -296,8 +288,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                         'filename' => 'registration_form_reg_form_settings',
                     ),
                 ),
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Registration_Form_Settings_Help_Tour'),
                 'require_nonce' => false,
             ),
 
