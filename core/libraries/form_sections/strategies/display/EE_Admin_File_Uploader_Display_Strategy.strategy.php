@@ -66,10 +66,10 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
         // image uploader
         $uploader = EEH_HTML::link(
             '#',
-            '<img src="' . admin_url('images/media-button-image.gif') . '" >',
+            '<span class="dashicons dashicons-format-image"></span>',
             esc_html__('click to add an image', 'event_espresso'),
             '',
-            'ee_media_upload'
+            'ee_media_upload button button--secondary button--icon-only'
         );
         // only attempt to show the image if it at least exists
         $image = $this->_input->raw_value() && $this->src_exists($this->_input->raw_value())

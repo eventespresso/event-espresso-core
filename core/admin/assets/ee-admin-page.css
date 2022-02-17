@@ -762,6 +762,7 @@ table .espresso-radio-btn-options-ul .medium-lbl,
     width: 49%;
     min-width: 400px;
     max-width: 486px;
+    margin-block-end: 1rem;
 }
 
 .ee-radio-label-after.big-lbl,
@@ -1497,13 +1498,11 @@ label.error {
 /**
  * other ee wp-list-table styles
  */
-/*.espresso-admin .wp-list-table .ee-icon:before, .espresso-admin .wp-list-table .dashicons:before, .espresso-admin .wp-list-table .checkin-icons:before {*/
-/*    font-size: 20px;*/
-/*}*/
-
 
 .espresso-admin .form-table th {
-    width: 230px;
+    max-width: 32rem;
+    min-width: 16rem;
+    width: 25%;
 }
 
 .espresso-admin .form-table,
@@ -1514,6 +1513,8 @@ label.error {
 }
 .espresso-admin .form-table td p.description {
   clear: both;
+  max-width: clamp(24rem, 100%, 60rem);;
+  width: clamp(16rem, 50%, 100%);
 }
 
 
@@ -2927,19 +2928,34 @@ body.espresso-admin #contextual-help-wrap strong {
     white-space: nowrap;
     width: 100%;;
 }
-    .espresso-admin select.ee-input--small,
-    .espresso-admin textarea.ee-input--small,
-    .espresso-admin input.ee-input--small:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-        min-width: clamp(4rem, 12.5%, 8rem);
-        max-width: clamp(8rem, 25%, 16rem);
-    }
+
+.espresso-admin select.ee-input--tiny,
+.espresso-admin textarea.ee-input--tiny,
+.espresso-admin input.ee-input--tiny:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    min-width: clamp(3rem, 6.25%, 6rem);
+    max-width: clamp(6rem, 12.5%, 9rem);
+}
+
+.espresso-admin select.ee-input--small,
+.espresso-admin textarea.ee-input--small,
+.espresso-admin input.ee-input--small:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    min-width: clamp(4rem, 12.5%, 8rem);
+    max-width: clamp(8rem, 25%, 16rem);
+}
+
+.espresso-admin select.ee-input--big,
+.espresso-admin textarea.ee-input--big,
+.espresso-admin input.ee-input--big:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    min-width: clamp(16rem, 50%, 32rem);
+    max-width: clamp(32rem, 100%, 64rem);
+}
 
 @media screen and (min-width: 782px) {
     .espresso-admin select,
     .espresso-admin textarea:not(.wp-editor-area),
     .espresso-admin input:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
         min-width: clamp(4rem, 25%, 16rem);
-        max-width: clamp(21rem, 100%, 40rem);
+        max-width: clamp(24rem, 100%, 60rem);;
     }
 }
 
@@ -3092,8 +3108,8 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin .html-active #wp-content-editor-container #ed_toolbar #qt_content_dfw {
     float: right;
-    margin-block-start: 1rem;
-    margin-inline-end: 1rem;
+    /* margin-block-start: 1rem;
+    margin-inline-end: 1rem; */
 }
 
 .espresso-admin .quicktags-toolbar,
@@ -3142,7 +3158,8 @@ body.espresso-admin #contextual-help-wrap strong {
     border-width: 2px 2px 0 !important;
     border-start-start-radius: 0.25rem;
     border-start-end-radius: 0.25rem;
-  box-sizing: border-box;
+    box-sizing: border-box;
+    margin-block-start: .5rem !important;
 }
 
 .espresso-admin.wp-core-ui #post-status-info,
@@ -4104,17 +4121,14 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin #postcustomstuff table td.left select {
     margin: 0;
     margin-inline-end: 1rem;
-    min-width: 18rem;
-    width: 45%;
+    width: clamp(12rem, 40%, 20rem);
 }
 .espresso-admin #postcustomstuff table textarea {
+    margin: 0;
+    max-width: 100%;
     width: 100%;
-    margin: 0;
-} {
-    margin: 0;
-    margin-inline-end: 1rem;
-    min-width: 6rem;
 }
+
 .espresso-admin #postcustomstuff table td.left input[type="submit"] {
     margin: 0;
     margin-inline-end: 1rem;

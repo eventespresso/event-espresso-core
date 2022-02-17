@@ -396,8 +396,10 @@ class EEH_Form_Fields
             return $input;
         }
         $label = esc_html($label);
+        $label_class = self::getInputSizeClass($label);
+        $label_class = $label_class ? ' class="' . $label_class . '"' : '';
         return "
-        <label for='$id'>
+        <label for='$id'{$label_class}>
             {$input}
             {$label}
         </label>";
@@ -430,6 +432,10 @@ class EEH_Form_Fields
         $class        = esc_attr($class);
         $tab_index    = absint($tab_index);
         $required     = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
+
+        $size_class = self::getInputSizeClass($options);
+        $class      .= $size_class ? " {$size_class}" : '';
+
         return "
         <select name='{$name}' id='{$id}' class='{$class}' {$required} tabindex='{$tab_index}'>
             {$options_html}
@@ -454,6 +460,8 @@ class EEH_Form_Fields
         $class     = esc_attr($class);
         $tab_index = absint($tab_index);
         $required  = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
+        $size_class = self::getInputSizeClass($value);
+        $class .= $size_class ? " {$size_class}" : '';
         return "
         <input name='{$name}' type='text' id='{$id}' class='{$class}' value='{$value}' {$required} tabindex='{$tab_index}'/>";
     }
@@ -552,18 +560,19 @@ class EEH_Form_Fields
         if (EEH_Formatter::ee_tep_not_null($parameters)) {
             $field .= ' ' . $parameters;
         }
-        if ($autosize) {
-            $size = 'med';
-            for ($ii = 0, $ni = sizeof($values); $ii < $ni; $ii++) {
-                if ($values[ $ii ]['text']) {
-                    if (strlen($values[ $ii ]['text']) > 5) {
-                        $size = 'wide';
-                    }
-                }
-            }
-        } else {
-            $size = '';
-        }
+        $size = $autosize ? self::getInputSizeClass($values) : '';
+        // if ($autosize) {
+        //     $size = 'ee-input--small';
+        //     for ($ii = 0, $ni = sizeof($values); $ii < $ni; $ii++) {
+        //         if ($values[ $ii ]['text']) {
+        //             if (strlen($values[ $ii ]['text']) > 5) {
+        //                 $size = 'ee-input--reg';
+        //             }
+        //         }
+        //     }
+        // } else {
+        //     $size = '';
+        // }
 
         $field .= ' class="' . $class . ' ' . $size . '">';
 
@@ -585,6 +594,49 @@ class EEH_Form_Fields
         $field .= '</select>';
 
         return $field;
+    }
+
+
+    /**
+     * @param mixed $value
+     * @return int
+     * @since   $VID:$
+     */
+    private static function getInputValueLength($value): int
+    {
+        if (is_array($value)) {
+            $chars = 0;
+            foreach ($value as $val) {
+                $length = self::getInputValueLength($val);
+                $chars = $length > $chars ? $length : $chars;
+            }
+            return $chars;
+        }
+        if (! is_scalar($value)) {
+            return 100;
+        }
+        return strlen((string) $value);
+    }
+
+
+    /**
+     * @param $value
+     * @return string
+     * @since   $VID:$
+     */
+    private static function getInputSizeClass($value): string
+    {
+        $chars = self::getInputValueLength($value);
+        if ($chars < 5) {
+            return 'ee-input--tiny';
+        }
+        if ($chars < 15) {
+            return 'ee-input--small';
+        }
+        if ($chars > 99) {
+            return 'ee-input--big';
+        }
+        return '';
     }
 
 
