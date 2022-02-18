@@ -42,7 +42,11 @@
                     </label>
                 </th>
                 <td>
-                    <select id="reg_page_id" name="reg_page_id" data-placeholder="Choose a page...">
+                    <select id="reg_page_id"
+                            name="reg_page_id"
+                            class='ee-input-size--reg'
+                            data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
+                    >
                         <option value="0">
                             <?php esc_html_e('Main Page', 'event_espresso'); ?>
                         </option>
@@ -85,7 +89,11 @@
                     </label>
                 </th>
                 <td>
-                    <select id="txn_page_id" name="txn_page_id" data-placeholder="Choose a page...">
+                    <select id="txn_page_id"
+                            name="txn_page_id"
+                            class='ee-input-size--reg'
+                            data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
+                    >
                         <option value="0">
                             <?php esc_html_e('Main Page', 'event_espresso'); ?>
                         </option>
@@ -124,7 +132,11 @@
                     </label>
                 </th>
                 <td>
-                    <select id="thank_you_page_id" name="thank_you_page_id" data-placeholder="Choose a page...">
+                    <select id="thank_you_page_id"
+                            name="thank_you_page_id"
+                            class='ee-input-size--reg'
+                            data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
+                    >
                         <option value="0">
                             <?php esc_html_e('Main Page', 'event_espresso'); ?>
                         </option>
@@ -163,7 +175,11 @@
                     </label>
                 </th>
                 <td>
-                    <select id="cancel_page_id" name="cancel_page_id" data-placeholder="Choose a page...">
+                    <select id="cancel_page_id"
+                            name="cancel_page_id"
+                            class='ee-input-size--reg'
+                            data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
+                    >
                         <option value="0">
                             <?php esc_html_e('Main Page', 'event_espresso'); ?>
                         </option>

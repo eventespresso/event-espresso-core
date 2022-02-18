@@ -1069,7 +1069,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'inactive' => esc_html__('Inactive', 'event_espresso'),
         ];
 
-        return EEH_Form_Fields::select_input($select_name, $values, $current_value, '', 'wide');
+        return EEH_Form_Fields::select_input($select_name, $values, $current_value);
     }
 
 
@@ -1091,7 +1091,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             $values[ $venue->ID() ] = $venue->name();
         }
 
-        return EEH_Form_Fields::select_input('venue', $values, $current_value, '', 'wide');
+        return EEH_Form_Fields::select_input('venue', $values, $current_value);
     }
 
 

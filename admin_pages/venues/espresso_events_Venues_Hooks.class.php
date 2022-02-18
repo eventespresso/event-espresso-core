@@ -133,7 +133,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
             array(
                 'html_name'  => 'venue_id',
                 'html_id'    => 'venue_id',
-                'html_class' => 'wide',
+                'html_class' => '',
                 'default'    => $evt_venue_id ? $evt_venue_id : '0'
             )
         );

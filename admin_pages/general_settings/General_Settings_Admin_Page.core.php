@@ -701,45 +701,45 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'CNT_ISO'         => [
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
-                'class'      => 'small-text',
+                'class'      => 'ee-input-size--small',
             ],
             'CNT_ISO3'        => [
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
-                'class'      => 'small-text',
+                'class'      => 'ee-input-size--small',
             ],
             'RGN_ID'          => [
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
-                'class'      => 'small-text',
+                'class'      => 'ee-input-size--small',
             ],
             'CNT_name'        => [
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
-                'class'      => 'regular-text',
+                'class'      => 'ee-input-size--big',
             ],
             'CNT_cur_code'    => [
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
-                'class'      => 'small-text',
+                'class'      => 'ee-input-size--small',
                 'disabled'   => $CNT_cur_disabled,
             ],
             'CNT_cur_single'  => [
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
-                'class'      => 'medium-text',
+                'class'      => 'ee-input-size--reg',
                 'disabled'   => $CNT_cur_disabled,
             ],
             'CNT_cur_plural'  => [
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
-                'class'      => 'medium-text',
+                'class'      => 'ee-input-size--reg',
                 'disabled'   => $CNT_cur_disabled,
             ],
             'CNT_cur_sign'    => [
                 'type'         => 'TEXT',
                 'input_name'   => 'cntry[' . $CNT_ISO . ']',
-                'class'        => 'small-text',
+                'class'        => 'ee-input-size--small',
                 'htmlentities' => false,
                 'disabled'     => $CNT_cur_disabled,
             ],
@@ -801,7 +801,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'CNT_tel_code'    => [
                 'type'       => 'TEXT',
                 'input_name' => 'cntry[' . $CNT_ISO . ']',
-                'class'      => 'small-text',
+                'class'      => 'ee-input-size--small',
             ],
             'CNT_is_EU'       => [
                 'type'             => 'RADIO_BTN',
@@ -880,41 +880,49 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         if (is_array($states)) {
             foreach ($states as $STA_ID => $state) {
                 if ($state instanceof EE_State) {
-                    // STA_abbrev    STA_name    STA_active
-                    $state_input_types                                             = [
-                        'STA_abbrev' => [
-                            'type'       => 'TEXT',
-                            'input_name' => 'states[' . $STA_ID . ']',
-                            'class'      => 'small-text',
+                    $inputs = EE_Question_Form_Input::generate_question_form_inputs_for_object(
+                        $state,
+                        [
+                            'STA_abbrev' => [
+                                'type'             => 'TEXT',
+                                'label'            => esc_html__('Code', 'event_espresso'),
+                                'input_name'       => 'states[' . $STA_ID . ']',
+                                'class'            => 'ee-input-size--tiny',
+                                'add_mobile_label' => true,
+                            ],
+                            'STA_name'   => [
+                                'type'             => 'TEXT',
+                                'label'            => esc_html__('Name', 'event_espresso'),
+                                'input_name'       => 'states[' . $STA_ID . ']',
+                                'class'            => 'ee-input-size--big',
+                                'add_mobile_label' => true,
+                            ],
+                            'STA_active' => [
+                                'type'             => 'RADIO_BTN',
+                                'label'            => esc_html__(
+                                    'State Appears in Dropdown Select Lists',
+                                    'event_espresso'
+                                ),
+                                'input_name'       => 'states[' . $STA_ID . ']',
+                                'options'          => $this->_yes_no_values,
+                                'use_desc_4_label' => true,
+                                'add_mobile_label' => true,
+                            ],
+                        ]
+                    );
+
+                    $delete_state_url = EE_Admin_Page::add_query_args_and_nonce(
+                        [
+                            'action'     => 'delete_state',
+                            'STA_ID'     => $STA_ID,
+                            'CNT_ISO'    => $CNT_ISO,
+                            'STA_abbrev' => $state->abbrev(),
                         ],
-                        'STA_name'   => [
-                            'type'       => 'TEXT',
-                            'input_name' => 'states[' . $STA_ID . ']',
-                            'class'      => 'regular-text',
-                        ],
-                        'STA_active' => [
-                            'type'             => 'RADIO_BTN',
-                            'input_name'       => 'states[' . $STA_ID . ']',
-                            'options'          => $this->_yes_no_values,
-                            'use_desc_4_label' => true,
-                        ],
-                    ];
-                    $this->_template_args['states'][ $STA_ID ]['inputs']           =
-                        EE_Question_Form_Input::generate_question_form_inputs_for_object(
-                            $state,
-                            $state_input_types
-                        );
-                    $query_args                                                    = [
-                        'action'     => 'delete_state',
-                        'STA_ID'     => $STA_ID,
-                        'CNT_ISO'    => $CNT_ISO,
-                        'STA_abbrev' => $state->abbrev(),
-                    ];
-                    $this->_template_args['states'][ $STA_ID ]['delete_state_url'] =
-                        EE_Admin_Page::add_query_args_and_nonce(
-                            $query_args,
-                            GEN_SET_ADMIN_URL
-                        );
+                        GEN_SET_ADMIN_URL
+                    );
+
+                    $this->_template_args['states'][ $STA_ID ]['inputs'] = $inputs;
+                    $this->_template_args['states'][ $STA_ID ]['delete_state_url'] = $delete_state_url;
                 }
             }
         } else {

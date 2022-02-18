@@ -221,7 +221,7 @@ if ($QST_system === 'country') {
                                name="QST_max"
                                type="number"
                                value="<?php echo esc_attr($question->get_f('QST_max')); ?>"
-                               class="ee-input--small"
+                               class="ee-input-size--small"
                         />
                         <p>
                             <span class="description">
@@ -442,7 +442,7 @@ if ($QST_system === 'country') {
                             $requiredOptions,
                             $question->required(),
                             'id="QST_required' . $id . '"' . $disabled_attr,
-                            'ee-input--small'
+                            'ee-input-size--small'
                         ); // already escaped
                         ?>
                         <p>

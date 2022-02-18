@@ -396,7 +396,7 @@ class EEH_Form_Fields
             return $input;
         }
         $label = esc_html($label);
-        $label_class = self::getInputSizeClass($label);
+        $label_class = self::appendInputSizeClass('', $label);
         $label_class = $label_class ? ' class="' . $label_class . '"' : '';
         return "
         <label for='$id'{$label_class}>
@@ -433,8 +433,7 @@ class EEH_Form_Fields
         $tab_index    = absint($tab_index);
         $required     = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
 
-        $size_class = self::getInputSizeClass($options);
-        $class      .= $size_class ? " {$size_class}" : '';
+        $class = self::appendInputSizeClass($class, $options);
 
         return "
         <select name='{$name}' id='{$id}' class='{$class}' {$required} tabindex='{$tab_index}'>
@@ -460,8 +459,7 @@ class EEH_Form_Fields
         $class     = esc_attr($class);
         $tab_index = absint($tab_index);
         $required  = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
-        $size_class = self::getInputSizeClass($value);
-        $class .= $size_class ? " {$size_class}" : '';
+        $class     = self::appendInputSizeClass($class, $value);
         return "
         <input name='{$name}' type='text' id='{$id}' class='{$class}' value='{$value}' {$required} tabindex='{$tab_index}'/>";
     }
@@ -560,21 +558,9 @@ class EEH_Form_Fields
         if (EEH_Formatter::ee_tep_not_null($parameters)) {
             $field .= ' ' . $parameters;
         }
-        $size = $autosize ? self::getInputSizeClass($values) : '';
-        // if ($autosize) {
-        //     $size = 'ee-input--small';
-        //     for ($ii = 0, $ni = sizeof($values); $ii < $ni; $ii++) {
-        //         if ($values[ $ii ]['text']) {
-        //             if (strlen($values[ $ii ]['text']) > 5) {
-        //                 $size = 'ee-input--reg';
-        //             }
-        //         }
-        //     }
-        // } else {
-        //     $size = '';
-        // }
+        $class = $autosize ? self::appendInputSizeClass($class, $values) : '';
 
-        $field .= ' class="' . $class . ' ' . $size . '">';
+        $field .= ' class="' . $class . '">';
 
         if (empty($default) && isset($GLOBALS[ $name ])) {
             $default = stripslashes($GLOBALS[ $name ]);
@@ -604,6 +590,9 @@ class EEH_Form_Fields
      */
     private static function getInputValueLength($value): int
     {
+        if ($value instanceof EE_Question_Option) {
+            return self::getInputValueLength($value->desc());
+        }
         if (is_array($value)) {
             $chars = 0;
             foreach ($value as $val) {
@@ -612,31 +601,36 @@ class EEH_Form_Fields
             }
             return $chars;
         }
+        // not a primitive? return something big
         if (! is_scalar($value)) {
-            return 100;
+            return 500;
         }
         return strlen((string) $value);
     }
 
 
     /**
-     * @param $value
+     * @param string $class
+     * @param mixed $value
      * @return string
      * @since   $VID:$
      */
-    private static function getInputSizeClass($value): string
+    private static function appendInputSizeClass(string $class, $value): string
     {
+        if (strpos($class, 'ee-input-size--') !== false) {
+            return $class;
+        }
         $chars = self::getInputValueLength($value);
-        if ($chars < 5) {
-            return 'ee-input--tiny';
+        if ($chars && $chars < 5) {
+            return "{$class} ee-input-size--tiny";
         }
-        if ($chars < 15) {
-            return 'ee-input--small';
+        if ($chars && $chars < 15) {
+            return "{$class} ee-input-size--small";
         }
-        if ($chars > 99) {
-            return 'ee-input--big';
+        if ($chars && $chars > 100) {
+            return "{$class} ee-input-size--big";
         }
-        return '';
+        return "{$class} ee-input-size--reg";
     }
 
 
@@ -861,12 +855,14 @@ class EEH_Form_Fields
               . self::prep_answer($required_text, $use_html_entities)
               . '</div>'
             : '';
-        $label_class       = 'espresso-form-input-lbl';
+        $label_class       = $QFI->get('label_class');
+        $label_class       = $label_class ? "{$label_class} espresso-form-input-lbl" : 'espresso-form-input-lbl';
         $QST_options       = $QFI->options(true, $answer);
         $options           = is_array($QST_options) ? self::prep_answer_options($QST_options) : [];
         $system_ID         = $QFI->get('QST_system');
         $label_b4          = $QFI->get_meta('label_b4');
         $use_desc_4_label  = $QFI->get_meta('use_desc_4_label');
+        $add_mobile_label  = $QFI->get_meta('add_mobile_label');
 
 
         switch ($QFI->get('QST_type')) {
@@ -883,7 +879,8 @@ class EEH_Form_Fields
                     $label_class,
                     $disabled,
                     $system_ID,
-                    $use_html_entities
+                    $use_html_entities,
+                    $add_mobile_label
                 );
 
             case 'DROPDOWN':
@@ -900,7 +897,8 @@ class EEH_Form_Fields
                     $disabled,
                     $system_ID,
                     $use_html_entities,
-                    true
+                    true,
+                    $add_mobile_label
                 );
 
 
@@ -919,7 +917,8 @@ class EEH_Form_Fields
                     $system_ID,
                     $use_html_entities,
                     $label_b4,
-                    $use_desc_4_label
+                    $use_desc_4_label,
+                    $add_mobile_label
                 );
 
             case 'CHECKBOX':
@@ -936,7 +935,8 @@ class EEH_Form_Fields
                     $disabled,
                     $label_b4,
                     $system_ID,
-                    $use_html_entities
+                    $use_html_entities,
+                    $add_mobile_label
                 );
 
             case 'DATE':
@@ -951,7 +951,8 @@ class EEH_Form_Fields
                     $label_class,
                     $disabled,
                     $system_ID,
-                    $use_html_entities
+                    $use_html_entities,
+                    $add_mobile_label
                 );
 
             case 'TEXT':
@@ -967,9 +968,46 @@ class EEH_Form_Fields
                     $label_class,
                     $disabled,
                     $system_ID,
-                    $use_html_entities
+                    $use_html_entities,
+                    $add_mobile_label
                 );
         }
+    }
+
+
+    public static function label(
+        string $question,
+        string $required_text = '',
+        string $required_label = '',
+        string $name = '',
+        string $label_class = '',
+        bool   $filter = true
+    ): string {
+        $for   = ! empty($name) ? " for='{$name}'" : '';
+        $class = ! empty($label_class) ? " class='{$label_class}'" : '';
+        $label = self::prep_question($question) . $required_label;
+        $label_html = "
+            {$required_text}
+            <label{$for}{$class}>{$label}</label>";
+        // filter label but ensure required text comes before it
+        return $filter
+            ? apply_filters('FHEE__EEH_Form_Fields__label_html', $label_html, $required_text)
+            : $label_html;
+    }
+
+
+
+    public static function mobileLabel(
+        bool   $add_mobile_label,
+        string $question,
+        string $required_text = '',
+        string $required_label = '',
+        string $label_class = '',
+        string $name = ''
+    ): string {
+        return $add_mobile_label
+            ? self::label($question, $required_text, $required_label, $name, $label_class, false)
+            : '';
     }
 
 
@@ -998,7 +1036,8 @@ class EEH_Form_Fields
         $label_class = '',
         $disabled = false,
         $system_ID = false,
-        $use_html_entities = true
+        $use_html_entities = true,
+        $add_mobile_label = false
     ) {
         // need these
         if (! $question || ! $name) {
@@ -1014,23 +1053,29 @@ class EEH_Form_Fields
         $txt_class = is_admin() ? 'regular-text' : 'espresso-text-inp';
         $class     = empty($class) ? $txt_class : $class;
         $class     .= ! empty($system_ID) ? ' ' . $system_ID : '';
+        $class = self::appendInputSizeClass($class, $answer);
+        $class .= ! empty($required['class']) ? ' ' . $required['class'] : '';
         $extra     = apply_filters('FHEE__EEH_Form_Fields__additional_form_field_attributes', '');
 
-        $label_html =
-            $required_text
-            . "\n\t\t\t"
-            . '<label for="' . $name . '" class="' . $label_class . '">'
-            . self::prep_question($question)
-            . $required['label']
-            . '</label><br/>';
-        // filter label but ensure required text comes before it
-        $label_html = apply_filters('FHEE__EEH_Form_Fields__label_html', $label_html, $required_text);
+        $label_html = self::label($question, $required_text, $required['label'], $name, $label_class);
+        $mobile_label = self::mobileLabel(
+            $add_mobile_label,
+            $question,
+            $required_text,
+            $required['label'],
+            $label_class,
+            $name
+        );
 
-        $input_html =
-            "\n\t\t\t"
-            . '<input type="text" name="' . $name . '" id="' . $id . '" '
-            . 'class="' . $class . ' ' . $required['class'] . '" value="' . esc_attr($answer) . '"  '
-            . 'title="' . esc_attr($required['msg']) . '" ' . $disabled . ' ' . $extra . '/>';
+        $input_html = $mobile_label . '
+            <input  type="text"
+                    name="' . $name . '"
+                    id="' . $id . '"
+                    class="' . trim($class) . '"
+                    value="' . esc_attr($answer) . '"
+                    aria-label="' . esc_attr($required['msg']) . '"
+                    ' . $disabled . ' ' . $extra . '
+            />';
 
         $input_html = apply_filters('FHEE__EEH_Form_Fields__input_html', $input_html, $label_html, $id);
         return $label_html . $input_html;
@@ -1064,7 +1109,8 @@ class EEH_Form_Fields
         $label_class = '',
         $disabled = false,
         $system_ID = false,
-        $use_html_entities = true
+        $use_html_entities = true,
+        $add_mobile_label = false
     ) {
         // need these
         if (! $question || ! $name) {
@@ -1081,28 +1127,26 @@ class EEH_Form_Fields
         // set disabled tag
         $disabled = $answer === null || ! $disabled ? '' : ' disabled="disabled"';
         // ya gots ta have style man!!!
-        $txt_class = is_admin() ? 'regular-text' : 'espresso-textarea-inp';
-        $class     = empty($class) ? $txt_class : $class;
         $class     .= ! empty($system_ID) ? ' ' . $system_ID : '';
+        $class     .= ! empty($required['class']) ? ' ' . $required['class'] : '';
         $extra     = apply_filters('FHEE__EEH_Form_Fields__additional_form_field_attributes', '');
 
-        $label_html =
-            $required_text
-            . "\n\t\t\t"
-            . '<label for="' . $name . '" class="' . $label_class . '">'
-            . self::prep_question($question)
-            . $required['label']
-            . '</label><br/>';
-        // filter label but ensure required text comes before it
-        $label_html = apply_filters('FHEE__EEH_Form_Fields__label_html', $label_html, $required_text);
+        $label_html   = self::label($question, $required_text, $required['label'], $name, $label_class);
+        $mobile_label = self::mobileLabel(
+            $add_mobile_label,
+            $question,
+            $required_text,
+            $required['label'],
+            $label_class,
+            $name
+        );
 
-        $input_html =
-            "\n\t\t\t"
-            . '<textarea name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" '
+        $input_html = $mobile_label
+            . '<textarea name="' . $name . '" id="' . $id . '" class="' . trim($class) . '" '
             . 'rows="' . $dimensions['rows'] . '" cols="' . $dimensions['cols'] . '"  '
-            . 'title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>'
-            . esc_textarea($answer)
-            . '</textarea>';
+            . 'aria-label="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>'
+             . esc_textarea($answer)
+              . '</textarea>';
 
         $input_html = apply_filters('FHEE__EEH_Form_Fields__input_html', $input_html, $label_html, $id);
         return $label_html . $input_html;
@@ -1138,7 +1182,8 @@ class EEH_Form_Fields
         $disabled = false,
         $system_ID = false,
         $use_html_entities = true,
-        $add_please_select_option = false
+        $add_please_select_option = false,
+        $add_mobile_label = false
     ) {
 
         // need these
@@ -1146,37 +1191,31 @@ class EEH_Form_Fields
             return null;
         }
         // prep the answer
-        $answer =
-            is_array($answer)
-                ? self::prep_answer(array_shift($answer), $use_html_entities)
-                : self::prep_answer(
-                    $answer,
-                    $use_html_entities
-                );
+        $answer = is_array($answer)
+            ? self::prep_answer(array_shift($answer), $use_html_entities)
+            : self::prep_answer($answer, $use_html_entities);
         // prep the required array
         $required = self::prep_required($required);
         // set disabled tag
         $disabled = $answer === null || ! $disabled ? '' : ' disabled="disabled"';
         // ya gots ta have style man!!!
-        $txt_class = is_admin() ? 'wide' : 'espresso-select-inp';
-        $class     = empty($class) ? $txt_class : $class;
         $class     .= ! empty($system_ID) ? ' ' . $system_ID : '';
+        $class = self::appendInputSizeClass($class, $options);
         $extra     = apply_filters('FHEE__EEH_Form_Fields__additional_form_field_attributes', '');
 
-        $label_html =
-            $required_text
-            . "\n\t\t\t"
-            . '<label for="' . $name . '" class="' . $label_class . '">'
-            . self::prep_question($question)
-            . $required['label']
-            . '</label><br/>';
-        // filter label but ensure required text comes before it
-        $label_html = apply_filters('FHEE__EEH_Form_Fields__label_html', $label_html, $required_text);
+        $label_html   = self::label($question, $required_text, $required['label'], $name, $label_class);
+        $mobile_label = self::mobileLabel(
+            $add_mobile_label,
+            $question,
+            $required_text,
+            $required['label'],
+            $label_class,
+            $name
+        );
 
-        $input_html =
-            "\n\t\t\t"
-            . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" '
-            . 'title="' . esc_attr($required['msg']) . '"' . $disabled . ' ' . $extra . '>';
+        $input_html = $mobile_label
+            . '<select name="' . $name . '" id="' . $id . '" class="' . trim($class) . ' ' . $required['class'] . '" '
+            . 'aria-label="' . esc_attr($required['msg']) . '"' . $disabled . ' ' . $extra . '>';
         // recursively count array elements, to determine total number of options
         $only_option = count($options, 1) == 1;
         if (! $only_option) {
@@ -1312,7 +1351,8 @@ class EEH_Form_Fields
         $system_ID = false,
         $use_html_entities = true,
         $label_b4 = false,
-        $use_desc_4_label = false
+        $use_desc_4_label = false,
+        $add_mobile_label = false
     ) {
         // need these
         if (! $question || ! $name || ! $options || empty($options) || ! is_array($options)) {
@@ -1329,19 +1369,17 @@ class EEH_Form_Fields
         $class       = ! empty($class) ? $class : 'espresso-radio-btn-inp';
         $extra       = apply_filters('FHEE__EEH_Form_Fields__additional_form_field_attributes', '');
 
-        $label_html =
-            $required_text
-            . "\n\t\t\t"
-            . '<label class="' . $label_class . '">'
-            . self::prep_question($question)
-            . $required['label']
-            . '</label> ';
-        // filter label but ensure required text comes before it
-        $label_html = apply_filters('FHEE__EEH_Form_Fields__label_html', $label_html, $required_text);
+        $label_html = self::label($question, $required_text, $required['label'], '', $label_class);
+        $mobile_label = self::mobileLabel(
+            $add_mobile_label,
+            $question,
+            $required_text,
+            $required['label'],
+            $label_class
+        );
 
-        $input_html =
-            "\n\t\t\t"
-            . '<ul id="' . $id . '-ul" class="espresso-radio-btn-options-ul ' . $label_class . ' ' . $class . '-ul">';
+        $input_html = $mobile_label
+            . '<ul id="' . $id . '-ul" class="espresso-radio-btn-options-ul ' . $class . '-ul">';
 
         $class .= ! empty($system_ID) ? ' ' . $system_ID : '';
         $class .= ! empty($required['class']) ? ' ' . $required['class'] : '';
@@ -1360,15 +1398,15 @@ class EEH_Form_Fields
 
                 $input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
                 $input_html .= "\n\t\t\t\t\t" . '<label class="' . $radio_class . ' espresso-radio-btn-lbl">';
-                $input_html .= $label_b4 ? "\n\t\t\t\t\t\t" . '<span>' . $label . '</span>' : '';
+                $input_html .= $label_b4 ? "\n\t\t\t\t\t\t" . '<span>' . $label . '</span>&nbsp;&nbsp;' : '';
                 $input_html .= "\n\t\t\t\t\t\t"
                                . '<input type="radio" name="' . $name . '" id="' . $id . $opt . '" '
                                . 'class="' . $class . '" value="' . $value . '" '
-                               . 'title="' . esc_attr($required['msg']) . '" ' . $disabled
+                               . 'aria-label="' . esc_attr($required['msg']) . '" ' . $disabled
                                . $checked . ' ' . $extra . '/>';
                 $input_html .= ! $label_b4
                     ? "\n\t\t\t\t\t\t"
-                      . '<span class="espresso-radio-btn-desc">'
+                      . '&nbsp;&nbsp;<span class="espresso-radio-btn-desc">'
                       . $label
                       . '</span>'
                     : '';
@@ -1415,7 +1453,8 @@ class EEH_Form_Fields
         $disabled = false,
         $label_b4 = false,
         $system_ID = false,
-        $use_html_entities = true
+        $use_html_entities = true,
+        $add_mobile_label = false
     ) {
         // need these
         if (! $question || ! $name || ! $options || empty($options) || ! is_array($options)) {
@@ -1440,19 +1479,17 @@ class EEH_Form_Fields
         $class       = empty($class) ? 'espresso-radio-btn-inp' : $class;
         $extra       = apply_filters('FHEE__EEH_Form_Fields__additional_form_field_attributes', '');
 
-        $label_html =
-            $required_text
-            . "\n\t\t\t"
-            . '<label class="' . $label_class . '">'
-            . self::prep_question($question)
-            . $required['label']
-            . '</label> ';
-        // filter label but ensure required text comes before it
-        $label_html = apply_filters('FHEE__EEH_Form_Fields__label_html', $label_html, $required_text);
+        $label_html   = self::label($question, $required_text, $required['label'], '', $label_class);
+        $mobile_label = self::mobileLabel(
+            $add_mobile_label,
+            $question,
+            $required_text,
+            $required['label'],
+            $label_class
+        );
 
-        $input_html =
-            "\n\t\t\t"
-            . '<ul id="' . $id . '-ul" class="espresso-checkbox-options-ul ' . $label_class . ' ' . $class . '-ul">';
+        $input_html = $mobile_label
+            . '<ul id="' . $id . '-ul" class="espresso-checkbox-options-ul ' . $class . '-ul">';
 
         $class .= ! empty($system_ID) ? ' ' . $system_ID : '';
         $class .= ! empty($required['class']) ? ' ' . $required['class'] : '';
@@ -1468,12 +1505,12 @@ class EEH_Form_Fields
 
             $input_html .= "\n\t\t\t\t" . '<li' . $size . '>';
             $input_html .= "\n\t\t\t\t\t" . '<label class="' . $radio_class . ' espresso-checkbox-lbl">';
-            $input_html .= $label_b4 ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>' : '';
+            $input_html .= $label_b4 ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>&nbsp;&nbsp;' : '';
             $input_html .= "\n\t\t\t\t\t\t"
                            . '<input type="checkbox" name="' . $name . '[' . $OPT->ID() . ']" '
                            . 'id="' . $id . $opt . '" class="' . $class . '" value="' . $value . '" '
-                           . 'title="' . esc_attr($required['msg']) . '" ' . $disabled . $checked . ' ' . $extra . '/>';
-            $input_html .= ! $label_b4 ? "\n\t\t\t\t\t\t" . '<span>' . $text . '</span>' : '';
+                           . 'aria-label="' . esc_attr($required['msg']) . '" ' . $disabled . $checked . ' ' . $extra . '/>';
+            $input_html .= ! $label_b4 ? "\n\t\t\t\t\t\t" . '&nbsp;&nbsp;<span>' . $text . '</span>' : '';
             $input_html .= "\n\t\t\t\t\t" . '</label>';
             if (! empty($desc) && $desc != $text) {
                 $input_html .= "\n\t\t\t\t\t"
@@ -1516,7 +1553,8 @@ class EEH_Form_Fields
         $label_class = '',
         $disabled = false,
         $system_ID = false,
-        $use_html_entities = true
+        $use_html_entities = true,
+        $add_mobile_label = false
     ) {
         // need these
         if (! $question || ! $name) {
@@ -1532,23 +1570,23 @@ class EEH_Form_Fields
         $txt_class = is_admin() ? 'regular-text' : 'espresso-datepicker-inp';
         $class     = empty($class) ? $txt_class : $class;
         $class     .= ! empty($system_ID) ? ' ' . $system_ID : '';
+        $class = self::appendInputSizeClass($class, $answer);
         $extra     = apply_filters('FHEE__EEH_Form_Fields__additional_form_field_attributes', '');
 
-        $label_html =
-            $required_text
-            . "\n\t\t\t"
-            . '<label for="' . $name . '" class="' . $label_class . '">'
-            . self::prep_question($question)
-            . $required['label']
-            . '</label><br/>';
-        // filter label but ensure required text comes before it
-        $label_html = apply_filters('FHEE__EEH_Form_Fields__label_html', $label_html, $required_text);
+        $label_html   = self::label($question, $required_text, $required['label'], '', $label_class);
+        $mobile_label = self::mobileLabel(
+            $add_mobile_label,
+            $question,
+            $required_text,
+            $required['label'],
+            $label_class,
+            $name
+        );
 
-        $input_html =
-            "\n\t\t\t"
+        $input_html = $mobile_label
             . '<input type="text" name="' . $name . '" id="' . $id . '" '
             . 'class="' . $class . ' ' . $required['class'] . ' datepicker" value="' . $answer . '"  '
-            . 'title="' . esc_attr($required['msg']) . '" ' . $disabled . ' ' . $extra . '/>';
+            . 'aria-label="' . esc_attr($required['msg']) . '" ' . $disabled . ' ' . $extra . '/>';
 
         // enqueue scripts
         wp_register_style(
@@ -1921,7 +1959,7 @@ class EEH_Form_Fields
             ];
         }
 
-        return self::select_input('month_range', $options, $cur_date, '', 'wide');
+        return self::select_input('month_range', $options, $cur_date);
     }
 
 
@@ -1995,7 +2033,7 @@ class EEH_Form_Fields
         }
 
 
-        return self::select_input('month_range', $options, $cur_date, '', 'wide');
+        return self::select_input('month_range', $options, $cur_date);
     }
 
 
