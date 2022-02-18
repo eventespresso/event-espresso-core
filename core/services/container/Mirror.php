@@ -349,4 +349,17 @@ class Mirror
         }
         return $this->static_properties[ $class_name ];
     }
+
+
+    /**
+     * @param string $class_name
+     * @param string $property
+     * @return bool
+     * @throws ReflectionException
+     */
+    public function hasProperty(string $class_name, string $property): bool
+    {
+        $this->getProperties($class_name);
+        return isset($this->properties[ $class_name ][ $property ]);
+    }
 }
