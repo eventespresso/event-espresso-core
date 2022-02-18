@@ -106,7 +106,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                         </label>
                     </th>
                     <td>
-                        <input class='ee-input--small'
+                        <input class='ee-input-size--small'
                                id="QSG_order"
                                name="QSG_order"
                                value="<?php echo $question_group->order(); ?>"
@@ -127,7 +127,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                             $values,
                             $question_group->show_group_name(),
                             '',
-                            'ee-input--small'
+                            'ee-input-size--small'
                         ); ?>
                         <p class="description">
                             <?php esc_html_e('Show Group Name on Registration Page?', 'event_espresso'); ?>
@@ -148,7 +148,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                             $values,
                             $question_group->show_group_desc(),
                             '',
-                            'ee-input--small'
+                            'ee-input-size--small'
                         ); ?>
                         <p class="description"><?php
                             esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
