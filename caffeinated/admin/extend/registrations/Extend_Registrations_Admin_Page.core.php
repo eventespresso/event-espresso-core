@@ -108,7 +108,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                         'filename' => 'registrations_reports',
                     ),
                 ),
-                /*'help_tour' => array( 'Registration_Reports_Help_Tour' ),*/
                 'require_nonce' => false,
             ),
             'event_registrations'   => array(
@@ -139,8 +138,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                         'filename' => 'registrations_event_checkin_other',
                     ),
                 ),
-                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-                // 'help_tour'     => array('Event_Checkin_Help_Tour'),
                 'qtips'         => array('Registration_List_Table_Tips'),
                 'list_table'    => 'EE_Event_Registrations_List_Table',
                 'metaboxes'     => array(),
@@ -154,7 +151,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                     'url'        => '',
                 ),
                 'list_table'    => 'EE_Registration_CheckIn_List_Table',
-                // 'help_tour' => array( 'Checkin_Toggle_View_Help_Tour' ),
                 'metaboxes'     => array(),
                 'require_nonce' => false,
             ),

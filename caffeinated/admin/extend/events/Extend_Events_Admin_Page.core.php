@@ -189,8 +189,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                     'filename' => 'general_settings_templates',
                 ],
             ],
-            // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-            // 'help_tour'     => ['Templates_Help_Tour'],
             'require_nonce' => false,
         ];
         $this->_page_config                   = array_merge($this->_page_config, $new_page_config);

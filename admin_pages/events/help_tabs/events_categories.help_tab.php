@@ -8,7 +8,7 @@
 <p>
     <strong><?php esc_html_e('Recommendations', 'event_espresso'); ?></strong><br />
     <?php esc_html_e(
-        'Want to see a tour of this screen? Click on the Event Categories Tour button which appears on the right side of the page. To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.',
+        'To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.',
         'event_espresso'
     ); ?>
 </p>
