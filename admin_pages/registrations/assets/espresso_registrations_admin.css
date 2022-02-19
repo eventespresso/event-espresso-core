@@ -593,3 +593,18 @@
 .event-espresso_page_espresso_registrations #post-body-content > h2 .dashicons.dashicons-calendar {
     margin-inline: 1rem;
 }
+
+
+.event-espresso_page_espresso_registrations .ee-admin-page-header-grid {
+    grid-template-columns: 360px 360px 1fr var(--ee-admin-sidebar-width);
+}
+@media screen and ( max-width: 1280px ) {
+    .event-espresso_page_espresso_registrations .ee-admin-page-header-grid {
+        grid-template-columns: 1fr 1fr var(--ee-admin-sidebar-width);
+    }
+}
+@media screen and ( max-width: 1024px ) {
+    .event-espresso_page_espresso_registrations .ee-admin-page-header-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
