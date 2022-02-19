@@ -244,19 +244,40 @@
     display: flex;
 }
 
-.admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon .dashicons {
-    color: var(--ee-status-color-light-grey);
-    margin-block-start: .35rem;
+#admin-side-mbox-primary-registrant-dv .admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon .dashicons {
+    color: var(--ee-status-color-grey);
+    margin-block-start: .25rem;
+    margin-inline-end: .5rem;
 }
 
-.admin-side-mbox-text-dv .ee-admin-attendee-name {
-    font-size: 1.2rem;
+#admin-side-mbox-primary-registrant-dv .admin-side-mbox-text-dv .ee-admin-attendee-name {
+    font-size: 1.25rem;
+    font-weight: 500;
 }
 
 .admin-side-mbox-text-dv .ee-admin-attendee-email,
 .admin-side-mbox-text-dv .ee-admin-attendee-phone,
 .admin-side-mbox-text-dv .ee-admin-attendee-address {
     margin-block-start: .5rem;
+}
+
+
+@media screen and ( max-width: 1600px ) {
+    #admin-side-mbox-primary-registrant-dv {
+        flex-direction: column;
+    }
+
+    #admin-side-mbox-primary-registrant-dv .ee-admin-attendee-avatar {
+        margin: 0;
+    }
+
+    #admin-side-mbox-primary-registrant-dv,
+    #admin-side-mbox-primary-registrant-dv .ee-admin-attendee-name,
+    #admin-side-mbox-primary-registrant-dv .ee-admin-contact-details-with-dashicon {
+        justify-content: center;
+        text-align: center;
+    }
+
 }
 
 .ee-admin-dialog-container .admin-modal-dialog-h2 {
@@ -374,19 +395,18 @@
 
 #admin-modal-dialog-options-ul,
 #txn-admin-payment-options-ul, #del-admin-modal-dialog-options-ul {
-    float: right;
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
     list-style: none;
-    margin: 0 .5em 1em;
+    margin: 0;
+    padding: 1rem 0 0;
 }
 
-#admin-modal-dialog-options-ul li,
-#txn-admin-payment-options-ul li, #del-admin-modal-dialog-options-ul li {
-    display: inline-block;
-}
-
-#admin-modal-dialog-options-ul li + li,
-#txn-admin-payment-options-ul li + li, #del-admin-modal-dialog-options-ul li + li {
-    margin-left: 1em;
+#admin-modal-dialog-options-ul a + a,
+#txn-admin-payment-options-ul a + a,
+#del-admin-modal-dialog-options-ul a + a {
+    margin-inline-start: 1rem;
 }
 
 #admin-modal-dialog-options-ul .hidden, #del-admin-modal-dialog-options-ul .hidden {
@@ -422,19 +442,37 @@
     background: #FCFCFC;
 }
 
-.admin-modal-dialog-row {
-    clear: both;
+.admin-modal-dialog-inner .admin-modal-dialog-row {
+    align-items: flex-start;
     margin: 0 0 2em;
+    width: 100%;
 }
 
-.admin-modal-dialog-inner label {
-    display: inline-block;
-    float: left;
-    width: clamp(16rem, 25%, 32rem);
-    padding-top: .4em;
-    margin: 0 1em .5em 0;
+.admin-modal-dialog-inner .admin-modal-dialog-row > label {
+    align-items: center;
+    display: flex;
+    font-weight: 600;
+    margin: 0.5rem 1rem 0.5rem 0;
+    padding-top: 0.5rem;
     vertical-align: top;
-    font-weight: bold;
+    width: 25%;
+}
+
+
+.admin-modal-dialog-inner .admin-modal-dialog-row > .ee-layout-stack {
+    width: 75%;
+}
+
+
+@media screen and ( max-width: 782px ) {
+
+    .admin-modal-dialog-row {
+        flex-direction: column;
+    }
+
+    .admin-modal-dialog-inner label {
+        width: 100%;
+    }
 }
 
 .admin-modal-dialog-inner .txn-admin-payment-reg-to-apply-lbl {
@@ -459,15 +497,12 @@
 }
 
 .validation-notice-dv {
-    display: none;
-    padding: 0 0 0 250px;
-    margin-left: 1em;
     color: var(--ee-status-color-red);
+    display: none;
+    font-weight: 600;
+    margin-left: .5rem;
 }
 
-.requires-value {
-    border: 1px solid var(--ee-status-color-red) !important;
-}
 
 /*.admin-modal-dialog-inner label.last { margin-bottom:8em; }*/
 
@@ -484,17 +519,14 @@
     max-width: 250px;
 }
 
+.admin-modal-dialog-inner input[type=radio],
 .admin-modal-dialog-inner input[type=checkbox] {
-    margin: 6px 1em .5em 0
+    margin-inline-end: 1rem;
 }
 
 .admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox],
 .admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox]:checked {
     margin: 0
-}
-
-.txn-admin-apply-payment-to-registrations-lbl input {
-    margin: 2px 1em 0 0;
 }
 
 .txn-date-h2, .txn-status-h2, .txn-amount-due-h2, .txn-selected-method-of-payment-h3 {

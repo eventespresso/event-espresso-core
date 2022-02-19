@@ -185,7 +185,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $pretty_status   = EEH_Template::pretty_status($status, false, 'sentence');
         $status_dot      = '<span class="ee-status-dot ee-status-bg--' . $status . '"></span>';
         $content         = '
-            <div class="ee-layout-row">
+            <div class="ee-layout-row ee-layout-row--fixed">
                 <a  class="row-title ee-status-color--' . $status . ' ee-aria-tooltip" 
                     aria-label="' . $pretty_status . '" 
                     href="' . $edit_link . '"
@@ -373,7 +373,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             'EVT_wp_user' => $event->wp_user(),
         ];
         $filter_url = EE_Admin_Page::add_query_args_and_nonce($query_args, EVENTS_ADMIN_URL);
-        $content    = '<div class="ee-layout-row">';
+        $content    = '<div class="ee-layout-row ee-layout-row--fixed">';
         $content    .= $gravatar . '  <a href="' . $filter_url . '" class="ee-aria-tooltip"'
                        . ' aria-label="' . esc_attr__('Click to filter events by this author.', 'event_espresso') . '">'
                        . $event_author->display_name

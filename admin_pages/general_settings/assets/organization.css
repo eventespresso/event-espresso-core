@@ -43,15 +43,19 @@
 
 
 @media all and (max-width: 782px) {
-    .espresso-admin #general-setting-country-details-tbl.form-table tr {
-        border-block-end: none;
+    .espresso-admin #general-setting-country-states-tbl.form-table tr {
+        border-block-end: 2px solid var(--ee-border-color-table-row);
     }
 
     #country-settings-dv th:first-child,
     #country-settings-dv td:first-child {
-        padding-block-start: 3rem;
+        padding-block-start: 1.5rem;
     }
 
+    #general-setting-country-states-tbl th:first-child,
+    #general-setting-country-states-tbl td:first-child {
+        padding-block-start: 3rem;
+    }
     #general-setting-country-states-tbl th:last-child,
     #general-setting-country-states-tbl td:last-child {
         padding-block-end: 1.5rem;

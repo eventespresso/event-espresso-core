@@ -196,6 +196,9 @@ abstract class IframeEmbedButton
         $iframe_module_routes                      = EE_Registry::$i18n_js_strings['iframe_module_routes'] ?? [];
         $iframe_module_routes[ $this->route_name ] = $this->route_name;
         EE_Registry::$i18n_js_strings['iframe_module_routes'] = $iframe_module_routes;
+        $route_name = esc_attr($this->route_name);
+        $iframe_url = esc_url_raw(add_query_arg($query_args, site_url()));
+
         return EEH_HTML::div(
             EEH_HTML::link(
                 '#',
@@ -207,28 +210,27 @@ abstract class IframeEmbedButton
                     ),
                     EEH_Inflector::add_indefinite_article($this->iframe_name)
                 ),
-                esc_attr($this->route_name) . '-iframe-embed-trigger-js',
+                $route_name . '-iframe-embed-trigger-js',
                 'iframe-embed-trigger-js button button--small button--secondary ' . esc_attr($button_class),
                 '',
-                ' data-iframe_embed_button="#' . esc_attr($this->route_name) . '-iframe-js" tabindex="-1"'
+                ' data-iframe_embed_button="#' . $route_name . '-iframe-js" tabindex="-1"'
             )
-            . EEH_HTML::div(
-                EEH_HTML::div(
-                    '<iframe src="'
-                    . esc_url_raw(add_query_arg($query_args, site_url()))
-                    . '" width="100%" height="100%"></iframe>',
-                    '',
-                    '',
-                    'width:100%; height: 500px;'
-                ),
-                esc_attr($this->route_name) . '-iframe-js',
-                'iframe-embed-wrapper-js',
-                'display:none;'
-            ),
+            ,
             '',
             'ee-admin-button-row ee-admin-button-row--align-start'
+        )
+        . EEH_HTML::div(
+            EEH_HTML::div(
+                '<iframe src="' . $iframe_url . '" width="100%" height="100%"></iframe>',
+                '',
+                '',
+                'width:100%; height: 500px;'
+            ),
+            $route_name . '-iframe-js',
+            'iframe-embed-wrapper-js',
+            'display:none;'
         );
-    }
+}
 
 
     /**

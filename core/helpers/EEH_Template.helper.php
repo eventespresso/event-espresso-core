@@ -552,7 +552,7 @@ class EEH_Template
      * @param string $title
      * @return string the html output for the button
      */
-    public static function get_button_or_link($url, $label, $class = 'button--primary', $icon = '', $title = '')
+    public static function get_button_or_link($url, $label, $class = 'button button--primary', $icon = '', $title = '')
     {
         $icon_html = '';
         if (! empty($icon)) {
@@ -571,8 +571,10 @@ class EEH_Template
         $url   = esc_url_raw($url);
         $class = esc_attr($class);
         $title = esc_attr($title);
+        $class .= $title ? ' ee-aria-tooltip' : '';
+        $title = $title ? " aria-label='{$title}'" : '';
         $label = esc_html($label);
-        return "<a id='{$id}' href='{$url}' class='{$class}' title='{$title}'>{$icon_html}{$label}</a>";
+        return "<a id='{$id}' href='{$url}' class='{$class}'{$title}>{$icon_html}{$label}</a>";
     }
 
 

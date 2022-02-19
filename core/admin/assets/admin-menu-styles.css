@@ -69,12 +69,12 @@
     --ee-btn-primary-low-constrast: hsla(
         var(--ee-btn-primary-hue),
         calc((var(--ee-btn-primary-sat) + 5) * 1%),
-        calc((var(--ee-btn-primary-lit) + 15) * 1%),
+        calc((var(--ee-btn-primary-lit) + 10) * 1%),
         var(--ee-btn-primary-alpha)
     );
     --ee-btn-primary-high-constrast: hsla(
         var(--ee-btn-primary-hue),
-        calc((var(--ee-btn-primary-sat) + 20) * 1%),
+        calc((var(--ee-btn-primary-sat) + 15) * 1%),
         calc((var(--ee-btn-primary-lit) - 10) * 1%),
         var(--ee-btn-primary-alpha)
     );

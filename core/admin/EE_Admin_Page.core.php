@@ -2482,18 +2482,18 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_set_save_buttons($both_btns, [], [], $save_close_redirect_URL);
         // if we have extra content set let's add it in if not make sure its empty
         $this->_template_args['publish_box_extra_content'] = $this->_template_args['publish_box_extra_content'] ?? '';
+        $delete_link = '';
         if ($delete && ! empty($id)) {
             // make sure we have a default if just true is sent.
             $delete           = ! empty($delete) ? $delete : 'delete';
-            $delete_link_args = [$name => $id];
-            $delete           = $this->get_action_link_or_button(
+            $delete_link      = $this->get_action_link_or_button(
                 $delete,
                 $delete,
-                $delete_link_args,
+                [$name => $id],
                 'submitdelete deletion button button--small  button--outline button--caution'
             );
         }
-        $this->_template_args['publish_delete_link'] = ! empty($id) ? $delete : '';
+        $this->_template_args['publish_delete_link'] = $delete_link;
         if (! empty($name) && ! empty($id)) {
             $hidden_field_arr[ $name ] = [
                 'type'  => 'hidden',
