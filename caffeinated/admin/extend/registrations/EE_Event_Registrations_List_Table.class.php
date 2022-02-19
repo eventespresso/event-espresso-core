@@ -213,7 +213,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             /** @var EE_Event $event */
             foreach ($events as $event) {
                 // any registrations for this event?
-                if (! $event->get_count_of_all_registrations()) {
+                if (! $event instanceof EE_Event || ! $event->get_count_of_all_registrations()) {
                     continue;
                 }
                 $events[] = [
