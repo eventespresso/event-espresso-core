@@ -235,51 +235,6 @@
     margin: 0 0 1em 1em;
 }
 
-.admin-side-mbox-dv .ee-admin-attendee-avatar {
-    margin: 0 0 1em .5em;
-}
-
-#admin-side-mbox-primary-registrant-dv,
-.admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon {
-    display: flex;
-}
-
-#admin-side-mbox-primary-registrant-dv .admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon .dashicons {
-    color: var(--ee-status-color-grey);
-    margin-block-start: .25rem;
-    margin-inline-end: .5rem;
-}
-
-#admin-side-mbox-primary-registrant-dv .admin-side-mbox-text-dv .ee-admin-attendee-name {
-    font-size: 1.25rem;
-    font-weight: 500;
-}
-
-.admin-side-mbox-text-dv .ee-admin-attendee-email,
-.admin-side-mbox-text-dv .ee-admin-attendee-phone,
-.admin-side-mbox-text-dv .ee-admin-attendee-address {
-    margin-block-start: .5rem;
-}
-
-
-@media screen and ( max-width: 1600px ) {
-    #admin-side-mbox-primary-registrant-dv {
-        flex-direction: column;
-    }
-
-    #admin-side-mbox-primary-registrant-dv .ee-admin-attendee-avatar {
-        margin: 0;
-    }
-
-    #admin-side-mbox-primary-registrant-dv,
-    #admin-side-mbox-primary-registrant-dv .ee-admin-attendee-name,
-    #admin-side-mbox-primary-registrant-dv .ee-admin-contact-details-with-dashicon {
-        justify-content: center;
-        text-align: center;
-    }
-
-}
-
 .ee-admin-dialog-container .admin-modal-dialog-h2 {
     font-size: 2em;
     margin: .25em 0;
