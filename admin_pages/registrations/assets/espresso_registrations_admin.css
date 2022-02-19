@@ -247,30 +247,6 @@
     margin: 0 0 1em 1em;
 }
 
-.admin-side-mbox-dv .ee-admin-attendee-avatar {
-    margin: 0 0 1em .5em;
-}
-
-#admin-side-mbox-primary-registrant-dv,
-.admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon {
-    display: flex;
-}
-
-.admin-side-mbox-text-dv .ee-admin-contact-details-with-dashicon .dashicons {
-    color: var(--ee-font-color-light);
-    margin-block-start: .35rem;
-}
-
-.admin-side-mbox-text-dv .ee-admin-attendee-name {
-    font-size: 1.2rem;
-}
-
-.admin-side-mbox-text-dv .ee-admin-attendee-email,
-.admin-side-mbox-text-dv .ee-admin-attendee-phone,
-.admin-side-mbox-text-dv .ee-admin-attendee-address {
-    margin-block-start: .5rem;
-}
-
 
 .reg-admin-edit-question-group-spn {
     position: relative;
