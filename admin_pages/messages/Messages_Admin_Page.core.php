@@ -2682,7 +2682,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                         foreach ($context_templates as $context => $template_fields) :
                             $checked = ($context === $args['context']) ? 'selected="selected"' : '';
                             ?>
-                            <option value="<?php echo esc_attr($context); ?>" <?php echo esc_attr($checked); ?>>
+                            <option value="<?php echo esc_attr($context); ?>" <?php echo $checked; ?>>
                                 <?php echo $context_details[ $context ]['label']; // already escaped
                                 ?>
                             </option>
