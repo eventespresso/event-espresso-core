@@ -538,7 +538,7 @@
                                     ?>
                                     <option id="payment-method-opt-<?php echo esc_attr($method->slug()); ?>"
                                             value="<?php echo esc_attr($method->ID()); ?>"
-                                        <?php echo esc_attr($selected); ?>
+                                        <?php echo $selected; ?>
                                     >
                                         <?php
                                         echo esc_html(
@@ -620,7 +620,7 @@
                                         ?>
                                         <option id="payment-status-opt-<?php echo esc_attr($STS_ID); ?>"
                                                 value="<?php echo esc_attr($STS_ID); ?>"
-                                            <?php echo esc_attr($selected); ?>
+                                            <?php echo $selected; ?>
                                         >
                                             <?php echo esc_html($STS_code); ?>
                                         </option>
