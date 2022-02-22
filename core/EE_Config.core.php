@@ -2623,13 +2623,6 @@ class EE_Admin_Config extends EE_Config_Base
     public $affiliate_id;
 
     /**
-     * help tours on or off (global setting)
-     *
-     * @var boolean
-     */
-    public $help_tour_activation;
-
-    /**
      * adds extra layer of encoding to session data to prevent serialization errors
      * but is incompatible with some server configuration errors
      * if you get "500 internal server errors" during registration, try turning this on
@@ -2665,7 +2658,6 @@ class EE_Admin_Config extends EE_Config_Base
             false
         );
         $this->affiliate_id = 'default';
-        $this->help_tour_activation = false;
         $this->encode_session_data = false;
     }
 

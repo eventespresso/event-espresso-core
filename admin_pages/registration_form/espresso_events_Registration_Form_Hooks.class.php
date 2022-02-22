@@ -174,9 +174,9 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
 						<input value="' . $QSG_ID . '"
 						    type="checkbox"
 						    name="question_groups[' . $QSG_ID . ']" '
-                             . esc_attr($visibility)
-                             . esc_attr($checked) . '
-                         />
+                            . $visibility
+                            . $checked . '
+                        />
 						<a href="' . esc_url_raw($edit_link) . '"
 						    title="' . esc_attr($edit_link_title) . '"
 						    target="_blank"
