@@ -188,15 +188,26 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
      */
     public function column_id(EE_Change_Log $item)
     {
-        $ID                 = absint($item->ID());
-        $details_query_args = [
-            'action' => 'payment_log_details',
-            'ID'     => $ID,
-        ];
-        $url                = esc_url_raw(
-            EE_Admin_Page::add_query_args_and_nonce($details_query_args, EE_PAYMENTS_ADMIN_URL)
+        $ID = absint($item->ID());
+        $url = esc_url_raw(
+            EE_Admin_Page::add_query_args_and_nonce(
+                [
+                        'action' => 'payment_log_details',
+                        'ID'     => $ID,
+                ],
+                EE_PAYMENTS_ADMIN_URL
+            )
         );
-        return "<a href='$url'>{$ID}</a>";
+        $label = esc_attr__('View Payment Log Details', 'event_espresso');
+        $payment_log = "<a class='ee-aria-tooltip' aria-label='{$label}' href='$url'>{$ID}</a>";
+        $content = '
+            <span class="ee-entity-id">' . $payment_log . '</span>
+            <span class="show-on-mobile-view-only">
+                <span>' . $this->column_LOG_time($item, false) . '</span>
+                &nbsp;
+                <span>' . $this->column_PMD_ID($item, false) . '</span>
+            </span>';
+        return $this->columnContent('id', $content, 'end');
     }
 
 
@@ -204,13 +215,15 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
      * column_LOG_time
      *
      * @param EE_Change_Log $item
+     * @param bool          $prep_content
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_LOG_time(EE_Change_Log $item)
+    public function column_LOG_time(EE_Change_Log $item, bool $prep_content = true): string
     {
-        return $item->get_datetime('LOG_time');
+        $content = $item->get_datetime('LOG_time');
+        return $prep_content ? $this->columnContent('LOG_time', $content) : $content;
     }
 
 
@@ -218,24 +231,26 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
      * column_PMD_ID
      *
      * @param EE_Change_Log $item
+     * @param bool          $prep_content
      * @return string
      * @throws EE_Error
      */
-    public function column_PMD_ID(EE_Change_Log $item)
+    public function column_PMD_ID(EE_Change_Log $item, bool $prep_content = true): string
     {
-        if ($item->object() instanceof EE_Payment_Method) {
-            return $item->object()->admin_name();
-        }
-        if (
-            $item->object() instanceof EE_Payment
-            && $item->object()->payment_method() instanceof EE_Payment_Method
+        $object = $item->object();
+        if ($object instanceof EE_Payment_Method) {
+            $content = $object->admin_name();
+        } else if (
+            $object instanceof EE_Payment
+            && $object->payment_method() instanceof EE_Payment_Method
         ) {
-            return $item->object()->payment_method()->admin_name();
+            $content = $object->payment_method()->admin_name();
+        } elseif ($object instanceof EE_Transaction) {
+            $content = esc_html__('Unknown', 'event_espresso');
+        } else {
+            $content = esc_html__('No longer exists', 'event_espresso');
         }
-        if ($item->object() instanceof EE_Transaction) {
-            return esc_html__('Unknown', 'event_espresso');
-        }
-        return esc_html__('No longer exists', 'event_espresso');
+        return $prep_content ? $this->columnContent('PMD_ID', $content) : $content;
     }
 
 
@@ -247,12 +262,13 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_TXN_ID(EE_Change_Log $item)
+    public function column_TXN_ID(EE_Change_Log $item): string
     {
-        if ($item->object() instanceof EE_Payment) {
-            $transaction_id = $item->object()->TXN_ID();
-        } elseif ($item->object() instanceof EE_Transaction) {
-            $transaction_id = $item->object()->ID();
+        $object = $item->object();
+        if ($object instanceof EE_Payment) {
+            $transaction_id = $object->TXN_ID();
+        } elseif ($object instanceof EE_Transaction) {
+            $transaction_id = $object->ID();
         } else {
             $transaction_id = null;
         }
@@ -268,15 +284,17 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
                 ['action' => 'view_transaction', 'TXN_ID' => $transaction_id],
                 TXN_ADMIN_URL
             );
-            return '<a href="' . esc_url_raw($view_txn_lnk_url) . '"  '
+            $content = '<a href="' . esc_url_raw($view_txn_lnk_url) . '"  '
                    . 'title="' . sprintf(
                        esc_attr__('click to view transaction #%s', 'event_espresso'),
                        $transaction_id
                    ) . '">'
                    . sprintf(esc_html__('view txn %s', 'event_espresso'), $transaction_id)
                    . '</a>';
+        } else {
+            // No transaction id or use can not view the transaction.
+            $content = esc_html__('Unable to find transaction', 'event_espresso');
         }
-        // No transaction id or use can not view the transaction.
-        return esc_html__("Unable to find transaction", 'event_espresso');
+        return $this->columnContent('TXN_ID', $content);
     }
 }

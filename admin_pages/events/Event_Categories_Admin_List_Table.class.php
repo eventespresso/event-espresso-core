@@ -10,8 +10,6 @@
  * @package         Event_Categories_Admin_List_Table
  * @subpackage      includes/core/admin/events/Event_Category_Admin_List_Table.class.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
 {
@@ -81,11 +79,12 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
 
     public function column_id($item)
     {
-        $content = $item->get('term_id');
-        $content .= '  <span class="show-on-mobile-view-only">' . $item->get_first_related('Term')->get(
-            'name'
-        ) . '</span>';
-        return $content;
+        $content = '
+        <span class="ee-entity-id">' . $item->get('term_id') . '</span>
+        <span class="show-on-mobile-view-only">
+            ' . $item->get_first_related('Term')->get('name') . '
+        </span>';
+        return $this->columnContent('id', $content, 'end');
     }
 
 
@@ -133,14 +132,14 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
             'name'
         ) . '</a></strong>';
         $content .= $this->row_actions($actions);
-        return $content;
+        return $this->columnContent('name', $content);
     }
 
 
     public function column_shortcode($item)
     {
         $content = '[ESPRESSO_EVENTS category_slug=' . $item->get_first_related('Term')->get('slug') . ']';
-        return $content;
+        return $this->columnContent('shortcode', $content);
     }
 
 
@@ -152,6 +151,6 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
         );
         $e_link = EE_Admin_Page::add_query_args_and_nonce($e_args, EVENTS_ADMIN_URL);
         $content = '<a href="' . $e_link . '">' . $item->get('term_count') . '</a>';
-        return $content;
+        return $this->columnContent('count', $content);
     }
 }
