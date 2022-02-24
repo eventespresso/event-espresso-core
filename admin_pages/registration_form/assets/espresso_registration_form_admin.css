@@ -99,42 +99,72 @@
 }
 
 
-table.question-options-table td, table.question-options-table th {
-	padding:1em 10px 0 3px; line-height: 1em;
+.espresso-admin .form-table #question_options td {
+    padding: 0;
 }
-
-table.question-options-table{
+.espresso-admin .form-table #question_options table.question-options-table {
 	width: 100%;
 }
 
-table.question-options-table .regular-text {
+.espresso-admin .form-table #question_options table.question-options-table th,
+.espresso-admin .form-table #question_options table.question-options-table td {
+    display: flex;
+    padding: 0;
 	width: 100%;
 }
-
-table.question-options-table td:first-child, table.question-options-table td:nth-child(2) {
-	width: 45%;
+.espresso-admin .form-table #question_options table.question-options-table th:last-child,
+.espresso-admin .form-table #question_options table.question-options-table td:last-child {
+    min-width: unset;
+    justify-content: flex-end;
+	width: 100%;
+}
+.espresso-admin .form-table #question_options table.question-options-table td input:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    margin-inline-start: .25rem;
+    min-width: unset;
 }
 
-table.question-options-table td:last-child {
-	width: 10%;
+.espresso-admin #new-question-option {
+    margin-block-start: 1rem;
 }
 
-@media screen and (max-width:782px) {
-    .ee-question-sortable {
-        padding-left: 40px;
+
+@media screen and (min-width:600px) {
+    .espresso-admin .form-table #question_options table.question-options-table th,
+    .espresso-admin .form-table #question_options table.question-options-table td {
+        display: inline-flex;
+        padding-inline-end: .5rem;
+        width: calc(((100% - 6.5rem) / 2) - .5rem);
+    }
+
+    .espresso-admin .form-table #question_options table.question-options-table th:last-child,
+    .espresso-admin .form-table #question_options table.question-options-table td:last-child {
+        padding-inline-end: 0;
+        width: 6.5rem;
     }
 }
 @media screen and (min-width:1920px) {
-    #post-body-content > div {
-        max-width: 100% !important;
-        width: 100% !important;
-        clear: both !important;
-        float: none !important;
-    }
-
     #insert_question_group_event_form .edit-group + .edit-group,
     #update_question_group_event_form .edit-group + .edit-group {
         margin-block-start: unset;
         margin-inline-start: 4rem;
+    }
+}
+
+
+@media screen and ( max-width: 1366px ) {
+    .event-espresso_page_espresso_registration_form.espresso-admin #post-body {
+        display: flex;
+        flex-direction: column;
+    }
+    .event-espresso_page_espresso_registration_form.espresso-admin #post-body.columns-2 #postbox-container-1 {
+        float: unset;
+        margin: 0;
+        margin-block-start: 1rem;
+        width: 100%;
+    }
+
+    .event-espresso_page_espresso_registration_form.espresso-admin #post-body.columns-2 #post-body-content,
+    .event-espresso_page_espresso_registration_form.espresso-admin #post-body.columns-2 #postbox-container-1 > div {
+        width: 100%;
     }
 }
