@@ -205,7 +205,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     'order_by' => ['Datetime.DTT_EVT_start' => 'DESC'],
                 ]
             );
-            $events[] = [
+            $event_options[] = [
                 'id'   => 0,
                 'text' => esc_html__(' - select an event - ', 'event_espresso'),
             ];
@@ -216,11 +216,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 if (! $event instanceof EE_Event || ! $event->get_count_of_all_registrations()) {
                     continue;
                 }
-                $events[] = [
+                $event_options[] = [
                     'id'    => $event->ID(),
                     'text'  => apply_filters(
                         'FHEE__EE_Event_Registrations___get_table_filters__event_name',
-                        $event->get('EVT_name'),
+                        $event->name(),
                         $event
                     ),
                     'class' => $event->is_expired() ? 'ee-expired-event' : '',
@@ -229,19 +229,19 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     $checked = '';
                 }
             }
-            $event_filter = '<div class="ee-event-filter">';
-            $event_filter .= '<label for="event_id">';
-            $event_filter .= esc_html__('Check-in Status for', 'event_espresso');
-            $event_filter .= '</label>&nbsp;&nbsp;';
-            $event_filter .= EEH_Form_Fields::select_input('event_id', $events, $current_EVT_ID);
-            $event_filter .= '<span class="ee-event-filter-toggle">';
-            $event_filter .= '<label for="js-ee-hide-expired-events">';
-            $event_filter .= '<input type="checkbox" id="js-ee-hide-expired-events" ' . $checked . '>&nbsp;&nbsp;';
-            $event_filter .= esc_html__('Hide Expired Events', 'event_espresso');
-            $event_filter .= '</label>';
-            $event_filter .= '</span>';
-            $event_filter .= '</div>';
-            $filters[]    = $event_filter;
+            $filters[] = '
+            <div class="ee-event-filter">
+                <label for="event_id">
+                    ' . esc_html__('Check-in Status for', 'event_espresso') . '
+                </label>&nbsp;&nbsp;
+                ' .  EEH_Form_Fields::select_input('event_id', $event_options, $current_EVT_ID) . '
+                <span class="ee-event-filter-toggle">
+                    <label for="js-ee-hide-expired-events">
+                        <input type="checkbox" id="js-ee-hide-expired-events" ' . $checked . '>&nbsp;&nbsp;
+                        ' . esc_html__('Hide Expired Events', 'event_espresso') . '
+                    </label>
+                </span>
+            </div>';
         }
         if (! empty($this->_dtts_for_event)) {
             // DTT datetimes filter
@@ -332,9 +332,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column__REG_att_checked_in(EE_Registration $registration): string
     {
-        $attendee      = $registration->attendee();
-        $attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
-
         if ($this->_cur_dtt_id === 0 && count($this->_dtts_for_event) === 1) {
             $latest_related_datetime = $registration->get_latest_related_datetime();
             if ($latest_related_datetime instanceof EE_Datetime) {
@@ -354,17 +351,19 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                                    )
             ? ' clickable trigger-checkin'
             : '';
-        $mobile_view_content     = ' <span class="show-on-mobile-view-only">' . $attendee_name . '</span>';
-        return '
-        <button class="button button--secondary button--icon-only ' . $toggle_active . '"
-                data-_regid="' . $registration->ID() . '"
-                data-dttid="' . $this->_cur_dtt_id . '"
-                data-nonce="' . $nonce . '"
-        >   
-            <span class="' . $checkin_status_dashicon->cssClasses() . '"></span>
-        </button>
-            '
-               . $mobile_view_content;
+
+        $content = '
+        <span class="ee-entity-id ">
+            <button class="button button--secondary button--icon-only ' . $toggle_active . '"
+                    data-_regid="' . $registration->ID() . '"
+                    data-dttid="' . $this->_cur_dtt_id . '"
+                    data-nonce="' . $nonce . '"
+            >   
+                <span class="' . $checkin_status_dashicon->cssClasses() . '"></span>
+            </button>
+        </span>
+        <span class="show-on-mobile-view-only">' . $this->column_ATT_name($registration) . '</span>';
+        return $this->columnContent('_REG_att_checked_in', $content, 'end');
     }
 
 
@@ -469,9 +468,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                                       ) . '">' . $checkin_status . ': ' . $timestamp_string . '</a>';
             }
         }
-        return (! empty($DTT_ID) && ! empty($timestamps))
+        $content = (! empty($DTT_ID) && ! empty($timestamps))
             ? sprintf('%1$s %2$s', $name_link, $this->row_actions($actions, true))
             : $name_link;
+        return $this->columnContent('ATT_name', $content);
     }
 
 
@@ -484,7 +484,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     public function column_ATT_email(EE_Registration $registration): string
     {
         $attendee = $registration->attendee();
-        return $attendee instanceof EE_Attendee ? $attendee->email() : '';
+        $content = $attendee instanceof EE_Attendee ? $attendee->email() : '';
+        return $this->columnContent('ATT_email', $content);
     }
 
 
@@ -502,7 +503,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 ['action' => 'event_registrations', 'event_id' => $event->ID()],
                 REG_ADMIN_URL
             );
-            $event_label      = EE_Registry::instance()->CAP->current_user_can(
+            $content      = EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_checkins',
                 'espresso_registrations_registration_checkins'
             ) ? '<a class="ee-aria-tooltip" href="' . $checkin_link_url . '" aria-label="'
@@ -511,9 +512,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     'event_espresso'
                 ) . '">' . $event->name() . '</a>' : $event->name();
         } catch (EntityNotFoundException $e) {
-            $event_label = esc_html__('Unknown', 'event_espresso');
+            $content = esc_html__('Unknown', 'event_espresso');
         }
-        return $event_label;
+        return $this->columnContent('Event', $content);
     }
 
 
@@ -525,12 +526,13 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column_PRC_name(EE_Registration $registration): string
     {
-        return $registration->ticket() instanceof EE_Ticket
+        $content = $registration->ticket() instanceof EE_Ticket
             ? $registration->ticket()->name()
             : esc_html__(
                 "Unknown",
                 "event_espresso"
             );
+        return $this->columnContent('PRC_name', $content);
     }
 
 
@@ -543,7 +545,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column__REG_final_price(EE_Registration $registration): string
     {
-        return '<span class="reg-pad-rght">' . ' ' . $registration->pretty_final_price() . '</span>';
+        $content = '<span class="reg-pad-rght">' . ' ' . $registration->pretty_final_price() . '</span>';
+        return $this->columnContent('_REG_final_price', $content, 'end');
     }
 
 
@@ -557,6 +560,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column_TXN_paid(EE_Registration $registration): string
     {
+        $content = '';
         if ($registration->count() === 1) {
             if ($registration->transaction()->paid() >= $registration->transaction()->total()) {
                 return '<span class="reg-pad-rght"><div class="dashicons dashicons-yes green-icon"></div></span>';
@@ -565,12 +569,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     ['action' => 'view_transaction', 'TXN_ID' => $registration->transaction_ID()],
                     TXN_ADMIN_URL
                 );
-                return EE_Registry::instance()->CAP->current_user_can(
+                $content = EE_Registry::instance()->CAP->current_user_can(
                     'ee_read_transaction',
                     'espresso_transactions_view_transaction'
                 ) ? '
-				<span class="reg-pad-rght">
-					<a class="ee-aria-tooltip ee-status-color--'
+				<a class="ee-aria-tooltip ee-status-color--'
                     . $registration->transaction()->status_ID()
                     . '" href="'
                     . $view_txn_lnk_url
@@ -581,11 +584,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     . $registration->transaction()->pretty_paid()
                     . '
 					</a>
-				<span>' : '<span class="reg-pad-rght">' . $registration->transaction()->pretty_paid() . '</span>';
+				' : $registration->transaction()->pretty_paid();
             }
-        } else {
-            return '<span class="reg-pad-rght"></span>';
         }
+        return $this->columnContent('TXN_paid', $content, 'end');
     }
 
 
@@ -609,7 +611,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     'View Transaction',
                     'event_espresso'
                 );
-            return EE_Registry::instance()->CAP->current_user_can(
+            $content = EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_transaction',
                 'espresso_transactions_view_transaction'
             ) ? '<a class="ee-aria-tooltip" href="'
@@ -620,7 +622,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 . $txn_total
                 . '</span></a>' : '<span class="reg-pad-rght">' . $txn_total . '</span>';
         } else {
-            return '<span class="reg-pad-rght"></span>';
+            $content = '<span class="reg-pad-rght"></span>';
         }
+        return $this->columnContent('TXN_total', $content, 'end');
     }
 }

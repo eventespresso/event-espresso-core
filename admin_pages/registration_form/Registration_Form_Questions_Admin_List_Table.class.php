@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\capabilities\user_caps\RegFormListTableUserCapabilities;
+
 /**
  * Registration_Form_Questions_Admin_List_Table
  *
@@ -10,16 +12,25 @@
  * @package         Registration_Form_Questions_Admin_List_Table
  * @subpackage      includes/core/admin/events/Registration_Form_Questions_Admin_List_Table.class.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
 {
 
+    /**
+     * @var RegFormListTableUserCapabilities
+     */
+    protected $caps_handler;
+
 
     public function __construct($admin_page)
     {
+        $this->caps_handler = new RegFormListTableUserCapabilities(EE_Registry::instance()->CAP);
         parent::__construct($admin_page);
+
+        if (! defined('REG_ADMIN_URL')) {
+            define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
+        }
+
     }
 
 
@@ -53,6 +64,8 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
             'required'     => esc_html__('Req', 'event_espresso'),
         );
 
+        $this->_primary_column = 'id';
+
         $this->_sortable_columns = array(
             'id'           => array('QST_ID' => false),
             'display_text' => array('QST_display_text' => false),
@@ -72,17 +85,18 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
     protected function _add_view_counts()
     {
         $this->_views['all']['count'] = $this->_admin_page->get_questions($this->_per_page, $this->_current_page, true);
-        if (
-            EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_questions',
-                'espresso_registration_form_trash_question'
-            )
-        ) {
+        if ($this->caps_handler->userCanTrashQuestions()) {
             $this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions(-1, $this->_current_page, true);
         }
     }
 
 
+    /**
+     * @param EE_Question $item
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function column_cb($item)
     {
         $system_question = $item->is_system_question();
@@ -97,86 +111,111 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
-    public function column_id(EE_Question $item)
+    /**
+     * @param EE_Question $item
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_id($item)
     {
-        $content = $item->ID();
-        $content .= '  <span class="show-on-mobile-view-only">' . $item->display_text() . '</span>';
-        return $content;
+        $content = '
+            <span class="ee-entity-id">' . $item->ID() . '</span>
+            <span class="show-on-mobile-view-only">
+                ' . $this->column_display_text($item, false) . '
+            </span>';
+        return $this->columnContent('id', $content, 'end');
     }
 
 
-    public function column_display_text(EE_Question $item)
+    /**
+     * @param EE_Question $question
+     * @param bool        $prep_content
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_display_text(EE_Question $question, bool $prep_content = true): string
     {
-        $system_question = $item->is_system_question();
-
-        if (! defined('REG_ADMIN_URL')) {
-            define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
-        }
-
-        $edit_query_args = array(
-            'action' => 'edit_question',
-            'QST_ID' => $item->ID(),
-        );
-
-        if (
-            EE_Registry::instance()->CAP->current_user_can(
-                'ee_edit_question',
-                'espresso_registration_form_edit_question',
-                $item->ID()
-            )
-        ) {
-            $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_FORMS_ADMIN_URL);
-
-            $actions = array(
-                'edit' => '<a href="' . $edit_link . '" title="' . esc_attr__(
-                    'Edit Event',
-                    'event_espresso'
-                ) . '">' . esc_html__('Edit', 'event_espresso') . '</a>',
+        if ($this->caps_handler->userCanEditQuestion($question)) {
+            $content = $this->$this->getActionLink(
+                $this->getActionUrl($question, self::ACTION_EDIT),
+                $prep_content ? $question->display_text() : $question->admin_label(),
+                esc_attr__('Edit Question', 'event_espresso'),
+                'row-title'
             );
+            $content .= $this->row_actions(
+                [
+                    'edit' => $this->getActionLink(
+                        $this->getActionUrl($question, self::ACTION_EDIT),
+                        esc_html__('Edit', 'event_espresso'),
+                        esc_attr__('Edit Question', 'event_espresso')
+                    )
+                ]
+            );
+        } else {
+            $content = $question->display_text();
         }
 
-
-        $content = EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_question',
-            'espresso_registration_form_edit_question',
-            $item->ID()
-        ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>'
-            : $item->display_text();
-        $content .= $this->row_actions($actions);
-        return $content;
+        return $prep_content ? $this->columnContent('display_text', $content) : $content;
     }
 
 
-    public function column_admin_label(EE_Question $item)
+    /**
+     * @param EE_Question $question
+     * @param string      $action
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    protected function getActionUrl(EE_Question $question, string $action): string
     {
-        return $item->admin_label();
+        if (! in_array($action, self::$actions)) {
+            throw new DomainException(esc_html__('Invalid Action', 'event_espresso'));
+        }
+        return EE_Admin_Page::add_query_args_and_nonce(
+            [
+                'action'   => $action === self::ACTION_DELETE ? "{$action}_questions" : "{$action}_question",
+                'QST_ID'   => $question->ID(),
+                'noheader' => $action !== self::ACTION_EDIT,
+            ],
+            EE_FORMS_ADMIN_URL
+        );
     }
 
 
-    public function column_values(EE_Question $item)
+    public function column_admin_label(EE_Question $item): string
+    {
+        return $this->columnContent('admin_label', $item->admin_label());
+    }
+
+
+    public function column_values(EE_Question $item): string
     {
         $optionNames = array();
         $options = $item->options();
         if (empty($options)) {
-            return "N/A";
+            $content = "N/A";
         } else {
-            foreach ($options as $optionID => $option) {
-                /* @var $option EE_Question_Option */
+            foreach ($options as $option) {
                 $optionNames[] = $option->value();
             }
-            return implode(', ', $optionNames);
+            $content = implode(', ', $optionNames);
         }
+        return $this->columnContent('values', $content);
     }
 
 
-    public function column_type(EE_Question $item)
+    public function column_type(EE_Question $item): string
     {
-        return $item->type();
+        return $this->columnContent('type', $item->type());
     }
 
 
-    public function column_required(EE_Question $item)
+    public function column_required(EE_Question $item): string
     {
-        return $item->required() ? 'Yes' : '';
+        $content = $item->required() ? 'Yes' : '';
+        return $this->columnContent('required', $content);
     }
 }
