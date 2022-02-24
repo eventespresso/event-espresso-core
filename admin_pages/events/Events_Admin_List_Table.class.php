@@ -158,7 +158,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      */
     public function column_id(EE_Event $event): string
     {
-        $content = $event->ID();
+        $content = '<span class="ee-entity-id">' . $event->ID() . '</span>';
         $content .= '<span class="show-on-mobile-view-only">';
         $content .= $this->column_name($event, false);
         $content .= '</span>';
