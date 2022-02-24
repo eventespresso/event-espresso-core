@@ -54,12 +54,11 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_display_text">
                             <?php echo $fields['QST_display_text']->get_nicename(); // already escaped ?>
+                            <?php echo EEH_Template::get_help_tab_link('question_text_info'); // already escaped ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('question_text_info'); // already escaped ?>
                     </th>
                     <td>
-                        <input class='regular-text'
-                               id="QST_display_text"
+                        <input id="QST_display_text"
                                name="QST_display_text"
                                type="text"
                                value="<?php $question->f('QST_display_text') ?>"
@@ -71,26 +70,19 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_admin_label">
                             <?php echo $fields['QST_admin_label']->get_nicename(); ?>
+                            <?php echo EEH_Template::get_help_tab_link('question_label_info'); // already escaped ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('question_label_info'); // already escaped ?>
                     </th>
                     <td>
                         <?php
                         $id            = ! empty($QST_system) ? '_disabled' : '';
                         $disabled_attr = ! empty($QST_system) ? ' disabled="disabled"' : '';
                         ?>
-                        <input class='regular-text'
-                               id="QST_admin_label<?php echo $id; // escape not needed ?>"
+                        <input id="QST_admin_label<?php echo $id; // escape not needed ?>"
                                name="QST_admin_label<?php echo $id; // escape not needed ?>"
                                type="text"
                                value="<?php $question->f('QST_admin_label') ?>"
                                <?php echo $disabled_attr ?>
-                        />
-                        <input class="QST_order"
-                               id="QST_order<?php echo $id; // escape not needed ?>"
-                               name="QST_order<?php echo $id; // escape not needed ?>"
-                               type="hidden"
-                               value="<?php echo $question->get('QST_order'); ?>"
                         />
                         <?php if (! empty($QST_system)) { ?>
                             <input id='QST_admin_label'
@@ -100,14 +92,17 @@ if ($QST_system === 'country') {
                             />
                         <?php } ?>
                         <br />
-                        <p class="description">
-                            <?php if (! empty($QST_system)) { ?>
-                                <span class="description" style="color:#D54E21;">
+                        <?php if (! empty($QST_system)) { ?>
+                            <p class="description" style="color:#D54E21;">
                                 <?php esc_html_e('System question! This field cannot be changed.', 'event_espresso') ?>
-                        </span>
-                            <?php } ?>
-
-                        </p>
+                            </p>
+                        <?php } ?>
+                        <input class='QST_order'
+                               id="QST_order<?php echo $id; // escape not needed ?>"
+                               name="QST_order<?php echo $id; // escape not needed ?>"
+                               type='hidden'
+                               value="<?php echo $question->get('QST_order'); ?>"
+                        />
                     </td>
                 </tr>
 
@@ -115,8 +110,8 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_admin_only">
                             <?php echo esc_html($fields['QST_admin_only']->get_nicename()); ?>
+                            <?php echo EEH_Template::get_help_tab_link('question_admin_only_info'); // already escaped ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('question_admin_only_info'); // already escaped ?>
                     </th>
                     <td>
                         <?php
@@ -136,17 +131,15 @@ if ($QST_system === 'country') {
                             ?>
                         />
                         <br />
-                        <p class="description">
                             <?php
                             if (! empty($QST_system)) { ?>
-                                <span class="description" style="color:#D54E21;">
+                                <p class="description" style="color:#D54E21;">
                                     <?php esc_html_e(
                                         'System question! This field cannot be changed.',
                                         'event_espresso'
                                     ); ?>
-                                </span>
+                                </p>
                             <?php } ?>
-                        </p>
                     </td>
                 </tr>
 
@@ -154,8 +147,8 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_type">
                             <?php echo esc_html($fields['QST_type']->get_nicename()); ?>
+                            <?php echo EEH_Template::get_help_tab_link('question_type_info'); // already escaped ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('question_type_info'); // already escaped ?>
                     </th>
                     <td>
                         <?php
@@ -197,10 +190,8 @@ if ($QST_system === 'country') {
                             );
                         }
                         if ($disabled || $has_answers) { ?>
-                            <p>
-                                <span class="description" style="color:#D54E21;">
+                            <p class="description" style="color:#D54E21;">
                                     <?php echo esc_html($explanatory_text); ?>
-                                </span>
                             </p>
                         <?php } ?>
 
@@ -258,13 +249,17 @@ if ($QST_system === 'country') {
                             <thead>
                                 <tr>
                                     <th class="option-value-header">
-                                        <?php esc_html_e('Value', 'event_espresso') ?>
+                                        <label>
+                                            <?php esc_html_e('Value', 'event_espresso') ?>
+                                        </label>
                                     </th>
                                     <th class="option-desc-header">
+                                        <label>
                                         <?php esc_html_e(
                                             'Description (optional, only shown on registration form)',
                                             'event_espresso'
                                         ) ?>
+                                        </label>
                                     </th>
                                     <th>
                                     </th>
@@ -274,27 +269,44 @@ if ($QST_system === 'country') {
                             <tbody>
                                 <tr class="question-option sample">
                                     <td class="option-value-cell">
-                                        <input type="hidden"
-                                               class="QSO_order"
-                                               name="question_options[xxcountxx][QSO_order]"
-                                               value="0"
-                                        />
+                                        <label class='screen-reader-text' for='question_options-xxcountxx-QSO_value'>
+                                            <?php esc_html_e('Value', 'event_espresso') ?>
+                                        </label>
                                         <input type="text"
+                                               id="question_options-xxcountxx-QSO_value"
                                                name="question_options[xxcountxx][QSO_value]"
-                                               class="option-value regular-text"
+                                               class="option-value "
+                                        />
+                                        <input type='hidden'
+                                               class='QSO_order'
+                                               name='question_options[xxcountxx][QSO_order]'
+                                               value='0'
                                         />
                                     </td>
                                     <td class="option-desc-cell">
+                                        <label class='screen-reader-text' for='question_options-xxcountxx-QSO_desc'>
+                                            <?php esc_html_e('Description', 'event_espresso') ?>
+                                        </label>
                                         <input type="text"
+                                               id='question_options-xxcountxx-QSO_desc'
                                                name="question_options[xxcountxx][QSO_desc]"
-                                               class="option-desc regular-text"
+                                               class="option-desc "
                                         />
                                     </td>
                                     <td>
-                            <span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item">
-                            </span>
-                                        <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18">
-                            </span>
+                                        <a  class="button button--icon-only remove-option remove-item ee-aria-tooltip"
+                                            aria-label="<?php esc_html_e('click to delete this option', 'event_espresso') ?>"
+                                        >
+                                            <span class='dashicons clickable dashicons-post-trash'></span>
+                                        </a>
+                                        <a class="button button--icon-only sortable-drag-handle ee-aria-tooltip"
+                                            aria-label="<?php esc_html_e(
+                                                'click and drag to change the order of this option',
+                                                'event_espresso'
+                                            ) ?>"
+                                        >
+                                            <span class='dashicons dashicons-image-flip-vertical '></span>
+                                        </a>
                                     </td>
                                 </tr>
 
@@ -309,16 +321,22 @@ if ($QST_system === 'country') {
                                         ?>
                                         <tr class="question-option ee-options-sortable">
                                             <td class="option-value-cell">
-                                                <input type="hidden"
-                                                       class="QSO_order"
-                                                       name="question_options[<?php echo $count; ?>][QSO_order]"
-                                                       value="<?php echo $count; // escape not needed ?>"
-                                                />
+                                                <label class='screen-reader-text'
+                                                       for='question_options-<?php echo $count ?>-QSO_value'
+                                                >
+                                                    <?php esc_html_e('Value', 'event_espresso') ?>
+                                                </label>
                                                 <input type="text"
-                                                       class="option-value regular-text"
+                                                       class="option-value "
+                                                       id="question_options-<?php echo $count ?>-QSO_value"
                                                        name="question_options[<?php echo $count ?>][QSO_value]"
                                                        value="<?php $option->f('QSO_value') ?>"
                                                     <?php echo $disabled_attr; // escape not needed ?>
+                                                />
+                                                <input type='hidden'
+                                                       class='QSO_order'
+                                                       name="question_options[<?php echo $count; ?>][QSO_order]"
+                                                       value="<?php echo $count; // escape not needed ?>"
                                                 />
                                                 <?php if ($has_answers) : ?>
                                                     <input type="hidden"
@@ -328,20 +346,34 @@ if ($QST_system === 'country') {
                                                 <?php endif; ?>
                                             </td>
                                             <td class="option-desc-cell">
+                                                <label class='screen-reader-text'
+                                                       for='question_options-<?php echo $count ?>-QSO_desc'
+                                                >
+                                                    <?php esc_html_e('Description', 'event_espresso') ?>
+                                                </label>
                                                 <input type="text"
-                                                       class="option-desc regular-text"
+                                                       class="option-desc "
+                                                       id="question_options-<?php echo $count ?>-QSO_desc"
                                                        name="question_options[<?php echo $count ?>][QSO_desc]"
                                                        value="<?php $option->f('QSO_desc') ?>"
                                                 />
                                             </td>
                                             <td>
-                                                <?php if (! $option->system()) { ?>
-                                                    <span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item">
-                                        </span>
-                                                <?php } ?>
-                                                <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18">
-                                    </span>
-                                            </td>
+                                            <?php if (! $option->system()) { ?>
+                                                <a class='button button--icon-only remove-option remove-item ee-aria-tooltip'
+                                                   aria-label="<?php esc_html_e('click to delete this option', 'event_espresso') ?>"
+                                                >
+                                                    <span class='dashicons clickable dashicons-post-trash'></span>
+                                                </a>
+                                            <?php } ?>
+                                                <a class='button button--icon-only sortable-drag-handle ee-aria-tooltip'
+                                                   aria-label="<?php esc_html_e(
+                                                           'click and drag to change the order of this option',
+                                                           'event_espresso'
+                                                        ) ?>"
+                                                >
+                                                    <span class='dashicons dashicons-image-flip-vertical '></span>
+                                                </a>
                                             <?php
                                             echo EEH_Form_Fields::hidden_input(
                                                 "question_options[{$count}][QST_ID])",
@@ -353,6 +385,7 @@ if ($QST_system === 'country') {
                                             ); // already escaped
                                             $count++;
                                             ?>
+                                            </td>
                                         </tr>
                                         <?php
                                     }
@@ -360,20 +393,20 @@ if ($QST_system === 'country') {
                                     ?>
                                     <tr class="question-option ee-options-sortable">
                                         <td class="option-value-cell">
-                                            <input type="hidden"
-                                                   class="QSO_order"
-                                                   name="question_options[0][QSO_order]"
-                                                   value="0"
-                                            />
                                             <input type="text"
                                                    name="question_options[0][QSO_value]"
-                                                   class="option-value regular-text"
+                                                   class="option-value "
+                                            />
+                                            <input type='hidden'
+                                                   class='QSO_order'
+                                                   name='question_options[0][QSO_order]'
+                                                   value='0'
                                             />
                                         </td>
                                         <td class="option-desc-cell">
                                             <input type="text"
                                                    name="question_options[0][QSO_desc]"
-                                                   class="option-desc regular-text"
+                                                   class="option-desc "
                                             />
                                         </td>
                                         <td>
@@ -383,20 +416,17 @@ if ($QST_system === 'country') {
                                     <?php
                                 }
                                 ?>
-                                <tr style="display:none">
-                                    <td colspan="3">
-                                        <?php echo EEH_Form_Fields::hidden_input("question_options_count", $count); // already escaped ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3">
-                                        <a id='new-question-option' class='button' style='margin:0 0 1em 3px;'>
-                                            <?php esc_html_e('Add Another Answer Option', 'event_espresso') ?>
-                                        </a>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
+                        <div class="ee-admin-button-row">
+                            <a id='new-question-option' class='button button--secondary'>
+                                <?php esc_html_e('Add Another Answer Option', 'event_espresso') ?>
+                            </a>
+                            <?php echo EEH_Form_Fields::hidden_input(
+                                    'question_options_count',
+                                    $count
+                            ); // already escaped ?>
+                        </div>
                         <br />
 
                         <p class="description">
@@ -412,7 +442,6 @@ if ($QST_system === 'country') {
                                     'event_espresso'
                                 ); ?>
                             </p>
-
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -421,8 +450,8 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_required">
                             <?php echo esc_html($fields['QST_required']->get_nicename()); ?>
+                            <?php echo EEH_Template::get_help_tab_link('required_question_info'); // already escaped ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('required_question_info'); // already escaped ?>
                     </th>
                     <td>
                         <?php
@@ -445,23 +474,19 @@ if ($QST_system === 'country') {
                             'ee-input-size--small'
                         ); // already escaped
                         ?>
-                        <p>
-                            <span id="required_toggled_on" class="description"
+                        <p id="required_toggled_on" class="description"
                                   style="color:#D54E21;<?php echo $show_required_msg; ?>"
                             >
                                 <?php esc_html_e(
                                     'Required is set to optional, and this field is disabled, because the question is Admin-Only.',
                                     'event_espresso'
                                 ) ?>
-                            </span
                         </p>
-                        <p>
-                            <span id="required_toggled_off" class="description" style="color:#D54E21; display: none;">
+                        <p id="required_toggled_off" class="description" style="color:#D54E21; display: none;">
                                 <?php esc_html_e(
                                     'Required option field is no longer disabled because the question is not Admin-Only',
                                     'event_espresso'
                                 ) ?>
-                            </span>
                         </p>
                         <?php if (! empty($disabled_attr) && in_array($QST_system, $system_required)) { ?>
                             <input id="QST_required"
@@ -469,10 +494,8 @@ if ($QST_system === 'country') {
                                    type='hidden'
                                    value="1"
                             />
-                            <p>
-                            <span class="description" style="color:#D54E21;">
+                            <p class="description" style="color:#D54E21;">
                                 <?php esc_html_e('System question! This field cannot be changed.', 'event_espresso') ?>
-                            </span>
                             </p>
                         <?php } ?>
                     </td>
@@ -482,13 +505,13 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_required_text">
                             <?php esc_html_e('Required Text', 'event_espresso'); ?>
+                            <?php echo EEH_Template::get_help_tab_link('required_text_info'); // already escaped ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('required_text_info'); // already escaped ?>
                     </th>
                     <td>
                         <input type="text"
                                maxlength="100"
-                               class="regular-text"
+                               class=""
                                id="QST_required_text"
                                name="QST_required_text"
                                value="<?php $question->f('QST_required_text'); ?>"
