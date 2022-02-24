@@ -12,27 +12,27 @@
 /**
  * Template args found in this template.
  *
- * $form_action
- * $form_route
- * $form_nonce_name
- * $form_nonce
- * $redirect_back_to
- * $ajax_nonce
- * $template_selector
- * $shortcodes
- * $id_type
+ * @var string $form_action
+ * @var string $form_route
+ * @var string $form_nonce_name
+ * @var string $form_nonce
+ * @var string $redirect_back_to
+ * @var string $ajax_nonce
+ * @var string $template_selector
+ * @var array $shortcodes
+ * @var string $id_type
  */
 ?>
 <div id="ee-batch-message-send-form" style="display:none;">
     <div class="ee-batch-message-send-form">
-        <form id="newsletter-send-form" method="POST" action="<?php echo $form_action; ?>">
+        <form id="newsletter-send-form" method="POST" action="<?php echo esc_url_raw($form_action); ?>">
             <input type="hidden" name="page" value="espresso_registrations">
-            <input id="newsletter_action" type="hidden" name="action" value="<?php echo $form_route; ?>">
-            <input type="hidden" name="<?php echo $form_nonce_name; ?>" value="<?php echo $form_nonce; ?>">
-            <input type="hidden" name="redirect_back_to" value="<?php echo $redirect_back_to; ?>">
+            <input id="newsletter_action" type="hidden" name="action" value="<?php echo esc_attr($form_route); ?>">
+            <input type="hidden" name="<?php echo esc_attr($form_nonce_name); ?>" value="<?php echo esc_attr($form_nonce); ?>">
+            <input type="hidden" name="redirect_back_to" value="<?php echo esc_attr($redirect_back_to); ?>">
             <input type="hidden" id="get_newsletter_form_content_nonce" name="get_newsletter_form_content_nonce"
-                   value="<?php echo $ajax_nonce; ?>">
-            <input type="hidden" name="batch_message[id_type]" value="<?php echo $id_type; ?>">
+                   value="<?php echo esc_attr($ajax_nonce); ?>">
+            <input type="hidden" name="batch_message[id_type]" value="<?php echo esc_attr($id_type); ?>">
             <input id="newsletter-batch-ids" type="hidden" name="batch_message[ids]" value="">
             <h3 class="newsletter-send-form-title"><?php
                 printf(

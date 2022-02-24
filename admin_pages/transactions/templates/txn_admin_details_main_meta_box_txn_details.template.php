@@ -134,16 +134,16 @@
                                 : '{}';
                             $escaped_pay_id = esc_attr($PAY_ID);
                             ?>
-                            <tr id="txn-admin-payment-tr-<?php echo $escaped_pay_id; ?>">
+                            <tr id="txn-admin-payment-tr-<?php echo esc_attr($escaped_pay_id); ?>">
                                 <td>
-                <span id="payment-status-<?php echo $escaped_pay_id; ?>"
+                <span id="payment-status-<?php echo esc_attr($escaped_pay_id); ?>"
                       class="ee-status-strip-td ee-status-strip pymt-status-<?php echo esc_attr($payment->STS_ID()); ?>"
                 >
                 </span>
-                                    <div id="payment-STS_ID-<?php echo $escaped_pay_id; ?>" class="hidden">
+                                    <div id="payment-STS_ID-<?php echo esc_attr($escaped_pay_id); ?>" class="hidden">
                                         <?php echo esc_html($payment->STS_ID()); ?>
                                     </div>
-                                    <div id="reg-payments-<?php echo $escaped_pay_id; ?>" class="hidden">
+                                    <div id="reg-payments-<?php echo esc_attr($escaped_pay_id); ?>" class="hidden">
                                         <?php echo esc_html($existing_reg_payment_json); ?>
                                     </div>
                                 </td>
@@ -153,7 +153,7 @@
                                             <?php if ($can_edit_payments) : ?>
                                                 <a class="txn-admin-payment-action-edit-lnk"
                                                    title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
-                                                   data-payment-id="<?php echo $escaped_pay_id; ?>"
+                                                   data-payment-id="<?php echo esc_attr($escaped_pay_id); ?>"
                                                 >
                                                     <div class="dashicons dashicons-edit" style="margin: 0;"></div>
                                                 </a>
@@ -163,7 +163,7 @@
                                             <?php if ($can_delete_payments) : ?>
                                                 <a class="txn-admin-payment-action-delete-lnk"
                                                    title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
-                                                   data-payment-id="<?php echo $escaped_pay_id; ?>"
+                                                   data-payment-id="<?php echo esc_attr($escaped_pay_id); ?>"
                                                 >
                                                     <div class="dashicons dashicons-trash" style="margin: 0;"></div>
                                                 </a>
@@ -172,26 +172,26 @@
                                     </ul>
                                 </td>
                                 <td class=" jst-rght">
-                                    <div id="payment-id-<?php echo $escaped_pay_id; ?>">
+                                    <div id="payment-id-<?php echo esc_attr($escaped_pay_id); ?>">
                                         <?php echo $PAY_ID; // sanitized
                                         ?>
                                     </div>
                                 </td>
                                 <td class=" jst-left">
-                                    <div id="payment-date-<?php echo $escaped_pay_id; ?>" class="payment-date-dv">
+                                    <div id="payment-date-<?php echo esc_attr($escaped_pay_id); ?>" class="payment-date-dv">
                                         <?php echo esc_html($payment->timestamp('Y-m-d', 'g:i a')); ?>
                                     </div>
                                 </td>
                                 <td class=" jst-left">
-                                    <div id="payment-method-<?php echo $escaped_pay_id; ?>">
+                                    <div id="payment-method-<?php echo esc_attr($escaped_pay_id); ?>">
                                         <?php echo esc_html($payment->source()); ?>
                                     </div>
-                                    <div id="payment-gateway-<?php echo $escaped_pay_id; ?>">
+                                    <div id="payment-gateway-<?php echo esc_attr($escaped_pay_id); ?>">
                                         <?php echo $payment->payment_method() instanceof EE_Payment_Method
                                             ? esc_html($payment->payment_method()->admin_name())
                                             : esc_html__("Unknown", 'event_espresso'); ?>
                                     </div>
-                                    <div id="payment-gateway-id-<?php echo $escaped_pay_id; ?>"
+                                    <div id="payment-gateway-id-<?php echo esc_attr($escaped_pay_id); ?>"
                                          class="hidden"
                                     >
                                         <?php echo $payment->payment_method() instanceof EE_Payment_Method
@@ -200,22 +200,22 @@
                                     </div>
                                 </td>
                                 <td class=" jst-left">
-                                    <div id="payment-response-<?php echo $escaped_pay_id; ?>">
+                                    <div id="payment-response-<?php echo esc_attr($escaped_pay_id); ?>">
                                         <?php echo esc_html($payment->gateway_response()); ?>
                                     </div>
                                 </td>
                                 <td class=" jst-left payment-txn-id-chq-nmbr">
-                                    <div id="payment-txn-id-chq-nmbr-<?php echo $escaped_pay_id; ?>">
+                                    <div id="payment-txn-id-chq-nmbr-<?php echo esc_attr($escaped_pay_id); ?>">
                                         <?php echo esc_html($payment->txn_id_chq_nmbr()); ?>
                                     </div>
                                 </td>
                                 <td class=" jst-left">
-                                    <div id="payment-po-nmbr-<?php echo $escaped_pay_id; ?>">
+                                    <div id="payment-po-nmbr-<?php echo esc_attr($escaped_pay_id); ?>">
                                         <?php echo esc_html($payment->po_number()); ?>
                                     </div>
                                 </td>
                                 <td class=" jst-left">
-                                    <div id="payment-accntng-<?php echo $escaped_pay_id; ?>">
+                                    <div id="payment-accntng-<?php echo esc_attr($escaped_pay_id); ?>">
                                         <?php echo esc_html($payment->extra_accntng()); ?>
                                     </div>
                                 </td>
@@ -226,7 +226,7 @@
                                         : 'txn-admin-payment-status-PDC';
                                     ?>
                                     <span class="<?php echo esc_attr($payment_class); ?>">
-                                        <span id="payment-amount-<?php echo $escaped_pay_id; ?>" style="display:inline;">
+                                        <span id="payment-amount-<?php echo esc_attr($escaped_pay_id); ?>" style="display:inline;">
                                         <?php echo EEH_Template::format_currency(
                                             $payment->amount(),
                                             false,

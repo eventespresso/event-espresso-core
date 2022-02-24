@@ -4,7 +4,6 @@
  * @var string           $post_body_content
  * @var string|WP_Screen $current_page
  */
-$admin_page_wrapper_div_id = esc_attr($admin_page_wrapper_div_id);
 
 global $post_type, $post;
 // action for registering metaboxes
@@ -16,7 +15,7 @@ do_action('add_meta_boxes', (string) $post_type, $post);
         <?php echo $admin_page_header; // already escaped ?>
     </div>
 <?php endif; ?>
-<div id="<?php echo $admin_page_wrapper_div_id; // already escaped ?>">
+<div id="<?php echo esc_attr($admin_page_wrapper_div_id); ?>">
     <!-- admin-page-header -->
     <div id="post-body" class="metabox-holder columns-2">
 
@@ -42,4 +41,4 @@ do_action('add_meta_boxes', (string) $post_type, $post);
     </div>
     <!-- post-body -->
 </div>
-<!-- <?php echo $admin_page_wrapper_div_id; // already escaped ?> -->
+<!-- <?php echo $admin_page_wrapper_div_id; ?> -->

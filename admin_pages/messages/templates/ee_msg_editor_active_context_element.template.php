@@ -35,7 +35,7 @@ $context = esc_attr($context);
 <div class="context-active-control-container">
     <span class="spinner"></span>
     <div class="activate_context_on_off_toggle_container">
-        <span id="on-off-nonce-<?php echo $context; // already escaped ?>" class="hidden">
+        <span id="on-off-nonce-<?php echo esc_attr($context); ?>" class="hidden">
             <?php echo $nonce; // already escaped ?>
         </span>
         <span class="ee-on-off-toggle-label">
@@ -46,14 +46,14 @@ $context = esc_attr($context);
             <span class="ee-inactive-message"><?php echo $inactive_message; // already escaped ?></span>
         </div>
         <div class="switch">
-            <?php $checked = $is_active ? ' checked="checked"' : ''; ?>
-            <input class='ee-on-off-toggle ee-toggle-round-flat'<?php echo $checked; ?>
+            <?php $checked = $is_active ? 'checked="checked"' : ''; ?>
+            <input class='ee-on-off-toggle ee-toggle-round-flat' <?php echo $checked; ?>
                    data-grpid="<?php echo esc_attr($message_template_group_id); ?>"
-                   id="ee-on-off-toggle-<?php echo $context; // already escaped ?>"
+                   id="ee-on-off-toggle-<?php echo esc_attr($context); ?>"
                    type="checkbox"
                    value="<?php echo esc_attr($on_off_action); ?>"
             />
-            <label for="ee-on-off-toggle-<?php echo $context; // already escaped ?>"></label>
+            <label for="ee-on-off-toggle-<?php echo esc_attr($context); ?>"></label>
         </div>
     </div>
 </div>

@@ -24,7 +24,7 @@
             $context = ($i === 1) ? 'normal' : 'side';
             $context = ($i > 2) ? 'column' . $i : $context;
             ?>
-        <div id='postbox-container-<?php echo $i; ?>' class='postbox-container'>
+        <div id='postbox-container-<?php echo esc_attr($i); ?>' class='postbox-container'>
             <?php do_meta_boxes($current_page, $context, null); ?>
         </div>
         <?php } // end column loop ?>

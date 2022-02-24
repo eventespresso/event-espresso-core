@@ -1484,8 +1484,8 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     function PUDismissUpgrade() {
                         jQuery("#pu_dashboard_message").slideUp();
                         jQuery.post(ajaxurl, {
-                            action: "<?php echo $this->dismiss_upgrade; ?>",
-                            version: "<?php echo $pluginInfo->version; ?>",
+                            action: "<?php echo esc_js($this->dismiss_upgrade); ?>",
+                            version: "<?php echo esc_js($pluginInfo->version); ?>",
                             cookie: encodeURIComponent(document.cookie)
                         });
                     }

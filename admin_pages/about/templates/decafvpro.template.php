@@ -12,31 +12,31 @@
     <?php
     $features = array(
         'pricing-options'        => array(
-            'label'   => esc_html__('Handle multiple dates and pricing options', 'event_espresso'),
+            'label'   => __('Handle multiple dates and pricing options', 'event_espresso'),
             'class'   => 'alternate',
         ),
         'custom-registration'    => array(
-            'label'   => esc_html__('Create custom registration forms', 'event_espresso'),
+            'label'   => __('Create custom registration forms', 'event_espresso'),
             'class'   => 'none',
         ),
         'advanced-notifications' => array(
-            'label'   => esc_html__('Customize advanced email notifications', 'event_espresso'),
+            'label'   => __('Customize advanced email notifications', 'event_espresso'),
             'class'   => 'alternate',
         ),
         'manage-taxes'           => array(
-            'label'   => esc_html__('Manage taxes', 'event_espresso'),
+            'label'   => __('Manage taxes', 'event_espresso'),
             'class'   => 'none',
         ),
         'typography'             => array(
-            'label'   => esc_html__('Additional payment methods available', 'event_espresso'),
+            'label'   => __('Additional payment methods available', 'event_espresso'),
             'class'   => 'alternate',
         ),
         'add-on-compatibility'   => array(
-            'label'   => esc_html__('Compatibility with add-ons', 'event_espresso'),
+            'label'   => __('Compatibility with add-ons', 'event_espresso'),
             'class'   => 'none',
         ),
         'best-support'           => array(
-            'label'   => esc_html__('Best in class support', 'event_espresso'),
+            'label'   => __('Best in class support', 'event_espresso'),
             'class'   => 'alternate',
         ),
     );
@@ -56,7 +56,7 @@
             <tr class="<?php echo esc_attr($feature['class']); ?>">
                 <td class="feature">
                     <h3>
-                        <?php echo $feature['label']; // already escaped ?>
+                        <?php echo esc_html($feature['label']); ?>
                     </h3>
                 </td>
                 <td class="decaf-feature">

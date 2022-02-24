@@ -22,7 +22,7 @@
     <link rel="stylesheet" type="text/css"
           href="[base_url]css/print/<?php echo str_replace('.css', '', $invoice_css); ?>_print.css" media="print"/>
     <!-- Primary Style Sheet -->
-    <link rel="stylesheet" type="text/css" href="[base_url]css/<?php echo $invoice_css; ?>"/>
+    <link rel="stylesheet" type="text/css" href="[base_url]css/<?php echo esc_attr($invoice_css); ?>"/>
     <!-- Make sure the buttons don't print -->
     <style type="text/css">
         @media print {

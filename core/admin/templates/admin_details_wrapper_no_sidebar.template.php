@@ -4,10 +4,9 @@
  * @var string           $post_body_content
  * @var string|WP_Screen $current_page
  */
-$admin_page_wrapper_div_id = esc_attr($admin_page_wrapper_div_id);
 ?>
 
-<div id="<?php echo $admin_page_wrapper_div_id; // already escaped ?>">
+<div id="<?php echo esc_attr($admin_page_wrapper_div_id); ?>">
     <div id="post-body" class="metabox-holder columns-1">
 
         <?php if (! empty($admin_page_header)) : ?>
@@ -32,4 +31,4 @@ $admin_page_wrapper_div_id = esc_attr($admin_page_wrapper_div_id);
     </div>
     <!-- post-body -->
 </div>
-<!-- <?php echo $admin_page_wrapper_div_id; // already escaped ?> -->
+<!-- <?php echo esc_attr($admin_page_wrapper_div_id); ?> -->

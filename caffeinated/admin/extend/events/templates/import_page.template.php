@@ -5,5 +5,5 @@
             'event_espresso'
         ); ?>
     </div>
-    <?php // echo $form?>
+    <?php // echo $form; ?>
 </div>

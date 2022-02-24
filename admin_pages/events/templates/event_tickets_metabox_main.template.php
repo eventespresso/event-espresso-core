@@ -124,7 +124,7 @@
         <input id='ticket-total-rows'
                name="ticket_total_rows"
                type="hidden"
-               value="<?php echo $total_ticket_rows; // already escaped ?>"
+               value="<?php echo esc_attr($total_ticket_rows); ?>"
         />
         <div class="save-cancel-button-container">
             <button class="button-secondary ee-create-button" data-context="ticket">

@@ -38,7 +38,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                 </label>
             </th>
             <td>
-                <input id="QSG_name" name="QSG_name" value="<?php $question_group->f('QSG_name') ?>" type="text"
+                <input id="QSG_name" name="QSG_name" value="<?php echo esc_attr($question_group->get_f('QSG_name')); ?>" type="text"
                        class="regular-text"><br/>
 
             </td>
@@ -53,8 +53,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                 </label>
             </th>
             <td>
-                <input id="QSG_identifier" name="QSG_identifier<?php echo $id; ?>"
-                       value="<?php $question_group->f('QSG_identifier') ?>" type="text"
+                <input id="QSG_identifier" name="QSG_identifier<?php echo esc_attr($id); ?>"
+                       value="<?php echo esc_attr($question_group->get_f('QSG_identifier')); ?>" type="text"
                        class="regular-text"<?php echo $disabled; ?>>
                 <?php if (! empty($QSG_system)) { ?>
                     <p><span class="description" style="color:#D54E21;">
@@ -88,7 +88,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
             </th>
             <td>
                 <input id="QSG_order" name="QSG_order" class="regular-text"
-                       value="<?php echo $question_group->order(); ?>"/>
+                       value="<?php echo esc_attr($question_group->order()); ?>"/>
             </td>
         </tr>
 
@@ -131,7 +131,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                         esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
                     ?></p>
                 </label>
-                <input type="hidden" name="QSG_system" value="<?php echo $question_group->system_group(); ?>">
+                <input type="hidden" name="QSG_system" value="<?php echo esc_attr($question_group->system_group()); ?>">
             </td>
         </tr>
 
@@ -180,10 +180,10 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                             }
                             ?>
                             <li class="ee-question-sortable">
-                                <label for="question-<?php echo $question_ID ?>">
-                                    <input type="checkbox" name="questions[<?php echo $question_ID; ?>]"
-                                           id="question-<?php echo $question_ID; ?>"
-                                           value="<?php echo $question_ID; ?>"<?php echo $disabled; ?><?php echo $checked; ?>/>
+                                <label for="question-<?php echo esc_attr($question_ID); ?>">
+                                    <input type="checkbox" name="questions[<?php echo esc_attr($question_ID); ?>]"
+                                           id="question-<?php echo esc_attr($question_ID); ?>"
+                                           value="<?php echo esc_attr($question_ID); ?>"<?php echo $disabled; ?><?php echo $checked; ?>/>
                                     <span class="question-text"><?php
                                         echo trim($question->display_text())
                                              . (95 <= strlen(trim($question->display_text()))
@@ -192,8 +192,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                                                 ?>
                                     </span>
                                     <input class="question-group-QGQ_order" type="hidden"
-                                           name="question_orders[<?php echo $question_ID; ?>]"
-                                           value="<?php echo $question_order; ?>">
+                                           name="question_orders[<?php echo esc_attr($question_ID); ?>]"
+                                           value="<?php echo esc_attr($question_order); ?>">
                                 </label>
                                 <?php
                                 if (
