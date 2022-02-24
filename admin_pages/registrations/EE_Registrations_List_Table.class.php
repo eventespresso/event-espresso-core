@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\services\capabilities\RegistrationsListTableUserCapabilities;
+use EventEspresso\core\domain\services\capabilities\user_caps\RegistrationsListTableUserCapabilities;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -440,7 +440,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column_id(EE_Registration $registration): string
     {
-        $content = $registration->ID();
+        $content = '<span class="ee-entity-id">' . $registration->ID() . '</span>';
         $content .= '<span class="show-on-mobile-view-only">';
         $content .= $this->column_ATT_fname($registration, false);
         $content .= '</span>';
@@ -482,10 +482,15 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             ' . $this->viewRegistrationLink($registration, $status)
                    . $prime_reg_star
                    . $group_count . '
+            <span class="spacer"></span>
+            <span>
+                ' . sprintf(
+                    esc_html__('Reg Code: %s', 'event_espresso'),
+                    $registration->get('REG_code')
+                ) . '
+            </span>
         </div>';
 
-        // append reg_code
-        $content    .= sprintf(esc_html__('Reg Code: %s', 'event_espresso'), $registration->get('REG_code'));
         $url_params = ['_REG_ID' => $registration->ID()];
         if (isset($this->_req_data['event_id'])) {
             $url_params['event_id'] = $registration->event_ID();

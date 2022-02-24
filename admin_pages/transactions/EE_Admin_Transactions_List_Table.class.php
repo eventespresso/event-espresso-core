@@ -180,11 +180,15 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             ),
             TXN_ADMIN_URL
         );
-        $content = '<a class="ee-aria-tooltip" href="' . $view_lnk_url . '"'
-                   . ' aria-label="' . esc_attr__('Go to Transaction Details', 'event_espresso') . '">'
-                   . $transaction->ID()
-                   . '</a>';
-
+        $content = '
+        <span class="ee-entity-id">
+            <a  class="ee-aria-tooltip" 
+                href="' . $view_lnk_url . '" 
+                aria-label="' . esc_attr__('Go to Transaction Details', 'event_espresso') . '"
+            >
+               ' . $transaction->ID() . '
+           </a>
+        </span>';
         // txn timestamp
         $content .= '  <span class="show-on-mobile-view-only">' . $this->_get_txn_timestamp($transaction) . '</span>';
         return $this->columnContent('id', $content, 'end');
