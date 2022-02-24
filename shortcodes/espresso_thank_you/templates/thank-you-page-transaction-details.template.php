@@ -42,7 +42,7 @@
                     <?php $transaction->e_pretty_status(true);
                     if ($show_try_pay_again_link && ! $transaction->is_completed()) { ?>
                         <span class="small-text">
-                        <a href='<?php echo esc_url($SPCO_payment_options_url); ?>'>
+                        <a href='<?php echo esc_url_raw($SPCO_payment_options_url); ?>'>
                             <?php esc_html_e('View Payment Options', 'event_espresso'); ?>
                         </a>
                     </span>
@@ -66,7 +66,7 @@
 
     <?php if ($show_try_pay_again_link && ! $transaction->is_completed()) { ?>
         <p class="small-text jst-rght">
-            <a href='<?php echo esc_url($SPCO_payment_options_url); ?>'><?php
+            <a href='<?php echo esc_url_raw($SPCO_payment_options_url); ?>'><?php
                 esc_html_e("Click here to view Payment Options", 'event_espresso'); ?></a>
         </p>
         <br />
