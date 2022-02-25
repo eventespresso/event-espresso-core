@@ -1,8 +1,7 @@
 <?php
 
-namespace EventEspresso\core\domain\services\capabilities;
+namespace EventEspresso\core\domain\services\capabilities\user_caps;
 
-use EE_Capabilities;
 use EE_Error;
 use EE_Registration;
 use ReflectionException;
@@ -14,57 +13,8 @@ use ReflectionException;
  * @package EventEspresso\core\domain\services\capabilities
  * @since   $VID:$
  */
-class RegistrationsListTableUserCapabilities
+class RegistrationsListTableUserCapabilities extends UserCapabilities
 {
-
-    /**
-     * @var EE_Capabilities
-     */
-    protected $capabilities;
-
-
-    /**
-     * @var array
-     */
-    protected $caps = [];
-
-
-    /**
-     * @param EE_Capabilities $capabilities
-     */
-    public function __construct(EE_Capabilities $capabilities)
-    {
-        $this->capabilities = $capabilities;
-    }
-
-
-    /**
-     * @param string     $cap
-     * @param string     $context
-     * @param int|string $ID
-     * @return bool
-     */
-    private function hasEntityCap(string $cap, string $context, $ID): bool
-    {
-        if (! isset($this->caps[ $cap ][ $context ][ $ID ])) {
-            $this->caps[ $cap ][ $context ][ $ID ] = $this->capabilities->current_user_can($cap, $context, $ID);
-        }
-        return $this->caps[ $cap ][ $context ][ $ID ];
-    }
-
-
-    /**
-     * @param string $cap
-     * @param string $context
-     * @return bool
-     */
-    private function hasGlobalCap(string $cap, string $context): bool
-    {
-        if (! isset($this->caps[ $cap ][ $context ])) {
-            $this->caps[ $cap ][ $context ] = $this->capabilities->current_user_can($cap, $context);
-        }
-        return $this->caps[ $cap ][ $context ];
-    }
 
 
     /**
