@@ -10,8 +10,6 @@
  * @package         Venue_Categories_Admin_List_Table
  * @subpackage      caffeinated/admin/new/venues/Venue_Categories_Admin_List_Table.class.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table
 {
@@ -72,24 +70,26 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table
 
     public function column_id($item)
     {
-        $content = $item->get('term_id');
-        $content .= '  <span class="show-on-mobile-view-only">' . $item->get_first_related('Term')->get(
-            'name'
-        ) . '</span>';
-        return $content;
+        $content = '<span class="ee-entity-id">' . $item->get('term_id') . '</span>';
+        $content .= '
+            <span class="show-on-mobile-view-only">
+                ' . $this->column_name($item, false) . '
+            </span>';
+        return $this->columnContent('id', $content, 'end');
     }
 
 
-    public function column_name($item)
+    public function column_name(EE_Term_Taxonomy $item, bool $prep_content = true): string
     {
+        $VEN_CAT_ID = $item->get('term_id');
         $edit_query_args = array(
             'action'     => 'edit_category',
-            'VEN_CAT_ID' => $item->get('term_id'),
+            'VEN_CAT_ID' => $VEN_CAT_ID,
         );
 
         $delete_query_args = array(
             'action'     => 'delete_category',
-            'VEN_CAT_ID' => $item->get('term_id'),
+            'VEN_CAT_ID' => $VEN_CAT_ID,
         );
 
         $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_VENUES_ADMIN_URL);
@@ -108,29 +108,35 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table
             'event_espresso'
         ) . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
 
-        $content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->get_first_related('Term')->get(
-            'name'
-        ) . '</a></strong>';
-        $content .= $this->row_actions($actions);
-        return $content;
+        $content = '
+            <strong>
+                <a class="row-title" href="' . $edit_link . '">
+                    ' . $item->get_first_related('Term')->get('name') . '
+                </a>
+            </strong>';
+
+        $content .= $prep_content ? $this->row_actions($actions) : '';
+        return $prep_content ? $this->columnContent('name', $content) : $content;
     }
 
 
-    public function column_shortcode($item)
+    public function column_shortcode(EE_Term_Taxonomy $item): string
     {
         $content = '[EVENT_ESPRESSO_CATEGORY category_id="' . $item->get_first_related('Term')->get('slug') . '"]';
-        return $content;
+        return $this->columnContent('shortcode', $content);
     }
 
 
-    public function column_count($item)
+    public function column_count(EE_Term_Taxonomy $item): string
     {
-        $e_args = array(
+        $args = array(
             'action'   => 'default',
             'category' => $item->get_first_related('Term')->ID(),
         );
-        $e_link = EE_Admin_Page::add_query_args_and_nonce($e_args, EE_VENUES_ADMIN_URL);
-        $content = '<a href="' . $e_link . '">' . $item->get('term_count') . '</a>';
-        return $content;
+        $content = '
+        <a href="' . EE_Admin_Page::add_query_args_and_nonce($args, EE_VENUES_ADMIN_URL) . '">
+            ' . $item->get('term_count') . '
+        </a>';
+        return $this->columnContent('count', $content, 'end');
     }
 }

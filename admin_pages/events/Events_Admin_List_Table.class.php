@@ -61,10 +61,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             'start_date_time' => esc_html__('Event Start', 'event_espresso'),
             'reg_begins'      => esc_html__('On Sale', 'event_espresso'),
             'attendees'       => '
-                <span class="show-on-mobile-view-only" aria-label="' . $approved_registrations . '">
-                    ' . $approved_registrations . '
-                </span>
-                <span class="dashicons dashicons-groups ee-icon-color-ee-green"></span>',
+                <span class="dashicons dashicons-groups ee-status-color--RAP ee-aria-tooltip"
+                    aria-label="' . $approved_registrations . '"></span>',
             'actions'         => $this->actionsColumnHeader(),
         ];
         $this->addConditionalColumns();

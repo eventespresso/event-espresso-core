@@ -10,17 +10,9 @@
  * @package         Venues_Admin_List_Table
  * @subpackage      includes/core/admin/events/Venues_Admin_List_Table.class.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Venues_Admin_List_Table extends EE_Admin_List_Table
 {
-
-    public function __construct($admin_page)
-    {
-        parent::__construct($admin_page);
-    }
-
 
     protected function _setup_data()
     {
@@ -66,6 +58,10 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _add_view_counts()
     {
         $this->_views['all']['count'] = EEM_Venue::instance()->count();
@@ -89,13 +85,21 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
 
     public function column_id($item)
     {
-        $content = $item->ID();
-        $content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
-        return $content;
+        $content = '
+            <span class="ee-entity-id">' . $item->ID() . '</span>
+            <span class="show-on-mobile-view-only">' . $this->column_name($item, false) . '</span>';
+        return $this->columnContent('id', $content, 'end');
     }
 
 
-    public function column_name($item)
+    /**
+     * @param EE_Venue $item
+     * @param bool     $prep_content
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_name(EE_Venue $item, bool $prep_content = true): string
     {
         $edit_query_args = array(
             'action' => 'edit',
@@ -105,15 +109,15 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
         $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_VENUES_ADMIN_URL);
 
         $statuses = EEM_Venue::instance()->get_status_array();
-        $actions = $this->_column_name_action_setup($item);
+        $actions = $prep_content ? $this->_column_name_action_setup($item) : [];
         $content = EE_Registry::instance()->CAP->current_user_can('ee_edit_venue', 'espresso_venues_edit', $item->ID())
             ? '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep(
                 $item->name()
             ) . '</a></strong>' : $item->name();
         $content .= $item->status() == 'draft' ? ' - <span class="post-state">' . $statuses['draft'] . '</span>' : '';
-        $content .= $this->row_actions($actions);
-        return $content;
-    }
+
+        $content .= $prep_content ? $this->row_actions($actions) : '';
+        return $prep_content ? $this->columnContent('name', $content) : $content;    }
 
 
     /**
@@ -121,8 +125,10 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
      *
      * @param EE_Venue $item
      * @return array()
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _column_name_action_setup(EE_Venue $item)
+    protected function _column_name_action_setup(EE_Venue $item): array
     {
         $actions = array();
 
@@ -139,53 +145,6 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
         }
 
 
-        if (
-            EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_venue',
-                'espresso_venues_trash_venue',
-                $item->ID()
-            )
-        ) {
-            $trash_event_query_arg = array(
-                'action' => 'trash_venue',
-                'VNU_ID' => $item->ID(),
-            );
-            $trash_venue_link = EE_Admin_Page::add_query_args_and_nonce($trash_event_query_arg, EE_VENUES_ADMIN_URL);
-        }
-
-        if (
-            EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_venue',
-                'espresso_venues_restore_venue',
-                $item->ID()
-            )
-        ) {
-            $restore_venue_query_args = array(
-                'action' => 'restore_venue',
-                'VNU_ID' => $item->ID(),
-            );
-            $restore_venue_link = EE_Admin_Page::add_query_args_and_nonce(
-                $restore_venue_query_args,
-                EE_VENUES_ADMIN_URL
-            );
-        }
-
-        if (
-            EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_venue',
-                'espresso_venues_delete_venue',
-                $item->ID()
-            )
-        ) {
-            $delete_venue_query_args = array(
-                'action' => 'delete_venue',
-                'VNU_ID' => $item->ID(),
-            );
-            $delete_venue_link = EE_Admin_Page::add_query_args_and_nonce($delete_venue_query_args, EE_VENUES_ADMIN_URL);
-        }
-
-        $view_link = get_permalink($item->ID());
-
         switch ($item->get('status')) {
             case 'trash':
                 if (
@@ -195,6 +154,14 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                         $item->ID()
                     )
                 ) {
+                    $restore_venue_link = EE_Admin_Page::add_query_args_and_nonce(
+                        [
+                            'action' => 'restore_venue',
+                            'VNU_ID' => $item->ID(),
+                        ],
+                        EE_VENUES_ADMIN_URL
+                    );
+
                     $actions['restore_from_trash'] = '<a href="' . $restore_venue_link . '" title="' . esc_attr__(
                         'Restore from Trash',
                         'event_espresso'
@@ -207,6 +174,14 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                         $item->ID()
                     )
                 ) {
+                    $delete_venue_link = EE_Admin_Page::add_query_args_and_nonce(
+                        [
+                            'action' => 'delete_venue',
+                            'VNU_ID' => $item->ID(),
+                        ],
+                        EE_VENUES_ADMIN_URL
+                    );
+
                     $actions['delete permanently'] = '<a href="' . $delete_venue_link . '" title="' . esc_attr__(
                         'Delete Permanently',
                         'event_espresso'
@@ -214,10 +189,12 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                 }
                 break;
             default:
-                $actions['view'] = '<a href="' . $view_link . '" title="' . esc_attr__(
-                    'View Venue',
-                    'event_espresso'
-                ) . '">' . esc_html__('View', 'event_espresso') . '</a>';
+                $actions['view'] = '
+                    <a  href="' . get_permalink($item->ID()) . '" 
+                        title="' . esc_attr__( 'View Venue', 'event_espresso'   ) . '"
+                    >
+                        ' . esc_html__('View', 'event_espresso') . '
+                    </a>';
                 if (
                     EE_Registry::instance()->CAP->current_user_can(
                         'ee_delete_venue',
@@ -225,6 +202,14 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                         $item->ID()
                     )
                 ) {
+                    $trash_venue_link = EE_Admin_Page::add_query_args_and_nonce(
+                        [
+                            'action' => 'trash_venue',
+                            'VNU_ID' => $item->ID(),
+                        ],
+                        EE_VENUES_ADMIN_URL
+                    );
+
                     $actions['move to trash'] = '<a href="' . $trash_venue_link . '" title="' . esc_attr__(
                         'Trash Event',
                         'event_espresso'
@@ -235,27 +220,31 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
-    public function column_address($item)
+    public function column_address(EE_Venue $item): string
     {
-        return $item->address();
+        return $this->columnContent('address', $item->address());
     }
 
 
-    public function column_city($item)
+    public function column_city(EE_Venue $item): string
     {
-        return $item->city();
+        return $this->columnContent('city', $item->city());
     }
 
 
-    public function column_capacity($item)
+    public function column_capacity(EE_Venue $item): string
     {
-        return $item->capacity();
+        return $this->columnContent('capacity', $item->capacity());
     }
 
 
-    public function column_shortcode($item)
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
+    public function column_shortcode(EE_Venue $item): string
     {
         $content = '[ESPRESSO_VENUE id=' . $item->ID() . ']';
-        return $content;
+        return $this->columnContent('shortcode', $content);
     }
 }

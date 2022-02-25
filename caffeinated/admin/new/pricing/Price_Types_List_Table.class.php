@@ -41,23 +41,15 @@ class Price_Types_List_Table extends EE_Admin_List_Table
             'cb'        => '<input type="checkbox" />', // Render a checkbox instead of text
             'id'        => esc_html__('ID', 'event_espresso'),
             'name'      => esc_html__('Name', 'event_espresso'),
-            'base_type' => '<div class="jst-cntr">' . esc_html__('Base Type', 'event_espresso') . '</div>',
-            'percent'   => '<div class="jst-cntr">'
-                           . sprintf(
+            'base_type' => esc_html__('Base Type', 'event_espresso'),
+            'percent'   => sprintf(
                                /* translators: 1: HTML new line, 2: open span tag, 3: close span tag */
                                esc_html__('Applied %1$s as %2$s%%%3$s or %2$s$%3$s', 'event_espresso'),
                                '',
                                '<span class="big-text">',
                                '</span>'
-                           )
-                           . '</div>',
-            'order'     => '<div class="jst-cntr">'
-                           . sprintf(
-                               /* translators: HTML new line */
-                               esc_html__('Order of %s Application', 'event_espresso'),
-                               ''
-                           )
-                           . '</div>',
+                           ),
+            'order'     => esc_html__('Order of Application', 'event_espresso'),
         ];
 
         $this->_sortable_columns = [
@@ -88,6 +80,30 @@ class Price_Types_List_Table extends EE_Admin_List_Table
     }
 
 
+    /**
+     * @param EE_Price_Type $price_type
+     * @param string   $action
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    protected function getActionUrl(EE_Price_Type $price_type, string $action): string
+    {
+        if (! in_array($action, self::$actions)) {
+            throw new DomainException(esc_html__('Invalid Action', 'event_espresso'));
+        }
+        return EE_Admin_Page::add_query_args_and_nonce(
+            [
+                'action'   => "{$action}_price_type",
+                'id'       => $price_type->ID(),
+                'noheader' => $action !== self::ACTION_EDIT,
+            ],
+            PRICING_ADMIN_URL
+        );
+    }
+
+
     public function column_cb($item): string
     {
         if ($item->base_type() !== 1) {
@@ -106,81 +122,75 @@ class Price_Types_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_id(EE_Price_Type $item): string
+    public function column_id($item): string
     {
-        $content = $item->ID();
-        $content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
+        $content = '<span class="ee-entity-id">' . $item->ID() . '</span>';
+        $content .= '<span class="show-on-mobile-view-only">' . $this->column_name($item, false) . '</span>';
         return $this->columnContent('id', $content, 'end');
     }
 
 
-    public function column_name($item): string
+    /**
+     * @param EE_Price_Type $price_type
+     * @param bool          $prep_content
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_name(EE_Price_Type $price_type, bool $prep_content = true): string
     {
 
         // Build row actions
         $actions   = [];
-        $name_link = $item->name();
+        $name_link = $price_type->name();
         // edit price link
         if (
             EE_Registry::instance()->CAP->current_user_can(
                 'ee_edit_default_price_type',
                 'pricing_edit_price_type',
-                $item->ID()
+                $price_type->ID()
             )
         ) {
-            $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-                [
-                    'action' => 'edit_price_type',
-                    'id'     => $item->ID(),
-                ],
-                PRICING_ADMIN_URL
+            $name_link = $this->getActionLink(
+                $this->getActionUrl($price_type, self::ACTION_EDIT),
+                stripslashes($price_type->name()),
+                sprintf(
+                    /* translators: The name of the price type */
+                    esc_attr__('Edit Price Type (%s)', 'event_espresso'),
+                    $price_type->name()
+                )
             );
 
-            $name_link = '<a href="' . $edit_lnk_url . '" aria-label="'
-                         . sprintf(
-                             /* translators: The name of the price type */
-                             esc_attr__('Edit Price Type (%s)', 'event_espresso'),
-                             $item->name()
-                         )
-                         . '">'
-                         . stripslashes($item->name()) . '</a>';
-
-            $actions['edit'] = '<a href="' . $edit_lnk_url . '" aria-label="'
-                               . sprintf(
-                                   /* translators: The name of the price type */
-                                   esc_attr__('Edit Price Type (%s)', 'event_espresso'),
-                                   $item->name()
-                               )
-                               . '">'
-                               . esc_html__('Edit', 'event_espresso') . '</a>';
+            $actions['edit'] = $this->getActionLink(
+                $this->getActionUrl($price_type, self::ACTION_EDIT),
+                esc_html__('Edit', 'event_espresso'),
+                sprintf(
+                    /* translators: The name of the price type */
+                    esc_attr__('Edit Price Type (%s)', 'event_espresso'),
+                    $price_type->name()
+                )
+            );
         }
 
-        if ($item->base_type() !== 1) {
+        if ($price_type->base_type() !== 1) {
             if ($this->_view == 'all') {
                 // trash price link
                 if (
                     EE_Registry::instance()->CAP->current_user_can(
                         'ee_delete_default_price_type',
                         'pricing_trash_price_type',
-                        $item->ID()
+                        $price_type->ID()
                     )
                 ) {
-                    $trash_lnk_url    = EE_Admin_Page::add_query_args_and_nonce(
-                        [
-                            'action'   => 'trash_price_type',
-                            'id'       => $item->ID(),
-                            'noheader' => true,
-                        ],
-                        PRICING_ADMIN_URL
+                    $actions['trash'] = $this->getActionLink(
+                        $this->getActionUrl($price_type, self::ACTION_TRASH),
+                        esc_html__('Trash', 'event_espresso'),
+                        sprintf(
+                            /* translators: The name of the price type */
+                            esc_attr__('Move Price Type %s to Trash', 'event_espresso'),
+                            $price_type->name()
+                        )
                     );
-                    $actions['trash'] = '<a href="' . $trash_lnk_url . '" aria-label="'
-                                        . sprintf(
-                                            /* translators: The name of the price type */
-                                            esc_attr__('Move Price Type %s to Trash', 'event_espresso'),
-                                            $item->name()
-                                        )
-                                        . '">'
-                                        . esc_html__('Move to Trash', 'event_espresso') . '</a>';
                 }
             } else {
                 // restore price link
@@ -188,82 +198,60 @@ class Price_Types_List_Table extends EE_Admin_List_Table
                     EE_Registry::instance()->CAP->current_user_can(
                         'ee_delete_default_price_type',
                         'pricing_restore_price_type',
-                        $item->ID()
+                        $price_type->ID()
                     )
                 ) {
-                    $restore_lnk_url    = EE_Admin_Page::add_query_args_and_nonce(
-                        [
-                            'action'   => 'restore_price_type',
-                            'id'       => $item->ID(),
-                            'noheader' => true,
-                        ],
-                        PRICING_ADMIN_URL
+                    $actions['restore'] = $this->getActionLink(
+                        $this->getActionUrl($price_type, self::ACTION_RESTORE),
+                        esc_html__('Restore', 'event_espresso'),
+                        sprintf(
+                            /* translators: The name of the price type */
+                            esc_attr__('Restore Price Type (%s)', 'event_espresso'),
+                            $price_type->name()
+                        )
                     );
-                    $actions['restore'] = '<a href="' . $restore_lnk_url . '" aria-label="'
-                                          . sprintf(
-                                              /* translators: The name of the price type */
-                                              esc_attr__('Restore Price Type (%s)', 'event_espresso'),
-                                              $item->name()
-                                          )
-                                          . '">'
-                                          . esc_html__('Restore', 'event_espresso') . '</a>';
                 }
                 // delete price link
                 if (
                     EE_Registry::instance()->CAP->current_user_can(
                         'ee_delete_default_price_type',
                         'pricing_delete_price_type',
-                        $item->ID()
+                        $price_type->ID()
                     )
                 ) {
-                    $delete_lnk_url    = EE_Admin_Page::add_query_args_and_nonce(
-                        [
-                            'action'   => 'delete_price_type',
-                            'id'       => $item->ID(),
-                            'noheader' => true,
-                        ],
-                        PRICING_ADMIN_URL
-                    );
-                    $actions['delete'] = '
-                        <a href="' . $delete_lnk_url . '" 
-                            aria-label="' . sprintf(
+                    $actions['delete'] = $this->getActionLink(
+                        $this->getActionUrl($price_type, self::ACTION_DELETE),
+                        esc_html__('Delete Permanently', 'event_espresso'),
+                        sprintf(
                             /* translators: The name of the price type */
                             esc_attr__('Delete Price Type %s Permanently', 'event_espresso'),
-                            $item->name()
-                        ) . '"
-                        >
-                            ' . esc_html__('Delete Permanently', 'event_espresso') . '
-                        </a>';
+                            $price_type->name()
+                        )
+                    );
                 }
             }
         }
 
-        // Return the name contents
-        return sprintf(
-            '%1$s <span style="color:silver">(id:%2$s)</span>%3$s',
-            $name_link,
-            $item->ID(),
-            $this->row_actions($actions)
-        );
+        $content = $prep_content ? $name_link . $this->row_actions($actions) : $name_link;
+        return $prep_content ? $this->columnContent('name', $content) : $content;
     }
 
 
-    public function column_base_type($item): string
+    public function column_base_type($price_type): string
     {
-        return '<div class="jst-cntr">' . $item->base_type_name() . '</div>';
+        return $this->columnContent('base_type', $price_type->base_type_name());
     }
 
 
-    public function column_percent($item): string
+    public function column_percent($price_type): string
     {
-        return '<div class="jst-cntr">'
-               . ($item->is_percent() ? '%' : EE_Registry::instance()->CFG->currency->sign)
-               . '</div>';
+        $content = $price_type->is_percent() ? '%' : EE_Registry::instance()->CFG->currency->sign;
+        return $this->columnContent('percent', $content, 'center');
     }
 
 
-    public function column_order($item): string
+    public function column_order($price_type): string
     {
-        return '<div class="jst-cntr">' . $item->order() . '</div>';
+        return $this->columnContent('order', $price_type->order(), 'end');
     }
 }

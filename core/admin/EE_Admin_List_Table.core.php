@@ -19,6 +19,23 @@ if (! class_exists('WP_List_Table')) {
  */
 abstract class EE_Admin_List_Table extends WP_List_Table
 {
+    const ACTION_COPY    = 'duplicate';
+
+    const ACTION_DELETE  = 'delete';
+
+    const ACTION_EDIT    = 'edit';
+
+    const ACTION_RESTORE = 'restore';
+
+    const ACTION_TRASH   = 'trash';
+
+    protected static $actions = [
+        self::ACTION_COPY,
+        self::ACTION_DELETE,
+        self::ACTION_EDIT,
+        self::ACTION_RESTORE,
+        self::ACTION_TRASH,
+    ];
 
     /**
      * holds the data that will be processed for the table
@@ -397,7 +414,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      * @access protected
      * @return array bulk_actions
      */
-    protected function _get_bulk_actions()
+    protected function _get_bulk_actions(): array
     {
         $actions = [];
         // the _views property should have the bulk_actions, so let's go through and extract them into a properly
@@ -907,9 +924,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         $align = in_array($align, ['start', 'center', 'end']) ? $align : 'start';
         $align = "ee-responsive-table-cell--{$align}";
 
-        $html = "<div id='ee-responsive-table-cell-{$id}' class='ee-responsive-table-cell {$align} ee-layout-stack'>";
+        $html = "<div class='ee-responsive-table-cell ee-responsive-table-cell--column-{$id} {$align} ee-layout-row'>";
         $html .= "<div class='ee-responsive-table-cell__heading'>{$heading}</div>";
-        $html .= "<div class='ee-responsive-table-cell__content ee-layout-stack'>{$content}</div>";
+        $html .= "<div class='ee-responsive-table-cell__content ee-layout-row'>{$content}</div>";
         $html .= "</div>";
         return $html;
     }
@@ -939,5 +956,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table
                 <span class="dashicons dashicons-screenoptions"></span>
                 <span class="ee-actions-column-header">' . esc_html__('Actions', 'event_espresso') . '</span>
             </span>';
+    }
+
+
+    protected function getActionLink(string $url, string $display_text, string $label, $class = ''): string
+    {
+        $class = ! empty($class) ? "{$class} ee-list-table-action" : 'ee-list-table-action';
+        $class = ! empty($label) ? "{$class} ee-aria-tooltip" : $class;
+        $label = ! empty($label) ? " aria-label='{$label}'" : '';
+        return "<a href='{$url}' class='{$class}'{$label}>{$display_text}</a>";
     }
 }
