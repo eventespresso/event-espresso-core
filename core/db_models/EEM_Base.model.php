@@ -1836,7 +1836,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $field = $this->get_primary_key_field();
         } else {
             // no primary key, just grab the first column
-            $field = reset($this->field_settings());
+            $field_settings = $this->field_settings();
+            $field = reset($field_settings);
         }
         $model_query_info = $this->_create_model_query_info_carrier($query_params);
         $select_expressions = $field->get_qualified_column();
@@ -4996,7 +4997,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * gets the field object of type 'primary_key' from the fieldsSettings attribute.
      * Eg, on EE_Answer that would be ANS_ID field object
      *
-     * @return EE_Model_Field_Base
+     * @return EE_Primary_Key_Field_Base
      * @throws EE_Error
      */
     public function get_primary_key_field()
@@ -5616,12 +5617,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * if $quantity==1, on EEM_Event, it would 'Event' (internationalized), otherwise
      * it would be 'Events'.
      *
-     * @param int $quantity
+     * @param int|float|null $quantity
      * @return string
      */
-    public function item_name($quantity = 1)
+    public function item_name($quantity = 1): string
     {
-        return (int) $quantity === 1 ? $this->singular_item : $this->plural_item;
+        return _n($this->singular_item, $this->plural_item, floor($quantity) , 'event_espresso');
     }
 
 
