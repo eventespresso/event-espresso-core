@@ -7,7 +7,7 @@
 
     --ee-font-color-hue: 207;
     --ee-font-color-sat: 5;
-    --ee-font-color-lit: 20;
+    --ee-font-color-lit: 30;
     --ee-font-color-alpha: 1;
 
     --ee-color-white: hsl(207, 0%, 100%);
@@ -38,19 +38,19 @@
     --ee-font-color: hsla(
         var(--ee-font-color-hue),
         calc(var(--ee-font-color-sat) * 1%),
-        calc((var(--ee-font-color-lit) + 10) * 1%),
+        calc(var(--ee-font-color-lit) * 1%),
         var(--ee-font-color-alpha)
     );
     --ee-font-color-light: hsla(
         var(--ee-font-color-hue),
         calc(var(--ee-font-color-sat) * 1%),
-        calc((var(--ee-font-color-lit) + 17.5) * 1%),
+        calc((var(--ee-font-color-lit) + 15) * 1%),
         var(--ee-font-color-alpha)
     );
     --ee-font-color-dark: hsla(
         var(--ee-font-color-hue),
         calc(var(--ee-font-color-sat) * 1%),
-        calc(var(--ee-font-color-lit) * 1%),
+        calc((var(--ee-font-color-lit) - 15) * 1%),
         var(--ee-font-color-alpha)
     );
 
@@ -263,6 +263,7 @@ div.TB-ee-frame a {
 .smaller-text {
 	font-size: .8em;
 	line-height: 1em;
+    letter-spacing: 0.75px;
 }
 .small-text {
 	font-size: .85em;
