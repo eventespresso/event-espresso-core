@@ -1612,8 +1612,8 @@ label.error {
     vertical-align: top;
     width: auto;
 }
-.espresso-admin .form-table td p.description {
-    /* background: var(--ee-status-color-pale-blue); */
+.espresso-admin .form-table td p.description,
+.espresso-admin .form-table td span.description {
     background: hsl(203, 37.5%, 97.5%);
     border-radius: .25rem;
     display: inline-block;
