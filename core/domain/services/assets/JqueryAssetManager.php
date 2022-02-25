@@ -14,6 +14,8 @@ class JqueryAssetManager extends AssetManager
 
     const JS_HANDLE_JQUERY_VALIDATE_EXTRA = 'jquery-validate-extra-methods';
 
+    const JS_HANDLE_JQUERY_UI_CORE = 'jquery-ui-core';
+
     const JS_HANDLE_JQUERY_UI_DATEPICKER = 'jquery-ui-datepicker';
 
     const JS_HANDLE_JQUERY_UI_DRAGGABLE = 'jquery-ui-draggable';
@@ -23,6 +25,8 @@ class JqueryAssetManager extends AssetManager
     const JS_HANDLE_JQUERY_UI_SORTABLE = 'jquery-ui-sortable';
 
     const JS_HANDLE_JQUERY_UI_TIMEPICKER_ADDON = 'jquery-ui-timepicker-addon';
+
+    const JS_HANDLE_JQUERY_UI_TOUCH_PUNCH = 'jquery.ui.touch-punch';
 
 
 
@@ -62,6 +66,13 @@ class JqueryAssetManager extends AssetManager
             [
                 JqueryAssetManager::JS_HANDLE_JQUERY_UI_DATEPICKER,
                 JqueryAssetManager::JS_HANDLE_JQUERY_UI_SLIDER
+            ]
+        );
+        $this->addJavascript(
+            JqueryAssetManager::JS_HANDLE_JQUERY_UI_TOUCH_PUNCH,
+            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.ui.touch-punch.min.js',
+            [
+                JqueryAssetManager::JS_HANDLE_JQUERY_UI_CORE
             ]
         );
 	}
