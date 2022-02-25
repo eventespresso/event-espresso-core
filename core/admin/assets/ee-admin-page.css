@@ -3903,6 +3903,12 @@ body.espresso-admin #contextual-help-wrap strong {
     padding-block-start: 1rem;
 }
 
+.espresso-admin .wp-list-table thead th a,
+.espresso-admin .wp-list-table tfoot th a {
+    font-size: 1rem;
+    font-weight: 800 !important;
+}
+
 .admin-primary-mbox-tbl thead td,
 .admin-primary-mbox-tbl thead th,
 .espresso-admin .wp-list-table thead td,
