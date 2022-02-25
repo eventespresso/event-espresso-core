@@ -75,9 +75,9 @@ class AdvancedEditorAdminFormSection
         return [
                    'new_features_section_header' => new EE_Form_Section_HTML(
                        EEH_HTML::h2(
-                           esc_html__('New Features', 'event_espresso'),
+                           esc_html__('New Feature', 'event_espresso'),
                            '',
-                           'ee-admin-settings-hdr ee-admin-settings-hdr--new-features'
+                           'ee-admin-settings-hdr ee-admin-settings-hdr--new-feature'
                        )
                    ),
                    'use_advanced_editor'     => new EE_Select_Input(
