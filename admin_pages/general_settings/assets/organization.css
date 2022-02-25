@@ -29,17 +29,13 @@
     display: none;
 }
 
-
-
-#general-setting-country-states-tbl td input {
+#general-setting-country-states-tbl td input[type="text"] {
     margin-inline: 0;
     width: 100%
 }
 #general-setting-country-states-tbl td.delete-state-td {
     text-align: end;
 }
-
-
 
 
 @media all and (max-width: 782px) {
