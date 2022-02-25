@@ -14,33 +14,27 @@
 
     <?php echo $line_item_table; // already escaped ?>
 
-    <div id="additional-registration-actions-dv">
-        <ul>
-            <li>
-                <?php echo $resend_registration_button; // already escaped ?>
-            </li>
-            <li>
-                <?php echo $view_transaction_button; // already escaped ?>
-            </li>
-        </ul>
+    <div id="additional-registration-actions-dv" class="ee-admin-button-row">
+        <?php echo $resend_registration_button; // already escaped ?>
+        <?php echo $view_transaction_button; // already escaped ?>
     </div>
 
-    <a id="display-additional-registration-session-info" class="display-the-hidden smaller-text"
-       rel="additional-registration-session-info"
-    >
-        <span class="dashicons dashicons-plus-alt"></span>
-        <?php esc_html_e('view additional registration session details', 'event_espresso'); ?>
-    </a>
-
-    <div id="additional-registration-session-info-dv" class="hidden">
-        <a id="hide-additional-registration-session-info" class="hide-the-displayed hidden smaller-text"
+    <div class='ee-admin-button-row'>
+        <a id="display-additional-registration-session-info" class="display-the-hidden smaller-text"
            rel="additional-registration-session-info"
         >
-            <span class="dashicons dashicons-dismiss"></span>
+            <span class="dashicons dashicons-plus-alt"></span>
+            <?php esc_html_e('view additional registration session details', 'event_espresso'); ?>
+        </a>
+        <a id='hide-additional-registration-session-info' class='hide-the-displayed hidden smaller-text'
+           rel='additional-registration-session-info'
+        >
+            <span class='dashicons dashicons-dismiss'></span>
             <?php esc_html_e('hide additional registration session details', 'event_espresso'); ?>
         </a>
-        <br class="clear" />
+    </div>
 
+    <div id="additional-registration-session-info-dv" class="hidden">
         <h3 class="admin-primary-mbox-h4">
             <?php esc_html_e('Registration Session Details', 'event_espresso'); ?>
         </h3>
@@ -61,5 +55,4 @@
             </tbody>
         </table>
     </div>
-    <br class="clear" />
 </div>
