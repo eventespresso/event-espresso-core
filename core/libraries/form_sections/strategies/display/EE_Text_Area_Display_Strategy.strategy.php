@@ -36,7 +36,7 @@ class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base
             ) {
                 $html .= sprintf(
                     esc_html__('%1$s(allowed tags: %2$s)%3$s', 'event_espresso'),
-                    '<p class="ee-question-desc">',
+                    '<p class="ee-question-desc description">',
                     $validation_strategy->get_list_of_allowed_tags(),
                     '</p>'
                 );

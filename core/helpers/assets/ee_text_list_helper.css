@@ -30,7 +30,9 @@
 }
 
 .ee-text-links .ee-text-link .dashicons {
-	top: unset;
+	margin-inline-end: 0.5rem;
+	position: relative;
+	top: 1px;
     transition: all 0ms ease-in-out;
 }
 
