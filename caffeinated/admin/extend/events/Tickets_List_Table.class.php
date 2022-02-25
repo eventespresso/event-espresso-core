@@ -37,6 +37,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
 
         $this->_columns = array(
             'cb'              => '<input type="checkbox" />', // Render a checkbox instead of text
+            'id'              => esc_html__('ID', 'event_espresso'),
             'TKT_name'        => esc_html__('Name', 'event_espresso'),
             'TKT_description' => esc_html__('Description', 'event_espresso'),
             'TKT_qty'         => esc_html__('Quantity', 'event_espresso'),
@@ -49,6 +50,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
 
         $this->_sortable_columns = array(
             // TRUE means its already sorted
+            'id' => array('TKT_ID', false),
             'TKT_name'        => array('TKT_name' => true),
             'TKT_description' => array('TKT_description' => false),
             'TKT_qty'         => array('TKT_qty' => false),
@@ -85,17 +87,31 @@ class Tickets_List_Table extends EE_Admin_List_Table
     }
 
 
-    public function column_TKT_name($item)
+    /**
+     * @param EE_Ticket $item
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_id($item): string
+    {
+        $content = '<span class="ee-entity-id">' . $item->ID() . '</span>';
+        $content .= '<span class="show-on-mobile-view-only">' . $this->column_TKT_name($item, false) . '</span>';
+        return $this->columnContent('id', $content, 'end');
+    }
+
+
+    public function column_TKT_name(EE_Ticket $ticket, bool $prep_content = true): string
     {
         // build row actions
         $actions = array();
 
         // trash links
-        if ($item->ID() !== 1) {
+        if ($ticket->ID() !== 1) {
             if ($this->_view == 'all') {
                 $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
                     'action' => 'trash_ticket',
-                    'TKT_ID' => $item->ID(),
+                    'TKT_ID' => $ticket->ID(),
                 ), EVENTS_ADMIN_URL);
                 $actions['trash'] = '<a href="' . $trash_lnk_url . '" title="'
                                     . esc_attr__('Move Ticket to trash', 'event_espresso') . '">'
@@ -104,7 +120,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
                 // restore price link
                 $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
                     'action' => 'restore_ticket',
-                    'TKT_ID' => $item->ID(),
+                    'TKT_ID' => $ticket->ID(),
                 ), EVENTS_ADMIN_URL);
                 $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
                                       . esc_attr__('Restore Ticket', 'event_espresso') . '">'
@@ -112,7 +128,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
                 // delete price link
                 $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
                     'action' => 'delete_ticket',
-                    'TKT_ID' => $item->ID(),
+                    'TKT_ID' => $ticket->ID(),
                 ), EVENTS_ADMIN_URL);
                 $actions['delete'] = '<a href="' . $delete_lnk_url . '" title="'
                                      . esc_attr__('Delete Ticket Permanently', 'event_espresso') . '">'
@@ -120,48 +136,52 @@ class Tickets_List_Table extends EE_Admin_List_Table
             }
         }
 
-        return $item->get('TKT_name') . $this->row_actions($actions);
+        $content = $prep_content ? $ticket->name() . $this->row_actions($actions) : $ticket->name();
+        return $prep_content ? $this->columnContent('TKT_name', $content) : $content;
     }
 
 
-    public function column_TKT_description($item)
+    public function column_TKT_description(EE_Ticket $ticket): string
     {
-        return $item->get('TKT_description');
+        return $this->columnContent('TKT_description', $ticket->description());
     }
 
 
-    public function column_TKT_qty($item)
+    public function column_TKT_qty(EE_Ticket $ticket): string
     {
-        return $item->get_pretty('TKT_qty', 'text');
+        return $this->columnContent('TKT_qty', $ticket->qty(), 'end');
     }
 
 
-    public function column_TKT_uses($item)
+    public function column_TKT_uses(EE_Ticket $ticket): string
     {
-        return $item->get_pretty('TKT_uses', 'text');
+        return $this->columnContent('TKT_uses', $ticket->uses(), 'end');
     }
 
 
-    public function column_TKT_min($item)
+    public function column_TKT_min(EE_Ticket $ticket): string
     {
-        return $item->get('TKT_min');
+        return $this->columnContent('TKT_min', $ticket->min(), 'end');
     }
 
 
-    public function column_TKT_max($item)
+    public function column_TKT_max(EE_Ticket $ticket): string
     {
-        return $item->get_pretty('TKT_max', 'text');
+        return $this->columnContent('TKT_max', $ticket->max(), 'end');
     }
 
 
-    public function column_TKT_price($item)
+    public function column_TKT_price(EE_Ticket $ticket): string
     {
-        return EEH_Template::format_currency($item->get('TKT_price'));
+        return $this->columnContent('TKT_price', $ticket->pretty_price(), 'end');
     }
 
 
-    public function column_TKT_taxable($item)
+    public function column_TKT_taxable(EE_Ticket $ticket): string
     {
-        return $item->get('TKT_taxable') ? esc_html__('Yes', 'event_espresso') : esc_html__('No', 'event_espresso');
+        $content = $ticket->taxable()
+            ? esc_html__('Yes', 'event_espresso')
+            : esc_html__('No', 'event_espresso');
+        return $this->columnContent('TKT_taxable', $content, 'center');
     }
 }
