@@ -164,27 +164,29 @@
 
 /* TABLE COLUMNS */
 
-.transactions.wp-list-table .column-TXN_ID {
+/*.transactions.wp-list-table .column-TXN_ID {*/
+/*    text-align: end;*/
+/*    width: 2rem;*/
+/*    !*padding: 4px 7px 29px;*!*/
+/*}*/
+
+#TXN_total, #TXN_paid {
     text-align: end;
-    width: 2rem;
-    /*padding: 4px 7px 29px;*/
 }
 
-/* #TXN_total, #TXN_paid { text-align:center; } */
 .transactions.wp-list-table .column-TXN_timestamp {
-    min-width: 12rem;
-}
-
-.transactions.wp-list-table .column-TXN_total,
-.transactions.wp-list-table .column-TXN_paid {
-    min-width: 10rem;
-    padding-inline-end: 1.5rem;
-    text-align: end;
+    min-width: clamp(4rem, 8rem, 12rem);
 }
 
 .transactions.wp-list-table th.column-TXN_total,
 .transactions.wp-list-table th.column-TXN_paid {
-    padding-inline-end: 4rem;
+    padding-inline-end: 3rem;
+}
+
+.transactions.wp-list-table .column-TXN_total,
+.transactions.wp-list-table .column-TXN_paid {
+    min-width: clamp(4rem, 8rem, 12rem);
+    text-align: end;
 }
 
 .transactions.wp-list-table .column-TXN_total > div,
@@ -194,19 +196,6 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-}
-
-/*.txn-pad-rght {*/
-/*    display: block;*/
-/*    padding-right: 1em;*/
-/*}*/
-
-.transactions.wp-list-table .column-ATT_fname {
-    /*width: 20%;*/
-}
-
-.transactions.wp-list-table .column-event_name {
-    /*width: 15%*/
 }
 
 .txn-overview-free-event-spn {
@@ -451,38 +440,38 @@
     vertical-align: top;
 }
 
-.validation-notice-dv {
-    color: var(--ee-status-color-red);
-    display: none;
-    font-weight: 600;
-    margin-left: .5rem;
-}
+/*.validation-notice-dv {*/
+/*    color: var(--ee-status-color-red);*/
+/*    display: none;*/
+/*    font-weight: 600;*/
+/*    margin-left: .5rem;*/
+/*}*/
 
 
 /*.admin-modal-dialog-inner label.last { margin-bottom:8em; }*/
 
-.ee-attention input[type=checkbox] {
-    margin-top: -10px;
-    padding: 0;
-}
+/*.ee-attention input[type=checkbox] {*/
+/*    margin-top: -10px;*/
+/*    padding: 0;*/
+/*}*/
 
 
-.admin-modal-dialog-inner input[type=text],
-.admin-modal-dialog-inner select {
-    width: 100%;
-    min-width: 150px;
-    max-width: 250px;
-}
+/*.admin-modal-dialog-inner input[type=text],*/
+/*.admin-modal-dialog-inner select {*/
+/*    width: 100%;*/
+/*    min-width: 150px;*/
+/*    max-width: 250px;*/
+/*}*/
 
-.admin-modal-dialog-inner input[type=radio],
-.admin-modal-dialog-inner input[type=checkbox] {
-    margin-inline-end: 1rem;
-}
+/*.admin-modal-dialog-inner input[type=radio],*/
+/*.admin-modal-dialog-inner input[type=checkbox] {*/
+/*    margin-inline-end: 1rem;*/
+/*}*/
 
-.admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox],
-.admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox]:checked {
-    margin: 0
-}
+/*.admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox],*/
+/*.admin-modal-dialog-inner .admin-primary-mbox-tbl input[type=checkbox]:checked {*/
+/*    margin: 0*/
+/*}*/
 
 .txn-date-h2, .txn-status-h2, .txn-amount-due-h2, .txn-selected-method-of-payment-h3 {
     padding: 0;
@@ -523,29 +512,6 @@
     word-wrap: break-word;
 }
 
-
-#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.display-the-hidden:not(.hidden),
-#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.hide-the-displayed:not(.hidden) {
-    align-items: center;
-    display: inline-flex;
-    flex-flow: row wrap;
-    justify-content: flex-start;
-}
-
-#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.display-the-hidden:not(.hidden) > .dashicons,
-#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.hide-the-displayed:not(.hidden) > .dashicons {
-    margin-inline-end: .5rem;
-}
-
-#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.display-the-hidden > .dashicons-plus-alt:before {
-    position: relative;
-    top: 1px;
-}
-
-#edit-txn-details-mbox.ee-admin-container .ee-admin-button-row a.hide-the-displayed > .dashicons-dismiss:before {
-    position: relative;
-    top: -3px;
-}
 
 .ee-txn-reg-step-status-steps {
     flex-flow: row wrap !important;
