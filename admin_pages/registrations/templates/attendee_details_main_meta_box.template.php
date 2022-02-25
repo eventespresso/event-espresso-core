@@ -19,7 +19,7 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
                 <th>
                     <label for="ATT_fname">
                         <?php esc_html_e('First Name', 'event_espresso'); ?>
-                        <span class="denotes-required-spn">*</span>
+                        <span class="required">*</span>
                     </label>
                 </th>
                 <td>
@@ -43,7 +43,7 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
                 <th>
                     <label for="ATT_lname">
                         <?php esc_html_e('Last Name', 'event_espresso'); ?>
-                        <span class="denotes-required-spn">*</span>
+                        <span class="required">*</span>
                     </label>
                 </th>
                 <td>
@@ -67,7 +67,7 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
                 <th>
                     <label for="ATT_email">
                         <?php esc_html_e('Email Address', 'event_espresso'); ?>
-                        <span class="denotes-required-spn">*</span>
+                        <span class="required">*</span>
                     </label>
                 </th>
                 <td>
