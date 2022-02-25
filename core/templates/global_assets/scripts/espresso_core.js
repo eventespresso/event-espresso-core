@@ -287,7 +287,7 @@ jQuery( document ).ready( function ( $ ) {
 		// display the target's div container - use slideToggle or removeClass
 		$('#'+item_to_display+'-dv').slideToggle(250, function() {
 			// display the target div's hide link
-			$('#hide-'+item_to_display).show().fadeIn(50);
+			$('#hide-'+item_to_display).css('display', 'flex').fadeIn(50);
 			// if hiding/showing a form input, then id of the form input must = item_to_display
 			$('#'+item_to_display).focus(); // add focus to the target
 		});
@@ -307,7 +307,7 @@ jQuery( document ).ready( function ( $ ) {
 		// hide the target's div container - use slideToggle or addClass
 		$('#'+item_to_hide+'-dv').slideToggle(250, function() {
 			// display the control element that toggles display of this element
-			$('#display-'+item_to_hide).show().fadeIn(50);
+			$('#display-'+item_to_hide).css('display', 'flex').fadeIn(50);
 		});
 		e.preventDefault();
 		e.stopPropagation();
