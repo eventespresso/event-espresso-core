@@ -229,8 +229,9 @@
 .ee-page-status {
     border-radius: 1rem;
     margin-inline: 1rem;
-    padding-block: 0.5rem;
-    padding-inline: 1rem;
+    padding-block-start: 0.25rem;
+    padding-block-end: 0.45rem;
+    padding-inline: 1.5rem;
 }
 .ee-page-status strong{
     font-size: 1rem;
@@ -1843,12 +1844,17 @@ label.error {
 .ee-status {
     background-color: var(--ee-status-color-red);
     border-radius: 1rem;
+    box-sizing: border-box;
     color: white;
     display: block;
     font-size: 1rem;
-    font-weight: 500;
-    line-height: 2.25;
-    padding:  0 1.25rem;
+    font-weight: 600;
+    height: 2.25rem;
+    line-height: 1.5;
+    margin: 0.25rem;
+    padding-block-start: 0.25rem;
+    padding-block-end: 0.45rem;
+    padding-inline: 1.5rem;
     text-align: center;
     text-decoration: none;
     width: fit-content;
