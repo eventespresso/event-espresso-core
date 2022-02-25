@@ -3903,12 +3903,6 @@ body.espresso-admin #contextual-help-wrap strong {
     padding-block-start: 1rem;
 }
 
-.espresso-admin .wp-list-table thead th a,
-.espresso-admin .wp-list-table tfoot th a {
-    font-size: 1rem;
-    font-weight: 800 !important;
-}
-
 .admin-primary-mbox-tbl thead td,
 .admin-primary-mbox-tbl thead th,
 .espresso-admin .wp-list-table thead td,
@@ -3945,7 +3939,35 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin .wp-list-table th.sortable a,
 .espresso-admin .wp-list-table th.sorted a {
-    padding: 0;
+    font-size: 1rem;
+    font-weight: 800 !important;
+    padding: 0 !important;
+}
+.espresso-admin .wp-list-table th.sortable a .sorting-indicator,
+.espresso-admin .wp-list-table th.sorted a .sorting-indicator {
+    margin-top: unset;
+    margin-left: 0.5rem;
+}
+.espresso-admin .wp-list-table th.sortable a .sorting-indicator:before,
+.espresso-admin .wp-list-table th.sorted a .sorting-indicator:before {
+    color: var(--ee-status-color-blue);
+    font-size: 1.5rem;
+    left: -0.5rem;
+    top: -0.25rem;
+}
+.espresso-admin .wp-list-table th.sorted.asc a .sorting-indicator:before,
+.espresso-admin .wp-list-table th.sorted.asc a .sorting-indicator:before,
+.espresso-admin .wp-list-table th.sortable.desc a .sorting-indicator:before,
+.espresso-admin .wp-list-table th.sorted.desc:hover a .sorting-indicator:before,
+.espresso-admin .wp-list-table th.sorted.desc:hover a .sorting-indicator:before {
+    color: var(--ee-status-color-green);
+}
+.espresso-admin .wp-list-table th.sorted.desc a .sorting-indicator:before,
+.espresso-admin .wp-list-table th.sorted.desc a .sorting-indicator:before,
+.espresso-admin .wp-list-table th.sortable.asc a .sorting-indicator:before,
+.espresso-admin .wp-list-table th.sorted.asc:hover a .sorting-indicator:before,
+.espresso-admin .wp-list-table th.sorted.asc:hover a .sorting-indicator:before {
+    color: var(--ee-status-color-red);
 }
 
 .espresso-admin .wp-list-table th.column-primary.sorted > a,
