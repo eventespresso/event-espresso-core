@@ -149,9 +149,14 @@ final class EE_Config implements ResettableInterface
      */
     public static function instance()
     {
+        static $initialized = false;
         // check if class object is instantiated, and instantiated properly
         if (! self::$_instance instanceof EE_Config) {
             self::$_instance = new self();
+            if (! $initialized) {
+                self::$_instance->initialize();
+                $initialized = true;
+            }
         }
         return self::$_instance;
     }
@@ -192,12 +197,12 @@ final class EE_Config implements ResettableInterface
     }
 
 
-    /**
-     *    class constructor
-     *
-     * @access    private
-     */
     private function __construct()
+    {
+    }
+
+
+    private function initialize()
     {
         do_action('AHEE__EE_Config__construct__begin', $this);
         EE_Config::$_logging_enabled = apply_filters('FHEE__EE_Config___construct__logging_enabled', false);
@@ -210,15 +215,15 @@ final class EE_Config implements ResettableInterface
         //  register shortcodes and modules
         add_action(
             'AHEE__EE_System__register_shortcodes_modules_and_widgets',
-            array($this, 'register_shortcodes_and_modules'),
+            [$this, 'register_shortcodes_and_modules'],
             999
         );
         //  initialize shortcodes and modules
-        add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'initialize_shortcodes_and_modules'));
+        add_action('AHEE__EE_System__core_loaded_and_ready', [$this, 'initialize_shortcodes_and_modules']);
         // register widgets
-        add_action('widgets_init', array($this, 'widgets_init'), 10);
+        add_action('widgets_init', [$this, 'widgets_init'], 10);
         // shutdown
-        add_action('shutdown', array($this, 'shutdown'), 10);
+        add_action('shutdown', [$this, 'shutdown'], 10);
         // construct__end hook
         do_action('AHEE__EE_Config__construct__end', $this);
         // hardcoded hack
