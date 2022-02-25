@@ -286,9 +286,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'events_overview_other',
                     ],
                 ],
-                'qtips'         => [
-                    'EE_Event_List_Table_Tips',
-                ],
                 'require_nonce' => false,
             ],
             'create_new'             => [
