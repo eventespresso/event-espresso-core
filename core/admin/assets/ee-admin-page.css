@@ -719,7 +719,9 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     margin-block-start: 0;
 }
 
-.ee-attention {
+.ee-attention,
+.ee-admin-container p.ee-attention,
+.espresso-admin .postbox .inside p.ee-attention {
     padding: 1.5rem 2rem;
     margin: 2rem 0 1rem;
     background-color: var(--ee-attention-bg-color);
@@ -3382,7 +3384,11 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .ee-list-table-actions a,
 .espresso-admin.wp-core-ui #edit-slug-box .button,
 .espresso-admin.wp-core-ui .pagination-links .button,
+.espresso-admin.wp-core-ui .button-primary,
+.espresso-admin.wp-core-ui .button.button-primary,
 .espresso-admin.wp-core-ui .button.button--primary,
+.espresso-admin.wp-core-ui .button.button-secondary,
+.espresso-admin.wp-core-ui .button-secondary,
 .espresso-admin.wp-core-ui .button.button--secondary,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button,
 .espresso-admin.wp-core-ui input[type="checkbox"].button,
@@ -3490,6 +3496,8 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .ee-list-table-actions a,
 .espresso-admin.wp-core-ui #edit-slug-box .button,
 .espresso-admin.wp-core-ui .pagination-links .button,
+.espresso-admin.wp-core-ui .button-secondary,
+.espresso-admin.wp-core-ui .button.button-secondary,
 .espresso-admin.wp-core-ui .button.button--secondary,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a,
@@ -3509,6 +3517,8 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .ee-list-table-actions a:hover,
 .espresso-admin.wp-core-ui #edit-slug-box .button:hover,
 .espresso-admin.wp-core-ui .pagination-links .button:hover,
+.espresso-admin.wp-core-ui .button-secondary:hover,
+.espresso-admin.wp-core-ui .button.button-secondary:hover,
 .espresso-admin.wp-core-ui .button.button--secondary:hover,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button:hover,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a:hover,
@@ -3528,6 +3538,8 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .ee-list-table-actions a:focus,
 .espresso-admin.wp-core-ui #edit-slug-box .button:focus,
 .espresso-admin.wp-core-ui .pagination-links .button:focus,
+.espresso-admin.wp-core-ui .button-secondary:focus,
+.espresso-admin.wp-core-ui .button.button-secondary:focus,
 .espresso-admin.wp-core-ui .button.button--secondary:focus,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button:focus,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a:focus,
@@ -3543,6 +3555,7 @@ body.espresso-admin #contextual-help-wrap strong {
 
 
 
+.espresso-admin.wp-core-ui .button-primary,
 .espresso-admin.wp-core-ui .button.button-primary,
 .espresso-admin.wp-core-ui .button.button--primary,
 .espresso-admin.wp-core-ui .publishing-action input[type="submit"],
@@ -3557,6 +3570,7 @@ body.espresso-admin #contextual-help-wrap strong {
     color: var(--ee-color-white) !important;
 }
 
+.espresso-admin.wp-core-ui .button-primary:hover,
 .espresso-admin.wp-core-ui .button.button-primary:hover,
 .espresso-admin.wp-core-ui .button.button--primary:hover,
 .espresso-admin.wp-core-ui .publishing-action input[type="submit"]:hover,
@@ -3569,6 +3583,7 @@ body.espresso-admin #contextual-help-wrap strong {
     background-color: var(--ee-btn-primary-hover);
     border-color: var(--ee-btn-primary-hover);
 }
+.espresso-admin.wp-core-ui .button-primary:focus,
 .espresso-admin.wp-core-ui .button.button-primary:focus,
 .espresso-admin.wp-core-ui .button.button--primary:focus,
 .espresso-admin.wp-core-ui .publishing-action input[type="submit"]:focus,
