@@ -11,14 +11,6 @@ jQuery(document).ready(function ($) {
         theForm.submit();
     });
 
-    $('.confirm-delete').on('click', function () {
-        var what = $(this).attr('rel');
-        var answer = confirm(eei18n.confirm_delete);
-        return answer;
-    });
-
-    $('.updated.fade').delay(5000).fadeOut();
-
 
     var dialog_content = {};
     var d_contents = '';
