@@ -101,13 +101,20 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
     {
         $system_question = $item->is_system_question();
         $related_answer_count = $item->count_related('Answer');
-        $lock_icon = (! $system_question && $related_answer_count > 0 && $this->_view == 'trash')
-            ? 'dashicons dashicons-lock ee-alternate-color' : 'dashicons dashicons-lock ee-system-lock';
-        return $system_question || (! $system_question && $related_answer_count > 0 && $this->_view == 'trash')
-            ? '<span class="' . $lock_icon . '"></span>' . sprintf(
-                '<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />',
-                $item->ID()
-            ) : sprintf('<input type="checkbox" class="QST_ID" name="checkbox[%1$d]" value="%1$d" />', $item->ID());
+        $has_answers = ! $system_question && $related_answer_count > 0 && $this->_view == 'trash';
+        $notice = $has_answers
+            ? esc_html__(
+                'This question has answers attached to it from registrations that have the question.  It cannot be permanently deleted.',
+                'event_espresso'
+            )
+            : esc_html__('This question is a system question and cannot be trashed', 'event_espresso');
+
+        return $system_question || $has_answers
+            ? '
+            <span class="dashicons dashicons-lock ee-locked-entity ee-aria-tooltip" 
+                    aria-label="' . $notice . '"></span>
+            ' . sprintf('<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />', $item->ID())
+            : sprintf('<input type="checkbox" class="QST_ID" name="checkbox[%1$d]" value="%1$d" />', $item->ID());
     }
 
 

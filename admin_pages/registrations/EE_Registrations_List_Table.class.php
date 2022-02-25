@@ -421,11 +421,19 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             : 0;
 
         $content = $payment_count > 0 || ! $this->caps_handler->userCanEditRegistration($item)
-            ? '<input disabled type="checkbox" name="_REG_ID[]" value="' . $REG_ID . '" />
-                <span class="dashicons dashicons-lock"></span>'
+            ? '<span class="ee-locked-entity dashicons dashicons-lock ee-aria-tooltip ee-aria-tooltip--big-box" 
+                    aria-label="' . $this->lockedRegMessage() . '"></span>'
             : '<input type="checkbox" name="_REG_ID[]" value="' . $REG_ID . '" />';
-
         return $this->columnContent('cb', $content, 'center');
+    }
+
+
+    private function lockedRegMessage(): string
+    {
+        return esc_html__(
+           'This lock-icon means that this registration cannot be trashed.  Registrations that belong to a transaction that has payments cannot be trashed.  If you wish to trash this registration then you must delete all payments attached to the related transaction first.',
+           'event_espresso'
+       );
     }
 
 
