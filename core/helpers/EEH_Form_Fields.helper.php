@@ -539,8 +539,14 @@ class EEH_Form_Fields
      * @param boolean $autosize   whether to autosize the select or not
      * @return string              html string for the select input
      */
-    public static function select_input($name, $values, $default = '', $parameters = '', $class = '', $autosize = true)
-    {
+    public static function select_input(
+        $name,
+        $values,
+        $default = '',
+        $parameters = '',
+        $class = '',
+        $autosize = true
+    ) {
         // if $values was submitted in the wrong format, convert it over
         if (! empty($values) && (! array_key_exists(0, $values) || ! is_array($values[0]))) {
             $converted_values = [];
@@ -566,20 +572,27 @@ class EEH_Form_Fields
             $default = stripslashes($GLOBALS[ $name ]);
         }
 
-
-        for ($i = 0, $n = sizeof($values); $i < $n; $i++) {
-            $field .= '<option value="' . $values[ $i ]['id'] . '"';
-            if ($default == $values[ $i ]['id']) {
-                $field .= ' selected = "selected"';
-            }
-            if (isset($values[ $i ]['class'])) {
-                $field .= ' class="' . $values[ $i ]['class'] . '"';
-            }
-            $field .= '>' . $values[ $i ]['text'] . '</option>';
-        }
+        $field .= self::selectInputOption($values, $default);
         $field .= '</select>';
 
         return $field;
+    }
+
+
+    private static function selectInputOption(array $values, $default): string
+    {
+        if (isset($values['id'], $values['text'])) {
+            $id = is_scalar($values['id']) ? $values['id'] : '';
+            $text = is_scalar($values['text']) ? $values['text'] : '';
+            $selected = $default == $values['id'] ? ' selected = "selected"' : '';
+            $html_class = isset($values['class']) ? ' class="' . $values['class'] . '"' : '';
+            return "<option value='{$id}'{$selected}{$html_class}>{$text}</option>";
+        }
+        $options = '';
+        foreach ($values as $value) {
+            $options .= self::selectInputOption($value, $default);
+        }
+        return $options;
     }
 
 
