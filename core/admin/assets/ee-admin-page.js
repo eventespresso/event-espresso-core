@@ -295,8 +295,6 @@ jQuery(document).ready(function($) {
 			windowTop += 16;
 		}
 
-		// console.log({windowTop, windowBottom, windowWidth});
-
 		const tooltipHeight = $tooltip.height();
 		const tooltipWidth = $tooltip.width();
 		const tooltipPosition = $(this).offset();
@@ -306,11 +304,8 @@ jQuery(document).ready(function($) {
 		const tooltipTop = tooltipPosition.top;
 		const tooltipBottom = tooltipTop + tooltipHeight;
 
-		// console.log({tooltipLeft, tooltipWidth, tooltipRight});
-		// console.log({tooltipTop, tooltipHeight, tooltipBottom});
-
 		let shiftLeft = -16;
-		let shiftTop = -32
+		let shiftTop = (tooltipHeight + 24) * -1;
 
 		if (tooltipTop < windowTop) {
 			shiftTop = (shiftTop - (windowTop - tooltipTop)) * -1;
@@ -324,7 +319,6 @@ jQuery(document).ready(function($) {
 			shiftLeft -= tooltipRight - windowWidth;
 		}
 
-		// console.log({shiftTop, shiftLeft});
 		$tooltip.css({
 			left: $tooltip.position().left + shiftLeft + "px",
 			top: $tooltip.position().top + shiftTop + "px"
