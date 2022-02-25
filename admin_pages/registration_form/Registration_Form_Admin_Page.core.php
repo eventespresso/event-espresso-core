@@ -149,9 +149,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     ],
                 ],
                 'require_nonce' => false,
-                'qtips'         => [
-                    'EE_Registration_Form_Tips',
-                ]/**/
             ],
 
             'question_groups' => [

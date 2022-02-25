@@ -569,7 +569,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'registrations_overview_other',
                     ],
                 ],
-                'qtips'         => ['Registration_List_Table_Tips'],
                 'list_table'    => 'EE_Registrations_List_Table',
                 'require_nonce' => false,
             ],

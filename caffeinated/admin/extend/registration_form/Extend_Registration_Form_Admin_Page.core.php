@@ -216,9 +216,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 ),
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
-                'qtips'         => array(
-                    'EE_Registration_Form_Tips',
-                ),
             ),
 
             'add_question' => array(

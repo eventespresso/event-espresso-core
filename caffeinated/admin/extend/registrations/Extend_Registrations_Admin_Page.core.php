@@ -138,7 +138,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                         'filename' => 'registrations_event_checkin_other',
                     ),
                 ),
-                'qtips'         => array('Registration_List_Table_Tips'),
                 'list_table'    => 'EE_Event_Registrations_List_Table',
                 'metaboxes'     => array(),
                 'require_nonce' => false,

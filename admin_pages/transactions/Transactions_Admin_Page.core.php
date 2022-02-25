@@ -171,11 +171,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
                         'filename' => 'transactions_overview_views_filters_search',
                     ],
                 ],
-                /**
-                 * commented out because currently we are not displaying tips for transaction list table status but this
-                 * may change in a later iteration so want to keep the code for then.
-                 */
-                // 'qtips' => array( 'Transactions_List_Table_Tips' ),
                 'require_nonce' => false,
             ],
             'view_transaction' => [
