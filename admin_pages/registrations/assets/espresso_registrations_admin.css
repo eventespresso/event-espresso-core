@@ -1,56 +1,35 @@
-#entries-per-page-dv {
-    display: inline;
-}
-
-.wrap .nav-tab-wrapper {
-    margin-bottom: 1em;
-}
-
-.wrap .subsubsub {
-    margin: 0;
-}
-
-#reg-filters-dv {
-    clear: both;
-    padding: 1.5em 0;
-}
-
-.datepicker {
-    width: 125px;
-}
 
 /* TABLE COLUMNS */
 
-.column-_REG_ID {
-    width: 4%;
-}
-
-.wp-list-table .column-ATT_fname {
+.espresso-admin .wp-list-table .column-ATT_fname {
     width: max(15%, 20rem);
 }
 
-.wp-list-table .column-ATT_fname .ee-layout-row {
+.espresso-admin .wp-list-table .column-ATT_fname .ee-layout-row {
     flex-wrap: wrap;
 }
 
-.wp-list-table .column-ATT_fname .row-title {
+.espresso-admin .wp-list-table .column-ATT_fname .row-title {
     margin-inline-end: .5rem;
 }
 
-.wp-list-table .column-ATT_fname .reg-count-group-size {
+.espresso-admin .wp-list-table .column-ATT_fname .reg-count-group-size {
     white-space: nowrap;
 }
 
-.wp-list-table .column-_REG_date {
-    width: max(10%, 12.5rem);
+.espresso-admin .wp-list-table .column-_REG_date,
+.espresso-admin .wp-list-table .column-DTT_EVT_start {
+    width: clamp(8rem, 12rem, 16rem);
 }
 
-.wp-list-table .column-DTT_EVT_start {
-    width: max(12.5%, 15.25rem);
+.espresso-admin .wp-list-table .column-event_name {
+    width: clamp(12rem, 16rem, 20rem);
 }
 
-.wp-list-table .column-ATT_email {
-    width: 10%;
+.espresso-admin .wp-list-table #ATT_email,
+.espresso-admin .wp-list-table th #ee-responsive-table-cell-ATT_email,
+.espresso-admin .wp-list-table td #ee-responsive-table-cell-ATT_email {
+    width: clamp(8rem, 12rem, 16rem);
 }
 
 .espresso-admin .wp-list-table th.column-primary.column-_REG_att_checked_in,
@@ -59,29 +38,17 @@
     width: 4% !important;
 }
 
-.checkedin-status-0 {
-    color: var(--ee-status-color-red);
-}
-
-.checkedin-status-1 {
-    color: var(--ee-status-color-green);
-}
-
-.checkedin-status-2 {
-    color: var(--ee-status-color-grey);
-}
 
 .wp-list-table .column-DTT_reg_limit {
     width: 4.25%;
 }
-
 
 .wp-list-table th.column-PRC_amount,
 .wp-list-table th.column-_REG_final_price,
 .wp-list-table th.column-_REG_paid,
 .wp-list-table th.column-TXN_total,
 .wp-list-table th.column-TXN_paid {
-    width: max(7.5%, 12rem);
+    width: clamp(7rem, 11rem, 15rem);
     text-align: center;
 }
 
@@ -90,13 +57,8 @@
 .wp-list-table td.column-_REG_paid,
 .wp-list-table td.column-TXN_total,
 .wp-list-table td.column-TXN_paid {
-    width: max(7.5%, 12rem);
+    width: clamp(7rem, 11rem, 15rem);
     text-align: end;
-}
-
-.espresso-admin .wp-list-table th.column-_REG_final_price,
-.espresso-admin .wp-list-table td.column-_REG_final_price {
-    width: max(10%, 14rem);
 }
 
 .espresso-admin .wp-list-table .TXN_paid .dashicons-yes:before {
@@ -119,41 +81,6 @@
     margin-top: 5px;
 }
 
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_count {
-    min-width: 4%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_name {
-    min-width: 11%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_email {
-    min-width: 14%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #Event {
-    min-width: 14%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_code {
-    min-width: 8%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_final_price {
-    min-width: 6%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_paid {
-    min-width: 6%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_total {
-    min-width: 6%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #PRC_name {
-    min-width: 8%;
-}
 
 .reg-pad-rght {
     align-items: center;
@@ -167,6 +94,18 @@
 .reg-overview-free-event-spn {
     display: block;
     text-align: center;
+}
+
+.checkedin-status-0 {
+    color: var(--ee-status-color-red);
+}
+
+.checkedin-status-1 {
+    color: var(--ee-status-color-green);
+}
+
+.checkedin-status-2 {
+    color: var(--ee-status-color-grey);
 }
 
 
@@ -301,46 +240,34 @@
     }
 }
 
-/** Check-in status manipulation **/
-
-/**never checked in**/
-.wp-list-table ._REG_att_checked_in {
-    padding-left: 20px;
-}
-
 
 /**
  * attendee edit page stuff
  *
  */
 
-#titlediv .title-prompt-text {
-    color: var(--ee-font-color-light);
-    position: absolute;
-    font-size: 1.7em;
-    padding: 11px 10px;
+#poststuff #titlewrap {
+    display: flex;
 }
 
-#title-wrap .title-prompt-text {
-    font-size: 1.3em;
-    padding: 5px 8px;
+#poststuff #titlewrap > div {
+    width: 49%;
 }
 
-#titlediv .smaller-text-field, #titlediv .main-text-field {
-    padding: 3px 8px;
-    font-size: 1.7em;
-    line-height: 100%;
-    height: 1.7em;
-    width: 49.3%;
-    outline: none;
-    margin: 1px 6px 1px 0;
-    float: left;
+#poststuff #titlewrap > div + div {
+    margin-inline-start: 2%;
 }
 
+
+#titlediv .smaller-text-field,
 #titlediv .main-text-field {
+    font-size: 1.75rem;
+    height: 3.25rem;
+    line-height: 100%;
+    margin: 0;
     width: 100%;
-    float: none;
 }
+
 
 .espresso-question-group-wrap table th {
     width: inherit;
@@ -392,16 +319,6 @@
     padding: 0;
     margin: 0;
     height: 100%;
-}
-
-
-#admin-primary-mbox-reg-details-dv .button {
-    margin: 10px 0;
-}
-
-#additional-registration-actions-dv ul li {
-    display: inline-block;
-    margin-right: 10px;
 }
 
 #reg_status_change_form {
@@ -508,8 +425,13 @@
 
 /** REGISTRATION LIST TABLE EVENT-DATE COLUMNS **/
 
-.ee-responsive-table-cell__content > .ee-reg-list-dates-list-date {
-    position: relative;
+.espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date,
+.espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date > a {
+    width: clamp(8rem, 12rem, 16rem);
+}
+
+.espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date .row-actions {
+    width: unset;
 }
 
 .ee-registration-event-datetimes-container-wrap {
