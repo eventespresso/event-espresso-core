@@ -74,7 +74,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
             </th>
             <td>
                 <textarea id="QSG_desc" name="QSG_desc" class="regular-text" rows="2"
-                          cols="40"><?php $question_group->f('QSG_desc') ?></textarea>
+                          cols="40"><?php echo esc_textarea($question_group->get_f('QSG_desc')); ?></textarea>
             </td>
         </tr>
 

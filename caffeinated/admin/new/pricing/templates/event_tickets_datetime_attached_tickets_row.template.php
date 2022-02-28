@@ -20,7 +20,7 @@
             <div class="datetime-description-container">
                 <textarea name="<?php echo esc_attr($event_datetimes_name); ?>[<?php echo esc_attr($dtt_row); ?>][DTT_description]"
                           class="event-datetime-DTT_description ee-full-textarea-inp"
-                          placeholder="Datetime Description (optional)"><?php echo $DTT_description; ?></textarea>
+                          placeholder="Datetime Description (optional)"><?php echo esc_textarea($DTT_description); ?></textarea>
             </div>
             <?php do_action(
                 'AHEE__event_tickets_datetime_attached_tickets_row_template__advanced_details_after_dtt_description',

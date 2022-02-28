@@ -51,7 +51,7 @@
                     ); ?></label> <?php echo EEH_Template::get_help_tab_link('description_field_info'); ?></th>
             <td>
                     <textarea class="regular-text" id="PRC_desc" name="PRC_desc" rows="5"><?php
-                        $price->f('PRC_desc');
+                        echo esc_textarea($price->get_f('PRC_desc'));
                     ?></textarea><br/>
             </td>
         </tr>

@@ -172,7 +172,7 @@ if (WP_DEBUG) {
             ); ?> </div>-->
             <textarea name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_description]"
                       class="edit-ticket-TKT_description ee-full-textarea-inp"
-                      placeholder="Ticket Description"><?php echo $TKT_description; ?></textarea>
+                      placeholder="Ticket Description"><?php echo esc_textarea($TKT_description); ?></textarea>
 
             <?php do_action('AHEE__event_tickets_datetime_ticket_row_template_after_desc', $tkt_row, $TKT_ID); ?>
 
