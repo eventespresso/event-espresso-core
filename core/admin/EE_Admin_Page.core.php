@@ -1225,7 +1225,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $request->unSetRequestParams(['_wp_http_referer', 'wp_referer'], true);
             $request->unSetServerParam('_wp_http_referer', true);
             foreach ($request->requestParams() as $key => $value) {
-                \EEH_Debug_Tools::printr($key, '$key', __FILE__, __LINE__);
                 // do not add nonces
                 if (strpos($key, 'nonce') !== false) {
                     continue;
