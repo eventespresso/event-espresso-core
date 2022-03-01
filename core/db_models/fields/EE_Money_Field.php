@@ -14,17 +14,23 @@ class EE_Money_Field extends EE_Float_Field
      */
     protected $decimal_values;
 
+
     /**
      * @param string $table_column
      * @param string $nicename
      * @param bool   $nullable
      * @param null   $default_value
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType('object');
-        $this->decimal_values = LoaderFactory::getShared(DecimalValues::class);
+        $this->decimal_values = LoaderFactory::getShared(
+            'EventEspresso\core\services\helpers\DecimalValues',
+            [EE_Currency_Config::getCurrencyConfig()]
+        );
     }
 
 
@@ -37,7 +43,6 @@ class EE_Money_Field extends EE_Float_Field
      * @param string $value_on_field_to_be_outputted
      * @param string $schema
      * @return string
-     * @throws EE_Error
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null): string
     {

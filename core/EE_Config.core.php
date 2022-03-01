@@ -118,28 +118,29 @@ final class EE_Config implements ResettableInterface
     public $gateway;
 
     /**
-     * @var    array $_addon_option_names
-     * @access    private
+     * @var array
      */
     private $_addon_option_names = array();
 
     /**
-     * @var    array $_module_route_map
-     * @access    private
+     * @var array
      */
     private static $_module_route_map = array();
 
     /**
-     * @var    array $_module_forward_map
-     * @access    private
+     * @var array
      */
     private static $_module_forward_map = array();
 
     /**
-     * @var    array $_module_view_map
-     * @access    private
+     * @var array
      */
     private static $_module_view_map = array();
+
+    /**
+     * @var bool
+     */
+    private static $initialized = false;
 
 
     /**
@@ -149,14 +150,9 @@ final class EE_Config implements ResettableInterface
      */
     public static function instance()
     {
-        static $initialized = false;
         // check if class object is instantiated, and instantiated properly
         if (! self::$_instance instanceof EE_Config) {
             self::$_instance = new self();
-            if (! $initialized) {
-                self::$_instance->initialize();
-                $initialized = true;
-            }
         }
         return self::$_instance;
     }
@@ -186,6 +182,7 @@ final class EE_Config implements ResettableInterface
             self::$_instance->update_addon_option_names();
         }
         self::$_instance = null;
+        self::$initialized = false;
         // we don't need to reset the static properties imo because those should
         // only change when a module is added or removed. Currently we don't
         // support removing a module during a request when it previously existed
@@ -199,11 +196,10 @@ final class EE_Config implements ResettableInterface
 
     private function __construct()
     {
-    }
-
-
-    private function initialize()
-    {
+        if (self::$initialized) {
+            return;
+        }
+        self::$initialized = true;
         do_action('AHEE__EE_Config__construct__begin', $this);
         EE_Config::$_logging_enabled = apply_filters('FHEE__EE_Config___construct__logging_enabled', false);
         // setup empty config classes
@@ -247,8 +243,7 @@ final class EE_Config implements ResettableInterface
      */
     public static function get_current_theme()
     {
-        return isset(self::$_instance->template_settings->current_espresso_theme)
-            ? self::$_instance->template_settings->current_espresso_theme : 'Espresso_Arabica_2014';
+        return self::$_instance->template_settings->current_espresso_theme ?? 'Espresso_Arabica_2014';
     }
 
 
@@ -283,7 +278,12 @@ final class EE_Config implements ResettableInterface
     {
         // load_core_config__start hook
         do_action('AHEE__EE_Config___load_core_config__start', $this);
-        $espresso_config = $this->get_espresso_config();
+        $espresso_config = (array) $this->get_espresso_config();
+        // need to move the "addons" element to the end of the config array
+        // in case an addon config references one of the other config classes
+        $addons = $espresso_config['addons'];
+        unset($espresso_config['addons']);
+        $espresso_config['addons'] = $addons;
         foreach ($espresso_config as $config => $settings) {
             // load_core_config__start hook
             $settings = apply_filters(
@@ -2131,8 +2131,9 @@ class EE_Currency_Config extends EE_Config_Base
      */
     public function __construct($CNT_ISO = '')
     {
-        /** @var TableAnalysis $table_analysis */
-        $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
+        if ($CNT_ISO && $CNT_ISO === $this->code) {
+            return;
+        }
         // get country code from organization settings or use default
         $ORG_CNT = isset(EE_Registry::instance()->CFG->organization)
                    && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
@@ -2141,39 +2142,82 @@ class EE_Currency_Config extends EE_Config_Base
         // but override if requested
         $CNT_ISO = ! empty($CNT_ISO) ? $CNT_ISO : $ORG_CNT;
         // so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
-        if (
-            ! empty($CNT_ISO)
-            && EE_Maintenance_Mode::instance()->models_can_query()
-            && $table_analysis->tableExists(EE_Registry::instance()->load_model('Country')->table())
-        ) {
-            // retrieve the country settings from the db, just in case they have been customized
-            $country = EE_Registry::instance()->load_model('Country')->get_one_by_ID($CNT_ISO);
-            if ($country instanceof EE_Country) {
-                $this->code = $country->currency_code();    // currency code: USD, CAD, EUR
-                $this->name = $country->currency_name_single();    // Dollar
-                $this->plural = $country->currency_name_plural();    // Dollars
-                $this->sign = $country->currency_sign();            // currency sign: $
-                $this->sign_b4 = $country->currency_sign_before(
-                );        // currency sign before or after: $TRUE  or  FALSE$
-                $this->dec_plc = $country->currency_decimal_places();    // decimal places: 2 = 0.00  3 = 0.000
-                $this->dec_mrk = $country->currency_decimal_mark(
-                );    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-                $this->thsnds = $country->currency_thousands_separator(
-                );    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
-            }
-        }
+        $this->setCurrency($CNT_ISO);
         // fallback to hardcoded defaults, in case the above failed
         if (empty($this->code)) {
-            // set default currency settings
-            $this->code = 'USD';    // currency code: USD, CAD, EUR
-            $this->name = esc_html__('Dollar', 'event_espresso');    // Dollar
-            $this->plural = esc_html__('Dollars', 'event_espresso');    // Dollars
-            $this->sign = '$';    // currency sign: $
-            $this->sign_b4 = true;    // currency sign before or after: $TRUE  or  FALSE$
-            $this->dec_plc = 2;    // decimal places: 2 = 0.00  3 = 0.000
-            $this->dec_mrk = '.';    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-            $this->thsnds = ',';    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+            $this->setFallbackCurrency();
         }
+    }
+
+
+    /**
+     * @param string|null $CNT_ISO
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setCurrency(?string $CNT_ISO = '')
+    {
+        if (empty($CNT_ISO) || ! EE_Maintenance_Mode::instance()->models_can_query()){
+            return;
+        }
+
+        /** @var TableAnalysis $table_analysis */
+        $table_analysis = EE_Registry::instance()->create('TableAnalysis', [], true);
+        if (! $table_analysis->tableExists(EE_Registry::instance()->load_model('Country')->table())) {
+            return;
+        }
+        // retrieve the country settings from the db, just in case they have been customized
+        $country = EE_Registry::instance()->load_model('Country')->get_one_by_ID($CNT_ISO);
+        if (! $country instanceof EE_Country) {
+            throw new DomainException(
+                esc_html__('Invalid Country ISO Code.', 'event_espresso')
+            );
+        }
+        $this->code    = $country->currency_code();                  // currency code: USD, CAD, EUR
+        $this->name    = $country->currency_name_single();           // Dollar
+        $this->plural  = $country->currency_name_plural();           // Dollars
+        $this->sign    = $country->currency_sign();                  // currency sign: $
+        $this->sign_b4 = $country->currency_sign_before();           // currency sign before or after
+        $this->dec_plc = $country->currency_decimal_places();        // decimal places: 2 = 0.00  3 = 0.000
+        $this->dec_mrk = $country->currency_decimal_mark();          // decimal mark: ',' = 0,01 or '.' = 0.01
+        $this->thsnds  = $country->currency_thousands_separator();   // thousands sep: ',' = 1,000 or '.' = 1.000
+    }
+
+
+    private function setFallbackCurrency()
+    {
+        // set default currency settings
+        $this->code    = 'USD';
+        $this->name    = esc_html__('Dollar', 'event_espresso');
+        $this->plural  = esc_html__('Dollars', 'event_espresso');
+        $this->sign    = '$';
+        $this->sign_b4 = true;
+        $this->dec_plc = 2;
+        $this->dec_mrk = '.';
+        $this->thsnds  = ',';
+    }
+
+
+    /**
+     * @param string|null $CNT_ISO
+     * @return EE_Currency_Config
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function getCurrencyConfig(?string $CNT_ISO = ''): EE_Currency_Config
+    {
+        // if CNT_ISO passed lets try to get currency settings for it.
+        $currency_config = ! empty($CNT_ISO)
+            ? new EE_Currency_Config($CNT_ISO)
+            : null;
+        // default currency settings for site if not set
+        if ($currency_config instanceof EE_Currency_Config) {
+            return $currency_config;
+        }
+        EE_Config::instance()->currency = EE_Config::instance()->currency instanceof EE_Currency_Config
+            ? EE_Config::instance()->currency
+            : new EE_Currency_Config();
+        return EE_Config::instance()->currency;
     }
 }
 
