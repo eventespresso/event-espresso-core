@@ -1687,15 +1687,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * This method returns a localized message for the toggled Check-in message.
      *
-     * @param int  $DTT_ID include specific datetime to get the correct Check-in message.  If not included or null,
-     *                     then it is assumed Check-in for primary datetime was toggled.
-     * @param bool $error  This just flags that you want an error message returned. This is put in so that the error
-     *                     message can be customized with the attendee name.
+     * @param int|null $DTT_ID include specific datetime to get the correct Check-in message.  If not included or null,
+     *                         then it is assumed Check-in for primary datetime was toggled.
+     * @param bool     $error  This just flags that you want an error message returned. This is put in so that the error
+     *                         message can be customized with the attendee name.
      * @return string internationalized message
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_checkin_msg(int $DTT_ID, bool $error = false): string
+    public function get_checkin_msg(?int $DTT_ID, bool $error = false): string
     {
         // let's get the attendee first so we can include the name of the attendee
         $attendee = $this->get_first_related('Attendee');
