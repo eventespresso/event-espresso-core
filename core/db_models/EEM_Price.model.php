@@ -29,7 +29,6 @@ class EEM_Price extends EEM_Soft_Delete_Base
      */
     protected function __construct($timezone)
     {
-        require_once(EE_MODELS . 'EEM_Price_Type.model.php');
         $this->singular_item = __('Price', 'event_espresso');
         $this->plural_item   = __('Prices', 'event_espresso');
 

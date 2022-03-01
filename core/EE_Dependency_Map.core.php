@@ -965,7 +965,7 @@ class EE_Dependency_Map
                 return EE_Config::instance()->template_settings;
             },
             'EE_Currency_Config'                           => static function () {
-                return EE_Config::instance()->currency;
+                return EE_Currency_Config::getCurrencyConfig();
             },
             'EE_Registration_Config'                       => static function () {
                 return EE_Config::instance()->registration;
