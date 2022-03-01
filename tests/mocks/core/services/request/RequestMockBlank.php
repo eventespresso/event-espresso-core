@@ -47,7 +47,12 @@ class RequestMockBlank implements RequestInterface
     }
 
 
-    public function setServerParam($key, $value)
+    public function setServerParam(string $key, $value, bool $set_global_too = false)
+    {
+    }
+
+
+    public function unSetServerParam(string $key, bool $unset_from_global_too = false)
     {
     }
 
