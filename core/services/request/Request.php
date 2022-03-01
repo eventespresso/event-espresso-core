@@ -128,11 +128,12 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * @param string                 $key
      * @param array|int|float|string $value
+     * @param bool                   $set_global_too
      * @return void
      */
-    public function setServerParam($key, $value)
+    public function setServerParam(string $key, $value, bool $set_global_too = false)
     {
-        $this->server_params->setServerParam($key, $value);
+        $this->server_params->setServerParam($key, $value, $set_global_too);
     }
 
 
@@ -276,6 +277,17 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function unSetRequestParams(array $keys, $unset_from_global_too = false)
     {
         $this->request_params->unSetRequestParams($keys, $unset_from_global_too);
+    }
+
+
+    /**
+     * @param string $key
+     * @param bool   $unset_from_global_too
+     * @return void
+     */
+    public function unSetServerParam(string $key, bool $unset_from_global_too = false)
+    {
+        $this->server_params->unSetServerParam($key, $unset_from_global_too);
     }
 
 
