@@ -64,7 +64,7 @@
 		"prop-types": "^15.7.2",
 		"querystringify": "^2.2.0",
 		"react-modal": "^3.14.4",
-		"react-select": "^5.2.1",
+		"react-select": "^5.2.2",
 		"rememo": "^4.0.0",
 		"warning": "^4.0.3"
 	},
