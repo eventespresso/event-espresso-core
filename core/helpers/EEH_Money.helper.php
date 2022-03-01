@@ -243,19 +243,4 @@ class EEH_Money extends EEH_Base
         $currency_config = EE_Currency_Config::getCurrencyConfig($CNT_ISO);
         return $as_decimal ? pow(10, ($currency_config->dec_plc * -1)) : $currency_config->dec_plc;
     }
-
-
-    /**
-     * @param string|null $CNT_ISO
-     * @param bool        $as_decimal if false [default] will return the number of decimal places ex: 1, 2, 3
-     *                                if true, will return the subunits as a decimal fraction ex: .1, .01, .001
-     * @return float
-     * @throws EE_Error
-     * @since $VID:$
-     */
-    public static function getCurrencySubUnits(?string $CNT_ISO = '', bool $as_decimal = false): float
-    {
-        $currency_config = EEH_Money::get_currency_config($CNT_ISO);
-        return $as_decimal ? pow(10, ($currency_config->dec_plc * -1)) : $currency_config->dec_plc;
-    }
 }
