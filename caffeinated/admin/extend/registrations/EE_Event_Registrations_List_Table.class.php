@@ -119,6 +119,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         ];
 
         $this->_columns      = [
+            'cb' => '<input type="checkbox" />', // Render a checkbox instead of text
             '_REG_att_checked_in' => esc_html__('Check In', 'event_espresso'),
             'ATT_name'            => esc_html__('Registrant', 'event_espresso'),
             'ATT_email'           => esc_html__('Email Address', 'event_espresso'),
@@ -435,7 +436,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             <span class="' . $dashicon_class . '" ></span>
         </button>
         <span class="show-on-mobile-view-only">' . $this->column_ATT_name($registration) . '</span>';
-        return $this->columnContent('_REG_att_checked_in', $content, 'end');
+        return $this->columnContent('_REG_att_checked_in', $content, 'center');
     }
 
 
