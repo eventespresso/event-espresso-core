@@ -53,7 +53,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                 </label>
             </th>
             <td>
-                <input id="QSG_identifier" name="QSG_identifier<?php echo esc_attr($id); ?>"
+                <input id="QSG_identifier" name="QSG_identifier<?php echo absint($id); ?>"
                        value="<?php echo esc_attr($question_group->get_f('QSG_identifier')); ?>" type="text"
                        class="regular-text"<?php echo $disabled; ?>>
                 <?php if (! empty($QSG_system)) { ?>
@@ -180,10 +180,10 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                             }
                             ?>
                             <li class="ee-question-sortable">
-                                <label for="question-<?php echo esc_attr($question_ID); ?>">
-                                    <input type="checkbox" name="questions[<?php echo esc_attr($question_ID); ?>]"
-                                           id="question-<?php echo esc_attr($question_ID); ?>"
-                                           value="<?php echo esc_attr($question_ID); ?>"<?php echo $disabled; ?><?php echo $checked; ?>/>
+                                <label for="question-<?php echo absint($question_ID); ?>">
+                                    <input type="checkbox" name="questions[<?php echo absint($question_ID); ?>]"
+                                           id="question-<?php echo absint($question_ID); ?>"
+                                           value="<?php echo absint($question_ID); ?>"<?php echo $disabled; ?><?php echo $checked; ?>/>
                                     <span class="question-text"><?php
                                         echo trim($question->display_text())
                                              . (95 <= strlen(trim($question->display_text()))
@@ -192,7 +192,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                                                 ?>
                                     </span>
                                     <input class="question-group-QGQ_order" type="hidden"
-                                           name="question_orders[<?php echo esc_attr($question_ID); ?>]"
+                                           name="question_orders[<?php echo absint($question_ID); ?>]"
                                            value="<?php echo esc_attr($question_order); ?>">
                                 </label>
                                 <?php

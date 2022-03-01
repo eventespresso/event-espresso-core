@@ -28,7 +28,7 @@
                 $state_name   = is_object($venue->state_obj()) ? $venue->state_obj()->name() : null;
                 $country_name = is_object($venue->country_obj()) ? $venue->country_obj()->name() : null;
                 ?>
-                <div class='eebox <?php echo sanitize_html_class($selected); ?>' id="eebox_<?php echo esc_attr($venue->ID()); ?>">
+                <div class='eebox <?php echo sanitize_html_class($selected); ?>' id="eebox_<?php echo absint($venue->ID()); ?>">
                     <p class='address-view'>
                         <span><?php esc_html_e('Address:', 'event_espresso'); ?>&nbsp;</span>
                         <?php echo esc_html($venue->address()); ?>

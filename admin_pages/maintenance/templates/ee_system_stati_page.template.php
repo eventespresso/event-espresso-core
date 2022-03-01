@@ -29,7 +29,7 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
         $depth++;
         ksort($data, SORT_NATURAL | SORT_FLAG_CASE);
         if (EEH_Array::is_associative_array($data)) { ?>
-            <table class='ee-system-stati ee-system-stati-<?php echo sanitize_html_class($depth); ?>'>
+            <table class='ee-system-stati ee-system-stati-<?php echo absint($depth); ?>'>
                 <tbody>
                     <?php foreach ($data as $data_key => $data_value) {
                         // if the value is a single element array with no key,
@@ -98,7 +98,7 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
                 </tbody>
             </table>
         <?php } elseif (count($data) > 1) { ?>
-            <ul class='ee-system-stati ee-system-stati-<?php echo sanitize_html_class($depth); ?>'>
+            <ul class='ee-system-stati ee-system-stati-<?php echo absint($depth); ?>'>
                 <?php foreach ($data as $datum) { ?>
                     <li>
                         <?php ee_recurse_into_array_for_display($datum, $depth, false); ?>

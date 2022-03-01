@@ -2672,10 +2672,10 @@ class Messages_Admin_Page extends EE_Admin_Page
                 wp_nonce_field($args['action'] . '_nonce', $args['action'] . '_nonce', false);
                 $id = 'ee-' . sanitize_key($context_label['label']) . '-select';
                 ?>
-                <label for='<?php echo esc_attr($id); ?>' class='screen-reader-text'>
+                <label for='<?php echo absint($id); ?>' class='screen-reader-text'>
                     <?php esc_html_e('message context options', 'event_espresso'); ?>
                 </label>
-                <select id="<?php echo esc_attr($id); ?>" name="context">
+                <select id="<?php echo absint($id); ?>" name="context">
                     <?php
                     $context_templates = $template_group_object->context_templates();
                     if (is_array($context_templates)) :

@@ -80,15 +80,15 @@ if ($QST_system === 'country') {
                         $disabled_attr = ! empty($QST_system) ? ' disabled="disabled"' : '';
                         ?>
                         <input class='regular-text'
-                               id="QST_admin_label<?php echo esc_attr($id); ?>"
-                               name="QST_admin_label<?php echo esc_attr($id); ?>"
+                               id="QST_admin_label<?php echo absint($id); ?>"
+                               name="QST_admin_label<?php echo absint($id); ?>"
                                type="text"
                                value="<?php echo esc_attr($question->get_f('QST_admin_label')); ?>"
                                <?php echo $disabled_attr ?>
                         />
                         <input class="QST_order"
-                               id="QST_order<?php echo esc_attr($id); ?>"
-                               name="QST_order<?php echo esc_attr($id); ?>"
+                               id="QST_order<?php echo absint($id); ?>"
+                               name="QST_order<?php echo absint($id); ?>"
                                type="hidden"
                                value="<?php echo esc_attr($question->get('QST_order')); ?>"
                         />
@@ -126,8 +126,8 @@ if ($QST_system === 'country') {
                         $checked       = ! empty($admin_only) ? ' checked="checked"' : '';
                         ?>
                         <input class="QST_admin_only"
-                               id="QST_admin_only<?php echo esc_attr($id); ?>"
-                               name="QST_admin_only<?php echo esc_attr($id); ?>"
+                               id="QST_admin_only<?php echo absint($id); ?>"
+                               name="QST_admin_only<?php echo absint($id); ?>"
                                type="checkbox"
                                value="1"
                             <?php
@@ -310,18 +310,18 @@ if ($QST_system === 'country') {
                                             <td class="option-value-cell">
                                                 <input type="hidden"
                                                        class="QSO_order"
-                                                       name="question_options[<?php echo esc_attr($count); ?>][QSO_order]"
-                                                       value="<?php echo esc_attr($count); ?>"
+                                                       name="question_options[<?php echo absint($count); ?>][QSO_order]"
+                                                       value="<?php echo absint($count); ?>"
                                                 />
                                                 <input type="text"
                                                        class="option-value regular-text"
-                                                       name="question_options[<?php echo esc_attr($count) ?>][QSO_value]"
+                                                       name="question_options[<?php echo absint($count) ?>][QSO_value]"
                                                        value="<?php echo esc_attr($option->get_f('QSO_value')); ?>"
                                                     <?php echo $disabled_attr; // escape not needed ?>
                                                 />
                                                 <?php if ($has_answers) : ?>
                                                     <input type="hidden"
-                                                           name="question_options[<?php echo esc_attr($count); ?>][QSO_value]"
+                                                           name="question_options[<?php echo absint($count); ?>][QSO_value]"
                                                            value="<?php echo esc_attr($option->get_f('QSO_value')); ?>"
                                                     />
                                                 <?php endif; ?>
@@ -329,7 +329,7 @@ if ($QST_system === 'country') {
                                             <td class="option-desc-cell">
                                                 <input type="text"
                                                        class="option-desc regular-text"
-                                                       name="question_options[<?php echo esc_attr($count); ?>][QSO_desc]"
+                                                       name="question_options[<?php echo absint($count); ?>][QSO_desc]"
                                                        value="<?php echo esc_attr($option->get_f('QSO_desc')); ?>"
                                                 />
                                             </td>
