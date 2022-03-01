@@ -290,7 +290,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ],
             'create_new'             => [
                 'nav'           => [
-                    'label'      => esc_html__('Add Event', 'event_espresso'),
+                    'label'      => esc_html__('Add New Event', 'event_espresso'),
                     'order'      => 5,
                     'persistent' => false,
                 ],
