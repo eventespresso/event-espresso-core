@@ -1849,12 +1849,12 @@ label.error {
     display: block;
     font-size: 1rem;
     font-weight: 600;
-    height: 2.25rem;
-    line-height: 1.5;
+    height: 2rem;
+    line-height: 1.25;
     margin: 0.25rem;
     padding-block-start: 0.25rem;
     padding-block-end: 0.45rem;
-    padding-inline: 1.5rem;
+    padding-inline: 1.25rem;
     text-align: center;
     text-decoration: none;
     width: fit-content;
@@ -3055,9 +3055,11 @@ body.espresso-admin #contextual-help-wrap strong {
     letter-spacing: unset;
     line-height: 1.5;
     height: auto;
+    max-width: clamp(24rem, 48rem, 96rem);
+    min-width: clamp(12rem, 18rem, 24rem);
     padding: 1rem 2rem;
-    width: clamp(24rem, 48rem, 96rem);
     white-space: unset;
+    /* width: fit-content; */
 }
 
 .espresso-admin .ee-locked-entity.ee-aria-tooltip .ee-tooltip {
@@ -3608,22 +3610,27 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .wrap .page-title-action,
 .espresso-admin.wp-core-ui .button.button--primary-alt {
     background-color: var(--ee-color-white);
-    border-color: var(--ee-btn-primary-alt);
-    color: var(--ee-btn-primary-alt);
+    border-color: var(--ee-btn-primary);
+    color: var(--ee-btn-primary);
 }
 .espresso-admin.wp-core-ui .wrap .add-new-h2:hover,
 .espresso-admin.wp-core-ui .wrap .page-title-action:hover,
 .espresso-admin.wp-core-ui .button.button--primary-alt:hover {
-    background-color: var(--ee-btn-primary-alt);
-    border-color: var(--ee-btn-primary-alt);
+    background-color: var(--ee-btn-primary);
+    border-color: var(--ee-btn-primary);
     color: var(--ee-color-white);
 }
 .espresso-admin.wp-core-ui .wrap .add-new-h2:focus,
 .espresso-admin.wp-core-ui .wrap .page-title-action:focus,
 .espresso-admin.wp-core-ui .button.button--primary-alt:focus {
-    background-color: var(--ee-btn-primary-alt-focus);
-    border-color: var(--ee-btn-primary-alt-focus);
+    background-color: var(--ee-btn-primary-focus);
+    border-color: var(--ee-btn-primary-focus);
     color: var(--ee-color-white);
+}
+
+
+.espresso-admin.wp-core-ui .wrap h1 > .add-new-h2 {
+    margin-inline-start: 1rem;
 }
 
 
@@ -4256,6 +4263,7 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 .espresso-admin p.search-box input[type="search"][name="s"]:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
     float: unset;
+    max-width: clamp(24rem, 50%, 48rem);
 }
 
 

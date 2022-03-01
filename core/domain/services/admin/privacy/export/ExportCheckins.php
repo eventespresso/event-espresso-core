@@ -96,7 +96,7 @@ class ExportCheckins implements PersonalDataExporterInterface
                         ),
                         array(
                             'name'  => esc_html__('Check in/out', 'event_espresso'),
-                            'value' => $checkin->get('CHK_in')
+                            'value' => $checkin->status()
                                 ? esc_html__('In', 'event_espresso')
                                 : esc_html__('Out', 'event_espresso'),
                         ),

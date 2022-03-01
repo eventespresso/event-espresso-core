@@ -1567,7 +1567,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             EE_Checkin::status_checked_out   => EE_Checkin::status_checked_in,
         );
         // start by getting the current status so we know what status we'll be changing to.
-        $cur_status = $this->check_in_status_for_datetime($DTT_ID, null);
+        $cur_status = $this->check_in_status_for_datetime($DTT_ID);
         $status_to = $status_paths[ $cur_status ];
         // database only records true for checked IN or false for checked OUT
         // no record ( null ) means checked in NEVER, but we obviously don't save that
@@ -1655,55 +1655,56 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * If neither the datetime nor the checkin values are provided as arguments,
      * then this will return the LATEST check-in status for the registration across all datetimes it belongs to.
      *
-     * @param  int       $DTT_ID  The ID of the datetime we're checking against
-     *                            (if empty we'll get the primary datetime for
-     *                            this registration (via event) and use it's ID);
-     * @param EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
-     *
-     * @return int                Integer representing Check-in status.
+     * @param int|null        $DTT_ID  The ID of the datetime we're checking against
+     *                                 (if empty we'll get the primary datetime for
+     *                                 this registration (via event) and use it's ID);
+     * @param EE_Checkin|null $checkin If present, we use the given checkin object rather than the dtt_id.
+     * @return int                     Integer representing Check-in status.
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function check_in_status_for_datetime($DTT_ID = 0, $checkin = null)
+    public function check_in_status_for_datetime(?int $DTT_ID = 0, ?EE_Checkin $checkin = null): int
     {
-        $checkin_query_params = array(
-            'order_by' => array('CHK_timestamp' => 'DESC'),
-        );
-
-        if ($DTT_ID > 0) {
-            $checkin_query_params[0] = array('DTT_ID' => $DTT_ID);
-        }
-
-        // get checkin object (if exists)
-        $checkin = $checkin instanceof EE_Checkin
-            ? $checkin
-            : $this->get_first_related('Checkin', $checkin_query_params);
         if ($checkin instanceof EE_Checkin) {
-            if ($checkin->get('CHK_in')) {
-                return EE_Checkin::status_checked_in; // checked in
-            }
-            return EE_Checkin::status_checked_out; // had checked in but is now checked out.
+            return $checkin->status();
         }
-        return EE_Checkin::status_checked_never; // never been checked in
+        // can't query checkin for a specific date if no ID was supplied
+        if (empty($DTT_ID)) {
+            return EE_Checkin::status_invalid;
+        }
+
+        $checkin = $this->get_first_related(
+            'Checkin',
+            [
+                ['DTT_ID' => $DTT_ID],
+                'order_by' => ['CHK_timestamp' => 'DESC'],
+            ]
+        );
+        return $checkin instanceof EE_Checkin ? $checkin->status():  EE_Checkin::status_checked_never;
     }
 
 
     /**
      * This method returns a localized message for the toggled Check-in message.
      *
-     * @param  int $DTT_ID include specific datetime to get the correct Check-in message.  If not included or null,
+     * @param int  $DTT_ID include specific datetime to get the correct Check-in message.  If not included or null,
      *                     then it is assumed Check-in for primary datetime was toggled.
      * @param bool $error  This just flags that you want an error message returned. This is put in so that the error
      *                     message can be customized with the attendee name.
      * @return string internationalized message
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_checkin_msg($DTT_ID, $error = false)
+    public function get_checkin_msg(int $DTT_ID, bool $error = false): string
     {
         // let's get the attendee first so we can include the name of the attendee
         $attendee = $this->get_first_related('Attendee');
         if ($attendee instanceof EE_Attendee) {
             if ($error) {
-                return sprintf(esc_html__("%s's check-in status was not changed.", "event_espresso"), $attendee->full_name());
+                return sprintf(
+                    esc_html__("%s's check-in status was not changed.", "event_espresso"),
+                    $attendee->full_name()
+                );
             }
             $cur_status = $this->check_in_status_for_datetime($DTT_ID);
             // what is the status message going to be?
@@ -1713,13 +1714,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                         esc_html__("%s has been removed from Check-in records", "event_espresso"),
                         $attendee->full_name()
                     );
-                    break;
                 case EE_Checkin::status_checked_in:
                     return sprintf(esc_html__('%s has been checked in', 'event_espresso'), $attendee->full_name());
-                    break;
                 case EE_Checkin::status_checked_out:
                     return sprintf(esc_html__('%s has been checked out', 'event_espresso'), $attendee->full_name());
-                    break;
             }
         }
         return esc_html__("The check-in status could not be determined.", "event_espresso");
@@ -1732,8 +1730,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @return EE_Transaction
      * @throws EE_Error
      * @throws EntityNotFoundException
+     * @throws ReflectionException
      */
-    public function transaction()
+    public function transaction(): EE_Transaction
     {
         $transaction = $this->get_first_related('Transaction');
         if (! $transaction instanceof \EE_Transaction) {

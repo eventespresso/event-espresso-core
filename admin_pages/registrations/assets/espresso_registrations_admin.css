@@ -65,29 +65,60 @@
     font-size: 2rem;
 }
 
-.ee-event-filter {
+.espresso-admin #espresso-default-admin.registrations h2 .ee-event-name {
+    color: var(--ee-font-color-dark);
+    font-size: 1.75rem;
+    margin-inline-start: 2rem;
+}
+
+.espresso-admin #espresso-default-admin.registrations h2 .ee-event-datetime-name {
+    align-items: baseline;
+    color: var(--ee-font-color);
+    display: inline-flex;
+    font-size: 1.2rem;
+}
+.espresso-admin #espresso-default-admin.registrations h2 .ee-event-datetime-name .dashicons  {
+    color: var(--ee-font-color-light);
+    font-size: 1.5rem;
+    inset-block-start: 0.25rem;
+    margin-inline-start: 2rem;
+    margin-inline-end: 1.5rem;
+    position: relative;
+}
+.espresso-admin #espresso-default-admin.registrations h2 .ee-event-datetime-name .ee-status  {
+    margin-inline-start: 1rem;
+}
+
+.ee-event-filter,
+.ee-event-filter > span {
     align-items: center;
     display: flex;
+    justify-content: start;
 }
 
-.ee-event-filter label {
-    font-size: 1rem;
+.ee-event-filter > span input[type="checkbox"] {
+    margin-inline-end: .5rem;
 }
 
-.ee-event-filter .ee-event-filter-toggle {
-    display: block;
-    float: right;
-    margin-right: 20px;
-    margin-top: 5px;
+.ee-event-filter > span + span {
+    margin-inline-start: 1rem;
+}
+.ee-event-filter .ee-hide-expired-events .ee-expired-event {
+    display: none;
+}
+.ee-event-filter .ee-hide-upcoming-events .ee-upcoming-event {
+    display: none;
 }
 
-
-.reg-pad-rght {
-    align-items: center;
-    display: flex;
-    justify-content: flex-end;
-    padding-inline-end: .5em;
-    width: 100%;
+.ee-event-filter > span .dashicons-editor-help {
+    color: var(--ee-help-attention);
+    cursor: pointer;
+    font-size: 2rem;
+    margin-inline-end: 1rem;
+    top: -5px;
+}
+.ee-event-filter > span .dashicons-editor-help:hover {
+    color: var(--ee-help-attention-hover);
 }
 
 
