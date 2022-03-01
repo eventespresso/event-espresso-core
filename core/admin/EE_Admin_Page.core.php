@@ -1084,14 +1084,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if (! did_action('AHEE__EE_Admin_Page__route_admin_request')) {
             do_action('AHEE__EE_Admin_Page__route_admin_request', $this->_current_view, $this);
         }
-        // right before calling the route, let's clean the _wp_http_referer
-        $this->request->setServerParam(
-            'REQUEST_URI',
-            remove_query_arg(
+        // strip _wp_http_referer from the server REQUEST_URI
+        // else it grows in length on every submission due to recursion,
+        // ultimately causing a "Request-URI Too Large" error
+        $request_uri = remove_query_arg(
                 '_wp_http_referer',
                 wp_unslash($this->request->getServerParam('REQUEST_URI'))
-            )
         );
+        // set new value in both our Request object and the super global
+        $this->request->setServerParam('REQUEST_URI', $request_uri, true);
         if (! empty($func)) {
             if (is_array($func)) {
                 [$class, $method] = $func;
@@ -1221,14 +1222,17 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if ($sticky) {
             /** @var RequestInterface $request */
             $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-            $request->unSetRequestParams(['_wp_http_referer', 'wp_referer']);
+            $request->unSetRequestParams(['_wp_http_referer', 'wp_referer'], true);
+            $request->unSetServerParam('_wp_http_referer', true);
             foreach ($request->requestParams() as $key => $value) {
+                \EEH_Debug_Tools::printr($key, '$key', __FILE__, __LINE__);
                 // do not add nonces
                 if (strpos($key, 'nonce') !== false) {
                     continue;
                 }
                 $args[ 'wp_referer[' . $key . ']' ] = is_string($value) ? htmlspecialchars($value) : $value;
             }
+            wp_die();
         }
         return EEH_URL::add_query_args_and_nonce($args, $url, $exclude_nonce);
     }

@@ -57,9 +57,10 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
     /**
      * @param string                 $key
      * @param array|int|float|string $value
+     * @param bool                   $set_global_too
      * @return void
      */
-    public function setServerParam($key, $value);
+    public function setServerParam(string $key, $value, bool $set_global_too = false);
 
 
     /**
@@ -160,6 +161,14 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
      * @param bool  $unset_from_global_too
      */
     public function unSetRequestParams(array $keys, $unset_from_global_too = false);
+
+
+    /**
+     * @param string $key
+     * @param bool   $unset_from_global_too
+     * @return void
+     */
+    public function unSetServerParam(string $key, bool $unset_from_global_too = false);
 
 
     /**
