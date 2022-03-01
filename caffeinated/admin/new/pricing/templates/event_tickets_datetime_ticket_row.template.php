@@ -162,7 +162,7 @@ if (WP_DEBUG) {
                   class="ticket-fieldset"<?php echo $display_edit_tkt_row; ?>>
             <legend></legend>
             <input type="hidden" name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_ID]"
-                   class="edit-ticket-TKT_ID" value="<?php echo esc_attr($TKT_ID); ?>">
+                   class="edit-ticket-TKT_ID" value="<?php echo absint($TKT_ID); ?>">
             <input type="hidden" name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_row]"
                    class="edit-ticket-TKT_row" value="<?php echo absint($tkt_row); ?>">
 

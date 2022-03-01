@@ -15,10 +15,10 @@ foreach ($all_questions as $question_option) {
         $checked = array_key_exists($question_ID, $question_group->questions()) ? ' checked="checked"' : '';
         ?>
         <li>
-            <label for="question-<?php echo esc_attr($question_ID); ?>">
-                <input type="checkbox" name="questions[<?php echo esc_attr($question_ID); ?>]"
-                       id="question-<?php echo esc_attr($question_ID); ?>"
-                       value="<?php echo esc_attr($question_ID); ?>"<?php echo $checked; ?>/>
+            <label for="question-<?php echo absint($question_ID); ?>">
+                <input type="checkbox" name="questions[<?php echo absint($question_ID); ?>]"
+                       id="question-<?php echo absint($question_ID); ?>"
+                       value="<?php echo absint($question_ID); ?>"<?php echo $checked; ?>/>
                 <?php echo $question->display_text() ?>
             </label>
         </li>

@@ -32,7 +32,7 @@
     <td>
         <input type="hidden"
                name="<?php echo esc_attr($edit_prices_name); ?>[<?php echo absint($tkt_row); ?>][<?php echo absint($PRC_order); ?>][PRC_ID]"
-               class="edit-price-PRC_ID" value="<?php echo esc_attr($PRC_ID); ?>">
+               class="edit-price-PRC_ID" value="<?php echo absint($PRC_ID); ?>">
         <input type="hidden"
                name="<?php echo esc_attr($edit_prices_name); ?>[<?php echo absint($tkt_row); ?>][<?php echo absint($PRC_order); ?>][PRC_is_default]"
                class="edit-price-PRC_is_default" value="<?php echo esc_attr($PRC_is_default); ?>">

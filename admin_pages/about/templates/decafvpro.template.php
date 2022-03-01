@@ -53,7 +53,7 @@
         <tbody>
         <?php
         foreach ($features as $feature) : ?>
-            <tr class="<?php echo esc_attr($feature['class']); ?>">
+            <tr class="<?php echo sanitize_html_class($feature['class']); ?>">
                 <td class="feature">
                     <h3>
                         <?php echo esc_html($feature['label']); ?>
