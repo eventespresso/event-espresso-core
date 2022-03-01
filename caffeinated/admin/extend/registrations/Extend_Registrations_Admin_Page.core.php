@@ -1126,6 +1126,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $checked_in = new CheckinStatusDashicon(EE_Checkin::status_checked_in);
         $checked_out = new CheckinStatusDashicon(EE_Checkin::status_checked_out);
         $checked_never = new CheckinStatusDashicon(EE_Checkin::status_checked_never);
+        $checkin_invalid = new CheckinStatusDashicon(EE_Checkin::status_invalid);
         $legend_items = array(
             'star-icon'        => array(
                 'class' => 'dashicons dashicons-star-filled gold-icon',
@@ -1142,6 +1143,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'nocheckinrecord'  => array(
                 'class' => $checked_never->cssClasses(),
                 'desc'  => $checked_never->legendLabel(),
+            ),
+            'canNotCheckin'  => array(
+                'class' => $checkin_invalid->cssClasses(),
+                'desc'  => $checkin_invalid->legendLabel(),
             ),
             'approved_status'  => array(
                 'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_approved,
@@ -1169,14 +1174,15 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             ),
         );
         $this->_template_args['after_list_table'] = $this->_display_legend($legend_items);
-        $event_id = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : null;
+        $event_id = isset($this->_req_data['event_id']) ? absint($this->_req_data['event_id']) : 0;
         /** @var EE_Event $event */
         $event = EEM_Event::instance()->get_one_by_ID($event_id);
         $this->_template_args['before_list_table'] = $event instanceof EE_Event
-            ? '<h2>' . sprintf(
-                esc_html__('Viewing Registrations for Event: %s', 'event_espresso'),
-                EEM_Event::instance()->get_one_by_ID($event_id)->get('EVT_name')
-            ) . '</h2>'
+            ? '<h2>
+                ' . sprintf(
+                        esc_html__('Viewing Registrations for Event: %s', 'event_espresso'),
+                        "<span class='ee-event-name'>{$event->name()}</span>"
+                    )
             : '';
         // need to get the number of datetimes on the event and set default datetime_id if there is only one datetime on
         // the event.
@@ -1190,13 +1196,20 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         }
         $datetime = $datetime instanceof EE_Datetime ? $datetime : EEM_Datetime::instance()->get_one_by_ID($DTT_ID);
         if ($datetime instanceof EE_Datetime && $this->_template_args['before_list_table'] !== '') {
-            $this->_template_args['before_list_table'] = substr($this->_template_args['before_list_table'], 0, -5);
-            $this->_template_args['before_list_table'] .= ' &nbsp;<span class="drk-grey-text">';
-            $this->_template_args['before_list_table'] .= '<span class="dashicons dashicons-calendar"></span>';
+            $active_status   = $datetime->get_active_status();
+            $datetime_status =
+                '<span class="ee-status ee-status-bg--' . esc_attr($active_status) . ' event-active-status-' .
+                esc_attr($active_status) . '">'
+                . EEH_Template::pretty_status($active_status, false, 'sentence')
+                . '</span>';
+            $this->_template_args['before_list_table'] .= '<span class="ee-event-datetime-name">';
+            $this->_template_args['before_list_table'] .= '<span class="dashicons dashicons-calendar-alt"></span>';
             $this->_template_args['before_list_table'] .= $datetime->name();
             $this->_template_args['before_list_table'] .= ' ( ' . $datetime->date_and_time_range() . ' )';
-            $this->_template_args['before_list_table'] .= '</span></h2>';
+            $this->_template_args['before_list_table'] .= $datetime_status;
+            $this->_template_args['before_list_table'] .= '</span>';
         }
+        $this->_template_args['before_list_table'] .= '</h2>';
         // if no datetime, then we're on the initial view, so let's give some helpful instructions on what the status
         // column represents
         if (! $datetime instanceof EE_Datetime) {

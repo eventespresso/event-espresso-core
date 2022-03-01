@@ -122,29 +122,28 @@ jQuery(document).ready(function($) {
 		//won't do anything just wanna make sure .validate only runs when the jQuery validate plugin is present
 	}
 
-
-	/** Hide/unhide expired events in event dropdown **/
-	var non_expired_opts = '', full_opts = '';
-	var default_value = $('#event_id' ).val();
-	if ( full_opts === '' ) {
-		full_opts = $( '#event_id', '#post-body-content').children();
-		non_expired_opts = $( '#event_id', '#post-body-content' ).children().not( '.ee-expired-event' );
-
-		//on load let's just show non_expired but ONLY if the hide expired events is checked.
-		if ( $('#js-ee-hide-expired-events').prop( 'checked' ) ) {
-			$('#event_id', '#post-body-content').html(non_expired_opts);
-			//always ensure our original default select is retained.
-			$('#event_id', '#post-body-content').find('option[value=' + default_value + ']').prop('selected', true);
-		}
-	}
-	$('#js-ee-hide-expired-events', '#post-body-content').click( function() {
-		if ( $(this).prop('checked') ) {
-			$('#event_id', '#post-body-content').html( non_expired_opts );
-			$('#event_id', '#post-body-content').find( 'option[value='+default_value+']').prop('selected',true);
-		} else {
-			$('#event_id', '#post-body-content').html( full_opts );
-			$('#event_id', '#post-body-content').find( 'option[value='+default_value+']').prop('selected',true);
-		}
+	$('#js-ee-hide-expired-events').click( function() {
+		$('#event_id').toggleClass('ee-hide-expired-events');
+		// if ($(this).prop('checked')) {
+		// 	$('#event_id').addClass('ee-hide-expired-events');
+		// } else {
+		// 	$('#event_id').removeClass('ee-hide-expired-events');
+		// }
+	});
+	$('#js-ee-hide-upcoming-events').click( function() {
+		$('#event_id').toggleClass('ee-hide-upcoming-events');
+		// if ($(this).prop('checked')) {
+		// 	$('#event_id').addClass('ee-hide-upcoming-events');
+		// } else {
+		// 	$('#event_id').removeClass('ee-hide-upcoming-events');
+		// }
+	});
+	$('#event_id').change(function () {
+		$('#DTT_ID').val(0);
+		this.form.submit();
+	});
+	$('#DTT_ID').change(function () {
+		this.form.submit();
 	});
 });
 

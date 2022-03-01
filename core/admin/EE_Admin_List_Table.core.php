@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 if (! class_exists('WP_List_Table')) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -520,7 +523,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function prepare_items()
     {
-
         $this->_set_column_info();
         // $this->_column_headers = $this->get_column_info();
         $total_items = $this->_all_data_count;
