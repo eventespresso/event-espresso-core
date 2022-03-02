@@ -52,7 +52,7 @@ $event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $eve
 
 <?php elseif ( is_archive() ) : ?>
 
-	<div id="espresso-event-list-header-dv-<?php echo $post->ID;?>" class="espresso-event-header-dv">
+	<div id="espresso-event-list-header-dv-<?php echo esc_attr($post->ID); ?>" class="espresso-event-header-dv">
 		<?php espresso_get_template_part( 'content', 'espresso_events-thumbnail' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_events-header' ); ?>
 	</div>

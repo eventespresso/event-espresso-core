@@ -8,7 +8,7 @@ if ( has_post_thumbnail( $post->ID )) :
 		if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'large' )) :
 			$caption = get_post( get_post( $img_ID ))->post_excerpt;
 			?>
-<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
+<div id="ee-event-img-dv-<?php echo esc_attr($post->ID); ?>" class="ee-event-img-dv">
 	<a class="ee-event-img-lnk" href="<?php the_permalink(); ?>"<?php echo EED_Events_Archive::link_target();?>>
 		<img alt="<?php echo esc_attr($caption); ?>"
              class="ee-event-img"

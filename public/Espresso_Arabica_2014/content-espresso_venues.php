@@ -18,7 +18,7 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 
 <?php if ( is_single() ) : ?>
 
-	<div id="espresso-venue-header-dv-<?php echo $post->ID;?>" class="espresso-venue-header-dv">
+	<div id="espresso-venue-header-dv-<?php echo esc_attr($post->ID); ?>" class="espresso-venue-header-dv">
 		<?php espresso_get_template_part( 'content', 'espresso_venues-thumbnail' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_venues-header' ); ?>
 	</div>
@@ -34,7 +34,7 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 
 <?php elseif ( is_archive() ) : ?>
 
-	<div id="espresso-venue-header-dv-<?php echo $post->ID;?>" class="espresso-venue-header-dv">
+	<div id="espresso-venue-header-dv-<?php echo esc_attr($post->ID); ?>" class="espresso-venue-header-dv">
 		<?php espresso_get_template_part( 'content', 'espresso_venues-thumbnail' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_venues-header' ); ?>
 	</div>
