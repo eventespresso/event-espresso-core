@@ -46,8 +46,8 @@ $context = esc_attr($context);
             <span class="ee-inactive-message"><?php echo $inactive_message; // already escaped ?></span>
         </div>
         <div class="switch">
-            <?php $checked = $is_active ? 'checked="checked"' : ''; ?>
-            <input class='ee-on-off-toggle ee-toggle-round-flat' <?php echo $checked; ?>
+            <?php $checked = $is_active ? 'checked' : ''; ?>
+            <input class='ee-on-off-toggle ee-toggle-round-flat' <?php echo esc_attr($checked); ?>
                    data-grpid="<?php echo absint($message_template_group_id); ?>"
                    id="ee-on-off-toggle-<?php echo esc_attr($context); ?>"
                    type="checkbox"

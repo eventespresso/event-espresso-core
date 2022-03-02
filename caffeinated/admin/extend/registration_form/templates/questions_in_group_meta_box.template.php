@@ -12,13 +12,13 @@ foreach ($all_questions as $question_option) {
     <?php
     foreach ($all_questions as $question_ID => $question) {
         /*@var $question EE_Question*/
-        $checked = array_key_exists($question_ID, $question_group->questions()) ? ' checked="checked"' : '';
+        $checked = array_key_exists($question_ID, $question_group->questions()) ? 'checked' : '';
         ?>
         <li>
             <label for="question-<?php echo absint($question_ID); ?>">
                 <input type="checkbox" name="questions[<?php echo absint($question_ID); ?>]"
                        id="question-<?php echo absint($question_ID); ?>"
-                       value="<?php echo absint($question_ID); ?>"<?php echo $checked; ?>/>
+                       value="<?php echo absint($question_ID); ?>" <?php echo esc_attr($checked); ?>/>
                 <?php echo $question->display_text() ?>
             </label>
         </li>

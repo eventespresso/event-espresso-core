@@ -532,12 +532,12 @@
                                 <?php foreach ($payment_methods as $method) : ?>
                                     <?php
                                     $selected = $method->slug() == 'cash'
-                                        ? ' selected="selected"'
+                                        ? ' selected'
                                         : '';
                                     ?>
                                     <option id="payment-method-opt-<?php echo esc_attr($method->slug()); ?>"
                                             value="<?php echo esc_attr($method->ID()); ?>"
-                                        <?php echo $selected; ?>
+                                        <?php echo esc_attr($selected); ?>
                                     >
                                         <?php
                                         echo esc_html(
@@ -614,12 +614,12 @@
                                     <?php foreach ($payment_status as $STS_ID => $STS_code) : ?>
                                         <?php
                                         $selected = $STS_ID == 'PAP'
-                                            ? ' selected="selected"'
+                                            ? 'selected'
                                             : '';
                                         ?>
                                         <option id="payment-status-opt-<?php echo esc_attr($STS_ID); ?>"
                                                 value="<?php echo esc_attr($STS_ID); ?>"
-                                            <?php echo $selected; ?>
+                                            <?php echo esc_attr($selected); ?>
                                         >
                                             <?php echo esc_html($STS_code); ?>
                                         </option>

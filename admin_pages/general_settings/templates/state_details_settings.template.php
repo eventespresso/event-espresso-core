@@ -23,9 +23,8 @@
     <?php
     if ($states) {
         foreach ($states as $STA_ID => $state) {
-            $STA_ID = absint($STA_ID);
             ?>
-        <tr id="state-<?php echo esc_attr($STA_ID); ?>-tr" class="country-state-columns">
+        <tr id="state-<?php echo absint($STA_ID); ?>-tr" class="country-state-columns">
             <?php
             foreach ($state['inputs'] as $ID => $input) {
                 if ($ID != 'STA_ID' && $ID != 'CNT_ISO') {
@@ -35,7 +34,7 @@
             ?>
             <td class="delete-state-td">
                 <a class="dashicons dashicons-post-trash ee-icon-size-20 delete-state-lnk"
-                   id="delete-state-<?php echo esc_attr($STA_ID); ?>-lnk"
+                   id="delete-state-<?php echo absint($STA_ID); ?>-lnk"
                    href="<?php echo esc_url_raw($state['delete_state_url']); ?>"
                    rel="<?php echo esc_attr($STA_ID); ?>"
                    title="<?php echo sprintf(esc_attr__('Delete State #%d?', 'event_espresso'), $STA_ID); ?>"

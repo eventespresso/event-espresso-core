@@ -77,14 +77,14 @@ if ($QST_system === 'country') {
                     <td>
                         <?php
                         $id            = ! empty($QST_system) ? '_disabled' : '';
-                        $disabled_attr = ! empty($QST_system) ? ' disabled="disabled"' : '';
+                        $disabled_attr = ! empty($QST_system) ? 'disabled' : '';
                         ?>
                         <input class='regular-text'
                                id="QST_admin_label<?php echo absint($id); ?>"
                                name="QST_admin_label<?php echo absint($id); ?>"
                                type="text"
                                value="<?php echo esc_attr($question->get_f('QST_admin_label')); ?>"
-                               <?php echo $disabled_attr ?>
+                               <?php echo esc_attr($disabled_attr); ?>
                         />
                         <input class="QST_order"
                                id="QST_order<?php echo absint($id); ?>"
@@ -121,9 +121,9 @@ if ($QST_system === 'country') {
                     <td>
                         <?php
                         $id            = ! empty($QST_system) ? '_disabled' : '';
-                        $disabled_attr = ! empty($QST_system) ? ' disabled="disabled"' : '';
+                        $disabled_attr = ! empty($QST_system) ? 'disabled' : '';
                         $admin_only    = $question->get('QST_admin_only');
-                        $checked       = ! empty($admin_only) ? ' checked="checked"' : '';
+                        $checked       = ! empty($admin_only) ? ' checked' : '';
                         ?>
                         <input class="QST_admin_only"
                                id="QST_admin_only<?php echo absint($id); ?>"
@@ -131,8 +131,8 @@ if ($QST_system === 'country') {
                                type="checkbox"
                                value="1"
                             <?php
-                            echo $disabled_attr; // escape not needed
-                            echo $checked; // escape not needed
+                            echo esc_attr($disabled_attr);
+                            echo esc_attr($checked);
                             ?>
                         />
                         <br />
@@ -303,7 +303,7 @@ if ($QST_system === 'country') {
                                 if (! empty($question_options)) {
                                     foreach ($question_options as $option_id => $option) {
                                         $disabled_attr = $has_answers || $option->get('QSO_system')
-                                            ? ' disabled="disabled"'
+                                            ? 'disabled'
                                             : '';
                                         ?>
                                         <tr class="question-option ee-options-sortable">
@@ -317,7 +317,7 @@ if ($QST_system === 'country') {
                                                        class="option-value regular-text"
                                                        name="question_options[<?php echo absint($count) ?>][QSO_value]"
                                                        value="<?php echo esc_attr($option->get_f('QSO_value')); ?>"
-                                                    <?php echo $disabled_attr; // escape not needed ?>
+                                                    <?php echo esc_attr($disabled_attr); ?>
                                                 />
                                                 <?php if ($has_answers) : ?>
                                                     <input type="hidden"

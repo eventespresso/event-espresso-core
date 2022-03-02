@@ -61,13 +61,13 @@ if (WP_DEBUG) {
     echo ' ee-wp-debug';
 } ?>" id="display-ticketrow-<?php echo absint($tkt_row); ?>">
     <!--<td class="ee-tkt-order-field"><span class="dashicons dashicons-sort <?php echo sanitize_html_class($tkt_status_class); ?>">
-    <input type="hidden" name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo esc_attr($TKT_order); ?>" ></span></td>-->
+    <input type="hidden" name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo absint($TKT_order); ?>" ></span></td>-->
     <td class="ee-tkt-order-field"><span
             class="ee-status-strip-td ee-status-strip <?php echo sanitize_html_class($tkt_status_class); ?>"></span>
         <input type="hidden"
                name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_order]"
                class="edit-ticket-TKT_order"
-               value="<?php echo esc_attr($TKT_order); ?>">
+               value="<?php echo absint($TKT_order); ?>">
     </td>
     <td><input maxlength="245" type="text" name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_name]"
                class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title"

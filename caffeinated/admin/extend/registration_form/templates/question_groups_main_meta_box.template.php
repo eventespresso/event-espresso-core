@@ -21,7 +21,7 @@ assert(is_array($values));
 
 $QSG_system = $question_group->system_group();
 
-$disabled = ! empty($QSG_system) ? ' disabled="disabled"' : '';
+$disabled = ! empty($QSG_system) ? 'disabled' : '';
 $id = ! empty($QST_system) ? '_disabled' : '';
 ?>
 
@@ -55,7 +55,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
             <td>
                 <input id="QSG_identifier" name="QSG_identifier<?php echo absint($id); ?>"
                        value="<?php echo esc_attr($question_group->get_f('QSG_identifier')); ?>" type="text"
-                       class="regular-text"<?php echo $disabled; ?>>
+                       class="regular-text" <?php echo esc_attr($disabled); ?>>
                 <?php if (! empty($QSG_system)) { ?>
                     <p><span class="description" style="color:#D54E21;">
                             <?php esc_html_e('System question group! This field cannot be changed.', 'event_espresso') ?>
@@ -157,7 +157,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                     foreach ($all_questions as $question_ID => $question) {
                         if ($question instanceof EE_Question) {
                             /*@var $question EE_Question*/
-                            $checked = isset($question_group_questions[ $question_ID ]) ? ' checked="checked"' : '';
+                            $checked = isset($question_group_questions[ $question_ID ]) ? 'checked' : '';
                             // disable questions from the personal information question group
                             // is it required in the current question group? if so don't allow admins to remove it
                             $disabled = in_array(
@@ -165,7 +165,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                 EEM_Question::instance()->required_system_questions_in_system_question_group(
                                     $QSG_system
                                 )
-                            ) ? 'disabled="disabled"' : '';
+                            ) ? 'disabled' : '';
                             // limit where system questions can appear
                             if (
                                 $question->system_ID() &&
@@ -183,7 +183,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                 <label for="question-<?php echo absint($question_ID); ?>">
                                     <input type="checkbox" name="questions[<?php echo absint($question_ID); ?>]"
                                            id="question-<?php echo absint($question_ID); ?>"
-                                           value="<?php echo absint($question_ID); ?>"<?php echo $disabled; ?><?php echo $checked; ?>/>
+                                           value="<?php echo absint($question_ID); ?>" <?php echo esc_attr($disabled); ?> <?php echo esc_attr($checked); ?>/>
                                     <span class="question-text"><?php
                                         echo trim($question->display_text())
                                              . (95 <= strlen(trim($question->display_text()))
