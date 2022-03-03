@@ -603,20 +603,18 @@ class EEH_Template
 
 
         $help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
-        $icon         = ! $icon_style ? ' dashicons-editor-help' : $icon_style;
-        $help_text    = ! $help_text ? '' : $help_text;
-        return '<a id="'
-               . esc_attr($help_tab_lnk)
-               . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22'
-               . esc_attr($icon)
-               . '" title="'
-               . esc_attr__(
-                   'Click to open the \'Help\' tab for more information about this feature.',
-                   'event_espresso'
-               )
-               . '" > '
-               . wp_kses($help_text, $allowedtags)
-               . ' </a>';
+        $icon      = ! $icon_style ? 'dashicons-editor-help' : $icon_style;
+        $help_text = ! $help_text ? '' : $help_text;
+        return '
+        	<a 	id="' . esc_attr($help_tab_lnk) . '" 
+        		class="espresso-help-tab-lnk ee-help-btn ee-aria-tooltip dashicons ' . esc_attr($icon) . '" 
+        		aria-label="' . esc_attr__(
+                        'Click to open the \'Help\' tab for more information about this feature.',
+                        'event_espresso'
+                ) . '" 
+		    >
+		    	' . wp_kses($help_text, $allowedtags) . '
+			</a>';
     }
 
 

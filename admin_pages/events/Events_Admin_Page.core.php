@@ -767,7 +767,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'Your event is open for registration. Making changes may disrupt any transactions in progress. %sLearn more%s',
                     'event_espresso'
                 ),
-                '<a class="espresso-help-tab-lnk">',
+                '<a class="espresso-help-tab-lnk ee-help-tab-link">',
                 '</a>'
             )
         );

@@ -5,11 +5,6 @@
 /* CONSTANTS */
 :root {
 
-    --ee-font-color-hue: 207;
-    --ee-font-color-sat: 5;
-    --ee-font-color-lit: 30;
-    --ee-font-color-alpha: 1;
-
     --ee-color-white: hsl(207, 0%, 100%);
     --ee-color-almost-white: hsl(207, 0%, 95%);
     --ee-color-off-white: hsl(207, 0%, 90%);
@@ -34,6 +29,13 @@
     --ee-status-color-dark-grey: hsl(225, 2%, 25%);
     --ee-status-color-charcoal: hsl(225, 0%, 15%);
 
+
+    /* FONT COLORS */
+
+    --ee-font-color-hue: 207;
+    --ee-font-color-sat: 5;
+    --ee-font-color-lit: 30;
+    --ee-font-color-alpha: 1;
 
 
     --ee-font-color: hsla(
@@ -168,6 +170,14 @@
         var(--ee-btn-caution-alpha)
     );
 
+    --ee-button-height: 2.625rem;
+    --ee-button-height-three-quarter: calc(var(--ee-button-height) * .75);
+    --ee-button-height-half: calc(var(--ee-button-height) / 2);
+    --ee-button-height-third: calc(var(--ee-button-height) / 3);
+    --ee-button-height-forth: calc(var(--ee-button-height) / 4);
+    --ee-button-height-sixth: calc(var(--ee-button-height) / 6);
+    --ee-button-height-shim: calc(var(--ee-button-height) / 12);
+
 
     --ee-box-shadow: 0 2px 3px -2px hsla(0, 0%, 0%, .5);
     --ee-box-shadow-big: 0 3px 6px hsla(0, 0%, 0%, .5);
@@ -184,17 +194,12 @@
     --ee-attention-bg-color: hsl(51, 68%, 76%);
     --ee-attention-color: hsla(46, 24%, 9%, .85);
 
-    --ee-help-attention: hsl(203,50%, 70%);
+    --ee-help-attention: hsl(203, 50%, 70%);
     --ee-help-attention-hover: hsl(203, 70%, 50%);
 
-    --ee-button-height: 2.625rem;
-    --ee-button-height-three-quarter: calc(var(--ee-button-height) * .75);
-    --ee-button-height-half: calc(var(--ee-button-height) / 2);
-    --ee-button-height-third: calc(var(--ee-button-height) / 3);
-    --ee-button-height-forth: calc(var(--ee-button-height) / 4);
-    --ee-button-height-sixth: calc(var(--ee-button-height) / 6);
-    --ee-button-height-shim: calc(var(--ee-button-height) / 12);
-
+    --ee-tab-border: hsl(203, 10%, 75%);
+    --ee-tab-border-hover: hsl(203, 40%, 65%);
+    --ee-tab-border-active: hsl(203, 70%, 55%);
 
     --ee-checkbox-height: 1.5rem;
 
@@ -722,10 +727,6 @@ div.TB-ee-frame a {
 .ee-icon-size-24:before {
 	font-size: 24px !important;
 	margin-right: -0.2em;
-}
-
-.espresso-help-tab-lnk {
-	cursor: pointer;
 }
 
 .ee-lock-icon:before, .ee-collapsible:before {
