@@ -111,18 +111,6 @@
     display: none;
 }
 
-.ee-event-filter > span .dashicons-editor-help {
-    color: var(--ee-help-attention);
-    cursor: pointer;
-    font-size: 2rem;
-    margin-inline-end: 1rem;
-    top: -5px;
-}
-.ee-event-filter > span .dashicons-editor-help:hover {
-    color: var(--ee-help-attention-hover);
-}
-
-
 .reg-overview-free-event-spn {
     display: block;
     text-align: center;

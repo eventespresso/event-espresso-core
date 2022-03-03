@@ -294,7 +294,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     <input type="checkbox" id="js-ee-hide-upcoming-events" name="hide_upcoming" ' . $hide_upcoming_checked . '>
                     ' . esc_html__('Hide Upcoming Events', 'event_espresso') . '
                 </label>
-                <span class="dashicons dashicons-editor-help ee-aria-tooltip" aria-label="'
+                <span class="ee-help-btn dashicons dashicons-editor-help ee-aria-tooltip" aria-label="'
                      . esc_html__(
                          'Will not display events with start dates in the future (ie: have not yet begun)',
                          'event_espresso'
@@ -306,7 +306,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     <input type="checkbox" id="js-ee-hide-expired-events" name="hide_expired" ' . $hide_expired_checked . '>
                     ' . esc_html__('Hide Expired Events', 'event_espresso') . '
                 </label>
-                <span class="dashicons dashicons-editor-help ee-aria-tooltip" aria-label="'
+                <span class="ee-help-btn dashicons dashicons-editor-help ee-aria-tooltip" aria-label="'
                      . esc_html__(
                          'Will not display events with end dates in the past (ie: have already finished)',
                          'event_espresso'
