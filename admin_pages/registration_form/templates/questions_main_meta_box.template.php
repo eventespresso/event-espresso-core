@@ -24,13 +24,16 @@ do_action('AHEE__questions_main_meta_box__template__before_admin_page_content', 
 
 // does question have any answers? cause if it does then we have to disable type
 $has_answers = $question->has_answers();
-
+global $allowedposttags;
+$info_box = '';
 if ($QST_system === 'country') {
     // already escaped
-    echo EEH_HTML::div(
-        EEH_HTML::h4(
-            '<span class="dashicons dashicons-info"></span>'
-            . esc_html__('Did you know...', 'event_espresso')
+    $info_box = EEH_HTML::div(
+        EEH_HTML::h3(
+            '<span class="dashicons dashicons-info"></span> '
+            . esc_html__('Did you know...', 'event_espresso'),
+			'',
+			'ee-status--info'
         ) .
         EEH_HTML::p(
             esc_html__(
@@ -47,6 +50,7 @@ if ($QST_system === 'country') {
 <?php do_action('AHEE__questions_main_meta_box__template__inner_admin_page_content', $question); ?>
 
     <div class="padding">
+        <?php echo wp_kses($info_box, $allowedposttags); ?>
         <table class="form-table">
             <tbody>
                 <?php do_action('AHEE__questions_main_meta_box__template__before_table_form_table', $question); ?>
