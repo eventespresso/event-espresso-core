@@ -155,7 +155,7 @@
 
 .espresso-admin .wp-list-table.messages .column-recipients,
 .espresso-admin .wp-list-table.messagetemplate .column-recipients {
-    width: 15%;
+    width: 12rem;
 }
 
 .espresso-admin .wp-list-table.messages .column-description,
