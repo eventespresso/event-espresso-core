@@ -219,13 +219,13 @@
 
 .ee_menu_group {
 	display: block;
-	background-color: var(--ee-status-color-light-grey);
+	background-color: hsla(207deg 0% 50% / 75%);
 	margin: -2px -5px 0px -12px;
 	padding: 2px 0 3px 10px;
 	font-size:.95em;
 	font-weight: bold;
 	letter-spacing: 1px;
-	color: #333;
+	color: var(--ee-color-white);
 	cursor: default;
 }
 .version-3-8.admin-color-fresh .ee_menu_group {
@@ -799,7 +799,8 @@ input.ee-toggle-round-flat + label:after {
   transition: margin 0.4s, background 0.4s;
 }
 input.ee-toggle-round-flat:checked + label {
-  background-color: var(--ee-status-color-blue);
+    background-color: var(--ee-status-color-blue);
+    margin-block: 0;
 }
 input.ee-toggle-round-flat:checked + label:after {
   margin-left: 1.8rem;

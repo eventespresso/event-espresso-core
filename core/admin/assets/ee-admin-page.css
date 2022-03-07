@@ -655,7 +655,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     .espresso-admin .publishing-action,
     .espresso-admin #major-publishing-actions,
     .espresso-admin #major-publishing-actions #publishing-action {
-        flex-direction: row;
+        flex-flow: row wrap;
     }
 
     .espresso-admin #publishing-action .spinner {
@@ -666,9 +666,6 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 }
 
 @media screen and (min-width: 1920px) {
-    .espresso-admin #major-publishing-actions {
-        flex-direction: row;
-    }
     .espresso-admin #major-publishing-actions #delete-action {
         margin-block-end: unset;
     }
@@ -738,6 +735,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     margin: 0 0 1rem;
 }
 
+
 .ee-info-box {
     color: var(--ee-status-color-grey);
     background: var(--ee-status-color-pale-blue);
@@ -748,18 +746,25 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     padding-inline: 2rem;
 }
 
-.ee-info-box h4 {
+.ee-info-box h3 {
     color: var(--ee-status-color-blue);
-    margin: .5rem 0 .25rem;
+    margin: 1rem 0 .5rem;
+    padding: 0 !important;
 }
 
 .ee-info-box p {
     font-size: 1.1rem;
     font-weight: 600;
+    line-height: 1.75;
     margin: 0;
 }
 .ee-info-box p + p {
     margin-block-start: 1rem;
+}
+.ee-info-box .dashicons {
+      font-size: 1.6rem;
+      height: 1.6rem;
+      width: 1.6rem;
 }
 
 .admin-state,
@@ -2992,11 +2997,16 @@ body.espresso-admin #contextual-help-wrap strong {
     font-size: 1.2rem;
 }
 
+.ee-admin-page-nav-strip,
 .ee-admin-page-nav-strip-wrap {
+    align-items: center;
     display: flex;
-    font-size: .8rem;
+}
+.ee-admin-page-nav-strip-wrap {
+    font-size: .9rem;
     justify-content: space-between;
-    margin: 0 0 0.5rem;
+    margin: 0;
+    margin-block: .75rem;
 }
 .ee-admin-page-nav-strip-item {
     margin-inline-start: 2rem;
@@ -3065,8 +3075,6 @@ body.espresso-admin #contextual-help-wrap strong {
     font-weight: 500;
     letter-spacing: .1rem;
     line-height: 1.25;
-    max-width: clamp(12rem, 24rem, 48rem);
-    min-width: clamp(12rem, 18rem, 24rem);
     overflow: visible;
     padding: 0.5rem 0.75rem 0.4rem;
     pointer-events: none;
@@ -3086,7 +3094,7 @@ body.espresso-admin #contextual-help-wrap strong {
     line-height: 1.5;
     height: auto;
     max-width: clamp(24rem, 48rem, 96rem);
-    min-width: clamp(12rem, 18rem, 24rem);
+    min-width: 60ch;
     padding: 1rem 2rem;
     white-space: unset;
 }
