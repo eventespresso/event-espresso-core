@@ -609,8 +609,8 @@ class EEH_Template
         	<a 	id="' . esc_attr($help_tab_lnk) . '" 
         		class="espresso-help-tab-lnk ee-help-btn ee-aria-tooltip dashicons ' . esc_attr($icon) . '" 
         		aria-label="' . esc_attr__(
-                        'Click to open the \'Help\' tab for more information about this feature.',
-                        'event_espresso'
+                    'Click to open the \'Help\' tab for more information about this feature.',
+                    'event_espresso'
                 ) . '" 
 		    >
 		    	' . wp_kses($help_text, $allowedtags) . '

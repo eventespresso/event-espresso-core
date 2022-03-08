@@ -214,8 +214,7 @@ abstract class IframeEmbedButton
                 'iframe-embed-trigger-js button button--small button--secondary ' . esc_attr($button_class),
                 '',
                 ' data-iframe_embed_button="#' . $route_name . '-iframe-js" tabindex="-1"'
-            )
-            ,
+            ),
             '',
             'ee-admin-button-row ee-admin-button-row--align-start'
         )
@@ -230,7 +229,7 @@ abstract class IframeEmbedButton
             'iframe-embed-wrapper-js',
             'display:none;'
         );
-}
+    }
 
 
     /**

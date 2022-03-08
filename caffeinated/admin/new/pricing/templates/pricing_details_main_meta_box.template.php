@@ -20,18 +20,18 @@
                 </th>
                 <td>
                     <?php echo EEH_Form_Fields::select_input(
-                            $default_base_price ? 'PRT_ID' : '',
-                            $price_types,
-                            $price->type(),
-                            $attributes
+                        $default_base_price ? 'PRT_ID' : '',
+                        $price_types,
+                        $price->type(),
+                        $attributes
                     ); ?>
                     <?php if ($default_base_price) : ?>
                         <input type='hidden' name='PRT_ID' id='PRT_ID' value="<?php echo esc_attr($price->type());?>" />
                         <p class="description">
                             <?php
                             esc_html_e(
-                                    'This is the default base price. Every new ticket created will start off with this base price.',
-                                    'event_espresso'
+                                'This is the default base price. Every new ticket created will start off with this base price.',
+                                'event_espresso'
                             );
                             ?>
                         </p>
@@ -39,8 +39,8 @@
                         <p class="description">
                             <?php
                             esc_html_e(
-                                    'Price Modifier. Default items will apply to ALL new events you create.',
-                                    'event_espresso'
+                                'Price Modifier. Default items will apply to ALL new events you create.',
+                                'event_espresso'
                             );
                             ?>
                         </p>

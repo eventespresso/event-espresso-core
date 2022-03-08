@@ -1680,7 +1680,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                 'order_by' => ['CHK_timestamp' => 'DESC'],
             ]
         );
-        return $checkin instanceof EE_Checkin ? $checkin->status():  EE_Checkin::status_checked_never;
+        return $checkin instanceof EE_Checkin ? $checkin->status() :  EE_Checkin::status_checked_never;
     }
 
 

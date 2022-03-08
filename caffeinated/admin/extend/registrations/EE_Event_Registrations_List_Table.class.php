@@ -20,7 +20,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @var RequestInterface
      */
     protected $request;
-    
+
     /**
      * @var Extend_Registrations_Admin_Page
      */
@@ -282,12 +282,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     ' . esc_html__('Check-in Status for', 'event_espresso') . '
                 </label>
                 ' . EEH_Form_Fields::select_input(
-                    'event_id',
-                    $event_options,
-                    $this->event_id,
-                '',
-                    $select_class
-            ) . '
+                        'event_id',
+                        $event_options,
+                        $this->event_id,
+                        '',
+                        $select_class
+                    ) . '
             </span>
             <span>
                 <label for="js-ee-hide-upcoming-events">
@@ -524,9 +524,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     <a  class="ee-aria-tooltip" 
                         href="' . $checkin_list_url . '" 
                         aria-label="' . esc_attr__(
-                                          'View this registrant\'s check-ins/checkouts for the datetime',
-                                          'event_espresso'
-                                      ) . '"
+                            'View this registrant\'s check-ins/checkouts for the datetime',
+                            'event_espresso'
+                        ) . '"
                     >
                         ' . $last_checkin->getCheckInText() . ': ' . $timestamp_string . '
                     </a>';

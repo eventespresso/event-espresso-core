@@ -117,7 +117,8 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
         $content .= $item->status() == 'draft' ? ' - <span class="post-state">' . $statuses['draft'] . '</span>' : '';
 
         $content .= $prep_content ? $this->row_actions($actions) : '';
-        return $prep_content ? $this->columnContent('name', $content) : $content;    }
+        return $prep_content ? $this->columnContent('name', $content) : $content;
+    }
 
 
     /**
@@ -191,7 +192,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
             default:
                 $actions['view'] = '
                     <a  href="' . get_permalink($item->ID()) . '" 
-                        title="' . esc_attr__( 'View Venue', 'event_espresso'   ) . '"
+                        title="' . esc_attr__('View Venue', 'event_espresso') . '"
                     >
                         ' . esc_html__('View', 'event_espresso') . '
                     </a>';

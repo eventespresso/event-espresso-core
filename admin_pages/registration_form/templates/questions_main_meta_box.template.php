@@ -32,8 +32,8 @@ if ($QST_system === 'country') {
         EEH_HTML::h3(
             '<span class="dashicons dashicons-info"></span> '
             . esc_html__('Did you know...', 'event_espresso'),
-			'',
-			'ee-status--info'
+            '',
+            'ee-status--info'
         ) .
         EEH_HTML::p(
             esc_html__(
@@ -372,9 +372,9 @@ if ($QST_system === 'country') {
                                             <?php } ?>
                                                 <a class='button button--icon-only sortable-drag-handle ee-aria-tooltip'
                                                    aria-label="<?php esc_html_e(
-                                                           'click and drag to change the order of this option',
-                                                           'event_espresso'
-                                                        ) ?>"
+                                                       'click and drag to change the order of this option',
+                                                       'event_espresso'
+                                                   ) ?>"
                                                 >
                                                     <span class='dashicons dashicons-image-flip-vertical '></span>
                                                 </a>
@@ -427,8 +427,8 @@ if ($QST_system === 'country') {
                                 <?php esc_html_e('Add Another Answer Option', 'event_espresso') ?>
                             </a>
                             <?php echo EEH_Form_Fields::hidden_input(
-                                    'question_options_count',
-                                    $count
+                                'question_options_count',
+                                $count
                             ); // already escaped ?>
                         </div>
                         <br />

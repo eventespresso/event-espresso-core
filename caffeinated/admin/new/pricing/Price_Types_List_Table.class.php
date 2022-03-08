@@ -44,11 +44,11 @@ class Price_Types_List_Table extends EE_Admin_List_Table
             'base_type' => esc_html__('Base Type', 'event_espresso'),
             'percent'   => sprintf(
                                /* translators: 1: HTML new line, 2: open span tag, 3: close span tag */
-                               esc_html__('Applied %1$s as %2$s%%%3$s or %2$s$%3$s', 'event_espresso'),
-                               '',
-                               '<span class="big-text">',
-                               '</span>'
-                           ),
+                esc_html__('Applied %1$s as %2$s%%%3$s or %2$s$%3$s', 'event_espresso'),
+                '',
+                '<span class="big-text">',
+                '</span>'
+            ),
             'order'     => esc_html__('Order of Application', 'event_espresso'),
         ];
 

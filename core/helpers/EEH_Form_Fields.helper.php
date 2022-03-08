@@ -994,7 +994,7 @@ class EEH_Form_Fields
         string $required_label = '',
         string $name = '',
         string $label_class = '',
-        bool   $filter = true
+        bool $filter = true
     ): string {
         $for   = ! empty($name) ? " for='{$name}'" : '';
         $class = ! empty($label_class) ? " class='{$label_class}'" : '';
@@ -1011,7 +1011,7 @@ class EEH_Form_Fields
 
 
     public static function mobileLabel(
-        bool   $add_mobile_label,
+        bool $add_mobile_label,
         string $question,
         string $required_text = '',
         string $required_label = '',

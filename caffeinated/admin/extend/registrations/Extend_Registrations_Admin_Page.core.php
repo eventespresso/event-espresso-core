@@ -1180,9 +1180,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $this->_template_args['before_list_table'] = $event instanceof EE_Event
             ? '<h2>
                 ' . sprintf(
-                        esc_html__('Viewing Registrations for Event: %s', 'event_espresso'),
-                        "<span class='ee-event-name'>{$event->name()}</span>"
-                    )
+                esc_html__('Viewing Registrations for Event: %s', 'event_espresso'),
+                "<span class='ee-event-name'>{$event->name()}</span>"
+            )
             : '';
         // need to get the number of datetimes on the event and set default datetime_id if there is only one datetime on
         // the event.

@@ -70,8 +70,8 @@
                     </label>
                     <p class="description"><?php
                         esc_html_e(
-                                'Whether this Price Type will be applied as a percentage or applied as a set fixed amount.',
-                                'event_espresso'
+                            'Whether this Price Type will be applied as a percentage or applied as a set fixed amount.',
+                            'event_espresso'
                         ); ?>
                     </p>
                     <?php if ($price_type->base_type() == EEM_Price_Type::base_type_tax) :
@@ -80,8 +80,8 @@
                         <p class="description" style="color:#E44064">
                             <?php
                             esc_html_e(
-                                    'The selected base type for this price type is "Tax".  Taxes are always assumed to be a percentage.  If you want to use a fixed value for a tax then please change the base type to a surcharge.',
-                                    'event_espresso'
+                                'The selected base type for this price type is "Tax".  Taxes are always assumed to be a percentage.  If you want to use a fixed value for a tax then please change the base type to a surcharge.',
+                                'event_espresso'
                             );
                             ?>
                         </p>
@@ -107,11 +107,11 @@
                     <p class="description">
                         <?php
                         printf(
-                                esc_html__(
-                                        'Price types are applied sequentially according to their Order, where higher ordered Price Types will affect lower ordered Price Types.%1$sPrice types with equal Orders will be applied in parallel to whatever total precedes them and will not affect each other. Actual Prices will be set to "0" so that they are processed first. Taxes will be always be applied last but their order will still determine if they are applied in parallel or as compound taxes (one tax on top of the other).',
-                                        'event_espresso'
-                                ),
-                                '<br/>'
+                            esc_html__(
+                                'Price types are applied sequentially according to their Order, where higher ordered Price Types will affect lower ordered Price Types.%1$sPrice types with equal Orders will be applied in parallel to whatever total precedes them and will not affect each other. Actual Prices will be set to "0" so that they are processed first. Taxes will be always be applied last but their order will still determine if they are applied in parallel or as compound taxes (one tax on top of the other).',
+                                'event_espresso'
+                            ),
+                            '<br/>'
                         ); ?>
                     </p>
                 </td>

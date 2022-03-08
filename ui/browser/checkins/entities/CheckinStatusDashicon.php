@@ -99,7 +99,7 @@ class CheckinStatusDashicon
      */
     public function cssClasses(): string
     {
-        switch($this->checkin_status) {
+        switch ($this->checkin_status) {
             case EE_Checkin::status_checked_in:
                 return "dashicons dashicons-yes-alt checkin-icons checkedin-status-{$this->checkin_status}";
             case EE_Checkin::status_checked_out:

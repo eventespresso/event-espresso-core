@@ -1088,8 +1088,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // else it grows in length on every submission due to recursion,
         // ultimately causing a "Request-URI Too Large" error
         $request_uri = remove_query_arg(
-                '_wp_http_referer',
-                wp_unslash($this->request->getServerParam('REQUEST_URI'))
+            '_wp_http_referer',
+            wp_unslash($this->request->getServerParam('REQUEST_URI'))
         );
         // set new value in both our Request object and the super global
         $this->request->setServerParam('REQUEST_URI', $request_uri, true);
@@ -3377,8 +3377,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 sprintf(
                     esc_html(
                         _n(
-                            'The "%s" has been successfully %s.',
-                            'The "%s" have been successfully %s.',
+                            'The "%1$s" has been successfully %2$s.',
+                            'The "%1$s" have been successfully %2$s.',
                             $success,
                             'event_espresso'
                         )
@@ -4061,11 +4061,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws EE_Error
      */
     protected function trashRestoreDeleteEntities(
-            EEM_Base $entity_model,
-            string $entity_PK_name,
-            string $action = EE_Admin_List_Table::ACTION_DELETE,
-            string $delete_column = '',
-            callable $callback = null
+        EEM_Base $entity_model,
+        string $entity_PK_name,
+        string $action = EE_Admin_List_Table::ACTION_DELETE,
+        string $delete_column = '',
+        callable $callback = null
     ) {
         $entity_PK      = $entity_model->get_primary_key_field();
         $entity_PK_name = $entity_PK_name ?: $entity_PK->get_name();
@@ -4116,14 +4116,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 return 'string';
         }
         throw new RuntimeException(
-                sprintf(
-                        esc_html__(
-                                '"%1$s" is an invalid schema type for the %2$s primary key.',
-                                'event_espresso'
-                        ),
-                        $entity_PK_type,
-                        $entity_PK->get_name()
-                )
+            sprintf(
+                esc_html__(
+                    '"%1$s" is an invalid schema type for the %2$s primary key.',
+                    'event_espresso'
+                ),
+                $entity_PK_type,
+                $entity_PK->get_name()
+            )
         );
     }
 
@@ -4137,11 +4137,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @return bool
      */
     protected function trashRestoreDeleteEntity(
-            EEM_Base $entity_model,
-            $entity_ID,
-            string $action,
-            string $delete_column,
-            ?callable $callback = null
+        EEM_Base $entity_model,
+        $entity_ID,
+        string $action,
+        string $delete_column,
+        ?callable $callback = null
     ): bool {
         $entity_ID = absint($entity_ID);
         if (! $entity_ID) {
@@ -4181,25 +4181,25 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         if (empty($delete_column)) {
             throw new DomainException(
-                    sprintf(
-                            esc_html__(
-                                    'You need to specify the name of the "delete column" on the %2$s model, in order to trash or restore an entity.',
-                                    'event_espresso'
-                            ),
-                            $entity_model->get_this_model_name()
-                    )
+                sprintf(
+                    esc_html__(
+                        'You need to specify the name of the "delete column" on the %2$s model, in order to trash or restore an entity.',
+                        'event_espresso'
+                    ),
+                    $entity_model->get_this_model_name()
+                )
             );
         }
         if (! $entity_model->has_field($delete_column)) {
             throw new DomainException(
-                    sprintf(
-                            esc_html__(
-                                    'The %1$s field does not exist on the %2$s model.',
-                                    'event_espresso'
-                            ),
-                            $delete_column,
-                            $entity_model->get_this_model_name()
-                    )
+                sprintf(
+                    esc_html__(
+                        'The %1$s field does not exist on the %2$s model.',
+                        'event_espresso'
+                    ),
+                    $delete_column,
+                    $entity_model->get_this_model_name()
+                )
             );
         }
     }
@@ -4215,26 +4215,26 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         if ($exception instanceof Exception) {
             throw new RuntimeException(
-                    sprintf(
-                            esc_html__(
-                                    'Could not %1$s the %2$s because the following error occurred: %3$s',
-                                    'event_espresso'
-                            ),
-                            $action,
-                            $entity_model->get_this_model_name(),
-                            $exception->getMessage()
-                    )
+                sprintf(
+                    esc_html__(
+                        'Could not %1$s the %2$s because the following error occurred: %3$s',
+                        'event_espresso'
+                    ),
+                    $action,
+                    $entity_model->get_this_model_name(),
+                    $exception->getMessage()
+                )
             );
         }
         throw new RuntimeException(
-                sprintf(
-                        esc_html__(
-                                'Could not %1$s the %2$s because an invalid ID was received.',
-                                'event_espresso'
-                        ),
-                        $action,
-                        $entity_model->get_this_model_name()
-                )
+            sprintf(
+                esc_html__(
+                    'Could not %1$s the %2$s because an invalid ID was received.',
+                    'event_espresso'
+                ),
+                $action,
+                $entity_model->get_this_model_name()
+            )
         );
     }
 }

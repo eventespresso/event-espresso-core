@@ -30,7 +30,6 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
         if (! defined('REG_ADMIN_URL')) {
             define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
         }
-
     }
 
 

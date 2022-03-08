@@ -240,7 +240,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
         $object = $item->object();
         if ($object instanceof EE_Payment_Method) {
             $content = $object->admin_name();
-        } else if (
+        } elseif (
             $object instanceof EE_Payment
             && $object->payment_method() instanceof EE_Payment_Method
         ) {

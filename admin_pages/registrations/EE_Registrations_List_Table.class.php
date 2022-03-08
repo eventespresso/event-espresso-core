@@ -431,9 +431,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     private function lockedRegMessage(): string
     {
         return esc_html__(
-           'This lock-icon means that this registration cannot be trashed.  Registrations that belong to a transaction that has payments cannot be trashed.  If you wish to trash this registration then you must delete all payments attached to the related transaction first.',
-           'event_espresso'
-       );
+            'This lock-icon means that this registration cannot be trashed.  Registrations that belong to a transaction that has payments cannot be trashed.  If you wish to trash this registration then you must delete all payments attached to the related transaction first.',
+            'event_espresso'
+        );
     }
 
 
@@ -493,9 +493,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             <span class="spacer"></span>
             <span>
                 ' . sprintf(
-                    esc_html__('Reg Code: %s', 'event_espresso'),
-                    $registration->get('REG_code')
-                ) . '
+                       esc_html__('Reg Code: %s', 'event_espresso'),
+                       $registration->get('REG_code')
+                   ) . '
             </span>
         </div>';
 
