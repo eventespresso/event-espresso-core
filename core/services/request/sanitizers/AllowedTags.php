@@ -8,7 +8,7 @@ namespace EventEspresso\core\services\request\sanitizers;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\request\sanitizers
- * @since   $VID:$
+ * @since   4.10.29.p
  */
 class AllowedTags
 {

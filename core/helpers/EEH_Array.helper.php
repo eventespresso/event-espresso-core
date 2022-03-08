@@ -218,7 +218,7 @@ class EEH_Array extends EEH_Base
      *
      * @param mixed $element
      * @return array|string
-     * @since   $VID:$
+     * @since   4.10.29.p
      */
     public static function addSlashesRecursively($element)
     {
