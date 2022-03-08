@@ -145,7 +145,8 @@
 
 .espresso-admin .wp-list-table.messages .column-messenger,
 .espresso-admin .wp-list-table.messagetemplate .column-messenger {
-    width: 7.5%;
+    max-width: 12rem;
+    min-width: 8rem;
 }
 
 .espresso-admin .wp-list-table.messages .column-message_type,
@@ -154,18 +155,11 @@
 }
 
 .espresso-admin .wp-list-table.messages .column-recipients,
-.espresso-admin .wp-list-table.messagetemplate .column-recipients {
-    width: 12rem;
-}
-
+.espresso-admin .wp-list-table.messagetemplate .column-recipients,
 .espresso-admin .wp-list-table.messages .column-description,
 .espresso-admin .wp-list-table.messagetemplate .column-description {
-    width: 40%;
-}
-
-.espresso-admin .wp-list-table.messages .column-description,
-.espresso-admin .wp-list-table.messagetemplate .column-description {
-    width: 35%;
+    max-width: 24rem;
+    min-width: 18rem;
 }
 
 .espresso-admin .wp-list-table.messages .column-events,

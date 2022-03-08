@@ -3522,7 +3522,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button.button-small,
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button:not([type="checkbox"]):not([type="radio"]):not([type="submit"]) {
     --ee-button-height: 2rem;
-    font-size: calc((var(--ee-button-height) *.6) - var(--ee-button-height-shim));
+    font-size: calc((var(--ee-button-height) / 2) - var(--ee-button-height-shim));
     height: var(--ee-button-height);
     padding-block: calc(var(--ee-button-height-half) - 2px);
 }
@@ -3531,14 +3531,14 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button.button--icon-only {
     height: var(--ee-button-height);
     width: var(--ee-button-height);
-    padding: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
+    padding: calc((var(--ee-button-heightt) / 2) - var(--ee-button-height-shim));
 }
 .espresso-admin.wp-core-ui .ee-list-table-actions a .dashicons,
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons,
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons:before {
-    font-size: calc(var(--ee-button-height-half) + var(--ee-button-height-shim));
-    height: calc(var(--ee-button-height-half) + var(--ee-button-height-shim));
-    width: calc(var(--ee-button-height-half) + var(--ee-button-height-shim));
+    font-size: calc((var(--ee-button-heightt) / 2) + var(--ee-button-height-shim));
+    height: calc((var(--ee-button-heightt) / 2) + var(--ee-button-height-shim));
+    width: calc((var(--ee-button-heightt) / 2) + var(--ee-button-height-shim));
     margin: 0;
     top: unset;
 }
@@ -3856,13 +3856,6 @@ body.espresso-admin #contextual-help-wrap strong {
     vertical-align: top;
 }
 
-.admin-primary-mbox-tbl td:first-child,
-.admin-primary-mbox-tbl th:first-child,
-.espresso-admin .wp-list-table tr:not(.is-expanded) td:first-child,
-.espresso-admin .wp-list-table th:first-child {
-    padding-inline-start: 1.5rem;
-}
-
 .espresso-admin .wp-list-table .column-status,
 .espresso-admin .wp-list-table th:first-child.column-status,
 .espresso-admin .wp-list-table td:first-child.column-status {
@@ -3883,7 +3876,15 @@ body.espresso-admin #contextual-help-wrap strong {
     flex-direction: column;
 }
 
-@media screen and (min-width: 782px) {
+@media screen and (min-width: 1280px) {
+    .admin-primary-mbox-tbl th:first-child,
+    .admin-primary-mbox-tbl td:first-child,
+    .espresso-admin .wp-list-table th:first-child,
+    .espresso-admin .wp-list-table td:first-child,
+    .espresso-admin .wp-list-table tr:not(.is-expanded) th:first-child,
+    .espresso-admin .wp-list-table tr:not(.is-expanded) td:first-child {
+        padding-inline-start: 1rem;
+    }
     .espresso-admin .wp-list-table.widefat th.check-column,
     .espresso-admin .wp-list-table.widefat td.check-column {
         padding-block-start: .7rem;
@@ -3892,9 +3893,15 @@ body.espresso-admin #contextual-help-wrap strong {
         text-align: center;
     }
 }
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1920px) {
+    .admin-primary-mbox-tbl th:first-child,
+    .admin-primary-mbox-tbl td:first-child,
+    .espresso-admin .wp-list-table th:first-child,
+    .espresso-admin .wp-list-table td:first-child,
     .espresso-admin .wp-list-table.widefat th.check-column,
-    .espresso-admin .wp-list-table.widefat td.check-column {
+    .espresso-admin .wp-list-table.widefat td.check-column,
+    .espresso-admin .wp-list-table tr:not(.is-expanded) th:first-child,
+    .espresso-admin .wp-list-table tr:not(.is-expanded) td:first-child {
         padding-inline-start: 1.5rem;
         padding-inline-end: 0.75rem;
     }
@@ -4045,12 +4052,17 @@ body.espresso-admin #contextual-help-wrap strong {
     justify-content: flex-start;
 }
 
-.espresso-admin .wp-list-table thead td.check-column,
 .espresso-admin .wp-list-table tbody th:not(.column-id):not(.column-actions),
 .espresso-admin .wp-list-table td:not(.column-id):not(.column-actions) > div,
 .espresso-admin .wp-list-table td:not(.column-id):not(.column-actions) > span:not(.ee-status-dot) {
     max-width: 100%;
     min-width: 3rem;
+}
+
+.espresso-admin .wp-list-table thead td.check-column,
+.espresso-admin .wp-list-table tbody th.check-column:not(.column-id):not(.column-actions) {
+    max-width: 100%;
+    min-width: 1.5rem;
 }
 .espresso-admin .wp-list-table .row-title {
     font-size: 1rem !important;
