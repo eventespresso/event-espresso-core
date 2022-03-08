@@ -268,7 +268,7 @@
 }
 
 
-div.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.ee-add-on-btn):not(.add-new-h2):not(.page-title-action) {
+div.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.ee-add-on-btn):not(.add-new-h2):not(.page-title-action):not(.button-primary):not(.button-secondary) {
     border: 2px solid transparent;
     box-shadow: none !important;
     color: var(--ee-btn-primary);
@@ -278,11 +278,11 @@ div.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button)
     padding-inline: .25rem;
     text-decoration: none;
 }
-div.espresso-admin  :not(.manage-column) > a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.add-new-h2):not(.page-title-action):hover {
+div.espresso-admin  :not(.manage-column) > a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.add-new-h2):not(.page-title-action):not(.button-primary):not(.button-secondary):hover {
     color: var(--ee-btn-primary-hover);
     border-color: var(--ee-btn-primary-hover);
 }
-div.espresso-admin :not(.manage-column) > a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.add-new-h2):not(.page-title-action):focus,
+div.espresso-admin :not(.manage-column) > a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.add-new-h2):not(.page-title-action):not(.button-primary):not(.button-secondary):focus,
 div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not(.button--secondary):not(.ee-filter-tag__close-btn):not(.toggle-row):not(.wp-switch-editor):focus {
     color: var(--ee-btn-primary-focus);
     border-color: var(--ee-btn-primary);
@@ -3137,6 +3137,7 @@ body.espresso-admin #contextual-help-wrap strong {
     padding-inline: var(--ee-button-height-forth);
     position: relative;
     text-align: start;
+    top: 1px;
     touch-action: manipulation;
     user-select: none;
     vertical-align: middle;
@@ -4558,7 +4559,17 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .ee-admin-button-row .button + .button {
     margin-inline-start: 1rem;
 }
-
+.espresso-admin.wp-core-ui .ee-admin-button-row input[type="text"] {
+    max-width: clamp(12rem, 50%, 16rem) !important;
+}
+.espresso-admin.wp-core-ui .ee-admin-button-row .button + span,
+.espresso-admin.wp-core-ui .ee-admin-button-row .button + input[type="text"] {
+    margin-inline-start: 2rem !important;
+}
+.espresso-admin.wp-core-ui .ee-admin-button-row span +  .button,
+.espresso-admin.wp-core-ui .ee-admin-button-row input[type="text"] +  .button {
+    margin-inline-start: .5rem !important;
+}
 
 
 .espresso-admin .qtip-content {
