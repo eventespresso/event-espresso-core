@@ -551,7 +551,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function column_event_name(EE_Registration $registration): string
     {
         $this->_set_related_details($registration);
-        // page=espresso_events&action=edit_event&EVT_ID=2&edit_event_nonce=cf3a7e5b62
         $EVT_ID     = $registration->event_ID();
         $event_name = $registration->event_name();
         $event_name = $event_name ?: esc_html__("No Associated Event", 'event_espresso');
@@ -599,7 +598,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function generateDisplayForDatetimes(array $datetime_strings): string
     {
-        // $content       = '<div class="ee-registration-event-datetimes-container">';
         // get first item for initial visibility
         $content = array_shift($datetime_strings);
         if (! empty($datetime_strings)) {
@@ -615,7 +613,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                     </div>
                 </div>';
         }
-        // $content .= '</div>';
         return $content;
     }
 
