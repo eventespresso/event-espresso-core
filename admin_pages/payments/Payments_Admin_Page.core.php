@@ -355,7 +355,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         $this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links(
             $tabs,
             'payment_method_links',
-            '|',
+            '',
             $this->_get_active_payment_method_slug()
         );
         $this->display_admin_page_with_sidebar();
