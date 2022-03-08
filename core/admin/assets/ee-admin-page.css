@@ -3522,7 +3522,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button.button-small,
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button:not([type="checkbox"]):not([type="radio"]):not([type="submit"]) {
     --ee-button-height: 2rem;
-    font-size: calc((var(--ee-button-height) / 2) - var(--ee-button-height-shim));
+    font-size: calc((var(--ee-button-height) * .6) - var(--ee-button-height-shim));
     height: var(--ee-button-height);
     padding-block: calc(var(--ee-button-height-half) - 2px);
 }
@@ -3531,14 +3531,14 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button.button--icon-only {
     height: var(--ee-button-height);
     width: var(--ee-button-height);
-    padding: calc((var(--ee-button-heightt) / 2) - var(--ee-button-height-shim));
+    padding: calc((var(--ee-button-height) * .6) - var(--ee-button-height-shim));
 }
 .espresso-admin.wp-core-ui .ee-list-table-actions a .dashicons,
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons,
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons:before {
-    font-size: calc((var(--ee-button-heightt) / 2) + var(--ee-button-height-shim));
-    height: calc((var(--ee-button-heightt) / 2) + var(--ee-button-height-shim));
-    width: calc((var(--ee-button-heightt) / 2) + var(--ee-button-height-shim));
+    font-size: calc((var(--ee-button-height) * .6) + var(--ee-button-height-shim));
+    height: calc((var(--ee-button-height) * .6) + var(--ee-button-height-shim));
+    width: calc((var(--ee-button-height) * .6) + var(--ee-button-height-shim));
     margin: 0;
     top: unset;
 }
