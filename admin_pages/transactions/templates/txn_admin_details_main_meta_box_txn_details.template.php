@@ -381,43 +381,38 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
             </table>
         </div>
 
-        <ul id="txn-admin-payment-options-ul">
-            <?php if ($can_edit_payments) :
-                ?>
-                <li>
-                    <a id="display-txn-admin-apply-payment"
-                       class="button button--primary no-icon no-hide"
-                       rel="txn-admin-apply-payment"
-                       tabindex='0'
-                    > <!--display-the-hidden -->
-                        <?php esc_html_e('Apply Payment', 'event_espresso'); ?>
-                    </a>
-                </li>
-                <li>
-                    <a id="display-txn-admin-apply-refund"
-                       class="button button--secondary no-icon no-hide"
-                       rel="txn-admin-apply-refund"
-                       tabindex='0'
-                    >  <!--display-the-hidden -->
-                        <?php esc_html_e('Apply Refund', 'event_espresso'); ?>
-                    </a>
-                </li>
+        <div id="txn-admin-payment-options-ul" class="ee-admin-button-row">
+            <?php if ($can_edit_payments) : ?>
+                <a id="display-txn-admin-apply-payment"
+                   class="button button--primary no-icon no-hide"
+                   rel="txn-admin-apply-payment"
+                   tabindex='0'
+                > <!--display-the-hidden -->
+                    <?php esc_html_e('Apply Payment', 'event_espresso'); ?>
+                </a>
+                <a id="display-txn-admin-apply-refund"
+                   class="button button--secondary no-icon no-hide"
+                   rel="txn-admin-apply-refund"
+                   tabindex='0'
+                >  <!--display-the-hidden -->
+                    <?php esc_html_e('Apply Refund', 'event_espresso'); ?>
+                </a>
             <?php else : ?>
-                <li>
-                    <p>
-                        <?php esc_html__('You do not have access to apply payments or refunds.', 'event_espresso'); ?>
-                    </p>
-                </li>
+                <span>
+                    <?php esc_html__('You do not have access to apply payments or refunds.', 'event_espresso'); ?>
+                </span>
             <?php endif; ?>
             <?php
             // Allows extend the fields at actions area.
+            ob_start();
             do_action(
                 'AHEE__txn_admin_details_main_meta_box_txn_details__after_actions_buttons',
                 $can_edit_payments
             );
+            $extra_actions = ob_get_clean();
+            echo str_replace(['<li', '</li>'], ['<span', '</span>'], $extra_actions);
             ?>
-        </ul>
-        <br class="clear" />
+        </div>
 
         <div id="txn-admin-apply-payment-dv" class="txn-admin-payment-option auto-hide" style="display: none;">
 

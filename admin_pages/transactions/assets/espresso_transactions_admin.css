@@ -338,7 +338,7 @@
 }
 
 #admin-modal-dialog-options-ul,
-#txn-admin-payment-options-ul, #del-admin-modal-dialog-options-ul {
+#del-admin-modal-dialog-options-ul {
     align-items: center;
     display: flex;
     justify-content: flex-end;
@@ -347,13 +347,17 @@
     padding: 1rem 0 0;
 }
 
+#txn-admin-payment-options-ul {
+    padding: 1rem 0 0;
+}
+
 #admin-modal-dialog-options-ul a + a,
-#txn-admin-payment-options-ul a + a,
 #del-admin-modal-dialog-options-ul a + a {
     margin-inline-start: 1rem;
 }
 
-#admin-modal-dialog-options-ul .hidden, #del-admin-modal-dialog-options-ul .hidden {
+#admin-modal-dialog-options-ul .hidden,
+#del-admin-modal-dialog-options-ul .hidden {
     display: none !important;
 }
 
