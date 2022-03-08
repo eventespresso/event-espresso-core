@@ -119,35 +119,35 @@ class EEW_Upcoming_Events extends EspressoWidget
         <!-- Widget Title: Text Input -->
 
         <p>
-            <label for="<?php echo $this->fieldID('title'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('title')); ?>">
                 <?php esc_html_e('Title:', 'event_espresso'); ?>
             </label>
-            <input id="<?php echo $this->fieldID('title'); ?>"
+            <input id="<?php echo esc_attr($this->fieldID('title')); ?>"
                    class="widefat"
-                   name="<?php echo $this->fieldName('title'); ?>"
+                   name="<?php echo esc_attr($this->fieldName('title')); ?>"
                    value="<?php echo esc_attr($instance['title']); ?>"
                    type="text"
             />
         </p>
         <p>
-            <label for="<?php echo $this->fieldID('category_name'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('category_name')); ?>">
                 <?php esc_html_e('Event Category:', 'event_espresso'); ?>
             </label>
             <?php $this->eventCategoriesSelector($instance); ?>
         </p>
         <p>
-            <label for="<?php echo $this->fieldID('limit'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('limit')); ?>">
                 <?php esc_html_e('Number of Events to Display:', 'event_espresso'); ?>
             </label>
-            <input id="<?php echo $this->fieldID('limit'); ?>"
-                   name="<?php echo $this->fieldName('limit'); ?>"
+            <input id="<?php echo esc_attr($this->fieldID('limit')); ?>"
+                   name="<?php echo esc_attr($this->fieldName('limit')); ?>"
                    value="<?php echo esc_attr($instance['limit']); ?>"
                    size="3"
                    type="text"
             />
         </p>
         <p>
-            <label for="<?php echo $this->fieldID('show_expired'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('show_expired')); ?>">
                 <?php esc_html_e('Show Expired Events:', 'event_espresso'); ?>
             </label>
             <?php
@@ -165,7 +165,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             ?>
         </p>
         <p>
-            <label for="<?php echo $this->fieldID('sort'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('sort')); ?>">
                 <?php esc_html_e('Sort Events:', 'event_espresso'); ?>
             </label>
             <?php
@@ -179,14 +179,14 @@ class EEW_Upcoming_Events extends EspressoWidget
             ?>
         </p>
         <p>
-            <label for="<?php echo $this->fieldID('image_size'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('image_size')); ?>">
                 <?php esc_html_e('Image Size:', 'event_espresso'); ?>
             </label>
             <?php $this->imageSizeSelector($instance); ?>
 
         </p>
         <p>
-            <label for="<?php echo $this->fieldID('show_desc'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('show_desc')); ?>">
                 <?php esc_html_e('Show Description:', 'event_espresso'); ?>
             </label>
             <?php
@@ -200,7 +200,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             ?>
         </p>
         <p>
-            <label for="<?php echo $this->fieldID('show_dates'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('show_dates')); ?>">
                 <?php esc_html_e('Show Dates:', 'event_espresso'); ?>
             </label>
             <?php
@@ -214,7 +214,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             ?>
         </p>
         <p>
-            <label for="<?php echo $this->fieldID('show_everywhere'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('show_everywhere')); ?>">
                 <?php esc_html_e('Show on all Pages:', 'event_espresso'); ?>
             </label>
             <?php
@@ -228,18 +228,18 @@ class EEW_Upcoming_Events extends EspressoWidget
             ?>
         </p>
         <p>
-            <label for="<?php echo $this->fieldID('date_limit'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('date_limit')); ?>">
                 <?php esc_html_e('Number of Dates to Display:', 'event_espresso'); ?>
             </label>
-            <input id="<?php echo $this->fieldID('date_limit'); ?>"
-                   name="<?php echo $this->fieldName('date_limit'); ?>"
+            <input id="<?php echo esc_attr($this->fieldID('date_limit')); ?>"
+                   name="<?php echo esc_attr($this->fieldName('date_limit')); ?>"
                    value="<?php echo esc_attr($instance['date_limit']); ?>"
                    size="3"
                    type="text"
             />
         </p>
         <p>
-            <label for="<?php echo $this->fieldID('date_range'); ?>">
+            <label for="<?php echo esc_attr($this->fieldID('date_range')); ?>">
                 <?php esc_html_e('Show Date Range:', 'event_espresso'); ?>
             </label>
             <?php
@@ -357,7 +357,7 @@ class EEW_Upcoming_Events extends EspressoWidget
      */
     public function fieldID($field_name)
     {
-        return esc_attr(parent::get_field_id($field_name));
+        return parent::get_field_id($field_name);
     }
 
 
@@ -368,7 +368,7 @@ class EEW_Upcoming_Events extends EspressoWidget
      */
     public function fieldName($field_name)
     {
-        return esc_attr(parent::get_field_name($field_name));
+        return parent::get_field_name($field_name);
     }
 
 
