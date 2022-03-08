@@ -181,7 +181,7 @@
 
     --ee-box-shadow: 0 2px 3px -2px hsla(0, 0%, 0%, .5);
     --ee-box-shadow-big: 0 3px 6px hsla(0, 0%, 0%, .5);
-    --ee-button-box-shadow: 0 1px 1px hsla(0, 0%, 0%, 0.35), 1px 1px 2px hsla(0, 0%, 0%, 0.1), -1px -1px 1px hsla(0, 0%, 100%, 0.75);
+    --ee-button-box-shadow: 0 1px 1px hsla(0, 0%, 0%, 0.4), 1px 1px 3px hsla(0, 0%, 0%, 0.15), -1px -1px 1px hsla(0, 0%, 100%, 0.75);
     --ee-button-box-shadow-alt: 0 0 2px hsla(0, 0%, 0%, 0.35), -1px -1px 2px hsla(0, 0%, 100%, 0.75);
 
 
