@@ -241,7 +241,7 @@ class CustomPostTypeDefinitions
         // if we made it here then we're returning an array of cpt model names indexed by post_type_slug.
         $cpt_models = array();
         foreach ($cpts as $slug => $args) {
-            $model = $this->getCustomPostTypeModelName($post_type_slug, $cpts[ $post_type_slug ]);
+            $model = $this->getCustomPostTypeModelName($slug, $args);
             if (! empty($model)) {
                 $cpt_models[ $slug ] = $model;
             }
