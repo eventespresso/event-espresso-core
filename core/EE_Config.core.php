@@ -2157,7 +2157,7 @@ class EE_Currency_Config extends EE_Config_Base
      */
     public function setCurrency(?string $CNT_ISO = '')
     {
-        if (empty($CNT_ISO) || ! EE_Maintenance_Mode::instance()->models_can_query()){
+        if (empty($CNT_ISO) || ! EE_Maintenance_Mode::instance()->models_can_query()) {
             return;
         }
 
