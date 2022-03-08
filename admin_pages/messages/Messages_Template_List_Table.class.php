@@ -337,7 +337,6 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
             return '';
         }
         // we want to display the contexts in here, so we need to set them up
-        // $c_label           = $item->context_label();
         $c_configs         = $item->contexts_config();
         $context_array     = [];
         $context_templates = $item->context_templates();
