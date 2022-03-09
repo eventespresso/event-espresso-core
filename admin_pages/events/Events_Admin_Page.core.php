@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
@@ -50,6 +51,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @var NodeGroupDao
      */
     protected $model_obj_node_group_persister;
+
+    /**
+     * @var AdvancedEditorAdminFormSection
+     */
+    protected $advanced_editor_admin_form;
 
 
     /**
@@ -2459,6 +2465,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ],
             true
         );
+        // setup Advanced Editor ???
+        if (
+            $this->raw_req_action === 'default_event_settings'
+            || $this->raw_req_action === 'update_default_event_settings'
+        ) {
+            $this->advanced_editor_admin_form = $this->loader->getShared(AdvancedEditorAdminFormSection::class);
+        }
         return new EE_Form_Section_Proper(
             [
                 'name'            => 'update_default_event_settings',

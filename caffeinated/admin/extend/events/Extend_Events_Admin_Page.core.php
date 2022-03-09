@@ -1,6 +1,5 @@
 <?php
 
-use EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -20,11 +19,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @var EE_Admin_Config
      */
     protected $admin_config;
-
-    /**
-     * @var AdvancedEditorAdminFormSection
-     */
-    protected $advanced_editor_admin_form;
 
 
     /**
@@ -223,31 +217,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // legend item
         add_filter('FHEE__Events_Admin_Page___event_legend_items__items', [$this, 'additional_legend_items']);
         add_action('admin_init', [$this, 'admin_init']);
-        // load additional handlers
-        $this->handleActionRequest();
-    }
-
-
-    private function getRequestAction()
-    {
-        return $this->request->getRequestParam('action');
-    }
-
-
-    /**
-     * @throws Exception
-     */
-    private function handleActionRequest()
-    {
-        $action = $this->getRequestAction();
-        if ($action) {
-            // setup Advanced Editor ???
-            if ($action === 'default_event_settings' || $action === 'update_default_event_settings') {
-                $this->advanced_editor_admin_form = $this->loader->getShared(
-                    'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
-                );
-            }
-        }
     }
 
 
