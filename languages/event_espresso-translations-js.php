@@ -307,10 +307,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:38
 	__( 'loading event dates…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:20
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:21
 	__( 'Add a date or a ticket in order to use Ticket Assignment Manager', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:30
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:31
 	__( 'Ticket Assignments', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:25
@@ -586,7 +586,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:26
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/NewDateModal.tsx:12
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/OptionsModalButton.tsx:16
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/OptionsModalButton.tsx:18
 	__( 'Add New Date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:26
