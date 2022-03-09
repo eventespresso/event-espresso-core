@@ -24,7 +24,10 @@ class SessionRequests extends Route
      */
     public function matchesCurrentRequest(): bool
     {
-        return $this->request->isAdmin() || $this->request->isEeAjax() || $this->request->isFrontend();
+        return $this->request->isAdmin()
+               || $this->request->isEeAjax()
+               || $this->request->isFrontend()
+               || $this->request->isIframe();
     }
 
 
