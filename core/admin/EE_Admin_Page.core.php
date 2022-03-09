@@ -212,6 +212,20 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
+     * @var string
+     */
+    protected $class_name;
+
+    /**
+     * if the current class is an admin page extension, like: Extend_Events_Admin_Page,
+     * then this would be the parent classname: Events_Admin_Page
+     *
+     * @var string
+     */
+    protected $base_class_name;
+
+
+    /**
      * @Constructor
      * @param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
      * @throws InvalidArgumentException
@@ -227,6 +241,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->request = $this->loader->getShared(RequestInterface::class);
         // routing enabled?
         $this->_routing = $routing;
+
+        $this->class_name = get_class($this);
+        $this->base_class_name = strpos($this->class_name, 'Extend_') === 0
+            ? str_replace('Extend_', '', $this->class_name)
+            : '';
 
         if (strpos($this->_get_dir(), 'caffeinated') !== false) {
             $this->_is_caf = true;
@@ -595,7 +614,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // next verify if we need to load anything...
         $this->_current_page = $this->request->getRequestParam('page', '', 'key');
         $this->page_folder   = strtolower(
-            str_replace(['_Admin_Page', 'Extend_'], '', get_class($this))
+            str_replace(['_Admin_Page', 'Extend_'], '', $this->class_name)
         );
         global $ee_menu_slugs;
         $ee_menu_slugs = (array) $ee_menu_slugs;
@@ -658,15 +677,27 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         }
         // filter routes and page_config so addons can add their stuff. Filtering done per class
         $this->_page_routes = apply_filters(
-            'FHEE__' . get_class($this) . '__page_setup__page_routes',
+            'FHEE__' . $this->class_name . '__page_setup__page_routes',
             $this->_page_routes,
             $this
         );
         $this->_page_config = apply_filters(
-            'FHEE__' . get_class($this) . '__page_setup__page_config',
+            'FHEE__' . $this->class_name . '__page_setup__page_config',
             $this->_page_config,
             $this
         );
+        if($this->base_class_name !== '') {
+            $this->_page_routes = apply_filters(
+                    'FHEE__' . $this->base_class_name . '__page_setup__page_routes',
+                    $this->_page_routes,
+                    $this
+            );
+            $this->_page_config = apply_filters(
+                    'FHEE__' . $this->base_class_name . '__page_setup__page_config',
+                    $this->_page_config,
+                    $this
+            );
+        }
         // if AHEE__EE_Admin_Page__route_admin_request_$this->_current_view method is present
         // then we call it hooked into the AHEE__EE_Admin_Page__route_admin_request action
         if (method_exists($this, 'AHEE__EE_Admin_Page__route_admin_request_' . $this->_current_view)) {
@@ -1282,12 +1313,12 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                                 'event_espresso'
                             ),
                             $config['help_sidebar'],
-                            get_class($this)
+                            $this->class_name
                         )
                     );
                 }
                 $content = apply_filters(
-                    'FHEE__' . get_class($this) . '__add_help_tabs__help_sidebar',
+                    'FHEE__' . $this->class_name . '__add_help_tabs__help_sidebar',
                     $this->{$config['help_sidebar']}()
                 );
                 $this->_current_screen->set_help_sidebar($content);
@@ -2019,7 +2050,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                             'event_espresso'
                         ),
                         $this->_route_config['list_table'],
-                        get_class($this)
+                        $this->class_name
                     )
                 );
             }
@@ -3395,8 +3426,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if (! is_array($query_args)) {
             $query_args = [];
         }
-        // class name for actions/filters.
-        $classname = get_class($this);
         /**
          * Allow injecting actions before the query_args are modified for possible different
          * redirections on save and close actions
@@ -3406,7 +3435,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
          * @since 4.2.0
          */
         do_action(
-            "AHEE__{$classname}___redirect_after_action__before_redirect_modification_{$this->_req_action}",
+            "AHEE__{$this->class_name}___redirect_after_action__before_redirect_modification_{$this->_req_action}",
             $query_args
         );
         // set redirect url.
@@ -3462,9 +3491,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         }
         // we're adding some hooks and filters in here for processing any things just before redirects
         // (example: an admin page has done an insert or update and we want to run something after that).
-        do_action('AHEE_redirect_' . $classname . $this->_req_action, $query_args);
+        do_action('AHEE_redirect_' . $this->class_name . $this->_req_action, $query_args);
         $redirect_url = apply_filters(
-            'FHEE_redirect_' . $classname . $this->_req_action,
+            'FHEE_redirect_' . $this->class_name . $this->_req_action,
             EE_Admin_Page::add_query_args_and_nonce($query_args, $redirect_url),
             $query_args
         );
@@ -3969,7 +3998,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function _get_dir()
     {
-        $reflector = new ReflectionClass(get_class($this));
+        $reflector = new ReflectionClass($this->class_name);
         return dirname($reflector->getFileName());
     }
 
