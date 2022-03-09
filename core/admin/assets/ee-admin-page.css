@@ -624,6 +624,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 
 .espresso-admin .ee-reg-list-link {
     font-weight: 600;
+    text-decoration: none;
 }
 .espresso-admin .ee-reg-list-link__reg-count {
     margin-inline-end: 0.25rem;
@@ -699,7 +700,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     }
 }
 
-@media screen and (max-width: 1920px)  and (min-width: 1920px) {
+@media screen and (min-width: 1920px) {
     .espresso-admin .publishing-action,
     .espresso-admin #major-publishing-actions,
     .espresso-admin #major-publishing-actions #publishing-action {
