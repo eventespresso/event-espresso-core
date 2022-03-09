@@ -2526,7 +2526,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $delete,
                 $delete,
                 [$name => $id],
-                'submitdelete deletion button button--small  button--outline button--caution'
+                'submitdelete deletion button button--outline button--caution'
             );
         }
         $this->_template_args['publish_delete_link'] = $delete_link;
