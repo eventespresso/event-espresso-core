@@ -388,11 +388,10 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     margin-block-end: 4rem;
 }
 
+.espresso-admin #submitpost,
 .espresso-admin #postbox-container-1 .postbox .inside,
 .espresso-admin #postbox-container-2 .postbox .inside {
-    padding-block-start: 1rem;
-    padding-block-end: 1.75rem;
-    padding-inline: 1.75rem;
+    padding: 1.5rem;
 }
 .espresso-admin #postbox-container-1 .postbox .inside > .inside,
 .espresso-admin #postbox-container-2 .postbox .inside > .inside {
@@ -582,18 +581,56 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     background: none;
     border-top: medium none;
     clear: both;
-    padding: 1.5rem;
-    padding-block-start: 0;
+    padding: 0;
 }
 
 .espresso-admin .postbox .inside .misc-pub-section {
+    align-items: center;
+    border-block-end: 1px solid var(--ee-border-color-table-row);
+    display: flex;
+    flex-direction: row;
+    font-weight: 200;
+    margin-block-end: 0.75rem;
     padding: 0;
-    padding-block-end: 1rem;
-    padding-inline:  .5rem;
+    padding-block-end: 0.75rem;
+}
+
+.espresso-admin .postbox .inside .misc-pub-section > span:not(#timestamp):not(.dashicons) {
+    margin-inline:  .5rem;
+}
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-timestamp,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-post-status {
+    margin-inline-start: auto !important;
 }
 .espresso-admin .postbox .inside .misc-pub-section label,
 .espresso-admin .postbox .inside .misc-pub-section input {
     margin-block-end: 0;
+}
+
+.espresso-admin #misc-publishing-actions #visibility:before,
+.espresso-admin #misc-publishing-actions #timestamp:before,
+.espresso-admin #misc-publishing-actions .misc-pub-post-status:before {
+    color: var(--ee-font-color-light);
+    font: normal 1.5rem/1 dashicons;
+    margin-inline-end: 0.5rem;
+    padding: 0;
+}
+
+.espresso-admin .ee-reg-list-link {
+    font-weight: 600;
+}
+.espresso-admin .ee-reg-list-link__reg-count {
+    margin-inline-end: 0.5rem;
+}
+.espresso-admin .misc-pub-section .dashicons {
+    margin-inline-end: 1rem;
+}
+.espresso-admin .ee-reg-list-link .dashicons-external {
+    color: var(--ee-status-color-light-grey);
+    font-weight: 200;
+    margin-inline-start:  .5rem;
+    margin-inline-end: 0;
 }
 
 
@@ -610,8 +647,9 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     z-index: 1000;
 }
 
-.espresso-admin #misc-publishing-actions {
-    padding: 0.75rem 1.5rem 1rem;
+.espresso-admin #misc-publishing-actions,
+.espresso-admin #minor-publishing-actions {
+    padding: 0;
 }
 
 .espresso-admin .publishing-action,
@@ -620,20 +658,16 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     display: flex;
     flex-direction: column;
     float: none;
+    justify-content: flex-end;
     margin: 0;
 }
 
-.espresso-admin #publishing-action {
-    justify-content: flex-end;
-}
 .espresso-admin #publishing-action .spinner {
     bottom: 1.5rem;
     position: absolute;
     right: 1rem;
 }
-.espresso-admin #major-publishing-actions {
-    justify-content: space-between;
-}
+
 .espresso-admin #major-publishing-actions #publishing-action {
     margin: 0;
 }
@@ -3451,6 +3485,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button.button--secondary,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button,
 .espresso-admin.wp-core-ui input[type="checkbox"].button,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-timestamp,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-post-status,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a,
 .espresso-admin.wp-core-ui .wp-editor-expand #qt_content_dfw,
 .espresso-admin.wp-core-ui .wp-editor-tabs button.wp-switch-editor,
@@ -3511,6 +3548,19 @@ body.espresso-admin #contextual-help-wrap strong {
 } */
 
 
+.espresso-admin.wp-core-ui .button.button-tiny,
+.espresso-admin.wp-core-ui .button.button--tiny,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-timestamp,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-post-status {
+    --ee-button-height: 1.5rem;
+    font-size: calc((var(--ee-button-height) * .65) - var(--ee-button-height-shim));
+    height: var(--ee-button-height);
+    padding-block: calc((var(--ee-button-height) * .4) - 2px);
+    padding-inline: calc((var(--ee-button-height) * .4) - var(--ee-button-height-shim));
+}
+
+
 .espresso-admin.wp-core-ui .button.button-small,
 .espresso-admin.wp-core-ui .button.button--small,
 .espresso-admin.wp-core-ui .submitdelete,
@@ -3524,7 +3574,7 @@ body.espresso-admin #contextual-help-wrap strong {
     --ee-button-height: 2rem;
     font-size: calc((var(--ee-button-height) * .6) - var(--ee-button-height-shim));
     height: var(--ee-button-height);
-    padding-block: calc(var(--ee-button-height-half) - 2px);
+    padding-block: calc((var(--ee-button-height) * .6) - 2px);
 }
 
 .espresso-admin.wp-core-ui .ee-list-table-actions a,
@@ -3560,6 +3610,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button.button--secondary,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-timestamp,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-post-status,
 .espresso-admin.wp-core-ui .wp-editor-expand #qt_content_dfw,
 .espresso-admin.wp-core-ui .wp-editor-tabs button.wp-switch-editor,
 .espresso-admin.wp-core-ui input[type="submit"]:not(.button-primary),
@@ -3581,6 +3634,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button.button--secondary:hover,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button:hover,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a:hover,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility:hover,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-timestamp:hover,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-post-status:hover,
 .espresso-admin.wp-core-ui .wp-editor-expand #qt_content_dfw:hover,
 .espresso-admin.wp-core-ui .wp-editor-tabs button.wp-switch-editor:hover,
 .espresso-admin.wp-core-ui input[type="submit"]:not(.button-primary):hover,
@@ -3602,6 +3658,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button.button--secondary:focus,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button:focus,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a:focus,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility:focus,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-timestamp:focus,
+.espresso-admin.wp-core-ui .misc-pub-section a.edit-post-status:focus,
 .espresso-admin.wp-core-ui .wp-editor-expand #qt_content_dfw:focus,
 .espresso-admin.wp-core-ui .wp-editor-tabs button.wp-switch-editor:focus,
 .espresso-admin.wp-core-ui input[type="submit"]:not(.button-primary):focus,
@@ -3689,13 +3748,13 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .submitdelete,
 .espresso-admin.wp-core-ui .button.button--outline.button--caution {
     background-color: var(--ee-color-white);
-    border-color: transparent;
+    border-color: var(--ee-btn-caution);
     color: var(--ee-btn-caution);
 }
 .espresso-admin.wp-core-ui .deletemeta:focus,
 .espresso-admin.wp-core-ui .submitdelete:focus,
 .espresso-admin.wp-core-ui .button.button--outline.button--caution:focus {
-    border-color: var(--ee-btn-caution);
+    border-color: var(--ee-btn-caution-focus);
     color: var(--ee-btn-caution);
 }
 .espresso-admin.wp-core-ui .deletemeta:hover,
