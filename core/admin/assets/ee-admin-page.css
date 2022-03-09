@@ -594,6 +594,11 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     padding: 0;
     padding-block-end: 0.75rem;
 }
+.espresso-admin .postbox .inside #minor-publishing-actions #save-action {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    display: none;
+}
 
 .espresso-admin .postbox .inside .misc-pub-section > span:not(#timestamp):not(.dashicons) {
     margin-inline:  .5rem;
@@ -613,7 +618,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 .espresso-admin #misc-publishing-actions .misc-pub-post-status:before {
     color: var(--ee-font-color-light);
     font: normal 1.5rem/1 dashicons;
-    margin-inline-end: 0.5rem;
+    margin-inline-end: 0.25rem;
     padding: 0;
 }
 
@@ -621,15 +626,15 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     font-weight: 600;
 }
 .espresso-admin .ee-reg-list-link__reg-count {
-    margin-inline-end: 0.5rem;
+    margin-inline-end: 0.25rem;
 }
 .espresso-admin .misc-pub-section .dashicons {
-    margin-inline-end: 1rem;
+    margin-inline-end: .5rem;
 }
 .espresso-admin .ee-reg-list-link .dashicons-external {
     color: var(--ee-status-color-light-grey);
     font-weight: 200;
-    margin-inline-start:  .5rem;
+    margin-inline-start:  .25rem;
     margin-inline-end: 0;
 }
 
@@ -656,7 +661,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 .espresso-admin #major-publishing-actions,
 .espresso-admin #major-publishing-actions #publishing-action {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     float: none;
     justify-content: flex-end;
     margin: 0;
@@ -677,15 +682,24 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 
 .espresso-admin #major-publishing-actions #delete-action {
     float: unset;
-    line-height: 1;
-    /* margin-block-end: 1rem; */
 }
-/* .espresso-admin #major-publishing-actions #publishing-action input.button {
-    max-width: clamp(4rem, 50%, 16rem);
-} */
 
+@media screen and (max-width: 782px) {
+    .espresso-admin #delete-action,
+    .espresso-admin .publishing-action {
+        line-height: 1.5;
+    }
+}
 
-@media screen and (min-width: 600px) {
+@media screen and (max-width: 1024px){
+    .espresso-admin .publishing-action,
+    .espresso-admin #major-publishing-actions,
+    .espresso-admin #major-publishing-actions #publishing-action {
+        flex-flow: row wrap;
+    }
+}
+
+@media screen and (max-width: 1920px)  and (min-width: 1920px) {
     .espresso-admin .publishing-action,
     .espresso-admin #major-publishing-actions,
     .espresso-admin #major-publishing-actions #publishing-action {
@@ -697,9 +711,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
         position: relative;
         right: unset;
     }
-}
 
-@media screen and (min-width: 1920px) {
     .espresso-admin #major-publishing-actions #delete-action {
         margin-block-end: unset;
     }
@@ -1045,7 +1057,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .ee-important-notice {
   padding: 1.5rem 2rem;
   margin: 2rem 0 1rem;
-  /* background-color: var(--ee-color-white); */
   background-color: var(--ee-status-color-yellow);
   border: 4px solid var(--ee-status-color-yellow);
   border-radius: 3px;
@@ -1778,11 +1789,8 @@ label.error {
     border: 1px solid #DDDDDD;
     box-sizing: border-box;
     height: auto;
-    /* left: 25% !important; */
     padding: 3rem 4rem 2rem;
     position: absolute;
-    /* top: 2rem !important;
-    width: 75% !important; */
     z-index: 9999991;
 }
 
@@ -2755,7 +2763,6 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .ee-card-grid {
     display: grid;
-    /* grid-template-columns: 1fr 1fr; */
     grid-template-columns: repeat(auto-fit, minmax(640px, 1fr));
     column-gap: 1rem;
     row-gap: 1rem;
@@ -2954,8 +2961,7 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .ee-admin-container p,
 .espresso-admin .postbox .inside p,
-.espresso-admin .postbox .inside > div/* ,
-.espresso-admin .ee-admin-page-form #post-body-content p */ {
+.espresso-admin .postbox .inside > div {
     font-size: 1rem;
     margin: 0;
     padding-block-start: 0;
@@ -2968,8 +2974,6 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-block-start: 1.5rem;
 }
 
-/* .espresso-admin .postbox .inside div + div:not(.tabs-panel):not(.progress-step-bubble):not(.ee-status-pill):not(.publishing-action), */
-/* .espresso-admin .postbox .inside .misc-pub-section + .misc-pub-section */
 .espresso-admin .postbox .inside div:not(.progress-step-bubble) > p,
 .espresso-admin .postbox .inside br + div {
     margin-block-start: .5rem;
@@ -3377,8 +3381,6 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin .html-active #wp-content-editor-container #ed_toolbar #qt_content_dfw {
     float: right;
-    /* margin-block-start: 1rem;
-    margin-inline-end: 1rem; */
 }
 
 .espresso-admin .quicktags-toolbar,
@@ -3467,6 +3469,8 @@ body.espresso-admin #contextual-help-wrap strong {
     --ee-button-height: 4rem;
 }
 
+
+
 .espresso-admin.wp-core-ui .button,
 .espresso-admin.wp-core-ui #doaction,
 .espresso-admin.wp-core-ui .submitdelete,
@@ -3505,7 +3509,7 @@ body.espresso-admin #contextual-help-wrap strong {
     box-sizing: border-box;
     color: var(--ee-font-color);
     cursor: pointer;
-    display: inline-flex;
+    display: inline-flex !important;
     font-size: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
     font-weight: 600;
     height: min(calc(var(--ee-button-height) - 4px), auto);
@@ -3541,19 +3545,13 @@ body.espresso-admin #contextual-help-wrap strong {
   color: var(--ee-font-color) !important;
 }
 
-/* .espresso-admin.wp-core-ui input[type="submit"],
-.espresso-admin.wp-core-ui .button.button--primary.button--small:not(a),
-.espresso-admin.wp-core-ui .button.button--secondary.button--small:not(a) {
-    line-height: 0;
-} */
-
 
 .espresso-admin.wp-core-ui .button.button-tiny,
 .espresso-admin.wp-core-ui .button.button--tiny,
 .espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility,
 .espresso-admin.wp-core-ui .misc-pub-section a.edit-timestamp,
 .espresso-admin.wp-core-ui .misc-pub-section a.edit-post-status {
-    --ee-button-height: 1.5rem;
+    --ee-button-height: 1.6rem;
     font-size: calc((var(--ee-button-height) * .65) - var(--ee-button-height-shim));
     height: var(--ee-button-height);
     padding-block: calc((var(--ee-button-height) * .4) - 2px);
@@ -3563,7 +3561,6 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin.wp-core-ui .button.button-small,
 .espresso-admin.wp-core-ui .button.button--small,
-.espresso-admin.wp-core-ui .submitdelete,
 .espresso-admin.wp-core-ui .wrap .add-new-h2,
 .espresso-admin.wp-core-ui .wrap .page-title-action,
 .espresso-admin.wp-core-ui #edit-slug-box .button,
@@ -3853,6 +3850,22 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-block-end: .5rem;
 }
 
+@media screen and (max-width: 782px) {
+    .espresso-admin.wp-core-ui .button,
+    .espresso-admin.wp-core-ui .button.button-large,
+    .espresso-admin.wp-core-ui .button.button-small,
+    .espresso-admin input#publish,
+    .espresso-admin input#save-post,
+    .espresso-admin a.preview {
+        padding-block: var(--ee-button-height-sixth);
+        padding-inline: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
+        line-height: 1.25;
+        font-size: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
+        min-height: var(--ee-button-height);
+        margin-block: 0.25rem;
+        margin-inline: 0.25rem;
+    }
+}
 
 /* LIST TABLES */
 
@@ -3983,10 +3996,6 @@ body.espresso-admin #contextual-help-wrap strong {
     border-radius: 0.25rem;
 }
 
-/* .espresso-admin .wp-list-table.widefat th.check-column .dashicons-lock,
-.espresso-admin .wp-list-table.widefat td.check-column .dashicons-lock {
-    inset-inline-start: -.1rem;
-} */
 
 .espresso-admin .wp-list-table.widefat th.check-column input[type="checkbox"] + .dashicons-lock,
 .espresso-admin .wp-list-table.widefat td.check-column input[type="checkbox"] + .dashicons-lock {
@@ -3994,15 +4003,7 @@ body.espresso-admin #contextual-help-wrap strong {
     z-index: 1;
 }
 
-/* @media screen and (min-width: 782px) { */
-    /* .espresso-admin .wp-list-table.widefat th.check-column input[type="checkbox"] + .dashicons-lock,
-    .espresso-admin .wp-list-table.widefat td.check-column input[type="checkbox"] + .dashicons-lock {
-        margin-block-start: .5rem;
-        margin-inline-start: 0;
-        position: unset;
-        top: unset;
-    } */
-/* } */
+
 
 
 .espresso-admin .wp-list-table th.column-id,
@@ -4262,13 +4263,6 @@ body.espresso-admin #contextual-help-wrap strong {
         margin-left: 0;
         margin-inline-start: .5rem;
     }
-    /* .espresso-admin .row-actions {
-        margin-left: unset;
-        margin-right: unset;
-        padding: 0;
-        padding-block-start: .5rem;
-        width: 100%;
-    } */
 }
 
 .espresso-admin .paging-input,
@@ -4279,7 +4273,6 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui #search-submit,
 .espresso-admin.wp-core-ui .tablenav #doaction,
 .espresso-admin.wp-core-ui .tablenav #doaction2,
-.espresso-admin.wp-core-ui #postbox-container-1 .button,
 .espresso-admin.wp-core-ui .tablenav .button.button--secondary {
     height: var(--ee-button-height);
     line-height: 1;
@@ -4503,11 +4496,6 @@ body.espresso-admin #contextual-help-wrap strong {
         align-items: flex-start;
         text-align: start;
         justify-content: flex-start;
-        /* align-items: center;
-        text-align: start;
-        justify-content: flex-start;
-        flex-direction: row;
-        margin: 3px; */
     }
 
     .espresso-admin .wp-list-table tr:not(.is-expanded) td:first-child {
@@ -4520,7 +4508,6 @@ body.espresso-admin #contextual-help-wrap strong {
         flex-direction: row;
     }
 
-    /* .espresso-admin .wp-list-table .column-primary .ee-responsive-table-cell__heading, */
     .espresso-admin .wp-list-table tr:not(.is-expanded) td.column-primary  .ee-responsive-table-cell .ee-entity-id {
         margin-inline-end: 1rem;
         min-width: 4ch;
@@ -4534,7 +4521,6 @@ body.espresso-admin #contextual-help-wrap strong {
     }
     .espresso-admin .wp-list-table tr.is-expanded .column-id .ee-responsive-table-cell__heading {
         display: none;
-        /* width: 3rem; */
     }
 
     .espresso-admin .wp-list-table .ee-actions-column-header-wrap .dashicons-screenoptions,
@@ -4774,5 +4760,55 @@ body.espresso-admin #contextual-help-wrap strong {
         inset-block-start: -.125rem;
         inset-inline-start: -.5rem;
         inset-inline-end: unset;
+    }
+}
+
+
+.espresso-admin #poststuff #titlewrap {
+    display: flex;
+    flex-flow: row wrap;
+}
+.espresso-admin #poststuff #titlewrap label,
+.espresso-admin #poststuff #titlediv-people-addon label {
+    cursor: text;
+    margin-block-end: 0;
+    width: 49%;
+}
+
+.espresso-admin #poststuff #titlediv-people-addon .smaller-text-field,
+.espresso-admin #poststuff #titlediv-people-addon .main-text-field {
+    font-size: 1.75rem;
+    height: 3.25rem;
+    line-height: 100%;
+    margin: 0;
+    width: 49%;
+}
+.espresso-admin #poststuff #titlewrap-people-addon #PER_lname,
+.espresso-admin #poststuff #titlewrap-people-addon label[for="PER_lname"] {
+    position: relative;
+    inset-block-start: -1.75rem;
+    inset-inline-start: 2%;
+}
+
+
+@media screen and (max-width: 600px) {
+    .espresso-admin #poststuff #titlewrap {
+        flex-direction: column;
+    }
+    .espresso-admin #poststuff #titlewrap > div,
+    .espresso-admin #poststuff #titlediv-people-addon .smaller-text-field,
+    .espresso-admin #poststuff #titlediv-people-addon .main-text-field {
+        margin-inline-start: 0 !important;
+        width: 100%;
+    }
+    .espresso-admin #poststuff #titlewrap-people-addon #PER_lname,
+    .espresso-admin #poststuff #titlewrap-people-addon label[for="PER_lname"] {
+        position: relative;
+        inset-block-start: unset;
+        inset-inline-start: unset;
+    }
+    .espresso-admin #poststuff #titlewrap .smaller-text-field,
+    .espresso-admin #poststuff #titlewrap-people-addon .smaller-text-field {
+        margin-block-end: 1rem;
     }
 }
