@@ -46,7 +46,7 @@ class FeatureFlags
             'FHEE__EventEspresso_core_domain_services_capabilities_FeatureFlags',
             [
                 'use_advanced_event_editor'  => false,
-                'use_bulk_edit'              => false,
+                'ee_event_editor_bulk_edit'  => false,
                 'use_default_ticket_manager' => false,
                 'use_event_description_rte'  => false,
                 'use_experimental_rte'       => false,
