@@ -95,13 +95,11 @@ class Prices_List_Table extends EE_Admin_List_Table
      */
     protected function _get_row_class($item)
     {
-        $row_class = '';
-
-        if ($item->type_obj()->base_type() !== 1 && $item->type_obj()->base_type() !== 4) {
-            $row_class .= 'rowsortable';
-        }
-
-        return ' class="' . $row_class . '"';
+        return $item->type_obj() instanceof EE_Price_Type
+                     && $item->type_obj()->base_type() !== 1
+                     && $item->type_obj()->base_type() !== 4
+            ? ' class="rowsortable"'
+            : '';
     }
 
 
@@ -131,13 +129,12 @@ class Prices_List_Table extends EE_Admin_List_Table
 
     public function column_cb($item)
     {
-        if ($item->type_obj()->base_type() !== 1) {
-            return sprintf(
+        return $item->type_obj() instanceof EE_Price_Type && $item->type_obj()->base_type() !== 1
+            ? sprintf(
                 '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />',
                 $item->ID()
-            );
-        }
-        return '';
+            )
+            : '';
     }
 
 
@@ -194,7 +191,7 @@ class Prices_List_Table extends EE_Admin_List_Table
             )
             : $price->name();
 
-        if ($price->type_obj()->base_type() !== 1) {
+        if ($price->type_obj() instanceof EE_Price_Type && $price->type_obj()->base_type() !== 1) {
             if ($this->_view == 'all') {
                 // trash price link
                 if (
@@ -253,7 +250,9 @@ class Prices_List_Table extends EE_Admin_List_Table
      */
     public function column_type(EE_Price $price): string
     {
-        $content = $this->_price_types[ $price->type() ]->name();
+        $content = isset($this->_price_types[ $price->type() ])
+            ? $this->_price_types[ $price->type() ]->name()
+            : '';
         return $this->columnContent('type', $content);
     }
 
@@ -275,7 +274,10 @@ class Prices_List_Table extends EE_Admin_List_Table
      */
     public function column_amount(EE_Price $price): string
     {
-        $content = $this->_price_types[ $price->type() ]->is_percent() ?
+        $price_type = isset($this->_price_types[ $price->type() ])
+            ? $this->_price_types[ $price->type() ]->name()
+            : null;
+        $content = $price_type instanceof EE_Price_Type && $price_type->is_percent() ?
             '<div class="pad-amnt-rght">' . number_format($price->amount(), 1) . '%</div>'
             : '<div class="pad-amnt-rght">' . EEH_Template::format_currency($price->amount()) . '</div>';
         return $this->columnContent('amount', $content, 'end');
