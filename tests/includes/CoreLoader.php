@@ -130,6 +130,7 @@ class CoreLoader
     /**
      * @param string $folder
      * @param string $with_file
+     * @param int    $depth
      * @return string|null
      * @since 4.10.7.p
      */
