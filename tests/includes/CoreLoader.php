@@ -130,15 +130,15 @@ class CoreLoader
     /**
      * @param string $folder
      * @param string $with_file
+     * @param int    $depth
      * @return string|null
      * @since 4.10.7.p
      */
-    private function findFolderWithFile(string $folder = '', string $with_file = ''): ?string
+    private function findFolderWithFile(string $folder = '', string $with_file = '', int $depth = 10): ?string
     {
         if (! $folder || $folder === '/') {
             return null;
         }
-        static $depth = 10;
         $with_file = strpos($with_file, '/') !== 0 ? '/' . $with_file : $with_file;
         echo "\n => {$folder}{$with_file}";
         if (is_readable($folder . $with_file)) {
@@ -146,7 +146,7 @@ class CoreLoader
         }
         if ($depth > 0) {
             $depth--;
-            return $this->findFolderWithFile(dirname($folder), $with_file);
+            return $this->findFolderWithFile(dirname($folder), $with_file, $depth);
         }
         return null;
     }
