@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\DataType;
+
 /**
  * Pricing_Admin_Page class
  *
@@ -9,16 +11,6 @@
  */
 class Pricing_Admin_Page extends EE_Admin_Page
 {
-
-    /**
-     * @param bool $routing
-     * @throws ReflectionException
-     */
-    public function __construct($routing = true)
-    {
-        parent::__construct($routing);
-    }
-
 
     protected function _init_page_props()
     {
@@ -58,10 +50,8 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     protected function _set_page_routes()
     {
-        $prc_id             = ! empty($this->_req_data['PRC_ID']) && ! is_array($this->_req_data['PRC_ID'])
-            ? $this->_req_data['PRC_ID'] : 0;
-        $prt_id             = ! empty($this->_req_data['PRT_ID']) && ! is_array($this->_req_data['PRT_ID'])
-            ? $this->_req_data['PRT_ID'] : 0;
+        $PRC_ID             = $this->request->getRequestParam('PRC_ID', 0, DataType::INTEGER);
+        $PRT_ID             = $this->request->getRequestParam('PRT_ID', 0, DataType::INTEGER);
         $this->_page_routes = [
             'default'                     => [
                 'func'       => '_price_overview_list_table',
@@ -76,7 +66,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 'func'       => '_edit_price_details',
                 'args'       => ['new_price' => false],
                 'capability' => 'ee_edit_default_price',
-                'obj_id'     => $prc_id,
+                'obj_id'     => $PRC_ID,
             ],
             'insert_price'                => [
                 'func'       => '_insert_or_update_price',
@@ -89,27 +79,27 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 'args'       => ['new_price' => false],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_price',
-                'obj_id'     => $prc_id,
+                'obj_id'     => $PRC_ID,
             ],
             'trash_price'                 => [
                 'func'       => '_trash_or_restore_price',
                 'args'       => ['trash' => true],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price',
-                'obj_id'     => $prc_id,
+                'obj_id'     => $PRC_ID,
             ],
             'restore_price'               => [
                 'func'       => '_trash_or_restore_price',
                 'args'       => ['trash' => false],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price',
-                'obj_id'     => $prc_id,
+                'obj_id'     => $PRC_ID,
             ],
             'delete_price'                => [
                 'func'       => '_delete_price',
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price',
-                'obj_id'     => $prc_id,
+                'obj_id'     => $PRC_ID,
             ],
             'espresso_update_price_order' => [
                 'func'       => 'update_price_order',
@@ -128,7 +118,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'edit_price_type'             => [
                 'func'       => '_edit_price_type_details',
                 'capability' => 'ee_edit_default_price_type',
-                'obj_id'     => $prt_id,
+                'obj_id'     => $PRT_ID,
             ],
             'insert_price_type'           => [
                 'func'       => '_insert_or_update_price_type',
@@ -141,27 +131,27 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 'args'       => ['new_price_type' => false],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_price_type',
-                'obj_id'     => $prt_id,
+                'obj_id'     => $PRT_ID,
             ],
             'trash_price_type'            => [
                 'func'       => '_trash_or_restore_price_type',
                 'args'       => ['trash' => true],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price_type',
-                'obj_id'     => $prt_id,
+                'obj_id'     => $PRT_ID,
             ],
             'restore_price_type'          => [
                 'func'       => '_trash_or_restore_price_type',
                 'args'       => ['trash' => false],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price_type',
-                'obj_id'     => $prt_id,
+                'obj_id'     => $PRT_ID,
             ],
             'delete_price_type'           => [
                 'func'       => '_delete_price_type',
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price_type',
-                'obj_id'     => $prt_id,
+                'obj_id'     => $PRT_ID,
             ],
             'tax_settings'                => [
                 'func'       => '_tax_settings',
@@ -178,6 +168,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
 
     protected function _set_page_config()
     {
+        $PRC_ID             = $this->request->getRequestParam('id', 0, DataType::INTEGER);
         $this->_page_config = [
             'default'            => [
                 'nav'           => [
@@ -185,7 +176,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
                     'order' => 10,
                 ],
                 'list_table'    => 'Prices_List_Table',
-                'metaboxes' => $this->_default_espresso_metaboxes,
+                'metaboxes'     => $this->_default_espresso_metaboxes,
                 'help_tabs'     => [
                     'pricing_default_pricing_help_tab'                           => [
                         'title'    => esc_html__('Default Pricing', 'event_espresso'),
@@ -224,10 +215,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 'nav'           => [
                     'label'      => esc_html__('Edit Default Price', 'event_espresso'),
                     'order'      => 20,
-                    'url'        => isset($this->_req_data['id']) ? add_query_arg(
-                        ['id' => $this->_req_data['id']],
-                        $this->_current_page_view_url
-                    ) : $this->_admin_base_url,
+                    'url'        => $PRC_ID
+                        ? add_query_arg(['id' => $PRC_ID], $this->_current_page_view_url)
+                        : $this->_admin_base_url,
                     'persistent' => false,
                 ],
                 'metaboxes'     => array_merge(
@@ -284,18 +274,18 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 'require_nonce' => false,
             ],
             'edit_price_type'    => [
-                'nav'       => [
+                'nav'           => [
                     'label'      => esc_html__('Edit Price Type', 'event_espresso'),
                     'order'      => 40,
                     'persistent' => false,
                 ],
-                'help_tabs' => [
+                'help_tabs'     => [
                     'edit_price_type_help_tab' => [
                         'title'    => esc_html__('Edit Price Type', 'event_espresso'),
                         'filename' => 'pricing_edit_price_type',
                     ],
                 ],
-                'metaboxes' => array_merge(
+                'metaboxes'     => array_merge(
                     ['_publish_post_box'],
                     $this->_default_espresso_metaboxes
                 ),
@@ -461,11 +451,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _price_overview_list_table()
     {
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-            'add_new_price',
-            'add',
-            [],
-            'add-new-h2'
-        );
+                'add_new_price',
+                'add',
+                [],
+                'add-new-h2'
+            );
         $this->_admin_page_title .= $this->_learn_more_about_pricing_link();
         $this->_search_btn_label = esc_html__('Default Prices', 'event_espresso');
         $this->display_admin_list_table_page_with_sidebar();
@@ -491,13 +481,10 @@ class Pricing_Admin_Page extends EE_Admin_Page
         require_once(EE_MODELS . 'EEM_Price.model.php');
         // $PRC = EEM_Price::instance();
 
-        $this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
+        $orderby = $this->request->getRequestParam('orderby', '');
+        $order   = $this->request->getRequestParam('order', 'ASC');
 
-        $order = (isset($this->_req_data['order']) && ! empty($this->_req_data['order']))
-                ? $this->_req_data['order']
-                : 'ASC';
-
-        switch ($this->_req_data['orderby']) {
+        switch ($orderby) {
             case 'name':
                 $orderby = ['PRC_name' => $order];
                 break;
@@ -511,14 +498,10 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 $orderby = ['PRC_order' => $order, 'Price_Type.PRT_order' => $order, 'PRC_ID' => $order];
         }
 
-        $current_page = isset($this->_req_data['paged']) && ! empty($this->_req_data['paged'])
-            ? $this->_req_data['paged']
-            : 1;
-        $per_page     = isset($this->_req_data['perpage']) && ! empty($this->_req_data['perpage'])
-            ? $this->_req_data['perpage']
-            : $per_page;
+        $current_page = $this->request->getRequestParam('paged', 1, DataType::INTEGER);
+        $per_page     = $this->request->getRequestParam('perpage', $per_page, DataType::INTEGER);
 
-        $_where = [
+        $where = [
             'PRC_is_default' => 1,
             'PRC_deleted'    => $trashed,
         ];
@@ -526,18 +509,19 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $offset = ($current_page - 1) * $per_page;
         $limit  = [$offset, $per_page];
 
-        if (isset($this->_req_data['s'])) {
-            $sstr         = '%' . $this->_req_data['s'] . '%';
-            $_where['OR'] = [
-                'PRC_name'            => ['LIKE', $sstr],
-                'PRC_desc'            => ['LIKE', $sstr],
-                'PRC_amount'          => ['LIKE', $sstr],
-                'Price_Type.PRT_name' => ['LIKE', $sstr],
+        $search_term = $this->request->getRequestParam('s');
+        if ($search_term) {
+            $search_term = "%{$search_term}%";
+            $where['OR'] = [
+                'PRC_name'            => ['LIKE', $search_term],
+                'PRC_desc'            => ['LIKE', $search_term],
+                'PRC_amount'          => ['LIKE', $search_term],
+                'Price_Type.PRT_name' => ['LIKE', $search_term],
             ];
         }
 
         $query_params = [
-            $_where,
+            $where,
             'order_by' => $orderby,
             'limit'    => $limit,
             'group_by' => 'PRC_ID',
@@ -545,8 +529,8 @@ class Pricing_Admin_Page extends EE_Admin_Page
 
         if ($count) {
             return $trashed
-                ? EEM_Price::instance()->count([$_where])
-                : EEM_Price::instance()->count_deleted_and_undeleted([$_where]);
+                ? EEM_Price::instance()->count([$where])
+                : EEM_Price::instance()->count_deleted_and_undeleted([$where]);
         }
         return EEM_Price::instance()->get_all_deleted_and_undeleted($query_params);
     }
@@ -560,8 +544,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _edit_price_details()
     {
         // grab price ID
-        $PRC_ID = isset($this->_req_data['id']) && ! empty($this->_req_data['id']) ? absint($this->_req_data['id'])
-            : false;
+        $PRC_ID = $this->request->getRequestParam('id', 0, DataType::INTEGER);
         // change page title based on request action
         switch ($this->_req_action) {
             case 'add_new_price':
@@ -576,30 +559,38 @@ class Pricing_Admin_Page extends EE_Admin_Page
         // add PRC_ID to title if editing
         $this->_admin_page_title = $PRC_ID ? $this->_admin_page_title . ' # ' . $PRC_ID : $this->_admin_page_title;
 
-        // get prices
-        require_once(EE_MODELS . 'EEM_Price.model.php');
-        $PRC = EEM_Price::instance();
-
         if ($PRC_ID) {
-            $price                    = $PRC->get_one_by_ID($PRC_ID);
+            $price                    = EEM_Price::instance()->get_one_by_ID($PRC_ID);
             $additional_hidden_fields = [
                 'PRC_ID' => ['type' => 'hidden', 'value' => $PRC_ID],
             ];
             $this->_set_add_edit_form_tags('update_price', $additional_hidden_fields);
         } else {
-            $price = $PRC->get_new_price();
+            $price = EEM_Price::instance()->get_new_price();
             $this->_set_add_edit_form_tags('insert_price');
+        }
+
+        if (! $price instanceof EE_Price) {
+            throw new RuntimeException(
+                sprintf(
+                    esc_html__(
+                        'A valid Price could not be retrieved from the database with ID: %1$s',
+                        'event_espresso'
+                    ),
+                    $PRC_ID
+                )
+            );
         }
 
 
         $this->_template_args['PRC_ID'] = $PRC_ID;
         $this->_template_args['price']  = $price;
 
-        $default_base_price = $price->type_obj() && $price->type_obj()->base_type() === 1;
-        $this->_template_args['default_base_price']  = $default_base_price;
+        $default_base_price                         = $price->type_obj() && $price->type_obj()->base_type() === 1;
+        $this->_template_args['default_base_price'] = $default_base_price;
 
         // get price types
-        $price_types      = EEM_Price_Type::instance()->get_all([['PBT_ID' => ['!=', 1]]]);
+        $price_types = EEM_Price_Type::instance()->get_all([['PBT_ID' => ['!=', 1]]]);
         if (empty($price_types)) {
             $msg = esc_html__(
                 'You have no price types defined. Please add a price type before adding a price.',
@@ -610,9 +601,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
         }
         $attributes       = [];
         $price_type_names = [];
-        $attributes[] = 'id="PRT_ID"';
+        $attributes[]     = 'id="PRT_ID"';
         if ($default_base_price) {
-            $attributes[] = 'disabled="disabled"';
+            $attributes[]       = 'disabled="disabled"';
             $price_type_names[] = ['id' => 1, 'text' => esc_html__('Base Price', 'event_espresso')];
         }
         foreach ($price_types as $type) {
@@ -622,7 +613,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $this->_template_args['price_types'] = $price_type_names;
 
         $this->_template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
-        $this->_template_args['admin_page_content'] = $this->_edit_price_details_meta_box();
+        $this->_template_args['admin_page_content']            = $this->_edit_price_details_meta_box();
 
         $this->_set_publish_post_box_vars('id', $PRC_ID);
         // the details template wrapper
@@ -634,7 +625,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
      *
      * @return string
      */
-    public function _edit_price_details_meta_box()
+    public function _edit_price_details_meta_box(): string
     {
         return EEH_Template::display_template(
             PRICING_TEMPLATE_PATH . 'pricing_details_main_meta_box.template.php',
@@ -652,7 +643,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function set_price_column_values(): array
     {
         $PRC_order = 0;
-        $PRT_ID    = absint($this->_req_data['PRT_ID']);
+        $PRT_ID    = $this->request->getRequestParam('PRT_ID', 0, DataType::INTEGER);
         if ($PRT_ID) {
             /** @var EE_Price_Type $price_type */
             $price_type = EEM_Price_Type::instance()->get_one_by_ID($PRT_ID);
@@ -662,9 +653,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
         }
         return [
             'PRT_ID'         => $PRT_ID,
-            'PRC_amount'     => $this->_req_data['PRC_amount'],
-            'PRC_name'       => $this->_req_data['PRC_name'],
-            'PRC_desc'       => $this->_req_data['PRC_desc'],
+            'PRC_amount'     => $this->request->getRequestParam('PRC_amount', 0, DataType::FLOAT),
+            'PRC_name'       => $this->request->getRequestParam('PRC_name'),
+            'PRC_desc'       => $this->request->getRequestParam('PRC_desc'),
             'PRC_is_default' => 1,
             'PRC_overrides'  => null,
             'PRC_order'      => $PRC_order,
@@ -682,47 +673,45 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     protected function _insert_or_update_price(bool $insert = false)
     {
-        $PRC = EEM_Price::instance();
-
         // why be so pessimistic ???  : (
-        $success = 0;
+        $updated = 0;
 
         $set_column_values = $this->set_price_column_values();
         // is this a new Price ?
         if ($insert) {
             // run the insert
-            if ($PRC_ID = $PRC->insert($set_column_values)) {
+            $PRC_ID = EEM_Price::instance()->insert($set_column_values);
+            if ($PRC_ID) {
                 // make sure this new price modifier is attached to the ticket but ONLY if it is not a tax type
-                $PR = EEM_price::instance()->get_one_by_ID($PRC_ID);
-                if ($PR instanceof EE_Price && $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax) {
+                $price = EEM_price::instance()->get_one_by_ID($PRC_ID);
+                if (
+                    $price instanceof EE_Price
+                    && $price->type_obj() instanceof EE_Price_type
+                    && $price->type_obj()->base_type() !== EEM_Price_Type::base_type_tax
+                ) {
                     $ticket = EEM_Ticket::instance()->get_one_by_ID(1);
-                    $ticket->_add_relation_to($PR, 'Price');
+                    $ticket->_add_relation_to($price, 'Price');
                     $ticket->save();
                 }
-                $success = 1;
-            } else {
-                $PRC_ID  = false;
-                $success = 0;
+                $updated = 1;
             }
             $action_desc = 'created';
         } else {
-            $PRC_ID = absint($this->_req_data['PRC_ID']);
+            $PRC_ID = $this->request->getRequestParam('PRC_ID', 0, DataType::INTEGER);
             // run the update
             $where_cols_n_values = ['PRC_ID' => $PRC_ID];
-            if ($PRC->update($set_column_values, [$where_cols_n_values])) {
-                $success = 1;
-            }
+            $updated             = EEM_Price::instance()->update($set_column_values, [$where_cols_n_values]);
 
-            $PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
-            if ($PR instanceof EE_Price && $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax) {
+            $price = EEM_Price::instance()->get_one_by_ID($PRC_ID);
+            if ($price instanceof EE_Price && $price->type_obj()->base_type() !== EEM_Price_Type::base_type_tax) {
                 // if this is $PRC_ID == 1,
                 // then we need to update the default ticket attached to this price so the TKT_price value is updated.
                 if ($PRC_ID === 1) {
-                    $ticket = $PR->get_first_related('Ticket');
+                    $ticket = $price->get_first_related('Ticket');
                     if ($ticket) {
-                        $ticket->set('TKT_price', $PR->get('PRC_amount'));
-                        $ticket->set('TKT_name', $PR->get('PRC_name'));
-                        $ticket->set('TKT_description', $PR->get('PRC_desc'));
+                        $ticket->set('TKT_price', $price->get('PRC_amount'));
+                        $ticket->set('TKT_name', $price->get('PRC_name'));
+                        $ticket->set('TKT_description', $price->get('PRC_desc'));
                         $ticket->save();
                     }
                 } else {
@@ -738,7 +727,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
 
         $query_args = ['action' => 'edit_price', 'id' => $PRC_ID];
 
-        $this->_redirect_after_action($success, 'Prices', $action_desc, $query_args);
+        $this->_redirect_after_action($updated, 'Prices', $action_desc, $query_args);
     }
 
 
@@ -862,36 +851,26 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     public function update_price_order()
     {
-        $success = esc_html__('Price order was updated successfully.', 'event_espresso');
-
         // grab our row IDs
-        $row_ids = isset($this->_req_data['row_ids']) && ! empty($this->_req_data['row_ids']) ? explode(
-            ',',
-            rtrim(
-                $this->_req_data['row_ids'],
-                ','
-            )
-        ) : false;
+        $row_ids = $this->request->getRequestParam('row_ids', '');
+        $row_ids = explode(',', rtrim($row_ids, ','));
 
-        if (is_array($row_ids)) {
-            for ($i = 0; $i < count($row_ids); $i++) {
-                // Update the prices when re-ordering
-                $id = absint($row_ids[ $i ]);
-                if (
-                    EEM_Price::instance()->update(
-                        ['PRC_order' => $i + 1],
-                        [['PRC_ID' => $id]]
-                    ) === false
-                ) {
-                    $success = false;
-                }
-            }
-        } else {
-            $success = false;
+        $all_updated = true;
+        foreach ($row_ids as $i => $row_id) {
+            // Update the prices when re-ordering
+            $fields_n_values = ['PRC_order' => $i + 1];
+            $query_params    = [['PRC_ID' => absint($row_id)]];
+            // any failure will toggle $all_updated to false
+            $all_updated = $row_id && EEM_Price::instance()->update($fields_n_values, $query_params) !== false
+                ? $all_updated
+                : false;
         }
-
-        $errors =
-            ! $success ? esc_html__('An error occurred. The price order was not updated.', 'event_espresso') : false;
+        $success = $all_updated
+            ? esc_html__('Price order was updated successfully.', 'event_espresso')
+            : false;
+        $errors  = ! $all_updated
+            ? esc_html__('An error occurred. The price order was not updated.', 'event_espresso')
+            : false;
 
         echo wp_json_encode(['return_data' => false, 'success' => $success, 'errors' => $errors]);
         die();
@@ -916,11 +895,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _price_types_overview_list_table()
     {
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-            'add_new_price_type',
-            'add_type',
-            [],
-            'add-new-h2'
-        );
+                'add_new_price_type',
+                'add_type',
+                [],
+                'add-new-h2'
+            );
         $this->_admin_page_title .= $this->_learn_more_about_pricing_link();
         $this->_search_btn_label = esc_html__('Price Types', 'event_espresso');
         $this->display_admin_list_table_page_with_sidebar();
@@ -942,12 +921,10 @@ class Pricing_Admin_Page extends EE_Admin_Page
         // start with an empty array
         require_once(PRICING_ADMIN . 'Price_Types_List_Table.class.php');
 
-        $this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
+        $orderby = $this->request->getRequestParam('orderby', '');
+        $order   = $this->request->getRequestParam('order', 'ASC');
 
-        $order = (isset($this->_req_data['order']) && ! empty($this->_req_data['order']))
-            ? $this->_req_data['order']
-            : 'ASC';
-        switch ($this->_req_data['orderby']) {
+        switch ($orderby) {
             case 'name':
                 $orderby = ['PRT_name' => $order];
                 break;
@@ -955,31 +932,28 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 $orderby = ['PRT_order' => $order];
         }
 
-        $current_page = isset($this->_req_data['paged']) && ! empty($this->_req_data['paged'])
-            ? $this->_req_data['paged'] : 1;
-        $per_page     = isset($this->_req_data['perpage']) && ! empty($this->_req_data['perpage'])
-            ? $this->_req_data['perpage'] : $per_page;
+        $current_page = $this->request->getRequestParam('paged', 1, DataType::INTEGER);
+        $per_page     = $this->request->getRequestParam('perpage', $per_page, DataType::INTEGER);
 
         $offset = ($current_page - 1) * $per_page;
         $limit  = [$offset, $per_page];
 
-        $_where = ['PRT_deleted' => $trashed, 'PBT_ID' => ['!=', 1]];
+        $where = ['PRT_deleted' => $trashed, 'PBT_ID' => ['!=', 1]];
 
-        if (isset($this->_req_data['s'])) {
-            $sstr         = '%' . $this->_req_data['s'] . '%';
-            $_where['OR'] = [
-                'PRT_name' => ['LIKE', $sstr],
+        $search_term = $this->request->getRequestParam('s');
+        if ($search_term) {
+            $where['OR'] = [
+                'PRT_name' => ['LIKE', "%{$search_term}%"],
             ];
         }
         $query_params = [
-            $_where,
+            $where,
             'order_by' => $orderby,
             'limit'    => $limit,
         ];
-        if ($count) {
-            return EEM_Price_Type::instance()->count_deleted_and_undeleted($query_params);
-        }
-        return EEM_Price_Type::instance()->get_all_deleted_and_undeleted($query_params);
+        return $count
+            ? EEM_Price_Type::instance()->count_deleted_and_undeleted($query_params)
+            : EEM_Price_Type::instance()->get_all_deleted_and_undeleted($query_params);
     }
 
 
@@ -993,9 +967,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _edit_price_type_details()
     {
         // grab price type ID
-        $PRT_ID = isset($this->_req_data['id']) && ! empty($this->_req_data['id'])
-            ? absint($this->_req_data['id'])
-            : false;
+        $PRT_ID = $this->request->getRequestParam('id', 0, DataType::INTEGER);
         // change page title based on request action
         switch ($this->_req_action) {
             case 'add_new_price_type':
@@ -1019,6 +991,18 @@ class Pricing_Admin_Page extends EE_Admin_Page
             $this->_set_add_edit_form_tags('insert_price_type');
         }
 
+        if (! $price_type instanceof EE_Price_Type) {
+            throw new RuntimeException(
+                sprintf(
+                    esc_html__(
+                        'A valid Price Type could not be retrieved from the database with ID: %1$s',
+                        'event_espresso'
+                    ),
+                    $PRT_ID
+                )
+            );
+        }
+
         $this->_template_args['PRT_ID']     = $PRT_ID;
         $this->_template_args['price_type'] = $price_type;
 
@@ -1032,7 +1016,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             $select_values[] = ['id' => $ref, 'text' => $text];
         }
 
-        $this->_template_args['base_type_select']  = EEH_Form_Fields::select_input(
+        $this->_template_args['base_type_select'] = EEH_Form_Fields::select_input(
             'base_type',
             $select_values,
             $price_type->base_type(),
@@ -1040,7 +1024,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
         );
 
         $this->_template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
-        $this->_template_args['admin_page_content'] = $this->_edit_price_type_details_meta_box();
+        $this->_template_args['admin_page_content']            = $this->_edit_price_type_details_meta_box();
 
         $redirect_URL = add_query_arg(['action' => 'price_types'], $this->_admin_base_url);
         $this->_set_publish_post_box_vars('id', $PRT_ID, false, $redirect_URL);
@@ -1054,7 +1038,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
      *
      * @return string
      */
-    public function _edit_price_type_details_meta_box()
+    public function _edit_price_type_details_meta_box(): string
     {
         return EEH_Template::display_template(
             PRICING_TEMPLATE_PATH . 'pricing_type_details_main_meta_box.template.php',
@@ -1069,35 +1053,33 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     protected function set_price_type_column_values(): array
     {
-        $base_type = ! empty($this->_req_data['base_type']) ? $this->_req_data['base_type']
-            : EEM_Price_Type::base_type_base_price;
-
+        $base_type  = $this->request->getRequestParam(
+            'base_type',
+            EEM_Price_Type::base_type_base_price,
+            DataType::INTEGER
+        );
+        $is_percent = $this->request->getRequestParam('PRT_is_percent', 0, DataType::INTEGER);
+        $order      = $this->request->getRequestParam('PRT_order', 0, DataType::INTEGER);
         switch ($base_type) {
             case EEM_Price_Type::base_type_base_price:
-                $this->_req_data['PBT_ID']         = EEM_Price_Type::base_type_base_price;
-                $this->_req_data['PRT_is_percent'] = 0;
-                $this->_req_data['PRT_order']      = 0;
+                $is_percent = 0;
+                $order      = 0;
                 break;
 
             case EEM_Price_Type::base_type_discount:
-                $this->_req_data['PBT_ID'] = EEM_Price_Type::base_type_discount;
-                break;
-
             case EEM_Price_Type::base_type_surcharge:
-                $this->_req_data['PBT_ID'] = EEM_Price_Type::base_type_surcharge;
                 break;
 
             case EEM_Price_Type::base_type_tax:
-                $this->_req_data['PBT_ID']         = EEM_Price_Type::base_type_tax;
-                $this->_req_data['PRT_is_percent'] = 1;
+                $is_percent = 1;
                 break;
         }
 
         return [
-            'PRT_name'       => $this->_req_data['PRT_name'],
-            'PBT_ID'         => absint($this->_req_data['PBT_ID']),
-            'PRT_is_percent' => absint($this->_req_data['PRT_is_percent']),
-            'PRT_order'      => absint($this->_req_data['PRT_order']),
+            'PBT_ID'         => $base_type,
+            'PRT_name'       => $this->request->getRequestParam('PRT_name', ''),
+            'PRT_is_percent' => $is_percent,
+            'PRT_order'      => $order,
             'PRT_deleted'    => 0,
         ];
     }
@@ -1111,9 +1093,6 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     protected function _insert_or_update_price_type(bool $new_price_type = false)
     {
-        require_once(EE_MODELS . 'EEM_Price_Type.model.php');
-        $PRT = EEM_Price_Type::instance();
-
         // why be so pessimistic ???  : (
         $success = 0;
 
@@ -1121,15 +1100,15 @@ class Pricing_Admin_Page extends EE_Admin_Page
         // is this a new Price ?
         if ($new_price_type) {
             // run the insert
-            if ($PRT_ID = $PRT->insert($set_column_values)) {
+            if ($PRT_ID = EEM_Price_Type::instance()->insert($set_column_values)) {
                 $success = 1;
             }
             $action_desc = 'created';
         } else {
-            $PRT_ID = absint($this->_req_data['PRT_ID']);
+            $PRT_ID = $this->request->getRequestParam('PRT_ID', 0, DataType::INTEGER);
             // run the update
             $where_cols_n_values = ['PRT_ID' => $PRT_ID];
-            if ($PRT->update($set_column_values, [$where_cols_n_values])) {
+            if (EEM_Price_Type::instance()->update($set_column_values, [$where_cols_n_values])) {
                 $success = 1;
             }
             $action_desc = 'updated';
@@ -1199,9 +1178,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _learn_more_about_pricing_link(): string
     {
         return '<a class="hidden" style="margin:0 20px; cursor:pointer; font-size:12px;" >' . esc_html__(
-            'learn more about how pricing works',
-            'event_espresso'
-        ) . '</a>';
+                'learn more about how pricing works',
+                'event_espresso'
+            ) . '</a>';
     }
 
 
@@ -1223,6 +1202,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     protected function tax_settings_form(): EE_Form_Section_Proper
     {
+        $tax_settings = EE_Config::instance()->tax_settings;
         return new EE_Form_Section_Proper(
             [
                 'name'            => 'tax_settings_form',
@@ -1249,17 +1229,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
                                                 'Indicates whether or not to display prices with the taxes included',
                                                 'event_espresso'
                                             ),
-                                            'default'                 => isset(
-                                                EE_Registry::instance()
-                                                    ->CFG
-                                                    ->tax_settings
-                                                    ->prices_displayed_including_taxes
-                                            )
-                                                ? EE_Registry::instance()
-                                                    ->CFG
-                                                    ->tax_settings
-                                                    ->prices_displayed_including_taxes
-                                                : true,
+                                            'default'                 => $tax_settings->prices_displayed_including_taxes
+                                                                         ??
+                                                                         true,
                                             'display_html_label_text' => false,
                                         ]
                                     ),
@@ -1283,8 +1255,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     public function _update_tax_settings()
     {
-        if (! isset(EE_Registry::instance()->CFG->tax_settings)) {
-            EE_Registry::instance()->CFG->tax_settings = new EE_Tax_Config();
+        $tax_settings = EE_Config::instance()->tax_settings;
+        if (! $tax_settings instanceof EE_Tax_Config) {
+            $tax_settings = new EE_Tax_Config();
         }
         try {
             $tax_form = $this->tax_settings_form();
@@ -1297,11 +1270,8 @@ class Pricing_Admin_Page extends EE_Admin_Page
                     // grab validated data from form
                     $valid_data = $tax_form->valid_data();
                     // set data on config
-                    EE_Registry::instance()
-                        ->CFG
-                        ->tax_settings
-                        ->prices_displayed_including_taxes
-                        = $valid_data['tax_settings']['prices_displayed_including_taxes'];
+                    $tax_settings->prices_displayed_including_taxes =
+                        $valid_data['tax_settings']['prices_displayed_including_taxes'];
                 } else {
                     if ($tax_form->submission_error_message() !== '') {
                         EE_Error::add_error(
@@ -1320,7 +1290,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $what    = 'Tax Settings';
         $success = $this->_update_espresso_configuration(
             $what,
-            EE_Registry::instance()->CFG->tax_settings,
+            $tax_settings,
             __FILE__,
             __FUNCTION__,
             __LINE__
