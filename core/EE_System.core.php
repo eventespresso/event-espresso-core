@@ -1130,13 +1130,13 @@ final class EE_System implements ResettableInterface
      */
     public function initialize_last()
     {
+        $this->router->initializeLast();
         do_action('AHEE__EE_System__initialize_last');
         /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
         $rewrite_rules = $this->loader->getShared(
             'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
         );
         $rewrite_rules->flushRewriteRules();
-        $this->router->initializeLast();
         add_action('admin_bar_init', [$this, 'addEspressoToolbar']);
     }
 
