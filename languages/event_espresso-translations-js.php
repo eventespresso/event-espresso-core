@@ -1273,10 +1273,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:68
 	__( 'End Date is required', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:31
+	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:32
 	__( 'no results found', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:32
+	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:33
 	__( 'try changing filter settings', 'event_espresso' ),
 
 	// Reference: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:38
