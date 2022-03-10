@@ -19,12 +19,6 @@
                     </label>
                 </th>
                 <td>
-                    <?php echo EEH_Form_Fields::select_input(
-                        $default_base_price ? 'PRT_ID' : '',
-                        $price_types,
-                        $price->type(),
-                        $attributes
-                    ); ?>
                     <?php if ($default_base_price) : ?>
                         <input type='hidden' name='PRT_ID' id='PRT_ID' value="<?php echo esc_attr($price->type());?>" />
                         <p class="description">
@@ -36,6 +30,7 @@
                             ?>
                         </p>
                     <?php else : ?>
+                        <?php echo EEH_Form_Fields::select_input('PRT_ID', $price_types, $price->type(), $attributes); ?>
                         <p class="description">
                             <?php
                             esc_html_e(
