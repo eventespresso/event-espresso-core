@@ -1340,7 +1340,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      *                                 off of.
      * @throws EE_error
      * @throws ReflectionException
-     * @deprecated $VID:$
+     * @deprecated 4.10.29.p
      */
     protected function _add_message_template($message_type, $messenger, $GRP_ID)
     {
@@ -2739,7 +2739,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * retrieve and sanitize form data
      *
      * @return array
-     * @since $VID:$
+     * @since 4.10.29.p
      */
     protected function getMessageTemplateFormData()
     {
@@ -2764,7 +2764,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return array no return on AJAX requests
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.29.p
      */
     private function generateNewTemplates($GRP_ID, $messenger, $message_type)
     {
@@ -2811,7 +2811,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @param array  $form_data
      * @return array
      * @throws EE_Error
-     * @since $VID:$
+     * @since 4.10.29.p
      */
     private function updateExistingTemplates(
         $GRP_ID,
@@ -2857,7 +2857,7 @@ class Messages_Admin_Page extends EE_Admin_Page
 
     /**
      * @return array
-     * @since $VID:$
+     * @since 4.10.29.p
      */
     private function getTemplateFields()
     {
@@ -2886,7 +2886,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @param array  $template_fields
      * @return bool
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   4.10.29.p
      */
     private function validateTemplateFields(
         $messenger,
@@ -2945,7 +2945,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @param array $field_data
      * @param array $form_data
      * @return array
-     * @since   $VID:$
+     * @since   4.10.29.p
      */
     private function getTemplateFieldFormData(array $field_data, array $form_data)
     {
@@ -2965,7 +2965,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @param array  $form_data
      * @return bool
      * @throws EE_Error
-     * @since $VID:$
+     * @since 4.10.29.p
      */
     private function updateMessageTemplates($template_field, array $form_data)
     {
@@ -3013,7 +3013,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @param array $form_data
      * @return bool
      * @throws EE_Error
-     * @since $VID:$
+     * @since 4.10.29.p
      */
     private function updateMessageTemplateGroup(array $form_data)
     {
@@ -3071,7 +3071,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      *
      * @param array|string $content
      * @return array|string
-     * @since   $VID:$
+     * @since   4.10.29.p
      */
     private function sanitizeMessageTemplateContent($content)
     {
@@ -3098,7 +3098,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @param string $message_type
      * @param string $context
      * @return string
-     * @since $VID:$
+     * @since 4.10.29.p
      */
     private function generateUpdateDescription($messenger, $message_type, $context)
     {
@@ -3129,7 +3129,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.29.p
      */
     private function performTestSendAfterUpdate($messenger, $message_type, $context)
     {

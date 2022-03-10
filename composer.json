@@ -25,6 +25,12 @@
 			"url": "https://github.com/eventespresso/ee-coding-standards"
 		}
 	],
+	"allow-plugins": {
+		"eventespresso/*": true,
+		"composer/installers": true,
+		"roave/security-advisories": true,
+		"yoast/phpunit-polyfills": true
+	},
 	"require": {
 		"composer/installers": "~2.0",
 		"php": ">=7.2",

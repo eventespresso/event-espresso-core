@@ -95,7 +95,7 @@ class EE_Message_To_Generate
      * one of the message status constants on EEM_Message
      *
      * @var string
-     * @since $VID:$
+     * @since 4.10.29.p
      */
     protected $_status = '';
 
@@ -103,7 +103,7 @@ class EE_Message_To_Generate
      * use $_status var above
      *
      * @var string
-     * @deprecated $VID:$
+     * @deprecated 4.10.29.p
      */
     protected $_message_status = '';
 
