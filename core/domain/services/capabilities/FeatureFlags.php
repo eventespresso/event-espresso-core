@@ -54,8 +54,8 @@ class FeatureFlags
         $this->feature_flags = apply_filters(
             'FHEE__EventEspresso_core_domain_services_capabilities_FeatureFlags',
             [
-                'ee_advanced_event_editor'   => $this->domain->isCaffeinated() && ! is_multisite(),
-                'ee_event_editor_bulk_edit'  => $this->domain->isCaffeinated() && ! is_multisite(),
+                'ee_advanced_event_editor'   => $this->domain->isCaffeinated() && ! $this->domain->isMultiSite(),
+                'ee_event_editor_bulk_edit'  => $this->domain->isCaffeinated() && ! $this->domain->isMultiSite(),
                 'use_default_ticket_manager' => false,
                 'use_event_description_rte'  => false,
                 'use_experimental_rte'       => false,
