@@ -803,6 +803,7 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\domain\services\capabilities\FeatureFlags'                                                => [
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\addon\AddonManager'                                                              => [
                 'EventEspresso\core\services\addon\AddonCollection'              => EE_Dependency_Map::load_from_cache,
