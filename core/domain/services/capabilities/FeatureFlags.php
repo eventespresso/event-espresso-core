@@ -2,7 +2,9 @@
 
 namespace EventEspresso\core\domain\services\capabilities;
 
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
+use EventEspresso\core\services\request\Request;
 
 /**
  * Class FeatureFlags
@@ -33,20 +35,27 @@ class FeatureFlags
      */
     private $feature_flags;
 
+    /**
+     * @var Domain
+     */
+    protected $domain;
+
 
     /**
      * FeatureFlags constructor.
      *
      * @param CapabilitiesChecker $capabilities_checker
+     * @param Domain              $domain
      */
-    public function __construct(CapabilitiesChecker $capabilities_checker)
+    public function __construct(CapabilitiesChecker $capabilities_checker, Domain $domain)
     {
         $this->capabilities_checker = $capabilities_checker;
+        $this->domain = $domain;
         $this->feature_flags = apply_filters(
             'FHEE__EventEspresso_core_domain_services_capabilities_FeatureFlags',
             [
-                'use_advanced_event_editor'  => false,
-                'ee_event_editor_bulk_edit'  => false,
+                'ee_advanced_event_editor'   => $this->domain->isCaffeinated() && ! is_multisite(),
+                'ee_event_editor_bulk_edit'  => $this->domain->isCaffeinated() && ! is_multisite(),
                 'use_default_ticket_manager' => false,
                 'use_event_description_rte'  => false,
                 'use_experimental_rte'       => false,
