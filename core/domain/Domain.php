@@ -42,11 +42,18 @@ class Domain extends DomainBase implements CaffeinatedInterface
      */
     private $caffeinated;
 
+    /**
+     * @since $VID:$
+     * @var bool
+     */
+    private $multisite;
+
 
     public function __construct(FilePath $plugin_file, Version $version)
     {
         parent::__construct($plugin_file, $version);
         $this->setCaffeinated();
+        $this->multisite = is_multisite();
     }
 
     /**
@@ -80,5 +87,15 @@ class Domain extends DomainBase implements CaffeinatedInterface
     public static function brandName()
     {
         return (string) apply_filters('FHEE__EventEspresso_core_domain_Domain__brandName', 'Event Espresso');
+    }
+
+
+    /**
+     * @return bool
+     * @since $VID:$
+     */
+    public function isMultiSite(): bool
+    {
+        return $this->multisite;
     }
 }
