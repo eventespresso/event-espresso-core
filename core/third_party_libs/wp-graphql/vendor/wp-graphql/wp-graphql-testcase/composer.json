@@ -1,0 +1,52 @@
+{
+    "name": "wp-graphql/wp-graphql-testcase",
+    "description": "Codeception module for WPGraphQL API testing",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Geoff Taylor",
+            "email": "geoffrey.taylor@outlook.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Tests\\WPGraphQL\\": "src/"
+        },
+        "classmap": [
+            "src/"
+        ]
+    },
+    "require": {
+        "php": "^7.1 || ^8.0",
+        "phpunit/phpunit": "^7.5 || ^8.5.0"
+    },
+    "require-dev": {
+        "composer/installers": "^1.9",
+        "johnpbloch/wordpress": "^5.4",
+        "wp-graphql/wp-graphql": "^1.1.8",
+        "simpod/php-coveralls-mirror": "^3.0",
+        "automattic/vipwpcs": "^2.2",
+        "wp-coding-standards/wpcs": "^2.3"
+    },
+    "scripts": {
+        "cli": "docker-compose run --rm --workdir=/var/www/html/wp-content/plugins/wp-graphql-testcase --user $(id -u) wordpress wait_for_it $TEST_DB -s -t 300 --",
+        "codeception": "codecept run wpunit --",
+        "phpunit": "phpunit --",
+        "run-codeception": "env TEST_DB=mysql:3306 composer cli vendor/bin/codecept run wpunit",
+        "run-phpunit": "env TEST_DB=mysql_phpunit:3306 composer cli vendor/bin/phpunit"
+    },
+    "extra": {
+        "wordpress-install-dir": "local/public",
+        "installer-paths": {
+            "local/public/wp-content/plugins/{$name}/": ["type:wordpress-plugin"]
+        }
+    },
+    "suggest": {
+        "codeception/module-asserts": "Needed for \\Tests\\WPGraphQL\\TestCase\\WPGraphQLTestcase to work.",
+        "codeception/util-universalframework": "Needed for \\Tests\\WPGraphQL\\TestCase\\WPGraphQLTestcase to work.",
+        "codeception/module-rest": "Needed for \\Tests\\WPGraphQL\\TestCase\\WPGraphQLTestcase to work.",
+        "lucatume/wp-browser": "Needed for \\Tests\\WPGraphQL\\TestCase\\WPGraphQLTestcase to work.",
+        "wp-phpunit/wp-phpunit": "Needed for \\Tests\\WPGraphQL\\TestCase\\WPGraphQLUnitTestcase to work."
+    }
+}

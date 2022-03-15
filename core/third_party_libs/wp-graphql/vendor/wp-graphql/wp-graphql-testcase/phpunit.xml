@@ -1,0 +1,34 @@
+<phpunit
+	bootstrap="tests/phpunit/bootstrap.php"
+	backupGlobals="false"
+	colors="true"
+	verbose="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	>
+	<php>
+		<const
+			name="WP_TEST_ACTIVATED_PLUGINS"
+			value="wp-graphql/wp-graphql.php"
+		/>
+	</php>
+	<testsuites>
+		<testsuite name="unit">
+			<directory prefix="test-" suffix=".php">./tests/phpunit/</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+            <file>src/TestCase/WPGraphQLTestCommon.php</file>
+			<file>src/TestCase/WPGraphQLUnitTestCase.php</file>
+			<exclude>
+				<directory>vendor/</directory>
+				<directory>local/</directory>
+			</exclude>
+		</whitelist>
+	</filter>
+	<logging>
+		<log type="coverage-clover" target="tests/phpunit/reports/clover.xml" />
+	</logging>
+</phpunit>

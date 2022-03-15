@@ -1,0 +1,64 @@
+name: continuous_integration
+
+on:
+  schedule:
+    - cron: '0 4 * * 5'
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  continuous_integration:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '7.3', '7.4', '8.0' ]
+      fail-fast: false
+    name: Make sure that the WPGraphQLTestCase works!!!
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, mbstring
+
+      - name: Install PHPUnit dependencies
+        if: ${{ matrix.php != '8.0' }}
+        run: |
+          composer require wp-phpunit/wp-phpunit \
+          phpunit/phpunit:~7.5
+          composer install
+
+      - name: Run PHPUnit Tests w/ Docker.
+        if: ${{ matrix.php != '8.0' }}
+        run: composer run-phpunit -- -- --coverage-text
+
+      - name: Install Codeception dependencies
+        run: |
+          composer install --ignore-platform-reqs
+          composer require codeception/module-asserts \
+            codeception/util-universalframework \
+            codeception/module-rest \
+            lucatume/wp-browser --ignore-platform-reqs
+
+      - name: Run Codeception Tests w/ Docker.
+        run: composer run-codeception -- -- --coverage --coverage-xml
+
+      - name: Push Codecoverage to Coveralls.io
+        env:
+          COVERALLS_RUN_LOCALLY: 1
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          docker-compose run --rm \
+          --workdir=/var/www/html/wp-content/plugins/wp-graphql-testcase \
+          --user $(id -u) \
+          -e COVERALLS_RUN_LOCALLY=1 -e COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN \
+          wordpress \
+          vendor/bin/php-coveralls -v

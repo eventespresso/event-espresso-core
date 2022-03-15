@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+
+  mysql:
+    image: mysql
+    platform: linux/amd64
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: password
+
+  wordpress:
+    image: wp-graphql/wordpress:${WORDPRESS_IMAGE_VERSION:-latest}
+    build:
+      context: ./docker
+    depends_on:
+      - mysql
+      - mysql_phpunit
+    ports:
+      - "8080:80"
+    volumes:
+      - ./local/public:/var/www/html # WP core files.
+      - .:/var/www/html/wp-content/plugins/wp-graphql-testcase
+      - ./local/config/wp-config.php:/var/www/html/wp-config.php
+      - ./local/config/wp-tests-config.php:/var/www/html/wp-tests-config.php
+    environment:
+      COMPOSER_HOME: /tmp/.composer
+      APACHE_RUN_USER: "#1000" # Ensure Apache can write to the filesystem.
+      WP_TESTS_DIR: /var/www/html/wp-content/plugins/wp-graphql-testcase/vendor/wp-phpunit/wp-phpunit
+      WP_PHPUNIT__TESTS_CONFIG: /var/www/html/wp-tests-config.php
+
+  mysql_phpunit:
+    image: mysql:5.7
+    platform: linux/amd64
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "wordpress"
+      MYSQL_ROOT_PASSWORD: ""

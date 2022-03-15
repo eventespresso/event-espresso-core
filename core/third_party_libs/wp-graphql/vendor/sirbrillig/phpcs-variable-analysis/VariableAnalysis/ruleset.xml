@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<ruleset name="VariableAnalysis">
+  <description>Plugin for PHP_CodeSniffer static analysis tool that adds analysis of problematic variable use.</description>
+   <rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis"/>
+</ruleset>

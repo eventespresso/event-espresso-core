@@ -1,0 +1,27 @@
+paths:
+    tests: tests/codeception
+    output: tests/codeception/_output
+    data: tests/codeception/_data
+    support: tests/codeception/_support
+    envs: tests/codeception/_envs
+actor_suffix: Tester
+coverage:
+    enabled: true
+    include:
+        - src/TestCase/*
+    exclude: 
+        - src/TestCase/WPGraphQLUnitTestCase.php
+    show_only_summary: false
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+    commands:
+        - Codeception\Command\GenerateWPUnit
+        - Codeception\Command\GenerateWPRestApi
+        - Codeception\Command\GenerateWPRestController
+        - Codeception\Command\GenerateWPRestPostTypeController
+        - Codeception\Command\GenerateWPAjax
+        - Codeception\Command\GenerateWPCanonical
+        - Codeception\Command\GenerateWPXMLRPC
+params:
+    - .env.testing

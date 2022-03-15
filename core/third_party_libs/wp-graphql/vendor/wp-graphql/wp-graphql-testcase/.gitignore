@@ -1,0 +1,31 @@
+# PhpStorm and MacOS misc. files.
+.idea
+.DS_Store
+.vscode
+
+# Composer files.
+vendor/
+
+# Local test configuration files.
+codeception.yml
+tests/*.suite.yml
+.env.testing.local
+
+# Patchwork cache folder.
+cache/*
+src/Codeception/Module/patchwork.json
+src/includes/patchwork.json
+composer.lock
+
+# Some local vim files
+tags
+*.swp
+
+# Release notes
+.rel
+
+# Backup files and folders
+*.bak
+
+# Ready files
+*.ready
