@@ -15,8 +15,17 @@
 }
 
 #country-settings-dv .espresso-radio-btn-options-ul {
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
     margin-block-start: .75rem;
 }
+
+#country-settings-dv .espresso-radio-btn-options-ul .nano-lbl {
+    display: unset;
+    margin-inline-end: 2rem;
+}
+
 
 #general-setting-country-details-tbl.form-table th {
     padding-block-end: 0;
