@@ -183,7 +183,12 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected $_yes_no_values = [];
 
     // some default things shared by all child classes
-    protected $_default_espresso_metaboxes;
+    protected $_default_espresso_metaboxes = [
+        '_espresso_news_post_box',
+        '_espresso_links_post_box',
+        '_espresso_ratings_request',
+        '_espresso_sponsors_post_box',
+    ];
 
     /**
      * @var EE_Registry
@@ -646,13 +651,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             ['page' => $this->_current_page, 'action' => $this->_current_view],
             $this->_admin_base_url
         );
-        // default things
-        $this->_default_espresso_metaboxes = [
-            '_espresso_news_post_box',
-            '_espresso_links_post_box',
-            '_espresso_ratings_request',
-            '_espresso_sponsors_post_box',
-        ];
         // set page configs
         $this->_set_page_routes();
         $this->_set_page_config();
