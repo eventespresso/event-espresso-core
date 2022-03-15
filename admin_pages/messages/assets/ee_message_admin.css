@@ -58,10 +58,14 @@
 }
 
 .ee-msg-switcher-container {
+    align-items: center;
     background: white;
+    display: flex;
+    flex-flow: row wrap;
     grid-area: msg-header-2;
     margin: 0;
     padding: 1rem 1rem 1rem 0;
+    width: 100%;
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {
@@ -74,10 +78,18 @@
 }
 
 #ee-msg-context-switcher-frm {
-    display: inline-block;
+    display: flex;
+    flex-flow: row wrap;
+}
+#ee-recipient-select {
+    width: 15rem;
+}
+#submit-msg-context-switcher-sbmt {
+    width: 11rem;
 }
 .messages-preview-button {
     display: inline-block;
+    margin-inline: 1rem;
 }
 
 #espresso_espresso_messages_editor_overview #minor-publishing {

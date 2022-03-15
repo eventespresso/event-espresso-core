@@ -2469,10 +2469,10 @@ class Messages_Admin_Page extends EE_Admin_Page
         }
 
         // and button
+        $test_settings_html .= '<div class="publishing-action alignright resetbutton">';
         $test_settings_html .= '<p>';
         $test_settings_html .= esc_html__('Need to reset this message type and start over?', 'event_espresso');
         $test_settings_html .= '</p>';
-        $test_settings_html .= '<div class="publishing-action alignright resetbutton">';
         $test_settings_html .= $this->get_action_link_or_button(
             'reset_to_default',
             'reset',
