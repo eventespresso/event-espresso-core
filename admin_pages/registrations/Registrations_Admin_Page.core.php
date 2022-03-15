@@ -639,7 +639,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         ? add_query_arg(['ATT_ID' => $ATT_ID], $this->_current_page_view_url)
                         : $this->_admin_base_url,
                 ],
-                'metaboxes'     => ['attendee_editor_metaboxes'],
+                'metaboxes'     => array_merge(
+                    $this->_default_espresso_metaboxes,
+                    ['attendee_editor_metaboxes']
+                ),
                 'require_nonce' => false,
             ],
             'contact_list'      => [
