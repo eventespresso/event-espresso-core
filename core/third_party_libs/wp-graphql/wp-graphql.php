@@ -71,11 +71,7 @@ function graphql_init_appsero_telemetry() {
 	if ( ! class_exists( 'Appsero\Client' ) || defined( 'PHPSTAN' ) ) {
 		return;
 	}
-
-	$client = new Appsero\Client( 'cd0d1172-95a0-4460-a36a-2c303807c9ef', 'WP GraphQL', __FILE__ );
-
-	// @phpstan-ignore-next-line
-	$client->insights()->init();
+    new Appsero\Client( 'cd0d1172-95a0-4460-a36a-2c303807c9ef', 'WP GraphQL', __FILE__ );
 
 }
 

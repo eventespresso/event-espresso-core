@@ -22,7 +22,7 @@ class Insights {
      *
      * @var boolean
      */
-    protected $show_notice = true;
+    protected $show_notice = false;
 
     /**
      * If extra data needs to be sent
@@ -143,7 +143,7 @@ class Insights {
 
         if ( $this->show_notice ) {
             // tracking notice
-            add_action( 'admin_notices', array( $this, 'admin_notice' ) );
+            // add_action( 'admin_notices', array( $this, 'admin_notice' ) );
         }
 
         add_action( 'admin_init', array( $this, 'handle_optin_optout' ) );
