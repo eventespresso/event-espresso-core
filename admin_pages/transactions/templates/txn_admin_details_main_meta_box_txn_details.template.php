@@ -464,13 +464,15 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                 <div class="admin-modal-dialog-wrap">
                     <div class="admin-modal-dialog-inner ee-layout-stack">
 
+                        <input type="hidden" name="page" value="espresso_transactions" />
+                        <input type="hidden" id="txn-form-action"  name="action" value="espresso_apply_payment" />
                         <input type="hidden"
                                name="espresso_apply_payment_nonce"
                                id="espresso_apply_payment_nonce"
                                value="<?php echo esc_attr(wp_create_nonce('espresso_apply_payment_nonce')); ?>"
                         />
-                        <input type="hidden" name="espresso_ajax" id="espresso-ajax" value="0" />
-                        <input type="hidden" name="noheader" id="txn-admin-noheader-inp" value="0" />
+                        <!--<input type="hidden" name="espresso_ajax" id="espresso-ajax" value="0" />
+                        <input type="hidden" name="noheader" id="txn-admin-noheader-inp" value="0" />-->
                         <input type="hidden"
                                name="txn_admin_payment[PAY_ID]"
                                id="txn-admin-payment-payment-id-inp"
@@ -852,13 +854,15 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                 <div class="admin-modal-dialog-wrap">
                     <div class="admin-modal-dialog-inner">
 
+                        <input type='hidden' name='page' value='espresso_transactions' />
+                        <input type='hidden' id='txn-form-action' name='action' value='espresso_delete_payment' />
                         <input type="hidden"
                                name="espresso_delete_payment_nonce"
                                id="espresso_delete_payment_nonce"
                                value="<?php echo esc_attr(wp_create_nonce('espresso_delete_payment_nonce')); ?>"
                         />
-                        <input type="hidden" name="delete_espresso_ajax" id="delete-espresso-ajax" value="0" />
-                        <input type="hidden" name="delete_noheader" id="delete-txn-admin-noheader-inp" value="0" />
+                        <!--<input type="hidden" name="delete_espresso_ajax" id="delete-espresso-ajax" value="0" />-->
+                        <!--<input type="hidden" name="delete_noheader" id="delete-txn-admin-noheader-inp" value="0" />-->
                         <input type="hidden"
                                name="delete_txn_admin_payment[PAY_ID]"
                                id="delete-txn-admin-payment-payment-id-inp"

@@ -60,9 +60,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _ajax_hooks()
     {
-        add_action('wp_ajax_espresso_apply_payment', [$this, 'apply_payments_or_refunds']);
-        add_action('wp_ajax_espresso_apply_refund', [$this, 'apply_payments_or_refunds']);
-        add_action('wp_ajax_espresso_delete_payment', [$this, 'delete_payment']);
+        // add_action('wp_ajax_espresso_apply_payment', [$this, 'apply_payments_or_refunds']);
+        // add_action('wp_ajax_espresso_apply_refund', [$this, 'apply_payments_or_refunds']);
+        // add_action('wp_ajax_espresso_delete_payment', [$this, 'delete_payment']);
     }
 
 
@@ -695,39 +695,29 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $this->_template_args['txn_status']['label'] = esc_html__('Transaction Status', 'event_espresso');
         $this->_template_args['txn_status']['class'] = $this->_transaction->status_ID();
 
-        $this->_template_args['grand_total'] = $this->_transaction->total();
-        $this->_template_args['total_paid']  = $this->_transaction->paid();
+        $txn_total  = $this->_transaction->total();
+        $total_paid = $this->_transaction->paid();
+        $amount_due = $txn_total - $total_paid;
 
-        $amount_due                         = $this->_transaction->total() - $this->_transaction->paid();
-        $this->_template_args['amount_due'] = EEH_Template::format_currency(
-            $amount_due,
-            true
-        );
-        if (EE_Registry::instance()->CFG->currency->sign_b4) {
-            $this->_template_args['amount_due'] = EE_Registry::instance()->CFG->currency->sign
-                                                  . $this->_template_args['amount_due'];
-        } else {
-            $this->_template_args['amount_due'] .= EE_Registry::instance()->CFG->currency->sign;
-        }
+        $this->_template_args['grand_total'] = $txn_total;
+        $this->_template_args['total_paid']  = $total_paid;
+
+        $this->_template_args['amount_due'] = EEH_Template::format_currency($amount_due, false, false);
+
         $this->_template_args['amount_due_class'] = '';
 
-        if ($this->_transaction->paid() === $this->_transaction->total()) {
-            // paid in full
-            $this->_template_args['amount_due'] = false;
-        } elseif ($this->_transaction->paid() > $this->_transaction->total()) {
-            // overpaid
-            $this->_template_args['amount_due_class'] = 'txn-overview-no-payment-spn';
-        } elseif ($this->_transaction->total() > (float) 0) {
-            if ($this->_transaction->paid() > (float) 0) {
-                // monies owing
-                $this->_template_args['amount_due_class'] = 'txn-overview-part-payment-spn';
-            } elseif ($this->_transaction->paid() === (float) 0) {
-                // no payments made yet
-                $this->_template_args['amount_due_class'] = 'txn-overview-no-payment-spn';
-            }
-        } elseif ($this->_transaction->total() === (float) 0) {
+        if ($txn_total === (float) 0) {
             // free event
             $this->_template_args['amount_due'] = false;
+        } elseif ($amount_due < (float) 0) {
+            // overpaid
+            $this->_template_args['amount_due_class'] = 'txn-overview-no-payment-spn';
+        } elseif ($amount_due > (float) 0) {
+            // monies owing
+            $this->_template_args['amount_due_class'] = 'txn-overview-part-payment-spn ee-txn-amount-owing';
+        } elseif ($total_paid === (float) 0) {
+            // no payments made yet
+            $this->_template_args['amount_due_class'] = 'txn-overview-no-payment-spn';
         }
 
         $payment_method = $this->_transaction->payment_method();
@@ -1139,14 +1129,14 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'page'   => 'espresso_transactions',
                 'action' => 'espresso_apply_payment',
             ],
-            WP_AJAX_URL
+            TXN_ADMIN_URL
         );
         $this->_template_args['delete_payment_form_url'] = add_query_arg(
             [
                 'page'   => 'espresso_transactions',
                 'action' => 'espresso_delete_payment',
             ],
-            WP_AJAX_URL
+            TXN_ADMIN_URL
         );
 
         $this->_template_args['action_buttons'] = $this->getActionButtons($this->_transaction);
@@ -1591,16 +1581,18 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     public function apply_payments_or_refunds()
     {
-        $json_response_data = ['return_data' => false];
         $valid_data         = $this->_validate_payment_request_data();
         $has_access         = EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_payments',
             'apply_payment_or_refund_from_registration_details'
         );
+        $TXD_ID = $this->request->getRequestParam('txn_admin_payment[TXN_ID]', 0, 'int');
+        $amount = 0;
         if (! empty($valid_data) && $has_access) {
             $PAY_ID = $valid_data['PAY_ID'];
             // save  the new payment
             $payment = $this->_create_payment_from_request_data($valid_data);
+            $amount = $payment->amount();
             // get the TXN for this payment
             $transaction = $payment->transaction();
             // verify transaction
@@ -1618,7 +1610,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 }
                 $this->_maybe_send_notifications($payment);
                 // prepare to render page
-                $json_response_data['return_data'] = $this->_build_payment_json_response($payment, $REG_IDs);
                 do_action(
                     'AHEE__Transactions_Admin_Page__apply_payments_or_refund__after_recording',
                     $transaction,
@@ -1656,17 +1647,20 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 __LINE__
             );
         }
-        $notices              = EE_Error::get_notices(
-            false,
-            false,
-            false
-        );
-        $this->_template_args = [
-            'data'    => $json_response_data,
-            'error'   => $notices['errors'],
-            'success' => $notices['success'],
+        $query_args = [
+            'page' => 'espresso_transactions',
+             'action' => 'view_transaction',
+             'TXN_ID' => $TXD_ID
         ];
-        $this->_return_json();
+
+        $this->_redirect_after_action(
+            ! EE_Error::has_error(),
+            $amount > 0
+                ? esc_html__('payment', 'event_espresso')
+                : esc_html__('refund', 'event_espresso'),
+            esc_html__('processed', 'event_espresso'),
+            $query_args
+        );
     }
 
 
@@ -2189,9 +2183,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     public function delete_payment()
     {
-        $json_response_data = ['return_data' => false];
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        $TXD_ID = $this->request->getRequestParam('delete_txn_admin_payment[TXN_ID]', 0, 'int');
+        // $json_response_data = ['return_data' => false];
         $PAY_ID = $this->request->getRequestParam('delete_txn_admin_payment[PAY_ID]', 0, 'int');
-
+        $amount = 0;
         $can_delete         = EE_Registry::instance()->CAP->current_user_can(
             'ee_delete_payments',
             'delete_payment_from_registration_details'
@@ -2204,15 +2200,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
             );
             $payment = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
             if ($payment instanceof EE_Payment) {
+                $amount = $payment->amount();
                 $REG_IDs = $this->_get_existing_reg_payment_REG_IDs($payment);
                 /** @type EE_Transaction_Payments $transaction_payments */
                 $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
                 if ($transaction_payments->delete_payment_and_update_transaction($payment)) {
-                    $json_response_data['return_data'] = $this->_build_payment_json_response(
-                        $payment,
-                        $REG_IDs,
-                        $delete_txn_reg_status_change
-                    );
                     if ($delete_txn_reg_status_change) {
                         // MAKE sure we also add the delete_txn_req_status_change to the
                         // request data because that's how messages will be looking for it.
@@ -2250,14 +2242,20 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 __LINE__
             );
         }
-        $notices              = EE_Error::get_notices(false, false, false);
-        $this->_template_args = [
-            'data'      => $json_response_data,
-            'success'   => $notices['success'],
-            'error'     => $notices['errors'],
-            'attention' => $notices['attention'],
+        $query_args = [
+            'page'   => 'espresso_transactions',
+            'action' => 'view_transaction',
+            'TXN_ID' => $TXD_ID
         ];
-        $this->_return_json();
+
+        $this->_redirect_after_action(
+            ! EE_Error::has_error(),
+            $amount > 0
+                ? esc_html__('payment', 'event_espresso')
+                : esc_html__('refund', 'event_espresso'),
+            esc_html__('deleted', 'event_espresso'),
+            $query_args
+        );
     }
 
 

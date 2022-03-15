@@ -9,7 +9,6 @@
  * @var string[] $txn_datetime
  * @var string[] $txn_status
  */
-$amount_due_class = $amount_due ? 'ee-txn-amount-owing' : '';
 ?>
 
 <div class="ee-admin-page-nav-strip-wrap">
