@@ -451,11 +451,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _price_overview_list_table()
     {
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                'add_new_price',
-                'add',
-                [],
-                'add-new-h2'
-            );
+            'add_new_price',
+            'add',
+            [],
+            'add-new-h2'
+        );
         $this->_admin_page_title .= $this->_learn_more_about_pricing_link();
         $this->_search_btn_label = esc_html__('Default Prices', 'event_espresso');
         $this->display_admin_list_table_page_with_sidebar();
@@ -787,12 +787,8 @@ class Pricing_Admin_Page extends EE_Admin_Page
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function adjustTicketRelations(
-        EEM_Base $entity_model,
-                 $entity_ID,
-        string   $action,
-        int      $result
-    ) {
+    public function adjustTicketRelations(EEM_Base $entity_model, $entity_ID, string $action, int $result)
+    {
         if (! $entity_ID || (float)$result < 1) {
             return;
         }
@@ -881,11 +877,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _price_types_overview_list_table()
     {
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                'add_new_price_type',
-                'add_type',
-                [],
-                'add-new-h2'
-            );
+            'add_new_price_type',
+            'add_type',
+            [],
+            'add-new-h2'
+        );
         $this->_admin_page_title .= $this->_learn_more_about_pricing_link();
         $this->_search_btn_label = esc_html__('Price Types', 'event_espresso');
         $this->display_admin_list_table_page_with_sidebar();
@@ -1208,12 +1204,12 @@ class Pricing_Admin_Page extends EE_Admin_Page
                                     'prices_displayed_including_taxes' => new EE_Yes_No_Input(
                                         [
                                             'html_label_text'         => esc_html__(
-                                            'Show Prices With Taxes Included?',
-                                            'event_espresso'
+                                                'Show Prices With Taxes Included?',
+                                                'event_espresso'
                                             ),
                                             'html_help_text'          => esc_html__(
-                                            'Indicates whether or not to display prices with the taxes included',
-                                            'event_espresso'
+                                                'Indicates whether or not to display prices with the taxes included',
+                                                'event_espresso'
                                             ),
                                             'default'                 => $tax_settings->prices_displayed_including_taxes
                                                                          ?? true,
