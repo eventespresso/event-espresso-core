@@ -789,7 +789,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     public function adjustTicketRelations(EEM_Base $entity_model, $entity_ID, string $action, int $result)
     {
-        if (! $entity_ID || (float)$result < 1) {
+        if (! $entity_ID || (float) $result < 1) {
             return;
         }
 
