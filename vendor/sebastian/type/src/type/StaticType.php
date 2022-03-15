@@ -57,4 +57,9 @@ final class StaticType extends Type
     {
         return $this->allowsNull;
     }
+
+    public function isStatic(): bool
+    {
+        return true;
+    }
 }

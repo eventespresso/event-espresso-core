@@ -73,4 +73,9 @@ final class IterableType extends Type
     {
         return $this->allowsNull;
     }
+
+    public function isIterable(): bool
+    {
+        return true;
+    }
 }

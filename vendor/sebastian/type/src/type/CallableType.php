@@ -17,7 +17,6 @@ use function function_exists;
 use function is_array;
 use function is_object;
 use function is_string;
-use function strpos;
 use Closure;
 use ReflectionClass;
 use ReflectionException;
@@ -83,6 +82,11 @@ final class CallableType extends Type
     public function allowsNull(): bool
     {
         return $this->allowsNull;
+    }
+
+    public function isCallable(): bool
+    {
+        return true;
     }
 
     private function isClosure(ObjectType $type): bool

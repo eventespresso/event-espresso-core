@@ -26,17 +26,12 @@ final class UnknownType extends Type
         return '';
     }
 
-    /**
-     * @deprecated
-     *
-     * @codeCoverageIgnore
-     */
-    public function getReturnTypeDeclaration(): string
+    public function allowsNull(): bool
     {
-        return '';
+        return true;
     }
 
-    public function allowsNull(): bool
+    public function isUnknown(): bool
     {
         return true;
     }

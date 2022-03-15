@@ -9,9 +9,11 @@
  */
 namespace SebastianBergmann\Type;
 
+use const PHP_VERSION;
 use function get_class;
 use function gettype;
 use function strtolower;
+use function version_compare;
 
 abstract class Type
 {
@@ -38,6 +40,10 @@ abstract class Type
 
     public static function fromName(string $typeName, bool $allowsNull): self
     {
+        if (version_compare(PHP_VERSION, '8.1.0-dev', '>=') && strtolower($typeName) === 'never') {
+            return new NeverType;
+        }
+
         switch (strtolower($typeName)) {
             case 'callable':
                 return new CallableType($allowsNull);
@@ -83,17 +89,77 @@ abstract class Type
         return ($this->allowsNull() ? '?' : '') . $this->name();
     }
 
-    /**
-     * @deprecated
-     *
-     * @codeCoverageIgnore
-     */
-    public function getReturnTypeDeclaration(): string
+    public function isCallable(): bool
     {
-        return ': ' . $this->asString();
+        return false;
     }
 
-    abstract public function isAssignable(Type $other): bool;
+    public function isFalse(): bool
+    {
+        return false;
+    }
+
+    public function isGenericObject(): bool
+    {
+        return false;
+    }
+
+    public function isIntersection(): bool
+    {
+        return false;
+    }
+
+    public function isIterable(): bool
+    {
+        return false;
+    }
+
+    public function isMixed(): bool
+    {
+        return false;
+    }
+
+    public function isNever(): bool
+    {
+        return false;
+    }
+
+    public function isNull(): bool
+    {
+        return false;
+    }
+
+    public function isObject(): bool
+    {
+        return false;
+    }
+
+    public function isSimple(): bool
+    {
+        return false;
+    }
+
+    public function isStatic(): bool
+    {
+        return false;
+    }
+
+    public function isUnion(): bool
+    {
+        return false;
+    }
+
+    public function isUnknown(): bool
+    {
+        return false;
+    }
+
+    public function isVoid(): bool
+    {
+        return false;
+    }
+
+    abstract public function isAssignable(self $other): bool;
 
     abstract public function name(): string;
 

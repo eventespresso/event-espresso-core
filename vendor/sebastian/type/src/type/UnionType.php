@@ -47,16 +47,6 @@ final class UnionType extends Type
         return $this->name();
     }
 
-    /**
-     * @deprecated
-     *
-     * @codeCoverageIgnore
-     */
-    public function getReturnTypeDeclaration(): string
-    {
-        return ': ' . $this->name();
-    }
-
     public function name(): string
     {
         $types = [];
@@ -79,6 +69,11 @@ final class UnionType extends Type
         }
 
         return false;
+    }
+
+    public function isUnion(): bool
+    {
+        return true;
     }
 
     /**

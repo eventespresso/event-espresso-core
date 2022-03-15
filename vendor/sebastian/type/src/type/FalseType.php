@@ -9,34 +9,30 @@
  */
 namespace SebastianBergmann\Type;
 
-final class NullType extends Type
+final class FalseType extends Type
 {
     public function isAssignable(Type $other): bool
     {
-        return !($other instanceof VoidType);
+        if ($other instanceof self) {
+            return true;
+        }
+
+        return $other instanceof SimpleType &&
+              $other->name() === 'bool' &&
+              $other->value() === false;
     }
 
     public function name(): string
     {
-        return 'null';
-    }
-
-    public function asString(): string
-    {
-        return 'null';
-    }
-
-    /**
-     * @deprecated
-     *
-     * @codeCoverageIgnore
-     */
-    public function getReturnTypeDeclaration(): string
-    {
-        return '';
+        return 'false';
     }
 
     public function allowsNull(): bool
+    {
+        return false;
+    }
+
+    public function isFalse(): bool
     {
         return true;
     }

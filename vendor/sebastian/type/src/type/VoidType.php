@@ -9,38 +9,25 @@
  */
 namespace SebastianBergmann\Type;
 
-final class GenericObjectType extends Type
+final class VoidType extends Type
 {
-    /**
-     * @var bool
-     */
-    private $allowsNull;
-
-    public function __construct(bool $nullable)
-    {
-        $this->allowsNull = $nullable;
-    }
-
     public function isAssignable(Type $other): bool
     {
-        if ($this->allowsNull && $other instanceof NullType) {
-            return true;
-        }
-
-        if (!$other instanceof ObjectType) {
-            return false;
-        }
-
-        return true;
+        return $other instanceof self;
     }
 
     public function name(): string
     {
-        return 'object';
+        return 'void';
     }
 
     public function allowsNull(): bool
     {
-        return $this->allowsNull;
+        return false;
+    }
+
+    public function isVoid(): bool
+    {
+        return true;
     }
 }

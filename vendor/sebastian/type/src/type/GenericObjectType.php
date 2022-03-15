@@ -9,38 +9,43 @@
  */
 namespace SebastianBergmann\Type;
 
-final class FalseType extends Type
+final class GenericObjectType extends Type
 {
+    /**
+     * @var bool
+     */
+    private $allowsNull;
+
+    public function __construct(bool $nullable)
+    {
+        $this->allowsNull = $nullable;
+    }
+
     public function isAssignable(Type $other): bool
     {
-        if ($other instanceof self) {
+        if ($this->allowsNull && $other instanceof NullType) {
             return true;
         }
 
-        return $other instanceof SimpleType &&
-              $other->name() === 'bool' &&
-              $other->value() === false;
+        if (!$other instanceof ObjectType) {
+            return false;
+        }
+
+        return true;
     }
 
     public function name(): string
     {
-        return 'false';
+        return 'object';
     }
 
     public function allowsNull(): bool
     {
-        return false;
+        return $this->allowsNull;
     }
 
-    /**
-     * @deprecated
-     *
-     * @codeCoverageIgnore
-     *
-     * @throws LogicException
-     */
-    public function getReturnTypeDeclaration(): string
+    public function isGenericObject(): bool
     {
-        throw new LogicException;
+        return true;
     }
 }
