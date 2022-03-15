@@ -81,7 +81,7 @@
             <input type="text"
                    size="1"
                    class="edit-price-PRC_amount ee-small-text-inp ee-inp-right"
-                   name="edit_prices[<?php echo absint($ticketrow); ?>][1][PRC_amount]"
+                   name="edit_prices[<?php echo esc_attr($ticketrow); ?>][1][PRC_amount]"
                    value="<?php echo esc_attr($PRC_amount); ?>"
             />
         <?php else : ?>
@@ -95,23 +95,23 @@
             <input type="hidden"
                    size="1"
                    class="edit-price-PRC_amount ee-small-text-inp ee-inp-right"
-                   name="edit_prices[<?php echo absint($ticketrow); ?>][1][PRC_amount]"
+                   name="edit_prices[<?php echo esc_attr($ticketrow); ?>][1][PRC_amount]"
                    value="<?php echo esc_attr($PRC_amount); ?>"
             />
         <?php endif; ?>
 
         <input type="hidden"
-               name="edit_prices[<?php echo absint($ticketrow); ?>][1][PRT_ID]"
+               name="edit_prices[<?php echo esc_attr($ticketrow); ?>][1][PRT_ID]"
                class="edit-price-PRT_ID"
                value="1"
         />
         <input type="hidden"
-               name="edit_prices[<?php echo absint($ticketrow); ?>][1][PRC_ID]"
+               name="edit_prices[<?php echo esc_attr($ticketrow); ?>][1][PRC_ID]"
                class="edit-price-PRC_ID"
                value="<?php echo absint($PRC_ID); ?>"
         />
         <input type="hidden"
-               name="edit_prices[<?php echo absint($ticketrow); ?>][1][PRC_is_default]"
+               name="edit_prices[<?php echo esc_attr($ticketrow); ?>][1][PRC_is_default]"
                class="edit-price-PRC_is_default"
                value="<?php echo esc_attr($PRC_is_default); ?>"
         />
