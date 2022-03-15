@@ -3246,7 +3246,7 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin .ee-locked-entity,
 .espresso-admin input[type="radio"],
-.espresso-admin input[type="checkbox"] {
+.espresso-admin input[type="checkbox"]chakra-switch__input {
     align-content: center;
     align-items: center;
     background-color: var(--ee-color-white);
@@ -3260,7 +3260,7 @@ body.espresso-admin #contextual-help-wrap strong {
     outline: none !important;
     width: var(--ee-checkbox-height);
 }
-.espresso-admin input[type="checkbox"] {
+.espresso-admin input[type="checkbox"]chakra-switch__input {
     border-radius: .25rem;
 }
 .espresso-admin input[type="radio"],
@@ -3270,11 +3270,11 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin input[type="radio"]:hover,
-.espresso-admin input[type="checkbox"]:hover {
+.espresso-admin input[type="checkbox"]chakra-switch__input:hover {
     border-color: var(--ee-btn-primary-hover);
 }
 .espresso-admin input[type="radio"]:focus,
-.espresso-admin input[type="checkbox"]:focus {
+.espresso-admin input[type="checkbox"]chakra-switch__input:focus {
     border-color: var(--ee-btn-primary-focus);
 }
 
@@ -3282,7 +3282,7 @@ body.espresso-admin #contextual-help-wrap strong {
     background-color: var(--ee-color-white);
 }
 
-.espresso-admin input[type="checkbox"]:checked::before {
+.espresso-admin input[type="checkbox"]chakra-switch__input:checked::before {
     background-image:  url("data:image/gif;base64,R0lGODlhCwAKAIABAP////3cnSH5BAEKAAEALAAAAAALAAoAAAIUjH+AC73WHIsw0UCjglraO20PNhYAOw==");
     background-size: calc(var(--ee-checkbox-height) * .65);
     display: inline-block;
@@ -3293,25 +3293,25 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 @media screen and (max-width: 782px) {
-    .espresso-admin input[type="checkbox"]:checked::before {
+    .espresso-admin input[type="checkbox"]chakra-switch__input:checked::before {
         background-position: 50% 50%;
     }
 }
 
 .espresso-admin input[type="radio"]:checked,
-.espresso-admin input[type="checkbox"]:checked {
+.espresso-admin input[type="checkbox"]chakra-switch__input:checked {
     border-color: var(--ee-btn-primary);
     background-color: var(--ee-btn-primary);
 }
 .espresso-admin input[type="radio"]:checked:disabled,
-.espresso-admin input[type="checkbox"]:checked:disabled {
+.espresso-admin input[type="checkbox"]chakra-switch__input:checked:disabled {
     border-color: var(--ee-btn-primary-disabled);
     background-color: var(--ee-btn-primary-disabled);
     cursor:not-allowed;
 }
 
 .espresso-admin input[type="radio"]:checked:focus,
-.espresso-admin input[type="checkbox"]:checked:focus {
+.espresso-admin input[type="checkbox"]chakra-switch__input:checked:focus {
     border-color: var(--ee-btn-primary-focus);
     background-color: var(--ee-btn-primary-focus);
 }
@@ -3331,6 +3331,28 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-inline-end: 0.5rem;
     top: unset;
 }
+
+
+
+.espresso-admin.wp-core-ui .ee-switch .chakra-switch__track {
+    --switch-track-width: var(--ee-switch-width);
+    --switch-track-height: var(--ee-switch-height);
+    --switch-track-diff: var(--ee-switch-height);
+    --switch-thumb-x: var(--ee-switch-height);
+    background: var(--ee-status-color-grey);
+    box-sizing: border-box;
+    padding: var(--ee-switch-padding);
+}
+.espresso-admin.wp-core-ui .ee-switch .chakra-switch__track[aria-checked=true],
+.espresso-admin.wp-core-ui .ee-switch .chakra-switch__track[data-checked] {
+    background: var(--ee-status-color-blue);
+}
+.espresso-admin.wp-core-ui .ee-switch .chakra-switch__track .chakra-switch__thumb {
+    height: var( --ee-switch-button);
+    width: var( --ee-switch-button);
+}
+
+
 
 .espresso-admin.wp-core-ui .quicktags-toolbar  input.button.button-small {
     margin-block-end: .5rem;
@@ -3507,7 +3529,7 @@ body.espresso-admin #contextual-help-wrap strong {
     box-sizing: border-box;
     color: var(--ee-font-color);
     cursor: pointer;
-    display: inline-flex !important;
+    display: inline-flex;
     font-size: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
     font-weight: 600;
     height: min(calc(var(--ee-button-height) - 4px), auto);

@@ -203,6 +203,11 @@
 
     --ee-checkbox-height: 1.5rem;
 
+    --ee-switch-width: 3.6rem;
+	--ee-switch-height: 1.8rem;
+	--ee-switch-padding: .3rem;
+	--ee-switch-button: calc(var(--ee-switch-height) - (var(--ee-switch-padding) * 2));
+
 }
 
 @media screen and (min-width: 960px) {
@@ -777,10 +782,11 @@ div.TB-ee-frame a {
   user-select: none;
 }
 input.ee-toggle-round-flat + label {
-  width: 3.6rem;
-  height: 1.8rem;
+  width: var(--ee-switch-width);
+  height: var(--ee-switch-height);
+
   background-color: var(--ee-status-color-light-grey);
-  border-radius: 1.9rem;
+  border-radius: var(--ee-switch-height);
   transition: background 0.4s;
 }
 input.ee-toggle-round-flat + label:after {
@@ -789,13 +795,13 @@ input.ee-toggle-round-flat + label:after {
   content: "";
 }
 input.ee-toggle-round-flat + label:after {
-  top: .3rem;
-  left: .3rem;
-  bottom: .3rem;
-  height: 1.2rem;
-  width: 1.2rem;
+  top: var(--ee-switch-padding);
+  left: var(--ee-switch-padding);
+  bottom: var(--ee-switch-padding);
+  height: var(--ee-switch-button);
+  width: var(--ee-switch-button);
   background-color: #FFF;
-  border-radius: .6rem;
+  border-radius: var(--ee-switch-button);
   transition: margin 0.4s, background 0.4s;
 }
 input.ee-toggle-round-flat:checked + label {
@@ -803,7 +809,7 @@ input.ee-toggle-round-flat:checked + label {
     margin-block: 0;
 }
 input.ee-toggle-round-flat:checked + label:after {
-  margin-left: 1.8rem;
+  margin-left: var(--ee-switch-height);
 }
 
 
