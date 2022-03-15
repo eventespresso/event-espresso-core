@@ -3246,7 +3246,7 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin .ee-locked-entity,
 .espresso-admin input[type="radio"],
-.espresso-admin input[type="checkbox"]chakra-switch__input {
+.espresso-admin input[type="checkbox"].chakra-switch__input {
     align-content: center;
     align-items: center;
     background-color: var(--ee-color-white);
@@ -3260,7 +3260,7 @@ body.espresso-admin #contextual-help-wrap strong {
     outline: none !important;
     width: var(--ee-checkbox-height);
 }
-.espresso-admin input[type="checkbox"]chakra-switch__input {
+.espresso-admin input[type="checkbox"].chakra-switch__input {
     border-radius: .25rem;
 }
 .espresso-admin input[type="radio"],
@@ -3270,11 +3270,11 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin input[type="radio"]:hover,
-.espresso-admin input[type="checkbox"]chakra-switch__input:hover {
+.espresso-admin input[type="checkbox"].chakra-switch__input:hover {
     border-color: var(--ee-btn-primary-hover);
 }
 .espresso-admin input[type="radio"]:focus,
-.espresso-admin input[type="checkbox"]chakra-switch__input:focus {
+.espresso-admin input[type="checkbox"].chakra-switch__input:focus {
     border-color: var(--ee-btn-primary-focus);
 }
 
@@ -3282,7 +3282,7 @@ body.espresso-admin #contextual-help-wrap strong {
     background-color: var(--ee-color-white);
 }
 
-.espresso-admin input[type="checkbox"]chakra-switch__input:checked::before {
+.espresso-admin input[type="checkbox"].chakra-switch__input:checked::before {
     background-image:  url("data:image/gif;base64,R0lGODlhCwAKAIABAP////3cnSH5BAEKAAEALAAAAAALAAoAAAIUjH+AC73WHIsw0UCjglraO20PNhYAOw==");
     background-size: calc(var(--ee-checkbox-height) * .65);
     display: inline-block;
@@ -3293,25 +3293,25 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 @media screen and (max-width: 782px) {
-    .espresso-admin input[type="checkbox"]chakra-switch__input:checked::before {
+    .espresso-admin input[type="checkbox"].chakra-switch__input:checked::before {
         background-position: 50% 50%;
     }
 }
 
 .espresso-admin input[type="radio"]:checked,
-.espresso-admin input[type="checkbox"]chakra-switch__input:checked {
+.espresso-admin input[type="checkbox"].chakra-switch__input:checked {
     border-color: var(--ee-btn-primary);
     background-color: var(--ee-btn-primary);
 }
 .espresso-admin input[type="radio"]:checked:disabled,
-.espresso-admin input[type="checkbox"]chakra-switch__input:checked:disabled {
+.espresso-admin input[type="checkbox"].chakra-switch__input:checked:disabled {
     border-color: var(--ee-btn-primary-disabled);
     background-color: var(--ee-btn-primary-disabled);
     cursor:not-allowed;
 }
 
 .espresso-admin input[type="radio"]:checked:focus,
-.espresso-admin input[type="checkbox"]chakra-switch__input:checked:focus {
+.espresso-admin input[type="checkbox"].chakra-switch__input:checked:focus {
     border-color: var(--ee-btn-primary-focus);
     background-color: var(--ee-btn-primary-focus);
 }
