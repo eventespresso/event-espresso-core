@@ -275,7 +275,7 @@ class Prices_List_Table extends EE_Admin_List_Table
     public function column_amount(EE_Price $price): string
     {
         $price_type = isset($this->_price_types[ $price->type() ])
-            ? $this->_price_types[ $price->type() ]->name()
+            ? $this->_price_types[ $price->type() ]
             : null;
         $content = $price_type instanceof EE_Price_Type && $price_type->is_percent() ?
             '<div class="pad-amnt-rght">' . number_format($price->amount(), 1) . '%</div>'
