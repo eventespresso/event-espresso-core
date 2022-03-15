@@ -659,12 +659,15 @@ window.console_log_object = function( obj_name, obj, depth ) {
  * returns true if object exists and displays console error if it does not
  * @param  {object} $object
  * @param  {string} object_name
+ * @param log_error
  * @return boolean
  */
-function object_exists($object, object_name) {
+function object_exists($object, object_name, log_error = true) {
     if ($object.length) {
         return true;
     }
-    console_log('ERROR: object not found', object_name, false);
+    if (log_error) {
+		console_log('ERROR: object not found', object_name, false);
+    }
     return false;
 }

@@ -22,10 +22,10 @@ jQuery(document).ready(function ($) {
             var active_rows = 0;
             var datetimes = [];
             var $ticket_selector = $('#tkt-slctr-tbl-' + event_id);
-            if (object_exists($ticket_selector, '$ticket_selector')) {
+            if (object_exists($ticket_selector, '$ticket_selector', false)) {
                 // first let's put together an array of ALL checked datetime options for this event
                 $datetime_options = $datetime_selector_option.parents('ul').find('.datetime-selector-option');
-                if (object_exists($datetime_options, '$datetime_options')) {
+                if (object_exists($datetime_options, '$datetime_options', false)) {
                     // add each datetime options to our array of datetimes
                     $.each($datetime_options, function (index) {
                         // if checked, then display row and increment active_rows count
@@ -71,7 +71,7 @@ jQuery(document).ready(function ($) {
                 });
             }
             // enable or disable submit button based on active_rows count
-            if (object_exists($submit_button, '$submit_button')) {
+            if (object_exists($submit_button, '$submit_button', false)) {
                 if (active_rows > 0) {
                     $submit_button.removeClass('ee-disabled-btn');
                 } else {
