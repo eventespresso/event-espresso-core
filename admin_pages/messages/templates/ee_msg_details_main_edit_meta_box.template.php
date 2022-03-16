@@ -50,9 +50,7 @@ $header = isset($event_name) ? sprintf(esc_html__('%1$s Custom Template'), $even
                 <textarea class='large-text'
                           id="ee-msg-non-global-fields-MTP_description"
                           name="ee_msg_non_global_fields[MTP_description]"
-                >
-                    <?php echo esc_textarea($MTP->description()); ?>
-                </textarea>
+                ><?php echo esc_textarea($MTP->description()); ?></textarea>
             </p>
         </div>
         <?php

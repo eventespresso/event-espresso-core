@@ -94,9 +94,12 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                         </label>
                     </th>
                     <td>
-                        <textarea id="QSG_desc" name="QSG_desc" class="regular-text" rows="2" cols="40">
-                            <?php echo esc_textarea($question_group->get_f('QSG_desc')); ?>
-                        </textarea>
+                        <textarea id="QSG_desc"
+                                  name="QSG_desc"
+                                  class="regular-text"
+                                  rows="2"
+                                  cols="40"
+                        ><?php echo esc_textarea($question_group->get_f('QSG_desc')); ?></textarea>
                     </td>
                 </tr>
 

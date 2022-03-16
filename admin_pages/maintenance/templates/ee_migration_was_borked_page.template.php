@@ -70,12 +70,10 @@
                 <label for='body'><?php esc_html_e("Comments", "event_espresso"); ?></label>
             </td>
             <td>
-                <textarea name="body" id="body" class='system_status_info'>
-                    <?php esc_textarea(__(
-                        "Enter any comments about why you think the error may have occurred",
-                        "event_espresso"
-                    )); ?>
-                </textarea>
+                <textarea name="body" id="body" class='system_status_info'><?php esc_textarea(__(
+                    "Enter any comments about why you think the error may have occurred",
+                    "event_espresso"
+                )); ?></textarea>
                 <p class='description'>
                     <?php esc_textarea(__(
                         "Note: the System Information report will also be added to the email's body, which contains information about your Event Espresso, Wordpress, and PHP settings which can be helpful in debugging the problem.",
@@ -102,9 +100,7 @@
         "</a>"
     ); ?>
 </p>
-<textarea class="system_status_info">
-    <?php print_r(EEM_System_Status::instance()->get_system_stati()) ?>
-</textarea>
+<textarea class="system_status_info"><?php print_r(EEM_System_Status::instance()->get_system_stati()) ?></textarea>
 <p>
     <?php printf(
         esc_html__('%1$sNext Step%2$s', 'event_espresso'),

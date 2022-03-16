@@ -488,9 +488,7 @@ class EEH_Form_Fields
         $tab_index = absint($tab_index);
         $required  = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
         return "
-        <textarea name='{$name}' id='{$id}' class='{$class}' rows='{$rows}' cols='{$cols}' {$required} tabindex='{$tab_index}'>
-            {$value}
-        </textarea>";
+        <textarea name='{$name}' id='{$id}' class='{$class}' rows='{$rows}' cols='{$cols}' {$required} tabindex='{$tab_index}'>{$value}</textarea>";
     }
 
 
