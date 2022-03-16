@@ -63,6 +63,7 @@ class AllowedTags
         'itemscope'         => 1,
         'itemprop'          => 1,
         'content'           => 1,
+        'accept-charset'    => 1,
     ];
 
 
@@ -77,7 +78,6 @@ class AllowedTags
         'code',
         'div',
         'em',
-        'form',
         'h1',
         'h2',
         'h3',
@@ -86,13 +86,7 @@ class AllowedTags
         'h6',
         'hr',
         'i',
-        'iframe',
         'img',
-        'input',
-        'select',
-        'option',
-        'optgroup',
-        'label',
         'li',
         'ol',
         'p',
@@ -104,7 +98,6 @@ class AllowedTags
         'style',
         'table',
         'td',
-        'textarea',
         'tr',
         'ul',
     ];
@@ -120,6 +113,12 @@ class AllowedTags
      * @var array
      */
     private static $allowed_with_embed_tags;
+
+
+    /**
+     * @var array
+     */
+    private static $allowed_with_form_tags;
 
 
     /**
@@ -150,6 +149,28 @@ class AllowedTags
 
 
     /**
+     * merges additional tags and attributes into the WP global $allowedposttags
+     */
+    private static function initializeWithFormTags()
+    {
+        $all_tags = AllowedTags::getAllowedTags();
+        $form_tags = [
+            'form' => AllowedTags::$attributes,
+            'label' => AllowedTags::$attributes,
+            'input' => AllowedTags::$attributes,
+            'select' => AllowedTags::$attributes,
+            'option' => AllowedTags::$attributes,
+            'optgroup' => AllowedTags::$attributes,
+            'textarea' => AllowedTags::$attributes,
+            'button' => AllowedTags::$attributes,
+            'fieldset' => AllowedTags::$attributes,
+            'output' => AllowedTags::$attributes,
+        ];
+        AllowedTags::$allowed_with_form_tags = array_merge_recursive($all_tags, $form_tags);
+    }
+
+
+    /**
      * @return array[]
      */
     public static function getAllowedTags()
@@ -170,5 +191,17 @@ class AllowedTags
             AllowedTags::initializeWithEmbedTags();
         }
         return AllowedTags::$allowed_with_embed_tags;
+    }
+
+
+    /**
+     * @return array[]
+     */
+    public static function getWithFormTags()
+    {
+        if (empty(AllowedTags::$allowed_with_form_tags)) {
+            AllowedTags::initializeWithFormTags();
+        }
+        return AllowedTags::$allowed_with_form_tags;
     }
 }
