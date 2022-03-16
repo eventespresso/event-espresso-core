@@ -307,10 +307,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:38
 	__( 'loading event dates…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:21
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:22
 	__( 'Add a date or a ticket in order to use Ticket Assignment Manager', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:31
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:32
 	__( 'Ticket Assignments', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:25
@@ -351,7 +351,7 @@ $generated_i18n_strings = array(
 	__( 'copy datetime', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:36
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:39
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:40
 	// Reference: packages/ui-components/src/bulkEdit/BulkActions.tsx:43
 	__( 'bulk actions', 'event_espresso' ),
 
@@ -918,16 +918,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:39
 	__( 'copy ticket', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:43
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:44
 	__( 'edit ticket details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:47
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:48
 	__( 'delete tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:47
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:48
 	__( 'trash tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:51
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:52
 	__( 'edit ticket prices', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:14
