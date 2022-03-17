@@ -850,9 +850,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
             $fields_n_values = ['PRC_order' => $i + 1];
             $query_params    = [['PRC_ID' => absint($row_id)]];
             // any failure will toggle $all_updated to false
-            $all_updated =
-                $row_id && EEM_Price::instance()->update($fields_n_values, $query_params) !== false ? $all_updated
-                    : false;
+            $all_updated = $row_id && EEM_Price::instance()->update($fields_n_values, $query_params) !== false
+                ? $all_updated
+                : false;
         }
         $success = $all_updated ? esc_html__('Price order was updated successfully.', 'event_espresso') : false;
         $errors  = ! $all_updated ? esc_html__('An error occurred. The price order was not updated.', 'event_espresso')
