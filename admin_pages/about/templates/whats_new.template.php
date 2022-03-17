@@ -1,11 +1,11 @@
 <?php
 // comment out the following two lines if version is a major release
 $type    = 'minor';
-$heading = esc_html(_n('Minor Release Information', 'Minor Releases', 1, 'event_espresso'));
+$heading = _n('Minor Release Information', 'Minor Releases', 1, 'event_espresso');
 
 // comment out the following two lines if version is a minor release
 // $type = 'major';
-// $heading = esc_html(_n('Major Release Information', 'Major Releases', 1, 'event_espresso'));
+// $heading = _n('Major Release Information', 'Major Releases', 1, 'event_espresso');
 
 $version = explode('.', EVENT_ESPRESSO_VERSION);
 array_pop($version);
@@ -13,7 +13,7 @@ $version = implode('.', $version);
 ?>
 <div class="changelog point-releases">
     <h3>
-        <?php echo $heading; // already escaped ?>
+        <?php echo esc_html($heading); ?>
     </h3>
     <p>
         <?php

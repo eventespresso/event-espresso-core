@@ -12,12 +12,12 @@
 
 <?php echo $hidden_inputs; // already escaped ?>
     <input type="hidden"
-           name="tkt-slctr-qty-<?php echo esc_attr($EVT_ID); ?>[<?php echo esc_attr($TKT_ID); ?>]"
+           name="tkt-slctr-qty-<?php echo esc_attr($EVT_ID); ?>[<?php echo absint($TKT_ID); ?>]"
            value="1"
     />
     <input type="hidden"
            name="tkt-slctr-ticket-id-<?php echo esc_attr($EVT_ID); ?>[]"
-           value="<?php echo esc_attr($TKT_ID); ?>"
+           value="<?php echo absint($TKT_ID); ?>"
     />
 <?php
 if ($ticket instanceof EE_Ticket) {

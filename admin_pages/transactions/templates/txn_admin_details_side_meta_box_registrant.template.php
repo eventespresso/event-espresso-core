@@ -29,7 +29,7 @@ $prime_reg_email = sanitize_email($prime_reg_email);
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
             <?php esc_html_e('Email', 'event_espresso'); ?>
         </span>
-        <a href="mailto:<?php echo $prime_reg_email; // sanitized ?>"><?php echo $prime_reg_email; // sanitized ?></a>
+        <a href="mailto:<?php echo esc_attr($prime_reg_email); ?>"><?php echo $prime_reg_email; // sanitized ?></a>
     </p>
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">

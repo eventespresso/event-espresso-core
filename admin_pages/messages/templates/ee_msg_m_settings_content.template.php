@@ -23,9 +23,9 @@
             <?php echo $nonce; // already escaped ?>
         </span>
         <div class="switch">
-            <?php $checked = $on_off_status ? ' checked="checked"' : ''; ?>
+            <?php $checked = $on_off_status ? 'checked' : ''; ?>
             <input id="ee-on-off-toggle-<?php echo esc_attr($messenger); ?>" type="checkbox"
-                   class="ee-on-off-toggle ee-toggle-round-flat"<?php echo $checked; ?>
+                   class="ee-on-off-toggle ee-toggle-round-flat" <?php echo esc_attr($checked); ?>
                    value="<?php echo esc_attr($on_off_action); ?>"
             />
             <label for="ee-on-off-toggle-<?php echo esc_attr($messenger); ?>"></label>

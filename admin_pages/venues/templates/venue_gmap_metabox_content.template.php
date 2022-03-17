@@ -23,7 +23,7 @@
                     </p>
                     <!-- <p>
                     <?php // esc_html_e('Google Map Link (for email):', 'event_espresso'); ?>
-                    <input type="text" name="vnu_google_map_link" value="<?php // echo $vnu_google_map_link; ?>"
+                    <input type="text" name="vnu_google_map_link" value="<?php // echo esc_url_raw($vnu_google_map_link); ?>"
                     class="all-options" />
                     </p> -->
                     <?php

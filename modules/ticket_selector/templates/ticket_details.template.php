@@ -273,7 +273,7 @@ $spaces_left_label = apply_filters(
                                 <?php foreach ($datetimes as $datetime) {
                                     if ($datetime instanceof EE_Datetime) { ?>
                                     <tr>
-                                        <td data-th="<?php echo $event_date_label;?>" class="small-text">
+                                        <td data-th="<?php echo esc_attr($event_date_label); ?>" class="small-text">
                                             <?php $datetime_name = $datetime->name(); ?>
                                             <?php echo ! empty($datetime_name)
                                             ? '<b>' . esc_html($datetime_name) . '</b><br/>'
@@ -292,17 +292,17 @@ $spaces_left_label = apply_filters(
                                             ); ?>
                                         </td>
                                         <?php if ($show_ticket_sale_columns) : ?>
-                                        <td data-th="<?php echo $sold_label; ?>" class="cntr small-text">
+                                        <td data-th="<?php echo esc_attr($sold_label); ?>" class="cntr small-text">
                                             <?php echo $ticket->sold(); ?>
                                         </td>
-                                        <td data-th="<?php echo $remaining_label;?>" class="cntr small-text">
+                                        <td data-th="<?php echo esc_attr($remaining_label); ?>" class="cntr small-text">
                                             <?php echo $remaining === EE_INF
                                                 ? '<span class="smaller-text">'
                                                   . esc_html__('unlimited ', 'event_espresso')
                                                   . '</span>'
                                                 : $remaining; ?>
                                         </td>
-                                        <td data-th="<?php echo $total_sold_label;?>" class="cntr small-text">
+                                        <td data-th="<?php echo esc_attr($total_sold_label); ?>" class="cntr small-text">
                                             <?php echo $datetime->sold(); ?>
                                         </td>
                                             <?php $tkts_left = $datetime->sold_out()
@@ -310,7 +310,7 @@ $spaces_left_label = apply_filters(
                                                   . esc_html__('Sold&nbsp;Out', 'event_espresso')
                                                   . '</span>'
                                                 : $datetime->spaces_remaining(); ?>
-                                        <td data-th="<?php echo $spaces_left_label;?>" class="cntr small-text">
+                                        <td data-th="<?php echo esc_attr($spaces_left_label); ?>" class="cntr small-text">
                                             <?php echo $tkts_left === EE_INF
                                                 ? '<span class="smaller-text">'
                                                   . esc_html__('unlimited ', 'event_espresso')

@@ -51,7 +51,7 @@
             <label for="EVT_ID_select"><?php esc_html_e('Select Event', 'event_espresso'); ?></label>
             <select name="EVT_ID" id="EVT_ID_select">
                 <?php foreach ($active_events as $event) : ?>
-                    <option value="<?php echo esc_attr($event->event_id); ?>">
+                    <option value="<?php echo absint($event->event_id); ?>">
                         <?php echo esc_html($event->event_name); ?>
                     </option>
                 <?php endforeach; ?>

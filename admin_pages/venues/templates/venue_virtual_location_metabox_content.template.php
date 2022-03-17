@@ -8,7 +8,7 @@
                     </label>
                     <?php //phpcs:disable Generic.Files.LineLength.TooLong
                     // no new lines within <textarea> here because they'll output whitespace ?>
-                    <textarea id="url-event" cols="30" rows="4" tabindex="112" name="vnu_virtual_url"><?php $_venue->f('VNU_virtual_url'); ?></textarea>
+                    <textarea id="url-event" cols="30" rows="4" tabindex="112" name="vnu_virtual_url"><?php echo esc_textarea($_venue->get_f('VNU_virtual_url')); ?></textarea>
                     <?php //phpcs:enable ?>
                 </p>
                 <p>

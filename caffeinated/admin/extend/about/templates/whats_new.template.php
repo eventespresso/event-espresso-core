@@ -3,12 +3,8 @@
 $is_major_release = true;
 $type             = $is_major_release ? 'major' : 'minor';
 $heading          = $is_major_release
-    ? esc_html(
-        _n('Major Release Information', 'Major Releases', 1, 'event_espresso')
-    )
-    : esc_html(
-        _n('Minor Release Information', 'Minor Releases', 1, 'event_espresso')
-    );
+    ? _n('Major Release Information', 'Major Releases', 1, 'event_espresso')
+    : _n('Minor Release Information', 'Minor Releases', 1, 'event_espresso');
 
 $version = explode('.', EVENT_ESPRESSO_VERSION);
 array_pop($version);
@@ -16,7 +12,7 @@ $version = implode('.', $version);
 ?>
 
 <div class="changelog point-releases">
-    <h3><?php echo $heading; // already escaped ?></h3>
+    <h3><?php echo esc_html($heading); ?></h3>
     <p><?php
         printf(
             esc_html__('%1$sVersion %2$s%3$s is a %4$s release.', 'event_espresso'),

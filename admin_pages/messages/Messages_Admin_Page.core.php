@@ -2672,17 +2672,17 @@ class Messages_Admin_Page extends EE_Admin_Page
                 wp_nonce_field($args['action'] . '_nonce', $args['action'] . '_nonce', false);
                 $id = 'ee-' . sanitize_key($context_label['label']) . '-select';
                 ?>
-                <label for='<?php echo esc_attr($id); ?>' class='screen-reader-text'>
+                <label for='<?php echo absint($id); ?>' class='screen-reader-text'>
                     <?php esc_html_e('message context options', 'event_espresso'); ?>
                 </label>
-                <select id="<?php echo esc_attr($id); ?>" name="context">
+                <select id="<?php echo absint($id); ?>" name="context">
                     <?php
                     $context_templates = $template_group_object->context_templates();
                     if (is_array($context_templates)) :
                         foreach ($context_templates as $context => $template_fields) :
-                            $checked = ($context === $args['context']) ? 'selected="selected"' : '';
+                            $checked = ($context === $args['context']) ? 'selected' : '';
                             ?>
-                            <option value="<?php echo esc_attr($context); ?>" <?php echo $checked; ?>>
+                            <option value="<?php echo esc_attr($context); ?>" <?php echo esc_attr($checked); ?>>
                                 <?php echo $context_details[ $context ]['label']; // already escaped
                                 ?>
                             </option>

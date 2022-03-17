@@ -515,7 +515,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             if ($event instanceof EE_Event && (! is_single() || $post->ID != $event->ID())) {
                 $event_url = $this->eventUrl($event);
                 $list_items .= '
-                <li id="ee-upcoming-events-widget-li-' . esc_attr($event->ID()) . '" 
+                <li id="ee-upcoming-events-widget-li-' . absint($event->ID()) . '" 
                     class="ee-upcoming-events-widget-li"
                 >
                     <h5 class="ee-upcoming-events-widget-title-h5">

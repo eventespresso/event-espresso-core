@@ -10,7 +10,7 @@
                     ); ?></label> <?php echo EEH_Template::get_help_tab_link('type_field_info'); ?></th>
             <td>
                 <?php if ($price->type_obj() && $price->type_obj()->base_type() === 1) : ?>
-                    <input type="hidden" name="PRT_ID" id="PRT_ID" value="<?php echo $price->type(); ?>"/>
+                    <input type="hidden" name="PRT_ID" id="PRT_ID" value="<?php echo esc_attr($price->type()); ?>"/>
                     <p><strong><?php esc_html_e('Price', 'event_espresso'); ?></strong></p>
                     <p class="description">
                         <?php
@@ -51,7 +51,7 @@
                     ); ?></label> <?php echo EEH_Template::get_help_tab_link('description_field_info'); ?></th>
             <td>
                     <textarea class="regular-text" id="PRC_desc" name="PRC_desc" rows="5"><?php
-                        $price->f('PRC_desc');
+                        echo esc_textarea($price->get_f('PRC_desc'));
                     ?></textarea><br/>
             </td>
         </tr>
@@ -63,7 +63,7 @@
                     ); ?><?php echo EEH_Template::get_help_tab_link('amount_field_info'); ?></label></th>
             <td>
                 <input class="small-text ee-numeric" type="text" id="PRC_amount" name="PRC_amount"
-                       value="<?php echo $price->amount(); ?>"/>
+                       value="<?php echo esc_attr($price->amount()); ?>"/>
             </td>
         </tr>
         </tbody>

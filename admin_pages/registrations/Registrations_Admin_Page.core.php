@@ -3405,7 +3405,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * Callback invoked by parent EE_Admin_CPT class hooked in on `save_post` wp hook.
      *
      * @param int     $post_id
-     * @param WP_POST $post
+     * @param WP_Post $post
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
