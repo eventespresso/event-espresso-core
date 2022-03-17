@@ -1380,10 +1380,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $datetime->_add_relation_to($ticket, 'Ticket');
             $saved_tickets[ $ticket->ID() ] = $ticket;
             // add prices to ticket
-            $prices_data = (
-                isset($data['edit_prices'][ $row ])
-                && is_array($data['edit_prices'][ $row ])
-            ) ? $data['edit_prices'][ $row ] : [];
+            $prices_data = isset($data['edit_prices'][ $row ]) && is_array($data['edit_prices'][ $row ])
+                ? $data['edit_prices'][ $row ]
+                : [];
             $this->_add_prices_to_ticket($prices_data, $ticket, $update_prices);
         }
         // however now we need to handle permanently deleting tickets via the ui.
