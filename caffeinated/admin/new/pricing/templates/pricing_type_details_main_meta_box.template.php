@@ -79,7 +79,7 @@
             </th>
             <td>
                 <input class="small-text" type="text" id="PRT_order" name="PRT_order"
-                       value="<?php echo $price_type->order(); ?>"/>
+                       value="<?php echo esc_attr($price_type->order()); ?>"/>
                 <p class="description">
                     <?php esc_html_e('The order that Price Types are applied.', 'event_espresso'); ?></p>
                 <p class="description">

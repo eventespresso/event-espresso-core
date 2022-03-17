@@ -47,7 +47,7 @@
                           id="ee-msg-non-global-fields-MTP_description"
                           name="ee_msg_non_global_fields[MTP_description]"
                 >
-                    <?php echo esc_html($MTP->description()); ?>
+                    <?php echo esc_textarea($MTP->description()); ?>
                 </textarea>
             </p>
         </div>

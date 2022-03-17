@@ -56,84 +56,84 @@
  */
 
 ?>
-<tr valign="top" class="ee-ticket-sortable ticket-row<?php echo $ticket_archive_class;
+<tr valign="top" class="ee-ticket-sortable ticket-row <?php echo sanitize_html_class($ticket_archive_class);
 if (WP_DEBUG) {
     echo ' ee-wp-debug';
-} ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
-    <!--<td class="ee-tkt-order-field"><span class="dashicons dashicons-sort<?php echo $tkt_status_class; ?>">
-    <input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>" ></span></td>-->
+} ?>" id="display-ticketrow-<?php echo absint($tkt_row); ?>">
+    <!--<td class="ee-tkt-order-field"><span class="dashicons dashicons-sort <?php echo sanitize_html_class($tkt_status_class); ?>">
+    <input type="hidden" name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo absint($TKT_order); ?>" ></span></td>-->
     <td class="ee-tkt-order-field"><span
-            class="ee-status-strip-td ee-status-strip<?php echo $tkt_status_class; ?>"></span>
+            class="ee-status-strip-td ee-status-strip <?php echo sanitize_html_class($tkt_status_class); ?>"></span>
         <input type="hidden"
-               name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]"
+               name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_order]"
                class="edit-ticket-TKT_order"
-               value="<?php echo $TKT_order; ?>">
+               value="<?php echo absint($TKT_order); ?>">
     </td>
-    <td><input maxlength="245" type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_name]"
+    <td><input maxlength="245" type="text" name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_name]"
                class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title"
-               value="<?php echo $TKT_name; ?>"></td>
+               value="<?php echo esc_attr($TKT_name); ?>"></td>
     <td>
         <?php if ($disabled) : ?>
-            <input type="hidden" id="edit-ticket-TKT_start_date-<?php echo $tkt_row; ?>"
-                   name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_start_date]"
-                   class="edit-ticket-TKT_start_date ee-text-inp" value="<?php echo $TKT_start_date; ?>">
+            <input type="hidden" id="edit-ticket-TKT_start_date-<?php echo absint($tkt_row); ?>"
+                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_start_date]"
+                   class="edit-ticket-TKT_start_date ee-text-inp" value="<?php echo esc_attr($TKT_start_date); ?>">
             <input type="text" name="archived_ticket[TKT_start_date]" class="edit-ticket-TKT_start_date ee-text-inp"
-                   value="<?php echo $TKT_start_date; ?>" disabled>
+                   value="<?php echo esc_attr($TKT_start_date); ?>" disabled>
         <?php else : ?>
-            <input id="edit-ticket-TKT_start_date-<?php echo $tkt_row; ?>" type="text"
-                   name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_start_date]"
-                   class="edit-ticket-TKT_start_date ee-text-inp ee-datepicker" value="<?php echo $TKT_start_date; ?>"
-                   data-context="start-ticket" data-date-field-context="#display-ticketrow-<?php echo $tkt_row; ?>"
+            <input id="edit-ticket-TKT_start_date-<?php echo absint($tkt_row); ?>" type="text"
+                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_start_date]"
+                   class="edit-ticket-TKT_start_date ee-text-inp ee-datepicker" value="<?php echo esc_attr($TKT_start_date); ?>"
+                   data-context="start-ticket" data-date-field-context="#display-ticketrow-<?php echo absint($tkt_row); ?>"
                    data-related-field=".edit-ticket-TKT_end_date" data-next-field=".edit-ticket-TKT_end_date">
         <?php endif; ?>
     </td>
     <td>
         <?php if ($disabled) : ?>
-            <input type="hidden" id="edit-ticket-TKT_end_date-<?php echo $tkt_row; ?>"
-                   name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_end_date]"
-                   class="edit-ticket-TKT_end_date ee-text-inp" value="<?php echo $TKT_end_date; ?>">
+            <input type="hidden" id="edit-ticket-TKT_end_date-<?php echo absint($tkt_row); ?>"
+                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_end_date]"
+                   class="edit-ticket-TKT_end_date ee-text-inp" value="<?php echo esc_attr($TKT_end_date); ?>">
             <input type="text" name="archived_ticket[TKT_end_date]" class="edit-ticket-TKT_end_date ee-text-inp"
-                   value="<?php echo $TKT_end_date; ?>" disabled>
+                   value="<?php echo esc_attr($TKT_end_date); ?>" disabled>
         <?php else : ?>
-            <input id="edit-ticket-TKT_end_date-<?php echo $tkt_row; ?>" type="text"
-                   name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_end_date]"
-                   class="edit-ticket-TKT_end_date ee-text-inp ee-datepicker" value="<?php echo $TKT_end_date; ?>"
-                   data-context="end-ticket" data-date-field-context="#display-ticketrow-<?php echo $tkt_row; ?>"
+            <input id="edit-ticket-TKT_end_date-<?php echo absint($tkt_row); ?>" type="text"
+                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_end_date]"
+                   class="edit-ticket-TKT_end_date ee-text-inp ee-datepicker" value="<?php echo esc_attr($TKT_end_date); ?>"
+                   data-context="end-ticket" data-date-field-context="#display-ticketrow-<?php echo absint($tkt_row); ?>"
                    data-related-field=".edit-ticket-TKT_start_date" data-next-field=".edit-ticket-TKT_qty">
         <?php endif; ?>
     </td>
     <td>
         <?php if ($disabled) : ?>
-            <input id="edit-ticket-TKT_base_price-<?php echo $tkt_row; ?>" type="hidden"
-                   name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_base_price]"
+            <input id="edit-ticket-TKT_base_price-<?php echo absint($tkt_row); ?>" type="hidden"
+                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_base_price]"
                    class="edit-ticket-TKT_base_price ee-small-text-inp edit-price-PRC_amount ee-numeric"
-                   value="<?php echo $TKT_base_price; ?>">
-            <input type="text" name="archived_ticket[<?php echo $tkt_row; ?>][TKT_base_price]"
+                   value="<?php echo esc_attr($TKT_base_price); ?>">
+            <input type="text" name="archived_ticket[<?php echo absint($tkt_row); ?>][TKT_base_price]"
                    class="edit-ticket-TKT_base_price ee-small-text-inp edit-price-PRC_amount ee-numeric"
-                   value="<?php echo $TKT_base_price; ?>" disabled>
+                   value="<?php echo esc_attr($TKT_base_price); ?>" disabled>
         <?php else : ?>
-            <input id="edit-ticket-TKT_base_price-<?php echo $tkt_row; ?>" type="text"
-                   name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_base_price]"
+            <input id="edit-ticket-TKT_base_price-<?php echo absint($tkt_row); ?>" type="text"
+                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_base_price]"
                    class="edit-ticket-TKT_base_price ee-small-text-inp edit-price-PRC_amount ee-numeric"
-                   value="<?php echo $TKT_base_price; ?>">
+                   value="<?php echo esc_attr($TKT_base_price); ?>">
         <?php endif; ?>
-        <input type="hidden" id="edit-ticket-TKT_base_price_ID-<?php echo $tkt_row; ?>"
-               name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_base_price_ID]"
-               value="<?php echo $TKT_base_price_ID; ?>">
+        <input type="hidden" id="edit-ticket-TKT_base_price_ID-<?php echo absint($tkt_row); ?>"
+               name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_base_price_ID]"
+               value="<?php echo esc_attr($TKT_base_price_ID); ?>">
     </td>
     <td>
         <?php if ($disabled) : ?>
             <input type="hidden" class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric"
-                   name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_qty]"
-                   value="<?php echo $TKT_qty_for_input; ?>">
+                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_qty]"
+                   value="<?php echo esc_attr($TKT_qty_for_input); ?>">
             <input type="text" class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric"
-                   name="archived_ticket[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>"
+                   name="archived_ticket[<?php echo absint($tkt_row); ?>][TKT_qty]" value="<?php echo esc_attr($TKT_qty_for_input); ?>"
                    disabled>
         <?php else : ?>
-            <input type="text" id="edit-ticket-TKT_qty-<?php echo $tkt_row; ?>"
+            <input type="text" id="edit-ticket-TKT_qty-<?php echo absint($tkt_row); ?>"
                    class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric"
-                   name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_qty]"
-                   value="<?php echo $TKT_qty_for_input; ?>">
+                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_qty]"
+                   value="<?php echo esc_attr($TKT_qty_for_input); ?>">
         <?php endif; ?>
     </td>
     <!--<td><span class="ticket-display-row-TKT_price"><?php // echo $TKT_price; ?></span></td>-->
@@ -143,36 +143,36 @@ if (WP_DEBUG) {
     <?php endif; ?>
     <td><span class="ticket-display-row-TKT_registrations"><?php echo $TKT_registrations; ?></span></td>
     <td>
-        <div class="ee-editing-container <?php echo $edit_tkt_expanded; ?>"><span
-                class="gear-icon dashicons dashicons-admin-generic clickable" data-ticket-row="<?php echo $tkt_row; ?>"
+        <div class="ee-editing-container <?php echo sanitize_html_class($edit_tkt_expanded); ?>"><span
+                class="gear-icon dashicons dashicons-admin-generic clickable" data-ticket-row="<?php echo absint($tkt_row); ?>"
                 data-context="ticket"></span></div>
-        <span class="<?php echo $clone_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span
-            class="<?php echo $trash_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>"
+        <span class="<?php echo sanitize_html_class($clone_icon); ?>" data-ticket-row="<?php echo absint($tkt_row); ?>" data-context="ticket"></span><span
+            class="<?php echo sanitize_html_class($trash_icon); ?>" data-ticket-row="<?php echo absint($tkt_row); ?>"
             data-context="ticket"<?php echo $trash_hidden; ?>></span>
         <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle"></span>
     </td>
 </tr>
-<tr id="edit-ticketrow-<?php echo $tkt_row; ?>" class="edit-ticket-row">
+<tr id="edit-ticketrow-<?php echo absint($tkt_row); ?>" class="edit-ticket-row">
     <?php if (apply_filters('FHEE__event_tickets_metabox__tkt_reserved', true)) { ?>
     <td colspan="10">
     <?php } else { ?>
     <td colspan="9">
     <?php } ?>
-        <fieldset id="fieldset-edit-ticketrow-<?php echo $tkt_row; ?>"
+        <fieldset id="fieldset-edit-ticketrow-<?php echo absint($tkt_row); ?>"
                   class="ticket-fieldset"<?php echo $display_edit_tkt_row; ?>>
             <legend></legend>
-            <input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_ID]"
-                   class="edit-ticket-TKT_ID" value="<?php echo $TKT_ID; ?>">
-            <input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_row]"
-                   class="edit-ticket-TKT_row" value="<?php echo $tkt_row; ?>">
+            <input type="hidden" name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_ID]"
+                   class="edit-ticket-TKT_ID" value="<?php echo absint($TKT_ID); ?>">
+            <input type="hidden" name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_row]"
+                   class="edit-ticket-TKT_row" value="<?php echo absint($tkt_row); ?>">
 
             <!--<div class="total-price-container"><?php printf(
                 esc_html__('Total Final Price: %s', 'event_espresso'),
                 '<span class="ticket-price-amount">' . $TKT_price . '</span>'
             ); ?> </div>-->
-            <textarea name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_description]"
+            <textarea name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_description]"
                       class="edit-ticket-TKT_description ee-full-textarea-inp"
-                      placeholder="Ticket Description"><?php echo $TKT_description; ?></textarea>
+                      placeholder="Ticket Description"><?php echo esc_textarea($TKT_description); ?></textarea>
 
             <?php do_action('AHEE__event_tickets_datetime_ticket_row_template_after_desc', $tkt_row, $TKT_ID); ?>
 
@@ -204,55 +204,55 @@ if (WP_DEBUG) {
                         <td>
                             <?php if ($disabled) : ?>
                                 <input type="hidden" class="edit-ticket-TKT_uses ee-small-text-inp ee-numeric"
-                                       name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_uses]"
-                                       value="<?php echo $TKT_uses; ?>">
+                                       name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_uses]"
+                                       value="<?php echo esc_attr($TKT_uses); ?>">
                                 <input type="text" class="edit-ticket-TKT_uses ee-small-text-inp ee-numeric"
-                                       name="archived_ticket[<?php echo $tkt_row; ?>][TKT_uses]"
-                                       value="<?php echo $TKT_uses; ?>" disabled>
+                                       name="archived_ticket[<?php echo absint($tkt_row); ?>][TKT_uses]"
+                                       value="<?php echo esc_attr($TKT_uses); ?>" disabled>
                             <?php else : ?>
                                 <input type="text" class="edit-ticket-TKT_uses ee-small-text-inp ee-numeric"
-                                       name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_uses]"
-                                       value="<?php echo $TKT_uses; ?>">
+                                       name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_uses]"
+                                       value="<?php echo esc_attr($TKT_uses); ?>">
                             <?php endif; ?>
                         </td>
                         <td>
                             <?php if ($disabled) : ?>
                                 <input type="hidden" class="edit-ticket-TKT_min ee-small-text-inp ee-numeric"
-                                       name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_min]"
-                                       value="<?php echo $TKT_min; ?>">
+                                       name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_min]"
+                                       value="<?php echo esc_attr($TKT_min); ?>">
                                 <input type="text" class="edit-ticket-TKT_min ee-small-text-inp ee-numeric"
-                                       name="archived_ticket[<?php echo $tkt_row; ?>][TKT_min]"
-                                       value="<?php echo $TKT_min; ?>" disabled>
+                                       name="archived_ticket[<?php echo absint($tkt_row); ?>][TKT_min]"
+                                       value="<?php echo esc_attr($TKT_min); ?>" disabled>
                             <?php else : ?>
                                 <input type="text" class="edit-ticket-TKT_min ee-small-text-inp ee-numeric"
-                                       name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_min]"
-                                       value="<?php echo $TKT_min; ?>">
+                                       name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_min]"
+                                       value="<?php echo esc_attr($TKT_min); ?>">
                             <?php endif; ?>
                         </td>
                         <td>
                             <?php if ($disabled) : ?>
                                 <input type="hidden" class="edit-ticket-TKT_max ee-small-text-inp ee-numeric"
-                                       name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_max]"
-                                       value="<?php echo $TKT_max; ?>">
+                                       name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_max]"
+                                       value="<?php echo esc_attr($TKT_max); ?>">
                                 <input type="text" class="edit-ticket-TKT_max ee-small-text-inp ee-numeric"
-                                       name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_max]"
-                                       value="<?php echo $TKT_max; ?>" disabled>
+                                       name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_max]"
+                                       value="<?php echo esc_attr($TKT_max); ?>" disabled>
                             <?php else : ?>
                                 <input type="text" class="edit-ticket-TKT_max ee-small-text-inp ee-numeric"
-                                       name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_max]"
-                                       value="<?php echo $TKT_max; ?>">
+                                       name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_max]"
+                                       value="<?php echo esc_attr($TKT_max); ?>">
                             <?php endif; ?>
                         </td>
                     </tr>
                     </tbody>
                 </table>
                 <button data-context="price-create" class="button-secondary ee-create-button ee-price-create-button"
-                        data-ticket-row="<?php echo $tkt_row; ?>"<?php echo $show_price_mod_button; ?>>
+                        data-ticket-row="<?php echo absint($tkt_row); ?>"<?php echo $show_price_mod_button; ?>>
                     <?php esc_html_e('Add Price Modifier', 'event_espresso'); ?>
                 </button>
                 <div class="ticket-is-required-container">
                     <input type="checkbox"
-                           name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_required]"
+                           name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_required]"
                            class="edit-ticket-TKT_required" value="1"<?php
                             echo $TKT_required
                                 ? ' checked="checked"'
@@ -273,18 +273,18 @@ if (WP_DEBUG) {
                             $tax_value = ! empty($TKT_taxable) ? 1 : 0;
                             ?>
                         <input class="TKT-taxable-checkbox" type="hidden"
-                               name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_taxable]"
-                               value="<?php echo $tax_value; ?>">
-                        <input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"
-                               type="checkbox" name="archived_ticket[<?php echo $tkt_row; ?>][TKT_taxable]"
+                               name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_taxable]"
+                               value="<?php echo esc_attr($tax_value); ?>">
+                        <input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo absint($tkt_row); ?>"
+                               type="checkbox" name="archived_ticket[<?php echo absint($tkt_row); ?>][TKT_taxable]"
                                value="1"<?php echo $TKT_taxable; ?> disabled>
                         <?php else : ?>
-                        <input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"
+                        <input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo absint($tkt_row); ?>"
                                type="checkbox"
-                               name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_taxable]"
+                               name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_taxable]"
                                value="1"<?php echo $TKT_taxable; ?>>
                         <?php endif; ?>
-                    <label for="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"> <?php
+                    <label for="edit-ticket-TKT_taxable-<?php echo absint($tkt_row); ?>"> <?php
                         esc_html_e('This ticket is taxable.', 'event_espresso'); ?>
                     <?php } //end tax_rows check ?>
                 </div>
@@ -322,8 +322,8 @@ if (WP_DEBUG) {
                         <td class="ee-numeric">
                             <span
                                 class="TKT-taxable-subtotal-amount-display"><?php echo $TKT_subtotal_amount_display; ?></span>
-                            <input type="hidden" value="<?php echo $TKT_subtotal_amount; ?>"
-                                   name="subtotal_amount_<?php echo $tkt_row; ?>" class="TKT-taxable-subtotal-amount">
+                            <input type="hidden" value="<?php echo esc_attr($TKT_subtotal_amount); ?>"
+                                   name="subtotal_amount_<?php echo absint($tkt_row); ?>" class="TKT-taxable-subtotal-amount">
                         </td>
                         <td></td>
                         <td></td>
@@ -334,15 +334,15 @@ if (WP_DEBUG) {
                             <strong><?php esc_html_e('Total', 'event_espresso'); ?></strong>
                         </td>
                         <td class="ee-numeric">
-                            <span id="price-total-amount-<?php echo $tkt_row; ?>"><?php echo $TKT_price; ?></span>
+                            <span id="price-total-amount-<?php echo absint($tkt_row); ?>"><?php echo $TKT_price; ?></span>
                             <input type="hidden"
-                                   name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_price]"
-                                   class="edit-ticket-TKT_price" value="<?php echo $TKT_price_amount; ?>">
+                                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_price]"
+                                   class="edit-ticket-TKT_price" value="<?php echo esc_attr($TKT_price_amount); ?>">
                         </td>
                         <td><?php echo $TKT_price_code; ?></td>
-                        <td><input type="hidden" name="price_total_rows_ticket[<?php echo $tkt_row; ?>]"
-                                   id="price-total-rows-<?php echo $tkt_row; ?>"
-                                   value="<?php echo $total_price_rows; ?>"></td>
+                        <td><input type="hidden" name="price_total_rows_ticket[<?php echo absint($tkt_row); ?>]"
+                                   id="price-total-rows-<?php echo absint($tkt_row); ?>"
+                                   value="<?php echo esc_attr($total_price_rows); ?>"></td>
                     </tr>
                     </tfoot>
                 </table>
@@ -380,36 +380,36 @@ if (WP_DEBUG) {
                             'event_espresso'
                         ); ?></label>
                     <input type="checkbox"
-                           name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default_selector]"
+                           name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_is_default_selector]"
                            class="edit-ticket-TKT_is_default_selector" value="1"<?php
                             echo $disabled
                                 ? ' disabled'
                                 : ''; ?>>
                     <input type="hidden"
-                           name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default]"
-                           class="edit-ticket-TKT_is_default" value="<?php echo $TKT_is_default; ?>">
-                    <!--<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php esc_html_e(
+                           name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TKT_is_default]"
+                           class="edit-ticket-TKT_is_default" value="<?php echo esc_attr($TKT_is_default); ?>">
+                    <!--<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo absint($tkt_row); ?>"><?php esc_html_e(
                         'Update Ticket',
                         'event_espresso'
                     ); ?></button>-->
                     <button class="button-secondary ee-cancel-button" data-context="ticket"
-                            data-ticket-row="<?php echo $tkt_row; ?>"><?php
+                            data-ticket-row="<?php echo absint($tkt_row); ?>"><?php
                                     esc_html_e('Close', 'event_espresso'); ?></button>
                 </div>
             </div>
             <!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
-            <input type="hidden" name="starting_ticket_datetime_rows[<?php echo $tkt_row; ?>]"
-                   id="starting-ticket-datetime-rows-<?php echo $tkt_row; ?>"
-                   value="<?php echo $starting_ticket_datetime_rows; ?>" class="starting-ticket-datetime-rows">
-            <input type="hidden" name="ticket_datetime_rows[<?php echo $tkt_row; ?>]" class="ticket-datetime-rows"
-                   id="ticket-datetime-rows-<?php echo $tkt_row; ?>" value="<?php echo $ticket_datetime_rows; ?>">
+            <input type="hidden" name="starting_ticket_datetime_rows[<?php echo absint($tkt_row); ?>]"
+                   id="starting-ticket-datetime-rows-<?php echo absint($tkt_row); ?>"
+                   value="<?php echo esc_attr($starting_ticket_datetime_rows); ?>" class="starting-ticket-datetime-rows">
+            <input type="hidden" name="ticket_datetime_rows[<?php echo absint($tkt_row); ?>]" class="ticket-datetime-rows"
+                   id="ticket-datetime-rows-<?php echo absint($tkt_row); ?>" value="<?php echo esc_attr($ticket_datetime_rows); ?>">
 
             <!-- these hidden inputs are for tracking changes in prices attached to tickets during a js session -->
-            <input type="hidden" name="ticket_price_ids[<?php echo $tkt_row; ?>][]"
-                   id="ticket-price-ids-<?php echo $tkt_row; ?>" class="ticket-price-ids"
-                   value="<?php echo $existing_ticket_price_ids; ?>">
-            <input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TTM_ID]"
-                   class="ticket-template-id" value="<?php echo $ticket_template_id; ?>">
+            <input type="hidden" name="ticket_price_ids[<?php echo absint($tkt_row); ?>][]"
+                   id="ticket-price-ids-<?php echo absint($tkt_row); ?>" class="ticket-price-ids"
+                   value="<?php echo esc_attr($existing_ticket_price_ids); ?>">
+            <input type="hidden" name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo absint($tkt_row); ?>][TTM_ID]"
+                   class="ticket-template-id" value="<?php echo esc_attr($ticket_template_id); ?>">
             <div style="clear:both"></div>
         </fieldset>
     </td>

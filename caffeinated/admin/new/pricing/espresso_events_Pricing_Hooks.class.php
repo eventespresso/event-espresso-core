@@ -1937,7 +1937,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
     ) {
         $select_name = $default && ! $price instanceof EE_Price
             ? 'edit_prices[TICKETNUM][PRICENUM][PRT_ID]'
-            : 'edit_prices[' . $ticket_row . '][' . $price_row . '][PRT_ID]';
+            : 'edit_prices[' . esc_attr($ticket_row) . '][' . esc_attr($price_row) . '][PRT_ID]';
         /** @var EEM_Price_Type $price_type_model */
         $price_type_model = EE_Registry::instance()->load_model('Price_Type');
         $price_types = $price_type_model->get_all(array(

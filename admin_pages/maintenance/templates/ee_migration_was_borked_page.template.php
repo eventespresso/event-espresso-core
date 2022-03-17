@@ -71,16 +71,16 @@
             </td>
             <td>
                 <textarea name="body" id="body" class='system_status_info'>
-                    <?php esc_html_e(
+                    <?php esc_textarea(__(
                         "Enter any comments about why you think the error may have occurred",
                         "event_espresso"
-                    ); ?>
+                    )); ?>
                 </textarea>
                 <p class='description'>
-                    <?php esc_html_e(
+                    <?php esc_textarea(__(
                         "Note: the System Information report will also be added to the email's body, which contains information about your Event Espresso, Wordpress, and PHP settings which can be helpful in debugging the problem.",
                         "event_espresso"
-                    ); ?>
+                    )); ?>
                 </p>
             </td>
         </tr>

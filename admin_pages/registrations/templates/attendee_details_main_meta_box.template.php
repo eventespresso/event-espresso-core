@@ -10,7 +10,7 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
 
     <div id="att-admin-add-new-attendee-messages-dv"></div>
 
-    <input type="hidden" name="ATT_ID" value="<?php echo esc_attr($attendee->ID()); ?>">
+    <input type="hidden" name="ATT_ID" value="<?php echo absint($attendee->ID()); ?>">
 
     <table class="form-table">
         <tbody>

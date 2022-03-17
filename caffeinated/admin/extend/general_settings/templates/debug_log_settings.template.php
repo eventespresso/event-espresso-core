@@ -32,7 +32,7 @@
         </th>
         <td>
             <input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text"
-                   value="<?php echo $remote_logging_url; ?>"/>
+                   value="<?php echo esc_url_raw($remote_logging_url); ?>"/>
             <p class="description">
                 <?php esc_html_e('Example: https://your-webhook-url.com/', 'event_espresso'); ?>
             </p>

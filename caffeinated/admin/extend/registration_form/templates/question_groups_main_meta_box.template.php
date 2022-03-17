@@ -21,7 +21,7 @@ assert(is_array($values));
 
 $QSG_system = $question_group->system_group();
 
-$disabled = ! empty($QSG_system) ? ' disabled="disabled"' : '';
+$disabled = ! empty($QSG_system) ? 'disabled' : '';
 $id = ! empty($QST_system) ? '_disabled' : '';
 ?>
 
@@ -38,7 +38,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                 </label>
             </th>
             <td>
-                <input id="QSG_name" name="QSG_name" value="<?php $question_group->f('QSG_name') ?>" type="text"
+                <input id="QSG_name" name="QSG_name" value="<?php echo esc_attr($question_group->get_f('QSG_name')); ?>" type="text"
                        class="regular-text"><br/>
 
             </td>
@@ -53,9 +53,9 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                 </label>
             </th>
             <td>
-                <input id="QSG_identifier" name="QSG_identifier<?php echo $id; ?>"
-                       value="<?php $question_group->f('QSG_identifier') ?>" type="text"
-                       class="regular-text"<?php echo $disabled; ?>>
+                <input id="QSG_identifier" name="QSG_identifier<?php echo absint($id); ?>"
+                       value="<?php echo esc_attr($question_group->get_f('QSG_identifier')); ?>" type="text"
+                       class="regular-text" <?php echo esc_attr($disabled); ?>>
                 <?php if (! empty($QSG_system)) { ?>
                     <p><span class="description" style="color:#D54E21;">
                             <?php esc_html_e('System question group! This field cannot be changed.', 'event_espresso') ?>
@@ -74,7 +74,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
             </th>
             <td>
                 <textarea id="QSG_desc" name="QSG_desc" class="regular-text" rows="2"
-                          cols="40"><?php $question_group->f('QSG_desc') ?></textarea>
+                          cols="40"><?php echo esc_textarea($question_group->get_f('QSG_desc')); ?></textarea>
             </td>
         </tr>
 
@@ -88,7 +88,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
             </th>
             <td>
                 <input id="QSG_order" name="QSG_order" class="regular-text"
-                       value="<?php echo $question_group->order(); ?>"/>
+                       value="<?php echo esc_attr($question_group->order()); ?>"/>
             </td>
         </tr>
 
@@ -131,7 +131,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                         esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
                     ?></p>
                 </label>
-                <input type="hidden" name="QSG_system" value="<?php echo $question_group->system_group(); ?>">
+                <input type="hidden" name="QSG_system" value="<?php echo esc_attr($question_group->system_group()); ?>">
             </td>
         </tr>
 
@@ -157,7 +157,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                     foreach ($all_questions as $question_ID => $question) {
                         if ($question instanceof EE_Question) {
                             /*@var $question EE_Question*/
-                            $checked = isset($question_group_questions[ $question_ID ]) ? ' checked="checked"' : '';
+                            $checked = isset($question_group_questions[ $question_ID ]) ? 'checked' : '';
                             // disable questions from the personal information question group
                             // is it required in the current question group? if so don't allow admins to remove it
                             $disabled = in_array(
@@ -165,7 +165,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                 EEM_Question::instance()->required_system_questions_in_system_question_group(
                                     $QSG_system
                                 )
-                            ) ? 'disabled="disabled"' : '';
+                            ) ? 'disabled' : '';
                             // limit where system questions can appear
                             if (
                                 $question->system_ID() &&
@@ -180,10 +180,10 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                             }
                             ?>
                             <li class="ee-question-sortable">
-                                <label for="question-<?php echo $question_ID ?>">
-                                    <input type="checkbox" name="questions[<?php echo $question_ID; ?>]"
-                                           id="question-<?php echo $question_ID; ?>"
-                                           value="<?php echo $question_ID; ?>"<?php echo $disabled; ?><?php echo $checked; ?>/>
+                                <label for="question-<?php echo absint($question_ID); ?>">
+                                    <input type="checkbox" name="questions[<?php echo absint($question_ID); ?>]"
+                                           id="question-<?php echo absint($question_ID); ?>"
+                                           value="<?php echo absint($question_ID); ?>" <?php echo esc_attr($disabled); ?> <?php echo esc_attr($checked); ?>/>
                                     <span class="question-text"><?php
                                         echo trim($question->display_text())
                                              . (95 <= strlen(trim($question->display_text()))
@@ -192,8 +192,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                                                 ?>
                                     </span>
                                     <input class="question-group-QGQ_order" type="hidden"
-                                           name="question_orders[<?php echo $question_ID; ?>]"
-                                           value="<?php echo $question_order; ?>">
+                                           name="question_orders[<?php echo absint($question_ID); ?>]"
+                                           value="<?php echo esc_attr($question_order); ?>">
                                 </label>
                                 <?php
                                 if (

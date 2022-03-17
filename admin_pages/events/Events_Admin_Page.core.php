@@ -988,7 +988,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @access protected
      * @abstract
      * @param string $post_id The ID of the cpt that was saved (so you can link relationally)
-     * @param object $post    The post object of the cpt that was saved.
+     * @param WP_Post $post    The post object of the cpt that was saved.
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
@@ -1380,7 +1380,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $datetime->_add_relation_to($ticket, 'Ticket');
             $saved_tickets[ $ticket->ID() ] = $ticket;
             // add prices to ticket
-            $this->_add_prices_to_ticket($data['edit_prices'][ $row ], $ticket, $update_prices);
+            $prices_data = isset($data['edit_prices'][ $row ]) && is_array($data['edit_prices'][ $row ])
+                ? $data['edit_prices'][ $row ]
+                : [];
+            $this->_add_prices_to_ticket($prices_data, $ticket, $update_prices);
         }
         // however now we need to handle permanently deleting tickets via the ui.
         //  Keep in mind that the ui does not allow deleting/archiving tickets that have ticket sold.
