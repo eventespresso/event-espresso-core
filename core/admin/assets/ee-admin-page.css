@@ -300,7 +300,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 .espresso-admin.wp-core-ui ul.categorychecklist li {
     margin-block-end: 1rem;
     padding-inline-end: 0.5rem;
-    padding-inline-start: 1rem;
+    padding-inline-start: 0.1rem;
 }
 .espresso-admin.wp-core-ui ul.categorychecklist li:first-child {
     margin-block-start: 0.75rem;
@@ -3471,9 +3471,16 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .mce-statusbar.mce-container.mce-panel.mce-stack-layout-item {
     border-color:  var(--ee-border-color);
     border-style: solid;
-    border-width: 1px 2px 2px !important;
+    border-block-start-width: 1px !important;
+    border-inline-width: 2px !important;
+}
+.espresso-admin.wp-core-ui #post-status-info {
+    border-block-end-width: 2px !important;
     border-end-start-radius: 0.25rem;
     border-end-end-radius: 0.25rem;
+}
+.espresso-admin.wp-core-ui .mce-statusbar.mce-container.mce-panel.mce-stack-layout-item {
+    border-block-end-width: 0 !important;
 }
  .espresso-admin.wp-core-ui #post-status-info tr:last-child td:first-child {
     border-end-start-radius: 0.25rem;

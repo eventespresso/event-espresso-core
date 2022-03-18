@@ -450,3 +450,7 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
 .activate_context_on_off_toggle_container #ee-on-off-toggle-primary_attendee {
     display: none;
 }
+
+ .espresso-admin.wp-core-ui .messages .mce-statusbar.mce-container.mce-panel.mce-stack-layout-item {
+    border-block-end-width: 2px !important;
+}
