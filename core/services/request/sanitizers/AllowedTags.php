@@ -17,53 +17,53 @@ class AllowedTags
      * @var array[]
      */
     private static $attributes = [
-        'data-*'            => 1,
-        'aria-*'            => 1,
-        'type'              => 1,
-        'value'             => 1,
-        'class'             => 1,
-        'id'                => 1,
-        'for'               => 1,
-        'style'             => 1,
-        'src'               => 1,
-        'alt'               => 1,
-        'title'             => 1,
-        'placeholder'       => 1,
-        'href'              => 1,
-        'rel'               => 1,
-        'target'            => 1,
-        'novalidate'        => 1,
-        'name'              => 1,
-        'tabindex'          => 1,
+        'accept-charset'    => 1,
         'action'            => 1,
-        'method'            => 1,
-        'width'             => 1,
-        'height'            => 1,
-        'selected'          => 1,
-        'checked'           => 1,
-        'readonly'          => 1,
-        'disabled'          => 1,
-        'required'          => 1,
-        'autocomplete'      => 1,
-        'min'               => 1,
-        'max'               => 1,
-        'step'              => 1,
-        'cols'              => 1,
-        'rows'              => 1,
-        'lang'              => 1,
-        'dir'               => 1,
-        'enctype'           => 1,
-        'multiple'          => 1,
-        'frameborder'       => 1,
+        'alt'               => 1,
         'allow'             => 1,
         'allowfullscreen'   => 1,
-        'label'             => 1,
         'align'             => 1,
-        'itemtype'          => 1,
-        'itemscope'         => 1,
-        'itemprop'          => 1,
+        'aria-*'            => 1,
+        'autocomplete'      => 1,
+        'checked'           => 1,
+        'class'             => 1,
+        'cols'              => 1,
         'content'           => 1,
-        'accept-charset'    => 1,
+        'data-*'            => 1,
+        'dir'               => 1,
+        'disabled'          => 1,
+        'enctype'           => 1,
+        'for'               => 1,
+        'frameborder'       => 1,
+        'height'            => 1,
+        'href'              => 1,
+        'id'                => 1,
+        'itemprop'          => 1,
+        'itemscope'         => 1,
+        'itemtype'          => 1,
+        'label'             => 1,
+        'lang'              => 1,
+        'max'               => 1,
+        'method'            => 1,
+        'min'               => 1,
+        'multiple'          => 1,
+        'name'              => 1,
+        'novalidate'        => 1,
+        'placeholder'       => 1,
+        'readonly'          => 1,
+        'rel'               => 1,
+        'required'          => 1,
+        'rows'              => 1,
+        'selected'          => 1,
+        'src'               => 1,
+        'style'             => 1,
+        'step'              => 1,
+        'tabindex'          => 1,
+        'target'            => 1,
+        'title'             => 1,
+        'type'              => 1,
+        'value'             => 1,
+        'width'             => 1,
     ];
 
 
@@ -91,11 +91,9 @@ class AllowedTags
         'ol',
         'p',
         'pre',
-        'script',
         'small',
         'span',
         'strong',
-        'style',
         'table',
         'td',
         'tr',
@@ -122,7 +120,13 @@ class AllowedTags
 
 
     /**
-     * merges additional tags and attributes into the WP global $allowedposttags
+     * @var array
+     */
+    private static $allowed_with_script_and_style_tags;
+
+
+    /**
+     * merges additional tags and attributes into the WP post tags
      */
     private static function initializeAllowedTags()
     {
@@ -136,7 +140,7 @@ class AllowedTags
 
 
     /**
-     * merges additional tags and attributes into the WP global $allowedposttags
+     * merges embed tags and attributes into the EE all tags
      */
     private static function initializeWithEmbedTags()
     {
@@ -149,7 +153,7 @@ class AllowedTags
 
 
     /**
-     * merges additional tags and attributes into the WP global $allowedposttags
+     * merges form tags and attributes into the EE all tags
      */
     private static function initializeWithFormTags()
     {
@@ -167,6 +171,20 @@ class AllowedTags
             'output' => AllowedTags::$attributes,
         ];
         AllowedTags::$allowed_with_form_tags = array_merge_recursive($all_tags, $form_tags);
+    }
+
+
+    /**
+     * merges form script and style tags and attributes into the EE all tags
+     */
+    private static function initializeWithScriptAndStyleTags()
+    {
+        $all_tags = AllowedTags::getAllowedTags();
+        $script_and_style_tags = [
+            'script' => AllowedTags::$attributes,
+            'style' => AllowedTags::$attributes,
+        ];
+        AllowedTags::$allowed_with_script_and_style_tags = array_merge_recursive($all_tags, $script_and_style_tags);
     }
 
 
@@ -203,5 +221,16 @@ class AllowedTags
             AllowedTags::initializeWithFormTags();
         }
         return AllowedTags::$allowed_with_form_tags;
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function getWithScriptAndStyleTags()
+    {
+        if (empty(AllowedTags::$allowed_with_script_and_style_tags)) {
+            AllowedTags::initializeWithScriptAndStyleTags();
+        }
+        return AllowedTags::$allowed_with_script_and_style_tags;
     }
 }
