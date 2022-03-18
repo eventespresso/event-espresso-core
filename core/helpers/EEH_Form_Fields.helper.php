@@ -1049,7 +1049,7 @@ class EEH_Form_Fields
             . '<textarea name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" '
             . 'rows="' . $dimensions['rows'] . '" cols="' . $dimensions['cols'] . '"  '
             . 'title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>'
-            . $answer
+            . esc_textarea($answer)
             . '</textarea>';
 
         $input_html = apply_filters('FHEE__EEH_Form_Fields__input_html', $input_html, $label_html, $id);

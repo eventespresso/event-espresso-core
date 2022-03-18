@@ -117,7 +117,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      *
      * @abstract
      * @param string      $post_id The ID of the cpt that was saved (so you can link relationally)
-     * @param EE_CPT_Base $post    The post object of the cpt that was saved.
+     * @param WP_Post     $post    The post object of the cpt that was saved.
      * @return void
      */
     abstract protected function _insert_update_cpt_item($post_id, $post);

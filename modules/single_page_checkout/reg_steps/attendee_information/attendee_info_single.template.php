@@ -32,9 +32,9 @@ if (count($registrations) > 0) {
     $ticketID = esc_attr(key($template_args['ticket_count']));
     ?>
 
-    <div id="spco-attendee-panel-dv-<?php echo $ticketID; ?>"
-        class="spco-attendee-panel-dv spco-attendee-ticket-<?php echo $ticketID; ?>">
-
+    <div id="spco-attendee-panel-dv-<?php echo esc_attr($ticketID); ?>"
+         class="spco-attendee-panel-dv spco-attendee-ticket-<?php echo sanitize_html_class($ticketID); ?>"
+    >
         <div class="spco-ticket-info-dv">
             <table class="spco-ticket-details">
                 <thead>

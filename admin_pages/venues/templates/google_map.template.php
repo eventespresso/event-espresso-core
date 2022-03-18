@@ -156,39 +156,39 @@
                 <td>
                     <label for="event_details_control_type-default" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_details_control_type == 'default'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_details_control_type-default"
                                type="radio"
                                name="event_details_control_type"
                                value="default"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Default', 'event_espresso') ?>
                     </label>
 
                     <label for="event_details_control_type-horizontal" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_details_control_type == 'horizontal'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_details_control_type-horizontal"
                                type="radio"
                                name="event_details_control_type"
                                value="horizontal"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Horizontal', 'event_espresso') ?>
                     </label>
 
                     <label for="event_details_control_type-dropdown" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_details_control_type == 'dropdown'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_details_control_type-dropdown"
                                type="radio"
                                name="event_details_control_type"
                                value="dropdown"
-                            <?php echo $checked; ?>/>
+                            <?php echo esc_attr($checked); ?>/>
                         <?php esc_html_e(' Dropdown', 'event_espresso') ?>
                     </label>
                 </td>
@@ -201,52 +201,52 @@
                 <td>
                     <label for="event_details_map_align-none" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_details_map_align == 'none'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_details_map_align-none"
                                type="radio"
                                name="event_details_map_align"
                                value="none"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' None', 'event_espresso') ?>
                     </label>
 
                     <label for="event_details_map_align-left" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_details_map_align == 'left'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_details_map_align-left"
                                type="radio"
                                name="event_details_map_align"
                                value="left"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Align Left', 'event_espresso') ?>
                     </label>
 
                     <label for="event_details_map_align-center" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_details_map_align == 'center'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_details_map_align-center"
                                type="radio"
                                name="event_details_map_align"
                                value="center"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Align Center', 'event_espresso') ?>
                     </label>
 
                     <label for="event_details_map_align-right" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_details_map_align == 'right'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_details_map_align-right"
                                type="radio"
                                name="event_details_map_align"
                                value="right"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Align Right', 'event_espresso') ?>
                     </label>
@@ -348,26 +348,26 @@
                 <td>
                     <label for="event_list_control_type-default" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_list_control_type == 'default'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_list_control_type-default"
                                type="radio"
                                name="event_list_control_type"
                                value="default"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Default', 'event_espresso') ?>
                     </label>
 
                     <label for="event_list_control_type-horizontal" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_list_control_type == 'horizontal'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_list_control_type-horizontal"
                                type="radio"
                                name="event_list_control_type"
                                value="horizontal"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Horizontal', 'event_espresso') ?>
                     </label>
@@ -375,13 +375,13 @@
                     <label for="event_list_control_type-dropdown" class="ee-admin-radio-lbl">
                         <?php $checked =
                             $map_settings->event_list_control_type == 'dropdown'
-                                ? 'checked="checked"'
+                                ? 'checked'
                                 : ''; ?>
                         <input id="event_list_control_type-dropdown"
                                type="radio"
                                name="event_list_control_type"
                                value="dropdown"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Dropdown', 'event_espresso') ?>
                     </label>
@@ -396,52 +396,52 @@
                 <td>
                     <label for="event_list_map_align-none" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_list_map_align == 'none'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_list_map_align-none"
                                type="radio"
                                name="event_list_map_align"
                                value="none"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' None', 'event_espresso') ?>
                     </label>
 
                     <label for="event_list_map_align-left" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_list_map_align == 'left'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_list_map_align-left"
                                type="radio"
                                name="event_list_map_align"
                                value="left"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Align Left', 'event_espresso') ?>
                     </label>
 
                     <label for="event_list_map_align-center" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_list_map_align == 'center'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_list_map_align-center"
                                type="radio"
                                name="event_list_map_align"
                                value="center"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Align Center', 'event_espresso') ?>
                     </label>
 
                     <label for="event_list_map_align-right" class="ee-admin-radio-lbl">
                         <?php $checked = $map_settings->event_list_map_align == 'right'
-                            ? 'checked="checked"'
+                            ? 'checked'
                             : ''; ?>
                         <input id="event_list_map_align-right"
                                type="radio"
                                name="event_list_map_align"
                                value="right"
-                            <?php echo $checked; ?>
+                            <?php echo esc_attr($checked); ?>
                         />
                         <?php esc_html_e(' Align Right', 'event_espresso') ?>
                     </label>

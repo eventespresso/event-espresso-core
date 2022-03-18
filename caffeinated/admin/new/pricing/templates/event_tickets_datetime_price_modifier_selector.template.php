@@ -23,7 +23,7 @@
 <?php if ($disabled) : ?>
     <input type="hidden"
            name="<?php echo esc_attr($main_name); ?>"
-           value="<?php echo esc_attr($selected_price_type_id); ?>">
+           value="<?php echo absint($selected_price_type_id); ?>">
 <?php endif; ?>
 
 <div class="ee-price-type-option-info hidden">

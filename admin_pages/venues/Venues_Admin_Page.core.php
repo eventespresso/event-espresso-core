@@ -806,7 +806,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
      * Handles updates for venue cpts
      *
      * @param int    $post_id ID of Venue CPT
-     * @param object $post    Post object (with "blessed" WP properties)
+     * @param WP_Post $post    Post object (with "blessed" WP properties)
      * @return void
      */
     protected function _insert_update_cpt_item($post_id, $post)

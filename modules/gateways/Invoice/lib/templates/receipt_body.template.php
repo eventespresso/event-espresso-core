@@ -277,7 +277,7 @@
                                     <?php
                                     echo esc_html__("Registration Details", "event_espresso"); ?>
                                     <span class="small-text link">[
-                                <a class="print_button noPrint" href="<?php echo $edit_reg_info_url; ?>">
+                                <a class="print_button noPrint" href="<?php echo esc_url_raw($edit_reg_info_url); ?>">
                                     <?php esc_html_e('edit', 'event_espresso'); ?>
                                 </a>
                                 ]
@@ -299,7 +299,7 @@
                                                     </th>
                                                     <td>
                                                         <?php echo $registration->reg_code(); // already escaped ?> -
-                                                        <span class="<?php echo $registration->status_ID() ?>">
+                                                        <span class="<?php echo sanitize_html_class($registration->status_ID()); ?>">
                                                     <?php echo $registration->pretty_status(); // already escaped ?>
                                                 </span>
                                                     </td>

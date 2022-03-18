@@ -20,7 +20,7 @@
 <div id="event-and-ticket-form-content">
     <h3 class="event-tickets-datetimes-title">
         <span data-target=".event-datetimes-container"
-              class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>">
+              class="clickable ee-collapsible <?php echo sanitize_html_class($ee_collapsible_status); ?>">
             <span class="dashicons dashicons-clock ee-icon-size-20"></span>
             <?php esc_html_e('Event Datetimes', 'event_espresso'); ?>
         </span>
@@ -36,13 +36,15 @@
         <input type="hidden"
                name="datetime_IDs"
                id="datetime-IDs"
-               value="<?php echo $existing_datetime_ids; ?>">
+               value="<?php echo esc_attr($existing_datetime_ids); ?>"
+        >
 
         <!-- this is used by js to calculate what the next datetime row will be and is incremented when a new datetime is "saved". -->
         <input type="hidden"
                name="datetime_total_rows"
                id="datetime-total-rows"
-               value="<?php echo $total_dtt_rows; ?>">
+               value="<?php echo esc_attr($total_dtt_rows); ?>"
+        >
         <table id="datetime-editing-dtts-table" class="datetime-edit-table">
             <thead>
             <tr valign="top">
@@ -145,13 +147,12 @@
     <div class="available-tickets-container">
         <h3 class="event-tickets-datetimes-title">
             <span data-target=".event-tickets-container"
-                class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>">
+                class="clickable ee-collapsible<?php echo sanitize_html_class($ee_collapsible_status); ?>">
                 <span class="ee-icon ee-icon-tickets ee-icon-size-20"></span>
                 <?php esc_html_e('Available Tickets', 'event_espresso'); ?>
             </span>
         </h3>
-        <div class="event-tickets-container ee-create-ticket-button"<?php
-        echo $show_tickets_container; ?>>
+        <div class="event-tickets-container ee-create-ticket-button"<?php echo $show_tickets_container; ?>>
             <button class="ee-create-ticket-button button-secondary ee-create-button" data-context="ticket">
                 <?php esc_html_e('Create Ticket', 'event_espresso'); ?>
             </button>
@@ -197,11 +198,8 @@
                 </tbody>
             </table> <!-- end .ticket-table -->
 
-            <input type="hidden" name="ticket_IDs" id="ticket-IDs" value="<?php
-            echo $existing_ticket_ids; ?>">
-            <input type="hidden" name="ticket_total_rows" id="ticket-total-rows"
-                   value="<?php
-                    echo $total_ticket_rows; ?>">
+            <input type="hidden" name="ticket_IDs" id="ticket-IDs" value="<?php echo esc_attr($existing_ticket_ids); ?>">
+            <input type="hidden" name="ticket_total_rows" id="ticket-total-rows" value="<?php echo esc_attr($total_ticket_rows); ?>">
         </div> <!-- end .event-tickets-container -->
         <div style="clear:both"></div>
     </div>
