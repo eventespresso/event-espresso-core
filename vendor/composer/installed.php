@@ -5,18 +5,18 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '507b85ecd30f5bc78b54f36fd8911d7229b19b98',
+        'reference' => 'a47913fd64ff138166eddeeb93efe75272fcae00',
         'name' => 'eventespresso/event-espresso-core',
         'dev' => true,
     ),
     'versions' => array(
         'composer/installers' => array(
-            'pretty_version' => 'v2.0.1',
-            'version' => '2.0.1.0',
+            'pretty_version' => 'v2.1.0',
+            'version' => '2.1.0.0',
             'type' => 'composer-plugin',
             'install_path' => __DIR__ . '/./installers',
             'aliases' => array(),
-            'reference' => 'a241e78aaeb09781f5f5b92ac01ffd13ab43e5e8',
+            'reference' => '75e5ef05436c90ac565a48176cc7465991908352',
             'dev_requirement' => false,
         ),
         'doctrine/instantiator' => array(
@@ -45,7 +45,7 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '507b85ecd30f5bc78b54f36fd8911d7229b19b98',
+            'reference' => 'a47913fd64ff138166eddeeb93efe75272fcae00',
             'dev_requirement' => false,
         ),
         'myclabs/deep-copy' => array(
@@ -207,7 +207,7 @@
             'type' => 'metapackage',
             'install_path' => NULL,
             'aliases' => array(),
-            'reference' => '86b842d48cdaaab1bf3dc24fdc830bf7b58cfcab',
+            'reference' => '4701a5552ca324de5333d742d51d9cf2786f3186',
             'dev_requirement' => true,
         ),
         'sebastian/cli-parser' => array(
