@@ -223,6 +223,7 @@ class AllowedTags
         return AllowedTags::$allowed_with_form_tags;
     }
 
+
     /**
      * @return array[]
      */
