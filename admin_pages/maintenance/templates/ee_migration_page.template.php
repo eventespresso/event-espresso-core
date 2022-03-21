@@ -1,4 +1,5 @@
 <?php
+
 /**
  * For displaying the migration page. Does not allow the user to migrate until all known EE
  * addons are updated from PUE. Using AJAX to run the migration and update the progress bar

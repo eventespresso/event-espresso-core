@@ -1,4 +1,5 @@
 <?php
+
 /**
  * a template with options for resetting and/or deleting EE data
  *

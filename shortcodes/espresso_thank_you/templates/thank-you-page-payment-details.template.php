@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Transaction $transaction
  * @var string[] $payments

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Question_Form_Input $countries
  * @var string                 $country_details_settings

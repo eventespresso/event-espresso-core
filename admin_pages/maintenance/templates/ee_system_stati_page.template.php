@@ -10,7 +10,6 @@
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
-
 /**
  * Recurses through an array to output strings for display.  Considers elements that may be objects as well.
  *
