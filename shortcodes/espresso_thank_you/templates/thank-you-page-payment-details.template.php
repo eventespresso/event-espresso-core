@@ -4,6 +4,9 @@
  * @var string[] $payments
  * @var string $gateway_content
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <h2 class="section-heading display-box-heading">
@@ -34,7 +37,7 @@
             <tbody>
             <?php
             foreach ($payments as $payment) {
-                echo $payment; // already escaped
+                echo wp_kses($payment, AllowedTags::getAllowedTags());
             }
             ?>
             </tbody>
@@ -63,9 +66,8 @@
             do_action('AHEE__thank_you_page_payment_details_template__no_payment_required');
         }
     }
-    echo $gateway_content; // already escaped
+    echo wp_kses($gateway_content, AllowedTags::getAllowedTags());
     do_action('AHEE__thank_you_page_payment_details_template__after_gateway_content', $gateway_content);
-
     ?>
 
     <br/>

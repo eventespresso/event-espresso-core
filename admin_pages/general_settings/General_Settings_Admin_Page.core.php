@@ -4,6 +4,7 @@ use EventEspresso\admin_pages\general_settings\AdminOptionsSettings;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * General_Settings_Admin_Page
@@ -1374,7 +1375,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             }
         }
         if ($echo) {
-            echo $output;
+            echo wp_kses($output, AllowedTags::getAllowedTags());
             return '';
         }
         return $output;

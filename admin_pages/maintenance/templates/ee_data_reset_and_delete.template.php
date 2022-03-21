@@ -7,6 +7,9 @@
  * @var string $reset_db_url
  * @var string $reset_reservations_button
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <h2>
     <?php esc_html_e('Reset/Delete Data for Event Espresso', 'event_espresso'); ?>
@@ -18,7 +21,7 @@
         <?php esc_html_e('Reset Ticket and Datetime Reserved Counts', 'event_espresso'); ?>
     </h4>
     <p><?php esc_html_e('Use this to reset the counts for ticket and datetime reservations.', 'event_espresso'); ?></p>
-    <div class="float-right"><?php echo $reset_reservations_button; // already escaped ?></div>
+    <div class="float-right"><?php echo wp_kses($reset_reservations_button, AllowedTags::getAllowedTags()); ?></div>
     <div class="clear"></div>
 </div>
 <br />
@@ -35,7 +38,7 @@
             'event_espresso'
         ); ?>
     </p>
-    <div class="float-right"><?php echo $reset_capabilities_button; // already escaped ?></div>
+    <div class="float-right"><?php echo wp_kses($reset_capabilities_button, AllowedTags::getAllowedTags()); ?></div>
     <div class="clear"></div>
 </div>
 <br />

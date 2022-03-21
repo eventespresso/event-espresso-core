@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * invoice_payment_details_content
  *
@@ -11,8 +13,7 @@
  * @var string $page_extra_info
  * @var string $page_title
  */
-global $allowedtags;
-
+$allowedtags = AllowedTags::getAllowedTags();
 ?>
 <div class="event-display-boxes">
     <?php if (! empty($page_title)) { ?>

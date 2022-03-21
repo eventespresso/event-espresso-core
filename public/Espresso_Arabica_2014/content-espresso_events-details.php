@@ -2,7 +2,9 @@
 global $post;
 ?>
 <div class="event-content">
-<?php if ( apply_filters( 'FHEE__content_espresso_events_details_template__display_entry_meta', TRUE )): ?>
+<?php use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
+if ( apply_filters( 'FHEE__content_espresso_events_details_template__display_entry_meta', TRUE )): ?>
 
 	<div class="entry-meta">
 
@@ -37,7 +39,7 @@ global $post;
 		<span class="small-text">
             <strong><?php esc_html_e( 'Event Phone:', 'event_espresso' ); ?> </strong>
         </span>
-        <?php echo $event_phone; // already escaped ?>
+        <?php echo wp_kses($event_phone, AllowedTags::getAllowedTags()); ?>
 	</p>
 <?php endif;  ?>
 

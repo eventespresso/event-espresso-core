@@ -8,6 +8,8 @@
  * @var array  $system_stati
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 
 /**
  * Recurses through an array to output strings for display.  Considers elements that may be objects as well.
@@ -114,10 +116,10 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
             ee_recurse_into_array_for_display(reset($data), $depth, false);
         }
     } else {
-        echo $td ? '<td class="ee-system-stati-value">' : '';
+        echo ($td ? '<td class="ee-system-stati-value">' : '');
         // simple value
-        echo $data;
-        echo $td ? '</td>' : '';
+        echo wp_kses($data, AllowedTags::getAllowedTags());
+        echo ($td ? '</td>' : '');
     }
 }
 

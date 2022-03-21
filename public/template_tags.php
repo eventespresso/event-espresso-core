@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 defined('EVENT_ESPRESSO_VERSION') || exit();
 
 
@@ -450,7 +453,7 @@ if (! function_exists('espresso_event_tickets_available')) {
                 $html .= '</ul>';
             }
             if ($echo && $format) {
-                echo $html; // already escaped
+                echo wp_kses($html, AllowedTags::getAllowedTags());
                 return '';
             }
             return $html;
@@ -532,7 +535,7 @@ if (! function_exists('espresso_list_of_event_dates')) {
         $add_breaks = true,
         $limit = null
     ) {
-        global $allowedtags;
+        $allowedtags = AllowedTags::getAllowedTags();
         $date_format = ! empty($date_format) ? $date_format : get_option('date_format');
         $time_format = ! empty($time_format) ? $time_format : get_option('time_format');
         $date_format = apply_filters('FHEE__espresso_list_of_event_dates__date_format', $date_format);
@@ -602,7 +605,7 @@ if (! function_exists('espresso_list_of_event_dates')) {
             <br/>';
         }
         if ($echo) {
-            echo $html; // already escaped
+            echo wp_kses($html, AllowedTags::getAllowedTags());
             return '';
         }
         return $html;
@@ -688,7 +691,7 @@ if (! function_exists('espresso_event_date_range')) {
                 EEH_Event_View::the_earliest_event_date($single_date_format, $single_time_format, $EVT_ID);
         }
         if ($echo) {
-            echo $html; // already escaped
+            echo wp_kses($html, AllowedTags::getAllowedTags());
             return '';
         }
         return $html;
@@ -740,7 +743,7 @@ if (! function_exists('espresso_next_upcoming_datetime')) {
             return '';
         }
         if ($echo) {
-            echo $datetime->get_i18n_datetime('DTT_EVT_start', $datetime_format); // already escaped
+            echo esc_html($datetime->get_i18n_datetime('DTT_EVT_start', $datetime_format));
             return '';
         }
         return $datetime->get_i18n_datetime('DTT_EVT_start', $datetime_format);

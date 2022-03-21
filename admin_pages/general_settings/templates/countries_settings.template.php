@@ -5,6 +5,9 @@
  * @var string                 $country_states_settings
  * @var string                 $CNT_name_for_site
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <div class="padding">
 
@@ -44,7 +47,7 @@
             echo EEH_Template::get_help_tab_link('country_details_info'); // already escaped
             ?>
         </h2>
-        <div id="country-details-dv"><?php echo $country_details_settings; // already escaped ?></div>
+        <div id="country-details-dv"><?php echo wp_kses($country_details_settings, AllowedTags::getAllowedTags()); ?></div>
     </div>
 
     <div id="country-states-settings-dv">
@@ -54,7 +57,7 @@
             echo EEH_Template::get_help_tab_link('country_states_info'); // already escaped
             ?>
         </h2>
-        <div id="country-states-dv"><?php echo $country_states_settings; // already escaped ?></div>
+        <div id="country-states-dv"><?php echo wp_kses($country_states_settings, AllowedTags::getAllowedTags()); ?></div>
     </div>
 
     <div class="clear"></div>
