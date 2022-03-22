@@ -5,6 +5,9 @@
  * @var string     $venue_selector
  * @var string     $new_venue_link
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <table class="form-table">
@@ -14,8 +17,8 @@
                 <?php esc_html_e('Select from Venue Manager List', 'event_espresso'); ?>
             </label>
             <?php
-            echo $venue_selector; // already escaped
-            echo $new_venue_link; // already escaped
+            echo wp_kses($venue_selector, AllowedTags::getWithFormTags());
+            echo wp_kses($new_venue_link, AllowedTags::getWithFormTags());
             foreach ($venues as $venue) :
                 if (! $venue instanceof EE_Venue) {
                     continue;
@@ -32,7 +35,7 @@
                     <p class='address-view'>
                         <span><?php esc_html_e('Address:', 'event_espresso'); ?>&nbsp;</span>
                         <?php echo esc_html($venue->address()); ?>
-                        <?php echo $venue->address2() ? '<br />' . esc_html($venue->address2()) : ''; ?>
+                        <?php echo ($venue->address2() ? '<br />' . esc_html($venue->address2()) : ''); ?>
                         <br />
                         <span><?php esc_html_e('City:', 'event_espresso'); ?>&nbsp;</span>
                         <?php echo esc_html($venue->city()); ?>

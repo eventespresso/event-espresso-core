@@ -3,6 +3,9 @@
  * @var string $vnu_enable_for_gmap
  * @var string $vnu_google_map_link
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <table class="form-table">
@@ -19,7 +22,7 @@
                         <label for="enable_for_gmap">
                             <?php esc_html_e('Display Google Map for this venue? ', 'event_espresso') ?>
                         </label>
-                        <?php echo $vnu_enable_for_gmap;// already escaped ?>
+                        <?php echo wp_kses($vnu_enable_for_gmap, AllowedTags::getWithFormTags()); ?>
                     </p>
                     <!-- <p>
                     <?php // esc_html_e('Google Map Link (for email):', 'event_espresso'); ?>

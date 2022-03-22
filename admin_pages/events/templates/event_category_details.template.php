@@ -7,6 +7,9 @@
  * @var string   $category_select
  * @var string   $category_desc_editor
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <h3><?php echo esc_html($category->category_name); ?></h3>
 <table class="form-table">
@@ -30,7 +33,7 @@
         <th>
             <label for="cat_id">
                 <?php esc_html_e('Unique ID', 'event_espresso'); ?>
-                <?php echo $unique_id_info_help_link; // already escaped ?>
+                <?php echo wp_kses($unique_id_info_help_link, AllowedTags::getAllowedTags()); ?>
             </label>
         </th>
         <td>
@@ -58,7 +61,7 @@
             </label>
         </th>
         <td>
-            <?php echo $category_select; // already escaped ?>
+            <?php echo wp_kses($category_select, AllowedTags::getWithFormTags()); ?>
             <br/>
             <p class="description">
                 <?php esc_html_e(
@@ -73,7 +76,7 @@
             <h4 class="category_description_label">
                 <?php esc_html_e('Category Description', 'event_espresso'); ?>
             </h4>
-            <?php echo $category_desc_editor; // already escaped ?>
+            <?php echo wp_kses($category_desc_editor, AllowedTags::getWithFormTags()); ?>
             <table id="cat-descr-add-form" cellspacing="0">
                 <tbody>
                 <tr>

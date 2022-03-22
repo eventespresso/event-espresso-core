@@ -6,6 +6,8 @@
  * @var string[][] $template_args
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 do_action('AHEE__venue_address_metabox_content__before', $template_args);
 ?>
     <p>
@@ -42,7 +44,7 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
         />
     </p>
     <p>
-        <?php echo $states_dropdown; // already escaped ?>
+        <?php echo wp_kses($states_dropdown, AllowedTags::getWithFormTags()); ?>
     </p>
     <p>
         <label for="zip-postal">
@@ -56,7 +58,7 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
         />
     </p>
     <p>
-        <?php echo $countries_dropdown; // already escaped ?>
+        <?php echo wp_kses($countries_dropdown, AllowedTags::getWithFormTags()); ?>
     </p>
 <?php
 do_action('AHEE__venue_address_metabox_content__after', $template_args);
