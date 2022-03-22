@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Venue[] $venues
  * @var int        $evt_venue_id

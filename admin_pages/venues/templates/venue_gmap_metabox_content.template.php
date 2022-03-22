@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $vnu_enable_for_gmap
  * @var string $vnu_google_map_link

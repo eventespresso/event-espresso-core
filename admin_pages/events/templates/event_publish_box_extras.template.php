@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $approved_regs
  * @var string $event_editor_overview_add

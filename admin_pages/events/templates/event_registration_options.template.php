@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Event $event
  * @var int      $additional_limit

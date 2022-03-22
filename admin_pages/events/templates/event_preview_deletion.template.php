@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Event[]             $events
  * @var EE_Form_Section_Proper $form

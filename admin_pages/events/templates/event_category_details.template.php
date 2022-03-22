@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var stdClass $category
  * @var string   $unique_id_info_help_link

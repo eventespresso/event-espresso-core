@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Venue   $_venue
  * @var string     $countries_dropdown
