@@ -14,7 +14,6 @@ use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
  */
 interface RequestTypeContextFactoryInterface
 {
-
     /**
      * @param string $slug
      * @return RequestTypeContext

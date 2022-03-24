@@ -18,7 +18,6 @@ use EventEspresso\core\domain\services\admin\PluginUpsells;
  */
 class WordPressPluginsPage extends Route
 {
-
     /**
      * returns true if the current request matches this route
      *

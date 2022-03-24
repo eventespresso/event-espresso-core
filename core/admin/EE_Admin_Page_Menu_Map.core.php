@@ -9,8 +9,6 @@
  */
 abstract class EE_Admin_Page_Menu_Map
 {
-
-
     /**
      * The title for the menu page. (the page the menu links to)
      *

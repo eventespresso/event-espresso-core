@@ -15,7 +15,6 @@ use EventEspresso\core\exceptions\InvalidFilePathException;
  */
 class FilePath
 {
-
     /**
      * @var string file_path
      */

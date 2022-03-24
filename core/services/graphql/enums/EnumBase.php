@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\graphql\enums;
  */
 abstract class EnumBase implements EnumInterface
 {
-
     /**
      * @var string $namespace The graphql namespace/prefix.
      */

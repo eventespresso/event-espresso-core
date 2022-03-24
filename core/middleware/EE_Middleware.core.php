@@ -19,7 +19,6 @@
  */
 abstract class EE_Middleware implements EEI_Request_Decorator
 {
-
     /**
      * @deprecated
      * @param    EE_Request  $request

@@ -11,8 +11,6 @@
  */
 class EES_Espresso_Event_Attendees extends EES_Shortcode
 {
-
-
     /**
      * run - initial module setup
      *

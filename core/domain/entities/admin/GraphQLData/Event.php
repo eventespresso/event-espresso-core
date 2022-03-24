@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\entities\admin\GraphQLData;
 
 class Event extends GraphQLData
 {
-
     /**
      * @inheritDoc
      */

@@ -31,7 +31,6 @@ use ReflectionException;
  */
 class RegForm extends EE_Form_Section_Proper
 {
-
     /**
      * @var bool
      */

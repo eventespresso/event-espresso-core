@@ -33,7 +33,6 @@ use EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareE
  */
 class CommandBus implements CommandBusInterface
 {
-
     /**
      * @type CommandHandlerManagerInterface $command_handler_manager
      */

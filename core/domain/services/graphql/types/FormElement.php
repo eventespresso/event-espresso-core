@@ -26,7 +26,6 @@ use ReflectionException;
  */
 class FormElement extends TypeBase
 {
-
     /**
      * FormElement constructor.
      *

@@ -14,7 +14,6 @@ use EventEspresso\core\interfaces\InterminableInterface;
  */
 interface DomainInterface extends InterminableInterface
 {
-
     /**
      * @param string $asset_namespace
      * @return void

@@ -23,7 +23,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class RouteMatchSpecification implements RouteMatchSpecificationInterface
 {
-
     /**
      * @var RequestInterface $request
      */

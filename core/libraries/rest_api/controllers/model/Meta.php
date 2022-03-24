@@ -24,8 +24,6 @@ use WP_REST_Response;
  */
 class Meta extends Base
 {
-
-
     /**
      * @param WP_REST_Request $request
      * @param string           $version

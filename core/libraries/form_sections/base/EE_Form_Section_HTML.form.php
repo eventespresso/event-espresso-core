@@ -13,7 +13,6 @@
  */
 class EE_Form_Section_HTML extends EE_Form_Section_Base
 {
-
     protected $_html = '';
 
 

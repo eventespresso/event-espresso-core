@@ -14,7 +14,6 @@ namespace EventEspresso\core\services\commands;
  */
 abstract class CompositeCommandHandler extends CommandHandler
 {
-
     /**
      * @type CommandBusInterface $command_bus
      */

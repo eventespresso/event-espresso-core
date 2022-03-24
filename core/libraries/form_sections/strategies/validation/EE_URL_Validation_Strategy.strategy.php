@@ -15,7 +15,6 @@ use EventEspresso\core\services\validators\URLValidator;
  */
 class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
 {
-
     /**
      * @var @boolean whether we should check if the file exists or not
      */

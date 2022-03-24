@@ -7,9 +7,6 @@
  */
 class EE_Simple_HTML_Field extends EE_Text_Field_Base
 {
-
-
-
     /**
      * removes all tags which a WP Post wouldn't allow in its content normally
      *

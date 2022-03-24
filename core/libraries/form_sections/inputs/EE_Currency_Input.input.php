@@ -11,7 +11,6 @@
  */
 class EE_Currency_Input extends EE_Select_Input
 {
-
     /**
      *
      * @param array $only_specific_currency_codes numerically-indexed array of allowed currency codes. By default, all are allowed

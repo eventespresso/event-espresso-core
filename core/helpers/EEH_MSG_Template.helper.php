@@ -13,8 +13,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEH_MSG_Template
 {
-
-
     /**
      * Holds a collection of EE_Message_Template_Pack objects.
      * @type EE_Messages_Template_Pack_Collection

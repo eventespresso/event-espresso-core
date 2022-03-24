@@ -25,7 +25,6 @@ if (defined('WP_DEBUG') && WP_DEBUG === true && defined('EE_ERROR_EMAILS') && EE
  */
 class EE_Error extends Exception
 {
-
     const OPTIONS_KEY_NOTICES = 'ee_notices';
 
 

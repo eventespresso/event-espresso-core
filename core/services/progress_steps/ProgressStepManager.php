@@ -26,7 +26,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class ProgressStepManager
 {
-
     /**
      * @var ProgressStepInterface[]
      */

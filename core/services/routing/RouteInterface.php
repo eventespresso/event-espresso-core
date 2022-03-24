@@ -18,7 +18,6 @@ use EventEspresso\core\services\json\JsonDataNode;
  */
 interface RouteInterface
 {
-
     /**
      * @return JsonDataNode
      */

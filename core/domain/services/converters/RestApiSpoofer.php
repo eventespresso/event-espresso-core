@@ -49,7 +49,6 @@ use WP_REST_Server;
  */
 class RestApiSpoofer
 {
-
     /**
      * @var WP_REST_Server $wp_rest_server
      */

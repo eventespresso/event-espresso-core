@@ -16,7 +16,6 @@
  */
 abstract class EE_Base_Class_Repository extends EE_Object_Repository implements EEI_Deletable
 {
-
     /**
      * EE_Base_Class_Repository constructor.
      */

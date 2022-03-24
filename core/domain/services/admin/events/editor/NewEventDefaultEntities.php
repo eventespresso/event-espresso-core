@@ -29,7 +29,6 @@ use ReflectionException;
  */
 class NewEventDefaultEntities extends EventEditorData
 {
-
     /**
      * @var DefaultDatetimes
      */

@@ -14,7 +14,6 @@ use Closure;
  */
 class BasicCacheManager implements CacheManagerInterface
 {
-
     /**
      * @type string
      */

@@ -12,7 +12,6 @@
  */
 class EE_Checkbox_Dropdown_Selector_Input extends EE_Form_Input_With_Options_Base
 {
-
     /**
      * @var string text to display on the select button itself
      */

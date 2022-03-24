@@ -11,7 +11,6 @@
  */
 class EE_Model_Form_Section extends EE_Form_Section_Proper
 {
-
     /**
      * @var EEM_Base
      */

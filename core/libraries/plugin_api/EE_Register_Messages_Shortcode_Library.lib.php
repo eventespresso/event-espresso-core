@@ -10,8 +10,6 @@
  */
 class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
 {
-
-
     /**
      * holds values for registered messages shortcode libraries
      *

@@ -14,7 +14,6 @@
  */
 class espresso_events_Venues_Hooks extends EE_Admin_Hooks
 {
-
     /**
      * @var EE_Event
      */

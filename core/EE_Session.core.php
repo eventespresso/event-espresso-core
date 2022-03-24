@@ -23,7 +23,6 @@ use EventEspresso\core\services\session\SessionStartHandler;
  */
 class EE_Session implements SessionIdentifierInterface
 {
-
     const session_id_prefix = 'ee_ssn_';
 
     const hash_check_prefix = 'ee_shc_';

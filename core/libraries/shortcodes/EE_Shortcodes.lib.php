@@ -16,7 +16,6 @@
  */
 abstract class EE_Shortcodes extends EE_Base
 {
-
     /**
      * holds label for library
      * This is used for referencing the library label

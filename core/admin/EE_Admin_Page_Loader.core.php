@@ -16,7 +16,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class EE_Admin_Page_Loader
 {
-
     /**
      * @var LoaderInterface $loader
      */

@@ -12,8 +12,6 @@ namespace EventEspresso\core\services\container\exceptions;
  */
 class ServiceExistsException extends \OutOfRangeException
 {
-
-
     /**
      * ServiceExistsException constructor
      *

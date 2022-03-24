@@ -14,7 +14,6 @@
  */
 class Global_EE_Caf_Hooks
 {
-
     public function __construct()
     {
         $this->_do_hooks();

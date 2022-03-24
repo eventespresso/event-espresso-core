@@ -43,7 +43,6 @@ use ReflectionException;
  */
 class OrganizationSettings extends FormHandler
 {
-
     /**
      * @var EE_Organization_Config
      */

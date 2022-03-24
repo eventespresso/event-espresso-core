@@ -11,7 +11,6 @@
  */
 class EE_Submit_Input extends EE_Form_Input_Base
 {
-
     /**
      * @param array $options
      */

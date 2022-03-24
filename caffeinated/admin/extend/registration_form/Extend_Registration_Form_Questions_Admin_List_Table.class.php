@@ -13,7 +13,6 @@
  */
 class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_Form_Questions_Admin_List_Table
 {
-
     /**
      * @param EE_Question $question
      * @param bool        $prep_content

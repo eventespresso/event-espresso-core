@@ -17,8 +17,6 @@
  */
 class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
 {
-
-
     protected function _init_props()
     {
         $this->label = esc_html__('Primary_Registration Details Shortcodes', 'event_espresso');

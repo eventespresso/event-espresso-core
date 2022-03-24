@@ -17,7 +17,6 @@ use RuntimeException;
  */
 class OpenSSLv1 extends OpenSSL
 {
-
     /**
      * name used for a default encryption key in case no others are set
      */

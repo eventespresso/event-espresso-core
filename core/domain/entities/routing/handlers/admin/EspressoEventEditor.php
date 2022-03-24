@@ -17,7 +17,6 @@ use EventEspresso\core\services\graphql\GraphQLManager;
  */
 class EspressoEventEditor extends EspressoEventsAdmin
 {
-
     /**
      * returns true if the current request matches this route
      *

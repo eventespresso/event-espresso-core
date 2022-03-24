@@ -14,7 +14,6 @@
 
 class EE_Payment_Refund_message_type extends EE_Payment_Base_message_type
 {
-
     public function __construct()
     {
 

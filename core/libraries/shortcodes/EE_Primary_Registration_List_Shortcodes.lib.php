@@ -18,7 +18,6 @@
  */
 class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes
 {
-
     public function __construct()
     {
         parent::__construct();

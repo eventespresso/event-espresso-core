@@ -11,8 +11,6 @@ namespace EventEspresso\core\exceptions;
  */
 class EntityConstructionException extends \DomainException
 {
-
-
     /**
      * EntityConstructionException constructor
      *

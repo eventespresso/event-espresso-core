@@ -15,7 +15,6 @@ const EE_QUERY_PLACEHOLDER_USER_FIELD_NAME = EE_Default_Where_Conditions::user_f
  */
 class EE_Default_Where_Conditions
 {
-
     /**
      * This const can be used in EE_Default_Where_Conditions values, and at the
      * time of querying it will be replaced with the current user's ID (because

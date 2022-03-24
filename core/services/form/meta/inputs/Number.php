@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\form\meta\inputs;
 
 class Number
 {
-
     /**
      * indicates that the HTML input type is 'number' whose value is a decimal (float)
      */

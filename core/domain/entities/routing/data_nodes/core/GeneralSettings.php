@@ -15,7 +15,6 @@ use EventEspresso\core\services\json\JsonDataNodeValidator;
  */
 class GeneralSettings extends JsonDataNode
 {
-
     const NODE_NAME = 'generalSettings';
 
     /**

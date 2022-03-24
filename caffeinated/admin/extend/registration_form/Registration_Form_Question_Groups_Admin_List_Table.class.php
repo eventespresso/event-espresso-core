@@ -15,7 +15,6 @@ use EventEspresso\core\domain\services\capabilities\user_caps\RegFormListTableUs
  */
 class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_Table
 {
-
     /**
      * @var RegFormListTableUserCapabilities
      */

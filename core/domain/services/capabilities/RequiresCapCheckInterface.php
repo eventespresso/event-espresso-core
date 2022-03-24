@@ -11,7 +11,6 @@ namespace EventEspresso\core\domain\services\capabilities;
  */
 interface RequiresCapCheckInterface
 {
-
     /**
      * @return CapCheckInterface
      */

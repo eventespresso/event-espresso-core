@@ -14,7 +14,6 @@
  */
 class EE_SPCO_JSON_Response
 {
-
     /**
      * @var string
      */

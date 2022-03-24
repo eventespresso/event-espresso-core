@@ -10,7 +10,6 @@
  */
 class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
 {
-
     /**
      * Its important this media only get enqueued AFTER init, but before the footer... where the
      * rest of our forms JS gets enqueued. Otherwise the JS gets enqueued fine, and loaded on the page fine,

@@ -10,7 +10,6 @@
  */
 class EE_Enum_Text_Field extends EE_Text_Field_Base
 {
-
     /**
      * @var array $_allowed_enum_values
      */

@@ -18,7 +18,6 @@ use JsonSerializable;
  */
 interface JsonDataNodeInterface extends JsonSerializable
 {
-
     /**
      * @param JsonDataNode $data_node
      * @throws DomainException

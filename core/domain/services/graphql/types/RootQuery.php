@@ -31,7 +31,6 @@ use GraphQLRelay\Relay;
  */
 class RootQuery extends TypeBase
 {
-
     /**
      * RootQuery constructor.
      */

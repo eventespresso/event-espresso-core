@@ -15,7 +15,6 @@ use EventEspresso\modules\events_archive\EventsArchiveIframe;
  */
 class EED_Events_Archive extends EED_Module
 {
-
     const EVENT_DETAILS_PRIORITY = 100;
 
     const EVENT_DATETIMES_PRIORITY = 110;

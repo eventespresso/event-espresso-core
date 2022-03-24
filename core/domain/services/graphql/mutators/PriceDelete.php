@@ -16,7 +16,6 @@ use WPGraphQL\AppContext;
 
 class PriceDelete extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

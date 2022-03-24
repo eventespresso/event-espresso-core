@@ -10,8 +10,6 @@
  */
 abstract class EE_Validation_Strategy_Base extends EE_Form_Input_Strategy_Base
 {
-
-
     protected $_validation_error_message = '';
 
 

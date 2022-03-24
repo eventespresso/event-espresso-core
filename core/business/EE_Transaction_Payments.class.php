@@ -14,7 +14,6 @@
  */
 class EE_Transaction_Payments
 {
-
     /**
      * @var EE_Transaction_Payments $_instance
      * @access    private

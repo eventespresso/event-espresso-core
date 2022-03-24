@@ -15,7 +15,6 @@ use Exception;
  */
 class InvalidAliasException extends DomainException
 {
-
     /**
      * InvalidClassException constructor.
      *

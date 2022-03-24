@@ -18,7 +18,6 @@ use EventEspresso\core\services\request\CurrentPage;
  */
 class Registrations_Admin_Page extends EE_Admin_Page_CPT
 {
-
     /**
      * @var EE_Registration
      */

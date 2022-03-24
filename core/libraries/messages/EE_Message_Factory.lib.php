@@ -13,8 +13,6 @@
  */
 class EE_Message_Factory
 {
-
-
     /**
      * @type EE_Message_Factory $_instance
      */

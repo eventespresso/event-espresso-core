@@ -8,7 +8,6 @@
  */
 class EE_Serialized_Text_Field extends EE_Text_Field_Base
 {
-
     /**
      * @param string $table_column
      * @param string $nicename

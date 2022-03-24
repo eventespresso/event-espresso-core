@@ -17,7 +17,6 @@ use FilesystemIterator;
  */
 class FqcnLocator extends Locator
 {
-
     /**
      * @var array $FQCNs
      */

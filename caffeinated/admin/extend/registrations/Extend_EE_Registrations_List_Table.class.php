@@ -12,7 +12,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
 {
-
     /**
      * @param EE_Registration $registration
      * @param bool            $prep_content

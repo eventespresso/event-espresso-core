@@ -22,7 +22,6 @@ use ReflectionException;
  */
 class TicketMutation
 {
-
     /**
      * Maps the GraphQL input to a format that the model functions can use
      *

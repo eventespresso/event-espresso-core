@@ -13,7 +13,6 @@
  */
 class EE_Admin_Page_Menu_Group extends EE_Admin_Page_Menu_Map
 {
-
     /**
      * @throws EE_Error
      */

@@ -21,7 +21,6 @@ use RuntimeException;
  */
 abstract class EntityMutator
 {
-
     /**
      * @param EEM_Base $model
      * @param integer  $ID

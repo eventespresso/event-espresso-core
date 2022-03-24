@@ -12,8 +12,6 @@
  */
 class EE_Bootstrap
 {
-
-
     /**
      * load_espresso_addons
      * runs during the WP 'plugins_loaded' action at priority 1

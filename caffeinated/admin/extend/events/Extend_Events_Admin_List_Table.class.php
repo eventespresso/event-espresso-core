@@ -11,7 +11,6 @@
  */
 class Extend_Events_Admin_List_Table extends Events_Admin_List_Table
 {
-
     protected function _column_name_action_setup(EE_Event $event): array
     {
         $export_query_args = array(

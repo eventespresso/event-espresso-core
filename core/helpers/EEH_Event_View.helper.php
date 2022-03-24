@@ -9,7 +9,6 @@
  */
 class EEH_Event_View extends EEH_Base
 {
-
     /**
      * @var EE_Event $_event
      */

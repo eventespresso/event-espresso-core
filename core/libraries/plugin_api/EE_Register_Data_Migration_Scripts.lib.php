@@ -14,7 +14,6 @@
  */
 class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
 {
-
     /**
      * Holds values for registered DMSs
      *

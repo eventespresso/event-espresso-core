@@ -19,7 +19,6 @@ use ReflectionException;
  */
 class GraphQLField implements GraphQLFieldInterface
 {
-
     /**
      * @var string $name
      */

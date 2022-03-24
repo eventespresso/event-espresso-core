@@ -15,7 +15,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Datetime_Field extends EE_Model_Field_Base
 {
-
     /**
      * The pattern we're looking for is if only the characters 0-9 are found and there are only
      * 10 or more numbers (because 9 numbers even with all 9's would be sometime in 2001 )

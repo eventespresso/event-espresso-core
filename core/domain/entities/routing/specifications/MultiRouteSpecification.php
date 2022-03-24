@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class MultiRouteSpecification extends RouteMatchSpecification
 {
-
     /**
      * @var RouteMatchSpecificationInterface[] $specifications
      */

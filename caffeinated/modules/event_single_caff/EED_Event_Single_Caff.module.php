@@ -24,8 +24,6 @@
  */
 class EED_Event_Single_Caff extends EED_Event_Single
 {
-
-
     /**
      * @return EED_Event_Single_Caff
      */

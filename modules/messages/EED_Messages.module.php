@@ -15,7 +15,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EED_Messages extends EED_Module
 {
-
     /**
      * This holds the EE_messages controller
      *

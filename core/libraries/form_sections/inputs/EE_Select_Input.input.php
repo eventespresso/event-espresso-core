@@ -13,7 +13,6 @@
  */
 class EE_Select_Input extends EE_Form_Input_With_Options_Base
 {
-
     /**
      * @param array $answer_options
      * @param array $input_settings

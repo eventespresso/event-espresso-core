@@ -15,7 +15,6 @@ use InvalidArgumentException;
  */
 class InvalidEntityException extends InvalidArgumentException
 {
-
     /**
      * InvalidEntityException constructor.
      *

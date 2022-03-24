@@ -15,8 +15,6 @@ use EEH_Inflector;
  */
 abstract class IframeEmbedButton
 {
-
-
     /**
      * @var string $iframe_name
      */

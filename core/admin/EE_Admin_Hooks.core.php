@@ -14,8 +14,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EE_Admin_Hooks extends EE_Base
 {
-
-
     /**
      * we're just going to use this to hold the name of the caller class (child class name)
      *

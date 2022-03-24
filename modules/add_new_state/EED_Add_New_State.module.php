@@ -17,8 +17,6 @@ use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
  */
 class EED_Add_New_State extends EED_Module
 {
-
-
     /**
      * @return EED_Add_New_State|EED_Module
      * @throws EE_Error

@@ -16,7 +16,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class General_Settings_Admin_Page extends EE_Admin_Page
 {
-
     /**
      * _question_group
      * holds the specific question group object for the question group details screen

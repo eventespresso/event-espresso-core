@@ -14,7 +14,6 @@ namespace EventEspresso\core\services\request;
  */
 class RequestStack
 {
-
     /**
      * @var RequestDecoratorInterface $request_stack_app
      */

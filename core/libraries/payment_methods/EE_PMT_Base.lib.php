@@ -19,7 +19,6 @@ use EventEspresso\core\services\formatters\AsciiOnly;
  */
 abstract class EE_PMT_Base
 {
-
     const onsite  = 'on-site';
 
     const offsite = 'off-site';

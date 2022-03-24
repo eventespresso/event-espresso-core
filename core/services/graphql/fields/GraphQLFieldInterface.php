@@ -15,7 +15,6 @@ use WPGraphQL\AppContext;
  */
 interface GraphQLFieldInterface
 {
-
     /**
      * @return array
      */

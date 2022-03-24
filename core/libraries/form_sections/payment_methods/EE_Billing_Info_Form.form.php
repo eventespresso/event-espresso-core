@@ -14,7 +14,6 @@
  */
 class EE_Billing_Info_Form extends EE_Form_Section_Proper
 {
-
     /**
      * The payment method this billing form is for
      * @var EE_Payment_Method

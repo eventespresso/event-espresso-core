@@ -11,8 +11,6 @@
  */
 class EE_Select_Multi_Model_Input extends EE_Select_Multiple_Input
 {
-
-
     protected $_naming_method;
 
 

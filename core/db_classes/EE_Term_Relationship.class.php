@@ -9,7 +9,6 @@
  */
 class EE_Term_Relationship extends EE_Base_Class
 {
-
     /**
      * @param array $props_n_values
      * @return EE_Term_Relationship

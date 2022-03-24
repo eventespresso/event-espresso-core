@@ -13,7 +13,6 @@
  */
 class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage
 {
-
     private $_converted_active_gateways = false;
 
     public function _migration_step($num_items = 50)

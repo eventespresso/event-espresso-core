@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
 {
-
     /**
      * @var EE_Event|null
      */

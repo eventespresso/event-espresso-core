@@ -11,7 +11,6 @@
  */
 class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strategy_Base
 {
-
     /**
      * Array describing conditions necessary to make the input required.
      * This is used to derive a jquery dependency expression (see http://jqueryvalidation.org/required-method)

@@ -11,9 +11,6 @@
  */
 class EEM_Ticket_Template extends EEM_Base
 {
-
-
-
     // private instance of the EEM_Ticket_Template object
     protected static $_instance = null;
 

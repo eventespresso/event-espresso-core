@@ -11,7 +11,6 @@
  */
 interface EEI_Has_Icon
 {
-
     /**
      * Return the icon representing the object (usually a WP dashicon).
      * @return string

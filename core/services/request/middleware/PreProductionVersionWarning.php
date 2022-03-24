@@ -17,7 +17,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class PreProductionVersionWarning extends Middleware
 {
-
     /**
      * converts a Request to a Response
      *

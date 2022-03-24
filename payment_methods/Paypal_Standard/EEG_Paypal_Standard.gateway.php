@@ -19,7 +19,6 @@ use EventEspresso\payment_methods\Paypal_Standard\ItemizedOrder;
  */
 class EEG_Paypal_Standard extends EE_Offsite_Gateway
 {
-
     /**
      * Name for the wp option used to save the itemized payment
      */

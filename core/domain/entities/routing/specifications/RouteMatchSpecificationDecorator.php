@@ -12,7 +12,6 @@ namespace EventEspresso\core\domain\entities\routing\specifications;
  */
 abstract class RouteMatchSpecificationDecorator implements RouteMatchSpecificationInterface
 {
-
     /**
      * @var RouteMatchSpecificationInterface $specification
      */

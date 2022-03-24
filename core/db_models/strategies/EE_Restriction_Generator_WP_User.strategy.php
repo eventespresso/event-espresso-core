@@ -11,7 +11,6 @@
  */
 class EE_Restriction_Generator_WP_User extends EE_Restriction_Generator_Base
 {
-
     /**
      * @return EE_Default_Where_Conditions[]
      * @throws EE_Error

@@ -13,7 +13,6 @@ namespace EventEspresso\core\domain;
  */
 interface RequiresDomainInterface
 {
-
     /**
      * @param DomainInterface $domain
      */

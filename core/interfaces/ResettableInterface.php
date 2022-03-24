@@ -14,7 +14,6 @@ namespace EventEspresso\core\interfaces;
  */
 interface ResettableInterface
 {
-
     /**
      * @return mixed
      */

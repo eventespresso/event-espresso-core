@@ -10,8 +10,6 @@
  */
 interface EEI_Has_Sending_Messenger
 {
-
-
     /**
      * Expect a EE_messenger object back that is serving as the sending messenger for a message.
      * @return EE_messenger

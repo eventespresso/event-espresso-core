@@ -10,7 +10,6 @@ namespace EventEspresso\core\services\graphql\fields;
  */
 class GraphQLOutputField extends GraphQLField
 {
-
     /**
      * @param string          $name
      * @param string|string[] $type

@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\notices;
  */
 class AdminNotice
 {
-
     const ERROR = 'notice-error';
 
     const WARNING = 'notice-warning';

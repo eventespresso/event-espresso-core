@@ -20,7 +20,6 @@ use EventEspresso\core\services\request\ResponseInterface;
  */
 class EE_Dependency_Map
 {
-
     /**
      * This means that the requested class dependency is not present in the dependency map
      */

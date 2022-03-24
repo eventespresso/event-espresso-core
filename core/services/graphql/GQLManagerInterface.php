@@ -15,7 +15,6 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  */
 interface GQLManagerInterface
 {
-
     /**
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException

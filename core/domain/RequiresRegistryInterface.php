@@ -14,7 +14,6 @@ use EE_Registry;
  */
 interface RequiresRegistryInterface
 {
-
     /**
      * @param EE_Registry $registry
      */

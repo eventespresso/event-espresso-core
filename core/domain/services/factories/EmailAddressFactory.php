@@ -18,7 +18,6 @@ use InvalidArgumentException;
  */
 class EmailAddressFactory implements FactoryInterface
 {
-
     /**
      * @param string $email_address
      * @return EmailAddress

@@ -13,7 +13,6 @@
  */
 class Venues_Admin_List_Table extends EE_Admin_List_Table
 {
-
     protected function _setup_data()
     {
         $this->_data = $this->_admin_page->get_venues($this->_per_page);

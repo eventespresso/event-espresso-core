@@ -9,5 +9,4 @@ namespace EventEspresso\core\services\commands;
  */
 interface CommandInterface
 {
-
 }

@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\request;
  */
 interface ResponseInterface
 {
-
     /**
      * @param $key
      * @param $value

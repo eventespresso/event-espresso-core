@@ -22,7 +22,6 @@ use EventEspresso\core\services\routing\Route;
  */
 class AssetRequests extends Route
 {
-
     /**
      * @var BaristaFactory $barista_factory
      */

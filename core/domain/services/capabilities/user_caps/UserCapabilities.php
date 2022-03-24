@@ -6,7 +6,6 @@ use EE_Capabilities;
 
 abstract class UserCapabilities
 {
-
     /**
      * @var EE_Capabilities
      */

@@ -20,7 +20,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 final class EE_Admin implements InterminableInterface
 {
-
     /**
      * @var EE_Admin $_instance
      */

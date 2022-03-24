@@ -13,7 +13,6 @@ use WPGraphQL\AppContext;
 
 class EventUpdate extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

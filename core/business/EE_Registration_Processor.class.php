@@ -25,7 +25,6 @@ EE_Registry::instance()->load_class('Processor_Base');
  */
 class EE_Registration_Processor extends EE_Processor_Base
 {
-
     /**
      * @var EE_Registration_Processor $_instance
      * @access    private

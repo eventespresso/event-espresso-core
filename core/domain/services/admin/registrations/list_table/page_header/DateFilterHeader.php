@@ -22,7 +22,6 @@ use ReflectionException;
  */
 class DateFilterHeader extends AdminPageHeaderDecorator
 {
-
     /**
      * @var EEM_Datetime $datetime_model
      */

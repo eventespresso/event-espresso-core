@@ -13,7 +13,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 {
-
     /**
      * @param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
      */

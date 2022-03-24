@@ -13,7 +13,6 @@
  */
 abstract class EE_Messages_Base extends EE_Base
 {
-
     /** DETAILS PROPERTIES **/
     /**
      * The following are used to hold details on the type for reference (i.e. on admin screens)

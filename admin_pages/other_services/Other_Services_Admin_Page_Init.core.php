@@ -14,8 +14,6 @@
  */
 class Other_Services_Admin_Page_Init extends EE_Admin_Page_Init
 {
-
-
     public function __construct()
     {
         // define some help/support page related constants

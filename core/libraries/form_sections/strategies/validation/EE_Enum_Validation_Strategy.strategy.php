@@ -11,7 +11,6 @@
  */
 class EE_Enum_Validation_Strategy extends EE_Validation_Strategy_Base
 {
-
     /**
      * Check that the value is in the allowed list
      * @param $normalized_value

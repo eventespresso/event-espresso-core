@@ -19,7 +19,6 @@ use ReflectionException;
  */
 abstract class TicketSelector
 {
-
     /**
      * @var EE_Event
      */

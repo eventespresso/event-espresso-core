@@ -11,8 +11,6 @@
  */
 class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements EEI_Has_Sending_Messenger
 {
-
-
     /**
      * Sending messenger
      *

@@ -15,7 +15,6 @@ use WP_Post;
  */
 class WordPressPostsEditorEdit extends RouteMatchSpecification
 {
-
     /**
      * returns true if current request matches specification
      *

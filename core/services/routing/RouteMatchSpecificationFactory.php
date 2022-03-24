@@ -22,7 +22,6 @@ use InvalidArgumentException;
  */
 class RouteMatchSpecificationFactory extends FactoryWithDependencyResolver
 {
-
     /**
      * RouteMatchSpecificationFactory constructor
      *

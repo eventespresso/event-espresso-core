@@ -10,7 +10,6 @@
  */
 class EEH_Money extends EEH_Base
 {
-
     /**
      * This removes all localized money formatting from the incoming value
      * Note: uses this site's currency settings for deciding what is considered a

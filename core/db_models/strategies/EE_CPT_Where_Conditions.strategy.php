@@ -11,7 +11,6 @@
  */
 class EE_CPT_Where_Conditions extends EE_CPT_Minimum_Where_Conditions
 {
-
     /**
      * Gets the where default where conditions for a custom post type model
      *

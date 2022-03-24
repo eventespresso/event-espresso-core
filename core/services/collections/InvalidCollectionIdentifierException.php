@@ -15,7 +15,6 @@ use OutOfBoundsException;
  */
 class InvalidCollectionIdentifierException extends OutOfBoundsException
 {
-
     /**
      * InvalidCollectionIdentifierException constructor.
      *

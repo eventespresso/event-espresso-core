@@ -13,7 +13,6 @@ use EventEspresso\core\services\request\CurrentPage;
  */
 class EE_Payment_Method extends EE_Base_Class
 {
-
     /**
      * Payment Method type object, which has all the info about this type of payment method,
      * including functions for processing payments, to get settings forms, etc.

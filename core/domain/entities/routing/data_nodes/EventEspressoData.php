@@ -20,7 +20,6 @@ use EventEspresso\core\services\json\JsonDataNodeValidator;
  */
 class EventEspressoData extends PrimaryJsonDataNode
 {
-
     const NODE_NAME = 'eventEspressoData';
 
     /**

@@ -14,7 +14,6 @@
  */
 class EEM_Event_Question_Group extends EEM_Base
 {
-
     /**
      * Name of the field indicating an event should use the question group for the primary attendee
      */

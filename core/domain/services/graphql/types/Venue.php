@@ -26,7 +26,6 @@ use WPGraphQL\AppContext;
  */
 class Venue extends TypeBase
 {
-
     /**
      * Venue constructor.
      *

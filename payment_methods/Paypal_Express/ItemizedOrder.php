@@ -14,8 +14,6 @@ use RuntimeException;
 
 class ItemizedOrder
 {
-
-
     /**
      * number of decimal places to round numbers to when performing calculations
      *

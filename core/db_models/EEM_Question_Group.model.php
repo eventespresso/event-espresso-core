@@ -9,7 +9,6 @@
  */
 class EEM_Question_Group extends EEM_Soft_Delete_Base
 {
-
     const system_personal = 1;
 
     const system_address = 2;

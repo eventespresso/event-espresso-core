@@ -24,7 +24,6 @@ use EventEspresso\core\services\routing\Router;
  */
 final class EE_System implements ResettableInterface
 {
-
     /**
      * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
      * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc

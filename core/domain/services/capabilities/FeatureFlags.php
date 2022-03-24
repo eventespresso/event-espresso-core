@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\Request;
  */
 class FeatureFlags
 {
-
     /**
      * @var CapabilitiesChecker $capabilities_checker
      */

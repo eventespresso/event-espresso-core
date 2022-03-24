@@ -23,7 +23,6 @@ use GraphQL\Type\Definition\ResolveInfo;
  */
 class Attendee extends TypeBase
 {
-
     /**
      * Attendee constructor.
      *

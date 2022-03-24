@@ -11,8 +11,6 @@
  */
 class Support_Admin_Page extends EE_Admin_Page
 {
-
-
     protected function _init_page_props()
     {
         $this->page_slug = EE_SUPPORT_PG_SLUG;

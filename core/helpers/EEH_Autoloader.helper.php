@@ -13,8 +13,6 @@ use EventEspresso\core\services\Benchmark;
  */
 class EEH_Autoloader extends EEH_Base
 {
-
-
     /**
      *    instance of the EE_System object
      *

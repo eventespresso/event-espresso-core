@@ -25,7 +25,6 @@ use WP_Screen;
  */
 class PrivacyPolicyManager
 {
-
     public function __construct()
     {
         add_action('current_screen', array($this, 'addPrivacyPolicy'), 9);

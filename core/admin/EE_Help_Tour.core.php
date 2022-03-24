@@ -17,7 +17,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EE_Help_Tour extends EE_Base
 {
-
     /**
      * This is the label for the tour. It is used when regenerating restart buttons for the tour. Set this in the
      * constructor of the child class.

@@ -11,7 +11,6 @@
  */
 class EEH_Base
 {
-
     /**
      *  @var    array   $uri_segment_array  URL segments
      *  @access     private

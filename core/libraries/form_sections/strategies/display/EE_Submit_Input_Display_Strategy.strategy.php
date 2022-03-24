@@ -9,7 +9,6 @@
  */
 class EE_Submit_Input_Display_Strategy extends EE_Display_Strategy_Base
 {
-
     /**
      * @return string of html to display the input
      */

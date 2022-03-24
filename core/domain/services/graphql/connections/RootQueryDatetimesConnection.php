@@ -18,8 +18,6 @@ use Exception;
  */
 class RootQueryDatetimesConnection extends AbstractRootQueryConnection
 {
-
-
     /**
      * DatetimeConnection constructor.
      *

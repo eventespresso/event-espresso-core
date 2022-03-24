@@ -14,7 +14,6 @@ use EEH_URL;
  */
 class CustomTaxonomyDefinitions
 {
-
     /**
      * @var array $taxonomies
      */

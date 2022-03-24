@@ -12,7 +12,6 @@ namespace EventEspresso\core\domain\services\custom_post_types;
  */
 class RewriteRules
 {
-
     const OPTION_KEY_FLUSH_REWRITE_RULES = 'ee_flush_rewrite_rules';
 
 

@@ -14,7 +14,6 @@ use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
  */
 abstract class EES_Shortcode extends EE_Base
 {
-
     /**
      * @protected   public
      * @var     array $_attributes

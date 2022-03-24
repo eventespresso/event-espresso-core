@@ -15,7 +15,6 @@ use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
  */
 class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
 {
-
     /**
      * EE_Registration_CheckIn_List_Table constructor.
      *

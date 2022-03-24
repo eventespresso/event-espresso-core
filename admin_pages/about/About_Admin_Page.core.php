@@ -15,8 +15,6 @@
  */
 class About_Admin_Page extends EE_Admin_Page
 {
-
-
     protected function _init_page_props()
     {
         $this->page_slug = EE_ABOUT_PG_SLUG;

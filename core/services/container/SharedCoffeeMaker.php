@@ -16,8 +16,6 @@ namespace EventEspresso\core\services\container;
  */
 class SharedCoffeeMaker extends CoffeeMaker
 {
-
-
     /**
      * @return string
      */

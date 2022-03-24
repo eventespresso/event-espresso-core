@@ -14,8 +14,6 @@ use EE_Dependency_Map;
  */
 class FrontendRequests extends PublicRoute
 {
-
-
     /**
      * returns true if the current request matches this route
      * child classes can override and use Request directly to match route with request

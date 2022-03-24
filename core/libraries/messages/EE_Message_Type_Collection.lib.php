@@ -13,7 +13,6 @@
  */
 class EE_Message_Type_Collection extends EE_Object_Collection
 {
-
     /**
      * EE_Message_Type_Collection constructor.
      */

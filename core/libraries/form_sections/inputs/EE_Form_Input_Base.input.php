@@ -14,7 +14,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 {
-
     /**
      * the input's name attribute
      *

@@ -18,8 +18,6 @@ use Exception;
  */
 class RootQueryStatesConnection extends AbstractRootQueryConnection
 {
-
-
     /**
      * StateConnection constructor.
      *

@@ -30,7 +30,6 @@ use InvalidArgumentException;
  */
 class PersistentAdminNoticeManager
 {
-
     const WP_OPTION_KEY = 'ee_pers_admin_notices';
 
     /**

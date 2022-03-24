@@ -18,7 +18,6 @@ use EE_Form_Section_Validatable;
  */
 class VsprintfFilter extends FormHtmlFilter
 {
-
     /**
      * @var string $format
      */

@@ -14,7 +14,6 @@ use EEH_File;
  */
 class Benchmark
 {
-
     /**
      * @var string $output
      */

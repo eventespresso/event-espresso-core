@@ -14,7 +14,6 @@ use EventEspresso\core\domain\services\validation\email\EmailValidatorInterface;
  */
 class Basic implements EmailValidatorInterface
 {
-
     /**
      * @param string $email_address
      * @return bool

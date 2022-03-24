@@ -18,8 +18,6 @@
  */
 class EE_Payment_List_Shortcodes extends EE_Shortcodes
 {
-
-
     protected function _init_props()
     {
         $this->label = esc_html__('Payment List Shortcodes', 'event_espresso');

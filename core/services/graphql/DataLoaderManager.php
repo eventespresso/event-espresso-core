@@ -17,7 +17,6 @@ use EventEspresso\core\services\graphql\loaders\DataLoaderCollection;
  */
 class DataLoaderManager implements GQLManagerInterface
 {
-
     /**
      * @var DataLoaderCollection|GQLDataDomainInterface[] $data_loaders
      */

@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\form\meta\inputs;
 
 class Phone
 {
-
     /**
      * indicates that the HTML input type is 'tel'
      */

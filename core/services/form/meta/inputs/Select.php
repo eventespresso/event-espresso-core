@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\form\meta\inputs;
 
 class Select
 {
-
     /**
      * indicates that the input is an HTML dropdown (select input) that accepts only one value
      */

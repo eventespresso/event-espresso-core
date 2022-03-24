@@ -20,7 +20,6 @@ use ReflectionException;
  */
 class EventMutation
 {
-
     /**
      * Maps the GraphQL input to a format that the model functions can use
      *

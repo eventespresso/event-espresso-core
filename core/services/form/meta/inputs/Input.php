@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\form\meta\inputs;
 
 class Input
 {
-
     /**
      * indicates that the HTML input type is 'checkbox'
      */

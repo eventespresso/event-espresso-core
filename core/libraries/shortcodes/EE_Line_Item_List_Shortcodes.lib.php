@@ -20,8 +20,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
 {
-
-
     protected function _init_props()
     {
         $this->label = esc_html__('Line Item List Shortcodes', 'event_espresso');

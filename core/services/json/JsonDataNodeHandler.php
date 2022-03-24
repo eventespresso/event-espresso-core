@@ -17,7 +17,6 @@ use EE_Registry;
  */
 class JsonDataNodeHandler
 {
-
     /**
      * @var PrimaryJsonDataNode $primary_data_node
      */

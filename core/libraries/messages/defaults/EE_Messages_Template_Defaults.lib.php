@@ -13,8 +13,6 @@
  */
 class EE_Messages_Template_Defaults extends EE_Base
 {
-
-
     /**
      * Used for holding the EE_Message_Template GRP_ID field value.
      * @var [type]

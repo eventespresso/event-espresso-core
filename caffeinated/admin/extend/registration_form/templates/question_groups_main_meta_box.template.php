@@ -157,7 +157,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                         ); ?>
                         <p class="description"><?php
                             esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
-                            ?></p>
+                        ?></p>
                         <input type="hidden" name="QSG_system" value="<?php echo esc_attr($question_group->system_group()); ?>">
                     </td>
                 </tr>

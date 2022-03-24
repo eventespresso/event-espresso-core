@@ -9,8 +9,6 @@ use ReflectionException;
 
 class RegFormListTableUserCapabilities extends UserCapabilities
 {
-
-
     /**
      * @throws EE_Error
      * @throws ReflectionException

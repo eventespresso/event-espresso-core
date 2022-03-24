@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\container;
  */
 interface ContainerInterface
 {
-
     /**
      * Finds an entry of the container by its identifier and returns it.
      *

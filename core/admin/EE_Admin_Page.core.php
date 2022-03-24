@@ -684,16 +684,16 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $this->_page_config,
             $this
         );
-        if($this->base_class_name !== '') {
+        if ($this->base_class_name !== '') {
             $this->_page_routes = apply_filters(
-                    'FHEE__' . $this->base_class_name . '__page_setup__page_routes',
-                    $this->_page_routes,
-                    $this
+                'FHEE__' . $this->base_class_name . '__page_setup__page_routes',
+                $this->_page_routes,
+                $this
             );
             $this->_page_config = apply_filters(
-                    'FHEE__' . $this->base_class_name . '__page_setup__page_config',
-                    $this->_page_config,
-                    $this
+                'FHEE__' . $this->base_class_name . '__page_setup__page_config',
+                $this->_page_config,
+                $this
             );
         }
         // if AHEE__EE_Admin_Page__route_admin_request_$this->_current_view method is present

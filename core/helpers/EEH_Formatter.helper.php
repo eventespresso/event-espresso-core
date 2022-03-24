@@ -10,8 +10,6 @@
  */
 class EEH_Formatter
 {
-
-
     /**
      * _admin_format_content
      * Text formatting function for wp_editor.

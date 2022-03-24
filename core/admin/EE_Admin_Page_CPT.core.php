@@ -26,8 +26,6 @@ use EventEspresso\core\services\request\middleware\RecommendedVersions;
  */
 abstract class EE_Admin_Page_CPT extends EE_Admin_Page
 {
-
-
     /**
      * This gets set in _setup_cpt
      * It will contain the object for the custom post type.

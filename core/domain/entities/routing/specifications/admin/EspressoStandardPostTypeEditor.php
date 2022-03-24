@@ -14,7 +14,6 @@ use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecific
  */
 class EspressoStandardPostTypeEditor extends RouteMatchSpecification
 {
-
     /**
      * returns true if current request matches specification
      *

@@ -13,7 +13,6 @@
  */
 class Venues_Admin_Page extends EE_Admin_Page_CPT
 {
-
     /**
      * _venue
      * This will hold the venue object for venue_details screen.

@@ -14,7 +14,6 @@
 
 class EE_Cancelled_Registration_message_type extends EE_Registration_Base_message_type
 {
-
     public function __construct()
     {
         $this->name = 'cancelled_registration';

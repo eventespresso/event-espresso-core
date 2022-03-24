@@ -20,7 +20,6 @@ use ReflectionProperty;
  */
 class Mirror
 {
-
     /**
      * @var ReflectionClass[]
      */

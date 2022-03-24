@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\converters\json;
  */
 interface ModelObjectToJsonConverterInterface
 {
-
     /**
      * @param array $entities
      * @return array

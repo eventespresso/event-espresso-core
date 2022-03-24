@@ -46,7 +46,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class ModelFieldFactory
 {
-
     /**
      * @var LoaderInterface $loader
      */

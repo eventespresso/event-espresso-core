@@ -15,7 +15,6 @@ use GraphQLRelay\Relay;
  */
 class EventEntityRelations extends EventEditorData
 {
-
     /**
      * @param array $data
      */

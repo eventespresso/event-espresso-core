@@ -13,7 +13,6 @@
  */
 class EE_Full_HTML_Field extends EE_Text_Field_Base
 {
-
     /**
      * @param string $table_column
      * @param string $nicename

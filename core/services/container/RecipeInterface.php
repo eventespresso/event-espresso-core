@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\container;
  */
 interface RecipeInterface
 {
-
     /**
      * @return string
      */

@@ -15,7 +15,6 @@ use WP_Role;
  */
 class EventManagers
 {
-
     /**
      * @var string[]
      */

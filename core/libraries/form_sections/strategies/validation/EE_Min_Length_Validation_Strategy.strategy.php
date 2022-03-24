@@ -11,7 +11,6 @@
  */
 class EE_Min_Length_Validation_Strategy extends EE_Validation_Strategy_Base
 {
-
     protected $_min_length;
 
     public function __construct($validation_error_message = null, $min_length = 0)

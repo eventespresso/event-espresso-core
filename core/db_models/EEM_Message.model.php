@@ -12,7 +12,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEM_Message extends EEM_Base implements EEI_Query_Filter
 {
-
     // private instance of the Message object
     protected static $_instance = null;
 

@@ -26,7 +26,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class Route implements RouteInterface
 {
-
     /**
      * @var AssetManagerInterface $asset_manager
      */

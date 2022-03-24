@@ -16,9 +16,6 @@ use EventEspresso\core\exceptions\SendMessageException;
  */
 abstract class EE_messenger extends EE_Messages_Base
 {
-
-
-
     /**
      * This property holds the default message types associated with this messenger when it is activated. The values of the array must match a valid message type.
      * This property gets set by the _set_default_message_types() method.

@@ -11,8 +11,6 @@
  */
 class EED_Feeds extends EED_Module
 {
-
-
     /**
      * @return EED_Feeds
      */

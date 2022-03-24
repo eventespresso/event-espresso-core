@@ -13,7 +13,6 @@
  */
 class EE_Newsletter_Shortcodes extends EE_Shortcodes
 {
-
     protected function _init_props()
     {
         $this->label = esc_html__("Batch Messages Shortcodes", 'event_espresso');

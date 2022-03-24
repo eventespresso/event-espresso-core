@@ -14,8 +14,6 @@ use EventEspresso\core\services\commands\Command;
  */
 class CancelTicketLineItemCommand extends Command
 {
-
-
     /**
      * @var \EE_Transaction $transaction
      */

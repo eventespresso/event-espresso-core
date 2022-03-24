@@ -19,7 +19,6 @@ use EventEspresso\core\domain\services\graphql\Utilities;
  */
 abstract class EventEditorData implements EventEditorDataInterface
 {
-
     /**
      * @var EEM_Datetime $datetime_model
      */

@@ -13,7 +13,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEH_URL
 {
-
     /**
      * _add_query_arg
      * adds nonce to array of arguments then calls WP add_query_arg function

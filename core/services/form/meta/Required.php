@@ -14,7 +14,6 @@ use EventEspresso\core\services\json\JsonDataHandler;
  */
 class Required implements JsonableInterface
 {
-
     /**
      * @var JsonDataHandler
      */

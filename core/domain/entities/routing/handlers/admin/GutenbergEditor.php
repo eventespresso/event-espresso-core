@@ -15,7 +15,6 @@ use EventEspresso\core\domain\entities\routing\data_nodes\domains\GutenbergEdito
  */
 class GutenbergEditor extends AdminRoute
 {
-
     /**
      * returns true if the current request matches this route
      *

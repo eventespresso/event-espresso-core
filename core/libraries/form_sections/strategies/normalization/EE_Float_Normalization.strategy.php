@@ -10,7 +10,6 @@
  */
 class EE_Float_Normalization extends EE_Normalization_Strategy_Base
 {
-
     /*
      * regex pattern that matches for the following:
      *      * optional negative sign

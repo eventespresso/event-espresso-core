@@ -15,7 +15,6 @@ use stdClass;
  */
 abstract class JsonDataWordpressOption extends WordPressOption
 {
-
     /**
      * @var array
      */

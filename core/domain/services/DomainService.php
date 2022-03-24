@@ -19,7 +19,6 @@ namespace EventEspresso\core\domain\services;
  */
 abstract class DomainService implements DomainServiceInterface
 {
-
     /**
      * DomainService constructor.
      */

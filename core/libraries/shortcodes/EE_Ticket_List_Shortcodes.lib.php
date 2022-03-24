@@ -18,8 +18,6 @@
  */
 class EE_Ticket_List_Shortcodes extends EE_Shortcodes
 {
-
-
     protected function _init_props()
     {
         $this->label       = esc_html__('Ticket List Shortcodes', 'event_espresso');

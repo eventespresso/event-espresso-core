@@ -14,7 +14,6 @@ use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
  */
 class CoffeeMill
 {
-
     /**
      * @var CoffeeShop $coffee_shop
      */

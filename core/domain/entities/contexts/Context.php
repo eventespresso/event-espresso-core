@@ -13,7 +13,6 @@ namespace EventEspresso\core\domain\entities\contexts;
  */
 class Context implements ContextInterface
 {
-
     /**
      * @var string $slug
      */

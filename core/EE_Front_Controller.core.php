@@ -16,7 +16,6 @@ use EventEspresso\widgets\EspressoWidget;
  */
 final class EE_Front_Controller
 {
-
     /**
      * @var string
      */

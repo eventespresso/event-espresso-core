@@ -37,7 +37,6 @@ use WPGraphQL\AppContext;
  */
 class FieldResolver extends ResolverBase
 {
-
     /**
      * @var EEM_Base $model
      */

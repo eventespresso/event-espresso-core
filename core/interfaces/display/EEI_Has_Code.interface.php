@@ -13,7 +13,6 @@
  */
 interface EEI_Has_Code
 {
-
     /**
      * Return a code.
      * @return string

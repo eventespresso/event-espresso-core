@@ -37,8 +37,6 @@ use EE_Error;
  */
 class Write extends Base
 {
-
-
     public function __construct()
     {
         parent::__construct();

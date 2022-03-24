@@ -15,7 +15,6 @@ use EventEspresso\core\services\context\ContextChecker;
  */
 class RequestTypeContextChecker extends ContextChecker implements RequestTypeContextCheckerInterface
 {
-
     /**
      * @var RequestTypeContext $request_type
      */

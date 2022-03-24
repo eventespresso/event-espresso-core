@@ -34,7 +34,6 @@ use EventEspresso\core\services\form\meta\JsonableInterface;
  */
 abstract class TypeBase implements TypeInterface
 {
-
     /**
      * @var string $namespace The graphql namespace/prefix.
      */

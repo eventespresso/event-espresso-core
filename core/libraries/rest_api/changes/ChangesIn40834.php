@@ -11,7 +11,6 @@ use EventEspresso\core\libraries\rest_api\controllers\Base;
 
 class ChangesIn40834 extends ChangesInBase
 {
-
     /**
      * Adds hooks so requests to 4.8.29 don't have the checkin endpoints
      */

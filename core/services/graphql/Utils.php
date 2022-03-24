@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\graphql;
  */
 class Utils
 {
-
     /**
      * Given a string, formats it as GraphQL ENUM value
      *

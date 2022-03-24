@@ -15,7 +15,6 @@ use EventEspresso\core\exceptions\InvalidClassException;
  */
 interface CapabilitiesCheckerInterface
 {
-
     /**
      * Verifies that the current user has ALL of the capabilities listed in the CapCheck DTO.
      * If any of the individual capability checks fails, then the command will NOT be executed.

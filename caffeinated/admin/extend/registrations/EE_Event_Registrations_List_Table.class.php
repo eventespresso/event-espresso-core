@@ -15,7 +15,6 @@ use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
  */
 class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 {
-
     /**
      * @var RequestInterface
      */

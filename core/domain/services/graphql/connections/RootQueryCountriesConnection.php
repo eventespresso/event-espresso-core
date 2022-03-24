@@ -18,8 +18,6 @@ use Exception;
  */
 class RootQueryCountriesConnection extends AbstractRootQueryConnection
 {
-
-
     /**
      * CountryConnection constructor.
      *

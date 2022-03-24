@@ -9,7 +9,6 @@ use WPGraphQL\AppContext;
 
 class BulkEntityMutator extends EntityMutator
 {
-
     /**
      * @var callable $entity_mutator .
      */

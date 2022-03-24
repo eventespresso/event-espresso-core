@@ -14,8 +14,6 @@ use EventEspresso\core\exceptions\InvalidEntityException;
  */
 class LooseCollection extends Collection
 {
-
-
     /**
      * setCollectionInterface
      *

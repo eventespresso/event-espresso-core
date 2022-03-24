@@ -11,7 +11,6 @@ use EventEspresso\core\services\request\DataType;
  */
 class Pricing_Admin_Page extends EE_Admin_Page
 {
-
     protected function _init_page_props()
     {
         $this->page_slug        = PRICING_PG_SLUG;
@@ -451,11 +450,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _price_overview_list_table()
     {
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                'add_new_price',
-                'add',
-                [],
-                'add-new-h2'
-            );
+            'add_new_price',
+            'add',
+            [],
+            'add-new-h2'
+        );
         $this->_admin_page_title .= $this->_learn_more_about_pricing_link();
         $this->_search_btn_label = esc_html__('Default Prices', 'event_espresso');
         $this->display_admin_list_table_page_with_sidebar();
@@ -895,11 +894,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _price_types_overview_list_table()
     {
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                'add_new_price_type',
-                'add_type',
-                [],
-                'add-new-h2'
-            );
+            'add_new_price_type',
+            'add_type',
+            [],
+            'add-new-h2'
+        );
         $this->_admin_page_title .= $this->_learn_more_about_pricing_link();
         $this->_search_btn_label = esc_html__('Price Types', 'event_espresso');
         $this->display_admin_list_table_page_with_sidebar();
@@ -1178,9 +1177,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _learn_more_about_pricing_link(): string
     {
         return '<a class="hidden" style="margin:0 20px; cursor:pointer; font-size:12px;" >' . esc_html__(
-                'learn more about how pricing works',
-                'event_espresso'
-            ) . '</a>';
+            'learn more about how pricing works',
+            'event_espresso'
+        ) . '</a>';
     }
 
 

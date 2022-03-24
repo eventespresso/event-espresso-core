@@ -17,7 +17,6 @@ use WP_Post_Type;
  */
 class RegisterCustomPostTypes
 {
-
     /**
      * @var CustomPostTypeDefinitions $custom_post_types
      */

@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\commands;
  */
 class CommandHandlerNotFoundException extends \OutOfBoundsException
 {
-
     /**
      * @access public
      * @param  string     $command_handler_name

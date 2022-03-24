@@ -18,7 +18,6 @@ use EventEspresso\core\libraries\rest_api\RestException;
  */
 class Base extends Controller_Base
 {
-
     /**
      * Holds reference to the model version info, which knows the requested version
      *

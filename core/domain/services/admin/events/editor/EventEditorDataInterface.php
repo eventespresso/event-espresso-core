@@ -12,7 +12,6 @@ namespace EventEspresso\core\domain\services\admin\events\editor;
  */
 interface EventEditorDataInterface
 {
-
     /**
      * @param int $eventId
      * @return array

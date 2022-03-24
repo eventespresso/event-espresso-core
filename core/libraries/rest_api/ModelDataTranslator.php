@@ -38,7 +38,6 @@ use ReflectionException;
  */
 class ModelDataTranslator
 {
-
     /**
      * We used to use -1 for infinity in the rest api, but that's ambiguous for
      * fields that COULD contain -1; so we use null

@@ -12,7 +12,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Load_Textdomain extends EE_Base
 {
-
     /**
      * holds the current lang in WP
      *

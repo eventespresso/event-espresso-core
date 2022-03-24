@@ -36,7 +36,6 @@ use EE_Error;
 
 abstract class ChangesInBase
 {
-
     /**
      * The version that these changes happened
      *

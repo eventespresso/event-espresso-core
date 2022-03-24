@@ -26,7 +26,6 @@ use ReflectionException;
  */
 class Price extends TypeBase
 {
-
     /**
      * Price constructor.
      *

@@ -17,7 +17,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Request implements LegacyRequestInterface, InterminableInterface
 {
-
     /**
      * @var RequestInterface $request
      */

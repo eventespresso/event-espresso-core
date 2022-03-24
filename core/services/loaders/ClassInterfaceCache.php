@@ -16,7 +16,6 @@ use EventEspresso\core\exceptions\InvalidAliasException;
  */
 class ClassInterfaceCache
 {
-
     /**
      * array of interfaces indexed by FQCNs where values are arrays of interface FQNs
      *

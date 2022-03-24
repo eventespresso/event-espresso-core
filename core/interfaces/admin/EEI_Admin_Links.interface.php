@@ -11,8 +11,6 @@
  */
 interface EEI_Admin_Links
 {
-
-
     /**
      * Return the link to the admin details for the object.
      * @return string

@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 final class EE_Module_Request_Router implements InterminableInterface
 {
-
     /**
      * @var RequestInterface $request
      */

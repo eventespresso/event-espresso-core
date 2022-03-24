@@ -12,8 +12,6 @@
  */
 abstract class EE_Registration_Base_message_type extends EE_message_type
 {
-
-
     /**
      * @see parent::get_priority() for documentation.
      * @return int

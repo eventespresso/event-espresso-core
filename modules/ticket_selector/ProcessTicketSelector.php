@@ -33,7 +33,6 @@ use ReflectionException;
  */
 class ProcessTicketSelector
 {
-
     /**
      * @var EE_Cart $cart
      */

@@ -23,7 +23,6 @@ use WPGraphQL\AppContext;
  */
 interface TypeInterface
 {
-
     /**
      * @return string
      */

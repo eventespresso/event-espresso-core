@@ -18,7 +18,6 @@ use SplObjectStorage;
  */
 class Collection extends SplObjectStorage implements CollectionInterface
 {
-
     /**
      * a unique string for identifying this collection
      *

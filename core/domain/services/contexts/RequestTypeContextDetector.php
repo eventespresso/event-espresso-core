@@ -18,7 +18,6 @@ use InvalidArgumentException;
  */
 class RequestTypeContextDetector
 {
-
     /**
      * @var GraphQLEndpoint $gql_endpoint
      */

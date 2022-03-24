@@ -12,7 +12,6 @@
  */
 class EE_Restriction_Generator_Reg_Form extends EE_Restriction_Generator_Base
 {
-
     /**
      * @var string  the name of the field that indicates
      *              whether or not this is a system thing

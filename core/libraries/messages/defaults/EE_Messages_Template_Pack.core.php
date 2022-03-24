@@ -12,8 +12,6 @@
  */
 abstract class EE_Messages_Template_Pack
 {
-
-
     /**
      * This defines the base_path where the templates are located.
      *

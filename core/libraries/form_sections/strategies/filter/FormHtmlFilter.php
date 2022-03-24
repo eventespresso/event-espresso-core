@@ -13,7 +13,6 @@ use EE_Form_Section_Validatable;
  */
 abstract class FormHtmlFilter
 {
-
     /**
      * @param                             $html
      * @param EE_Form_Section_Validatable $form_section

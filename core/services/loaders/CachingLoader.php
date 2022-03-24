@@ -16,7 +16,6 @@ use InvalidArgumentException;
  */
 class CachingLoader extends CachingLoaderDecorator
 {
-
     /**
      * @var bool
      */

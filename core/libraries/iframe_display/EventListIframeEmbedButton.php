@@ -13,7 +13,6 @@ use EEH_Array;
  */
 class EventListIframeEmbedButton extends IframeEmbedButton
 {
-
     /**
      * EventListIframeEmbedButton constructor.
      */

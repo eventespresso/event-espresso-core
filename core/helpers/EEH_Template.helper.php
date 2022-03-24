@@ -49,7 +49,6 @@ if (! function_exists('espresso_get_object_css_class')) {
  */
 class EEH_Template
 {
-
     private static $_espresso_themes = [];
 
 

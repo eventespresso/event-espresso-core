@@ -14,7 +14,6 @@ use EventEspresso\core\services\json\JsonDataNodeValidator;
  */
 class GutenbergEditorData extends JsonDataNode
 {
-
     const NODE_NAME = 'blocks';
 
 

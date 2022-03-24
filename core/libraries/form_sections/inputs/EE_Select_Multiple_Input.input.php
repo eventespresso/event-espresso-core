@@ -9,7 +9,6 @@
  */
 class EE_Select_Multiple_Input extends EE_Form_Input_With_Options_Base
 {
-
     /**
      * @param array | EE_Question_Option[] $answer_options
      * @param array $input_settings

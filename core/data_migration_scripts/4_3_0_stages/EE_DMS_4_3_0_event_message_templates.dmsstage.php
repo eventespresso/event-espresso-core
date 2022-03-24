@@ -12,7 +12,6 @@
  */
 class EE_DMS_4_3_0_event_message_templates extends EE_Data_Migration_Script_Stage_Table
 {
-
     /**
      * This property will hold the table name for event_message_templates
      * @var string

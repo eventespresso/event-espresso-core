@@ -18,8 +18,6 @@ use GraphQL\Deferred;
  */
 class EventDatetimesConnection extends ConnectionBase
 {
-
-
     /**
      * DatetimeConnection constructor.
      *

@@ -13,7 +13,6 @@
 
 class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Table_Line_Item_Display_Strategy
 {
-
     /**
      * Table header for display.
      * @since   4.8

@@ -14,7 +14,6 @@
  */
 abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
 {
-
     const EVENT_CATEGORY_TAXONOMY = 'espresso_event_categories';
 
     /**

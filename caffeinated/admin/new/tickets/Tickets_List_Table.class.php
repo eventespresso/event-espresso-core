@@ -16,8 +16,6 @@
  */
 class Tickets_List_Table extends EE_Admin_List_Table
 {
-
-
     protected function _setup_data()
     {
         \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);

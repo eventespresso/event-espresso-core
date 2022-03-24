@@ -24,7 +24,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class PublicRoute extends Route
 {
-
     /**
      * @var EE_Maintenance_Mode $maintenance_mode
      */

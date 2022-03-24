@@ -24,7 +24,6 @@ use GraphQLRelay\Relay;
  */
 class Event extends TypeBase
 {
-
     /**
      * Event constructor.
      *

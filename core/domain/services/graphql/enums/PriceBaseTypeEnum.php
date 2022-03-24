@@ -15,7 +15,6 @@ use EventEspresso\core\services\graphql\enums\EnumBase;
  */
 class PriceBaseTypeEnum extends EnumBase
 {
-
     /**
      * PriceBaseTypeEnum constructor.
      */

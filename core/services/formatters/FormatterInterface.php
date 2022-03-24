@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\formatters;
  */
 interface FormatterInterface
 {
-
     /**
      * Applies the formatting to all items in the array
      *

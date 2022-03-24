@@ -13,7 +13,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEG_Paypal_Pro extends EE_Onsite_Gateway
 {
-
     /**
      * @var $_paypal_api_username string
      */

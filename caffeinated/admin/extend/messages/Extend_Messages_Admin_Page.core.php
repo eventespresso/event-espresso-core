@@ -16,8 +16,6 @@
  */
 class Extend_Messages_Admin_Page extends Messages_Admin_Page
 {
-
-
     public function __construct($routing = true)
     {
         parent::__construct($routing);

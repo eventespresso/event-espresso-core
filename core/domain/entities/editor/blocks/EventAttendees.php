@@ -20,7 +20,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EventAttendees extends Block
 {
-
     const BLOCK_TYPE = 'event-attendees';
 
     /**

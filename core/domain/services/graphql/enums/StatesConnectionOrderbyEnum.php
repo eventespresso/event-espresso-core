@@ -14,7 +14,6 @@ use EventEspresso\core\services\graphql\enums\EnumBase;
  */
 class StatesConnectionOrderbyEnum extends EnumBase
 {
-
     /**
      * StatesConnectionOrderbyEnum constructor.
      */

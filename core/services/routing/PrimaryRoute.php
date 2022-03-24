@@ -20,7 +20,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class PrimaryRoute extends Route
 {
-
     const ROUTE_REQUEST_TYPE_ACTIVATION = 'ACTIVATION';
 
     const ROUTE_REQUEST_TYPE_REGULAR = 'REGULAR';

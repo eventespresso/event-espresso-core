@@ -16,7 +16,6 @@ use WPGraphQL\AppContext;
  */
 class EspressoEditor implements GQLDataDomainInterface
 {
-
     /**
      * @param array      $loaders The loaders accessible in the AppContext
      * @param AppContext $context The AppContext

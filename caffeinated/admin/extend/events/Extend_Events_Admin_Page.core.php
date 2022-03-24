@@ -14,7 +14,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class Extend_Events_Admin_Page extends Events_Admin_Page
 {
-
     /**
      * @var EE_Admin_Config
      */

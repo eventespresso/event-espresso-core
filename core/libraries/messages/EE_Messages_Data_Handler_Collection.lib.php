@@ -9,8 +9,6 @@
  */
 class EE_Messages_Data_Handler_Collection extends EE_Object_Collection
 {
-
-
     public function __construct()
     {
         $this->interface = 'EE_Messages_incoming_data';

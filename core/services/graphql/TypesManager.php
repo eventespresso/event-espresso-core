@@ -17,7 +17,6 @@ use EventEspresso\core\services\graphql\types\TypeInterface;
  */
 class TypesManager implements GQLManagerInterface
 {
-
     /**
      * @var TypeCollection|TypeInterface[] $types
      */

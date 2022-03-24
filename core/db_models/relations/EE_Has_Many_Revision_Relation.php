@@ -10,8 +10,6 @@
  */
 class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation
 {
-
-
     /**
      * The Foreign key on the model that acts as the PRIMARY KEY used in special autosave handling where we query for
      * autosaves (or the Foreign key on other models in relations pointing to this models primary key which is this

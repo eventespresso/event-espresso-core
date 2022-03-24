@@ -15,7 +15,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class Payments_Admin_Page extends EE_Admin_Page
 {
-
     /**
      * Variables used for when we're re-sorting the logs results,
      * in case we needed to do two queries, and we need to resort

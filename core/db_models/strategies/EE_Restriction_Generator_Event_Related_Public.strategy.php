@@ -13,7 +13,6 @@
  */
 class EE_Restriction_Generator_Event_Related_Public extends EE_Restriction_Generator_Base
 {
-
     /**
      * Path to the event model from the model this restriction generator will
      * be applied to; including the event model itself. Eg

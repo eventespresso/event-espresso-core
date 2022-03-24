@@ -25,8 +25,6 @@ use LogicException;
  */
 class AttendeeContactDetailsMetaboxFormHandler extends FormHandler
 {
-
-
     protected $attendee;
 
 

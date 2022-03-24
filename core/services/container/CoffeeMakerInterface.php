@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\container;
  */
 interface CoffeeMakerInterface
 {
-
     /**
      * @return array
      */

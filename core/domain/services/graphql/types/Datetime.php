@@ -37,7 +37,6 @@ use GraphQL\Type\Definition\ResolveInfo;
  */
 class Datetime extends TypeBase
 {
-
     /**
      * EventDate constructor.
      *

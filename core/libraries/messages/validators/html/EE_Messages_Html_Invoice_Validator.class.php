@@ -15,7 +15,6 @@
  */
 class EE_Messages_Html_Invoice_Validator extends EE_Messages_Validator
 {
-
     public function __construct($fields, $context)
     {
         $this->_m_name = 'html';

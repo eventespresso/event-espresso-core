@@ -39,7 +39,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EEM_Base extends EE_Base implements ResettableInterface
 {
-
     /**
      * Flag to indicate whether the values provided to EEM_Base have already been prepared
      * by the model object or not (ie, the model object has used the field's _prepare_for_set function on the values).

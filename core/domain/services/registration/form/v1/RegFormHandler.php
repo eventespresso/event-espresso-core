@@ -17,7 +17,6 @@ use RuntimeException;
 
 class RegFormHandler
 {
-
     /**
      * @var EE_Checkout
      */

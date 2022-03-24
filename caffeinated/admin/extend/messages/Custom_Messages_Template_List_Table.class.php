@@ -11,7 +11,6 @@
  */
 class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
 {
-
     /**
      * Setup initial data.
      */

@@ -14,7 +14,6 @@ use EventEspresso\core\services\json\JsonDataHandler;
  */
 class HelpText implements JsonableInterface
 {
-
     /**
      * @var JsonDataHandler
      */

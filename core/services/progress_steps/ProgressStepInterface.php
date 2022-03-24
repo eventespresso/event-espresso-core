@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\progress_steps;
  */
 interface ProgressStepInterface
 {
-
     /**
      * @return boolean
      */

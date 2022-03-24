@@ -6,7 +6,6 @@
  */
 abstract class EE_Text_Field_Base extends EE_Model_Field_Base
 {
-
     /**
      * Gets the value in the format expected when being set.
      * For display on the front-end, usually you would use prepare_for_pretty_echoing() instead.

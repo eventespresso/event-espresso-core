@@ -15,8 +15,6 @@ use ReflectionException;
  */
 class RegistrationsListTableUserCapabilities extends UserCapabilities
 {
-
-
     /**
      * @throws EE_Error
      * @throws ReflectionException

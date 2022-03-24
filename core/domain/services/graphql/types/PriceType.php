@@ -20,7 +20,6 @@ use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
  */
 class PriceType extends TypeBase
 {
-
     /**
      * PriceType constructor.
      *

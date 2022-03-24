@@ -13,7 +13,6 @@
  */
 class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
 {
-
     /**
      *
      * @param EE_Payment_Method $payment_method
@@ -180,8 +179,8 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
             'phone'      => 'set_phone',
         ];
         foreach ($fields_and_setters as $field => $setter) {
-            if (! empty($data[$field]) && method_exists($attendee, $setter)) {
-                $attendee->{$setter}($data[$field]);
+            if (! empty($data[ $field ]) && method_exists($attendee, $setter)) {
+                $attendee->{$setter}($data[ $field ]);
             }
         }
         return $attendee;

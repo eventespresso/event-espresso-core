@@ -10,7 +10,6 @@
  */
 class EEM_Change_Log extends EEM_Base
 {
-
     /**
      * the related object was created log type
      */

@@ -15,7 +15,6 @@ use GraphQLRelay\Relay;
  */
 abstract class BlockRenderer implements BlockRendererInterface
 {
-
     /**
      * @var DomainInterface
      */

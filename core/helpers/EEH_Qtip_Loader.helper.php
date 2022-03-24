@@ -15,7 +15,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class EEH_Qtip_Loader extends EEH_Base
 {
-
     /**
      * @var LoaderInterface $loader
      */

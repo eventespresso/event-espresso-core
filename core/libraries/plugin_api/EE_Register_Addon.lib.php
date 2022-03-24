@@ -23,7 +23,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Register_Addon implements EEI_Plugin_API
 {
-
     /**
      * possibly truncated version of the EE core version string
      *

@@ -9,7 +9,6 @@ namespace EventEspresso\core\services\commands;
  */
 interface CommandBusInterface
 {
-
     /**
      * @return CommandHandlerManagerInterface
      */

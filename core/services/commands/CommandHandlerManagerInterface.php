@@ -9,7 +9,6 @@ namespace EventEspresso\core\services\commands;
  */
 interface CommandHandlerManagerInterface
 {
-
     /**
      * !!! IMPORTANT !!!
      * If overriding the default CommandHandler for a Command,

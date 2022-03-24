@@ -15,7 +15,6 @@ use EventEspresso\core\services\collections\Collection;
  */
 class RouteMatchSpecificationCollection extends Collection
 {
-
     const COLLECTION_NAME = 'route_match_specifications';
 
 

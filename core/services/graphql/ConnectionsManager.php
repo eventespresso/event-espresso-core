@@ -17,7 +17,6 @@ use EventEspresso\core\services\graphql\connections\ConnectionInterface;
  */
 class ConnectionsManager implements GQLManagerInterface
 {
-
     /**
      * @var ConnectionCollection|ConnectionInterface[] $connections
      */

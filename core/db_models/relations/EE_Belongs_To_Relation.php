@@ -11,7 +11,6 @@
  */
 class EE_Belongs_To_Relation extends EE_Model_Relation_Base
 {
-
     /**
      * Object representing the relationship between two models. Belongs_To means that THIS model has the foreign key
      * to the other model. This knows how to join the models,

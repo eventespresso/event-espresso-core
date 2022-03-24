@@ -13,8 +13,6 @@
  */
 class EE_Messages_Addressee extends EE_Base
 {
-
-
     /**
      * Identifier properties for the recipient
      */

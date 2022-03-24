@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class ProcessTicketSelectorPostData
 {
-
     const DATA_KEY_EVENT_ID      = 'id';
 
     const DATA_KEY_MAX_ATNDZ     = 'max_atndz';

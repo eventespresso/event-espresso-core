@@ -17,7 +17,6 @@ use EEH_Template;
  */
 class Iframe
 {
-
     /*
     * HTML for notices and ajax gif
     * @var string $title

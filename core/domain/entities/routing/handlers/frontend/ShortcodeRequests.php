@@ -16,7 +16,6 @@ use EventEspresso\core\services\routing\Route;
  */
 class ShortcodeRequests extends Route
 {
-
     /**
      * returns true if the current request matches this route
      * child classes can override and use Request directly to match route with request

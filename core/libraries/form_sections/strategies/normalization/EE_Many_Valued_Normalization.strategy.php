@@ -9,7 +9,6 @@
  */
 class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base
 {
-
     protected $_individual_item_normalization_strategy = array();
 
 

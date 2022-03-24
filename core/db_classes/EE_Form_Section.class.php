@@ -25,7 +25,6 @@ use EventEspresso\core\services\form\meta\FormStatus;
  */
 class EE_Form_Section extends EE_Base_Class
 {
-
     /**
      * @var Attributes
      */

@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\addon\api\v1;
 
 class DataMigrationApi
 {
-
     /**
      * @var string path to DMS folder
      */

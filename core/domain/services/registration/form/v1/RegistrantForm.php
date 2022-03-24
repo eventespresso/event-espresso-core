@@ -17,7 +17,6 @@ use ReflectionException;
 
 class RegistrantForm extends EE_Form_Section_Proper
 {
-
     /**
      * @var EE_SPCO_Reg_Step_Attendee_Information
      */

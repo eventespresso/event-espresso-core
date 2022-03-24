@@ -10,7 +10,6 @@
  */
 class EED_Thank_You_Page extends EED_Module
 {
-
     /**
      * time in seconds to wait for the IPN to arrive before telling the registrant to bugger off ( 1200s = 20 minutes )
      */

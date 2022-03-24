@@ -12,7 +12,6 @@ use EventEspresso\payment_methods\Paypal_Express\TokenRequest;
  */
 class EEG_Paypal_Express extends EE_Offsite_Gateway
 {
-
     /**
      * Merchant API Username.
      *

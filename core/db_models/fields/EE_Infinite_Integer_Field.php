@@ -9,7 +9,6 @@
  */
 class EE_Infinite_Integer_Field extends EE_Model_Field_Base
 {
-
     /**
      * @param string $table_column
      * @param string $nicename

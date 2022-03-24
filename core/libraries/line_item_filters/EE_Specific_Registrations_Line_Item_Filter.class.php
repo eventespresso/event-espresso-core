@@ -12,7 +12,6 @@
  */
 class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Base
 {
-
     /**
      * array of line item codes and their corresponding quantities for registrations
      *

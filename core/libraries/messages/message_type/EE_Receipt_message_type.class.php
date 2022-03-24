@@ -12,7 +12,6 @@
  */
 class EE_Receipt_message_type extends EE_message_type
 {
-
     public function __construct()
     {
         $this->name = 'receipt';

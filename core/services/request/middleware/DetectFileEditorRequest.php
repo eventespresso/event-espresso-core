@@ -16,7 +16,6 @@ use EventEspresso\core\services\request\ResponseInterface;
  */
 class DetectFileEditorRequest extends Middleware
 {
-
     /**
      * converts a Request to a Response
      *

@@ -13,8 +13,6 @@ namespace EventEspresso\modules\ticket_selector;
  */
 class TicketDetails
 {
-
-
     /**
      * @var \EE_Ticket $ticket
      */

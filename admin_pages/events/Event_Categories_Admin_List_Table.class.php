@@ -13,7 +13,6 @@
  */
 class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
 {
-
     public function __construct($admin_page)
     {
         parent::__construct($admin_page);

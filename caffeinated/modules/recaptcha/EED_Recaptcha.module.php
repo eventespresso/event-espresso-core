@@ -17,7 +17,6 @@ use ReCaptcha\Response;
  */
 class EED_Recaptcha extends EED_Module
 {
-
     /**
      * @var EE_Registration_Config $config
      */

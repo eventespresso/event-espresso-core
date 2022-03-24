@@ -13,7 +13,6 @@ use EventEspresso\core\libraries\iframe_display\IframeEmbedButton;
  */
 class TicketSelectorIframeEmbedButton extends IframeEmbedButton
 {
-
     /**
      * TicketSelectorIframeEmbedButton constructor.
      */

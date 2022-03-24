@@ -2,9 +2,6 @@
 
 class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base
 {
-
-
-
     /**
     *
     * @return string of html to display the field

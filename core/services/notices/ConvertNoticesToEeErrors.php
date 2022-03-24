@@ -13,7 +13,6 @@ use EE_Error;
  */
 class ConvertNoticesToEeErrors extends NoticeConverter
 {
-
     /**
      * Converts Notice objects into EE_Error notifications
      *

@@ -18,7 +18,6 @@
  */
 class EEM_Post_Meta extends EEM_Base
 {
-
     // private instance of the EE_Post_Meta object
     protected static $_instance = null;
 

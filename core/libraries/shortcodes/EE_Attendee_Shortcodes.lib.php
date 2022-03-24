@@ -15,7 +15,6 @@
  */
 class EE_Attendee_Shortcodes extends EE_Shortcodes
 {
-
     /**
      * hold all extra data.
      *

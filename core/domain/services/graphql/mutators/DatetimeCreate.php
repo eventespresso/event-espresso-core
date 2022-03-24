@@ -12,7 +12,6 @@ use WPGraphQL\AppContext;
 
 class DatetimeCreate extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

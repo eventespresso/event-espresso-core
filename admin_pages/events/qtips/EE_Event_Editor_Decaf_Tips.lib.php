@@ -11,8 +11,6 @@
  */
 class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config
 {
-
-
     /**
      * Creates the array for the tips
      */

@@ -12,7 +12,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_WP_User extends EE_Base_Class implements EEI_Admin_Links
 {
-
     /**
      * @var WP_User
      */

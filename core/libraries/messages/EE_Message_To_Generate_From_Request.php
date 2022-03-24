@@ -18,8 +18,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate implements EEI_Has_Sending_Messenger
 {
-
-
     /**
      * This messenger is used to send the generated message.
      *

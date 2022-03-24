@@ -15,7 +15,6 @@ use InvalidArgumentException;
  */
 class Version
 {
-
     const RELEASE_TYPE_RC    = 'rc';
 
     const RELEASE_TYPE_BETA  = 'beta';

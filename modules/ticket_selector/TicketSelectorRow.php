@@ -18,7 +18,6 @@ use ReflectionException;
  */
 abstract class TicketSelectorRow
 {
-
     /**
      * @var EE_Ticket
      */

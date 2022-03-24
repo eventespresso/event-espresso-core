@@ -27,7 +27,6 @@ use WP_REST_Request;
  */
 class RestApiSpoofer
 {
-
     /**
      * @var Read
      */
