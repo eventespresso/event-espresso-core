@@ -1578,7 +1578,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * @param string                 $box_id
      * @param string                 $title
-     * @param callable|null          $callback
+     * @param callable|string|null   $callback
      * @param string|array|WP_Screen $screen
      * @param string                 $context
      * @param string                 $priority
@@ -1587,7 +1587,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function addMetaBox(
         string $box_id,
         string $title,
-        ?callable $callback,
+        $callback,
         $screen,
         string $context = 'normal',
         string $priority = 'default',
