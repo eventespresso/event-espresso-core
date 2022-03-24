@@ -1575,15 +1575,28 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     }
 
 
+    /**
+     * @param string                 $box_id
+     * @param string                 $title
+     * @param callable|null          $callback
+     * @param string|array|WP_Screen $screen
+     * @param string                 $context
+     * @param string                 $priority
+     * @param array|null             $callback_args
+     */
     protected function addMetaBox(
-        $box_id,
-        $title,
-        $callback,
+        string $box_id,
+        string $title,
+        ?callable $callback,
         $screen,
-        $context = 'normal',
-        $priority = 'default',
-        $callback_args = null
+        string $context = 'normal',
+        string $priority = 'default',
+        ?array $callback_args = null
     ) {
+        if (! is_callable($callback)) {
+            return;
+        }
+
         add_meta_box($box_id, $title, $callback, $screen, $context, $priority, $callback_args);
         add_filter(
             "postbox_classes_{$this->_wp_page_slug}_{$box_id}",
