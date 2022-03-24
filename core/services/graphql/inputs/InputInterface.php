@@ -14,7 +14,6 @@ use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
  */
 interface InputInterface
 {
-
     /**
      * @return string
      */

@@ -19,7 +19,6 @@
  */
 class EEH_HTML
 {
-
     /**
      *  instance of the EEH_Autoloader object
      *  @var    $_instance

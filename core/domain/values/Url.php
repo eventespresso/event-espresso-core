@@ -16,7 +16,6 @@ use InvalidArgumentException;
  */
 class Url
 {
-
     /**
      * @var string $scheme
      */

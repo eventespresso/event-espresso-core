@@ -17,7 +17,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class BlockManager
 {
-
     /**
      * @var CollectionInterface|BlockInterface[] $blocks
      */

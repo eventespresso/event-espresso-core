@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\database;
  */
 class TableManager extends \EE_Base
 {
-
     /**
      * @var TableAnalysis $table_analysis
      */

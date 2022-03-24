@@ -17,8 +17,6 @@ use GraphQL\Deferred;
  */
 abstract class AbstractRootQueryConnection extends ConnectionBase
 {
-
-
     /**
      * @param $entity
      * @param $args

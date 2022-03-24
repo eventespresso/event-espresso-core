@@ -26,7 +26,6 @@ use WP_Error;
  */
 class InvisibleRecaptcha
 {
-
     const URL_GOOGLE_RECAPTCHA_API          = 'https://www.google.com/recaptcha/api/siteverify';
 
     const SESSION_DATA_KEY_RECAPTCHA_PASSED = 'recaptcha_passed';

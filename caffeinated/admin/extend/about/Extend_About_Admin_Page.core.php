@@ -16,8 +16,6 @@
  */
 class Extend_About_Admin_Page extends About_Admin_Page
 {
-
-
     public function __construct($routing = true)
     {
         parent::__construct($routing);

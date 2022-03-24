@@ -10,8 +10,6 @@
  */
 class EES_Espresso_Txn_Page extends EES_Shortcode
 {
-
-
     /**
      * @deprecated 4.9.27
      * @return  void

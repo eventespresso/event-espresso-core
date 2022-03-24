@@ -15,7 +15,6 @@
  */
 class EE_Single_Registration_Line_Item_Filter extends EE_Specific_Registrations_Line_Item_Filter
 {
-
     /**
      *
      * @param EE_Registration $registration

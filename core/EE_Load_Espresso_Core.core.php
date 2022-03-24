@@ -26,7 +26,6 @@ use EventEspresso\core\services\request\ResponseInterface;
  */
 class EE_Load_Espresso_Core implements RequestDecoratorInterface, RequestStackCoreAppInterface
 {
-
     /**
      * @var RequestInterface $request
      */

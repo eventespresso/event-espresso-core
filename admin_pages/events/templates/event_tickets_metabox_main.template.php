@@ -127,7 +127,7 @@
                value="<?php echo esc_attr($total_ticket_rows); ?>"
         />
         <div class="save-cancel-button-container">
-            <button class="button-secondary ee-create-button" data-context="ticket">
+            <button class="button--secondary ee-create-button" data-context="ticket">
                 <?php esc_html_e('Create New Ticket', 'event_espresso'); ?>
             </button>
         </div>

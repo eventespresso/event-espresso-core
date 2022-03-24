@@ -20,7 +20,7 @@
         <?php echo $publish_hidden_fields; // already escaped ?>
     </div>
 
-    <div id="espresso_major_buttons_wrapper">
+    <div id="major-publishing-actions" class="ee-layout-row">
 
         <?php if ($publish_delete_link) : ?>
             <div id="delete-action">
@@ -28,11 +28,9 @@
             </div>
         <?php endif; ?>
 
-        <div class="publishing-action">
+        <div class="publishing-action" class='ee-layout-row'>
             <?php echo $save_buttons; // already escaped ?>
         </div>
-        <div class="clear"></div>
-
     </div>
 
     <div id="event-editor-floating-save-btns" class="hidden">

@@ -13,7 +13,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
 {
-
     /**
      *
      * @param array  $props_n_values          incoming values

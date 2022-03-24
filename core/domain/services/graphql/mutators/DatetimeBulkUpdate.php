@@ -7,7 +7,6 @@ use EventEspresso\core\domain\services\graphql\types\Datetime;
 
 class DatetimeBulkUpdate extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

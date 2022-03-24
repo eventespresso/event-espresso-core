@@ -12,7 +12,6 @@ use EventEspresso\core\exceptions\InvalidIdentifierException;
  */
 class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class
 {
-
     /**
      * Extra Meta key prefix for whether a given context for this message tmeplate group is active or not.
      */

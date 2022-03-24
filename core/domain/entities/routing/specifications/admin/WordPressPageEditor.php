@@ -18,7 +18,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class WordPressPageEditor extends MatchAnyRouteSpecification
 {
-
     /**
      * WordPressPostsEditor constructor.
      *

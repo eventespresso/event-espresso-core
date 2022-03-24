@@ -13,7 +13,6 @@
  */
 class EEH_Sideloader extends EEH_Base
 {
-
     /**
      * @since   4.1.0
      * @var     string

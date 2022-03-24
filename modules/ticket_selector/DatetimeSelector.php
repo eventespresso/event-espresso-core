@@ -11,7 +11,6 @@ namespace EventEspresso\modules\ticket_selector;
  */
 class DatetimeSelector
 {
-
     /**
      * @var \EE_Event $event
      */

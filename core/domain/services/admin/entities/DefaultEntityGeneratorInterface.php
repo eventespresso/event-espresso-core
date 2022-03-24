@@ -16,7 +16,6 @@ use ReflectionException;
  */
 interface DefaultEntityGeneratorInterface
 {
-
     /**
      * @param EE_Base_Class $entity
      * @return EE_Base_Class[]

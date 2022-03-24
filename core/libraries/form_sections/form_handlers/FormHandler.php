@@ -28,7 +28,6 @@ use EventEspresso\core\exceptions\InvalidFormSubmissionException;
  */
 abstract class FormHandler implements FormHandlerInterface
 {
-
     /**
      * will add opening and closing HTML form tags as well as a submit button
      */

@@ -12,7 +12,6 @@ use ReflectionException;
 
 class TokenRequest
 {
-
     /**
      * @var GatewayDataFormatterInterface
      */

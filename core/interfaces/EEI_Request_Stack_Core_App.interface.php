@@ -5,7 +5,6 @@
  */
 interface EEI_Request_Stack_Core_App
 {
-
     /**
      * gives the core app a chance to handle the response after the request stack has fully processed
      *

@@ -19,7 +19,6 @@ use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
  */
 class Country extends TypeBase
 {
-
     /**
      * Country constructor.
      *

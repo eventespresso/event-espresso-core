@@ -15,7 +15,6 @@ use EventEspresso\core\services\routing\Route;
  */
 class WordPressHeartbeat extends Route
 {
-
     /**
      * returns true if the current request matches this route
      *

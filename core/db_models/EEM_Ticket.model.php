@@ -9,7 +9,6 @@
  */
 class EEM_Ticket extends EEM_Soft_Delete_Base
 {
-
     /**
      * the following constants define where tickets can be viewed throughout the UI
      *

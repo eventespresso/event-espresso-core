@@ -21,7 +21,6 @@ use ReflectionException;
  */
 class DefaultTickets implements DefaultEntityGeneratorInterface
 {
-
     /**
      * @var DefaultPrices $default_prices
      */

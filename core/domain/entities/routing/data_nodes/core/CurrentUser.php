@@ -54,12 +54,14 @@ class CurrentUser extends JsonDataNode
         $this->addData('description', $current_user->description);
         $this->addData('email', $current_user->user_email);
         $this->addData('firstName', $current_user->first_name);
+        $this->addData('isa', is_super_admin($current_user->ID));
         $this->addData('lastName', $current_user->last_name);
         $this->addData('locale', get_user_locale($current_user->ID));
         $this->addData('name', $current_user->display_name);
         $this->addData('nicename', $current_user->user_nicename);
         $this->addData('nickname', $current_user->nickname);
         $this->addData('username', $current_user->user_login);
+        $this->addData('roles', $current_user->roles);
         $this->addData('__typename', 'User');
         $this->addDataNode($this->capabilities);
         $this->setInitialized(true);

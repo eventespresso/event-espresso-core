@@ -11,7 +11,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class Invoice
 {
-
     /**
      *
      * @var EE_Registration

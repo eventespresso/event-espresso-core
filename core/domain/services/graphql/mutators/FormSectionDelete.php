@@ -16,7 +16,6 @@ use ReflectionException;
 
 class FormSectionDelete extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

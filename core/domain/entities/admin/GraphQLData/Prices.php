@@ -12,7 +12,6 @@ namespace EventEspresso\core\domain\entities\admin\GraphQLData;
  */
 class Prices extends GraphQLData
 {
-
     /**
      * @param array $where_params
      * @return array|null

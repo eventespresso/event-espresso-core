@@ -10,7 +10,6 @@ use WPGraphQL\AppContext;
 
 class FormElementDelete extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

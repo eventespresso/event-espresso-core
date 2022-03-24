@@ -16,7 +16,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class Windows1252 extends FormatterBase
 {
-
     /**
      * Converts the string to windows-1252 encoding.
      *

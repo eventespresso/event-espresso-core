@@ -16,8 +16,6 @@
  */
 class EE_Line_Item_Shortcodes extends EE_Shortcodes
 {
-
-
     protected function _init_props()
     {
         $this->label = esc_html__('Line Item Shortcodes', 'event_espresso');

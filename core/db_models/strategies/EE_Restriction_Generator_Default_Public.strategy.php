@@ -14,7 +14,6 @@
  */
 class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_Base
 {
-
     /**
      * Name of the field on this model (or a related model, including the model
      * chain to it) that is a boolean indicating whether or not a model object

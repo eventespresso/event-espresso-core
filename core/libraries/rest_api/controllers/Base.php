@@ -20,7 +20,6 @@ use EEH_Inflector;
  */
 class Base
 {
-
     /**
      * @deprecated use all-caps version
      */

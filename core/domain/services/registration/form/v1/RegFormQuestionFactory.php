@@ -15,7 +15,6 @@ use ReflectionException;
 
 class RegFormQuestionFactory
 {
-
     /**
      * @var callable
      */

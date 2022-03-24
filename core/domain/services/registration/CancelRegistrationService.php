@@ -15,7 +15,6 @@ use EventEspresso\core\domain\services\ticket\CancelTicketLineItemService;
  */
 class CancelRegistrationService
 {
-
     /**
      * @var CancelTicketLineItemService $cancel_ticket_line_item_service
      */

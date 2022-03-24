@@ -54,19 +54,10 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.DTT_EVT_start').on('click', '.ee-more-datetimes-toggle', function(e){
+	$('#wpcontent').on('click', '.ee-more-datetimes-toggle', function(e){
 	    e.preventDefault();
-	    var show = $(this).hasClass('dashicons-plus'),
-            addIcon = show ? 'dashicons-minus' : 'dashicons-plus',
-            removeIcon = show ? 'dashicons-plus' : 'dashicons-minus',
-            $moreItems = $('.more-items', $(this).parent());
-
-	    $(this).removeClass(removeIcon).addClass(addIcon);
-	    if (show) {
-	        $moreItems.removeClass('hidden');
-        } else {
-	        $moreItems.addClass('hidden');
-        }
+		$(this).toggleClass('open');
+		$(this).next('.more-items').toggleClass('hidden').slideToggle();
     });
 
 
@@ -76,10 +67,9 @@ jQuery(document).ready(function($) {
 	 * @return string (new html for checkin)
 	 */
 	$('.trigger-checkin', '#the-list').on('click', function() {
-		var content;
-		var itemdata = $(this).data();
-		var thisitem = $(this);
-		var data = {
+		const itemdata = $(this).data();
+		const thisitem = $(this);
+		const data = {
 			_regid : itemdata._regid,
 			dttid : itemdata.dttid,
 			checkinnonce : itemdata.nonce,
@@ -88,7 +78,7 @@ jQuery(document).ready(function($) {
 			page : 'espresso_registrations'
 		};
 
-		var setup = {
+		const setup = {
 			where: '#ajax-notices-container',
 			what: 'clear'
 		};
@@ -98,20 +88,20 @@ jQuery(document).ready(function($) {
 			url: ajaxurl,
 			data: data,
 			success: function( response, status, xhr ) {
-				var ct = xhr.getResponseHeader("content-type") || "";
+				const ct = xhr.getResponseHeader("content-type") || "";
 					if (ct.indexOf('html') > -1) {
 						$(setup.where).html(response);
 					}
 
 					if (ct.indexOf('json') > -1 ) {
-						var resp = response,
+						const resp = response,
 						content = resp.error ? resp.error : resp.content;
 						if ( resp.error ) {
 							$(setup.where).html(content);
 						} else {
 							$(setup.where).html(resp.notices);
 							$('.espresso-notices').show();
-							thisitem.attr('class', content);
+							thisitem.find('.dashicons').attr('class', content);
 						}
 					}
 			}
@@ -125,36 +115,35 @@ jQuery(document).ready(function($) {
 			invalidHandler: function( event, validator ) {
 				//toggle the wpjs indicators
 				$('.spinner').hide();
-				$('#publish').removeClass('button-primary-disabled');
+				$('#publish').removeClass('button--primary-disabled');
 			}
 		});/**/
 	} catch(err) {
 		//won't do anything just wanna make sure .validate only runs when the jQuery validate plugin is present
 	}
 
-
-	/** Hide/unhide expired events in event dropdown **/
-	var non_expired_opts = '', full_opts = '';
-	var default_value = $('#event_id' ).val();
-	if ( full_opts === '' ) {
-		full_opts = $( '#event_id', '#post-body-content').children();
-		non_expired_opts = $( '#event_id', '#post-body-content' ).children().not( '.ee-expired-event' );
-
-		//on load let's just show non_expired but ONLY if the hide expired events is checked.
-		if ( $('#js-ee-hide-expired-events').prop( 'checked' ) ) {
-			$('#event_id', '#post-body-content').html(non_expired_opts);
-			//always ensure our original default select is retained.
-			$('#event_id', '#post-body-content').find('option[value=' + default_value + ']').prop('selected', true);
-		}
-	}
-	$('#js-ee-hide-expired-events', '#post-body-content').click( function() {
-		if ( $(this).prop('checked') ) {
-			$('#event_id', '#post-body-content').html( non_expired_opts );
-			$('#event_id', '#post-body-content').find( 'option[value='+default_value+']').prop('selected',true);
-		} else {
-			$('#event_id', '#post-body-content').html( full_opts );
-			$('#event_id', '#post-body-content').find( 'option[value='+default_value+']').prop('selected',true);
-		}
+	$('#js-ee-hide-expired-events').click( function() {
+		$('#event_id').toggleClass('ee-hide-expired-events');
+		// if ($(this).prop('checked')) {
+		// 	$('#event_id').addClass('ee-hide-expired-events');
+		// } else {
+		// 	$('#event_id').removeClass('ee-hide-expired-events');
+		// }
+	});
+	$('#js-ee-hide-upcoming-events').click( function() {
+		$('#event_id').toggleClass('ee-hide-upcoming-events');
+		// if ($(this).prop('checked')) {
+		// 	$('#event_id').addClass('ee-hide-upcoming-events');
+		// } else {
+		// 	$('#event_id').removeClass('ee-hide-upcoming-events');
+		// }
+	});
+	$('#event_id').change(function () {
+		$('#DTT_ID').val(0);
+		this.form.submit();
+	});
+	$('#DTT_ID').change(function () {
+		this.form.submit();
 	});
 });
 

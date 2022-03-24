@@ -24,7 +24,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class AdminRoute extends Route
 {
-
     /**
      * @var EE_Admin_Config $admin_config
      */

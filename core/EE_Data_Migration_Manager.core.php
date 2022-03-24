@@ -31,7 +31,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Data_Migration_Manager implements ResettableInterface
 {
-
     /**
      *
      * @var EE_Registry

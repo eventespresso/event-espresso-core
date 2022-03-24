@@ -10,7 +10,6 @@
  */
 class EE_Has_Many_Relation extends EE_Model_Relation_Base
 {
-
     /**
      * Object representing the relationship between two models. Has_Many_Relations are where the OTHER model has the
      * foreign key this model. IE, there can be many other model objects related to one of this model's objects (but

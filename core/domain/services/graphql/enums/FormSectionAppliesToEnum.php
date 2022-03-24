@@ -15,7 +15,6 @@ use EventEspresso\core\services\graphql\enums\EnumBase;
  */
 class FormSectionAppliesToEnum extends EnumBase
 {
-
     /**
      * FormSectionAppliesToEnum constructor.
      */

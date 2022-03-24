@@ -22,7 +22,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
 {
-
     /**
      * @var RegForm
      */

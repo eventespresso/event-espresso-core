@@ -16,8 +16,6 @@ use InvalidArgumentException;
  */
 class CommandFactory implements CommandFactoryInterface
 {
-
-
     /**
      * @var LoaderInterface $loader
      */

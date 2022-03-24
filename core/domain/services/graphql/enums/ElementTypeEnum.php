@@ -16,7 +16,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class ElementTypeEnum extends EnumBase
 {
-
     /**
      * ElementTypeEnum constructor.
      */

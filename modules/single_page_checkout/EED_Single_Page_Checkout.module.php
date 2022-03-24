@@ -18,7 +18,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EED_Single_Page_Checkout extends EED_Module
 {
-
     /**
      * $_initialized - has the SPCO controller already been initialized ?
      *

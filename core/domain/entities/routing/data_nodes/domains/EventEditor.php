@@ -19,7 +19,6 @@ use WP_Post;
  */
 class EventEditor extends JsonDataNode
 {
-
     const NODE_NAME = 'eventEditor';
 
 

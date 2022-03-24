@@ -14,7 +14,6 @@ use EventEspresso\core\services\json\JsonDataHandler;
  */
 class FormLabel implements JsonableInterface
 {
-
     /**
      * @var JsonDataHandler
      */

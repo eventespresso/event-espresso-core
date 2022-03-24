@@ -9,8 +9,6 @@
  */
 class EE_PMT_Bank extends EE_PMT_Base
 {
-
-
     /**
      *
      * @param EE_Payment_Method $pm_instance

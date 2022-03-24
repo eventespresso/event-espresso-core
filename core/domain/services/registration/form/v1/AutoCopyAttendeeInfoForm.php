@@ -7,7 +7,6 @@ use EEH_Template;
 
 class AutoCopyAttendeeInfoForm extends EE_Form_Section_HTML
 {
-
     /**
      * CopyAttendeeInfoForm constructor.
      */

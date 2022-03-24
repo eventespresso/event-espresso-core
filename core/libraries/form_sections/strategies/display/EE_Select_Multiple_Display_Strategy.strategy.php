@@ -11,7 +11,6 @@
  */
 class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy
 {
-
     /**
      *
      * @throws EE_Error

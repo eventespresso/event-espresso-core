@@ -11,7 +11,6 @@ use EventEspresso\widgets\EspressoWidget;
  */
 class EEW_Upcoming_Events extends EspressoWidget
 {
-
     /**
      * @var string
      */

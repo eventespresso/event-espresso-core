@@ -16,7 +16,6 @@ use EventEspresso\core\services\routing\Route;
  */
 class RestApiRequests extends Route
 {
-
     /**
      * returns true if the current request matches this route
      *

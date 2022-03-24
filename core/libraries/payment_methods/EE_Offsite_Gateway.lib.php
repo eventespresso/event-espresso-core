@@ -14,7 +14,6 @@
  */
 abstract class EE_Offsite_Gateway extends EE_Gateway
 {
-
     /**
      * whether or not the gateway uses an IPN
      * that is sent in a separate request than the returning registrant.

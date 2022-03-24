@@ -1,0 +1,452 @@
+<?xml version="1.0"?>
+<ruleset name="EventEspresso" namespace="EventEspressoCS\EventEspresso">
+    <description>EventEspresso Coding Standards</description>
+
+    <!--
+    #############################################################################
+    SNIFF FOR PHP CROSS-VERSION COMPATIBILITY
+    Exclude a few select errorcodes for things back-filled by WP Core.
+    #############################################################################
+    -->
+    <config name="installed_paths" value="vendor/wp-coding-standards/wpcs,vendor/phpcompatibility/php-compatibility" />
+    <config name="testVersion" value="7.1-"/>
+
+    <!-- Tabs should represent 4 spaces. -->
+    <arg name="tab-width" value="4"/>
+
+    <rule ref="Generic.WhiteSpace.ScopeIndent">
+        <properties>
+            <property name="indent" value="4"/>
+            <property name="tabIndent" value="false"/>
+        </properties>
+        <exclude name="Generic.WhiteSpace.ScopeIndent.Incorrect"/>
+    </rule>
+
+    <!-- Enforce PSR  -->
+    <rule ref="PSR12">
+        <exclude name="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace" />
+    </rule>
+
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" value="event_espresso" />
+        </properties>
+    </rule>
+
+    <rule ref="PHPCompatibility">
+        <!-- Whitelist PHP native classes, interfaces, functions and constants which
+             are back-filled by WP.
+
+             Based on:
+             * /wp-includes/compat.php
+             * /wp-includes/random_compat/random.php
+        -->
+        <exclude name="PHPCompatibility.PHP.NewClasses.errorFound"/>
+        <exclude name="PHPCompatibility.PHP.NewClasses.typeerrorFound"/>
+
+        <exclude name="PHPCompatibility.PHP.NewConstants.json_pretty_printFound"/>
+        <exclude name="PHPCompatibility.PHP.NewConstants.php_version_idFound"/>
+
+        <exclude name="PHPCompatibility.PHP.NewFunctions.hash_equalsFound"/>
+        <exclude name="PHPCompatibility.PHP.NewFunctions.json_last_error_msgFound"/>
+        <exclude name="PHPCompatibility.PHP.NewFunctions.random_intFound"/>
+        <exclude name="PHPCompatibility.PHP.NewFunctions.random_bytesFound"/>
+        <exclude name="PHPCompatibility.PHP.NewFunctions.array_replace_recursiveFound"/>
+
+        <exclude name="PHPCompatibility.PHP.NewInterfaces.jsonserializableFound"/>
+    </rule>
+
+
+    <!--
+    #############################################################################
+    ADD SOME SPECIFIC EXTRA SNIFFS
+    #############################################################################
+    -->
+
+    <!-- global exclusions: No coverage at all in these directories/files -->
+    <exclude-pattern>tests/*</exclude-pattern>
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>node_modules/*</exclude-pattern>
+    <exclude-pattern>languages/*</exclude-pattern>
+    <exclude-pattern>assets/*</exclude-pattern>
+    <exclude-pattern>bin/*</exclude-pattern>
+    <exclude-pattern>docs/*</exclude-pattern>
+    <exclude-pattern>eslint/*</exclude-pattern>
+    <exclude-pattern>acceptance_tests/*</exclude-pattern>
+    <exclude-pattern>third_party_libs/</exclude-pattern>
+    <exclude-pattern>wordpress-shims.php</exclude-pattern>
+    <exclude-pattern>invoice_functions.php</exclude-pattern>
+    <exclude-pattern>wp-assets/*</exclude-pattern>
+    <exclude-pattern>template_tags.php</exclude-pattern>
+    <exclude-pattern>Espresso_Arabica_2014/*</exclude-pattern>
+    <exclude-pattern>EE_Deprecated.core.php</exclude-pattern>
+
+
+
+    <!-- Event Espresso specific rulesets -->
+    <rule ref="Generic.Formatting.SpaceAfterCast"/>
+    <!-- Warn about lines longer than 120 chars, and never error. -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120" />
+            <property name="absoluteLineLimit" value="0" />
+        </properties>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.CastSpacing"/>
+    <rule ref="WordPress.Arrays.ArrayKeySpacingRestrictions"/>
+
+    <rule ref="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed">
+        <type>error</type>
+    </rule>
+    <rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
+        <type>error</type>
+    </rule>
+    <rule ref="PSR2.Methods.MethodDeclaration.Underscore">
+        <type>error</type>
+    </rule>
+
+    <!-- ##### Documentation Sniffs vs empty index files ##### -->
+
+    <!-- Exclude the 'empty' index files from some documentation checks -->
+    <rule ref="Squiz.Commenting.InlineComment.NoSpaceBefore">
+        <exclude-pattern>*/index\.php</exclude-pattern>
+    </rule>
+
+    <!-- Specific sniffs to exclude -->
+    <exclude name="Squiz.Commenting.FileComment.Missing" />
+
+    <!--
+
+     #######  legacy files specific excludes ##########
+     Legacy files are still linted but there are some rules that are excluded for back-compat
+     reasons.
+
+     -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
+        <exclude-pattern>*_Config.php</exclude-pattern>
+        <exclude-pattern>brewing_regular.php</exclude-pattern>
+        <exclude-pattern>EE_SPCO_JSON_Response.php</exclude-pattern>
+        <exclude-pattern>*.class.php</exclude-pattern>
+        <exclude-pattern>*.core.php</exclude-pattern>
+        <exclude-pattern>*\.template.php</exclude-pattern>
+        <exclude-pattern>*\.module.php</exclude-pattern>
+        <exclude-pattern>*.lib.php</exclude-pattern>
+        <exclude-pattern>*.help_tab*</exclude-pattern>
+        <exclude-pattern>*\.form.php</exclude-pattern>
+        <exclude-pattern>*\.gateway.php</exclude-pattern>
+        <exclude-pattern>*.pm.php</exclude-pattern>
+        <exclude-pattern>*.dmsstage.php</exclude-pattern>
+        <exclude-pattern>*.dms.php</exclude-pattern>
+        <exclude-pattern>*\.model.php</exclude-pattern>
+        <exclude-pattern>*/db_models/relations/*</exclude-pattern>
+        <exclude-pattern>*/db_models/fields/*</exclude-pattern>
+        <exclude-pattern>*/db_models/helpers/*</exclude-pattern>
+        <exclude-pattern>*\.strategy.php</exclude-pattern>
+        <exclude-pattern>*\.helper.php</exclude-pattern>
+        <exclude-pattern>*\.interface.php</exclude-pattern>
+        <exclude-pattern>EE_Number_Input_Display_Strategy.php</exclude-pattern>
+        <exclude-pattern>EE_Message_Generated_From_Token.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate_From_Queue.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate_From_Request.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate.php</exclude-pattern>
+        <exclude-pattern>*\.error.php</exclude-pattern>
+        <exclude-pattern>*\.input.php</exclude-pattern>
+        <exclude-pattern>EE_Integer_Input.php</exclude-pattern>
+        <exclude-pattern>EE_Button_Input.php</exclude-pattern>
+        <exclude-pattern>EE_Country_Select_Input.php</exclude-pattern>
+        <exclude-pattern>EE_Datepicker_Input.php</exclude-pattern>
+        <exclude-pattern>EE_State_Select_Input.php</exclude-pattern>
+        <exclude-pattern>*\.shortcode.php</exclude-pattern>
+        <exclude-pattern>*\.widget.php</exclude-pattern>
+        <exclude-pattern>*.class_extension.php</exclude-pattern>
+        <exclude-pattern>*.class_ext.php</exclude-pattern>
+        <exclude-pattern>*.model_ext.php</exclude-pattern>
+        <exclude-pattern>*.model.ext.php</exclude-pattern>
+        <exclude-pattern>EE_Mailchimp_Config_Api_Settings.php</exclude-pattern>
+    </rule>
+
+    <rule ref="Squiz.Classes.ValidClassName.NotCamelCaps">
+        <exclude-pattern>*_Config.php</exclude-pattern>
+        <exclude-pattern>brewing_regular.php</exclude-pattern>
+        <exclude-pattern>EE_SPCO_JSON_Response.php</exclude-pattern>
+        <exclude-pattern>*.class.php</exclude-pattern>
+        <exclude-pattern>*.core.php</exclude-pattern>
+        <exclude-pattern>*\.template.php</exclude-pattern>
+        <exclude-pattern>*\.module.php</exclude-pattern>
+        <exclude-pattern>*.lib.php</exclude-pattern>
+        <exclude-pattern>*.help_tab*</exclude-pattern>
+        <exclude-pattern>*\.form.php</exclude-pattern>
+        <exclude-pattern>*\.gateway.php</exclude-pattern>
+        <exclude-pattern>*.pm.php</exclude-pattern>
+        <exclude-pattern>*.dmsstage.php</exclude-pattern>
+        <exclude-pattern>*.dms.php</exclude-pattern>
+        <exclude-pattern>*\.model.php</exclude-pattern>
+        <exclude-pattern>*/db_models/relations/*</exclude-pattern>
+        <exclude-pattern>*/db_models/fields/*</exclude-pattern>
+        <exclude-pattern>*/db_models/helpers/*</exclude-pattern>
+        <exclude-pattern>*\.strategy.php</exclude-pattern>
+        <exclude-pattern>*\.helper.php</exclude-pattern>
+        <exclude-pattern>*\.interface.php</exclude-pattern>
+        <exclude-pattern>EE_Number_Input_Display_Strategy.php</exclude-pattern>
+        <exclude-pattern>EE_Message_Generated_From_Token.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate_From_Queue.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate_From_Request.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate.php</exclude-pattern>
+        <exclude-pattern>*\.error.php</exclude-pattern>
+        <exclude-pattern>*\.input.php</exclude-pattern>
+        <exclude-pattern>EE_Integer_Input.php</exclude-pattern>
+        <exclude-pattern>EE_Button_Input.php</exclude-pattern>
+        <exclude-pattern>EE_Country_Select_Input.php</exclude-pattern>
+        <exclude-pattern>EE_Datepicker_Input.php</exclude-pattern>
+        <exclude-pattern>EE_State_Select_Input.php</exclude-pattern>
+        <exclude-pattern>*\.shortcode.php</exclude-pattern>
+        <exclude-pattern>*\.widget.php</exclude-pattern>
+        <exclude-pattern>*.class_extension.php</exclude-pattern>
+        <exclude-pattern>*.class_ext.php</exclude-pattern>
+        <exclude-pattern>*.model_ext.php</exclude-pattern>
+        <exclude-pattern>*.model.ext.php</exclude-pattern>
+        <exclude-pattern>EE_Mailchimp_Config_Api_Settings.php</exclude-pattern>
+    </rule>
+
+    <rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
+        <exclude-pattern>*_Config.php</exclude-pattern>
+        <exclude-pattern>brewing_regular.php</exclude-pattern>
+        <exclude-pattern>EE_SPCO_JSON_Response.php</exclude-pattern>
+        <exclude-pattern>*.class.php</exclude-pattern>
+        <exclude-pattern>*.core.php</exclude-pattern>
+        <exclude-pattern>*\.template.php</exclude-pattern>
+        <exclude-pattern>*\.module.php</exclude-pattern>
+        <exclude-pattern>*.lib.php</exclude-pattern>
+        <exclude-pattern>*.help_tab*</exclude-pattern>
+        <exclude-pattern>*\.form.php</exclude-pattern>
+        <exclude-pattern>*\.gateway.php</exclude-pattern>
+        <exclude-pattern>*.pm.php</exclude-pattern>
+        <exclude-pattern>*.dmsstage.php</exclude-pattern>
+        <exclude-pattern>*.dms.php</exclude-pattern>
+        <exclude-pattern>*\.model.php</exclude-pattern>
+        <exclude-pattern>*/db_models/relations/*</exclude-pattern>
+        <exclude-pattern>*/db_models/fields/*</exclude-pattern>
+        <exclude-pattern>*/db_models/helpers/*</exclude-pattern>
+        <exclude-pattern>*\.strategy.php</exclude-pattern>
+        <exclude-pattern>*\.helper.php</exclude-pattern>
+        <exclude-pattern>*\.interface.php</exclude-pattern>
+        <exclude-pattern>EE_Message_Generated_From_Token.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate_From_Queue.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate_From_Request.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate.php</exclude-pattern>
+        <exclude-pattern>*\.error.php</exclude-pattern>
+        <exclude-pattern>*\.input.php</exclude-pattern>
+        <exclude-pattern>EE_Button_Input.php</exclude-pattern>
+        <exclude-pattern>*\.shortcode.php</exclude-pattern>
+        <exclude-pattern>*\.widget.php</exclude-pattern>
+        <exclude-pattern>*.class_extension.php</exclude-pattern>
+        <exclude-pattern>*.class_ext.php</exclude-pattern>
+        <exclude-pattern>*.model_ext.php</exclude-pattern>
+        <exclude-pattern>*.model.ext.php</exclude-pattern>
+    </rule>
+
+    <rule ref="PSR2.Methods.MethodDeclaration.Underscore">
+        <exclude-pattern>*_Config.php</exclude-pattern>
+        <exclude-pattern>brewing_regular.php</exclude-pattern>
+        <exclude-pattern>EE_SPCO_JSON_Response.php</exclude-pattern>
+        <exclude-pattern>*.class.php</exclude-pattern>
+        <exclude-pattern>*.core.php</exclude-pattern>
+        <exclude-pattern>*\.template.php</exclude-pattern>
+        <exclude-pattern>*\.module.php</exclude-pattern>
+        <exclude-pattern>*.lib.php</exclude-pattern>
+        <exclude-pattern>*.help_tab*</exclude-pattern>
+        <exclude-pattern>*.form.php</exclude-pattern>
+        <exclude-pattern>*\.gateway.php</exclude-pattern>
+        <exclude-pattern>*.pm.php</exclude-pattern>
+        <exclude-pattern>*.dmsstage.php</exclude-pattern>
+        <exclude-pattern>*.dms.php</exclude-pattern>
+        <exclude-pattern>*\.model.php</exclude-pattern>
+        <exclude-pattern>*/db_models/relations/*</exclude-pattern>
+        <exclude-pattern>*/db_models/fields/*</exclude-pattern>
+        <exclude-pattern>*/db_models/helpers/*</exclude-pattern>
+        <exclude-pattern>*.strategy.php</exclude-pattern>
+        <exclude-pattern>*\.helper.php</exclude-pattern>
+        <exclude-pattern>*\.interface.php</exclude-pattern>
+        <exclude-pattern>EE_Message_Generated_From_Token.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate_From_Queue.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate_From_Request.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate.php</exclude-pattern>
+        <exclude-pattern>*\.error.php</exclude-pattern>
+        <exclude-pattern>*\.input.php</exclude-pattern>
+        <exclude-pattern>EE_Button_Input.php</exclude-pattern>
+        <exclude-pattern>EE_Country_Select_Input.php</exclude-pattern>
+        <exclude-pattern>*\.shortcode.php</exclude-pattern>
+        <exclude-pattern>*\.widget.php</exclude-pattern>
+        <exclude-pattern>*.class_extension.php</exclude-pattern>
+        <exclude-pattern>*.class_ext.php</exclude-pattern>
+        <exclude-pattern>*.model_ext.php</exclude-pattern>
+        <exclude-pattern>*.model.ext.php</exclude-pattern>
+    </rule>
+
+    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <exclude-pattern>*_Config.php</exclude-pattern>
+        <exclude-pattern>brewing_regular.php</exclude-pattern>
+        <exclude-pattern>EE_SPCO_JSON_Response.php</exclude-pattern>
+        <exclude-pattern>*.class.php</exclude-pattern>
+        <exclude-pattern>*.core.php</exclude-pattern>
+        <exclude-pattern>*\.template.php</exclude-pattern>
+        <exclude-pattern>*\.module.php</exclude-pattern>
+        <exclude-pattern>*.lib.php</exclude-pattern>
+        <exclude-pattern>*.help_tab*</exclude-pattern>
+        <exclude-pattern>*\.form.php</exclude-pattern>
+        <exclude-pattern>*\.gateway.php</exclude-pattern>
+        <exclude-pattern>*.pm.php</exclude-pattern>
+        <exclude-pattern>*.dmsstage.php</exclude-pattern>
+        <exclude-pattern>*.dms.php</exclude-pattern>
+        <exclude-pattern>*\.model.php</exclude-pattern>
+        <exclude-pattern>*/db_models/relations/*</exclude-pattern>
+        <exclude-pattern>*/db_models/fields/*</exclude-pattern>
+        <exclude-pattern>*/db_models/helpers/*</exclude-pattern>
+        <exclude-pattern>*\.strategy.php</exclude-pattern>
+        <exclude-pattern>*\.helper.php</exclude-pattern>
+        <exclude-pattern>*\.interface.php</exclude-pattern>
+        <exclude-pattern>JobHandlerInterface.php</exclude-pattern>
+        <exclude-pattern>*/batch/JobHandlers/*</exclude-pattern>
+        <exclude-pattern>LegacyRequestInterface.php</exclude-pattern>
+        <exclude-pattern>EE_Message_Generated_From_Token.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate_From_Queue.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate_From_Request.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate.php</exclude-pattern>
+        <exclude-pattern>*\.error.php</exclude-pattern>
+        <exclude-pattern>*\.input.php</exclude-pattern>
+        <exclude-pattern>EE_Button_Input.php</exclude-pattern>
+        <exclude-pattern>EE_Country_Select_Input.php</exclude-pattern>
+        <exclude-pattern>EE_Datepicker_Input.php</exclude-pattern>
+        <exclude-pattern>EE_State_Select_Input.php</exclude-pattern>
+        <exclude-pattern>*\.shortcode.php</exclude-pattern>
+        <exclude-pattern>*\.widget.php</exclude-pattern>
+        <exclude-pattern>*.class_extension.php</exclude-pattern>
+        <exclude-pattern>*.class_ext.php</exclude-pattern>
+        <exclude-pattern>*.model_ext.php</exclude-pattern>
+        <exclude-pattern>*.model.ext.php</exclude-pattern>
+    </rule>
+
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <type>error</type>
+        <exclude-pattern>brewing_regular.php</exclude-pattern>
+        <exclude-pattern>bootstrap.php</exclude-pattern>
+        <exclude-pattern>espresso.php</exclude-pattern>
+        <exclude-pattern>espresso_definitions.php</exclude-pattern>
+        <exclude-pattern>bootstrap_espresso.php</exclude-pattern>
+        <exclude-pattern>EE_Registration_Processor.class.php</exclude-pattern>
+        <exclude-pattern>EE_Transaction_Processor.class.php</exclude-pattern>
+        <exclude-pattern>EE_Payment_Processor.core.php</exclude-pattern>
+        <exclude-pattern>EE_Error.core.php</exclude-pattern>
+        <exclude-pattern>EE_Admin_List_Table.core.php</exclude-pattern>
+        <exclude-pattern>*.template.php</exclude-pattern>
+        <exclude-pattern>EE_PMT_Base.lib.php</exclude-pattern>
+        <exclude-pattern>*.dms.php</exclude-pattern>
+    </rule>
+
+    <rule ref="WordPress.WP.I18n.UnorderedPlaceholdersText">
+        <exclude-pattern>*.class.php</exclude-pattern>
+        <exclude-pattern>*.core.php</exclude-pattern>
+        <exclude-pattern>*\.template.php</exclude-pattern>
+        <exclude-pattern>*\.module.php</exclude-pattern>
+        <exclude-pattern>*.lib.php</exclude-pattern>
+        <exclude-pattern>*.help_tab*</exclude-pattern>
+        <exclude-pattern>*\.form.php</exclude-pattern>
+        <exclude-pattern>*\.gateway.php</exclude-pattern>
+        <exclude-pattern>*.pm.php</exclude-pattern>
+        <exclude-pattern>*.dmsstage.php</exclude-pattern>
+        <exclude-pattern>*.dms.php</exclude-pattern>
+        <exclude-pattern>*\.model.php</exclude-pattern>
+        <exclude-pattern>*/db_models/relations/*</exclude-pattern>
+        <exclude-pattern>*/db_models/fields/*</exclude-pattern>
+        <exclude-pattern>*/db_models/helpers/*</exclude-pattern>
+        <exclude-pattern>*.strategy.php</exclude-pattern>
+        <exclude-pattern>*\.helper.php</exclude-pattern>
+        <exclude-pattern>*\.interface.php</exclude-pattern>
+        <exclude-pattern>EE_Message_To_Generate.php</exclude-pattern>
+        <exclude-pattern>*\.error.php</exclude-pattern>
+        <exclude-pattern>*\.input.php</exclude-pattern>
+        <exclude-pattern>*\.shortcode.php</exclude-pattern>
+        <exclude-pattern>*\.widget.php</exclude-pattern>
+        <exclude-pattern>*.class_extension.php</exclude-pattern>
+        <exclude-pattern>*.class_ext.php</exclude-pattern>
+        <exclude-pattern>*.model_ext.php</exclude-pattern>
+        <exclude-pattern>*.model.ext.php</exclude-pattern>
+    </rule>
+
+    <rule ref="WordPress.WP.I18n.MissingSingularPlaceholder">
+        <exclude-pattern>ee_migration_page.template.php</exclude-pattern>
+        <exclude-pattern>EED_Messages.module.php</exclude-pattern>
+    </rule>
+
+    <rule ref="PEAR.Functions.ValidDefaultValue.NotAtEnd">
+        <exclude-pattern>*.class.php</exclude-pattern>
+        <exclude-pattern>*.core.php</exclude-pattern>
+        <exclude-pattern>*\.template.php</exclude-pattern>
+        <exclude-pattern>*\.module.php</exclude-pattern>
+        <exclude-pattern>*.lib.php</exclude-pattern>
+        <exclude-pattern>*.help_tab*</exclude-pattern>
+        <exclude-pattern>*\.form.php</exclude-pattern>
+        <exclude-pattern>*\.gateway.php</exclude-pattern>
+        <exclude-pattern>*.pm.php</exclude-pattern>
+        <exclude-pattern>*.dmsstage.php</exclude-pattern>
+        <exclude-pattern>*.dms.php</exclude-pattern>
+        <exclude-pattern>*\.model.php</exclude-pattern>
+        <exclude-pattern>*/db_models/relations/*</exclude-pattern>
+        <exclude-pattern>*/db_models/fields/*</exclude-pattern>
+        <exclude-pattern>*/db_models/helpers/*</exclude-pattern>
+        <exclude-pattern>*.strategy.php</exclude-pattern>
+        <exclude-pattern>*\.helper.php</exclude-pattern>
+        <exclude-pattern>*\.interface.php</exclude-pattern>
+        <exclude-pattern>NoticesContainerInterface.php</exclude-pattern>
+        <exclude-pattern>SequentialStepForm.php</exclude-pattern>
+        <exclude-pattern>SettingsForm.php</exclude-pattern>
+        <exclude-pattern>EE_Message_Generated_From_Token.php</exclude-pattern>
+        <exclude-pattern>*\.error.php</exclude-pattern>
+        <exclude-pattern>*\.input.php</exclude-pattern>
+        <exclude-pattern>*\.shortcode.php</exclude-pattern>
+        <exclude-pattern>*\.widget.php</exclude-pattern>
+        <exclude-pattern>*.class_extension.php</exclude-pattern>
+        <exclude-pattern>*.class_ext.php</exclude-pattern>
+        <exclude-pattern>*.model_ext.php</exclude-pattern>
+        <exclude-pattern>*.model.ext.php</exclude-pattern>
+    </rule>
+
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase">
+        <exclude-pattern>*.class.php</exclude-pattern>
+        <exclude-pattern>*.core.php</exclude-pattern>
+        <exclude-pattern>*\.template.php</exclude-pattern>
+        <exclude-pattern>*\.module.php</exclude-pattern>
+        <exclude-pattern>*.lib.php</exclude-pattern>
+        <exclude-pattern>*.help_tab*</exclude-pattern>
+        <exclude-pattern>*\.form.php</exclude-pattern>
+        <exclude-pattern>*\.gateway.php</exclude-pattern>
+        <exclude-pattern>*.pm.php</exclude-pattern>
+        <exclude-pattern>*.dmsstage.php</exclude-pattern>
+        <exclude-pattern>*.dms.php</exclude-pattern>
+        <exclude-pattern>*\.model.php</exclude-pattern>
+        <exclude-pattern>*/db_models/relations/*</exclude-pattern>
+        <exclude-pattern>*/db_models/fields/*</exclude-pattern>
+        <exclude-pattern>*/db_models/helpers/*</exclude-pattern>
+        <exclude-pattern>*.strategy.php</exclude-pattern>
+        <exclude-pattern>*\.helper.php</exclude-pattern>
+        <exclude-pattern>*\.interface.php</exclude-pattern>
+        <exclude-pattern>*\.error.php</exclude-pattern>
+        <exclude-pattern>*\.input.php</exclude-pattern>
+        <exclude-pattern>*\.shortcode.php</exclude-pattern>
+        <exclude-pattern>*\.widget.php</exclude-pattern>
+        <exclude-pattern>*.class_extension.php</exclude-pattern>
+        <exclude-pattern>*.class_ext.php</exclude-pattern>
+        <exclude-pattern>*.model_ext.php</exclude-pattern>
+        <exclude-pattern>*.model.ext.php</exclude-pattern>
+    </rule>
+
+    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+        <exclude-pattern>EE_Register_CPTs.core.php</exclude-pattern>
+        <exclude-pattern>EE_Admin_Page_Menu_Map.core.php</exclude-pattern>
+        <exclude-pattern>EE_Network_Config.core.php</exclude-pattern>
+        <exclude-pattern>EE_Capabilities.core.php</exclude-pattern>
+        <exclude-pattern>EE_Config.core.php</exclude-pattern>
+        <exclude-pattern>EE_Qtip_Config.lib.php</exclude-pattern>
+        <exclude-pattern>EEG_Aim.gateway.php</exclude-pattern>
+    </rule>
+</ruleset>

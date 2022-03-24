@@ -19,7 +19,6 @@
  */
 class EE_Restriction_Generator_Global extends EE_Restriction_Generator_Base
 {
-
     /**
      * name of the model field that indicates whether or not a model object is
      * "global"

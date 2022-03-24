@@ -25,7 +25,6 @@ use InvalidArgumentException;
  */
 class EventSpacesCalculator
 {
-
     /**
      * @var EE_Event $event
      */

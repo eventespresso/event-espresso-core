@@ -20,7 +20,6 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  */
 class DataLoaderCollection extends Collection
 {
-
     const COLLECTION_NAME = 'espresso_graphql_data_loaders';
 
     const COLLECTION_INTERFACE = 'EventEspresso\core\services\graphql\loaders\GQLDataDomainInterface';

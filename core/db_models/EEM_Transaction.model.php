@@ -19,7 +19,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEM_Transaction extends EEM_Base
 {
-
     // private instance of the Transaction object
     protected static $_instance;
 

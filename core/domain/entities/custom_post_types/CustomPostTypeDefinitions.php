@@ -16,7 +16,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class CustomPostTypeDefinitions
 {
-
     /**
      * @var string $namespace The graphql namespace/prefix.
      */

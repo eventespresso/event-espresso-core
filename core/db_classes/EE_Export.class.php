@@ -15,7 +15,6 @@
  */
 class EE_Export
 {
-
     const option_prefix = 'ee_report_job_';
 
 

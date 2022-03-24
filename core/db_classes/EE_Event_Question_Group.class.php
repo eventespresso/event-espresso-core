@@ -5,7 +5,6 @@
  */
 class EE_Event_Question_Group extends EE_Base_Class
 {
-
     /**
      * @param array $props_n_values
      * @return EE_Event_Question_Group|mixed

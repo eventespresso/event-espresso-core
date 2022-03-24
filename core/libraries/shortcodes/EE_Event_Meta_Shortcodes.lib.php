@@ -30,8 +30,6 @@
  */
 class EE_Event_Meta_Shortcodes extends EE_Shortcodes
 {
-
-
     public function __construct()
     {
         parent::__construct();

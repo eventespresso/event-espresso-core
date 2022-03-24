@@ -17,7 +17,6 @@ use ReflectionException;
  */
 class TicketVisibilityEnum extends EnumBase
 {
-
     /**
      * TicketVisibilityEnum constructor.
      */

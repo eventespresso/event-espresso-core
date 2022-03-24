@@ -73,7 +73,7 @@
     </td>
     <td>
         <?php if ($disabled) : ?>
-            <span class="ee-lock-icon"></span>
+            <span class="dashicons dashicons-lock"></span>
         <?php else : ?>
             <!-- <span class="gear-icon dashicons dashicons-admin-generic clickable" data-ticket-row="<?php echo absint($tkt_row); ?>" data-context="price" data-price-row="<?php echo absint($PRC_order); ?>"></span> -->
             <span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="<?php echo absint($tkt_row); ?>"

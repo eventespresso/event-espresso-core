@@ -16,7 +16,6 @@ use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
  */
 class Events_Admin_Page extends EE_Admin_Page_CPT
 {
-
     /**
      * This will hold the event object for event_details screen.
      *
@@ -292,14 +291,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'events_overview_other',
                     ],
                 ],
-                'qtips'         => [
-                    'EE_Event_List_Table_Tips',
-                ],
                 'require_nonce' => false,
             ],
             'create_new'             => [
                 'nav'           => [
-                    'label'      => esc_html__('Add Event', 'event_espresso'),
+                    'label'      => esc_html__('Add New Event', 'event_espresso'),
                     'order'      => 5,
                     'persistent' => false,
                 ],
@@ -770,7 +766,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'Your event is open for registration. Making changes may disrupt any transactions in progress. %sLearn more%s',
                     'event_espresso'
                 ),
-                '<a class="espresso-help-tab-lnk">',
+                '<a class="espresso-help-tab-lnk ee-help-tab-link">',
                 '</a>'
             )
         );
@@ -802,7 +798,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     '<select id="timezone_string" name="timezone_string" aria-describedby="timezone-description">'
                     . EEH_DTT_Helper::wp_timezone_choice('', EEH_DTT_Helper::get_user_locale())
                     . '</select>',
-                    '<button class="button button-secondary timezone-submit">',
+                    '<button class="button button--secondary timezone-submit">',
                     '</button><span class="spinner"></span>'
                 ),
                 __FILE__,
@@ -862,11 +858,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $items    = [
             'view_details'   => [
-                'class' => 'dashicons dashicons-search',
+                'class' => 'dashicons dashicons-visibility',
                 'desc'  => esc_html__('View Event', 'event_espresso'),
             ],
             'edit_event'     => [
-                'class' => 'ee-icon ee-icon-calendar-edit',
+                'class' => 'dashicons dashicons-calendar-alt',
                 'desc'  => esc_html__('Edit Event Details', 'event_espresso'),
             ],
             'view_attendees' => [
@@ -877,31 +873,31 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $items    = apply_filters('FHEE__Events_Admin_Page___event_legend_items__items', $items);
         $statuses = [
             'sold_out_status'  => [
-                'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::sold_out,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::sold_out,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::sold_out, false, 'sentence'),
             ],
             'active_status'    => [
-                'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::active,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::active,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::active, false, 'sentence'),
             ],
             'upcoming_status'  => [
-                'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::upcoming,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::upcoming,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::upcoming, false, 'sentence'),
             ],
             'postponed_status' => [
-                'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::postponed,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::postponed,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::postponed, false, 'sentence'),
             ],
             'cancelled_status' => [
-                'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::cancelled,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::cancelled,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::cancelled, false, 'sentence'),
             ],
             'expired_status'   => [
-                'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::expired,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::expired,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::expired, false, 'sentence'),
             ],
             'inactive_status'  => [
-                'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::inactive,
+                'class' => 'ee-status-legend ee-status-bg--' . EE_Datetime::inactive,
                 'desc'  => EEH_Template::pretty_status(EE_Datetime::inactive, false, 'sentence'),
             ],
         ];
@@ -941,8 +937,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         // make sure this is only when editing
         if (! empty($id)) {
-            $post   = get_post($id);
-            $return .= '<a class="button button-small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">'
+            $post = get_post($id);
+            $return .= '<a class="button button--small button--secondary" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">'
                        . esc_html__('Shortcode', 'event_espresso')
                        . '</a> ';
             $return .= '<input id="shortcode" type="hidden" value="[ESPRESSO_TICKET_SELECTOR event_id='
@@ -967,21 +963,30 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _events_overview_list_table()
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $after_list_table                           = [];
-        $after_list_table['view_event_list_button'] = EEH_HTML::br();
-        $after_list_table['view_event_list_button'] .= EEH_Template::get_button_or_link(
-            get_post_type_archive_link('espresso_events'),
-            esc_html__('View Event Archive Page', 'event_espresso'),
-            'button'
+        $links_html = EEH_HTML::div('', '', 'ee-admin-section ee-layout-stack');
+        $links_html .= EEH_HTML::h3(esc_html__('Links', 'event_espresso'));
+        $links_html .= EEH_HTML::div(
+            EEH_Template::get_button_or_link(
+                get_post_type_archive_link('espresso_events'),
+                esc_html__('View Event Archive Page', 'event_espresso'),
+                'button button--small button--secondary'
+            ),
+            '',
+            'ee-admin-button-row ee-admin-button-row--align-start'
         );
-        $after_list_table['legend']                 = $this->_display_legend($this->_event_legend_items());
+        $links_html .= EEH_HTML::divx();
+
+        $after_list_table['view_event_list_button'] = $links_html;
+
+        $after_list_table['legend'] = $this->_display_legend($this->_event_legend_items());
         $this->_admin_page_title                    .= ' ' . $this->get_action_link_or_button(
             'create_new',
             'add',
             [],
             'add-new-h2'
         );
+
         $this->_template_args['after_list_table']   = array_merge(
             (array) $this->_template_args['after_list_table'],
             $after_list_table
@@ -1640,7 +1645,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $use_advanced_editor = $this->admin_config->useAdvancedEditor();
         // check if the new EDTR reg options meta box is being used, and if so, don't load the legacy version
         if (! $use_advanced_editor || ! $this->feature->allowed('use_reg_options_meta_box')) {
-            add_meta_box(
+            $this->addMetaBox(
                 'espresso_event_editor_event_options',
                 esc_html__('Event Registration Options', 'event_espresso'),
                 [$this, 'registration_options_meta_box'],
@@ -1649,7 +1654,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             );
         }
         if (! $use_advanced_editor) {
-            add_meta_box(
+            $this->addMetaBox(
                 'espresso_event_editor_tickets',
                 esc_html__('Event Datetime & Ticket', 'event_espresso'),
                 [$this, 'ticket_metabox'],
@@ -1692,7 +1697,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'existing_ticket_ids'      => '',
             'total_ticket_rows'        => 1,
             'ticket_js_structure'      => '',
-            'trash_icon'               => 'ee-lock-icon',
+            'trash_icon'               => 'dashicons dashicons-lock',
             'disabled'                 => '',
         ];
         $event_id      = is_object($this->_cpt_model_obj) ? $this->_cpt_model_obj->ID() : null;
@@ -1789,7 +1794,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'TKT_sold'            => $skeleton ? 0 : $ticket->get('TKT_sold'),
             'trash_icon'          => ($skeleton || (! empty($ticket) && ! $ticket->get('TKT_deleted')))
                                      && (! empty($ticket) && $ticket->get('TKT_sold') === 0)
-                ? 'trash-icon dashicons dashicons-post-trash clickable' : 'ee-lock-icon',
+                ? 'trash-icon dashicons dashicons-post-trash clickable' : 'dashicons dashicons-lock',
             'disabled'            => $skeleton || (! empty($ticket) && ! $ticket->get('TKT_deleted')) ? ''
                 : ' disabled=disabled',
         ];
@@ -2444,7 +2449,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $this->_set_add_edit_form_tags('update_default_event_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
-        $this->_template_args['admin_page_content'] = $this->_default_event_settings_form()->get_html();
+        $this->_template_args['admin_page_content'] = EEH_HTML::div(
+            $this->_default_event_settings_form()->get_html(),
+            '',
+            'padding'
+        );
         $this->display_admin_page_with_sidebar();
     }
 
@@ -2484,6 +2493,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'subsections'     => apply_filters(
                     'FHEE__Events_Admin_Page___default_event_settings_form__form_subsections',
                     [
+                        'defaults_section_header' => new EE_Form_Section_HTML(
+                            EEH_HTML::h2(
+                                esc_html__('Default Settings', 'event_espresso'),
+                                '',
+                                'ee-admin-settings-hdr'
+                            )
+                        ),
                         'default_reg_status'  => new EE_Select_Input(
                             $registration_stati_for_selection,
                             [

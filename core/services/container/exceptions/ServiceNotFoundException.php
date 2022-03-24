@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\container\exceptions;
  */
 class ServiceNotFoundException extends \RuntimeException
 {
-
     /**
      * ServiceNotFoundException constructor
      *

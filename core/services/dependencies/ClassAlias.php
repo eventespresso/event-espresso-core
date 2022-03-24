@@ -16,7 +16,6 @@ use EventEspresso\core\exceptions\InvalidAliasException;
  */
 class ClassAlias
 {
-
     /**
      * @var string $alias   an interface or base class representing what object
      *                      can be utilized by another object and/or function

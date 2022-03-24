@@ -17,7 +17,6 @@ use WP_REST_Request;
  */
 class Capabilities
 {
-
     /**
      * The current user can see at least SOME of these entities.
      *

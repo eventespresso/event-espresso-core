@@ -20,7 +20,7 @@
                 type="submit"
                 name="save"
                 id="country_settings_save_2"
-                class="button-primary save"
+                class="button button--primary save"
                 value="<?php esc_html_e('Save Country Details', 'event_espresso'); ?>"
             />
             <input

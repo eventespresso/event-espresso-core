@@ -18,7 +18,6 @@ use WP_Admin_Bar;
  */
 class AdminToolBar
 {
-
     /**
      * @var WP_Admin_Bar $admin_bar
      */

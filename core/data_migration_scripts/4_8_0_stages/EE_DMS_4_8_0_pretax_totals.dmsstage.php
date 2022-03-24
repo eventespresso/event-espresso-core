@@ -12,7 +12,6 @@
  */
 class EE_DMS_4_8_0_pretax_totals extends EE_Data_Migration_Script_Stage
 {
-
     protected $_line_item_table_name;
 
 

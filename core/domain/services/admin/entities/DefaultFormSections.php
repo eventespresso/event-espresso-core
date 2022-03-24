@@ -24,7 +24,6 @@ use ReflectionException;
  */
 class DefaultFormSections implements DefaultEntityGeneratorInterface
 {
-
     /**
      * @var EEM_Form_Element $form_element_model
      */

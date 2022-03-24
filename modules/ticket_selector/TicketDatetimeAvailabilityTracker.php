@@ -21,7 +21,6 @@ use InvalidArgumentException;
  */
 class TicketDatetimeAvailabilityTracker
 {
-
     /**
      * array of datetimes and the spaces available for them
      *

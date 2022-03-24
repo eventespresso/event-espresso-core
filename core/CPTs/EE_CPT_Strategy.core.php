@@ -15,7 +15,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_CPT_Strategy extends EE_Base
 {
-
     /**
      * @var EE_CPT_Strategy $_instance
      */

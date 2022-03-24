@@ -10,7 +10,6 @@
  */
 class EE_Text_Validation_Strategy extends EE_Validation_Strategy_Base
 {
-
     protected $_regex = null;
     /**
      *

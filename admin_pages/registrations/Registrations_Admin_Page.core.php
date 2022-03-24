@@ -18,7 +18,6 @@ use EventEspresso\core\services\request\CurrentPage;
  */
 class Registrations_Admin_Page extends EE_Admin_Page_CPT
 {
-
     /**
      * @var EE_Registration
      */
@@ -569,7 +568,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'registrations_overview_other',
                     ],
                 ],
-                'qtips'         => ['Registration_List_Table_Tips'],
                 'list_table'    => 'EE_Registrations_List_Table',
                 'require_nonce' => false,
             ],
@@ -640,7 +638,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         ? add_query_arg(['ATT_ID' => $ATT_ID], $this->_current_page_view_url)
                         : $this->_admin_base_url,
                 ],
-                'metaboxes'     => ['attendee_editor_metaboxes'],
+                'metaboxes'     => array_merge(
+                    $this->_default_espresso_metaboxes,
+                    ['attendee_editor_metaboxes']
+                ),
                 'require_nonce' => false,
             ],
             'contact_list'      => [
@@ -1032,7 +1033,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         $fc_items = [
             'star-icon'        => [
-                'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
+                'class' => 'dashicons dashicons-star-filled gold-icon',
                 'desc'  => esc_html__('This is the Primary Registrant', 'event_espresso'),
             ],
             'view_details'     => [
@@ -1040,7 +1041,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'desc'  => esc_html__('View Registration Details', 'event_espresso'),
             ],
             'edit_attendee'    => [
-                'class' => 'ee-icon ee-icon-user-edit ee-icon-size-16',
+                'class' => 'dashicons dashicons-admin-users',
                 'desc'  => esc_html__('Edit Contact Details', 'event_espresso'),
             ],
             'view_transaction' => [
@@ -1081,7 +1082,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         }
         $sc_items = [
             'approved_status'   => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_approved,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_approved,
                     false,
@@ -1089,7 +1090,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'pending_status'    => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_pending_payment,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_pending_payment,
                     false,
@@ -1097,7 +1098,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'wait_list'         => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_wait_list,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_wait_list,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_wait_list,
                     false,
@@ -1105,7 +1106,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'incomplete_status' => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_incomplete,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_incomplete,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_incomplete,
                     false,
@@ -1113,7 +1114,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'not_approved'      => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_not_approved,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_not_approved,
                     false,
@@ -1121,7 +1122,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'declined_status'   => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_declined,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_declined,
                     false,
@@ -1129,7 +1130,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 ),
             ],
             'cancelled_status'  => [
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
+                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_cancelled,
                 'desc'  => EEH_Template::pretty_status(
                     EEM_Registration::status_id_cancelled,
                     false,
@@ -1428,21 +1429,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         do_action('AHEE__Registrations_Admin_Page___registration_details_metabox__start', $this);
         $this->_set_registration_object();
         $attendee = $this->_registration instanceof EE_Registration ? $this->_registration->attendee() : null;
-        add_meta_box(
+        $this->addMetaBox(
             'edit-reg-status-mbox',
             esc_html__('Registration Status', 'event_espresso'),
             [$this, 'set_reg_status_buttons_metabox'],
-            $this->_wp_page_slug,
-            'normal',
-            'high'
+            $this->_wp_page_slug
         );
-        add_meta_box(
+        $this->addMetaBox(
             'edit-reg-details-mbox',
-            esc_html__('Registration Details', 'event_espresso'),
+            '<span>' . esc_html__('Registration Details', 'event_espresso')
+            . '&nbsp;<span class="dashicons dashicons-clipboard"></span></span>',
             [$this, '_reg_details_meta_box'],
-            $this->_wp_page_slug,
-            'normal',
-            'high'
+            $this->_wp_page_slug
         );
         if (
             $attendee instanceof EE_Attendee
@@ -1452,31 +1450,27 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $this->_registration->ID()
             )
         ) {
-            add_meta_box(
+            $this->addMetaBox(
+                $this->_wp_page_slug,
                 'edit-reg-questions-mbox',
                 esc_html__('Registration Form Answers', 'event_espresso'),
                 [$this, '_reg_questions_meta_box'],
-                $this->_wp_page_slug,
-                'normal',
-                'high'
+                $this->_wp_page_slug
             );
         }
-        add_meta_box(
+        $this->addMetaBox(
             'edit-reg-registrant-mbox',
             esc_html__('Contact Details', 'event_espresso'),
             [$this, '_reg_registrant_side_meta_box'],
             $this->_wp_page_slug,
-            'side',
-            'high'
+            'side'
         );
         if ($this->_registration->group_size() > 1) {
-            add_meta_box(
+            $this->addMetaBox(
                 'edit-reg-attendees-mbox',
                 esc_html__('Other Registrations in this Transaction', 'event_espresso'),
                 [$this, '_reg_attendees_meta_box'],
-                $this->_wp_page_slug,
-                'normal',
-                'high'
+                $this->_wp_page_slug
             );
         }
     }
@@ -1539,27 +1533,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'default' => $this->_registration->ID(),
                     ]
                 ),
-                'current_status' => new EE_Form_Section_HTML(
-                    EEH_HTML::table(
-                        EEH_HTML::tr(
-                            EEH_HTML::th(
-                                EEH_HTML::label(
-                                    EEH_HTML::strong(
-                                        esc_html__('Current Registration Status', 'event_espresso')
-                                    )
-                                )
-                            )
-                            . EEH_HTML::td(
-                                EEH_HTML::strong(
-                                    $this->_registration->pretty_status(),
-                                    '',
-                                    'status-' . $this->_registration->status_ID(),
-                                    'line-height: 1em; font-size: 1.5em; font-weight: bold;'
-                                )
-                            )
-                        )
-                    )
-                ),
             ],
         ];
         if (
@@ -1588,7 +1561,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             );
             $reg_status_change_form_array['subsections']['submit']             = new EE_Submit_Input(
                 [
-                    'html_class'      => 'button-primary',
+                    'html_class'      => 'button--primary',
                     'html_label_text' => '&nbsp;',
                     'default'         => esc_html__('Update Registration Status', 'event_espresso'),
                 ]
@@ -2049,7 +2022,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     TXN_ADMIN_URL
                 ),
                 esc_html__(' View Transaction', 'event_espresso'),
-                'button secondary-button right',
+                'button button--secondary right',
                 'dashicons dashicons-cart'
             );
         } else {
@@ -2072,7 +2045,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     REG_ADMIN_URL
                 ),
                 esc_html__(' Resend Registration', 'event_espresso'),
-                'button secondary-button right',
+                'button button--secondary right',
                 'dashicons dashicons-email-alt'
             );
         } else {
@@ -2537,6 +2510,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             ],
             REG_ADMIN_URL
         );
+        $this->_template_args['att_edit_title'] = esc_html__('View details for this contact.', 'event_espresso');
         $this->_template_args['att_edit_label'] = esc_html__('View/Edit Contact', 'event_espresso');
         // create link
         $this->_template_args['create_link']  = $primary_registration instanceof EE_Registration
@@ -3511,16 +3485,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         );
         remove_meta_box('commentstatusdiv', $this->_cpt_routes[ $this->_req_action ], 'normal');
         if (post_type_supports('espresso_attendees', 'excerpt')) {
-            add_meta_box(
+            $this->addMetaBox(
                 'postexcerpt',
                 esc_html__('Short Biography', 'event_espresso'),
                 'post_excerpt_meta_box',
-                $this->_cpt_routes[ $this->_req_action ],
-                'normal'
+                $this->_cpt_routes[ $this->_req_action ]
             );
         }
         if (post_type_supports('espresso_attendees', 'comments')) {
-            add_meta_box(
+            $this->addMetaBox(
                 'commentsdiv',
                 esc_html__('Notes on the Contact', 'event_espresso'),
                 'post_comment_meta_box',
@@ -3529,7 +3502,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'core'
             );
         }
-        add_meta_box(
+        $this->addMetaBox(
             'attendee_contact_info',
             esc_html__('Contact Info', 'event_espresso'),
             [$this, 'attendee_contact_info'],
@@ -3537,7 +3510,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'side',
             'core'
         );
-        add_meta_box(
+        $this->addMetaBox(
             'attendee_details_address',
             esc_html__('Address Details', 'event_espresso'),
             [$this, 'attendee_address_details'],
@@ -3545,13 +3518,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'normal',
             'core'
         );
-        add_meta_box(
+        $this->addMetaBox(
             'attendee_registrations',
             esc_html__('Registrations for this Contact', 'event_espresso'),
             [$this, 'attendee_registrations_meta_box'],
-            $this->_cpt_routes[ $this->_req_action ],
-            'normal',
-            'high'
+            $this->_cpt_routes[ $this->_req_action ]
         );
     }
 

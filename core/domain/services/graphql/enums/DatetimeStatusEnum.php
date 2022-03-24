@@ -15,7 +15,6 @@ use EventEspresso\core\services\graphql\enums\EnumBase;
  */
 class DatetimeStatusEnum extends EnumBase
 {
-
     /**
      * DatetimeStatusEnum constructor.
      */

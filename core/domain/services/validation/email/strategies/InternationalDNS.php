@@ -14,7 +14,6 @@ use EventEspresso\core\domain\services\validation\email\EmailValidationException
  */
 class InternationalDNS extends International
 {
-
     /**
      * Validates the email in teh same way as the parent, but also
      * verifies the domain exists.

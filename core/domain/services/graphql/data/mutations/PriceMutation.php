@@ -12,7 +12,6 @@ use GraphQLRelay\Relay;
  */
 class PriceMutation
 {
-
     /**
      * Maps the GraphQL input to a format that the model functions can use
      *

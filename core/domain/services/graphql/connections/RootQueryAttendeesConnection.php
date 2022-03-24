@@ -18,8 +18,6 @@ use Exception;
  */
 class RootQueryAttendeesConnection extends AbstractRootQueryConnection
 {
-
-
     /**
      * AttendeeConnection constructor.
      *

@@ -15,7 +15,6 @@ use RuntimeException;
  */
 class CollectionDetailsException extends RuntimeException
 {
-
     /**
      * DuplicateCollectionIdentifierException constructor.
      *

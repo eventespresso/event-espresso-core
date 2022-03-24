@@ -14,7 +14,6 @@ use EEM_Base;
  */
 abstract class ConnectionBase implements ConnectionInterface
 {
-
     /**
      * @var EEM_Base $model
      */

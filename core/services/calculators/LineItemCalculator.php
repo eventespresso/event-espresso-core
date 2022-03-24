@@ -20,7 +20,6 @@ use ReflectionException;
  */
 class LineItemCalculator
 {
-
     /**
      * @var DecimalValues
      */

@@ -13,7 +13,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 {
-
     /**
      * @param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
      */
@@ -216,9 +215,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 ),
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
-                'qtips'         => array(
-                    'EE_Registration_Form_Tips',
-                ),
             ),
 
             'add_question' => array(

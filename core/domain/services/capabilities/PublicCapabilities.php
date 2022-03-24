@@ -15,8 +15,6 @@ namespace EventEspresso\core\domain\services\capabilities;
  */
 class PublicCapabilities extends CapCheck
 {
-
-
     /**
      * @return string
      */

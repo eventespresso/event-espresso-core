@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class CapCheck implements CapCheckInterface
 {
-
     /**
      * @var string|array $capability
      */

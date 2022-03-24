@@ -13,7 +13,6 @@
 
 class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Table_Line_Item_Display_Strategy
 {
-
     /**
      * Table header for display.
      * @since   4.8
@@ -51,8 +50,7 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
             ? $line_item->parent()->get_object()
             : null;
         // start of row
-        $row_class = $options['odd'] ? 'item odd' : 'item';
-        $html = EEH_HTML::tr('', '', $row_class);
+        $html = EEH_HTML::tr('', '', 'item');
 
 
         // Name Column

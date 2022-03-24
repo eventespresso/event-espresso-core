@@ -18,8 +18,6 @@ use WPGraphQL\Data\Connection\AbstractConnectionResolver as WPGraphQLConnectionR
  */
 abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
 {
-
-
     /**
      * @var Utilities
      */

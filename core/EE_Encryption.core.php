@@ -24,7 +24,6 @@ use EventEspresso\core\interfaces\InterminableInterface;
  */
 class EE_Encryption implements InterminableInterface
 {
-
     /**
      * key used for saving the encryption key to the wp_options table
      */

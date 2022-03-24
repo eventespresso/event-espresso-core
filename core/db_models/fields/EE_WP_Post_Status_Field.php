@@ -2,7 +2,6 @@
 
 class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
 {
-
     protected $_wp_post_stati;
 
 

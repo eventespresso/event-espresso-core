@@ -18,8 +18,6 @@ namespace EventEspresso\core\services\container;
  */
 class NewCoffeeMaker extends CoffeeMaker
 {
-
-
     /**
      * @return string
      */

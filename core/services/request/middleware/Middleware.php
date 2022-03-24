@@ -24,7 +24,6 @@ use EventEspresso\core\services\request\ResponseInterface;
  */
 abstract class Middleware implements RequestDecoratorInterface
 {
-
     /**
      * @var RequestDecoratorInterface $request_stack_app
      */

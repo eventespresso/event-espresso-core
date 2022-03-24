@@ -18,7 +18,6 @@ use EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton;
  */
 class EED_Ticket_Selector extends EED_Module
 {
-
     /**
      * @var DisplayTicketSelector $ticket_selector
      */

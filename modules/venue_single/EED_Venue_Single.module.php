@@ -28,7 +28,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EED_Venue_Single extends EED_Module
 {
-
     /**
      * @return EED_Venue_Single
      */

@@ -14,7 +14,6 @@ use Exception;
  */
 abstract class GraphQLData implements GraphQLDataInterface
 {
-
     /**
      * @var string $namespace The graphql namespace/prefix.
      */

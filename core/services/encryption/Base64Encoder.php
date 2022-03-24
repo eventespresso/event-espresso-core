@@ -14,7 +14,6 @@ use RuntimeException;
  */
 class Base64Encoder
 {
-
     /**
      * @var boolean
      */

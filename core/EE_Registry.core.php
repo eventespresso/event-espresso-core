@@ -22,7 +22,6 @@ use EventEspresso\core\services\loaders\ObjectIdentifier;
  */
 class EE_Registry implements ResettableInterface
 {
-
     /**
      * @var EE_Registry $_instance
      */

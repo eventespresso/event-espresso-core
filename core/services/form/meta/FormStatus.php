@@ -14,7 +14,6 @@ use EventEspresso\core\services\graphql\Utils as GQLUtils;
  */
 class FormStatus
 {
-
     /**
      * indicates that element is not archived or trashed
      */

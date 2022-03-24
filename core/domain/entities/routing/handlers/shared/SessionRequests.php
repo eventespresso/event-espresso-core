@@ -15,7 +15,6 @@ use EventEspresso\core\services\routing\Route;
  */
 class SessionRequests extends Route
 {
-
     /**
      * returns true if the current request matches this route
      *

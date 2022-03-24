@@ -11,7 +11,6 @@
  */
 class EE_Radio_Button_Display_Strategy extends EE_Compound_Input_Display_Strategy
 {
-
     /**
      *
      * @throws EE_Error

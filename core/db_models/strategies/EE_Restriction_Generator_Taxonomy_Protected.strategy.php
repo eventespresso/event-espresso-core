@@ -11,7 +11,6 @@
  */
 class EE_Restriction_Generator_Taxonomy_Protected extends EE_Restriction_Generator_Base
 {
-
     /**
      * Model chain/path to taxonomy model,
      * including the term_taxonomy model itself

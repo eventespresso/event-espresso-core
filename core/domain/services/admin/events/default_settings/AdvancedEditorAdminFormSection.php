@@ -37,7 +37,6 @@ use EEH_HTML;
  */
 class AdvancedEditorAdminFormSection
 {
-
     /**
      * @var EE_Admin_Config
      */
@@ -73,6 +72,13 @@ class AdvancedEditorAdminFormSection
     public function mergeFormSubsections(array $default_event_settings_form_subsections)
     {
         return [
+                   'new_features_section_header' => new EE_Form_Section_HTML(
+                       EEH_HTML::h2(
+                           esc_html__('New Feature', 'event_espresso'),
+                           '',
+                           'ee-admin-settings-hdr ee-admin-settings-hdr--new-feature'
+                       )
+                   ),
                    'use_advanced_editor'     => new EE_Select_Input(
                        apply_filters(
                            'FHEE__Events_Admin_Page___default_event_settings_form__advanced_editor_input_answer_options',
@@ -94,13 +100,6 @@ class AdvancedEditorAdminFormSection
                                    '<br />'
                                ),
                            ]
-                       )
-                   ),
-                   'defaults_section_header' => new EE_Form_Section_HTML(
-                       EEH_HTML::h2(
-                           esc_html__('Default Settings', 'event_espresso'),
-                           '',
-                           'ee-admin-settings-hdr'
                        )
                    ),
                ] + $default_event_settings_form_subsections;

@@ -9,7 +9,6 @@
  */
 class EE_Answer extends EE_Base_Class
 {
-
     /**
      *
      * @param array $props_n_values

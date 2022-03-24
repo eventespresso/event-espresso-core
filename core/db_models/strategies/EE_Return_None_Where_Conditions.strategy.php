@@ -10,7 +10,6 @@
  */
 class EE_Return_None_Where_Conditions extends EE_Default_Where_Conditions
 {
-
     /**
      * @return array[]
      * @throws EE_Error

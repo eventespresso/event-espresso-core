@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\shortcodes;
 
 interface ShortcodeInterface
 {
-
     /**
      * the actual shortcode tag that gets registered with WordPress
      *

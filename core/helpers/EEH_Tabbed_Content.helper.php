@@ -13,7 +13,6 @@
  */
 class EEH_Tabbed_Content
 {
-
     /**
      * assembles and returns the html structure for tabs
      *
@@ -214,7 +213,7 @@ class EEH_Tabbed_Content
         }
 
         return "
-        <ul class='ee-text-links{$container_class}'>{$list}</ul>
+        <div class='ee-text-links{$container_class}'>{$list}</div>
         ";
     }
 
@@ -228,19 +227,18 @@ class EEH_Tabbed_Content
         $class = $item['class'] ? esc_attr($item['class']) : '';
         $label = esc_html($item['label']);
         $href  = $item['href'] ? esc_attr($item['href']) : '';
+        $icon  = $item['icon'] ?? '';
         $title = esc_attr($item['title']);
+        $tag = $item['tag'] ?? 'a';
 
 
-        $link = ! empty($href)
+        return ! empty($href)
             ? "
-            <a class='ee-text-link' href='#{$href}' title='{$title}'>
-                {$label}
-            </a>
+            <{$tag} class='{$class} ee-text-link ee-aria-tooltip' href='#{$href}' aria-label='{$title}'>
+                {$icon}{$label}
+            </{$tag}>
             "
             : $label;
-        return "
-        <li class='ee-text-link-li {$class}'>{$link}</li>
-        ";
     }
 
 
@@ -253,7 +251,7 @@ class EEH_Tabbed_Content
     {
         $separator = esc_html($separator);
         return "
-        <li class='ee-text-link-sep'>{$separator}</li>
+        <span class='ee-text-link-sep'>{$separator}</span>
         ";
     }
 }

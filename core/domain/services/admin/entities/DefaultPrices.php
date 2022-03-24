@@ -24,7 +24,6 @@ use RuntimeException;
  */
 class DefaultPrices implements DefaultEntityGeneratorInterface
 {
-
     /**
      * @var EEM_Price
      */

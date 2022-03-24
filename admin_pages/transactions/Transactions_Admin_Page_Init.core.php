@@ -11,8 +11,6 @@
  */
 class Transactions_Admin_Page_Init extends EE_Admin_Page_Init
 {
-
-
     /**
      * @Constructor
      * @access public

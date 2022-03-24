@@ -14,7 +14,6 @@ use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecific
  */
 class WordPressPluginsPage extends RouteMatchSpecification
 {
-
     /**
      * @inheritDoc
      */

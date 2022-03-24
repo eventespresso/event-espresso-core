@@ -32,7 +32,6 @@ use WP_Block_Editor_Context;
  */
 class BlockRegistrationManager extends BlockManager
 {
-
     /**
      * @var BlockAssetManagerCollection $block_asset_manager_collection
      */

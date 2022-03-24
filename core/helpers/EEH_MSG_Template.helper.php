@@ -13,8 +13,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEH_MSG_Template
 {
-
-
     /**
      * Holds a collection of EE_Message_Template_Pack objects.
      * @type EE_Messages_Template_Pack_Collection
@@ -656,7 +654,7 @@ class EEH_MSG_Template
             array(
                 'view' => array(
                     'label' => esc_html__('View Message', 'event_espresso'),
-                    'css_class' => 'dashicons dashicons-welcome-view-site',
+                    'css_class' => 'dashicons dashicons-visibility',
                 ),
                 'error' => array(
                     'label' => esc_html__('View Error Message', 'event_espresso'),
@@ -807,7 +805,9 @@ class EEH_MSG_Template
     {
         $url = EEH_MSG_Template::get_message_action_url($type, $message, $query_params);
         $icon_css = EEH_MSG_Template::get_message_action_icon($type);
-        $title = isset($icon_css['label']) ? 'title="' . $icon_css['label'] . '"' : '';
+        $label = $icon_css['label'] ?? null;
+        $label = $label ? 'aria-label="' . $label . '"' : '';
+        $class = $label ? ' ee-aria-tooltip' : '';
 
         if (empty($url) || empty($icon_css) || ! isset($icon_css['css_class'])) {
             return '';
@@ -823,7 +823,10 @@ class EEH_MSG_Template
             )
         );
 
-        return '<a href="' . $url . '" ' . $title . '><span class="' . esc_attr($icon_css['css_class']) . '"></span></a>';
+        return '
+            <a href="' . $url . '" ' . $label . ' class="button button--icon-only' . $class . '">
+                <span class="' . esc_attr($icon_css['css_class']) . '"></span>
+            </a>';
     }
 
 

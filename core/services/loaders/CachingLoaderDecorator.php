@@ -13,8 +13,6 @@ namespace EventEspresso\core\services\loaders;
  */
 abstract class CachingLoaderDecorator extends LoaderDecorator implements CachingLoaderDecoratorInterface
 {
-
-
 }
 // End of file LoaderDecorator.php
 // Location: core/services/loaders/LoaderDecorator.php

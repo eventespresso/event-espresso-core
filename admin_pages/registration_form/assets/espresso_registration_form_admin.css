@@ -31,48 +31,7 @@
 .question-group-questions-container { display:inline-block; width: 30%; }
 .ee-question-sortable { cursor: move;}
 .ee-question-sortable label { cursor: inherit;}
-.ee-question-sortable .dashicons {
-    float: right;
-    font-size: 1rem;
-    text-decoration: none;
-    margin-top: 3px;
-}
 
-.question-group-questions-container {
-    background: white;
-    border: 1px solid #e5e5e5;
-    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.04);
-    box-shadow: 0 1px 1px rgba(0,0,0,.04);
-    margin-top: 1em;
-}
-.question-group-questions-container.closed .handlediv:before {
-    content: '\f140';
-}
-.question-group-questions-container .handlediv:before {
-    content: '\f142';
-    right: 12px;
-    font: 400 20px/1 dashicons;
-    speak: none;
-    display: inline-block;
-    padding: 8px 10px;
-    top: 0;
-    position: relative;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-decoration: none!important;
-}
-.question-group-questions-container .handle {
-    border-bottom: 1px solid #eee;
-    padding: 6px 8px !important;
-    margin: 0 !important;
-}
-.question-group-questions.inside {
-    padding: 0 !important;
-    margin: 0 !important;
-}
-.question-group-questions.inside .padding {
-    padding: 0 10px;
-}
 .question-group-questions .description {
     color: #777;
     font-style: normal;
@@ -81,14 +40,17 @@
     padding-left: 0;
 }
 .ee-question-sortable {
+    align-items: center;
+    border: 1px solid hsl(0, 0%, 90%);
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    margin-block-end: 1rem;
+    padding: 0;
+    padding-block: .5rem;
+    padding-inline-start: 1rem;
+    padding-inline-end: 0.5rem;
     position: relative;
-    background: #fafafa;
-    color: #222;
-    border: 1px solid #e5e5e5;
-    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.04);
-    box-shadow: 0 1px 1px rgba(0,0,0,.04);
-    padding: 5px 5px 5px 35px;
-    margin-bottom: 10px;
 }
 .ee-question-sortable:hover {
     border-color: #444;
@@ -103,60 +65,105 @@
     margin: 0 !important;
     border: 0 !important;
 }
-.ee-question-sortable input {
-    position: absolute;
-    top: 13px;
-    left: 10px;
+
+.ee-question-sortable label {
+    display: flex;
+}
+.ee-question-sortable input[type="checkbox"] {
+    margin-inline-start: 0;
+    margin-inline-end: 1rem;
+}
+.ee-question-sortable a {
+    margin-inline-start: auto;
 }
 
-#update_question_group_event_form textarea {
-    width: 25em !important;
+#insert_question_group_event_form .questions-group-wrap,
+#update_question_group_event_form .questions-group-wrap {
+    align-items: flex-start;
+    flex-flow: row wrap;
 }
 
-#update_question_group_event_form #post-body-content > div, #insert_question_group_event_form #post-body-content > div {
-    max-width: 48.5%;
-    width: auto;
-    float: left;
-    clear: none;
+#insert_question_group_event_form .edit-group,
+#update_question_group_event_form .edit-group {
+    width: clamp(400px, 800px, 100%)
 }
 
-#update_question_group_event_form #post-body-content > div:last-child, #insert_question_group_event_form #post-body-content > div:last-child {
-    float: right;
+#insert_question_group_event_form .edit-group + .edit-group,
+#update_question_group_event_form .edit-group + .edit-group {
+    margin-block-start: 2rem;
+    margin-inline-start: unset;
+}
+#update_question_group_event_form .edit-group > h2,
+#insert_question_group_event_form .edit-group > h2 {
+    margin-block-start: unset;
 }
 
-table.question-options-table td, table.question-options-table th{
-	padding:1em 10px 0 3px; line-height: 1em;
+.espresso-admin .form-table #question_options td {
+    padding: 0;
 }
-
-table.question-options-table{
+.espresso-admin .form-table #question_options table.question-options-table {
 	width: 100%;
 }
 
-table.question-options-table .regular-text {
+.espresso-admin .form-table #question_options table.question-options-table th,
+.espresso-admin .form-table #question_options table.question-options-table td {
+    display: flex;
+    padding: 0;
 	width: 100%;
 }
-
-table.question-options-table td:first-child, table.question-options-table td:nth-child(2) {
-	width: 45%;
+.espresso-admin .form-table #question_options table.question-options-table th:last-child,
+.espresso-admin .form-table #question_options table.question-options-table td:last-child {
+    min-width: unset;
+    justify-content: flex-end;
+	width: 100%;
+}
+.espresso-admin .form-table #question_options table.question-options-table td input:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    margin-inline-start: .25rem;
+    min-width: unset;
 }
 
-table.question-options-table td:last-child {
-	width: 10%;
+.espresso-admin #new-question-option {
+    margin-block-start: 1rem;
 }
 
-@media screen and (max-width:782px) {
-    .ee-question-sortable {
-        padding-left: 40px;
+
+@media screen and (min-width:600px) {
+    .espresso-admin .form-table #question_options table.question-options-table th,
+    .espresso-admin .form-table #question_options table.question-options-table td {
+        display: inline-flex;
+        padding-inline-end: .5rem;
+        width: calc(((100% - 6.5rem) / 2) - .5rem);
     }
-    #update_question_group_event_form textarea {
-        width: 100% !important;
+
+    .espresso-admin .form-table #question_options table.question-options-table th:last-child,
+    .espresso-admin .form-table #question_options table.question-options-table td:last-child {
+        padding-inline-end: 0;
+        width: 6.5rem;
     }
 }
-@media screen and (max-width:1400px) {
-    #post-body-content > div {
-        max-width: 100% !important;
-        width: 100% !important;
-        clear: both !important;
-        float: none !important;
+@media screen and (min-width:1920px) {
+    #insert_question_group_event_form .edit-group + .edit-group,
+    #update_question_group_event_form .edit-group + .edit-group {
+        margin-block-start: unset;
+        margin-inline-start: 4rem;
+    }
+}
+
+
+@media screen and ( max-width: 1366px ) {
+    .event-espresso_page_espresso_registration_form.espresso-admin #post-body {
+        display: flex;
+        flex-direction: column;
+    }
+    .event-espresso_page_espresso_registration_form.espresso-admin #post-body.columns-2 #postbox-container-1 {
+        float: unset;
+        margin: 0;
+        margin-block-start: 1rem;
+        width: 100%;
+    }
+
+    .event-espresso_page_espresso_registration_form.espresso-admin #post-body.columns-2 #post-body-content,
+    .event-espresso_page_espresso_registration_form.espresso-admin #post-body.columns-2 #postbox-container-1 > div {
+        width: 100%;
     }
 }

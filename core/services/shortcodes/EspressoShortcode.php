@@ -19,7 +19,6 @@ use WP_Post;
  */
 abstract class EspressoShortcode implements ShortcodeInterface
 {
-
     /**
      * transient prefix
      *

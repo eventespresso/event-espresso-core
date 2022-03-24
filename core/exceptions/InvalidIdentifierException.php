@@ -15,7 +15,6 @@ use InvalidArgumentException;
  */
 class InvalidIdentifierException extends InvalidArgumentException
 {
-
     /**
      * InvalidIdentifierException constructor.
      *

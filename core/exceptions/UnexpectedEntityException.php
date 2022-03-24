@@ -11,7 +11,6 @@ namespace EventEspresso\core\exceptions;
  */
 class UnexpectedEntityException extends \UnexpectedValueException
 {
-
     /**
      * UnexpectedEntityException constructor
      *

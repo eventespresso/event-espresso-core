@@ -11,8 +11,6 @@
  */
 class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_Display_Strategy
 {
-
-
     /**
      * enqueues css and js, so that this can be called statically
      */
@@ -122,7 +120,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         $html = \EEH_HTML::div('', '', 'checkbox-dropdown-selector-wrap-dv');
         $html .= '<button id="' . $input->html_id() . '-btn"';
         // $html .= ' name="' . $input->html_name() . '"';
-        $html .= ' class="' . $input->html_class() . ' checkbox-dropdown-selector-btn button-secondary button"';
+        $html .= ' class="' . $input->html_class() . ' checkbox-dropdown-selector-btn button--secondary button"';
         $html .= ' style="' . $input->html_style() . '"';
         $html .= ' data-target="' . $input->html_id() . '-options-dv"';
         $html .= ' ' . $input->other_html_attributes() . '>';

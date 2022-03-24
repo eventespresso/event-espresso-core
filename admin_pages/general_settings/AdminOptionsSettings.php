@@ -25,7 +25,6 @@ use LogicException;
  */
 class AdminOptionsSettings extends FormHandler
 {
-
     protected $template_args = array();
 
     /**

@@ -11,8 +11,6 @@
  */
 class EEH_Parse_Shortcodes
 {
-
-
     /**
      * holds the template
      *

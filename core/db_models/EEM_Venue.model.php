@@ -10,7 +10,6 @@
  */
 class EEM_Venue extends EEM_CPT_Base
 {
-
     // private instance of the Attendee object
     protected static $_instance = null;
 

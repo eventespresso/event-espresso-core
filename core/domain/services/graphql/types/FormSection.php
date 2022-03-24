@@ -26,7 +26,6 @@ use ReflectionException;
  */
 class FormSection extends TypeBase
 {
-
     /**
      * FormSection constructor.
      *

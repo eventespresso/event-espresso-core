@@ -5,6 +5,5 @@
  */
 interface EEI_Event
 {
-
     public function name();
 }

@@ -16,7 +16,6 @@ use EventEspresso\core\services\graphql\fields\GraphQLField;
  */
 class AttendeesConnectionOrderbyInput extends InputBase
 {
-
     /**
      * AttendeesConnectionOrderbyInput constructor.
      */

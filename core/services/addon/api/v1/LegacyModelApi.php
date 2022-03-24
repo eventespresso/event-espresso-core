@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\addon\api\v1;
 
 class LegacyModelApi
 {
-
     /**
      * @var string path to EE_* entity classes
      */

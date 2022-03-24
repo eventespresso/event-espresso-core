@@ -13,7 +13,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EED_Event_Single extends EED_Module
 {
-
     const EVENT_DETAILS_PRIORITY = 100;
     const EVENT_DATETIMES_PRIORITY = 110;
     const EVENT_TICKETS_PRIORITY = 120;

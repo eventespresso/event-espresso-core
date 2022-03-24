@@ -10,8 +10,6 @@
  */
 class EE_Message_List_Table extends EE_Admin_List_Table
 {
-
-
     /**
      * @return Messages_Admin_Page
      */
@@ -39,14 +37,14 @@ class EE_Message_List_Table extends EE_Admin_List_Table
 
         $this->_columns = array(
             'cb'           => '<input type="checkbox" />',
+            'id'       => esc_html__('ID', 'event_espresso'),
             'to'           => esc_html__('To', 'event_espresso'),
-            'from'         => esc_html__('From', 'event_espresso'),
-            'messenger'    => esc_html__('Messenger', 'event_espresso'),
+            'context'      => esc_html__('Recipient', 'event_espresso'),
             'message_type' => esc_html__('Message Type', 'event_espresso'),
-            'context'      => esc_html__('Context', 'event_espresso'),
+            'messenger'    => esc_html__('Messenger', 'event_espresso'),
+            'from'         => esc_html__('From', 'event_espresso'),
             'modified'     => esc_html__('Modified', 'event_espresso'),
-            'action'       => esc_html__('Actions', 'event_espresso'),
-            'msg_id'       => esc_html__('ID', 'event_espresso'),
+            'actions'      => $this->actionsColumnHeader(),
         );
 
         $this->_sortable_columns = array(
@@ -56,13 +54,13 @@ class EE_Message_List_Table extends EE_Admin_List_Table
             'to'           => array('MSG_to' => false),
             'from'         => array('MSG_from' => false),
             'context'      => array('MSG_context' => false),
-            'msg_id'       => array('MSG_ID', false),
+            'id'       => array('MSG_ID', false),
         );
 
         $this->_primary_column = 'to';
 
         $this->_hidden_columns = array(
-            'msg_id',
+            'id',
         );
     }
 
@@ -78,7 +76,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
     {
         $class = parent::_get_row_class($item);
         // add status class
-        $class .= ' ee-status-strip msg-status-' . $item->STS_ID();
+        $class .= ' msg-status-' . $item->STS_ID();
         if ($this->_has_checkbox_column) {
             $class .= ' has-checkbox-column';
         }
@@ -128,7 +126,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
     /**
      * @param EE_Message $message
      * @return string   checkbox
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_cb($message)
     {
@@ -141,9 +139,9 @@ class EE_Message_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws \EE_Error
      */
-    public function column_msg_id(EE_Message $message)
+    public function column_id(EE_Message $message)
     {
-        return $message->ID();
+        return $this->columnContent('id', $message->ID(), 'center');
     }
 
 
@@ -154,19 +152,26 @@ class EE_Message_List_Table extends EE_Admin_List_Table
      */
     public function column_to(EE_Message $message)
     {
-        EE_Registry::instance()->load_helper('URL');
-        $actions = array();
-        $actions['delete'] = '<a href="'
-                             . EEH_URL::add_query_args_and_nonce(
-                                 array(
-                                    'page'   => 'espresso_messages',
-                                    'action' => 'delete_ee_message',
-                                    'MSG_ID' => $message->ID(),
-                                 ),
-                                 admin_url('admin.php')
-                             )
-                             . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
-        return esc_html($message->to()) . $this->row_actions($actions);
+        $delete_url = EEH_URL::add_query_args_and_nonce(
+            [
+                'page'   => 'espresso_messages',
+                'action' => 'delete_ee_message',
+                'MSG_ID' => $message->ID(),
+            ],
+            admin_url('admin.php')
+        );
+        $actions = [
+            'delete' => '<a href="' . $delete_url . '">' . esc_html__('Delete', 'event_espresso') . '</a>'
+        ];
+        $status = esc_attr($message->STS_ID());
+        $pretty_status = EEH_Template::pretty_status($status, false, 'sentence');
+        return '
+        <div class="ee-layout-row">
+            <span class="row-title ee-status-color--' . $status . ' ee-aria-tooltip" aria-label="' . $pretty_status . '">
+                <span class="ee-status-dot ee-status-bg--' . $status . '"></span>
+                ' . esc_html($message->to()) . '
+            </span>
+        </div>' . $this->row_actions($actions);
     }
 
 
@@ -224,9 +229,8 @@ class EE_Message_List_Table extends EE_Admin_List_Table
      * @param EE_Message $message
      * @return string   Actions that can be done on the current message.
      */
-    public function column_action(EE_Message $message)
+    public function column_actions(EE_Message $message)
     {
-        EE_Registry::instance()->load_helper('MSG_Template');
         $action_links = array(
             'view'                => EEH_MSG_Template::get_message_action_link('view', $message),
             'error'               => EEH_MSG_Template::get_message_action_link('error', $message),
@@ -240,6 +244,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
             case EEM_Message::status_sent:
                 $content = $action_links['view'] . $action_links['queue_for_resending'] . $action_links['view_transaction'];
                 break;
+            case EEM_Message::status_idle:
             case EEM_Message::status_resend:
                 $content = $action_links['view'] . $action_links['send_now'] . $action_links['view_transaction'];
                 break;
@@ -250,14 +255,11 @@ class EE_Message_List_Table extends EE_Admin_List_Table
             case EEM_Message::status_debug_only:
                 $content = $action_links['error'] . $action_links['view_transaction'];
                 break;
-            case EEM_Message::status_idle:
-                $content = $action_links['view'] . $action_links['send_now'] . $action_links['view_transaction'];
-                break;
             case EEM_Message::status_incomplete:
                 $content = $action_links['generate_now'] . $action_links['view_transaction'];
                 break;
         }
-        return $content;
+        return $this->actionsModalMenu($content);
     }
 
 

@@ -14,7 +14,6 @@ use RuntimeException;
  */
 class CipherMethod
 {
-
     /**
      * @var string
      */

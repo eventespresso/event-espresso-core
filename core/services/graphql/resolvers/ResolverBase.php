@@ -12,5 +12,4 @@ namespace EventEspresso\core\services\graphql\resolvers;
  */
 abstract class ResolverBase implements ResolverInterface
 {
-
 }

@@ -14,7 +14,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEH_Debug_Tools
 {
-
     /**
      *    instance of the EEH_Autoloader object
      *

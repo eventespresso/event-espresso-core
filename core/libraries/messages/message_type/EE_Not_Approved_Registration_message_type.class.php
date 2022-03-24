@@ -13,7 +13,6 @@
  */
 class EE_Not_Approved_Registration_message_type extends EE_Registration_Base_message_type
 {
-
     public function __construct()
     {
         $this->name = 'not_approved_registration';

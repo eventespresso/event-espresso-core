@@ -43,7 +43,6 @@
  */
 abstract class EEME_Base
 {
-
     const extending_method_prefix = 'ext_';
     const dynamic_callback_method_prefix = 'dynamic_callback_method_';
 

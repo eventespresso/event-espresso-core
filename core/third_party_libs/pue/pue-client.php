@@ -1233,7 +1233,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ?>
                 <div class="error" id="pue_error_notices">
                     <?php echo $this->_sanitize_notices($errors); ?>
-                    <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );"
+                    <a class="button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );"
                        style="float:right; margin-bottom: 10px;">
                         <?php esc_html_e('Dismiss'); ?>
                     </a>
@@ -1249,7 +1249,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ?>
                 <div class="notice notice-info" id="pue_attention_notices">
                     <?php echo $this->_sanitize_notices($attentions); ?>
-                    <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );"
+                    <a class="button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );"
                        style="float:right; margin-bottom: 10px;">
                         <?php esc_html_e('Dismiss'); ?>
                     </a>
@@ -1265,7 +1265,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ?>
                 <div class="success" id="pue_success_notices">
                     <?php echo $this->_sanitize_notices($successes); ?>
-                    <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );"
+                    <a class="button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );"
                        style="float:right; margin-bottom: 10px;">
                         <?php esc_html_e('Dismiss'); ?>
                     </a>
@@ -1476,7 +1476,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ?>
                 <div class="updated" style="padding:15px; position:relative;"
                      id="pu_dashboard_message"><?php echo $this->_sanitize_notices($msg); ?>
-                    <a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();"
+                    <a class="button--secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();"
                        style='float:right;'><?php esc_html_e("Dismiss") ?></a>
                     <div style="clear:both;"></div>
                 </div>
@@ -1597,7 +1597,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 . $this->pluginFile,
                 'upgrade-plugin_' . $this->pluginFile
             );
-            $button = '<a href="' . $button_link . '" class="button-secondary pue-upgrade-now-button" value="no">'
+            $button = '<a href="' . $button_link . '" class="button--secondary pue-upgrade-now-button" value="no">'
                       . esc_html__('Upgrade Now', $this->lang_domain)
                       . '</a>';
 
@@ -1605,7 +1605,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                        . $msg . '</p>';
             $content .= empty($this->json_error) ? $button : '';
             $content .= $show_dismissal_button
-                ? '<a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();" '
+                ? '<a class="button--secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();" '
                     .'style="float:right;">' . esc_html__("Dismiss") . '</a>'
                 : '';
             $content .= '<div style="clear:both;"></div></div>';

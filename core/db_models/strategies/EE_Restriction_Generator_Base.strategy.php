@@ -36,7 +36,6 @@
  */
 abstract class EE_Restriction_Generator_Base
 {
-
     /**
      * One of EEM_Base::valid_cap_contexts()
      *

@@ -17,7 +17,6 @@ use EventEspresso\core\services\routing\Router;
  */
 class ActivationRequests extends PrimaryRoute
 {
-
     /**
      * returns true if the current request matches this route
      *

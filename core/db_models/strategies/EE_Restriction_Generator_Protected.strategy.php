@@ -20,7 +20,6 @@
  */
 class EE_Restriction_Generator_Protected extends EE_Restriction_Generator_Base
 {
-
     /**
      * @return EE_Default_Where_Conditions[]|EE_Return_None_Where_Conditions[]
      * @throws EE_Error

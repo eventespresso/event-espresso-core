@@ -19,7 +19,6 @@ use EE_Form_Section_Proper;
  */
 interface FormHandlerInterface
 {
-
     /**
      * the absolute top level form section being used on the page
      *

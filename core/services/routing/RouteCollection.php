@@ -16,7 +16,6 @@ use EventEspresso\core\services\collections\Collection;
  */
 class RouteCollection extends Collection
 {
-
     const COLLECTION_NAME = 'routes';
 
 

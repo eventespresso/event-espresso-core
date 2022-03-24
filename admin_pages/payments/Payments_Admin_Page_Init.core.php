@@ -14,7 +14,6 @@ use EventEspresso\core\services\database\TableAnalysis;
  */
 class Payments_Admin_Page_Init extends EE_Admin_Page_Init
 {
-
     /**
      * @var TableAnalysis $table_analysis
      */

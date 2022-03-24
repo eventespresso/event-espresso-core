@@ -15,7 +15,6 @@ use EventEspresso\core\services\privacy\erasure\PersonalDataEraserInterface;
  */
 class EraseAttendeeData implements PersonalDataEraserInterface
 {
-
     /**
      * @var EEM_Attendee
      */

@@ -16,7 +16,6 @@ use EventEspresso\core\services\routing\Route;
  */
 class RegularRequests extends PrimaryRoute
 {
-
     /**
      * called just before matchesCurrentRequest()
      * and allows Route to perform any setup required such as calling setSpecification()

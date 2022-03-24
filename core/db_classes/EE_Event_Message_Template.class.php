@@ -11,7 +11,6 @@
  */
 class EE_Event_Message_Template extends EE_Base_Class
 {
-
     /**
      * @param array $props_n_values
      * @param null  $timezone

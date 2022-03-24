@@ -14,7 +14,6 @@ use EventEspresso\payment_methods\Paypal_Express\forms\SettingsForm;
  */
 class EE_PMT_Paypal_Express extends EE_PMT_Base
 {
-
     /**
      * EE_PMT_Paypal_Express constructor.
      */

@@ -12,7 +12,6 @@ namespace EventEspresso\core\domain\services\contexts;
  */
 interface RequestTypeContextCheckerInterface
 {
-
     /**
      * true if the current request involves some form of activation
      *

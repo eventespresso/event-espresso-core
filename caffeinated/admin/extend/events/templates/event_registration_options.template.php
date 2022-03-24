@@ -44,8 +44,10 @@ $settings_array                = [
             <input name="event_phone" size="20" type="text" value="' . esc_attr($_event->phone()) . '">
             </p>',
     'default_registration_status'     => '<p>
-            <label>' . esc_html__('Default Registration Status', 'event_espresso') . '</label>'
+            <label>
+            ' . esc_html__('Default Registration Status', 'event_espresso')
              . EEH_Template::get_help_tab_link('event_editor_event_registration_options_help_tab')
+            . '</label>'
              . $EVT_default_registration_status // already escaped
              . '</p>',
 ];

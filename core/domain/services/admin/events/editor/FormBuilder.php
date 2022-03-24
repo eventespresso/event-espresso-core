@@ -23,8 +23,6 @@ use ReflectionException;
  */
 class FormBuilder implements EventEditorDataInterface
 {
-
-
     /**
      * @param int $eventId
      * @return array

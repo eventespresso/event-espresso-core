@@ -6,7 +6,6 @@ use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
 
 class ServerParams
 {
-
     /**
      * IP address for request
      *
@@ -89,11 +88,30 @@ class ServerParams
     /**
      * @param string                 $key
      * @param array|int|float|string $value
+     * @param bool                   $set_global_too
      * @return void
      */
-    public function setServerParam($key, $value)
+    public function setServerParam(string $key, $value, bool $set_global_too = false)
     {
-        $this->server[ $key ] = $this->sanitizer->clean($key, $value);
+        $value = $this->sanitizer->clean($key, $value);
+        $this->server[ $key ] = $value;
+        if ($set_global_too) {
+            $_SERVER[ $key ] = $value;
+        }
+    }
+
+
+    /**
+     * @param string $key
+     * @param bool   $unset_from_global_too
+     * @return void
+     */
+    public function unSetServerParam(string $key, bool $unset_from_global_too = false)
+    {
+        unset($this->server[ $key ]);
+        if ($unset_from_global_too) {
+            unset($_SERVER[ $key ]);
+        }
     }
 
 

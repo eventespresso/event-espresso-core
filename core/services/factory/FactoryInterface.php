@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\factory;
  */
 interface FactoryInterface
 {
-
     /**
      * @param string $fqcn      Fully Qualified Class Name
      * @param array  $arguments [optional] array of data required for construction

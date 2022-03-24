@@ -14,7 +14,6 @@ use EventEspresso\core\services\request\ResponseInterface;
  */
 abstract class EED_Module extends EE_Configurable implements ResettableInterface
 {
-
     /**
      * rendered output to be returned to WP
      *

@@ -1,27 +1,9 @@
-.ee-text-links .item_display {
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	background-color: #b2b2b2;
-	padding: 5px;
-	margin-right: 10px;
+.ee-text-links .ee-text-link.gateway-active {
+    background-color: var(--ee-status-color-green);
+    border-color: var(--ee-status-color-green);
+    color: var(--ee-color-white);
 }
 
-.ee-text-links .gateway-active a {
-	padding-left: 20px;
-	background: transparent url(images/sprocket_green.png) no-repeat left;
-}
-
-.ee-text-links .item_display a {
-	color: white;
-	text-decoration: none;
-}
-
-
-.ee-text-links a {
-	padding-left: 20px;
-	background: transparent url(images/sprocket_s_light.png) no-repeat left;
-}
 
 .form-table {
 	width: 100%;
@@ -36,11 +18,6 @@
 .form-table textarea  {
 	width: 100%;
 }
-
-.form-table input {
-	/*width: 100%;*/
-}
-
 .ee-checkbox-label-after.medium-lbl {
 	display: block;
 	width: auto;
@@ -56,6 +33,10 @@
 	padding-left: 20px
 }
 
+
+h4.ee-status-outline {
+    display: inline-block;
+}
 
 table.widefat.ee-payment-log-details,
 table.widefat.ee-payment-log-details table.widefat {

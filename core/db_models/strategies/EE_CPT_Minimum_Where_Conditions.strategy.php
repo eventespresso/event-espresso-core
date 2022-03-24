@@ -12,7 +12,6 @@
  */
 class EE_CPT_Minimum_Where_Conditions extends EE_Default_Where_Conditions
 {
-
     /**
      * @var string
      */

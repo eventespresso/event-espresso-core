@@ -27,7 +27,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EEM_Line_Item extends EEM_Base
 {
-
     /**
      * Tax sub-total is just the total of all the taxes, which should be children
      * of this line item. There should only ever be one tax sub-total, and it should

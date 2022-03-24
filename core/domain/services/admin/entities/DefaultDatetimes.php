@@ -20,7 +20,6 @@ use ReflectionException;
  */
 class DefaultDatetimes implements DefaultEntityGeneratorInterface
 {
-
     /**
      * @var DefaultTickets $default_tickets
      */

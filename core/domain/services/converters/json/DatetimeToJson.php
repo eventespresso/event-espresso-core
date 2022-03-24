@@ -21,7 +21,6 @@ use ReflectionException;
  */
 class DatetimeToJson implements ModelObjectToJsonConverterInterface
 {
-
     /**
      * @param EE_Datetime[] $datetimes
      * @return array

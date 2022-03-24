@@ -22,27 +22,27 @@
 .ee-tkt-status {}
 
 .tkt-archived td, .tkt-archived input {
-    color: #b2b2b2;
+    color: var(--ee-status-color-grey);
 }
 
 .tkt-status-TKA {
-    background-color: #e6e6e6;
+    background-color: var(--ee-status-color-charcoal);
 }
 
 .tkt-status-TKE {
-   background-color: #A39D9C;
+   background-color: var(--ee-status-color-grey);
 }
 
 .tkt-status-TKP {
-    background-color: #49afcd;
+    background-color: var(--ee-status-color-blue);
 }
 
 .tkt-status-TKO {
-    background-color: #62B660;
+    background-color: var(--ee-status-color-green);
 }
 
 .tkt-status-TKS {
-    border-color: #E44064;
+    border-color: var(--ee-status-color-purple);
 }
 
 .add-new-ticket-table td:first-child {

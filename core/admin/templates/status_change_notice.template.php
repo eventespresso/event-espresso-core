@@ -18,6 +18,7 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
         link.classList.remove('ee-show-link');
         let statusNotice = document.getElementById('ee-status-change-notice');
         statusNotice.classList.add('ee-open-notice');
+        return false;
     }
 
     function closeStatusNotice() {
@@ -25,12 +26,14 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
         link.classList.add('ee-show-link');
         let statusNotice = document.getElementById('ee-status-change-notice');
         statusNotice.classList.remove('ee-open-notice');
+        return false;
     }
 
     function removeStatusNotice() {
         let link = document.getElementById('ee-open-notice-link');
         link.style.display = 'none';
         closeStatusNotice();
+        return false;
     }
 
     function dismissStatusNotice() {
@@ -79,8 +82,8 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
 
     #ee-open-notice-link {
         box-shadow: none !important;
-        color: #e34052;
-        display: block;
+        color: var(--ee-status-color-red);
+        display: inline-block;
         font-weight: 700;
         margin: .5rem 0;
         outline: none !important;
@@ -103,7 +106,7 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
 
     .ee-close-notice-btn:after,
     .ee-close-notice-btn:before {
-        background-color: #182e46;
+        background-color: var(--ee-status-color-grey);
         content: ' ';
         height: 18px;
         position: absolute;
@@ -126,7 +129,7 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
     }
 
     .ee-open-notice {
-        max-height: 24rem !important;
+        max-height: 35rem !important;
     }
 
     .ee-show-link {
@@ -134,18 +137,10 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
     }
 
     .ee-status-change-notice-div {
+        display: inline-block;
         margin: 0 .25rem 1rem;
-        padding: 1rem 2rem;
         position: relative;
         transition: max-height 0.4s ease;
-    }
-
-    .ee-status-change-notice__admin-legend .ee-status-change-notice-div {
-        background: #ffffff;
-    }
-
-    .ee-status-change-notice__event-editor .ee-status-change-notice-div {
-        background: #f1f1f1;
     }
 
     .espresso-events-page .ee-status-message,
@@ -155,7 +150,7 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
     }
 
     .ee-status-change-notice-div h3 {
-        color: #e34052;
+        color: var(--ee-font-color-light);
         font-weight: 700;
         margin: .5rem 0 1rem;
     }
@@ -179,28 +174,28 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
     }
 
     .ee-status-change-notice-div span.pill.yellow {
-        background: #fad800;
+        background: var(--ee-status-color-yellow);
         color: #403a3a;
     }
 
     .ee-status-change-notice-div span.pill.purple {
-        background: #8a549a;
+        background: var(--ee-status-color-purple);
     }
 
     .ee-status-change-notice-div span.pill.charcoal {
-        background: #403a3a;
+        background: var(--ee-status-color-dark-grey);
     }
 
     .ee-status-change-notice-div span.pill.blue {
-        background: #297abc;
+        background: var(--ee-status-color-blue);
     }
 
     .ee-status-change-notice-div span.pill.pink {
-        background: #e65983;
+        background: var(--ee-status-color-red);
     }
 
     .ee-status-change-notice-div span.pill.green {
-        background: #91ab30;
+        background: var(--ee-status-color-green);
     }
 
     .ee-status-change-notice-div span.pill.red {
@@ -215,29 +210,35 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
         text-decoration: none;
     }
 
-    .ee-status-change-notice-div .ee-dismiss-notice-pg a .pill {
+    .ee-status-change-notice-div .ee-dismiss-notice-pg button .pill {
         background: unset;
-        border: 1px #e65983 solid;
+        border: 1px #e65983 solid !important;
         color: #e65983;
         transition: all 0.15s;
     }
 
-    .ee-status-change-notice-div .ee-dismiss-notice-pg a .pill:hover {
+    .ee-status-change-notice-div .ee-dismiss-notice-pg button .pill:hover {
         background: #e65983;
         color: #fff;
+    }
+
+    .ee-status-change-notice-wrapper button {
+        background: none !important;
+        border: none !important;
+        cursor: pointer;
     }
 </style>
 
 <div class="ee-status-change-notice-wrapper <?php echo "ee-status-change-notice{$context} {$page_slug}"; ?>">
 
-    <a href="javascript:void(0);" onclick="openStatusNotice();" id="ee-open-notice-link" class="ee-hide-container
+    <button type="button" href="javascript:void(0);" onclick="openStatusNotice();" id="ee-open-notice-link" class="ee-hide-container
         ee-show-link">
         <?php esc_html_e('Click for an Important Notice regarding Status Color Codes', 'event_espresso'); ?>
-    </a>
+    </button>
     <div id="ee-status-change-notice" class="ee-hide-container ee-close-notice">
-        <div class="ee-status-change-notice-div">
+        <div class="ee-status-change-notice-div ee-status-outline ee-status-outline--attention">
 
-            <a href="javascript:void(0);" onclick="closeStatusNotice();" class="ee-close-notice-btn"></a>
+            <button type="button" href="javascript:void(0);" onclick="closeStatusNotice();" class="ee-close-notice-btn"></button>
             <h3><?php esc_html_e('Important Notice Regarding Status Color Codes', 'event_espresso'); ?></h3>
             <p>
                 <?php esc_html_e(
@@ -331,11 +332,11 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
                 ); ?>
             </p>
             <p class="ee-dismiss-notice-pg">
-                <a href="javascript:void(0);" onclick="dismissStatusNotice();" class="ee-dismiss-notice-link">
+                <button type="button" href="javascript:void(0);" onclick="dismissStatusNotice();" class="ee-dismiss-notice-link">
                     <span class="pill pink"><?php
                         esc_html_e('don\'t show this notice again please', 'event_espresso');
                     ?></span>
-                </a>
+                </button>
             </p>
         </div>
     </div>

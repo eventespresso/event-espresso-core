@@ -11,7 +11,6 @@
  */
 class EE_Term extends EE_Base_Class
 {
-
     public $post_type;
 
     /**

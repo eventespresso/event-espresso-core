@@ -2,7 +2,6 @@
 
 class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base
 {
-
     /**
      * Should be used to start teh form section (Eg a table tag, or a div tag, etc.)
      *

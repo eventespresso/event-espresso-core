@@ -14,7 +14,6 @@
  */
 interface EEI_Related_Scope
 {
-
     /**
      * Used to return the related scope object.
      * @return object  This may not necessarily be a EE_Base_Class object.

@@ -67,9 +67,8 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html = '';
         // set some default options and merge with incoming
         $default_options = array(
-            'odd' => true,
             'use_table_wrapper' => true,
-            'table_css_class' => 'admin-primary-mbox-tbl',
+            'table_css_class' => 'admin-primary-mbox-tbl striped',
             'taxes_tr_css_class' => 'admin-primary-mbox-taxes-tr',
             'total_tr_css_class' => 'admin-primary-mbox-total-tr'
         );
@@ -150,9 +149,9 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::tr();
         $html .= EEH_HTML::th(esc_html__('Name', 'event_espresso'), '', 'jst-left');
         $html .= EEH_HTML::th(esc_html__('Type', 'event_espresso'), '', 'jst-left');
-        $html .= EEH_HTML::th(esc_html__('Amount', 'event_espresso'), '', 'jst-cntr');
-        $html .= EEH_HTML::th(esc_html__('Qty', 'event_espresso'), '', 'jst-cntr');
-        $html .= EEH_HTML::th(esc_html__('Line Total', 'event_espresso'), '', 'jst-cntr');
+        $html .= EEH_HTML::th(esc_html__('Amount', 'event_espresso'), '', 'jst-rght');
+        $html .= EEH_HTML::th(esc_html__('Qty', 'event_espresso'), '', 'jst-rght');
+        $html .= EEH_HTML::th(esc_html__('Line Total', 'event_espresso'), '', 'jst-rght');
         $html .= EEH_HTML::tbody();
         return $html;
     }
@@ -183,8 +182,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $line_item_related_object = $line_item->get_object();
         $parent_line_item_related_object = $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->get_object() : null;
         // start of row
-        $row_class = $options['odd'] ? 'item odd' : 'item';
-        $html = EEH_HTML::tr('', '', $row_class);
+        $html = EEH_HTML::tr('', '', 'item');
 
 
         // Name Column
@@ -200,7 +198,9 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $name_html = $name_link ? '<a href="' . $name_link . '">' . $name_html . '</a>' : $name_html;
         $name_html .= $line_item->is_taxable() ? ' *' : '';
         // maybe preface with icon?
-        $name_html = $line_item_related_object instanceof EEI_Has_Icon ? $line_item_related_object->get_icon() . $name_html : $name_html;
+        $name_html = $line_item_related_object instanceof EEI_Has_Icon
+            ? $line_item_related_object->get_icon() . '&nbsp;' . $name_html
+            : $name_html;
         $name_html = '<span class="ee-line-item-name linked">' . $name_html . '</span><br>';
         $name_html .=  sprintf(
             _x('%1$sfor the %2$s: %3$s%4$s', 'eg. "for the Event: My Cool Event"', 'event_espresso'),
@@ -217,19 +217,19 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $options
         );
 
-        $html .= EEH_HTML::td($name_html, '', 'jst-left');
+        $html .= EEH_HTML::td($name_html, '', 'ee-line-item-name-td jst-left');
         // Type Column
         $type_html = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() : '';
         $type_html .= $this->_get_cancellations($line_item);
         $type_html .= $line_item->OBJ_type() ? '<br />' : '';
         $code = $line_item_related_object instanceof EEI_Has_Code ? $line_item_related_object->code() : '';
         $type_html .= ! empty($code) ? '<span class="ee-line-item-id">' . sprintf(esc_html__('Code: %s', 'event_espresso'), $code) . '</span>' : '';
-        $html .= EEH_HTML::td($type_html, '', 'jst-left');
+        $html .= EEH_HTML::td($type_html, '', 'ee-line-item-type-td jst-left');
 
 
         // Amount Column
         if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'jst-rght');
+            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'ee-line-item-amount-td jst-rght');
         } else {
             $include_taxes = $this->prices_include_taxes
                 ? '<br /><span class="grey-text">'
@@ -241,14 +241,15 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                   . '</span>'
                 : '';
             $price = $line_item->unit_price_no_code();
-            $html .= EEH_HTML::td($price . $include_taxes, '', 'jst-rght');
+            $html .= EEH_HTML::td($price . $include_taxes, '', 'ee-line-item-amount-td jst-rght');
         }
 
         // QTY column
-        $html .= EEH_HTML::td($line_item->quantity(), '', 'jst-rght');
+        $html .= EEH_HTML::td($line_item->quantity(), '', 'ee-line-item-quantity-td jst-rght');
 
         // total column
-        $html .= EEH_HTML::td(EEH_Template::format_currency($line_item->pretaxTotal(), false, false), '', 'jst-rght');
+        $total = EEH_Template::format_currency($line_item->pretaxTotal(), false, false);
+        $html .= EEH_HTML::td($total, '', 'ee-line-item-total-td jst-rght');
 
         // finish things off and return
         $html .= EEH_HTML::trx();

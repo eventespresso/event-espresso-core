@@ -32,9 +32,6 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  */
 class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base
 {
-
-
-
     /**
      * EE_DMS_Core_4_2_0 constructor.
      *

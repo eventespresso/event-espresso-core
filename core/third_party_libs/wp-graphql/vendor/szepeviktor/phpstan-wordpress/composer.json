@@ -1,0 +1,48 @@
+{
+    "name": "szepeviktor/phpstan-wordpress",
+    "type": "phpstan-extension",
+    "description": "WordPress extensions for PHPStan",
+    "keywords": [
+        "static analysis",
+        "code analysis",
+        "code analyse",
+        "wordpress",
+        "phpstan"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^7.1 || ^8.0",
+        "php-stubs/wordpress-stubs": "^4.7 || ^5.0",
+        "phpstan/phpstan": "^0.12.26",
+        "symfony/polyfill-php73": "^1.12.0"
+    },
+    "require-dev": {
+        "composer/composer": "^1.10.22",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
+        "php-parallel-lint/php-parallel-lint": "^1.1",
+        "phpstan/phpstan-strict-rules": "^0.12",
+        "szepeviktor/phpcs-psr-12-neutron-hybrid-ruleset": "^0.6"
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SzepeViktor\\PHPStan\\WordPress\\": "src/"
+        }
+    },
+    "scripts": {
+        "test": [
+            "@test:syntax",
+            "@test:cs",
+            "@test:phpstan"
+        ],
+        "test:cs": "phpcs --standard=PSR12NeutronRuleset --exclude=PEAR.Commenting.ClassComment,PEAR.Commenting.FileComment,Generic.Files.LineLength bootstrap.php src/",
+        "test:phpstan": "phpstan analyze",
+        "test:syntax": "parallel-lint bootstrap.php src/"
+    }
+}

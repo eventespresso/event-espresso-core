@@ -14,7 +14,6 @@ use Exception;
  */
 class Router
 {
-
     /**
      * @var EE_Dependency_Map
      */

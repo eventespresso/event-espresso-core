@@ -9,7 +9,6 @@
  */
 class EE_Email_Input extends EE_Form_Input_Base
 {
-
     /**
      * @param array $input_settings
      */

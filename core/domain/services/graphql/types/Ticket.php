@@ -35,7 +35,6 @@ use GraphQL\Type\Definition\ResolveInfo;
  */
 class Ticket extends TypeBase
 {
-
     /**
      * Ticket constructor.
      *

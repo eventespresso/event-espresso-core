@@ -11,8 +11,6 @@
  */
 class EEH_Array extends EEH_Base
 {
-
-
     /**
      * This method basically works the same as the PHP core function array_diff except it allows you to compare arrays
      * of EE_Base_Class objects NOTE: This will ONLY work on an array of EE_Base_Class objects
@@ -111,28 +109,26 @@ class EEH_Array extends EEH_Base
      *
      * @param array        $target_array the array to insert new data into
      * @param array        $array_to_insert the new data to be inserted
-     * @param int | string $offset a known key within $target_array where new data will be inserted
+     * @param int|string|null $offset a known key within $target_array where new data will be inserted
      * @param bool         $add_before whether to add new data before or after the offset key
      * @param bool         $preserve_keys whether or not to reset numerically indexed arrays
      * @return array
      */
     public static function insert_into_array(
-        $target_array = array(),
-        $array_to_insert = array(),
+        array $target_array = array(),
+        array $array_to_insert = array(),
         $offset = null,
-        $add_before = true,
-        $preserve_keys = true
+        bool $add_before = true,
+        bool $preserve_keys = true
     ) {
-        // ensure incoming arrays are actually arrays
-        $target_array = (array) $target_array;
-        $array_to_insert = (array) $array_to_insert;
+        $target_array_keys = array_keys($target_array);
         // if no offset key was supplied
         if (empty($offset)) {
             // use start or end of $target_array based on whether we are adding before or not
             $offset = $add_before ? 0 : count($target_array);
         }
         // if offset key is a string, then find the corresponding numeric location for that element
-        $offset = is_int($offset) ? $offset : array_search($offset, array_keys($target_array));
+        $offset = is_int($offset) ? $offset : array_search($offset, $target_array_keys, true);
         // add one to the offset if adding after
         $offset = $add_before ? $offset : $offset + 1;
         // but ensure offset does not exceed the length of the array

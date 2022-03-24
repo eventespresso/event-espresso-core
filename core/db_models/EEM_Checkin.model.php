@@ -11,7 +11,6 @@
  */
 class EEM_Checkin extends EEM_Base
 {
-
     // private instance of the EEM_Checkin object
     protected static $_instance;
 

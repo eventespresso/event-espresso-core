@@ -15,7 +15,6 @@
  */
 class EE_Soft_Delete_Where_Conditions extends EE_Default_Where_Conditions
 {
-
     /**
      * Gets the where default where conditions for a custom post type model
      *

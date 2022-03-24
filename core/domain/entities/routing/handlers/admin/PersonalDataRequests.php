@@ -15,7 +15,6 @@ use EventEspresso\core\domain\entities\routing\handlers\frontend\PublicRoute;
  */
 class PersonalDataRequests extends PublicRoute
 {
-
     /**
      * returns true if the current request matches this route
      *

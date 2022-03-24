@@ -13,7 +13,6 @@ use ReflectionException;
 
 class RegFormInputHandler
 {
-
     /**
      * @var EEM_Attendee
      */

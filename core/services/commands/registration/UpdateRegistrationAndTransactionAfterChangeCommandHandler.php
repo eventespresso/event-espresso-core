@@ -17,8 +17,6 @@ use EventEspresso\core\services\commands\CommandInterface;
  */
 class UpdateRegistrationAndTransactionAfterChangeCommandHandler extends CommandHandler
 {
-
-
     /**
      * @var UpdateRegistrationService $update_registration_service
      */

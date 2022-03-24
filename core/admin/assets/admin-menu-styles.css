@@ -2,34 +2,235 @@
 * Event Espresso admin menu styles
 */
 
+/* CONSTANTS */
 :root {
-    --ee-status-color-red: #fc1922;
-    --ee-status-color-pink: #e65983;
-    --ee-status-color-orange: #ff582c;
-    --ee-status-color-gold: #fdad02;
-    --ee-status-color-yellow: #fad800;
-    --ee-status-color-green: #7ab540;
-    --ee-status-color-green-high-contrast: #699f34;
-    --ee-status-color-dark-green: #01873a;
-    --ee-status-color-dark-green-low-contrast: #02ac4a;
-    --ee-status-color-light-blue: #94d5ff;
-    --ee-status-color-blue: #008dcb;
-    --ee-status-color-purple: #795d9d;
-    --ee-status-color-light-grey: #d4d4d4;
-    --ee-status-color-grey: #9b9b9b;
-    --ee-status-color-dark-grey: #626262;
-    --ee-status-color-charcoal: #292929;
+
+    --ee-color-white: hsl(207, 0%, 100%);
+    --ee-color-almost-white: hsl(207, 0%, 95%);
+    --ee-color-off-white: hsl(207, 0%, 90%);
+    --ee-status-color-pink: hsl(340, 100%, 85%);
+    --ee-status-color-red: hsl(340, 60%, 55%);
+    --ee-status-color-orange: hsl(18, 70%, 50%);
+    --ee-status-color-gold: hsl(39, 98%, 50%);
+    --ee-status-color-yellow: hsl(50, 95%, 45%);
+    --ee-status-color-yellow-desat: hsl(50, 95%, 45%);
+    --ee-status-color-dark-green: hsl(90, 100%, 15%);
+    --ee-status-color-green: hsl(140, 70%, 35%);
+    --ee-status-color-green-high-contrast: hsl(140, 90%, 25%);
+    --ee-status-color-blue-green: hsl(172, 95%, 25%);
+    --ee-status-color-blue: hsl(203, 50%, 50%);
+    --ee-status-color-light-blue: hsl(203, 90%, 70%);
+    --ee-status-color-pale-blue: hsl(203, 50%, 95%);
+    --ee-status-color-violet: hsl(239, 35%, 60%);
+    --ee-status-color-purple: hsl(279, 35%, 50%);
+    --ee-status-color-pale-grey: hsl(219, 2%, 75%);
+    --ee-status-color-light-grey: hsl(219, 2%, 55%);
+    --ee-status-color-grey: hsl(225, 2%, 37.5%);
+    --ee-status-color-dark-grey: hsl(225, 2%, 25%);
+    --ee-status-color-charcoal: hsl(225, 0%, 15%);
+
+
+    /* FONT COLORS */
+
+    --ee-font-color-hue: 207;
+    --ee-font-color-sat: 5;
+    --ee-font-color-lit: 30;
+    --ee-font-color-alpha: 1;
+
+
+    --ee-font-color: hsla(
+        var(--ee-font-color-hue),
+        calc(var(--ee-font-color-sat) * 1%),
+        calc(var(--ee-font-color-lit) * 1%),
+        var(--ee-font-color-alpha)
+    );
+    --ee-font-color-light: hsla(
+        var(--ee-font-color-hue),
+        calc(var(--ee-font-color-sat) * 1%),
+        calc((var(--ee-font-color-lit) + 15) * 1%),
+        var(--ee-font-color-alpha)
+    );
+    --ee-font-color-dark: hsla(
+        var(--ee-font-color-hue),
+        calc(var(--ee-font-color-sat) * 1%),
+        calc((var(--ee-font-color-lit) - 15) * 1%),
+        var(--ee-font-color-alpha)
+    );
+
+    /* PRIMARY BUTTON COLORS */
+    --ee-btn-primary-hue: 207;
+    --ee-btn-primary-sat: 65;
+    --ee-btn-primary-lit: 45;
+    --ee-btn-primary-alpha: 1;
+
+    --ee-btn-primary: hsla(
+        var(--ee-btn-primary-hue),
+        calc(var(--ee-btn-primary-sat) * 1%),
+        calc(var(--ee-btn-primary-lit) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
+    --ee-btn-primary-low-constrast: hsla(
+        var(--ee-btn-primary-hue),
+        calc((var(--ee-btn-primary-sat) + 5) * 1%),
+        calc((var(--ee-btn-primary-lit) + 10) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
+    --ee-btn-primary-high-constrast: hsla(
+        var(--ee-btn-primary-hue),
+        calc((var(--ee-btn-primary-sat) + 15) * 1%),
+        calc((var(--ee-btn-primary-lit) - 10) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
+    --ee-btn-primary-disabled: hsla(
+        var(--ee-btn-primary-hue),
+        calc((var(--ee-btn-primary-sat) - 30) * 1%),
+        calc((var(--ee-btn-primary-lit) + 15) * 1%),
+        var(--ee-btn-primary-alpha)
+    );
+    --ee-btn-primary-hover: var(--ee-btn-primary-low-constrast);
+    --ee-btn-primary-focus: var(--ee-btn-primary-high-constrast);
+
+
+    /* PRIMARY ALT  */
+
+    --ee-btn-primary-alt-hue: 140;
+    --ee-btn-primary-alt-sat: 70;
+    --ee-btn-primary-alt-lit: 35;
+    --ee-btn-primary-alt-alpha: 1;
+
+    --ee-btn-primary-alt: hsla(
+        var(--ee-btn-primary-alt-hue),
+        calc(var(--ee-btn-primary-alt-sat) * 1%),
+        calc(var(--ee-btn-primary-alt-lit) * 1%),
+        var(--ee-btn-primary-alt-alpha)
+    );
+    --ee-btn-primary-alt-low-constrast: hsla(
+        var(--ee-btn-primary-alt-hue),
+        calc((var(--ee-btn-primary-alt-sat) + 5) * 1%),
+        calc((var(--ee-btn-primary-alt-lit) + 2.5) * 1%),
+        var(--ee-btn-primary-alt-alpha)
+    );
+    --ee-btn-primary-alt-high-constrast: hsla(
+        var(--ee-btn-primary-alt-hue),
+        calc((var(--ee-btn-primary-alt-sat) + 20) * 1%),
+        calc((var(--ee-btn-primary-alt-lit) - 10) * 1%),
+        var(--ee-btn-primary-alt-alpha)
+    );
+    --ee-btn-primary-alt-hover: var(--ee-btn-primary-alt-low-constrast);
+    --ee-btn-primary-alt-focus: var(--ee-btn-primary-alt-high-constrast);
+
+    /* SECONDARY BUTTON COLORS */
+    --ee-btn-secondary-hue: 203;
+    --ee-btn-secondary-sat: 2;
+    --ee-btn-secondary-lit: 90;
+    --ee-btn-secondary-alpha: 1;
+
+    --ee-btn-secondary: hsla(
+        var(--ee-btn-secondary-hue),
+        calc(var(--ee-btn-secondary-sat) * 1%),
+        calc(var(--ee-btn-secondary-lit) * 1%),
+        var(--ee-btn-secondary-alpha)
+    );
+    --ee-btn-secondary-hover: hsla(
+        var(--ee-btn-secondary-hue),
+        calc(var(--ee-btn-secondary-sat) * 1%),
+        calc((var(--ee-btn-secondary-lit) - 20) * 1%),
+        var(--ee-btn-secondary-alpha)
+    );
+    --ee-btn-secondary-focus: hsla(
+        var(--ee-btn-secondary-hue),
+        calc(var(--ee-btn-secondary-sat) * 1%),
+        calc((var(--ee-btn-secondary-lit) - 40) * 1%),
+        var(--ee-btn-secondary-alpha)
+    );
+
+	/* CAUTION */
+
+    --ee-btn-caution-hue: 340;
+    --ee-btn-caution-sat: 55;
+    --ee-btn-caution-lit: 50;
+    --ee-btn-caution-alpha: 1;
+
+    --ee-btn-caution: hsla(
+        var(--ee-btn-caution-hue),
+        calc(var(--ee-btn-caution-sat) * 1%),
+        calc(var(--ee-btn-caution-lit) * 1%),
+        var(--ee-btn-caution-alpha)
+    );
+    --ee-btn-caution-hover: hsla(
+        var(--ee-btn-caution-hue),
+        calc((var(--ee-btn-caution-sat) + 45) * 1%),
+        calc((var(--ee-btn-caution-lit) + 7.5) * 1%),
+        var(--ee-btn-caution-alpha)
+    );
+    --ee-btn-caution-focus: hsla(
+        var(--ee-btn-caution-hue),
+        calc(var(--ee-btn-caution-sat) * 1%),
+        calc((var(--ee-btn-caution-lit) - 10) * 1%),
+        var(--ee-btn-caution-alpha)
+    );
+
+    --ee-button-height: 2.625rem;
+    --ee-button-height-three-quarter: calc(var(--ee-button-height) * .75);
+    --ee-button-height-half: calc(var(--ee-button-height) / 2);
+    --ee-button-height-third: calc(var(--ee-button-height) / 3);
+    --ee-button-height-forth: calc(var(--ee-button-height) / 4);
+    --ee-button-height-sixth: calc(var(--ee-button-height) / 6);
+    --ee-button-height-shim: calc(var(--ee-button-height) / 12);
+
+
+    --ee-box-shadow: 0 2px 3px -2px hsla(0, 0%, 0%, .5);
+    --ee-box-shadow-big: 0 3px 6px hsla(0, 0%, 0%, .5);
+    --ee-button-box-shadow: 0 1px 1px hsla(0, 0%, 0%, 0.4), 1px 1px 3px hsla(0, 0%, 0%, 0.15), -1px -1px 1px hsla(0, 0%, 100%, 0.75);
+    --ee-button-box-shadow-alt: 0 0 2px hsla(0, 0%, 0%, 0.35), -1px -1px 2px hsla(0, 0%, 100%, 0.75);
+
+
+    --ee-border-color: hsla(var(--ee-btn-secondary-hue), 2%, 70%, 1);
+    --ee-border-color-table-row: hsla(var(--ee-btn-secondary-hue), 0%, 90%, 1);
+    --ee-table-row-stripe-bg: hsl(207, 0%, 97.5%);
+
+    --ee-admin-sidebar-width: 100%;
+
+    --ee-attention-bg-color: hsl(51, 68%, 76%);
+    --ee-attention-color: hsla(46, 24%, 9%, .85);
+
+    --ee-help-attention: hsl(203, 50%, 70%);
+    --ee-help-attention-hover: hsl(203, 70%, 50%);
+
+    --ee-tab-border: hsl(203, 10%, 75%);
+    --ee-tab-border-hover: hsl(203, 40%, 65%);
+    --ee-tab-border-active: hsl(203, 70%, 55%);
+
+    --ee-checkbox-height: 1.5rem;
+
+    --ee-switch-width: 3.6rem;
+	--ee-switch-height: 1.8rem;
+	--ee-switch-padding: .3rem;
+	--ee-switch-button: calc(var(--ee-switch-height) - (var(--ee-switch-padding) * 2));
+
+}
+
+@media screen and (min-width: 960px) {
+    :root {
+        --ee-admin-sidebar-width: 320px;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    :root {
+        --ee-admin-sidebar-width: 480px;
+    }
 }
 
 .ee_menu_group {
 	display: block;
-	background-color: var(--ee-status-color-light-grey);
+	background-color: hsla(207deg 0% 50% / 75%);
 	margin: -2px -5px 0px -12px;
 	padding: 2px 0 3px 10px;
 	font-size:.95em;
 	font-weight: bold;
 	letter-spacing: 1px;
-	color: #333;
+	color: var(--ee-color-white);
 	cursor: default;
 }
 .version-3-8.admin-color-fresh .ee_menu_group {
@@ -37,7 +238,7 @@
 	margin: 3px -12px -3px -12px;
 	border-left: 3px solid var(--ee-status-color-blue);
 	background-color: var(--ee-status-color-charcoal);
-	color: #fff;
+	color: var(--ee-color-white);
 	font-weight: normal;
 }
 .version-3-8.admin-color-blue .ee_menu_group {
@@ -45,7 +246,7 @@
 	margin: 3px -12px -3px -12px;
 	border-left: 3px solid var(--ee-status-color-light-blue);
 	background-color: var(--ee-status-color-blue);
-	color: #fff;
+	color: var(--ee-color-white);
 	font-weight: normal;
 }
 .version-3-8.admin-color-light .ee_menu_group {
@@ -59,9 +260,9 @@
 .version-3-8.admin-color-midnight .ee_menu_group {
 	padding-left: 8px;
 	margin: 3px -12px -3px -12px;
-	background-color: #363B3F;
+	background-color: var(--ee-status-color-charcoal);
 	border-left: 3px solid var(--ee-status-color-orange);
-	color: #fff;
+	color: var(--ee-color-white);
 	font-weight: normal;
 }
 
@@ -77,6 +278,7 @@ div.TB-ee-frame a {
 .smaller-text {
 	font-size: .8em;
 	line-height: 1em;
+    letter-spacing: 0.75px;
 }
 .small-text {
 	font-size: .85em;
@@ -213,7 +415,7 @@ div.TB-ee-frame a {
 }
 
 .featured-section .button-hero .dashicons{
-    font-size:16px;
+    font-size: 1rem;
     vertical-align:middle;
 }
 
@@ -238,7 +440,12 @@ div.TB-ee-frame a {
 	font-style: normal;
 }
 
-.dashicons, .ee-dashicons, .ee-icon:before, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
+/* .dashicons, */
+.ee-dashicons,
+.ee-icon:before,
+#wpadminbar .ee-icon:before,
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
 	position: relative;
 	top: -2px;
 	font-size: inherit;
@@ -248,20 +455,24 @@ div.TB-ee-frame a {
 	width: auto;
 }
 
-.ee-icon:before, .ee-dashicons, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
-	display: inline-block;
-	font-family: "ee-dashicons" !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
- 	font-style: normal;
-	font-weight: 400;
-	font-variant: normal;
-	line-height: 1;
-	speak: none;
-	text-align: center;
-	text-decoration: inherit;
-	text-transform: none;
-	/* Better Font Rendering =========== */
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+.ee-icon:before,
+.ee-dashicons,
+#wpadminbar .ee-icon:before,
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
+    display: inline-block;
+    font-family: "ee-dashicons" !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    line-height: 1;
+    speak: none;
+    text-align: center;
+    text-decoration: inherit;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 @media screen and (max-width: 782px) {
@@ -421,14 +632,14 @@ div.TB-ee-frame a {
 .drk-green-icon:before, .drk-green, .drk-green a { color: var(--ee-status-color-dark-green); }
 .red-icon:before, .red, .red a { color: var(--ee-status-color-red); }
 .orange-icon:before, .orange, .orange a { color: var(--ee-status-color-orange); }
-.lt-blue-icon:before, .lt-blue, lt-blue a { color: var(--ee-status-color-light-blue); }
+.lt-blue-icon:before, .lt-blue, .lt-blue a { color: var(--ee-status-color-light-blue); }
 .blue-icon:before, .blue, .blue a { color: var(--ee-status-color-blue); }
 .yellow-icon:before, .yellow, .yellow a { color: var(--ee-status-color-yellow); }
-.lt-grey-icon:before, .lt-grey, lt-grey a { color: var(--ee-status-color-light-grey); }
+.lt-grey-icon:before, .lt-grey, .lt-grey a { color: var(--ee-status-color-light-grey); }
 .grey-icon:before, .grey, .grey a { color: var(--ee-status-color-grey); }
 .drk-grey-icon:before, .drk-grey, .drk-grey a { color: var(--ee-status-color-dark-grey); }
 .black-icon:before, .black, .black a { color: var(--ee-status-color-charcoal); }
-.white-icon:before, .white, .white a { color: #fff; }
+.white-icon:before, .white, .white a { color: var(--ee-color-white); }
 
 /** corresponding background colors **/
 .pink-bg, .reg-status-bg-RDC, .txn-status-bg-TFL, .pymt-status-bg-PDC { background-color: var(--ee-status-color-pink); }
@@ -485,7 +696,7 @@ div.TB-ee-frame a {
 }
 
 .ee-icon-color-ee-red:before {
-	color: var(--ee-status-color-pink);
+	color: var(--ee-status-color-red);
 }
 
 .ee-icon-color-ee-purple:before {
@@ -523,14 +734,6 @@ div.TB-ee-frame a {
 	margin-right: -0.2em;
 }
 
-.espresso-help-tab-lnk {
-	cursor: pointer;
-}
-
-.wp-list-table .ee-icon {
-	margin-right: .25em !important;
-}
-
 .ee-lock-icon:before, .ee-collapsible:before {
 	display: inline-block;
 	-webkit-font-smoothing: antialiased;
@@ -566,7 +769,7 @@ div.TB-ee-frame a {
 /**
  * fancy toggles
  */
-.ee-on-off-toggle{
+.ee-on-off-toggle {
   position: absolute;
   margin-left: -9999px;
   visibility: hidden;
@@ -579,10 +782,11 @@ div.TB-ee-frame a {
   user-select: none;
 }
 input.ee-toggle-round-flat + label {
-  width: 2.2rem;
-  height: 1.2rem;
-  background-color: var(--ee-status-color-grey);
-  border-radius: .6rem;
+  width: var(--ee-switch-width);
+  height: var(--ee-switch-height);
+
+  background-color: var(--ee-status-color-light-grey);
+  border-radius: var(--ee-switch-height);
   transition: background 0.4s;
 }
 input.ee-toggle-round-flat + label:after {
@@ -591,19 +795,21 @@ input.ee-toggle-round-flat + label:after {
   content: "";
 }
 input.ee-toggle-round-flat + label:after {
-  top: .2rem;
-  left: .2rem;
-  bottom: .2rem;
-  width: .8rem;
+  top: var(--ee-switch-padding);
+  left: var(--ee-switch-padding);
+  bottom: var(--ee-switch-padding);
+  height: var(--ee-switch-button);
+  width: var(--ee-switch-button);
   background-color: #FFF;
-  border-radius: .4rem;
+  border-radius: var(--ee-switch-button);
   transition: margin 0.4s, background 0.4s;
 }
 input.ee-toggle-round-flat:checked + label {
-  background-color: var(--ee-status-color-blue);
+    background-color: var(--ee-status-color-blue);
+    margin-block: 0;
 }
 input.ee-toggle-round-flat:checked + label:after {
-  margin-left: 1rem;
+  margin-left: var(--ee-switch-height);
 }
 
 

@@ -15,7 +15,6 @@ use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
  */
 abstract class InputBase implements InputInterface
 {
-
     /**
      * @var string $namespace The graphql namespace/prefix.
      */

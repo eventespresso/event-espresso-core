@@ -15,7 +15,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class Payments_Admin_Page extends EE_Admin_Page
 {
-
     /**
      * Variables used for when we're re-sorting the logs results,
      * in case we needed to do two queries, and we need to resort
@@ -323,7 +322,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         );
         foreach ($payment_methods as $payment_method) {
             if ($payment_method instanceof EE_Payment_Method) {
-                add_meta_box(
+                $this->addMetaBox(
                     // html id
                     'espresso_' . $payment_method->slug() . '_payment_settings',
                     // title
@@ -346,13 +345,16 @@ class Payments_Admin_Page extends EE_Admin_Page
                     'href'  => 'espresso_' . $payment_method->slug() . '_payment_settings',
                     'title' => esc_html__('Modify this Payment Method', 'event_espresso'),
                     'slug'  => $payment_method->slug(),
+                    'icon'  => $payment_method->active()
+                        ? '<span class="dashicons dashicons-yes-alt"></span>'
+                        : '<span class="dashicons dashicons-remove"></span>',
                 );
             }
         }
         $this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links(
             $tabs,
             'payment_method_links',
-            '|',
+            '',
             $this->_get_active_payment_method_slug()
         );
         $this->display_admin_page_with_sidebar();
@@ -694,7 +696,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                             $link_text_and_title,
                             $link_text_and_title,
                             'deactivate_' . $payment_method->slug(),
-                            'espresso-button button-secondary'
+                            'button button--secondary'
                         )
                     )
                 )
@@ -753,7 +755,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                                             $link_text_and_title,
                                             $link_text_and_title,
                                             'activate_' . $payment_method->slug(),
-                                            'espresso-button-green button-primary'
+                                            'button button--primary-alt'
                                         )
                                     )
                                 )
@@ -935,7 +937,11 @@ class Payments_Admin_Page extends EE_Admin_Page
         $form = $this->getPaymentSettingsForm();
         $this->_set_add_edit_form_tags('update_payment_settings');
         $this->_set_publish_post_box_vars(null, false, false, null, false);
-        $this->_template_args['admin_page_content'] =  $form->get_html_and_js();
+        $this->_template_args['admin_page_content'] = EEH_HTML::div(
+            $form->get_html_and_js(),
+            '',
+            'padding'
+        );
         $this->display_admin_page_with_sidebar();
     }
 

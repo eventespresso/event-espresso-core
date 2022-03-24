@@ -13,7 +13,6 @@ use DomainException;
  */
 class JsonDataNodeValidator
 {
-
     /**
      * @param JsonDataNode $data_node
      * @return bool             returns true if data array is safe to set, false if overwrite will occur

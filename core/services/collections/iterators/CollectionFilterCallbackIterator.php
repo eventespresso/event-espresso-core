@@ -8,7 +8,6 @@ use FilterIterator;
 
 class CollectionFilterCallbackIterator extends FilterIterator
 {
-
     /**
      * Used for determining whether the iterated object in the Collection is "valid" or not.
      * @var Closure

@@ -11,7 +11,6 @@
  */
 class Extend_Support_Admin_Page extends Support_Admin_Page
 {
-
     public function __construct($routing = true)
     {
         parent::__construct($routing);
@@ -63,7 +62,7 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
             'template_path' => EE_SUPPORT_CAF_ADMIN_TEMPLATE_PATH
                                . 'support_admin_details_additional_information.template.php',
         );
-        add_meta_box(
+        $this->addMetaBox(
             'espresso_additional_information_support',
             esc_html__('Additional Information', 'event_espresso'),
             function ($post, $metabox) {

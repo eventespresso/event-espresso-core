@@ -13,7 +13,6 @@
  */
 class Venues_Admin_Page extends EE_Admin_Page_CPT
 {
-
     /**
      * _venue
      * This will hold the venue object for venue_details screen.
@@ -688,21 +687,21 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     {
         $this->verify_cpt_object();
 
-        add_meta_box(
+        $this->addMetaBox(
             'espresso_venue_address_options',
             esc_html__('Physical Location', 'event_espresso'),
             [$this, 'venue_address_metabox'],
             $this->page_slug,
             'side'
         );
-        add_meta_box(
+        $this->addMetaBox(
             'espresso_venue_gmap_options',
             esc_html__('Google Map', 'event_espresso'),
             [$this, 'venue_gmap_metabox'],
             $this->page_slug,
             'side'
         );
-        add_meta_box(
+        $this->addMetaBox(
             'espresso_venue_virtual_loc_options',
             esc_html__('Virtual Location', 'event_espresso'),
             [$this, 'venue_virtual_loc_metabox'],

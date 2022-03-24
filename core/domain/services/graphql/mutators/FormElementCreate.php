@@ -11,7 +11,6 @@ use Exception;
 
 class FormElementCreate extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

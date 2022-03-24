@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 {
-
     /**
      * This property is just used to hold the status of whether an event is currently being
      * created (true) or edited (false)
@@ -209,9 +208,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                             'In order to trash this datetime you must first make sure the above ticket(s) are assigned to other datetimes.',
                             'event_espresso'
                         ),
-                        'cancel_button'           => '<button class="button-secondary ee-modal-cancel">'
+                        'cancel_button'           => '<button class="button--secondary ee-modal-cancel">'
                                                      . esc_html__('Cancel', 'event_espresso') . '</button>',
-                        'close_button'            => '<button class="button-secondary ee-modal-cancel">'
+                        'close_button'            => '<button class="button--secondary ee-modal-cancel">'
                                                      . esc_html__('Close', 'event_espresso') . '</button>',
                         'single_warning_from_tkt' => esc_html__(
                             'The Datetime you are attempting to unassign from this ticket is the only remaining datetime for this ticket. Tickets must always have at least one datetime assigned to them.',
@@ -221,13 +220,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                             'The ticket you are attempting to unassign from this datetime cannot be unassigned because the datetime is the only remaining datetime for the ticket.  Tickets must always have at least one datetime assigned to them.',
                             'event_espresso'
                         ),
-                        'dismiss_button'          => '<button class="button-secondary ee-modal-cancel">'
+                        'dismiss_button'          => '<button class="button--secondary ee-modal-cancel">'
                                                      . esc_html__('Dismiss', 'event_espresso') . '</button>',
                     ),
                     'DTT_ERROR_MSG'         => array(
                         'no_ticket_name' => esc_html__('General Admission', 'event_espresso'),
                         'dismiss_button' => '<div class="save-cancel-button-container">'
-                                            . '<button class="button-secondary ee-modal-cancel">'
+                                            . '<button class="button--secondary ee-modal-cancel">'
                                             . esc_html__('Dismiss', 'event_espresso')
                                             . '</button></div>',
                     ),
@@ -1240,7 +1239,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 ? ''
                 : 'clone-icon ee-icon ee-icon-clone clickable',
             'trash_icon'           => ! empty($datetime) && $datetime->get('DTT_sold') > 0
-                ? 'ee-lock-icon'
+                ? 'dashicons dashicons-lock'
                 : 'trash-icon dashicons dashicons-post-trash clickable',
             'reg_list_url'         => $default || ! $datetime->event() instanceof \EE_Event
                 ? ''
@@ -1249,7 +1248,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     REG_ADMIN_URL
                 ),
         );
-        $template_args['show_trash'] = count($all_datetimes) === 1 && $template_args['trash_icon'] !== 'ee-lock-icon'
+        $template_args['show_trash'] = count($all_datetimes) === 1 && $template_args['trash_icon'] !== 'dashicons dashicons-lock'
             ? ' style="display:none"'
             : '';
         // allow filtering of template args at this point.
@@ -1582,13 +1581,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'trash_icon'                    => $ticket instanceof EE_Ticket
                                                && $ticket->deleted()
                                                && ! $ticket->is_permanently_deleteable()
-                ? 'ee-lock-icon '
+                ? 'dashicons dashicons-lock '
                 : 'trash-icon dashicons dashicons-post-trash clickable',
             'clone_icon'                    => $ticket instanceof EE_Ticket && $ticket->deleted()
                 ? ''
                 : 'clone-icon ee-icon ee-icon-clone clickable',
         );
-        $template_args['trash_hidden'] = count($all_tickets) === 1 && $template_args['trash_icon'] !== 'ee-lock-icon'
+        $template_args['trash_hidden'] = count($all_tickets) === 1 && $template_args['trash_icon'] !== 'dashicons dashicons-lock'
             ? ' style="display:none"'
             : '';
         // handle rows that should NOT be empty

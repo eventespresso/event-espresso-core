@@ -14,7 +14,6 @@ use WPGraphQL\AppContext;
  */
 interface GQLDataDomainInterface
 {
-
     /**
      * @param array      $loaders The loaders accessible in the AppContext
      * @param AppContext $context The AppContext

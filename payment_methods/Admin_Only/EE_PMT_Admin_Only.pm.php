@@ -13,9 +13,6 @@
  */
 class EE_PMT_Admin_Only extends EE_PMT_Base
 {
-
-
-
     /**
      *
      * @param EE_Payment_Method $pm_instance

@@ -26,7 +26,6 @@ define('BATCH_URL', plugin_dir_url(__FILE__));
  */
 class EED_Batch extends EED_Module
 {
-
     /**
      * Possibly value for $_REQUEST[ 'batch' ]. Indicates to run a job that
      * processes data only

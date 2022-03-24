@@ -25,8 +25,6 @@ use RuntimeException;
  */
 class CopyRegistrationService extends DomainService
 {
-
-
     /**
      * @param EE_Registration $target_registration
      * @param EE_Registration $registration_to_copy

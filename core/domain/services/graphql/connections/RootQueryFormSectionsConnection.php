@@ -18,8 +18,6 @@ use Exception;
  */
 class RootQueryFormSectionsConnection extends AbstractRootQueryConnection
 {
-
-
     /**
      * FormSectionConnection constructor.
      *

@@ -13,7 +13,6 @@ namespace EventEspresso\core\domain\entities\routing\specifications;
  */
 class MatchAllRouteSpecifications extends MultiRouteSpecification
 {
-
     /**
      * returns true if current request matches specification
      *

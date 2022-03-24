@@ -11,7 +11,6 @@
  */
 class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
 {
-
     /**
      * opening div tag for a form
      *

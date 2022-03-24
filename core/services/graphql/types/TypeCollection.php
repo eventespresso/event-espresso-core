@@ -20,7 +20,6 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  */
 class TypeCollection extends Collection
 {
-
     const COLLECTION_NAME = 'espresso_graphql_types';
 
     const COLLECTION_INTERFACE = 'EventEspresso\core\services\graphql\types\TypeInterface';

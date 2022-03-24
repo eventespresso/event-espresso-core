@@ -10,8 +10,6 @@
  */
 class EE_Register_Admin_Page implements EEI_Plugin_API
 {
-
-
     /**
      * Holds registered EE_Admin_Pages
      *

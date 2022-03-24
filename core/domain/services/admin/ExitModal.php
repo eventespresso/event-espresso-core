@@ -16,7 +16,6 @@ use WP_User;
  */
 class ExitModal
 {
-
     const TYPE_FORM_URL = 'https://eventespresso.typeform.com/to/O1DDym';
 
     /**

@@ -16,7 +16,6 @@ use WPGraphQL\AppContext;
 
 class TicketDelete extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

@@ -15,7 +15,6 @@ use RuntimeException;
 
 class RegFormAttendeeFactory
 {
-
     /**
      * @var CommandBusInterface
      */

@@ -37,7 +37,7 @@
                 <br />
             </div>
         <?php endif; ?>
-        <input class='right button button-primary button-large'
+        <input class='right button button--primary button--big'
                id="ee-new-registration-step-button"
                type="submit"
                value="<?php echo esc_attr($step_button_text); ?>"

@@ -13,7 +13,6 @@ use DomainException;
  */
 class ConvertNoticesToAdminNotices extends NoticeConverter
 {
-
     /**
      * Converts Notice objects into AdminNotice notifications
      *

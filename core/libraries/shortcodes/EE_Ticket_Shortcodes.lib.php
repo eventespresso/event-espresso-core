@@ -17,8 +17,6 @@
  */
 class EE_Ticket_Shortcodes extends EE_Shortcodes
 {
-
-
     /**
      * Will hold the EE_Ticket if available
      *

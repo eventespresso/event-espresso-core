@@ -18,7 +18,6 @@ use ReflectionException;
  */
 class RegistrantData
 {
-
     /**
      * @var int
      */

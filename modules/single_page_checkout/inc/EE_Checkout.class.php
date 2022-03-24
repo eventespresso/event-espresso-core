@@ -14,7 +14,6 @@
  */
 class EE_Checkout
 {
-
     /**
      *    whether current request originated from the EE admin
      *

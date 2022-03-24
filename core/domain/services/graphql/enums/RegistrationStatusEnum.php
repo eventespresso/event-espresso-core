@@ -15,7 +15,6 @@ use EventEspresso\core\services\graphql\enums\EnumBase;
  */
 class RegistrationStatusEnum extends EnumBase
 {
-
     /**
      * RegistrationStatusEnum constructor.
      */

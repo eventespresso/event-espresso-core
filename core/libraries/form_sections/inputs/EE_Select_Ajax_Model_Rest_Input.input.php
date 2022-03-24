@@ -16,7 +16,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base
 {
-
     /**
      * @var string $_model_name
      */

@@ -11,8 +11,6 @@
  */
 interface EEI_Query_Filter
 {
-
-
     /**
      * Detects any specific query variables in the request and uses those to setup appropriate
      * filter for any queries.

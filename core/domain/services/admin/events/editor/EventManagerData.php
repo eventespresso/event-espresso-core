@@ -16,7 +16,6 @@ use EventEspresso\core\domain\services\graphql\Utilities;
  */
 class EventManagerData implements EventEditorDataInterface
 {
-
     /**
      * @var EventManagers
      */

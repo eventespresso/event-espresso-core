@@ -15,7 +15,6 @@ use InvalidArgumentException;
  */
 class InvalidDataTypeException extends InvalidArgumentException
 {
-
     /**
      * InvalidDataTypeException constructor
      *

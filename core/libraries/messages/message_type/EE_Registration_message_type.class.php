@@ -13,7 +13,6 @@
  */
 class EE_Registration_message_type extends EE_Registration_Base_message_type
 {
-
     public function __construct()
     {
         $this->name = 'registration';

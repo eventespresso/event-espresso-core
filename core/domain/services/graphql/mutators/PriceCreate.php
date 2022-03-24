@@ -13,7 +13,6 @@ use WPGraphQL\AppContext;
 
 class PriceCreate extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

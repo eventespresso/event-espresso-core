@@ -17,7 +17,6 @@ use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
  */
 class EspressoLegacyAdmin extends AdminRoute
 {
-
     /**
      * @var LegacyAccountingAssetManager $asset_manager
      */

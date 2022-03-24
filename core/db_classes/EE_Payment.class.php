@@ -9,7 +9,6 @@
  */
 class EE_Payment extends EE_Base_Class implements EEI_Payment
 {
-
     /**
      * @param array  $props_n_values          incoming values
      * @param string $timezone                incoming timezone (if not set the timezone set for the website will be

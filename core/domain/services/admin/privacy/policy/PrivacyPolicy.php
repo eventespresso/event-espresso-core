@@ -19,7 +19,6 @@ use EventEspresso\core\services\privacy\policy\PrivacyPolicyInterface;
  */
 class PrivacyPolicy implements PrivacyPolicyInterface
 {
-
     /**
      * @var EEM_Payment_Method
      */

@@ -10,7 +10,6 @@
  */
 class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
 {
-
     /**
      * Holds values for registered variations
      *

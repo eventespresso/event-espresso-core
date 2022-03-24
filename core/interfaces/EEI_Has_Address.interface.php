@@ -5,7 +5,6 @@
  */
 interface EEI_Has_Address
 {
-
     public function address();
 
 

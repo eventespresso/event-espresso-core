@@ -11,8 +11,6 @@
  */
 class EE_PMT_Check extends EE_PMT_Base
 {
-
-
     /**
      * @param null $pm_instance
      * @return EE_PMT_Check

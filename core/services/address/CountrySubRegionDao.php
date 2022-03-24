@@ -25,7 +25,6 @@ use WP_Error;
  */
 class CountrySubRegionDao
 {
-
     const REPO_URL = 'https://raw.githubusercontent.com/eventespresso/countries-and-subregions/master/';
 
     const OPTION_NAME_COUNTRY_DATA_VERSION = 'espresso-country-sub-region-data-version';

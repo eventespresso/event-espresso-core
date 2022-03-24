@@ -48,7 +48,7 @@
                           class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
                     <div id="shortcode-container-from" class="shortcodes-info-container ee_shortcode_chooser_container"
                          style="display:none">
-                        <p><?php esc_html_e('The following shortcodes can be used in the from field:', 'event_espresso'); ?></p>
+                        <h4><?php esc_html_e('Message Template Shortcodes for the "from" field:', 'event_espresso'); ?></h4>
                         <p><?php echo $shortcodes['From']; ?></p>
                     </div>
                     <input type="text" name="batch_message[from]" id="batch-message-from" class="batch-message-input">
@@ -59,11 +59,10 @@
                           class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
                     <div id="shortcode-container-subject"
                          class="shortcodes-info-container ee_shortcode_chooser_container" style="display:none">
-                        <p><?php
-                            esc_html_e(
-                                'The following shortcodes can be used in the subject field:',
-                                'event_espresso'
-                            ); ?></p>
+                        <h4><?php esc_html_e(
+                            'Message Template Shortcodes for the "subject" field:',
+                            'event_espresso'
+                        ); ?></h4>
                         <p><?php echo $shortcodes['Subject']; ?></p>
                     </div>
                     <input type="text" name="batch_message[subject]" id="batch-message-subject"
@@ -75,19 +74,18 @@
                           class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
                     <div id="shortcode-container-content"
                          class="shortcodes-info-container ee_shortcode_chooser_container" style="display:none">
-                        <p><?php
-                            esc_html_e(
-                                'The following shortcodes can be used in the content area:',
-                                'event_espresso'
-                            ); ?></p>
+                        <h4><?php esc_html_e(
+                            'Message Template Shortcodes for the "content" field:',
+                            'event_espresso'
+                        ); ?></h4>
                         <p><?php echo $shortcodes['[NEWSLETTER_CONTENT]']; ?></p>
                     </div>
                     <textarea name="batch_message[content]" id="batch-message-content"
                               class="batch-message-textarea"></textarea>
                 </section>
-                <input type="submit" class="batch-message-submit button button-primary alignright"
+                <input type="submit" class="batch-message-submit button button--primary alignright"
                        name="batch-message-submit" value="<?php esc_html_e('Send', 'event_espresso'); ?>">
-                <button class="batch-message-cancel button button-secondary alignright"><?php
+                <button class="batch-message-cancel button button--secondary alignright"><?php
                     esc_html_e(
                         'Cancel',
                         'event_espresso'

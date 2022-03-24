@@ -15,7 +15,6 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  */
 class GraphQLManager implements GQLManagerInterface
 {
-
     /**
      * @var ConnectionsManager $connections_manager
      */

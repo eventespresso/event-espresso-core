@@ -12,7 +12,6 @@
  */
 class EE_Register_Privacy_Policy implements EEI_Plugin_API
 {
-
     /**
      * FQCN for all privacy policy generators
      *

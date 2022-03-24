@@ -6,7 +6,6 @@
  */
 interface EEI_Payment extends EEI_Base
 {
-
     /**
      * @return string indicating which the payment is approved, pending, cancelled or failed
      */

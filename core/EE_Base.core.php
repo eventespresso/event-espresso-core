@@ -11,7 +11,6 @@
  */
 class EE_Base
 {
-
     /**
      *        @ override magic methods
      *        @ return void

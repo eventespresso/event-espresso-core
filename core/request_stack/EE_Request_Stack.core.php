@@ -12,8 +12,6 @@
  */
 class EE_Request_Stack
 {
-
-
     /**
      * @deprecated  4.9.53
      * @param    EEI_Request_Decorator $application

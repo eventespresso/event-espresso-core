@@ -13,7 +13,6 @@
  */
 abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 {
-
     /**
      * This is a property for holding cached feature images on CPT objects.  Cache's are set on the first
      * "feature_image()" method call.  Each key in the array corresponds to the requested size.

@@ -49,7 +49,6 @@ if (! function_exists('espresso_get_object_css_class')) {
  */
 class EEH_Template
 {
-
     private static $_espresso_themes = [];
 
 
@@ -547,12 +546,12 @@ class EEH_Template
      *
      * @param string $url   the url for the link, note that `esc_url` will be called on it
      * @param string $label What is the label you want displayed for the button
-     * @param string $class what class is used for the button (defaults to 'button-primary')
+     * @param string $class what class is used for the button (defaults to 'button--primary')
      * @param string $icon
      * @param string $title
      * @return string the html output for the button
      */
-    public static function get_button_or_link($url, $label, $class = 'button-primary', $icon = '', $title = '')
+    public static function get_button_or_link($url, $label, $class = 'button button--primary', $icon = '', $title = '')
     {
         $icon_html = '';
         if (! empty($icon)) {
@@ -571,8 +570,10 @@ class EEH_Template
         $url   = esc_url_raw($url);
         $class = esc_attr($class);
         $title = esc_attr($title);
+        $class .= $title ? ' ee-aria-tooltip' : '';
+        $title = $title ? " aria-label='{$title}'" : '';
         $label = esc_html($label);
-        return "<a id='{$id}' href='{$url}' class='{$class}' title='{$title}'>{$icon_html}{$label}</a>";
+        return "<a id='{$id}' href='{$url}' class='{$class}'{$title}>{$icon_html}{$label}</a>";
     }
 
 
@@ -601,20 +602,18 @@ class EEH_Template
 
 
         $help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
-        $icon         = ! $icon_style ? ' dashicons-editor-help' : $icon_style;
-        $help_text    = ! $help_text ? '' : $help_text;
-        return '<a id="'
-               . esc_attr($help_tab_lnk)
-               . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22'
-               . esc_attr($icon)
-               . '" title="'
-               . esc_attr__(
-                   'Click to open the \'Help\' tab for more information about this feature.',
-                   'event_espresso'
-               )
-               . '" > '
-               . wp_kses($help_text, $allowedtags)
-               . ' </a>';
+        $icon      = ! $icon_style ? 'dashicons-editor-help' : $icon_style;
+        $help_text = ! $help_text ? '' : $help_text;
+        return '
+        	<a 	id="' . esc_attr($help_tab_lnk) . '" 
+        		class="espresso-help-tab-lnk ee-help-btn ee-aria-tooltip dashicons ' . esc_attr($icon) . '" 
+        		aria-label="' . esc_attr__(
+                    'Click to open the \'Help\' tab for more information about this feature.',
+                    'event_espresso'
+                ) . '" 
+		    >
+		    	' . wp_kses($help_text, $allowedtags) . '
+			</a>';
     }
 
 
@@ -654,7 +653,7 @@ class EEH_Template
             $active_class = $active_status == $status ? 'class="ee-is-active-status"' : '';
             $content      .= '
                     <dt id="' . esc_attr('ee-legend-item-tooltip-' . $item) . '" ' . $active_class . '>
-                        <span class="' . esc_attr('ee-status-legend ee-status-legend-' . $status) . '"></span>
+                        <span class="' . esc_attr('ee-status-legend ee-status-bg--' . $status) . '"></span>
                         <span class="ee-legend-description">
                             ' . EEH_Template::pretty_status($status, false, 'sentence') . '
                         </span>

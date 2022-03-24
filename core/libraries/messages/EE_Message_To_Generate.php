@@ -11,7 +11,6 @@
  */
 class EE_Message_To_Generate
 {
-
     /**
      * @var string
      */

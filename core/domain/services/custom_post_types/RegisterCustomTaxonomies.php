@@ -16,7 +16,6 @@ use WP_Error;
  */
 class RegisterCustomTaxonomies
 {
-
     /**
      * @var CustomTaxonomyDefinitions $custom_taxonomies
      */

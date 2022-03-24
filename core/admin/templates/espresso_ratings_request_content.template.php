@@ -10,7 +10,7 @@
         class="ee-wp-blue dashicons dashicons-star-filled"></span><span
         class="ee-wp-blue dashicons dashicons-star-filled"></span><span
         class="ee-wp-blue dashicons dashicons-star-filled"></span>
-    <p><a class="button button-primary"
+    <p><a class="button button--primary"
           href="https://login.wordpress.org/?redirect_to=https%3A%2F%2Fwordpress.org%2Fsupport%2Fview%2Fplugin-reviews%2Fevent-espresso-decaf%3Frate%3D5%23postform"><?php
             esc_html_e(
                 'Rate It!',

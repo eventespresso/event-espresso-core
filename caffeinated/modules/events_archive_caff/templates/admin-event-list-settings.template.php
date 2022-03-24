@@ -16,6 +16,8 @@ $description = EEH_Form_Fields::prep_answer_options(
     )
 );
 
+$event_archive_url = EEH_Event_View::event_archive_url();
+
 ?>
 
 
@@ -37,9 +39,10 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <a id="event_listings_url" class="ee-admin-settings-hdr-lnk small-text"
-               href="<?php echo EEH_Event_View::event_archive_url(); ?>"><?php
-                echo EEH_Event_View::event_archive_url(); ?></a>
+            <a id="event_listings_url" href="<?php echo $event_archive_url; ?>" target="_blank">
+                <?php echo $event_archive_url; ?>
+                <span class="dashicons dashicons-external"></span>
+            </a>
         </td>
     </tr>
 
@@ -50,14 +53,14 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <p><?php echo site_url() . '/ '
-                          . EEH_Form_Fields::text(
-                              'not_used',
-                              EE_Registry::instance()->CFG->core->event_cpt_slug,
-                              'event_cpt_slug',
-                              'event_cpt_slug',
-                              'regular'
-                          ); ?></p>
+            <?php echo site_url() . '/ '
+                      . EEH_Form_Fields::text(
+                          'not_used',
+                          EE_Registry::instance()->CFG->core->event_cpt_slug,
+                          'event_cpt_slug',
+                          'event_cpt_slug',
+                          'regular'
+                      ); ?>
             <p class="description"><?php
                 esc_html_e(
                     'This allows you to configure what slug is used for the url of all event pages.',

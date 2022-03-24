@@ -11,7 +11,6 @@
  */
 class EE_Restriction_Generator_Meta extends EE_Restriction_Generator_Base
 {
-
     /**
      * @var string the name of the field containing the meta key
      */

@@ -27,7 +27,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEM_Form_Element extends EEM_Base
 {
-
     /**
      * @var EEM_Form_Element
      */

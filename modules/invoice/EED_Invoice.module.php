@@ -10,8 +10,6 @@
  */
 class EED_Invoice extends EED_Module
 {
-
-
     /**
      * @return EED_Invoice|EED_Module
      * @throws EE_Error

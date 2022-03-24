@@ -16,7 +16,6 @@ use EventEspresso\core\domain\values\Version;
  */
 abstract class DomainBase implements DomainInterface
 {
-
     const ASSETS_FOLDER = 'assets/';
 
     /**

@@ -12,8 +12,6 @@ namespace EventEspresso\core\exceptions;
  */
 class ExceptionLogger
 {
-
-
     /**
      * ExceptionLogger constructor.
      *

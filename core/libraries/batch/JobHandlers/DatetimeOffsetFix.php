@@ -23,7 +23,6 @@ use InvalidArgumentException;
 
 class DatetimeOffsetFix extends JobHandler
 {
-
     /**
      * Key for the option used to track which models have been processed when doing the batches.
      */

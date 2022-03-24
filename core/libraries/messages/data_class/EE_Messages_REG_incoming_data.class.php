@@ -15,9 +15,6 @@
  */
 class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data
 {
-
-
-
     /**
      * For the constructor of this special preview class.
      *

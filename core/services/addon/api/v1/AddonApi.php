@@ -6,7 +6,6 @@ use EventEspresso\core\services\addon\api\AddonApiVersion;
 
 class AddonApi extends AddonApiVersion
 {
-
     /**
      * @var DataMigrationApi
      */

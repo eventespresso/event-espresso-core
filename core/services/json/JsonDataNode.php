@@ -18,7 +18,6 @@ use EEH_Array;
  */
 abstract class JsonDataNode implements JsonDataNodeInterface
 {
-
     /**
      * @var JsonDataNodeValidator
      */

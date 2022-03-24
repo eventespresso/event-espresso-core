@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\UnexpectedEntityException;
  */
 class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Object, EEI_Event_Relation, EEI_Has_Icon
 {
-
     /**
      * TicKet Archived:
      * constant used by ticket_status() to indicate that a ticket is archived
@@ -1655,7 +1654,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function get_icon()
     {
-        return '<span class="dashicons dashicons-tickets-alt"/>';
+        return '<span class="dashicons dashicons-tickets-alt"></span>';
     }
 
 

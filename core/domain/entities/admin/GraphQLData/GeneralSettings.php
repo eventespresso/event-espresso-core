@@ -12,7 +12,6 @@ namespace EventEspresso\core\domain\entities\admin\GraphQLData;
  */
 class GeneralSettings extends GraphQLData
 {
-
     /**
      * @param array $where_params
      * @return array|null

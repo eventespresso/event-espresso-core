@@ -1,19 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\services\capabilities\user_caps\RegFormListTableUserCapabilities;
+
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for Wordpress
- *
- * @package         Event Espresso
- * @author          Seth Shoultes
- * @copyright    (c)2009-2012 Event Espresso All Rights Reserved.
- * @license         https://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link            http://www.eventespresso.com
- * @version         3.2.P
- *
- * ------------------------------------------------------------------------
- *
  * Registration_Form_Question_Groups_Admin_List_Table
  *
  * Class for preparing the table listing all the custom event Question_Groups
@@ -23,16 +12,23 @@
  * @package         Registration_Form_Question_Groups_Admin_List_Table
  * @subpackage      includes/core/admin/events/Registration_Form_Question_Groups_Admin_List_Table.class.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_Table
 {
+    /**
+     * @var RegFormListTableUserCapabilities
+     */
+    protected $caps_handler;
 
 
     public function __construct($admin_page)
     {
+        $this->caps_handler = new RegFormListTableUserCapabilities(EE_Registry::instance()->CAP);
         parent::__construct($admin_page);
+
+        if (! defined('REG_ADMIN_URL')) {
+            define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
+        }
     }
 
 
@@ -79,7 +75,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 
     // not needed
-    protected function _get_table_filters()
+    protected function _get_table_filters(): array
     {
         return array();
     }
@@ -92,12 +88,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
             $this->_current_page,
             true
         );
-        if (
-            EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_question_groups',
-                'espresso_registration_form_trash_question_group'
-            )
-        ) {
+        if ($this->caps_handler->userCanTrashQuestionGroups()) {
             $this->_views['trash']['count'] = $this->_admin_page->get_trashed_question_groups(
                 $this->_per_page,
                 $this->_current_page,
@@ -107,24 +98,29 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
     }
 
 
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
     public function column_cb($item)
     {
         $system_group = $item->get('QSG_system');
-        $has_questions_with_answers = $item->has_questions_with_answers();
-        $lock_icon = $system_group === 0 && $this->_view == 'trash' && $has_questions_with_answers
-            ? 'ee-lock-icon ee-alternate-color'
-            : 'ee-lock-icon ee-system-lock';
-        return $system_group > 0
-               || ($system_group === 0
-                    && $this->_view == 'trash'
-                    && $has_questions_with_answers
-                )
-               || ! EE_Registry::instance()->CAP->current_user_can(
-                   'ee_delete_question_groups',
-                   'espresso_registration_form_trash_question_groups',
-                   $item->ID()
-               )
-            ? '<span class="' . $lock_icon . '"></span>'
+        $user_can_trash_it = $this->caps_handler->userCanTrashQuestionGroup($item);
+        $has_questions_with_answers = ! $system_group && $this->_view == 'trash' && $item->has_questions_with_answers();
+        $notice = ! $user_can_trash_it
+            ? esc_html__('You do not have the required permissions to trash this question group', 'event_espresso')
+            : '';
+        $notice = $has_questions_with_answers
+            ? esc_html__('This question group is a system group and cannot be trashed', 'event_espresso')
+            : $notice;
+        $notice = $has_questions_with_answers
+            ? esc_html__(
+                'This question group has questions that have answers attached to it from registrations that have the question. It cannot be permanently deleted.',
+                'event_espresso'
+            )
+            : $notice;
+        return $system_group || $has_questions_with_answers || ! $user_can_trash_it
+            ? '<span class="dashicons dashicons-lock ee-locked-entity ee-aria-tooltip" aria-label="' . $notice . '"></span>'
               . sprintf(
                   '<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />',
                   $item->ID()
@@ -138,133 +134,121 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
     public function column_id(EE_Question_Group $item)
     {
-        $content = $item->ID();
-        $content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
-        return $content;
+        $content = '
+            <span class="ee-entity-id">' . $item->ID() . '</span>
+            <span class="show-on-mobile-view-only">
+                ' . $item->name() . '
+            </span>';
+        return $this->columnContent('id', $content, 'end');
     }
 
 
-    public function column_name(EE_Question_Group $item)
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_name(EE_Question_Group $question_group, bool $prep_content = true): string
     {
-        $actions = array();
+        $actions = [];
 
-        // return $item->name();
-        if (! defined('REG_ADMIN_URL')) {
-            define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
-        }
-
-        $edit_query_args = array(
-            'action' => 'edit_question_group',
-            'QSG_ID' => $item->ID(),
-        );
-
-        $trash_query_args = array(
-            'action' => 'trash_question_group',
-            'QSG_ID' => $item->ID(),
-        );
-
-        $restore_query_args = array(
-            'action' => 'restore_question_group',
-            'QSG_ID' => $item->ID(),
-        );
-
-        $delete_query_args = array(
-            'action' => 'delete_question_group',
-            'QSG_ID' => $item->ID(),
-        );
-
-
-        $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_FORMS_ADMIN_URL);
-        $trash_link = EE_Admin_Page::add_query_args_and_nonce($trash_query_args, EE_FORMS_ADMIN_URL);
-        $restore_link = EE_Admin_Page::add_query_args_and_nonce($restore_query_args, EE_FORMS_ADMIN_URL);
-        $delete_link = EE_Admin_Page::add_query_args_and_nonce($delete_query_args, EE_FORMS_ADMIN_URL);
-
-        if (
-            EE_Registry::instance()->CAP->current_user_can(
-                'ee_edit_question_group',
-                'espresso_registration_form_edit_question_group',
-                $item->ID()
-            )
-        ) {
-            $actions = array(
-                'edit' => '<a href="' . $edit_link . '" title="'
-                          . esc_attr__('Edit Question Group', 'event_espresso') . '">'
-                          . esc_html__('Edit', 'event_espresso') . '</a>',
+        if ($this->caps_handler->userCanEditQuestionGroup($question_group)) {
+            $actions['edit'] = $this->getActionLink(
+                $this->getActionUrl($question_group, self::ACTION_EDIT),
+                esc_html__('Edit', 'event_espresso'),
+                esc_attr__('Edit Question Group', 'event_espresso')
             );
         }
         if (
-            $item->get('QSG_system') < 1
+            $question_group->get('QSG_system') < 1
             && $this->_view != 'trash'
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_question_group',
-                'espresso_registration_form_trash_question_group',
-                $item->ID()
-            )
+            && $this->caps_handler->userCanEditQuestionGroup($question_group)
         ) {
-            $actions['delete'] = '<a href="' . $trash_link . '" title="'
-                                 . esc_attr__('Delete Question Group', 'event_espresso') . '">'
-                                 . esc_html__('Trash', 'event_espresso') . '</a>';
+            $actions['delete'] = $this->getActionLink(
+                $this->getActionUrl($question_group, self::ACTION_TRASH),
+                esc_html__('Trash', 'event_espresso'),
+                esc_attr__('Trash Question Group', 'event_espresso')
+            );
         }
 
         if ($this->_view == 'trash') {
-            if (
-                EE_Registry::instance()->CAP->current_user_can(
-                    'ee_delete_question_group',
-                    'espresso_registration_form_restore_question_group',
-                    $item->ID()
-                )
-            ) {
-                $actions['restore'] = '<a href="' . $restore_link . '" title="'
-                                      . esc_attr__('Restore Question Group', 'event_espresso') . '">'
-                                      . esc_html__('Restore', 'event_espresso') . '</a>';
+            if ($this->caps_handler->userCanRestoreQuestionGroup($question_group)) {
+                $actions['restore'] = $this->getActionLink(
+                    $this->getActionUrl($question_group, self::ACTION_RESTORE),
+                    esc_html__('Restore', 'event_espresso'),
+                    esc_attr__('Restore Question Group', 'event_espresso')
+                );
             }
 
             if (
-                ! $item->has_questions_with_answers()
-                && EE_Registry::instance()->CAP->current_user_can(
-                    'ee_delete_question_group',
-                    'espresso_registration_form_delete_question_group',
-                    $item->ID()
-                )
+                ! $question_group->has_questions_with_answers()
+                && $this->caps_handler->userCanDeleteQuestionGroup($question_group)
             ) {
-                    $actions['delete'] = '<a href="' . $delete_link . '" title="'
-                                         . esc_attr__('Delete Question Group Permanently', 'event_espresso') . '">'
-                                         . esc_html__('Delete Permanently', 'event_espresso') . '</a>';
+                $actions['delete'] = $this->getActionLink(
+                    $this->getActionUrl($question_group, self::ACTION_DELETE),
+                    esc_html__('Delete Permanently', 'event_espresso'),
+                    esc_attr__('Delete Question Group Permanently', 'event_espresso')
+                );
             }
         }
 
-        $content = EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_question_group',
-            'espresso_registration_form_edit_question_group',
-            $item->ID()
-        )
-            ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>'
-            : $item->name();
+        $content = $this->caps_handler->userCanEditQuestionGroup($question_group)
+            ? $this->getActionLink(
+                $this->getActionUrl($question_group, self::ACTION_EDIT),
+                $question_group->name(),
+                esc_attr__('Edit Question Group', 'event_espresso'),
+                'row-title'
+            )
+            : $question_group->name();
         $content .= $this->row_actions($actions);
-        return $content;
+
+        return $prep_content ? $this->columnContent('name', $content) : $content;
     }
 
 
-    public function column_identifier(EE_Question_Group $item)
+    /**
+     * @param EE_Question_Group $question_group
+     * @param                   $action
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    protected function getActionUrl(EE_Question_Group $question_group, $action): string
     {
-        return $item->identifier();
+        if (! in_array($action, self::$actions)) {
+            throw new DomainException(esc_html__('Invalid Action', 'event_espresso'));
+        }
+        return EE_Admin_Page::add_query_args_and_nonce(
+            [
+                'action'   => "{$action}_question_group",
+                'QSG_ID'   => $question_group->ID(),
+                'noheader' => $action !== self::ACTION_EDIT,
+            ],
+            EE_FORMS_ADMIN_URL
+        );
     }
 
 
-    public function column_description(EE_Question_Group $item)
+    public function column_identifier(EE_Question_Group $question_group): string
     {
-        return $item->desc();
+        return $this->columnContent('identifier', $question_group->identifier());
     }
 
 
-    public function column_show_group_name(EE_Question_Group $item)
+    public function column_description(EE_Question_Group $question_group): string
     {
-        return $this->_yes_no[ $item->show_group_name() ];
+        return $this->columnContent('description', $question_group->desc());
     }
 
 
-    public function column_show_group_desc(EE_Question_Group $item)
+    public function column_show_group_name(EE_Question_Group $question_group): string
     {
-        return $this->_yes_no[ $item->show_group_desc() ];
+        return $this->columnContent('show_group_name', $this->_yes_no[ $question_group->show_group_name() ]);
+    }
+
+
+    public function column_show_group_desc(EE_Question_Group $question_group): string
+    {
+        return $this->columnContent('show_group_desc', $this->_yes_no[ $question_group->show_group_desc() ]);
     }
 }

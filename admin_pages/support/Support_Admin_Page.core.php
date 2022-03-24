@@ -11,8 +11,6 @@
  */
 class Support_Admin_Page extends EE_Admin_Page
 {
-
-
     protected function _init_page_props()
     {
         $this->page_slug = EE_SUPPORT_PG_SLUG;
@@ -135,7 +133,7 @@ class Support_Admin_Page extends EE_Admin_Page
 
     protected function _add_settings_metabox($box, $label, array $args)
     {
-        add_meta_box(
+        $this->addMetaBox(
             "espresso_{$box}_settings",
             $label,
             function ($post, $metabox) {

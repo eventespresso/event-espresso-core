@@ -13,7 +13,6 @@ use Exception;
 
 class FormElementUpdate extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

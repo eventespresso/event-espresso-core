@@ -25,7 +25,6 @@ use RuntimeException;
  */
 class CreateTransactionCommandHandler extends CommandHandler
 {
-
     /**
      * @param CommandInterface|CreateTransactionCommand $command
      * @return mixed

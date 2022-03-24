@@ -13,7 +13,6 @@
  */
 class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data
 {
-
     /**
      * This holds the incoming payment object
      * @var EE_Payment

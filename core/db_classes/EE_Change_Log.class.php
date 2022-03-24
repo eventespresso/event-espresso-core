@@ -10,7 +10,6 @@
  */
 class EE_Change_Log extends EE_Base_Class
 {
-
     /**
      * @param array  $props_n_values          incoming values
      * @param string $timezone                incoming timezone (if not set the timezone set for the website will be

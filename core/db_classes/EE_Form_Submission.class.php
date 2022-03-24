@@ -4,7 +4,6 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
 
 class EE_Form_Submission extends EE_Base_Class
 {
-
     /**
      * @param array $props_n_values
      * @return EE_Form_Submission

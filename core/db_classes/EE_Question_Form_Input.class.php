@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Question_Form_Input
 {
-
     /**
      *    EE_Question object
      *
@@ -122,6 +121,7 @@ class EE_Question_Form_Input
             'input_name'     => '',
             'input_id'       => '',
             'input_class'    => '',
+            'label_class'    => '',
             'input_prefix'   => 'qstn',
             'append_qstn_id' => true,
             'htmlentities'   => true,
@@ -186,7 +186,7 @@ class EE_Question_Form_Input
                 return $this->_QST->get($property);
             } elseif (EEM_Answer::instance()->has_field($property)) {
                 return $this->_ANS->get($property);
-            } elseif ($this->_question_form_input_property_exists(__CLASS__, $property)) {
+            } elseif ($this->_question_form_input_property_exists($property)) {
                 return $this->{$property};
             }
         }
@@ -195,24 +195,12 @@ class EE_Question_Form_Input
 
 
     /**
-     *    _question_form_input_property_exists
-     *
-     * @access private
-     * @param string $classname
      * @param string $property
      * @return boolean
-     * @throws ReflectionException
      */
-    private function _question_form_input_property_exists($classname, $property)
+    private function _question_form_input_property_exists(string $property): bool
     {
-        // first try regular property exists method which works as expected in PHP 5.3+
-        $prop = EEH_Class_Tools::has_property($classname, $property);
-        if (! $prop) {
-            // use reflection for < PHP 5.3 as a double check when property is not found, possible due to access restriction
-            $reflector = new ReflectionClass($classname);
-            $prop      = $reflector->hasProperty($property);
-        }
-        return $prop;
+        return property_exists(__CLASS__, $property);
     }
 
 
@@ -284,57 +272,52 @@ class EE_Question_Form_Input
      *        generate_question_form_inputs_for_object
      *
      * @access    protected
-     * @param bool|object $object $object
-     * @param array       $input_types
-     * @return        array
+     * @param EE_Base_class $object $object
+     * @param array         $input_types
+     * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function generate_question_form_inputs_for_object($object = false, $input_types = [])
+    public static function generate_question_form_inputs_for_object(EE_Base_class $object, array $input_types = []): array
     {
-        if (! is_object($object)) {
-            return [];
-        }
         $inputs = [];
-        $fields = $object->get_model()->field_settings(false);
+        $fields = $object->get_model()->field_settings();
         foreach ($fields as $field_ID => $field) {
             if ($field instanceof EE_Model_Field_Base) {
                 if (isset($input_types[ $field_ID ])) {
+                    // label to display
+                    $label = $input_types[ $field_ID ]['label'] ?? $field->get_nicename();
                     // get saved value for field
                     $value = $object->get($field_ID);
                     // if no saved value, then use default
-                    $value = $value !== null ? $value : $field->get_default_value();
+                    $value = $value ?? $field->get_default_value();
                     // determine question type
-                    $type = isset($input_types[ $field_ID ]) ? $input_types[ $field_ID ]['type'] : 'TEXT';
+                    $type = $input_types[ $field_ID ]['type'] ?? 'TEXT';
                     // input name
-                    $input_name = isset($input_types[ $field_ID ]) && isset($input_types[ $field_ID ]['input_name'])
+                    $input_name = isset($input_types[ $field_ID ]['input_name'])
                         ? $input_types[ $field_ID ]['input_name'] . '[' . $field_ID . ']'
                         : $field_ID;
                     // css class for input
-                    $class = isset($input_types[ $field_ID ]['class']) && ! empty($input_types[ $field_ID ]['class'])
-                        ? ' ' . $input_types[ $field_ID ]['class']
-                        : '';
+                    $class = $input_types[ $field_ID ]['class'] ?? '';
+                    // css class for label
+                    $label_class = $input_types[ $field_ID ]['label_class'] ?? '';
                     // whether to apply htmlentities to answer
-                    $htmlentities = isset($input_types[ $field_ID ]['htmlentities'])
-                        ? $input_types[ $field_ID ]['htmlentities']
-                        : true;
+                    $htmlentities = $input_types[ $field_ID ]['htmlentities'] ?? true;
                     // whether to apply htmlentities to answer
-                    $label_b4 = isset($input_types[ $field_ID ]['label_b4'])
-                        ? $input_types[ $field_ID ]['label_b4']
-                        : false;
+                    $label_b4 = $input_types[ $field_ID ]['label_b4'] ?? false;
                     // whether to apply htmlentities to answer
-                    $use_desc_4_label = isset($input_types[ $field_ID ]['use_desc_4_label'])
-                        ? $input_types[ $field_ID ]['use_desc_4_label']
-                        : false;
+                    $use_desc_4_label = $input_types[ $field_ID ]['use_desc_4_label'] ?? false;
                     // whether input is disabled
                     $disabled = isset($input_types[ $field_ID ]['disabled']) && $input_types[ $field_ID ]['disabled'];
+                    $add_mobile_label = isset($input_types[ $field_ID ]['add_mobile_label'])
+                                        && $input_types[ $field_ID ]['add_mobile_label'];
 
                     // create EE_Question_Form_Input object
                     $QFI = new EE_Question_Form_Input(
                         EE_Question::new_instance(
                             [
                                 'QST_ID'           => 0,
-                                'QST_display_text' => $field->get_nicename(),
+                                'QST_display_text' => $label,
                                 'QST_type'         => $type,
                             ]
                         ),
@@ -347,14 +330,16 @@ class EE_Question_Form_Input
                             ]
                         ),
                         [
-                            'input_id'         => $field_ID . '-' . $object->ID(),
+                            'input_id'         => "{$field_ID}-{$object->ID()}",
                             'input_name'       => $input_name,
-                            'input_class'      => $field_ID . $class,
+                            'input_class'      => "{$field_ID} {$class}",
+                            'label_class'      => $label_class,
                             'input_prefix'     => '',
                             'append_qstn_id'   => false,
                             'htmlentities'     => $htmlentities,
                             'label_b4'         => $label_b4,
                             'use_desc_4_label' => $use_desc_4_label,
+                            'add_mobile_label' => $add_mobile_label,
                         ]
                     );
                     // does question type have options ?
@@ -419,7 +404,7 @@ class EE_Question_Form_Input
                 $this->_QST->set($property, $value);
             } elseif (EEM_Answer::instance()->has_field($property)) {
                 $this->_ANS->set($property, $value);
-            } elseif ($this->_question_form_input_property_exists(__CLASS__, $property)) {
+            } elseif ($this->_question_form_input_property_exists($property)) {
                 $this->{$property} = $value;
             }
         }

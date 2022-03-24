@@ -20,7 +20,6 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  */
 class ConnectionCollection extends Collection
 {
-
     const COLLECTION_NAME = 'espresso_graphql_connections';
 
     /**

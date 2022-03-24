@@ -11,7 +11,6 @@
  */
 class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_Table
 {
-
     protected $_payment_table;
 
     protected $_registration_table;

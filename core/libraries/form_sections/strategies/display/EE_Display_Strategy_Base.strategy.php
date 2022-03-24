@@ -10,8 +10,6 @@
  */
 abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
 {
-
-
     /**
      * @var string $_tag
      */

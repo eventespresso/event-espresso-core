@@ -16,7 +16,6 @@ use DomainException;
  */
 abstract class JsonConfig
 {
-
     /**
      * @var boolean $has_changes
      */

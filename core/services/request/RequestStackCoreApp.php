@@ -22,7 +22,6 @@ use InvalidArgumentException;
  */
 class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCoreAppInterface
 {
-
     /**
      * @var RequestInterface $request
      */

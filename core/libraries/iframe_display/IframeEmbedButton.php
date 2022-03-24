@@ -2,6 +2,10 @@
 
 namespace EventEspresso\core\libraries\iframe_display;
 
+use EE_Registry;
+use EEH_HTML;
+use EEH_Inflector;
+
 /**
  * Class IframeEmbedButton
  *
@@ -11,8 +15,6 @@ namespace EventEspresso\core\libraries\iframe_display;
  */
 abstract class IframeEmbedButton
 {
-
-
     /**
      * @var string $iframe_name
      */
@@ -102,10 +104,7 @@ abstract class IframeEmbedButton
             if ($post->post_type !== 'espresso_events') {
                 return $permalink_string;
             }
-            $permalink_string .= $this->embedButtonHtml(
-                array($this->slug => $id),
-                'button-small'
-            );
+            $permalink_string .= $this->embedButtonHtml([$this->slug => $id]);
         }
         return $permalink_string;
     }
@@ -192,42 +191,42 @@ abstract class IframeEmbedButton
             $query_args
         );
         // add this route to our localized vars
-        $iframe_module_routes = isset(\EE_Registry::$i18n_js_strings['iframe_module_routes'])
-            ? \EE_Registry::$i18n_js_strings['iframe_module_routes']
-            : array();
+        $iframe_module_routes                      = EE_Registry::$i18n_js_strings['iframe_module_routes'] ?? [];
         $iframe_module_routes[ $this->route_name ] = $this->route_name;
-        \EE_Registry::$i18n_js_strings['iframe_module_routes'] = $iframe_module_routes;
-        $iframe_embed_html = \EEH_HTML::link(
-            '#',
-            sprintf(esc_html__('Embed %1$s', 'event_espresso'), $this->iframe_name),
-            sprintf(
-                esc_html__(
-                    'click here to generate code for embedding %1$s iframe into another site.',
-                    'event_espresso'
+        EE_Registry::$i18n_js_strings['iframe_module_routes'] = $iframe_module_routes;
+        $route_name = esc_attr($this->route_name);
+        $iframe_url = esc_url_raw(add_query_arg($query_args, site_url()));
+
+        return EEH_HTML::div(
+            EEH_HTML::link(
+                '#',
+                sprintf(esc_html__('Embed %1$s', 'event_espresso'), $this->iframe_name),
+                sprintf(
+                    esc_html__(
+                        'click here to generate code for embedding %1$s iframe into another site.',
+                        'event_espresso'
+                    ),
+                    EEH_Inflector::add_indefinite_article($this->iframe_name)
                 ),
-                \EEH_Inflector::add_indefinite_article($this->iframe_name)
+                $route_name . '-iframe-embed-trigger-js',
+                'iframe-embed-trigger-js button button--small button--secondary ' . esc_attr($button_class),
+                '',
+                ' data-iframe_embed_button="#' . $route_name . '-iframe-js" tabindex="-1"'
             ),
-            esc_attr($this->route_name) . "-iframe-embed-trigger-js",
-            'iframe-embed-trigger-js button ' . esc_attr($button_class),
             '',
-            ' data-iframe_embed_button="#' . esc_attr($this->route_name) . '-iframe-js" tabindex="-1"'
-        );
-        $iframe_embed_html .= \EEH_HTML::div(
-            '',
-            esc_attr($this->route_name) . "-iframe-js",
-            'iframe-embed-wrapper-js',
-            'display:none;'
-        );
-        $iframe_embed_html .= esc_html(
-            \EEH_HTML::div(
-                '<iframe src="' . esc_url_raw(add_query_arg($query_args, site_url())) . '" width="100%" height="100%"></iframe>',
+            'ee-admin-button-row ee-admin-button-row--align-start'
+        )
+        . EEH_HTML::div(
+            EEH_HTML::div(
+                '<iframe src="' . $iframe_url . '" width="100%" height="100%"></iframe>',
                 '',
                 '',
                 'width:100%; height: 500px;'
-            )
+            ),
+            $route_name . '-iframe-js',
+            'iframe-embed-wrapper-js',
+            'display:none;'
         );
-        $iframe_embed_html .= \EEH_HTML::divx();
-        return $iframe_embed_html;
     }
 
 
@@ -236,11 +235,11 @@ abstract class IframeEmbedButton
      */
     public function embedButtonAssets()
     {
-        \EE_Registry::$i18n_js_strings['iframe_embed_title'] = esc_html__(
+        EE_Registry::$i18n_js_strings['iframe_embed_title'] = esc_html__(
             'copy and paste the following into any other site\'s content to display this event:',
             'event_espresso'
         );
-        \EE_Registry::$i18n_js_strings['iframe_embed_close_msg'] = esc_html__(
+        EE_Registry::$i18n_js_strings['iframe_embed_close_msg'] = esc_html__(
             'click anywhere outside of this window to close it.',
             'event_espresso'
         );
@@ -271,16 +270,16 @@ abstract class IframeEmbedButton
             return '';
         }
         // add button for iframe code to event editor.
-        $html = \EEH_HTML::br(2);
-        $html .= \EEH_HTML::h3(esc_html__('iFrame Embed Code', 'event_espresso'));
-        $html .= \EEH_HTML::p(
+        $html = EEH_HTML::div('', '', 'ee-admin-section ee-iframe-embed-buttons');
+        $html .= EEH_HTML::h3(esc_html__('iFrame Embed Code', 'event_espresso'));
+        $html .= EEH_HTML::p(
             esc_html__(
                 'Click the following button(s) to generate iframe HTML that will allow you to embed your event content within the content of other websites.',
                 'event_espresso'
             )
         );
         $html .= ' &nbsp; ' . implode(' &nbsp; ', $embed_buttons) . ' ';
-        $html .= \EEH_HTML::br(2);
+        $html .= EEH_HTML::divx();
         return $html;
     }
 }

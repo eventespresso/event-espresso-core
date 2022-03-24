@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class AsciiOnly extends FormatterBase
 {
-
     /**
      * Removes all non Ascii characters from string
      *

@@ -4,6 +4,8 @@ jQuery(document).ready(function($) {
 	// clear firefox and safari cache
 	$(window).on("unload", function() {});
 
+	const $wpContent = $('#wpcontent');
+
 
 	function validate_form_inputs( submittedForm ) {
 
@@ -94,14 +96,14 @@ jQuery(document).ready(function($) {
 	 */
 	$(window).scroll(function() {
 		var scrollTop = $(this).scrollTop();
-		var offset = $('#espresso_major_buttons_wrapper .publishing-action').offset();
+		var offset = $('#major-publishing-actions .publishing-action').offset();
 		if( typeof(offset) !== 'undefined' && offset !== null && typeof(offset.top) !== 'undefined' ) {
 			if ( (scrollTop+33) > offset.top ) {
 				$('#event-editor-floating-save-btns').removeClass('hidden');
-				$('#espresso_major_buttons_wrapper .button-primary').addClass('hidden');
+				$('#major-publishing-actions .button--primary').addClass('hidden');
 			} else {
 				$('#event-editor-floating-save-btns').addClass('hidden');
-				$('#espresso_major_buttons_wrapper .button-primary').removeClass('hidden');
+				$('#major-publishing-actions .button--primary').removeClass('hidden');
 			}
 		}
 	});
@@ -216,8 +218,7 @@ jQuery(document).ready(function($) {
 	});
 
 
-
-	$('#wpcontent').on( 'click', '.espresso-help-tab-lnk', function(){
+	$wpContent.on( 'click', '.espresso-help-tab-lnk', function(){
 		var target_help_tab = '#tab-link-' + $(this).attr('id') + ' a';
 		if ( $('#contextual-help-wrap').css('display') === 'none' ) {
 			$('#contextual-help-link').trigger('click');
@@ -260,10 +261,73 @@ jQuery(document).ready(function($) {
 		espressoAjaxPopulate();
 	}
 
+	const espressoCloseModalMenus = function() {
+		$('.ee-modal-menu').each(function () {
+			$(this).removeClass('active');
+		});
+	}
+
+	$wpContent.on( 'click', '.ee-modal-menu__button', function(e) {
+		e.preventDefault();
+		espressoCloseModalMenus();
+		$(this).parent().toggleClass('active');
+	});
+	$wpContent.on('click', '.ee-modal-menu__close', function () {
+		espressoCloseModalMenus();
+	});
 
 
+	$wpContent.on('mouseenter', '.ee-aria-tooltip', function () {
+		const label = $(this).attr('aria-label');
+		const tooltip = '<span class="ee-tooltip">' + label + '</span>';
 
+		const $tooltip = $(this).append(tooltip).find('.ee-tooltip').hide();
 
+		let windowTop = $(window).scrollTop();
+		const windowBottom = windowTop + $(window).height();
+		let windowWidth = $(window).width() ;
 
+		// modify window because of toolbars, scrollbars, etc
+		windowTop += 32;
+		windowWidth -= 32;
+		const $adminBar = $('#wpadminbar');
+		if ($adminBar.length && $adminBar.css('position') === 'fixed') {
+			windowTop += 16;
+		}
 
+		const tooltipHeight = $tooltip.height();
+		const tooltipWidth = $tooltip.width();
+		const tooltipPosition = $(this).offset();
+
+		const tooltipLeft = tooltipPosition.left;
+		const tooltipRight = tooltipLeft + tooltipWidth;
+		const tooltipTop = tooltipPosition.top;
+		const tooltipBottom = tooltipTop + tooltipHeight;
+
+		let shiftLeft = -16;
+		let shiftTop = (tooltipHeight + 24) * -1;
+
+		if (tooltipTop < windowTop) {
+			shiftTop = (shiftTop - (windowTop - tooltipTop)) * -1;
+		} else if (tooltipBottom > windowBottom) {
+			shiftTop -= tooltipBottom - windowBottom;
+		}
+
+		if (tooltipLeft < 0) {
+			shiftLeft = (shiftTop - tooltipLeft) * -1;
+		} else if (tooltipRight > windowWidth) {
+			shiftLeft -= tooltipRight - windowWidth;
+		}
+
+		$tooltip.css({
+			left: $tooltip.position().left + shiftLeft + "px",
+			top: $tooltip.position().top + shiftTop + "px"
+		});
+
+		$tooltip.delay(500).fadeIn(250);
+	});
+
+	$wpContent.on('mouseleave', '.ee-aria-tooltip', function () {
+		$(this).find('.ee-tooltip').fadeOut(125).remove();
+	});
 });

@@ -14,8 +14,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EE_Admin_Hooks extends EE_Base
 {
-
-
     /**
      * we're just going to use this to hold the name of the caller class (child class name)
      *
@@ -753,6 +751,13 @@ abstract class EE_Admin_Hooks extends EE_Base
         }
         // everything checks out so let's add the metabox
         add_meta_box($id, $label, [$this, $func], $page, $context, $priority, $callback_args);
+        add_filter(
+            "postbox_classes_{$page}_{$id}",
+            function ($classes) {
+                array_push($classes, 'ee-admin-container');
+                return $classes;
+            }
+        );
     }
 
 

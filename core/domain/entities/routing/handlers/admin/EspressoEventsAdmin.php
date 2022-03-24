@@ -14,7 +14,6 @@ use EE_Dependency_Map;
  */
 class EspressoEventsAdmin extends AdminRoute
 {
-
     /**
      * returns true if the current request matches this route
      *

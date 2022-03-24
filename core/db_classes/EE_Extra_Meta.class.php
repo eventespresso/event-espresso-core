@@ -9,7 +9,6 @@
  */
 class EE_Extra_Meta extends EE_Base_Class
 {
-
     /**
      * @param array $props_n_values
      * @return EE_Extra_Meta|mixed

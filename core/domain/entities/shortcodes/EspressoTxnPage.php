@@ -24,8 +24,6 @@ use Exception;
  */
 class EspressoTxnPage extends EspressoShortcode
 {
-
-
     /**
      * the actual shortcode tag that gets registered with WordPress
      *

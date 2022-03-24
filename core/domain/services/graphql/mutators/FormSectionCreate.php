@@ -11,7 +11,6 @@ use Exception;
 
 class FormSectionCreate extends EntityMutator
 {
-
     /**
      * Defines the mutation data modification closure.
      *

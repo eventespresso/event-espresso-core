@@ -20,7 +20,6 @@ use InvalidArgumentException;
  */
 class QueryBuilder
 {
-
     /**
      * @var RequestInterface $request
      */

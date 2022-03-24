@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\container\exceptions;
  */
 class InvalidServiceException extends \UnexpectedValueException
 {
-
     /**
      * InvalidServiceException constructor.
      *

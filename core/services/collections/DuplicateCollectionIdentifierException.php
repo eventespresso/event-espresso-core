@@ -15,7 +15,6 @@ use OutOfRangeException;
  */
 class DuplicateCollectionIdentifierException extends OutOfRangeException
 {
-
     /**
      * DuplicateCollectionIdentifierException constructor.
      *

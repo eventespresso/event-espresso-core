@@ -16,7 +16,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class Attributes implements JsonableInterface
 {
-
     /**
      * @var JsonDataHandler
      */

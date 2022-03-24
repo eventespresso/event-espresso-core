@@ -1,231 +1,264 @@
-#entries-per-page-dv { display : inline; }
-
-.wrap .nav-tab-wrapper { margin-bottom : 1em; }
-
-.wrap .subsubsub { margin : 0; }
-
-#reg-filters-dv { clear : both; padding : 1.5em 0; }
-
-.datepicker { width : 125px; }
 
 /* TABLE COLUMNS */
 
-.column-_REG_ID { width : 4%; }
-
-.column-_REG_date { width : 12.5%; }
-
-.status-TCM,
-.status-RAP,
-.reg-overview-full-payment-spn { color : var(--ee-status-color-dark-green); font-weight : bold; }
-
-.status-TPN,
-.status-RPP,
-.reg-overview-part-payment-spn { color : var(--ee-status-color-orange); font-weight : bold; }
-
-.status-TFL, .status-TIN, .status-TOP,
-.status-RCN, .status-RFL, .status-RNA,
-.reg-overview-no-payment-spn { color : var(--ee-status-color-red); font-weight : bold; }
-
-/*.status-RAP, .status-RPP, .status-RCN, .status-RFL, .status-RNA { font-size : .9em; }*/
-
-.wp-list-table .column-event_name { width : 10%; }
-
-.wp-list-table .column-_REG_date,
-.wp-list-table .column-DTT_EVT_start { width : 13%; }
-
-.wp-list-table .column-ATT_fname { width : 20%; }
-
-.wp-list-table .column-ATT_email { width : 10%; }
-
-.wp-list-table .column-_REG_att_checked_in { width : 5%; text-align : center; }
-
-.wp-list-table .column-DTT_reg_limit { width : 4.25%; text-align : center; }
-
-.wp-list-table #PRC_amount,
-.wp-list-table #REG_final_price,
-.wp-list-table #TXN_total,
-.wp-list-table #TXN_paid { /* text-align:center; */ }
-
-.wp-list-table .column-PRC_amount,
-.wp-list-table .column-_REG_final_price,
-.wp-list-table .column-_REG_paid,
-.wp-list-table .column-TXN_total,
-.wp-list-table .column-TXN_paid { width : 7.5%; text-align : left; }
-
-.wp-list-table .column-_REG_final_price {
-    width: 10%;
+.espresso-admin .wp-list-table .column-ATT_fname {
+    width: max(15%, 20rem);
 }
 
-.ee-event-filter {
-    display: inline-block;
+.espresso-admin .wp-list-table .column-ATT_fname .ee-layout-row {
+    flex-wrap: wrap;
 }
 
-.ee-event-filter .ee-event-filter-toggle {
+.espresso-admin .wp-list-table .column-ATT_fname .row-title {
+    margin-inline-end: .5rem;
+}
+
+.espresso-admin .wp-list-table .column-ATT_fname .reg-count-group-size {
+    white-space: nowrap;
+}
+
+.espresso-admin .wp-list-table .column-_REG_date,
+.espresso-admin .wp-list-table .column-DTT_EVT_start {
+    width: clamp(8rem, 12rem, 16rem);
+}
+
+.espresso-admin .wp-list-table .column-event_name {
+    width: clamp(12rem, 16rem, 20rem);
+}
+
+.espresso-admin .wp-list-table #ATT_email,
+.espresso-admin .wp-list-table th #ee-responsive-table-cell-ATT_email,
+.espresso-admin .wp-list-table td #ee-responsive-table-cell-ATT_email {
+    width: clamp(8rem, 12rem, 16rem);
+}
+
+.espresso-admin .wp-list-table th.column-primary.column-_REG_att_checked_in,
+.espresso-admin .wp-list-table tr:not(.is-expanded) td.column-primary.column-_REG_att_checked_in {
+    padding-inline-start: .75rem;
+    padding-inline-end: .75rem;
+    width: 5rem !important;
+}
+
+
+.wp-list-table .column-DTT_reg_limit {
+    width: 4.25%;
+}
+
+.wp-list-table th.column-PRC_amount,
+.wp-list-table th.column-_REG_final_price,
+.wp-list-table th.column-_REG_paid,
+.wp-list-table th.column-TXN_total,
+.wp-list-table th.column-TXN_paid {
+    width: clamp(7rem, 11rem, 15rem);
+    text-align: center;
+}
+
+.wp-list-table td.column-PRC_amount,
+.wp-list-table td.column-_REG_final_price,
+.wp-list-table td.column-_REG_paid,
+.wp-list-table td.column-TXN_total,
+.wp-list-table td.column-TXN_paid {
+    width: clamp(7rem, 11rem, 15rem);
+    text-align: end;
+}
+
+.espresso-admin .wp-list-table .TXN_paid .dashicons-yes:before {
+    font-size: 2rem;
+}
+
+.espresso-admin #espresso-default-admin.registrations h2 .ee-event-name {
+    color: var(--ee-font-color-dark);
+    font-size: 1.75rem;
+    margin-inline-start: 2rem;
+}
+
+.espresso-admin #espresso-default-admin.registrations h2 .ee-event-datetime-name {
+    align-items: baseline;
+    color: var(--ee-font-color);
+    display: inline-flex;
+    font-size: 1.2rem;
+}
+.espresso-admin #espresso-default-admin.registrations h2 .ee-event-datetime-name .dashicons  {
+    color: var(--ee-font-color-light);
+    font-size: 1.5rem;
+    inset-block-start: 0.25rem;
+    margin-inline-start: 2rem;
+    margin-inline-end: 1.5rem;
+    position: relative;
+}
+.espresso-admin #espresso-default-admin.registrations h2 .ee-event-datetime-name .ee-status  {
+    margin-inline-start: 1rem;
+}
+
+.ee-event-filter,
+.ee-event-filter > span {
+    align-items: center;
+    display: flex;
+    justify-content: start;
+}
+
+.ee-event-filter > span input[type="checkbox"] {
+    margin-inline-end: .5rem;
+}
+
+.ee-event-filter > span + span {
+    margin-inline-start: 1rem;
+}
+.ee-event-filter .ee-hide-expired-events .ee-expired-event {
+    display: none;
+}
+.ee-event-filter .ee-hide-upcoming-events .ee-upcoming-event {
+    display: none;
+}
+
+.reg-overview-free-event-spn {
     display: block;
-    float: right;
-    margin-right: 20px;
-    margin-top: 5px;
+    text-align: center;
 }
 
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #cb {
-    width : 3%;
+.checkedin-status-0 {
+    color: var(--ee-status-color-red);
 }
 
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in {
-    width  : 3%;
-    margin : 0;
+.checkedin-status-1 {
+    color: var(--ee-status-color-green);
 }
 
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in .dashicons {
-    margin-left : 10px;
+.checkedin-status-2 {
+    color: var(--ee-status-color-grey);
 }
 
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_count {
-    width : 4%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_name {
-    width : 11%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_email {
-    width : 14%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #Event {
-    width : 14%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_code {
-    width : 8%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_final_price {
-    width : 6%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_paid {
-    width : 6%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_total {
-    width : 6%;
-}
-
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #PRC_name {
-    width : 8%;
-}
-
-.reg-pad-rght { display : block; padding-right : .5em; }
-
-/*.wp-list-table .column-actions,*/
-.wp-list-table .column-CHK_in { width : 11%; }
-
-/*.wp-list-table.attendees .column-actions {*/
-/*width : 7%;*/
-/*}*/
-
-.reg-overview-free-event-spn { display : block; text-align : center; }
-
-.reg-overview-actions-ul { list-style : none; margin : 0; }
-
-.reg-overview-actions-ul li { display : inline; margin : 0; }
-
-.reg-overview-actions-ul li + li { margin-left : 0; }
 
 #reg-admin-reg-details-reg-date-hdr,
-#reg-admin-reg-details-reg-status-hdr { padding : 0; margin : 0 0 .5em !important; }
-
-#reg-admin-approve-decline-reg-status-dv h2 span { font-size: 1.3em; margin-left: .5em; }
-
-#reg-admin-approve-decline-reg-status-spn { position : relative; top : -4px; display : block; }
-
-#reg-admin-approve-decline-reg-status-spn a { margin-left : 1em; margin-right : 1em; vertical-align : baseline; }
-
-.admin-side-mbox-dv { margin : 1em 0 2em; }
-
-.admin-side-mbox-dv p,
-.admin-side-mbox-dv > div { margin : .5em 0; line-height : 1.2em; color : #333; text-shadow : 0 1px 0 #FFF; }
-
-.admin-side-mbox-label-spn { width : 30%; padding-right : .5em; text-align : right; }
-
-.admin-side-mbox-text-dv { padding-left : .5em; margin : 0 0 1em 30%; }
-
-.admin-primary-mbox-h4 { margin : 2em 0 .25em; }
-
-.admin-primary-mbox-tbl-wrap {
-    padding       : 3px; margin : 0 0 2em;
-    background    : #FFF; border : 1px solid #DFDFDF;
-    border-radius : 3px;
+#reg-admin-reg-details-reg-status-hdr {
+    padding: 0;
+    margin: 0 0 .5em !important;
 }
 
-.admin-primary-mbox-tbl {
-    width : 100%; border-spacing : 0; border-collapse : collapse;
+#reg-admin-approve-decline-reg-status-dv h2 span {
+    font-size: 1.3em;
+    margin-left: .5em;
 }
 
-.admin-primary-mbox-tbl th, .admin-primary-mbox-tbl td {
-    padding     : 6px 12px; margin : 0;
-    border      : 1px solid #DFDFDF; background : #FCFCFC;
-    font-family : sans-serif; font-size : 1em; vertical-align : middle;
+#reg-admin-approve-decline-reg-status-spn {
+    position: relative;
+    top: -4px;
+    display: block;
 }
 
-.admin-primary-mbox-tbl tr + tr { border-top : none; }
+#reg-admin-approve-decline-reg-status-spn a {
+    margin-left: 1em;
+    margin-right: 1em;
+    vertical-align: baseline;
+}
 
-.admin-primary-mbox-tbl th + th,
-.admin-primary-mbox-tbl td + td { border-left : none; }
 
-.admin-primary-mbox-tbl th { font-size : .9em; font-weight : bold; }
+.admin-side-mbox-label-spn {
+    width: 30%;
+    padding-right: .5em;
+    text-align: right;
+}
 
-.admin-primary-mbox-tbl caption { display : none; }
+.admin-side-mbox-text-dv {
+    padding-left: .5em;
+    margin: 0 0 1em 30%;
+}
 
-.form-table.skinny-rows th, .form-table.skinny-rows td { padding : 3px 10px; }
+.admin-primary-mbox-h4 {
+    margin: 2em 0 .25em;
+}
 
-.admin-primary-mbox-total-tr { font-size : 1.1em; }
 
 .jqplot-title {
-    font-size : 24px; text-align : left !important; margin : 1em 0 0 1em;
+    font-size: 24px;
+    text-align: left !important;
+    margin: 1em 0 0 1em;
 }
 
 .jqplot-point-label {
-    padding       : 0 .5em;
-    background    : #FFF; border : 1px solid #DDD;
-    border-radius : 3px;
-    font-size     : 12px; color : #333;
-    box-shadow    : 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
+    padding: 0 .5em;
+    background: var(--ee-color-white);
+    border: 1px solid var(--ee-border-color);
+    border-radius: 3px;
+    font-size: 12px;
+    color: #333;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
 }
 
-.reg-admin-edit-question-group-spn { position : relative; top : -4px; padding : 4px; vertical-align : middle; }
 
-.reg-admin-edit-attendee-question-lnk { padding : 4px; text-decoration : none; outline : none; }
+.admin-side-mbox-dv {
+    margin: 1em 0 2em;
+}
 
-.reg-admin-edit-attendee-question-lnk:focus { outline : none; }
+.admin-side-mbox-dv p {
+    margin: .5em 0;
+    line-height: 1.2em;
+}
 
-.reg-admin-edit-attendee-question-lnk img { }
+.admin-side-mbox-label-spn {
+    width: 30%;
+    padding-right: .5em;
+    text-align: right;
+}
 
-/*.display-the-hidden { float:right; padding-left:16px; cursor:pointer; }
-.hide-the-displayed { float:right; padding-left:16px; cursor:pointer; }*/
+.admin-side-mbox-text-dv {
+    padding-left: .5em;
+    margin: 0 0 1em 1em;
+}
 
-.tkt-slctr-tbl { min-width : 530px; margin-bottom : 1em; border : none; border-bottom : 1px solid #EDEDED; border-collapse : collapse; border-spacing : 0; }
 
-.tkt-slctr-tbl th { padding : .5em 1em .5em 0; border : none; font-size : 1em; line-height : 1em; text-align : left; }
+.reg-admin-edit-question-group-spn {
+    position: relative;
+    top: -4px;
+    padding: 4px;
+    vertical-align: middle;
+}
 
-.tkt-slctr-tbl td { padding : .5em 1em .5em 0; border : none; border-top : 1px solid #EDEDED; font-size : 1em; line-height : 1em; }
+.reg-admin-edit-attendee-question-lnk {
+    padding: 4px;
+    text-decoration: none;
+    outline: none;
+}
 
-.tkt-slctr-tbl .tckt-slctr-tbl-td-qty { padding-right : 0; }
+.reg-admin-edit-attendee-question-lnk:focus {
+    outline: none;
+}
+
+
+.tkt-slctr-tbl {
+    min-width: 530px;
+    margin-bottom: 1em;
+    border: none;
+    border-bottom: 1px solid var(--ee-border-color);
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.tkt-slctr-tbl th {
+    padding: .5em 1em .5em 0;
+    border: none;
+    font-size: 1em;
+    line-height: 1em;
+    text-align: left;
+}
+
+.tkt-slctr-tbl td {
+    padding: .5em 1em .5em 0;
+    border: none;
+    border-top: 1px solid var(--ee-border-color);
+    font-size: 1em;
+    line-height: 1em;
+}
+
+.tkt-slctr-tbl .tckt-slctr-tbl-td-qty {
+    padding-right: 0;
+}
 
 @media only screen and (max-width: 600px) {
     .tkt-slctr-tbl {
         min-width: auto;
-    } 
+    }
 }
-
-/** Check-in status manipulation **/
-
-/**never checked in**/
-.wp-list-table ._REG_att_checked_in {
-    padding-left : 20px;
-}
-
 
 
 /**
@@ -233,61 +266,50 @@
  *
  */
 
-#titlediv .title-prompt-text {
-    color     : #BBB;
-    position  : absolute;
-    font-size : 1.7em;
-    padding   : 11px 10px;
+#poststuff #titlewrap {
+    display: flex;
 }
 
-#title-wrap .title-prompt-text {
-    font-size : 1.3em;
-    padding   : 5px 8px;
+#poststuff #titlewrap > div {
+    width: 49%;
 }
 
-#titlediv .smaller-text-field, #titlediv .main-text-field {
-    padding     : 3px 8px;
-    font-size   : 1.7em;
-    line-height : 100%;
-    height      : 1.7em;
-    width       : 49.3%;
-    outline     : none;
-    margin      : 1px 6px 1px 0;
-    float       : left;
+#poststuff #titlewrap > div + div {
+    margin-inline-start: 2%;
 }
 
+
+#titlediv .smaller-text-field,
 #titlediv .main-text-field {
-    width : 100%;
-    float : none;
+    font-size: 1.75rem;
+    height: 3.25rem;
+    line-height: 100%;
+    margin: 0;
+    width: 100%;
 }
+
 
 .espresso-question-group-wrap table th {
-    width     : inherit;
-    min-width : 200px;
+    width: inherit;
+    min-width: 200px;
 }
 
 #attendee_details_address label.espresso-form-input-lbl {
-    display : block;
+    display: block;
 }
 
 #attendee_details_address input.all-options {
-    width : 100%;
+    width: 100%;
 }
 
 #attendee_details_address #ATT_zip {
-    width     : 10%;
-    min-width : 150px;
+    width: 10%;
+    min-width: 150px;
 }
 
 /**
  * status strips
  */
-
-.wp-list-table .ee-status-strip ._REG_att_checked_in {
-    border-left-style: solid;
-    border-left-width: 4px;
-}
-
 .wp-list-table .ee-status-strip.has-checkbox-column ._REG_att_checked_in {
     border-left: none;
 }
@@ -311,178 +333,62 @@
 }
 
 
-/*pending payment*/
-.reg-status-RPP,
-.button-secondary.reg-status-RPP,
-.button-primary.reg-status-RPP,
-.reg-status-RPP ._REG_att_checked_in,
-.reg-status-RPP .check-column{
-    border-left-color : var(--ee-status-color-blue); /* prev: #00B1CA */
-}
-
-/*cancelled*/
-.reg-status-RCN,
-.tr-ee-reg-status-RCN,
-.button-secondary.reg-status-RCN,
-.button-primary.reg-status-RCN,
-.reg-status-RCN ._REG_att_checked_in,
-.reg-status-RCN .check-column{
-    border-left-color : var(--ee-status-color-grey);  /* prev: #AC9D9C */
-}
-
-/*declined*/
-.reg-status-RDC,
-.button-secondary.reg-status-RDC,
-.button-primary.reg-status-RDC,
-.reg-status-RDC ._REG_att_checked_in,
-.reg-status-RDC .check-column{
-    border-left-color : var(--ee-status-color-pink);  /* prev: #E44064 */
-}
-
-/*approved*/
-.reg-status-RAP,
-.button-secondary.reg-status-RAP,
-.button-primary.reg-status-RAP,
-.reg-status-RAP ._REG_att_checked_in,
-.reg-status-RAP .check-column{
-    border-left-color : var(--ee-status-color-green); /* prev: #70CC50 */
-}
-
-/*not-approved*/
-.reg-status-RNA,
-.button-secondary.reg-status-RNA,
-.button-primary.reg-status-RNA,
-.reg-status-RNA ._REG_att_checked_in,
-.reg-status-RNA .check-column{
-    border-left-color : var(--ee-status-color-orange); /* prev: #E76700 */
-}
-
-/*not-approved*/
-.reg-status-RIC,
-.button-secondary.reg-status-RIC,
-.button-primary.reg-status-RIC,
-.reg-status-RIC ._REG_att_checked_in,
-.reg-status-RIC .check-column{
-    border-left-color : var(--ee-status-color-yellow);  /* prev: #FCB93C */
-}
-
-/*wait-list*/
-.reg-status-RWL,
-.button-secondary.reg-status-RWL,
-.button-primary.reg-status-RWL,
-.reg-status-RWL ._REG_att_checked_in,
-.reg-status-RWL .check-column{
-    border-left-color : var(--ee-status-color-purple);  /* prev: #8A549A */
-}
-
 .widefat td.column-_Reg_Status,
 .widefat th.column-_Reg_Status {
-    width : 10px;
-    padding : 0;
-    margin  : 0;
+    width: 10px;
+    padding: 0;
+    margin: 0;
     height: 100%;
 }
 
-/** reg status legend **/
-.ee-status-legend-RPP {
-    background-color : var(--ee-status-color-blue); /* prev: #00B1CA */
-}
-
-.ee-status-legend-RCN {
-    background-color : var(--ee-status-color-grey);  /* prev: #AC9D9C */
-}
-
-.ee-status-legend-RDC {
-    background-color : var(--ee-status-color-pink);  /* prev: #E44064 */
-}
-
-.ee-status-legend-RAP {
-    background-color : var(--ee-status-color-green); /* prev: #70CC50 */
-}
-
-.ee-status-legend-RNA {
-    background-color : var(--ee-status-color-orange); /* prev: #E76700 */
-}
-
-.ee-status-legend-RIC {
-    background-color : var(--ee-status-color-yellow);  /* prev: #FCB93C */
-}
-
-.ee-status-legend-RWL {
-    background-color : var(--ee-status-color-purple);  /* prev: #8A549A */
-}
-
-.status-RPP { color : var(--ee-status-color-blue); /* prev: #00B1CA */ }
-
-.status-RCN { color : var(--ee-status-color-grey);  /* prev: #AC9D9C */ }
-
-.status-RDC { color : var(--ee-status-color-pink);  /* prev: #E44064 */ font-weight : bold; }
-
-.status-RAP { color : var(--ee-status-color-green); /* prev: #70CC50 */ }
-
-.status-RNA { color : var(--ee-status-color-orange); /* prev: #E76700 */ }
-
-.status-RIC { color : var(--ee-status-color-yellow);  /* prev: #FCB93C */ }
-
-.status-RWL { color : var(--ee-status-color-purple);  /* prev: #8A549A */ }
-
-#admin-primary-mbox-reg-details-dv .button {
-    margin : 10px 0;
-}
-
-#additional-registration-actions-dv ul li {
-    display      : inline-block;
-    margin-right : 10px;
-}
-
 #reg_status_change_form {
-    margin-top : 1em;
+    margin-top: 1em;
 }
 
-#reg_status_change_form .button-secondary {
-    margin-right : 0;
+#reg_status_change_form .button--secondary {
+    margin-right: 0;
 }
 
 #reg_status_change_form .ee-attention {
-    position : absolute;
-    width    : 50%;
-    top      : -100px;
-    right    : 0;
-    padding  : 15px 10px 0 10px;
+    position: absolute;
+    width: 50%;
+    top: -100px;
+    right: 0;
+    padding: 15px 10px 0 10px;
 }
 
 .espresso-admin .wp-list-table .ee-icon-size-22:before {
-    font-size : 22px;
+    font-size: 22px;
 }
 
 /**newsletter send css**/
 .ee-batch-message-send-form h3 {
-    font-size : 2em;
+    font-size: 2em;
 }
 
 .ee-batch-message-send-form .batch-message-edit-fields {
-    background-color : #E3E3E3;
-    padding          : 10px;
-    margin-top       : 20px;
-    border-radius    : 4px;
+    background-color: var(--ee-color-off-white);
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 4px;
 }
 
 .ee-batch-message-send-form .batch-message-input, .ee-batch-message-send-form .batch-message-textarea {
-    width : 100%;
+    width: 100%;
 }
 
 .ee-batch-message-send-form .batch-message-textarea {
-    height : 200px;
+    height: 200px;
 }
 
 .ee-batch-message-send-form .shortcodes-info-container {
-    padding          : 5px 20px 5px 20px;;
-    margin-bottom    : 10px;
-    background-color : #F5F5F5;
-    border-radius    : 4px;
+    padding: 5px 20px 5px 20px;;
+    margin-bottom: 10px;
+    background-color: var(--ee-color-almost-white);
+    border-radius: 4px;
 }
 
-.contact-details-buttons a.button-small {
+.contact-details-buttons a.button--small {
     float: right;
     margin-left: 8px;
 }
@@ -498,18 +404,12 @@
 }
 
 
-/*#reg-admin-approve-decline-reg-status-dv {*/
-/*border: 1px solid #ddd;*/
-/*padding: 0 1em 1em;*/
-/*margin: 0 0 2em;*/
-/*background: #fff;*/
-/*}*/
-
 #send-related-messages-dv label {
     position: relative;
     top: 3px;
-    left:1em;
+    left: 1em;
 }
+
 #send-related-messages-dv input[type=checkbox] {
     margin: 0 1em;
 }
@@ -517,7 +417,7 @@
 /** line item table styles **/
 .ee-line-item-id {
     font-size: .9em;
-    color: #bbb;
+    color: var(--ee-font-color-light);
     font-style: italic;
 }
 
@@ -527,39 +427,92 @@
 }
 
 #ee-add-reg-back-button-dv {
-    background: #fff;
-    color: #666;
+    background: var(--ee-color-white);
+    color: var(--ee-font-color);
     font-size: 1.2em;
-    line-height:1.75em;
+    line-height: 1.75em;
     padding: 1.5em 1.5em 2em;
     text-align: center;
 }
-#ee-add-reg-back-button-dv h3{
+
+#ee-add-reg-back-button-dv h3 {
     margin: .5em 0 0;
 }
 
 #reg-admin-transaction-attendees-table .reg-status-RCN {
-    color: #999;
+    color: var(--ee-font-color-light);
 }
 
 /** REGISTRATION LIST TABLE EVENT-DATE COLUMNS **/
-.ee-more-datetimes-toggle {
-    float: left;
-    display: inline-block;
-    margin-top: 2px;
-    cursor: pointer;
+
+.espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date,
+.espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date > a {
+    width: clamp(8rem, 12rem, 16rem);
 }
 
-.ee-registration-event-datetimes-container .left {
-    float:left;
-    max-width: 81%;
+.espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date .row-actions {
+    width: unset;
+}
+
+.ee-registration-event-datetimes-container-wrap {
+    box-sizing: border-box;
+    display: flex;
+    padding: 0;
+    padding-inline-end: 2rem;
+    width: 100%;
+}
+
+.ee-registration-event-datetimes-container {
+    display: none;
+    flex-flow: column nowrap;
+}
+
+
+.ee-reg-list-dates-list-date {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+
+.espresso-admin.wp-core-ui .button.button--icon-only.ee-more-datetimes-toggle {
+    background: none !important;
+    border: none !important;
+    border-radius: 100%;
+    box-shadow: none !important;
+    margin: 0;
+    position: absolute;
+    inset-block-start: .75rem;
+    inset-inline-end: .75rem;
+}
+
+.espresso-admin .wp-list-table .ee-more-datetimes-toggle > .dashicons,
+.espresso-admin .wp-list-table .ee-more-datetimes-toggle > .dashicons:before {
+    font-size: 2rem;
+    height: 2rem;
+    width: 2rem;
+}
+
+.ee-more-datetimes-toggle > .dashicons {
+    transition: transform 250ms ease-in-out;
+}
+
+.ee-more-datetimes-toggle.open > .dashicons {
+    transform: rotate(-90deg);
+}
+
+.espresso-admin .ee-event-filter-link .dashicons.dashicons--small {
+    margin-inline-end: 0.25rem;
+}
+
+.espresso-admin .ee-event-filter-link .dashicons.dashicons--small:before {
+    top: -2px;
 }
 
 /** Add a bit of style to tickets details table **/
 
 .spco-ticket-details {
     font-size: 16px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--ee-border-color-table-row);
     padding: 30px 0 15px;
     width: 100%;
 }
@@ -571,4 +524,29 @@
 .ee-new-registration-step-content .ee-attention {
     margin: 2em 0 1em;
     padding: 1.5em 0 0;
+}
+
+.event-espresso_page_espresso_registrations #post-body-content > h2 {
+    margin-block-start: .5rem;
+    margin-block-end: .25rem;
+    padding: 1px 0;
+}
+
+.event-espresso_page_espresso_registrations #post-body-content > h2 .dashicons.dashicons-calendar {
+    margin-inline: 1rem;
+}
+
+
+.event-espresso_page_espresso_registrations .ee-admin-page-header-grid {
+    grid-template-columns: 360px 360px 1fr var(--ee-admin-sidebar-width);
+}
+@media screen and ( max-width: 1280px ) {
+    .event-espresso_page_espresso_registrations .ee-admin-page-header-grid {
+        grid-template-columns: 1fr 1fr var(--ee-admin-sidebar-width);
+    }
+}
+@media screen and ( max-width: 1024px ) {
+    .event-espresso_page_espresso_registrations .ee-admin-page-header-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 }

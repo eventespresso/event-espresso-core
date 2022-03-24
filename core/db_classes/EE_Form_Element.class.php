@@ -28,7 +28,6 @@ use EventEspresso\core\services\form\meta\Required;
  */
 class EE_Form_Element extends EE_Base_Class
 {
-
     /**
      * @var Attributes
      */

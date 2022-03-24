@@ -432,13 +432,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'reset_reservations',
             'reset_reservations',
             [],
-            'button button-primary ee-confirm'
+            'button button--caution ee-confirm'
         );
         $this->_template_args['reset_capabilities_button'] = $this->get_action_link_or_button(
             'reset_capabilities',
             'reset_capabilities',
             [],
-            'button button-primary ee-confirm'
+            'button button--caution ee-confirm'
         );
         $this->_template_args['delete_db_url']             = EE_Admin_Page::add_query_args_and_nonce(
             ['action' => 'delete_db'],
@@ -453,7 +453,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             $this->_template_args,
             true
         );
-        $this->display_admin_page_with_sidebar();
+        $this->display_admin_page_with_no_sidebar();
     }
 
 
@@ -532,7 +532,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             $this->_template_args,
             true
         );
-        $this->display_admin_page_with_sidebar();
+        $this->display_admin_page_with_no_sidebar();
     }
 
 
@@ -802,7 +802,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         $this->_template_args['admin_page_content'] = $form->form_open($form_action, 'post')
                                                       . $form->get_html_and_js()
                                                       . $form->form_close();
-        $this->display_admin_page_with_no_sidebar();
+        $this->display_admin_page_with_sidebar();
     }
 
 

@@ -10,9 +10,6 @@
  */
 class EEH_Address
 {
-
-
-
     /**
      *    format - output formatted EE object address information
      *

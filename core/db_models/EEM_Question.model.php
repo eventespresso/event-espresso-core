@@ -9,7 +9,6 @@
  */
 class EEM_Question extends EEM_Soft_Delete_Base
 {
-
     // constant used to indicate that the question type is CHECKBOX
     const QST_type_checkbox = 'CHECKBOX';
 

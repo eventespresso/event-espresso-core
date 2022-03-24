@@ -9,14 +9,7 @@
     <tr>
         <th><?php esc_html_e('Code', 'event_espresso'); ?></th>
         <th><?php esc_html_e('Name', 'event_espresso'); ?></th>
-        <th colspan="2">
-            <span class="small-text">
-                <?php printf(
-                    esc_html__('State Appears in%1$sDropdown Select Lists ', 'event_espresso'),
-                    '<br />'
-                ); ?>
-            </span>
-        </th>
+        <th colspan="2"><?php esc_html_e('State Appears in Dropdown Select Lists', 'event_espresso'); ?></th>
     </tr>
     </thead>
     <tbody>
@@ -33,12 +26,13 @@
             }
             ?>
             <td class="delete-state-td">
-                <a class="dashicons dashicons-post-trash ee-icon-size-20 delete-state-lnk"
+                <a class="button button--secondary button--icon-only delete-state-lnk"
                    id="delete-state-<?php echo absint($STA_ID); ?>-lnk"
                    href="<?php echo esc_url_raw($state['delete_state_url']); ?>"
                    rel="<?php echo esc_attr($STA_ID); ?>"
                    title="<?php echo sprintf(esc_attr__('Delete State #%d?', 'event_espresso'), $STA_ID); ?>"
                 >
+                    <span class="dashicons dashicons-post-trash"></span>
                 </a>
             </td>
         </tr>
@@ -48,7 +42,7 @@
     </tbody>
 </table>
 <br/>
-<input class="button-primary save right"
+<input class="button button--primary save right"
        id='country_settings_save3'
        type="submit"
        name="save"
@@ -70,7 +64,7 @@
         <td class="general-settings-country-state-input-td">
             <label for="STA_abbrev_XXX"><?php esc_html_e('Code', 'event_espresso'); ?></label>
             <br/>
-            <input class="STA_abbrev small-text "
+            <input class="STA_abbrev ee-input-size--small"
                    id='STA_abbrev-XXX'
                    name="STA_abbrev_XXX"
                    title=""
@@ -81,12 +75,13 @@
         <td class="general-settings-country-state-input-td">
             <label for="STA_name_XXX"><?php esc_html_e('Name', 'event_espresso'); ?></label>
             <br/>
-            <input id="STA_name-XXX" class="STA_name regular-text " type="text" title="" value="" name="STA_name_XXX">
+            <input id="STA_name-XXX" class="STA_name ee-input-size--big" type="text" title="" value=""
+                   name="STA_name_XXX">
         </td>
     </tr>
     <tr>
         <td colspan="2">
-            <input class="secondary-button button right"
+            <input class="button button--secondary right"
                    id='add-new-state-btn'
                    type='submit'
                    value="<?php esc_html_e('Add New State/Province', 'event_espresso'); ?>"

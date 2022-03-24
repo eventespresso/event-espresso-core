@@ -27,7 +27,7 @@
 					<input type="text" name="add_new_datetime[DTT_reg_limit]" id="add-new-event-datetime-DTT_reg_limit" class="ee-small-text-inp">
 				</td>
 				<td class="event-datetime-column button-column">
-					<button data-context="datetime" class="button-primary ee-create-button">
+					<button data-context="datetime" class="button--primary ee-create-button">
 						Save Datetime
 					</button>
 				</td>
@@ -162,7 +162,7 @@
 							</ul>
 							<div class="save-cancel-button-container"><label for="edit-ticket-TKT_is_default_selector">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[1][TKT_is_default_selector]" class="edit-ticket-TKT_is_default_selector"> 
 							<input type="hidden" name="edit_tickets[1][TKT_is_default]" class="edit-ticket-TKT_is_default" value=""> 
-							<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="1">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="1">Cancel</button></div>
+							<button class="button--primary ee-save-button" data-context="ticket" data-ticket-row="1">Save Ticket</button><button class="button--secondary ee-cancel-button" data-context="ticket" data-ticket-row="1">Cancel</button></div>
 							<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
 							<input type="hidden" name="starting_ticket_datetime_IDs[1]" id="starting-ticket-datetime-ids-1" value="" class="starting-ticket-datetime-ids">
 							<input type="hidden" name="ticket_datetime_IDs" class="ticket-datetime-ids" id="ticket-datetime-ids-1" value="">
@@ -179,7 +179,7 @@
 
 		<input type="hidden" name="ticket_IDs" id="ticket-IDs" value="">
 		<input type="hidden" name="ticket_total_rows" id="ticket-total-rows" value="1">
-		<div class="save-cancel-button-container"><button class="button-secondary ee-create-button" data-context="ticket">Create New Ticket</button></div>
+		<div class="save-cancel-button-container"><button class="button--secondary ee-create-button" data-context="ticket">Create New Ticket</button></div>
 	</div>
 	<div style="clear:both"></div>
 
@@ -211,10 +211,10 @@
 						<input type="text" name="edit_event_datetimes[DTTNUM][DTT_reg_limit]" id="event-datetime-DTT_reg_limit-DTTNUM" class="ee-small-text-inp event-datetime-DTT_reg_limit">
 					</td>
 					<td class="event-datetime-column button-column">
-						<button data-datetime-row="DTTNUM"  data-context="datetime" class="button-primary ee-save-button">
+						<button data-datetime-row="DTTNUM"  data-context="datetime" class="button--primary ee-save-button">
 							Save Datetime
 						</button>
-						<button data-datetime-row="DTTNUM" data-context="datetime" class="button-secondary ee-cancel-button">
+						<button data-datetime-row="DTTNUM" data-context="datetime" class="button--secondary ee-cancel-button">
 							Cancel
 						</button>
 					</td>
@@ -315,7 +315,7 @@
 						<div class="save-cancel-button-container">
 							<label for="edit-ticket-TKT_is_default_selector">use this new ticket as a default ticket for any new events</label>  <input type="checkbox" name="edit_tickets[TICKETNUM][TKT_is_default_selector]" class="edit-ticket-TKT_is_default_selector">
 							<input type="hidden" name="edit_tickets[1][TKT_is_default]" class="edit-ticket-TKT_is_default" value=""> 
-							<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="TICKETNUM">Save Ticket</button><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="TICKETNUM">Cancel</button>
+							<button class="button--primary ee-save-button" data-context="ticket" data-ticket-row="TICKETNUM">Save Ticket</button><button class="button--secondary ee-cancel-button" data-context="ticket" data-ticket-row="TICKETNUM">Cancel</button>
 						</div>
 						<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
 						<input type="hidden" name="starting_ticket_datetime_IDs[TICKETNUM][]" id="starting-ticket-datetime-ids-TICKETNUM" value="" class="starting-ticket-datetime-ids">
@@ -437,10 +437,10 @@
 				</table>
 				<div class="save-cancel-button-container">
 					<!-- note: when the save button is clicked we update the #next-ticket-row hidden input (increment forward) -->
-					<button data-context="short-ticket" data-datetime-row="DTTNUM" class="button-primary ee-create-button">
+					<button data-context="short-ticket" data-datetime-row="DTTNUM" class="button--primary ee-create-button">
 						Save Ticket
 					</button>
-					<button data-context="short-ticket" data-datetime-row="DTTNUM" class="button-secondary ee-cancel-button add-edit">
+					<button data-context="short-ticket" data-datetime-row="DTTNUM" class="button--secondary ee-cancel-button add-edit">
 						Cancel
 					</button>
 				</div>

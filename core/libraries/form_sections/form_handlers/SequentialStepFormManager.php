@@ -29,7 +29,6 @@ use InvalidArgumentException;
  */
 abstract class SequentialStepFormManager
 {
-
     /**
      * a simplified URL with no form related parameters
      * that will be used to build the form's redirect URLs

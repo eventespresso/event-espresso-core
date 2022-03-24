@@ -12,7 +12,6 @@ use EventEspresso\core\domain\entities\contexts\ContextInterface;
  */
 class Context implements ContextInterface
 {
-
     /**
      * @var string $slug
      */

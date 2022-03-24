@@ -5,5 +5,4 @@
  */
 interface EEI_Payment_Method
 {
-
 }

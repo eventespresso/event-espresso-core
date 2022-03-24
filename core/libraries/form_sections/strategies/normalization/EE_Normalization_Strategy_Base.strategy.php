@@ -9,7 +9,6 @@
  */
 abstract class EE_Normalization_Strategy_Base extends EE_Form_Input_Strategy_Base
 {
-
     /**
      * Takes the sanitized value for the input and casts it into the correct PHP type.
      * Eg, turns it into an int, float, string, boolean, datetime, etc. The validation

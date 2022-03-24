@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 if (! class_exists('WP_List_Table')) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -19,6 +22,23 @@ if (! class_exists('WP_List_Table')) {
  */
 abstract class EE_Admin_List_Table extends WP_List_Table
 {
+    const ACTION_COPY    = 'duplicate';
+
+    const ACTION_DELETE  = 'delete';
+
+    const ACTION_EDIT    = 'edit';
+
+    const ACTION_RESTORE = 'restore';
+
+    const ACTION_TRASH   = 'trash';
+
+    protected static $actions = [
+        self::ACTION_COPY,
+        self::ACTION_DELETE,
+        self::ACTION_EDIT,
+        self::ACTION_RESTORE,
+        self::ACTION_TRASH,
+    ];
 
     /**
      * holds the data that will be processed for the table
@@ -397,7 +417,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      * @access protected
      * @return array bulk_actions
      */
-    protected function _get_bulk_actions()
+    protected function _get_bulk_actions(): array
     {
         $actions = [];
         // the _views property should have the bulk_actions, so let's go through and extract them into a properly
@@ -471,13 +491,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             echo $filter; // already escaped
         }
         // add filter button at end
-        echo '<input type="submit" class="button-secondary" value="'
+        echo '<input type="submit" class="button button--secondary" value="'
              . esc_html__('Filter', 'event_espresso')
              . '" id="post-query-submit" />';
         // add reset filters button at end
-        echo '<a class="button button-secondary"  href="'
+        echo '<a class="button button--secondary"  href="'
              . esc_url_raw($this->_admin_page->get_current_page_view_url())
-             . '" style="display:inline-block">'
+             . '">'
              . esc_html__('Reset Filters', 'event_espresso')
              . '</a>';
     }
@@ -503,7 +523,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function prepare_items()
     {
-
         $this->_set_column_info();
         // $this->_column_headers = $this->get_column_info();
         $total_items = $this->_all_data_count;
@@ -711,7 +730,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function single_row_columns($item)
     {
-        list($columns, $hidden, $sortable, $primary) = $this->get_column_info();
+        [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
 
         foreach ($columns as $column_name => $column_display_name) {
 
@@ -789,7 +808,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
                     $route,
                     $type,
                     $extra_request,
-                    'button button-secondary'
+                    'button button--secondary'
                 );
             }
             do_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen);
@@ -888,5 +907,65 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         $host = $this->_admin_page->get_request()->getServerParam('HTTP_HOST');
         $uri  = $this->_admin_page->get_request()->getServerParam('REQUEST_URI');
         return urlencode(esc_url_raw("//{$host}{$uri}"));
+    }
+
+
+    /**
+     * @param string $id
+     * @param string $content
+     * @param string $align     start (default), center, end
+     * @return string
+     * @since   $VID:$
+     */
+    protected function columnContent($id, $content, $align = 'start')
+    {
+        if (! isset($this->_columns[ $id ])) {
+            throw new DomainException('missing column id');
+        }
+        $heading = $id !== 'cb' ? $this->_columns[ $id ] : '';
+        $align = in_array($align, ['start', 'center', 'end']) ? $align : 'start';
+        $align = "ee-responsive-table-cell--{$align}";
+
+        $html = "<div class='ee-responsive-table-cell ee-responsive-table-cell--column-{$id} {$align} ee-layout-row'>";
+        $html .= "<div class='ee-responsive-table-cell__heading'>{$heading}</div>";
+        $html .= "<div class='ee-responsive-table-cell__content ee-layout-row'>{$content}</div>";
+        $html .= "</div>";
+        return $html;
+    }
+
+
+    protected function actionsModalMenu($actions): string
+    {
+        return '
+        <div class="ee-modal-menu">
+            <button class="ee-modal-menu__button button button--small button--icon-only ee-aria-tooltip"
+                    aria-label="' . esc_attr__('list table actions menu', 'event_espresso') . '"
+            >
+                <span class="dashicons dashicons-menu"></span>
+            </button>
+            <div class="ee-modal-menu__content ee-admin-container">
+                <span class="ee-modal-menu__close dashicons dashicons-no"></span>
+                ' . $actions . '
+            </div>
+        </div>';
+    }
+
+
+    protected function actionsColumnHeader(): string
+    {
+        return '
+            <span class="ee-actions-column-header-wrap">
+                <span class="dashicons dashicons-screenoptions"></span>
+                <span class="ee-actions-column-header">' . esc_html__('Actions', 'event_espresso') . '</span>
+            </span>';
+    }
+
+
+    protected function getActionLink(string $url, string $display_text, string $label, $class = ''): string
+    {
+        $class = ! empty($class) ? "{$class} ee-list-table-action" : 'ee-list-table-action';
+        $class = ! empty($label) ? "{$class} ee-aria-tooltip" : $class;
+        $label = ! empty($label) ? " aria-label='{$label}'" : '';
+        return "<a href='{$url}' class='{$class}'{$label}>{$display_text}</a>";
     }
 }

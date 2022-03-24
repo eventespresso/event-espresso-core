@@ -13,7 +13,6 @@ use WP_User;
  */
 class CurrentUser
 {
-
     /**
      * @var WP_User
      */

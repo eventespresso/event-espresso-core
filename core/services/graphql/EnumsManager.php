@@ -17,7 +17,6 @@ use EventEspresso\core\services\graphql\enums\EnumInterface;
  */
 class EnumsManager implements GQLManagerInterface
 {
-
     /**
      * @var EnumCollection|EnumInterface[] $enums
      */

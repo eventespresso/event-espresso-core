@@ -14,7 +14,6 @@ use GraphQLRelay\Relay;
  */
 class FormSectionMutation
 {
-
     /**
      * Maps the GraphQL input to a format that the model functions can use
      *

@@ -10,7 +10,6 @@ use InvalidArgumentException;
  */
 interface CachingLoaderDecoratorInterface extends LoaderDecoratorInterface
 {
-
     /**
      * @param string $fqcn
      * @param mixed  $object

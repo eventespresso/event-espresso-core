@@ -9,7 +9,6 @@
  */
 class EE_Month_Input extends EE_Select_Input
 {
-
     /**
      * @param bool  $leading_zero
      * @param array $input_settings

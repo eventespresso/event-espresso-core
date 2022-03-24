@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\address\formatters;
  */
 class NullAddressFormatter implements \EEI_Address_Formatter
 {
-
     /**
      * @param string $address
      * @param string $address2

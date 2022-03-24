@@ -10,7 +10,6 @@
  */
 class EEM_Term_Taxonomy extends EEM_Base
 {
-
     // private instance of the Attendee object
     protected static $_instance = null;
 

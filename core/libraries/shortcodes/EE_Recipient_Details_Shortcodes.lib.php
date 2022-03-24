@@ -18,7 +18,6 @@
  */
 class EE_Recipient_Details_Shortcodes extends EE_Shortcodes
 {
-
     protected $_recipient;
 
     protected $_registrations_for_recipient;

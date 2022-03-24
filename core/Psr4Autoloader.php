@@ -46,7 +46,6 @@ use EEH_File;
  */
 class Psr4Autoloader
 {
-
     /**
      * namespace separator
      */

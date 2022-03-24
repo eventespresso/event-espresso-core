@@ -14,7 +14,6 @@
  */
 class EE_Billing_Info_Form extends EE_Form_Section_Proper
 {
-
     /**
      * The payment method this billing form is for
      * @var EE_Payment_Method
@@ -22,11 +21,11 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
     protected $_pm_instance;
 
 
-
     /**
      *
      * @param EE_Payment_Method $payment_method
-     * @param array $options_array @see EE_Form_Section_Proper::__construct()
+     * @param array             $options_array @see EE_Form_Section_Proper::__construct()
+     * @throws EE_Error
      */
     public function __construct(EE_Payment_Method $payment_method, $options_array = array())
     {
@@ -53,7 +52,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
      * Returns the instance of the payment method this billing form is for
      * @return EE_Payment_Method
      */
-    public function payment_method()
+    public function payment_method(): EE_Payment_Method
     {
         return $this->_pm_instance;
     }
@@ -62,9 +61,10 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
 
     /**
      * payment_fields_autofilled_notice_html
-     * @return string
+     *
+     * @return EE_Form_Section_HTML
      */
-    public function payment_fields_autofilled_notice_html()
+    public function payment_fields_autofilled_notice_html(): EE_Form_Section_HTML
     {
         return  new EE_Form_Section_HTML(
             EEH_HTML::p(
@@ -80,7 +80,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
     /**
      * @return string
      */
-    public function html_class()
+    public function html_class(): string
     {
         return ! empty($this->_html_class) ? $this->_html_class . ' ee-billing-form' : 'ee-billing-form';
     }

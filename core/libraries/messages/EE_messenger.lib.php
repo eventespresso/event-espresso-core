@@ -16,9 +16,6 @@ use EventEspresso\core\exceptions\SendMessageException;
  */
 abstract class EE_messenger extends EE_Messages_Base
 {
-
-
-
     /**
      * This property holds the default message types associated with this messenger when it is activated. The values of the array must match a valid message type.
      * This property gets set by the _set_default_message_types() method.
@@ -575,9 +572,9 @@ abstract class EE_messenger extends EE_Messages_Base
                 $st_args['messenger_slug'] = $this->name;
                 $st_args['selector'] = EEH_Form_Fields::select_input('event_message_templates_relation[' . $mtpgID . ']', $select_values, $default_value, 'data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '"', 'message-template-selector');
                 // note that  message template group that has override_all_custom set will remove the ability to set a custom message template based off of the global (and that also in turn overrides any other custom templates).
-                $st_args['create_button'] = $mtpg->get('MTP_is_override') ? '' : '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $create_url . '" class="button button-small create-mtpg-button">' . esc_html__('Create New Custom', 'event_espresso') . '</a>';
+                $st_args['create_button'] = $mtpg->get('MTP_is_override') ? '' : '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $create_url . '" class="button button--secondary create-mtpg-button">' . esc_html__('Create New Custom', 'event_espresso') . '</a>';
                 $st_args['create_button'] = EE_Registry::instance()->CAP->current_user_can('ee_edit_messages', 'espresso_messages_add_new_message_template') ? $st_args['create_button'] : '';
-                $st_args['edit_button'] = EE_Registry::instance()->CAP->current_user_can('ee_edit_message', 'espresso_messages_edit_message_template', $mtpgID) ? '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . esc_html__('Edit', 'event_espresso') . '</a>' : '';
+                $st_args['edit_button'] = EE_Registry::instance()->CAP->current_user_can('ee_edit_message', 'espresso_messages_edit_message_template', $mtpgID) ? '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button--secondary edit-mtpg-button">' . esc_html__('Edit', 'event_espresso') . '</a>' : '';
                 $selector_rows .= EEH_Template::display_template($template_row_path, $st_args, true);
             }
         }

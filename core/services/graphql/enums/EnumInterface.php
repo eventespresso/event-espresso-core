@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\graphql\enums;
  */
 interface EnumInterface
 {
-
     /**
      * @return string
      */

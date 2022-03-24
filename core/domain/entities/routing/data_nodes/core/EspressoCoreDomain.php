@@ -16,7 +16,6 @@ use EventEspresso\core\services\json\JsonDataNodeValidator;
  */
 class EspressoCoreDomain extends JsonDataNode
 {
-
     const NODE_NAME = 'coreDomain';
 
     /**

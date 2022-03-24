@@ -9,7 +9,6 @@
  */
 class EE_Message extends EE_Base_Class implements EEI_Admin_Links
 {
-
     /**
      * @deprecated 4.9.0  Added for backward compat with add-on's
      * @type null

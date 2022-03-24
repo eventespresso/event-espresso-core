@@ -12,7 +12,6 @@ use EventEspresso\core\services\orm\ModelFieldFactory;
  */
 class EEM_WP_User extends EEM_Base
 {
-
     /**
      * private instance of the EEM_WP_User object
      *

@@ -14,7 +14,6 @@ use EEM_Ticket;
  */
 class TicketMeta implements EventEditorDataInterface
 {
-
     /**
      * @var EEM_Ticket $ticket_model
      */

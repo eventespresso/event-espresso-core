@@ -13,7 +13,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EED_Events_Archive_Caff extends EED_Events_Archive
 {
-
     /**
      * @return EED_Events_Archive_Caff|EED_Module
      */

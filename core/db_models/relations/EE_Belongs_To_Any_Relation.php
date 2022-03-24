@@ -14,8 +14,6 @@
  */
 class EE_Belongs_To_Any_Relation extends EE_Belongs_To_Relation
 {
-
-
     /**
      * get_join_statement
      *

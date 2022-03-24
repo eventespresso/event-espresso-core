@@ -20,7 +20,6 @@ use OutOfRangeException;
  */
 class CreateRegistrationCommandHandler extends CommandHandler
 {
-
     /**
      * @var CreateRegistrationService $registration_service
      */

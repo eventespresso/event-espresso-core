@@ -15,7 +15,6 @@ use EEI_Payment;
  */
 interface GatewayDataFormatterInterface
 {
-
     /**
      * Gets the text to use for a gateway's line item name when this is a partial payment
      *

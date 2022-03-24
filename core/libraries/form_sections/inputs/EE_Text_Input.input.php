@@ -11,8 +11,6 @@
  */
 class EE_Text_Input extends EE_Form_Input_Base
 {
-
-
     /**
      * @param array $options
      */

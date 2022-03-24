@@ -11,7 +11,6 @@ namespace EventEspresso\core\admin;
  */
 class PostShortcodeTracking
 {
-
     /**
      * @deprecated 4.9.26
      * @return    void

@@ -18,8 +18,6 @@ use Exception;
  */
 class RootQueryPriceTypesConnection extends AbstractRootQueryConnection
 {
-
-
     /**
      * PriceTypeConnection constructor.
      *

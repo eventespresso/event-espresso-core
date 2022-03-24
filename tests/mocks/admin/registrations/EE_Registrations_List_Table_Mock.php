@@ -23,16 +23,16 @@ class EE_Registrations_List_Table_Mock extends EE_Registrations_List_Table {
 	//abstracts needing declared
 	protected function _setup_data() {}
 	protected function _set_properties() {}
-	protected function _get_table_filters() {}
+	protected function _get_table_filters(): array { return []; }
 	protected function _add_view_counts() {}
 
 
 
-	public function total_registrations_this_month() {
+	public function total_registrations_this_month(): int {
 		return $this->_total_registrations_this_month();
 	}
 
-	public function total_registrations_today() {
+	public function total_registrations_today(): int {
 		return $this->_total_registrations_today();
 	}
 }

@@ -11,7 +11,6 @@
  */
 class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
 {
-
     /**
      * array of available options to choose as an answer
      *

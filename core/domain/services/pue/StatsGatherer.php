@@ -15,7 +15,6 @@ use Exception;
 
 class StatsGatherer
 {
-
     const COUNT_ALL_EVENTS = 'event';
     const COUNT_ACTIVE_EVENTS = 'active_event';
     const COUNT_DATETIMES = 'datetime';

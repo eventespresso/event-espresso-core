@@ -14,7 +14,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class Extend_Events_Admin_Page extends Events_Admin_Page
 {
-
     /**
      * @var EE_Admin_Config
      */
@@ -276,7 +275,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                        . $href
                        . '" title="'
                        . $title
-                       . '" id="ee-duplicate-event-button" class="button button-small"  value="duplicate_event">'
+                       . '" id="ee-duplicate-event-button" class="button button--small button--secondary"  value="duplicate_event">'
                        . $title
                        . '</a>';
         }
@@ -435,17 +434,21 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 $event->ID()
             )
         ) {
-            $reports_query_args = [
-                'action' => 'reports',
-                'EVT_ID' => $event->ID(),
-            ];
-            $reports_link       = EE_Admin_Page::add_query_args_and_nonce($reports_query_args, REG_ADMIN_URL);
-            $action_links[]     = '<a href="'
-                                  . $reports_link
-                                  . '" title="'
-                                  . esc_attr__('View Report', 'event_espresso')
-                                  . '"><div class="dashicons dashicons-chart-bar"></div></a>'
-                                  . "\n\t";
+            $reports_link = EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action' => 'reports',
+                    'EVT_ID' => $event->ID(),
+                ],
+                REG_ADMIN_URL
+            );
+
+            $action_links[]     = '
+                <a href="' . $reports_link . '" 
+                    aria-label="' . esc_attr__('View Report', 'event_espresso') . '" 
+                    class="ee-aria-tooltip button button--icon-only"
+                >
+                    <span class="dashicons dashicons-chart-bar"></span>
+                </a>';
         }
         if (EE_Registry::instance()->CAP->current_user_can('ee_read_global_messages', 'view_filtered_messages')) {
             EE_Registry::instance()->load_helper('MSG_Template');
@@ -920,7 +923,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             ! $this->admin_config->useAdvancedEditor()
             || ! $this->feature->allowed('use_reg_options_meta_box')
         ) {
-            add_meta_box(
+            $this->addMetaBox(
                 'espresso_event_editor_event_options',
                 esc_html__('Event Registration Options', 'event_espresso'),
                 [$this, 'registration_options_meta_box'],
@@ -1065,7 +1068,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             'inactive' => esc_html__('Inactive', 'event_espresso'),
         ];
 
-        return EEH_Form_Fields::select_input($select_name, $values, $current_value, '', 'wide');
+        return EEH_Form_Fields::select_input($select_name, $values, $current_value);
     }
 
 
@@ -1087,7 +1090,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             $values[ $venue->ID() ] = $venue->name();
         }
 
-        return EEH_Form_Fields::select_input('venue', $values, $current_value, '', 'wide');
+        return EEH_Form_Fields::select_input('venue', $values, $current_value);
     }
 
 

@@ -10,9 +10,6 @@
  */
 interface EEI_Repository extends EEI_Collection
 {
-
-
-
     /**
      * persist
      *

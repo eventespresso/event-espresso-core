@@ -14,7 +14,6 @@
  */
 class EE_Line_Item_Display
 {
-
     private $strategy = null;
 
 

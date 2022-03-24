@@ -20,7 +20,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 final class EE_Admin implements InterminableInterface
 {
-
     /**
      * @var EE_Admin $_instance
      */
@@ -405,6 +404,13 @@ final class EE_Admin implements InterminableInterface
             'nav-menus',
             'side',
             'core'
+        );
+        add_filter(
+            "postbox_classes_nav-menus_add-extra-nav-menu-pages",
+            function ($classes) {
+                array_push($classes, 'ee-admin-container');
+                return $classes;
+            }
         );
     }
 

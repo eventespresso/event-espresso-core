@@ -15,8 +15,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data
 {
-
-
     /**
      * Constructor.
      *

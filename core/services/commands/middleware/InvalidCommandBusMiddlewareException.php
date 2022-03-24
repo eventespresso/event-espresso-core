@@ -14,8 +14,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class InvalidCommandBusMiddlewareException extends InvalidDataTypeException
 {
-
-
     /**
      * @access public
      * @param  mixed     $command_bus_middleware_object

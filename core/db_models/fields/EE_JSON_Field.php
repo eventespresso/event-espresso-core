@@ -4,7 +4,6 @@ use EventEspresso\core\services\json\JsonDataHandler;
 
 class EE_JSON_Field extends EE_Model_Field_Base
 {
-
     /**
      * @var JsonDataHandler
      */

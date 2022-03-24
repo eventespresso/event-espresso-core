@@ -17,7 +17,6 @@ use EventEspresso\core\services\database\TableManager;
  */
 class EE_DMS_Unknown_1_0_0 extends EE_Data_Migration_Script_Base
 {
-
     /**
      * Returns whether or not this data migration script can operate on the given version of the database.
      * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and

@@ -14,8 +14,6 @@
  */
 abstract class EE_Line_Item_Filter_Base implements EE_Line_Item_Filter
 {
-
-
     /**
      * process
      *

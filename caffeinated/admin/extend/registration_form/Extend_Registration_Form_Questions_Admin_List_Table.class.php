@@ -10,129 +10,77 @@
  * @package         Extend_Registration_Form_Questions_Admin_List_Table
  * @subpackage      caffeinated/admin/extend/registration_form/Extend_Registration_Form_Questions_Admin_List_Table.class.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_Form_Questions_Admin_List_Table
 {
-
-    public function __construct($admin_page)
+    /**
+     * @param EE_Question $question
+     * @param bool        $prep_content
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_display_text(EE_Question $question, bool $prep_content = true): string
     {
-        parent::__construct($admin_page);
-    }
+        $actions         = [];
 
-    public function column_display_text(EE_Question $item)
-    {
-        $system_question = $item->is_system_question();
-        $actions = array();
-
-        if (! defined('REG_ADMIN_URL')) {
-            define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
-        }
-
-        $edit_query_args = array(
-            'action' => 'edit_question',
-            'QST_ID' => $item->ID(),
-        );
-
-        $trash_query_args = array(
-            'action' => 'trash_question',
-            'QST_ID' => $item->ID(),
-        );
-
-        $restore_query_args = array(
-            'action' => 'restore_question',
-            'QST_ID' => $item->ID(),
-        );
-
-        $delete_query_args = array(
-            'action' => 'delete_questions',
-            'QST_ID' => $item->ID(),
-        );
-
-        $duplicate_query_args = array(
-            'action' => 'duplicate_question',
-            'QST_ID' => $item->ID(),
-        );
-
-        $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_FORMS_ADMIN_URL);
-        $trash_link = EE_Admin_Page::add_query_args_and_nonce($trash_query_args, EE_FORMS_ADMIN_URL);
-        $restore_link = EE_Admin_Page::add_query_args_and_nonce($restore_query_args, EE_FORMS_ADMIN_URL);
-        $delete_link = EE_Admin_Page::add_query_args_and_nonce($delete_query_args, EE_FORMS_ADMIN_URL);
-        $duplicate_link = EE_Admin_Page::add_query_args_and_nonce($duplicate_query_args, EE_FORMS_ADMIN_URL);
-
-        if (
-            EE_Registry::instance()->CAP->current_user_can(
-                'ee_edit_question',
-                'espresso_registration_form_edit_question',
-                $item->ID()
-            )
-        ) {
-            $actions = array(
-                'edit' => '<a href="' . $edit_link . '" title="'
-                          . esc_html__('Edit Question', 'event_espresso') . '">'
-                          . esc_html__('Edit', 'event_espresso') . '</a>',
+        if ($this->caps_handler->userCanEditQuestion($question)) {
+            $actions['edit'] = $this->getActionLink(
+                $this->getActionUrl($question, self::ACTION_EDIT),
+                esc_html__('Edit', 'event_espresso'),
+                esc_attr__('Edit Question', 'event_espresso')
             );
         }
 
         if (
-            ! $system_question
-            && $this->_view != 'trash'
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_question',
-                'espresso_registration_form_trash_question',
-                $item->ID()
-            )
+            $this->_view != 'trash'
+            && ! $question->is_system_question()
+            && $this->caps_handler->userCanTrashQuestion($question)
         ) {
-                $actions['delete'] = '<a href="' . $trash_link . '" title="'
-                                     . esc_html__('Trash Question', 'event_espresso') . '">'
-                                     . esc_html__('Trash', 'event_espresso') . '</a>';
+            $actions['delete'] = $this->getActionLink(
+                $this->getActionUrl($question, self::ACTION_TRASH),
+                esc_html__('Trash', 'event_espresso'),
+                esc_attr__('Trash Question', 'event_espresso')
+            );
         }
 
         if ($this->_view == 'trash') {
-            if (
-                EE_Registry::instance()->CAP->current_user_can(
-                    'ee_delete_question',
-                    'espresso_registration_form_restore_question',
-                    $item->ID()
-                )
-            ) {
-                $actions['restore'] = '<a href="' . $restore_link . '" title="'
-                                      . esc_html__('Restore Question', 'event_espresso') . '">'
-                                      . esc_html__('Restore', 'event_espresso') . '</a>';
+            if ($this->caps_handler->userCanRestoreQuestion($question)) {
+                $actions['restore'] = $this->getActionLink(
+                    $this->getActionUrl($question, self::ACTION_RESTORE),
+                    esc_html__('Restore', 'event_espresso'),
+                    esc_attr__('Restore Question', 'event_espresso')
+                );
             }
             if (
-                $item->count_related('Answer') === 0
-                && EE_Registry::instance()->CAP->current_user_can(
-                    'ee_delete_question',
-                    'espresso_registration_form_delete_questions',
-                    $item->ID()
-                )
+                $question->count_related('Answer') === 0
+                && $this->caps_handler->userCanDeleteQuestion($question)
             ) {
-                    $actions['delete'] = '<a href="' . $delete_link . '" title="'
-                                         . esc_html__('Delete Question Permanently', 'event_espresso') . '">'
-                                         . esc_html__('Delete Permanently', 'event_espresso') . '</a>';
+                $actions['delete'] = $this->getActionLink(
+                    $this->getActionUrl($question, self::ACTION_DELETE),
+                    esc_html__('Delete Permanently', 'event_espresso'),
+                    esc_attr__('Delete Question Permanently', 'event_espresso')
+                );
             }
         }
-        if (
-            EE_Registry::instance()->CAP->current_user_can(
-                'ee_edit_questions',
-                'espresso_registration_form_edit_question'
-            )
-        ) {
-            $actions['duplicate'] = '<a href="' . $duplicate_link . '" title="'
-                                    . esc_html__('Duplicate Question', 'event_espresso') . '">'
-                                    . esc_html__('Duplicate', 'event_espresso') . '</a>';
+        if ($this->caps_handler->userCanEditQuestion($question)) {
+            $actions['duplicate'] = $this->getActionLink(
+                $this->getActionUrl($question, self::ACTION_COPY),
+                esc_html__('Duplicate', 'event_espresso'),
+                esc_attr__('Duplicate Question', 'event_espresso')
+            );
         }
 
-        $content = EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_question',
-            'espresso_registration_form_edit_question',
-            $item->ID()
-        )
-            ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>'
-            : $item->display_text();
+        $content = $this->caps_handler->userCanEditQuestion($question)
+            ? $this->getActionLink(
+                $this->getActionUrl($question, self::ACTION_EDIT),
+                $prep_content ? $question->display_text() : $question->admin_label(),
+                esc_attr__('Edit Question', 'event_espresso'),
+                'row-title'
+            )
+            : $question->display_text();
         $content .= $this->row_actions($actions);
-        return $content;
+
+        return $prep_content ? $this->columnContent('display_text', $content) : $content;
     }
 }

@@ -11,7 +11,6 @@
  */
 class EEM_State extends EEM_Base
 {
-
     // private instance of the Attendee object
     protected static $_instance = null;
     // array of all states

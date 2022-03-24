@@ -17,8 +17,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMapInterface, RequiresDomainInterface
 {
-
-
     /**
      * prefix to be added onto an addon's plugin slug to make a wp option name
      * which will be used to store the plugin's activation history

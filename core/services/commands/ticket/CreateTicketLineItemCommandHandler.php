@@ -20,8 +20,6 @@ use EventEspresso\core\services\commands\CommandInterface;
  */
 class CreateTicketLineItemCommandHandler extends CommandHandler
 {
-
-
     /**
      * @var CreateTicketLineItemService $factory
      */

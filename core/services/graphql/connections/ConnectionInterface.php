@@ -14,7 +14,6 @@ use EE_Base_Class;
  */
 interface ConnectionInterface
 {
-
     /**
      * @return array
      * @since $VID:$

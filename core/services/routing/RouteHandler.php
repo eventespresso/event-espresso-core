@@ -20,7 +20,6 @@ use Exception;
  */
 class RouteHandler
 {
-
     /**
      * @var JsonDataNodeHandler $data_node_handler
      */

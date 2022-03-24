@@ -19,7 +19,6 @@ use ReflectionException;
  */
 class ModelNameEnum extends EnumBase
 {
-
     /**
      * ModelNameEnum constructor.
      */

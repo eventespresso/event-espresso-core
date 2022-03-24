@@ -10,7 +10,6 @@
  */
 class Messages_Template_List_Table extends EE_Admin_List_Table
 {
-
     /**
      * @var Messages_Admin_Page
      */
@@ -61,6 +60,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
             // 'cb' => '<input type="checkbox" />', //no deleting default (global) templates!
             'message_type' => esc_html__('Message Type', 'event_espresso'),
             'messenger'    => esc_html__('Messenger', 'event_espresso'),
+            'recipients'   => esc_html__('Recipients', 'event_espresso'),
             'description'  => esc_html__('Description', 'event_espresso'),
         ];
 
@@ -179,15 +179,25 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     {
         // Return the name contents
         return sprintf(
-            '%1$s <span style="color:silver">(id:%2$s)</span><br />%3$s%4$s',
+            '%1$s <span style="color:silver">(id:%2$s)</span>',
             /* $1%s */
             ucwords($item->messenger_obj()->label['singular']),
             /* $2%s */
-            $item->GRP_ID(),
-            /* %4$s */
-            $this->_get_context_links($item),
-            $this->row_actions($this->_get_actions_for_messenger_column($item))
+            $item->GRP_ID()
         );
+    }
+
+
+    /**
+     * @param EE_Message_Template_Group $item
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function column_recipients($item)
+    {
+        // Return the name contents
+        return $this->_get_context_links($item) . $this->row_actions($this->_get_actions_for_messenger_column($item));
     }
 
 
@@ -326,7 +336,6 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
             return '';
         }
         // we want to display the contexts in here, so we need to set them up
-        $c_label           = $item->context_label();
         $c_configs         = $item->contexts_config();
         $context_array     = [];
         $context_templates = $item->context_templates();
@@ -339,11 +348,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
                                || ! $item->is_context_active($context)
                 ? ' mtp-inactive'
                 : '';
-            $context_title   = sprintf(
-            /* translators: Placeholder represents the context label. Example "Edit Event Admin" */
-                esc_html__('Edit %1$s', 'event_espresso'),
-                ucwords($c_configs[ $context ]['label'])
-            );
+            $context_title   = ucwords($c_configs[ $context ]['label']);
             $edit_link       = EE_Admin_Page::add_query_args_and_nonce(
                 [
                     'action'  => 'edit_message_template',
@@ -352,14 +357,18 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
                 ],
                 EE_MSG_ADMIN_URL
             );
+            $label = sprintf(
+                esc_attr__('Edit message content for the %1$s', 'event_espresso'),
+                $context_title
+            );
             $context_array[] = '<a href="' . $edit_link . '"'
-                               . ' class="' . "{$item->message_type()}-{$context}-edit-link{$inactive_class}" . '"'
-                               . ' title="' . esc_attr__('Edit Context', 'event_espresso') . '">'
+                               . ' class="' . "{$item->message_type()}-{$context}-edit-link{$inactive_class}" . ' ee-aria-tooltip"'
+                               . ' aria-label="' . $label . '">'
                                . $context_title
                                . '</a>';
         }
 
-        return sprintf('<strong>%s:</strong> ', ucwords($c_label['plural'])) . implode(' | ', $context_array);
+        return implode(' | ', $context_array);
     }
 
 

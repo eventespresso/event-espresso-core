@@ -6,7 +6,6 @@ use EE_Dependency_Map;
 
 abstract class DependencyHandler implements DependencyHandlerInterface
 {
-
     /**
      * @var EE_Dependency_Map $dependency_map
      */

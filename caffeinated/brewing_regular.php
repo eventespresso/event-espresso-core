@@ -29,7 +29,6 @@ define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods/');
  */
 class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 {
-
     /**
      * @var TableAnalysis $table_analysis
      */

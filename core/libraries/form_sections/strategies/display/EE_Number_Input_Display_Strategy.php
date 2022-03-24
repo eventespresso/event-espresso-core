@@ -10,7 +10,6 @@
  */
 class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
 {
-
     /**
      * minimum value for number field
      *

@@ -1,5 +1,48 @@
-.ee-text-links li {
-	display: inline-block;
-	padding-right: 10px;
+.ee-text-links  {
+	align-items: center;
+	display: inline-flex;
+	flex-flow: row wrap;
+	justify-content: flex-start;
+	padding-block-start: 1.5rem;
+	padding-block-end: 1rem;
 }
-.ee-text-link { outline:none !important; }
+
+.ee-text-links .ee-text-link,
+.ee-text-links .ee-text-link-sep {
+	margin-block: .5rem;
+	margin-inline-end: 1rem;
+}
+
+.ee-text-links .ee-text-link {
+	align-items: center;
+	background-color: var(--ee-btn-secondary);
+	border-radius: 0.25rem;
+	border: 2px solid var(--ee-btn-secondary-focus);
+	color: var(--ee-font-color);
+	display: inline-flex;
+	font-size: 1rem;
+	height: 2rem;
+	justify-content: center;
+	line-height: 1;
+	outline: none !important;
+	padding-inline-end: 1.25rem;
+	padding-inline-start: 0.75rem;
+	text-decoration: none;
+    transition: all 200ms ease-in-out;
+}
+
+.ee-text-links .ee-text-link .dashicons {
+	margin-inline-end: 0.5rem;
+	position: relative;
+	top: 1px;
+    transition: all 0ms ease-in-out;
+}
+
+.ee-text-links .ee-text-link:hover {
+	background-color: var(--ee-btn-primary);
+	border-color: var(--ee-btn-primary-hover);
+    color:  var(--ee-color-white);
+}
+.ee-text-links .ee-text-link:focus {
+	border-color: var(--ee-btn-primary-focus);
+}

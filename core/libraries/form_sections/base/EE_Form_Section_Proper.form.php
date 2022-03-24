@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 {
-
     const SUBMITTED_FORM_DATA_SSN_KEY = 'submitted_form_data';
 
     /**

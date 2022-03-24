@@ -18,8 +18,6 @@ use Exception;
  */
 class RootQueryTicketsConnection extends AbstractRootQueryConnection
 {
-
-
     /**
      * TicketConnection constructor.
      *
