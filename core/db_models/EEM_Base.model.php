@@ -5621,11 +5621,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function item_name($quantity = 1): string
     {
-        // because WordPress.WP.I18n.NonSingularStringLiteralSingle demands separate variables
-        $singular = $this->singular_item;
-        $plural = $this->plural_item;
         $quantity = floor($quantity);
-        return _n($singular, $plural, $quantity, 'event_espresso');
+        return apply_filters(
+            'FHEE__EEM_Base__item_name__plural_or_singular',
+            $quantity > 1 ? $this->plural_item : $this->singular_item,
+            $quantity,
+            $this->plural_item,
+            $this->singular_item
+        );
     }
 
 
