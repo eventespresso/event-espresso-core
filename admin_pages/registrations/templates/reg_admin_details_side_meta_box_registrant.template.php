@@ -25,19 +25,19 @@ $avatar  = get_avatar_url($email);
     <?php endif; ?>
     <div class='admin-side-mbox-text-dv'>
         <div class="ee-admin-attendee-name">
-            <?php esc_html_e($attendee_full_name); ?>
+            <?php echo esc_html($attendee_full_name); ?>
         </div>
         <div class='ee-admin-attendee-email'>
             <div class='ee-admin-contact-details-with-dashicon'>
                 <span class='dashicons dashicons-email'></span>
-                <a href="mailto:<?php echo esc_attr($email); ?>"><?php esc_html_e($email); ?></a>
+                <a href="mailto:<?php echo esc_attr($email); ?>"><?php echo esc_html($email); ?></a>
             </div>
         </div>
         <?php if (! empty($phone)) : ?>
             <div class='ee-admin-attendee-phone'>
                 <div class='ee-admin-contact-details-with-dashicon'>
                     <span class='dashicons dashicons-phone'></span>
-                    <a href="tel:<?php echo esc_attr($phone); ?>"><?php esc_html_e($phone); ?></a>
+                    <a href="tel:<?php echo esc_attr($phone); ?>"><?php echo esc_html($phone); ?></a>
                 </div>
             </div>
         <?php endif; ?>
@@ -66,7 +66,7 @@ if (
            title="<?php echo esc_attr($att_edit_title); ?>"
         >
             <span class="dashicons dashicons-groups"></span>
-            <?php esc_html_e($att_edit_label); ?>
+            <?php echo esc_html($att_edit_label); ?>
         </a>
 
     <?php if (! empty($create_link)) : ?>
@@ -77,7 +77,7 @@ if (
            ); ?>"
         >
             <span class="ee-icon ee-icon-user-add-new"></span>
-            <?php esc_html_e($create_label); ?>
+            <?php echo esc_html($create_label); ?>
         </a>
     <?php endif; ?>
 

@@ -22,12 +22,12 @@ $avatar = get_avatar_url($prime_reg_email);
 <?php else : ?>
     <?php if (! empty($avatar)) : ?>
     <div class="ee-admin-attendee-avatar">
-        <img alt="profile pic for <?php esc_html_e($attendee_full_name); ?>" src="<?php echo $avatar; ?>" />
+        <img alt="profile pic for <?php echo esc_html($attendee_full_name); ?>" src="<?php echo $avatar; ?>" />
     </div>
     <?php endif; ?>
     <div class='admin-side-mbox-text-dv'>
         <div class="ee-admin-attendee-name">
-            <?php esc_html_e($attendee_full_name); ?>
+            <?php echo esc_html($attendee_full_name); ?>
         </div>
         <div class='ee-admin-attendee-email'>
             <div class='ee-admin-contact-details-with-dashicon'>
@@ -42,7 +42,7 @@ $avatar = get_avatar_url($prime_reg_email);
                 <div class='ee-admin-contact-details-with-dashicon'>
                     <span class='dashicons dashicons-phone'></span>
                     <a href="tel:<?php echo esc_attr($prime_reg_phone); ?>">
-                        <?php esc_html_e($prime_reg_phone); ?>
+                        <?php echo esc_html($prime_reg_phone); ?>
                     </a>
                 </div>
             </div>
