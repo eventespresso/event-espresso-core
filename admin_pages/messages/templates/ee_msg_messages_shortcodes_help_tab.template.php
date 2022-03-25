@@ -1,7 +1,11 @@
 <?php
+
 /**
  * @var string[] $shortcodes
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
     <p>
@@ -17,5 +21,5 @@
 <?php
 foreach ($shortcodes as $name => $description) : ?>
     <p><strong><?php echo esc_html($name); ?></strong></p>
-    <p><?php echo $description; // already escaped ?></p>
+    <p><?php echo wp_kses($description, AllowedTags::getWithFormTags()); ?></p>
 <?php endforeach; ?>

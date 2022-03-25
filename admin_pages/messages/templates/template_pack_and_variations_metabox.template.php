@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This template is responsible for the template pack and variations metabox that appears on the Message Templates
  * editor.
@@ -11,21 +12,24 @@
  * @var string $template_pack_description      The description for the template packs for the given messenger.
  * @var string $template_variation_description The description for the template variations for the given messenger.
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <div id="template-variations-selectors">
     <label for="MTP_template_pack">
-        <?php echo $template_pack_label; // already escaped ?>:&nbsp;
+        <?php echo wp_kses($template_pack_label, AllowedTags::getAllowedTags()); ?>:&nbsp;
     </label>
-    <?php echo $template_packs_selector; // already escaped ?>
+    <?php echo wp_kses($template_packs_selector, AllowedTags::getWithFormTags()); ?>
     <span class="spinner"></span>
     <p class="description">
-        <?php echo $template_pack_description; // already escaped ?>
+        <?php echo wp_kses($template_pack_description, AllowedTags::getAllowedTags()); ?>
     <p>
         <label for="MTP_template_variation">
-            <?php echo $template_variation_label; // already escaped ?>:&nbsp;
+            <?php echo wp_kses($template_variation_label, AllowedTags::getAllowedTags()); ?>:&nbsp;
         </label>
-        <?php echo $variations_selector; // already escaped ?>
+        <?php echo wp_kses($variations_selector, AllowedTags::getWithFormTags()); ?>
     <p class="description">
-        <?php echo $template_variation_description; // already escaped ?>
+        <?php echo wp_kses($template_variation_description, AllowedTags::getWithFormTags()); ?>
     </p>
 </div>

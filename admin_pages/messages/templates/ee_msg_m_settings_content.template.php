@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var bool       $on_off_status
  * @var string     $description
@@ -9,6 +10,9 @@
  * @var string     $template_form_fields
  * @var string[][] $hidden_fields
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div class="messenger-settings-content">
@@ -20,7 +24,7 @@
             </span>
         </div>
         <span id="on-off-nonce-<?php echo esc_attr($messenger); ?>" class="hidden">
-            <?php echo $nonce; // already escaped ?>
+            <?php echo wp_kses($nonce, AllowedTags::getAllowedTags()); ?>
         </span>
         <div class="switch">
             <?php $checked = $on_off_status ? 'checked' : ''; ?>
@@ -32,17 +36,17 @@
         </div>
     </div> <!-- end .activate_messages_on_off_toggle_container -->
     <div class="messenger-description">
-        <p><?php echo $description; // already escaped ?></p>
+        <p><?php echo wp_kses($description, AllowedTags::getAllowedTags()); ?></p>
     </div>
     <div class="messenger-settings<?php echo esc_attr($show_hide_edit_form); ?>">
         <span id="has_form_class" class="hidden">
             <?php echo trim($show_hide_edit_form); // already escaped ?>
         </span>
         <form method="POST" action="" class="mt-settings-form">
-            <?php echo $template_form_fields; // already escaped ?>
+            <?php echo wp_kses($template_form_fields, AllowedTags::getWithFormTags()); ?>
             <?php
             foreach ($hidden_fields as $name => $field) {
-                echo $field['field']; // already escaped
+                echo wp_kses($field['field'], AllowedTags::getWithFormTags());
             } ?>
             <input type="submit"
                    value="<?php esc_attr_e('Submit', 'event_espresso'); ?>"
