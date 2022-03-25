@@ -5,7 +5,7 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'f4a6e860014591bf988967cadebdda77ad3c7d77',
+        'reference' => '9b8d27b35df09641c8d8cf3e54685d8fe3611e6e',
         'name' => 'eventespresso/event-espresso-core',
         'dev' => true,
     ),
@@ -45,7 +45,7 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'f4a6e860014591bf988967cadebdda77ad3c7d77',
+            'reference' => '9b8d27b35df09641c8d8cf3e54685d8fe3611e6e',
             'dev_requirement' => false,
         ),
         'myclabs/deep-copy' => array(
