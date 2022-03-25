@@ -298,7 +298,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function requestUri($relativeToWpRoot = false)
     {
-        return $this->server_params->requestUri();
+        return $this->server_params->requestUri($relativeToWpRoot);
     }
 
 
