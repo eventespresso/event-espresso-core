@@ -1436,8 +1436,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $this->_add_prices_to_ticket($prices_data, $ticket, $update_prices);
         }
         // however now we need to handle permanently deleting tickets via the ui.
-        //  Keep in mind that the ui does not allow deleting/archiving tickets that have ticket sold.
-        //  However, it does allow for deleting tickets that have no tickets sold,
+        // Keep in mind that the ui does not allow deleting/archiving tickets that have ticket sold.
+        // However, it does allow for deleting tickets that have no tickets sold,
         // in which case we want to get rid of permanently because there is no need to save in db.
         $old_tickets     = isset($old_tickets[0]) && $old_tickets[0] === '' ? [] : $old_tickets;
         $tickets_removed = array_diff($old_tickets, array_keys($saved_tickets));

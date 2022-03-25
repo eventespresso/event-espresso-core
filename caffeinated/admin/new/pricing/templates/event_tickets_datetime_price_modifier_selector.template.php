@@ -26,14 +26,16 @@
            value="<?php echo absint($selected_price_type_id); ?>">
 <?php endif; ?>
 
-<div class="ee-price-type-option-info hidden">
-    <?php echo $price_option_spans; ?>
-</div>
-<input type="hidden"
-       name="ee_price_selected[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>]"
+    <div class="ee-price-type-option-info hidden">
+        <?php echo $price_option_spans; ?>
+    </div>
+    <input type="hidden"
+       name="ee_price_selected[<?php echo esc_attr($tkt_row); ?>][<?php echo absint($PRC_order); ?>]"
        class="ee-price-selected-operator"
-       value="<?php echo esc_attr($price_selected_operator); ?>">
-<input type="hidden"
-       name="ee_price_selected[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>]"
+       value="<?php echo esc_attr($price_selected_operator); ?>"
+    >
+    <input type="hidden"
+       name="ee_price_selected[<?php echo esc_attr($tkt_row); ?>][<?php echo absint($PRC_order); ?>]"
        class="ee-price-selected-is-percent"
-       value="<?php echo esc_attr($price_selected_is_percent); ?>">
+       value="<?php echo esc_attr($price_selected_is_percent); ?>"
+    >

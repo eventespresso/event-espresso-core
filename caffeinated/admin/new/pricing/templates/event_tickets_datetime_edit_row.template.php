@@ -64,14 +64,14 @@
     <?php endif; ?>
 
     <td>
-        <div class="ee-editing-container <?php echo sanitize_html_class($edit_dtt_expanded); ?>">
+        <div class="ee-editing-container <?php echo esc_attr($edit_dtt_expanded); ?>">
             <span data-datetime-row="<?php echo absint($dtt_row); ?>" data-context="datetime"
                   class="ticket-icon dashicons dashicons-admin-generic clickable"></span>
         </div>
         <span data-context="datetime" data-datetime-row="<?php echo absint($dtt_row); ?>"
-              class="<?php echo sanitize_html_class($clone_icon); ?> clickable"></span>
+              class="<?php echo esc_attr($clone_icon); ?> clickable"></span>
         <span data-context="datetime" data-datetime-row="<?php echo absint($dtt_row); ?>"
-              class="<?php echo sanitize_html_class($trash_icon); ?> clickable"<?php echo $show_trash; ?>></span>
+              class="<?php echo esc_attr($trash_icon); ?> clickable"<?php echo $show_trash; ?>></span>
         <?php if ($reg_list_url !== '') : ?>
             <a href="<?php echo esc_url_raw($reg_list_url); ?>"
                title="<?php esc_html_e('View registrations for this datetime.', 'event_espresso'); ?>"
