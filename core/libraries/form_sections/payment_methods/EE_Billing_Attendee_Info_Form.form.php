@@ -194,7 +194,7 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
      * @return EE_Attendee
      * @throws EE_Error
      */
-    public function create_attendee_from_billing_form_data(): EE_Attendee
+    public function create_attendee_from_billing_form_data()
     {
         // grab billing form data
         $data = $this->valid_data();
