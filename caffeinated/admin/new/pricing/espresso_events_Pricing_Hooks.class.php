@@ -443,11 +443,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
     protected function _update_tickets($event, $saved_datetimes, $data)
     {
         $new_tkt = null;
-        $new_default = null;
         // stripslashes because WP filtered the $_POST ($data) array to add slashes
         $data = stripslashes_deep($data);
-        $timezone = isset($data['timezone_string']) ? $data['timezone_string'] : null;
-        $saved_tickets = $datetimes_on_existing = array();
+        $timezone = $data['timezone_string'] ?? null;
+        $saved_tickets = array();
         $old_tickets = isset($data['ticket_IDs']) ? explode(',', $data['ticket_IDs']) : array();
         if (empty($data['edit_tickets']) || ! is_array($data['edit_tickets'])) {
             throw new InvalidArgumentException(
@@ -486,9 +485,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             $ticket_price = $ticket_price === 0 && $base_price !== 0
                 ? $base_price
                 : $ticket_price;
-            $base_price_id = isset($tkt['TKT_base_price_ID'])
-                ? $tkt['TKT_base_price_ID']
-                : 0;
+            $base_price_id = $tkt['TKT_base_price_ID'] ?? 0;
             $price_rows = is_array($data['edit_prices']) && isset($data['edit_prices'][ $row ])
                 ? $data['edit_prices'][ $row ]
                 : array();
@@ -527,7 +524,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 'TKT_min'         => empty($tkt['TKT_min']) ? 0 : $tkt['TKT_min'],
                 'TKT_max'         => empty($tkt['TKT_max']) ? EE_INF : $tkt['TKT_max'],
                 'TKT_row'         => $row,
-                'TKT_order'       => isset($tkt['TKT_order']) ? $tkt['TKT_order'] : 0,
+                'TKT_order'       => $tkt['TKT_order'] ?? 0,
                 'TKT_taxable'     => ! empty($tkt['TKT_taxable']) ? 1 : 0,
                 'TKT_required'    => ! empty($tkt['TKT_required']) ? 1 : 0,
                 'TKT_price'       => $ticket_price,
