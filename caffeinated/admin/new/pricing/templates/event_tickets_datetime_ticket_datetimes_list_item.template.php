@@ -10,8 +10,6 @@
  * @var string $DTT_name;
  * @var string $tkt_status_class;
  */
-$dtt_row = absint($dtt_row);
-$tkt_row = absint($tkt_row);
 ?>
 
 <li class="datetime-ticket clickable<?php echo $ticket_datetime_selected; ?><?php echo $tkt_status_class; ?>"
