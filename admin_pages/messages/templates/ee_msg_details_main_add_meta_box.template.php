@@ -17,7 +17,15 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
     <h4 class="admin-primary-mbox-h4">
-        <?php echo ($event_name ? esc_html($event_name . ' Custom Template') : ''); ?>
+        <?php
+        echo $event_name
+            ? sprintf(
+            /* translators: %s: event name */
+                esc_html__('%1$s Custom Template', 'event_espresso'),
+                $event_name
+            )
+            : '';
+        ?>
     </h4>
     <p><?php echo wp_kses($action_message, AllowedTags::getWithFormTags()); ?></p>
 
@@ -33,8 +41,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <!--active_messengers -->
         <label for="MTP-messenger"><?php esc_html_e('Select Messenger', 'event_espresso'); ?></label>
         <select name="MTP_messenger" id="MTP-messenger">
-            <?php
-            foreach (array_keys($active_messengers) as $messenger) : ?>
+            <?php foreach (array_keys($active_messengers) as $messenger) : ?>
                 <option value="<?php echo esc_attr($messenger); ?>">
                     <?php echo esc_html(ucwords(str_replace('_', ' ', $messenger))); ?>
                 </option>

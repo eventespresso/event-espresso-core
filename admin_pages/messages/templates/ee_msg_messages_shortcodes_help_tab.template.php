@@ -22,4 +22,4 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 foreach ($shortcodes as $name => $description) : ?>
     <p><strong><?php echo esc_html($name); ?></strong></p>
     <p><?php echo wp_kses($description, AllowedTags::getWithFormTags()); ?></p>
-<?php endforeach; ?>
+<?php endforeach;

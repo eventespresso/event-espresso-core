@@ -3722,10 +3722,13 @@ class Messages_Admin_Page extends EE_Admin_Page
     public function global_messages_settings_metabox_content()
     {
         $form = $this->_generate_global_settings_form();
-        echo wp_kses($form->form_open(
-            $this->add_query_args_and_nonce(['action' => 'update_global_settings'], EE_MSG_ADMIN_URL),
-            'POST'
-        ), AllowedTags::getWithFormTags());
+        echo wp_kses(
+            $form->form_open(
+                $this->add_query_args_and_nonce(['action' => 'update_global_settings'], EE_MSG_ADMIN_URL),
+                'POST'
+            ),
+            AllowedTags::getWithFormTags()
+        );
         echo wp_kses($form->get_html(), AllowedTags::getWithFormTags());
         echo wp_kses($form->form_close(), AllowedTags::getWithFormTags());
     }

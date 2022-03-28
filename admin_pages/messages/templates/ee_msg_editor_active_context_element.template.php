@@ -43,7 +43,11 @@ $context = esc_attr($context);
             <?php echo wp_kses($nonce, AllowedTags::getWithFormTags()); ?>
         </span>
         <span class="ee-on-off-toggle-label">
-            <?php echo ($is_active ? wp_kses($active_message, AllowedTags::getAllowedTags()) : wp_kses($inactive_message, AllowedTags::getAllowedTags())); ?>
+            <?php
+            echo $is_active
+                ? wp_kses($active_message, AllowedTags::getAllowedTags())
+                : wp_kses($inactive_message, AllowedTags::getAllowedTags());
+            ?>
         </span>
         <div class="hidden js-data">
             <span class="ee-active-message"><?php echo wp_kses($active_message, AllowedTags::getAllowedTags()); ?></span>

@@ -162,7 +162,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
                 ),
                 '<strong>',
                 '</strong>',
-                '<a href="' . esc_url($msg_activate_url) . '">',
+                '<a href="' . esc_url_raw($msg_activate_url) . '">',
                 '</a>'
             );
             $error_content    = '<div class="error"><p>' . $error_msg . '</p></div>';
@@ -192,14 +192,14 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             }
         }
 
-
         // we want this to be tabbed content so let's use the EEH_Tabbed_Content::display helper.
         $tabbed_content = EEH_Tabbed_Content::display($tabs);
         if ($tabbed_content instanceof WP_Error) {
             $tabbed_content = $tabbed_content->get_error_message();
         }
 
-        $notices = '<div id="espresso-ajax-loading" class="ajax-loader-grey">
+        $notices = '
+        <div id="espresso-ajax-loading" class="ajax-loader-grey">
             <span class="ee-spinner ee-spin"></span>
             <span class="hidden">' . esc_html__('loading...', 'event_espresso') . '</span>
         </div>
