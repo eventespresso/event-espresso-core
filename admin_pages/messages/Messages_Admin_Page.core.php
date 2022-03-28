@@ -3797,7 +3797,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                         'update_settings'             => new EE_Submit_Input(
                             [
                                 'default'         => esc_html__('Update', 'event_espresso'),
-                                'html_label_text' => '&nbsp',
+                                'html_label_text' => '',
                             ]
                         ),
                     ]
