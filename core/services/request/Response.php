@@ -44,6 +44,7 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     public function __construct()
     {
         $this->terminateRequest(false);
+        $this->registerValidStyles();
     }
 
 
@@ -135,5 +136,20 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     public function deactivatePlugin()
     {
         $this->deactivate_plugin = true;
+    }
+
+    /**
+     * Registers EE valid style attributes
+     */
+    public function registerValidStyles()
+    {
+        add_filter(
+            'safe_style_css',
+            function ($styles) {
+                $styles[] = 'display';
+                $styles[] = 'visibility';
+                return $styles;
+            }
+        );
     }
 }

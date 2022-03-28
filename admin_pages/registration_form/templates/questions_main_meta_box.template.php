@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int         $QST_ID
  * @var EE_Question $question
@@ -7,6 +8,8 @@
  * @var int|float   $max_max
  */
 // PARAMS THAT MUST BE PASSED ARE:
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 assert(isset($QST_ID));
 assert($question);
 assert($question instanceof EE_Question);
@@ -53,9 +56,9 @@ if ($QST_system === 'country') {
                 <tr>
                     <th>
                         <label for="QST_display_text">
-                            <?php echo $fields['QST_display_text']->get_nicename(); // already escaped ?>
+                            <?php echo wp_kses($fields['QST_display_text']->get_nicename(), AllowedTags::getAllowedTags()); ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('question_text_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('question_text_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <input class='regular-text'
@@ -70,9 +73,9 @@ if ($QST_system === 'country') {
                 <tr>
                     <th>
                         <label for="QST_admin_label">
-                            <?php echo $fields['QST_admin_label']->get_nicename(); ?>
+                            <?php echo wp_kses($fields['QST_admin_label']->get_nicename(), AllowedTags::getAllowedTags()); ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('question_label_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('question_label_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <?php
@@ -204,7 +207,7 @@ if ($QST_system === 'country') {
                             </p>
                         <?php } ?>
 
-                        <?php echo $question_type_descriptions; ?>
+                        <?php echo wp_kses($question_type_descriptions, AllowedTags::getAllowedTags()); ?>
 
                     </td>
                 </tr>

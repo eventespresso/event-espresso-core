@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Payments_Admin_Page
@@ -438,9 +439,9 @@ class Payments_Admin_Page extends EE_Admin_Page
             if ($form->form_data_present_in($this->_req_data)) {
                 $form->receive_form_submission($this->_req_data);
             }
-            echo $form->form_open() . $form->get_html_and_js() . $form->form_close(); // already escaped
+            echo wp_kses($form->form_open() . $form->get_html_and_js() . $form->form_close(), AllowedTags::getWithFormTags());
         } else {
-            echo $this->_activate_payment_method_button($payment_method)->get_html_and_js(); // already escaped
+            echo wp_kses($this->_activate_payment_method_button($payment_method)->get_html_and_js(), AllowedTags::getWithFormTags());
         }
     }
 

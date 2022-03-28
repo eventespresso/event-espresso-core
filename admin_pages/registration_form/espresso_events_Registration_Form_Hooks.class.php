@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * espresso_events_Registration_Form_Hooks
@@ -179,8 +180,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
 					</p>';
                 }
                 $html .= count($QSGs) > 10 ? '</div>' : '';
-
-                echo $html; // already escaped
+                echo wp_kses($html, AllowedTags::getWithFormTags());
             } else {
                 esc_html_e(
                     'There seems to be a problem with your questions. Please contact support@eventespresso.com',

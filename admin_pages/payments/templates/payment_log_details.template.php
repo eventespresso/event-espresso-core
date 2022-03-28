@@ -10,6 +10,9 @@
  * @var EE_Payment_Method $payment_method
  * @var EE_Transaction    $transaction
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <div class="padding">
     <table class="form-table">
@@ -62,7 +65,7 @@
                     </label>
                 </th>
                 <td>
-                    <?php echo $payment_log->get_pretty('LOG_message', 'as_table'); // already escaped ?>
+                    <?php echo wp_kses($payment_log->get_pretty('LOG_message', 'as_table'), AllowedTags::getWithFormTags()); ?>
                 </td>
             </tr>
         </tbody>
