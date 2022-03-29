@@ -180,6 +180,7 @@ jQuery(document).ready( function($) {
 				SPCO.auto_submit_gateway_form();
 				SPCO.start_registration_time_limit_countdown();
 			}
+			console.log('%c eei18n', 'color: Cyan;', eei18n);
 		},
 
 
@@ -830,7 +831,7 @@ jQuery(document).ready( function($) {
 			form_data += SPCO.additional_post_data;
 
 			console.log('%c submit_reg_form ', 'color: Yellow; font-size: 14px;');
-			console.log('%c form_data', 'color: DodgerBlue;', form_data);
+			console.log('%c form_data', 'color: DodgerBlue;', form_data.split('&'));
 
 			//console.log( '**SPCO SUBMIT REG FORM !!! ** form_data:' );
 		// alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
@@ -889,7 +890,7 @@ jQuery(document).ready( function($) {
 			form_data += SPCO.additional_post_data;
 
 			console.log('%c get_next_reg_step ', 'color: Yellow; font-size: 14px;');
-			console.log('%c form_data', 'color: DodgerBlue;', form_data);
+			console.log('%c form_data', 'color: DodgerBlue;', form_data.split('&'));
 
 			$.ajax({
 
@@ -952,7 +953,7 @@ jQuery(document).ready( function($) {
 			form_data += SPCO.additional_post_data;
 
 			console.log('%c display_payment_method ', 'color: Yellow; font-size: 14px;');
-			console.log('%c form_data', 'color: DodgerBlue;', form_data);
+			console.log('%c form_data', 'color: DodgerBlue;', form_data.split('&'));
 
 			$.ajax({
 
