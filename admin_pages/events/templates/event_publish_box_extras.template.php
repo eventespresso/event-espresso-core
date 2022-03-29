@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $approved_regs
  * @var string $event_editor_overview_add
@@ -8,6 +9,9 @@
  * @var string $view_not_approved_reg_url
  * @var string $view_pending_payment_reg_url
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <div class="misc-pub-section">
     <span class="dashicons dashicons-groups ee-icon-color-ee-green ee-icon-size-20"></span>
@@ -43,5 +47,5 @@
     <?php echo absint($not_approved_regs); ?>
 </div>
 
-<?php echo $event_editor_overview_add; ?>
+<?php echo wp_kses($event_editor_overview_add, AllowedTags::getWithFormTags()); ?>
 <br />

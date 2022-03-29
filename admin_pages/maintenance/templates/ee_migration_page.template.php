@@ -1,4 +1,5 @@
 <?php
+
 /**
  * For displaying the migration page. Does not allow the user to migrate until all known EE
  * addons are updated from PUE. Using AJAX to run the migration and update the progress bar
@@ -18,6 +19,8 @@
  * @var string                        $migration_options_html
  * @var int                           $mMode_level
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 $mMode_level = EE_Maintenance_Mode::instance()->level();
 
@@ -93,7 +96,7 @@ if ($show_backup_db_text) { ?>
 
         <?php
         if ($show_backup_db_text) {
-            echo $migration_options_html;
+            echo wp_kses($migration_options_html, AllowedTags::getAllowedTags());
         } ?>
 
         <?php
@@ -166,7 +169,7 @@ if ($show_backup_db_text) { ?>
 
     <?php
     if ($show_migration_progress) { ?>
-        <div id='migration-monitor' <?php echo $show_backup_db_text ? "style='display:none'" : '' ?>>
+        <div id='migration-monitor' <?php echo ($show_backup_db_text ? "style='display:none'" : ''); ?>>
             <?php
             if ($show_backup_db_text) { ?>
                 <p>
@@ -241,9 +244,9 @@ if ($show_backup_db_text) { ?>
                 <!-- #progress-responsive -->
 
                 <button id='start-migration' class='button-primary'>
-                    <?php echo $show_continue_current_migration_script
+                    <?php echo ($show_continue_current_migration_script
                         ? esc_html__("Continue Database Update", "event_espresso")
-                        : esc_html__("Begin Database Update", "event_espresso"); ?>
+                        : esc_html__("Begin Database Update", "event_espresso")); ?>
                 </button>
                 <br class="clear" />
 
@@ -275,9 +278,9 @@ if ($show_backup_db_text) { ?>
                                    name="maintenance_mode_level"
                                    type='radio'
                                    value="0"
-                                <?php echo $mMode_level === EE_Maintenance_Mode::level_0_not_in_maintenance
+                                <?php echo ($mMode_level === EE_Maintenance_Mode::level_0_not_in_maintenance
                                     ? 'checked="checked"'
-                                    : ''
+                                    : '');
                                 ?>
                             />
                         </td>
@@ -299,9 +302,9 @@ if ($show_backup_db_text) { ?>
                                    name="maintenance_mode_level"
                                    type='radio'
                                    value="1"
-                                <?php echo $mMode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance
+                                <?php echo ($mMode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance
                                     ? 'checked="checked"'
-                                    : ''
+                                    : '');
                                 ?>
                             />
                         </td>

@@ -1,5 +1,9 @@
-<?php //echo '<h1>' . __FILE__ . '</h1>'; ?>
-<?php global $post; ?>
+<?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
+global $post;
+?>
 <div class="venue-content">
 <?php if ( apply_filters( 'FHEE__content_espresso_venues_details_template__display_entry_meta', TRUE )): ?>
 	<div class="entry-meta">
@@ -22,12 +26,12 @@
 
 	<?php if ( $venue_phone = espresso_venue_phone( $post->ID, FALSE )) : ?>
 	<p>
-		<span class="small-text"><strong><?php esc_html_e( 'Venue Phone:', 'event_espresso' ); ?> </strong></span><?php echo $venue_phone; ?>
+		<span class="small-text"><strong><?php esc_html_e( 'Venue Phone:', 'event_espresso' ); ?> </strong></span><?php echo wp_kses($venue_phone, AllowedTags::getAllowedTags()); ?>
 	</p>
 	<?php endif; ?>
 	<?php if ( $venue_website = espresso_venue_website( $post->ID, FALSE )) : ?>
 	<p>
-		<span class="small-text"><strong><?php esc_html_e( 'Venue Website:', 'event_espresso' ); ?> </strong></span><?php echo $venue_website; ?>
+		<span class="small-text"><strong><?php esc_html_e( 'Venue Website:', 'event_espresso' ); ?> </strong></span><?php echo wp_kses($venue_website, AllowedTags::getAllowedTags()); ?>
 	</p>
 	<?php endif; ?>
 	<?php 

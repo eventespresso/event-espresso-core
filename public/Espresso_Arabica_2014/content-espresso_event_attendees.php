@@ -12,6 +12,8 @@
  * @type bool       $show_gravatar  whether to show gravatar or not.
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 $gravatar = $show_gravatar
     ? get_avatar(
         $contact->email(),
@@ -20,7 +22,7 @@ $gravatar = $show_gravatar
     : '';
 ?>
 <?php do_action( 'AHEE__content-espresso_event_attendees__before', $contact, $show_gravatar ); ?>
-<li><?php echo $gravatar . '&nbsp;' .  $contact->full_name(true); ?></li>
+<li><?php echo wp_kses($gravatar . '&nbsp;' .  $contact->full_name(true), AllowedTags::getAllowedTags()); ?></li>
 <?php do_action( 'AHEE__content-espresso_event_attendees__after', $contact, $show_gravatar ); ?>
 
 <!--<br >-->

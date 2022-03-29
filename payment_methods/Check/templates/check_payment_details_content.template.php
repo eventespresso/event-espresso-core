@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * check_payment_details_content
  *
@@ -11,8 +13,7 @@
  * @var string $payable_to
  * @var string $payment_instructions
  */
-global $allowedtags;
-
+$allowedtags = AllowedTags::getAllowedTags();
 ?>
 <div class="event-display-boxes">
     <h4 id="check_title" class="payment_type_title section-heading"><?php echo esc_html($check_title) ?></h4>

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 if (
 	( is_single() && espresso_display_venue_in_event_details() )
 	|| ( is_archive() && espresso_display_venue_in_event_list() )
@@ -16,7 +18,7 @@ if (
 <div class="espresso-venue-dv<?php echo espresso_is_venue_private() ? ' espresso-private-venue-dv' : ''; ?>">
 	<h4>
         <strong><?php esc_html_e( 'Venue:', 'event_espresso' ); ?></strong>&nbsp;&nbsp;
-        <strong> <?php echo $venue_name; // already escaped ?></strong>
+        <strong> <?php echo wp_kses($venue_name, AllowedTags::getAllowedTags()); ?></strong>
     </h4>
 	<p><span class="smaller-text tags-links"><?php echo espresso_venue_categories(); ?></span></p>
 <?php  if ( $venue_phone = espresso_venue_phone( $post->ID, FALSE )) : ?>
@@ -24,7 +26,7 @@ if (
 		<span class="small-text">
             <strong><?php esc_html_e( 'Venue Phone:', 'event_espresso' ); ?></strong>
         </span>
-        <?php echo $venue_phone; // already escaped ?>
+        <?php echo wp_kses($venue_phone, AllowedTags::getAllowedTags()); ?>
 	</p>
 <?php endif;  ?>
 <?php if ( $venue_website = espresso_venue_website( $post->ID, FALSE )) : ?>
@@ -32,7 +34,7 @@ if (
 		<span class="small-text">
             <strong><?php esc_html_e( 'Venue Website:', 'event_espresso' ); ?></strong>
         </span>
-        <?php echo $venue_website; // already escaped ?>
+        <?php echo wp_kses($venue_website, AllowedTags::getAllowedTags()); ?>
 	</p>
 <?php endif; ?>
 <?php  if ( espresso_venue_has_address( $post->ID )) : ?>
@@ -56,7 +58,7 @@ if (
 		<?php if ( $venue_excerpt ) : ?>
 	<p>
 		<strong><?php esc_html_e( 'Description:', 'event_espresso' ); ?></strong><br/>
-		<?php echo $venue_excerpt; ?>
+		<?php echo wp_kses($venue_excerpt, AllowedTags::getAllowedTags()); ?>
 	</p>
 			<?php endif;  ?>
 		<?php endif;  ?>

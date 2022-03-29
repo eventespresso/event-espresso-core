@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Event $event
  * @var int      $additional_limit
@@ -6,10 +7,13 @@
  * @var string   $additional_registration_options
  * @var string   $display_ticket_selector
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <p>
     <label><?php esc_html_e('Active Status: ', 'event_espresso'); ?></label>
-    <?php echo $active_status; // already escaped ?>
+    <?php echo wp_kses($active_status, AllowedTags::getAllowedTags()); ?>
 </p>
 
 <p>
@@ -32,7 +36,7 @@
 
 <p>
     <label><?php esc_html_e('Display Ticket Selector', 'event_espresso'); ?></label>
-    <?php echo $display_ticket_selector; // already escaped ?>
+    <?php echo wp_kses($display_ticket_selector, AllowedTags::getWithFormTags()); ?>
 </p>
 
 <p>
