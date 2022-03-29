@@ -929,7 +929,7 @@ jQuery(document).ready( function($) {
 			if ( SPCO.methods_of_payment === null ) {
 				SPCO.methods_of_payment = $( '#methods-of-payment' );
 			}
-			//SPCO.console_log( 'display_payment_method', payment_method, false );
+			console.log( 'display_payment_method', payment_method );
 			if ( payment_method === '' ) {
 				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
 				SPCO.scroll_to_top_and_display_messages( SPCO.methods_of_payment, msg, true  );
@@ -948,7 +948,7 @@ jQuery(document).ready( function($) {
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
 
-			// alert( 'form_data = ' + form_data );
+			console.log('display_payment_method', form_data);
 
 			$.ajax({
 
@@ -962,7 +962,7 @@ jQuery(document).ready( function($) {
 				},
 
 				success: function( response ){
-					//SPCO.console_log_object( 'display_payment_method : response', response );
+					console.log('display_payment_method', response);
 					if ( typeof response !== 'undefined' && typeof response === 'object' ) {
 						if ( typeof response.return_data === 'undefined' || typeof response.return_data !== 'object' ) {
 							response.return_data = {};
