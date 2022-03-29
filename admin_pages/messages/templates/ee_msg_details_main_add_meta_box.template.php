@@ -18,13 +18,13 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
     <h4 class="admin-primary-mbox-h4">
         <?php
-        echo $event_name
+        echo ($event_name
             ? sprintf(
             /* translators: %s: event name */
                 esc_html__('%1$s Custom Template', 'event_espresso'),
                 $event_name
             )
-            : '';
+            : '');
         ?>
     </h4>
     <p><?php echo wp_kses($action_message, AllowedTags::getWithFormTags()); ?></p>

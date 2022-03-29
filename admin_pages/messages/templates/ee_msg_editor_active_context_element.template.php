@@ -44,9 +44,9 @@ $context = esc_attr($context);
         </span>
         <span class="ee-on-off-toggle-label">
             <?php
-            echo $is_active
+            echo ($is_active
                 ? wp_kses($active_message, AllowedTags::getAllowedTags())
-                : wp_kses($inactive_message, AllowedTags::getAllowedTags());
+                : wp_kses($inactive_message, AllowedTags::getAllowedTags()));
             ?>
         </span>
         <div class="hidden js-data">
