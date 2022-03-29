@@ -990,7 +990,9 @@ jQuery(document).ready( function($) {
 		 * @param  {string} next_step
 		 * @param  {object} response
 		 */
-		process_response : function( next_step, response ) {
+		process_response: function (next_step, response) {
+			console.log('%c next_step', 'color: Cyan; font-size: 14px;', next_step);
+			console.log('%c process_response', 'color: HotPink;', response);
 			SPCO.allow_enable_submit_buttons = true;
 			//clear additional_post_data
 			SPCO.additional_post_data = '';
