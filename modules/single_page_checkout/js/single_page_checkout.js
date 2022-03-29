@@ -829,6 +829,8 @@ jQuery(document).ready( function($) {
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
 
+			console.log('%c submit_reg_form ', 'color: Yellow; font-size: 14px;');
+			console.log('%c form_data', 'color: DodgerBlue;', form_data);
 
 			//console.log( '**SPCO SUBMIT REG FORM !!! ** form_data:' );
 		// alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
@@ -875,7 +877,6 @@ jQuery(document).ready( function($) {
 			if ( ! SPCO.get_next_step ) {
 				return;
 			}
-
 			var form_data = 'action=display_spco_reg_step';
 			form_data += '&step=' + next_step;
 			form_data += '&process_form_submission=0';
@@ -886,7 +887,9 @@ jQuery(document).ready( function($) {
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
-			// alert( 'form_data = ' + form_data );
+
+			console.log('%c get_next_reg_step ', 'color: Yellow; font-size: 14px;');
+			console.log('%c form_data', 'color: DodgerBlue;', form_data);
 
 			$.ajax({
 
@@ -948,7 +951,8 @@ jQuery(document).ready( function($) {
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
 
-			console.log('display_payment_method', form_data);
+			console.log('%c display_payment_method ', 'color: Yellow; font-size: 14px;');
+			console.log('%c form_data', 'color: DodgerBlue;', form_data);
 
 			$.ajax({
 
@@ -991,8 +995,8 @@ jQuery(document).ready( function($) {
 		 * @param  {object} response
 		 */
 		process_response: function (next_step, response) {
-			console.log('%c next_step', 'color: Cyan; font-size: 14px;', next_step);
-			console.log('%c process_response', 'color: HotPink;', response);
+			console.log('%c process_response ', 'color: Lime; font-size: 14px;');
+			console.log('%c params', 'color: HotPink;', next_step, response);
 			SPCO.allow_enable_submit_buttons = true;
 			//clear additional_post_data
 			SPCO.additional_post_data = '';
