@@ -4034,7 +4034,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $success++;
             }
         }
-        $count = (int)count($checkboxes);
+        $count = (int) count($checkboxes);
         // if multiple entities were deleted successfully, then $deleted will be full count of deletions,
         // otherwise it will be a fraction of ( actual deletions / total entities to be deleted )
         return $success === $count ? $count : $success / $count;
@@ -4096,7 +4096,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         try {
             switch ($action) {
                 case EE_Admin_List_Table::ACTION_DELETE:
-                    $result = (bool)$entity_model->delete_permanently_by_ID($entity_ID);
+                    $result = (bool) $entity_model->delete_permanently_by_ID($entity_ID);
                     break;
                 case EE_Admin_List_Table::ACTION_RESTORE:
                     $this->validateDeleteColumn($entity_model, $delete_column);
