@@ -831,7 +831,7 @@ jQuery(document).ready( function($) {
 			form_data += SPCO.additional_post_data;
 
 			console.log('%c submit_reg_form ', 'color: Yellow; font-size: 14px;');
-			console.log('%c form_data', 'color: DodgerBlue;', form_data.split('&'));
+			console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
 
 			//console.log( '**SPCO SUBMIT REG FORM !!! ** form_data:' );
 		// alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
@@ -890,7 +890,7 @@ jQuery(document).ready( function($) {
 			form_data += SPCO.additional_post_data;
 
 			console.log('%c get_next_reg_step ', 'color: Yellow; font-size: 14px;');
-			console.log('%c form_data', 'color: DodgerBlue;', form_data.split('&'));
+			console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
 
 			$.ajax({
 
@@ -953,7 +953,7 @@ jQuery(document).ready( function($) {
 			form_data += SPCO.additional_post_data;
 
 			console.log('%c display_payment_method ', 'color: Yellow; font-size: 14px;');
-			console.log('%c form_data', 'color: DodgerBlue;', form_data.split('&'));
+			console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
 
 			$.ajax({
 
