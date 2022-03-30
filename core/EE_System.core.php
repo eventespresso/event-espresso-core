@@ -1239,6 +1239,14 @@ final class EE_System implements ResettableInterface
     public function initialize()
     {
         do_action('AHEE__EE_System__initialize');
+        add_filter(
+            'safe_style_css',
+            function ($styles) {
+                $styles[] = 'display';
+                $styles[] = 'visibility';
+                return $styles;
+            }
+        );
     }
 
 
