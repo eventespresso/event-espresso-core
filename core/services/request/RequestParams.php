@@ -136,13 +136,19 @@ class RequestParams
      *
      * @param string     $key
      * @param mixed|null $default
-     * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
+     * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc.
+     *                              DataType::ARRAY should only be used to indicate an array containing mixed types,
+     *                              ideally another data type should be selected to indicate the contents of the array,
+     *                              and then $is_array should be set to true. ie: an array of integers would be:
+     *                                  $type = DataType::INT
+     *                                  $is_array = true
      * @param bool       $is_array  if true, then parameter value will be treated as an array of $type
      * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return array|bool|float|int|string
      */
     public function getRequestParam($key, $default = null, $type = DataType::STRING, $is_array = false, $delimiter = '')
     {
+        $is_array = $type === DataType::ARRAY ? true : $is_array;
         $param = $this->sanitizer->clean(
             $this->parameterDrillDown($key, $default, 'get'),
             $type,
