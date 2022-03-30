@@ -547,7 +547,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 $this->request->getRequestParam(
                     $admin_options_settings_form->slug(),
                     [],
-                    DataType::ARRAY
+                    DataType::STRING,
+                    true
                 )
             );
             EE_Registry::instance()->CFG->admin = apply_filters(
@@ -1150,7 +1151,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         );
         $cols_n_values['CNT_active']      = $this->request->getRequestParam(
             "cntry[$CNT_ISO][CNT_active]",
-            $country->is_active(),
+            $country->isActive(),
             DataType::BOOL
         );
 
