@@ -1150,7 +1150,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         );
         $cols_n_values['CNT_active']      = $this->request->getRequestParam(
             "cntry[$CNT_ISO][CNT_active]",
-            $country->is_active(),
+            $country->isActive(),
             DataType::BOOL
         );
 
