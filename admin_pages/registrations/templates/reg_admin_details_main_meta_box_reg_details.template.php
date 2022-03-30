@@ -6,6 +6,9 @@
  * @var string     $view_transaction_button
  * @var string[][] $reg_details
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="admin-primary-mbox-reg-details-dv" class="admin-primary-mbox-dv">
@@ -16,15 +19,15 @@
         <?php esc_html_e('Registration Items', 'event_espresso'); ?>
     </h3>
 
-    <?php echo $line_item_table; // already escaped ?>
+    <?php echo wp_kses($line_item_table, AllowedTags::getWithFormTags()); ?>
 
     <div id="additional-registration-actions-dv">
         <ul>
             <li>
-                <?php echo $resend_registration_button; // already escaped ?>
+                <?php echo wp_kses($resend_registration_button, AllowedTags::getWithFormTags()); ?>
             </li>
             <li>
-                <?php echo $view_transaction_button; // already escaped ?>
+                <?php echo wp_kses($view_transaction_button, AllowedTags::getWithFormTags()); ?>
             </li>
         </ul>
     </div>

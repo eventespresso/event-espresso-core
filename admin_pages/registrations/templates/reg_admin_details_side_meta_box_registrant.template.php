@@ -10,6 +10,9 @@
  * @var string      $lname
  * @var string      $phone
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 $email = sanitize_email($email);
 ?>
 
@@ -43,7 +46,7 @@ $email = sanitize_email($email);
             <?php esc_html_e('Address', 'event_espresso'); ?>
         </span>
         <div class="admin-side-mbox-text-dv">
-            <?php echo $formatted_address; // already escaped ?>
+            <?php echo wp_kses($formatted_address, AllowedTags::getAllowedTags()); ?>
         </div>
     </div>
 </div>

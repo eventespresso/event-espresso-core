@@ -5,12 +5,15 @@
  * @var string $step_button_text
  * @var string $title
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div class="ee-new-registration-step-content clearfix">
     <h2 class="ee-new-registration-step-header"><?php echo esc_html($title) ?></h2>
     <div class="ee-new-registration-step-content">
-        <?php echo $content; // already escaped ?>
+        <?php echo wp_kses($content, AllowedTags::getWithFormTags()); ?>
         <?php
         if (
             $show_notification_toggle

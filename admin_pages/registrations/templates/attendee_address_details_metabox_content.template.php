@@ -4,6 +4,9 @@
  * @var string $state_html   html for displaying the attendee's state
  * @var string $country_html html for displaying the attendee's country
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee');
 ?>
 <table class="form-table">
@@ -44,12 +47,12 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
         </tr>
         <tr valign="top">
             <td>
-                <?php echo $state_html; // already escaped ?>
+                <?php echo wp_kses($state_html, AllowedTags::getWithFormTags()); ?>
             </td>
         </tr>
         <tr valign="top">
             <td>
-                <?php echo $country_html; // already escaped ?>
+                <?php echo wp_kses($country_html, AllowedTags::getWithFormTags()); ?>
             </td>
         </tr>
         <tr valign="top">
