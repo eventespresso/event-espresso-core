@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var bool   $show_notification_toggle
  * @var string $content

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int        $REG_ID
  * @var string     $reg_questions_form_action

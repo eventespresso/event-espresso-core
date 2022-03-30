@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Attendee $att_check
  * @var string      $att_edit_label

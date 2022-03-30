@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var        $attendee     EE_Attendee
  * @var string $state_html   html for displaying the attendee's state

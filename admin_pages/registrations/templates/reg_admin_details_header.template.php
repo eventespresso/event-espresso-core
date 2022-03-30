@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int             $REG_ID
  * @var string          $filtered_registrations_link
@@ -29,9 +30,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     echo wp_kses($previous_registration, AllowedTags::getAllowedTags());
     echo '&nbsp;' . sprintf(
         /* translators: %s: registration number */
-            esc_html__('Registration # %1$s', 'event_espresso'),
-            esc_html($reg_nmbr['value'])
-        ) . '&nbsp;';
+        esc_html__('Registration # %1$s', 'event_espresso'),
+        esc_html($reg_nmbr['value'])
+    ) . '&nbsp;';
     echo wp_kses($next_registration, AllowedTags::getAllowedTags());
     ?>
 </h3>

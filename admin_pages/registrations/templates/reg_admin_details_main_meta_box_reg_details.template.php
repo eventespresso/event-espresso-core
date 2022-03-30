@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int        $REG_ID
  * @var string     $line_item_table

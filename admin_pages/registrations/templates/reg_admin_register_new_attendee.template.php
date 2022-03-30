@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $event_name
  * @var string $step_content
