@@ -62,7 +62,7 @@ class AdminOptionsSettings extends FormHandler
      */
     public function generate()
     {
-        $form = new \EE_Form_Section_Proper(
+        $form = new EE_Form_Section_Proper(
             array(
                 'name'            => 'admin_option_settings',
                 'html_id'         => 'admin_option_settings',
@@ -159,7 +159,7 @@ class AdminOptionsSettings extends FormHandler
      *
      * @return string
      * @throws LogicException
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function display()
     {
