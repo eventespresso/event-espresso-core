@@ -12,8 +12,7 @@ namespace EventEspresso\core\services\request;
  */
 class DataType
 {
-    // can't use ARRAY as name until we switch to PHP 7+
-    // const ARRAY   = 'array';
+    const ARRAY   = 'array';
 
     const BOOL    = 'bool';
     const BOOLEAN = 'bool';
@@ -46,7 +45,7 @@ class DataType
      * @param string $type
      * @return mixed
      */
-    public static function setDataType($param, $type)
+    public static function setDataType($param, string $type)
     {
         switch ($type) {
             case DataType::NULL:
