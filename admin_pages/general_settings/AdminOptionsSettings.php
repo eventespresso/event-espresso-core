@@ -149,6 +149,12 @@ class AdminOptionsSettings extends FormHandler
                 'compatibility_hdr'
             );
         }
+        do_action(
+            'AHEE__EventEspresso_admin_pages_general_settings_AdminOptionsSettings__generate__form',
+            $form,
+            $this->registry->CFG->admin,
+            $this
+        );
         return $form;
     }
 
@@ -210,6 +216,12 @@ class AdminOptionsSettings extends FormHandler
         if (isset($form_data['encode_session_data'])) {
             $this->registry->CFG->admin->set_encode_session_data($form_data['encode_session_data']);
         }
+        do_action(
+            'AHEE__EventEspresso_admin_pages_general_settings_AdminOptionsSettings__process__form_data',
+            $form_data,
+            $this->registry->CFG->admin,
+            $this
+        );
         return false;
     }
 }
