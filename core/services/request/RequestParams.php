@@ -148,6 +148,7 @@ class RequestParams
      */
     public function getRequestParam($key, $default = null, $type = DataType::STRING, $is_array = false, $delimiter = '')
     {
+        // ensure $is_array is true if the data type is set as such
         $is_array = $type === DataType::ARRAY ? true : $is_array;
         $param = $this->sanitizer->clean(
             $this->parameterDrillDown($key, $default, 'get'),
@@ -155,7 +156,8 @@ class RequestParams
             $is_array,
             $delimiter
         );
-        $type = $is_array ? 'array' : $type;
+        // don't convert final return value to something else if an array is expected
+        $type = $is_array ? DataType::ARRAY : $type;
         return DataType::setDataType($param, $type);
     }
 
