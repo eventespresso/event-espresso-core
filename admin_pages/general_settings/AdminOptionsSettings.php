@@ -216,12 +216,13 @@ class AdminOptionsSettings extends FormHandler
         if (isset($valid_data['encode_session_data'])) {
             $this->registry->CFG->admin->set_encode_session_data($valid_data['encode_session_data']);
         }
-        do_action(
-            'AHEE__EventEspresso_admin_pages_general_settings_AdminOptionsSettings__process__valid_form_data',
+
+        return apply_filters(
+            'FHEE__EventEspresso_admin_pages_general_settings_AdminOptionsSettings__process__form_processed',
+            true, // form processed successfully
             $valid_data,
             $this->registry->CFG->admin,
             $this
         );
-        return false;
     }
 }
