@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var bool   $active
  * @var string $content
@@ -6,10 +7,13 @@
  * @var string $messenger
  * @var string $active_message_types
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div class="<?php echo esc_attr($messenger); ?>-content">
-    <?php echo $content; // already escaped ?>
+    <?php echo wp_kses($content, AllowedTags::getWithFormTags()); ?>
     <?php if (empty($inactive_message_types) && empty($active_message_types)) :
         echo '<p>'
              . esc_html__(
@@ -35,7 +39,7 @@
             class="mt-tab-container <?php echo esc_attr($hide_on_message); ?>"
         >
             <ul class="messenger-activation">
-                <?php echo $active_message_types; // already escaped ?>
+                <?php echo wp_kses($active_message_types, AllowedTags::getWithFormTags()); ?>
             </ul>
             <div class="ui-helper-clearfix"></div>
         </div>

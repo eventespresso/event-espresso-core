@@ -1,10 +1,14 @@
 <?php
+
 /**
  * @var EE_Message_Template_Group $MTP
  * @var string                    $context
  * @var string                    $event_name
  * @var string[]                  $template_fields
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
@@ -63,7 +67,7 @@
     <!-- we need to loop through the template_fields so we know our structure -->
     <?php
     if (isset($template_fields) && ! empty($template_fields) && ! is_wp_error($template_fields)) {
-        echo $template_fields; // already escaped
+        echo wp_kses($template_fields, AllowedTags::getWithFormTags());
     } else {
         ?>
         <p>
