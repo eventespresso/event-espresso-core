@@ -3240,7 +3240,7 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin select {
-    padding-inline-end: var(--ee-button-height);
+    padding-inline-end: var(--ee-button-height-two-thirds);
 }
 
 

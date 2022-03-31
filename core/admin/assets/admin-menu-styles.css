@@ -172,6 +172,7 @@
 
     --ee-button-height: 2.625rem;
     --ee-button-height-three-quarter: calc(var(--ee-button-height) * .75);
+    --ee-button-height-two-thirds: calc(var(--ee-button-height) / 3 * 2);
     --ee-button-height-half: calc(var(--ee-button-height) / 2);
     --ee-button-height-third: calc(var(--ee-button-height) / 3);
     --ee-button-height-forth: calc(var(--ee-button-height) / 4);
