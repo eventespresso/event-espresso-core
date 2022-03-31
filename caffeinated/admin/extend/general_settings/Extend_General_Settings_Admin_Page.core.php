@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\DataType;
+
 /**
  * Extend_General_Settings_Admin_Page
  *
@@ -11,8 +13,6 @@
  * @package           Extend_General_Settings_Admin_Page
  * @subpackage        caffeinated/admin/extend/general_settings/Extend_General_Settings_Admin_Page.core.php
  * @author            Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
 class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page
 {
@@ -48,13 +48,14 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page
      */
     public function debug_logging_options(array $template_args = [])
     {
-        $template_args['use_remote_logging'] = isset(EE_Registry::instance()->CFG->admin->use_remote_logging)
-            ? absint(EE_Registry::instance()->CFG->admin->use_remote_logging)
+        $admin_config = EE_Registry::instance()->CFG->admin;
+        $template_args['use_remote_logging'] = isset($admin_config->use_remote_logging)
+            ? absint($admin_config->use_remote_logging)
             : false;
 
-        $template_args['remote_logging_url'] = isset(EE_Registry::instance()->CFG->admin->remote_logging_url)
-                                               && ! empty(EE_Registry::instance()->CFG->admin->remote_logging_url)
-            ? stripslashes(EE_Registry::instance()->CFG->admin->remote_logging_url)
+        $template_args['remote_logging_url'] = isset($admin_config->remote_logging_url)
+                                               && ! empty($admin_config->remote_logging_url)
+            ? stripslashes($admin_config->remote_logging_url)
             : '';
 
         $template = GEN_SET_CAF_TEMPLATE_PATH . 'debug_log_settings.template.php';
@@ -71,14 +72,16 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page
      */
     public function update_debug_logging_options(EE_Admin_Config $admin_options): EE_Admin_Config
     {
-        $admin_options->use_remote_logging = isset($this->_req_data['use_remote_logging'])
-            ? absint($this->_req_data['use_remote_logging'])
-            : $admin_options->use_remote_logging;
-
-        $admin_options->remote_logging_url = isset($this->_req_data['remote_logging_url'])
-            ? esc_url_raw($this->_req_data['remote_logging_url'])
-            : $admin_options->remote_logging_url;
-
+        $admin_options->use_remote_logging = $this->request->getRequestParam(
+            'use_remote_logging',
+            $admin_options->use_remote_logging,
+            DataType::BOOL
+        );
+        $admin_options->remote_logging_url = $this->request->getRequestParam(
+            'remote_logging_url',
+            $admin_options->remote_logging_url,
+            DataType::URL
+        );
         return $admin_options;
     }
 }
