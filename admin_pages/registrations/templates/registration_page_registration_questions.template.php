@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var bool         $print_copy_info
  * @var int[]        $ticket_count
@@ -50,9 +51,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                 echo ($item['ticket']->qty()
                                     ? ' &nbsp; x &nbsp; '
                                       . sprintf(
-                                        /* translators: %s: ticket count */
-                                        esc_html__('%1$s tickets', 'event_espresso'),
-                                        absint($ticket_count[ $item['ticket']->ID() ])
+                                          /* translators: %s: ticket count */
+                                          esc_html__('%1$s tickets', 'event_espresso'),
+                                          absint($ticket_count[ $item['ticket']->ID() ])
                                       )
                                       . ' &nbsp; = &nbsp; '
                                       . EEH_Template::format_currency($qty_price)
