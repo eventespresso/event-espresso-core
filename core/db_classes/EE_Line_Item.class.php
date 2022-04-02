@@ -438,6 +438,18 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
 
 
     /**
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function prettyPercent(): string
+    {
+        return $this->get_pretty('LIN_percent');
+    }
+
+
+    /**
      * Sets percent (between 100-0.01)
      *
      * @param float $percent
@@ -1262,12 +1274,21 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     /**
      * @return string like '2, 004.00', formatted according to the localized currency
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function unit_price_no_code()
+    public function unit_price_no_code(): string
+    {
+        return $this->prettyUnitPrice();
+    }
+
+
+    /**
+     * @return string like '2, 004.00', formatted according to the localized currency
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function prettyUnitPrice(): string
     {
         return $this->get_pretty('LIN_unit_price', 'no_currency_code');
     }
@@ -1276,12 +1297,21 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     /**
      * @return string like '2, 004.00', formatted according to the localized currency
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function total_no_code()
+    public function total_no_code(): string
+    {
+        return $this->prettyTotal();
+    }
+
+
+    /**
+     * @return string like '2, 004.00', formatted according to the localized currency
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function prettyTotal(): string
     {
         return $this->get_pretty('LIN_total', 'no_currency_code');
     }
@@ -1613,7 +1643,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_nearest_descendant_of_type($type)
+    public function get_nearest_descendant_of_type(string $type): EE_Line_Item
     {
         EE_Error::doing_it_wrong(
             'EE_Line_Item::get_nearest_descendant_of_type()',
