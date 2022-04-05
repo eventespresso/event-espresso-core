@@ -2011,7 +2011,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:9
 	__( 'price description', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceIdInput.tsx:5
+	// Reference: packages/tpc/src/inputs/PriceIdInput.tsx:6
 	__( 'price id', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:13
