@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int             $REG_ID
  * @var string          $filtered_registrations_link
@@ -10,6 +11,9 @@
  * @var string[]        $reg_datetime
  * @var EE_Registration $registration
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div style="float:right">
@@ -23,10 +27,13 @@
 </div>
 <h3 id="reg-admin-reg-details-reg-nmbr-hdr">
     <?php
-    echo $previous_registration; // already escaped
-    echo '&nbsp;' . esc_html__('Registration # ', 'event_espresso');
-    echo esc_html($reg_nmbr['value']) . '&nbsp;';
-    echo $next_registration; // already escaped
+    echo wp_kses($previous_registration, AllowedTags::getAllowedTags());
+    echo '&nbsp;' . sprintf(
+        /* translators: %s: registration number */
+        esc_html__('Registration # %1$s', 'event_espresso'),
+        esc_html($reg_nmbr['value'])
+    ) . '&nbsp;';
+    echo wp_kses($next_registration, AllowedTags::getAllowedTags());
     ?>
 </h3>
 <h2 id="reg-admin-reg-details-reg-date-hdr"><?php echo esc_html($reg_datetime['value']); ?></h2>

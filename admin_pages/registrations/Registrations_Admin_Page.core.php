@@ -8,6 +8,7 @@ use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\domain\services\attendee\forms\AttendeeContactDetailsMetaboxFormHandler;
 use EventEspresso\core\services\request\CurrentPage;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Registrations_Admin_Page class
@@ -1507,7 +1508,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         );
         $output                 .= $change_reg_status_form->get_html();
         $output                 .= $change_reg_status_form->form_close();
-        echo $output; // already escaped
+        echo wp_kses($output, AllowedTags::getWithFormTags());
     }
 
 
@@ -3575,7 +3576,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // get attendee object ( should already have it )
         $form = $this->getAttendeeContactDetailsMetaboxFormHandler($this->_cpt_model_obj);
         $form->enqueueStylesAndScripts();
-        echo $form->display(); // already escaped
+        echo wp_kses($form->display(), AllowedTags::getWithFormTags());
     }
 
 

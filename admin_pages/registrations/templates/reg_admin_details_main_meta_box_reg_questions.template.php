@@ -1,9 +1,13 @@
 <?php
+
 /**
  * @var int        $REG_ID
  * @var string     $reg_questions_form_action
  * @var string[][] $att_questions
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="admin-primary-mbox-questions-dv" class="admin-primary-mbox-dv">
@@ -26,7 +30,7 @@
         <input type="hidden" name="espresso_ajax" id="espresso-ajax" value="0" />
         <input type="hidden" name="noheader" id="reg-admin-noheader-inp" value="true" />
         <?php
-        echo $att_questions; // already escaped
+        echo wp_kses($att_questions, AllowedTags::getWithFormTags());
         if (! empty($att_questions)) :
             if (
                 EE_Registry::instance()->CAP->current_user_can(
