@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string   $previous_transaction
  * @var string   $next_transaction
