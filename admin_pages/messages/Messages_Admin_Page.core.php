@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  *
@@ -2480,7 +2481,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'button--primary reset-default-button'
         );
         $test_settings_html .= '</div><div style="clear:both"></div>';
-        echo $test_settings_html; // already escaped
+        echo wp_kses($test_settings_html, AllowedTags::getWithFormTags());
     }
 
 
@@ -2538,7 +2539,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         }
         ?>
         <div style="float:right; margin-top:10px">
-            <?php echo $this->_get_help_tab_link('message_template_shortcodes'); // already escaped
+            <?php echo wp_kses($this->_get_help_tab_link('message_template_shortcodes'), AllowedTags::getAllowedTags());
             ?>
         </div>
         <p class="small-text">
@@ -2673,10 +2674,10 @@ class Messages_Admin_Page extends EE_Admin_Page
                 wp_nonce_field($args['action'] . '_nonce', $args['action'] . '_nonce', false);
                 $id = 'ee-' . sanitize_key($context_label['label']) . '-select';
                 ?>
-                <label for='<?php echo absint($id); ?>' class='screen-reader-text'>
+                <label for='<?php echo esc_attr($id); ?>' class='screen-reader-text'>
                     <?php esc_html_e('message context options', 'event_espresso'); ?>
                 </label>
-                <select id="<?php echo absint($id); ?>" name="context">
+                <select id="<?php echo esc_attr($id); ?>" name="context">
                     <?php
                     $context_templates = $template_group_object->context_templates();
                     if (is_array($context_templates)) :
@@ -2684,8 +2685,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                             $checked = ($context === $args['context']) ? 'selected' : '';
                             ?>
                             <option value="<?php echo esc_attr($context); ?>" <?php echo esc_attr($checked); ?>>
-                                <?php echo $context_details[ $context ]['label']; // already escaped
-                                ?>
+                                <?php echo esc_html($context_details[ $context ]['label']); ?>
                             </option>
                         <?php endforeach;
                     endif; ?>
@@ -2700,8 +2700,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                        value="<?php echo esc_attr($button_text); ?>"
                 />
             </form>
-            <?php echo $args['extra']; // already escaped
-            ?>
+            <?php echo wp_kses($args['extra'], AllowedTags::getWithFormTags()); ?>
         </div> <!-- end .ee-msg-switcher-container -->
         <?php $this->_context_switcher = ob_get_clean();
     }
@@ -3726,13 +3725,15 @@ class Messages_Admin_Page extends EE_Admin_Page
     public function global_messages_settings_metabox_content()
     {
         $form = $this->_generate_global_settings_form();
-        // already escaped
-        echo $form->form_open(
-            $this->add_query_args_and_nonce(['action' => 'update_global_settings'], EE_MSG_ADMIN_URL),
-            'POST'
+        echo wp_kses(
+            $form->form_open(
+                $this->add_query_args_and_nonce(['action' => 'update_global_settings'], EE_MSG_ADMIN_URL),
+                'POST'
+            ),
+            AllowedTags::getWithFormTags()
         );
-        echo $form->get_html();
-        echo $form->form_close();
+        echo wp_kses($form->get_html(), AllowedTags::getWithFormTags());
+        echo wp_kses($form->form_close(), AllowedTags::getWithFormTags());
     }
 
 
@@ -3799,7 +3800,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                         'update_settings'             => new EE_Submit_Input(
                             [
                                 'default'         => esc_html__('Update', 'event_espresso'),
-                                'html_label_text' => '&nbsp',
+                                'html_label_text' => '',
                             ]
                         ),
                     ]

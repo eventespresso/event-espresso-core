@@ -11,6 +11,7 @@ use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use Exception;
 
 /**
@@ -148,8 +149,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
         if (! is_string($message)) {
             throw new InvalidDataTypeException('$message', $message, 'string');
         }
-        global $allowedtags;
-        $allowedtags['br'] = array();
+        $allowedtags = AllowedTags::getAllowedTags();
         $this->message = wp_kses($message, $allowedtags);
     }
 

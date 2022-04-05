@@ -26,7 +26,7 @@
             <input
                 type="hidden"
                 id="country-currency-setting-disabled-input"
-                value="<?php echo $CNT_cur_disabled ? 'true' : 'false'; ?>"
+                value="<?php echo ($CNT_cur_disabled ? 'true' : 'false'); ?>"
             />
         </td>
     </tr>

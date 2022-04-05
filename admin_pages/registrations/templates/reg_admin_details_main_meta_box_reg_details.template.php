@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int        $REG_ID
  * @var string     $line_item_table
@@ -6,17 +7,20 @@
  * @var string     $view_transaction_button
  * @var string[][] $reg_details
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="admin-primary-mbox-reg-details-dv" class="admin-primary-mbox-dv">
 
     <?php do_action('AHEE__reg_admin_details_main_meta_box_reg_details__top', $REG_ID); ?>
 
-    <?php echo $line_item_table; // already escaped ?>
+    <?php echo wp_kses($line_item_table, AllowedTags::getWithFormTags()); ?>
 
     <div id="additional-registration-actions-dv" class="ee-admin-button-row">
-        <?php echo $resend_registration_button; // already escaped ?>
-        <?php echo $view_transaction_button; // already escaped ?>
+        <?php echo wp_kses($resend_registration_button, AllowedTags::getWithFormTags()); ?>
+        <?php echo wp_kses($view_transaction_button, AllowedTags::getWithFormTags()); ?>
     </div>
 
     <div class='ee-admin-button-row'>

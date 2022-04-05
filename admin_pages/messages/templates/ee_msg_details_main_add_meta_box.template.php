@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var EE_Event[] $active_events
  * @var array      $active_messengers
@@ -8,7 +11,14 @@
  * @var string     $action_message
  * @var string     $edit_message_template_form_url
  */
-$header = $event_name ? esc_html($event_name . ' Custom Template') : '';
+
+ $header = $event_name
+            ? sprintf(
+                /* translators: %s: event name */
+                esc_html__('%1$s Custom Template', 'event_espresso'),
+                $event_name
+            )
+            : '';
 ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
@@ -17,7 +27,7 @@ $header = $event_name ? esc_html($event_name . ' Custom Template') : '';
             <?php echo $header; ?>
         </h3>
     <?php endif; ?>
-    <p><?php echo $action_message; // already escaped ?></p>
+    <p><?php echo wp_kses($action_message, AllowedTags::getWithFormTags()); ?></p>
 
     <form action="<?php echo esc_url_raw($edit_message_template_form_url); ?>"
           id='ee-msg-add-message-template-frm'
@@ -26,13 +36,12 @@ $header = $event_name ? esc_html($event_name . ' Custom Template') : '';
         <input type="hidden" id="evt_id" name="EVT_ID" value="<?php echo absint($EVT_ID) ?: ''; ?>" />
         <?php
         if (isset($hidden_fields)) {
-            echo $hidden_fields; // already escaped
+            echo wp_kses($hidden_fields, AllowedTags::getWithFormTags());
         } ?>
         <!--active_messengers -->
         <label for="MTP-messenger"><?php esc_html_e('Select Messenger', 'event_espresso'); ?></label>
         <select name="MTP_messenger" id="MTP-messenger">
-            <?php
-            foreach (array_keys($active_messengers) as $messenger) : ?>
+            <?php foreach (array_keys($active_messengers) as $messenger) : ?>
                 <option value="<?php echo esc_attr($messenger); ?>">
                     <?php echo esc_html(ucwords(str_replace('_', ' ', $messenger))); ?>
                 </option>

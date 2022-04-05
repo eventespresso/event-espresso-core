@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * a template with options for resetting and/or deleting EE data
  *
@@ -7,6 +10,7 @@
  * @var string $reset_db_url
  * @var string $reset_reservations_button
  */
+
 ?>
 <h2>
     <?php esc_html_e('Reset/Delete Data for Event Espresso', 'event_espresso'); ?>
@@ -23,7 +27,9 @@
             'Use this to reset the counts for ticket and datetime reservations.',
             'event_espresso'
         ); ?></p>
-        <div class="ee-admin-button-row"><?php echo $reset_reservations_button; // already escaped ?></div>
+        <div class="ee-admin-button-row">
+            <?php echo wp_kses($reset_reservations_button, AllowedTags::getAllowedTags()); ?>
+        </div>
     </div>
 
     <!-- reset DB url is here. Just need to make it look pretty and unhide it-->
@@ -39,7 +45,9 @@
                 'event_espresso'
             ); ?>
         </p>
-        <div class="ee-admin-button-row"><?php echo $reset_capabilities_button; // already escaped ?></div>
+        <div class="ee-admin-button-row">
+            <?php echo wp_kses($reset_capabilities_button, AllowedTags::getAllowedTags()); ?>
+        </div>
     </div>
 
     <div class='ee-card ee-card--padding'>
@@ -150,5 +158,3 @@
     </div>
 
 </div>
-
-

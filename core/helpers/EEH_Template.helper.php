@@ -4,6 +4,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 if (! function_exists('espresso_get_template_part')) {
     /**
@@ -594,7 +595,7 @@ class EEH_Template
         $icon_style = false,
         $help_text = false
     ) {
-        global $allowedtags;
+        $allowedtags = AllowedTags::getAllowedTags();
         /** @var RequestInterface $request */
         $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $page    = $page ?: $request->getRequestParam('page', '', 'key');

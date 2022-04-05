@@ -2,6 +2,7 @@
 
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * espresso_events_Messages_Hooks_Extend
@@ -171,14 +172,14 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
                 ),
                 '<strong>',
                 '</strong>',
-                '<a href="' . $msg_activate_url . '">',
+                '<a href="' . esc_url_raw($msg_activate_url) . '">',
                 '</a>'
             );
             $error_content    = '<div class="error"><p>' . $error_msg . '</p></div>';
             $internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
 
-            echo $error_content;
-            echo $internal_content;
+            echo wp_kses($error_content, AllowedTags::getAllowedTags());
+            echo wp_kses($internal_content, AllowedTags::getAllowedTags());
             return '';
         }
 
@@ -201,7 +202,6 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             }
         }
 
-
         // we want this to be tabbed content so let's use the EEH_Tabbed_Content::display helper.
         $tabbed_content = EEH_Tabbed_Content::display($tabs);
         if ($tabbed_content instanceof WP_Error) {
@@ -209,18 +209,18 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         }
 
         $notices = '
-	<div id="espresso-ajax-loading" class="ajax-loader-grey">
-		<span class="ee-spinner ee-spin"></span>
-		<span class="hidden">' . esc_html__('loading...', 'event_espresso') . '</span>
-	</div>
-	<div class="ee-notices"></div>';
+        <div id="espresso-ajax-loading" class="ajax-loader-grey">
+            <span class="ee-spinner ee-spin"></span>
+            <span class="hidden">' . esc_html__('loading...', 'event_espresso') . '</span>
+        </div>
+        <div class="ee-notices"></div>';
 
         if (defined('DOING_AJAX')) {
             return $tabbed_content;
         }
 
         do_action('AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__before_content');
-        echo $notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>';
+        echo wp_kses($notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>', AllowedTags::getWithFormTags());
         do_action('AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__after_content');
         return '';
     }

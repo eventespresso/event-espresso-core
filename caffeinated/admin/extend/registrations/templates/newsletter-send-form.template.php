@@ -9,6 +9,8 @@
  * @subpackage Admin, Messages
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * Template args found in this template.
  *
@@ -40,7 +42,7 @@
                     '[NUMPEOPLE]'
                 ); ?></h3>
             <label for="batch-message-template-selector"><?php esc_html_e('Select Template:', 'event_espresso'); ?></label>
-            <?php echo $template_selector; ?>
+            <?php echo wp_kses($template_selector, AllowedTags::getWithFormTags()); ?>
             <div class="batch-message-edit-fields" style="display:none;">
                 <section>
                     <label for="batch-message-from"><?php esc_html_e('From:', 'event_espresso'); ?></label>
@@ -48,8 +50,10 @@
                           class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
                     <div id="shortcode-container-from" class="shortcodes-info-container ee_shortcode_chooser_container"
                          style="display:none">
-                        <h4><?php esc_html_e('Message Template Shortcodes for the "from" field:', 'event_espresso'); ?></h4>
-                        <p><?php echo $shortcodes['From']; ?></p>
+                        <h4>
+                        <?php esc_html_e('Message Template Shortcodes for the "from" field:', 'event_espresso'); ?>
+                        </h4>
+                        <p><?php echo wp_kses($shortcodes['From'], AllowedTags::getAllowedTags()); ?></p>
                     </div>
                     <input type="text" name="batch_message[from]" id="batch-message-from" class="batch-message-input">
                 </section>
@@ -59,11 +63,10 @@
                           class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
                     <div id="shortcode-container-subject"
                          class="shortcodes-info-container ee_shortcode_chooser_container" style="display:none">
-                        <h4><?php esc_html_e(
-                            'Message Template Shortcodes for the "subject" field:',
-                            'event_espresso'
-                        ); ?></h4>
-                        <p><?php echo $shortcodes['Subject']; ?></p>
+                        <h4>
+                        <?php esc_html_e('Message Template Shortcodes for the "subject" field:', 'event_espresso'); ?>
+                        </h4>
+                        <p><?php echo wp_kses($shortcodes['Subject'], AllowedTags::getAllowedTags()); ?></p>
                     </div>
                     <input type="text" name="batch_message[subject]" id="batch-message-subject"
                            class="batch-message-input">
@@ -78,7 +81,9 @@
                             'Message Template Shortcodes for the "content" field:',
                             'event_espresso'
                         ); ?></h4>
-                        <p><?php echo $shortcodes['[NEWSLETTER_CONTENT]']; ?></p>
+                        <p>
+                            <?php echo wp_kses($shortcodes['[NEWSLETTER_CONTENT]'], AllowedTags::getAllowedTags()); ?>
+                        </p>
                     </div>
                     <textarea name="batch_message[content]" id="batch-message-content"
                               class="batch-message-textarea"></textarea>

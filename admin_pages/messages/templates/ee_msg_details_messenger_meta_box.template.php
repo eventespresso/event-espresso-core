@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var bool $active
  * @var string  $hide_off_message
@@ -6,6 +7,9 @@
  * @var string  $inactive_message_types
  * @var string  $messenger
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div class="<?php echo esc_attr($messenger); ?>-content">
@@ -37,7 +41,7 @@
             class="inactive-message-types mt-tab-container ui-widget-content-ui-state-default <?php echo esc_attr($hide_on_message); ?>"
         >
             <ul class="messenger-activation">
-                <?php echo $inactive_message_types; // already escaped ?>
+                <?php echo wp_kses($inactive_message_types, AllowedTags::getWithFormTags()); ?>
             </ul>
             <div class="ui-helper-clearfix"></div>
         </div>

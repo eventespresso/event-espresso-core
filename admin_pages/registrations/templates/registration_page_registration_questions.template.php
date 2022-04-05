@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var bool         $print_copy_info
  * @var int[]        $ticket_count
@@ -6,6 +7,9 @@
  * @var string[]     $event_queue
  * @var string[][][] $additional_event_attendees
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="single-page-checkout" class="ui-widget">
@@ -44,18 +48,21 @@
                                     EEH_Template::format_currency($item['ticket']->price(), false, false)
                                 );
                                 $qty_price = $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ];
-                                echo $item['ticket']->qty()
+                                echo ($item['ticket']->qty()
                                     ? ' &nbsp; x &nbsp; '
-                                      . absint($ticket_count[ $item['ticket']->ID() ])
-                                      . esc_html__(' tickets', 'event_espresso')
+                                      . sprintf(
+                                          /* translators: %s: ticket count */
+                                          esc_html__('%1$s tickets', 'event_espresso'),
+                                          absint($ticket_count[ $item['ticket']->ID() ])
+                                      )
                                       . ' &nbsp; = &nbsp; '
                                       . EEH_Template::format_currency($qty_price)
-                                    : '';
-                                echo $item['ticket']->description()
+                                    : '');
+                                echo ($item['ticket']->description()
                                     ? '<br/>'
                                       . esc_html__('Ticket Details: ', 'event_espresso')
-                                      . esc_html($item['ticket']->description())
-                                    : '';
+                                      . wp_kses($item['ticket']->description(), AllowedTags::getAllowedTags())
+                                    : '');
                                 ?>
                             </p>
                         <?php } ?>

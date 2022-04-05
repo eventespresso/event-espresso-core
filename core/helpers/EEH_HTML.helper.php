@@ -858,17 +858,16 @@ class EEH_HTML
     public static function get_simple_tags()
     {
         global $allowedtags;
-        $tags_we_allow['p'] = array();
         $tags_we_allow = array_merge_recursive(
             $allowedtags,
-            array(
-                'ol' => array(),
-                'ul' => array(),
-                'li' => array(),
-                'br' => array(),
-                'p' => array(),
-                'a' => array('target')
-            )
+            [
+                'ol' => [],
+                'ul' => [],
+                'li' => [],
+                'br' => [],
+                'p' => [],
+                'a' => ['target']
+            ]
         );
         return apply_filters('FHEE__EEH_HTML__get_simple_tags', $tags_we_allow);
     }

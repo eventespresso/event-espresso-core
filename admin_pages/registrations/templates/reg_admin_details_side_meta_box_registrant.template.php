@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var EE_Attendee $att_check
  * @var int         $ATT_ID
@@ -12,6 +15,7 @@
  * @var string      $lname
  * @var string      $phone
  */
+
 $attendee_full_name = "$fname $lname";
 $email = sanitize_email($email);
 $avatar  = get_avatar_url($email);
@@ -45,7 +49,7 @@ $avatar  = get_avatar_url($email);
         <div class='ee-admin-attendee-address'>
             <div class='ee-admin-contact-details-with-dashicon'>
                 <span class='dashicons dashicons-location'></span>
-                <?php echo $formatted_address; // already escaped ?>
+                <?php echo wp_kses($formatted_address, AllowedTags::getAllowedTags()); ?>
             </div>
         </div>
         <?php endif; ?>

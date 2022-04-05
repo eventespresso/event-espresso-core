@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\widgets\EspressoWidget;
 
 /**
@@ -323,14 +324,14 @@ class EEW_Upcoming_Events extends EspressoWidget
                 $title = $this->widgetTitle();
 
                 // Before widget (defined by themes).
-                echo $before_widget;
+                echo wp_kses($before_widget, AllowedTags::getAllowedTags());
                 // Display the widget title if one was input (before and after defined by themes).
                 if (! empty($title)) {
-                    echo $before_title . $title . $after_title;
+                    echo wp_kses($before_title . $title . $after_title, AllowedTags::getAllowedTags());
                 }
-                echo $this->widgetContent($post);
+                echo wp_kses($this->widgetContent($post), AllowedTags::getAllowedTags());
                 // After widget (defined by themes).
-                echo $after_widget;
+                echo wp_kses($after_widget, AllowedTags::getAllowedTags());
             }
         }
     }
@@ -659,7 +660,7 @@ class EEW_Upcoming_Events extends EspressoWidget
         }
 
         if ($this->show_desc) {
-            global $allowedtags;
+            $allowedtags = AllowedTags::getAllowedTags();
             $desc    = $event->short_description(25);
             $content .= $desc ? '<p style="margin-top: .5em">' . wp_kses($desc, $allowedtags) . '</p>' : '';
         }

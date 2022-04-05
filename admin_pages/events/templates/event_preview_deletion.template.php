@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Event[]             $events
  * @var EE_Form_Section_Proper $form
@@ -7,6 +8,9 @@
  * @var string                 $form_url
  * @var int                    $reg_count
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <h2>
@@ -107,7 +111,7 @@ if ($reg_count > 0) {
     ?>
 </ul>
 <form action="<?php echo esc_url_raw($form_url); ?>" method="POST">
-    <?php echo $form->get_html_and_js(); // already escaped ?>
+    <?php echo wp_kses($form->get_html_and_js(), AllowedTags::getWithFormTags()); ?>
     <input class='button button--primary'
            type="submit"
            value="<?php esc_attr_e('Confirm', 'event_espresso'); ?>"

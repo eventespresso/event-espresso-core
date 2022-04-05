@@ -12,12 +12,12 @@
  * @var string $add_new_datetime_ticket_help_link
  */
 ?>
-<tr id="advanced-dtt-edit-row-<?php echo absint($dtt_row); ?>" class="advanced-dtt-edit-row">
+<tr id="advanced-dtt-edit-row-<?php echo esc_attr($dtt_row); ?>" class="advanced-dtt-edit-row">
     <td colspan="7">
-        <section id="edit-event-datetime-tickets-<?php echo absint($dtt_row); ?>"
+        <section id="edit-event-datetime-tickets-<?php echo esc_attr($dtt_row); ?>"
                  class="datetime-tickets-edit"<?php echo $show_tickets_row; ?>>
             <div class="datetime-description-container">
-                <textarea name="<?php echo esc_attr($event_datetimes_name); ?>[<?php echo absint($dtt_row); ?>][DTT_description]"
+                <textarea name="<?php echo esc_attr($event_datetimes_name); ?>[<?php echo esc_attr($dtt_row); ?>][DTT_description]"
                           class="event-datetime-DTT_description ee-full-textarea-inp"
                           placeholder="Datetime Description (optional)"><?php echo esc_textarea($DTT_description); ?></textarea>
             </div>
@@ -73,7 +73,7 @@
                             <input type="text" name="add_new_ticket[TKT_start_date]"
                                    class="add-new-ticket-TKT_start_date ee-text-inp ee-datepicker"
                                    data-context="start-ticket"
-                                   data-date-field-context="#edit-event-datetime-tickets-<?php echo absint($dtt_row); ?>"
+                                   data-date-field-context="#edit-event-datetime-tickets-<?php echo esc_attr($dtt_row); ?>"
                                    data-related-field=".add-new-ticket-TKT_end_date"
                                    data-next-field=".add-new-ticket-TKT_end_date">
                         </td>
@@ -81,7 +81,7 @@
                             <input type="text" name="add_new_ticket[TKT_end_date]"
                                    class="add-new-ticket-TKT_end_date ee-text-inp ee-datepicker"
                                    data-context="end-ticket"
-                                   data-date-field-context="#edit-event-datetime-tickets-<?php echo absint($dtt_row); ?>"
+                                   data-date-field-context="#edit-event-datetime-tickets-<?php echo esc_attr($dtt_row); ?>"
                                    data-related-field=".add-new-ticket-TKT_start_date"
                                    data-next-field=".add-new-ticket-PRC_amount">
                         </td>
@@ -95,7 +95,7 @@
                         </td>
                         <td>
                             <span class="clickable gear-icon dashicons dashicons-admin-generic add-edit"
-                                  data-context="short-ticket" data-datetime-row="<?php echo absint($dtt_row); ?>"
+                                  data-context="short-ticket" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
                                   style="display:none"></span>
                             <!--
                             the "add-edit" class is used by jQuery to indicate we need to retrieve
@@ -122,13 +122,13 @@
                     <div class="save-cancel-button-container">
                         <button class="button button--primary ee-create-button"
                                 data-context="short-ticket"
-                                data-datetime-row="<?php echo absint($dtt_row); ?>"
+                                data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
                         >
                             <?php esc_html_e('Create Ticket', 'event_espresso'); ?>
                         </button>
                         <button class="button button--secondary ee-cancel-button add-edit"
                                 data-context="short-ticket"
-                                data-datetime-row="<?php echo absint($dtt_row); ?>"
+                                data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
                         >
                             <?php esc_html_e('Close', 'event_espresso'); ?>
                         </button>

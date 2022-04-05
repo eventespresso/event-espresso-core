@@ -1,11 +1,16 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var EE_Message_Template_Group $MTP
  * @var string                    $context
  * @var string                    $event_name
  * @var string[]                  $template_fields
  */
-$header = isset($event_name) ? sprintf(esc_html__('%1$s Custom Template'), $event_name) : '';
+
+ $header = isset($event_name) ? sprintf(esc_html__('%1$s Custom Template'), $event_name) : '';
+
 ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
@@ -65,7 +70,7 @@ $header = isset($event_name) ? sprintf(esc_html__('%1$s Custom Template'), $even
     <!-- we need to loop through the template_fields so we know our structure -->
     <?php
     if (isset($template_fields) && ! empty($template_fields) && ! is_wp_error($template_fields)) {
-        echo $template_fields; // already escaped
+        echo wp_kses($template_fields, AllowedTags::getWithFormTags());
     } else {
         ?>
         <p>

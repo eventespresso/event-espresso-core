@@ -12,6 +12,9 @@
  * @var string      $ticket_options_help_link
  * @var string      $ticket_rows
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <?php do_action('AHEE__event_tickets_metabox_main__before_content'); ?>
@@ -19,7 +22,7 @@
     <h4 class="event-tickets-datetimes-title">
         <?php esc_html_e('Event Datetime', 'event_espresso'); ?>
     </h4>
-    <?php echo $event_datetime_help_link; // already escaped ?>
+    <?php echo wp_kses($event_datetime_help_link, AllowedTags::getAllowedTags()); ?>
     <div class="event-datetimes-container">
         <!-- these are the ids for the current displayed datetimes (on create new this is blank -->
         <input id='datetime-IDs'
@@ -99,7 +102,7 @@
         <h4 class="event-tickets-datetimes-title">
             <?php esc_html_e('Ticket Options', 'event_espresso'); ?>
         </h4>
-        <?php echo $ticket_options_help_link; // already escaped ?>
+        <?php echo wp_kses($ticket_options_help_link, AllowedTags::getAllowedTags()); ?>
         <br />
         <table class="add-new-ticket-table">
             <thead>
@@ -116,7 +119,7 @@
                 </tr>
             </thead>
             <tbody id="all-ticket-rows">
-                <?php echo $ticket_rows; // already escaped ?>
+                <?php echo wp_kses($ticket_rows, AllowedTags::getWithFormTags()); ?>
             </tbody>
         </table> <!-- end .add-new-ticket-table -->
 
@@ -138,5 +141,5 @@
 <?php do_action('AHEE__event_tickets_metabox_main__after_content'); ?>
 
 <table id="new-ticket-row-form" class="hidden">
-    <tbody><?php echo $ticket_js_structure; // already escaped ?></tbody>
+    <tbody><?php echo wp_kses($ticket_js_structure, AllowedTags::getWithFormTags()); ?></tbody>
 </table>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int             $REG_ID
  * @var string          $filtered_registrations_link
@@ -10,17 +11,23 @@
  * @var string[]        $reg_datetime
  * @var EE_Registration $registration
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div class='ee-admin-page-nav-strip-wrap'>
     <div class='ee-admin-page-nav-strip'>
         <?php
-        echo $previous_registration; // already escaped
+        echo wp_kses($previous_registration, AllowedTags::getAllowedTags());
         echo '<span>';
-        echo esc_html__('Registration # ', 'event_espresso');
-        echo esc_html($reg_nmbr['value']);
+        printf(
+            /* translators: %s: registration number */
+            esc_html__('Registration # %1$s', 'event_espresso'),
+            esc_html($reg_nmbr['value'])
+        );
         echo '</span>';
-        echo $next_registration; // already escaped
+        echo wp_kses($next_registration, AllowedTags::getAllowedTags());
         ?>
     </div>
     <div class='ee-admin-page-nav-strip'>
@@ -59,4 +66,3 @@
 
 
 <?php do_action('AHEE__reg_status_change_buttons__after_header', $REG_ID); ?>
-
