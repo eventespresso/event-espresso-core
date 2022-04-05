@@ -5,7 +5,7 @@
  * @var EE_Payment[] $payments
  * @var array        $payment_methods
  * @var array        $payment_status
- * @var array        $registrations_to_apply_payment_to
+ * @var string       $registrations_to_apply_payment_to
  * @var array        $txn_details
  * @var array        $txn_nmbr
  * @var int          $TXN_ID
@@ -22,6 +22,9 @@
  * @var string       $line_item_table
  * @var string       $status_change_select
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
@@ -31,11 +34,11 @@
     </h3>
 
     <div class="admin-primary-mbox-tbl-wrap">
-        <?php echo $line_item_table; // already escaped ?>
+        <?php echo wp_kses($line_item_table, AllowedTags::getWithFormTags()); ?>
         <span id="txn-admin-grand-total" class="hidden"><?php echo esc_html($grand_raw_total); ?></span>
     </div>
     <div id="additional-transaction-actions-dv">
-        <?php echo $action_buttons; // already escaped ?>
+        <?php echo wp_kses($action_buttons, AllowedTags::getWithFormTags()); ?>
     </div>
 
     <a id="display-additional-transaction-session-info"
@@ -71,7 +74,7 @@
                             </label>
                         </th>
                         <td>
-                            <?php echo $txn_detail['value']; // already escaped ?>
+                            <?php echo wp_kses($txn_detail['value'], AllowedTags::getAllowedTags()); ?>
                         </td>
                     </tr>
                 <?php endforeach; // $txn_details?>
@@ -172,8 +175,7 @@
                                 </td>
                                 <td class=" jst-rght">
                                     <div id="payment-id-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo $PAY_ID; // sanitized
-                                        ?>
+                                        <?php echo esc_html($PAY_ID); ?>
                                     </div>
                                 </td>
                                 <td class=" jst-left">
@@ -186,16 +188,16 @@
                                         <?php echo esc_html($payment->source()); ?>
                                     </div>
                                     <div id="payment-gateway-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo $payment->payment_method() instanceof EE_Payment_Method
+                                        <?php echo ($payment->payment_method() instanceof EE_Payment_Method
                                             ? esc_html($payment->payment_method()->admin_name())
-                                            : esc_html__("Unknown", 'event_espresso'); ?>
+                                            : esc_html__("Unknown", 'event_espresso')); ?>
                                     </div>
                                     <div id="payment-gateway-id-<?php echo absint($PAY_ID); ?>"
                                          class="hidden"
                                     >
-                                        <?php echo $payment->payment_method() instanceof EE_Payment_Method
+                                        <?php echo ($payment->payment_method() instanceof EE_Payment_Method
                                             ? esc_html($payment->payment_method()->ID())
-                                            : 0; ?>
+                                            : 0); ?>
                                     </div>
                                 </td>
                                 <td class=" jst-left">
@@ -244,7 +246,7 @@
                         ?>
                         <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
                             <td class=" jst-rght" colspan="10">
-                                <span class="important-notice"><?php echo $no_payment_text; // already escaped ?></span>
+                                <span class="important-notice"><?php echo wp_kses($no_payment_text, AllowedTags::getAllowedTags()); ?></span>
                             </td>
                         </tr>
                         <tr id="txn-admin-payments-total-tr"
@@ -281,7 +283,7 @@
                     <?php else : ?>
                         <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
                             <td class=" jst-rght" colspan="10">
-                                <span class="important-notice"><?php echo $no_payment_text; // already escaped ?></span>
+                                <span class="important-notice"><?php echo wp_kses($no_payment_text, AllowedTags::getAllowedTags()); ?></span>
                             </td>
                         </tr>
                         <tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
@@ -697,15 +699,14 @@
                                 />
                                 <?php esc_html_e('Just the following Registrations', 'event_espresso'); ?>
                             </label>
-                            <?php echo $registrations_to_apply_payment_to; // already escaped ?>
+                            <?php echo wp_kses($registrations_to_apply_payment_to, AllowedTags::getWithFormTags()); ?>
                         </div>
 
                         <div class="txn-admin-payment-reg-status-dv admin-modal-dialog-row">
                             <label for="txn-admin-payment-reg-status-inp" class="last">
                                 <?php esc_html_e('Change Registration Status?', 'event_espresso'); ?>
                             </label>
-                            <?php
-                            echo $status_change_select; // already escaped ?>
+                            <?php echo wp_kses($status_change_select, AllowedTags::getWithFormTags()); ?>
                             <p class="description">
                                 <?php esc_html_e(
                                     'If you wish to change the status for the registrations selected above, then select which status from this dropdown.',
@@ -849,7 +850,7 @@
                             <label for="delete-txn-admin-payment-reg-status-inp" class="last">
                                 <?php esc_html_e('Change Registration Status?', 'event_espresso'); ?>
                             </label>
-                            <?php echo $delete_status_change_select; // already escaped ?>
+                            <?php echo wp_kses($delete_status_change_select, AllowedTags::getWithFormTags()); ?>
                             <p class="description">
                                 <?php printf(
                                     esc_html__(

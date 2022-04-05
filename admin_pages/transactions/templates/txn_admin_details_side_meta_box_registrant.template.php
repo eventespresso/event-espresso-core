@@ -11,6 +11,8 @@
  * @var string $edit_attendee_url
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 $prime_reg_email = sanitize_email($prime_reg_email);
 ?>
     <div id="admin-side-mbox-primary-registrant-dv" class="admin-side-mbox-dv">
@@ -29,7 +31,7 @@ $prime_reg_email = sanitize_email($prime_reg_email);
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
             <?php esc_html_e('Email', 'event_espresso'); ?>
         </span>
-        <a href="mailto:<?php echo esc_attr($prime_reg_email); ?>"><?php echo $prime_reg_email; // sanitized ?></a>
+        <a href="mailto:<?php echo esc_attr($prime_reg_email); ?>"><?php echo esc_html($prime_reg_email); ?></a>
     </p>
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
@@ -46,7 +48,7 @@ $prime_reg_email = sanitize_email($prime_reg_email);
             <?php esc_html_e('Address', 'event_espresso'); ?>
         </span>
         <div class="admin-side-mbox-text-dv">
-            <?php echo $formatted_address; // already escaped ?>
+            <?php echo wp_kses($formatted_address, AllowedTags::getAllowedTags()); ?>
         </div>
     </div>
     </div> <!-- end #admin-side-mbox-primary-registrant-dv -->
