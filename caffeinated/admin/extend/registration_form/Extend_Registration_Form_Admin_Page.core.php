@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Class Extend_Registration_Form_Admin_Page
@@ -1160,7 +1161,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      */
     public function copy_attendee_info_settings_form()
     {
-        echo $this->_copy_attendee_info_settings_form()->get_html();
+        echo wp_kses($this->_copy_attendee_info_settings_form()->get_html(), AllowedTags::getWithFormTags());
     }
 
     /**
@@ -1266,7 +1267,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      */
     public function email_validation_settings_form()
     {
-        echo $this->_email_validation_settings_form()->get_html();
+        echo wp_kses($this->_email_validation_settings_form()->get_html(), AllowedTags::getWithFormTags());
     }
 
 
