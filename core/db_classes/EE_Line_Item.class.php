@@ -101,6 +101,13 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     }
 
 
+    public function __wakeup()
+    {
+        $this->calculator = LoaderFactory::getShared(LineItemCalculator::class);
+        parent::__wakeup();
+    }
+
+
     /**
      * Gets ID
      *
@@ -477,7 +484,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      */
     public function pretaxTotal(): float
     {
-        return $this->get('LIN_pretax');
+        return (float) $this->get('LIN_pretax');
     }
 
 
@@ -505,7 +512,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      */
     public function totalWithTax(): float
     {
-        return $this->get('LIN_total');
+        return (float) $this->get('LIN_total');
     }
 
 
@@ -1357,7 +1364,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     {
         $grand_total_line_item = EEH_Line_Item::find_transaction_grand_total_for_line_item($this);
         [$total] = $this->calculator->recalculateLineItemTotals($grand_total_line_item);
-        return $total;
+        return (float) $total;
     }
 
 
