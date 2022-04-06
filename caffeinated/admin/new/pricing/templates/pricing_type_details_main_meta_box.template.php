@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Price_Type $price_type
  * @var string $base_type_select

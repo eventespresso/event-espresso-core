@@ -1,8 +1,20 @@
+<?php
+
+/**
+ * template vars in use:
+ *
+ * @var $view_RLs
+ * @var $evt_prc_overview_url
+ * @var $status
+ * @var $list_table
+ */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
+?>
 <div id="evt-prc-overview-filters-dv">
     <ul class="subsubsub">
-        <?php use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
-        foreach ($view_RLs as $view) : ?>
+        <?php foreach ($view_RLs as $view) : ?>
             <li class="">
                 <a class="<?php echo sanitize_html_class($view['class']); ?>" href="<?php echo esc_url_raw($view['url']); ?>">
                     <?php echo esc_html($view['label']); ?> <span class="count">(<?php echo esc_html($view['count']); ?>)</span>
@@ -10,7 +22,6 @@
             </li>
         <?php endforeach; ?>
     </ul>
-    <!--<div class="clear"></div>-->
 </div>
 
 <form id="event-price-overview-frm" action="<?php echo esc_url_raw($evt_prc_overview_url); ?>" method="post">
