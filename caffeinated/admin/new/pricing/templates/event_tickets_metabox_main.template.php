@@ -15,6 +15,9 @@
  * @var string $ticket_js_structure
  * @var string $ee_collapsible_status
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="event-and-ticket-form-content">
@@ -30,7 +33,7 @@
                 ?>
         </span>
     </h3>
-    <?php echo $event_datetime_help_link; ?>
+    <?php echo wp_kses($event_datetime_help_link, AllowedTags::getAllowedTags()); ?>
     <div class="event-datetimes-container">
         <div class="save-cancel-button-container">
             <button class="button-secondary ee-create-button datetime-create-button" data-context="datetime">
@@ -57,7 +60,7 @@
             </tr>
             </thead>
             <tbody class="datetime-editing-dtts-tbody">
-            <?php echo $datetime_rows; ?>
+            <?php echo wp_kses($datetime_rows, AllowedTags::getWithFormTags()); ?>
             </tbody>
         </table>
         <div style="clear:both"></div>
@@ -67,7 +70,7 @@
             esc_html_e(
                 'Add New Datetime',
                 'event_espresso'
-            ); ?></h4><?php echo $add_new_dtt_help_link; ?>
+            ); ?></h4><?php echo wp_kses($add_new_dtt_help_link, AllowedTags::getAllowedTags()); ?>
         <div>
             <table id="add-new-event-datetime-table" class="datetime-edit-table">
                 <tr>
@@ -162,7 +165,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <?php echo $ticket_rows; ?>
+                <?php echo wp_kses($ticket_rows, AllowedTags::getWithFormTags()); ?>
                 </tbody>
             </table> <!-- end .ticket-table -->
 
@@ -174,4 +177,4 @@
     </div>
 </div> <!-- end #event-and-ticket-form-content -->
 
-<?php echo $ticket_js_structure; ?>
+<?php echo ($ticket_js_structure); ?>

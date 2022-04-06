@@ -38,9 +38,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     if ($payment_log->object() instanceof EE_Transaction) {
                         esc_html_e('Unknown', 'event_espresso');
                     } else {
-                        echo $payment_method
+                        echo ($payment_method
                             ? esc_html($payment_method->admin_name())
-                            : esc_html__("No Longer Exists", 'event_espresso');
+                            : esc_html__("No Longer Exists", 'event_espresso'));
                     }
                     ?>
                 </td>
@@ -52,9 +52,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <?php echo $transaction
+                    <?php echo ($transaction
                         ? absint($transaction->ID())
-                        : esc_html__('Could not be determined', 'event_espresso');
+                        : esc_html__('Could not be determined', 'event_espresso'));
                     ?>
                 </td>
             </tr>

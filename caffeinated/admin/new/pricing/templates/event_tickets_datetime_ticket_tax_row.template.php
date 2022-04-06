@@ -15,11 +15,11 @@
 
 <tr class="ticket-tax-row TKT-taxes-display"<?php echo $display_tax; ?>>
     <td colspan="4" class="ee-numeric">
-        <span class="TKT-tax-label"><?php echo $tax_label; ?></span>
+        <span class="TKT-tax-label"><?php echo esc_html($tax_label); ?></span>
     </td>
     <td class="ee-numeric">
         <span id="TKT-tax-amount-display-<?php echo absint($tax_id); ?>-<?php echo esc_attr($tkt_row); ?>"
-              class="TKT-tax-amount-display"><?php echo $tax_added_display; ?></span>
+              class="TKT-tax-amount-display"><?php echo esc_html($tax_added_display); ?></span>
         <input type="hidden" name="TKT-tax_amount[]" id="TKT-tax-amount-<?php echo absint($tax_id); ?>-<?php echo esc_attr($tkt_row); ?>"
                class="TKT-tax-amount" value="<?php echo esc_attr($tax_added); ?>">
         <input type="hidden" name="TKT-tax_percentage[]"

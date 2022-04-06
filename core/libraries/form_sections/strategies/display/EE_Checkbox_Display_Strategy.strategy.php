@@ -58,7 +58,7 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy
             $html .= ' style="' . $input->html_style() . '"';
             $html .= ' value="' . esc_attr($value) . '"';
             $html .= ! empty($input_raw_value) && in_array($value, $input_raw_value, true)
-                ? ' checked="checked"'
+                ? ' checked'
                 : '';
             $html .= ' ' . $this->_input->other_html_attributes();
             $html .= ' data-question_label="' . $input->html_label_id() . '"';

@@ -687,7 +687,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                        value="1"
                                        id="txn-admin-apply-payment-to-all-registrations-inp"
                                        name="txn_admin_payment[apply_to_all_registrations]"
-                                       checked="checked"
+                                       checked
                                 />
                                 <?php esc_html_e('ALL Registrations', 'event_espresso'); ?>
                             </label>
@@ -725,7 +725,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                 <input type="checkbox"
                                        value="1"
                                        name="txn_payments[send_notifications]"
-                                       checked="checked"
+                                       checked
                                        aria-checked="true"
                                        style="vertical-align: middle;"
                                 />

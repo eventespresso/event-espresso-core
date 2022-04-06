@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 /** @var string $persistent_admin_notice_name */
 /** @var string $persistent_admin_notice_message */
@@ -9,6 +12,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
     >
         <a><span class="dashicons dashicons-dismiss"></span><?php esc_html_e('Dismiss', 'event_espresso'); ?></a>
     </button>
-    <p><?php echo $persistent_admin_notice_message; // already escaped ?></p>
+    <p><?php echo wp_kses($persistent_admin_notice_message, AllowedTags::getWithFormTags()); ?></p>
     <div style="clear:both;"></div>
 </div>

@@ -1,9 +1,11 @@
 <div id="evt-prc-overview-filters-dv">
     <ul class="subsubsub">
-        <?php foreach ($view_RLs as $view) : ?>
+        <?php use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
+        foreach ($view_RLs as $view) : ?>
             <li class="">
                 <a class="<?php echo sanitize_html_class($view['class']); ?>" href="<?php echo esc_url_raw($view['url']); ?>">
-                    <?php echo $view['label']; ?> <span class="count">(<?php echo $view['count']; ?>)</span>
+                    <?php echo esc_html($view['label']); ?> <span class="count">(<?php echo esc_html($view['count']); ?>)</span>
                 </a>
             </li>
         <?php endforeach; ?>
@@ -15,6 +17,6 @@
     <?php // $list_table->search_box( $search['btn_label'], $search['callback'] ); ?>
     <input type="hidden" id="status" name="status" value="<?php echo esc_attr($status); ?>"/>
     <input type="hidden" id="per_page" name="per_page" value=""/>
-    <?php echo $list_table->display(); ?>
+    <?php echo wp_kses($list_table->display(), AllowedTags::getWithFormTags()); ?>
 </form>
 

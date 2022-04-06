@@ -138,7 +138,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
             if (! empty($QSGs)) {
                 $html = count($QSGs) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
                 foreach ($QSGs as $QSG) {
-                    $checked = in_array($QSG->ID(), $EQGids, true) ? ' checked="checked" ' : '';
+                    $checked = in_array($QSG->ID(), $EQGids, true) ? ' checked ' : '';
                     $edit_link = EE_Admin_Page::add_query_args_and_nonce(
                         array(
                             'action' => 'edit_question_group',

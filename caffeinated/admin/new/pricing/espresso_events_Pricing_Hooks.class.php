@@ -1365,7 +1365,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 ? 'TICKETNUM'
                 : $ticket_row,
             'datetime_ticket_checked' => in_array($display_row, $dtt_tkts, true)
-                ? ' checked="checked"'
+                ? ' checked'
                 : '',
             'ticket_selected'         => in_array($display_row, $dtt_tkts, true)
                 ? ' ticket-selected'
@@ -1465,7 +1465,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             $TKT_taxable = '';
         } else {
             $TKT_taxable = $ticket->taxable()
-                ? ' checked="checked"'
+                ? ' checked'
                 : '';
         }
         if ($default) {
@@ -2045,7 +2045,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 ? ' ticket-selected'
                 : '',
             'ticket_datetime_checked'  => in_array($datetime_row, $tkt_datetimes, true)
-                ? ' checked="checked"'
+                ? ' checked'
                 : '',
             'DTT_name'                 => $default && empty($datetime)
                 ? 'DTTNAME'

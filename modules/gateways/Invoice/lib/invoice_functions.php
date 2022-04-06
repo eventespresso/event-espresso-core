@@ -57,7 +57,7 @@ function espresso_invoice_template_files($class_file)
 function espresso_invoice_is_selected($input_item, $selected = '')
 {
     if ($input_item === $selected) {
-        return 'selected="selected"';
+        return 'selected';
     }
     return '';
 }

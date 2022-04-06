@@ -1282,7 +1282,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     : '';
                 $checked                           = empty($existing_reg_payments)
                                                      || in_array($registration->ID(), $existing_reg_payments, true)
-                    ? ' checked="checked"'
+                    ? ' checked'
                     : '';
                 $disabled                          = $registration->final_price() > 0 ? '' : ' disabled';
                 $registrations_to_apply_payment_to .= EEH_HTML::tr(

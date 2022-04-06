@@ -1364,7 +1364,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 $option = "\n\t";
                 $option .= '<option class="level-' . $level . '" ';
                 $option .= 'value="' . $ID . '" ';
-                $option .= $ID === absint($default) ? ' selected="selected"' : '';
+                $option .= $ID === absint($default) ? ' selected' : '';
                 $option .= '>';
                 $option .= "$pad {$post_title}";
                 $option .= '</option>';
