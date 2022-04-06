@@ -51,11 +51,9 @@
 
 .ee-icon,
 .dashicons {
-	/*position: relative;
-	top: -2px;*/
 	font-size: inherit;
    	height: auto;
-	margin-right: .5em;
+	margin-inline-end: .5em;
     vertical-align: middle;
 	width: auto;
 }
@@ -774,7 +772,7 @@ input.ee-register-button {
 }
 #espresso-notices-error,
 #espresso-ajax-notices-error {
-	border-color: var(--ee-status-color-pink);
+	border-color: var(--ee-status-color-red);
 }
 #espresso-notices-attention,
 #espresso-ajax-notices-attention {
