@@ -2,12 +2,15 @@
     width: 100%;
 }
 
-.messages-custom-template-switcher td:first {
+.messages-custom-template-switcher thead {
+    font-weight: bold;
+}
+
+.messages-custom-template-switcher td {
     width: 25%;
 }
 
 .messages-custom-template-switcher td:nth-child(2) {
-    width: 25%;
     padding-right: 10px;
 }
 
@@ -15,15 +18,6 @@
     width: 50%;
 }
 
-.messages-custom-template-switcher thead {
-    font-weight: bold;
-    font-size: 1.2em;
-}
-
 .messages-custom-template-switcher select {
     width: 100%;
-}
-
-.messages-custom-template-switcher .button--small {
-    margin-right: 20px;
 }
