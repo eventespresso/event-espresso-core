@@ -46,10 +46,10 @@ class EE_Checkbox_Display_Strategy_Test extends EE_UnitTestCase
 	<input type="checkbox" name="form[input1][]" id="form-input1-foo" class="" style="" value="foo" data-question_label="form-input1-lbl">&nbsp;Foo
 </label>
 <label for="form-input1-bar" id="form-input1-bar-lbl" class="ee-checkbox-label-after micro-lbl">
-	<input type="checkbox" name="form[input1][]" id="form-input1-bar" class="" style="" value="bar" checked data-question_label="form-input1-lbl">&nbsp;Bar
+	<input type="checkbox" name="form[input1][]" id="form-input1-bar" class="" style="" value="bar" checked="checked" data-question_label="form-input1-lbl">&nbsp;Bar
 </label>
 <label for="form-input1-bazem" id="form-input1-bazem-lbl" class="ee-checkbox-label-after micro-lbl">
-	<input type="checkbox" name="form[input1][]" id="form-input1-bazem" class="" style="" value="baz&#039;em" checked data-question_label="form-input1-lbl">&nbsp;Baz
+	<input type="checkbox" name="form[input1][]" id="form-input1-bazem" class="" style="" value="baz&#039;em" checked="checked" data-question_label="form-input1-lbl">&nbsp;Baz
 </label>';
         $this->assertHTMLEquals($expected_output2, $input->get_html_for_input());
     }

@@ -43,7 +43,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 <select name="form[input1]" id="form-input1" >
 	<option value="foo">Foo</option>
 	<option value="bar">Bar</option>
-	<option value="baz&#039;em" selected>Baz</option>
+	<option value="baz&#039;em" selected="selected">Baz</option>
 </select>';
 		$this->assertHTMLEquals( $expected_output2, $input->get_html_for_input() );
 
