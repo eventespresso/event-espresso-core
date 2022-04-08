@@ -54,8 +54,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 <td>
                     <?php echo ($transaction
                         ? absint($transaction->ID())
-                        : esc_html__('Could not be determined', 'event_espresso'));
-?>
+                        : esc_html__('Could not be determined', 'event_espresso')); ?>
                 </td>
             </tr>
             <tr>
