@@ -1,3 +1,8 @@
+#poststuff .messages-tabs-content .ee-nav-tabs .nav-tab-content {
+    margin-inline-start: .5rem;
+    margin-inline-end: 0;
+}
+
 .messages-custom-template-switcher {
     width: 100%;
 }
@@ -6,17 +11,21 @@
     font-weight: bold;
 }
 
-.messages-custom-template-switcher td {
-    width: 25%;
+.messages-custom-template-switcher td:first-child {
+    width: 40%;
 }
 
 .messages-custom-template-switcher td:nth-child(2) {
     padding-right: 10px;
+    width: 24%;
 }
 
 .messages-custom-template-switcher td:last-child {
-    width: 50%;
+    width: 32%;
 }
+/*.messages-custom-template-switcher td:last-child {*/
+/*    width: 50%;*/
+/*}*/
 
 .messages-custom-template-switcher select {
     width: 100%;
