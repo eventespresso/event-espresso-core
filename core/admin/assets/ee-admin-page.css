@@ -3044,6 +3044,11 @@ body.espresso-admin #contextual-help-wrap strong {
 
 
 .ee-admin-container p,
+.espresso-admin .postbox .inside p {
+    max-width: 120ch;
+}
+
+.ee-admin-container p,
 .espresso-admin .postbox .inside p,
 .espresso-admin .postbox .inside > div {
     font-size: 1rem;
