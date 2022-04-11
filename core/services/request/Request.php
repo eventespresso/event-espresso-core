@@ -59,7 +59,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
         array $cookies = [],
         array $files = []
     ) {
-        $this->cookies = ! empty($cookies)
+        $this->cookies        = ! empty($cookies)
             ? $cookies
             : filter_input_array(INPUT_COOKIE, FILTER_SANITIZE_STRING);
         $this->files          = ! empty($files) ? $files : $_FILES;
@@ -114,7 +114,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
-     * @param string $key
+     * @param string     $key
      * @param mixed|null $default
      * @return array|int|float|string
      */
@@ -484,7 +484,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     {
         return $this->request_type->isIframe();
     }
-
 
 
     /**
