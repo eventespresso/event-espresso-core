@@ -686,9 +686,9 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 }
 
 .espresso-admin .postbox .inside #minor-publishing-actions #save-action {
+    display: flex;
     flex-direction: row-reverse;
     justify-content: flex-start;
-    display: none;
 }
 
 .espresso-admin .postbox .inside .misc-pub-section > span:not(#timestamp):not(.dashicons) {
@@ -747,6 +747,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 .espresso-admin #misc-publishing-actions,
 .espresso-admin #minor-publishing-actions {
     padding: 0;
+    padding-block-end: 1.5rem;
 }
 
 .espresso-admin .publishing-action,
