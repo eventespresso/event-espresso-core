@@ -5185,7 +5185,8 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .media-frame .attachments-browser .media-views-heading {
     grid-area: heading;
 }
-.espresso-admin .media-frame .attachments-browser .attachments-wrapper {
+.espresso-admin .media-frame .attachments-browser > .attachments,
+.espresso-admin .media-frame .attachments-browser > .attachments-wrapper {
     grid-area: attachments;
 }
 .espresso-admin .media-frame .attachments-browser .media-sidebar {
