@@ -1380,7 +1380,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             }
         }
         if ($echo) {
-            echo wp_kses($output, AllowedTags::getAllowedTags());
+            echo wp_kses($output, AllowedTags::getWithFormTags());
             return '';
         }
         return $output;
