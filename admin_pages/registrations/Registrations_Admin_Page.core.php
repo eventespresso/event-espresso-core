@@ -1452,7 +1452,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             )
         ) {
             $this->addMetaBox(
-                $this->_wp_page_slug,
                 'edit-reg-questions-mbox',
                 esc_html__('Registration Form Answers', 'event_espresso'),
                 [$this, '_reg_questions_meta_box'],
