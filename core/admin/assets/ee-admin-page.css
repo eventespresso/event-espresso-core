@@ -654,12 +654,23 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     grid-template-areas:
         "month x day comma year"
         "at x hour colon minutes";
-    grid-template-columns: 14fr .5rem 8fr .25rem 8fr;
+    grid-template-columns: 10fr .5rem 6fr 0.4rem 6fr;
+    margin-inline-start: auto;
     text-align: end;
+    width: 17rem;
 }
 .espresso-admin .postbox .inside .misc-pub-section .hide-if-js .timestamp-wrap :first-child {
     grid-column-start: 1;
      grid-column-end: 3;
+}
+.espresso-admin .postbox .inside .misc-pub-section .hide-if-js .timestamp-wrap #mm {
+    width: 6rem;
+}
+.espresso-admin .postbox .inside .misc-pub-section .hide-if-js .timestamp-wrap #aa,
+.espresso-admin .postbox .inside .misc-pub-section .hide-if-js .timestamp-wrap #hh,
+.espresso-admin .postbox .inside .misc-pub-section .hide-if-js .timestamp-wrap #jj,
+.espresso-admin .postbox .inside .misc-pub-section .hide-if-js .timestamp-wrap #mn {
+    width: 3rem;
 }
 .espresso-admin .postbox .inside .misc-pub-section .hide-if-js .timestamp-wrap :nth-child(2),
 .espresso-admin .postbox .inside .misc-pub-section .hide-if-js .timestamp-wrap :nth-child(4) {
