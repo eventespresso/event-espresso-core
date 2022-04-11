@@ -4182,7 +4182,7 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin .wp-list-table.widefat th.check-column input[type="checkbox"] + .dashicons-lock,
 .espresso-admin .wp-list-table.widefat td.check-column input[type="checkbox"] + .dashicons-lock {
-    margin-block-start: -1.4rem;
+    margin-block-start: .25rem;
     z-index: 1;
 }
 

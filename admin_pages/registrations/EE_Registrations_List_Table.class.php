@@ -420,10 +420,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             ? $transaction->count_related('Payment')
             : 0;
 
-        $content = $payment_count > 0 || ! $this->caps_handler->userCanEditRegistration($item)
+        $content = '<input type="checkbox" name="_REG_ID[]" value="' . $REG_ID . '" />';
+        $content .= $payment_count > 0 || ! $this->caps_handler->userCanEditRegistration($item)
             ? '<span class="ee-locked-entity dashicons dashicons-lock ee-aria-tooltip ee-aria-tooltip--big-box" 
                     aria-label="' . $this->lockedRegMessage() . '"></span>'
-            : '<input type="checkbox" name="_REG_ID[]" value="' . $REG_ID . '" />';
+            : '';
         return $this->columnContent('cb', $content, 'center');
     }
 
