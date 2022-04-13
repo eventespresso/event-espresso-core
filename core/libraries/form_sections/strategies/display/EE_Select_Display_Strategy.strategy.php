@@ -70,7 +70,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
             // even if this input uses EE_Text_Normalization if one of the array keys is a numeric string, like "123",
             // PHP will have converted it to a PHP integer (eg 123). So we need to make sure it's a string
             $unnormalized_value = $this->_input->get_normalization_strategy()->unnormalize_one($value);
-            $selected = $this->_check_if_option_selected($unnormalized_value) ? ' selected="selected"' : '';
+            $selected = $this->_check_if_option_selected($unnormalized_value) ? ' selected' : '';
             $html .= EEH_HTML::nl(0, 'option') . '<option value="' . esc_attr($unnormalized_value) . '"' . $selected . '>' . $display_text . '</option>';
         }
         EEH_HTML::indent(-1, 'option');

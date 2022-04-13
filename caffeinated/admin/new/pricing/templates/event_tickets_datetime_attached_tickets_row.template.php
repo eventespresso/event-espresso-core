@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -12,6 +11,9 @@
  * @var string $event_datetimes_name
  * @var string $add_new_datetime_ticket_help_link
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <tr id="advanced-dtt-edit-row-<?php echo esc_attr($dtt_row); ?>" class="advanced-dtt-edit-row">
     <td colspan="7">
@@ -30,7 +32,7 @@
             <h4 class="datetime-tickets-heading"><?php esc_html_e('Assigned Tickets', 'event_espresso'); ?></h4>
 
             <ul class="datetime-tickets-list">
-                <?php echo $datetime_tickets_list; ?>
+                <?php echo wp_kses($datetime_tickets_list, AllowedTags::getWithFormTags()); ?>
             </ul>
 
 
@@ -39,7 +41,7 @@
                     esc_html_e(
                         'Add New Ticket',
                         'event_espresso'
-                    ); ?></h4><?php echo $add_new_datetime_ticket_help_link; ?><br>
+                    ); ?></h4><?php echo wp_kses($add_new_datetime_ticket_help_link, AllowedTags::getAllowedTags()); ?><br>
                 <table class="add-new-ticket-table">
                     <thead>
                     <tr valign="top">
@@ -107,12 +109,12 @@
                 <div class="ee-editor-footer-container">
                     <div class="ee-editor-id-container">
                         <span class="ee-item-id"><?php
-                            echo $DTT_ID
+                            echo ($DTT_ID
                                 ? sprintf(
                                     esc_html__('Datetime ID: %d', 'event_espresso'),
                                     $DTT_ID
                                 )
-                                : ''; ?></span>
+                                : ''); ?></span>
                     </div>
                     <div class="save-cancel-button-container">
                         <button data-context="short-ticket" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"

@@ -55,11 +55,11 @@
     </td>
     <td>
         <span data-context="datetime" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
-              class="datetime-tickets-sold ee-numeric"><?php echo $dtt_sold; ?></span>
+              class="datetime-tickets-sold ee-numeric"><?php echo esc_html($dtt_sold); ?></span>
     </td>
     <?php if (apply_filters('FHEE__event_tickets_metabox__dtt_reserved', true)) : ?>
         <td>
-            <span class="datetime-tickets-reserved ee-numeric"><?php echo $dtt_reserved; ?></span>
+            <span class="datetime-tickets-reserved ee-numeric"><?php echo esc_html($dtt_reserved); ?></span>
         </td>
     <?php endif; ?>
 
@@ -74,7 +74,7 @@
               class="<?php echo esc_attr($trash_icon); ?> clickable"<?php echo $show_trash; ?>></span>
         <?php if ($reg_list_url !== '') : ?>
             <a href="<?php echo esc_url_raw($reg_list_url); ?>"
-               title="<?php esc_html_e('View registrations for this datetime.', 'event_espresso'); ?>"
+               title="<?php esc_attr_e('View registrations for this datetime.', 'event_espresso'); ?>"
                style="text-decoration: none;">
                 <span data-context="datetime" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
                       class="dashicons dashicons-groups clickable"></span>

@@ -967,7 +967,7 @@ class EEH_DTT_Helper
         usort($zone_data, '_wp_timezone_choice_usort_callback');
         $structure = array();
         if (empty($selected_zone)) {
-            $structure[] = '<option selected="selected" value="">' . esc_html__('Select a city', 'event_espresso') . '</option>';
+            $structure[] = '<option selected value="">' . esc_html__('Select a city', 'event_espresso') . '</option>';
         }
         foreach ($zone_data as $key => $zone) {
             // Build value in an array to join later
@@ -993,7 +993,7 @@ class EEH_DTT_Helper
             }
             // Build the value
             $value       = implode('/', $value);
-            $selected    = $value === $selected_zone ? ' selected="selected"' : '';
+            $selected    = $value === $selected_zone ? ' selected' : '';
             $structure[] = '<option value="' . esc_attr($value) . '"' . $selected . '>'
                            . esc_html($display)
                            . '</option>';

@@ -219,7 +219,7 @@ if ($QST_system === 'country') {
                     </th>
                     <td>
                         <input id="QST_max"
-                            <?php echo $max_max === EE_INF ? '' : 'max="' . esc_attr($max_max) . '"'; ?>
+                            <?php echo ($max_max === EE_INF ? '' : 'max="' . esc_attr($max_max) . '"'); ?>
                                min="1"
                                name="QST_max"
                                type="number"

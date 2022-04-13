@@ -850,7 +850,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                         . '" alt="' . esc_attr__('Inactive Email Tab', 'event_espresso') . '" />';
         $args['img3'] = '<div class="switch">'
                         . '<input class="ee-on-off-toggle ee-toggle-round-flat"'
-                        . ' type="checkbox" checked="checked">'
+                        . ' type="checkbox" checked>'
                         . '<label for="ee-on-off-toggle-on"></label>'
                         . '</div>';
         $args['img4'] = '<div class="switch">'

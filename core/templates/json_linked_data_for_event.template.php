@@ -67,7 +67,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
     <?php
     if ($event_image) {
         ?>,
-  "image": "<?php echo $event_image; ?>"
+  "image": "<?php echo esc_url_raw($event_image); ?>"
         <?php
     } ?>
     <?php do_action('AHEE__json_linked_data_for_event__template'); ?>

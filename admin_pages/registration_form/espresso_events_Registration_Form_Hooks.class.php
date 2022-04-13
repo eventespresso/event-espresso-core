@@ -143,7 +143,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
                 foreach ($QSGs as $QSG) {
                     $QSG_ID          = absint($QSG->ID());
                     $checked         = in_array($QSG_ID, $EQGids, true) || $QSG->get('QSG_system') === 1
-                        ? ' checked="checked"'
+                        ? ' checked'
                         : '';
                     $visibility      = $QSG->get('QSG_system') === 1
                         ? ' style="visibility:hidden"'

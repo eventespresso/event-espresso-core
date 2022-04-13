@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /** @var boolean $display_ticket_price */
@@ -42,9 +45,9 @@ if ($display_ticket_price) { ?>
                 if ($ticket->base_price() instanceof EE_Price) { ?>
                     <tr>
                         <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>" class="small-text" colspan="2">
-                            <b><?php echo $ticket->base_price()->name(); ?></b></td>
+                            <b><?php echo wp_kses($ticket->base_price()->name(), AllowedTags::getAllowedTags()); ?></b></td>
                         <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
-                            class="jst-rght small-text"><?php echo $ticket->base_price()->pretty_price(); ?></td>
+                            class="jst-rght small-text"><?php echo wp_kses($ticket->base_price()->pretty_price(), AllowedTags::getAllowedTags()); ?></td>
                     </tr>
                     <?php
                     $running_total = $ticket->base_price()->amount();
@@ -55,10 +58,10 @@ if ($display_ticket_price) { ?>
                 foreach ($ticket->price_modifiers() as $price_mod) { ?>
                     <tr>
                         <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>"
-                            class="jst-rght small-text"><?php echo $price_mod->name(); ?></td>
+                            class="jst-rght small-text"><?php echo wp_kses($price_mod->name(), AllowedTags::getAllowedTags()); ?></td>
                         <?php if ($price_mod->is_percent()) { ?>
                             <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>"
-                                class="small-text"><?php echo $price_mod->desc(); ?> <?php echo $price_mod->amount(); ?>
+                                class="small-text"><?php echo wp_kses($price_mod->desc(), AllowedTags::getAllowedTags()); ?> <?php echo wp_kses($price_mod->amount(), AllowedTags::getAllowedTags()); ?>
                                 %
                             </td>
                             <?php
@@ -69,7 +72,7 @@ if ($display_ticket_price) { ?>
                             <?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1
                                 : $price_mod->amount(); ?>
                             <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>"
-                                class="small-text"><?php echo $price_mod->desc(); ?></td>
+                                class="small-text"><?php echo wp_kses($price_mod->desc(), AllowedTags::getAllowedTags()); ?></td>
                             <?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1
                                 : $price_mod->amount(); ?>
                         <?php } ?>
@@ -98,9 +101,9 @@ if ($display_ticket_price) { ?>
                     <?php foreach ($ticket->get_ticket_taxes_for_admin() as $tax) { ?>
                         <tr>
                             <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>"
-                                class="jst-rght small-text"><?php echo $tax->name(); ?></td>
+                                class="jst-rght small-text"><?php echo wp_kses($tax->name(), AllowedTags::getAllowedTags()); ?></td>
                             <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>"
-                                class="jst-rght small-text"><?php echo $tax->amount(); ?>%
+                                class="jst-rght small-text"><?php echo wp_kses($tax->amount(), AllowedTags::getAllowedTags()); ?>%
                             </td>
                             <?php $tax_amount = $running_total * ($tax->amount() / 100); ?>
                             <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"

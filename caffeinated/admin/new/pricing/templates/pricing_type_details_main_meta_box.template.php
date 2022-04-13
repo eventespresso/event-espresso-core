@@ -1,8 +1,12 @@
 <?php
+
 /**
  * @var EE_Price_Type $price_type
  * @var string $base_type_select
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div style="padding:1em;">
@@ -15,7 +19,7 @@
                 <label for="basic_type"><?php esc_html_e('Basic Type', 'event_espresso'); ?></label>
             </th>
             <td>
-                <?php echo $base_type_select; // already escaped ?><br/>
+                <?php echo wp_kses($base_type_select, AllowedTags::getWithFormTags()); ?><br/>
                 <p class="description">
                     <?php
                     printf(
@@ -45,14 +49,14 @@
                 <label><?php esc_html_e('Percentage or Fixed Amount?', 'event_espresso'); ?></label>
             </th>
             <td>
-                <?php $yes_checked = $price_type->is_percent() ? ' checked="checked"' : ''; ?>
+                <?php $yes_checked = $price_type->is_percent() ? 'checked' : ''; ?>
                 <label style="margin-right:15px;"><input type="radio" name="PRT_is_percent"
-                                                         value="1"<?php echo $yes_checked; ?> style="margin-right:5px;">
+                                                         value="1" <?php echo esc_attr($yes_checked); ?> style="margin-right:5px;">
                     <?php esc_html_e('Percentage', 'event_espresso'); ?>
                 </label>
-                <?php $no_checked = $price_type->is_percent() ? '' : ' checked="checked"'; ?>
+                <?php $no_checked = $price_type->is_percent() ? '' : 'checked'; ?>
                 <label style="margin-right:15px;"><input type="radio" name="PRT_is_percent"
-                                                         value="0"<?php echo $no_checked; ?> style="margin-right:5px;">
+                                                         value="0" <?php echo esc_attr($no_checked); ?> style="margin-right:5px;">
                     <?php esc_html_e('Fixed', 'event_espresso'); ?>
                 </label>
                 <p class="description"><?php
