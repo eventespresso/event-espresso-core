@@ -394,7 +394,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 .espresso-admin #submitpost,
 .espresso-admin #postbox-container-1 .postbox .inside,
 .espresso-admin #postbox-container-2 .postbox .inside {
-    padding: 1.5rem;
+    padding: clamp(.5rem, 1vw, 1.5rem);
 }
 .espresso-admin #postbox-container-1 .postbox .inside > .inside,
 .espresso-admin #postbox-container-2 .postbox .inside > .inside {
@@ -1546,6 +1546,14 @@ label.error {
 .ee-composite-dashicon span {
     position: relative;
     z-index: 10;
+}
+.espresso-admin .dashicons,
+.espresso-admin .dashicons-before:before {
+    aspect-ratio: 1;
+    color: currentColor;
+    font-size: 1.33rem;
+    height: 1.33rem;
+    width: 1.33rem;
 }
 
 .ee-composite-dashicon .ee-icon + .ee-icon,
@@ -3296,43 +3304,42 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 
-/* @media screen and (min-width: 782px) { */
-    .espresso-admin select,
-    .espresso-admin textarea:not(.wp-editor-area):not(.iframe-embed-content),
-    .espresso-admin input:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-        min-width: clamp(4rem, 25%, 16rem);
-        max-width: clamp(24rem, 100%, 60rem);;
-    }
+.espresso-admin select,
+.espresso-admin textarea:not(.wp-editor-area):not(.iframe-embed-content),
+.espresso-admin input:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    min-width: clamp(4rem, 25%, 16rem);
+    max-width: clamp(24rem, 100%, 60rem);;
+}
 
-    .espresso-admin select.ee-input-size--tiny,
-    .espresso-admin textarea.ee-input-size--tiny,
-    .espresso-admin input.ee-input-size--tiny:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-        min-width: clamp(3rem, 6.25%, 6rem);
-        max-width: clamp(6rem, 12.5%, 9rem);
-    }
+.espresso-admin select.ee-input-width--tiny,
+.espresso-admin textarea.ee-input-width--tiny,
+.espresso-admin input.ee-input-width--tiny:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    min-width: clamp(3rem, 6.25%, 6rem);
+    max-width: clamp(6rem, 12.5%, 9rem);
+}
 
-    .espresso-admin select.ee-input-size--small,
-    .espresso-admin textarea.ee-input-size--small,
-    .espresso-admin input.ee-input-size--small:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-        min-width: clamp(4rem, 12.5%, 8rem);
-        max-width: clamp(8rem, 25%, 16rem);
-    }
+.espresso-admin select.ee-input-width--small,
+.espresso-admin textarea.ee-input-width--small,
+.espresso-admin input.ee-input-width--small:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    min-width: clamp(4rem, 12.5%, 8rem);
+    max-width: clamp(8rem, 25%, 16rem);
+}
 
-    .espresso-admin select.ee-input-size--reg,
-    .espresso-admin textarea.ee-input-size--reg,
-    .espresso-admin input.ee-input-size--reg:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-        min-width: clamp(8rem, 25%, 16rem);
-        max-width: clamp(16rem, 50%, 32rem);
-    }
+.espresso-admin select.ee-input-width--reg,
+.espresso-admin textarea.ee-input-width--reg,
+.espresso-admin input.ee-input-width--reg:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    min-width: clamp(8rem, 25%, 16rem);
+    max-width: clamp(16rem, 50%, 32rem);
+}
 
 
-    .espresso-admin select.ee-input-size--big,
-    .espresso-admin textarea.ee-input-size--big,
-    .espresso-admin input.ee-input-size--big:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-        min-width: clamp(16rem, 50%, 32rem);
-        max-width: clamp(32rem, 100%, 64rem);
-    }
-/* } */
+.espresso-admin select.ee-input-width--big,
+.espresso-admin textarea.ee-input-width--big,
+.espresso-admin input.ee-input-width--big:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    min-width: clamp(16rem, 50%, 32rem);
+    max-width: clamp(32rem, 100%, 64rem);
+}
+
 
 .espresso-admin td > select:first-child,
 .espresso-admin td > textarea:first-child,
@@ -3357,6 +3364,26 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 
+.espresso-admin input[type="radio"].ee-input-size--tiny,
+.espresso-admin input[type="checkbox"].ee-input-size--tiny {
+    --ee-checkbox-height: 1.2rem;
+}
+.espresso-admin input[type="radio"].ee-input-size--tiny:checked::before,
+.espresso-admin input[type="checkbox"].ee-input-size--tiny:checked::before {
+    background-size: 0.75rem;
+    background-position: 0.375rem 0.4rem;
+}
+
+.espresso-admin input[type="radio"].ee-input-size--small,
+.espresso-admin input[type="checkbox"].ee-input-size--small {
+    --ee-checkbox-height: 1.35rem;
+}
+.espresso-admin input[type="radio"].ee-input-size--small:checked::before,
+.espresso-admin input[type="checkbox"].ee-input-size--small:checked::before {
+    background-size: 0.8125rem;
+    background-position: 0.34375rem 0.375rem;
+}
+
 .espresso-admin .ee-locked-entity,
 .espresso-admin input[type="radio"],
 .espresso-admin input[type="checkbox"],
@@ -3379,9 +3406,22 @@ body.espresso-admin #contextual-help-wrap strong {
     border-radius: .25rem;
 }
 .espresso-admin input[type="radio"],
+.espresso-admin input[type="checkbox"] {
+    aspect-ratio: 1 !important;
+}
+.espresso-admin input[type="radio"],
 .espresso-admin input[type="radio"]::before {
     aspect-ratio: 1 !important;
     border-radius: 100%;
+}
+
+.espresso-admin label > input[type="checkbox"],
+.espresso-admin label > input[type="radio"] {
+    margin-inline-end: .75rem;
+}
+.espresso-admin label.ee-input--after > input[type="checkbox"],
+.espresso-admin label.ee-input--after > input[type="radio"] {
+    margin-inline-start: .75rem;
 }
 
 .espresso-admin input[type="radio"]:hover,
@@ -3747,14 +3787,17 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button.button--icon-only {
     height: var(--ee-button-height);
     width: var(--ee-button-height);
+    /* padding: calc((var(--ee-button-height) * .6) - var(--ee-button-height-shim)); */
+}
+.espresso-admin.wp-core-ui .ee-list-table-actions  {
     padding: calc((var(--ee-button-height) * .6) - var(--ee-button-height-shim));
 }
 .espresso-admin.wp-core-ui .ee-list-table-actions a .dashicons,
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons,
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons:before {
-    font-size: calc((var(--ee-button-height) * .6) + var(--ee-button-height-shim));
-    height: calc((var(--ee-button-height) * .6) + var(--ee-button-height-shim));
-    width: calc((var(--ee-button-height) * .6) + var(--ee-button-height-shim));
+    font-size: calc((var(--ee-button-height) * .5) + var(--ee-button-height-shim));
+    height: calc((var(--ee-button-height) * .5) + var(--ee-button-height-shim));
+    width: calc((var(--ee-button-height) * .5) + var(--ee-button-height-shim));
     margin: 0;
     top: unset;
 }
@@ -4148,10 +4191,17 @@ body.espresso-admin #contextual-help-wrap strong {
     }
     .espresso-admin .wp-list-table.widefat th.check-column,
     .espresso-admin .wp-list-table.widefat td.check-column {
-        padding-block-start: .7rem;
         padding-block-end: .5rem;
         padding-inline: 0.5rem;
         text-align: center;
+    }
+    /* for wp-list-table, td.check-column is in the thead  */
+    .espresso-admin .wp-list-table.widefat td.check-column {
+        padding-block-start: .25rem;
+    }
+    /* and th.check-column is in the tbody  ¯\_(ツ)_/¯ */
+    .espresso-admin .wp-list-table.widefat th.check-column {
+        padding-block-start: .5rem;
     }
 }
 @media screen and (min-width: 1920px) {
@@ -4214,7 +4264,7 @@ body.espresso-admin #contextual-help-wrap strong {
     color: var(--ee-font-color-light);
     font-size: 1rem;
     font-weight: 800;
-    padding-block-start: 1rem;
+    /* padding-block-start: 1rem; */
 }
 
 .admin-primary-mbox-tbl thead td,
@@ -4296,7 +4346,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .wp-list-table th.sortable > a {
     align-content: center;
     align-items: center;
-    display: flex;
+    display: inline-flex;
     float: unset;
     justify-content: flex-start;
 }
@@ -4455,8 +4505,12 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin .paging-input,
+.espresso-admin .paging-input-of,
 .espresso-admin .pagination-links {
     flex-wrap: nowrap;
+}
+.espresso-admin .paging-input-of {
+    margin-inline: 0.25rem;
 }
 
 .espresso-admin.wp-core-ui #search-submit,
@@ -4465,6 +4519,13 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .tablenav .button.button--secondary {
     height: var(--ee-button-height);
     line-height: 1;
+}
+.espresso-admin.wp-core-ui .tablenav .button.button--icon-only {
+    font-size: 1.8rem;
+}
+.espresso-admin.wp-core-ui .tablenav .button.button--icon-only .ee-pagination-arrow {
+    position: relative;
+    top: -.25rem;
 }
 
 .espresso-admin .subsubsub,

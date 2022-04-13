@@ -9,7 +9,7 @@
     --ee-color-almost-white: hsl(207, 0%, 95%);
     --ee-color-off-white: hsl(207, 0%, 90%);
     --ee-status-color-pink: hsl(340, 100%, 70%);
-    --ee-status-color-red: hsl(355, 60%, 50%);
+    --ee-status-color-red: hsl(350, 90%, 60%);
     --ee-status-color-orange: hsl(20, 100%, 60%);
     --ee-status-color-gold: hsl(40, 98%, 50%);
     --ee-status-color-yellow: hsl(50, 95%, 45%);
@@ -179,7 +179,6 @@
     --ee-button-height-sixth: calc(var(--ee-button-height) / 6);
     --ee-button-height-shim: calc(var(--ee-button-height) / 12);
 
-
     --ee-box-shadow: 0 2px 3px -2px hsla(0, 0%, 0%, .5);
     --ee-box-shadow-big: 0 3px 6px hsla(0, 0%, 0%, .5);
     --ee-button-box-shadow: 0 1px 1px hsla(0, 0%, 0%, 0.4), 1px 1px 3px hsla(0, 0%, 0%, 0.15), -1px -1px 1px hsla(0, 0%, 100%, 0.75);
@@ -202,6 +201,7 @@
     --ee-tab-border-hover: hsl(203, 40%, 65%);
     --ee-tab-border-active: hsl(203, 70%, 55%);
 
+    --ee-input-height: calc(var(--ee-button-height) + 1px);
     --ee-checkbox-height: 1.5rem;
 
     --ee-switch-width: 3.6rem;

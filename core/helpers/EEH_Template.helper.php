@@ -817,24 +817,22 @@ class EEH_Template
 
         $output = '<span class="displaying-num">' . $item_label . '</span>';
 
-        if ($current === 1) {
-            $disable_first = ' disabled';
-        }
-        if ($current == $total_pages) {
-            $disable_last = ' disabled';
-        }
+        $disable_first = $current === 1 ? 'disabled' : '';
+        $disable_last  = $current === $total_pages ? 'disabled' : '';
+
+        $button_classes = 'button button--secondary button--icon-only button--small';
 
         $page_links[] = sprintf(
-            "<a class='%s' title='%s' href='%s'>%s</a>",
-            'first-page' . $disable_first,
+            '<a class="%s" aria-label="%s" href="%s"><span class="ee-pagination-arrow">%s</span></a>',
+            "first-page $button_classes $disable_first",
             esc_attr__('Go to the first page', 'event_espresso'),
             esc_url_raw(remove_query_arg($paged_arg_name, $url)),
             '&laquo;'
         );
 
         $page_links[] = sprintf(
-            '<a class="%s" title="%s" href="%s">%s</a>',
-            'prev-page' . $disable_first,
+            '<a class="%s" aria-label="%s" href="%s"><span class="ee-pagination-arrow">%s</span></a>',
+            "prev-page $button_classes $disable_first",
             esc_attr__('Go to the previous page', 'event_espresso'),
             esc_url_raw(add_query_arg($paged_arg_name, max(1, $current - 1), $url)),
             '&lsaquo;'
@@ -844,7 +842,7 @@ class EEH_Template
             $html_current_page = $current;
         } else {
             $html_current_page = sprintf(
-                "<input class='current-page' title='%s' type='text' name=$paged_arg_name value='%s' size='%d' />",
+                "<input class='current-page ee-input-size--small' title='%s' type='text' name=$paged_arg_name value='%s' size='%d' />",
                 esc_attr__('Current page', 'event_espresso'),
                 esc_attr($current),
                 strlen($total_pages)
@@ -857,34 +855,33 @@ class EEH_Template
         );
         $page_links[]     = sprintf(
             _x('%3$s%1$s of %2$s%4$s', 'paging', 'event_espresso'),
-            $html_current_page,
-            $html_total_pages,
+            "{$html_current_page}<span class='paging-input-of'>",
+            "</span>{$html_total_pages}",
             '<span class="paging-input">',
             '</span>'
         );
 
         $page_links[] = sprintf(
-            '<a class="%s" title="%s" href="%s">%s</a>',
-            'next-page' . $disable_last,
+            '<a class="%s" aria-label="%s" href="%s"><span class="ee-pagination-arrow">%s</span></a>',
+            "next-page $button_classes $disable_last",
             esc_attr__('Go to the next page', 'event_espresso'),
             esc_url_raw(add_query_arg($paged_arg_name, min($total_pages, $current + 1), $url)),
             '&rsaquo;'
         );
 
         $page_links[] = sprintf(
-            '<a class="%s" title="%s" href="%s">%s</a>',
-            'last-page' . $disable_last,
+            '<a class="%s" aria-label="%s" href="%s"><span class="ee-pagination-arrow">%s</span></a>',
+            "last-page $button_classes $disable_last",
             esc_attr__('Go to the last page', 'event_espresso'),
             esc_url_raw(add_query_arg($paged_arg_name, $total_pages, $url)),
             '&raquo;'
         );
 
         $output .= "\n" . '<span class="pagination-links">' . join("\n", $page_links) . '</span>';
-        // set page class
+
+        $page_class = ' no-pages';
         if ($total_pages) {
             $page_class = $total_pages < 2 ? ' one-page' : '';
-        } else {
-            $page_class = ' no-pages';
         }
 
         return '<div class="tablenav"><div class="tablenav-pages' . $page_class . '">' . $output . '</div></div>';
