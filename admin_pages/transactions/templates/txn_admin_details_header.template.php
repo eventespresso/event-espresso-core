@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string   $previous_transaction
  * @var string   $next_transaction
@@ -9,14 +10,20 @@
  * @var string[] $txn_datetime
  * @var string[] $txn_status
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <h3 class="txn-navigation-strip">
     <?php
-    echo $previous_transaction . '&nbsp;'; // already escaped
-    echo esc_html__('Transaction # ', 'event_espresso');
-    echo esc_html($txn_nmbr['value']);
-    echo '&nbsp;' . $next_transaction; // already escaped
+    echo wp_kses($previous_transaction, AllowedTags::getAllowedTags());
+    echo '&nbsp;' . sprintf(
+        /* translators: %s: transaction number */
+        esc_html__('Transaction # %1$s', 'event_espresso'),
+        esc_html($txn_nmbr['value'])
+    ) . '&nbsp;';
+    echo wp_kses($next_transaction, AllowedTags::getAllowedTags());
     ?>
 </h3>
 
