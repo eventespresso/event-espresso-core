@@ -626,20 +626,20 @@ class EEH_Form_Fields
      */
     private static function appendInputSizeClass(string $class, $value): string
     {
-        if (strpos($class, 'ee-input-size--') !== false) {
+        if (strpos($class, 'ee-input-width--') !== false) {
             return $class;
         }
         $chars = self::getInputValueLength($value);
         if ($chars && $chars < 5) {
-            return "{$class} ee-input-size--tiny";
+            return "{$class} ee-input-width--tiny";
         }
         if ($chars && $chars < 15) {
-            return "{$class} ee-input-size--small";
+            return "{$class} ee-input-width--small";
         }
         if ($chars && $chars > 100) {
-            return "{$class} ee-input-size--big";
+            return "{$class} ee-input-width--big";
         }
-        return "{$class} ee-input-size--reg";
+        return "{$class} ee-input-width--reg";
     }
 
 

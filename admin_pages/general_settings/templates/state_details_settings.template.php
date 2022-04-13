@@ -64,7 +64,7 @@
         <td class="general-settings-country-state-input-td">
             <label for="STA_abbrev_XXX"><?php esc_html_e('Code', 'event_espresso'); ?></label>
             <br/>
-            <input class="STA_abbrev ee-input-size--small"
+            <input class="STA_abbrev ee-input-width--small"
                    id='STA_abbrev-XXX'
                    name="STA_abbrev_XXX"
                    title=""
@@ -75,7 +75,7 @@
         <td class="general-settings-country-state-input-td">
             <label for="STA_name_XXX"><?php esc_html_e('Name', 'event_espresso'); ?></label>
             <br/>
-            <input id="STA_name-XXX" class="STA_name ee-input-size--big" type="text" title="" value=""
+            <input id="STA_name-XXX" class="STA_name ee-input-width--big" type="text" title="" value=""
                    name="STA_name_XXX">
         </td>
     </tr>

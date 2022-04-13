@@ -44,7 +44,7 @@
                 <td>
                     <select id="reg_page_id"
                             name="reg_page_id"
-                            class='ee-input-size--reg'
+                            class='ee-input-width--reg'
                             data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
                     >
                         <option value="0">
@@ -91,7 +91,7 @@
                 <td>
                     <select id="txn_page_id"
                             name="txn_page_id"
-                            class='ee-input-size--reg'
+                            class='ee-input-width--reg'
                             data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
                     >
                         <option value="0">
@@ -134,7 +134,7 @@
                 <td>
                     <select id="thank_you_page_id"
                             name="thank_you_page_id"
-                            class='ee-input-size--reg'
+                            class='ee-input-width--reg'
                             data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
                     >
                         <option value="0">
@@ -177,7 +177,7 @@
                 <td>
                     <select id="cancel_page_id"
                             name="cancel_page_id"
-                            class='ee-input-size--reg'
+                            class='ee-input-width--reg'
                             data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
                     >
                         <option value="0">
