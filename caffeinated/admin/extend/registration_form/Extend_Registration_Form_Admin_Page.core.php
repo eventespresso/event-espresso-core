@@ -673,7 +673,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         // make sure identifier is unique
         $identifier_value = isset($set_column_values['QSG_identifier']) ? $set_column_values['QSG_identifier'] : '';
         $where_values = ['QSG_identifier' => $set_column_values['QSG_identifier']];
-        if(! $new_question_group && isset($set_column_values['QSG_ID'])) {
+        if (! $new_question_group && isset($set_column_values['QSG_ID'])) {
             $where_values['QSG_ID'] = ['!=', $set_column_values['QSG_ID']];
         }
         $identifier_exists = ! empty($identifier_value)
