@@ -5,6 +5,9 @@
  * @var string            $default_hidden_inputs
  * @var EE_Registration[] $registrations
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <?php if (! is_admin()) : ?>
     <p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
@@ -69,7 +72,7 @@ if (count($registrations) > 0) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php echo $ticket_line_item[ $registration->ticket()->ID() ]; // already escaped ?>
+                                    <?php echo wp_kses($ticket_line_item[ $registration->ticket()->ID() ], AllowedTags::getWithFormTags()); ?>
                                 </tbody>
                             </table>
                         </div>
@@ -79,7 +82,7 @@ if (count($registrations) > 0) {
                 <?php
                 // ATTENDEE QUESTIONS
                 $reg_form = EE_Template_Layout::get_subform_name($registration->reg_url_link());
-                echo ${$reg_form}; // already escaped
+                echo wp_kses(${$reg_form}, AllowedTags::getWithFormTags());
                 ?>
 
             </div>
@@ -89,7 +92,7 @@ if (count($registrations) > 0) {
         } // if ( $registration instanceof EE_Registration )
     } // end foreach ( $registrations as $registration )
 
-    echo $default_hidden_inputs; // already escaped
+    echo wp_kses($default_hidden_inputs, AllowedTags::getWithFormTags());
 } // end if ( count( $registrations ) > 0 )
 
 ?>

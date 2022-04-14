@@ -53,7 +53,7 @@
                 <label><?php esc_html_e('Primary Registrant:', 'event_espresso'); ?></label>
             </td>
             <td>
-                <?php echo $primary_registrant_name; // already escaped ?>
+                <?php echo esc_html($primary_registrant_name); ?>
             </td>
         </tr>
         <?php do_action(

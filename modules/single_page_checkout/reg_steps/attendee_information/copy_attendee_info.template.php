@@ -2,6 +2,9 @@
 /**
  * @var string[] $spco_copy_attendee_chk
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="spco-copy-attendee-dv" class="hide-if-no-js">
@@ -57,7 +60,7 @@
 
         <?php
         foreach ($spco_copy_attendee_chk as $spco_copy_chk) {
-            echo $spco_copy_chk;  // already escaped
+            echo wp_kses($spco_copy_chk, AllowedTags::getWithFormTags());
         } ?>
 
     </div>

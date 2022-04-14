@@ -10,6 +10,8 @@
  * @type string $cookies_not_set_msg
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="ee-single-page-checkout-dv" class="">
@@ -50,7 +52,7 @@
                              class="spco-step-display-dv <?php echo esc_attr($step_display_dv_class); ?> steps-<?php echo esc_attr($total_steps); ?>"
                         >
                             <h4 id="spco-step-<?php echo esc_attr($slug); ?>-display-hdr" class="spco-steps-display-hdr">
-                                <span class="spco-step-big-nmbr"><?php echo $step_nmbr; ?></span>&nbsp;
+                                <span class="spco-step-big-nmbr"><?php echo esc_html($step_nmbr); ?></span>&nbsp;
                                 <span class="spco-step-name">
                                     <?php echo str_replace('&nbsp;', '<br/>&nbsp;', $reg_step->name()); ?>
                                 </span>
@@ -83,7 +85,7 @@
                 <div id="spco-<?php echo esc_attr($slug); ?>-dv"
                      class="spco-step-dv <?php echo esc_attr($reg_step->div_class()); ?>"
                 >
-                    <?php echo $reg_step->display_reg_form(); // already escaped ?>
+                    <?php echo wp_kses($reg_step->display_reg_form(), AllowedTags::getWithFormTags()); ?>
                     <?php do_action('AHEE__SPCO_after_reg_step_form', $slug, $next_step); ?>
                 </div>
                 <?php $step_nmbr++;
@@ -95,8 +97,8 @@
         <h3 id="spco-empty-cart-hdr" class="spco-step-title-hdr">
             <?php esc_html_e('Nothing in your Event Queue', 'event_espresso'); ?>
         </h3>
-        <p><?php echo $empty_msg; // already escaped ?></p>
-        <?php echo $cookies_not_set_msg; // already escaped ?>
+        <p><?php echo wp_kses($empty_msg, AllowedTags::getWithFormTags()); ?></p>
+        <?php echo wp_kses($cookies_not_set_msg, AllowedTags::getWithFormTags()); ?>
         <?php
     }
     do_action('AHEE__SPCO__reg_form_footer');
