@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var boolean           $revisit
  * @var array             $ticket_line_item

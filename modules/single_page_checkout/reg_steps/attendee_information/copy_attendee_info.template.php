@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string[] $spco_copy_attendee_chk
  */

@@ -1,10 +1,12 @@
 <?php
+
 /**
  * @var EE_Transaction $transaction
  * @var string $gateway_content
  * @var string[] $payments
  */
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <h2 class="section-heading display-box-heading">

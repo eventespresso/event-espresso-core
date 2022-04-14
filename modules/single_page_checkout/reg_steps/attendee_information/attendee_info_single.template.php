@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var boolean           $revisit
  * @var array             $template_args

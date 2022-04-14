@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @deprecated 4.9.13
  * @var EE_Event[]        $events_for_txn
