@@ -53,7 +53,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                 </label>
             </th>
             <td>
-                <input id="QSG_identifier" name="QSG_identifier<?php echo absint($id); ?>"
+                <input id="QSG_identifier" name="QSG_identifier<?php echo esc_attr($id); ?>"
                        value="<?php echo esc_attr($question_group->get_f('QSG_identifier')); ?>" type="text"
                        class="regular-text" <?php echo esc_attr($disabled); ?>>
                 <?php if (! empty($QSG_system)) { ?>
