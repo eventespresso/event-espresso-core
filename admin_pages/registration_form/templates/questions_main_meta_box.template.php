@@ -83,15 +83,15 @@ if ($QST_system === 'country') {
                         $disabled_attr = ! empty($QST_system) ? 'disabled' : '';
                         ?>
                         <input class='regular-text'
-                               id="QST_admin_label<?php echo absint($id); ?>"
-                               name="QST_admin_label<?php echo absint($id); ?>"
+                               id="QST_admin_label<?php echo esc_attr($id); ?>"
+                               name="QST_admin_label<?php echo esc_attr($id); ?>"
                                type="text"
                                value="<?php echo esc_attr($question->get_f('QST_admin_label')); ?>"
                                <?php echo esc_attr($disabled_attr); ?>
                         />
                         <input class="QST_order"
-                               id="QST_order<?php echo absint($id); ?>"
-                               name="QST_order<?php echo absint($id); ?>"
+                               id="QST_order<?php echo esc_attr($id); ?>"
+                               name="QST_order<?php echo esc_attr($id); ?>"
                                type="hidden"
                                value="<?php echo esc_attr($question->get('QST_order')); ?>"
                         />
@@ -129,8 +129,8 @@ if ($QST_system === 'country') {
                         $checked       = ! empty($admin_only) ? ' checked' : '';
                         ?>
                         <input class="QST_admin_only"
-                               id="QST_admin_only<?php echo absint($id); ?>"
-                               name="QST_admin_only<?php echo absint($id); ?>"
+                               id="QST_admin_only<?php echo esc_attr($id); ?>"
+                               name="QST_admin_only<?php echo esc_attr($id); ?>"
                                type="checkbox"
                                value="1"
                             <?php
