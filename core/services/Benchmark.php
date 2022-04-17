@@ -4,6 +4,7 @@ namespace EventEspresso\core\services;
 
 use EE_Error;
 use EEH_File;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Class Benchmark
@@ -126,9 +127,9 @@ class Benchmark
         $memory_used = Benchmark::convert(memory_get_usage(true));
         Benchmark::$memory_usage[ $label ] = $memory_used;
         if ($output_now) {
-            echo $formatted
+            echo ($formatted
                 ? "<br>{$label} : {$memory_used}"
-                : "\n {$label} : {$memory_used}";
+                : "\n {$label} : {$memory_used}");
         }
     }
 
@@ -243,7 +244,7 @@ class Benchmark
     {
         $results = Benchmark::generateResults($formatted);
         if ($echo) {
-            echo $results;
+            echo wp_kses($results, AllowedTags::getWithFormTags());
             return '';
         }
         return $results;
