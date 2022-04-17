@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $admin_page_title
  * @var string $ajax_notices

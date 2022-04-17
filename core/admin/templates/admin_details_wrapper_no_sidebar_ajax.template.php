@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $admin_page_header
  * @var string $post_body_content

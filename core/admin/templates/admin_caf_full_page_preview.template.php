@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $preview_img
  * @var string $preview_text
