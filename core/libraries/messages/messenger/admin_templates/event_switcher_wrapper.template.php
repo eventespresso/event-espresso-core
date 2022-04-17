@@ -7,6 +7,8 @@
  * @since 4.3.0
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * Template args in this template
  * @var string $selector_rows   contains all the rows for the table.
@@ -21,6 +23,6 @@
         </tr>
     </thead>
     <tbody>
-        <?php echo $selector_rows; // already escaped ?>
+        <?php echo wp_kses($selector_rows, AllowedTags::getWithFormTags()); ?>
     </tbody>
 </table>

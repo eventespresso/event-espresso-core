@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -20,8 +23,8 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
                      id="progress-step-<?php echo esc_attr($progress_step->id()); ?>"
                      class="progress-step-number <?php echo esc_attr($progress_step->htmlClass()); ?>">
                     <div class="progress-step-line"></div>
-                    <div class="progress-step-bubble"><p><?php echo $progress_step->order(); // sanitized ?></p></div>
-                    <span class="progress-step-text"><?php echo $progress_step->text(); // sanitized ?></span>
+                    <div class="progress-step-bubble"><p><?php echo wp_kses($progress_step->order(), AllowedTags::getAllowedTags()); ?></p></div>
+                    <span class="progress-step-text"><?php echo wp_kses($progress_step->text(), AllowedTags::getAllowedTags()); ?></span>
                 </div>
             <?php endforeach; ?>
         </div>

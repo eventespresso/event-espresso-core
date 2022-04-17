@@ -6,16 +6,19 @@
  * @var string $current_page
  * @var int $num_columns
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="poststuff">
     <div id="dashboard-widgets" class="metabox-holder <?php echo esc_attr($current_screen_widget_class); ?>">
         <div id="admin-page-header">
-            <?php echo esc_html($admin_page_header); ?>
+            <?php echo wp_kses($admin_page_header, AllowedTags::getAllowedTags()); ?>
         </div> <!-- admin-page-header -->
 
         <div id="post-body-content">
-            <?php echo $post_body_content; // already escaped ?>
+            <?php echo wp_kses($post_body_content, AllowedTags::getWithFormTags()); ?>
         </div> <!-- post-body-content -->
 
         <?php

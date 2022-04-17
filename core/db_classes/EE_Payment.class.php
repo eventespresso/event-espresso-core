@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * Payment class
  *
@@ -441,7 +443,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
      */
     public function e_pretty_status($show_icons = false)
     {
-        echo $this->pretty_status($show_icons); // already escaped
+        echo wp_kses($this->pretty_status($show_icons), AllowedTags::getAllowedTags());
     }
 
 

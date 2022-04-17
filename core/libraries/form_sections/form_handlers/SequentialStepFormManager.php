@@ -15,6 +15,7 @@ use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\progress_steps\ProgressStep;
 use EventEspresso\core\services\progress_steps\ProgressStepCollection;
 use EventEspresso\core\services\progress_steps\ProgressStepManager;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use Exception;
 use InvalidArgumentException;
 
@@ -518,7 +519,7 @@ abstract class SequentialStepFormManager
         if ($return_as_string) {
             return $progress_steps;
         }
-        echo $progress_steps; // already escaped
+        echo wp_kses($progress_steps, AllowedTags::getWithFormTags());
         return '';
     }
 
@@ -533,7 +534,7 @@ abstract class SequentialStepFormManager
         if ($return_as_string) {
             return $this->getCurrentStep()->display();
         }
-        echo $this->getCurrentStep()->display(); // already escaped
+        echo wp_kses($this->getCurrentStep()->display(), AllowedTags::getWithFormTags());
         return '';
     }
 
