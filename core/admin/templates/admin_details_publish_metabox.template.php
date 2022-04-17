@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $publish_box_extra_content
  * @var string $publish_hidden_fields

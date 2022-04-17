@@ -1,4 +1,5 @@
 <?php
+
 /** @var string $before_list_table */
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;

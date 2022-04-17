@@ -1,4 +1,5 @@
 <?php
+
 /**
  * displays legends with an array of $items
  * that are indexed by id for each item

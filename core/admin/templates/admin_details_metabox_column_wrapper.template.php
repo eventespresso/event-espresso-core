@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $current_screen_widget_class
  * @var string $admin_page_header

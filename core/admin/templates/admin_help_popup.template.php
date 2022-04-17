@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $help_popup_id
  * @var string $help_popup_title
