@@ -245,7 +245,7 @@ class RegistrationsReport extends JobHandlerFile
      */
     public function get_csv_data_for($event_id, $offset, $limit, $question_labels, $query_params)
     {
-        $reg_fields_to_include = array(
+        $reg_fields_to_include = [
             'TXN_ID',
             'ATT_ID',
             'REG_ID',
@@ -253,8 +253,8 @@ class RegistrationsReport extends JobHandlerFile
             'REG_code',
             'REG_count',
             'REG_final_price',
-        );
-        $att_fields_to_include = array(
+        ];
+        $att_fields_to_include = [
             'ATT_fname',
             'ATT_lname',
             'ATT_email',
@@ -265,18 +265,18 @@ class RegistrationsReport extends JobHandlerFile
             'CNT_ISO',
             'ATT_zip',
             'ATT_phone',
-        );
-        $registrations_csv_ready_array = array();
+        ];
+        $registrations_csv_ready_array = [];
         $reg_model = EE_Registry::instance()->load_model('Registration');
-        $query_params['limit'] = array($offset, $limit);
+        $query_params['limit'] = [$offset, $limit];
         $registration_rows = $reg_model->get_all_wpdb_results($query_params);
-        $registration_ids = array();
+        $registration_ids = [];
         foreach ($registration_rows as $reg_row) {
             $registration_ids[] = intval($reg_row['Registration.REG_ID']);
         }
         foreach ($registration_rows as $reg_row) {
             if (is_array($reg_row)) {
-                $reg_csv_array = array();
+                $reg_csv_array = [];
                 if (! $event_id) {
                     // get the event's name and Id
                     $reg_csv_array[ (string) esc_html__('Event', 'event_espresso') ] = sprintf(
@@ -338,10 +338,10 @@ class RegistrationsReport extends JobHandlerFile
                 }
                 // get pretty status
                 $stati = EEM_Status::instance()->localized_status(
-                    array(
+                    [
                         $reg_row['Registration.STS_ID']     => esc_html__('unknown', 'event_espresso'),
                         $reg_row['TransactionTable.STS_ID'] => esc_html__('unknown', 'event_espresso'),
-                    ),
+                    ],
                     false,
                     'sentence'
                 );
@@ -362,18 +362,18 @@ class RegistrationsReport extends JobHandlerFile
                         $reg_row['TransactionTable.TXN_paid'],
                         'localized_float'
                     ) : '0.00';
-                $payment_methods = array();
-                $gateway_txn_ids_etc = array();
-                $payment_times = array();
+                $payment_methods = [];
+                $gateway_txn_ids_etc = [];
+                $payment_times = [];
                 if ($is_primary_reg && $reg_row['TransactionTable.TXN_ID']) {
                     $payments_info = EEM_Payment::instance()->get_all_wpdb_results(
-                        array(
-                            array(
+                        [
+                            [
                                 'TXN_ID' => $reg_row['TransactionTable.TXN_ID'],
                                 'STS_ID' => EEM_Payment::status_id_approved,
-                            ),
-                            'force_join' => array('Payment_Method'),
-                        ),
+                            ],
+                            'force_join' => ['Payment_Method'],
+                        ],
                         ARRAY_A,
                         'Payment_Method.PMD_admin_name as name, Payment.PAY_txn_id_chq_nmbr as gateway_txn_id, Payment.PAY_timestamp as payment_time'
                     );
@@ -393,9 +393,39 @@ class RegistrationsReport extends JobHandlerFile
                     $gateway_txn_ids_etc
                 );
                 // get whether or not the user has checked in
-                $reg_csv_array[ (string) esc_html__("Check-Ins", "event_espresso") ] = $reg_model->count_related(
+                $reg_csv_array[ (string) esc_html__('Check-Ins', 'event_espresso') ] = $reg_model->count_related(
                     $reg_row['Registration.REG_ID'],
                     'Checkin'
+                );
+                $checkin_rows = (array) \EEM_Checkin::instance()->get_all_wpdb_results(
+                    [
+                        [
+                            'REG_ID' => $reg_row['Registration.REG_ID'],
+                        ],
+                    ]
+                );
+                $checkins_for_csv_col = [];
+                $datetime_checkins_for_csv_col = [];
+                foreach ($checkin_rows as $checkin_row) {
+                    $checkins_for_csv_col[] = $checkin_row['Checkin.CHK_timestamp'];
+                    $checkin_for_dtt_id = $checkin_row['Checkin.DTT_ID'];
+                    $checkin_for_dtt_name = \EEM_Datetime::instance()->get_var(
+                        [
+                            ['DTT_ID' => $checkin_for_dtt_id]
+                        ],
+                        'DTT_name'
+                    );
+                    $datetime_checkins_for_csv_col[] = $checkin_for_dtt_name ?
+                        $checkin_for_dtt_name . ' - ID ' . $checkin_for_dtt_id :
+                        $checkin_for_dtt_id;
+                }
+                $reg_csv_array[ (string) esc_html__('Check-In for Datetime(s)', 'event_espresso') ] = implode(
+                    ' + ',
+                    $datetime_checkins_for_csv_col
+                );
+                $reg_csv_array[ (string) esc_html__('Check-In Time(s)', 'event_espresso') ] = implode(
+                    ' + ',
+                    $checkins_for_csv_col
                 );
                 // get ticket of registration and its price
                 $ticket_model = EE_Registry::instance()->load_model('Ticket');
@@ -405,14 +435,14 @@ class RegistrationsReport extends JobHandlerFile
                         'TKT_name',
                         $reg_row['Ticket.TKT_name']
                     );
-                    $datetimes_strings = array();
+                    $datetimes_strings = [];
                     foreach (
                         EEM_Datetime::instance()->get_all_wpdb_results(
-                            array(
-                            array('Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID']),
-                            'order_by'                 => array('DTT_EVT_start' => 'ASC'),
-                            'default_where_conditions' => 'none',
-                            )
+                            [
+                                ['Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID']],
+                                'order_by' => ['DTT_EVT_start' => 'ASC'],
+                                'default_where_conditions' => 'none',
+                            ]
                         ) as $datetime
                     ) {
                         $datetimes_strings[] = EEH_Export::prepare_value_from_db_for_display(
@@ -423,7 +453,7 @@ class RegistrationsReport extends JobHandlerFile
                     }
                 } else {
                     $ticket_name = esc_html__('Unknown', 'event_espresso');
-                    $datetimes_strings = array(esc_html__('Unknown', 'event_espresso'));
+                    $datetimes_strings = [esc_html__('Unknown', 'event_espresso')];
                 }
                 $reg_csv_array[ (string) $ticket_model->field_settings_for('TKT_name')->get_nicename() ] = $ticket_name;
                 $reg_csv_array[ (string) esc_html__("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
@@ -434,12 +464,16 @@ class RegistrationsReport extends JobHandlerFile
                     if ($reg_row['Attendee_CPT.ID']) {
                         if ($att_field_name == 'STA_ID') {
                             $value = EEM_State::instance()->get_var(
-                                array(array('STA_ID' => $reg_row['Attendee_Meta.STA_ID'])),
+                                [
+                                    ['STA_ID' => $reg_row['Attendee_Meta.STA_ID']]
+                                ],
                                 'STA_name'
                             );
                         } elseif ($att_field_name == 'CNT_ISO') {
                             $value = EEM_Country::instance()->get_var(
-                                array(array('CNT_ISO' => $reg_row['Attendee_Meta.CNT_ISO'])),
+                                [
+                                    ['CNT_ISO' => $reg_row['Attendee_Meta.CNT_ISO']]
+                                ],
                                 'CNT_name'
                             );
                         } else {
@@ -460,10 +494,10 @@ class RegistrationsReport extends JobHandlerFile
                         $reg_csv_array[ $question_label ] = null;
                     }
                 }
-                $answers = EEM_Answer::instance()->get_all_wpdb_results(array(
-                    array('REG_ID' => $reg_row['Registration.REG_ID']),
-                    'force_join' => array('Question'),
-                ));
+                $answers = EEM_Answer::instance()->get_all_wpdb_results([
+                    ['REG_ID' => $reg_row['Registration.REG_ID']],
+                    'force_join' => ['Question'],
+                ]);
                 // now fill out the questions THEY answered
                 foreach ($answers as $answer_row) {
                     if ($answer_row['Question.QST_system']) {
@@ -515,11 +549,11 @@ class RegistrationsReport extends JobHandlerFile
         }
         // if we couldn't export anything, we want to at least show the column headers
         if (empty($registrations_csv_ready_array)) {
-            $reg_csv_array = array();
-            $model_and_fields_to_include = array(
+            $reg_csv_array = [];
+            $model_and_fields_to_include = [
                 'Registration' => $reg_fields_to_include,
                 'Attendee'     => $att_fields_to_include,
-            );
+            ];
             foreach ($model_and_fields_to_include as $model_name => $field_list) {
                 $model = EE_Registry::instance()->load_model($model_name);
                 foreach ($field_list as $field_name) {
