@@ -334,7 +334,7 @@ if ($QST_system === 'country') {
                                                        class="option-value "
                                                        id="question_options-<?php echo $count ?>-QSO_value"
                                                        name="question_options[<?php echo $count ?>][QSO_value]"
-                                                       value="<?php esc_attr($option->get_f('QSO_value')); ?>"
+                                                       value="<?php echo esc_attr($option->get_f('QSO_value')); ?>"
                                                     <?php echo esc_attr($disabled_attr); ?>
                                                 />
                                                 <input type="hidden"
