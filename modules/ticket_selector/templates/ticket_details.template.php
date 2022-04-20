@@ -17,6 +17,7 @@
  * @var TicketDetails $ticket_details
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\modules\ticket_selector\TicketDetails;
 
 $event_date_label = apply_filters(
@@ -52,7 +53,7 @@ $spaces_left_label = apply_filters(
 
                 <section class="tckt-slctr-tkt-details-sctn">
                     <h4><?php echo esc_html__('Details', 'event_espresso'); ?></h4>
-                    <p><?php echo $ticket->description(); // already escaped ?></p>
+                    <p><?php echo wp_kses($ticket->description(), AllowedTags::getAllowedTags()); ?></p>
 
                     <?php
                     do_action(
@@ -83,9 +84,9 @@ $spaces_left_label = apply_filters(
                             ); ?>
                         </span>
                         <span class="dashicons dashicons-calendar"></span>
-                        <?php echo $ticket->get_i18n_datetime('TKT_start_date', $date_format) . ' &nbsp; '; ?>
+                        <?php echo esc_html($ticket->get_i18n_datetime('TKT_start_date', $date_format)) . ' &nbsp; '; ?>
                         <span class="dashicons dashicons-clock"></span>
-                        <?php echo $ticket->get_i18n_datetime('TKT_start_date', $time_format); ?>
+                        <?php echo esc_html($ticket->get_i18n_datetime('TKT_start_date', $time_format)); ?>
                         <br />
                         <span class="ticket-details-label-spn drk-grey-text">
                             <?php echo apply_filters(
@@ -94,9 +95,9 @@ $spaces_left_label = apply_filters(
                             ); ?>
                         </span>
                         <span class="dashicons dashicons-calendar"></span>
-                        <?php echo $ticket->get_i18n_datetime('TKT_end_date', $date_format) . ' &nbsp; '; ?>
+                        <?php echo esc_html($ticket->get_i18n_datetime('TKT_end_date', $date_format)) . ' &nbsp; '; ?>
                         <span class="dashicons dashicons-clock"></span>
-                        <?php echo $ticket->get_i18n_datetime('TKT_end_date', $time_format); ?>
+                        <?php echo esc_html($ticket->get_i18n_datetime('TKT_end_date', $time_format)); ?>
                         <br />
                     </section>
                     <br />
@@ -128,7 +129,7 @@ $spaces_left_label = apply_filters(
                                 ); ?>
                             </span>
                             <?php
-                            echo $ticket->min() > 0 ? $ticket->min() : 0;
+                            echo ($ticket->min() > 0 ? $ticket->min() : 0);
 
                             if ($ticket->min() > $remaining) {
                                 ?> &nbsp;
@@ -150,9 +151,9 @@ $spaces_left_label = apply_filters(
                                     esc_html__('Maximum Qty:', 'event_espresso')
                                 ); ?>
                             </span>
-                            <?php echo $ticket->max() === EE_INF
+                            <?php echo ($ticket->max() === EE_INF
                                 ? esc_html__('no limit', 'event_espresso')
-                                : max($ticket->max(), 1);
+                                : max($ticket->max(), 1));
                             ?>
                             <br />
                         </section>
@@ -189,7 +190,7 @@ $spaces_left_label = apply_filters(
                                     esc_html__('# Datetimes:', 'event_espresso')
                                 ); ?>
                             </span>
-                            <?php echo $ticket->uses(); ?>
+                            <?php echo wp_kses($ticket->uses(), AllowedTags::getAllowedTags()); ?>
                             <br />
                         </section>
                     <?php } ?>
@@ -278,32 +279,32 @@ $spaces_left_label = apply_filters(
                                             <?php echo ! empty($datetime_name)
                                             ? '<b>' . esc_html($datetime_name) . '</b><br/>'
                                             : ''; ?>
-                                            <?php echo $datetime->date_range(
+                                            <?php echo esc_html($datetime->date_range(
                                                 $date_format,
                                                 esc_html__(' to  ', 'event_espresso')
-                                            ); ?>
+                                            )); ?>
                                         </td>
                                         <td data-th="<?php esc_html_e('Time ', 'event_espresso'); ?>"
                                             class="cntr small-text"
                                         >
-                                            <?php echo $datetime->time_range(
+                                            <?php echo esc_html($datetime->time_range(
                                                 $time_format,
                                                 esc_html__(' to  ', 'event_espresso')
-                                            ); ?>
+                                            )); ?>
                                         </td>
                                         <?php if ($show_ticket_sale_columns) : ?>
                                         <td data-th="<?php echo esc_attr($sold_label); ?>" class="cntr small-text">
-                                            <?php echo $ticket->sold(); ?>
+                                            <?php echo esc_html($ticket->sold()); ?>
                                         </td>
                                         <td data-th="<?php echo esc_attr($remaining_label); ?>" class="cntr small-text">
-                                            <?php echo $remaining === EE_INF
+                                            <?php echo ($remaining === EE_INF
                                                 ? '<span class="smaller-text">'
                                                   . esc_html__('unlimited ', 'event_espresso')
                                                   . '</span>'
-                                                : $remaining; ?>
+                                                : $remaining); ?>
                                         </td>
                                         <td data-th="<?php echo esc_attr($total_sold_label); ?>" class="cntr small-text">
-                                            <?php echo $datetime->sold(); ?>
+                                            <?php echo esc_html($datetime->sold()); ?>
                                         </td>
                                             <?php $tkts_left = $datetime->sold_out()
                                                 ? '<span class="sold-out smaller-text">'
@@ -311,11 +312,11 @@ $spaces_left_label = apply_filters(
                                                   . '</span>'
                                                 : $datetime->spaces_remaining(); ?>
                                         <td data-th="<?php echo esc_attr($spaces_left_label); ?>" class="cntr small-text">
-                                            <?php echo $tkts_left === EE_INF
+                                            <?php echo ($tkts_left === EE_INF
                                                 ? '<span class="smaller-text">'
                                                   . esc_html__('unlimited ', 'event_espresso')
                                                   . '</span>'
-                                                : $tkts_left; ?>
+                                                : $tkts_left); ?>
                                         </td>
                                         <?php endif; // end $show_ticket_sale_columns conditional ?>
                                     </tr>

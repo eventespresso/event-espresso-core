@@ -11,6 +11,8 @@
  * @var string $total_cost
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <div id="invoice">
 
@@ -51,9 +53,9 @@
     <div class="vcard" id="client-details">
         <div class="fn">[name]</div>
         <div class="adr">
-            <div class="street-address"><?php echo $attendee_address; // already escaped ?></div>
-            <div class="locality"><?php echo $attendee_city . ' ' . $attendee_state; // already escaped ?></div>
-            <div id="client-postcode"><?php echo $attendee_zip; // already escaped ?></div>
+            <div class="street-address"><?php echo wp_kses($attendee_address, AllowedTags::getAllowedTags()); ?></div>
+            <div class="locality"><?php echo wp_kses($attendee_city . ' ' . $attendee_state, AllowedTags::getAllowedTags()); ?></div>
+            <div id="client-postcode"><?php echo wp_kses($attendee_zip, AllowedTags::getAllowedTags()); ?></div>
         </div>
     </div>
     <!--#client-details vcard-->
@@ -89,14 +91,14 @@
                         ee_invoice_display_line_item($child_line_item, $show_line_item_description);
                     } ?>
                     <tr>
-                        <td colspan="<?php echo $show_line_item_description ? 5 : 4 ?>">
+                        <td colspan="<?php echo ($show_line_item_description ? 5 : 4) ?>">
                             <hr>
                         </td>
                     </tr>
                     <tr class="total_tr odd">
-                        <td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
+                        <td colspan="<?php echo ($show_line_item_description ? 2 : 1) ?>">&nbsp;</td>
                         <td colspan="2" class="total" id="total_currency"><?php esc_html_e('Total', 'event_espresso'); ?></td>
-                        <td class="total"><?php echo $line_item->total_no_code(); // already escaped ?></td>
+                        <td class="total"><?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
                     </tr>
                     <?php
                     break;
@@ -108,13 +110,13 @@
                         ee_invoice_display_line_item($child_line_item, $show_line_item_description, $odd);
                     } ?>
                     <tr class="total_tr odd">
-                        <td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
+                        <td colspan="<?php echo ($show_line_item_description ? 2 : 1) ?>">&nbsp;</td>
                         <td colspan="2" class="total" id="total_currency">
                             <?php esc_html_e(
                                 'Sub-Total',
                                 'event_espresso'
                             ); ?></td>
-                        <td class="total"><?php echo $line_item->total_no_code(); // already escaped ?></td>
+                        <td class="total"><?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
                     </tr>
                     <?php
                     break;
@@ -126,13 +128,13 @@
                         ee_invoice_display_line_item($child_line_item, $show_line_item_description, $odd);
                     } ?>
                     <tr class="total_tr odd">
-                        <td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
+                        <td colspan="<?php echo ($show_line_item_description ? 2 : 1) ?>">&nbsp;</td>
                         <td colspan="2" class="total" id="total_currency">
                             <?php esc_html_e(
                                 'Tax Total',
                                 'event_espresso'
                             ); ?></td>
-                        <td class="total"><?php echo $line_item->total_no_code(); // already escaped ?></td>
+                        <td class="total"><?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
                     </tr>
                     <?php
                     break;
@@ -143,7 +145,7 @@
                     $has_subitems = count($subitems) > 1;
                     if ($has_subitems) {
                         ?>
-                        <tr class="item <?php echo $odd ? 'odd' : ''; ?>">
+                        <tr class="item <?php echo ($odd ? 'odd' : ''); ?>">
                             <td class="item_l"><?php echo esc_html($line_item->name()) ?></td>
                             <?php if ($show_line_item_description) { ?>
                                 <td class="item_l"><?php echo esc_html($line_item->desc()) ?></td>
@@ -152,8 +154,8 @@
 
                             <td class="item_c"><?php echo esc_html($line_item->unit_price_no_code()) ?></td>
 
-                            <td class="item_r"> <?php echo $line_item->total_no_code(); // already escaped
-                                echo $line_item->is_taxable() ? '*' : '' ?> </td>
+                            <td class="item_r"> <?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags());
+                                echo ($line_item->is_taxable() ? '*' : ''); ?> </td>
                             <?php // <td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings);
                             ?>
                         </tr>
@@ -165,15 +167,15 @@
                         }
                     } else {// no subitems - just show this line item
                         ?>
-                        <tr class="item <?php echo $odd ? 'odd' : ''; ?>">
+                        <tr class="item <?php echo ($odd ? 'odd' : ''); ?>">
                             <td class="item_l"><?php echo esc_html($line_item->name()); ?></td>
                             <?php if ($show_line_item_description) { ?>
                                 <td class="item_l"><?php echo esc_html($line_item->desc()); ?></td>
                             <?php } ?>
                             <td class="item_l"><?php echo esc_html($line_item->quantity()); ?></td>
-                            <td class="item_c"><?php echo $line_item->unit_price_no_code(); // already escaped ?></td>
-                            <td class="item_r"> <?php echo $line_item->total_no_code(); // already escaped;
-                                echo $line_item->is_taxable() ? '*' : '' ?> </td>
+                            <td class="item_c"><?php echo wp_kses($line_item->unit_price_no_code(), AllowedTags::getAllowedTags()); ?></td>
+                            <td class="item_r"> <?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags());
+                                echo ($line_item->is_taxable() ? '*' : ''); ?> </td>
                             <?php // <td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings);
                             ?>
                         </tr>
@@ -192,9 +194,9 @@
                             <td class="item_c"><?php echo esc_html($line_item->percent()); ?>%</td>
                         <?php } else {// flat discount/surcharge ?>
                             <td></td>
-                            <td class="item_c"><?php echo $line_item->unit_price_no_code(); // already escaped ?></td>
+                            <td class="item_c"><?php echo wp_kses($line_item->unit_price_no_code(), AllowedTags::getAllowedTags()); ?></td>
                         <?php } ?>
-                        <td class="item_r"><?php echo $line_item->total_no_code(); // already escaped ?></td>
+                        <td class="item_r"><?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
                     </tr>
                     <?php
                     break;
@@ -207,7 +209,7 @@
                     <?php } ?>
                     <td colspan="2" class="item_c"><?php echo esc_html($line_item->percent()); ?>%</td>
 
-                    <td class="item_r"><?php echo $line_item->total_no_code(); // already escaped ?></td>
+                    <td class="item_r"><?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
                     </tr><?php
                     break;
             }
@@ -253,7 +255,7 @@
                 ?>
                 <tr class='item <?php echo(($c = ! $c) ? ' odd' : '') ?>'>
                     <td><?php $payment->e('PAY_gateway') ?></td>
-                    <td><?php echo $payment->timestamp('D M j, Y'); // already escaped ?></td>
+                    <td><?php echo esc_html($payment->timestamp('D M j, Y')); ?></td>
                     <td><?php $payment->e('PAY_txn_id_chq_nmbr') ?></td>
                     <td><?php $payment->e('PAY_po_number') ?></td>
                     <td><?php $payment->e_pretty_status() ?></td>

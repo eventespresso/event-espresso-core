@@ -5,6 +5,8 @@
  * @type string $events_requiring_pre_approval_msg
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <h4>
@@ -13,8 +15,8 @@
     </span>
 </h4>
 <p id="events-requiring-pre-approval-pg" class="small-text drk-grey-text">
-    <?php echo $events_requiring_pre_approval_msg; // already escaped ?>
+    <?php echo wp_kses($events_requiring_pre_approval_msg, AllowedTags::getAllowedTags()); ?>
 </p>
 <ul id="spco-pre-approval-events-ul">
-    <?php echo $events_requiring_pre_approval; // already escaped ?>
+    <?php echo wp_kses($events_requiring_pre_approval, AllowedTags::getAllowedTags()); ?>
 </ul>

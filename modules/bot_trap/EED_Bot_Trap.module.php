@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * EED_Bot_Trap Class
@@ -120,14 +121,13 @@ class EED_Bot_Trap extends EED_Module
      */
     public static function generate_bot_trap()
     {
-        $do_not_enter = esc_html__('please do not enter anything in this input', 'event_espresso');
-        $time = esc_attr(microtime(true));
+        $time = microtime(true);
         $html = '<div class="tkt-slctr-request-processor-dv" style="float:left; margin:0 0 0 -999em; height: 0;">';
-        $html .= '<label for="tkt-slctr-request-processor-email-' . $time . '">' . $do_not_enter . '</label>';
+        $html .= '<label for="tkt-slctr-request-processor-email-' . esc_attr($time) . '">' . esc_html__('please do not enter anything in this input', 'event_espresso') . '</label>';
         $html .= '<input type="email" id="tkt-slctr-request-processor-email-';
-        $html .= $time . '" name="tkt-slctr-request-processor-email" value=""/>';
-        $html .= '</div><!-- .tkt-slctr-request-processor-dv -->';
-        echo $html; // already escaped
+        $html .= esc_attr($time) . '" name="tkt-slctr-request-processor-email" value=""/>';
+        $html .= '</div>';
+        echo wp_kses($html, AllowedTags::getWithFormTags());
     }
 
 
