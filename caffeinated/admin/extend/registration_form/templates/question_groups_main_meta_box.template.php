@@ -183,7 +183,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                 <label for="question-<?php echo absint($question_ID); ?>">
                                     <input type="checkbox" name="questions[<?php echo absint($question_ID); ?>]"
                                            id="question-<?php echo absint($question_ID); ?>"
-                                           value="<?php echo absint($question_ID); ?>" <?php echo esc_attr($disabled); ?> <?php echo esc_attr($checked); ?>/>
+                                           value="<?php echo absint($question_ID); ?>" <?php echo esc_attr($disabled); ?> <?php echo esc_attr($checked); ?>>
                                     <span class="question-text"><?php
                                         echo trim($question->display_text())
                                              . (95 <= strlen(trim($question->display_text()))
