@@ -138,6 +138,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             'route'         => 'registrations_report',
             'extra_request' => [
                 'use_filters' => true,
+                'incude_checkins' => isset($req_data['event_id']) ? true : false,
                 'return_url'  => $return_url,
             ],
         ];

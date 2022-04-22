@@ -116,6 +116,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'route'         => 'registrations_checkin_report',
             'extra_request' => array(
                 'use_filters' => true,
+                'incude_checkins' => $evt_id ? true : false,
                 'filters'     => array_merge(
                     array(
                         'EVT_ID' => $evt_id,
