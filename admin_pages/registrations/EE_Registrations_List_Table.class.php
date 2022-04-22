@@ -109,6 +109,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                             ? $this->_req_data['event_id']
                             : null,
                         'return_url' => $return_url,
+                        'incude_checkins' => true,
                     ],
                 ],
             ];

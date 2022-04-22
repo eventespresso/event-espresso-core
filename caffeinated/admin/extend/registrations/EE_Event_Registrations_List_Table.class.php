@@ -107,6 +107,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                         array(
                             'EVT_ID'     => $evt_id,
                             'return_url' => $return_url,
+                            'incude_checkins' => true,
                         ),
                 ),
             );

@@ -2,10 +2,12 @@
 
 namespace EventEspressoBatchRequest\JobHandlers;
 
+use EE_Checkin;
 use EE_Registry;
 use EEH_Export;
 use EEM_Answer;
 use EEM_Attendee;
+use EEM_Checkin;
 use EEM_Country;
 use EEM_Datetime;
 use EEM_Event;
@@ -98,13 +100,16 @@ class RegistrationsReport extends JobHandlerFile
                 )
             )
         );
+        // Include check-in, check-out data
+        $incude_checkins = (bool) $job_parameters->request_datum('incude_checkins', 0);
         // we should also set the header columns
         $csv_data_for_row = $this->get_csv_data_for(
             $event_id,
             0,
             1,
             $job_parameters->extra_datum('question_labels'),
-            $job_parameters->extra_datum('query_params')
+            $job_parameters->extra_datum('query_params'),
+            $incude_checkins
         );
         EEH_Export::write_data_array_to_csv($filepath, $csv_data_for_row, true);
         // if we actually processed a row there, record it
@@ -202,12 +207,15 @@ class RegistrationsReport extends JobHandlerFile
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
         if ($job_parameters->units_processed() < $job_parameters->job_size()) {
+            // Include check-in, check-out data
+            $incude_checkins = (bool) $job_parameters->request_datum('incude_checkins', 0);
             $csv_data = $this->get_csv_data_for(
                 $job_parameters->request_datum('EVT_ID', '0'),
                 $job_parameters->units_processed(),
                 $batch_size,
                 $job_parameters->extra_datum('question_labels'),
-                $job_parameters->extra_datum('query_params')
+                $job_parameters->extra_datum('query_params'),
+                $incude_checkins
             );
             EEH_Export::write_data_array_to_csv($job_parameters->extra_datum('filepath'), $csv_data, false);
             $units_processed = count($csv_data);
@@ -240,10 +248,12 @@ class RegistrationsReport extends JobHandlerFile
      * @param int $limit
      * @param array $question_labels the IDs for all the questions which were answered by someone in this selection
      * @param array $query_params for using where querying the model
+     * @param bool $incude_checkins
      * @return array top-level keys are numeric, next-level keys are column headers
      * @throws \EE_Error
+     * @throws \ReflectionException
      */
-    public function get_csv_data_for($event_id, $offset, $limit, $question_labels, $query_params)
+    public function get_csv_data_for($event_id, $offset, $limit, $question_labels, $query_params, $incude_checkins = false)
     {
         $reg_fields_to_include = [
             'TXN_ID',
@@ -270,282 +280,303 @@ class RegistrationsReport extends JobHandlerFile
         $reg_model = EE_Registry::instance()->load_model('Registration');
         $query_params['limit'] = [$offset, $limit];
         $registration_rows = $reg_model->get_all_wpdb_results($query_params);
-        $registration_ids = [];
         foreach ($registration_rows as $reg_row) {
-            $registration_ids[] = intval($reg_row['Registration.REG_ID']);
-        }
-        foreach ($registration_rows as $reg_row) {
-            if (is_array($reg_row)) {
-                $reg_csv_array = [];
-                if (! $event_id) {
-                    // get the event's name and Id
-                    $reg_csv_array[ (string) esc_html__('Event', 'event_espresso') ] = sprintf(
-                        /* translators: 1: event name, 2: event ID */
-                        esc_html__('%1$s (%2$s)', 'event_espresso'),
+            if (!is_array($reg_row)) continue;
+            $reg_csv_array = [];
+            if (! $event_id) {
+                // get the event's name and Id
+                $reg_csv_array[ (string) esc_html__('Event', 'event_espresso') ] = sprintf(
+                    /* translators: 1: event name, 2: event ID */
+                    esc_html__('%1$s (%2$s)', 'event_espresso'),
+                    EEH_Export::prepare_value_from_db_for_display(
+                        EEM_Event::instance(),
+                        'EVT_name',
+                        $reg_row['Event_CPT.post_title']
+                    ),
+                    $reg_row['Event_CPT.ID']
+                );
+            }
+            $is_primary_reg = $reg_row['Registration.REG_count'] == '1' ? true : false;
+            /*@var $reg_row EE_Registration */
+            foreach ($reg_fields_to_include as $field_name) {
+                $field = $reg_model->field_settings_for($field_name);
+                if ($field_name == 'REG_final_price') {
+                    $value = EEH_Export::prepare_value_from_db_for_display(
+                        $reg_model,
+                        $field_name,
+                        $reg_row['Registration.REG_final_price'],
+                        'localized_float'
+                    );
+                } elseif ($field_name == 'REG_count') {
+                    $value = sprintf(
+                        /* translators: 1: number of registration in group (REG_count), 2: registration group size (REG_group_size) */
+                        esc_html__('%1$s of %2$s', 'event_espresso'),
                         EEH_Export::prepare_value_from_db_for_display(
-                            EEM_Event::instance(),
-                            'EVT_name',
-                            $reg_row['Event_CPT.post_title']
+                            $reg_model,
+                            'REG_count',
+                            $reg_row['Registration.REG_count']
                         ),
-                        $reg_row['Event_CPT.ID']
+                        EEH_Export::prepare_value_from_db_for_display(
+                            $reg_model,
+                            'REG_group_size',
+                            $reg_row['Registration.REG_group_size']
+                        )
+                    );
+                } elseif ($field_name == 'REG_date') {
+                    $value = EEH_Export::prepare_value_from_db_for_display(
+                        $reg_model,
+                        $field_name,
+                        $reg_row['Registration.REG_date'],
+                        'no_html'
+                    );
+                } else {
+                    $value = EEH_Export::prepare_value_from_db_for_display(
+                        $reg_model,
+                        $field_name,
+                        $reg_row[ $field->get_qualified_column() ]
                     );
                 }
-                $is_primary_reg = $reg_row['Registration.REG_count'] == '1' ? true : false;
-                /*@var $reg_row EE_Registration */
-                foreach ($reg_fields_to_include as $field_name) {
-                    $field = $reg_model->field_settings_for($field_name);
-                    if ($field_name == 'REG_final_price') {
-                        $value = EEH_Export::prepare_value_from_db_for_display(
-                            $reg_model,
-                            $field_name,
-                            $reg_row['Registration.REG_final_price'],
-                            'localized_float'
+                $reg_csv_array[ EEH_Export::get_column_name_for_field($field) ] = $value;
+                if ($field_name == 'REG_final_price') {
+                    // add a column named Currency after the final price
+                    $reg_csv_array[ (string) esc_html__("Currency", "event_espresso") ] = \EE_Config::instance()->currency->code;
+                }
+            }
+            // get pretty status
+            $stati = EEM_Status::instance()->localized_status(
+                [
+                    $reg_row['Registration.STS_ID']     => esc_html__('unknown', 'event_espresso'),
+                    $reg_row['TransactionTable.STS_ID'] => esc_html__('unknown', 'event_espresso'),
+                ],
+                false,
+                'sentence'
+            );
+            $reg_csv_array[ (string) esc_html__("Registration Status", 'event_espresso') ] = $stati[ $reg_row['Registration.STS_ID'] ];
+            // get pretty transaction status
+            $reg_csv_array[ (string) esc_html__("Transaction Status", 'event_espresso') ] = $stati[ $reg_row['TransactionTable.STS_ID'] ];
+            $reg_csv_array[ (string) esc_html__('Transaction Amount Due', 'event_espresso') ] = $is_primary_reg
+                ? EEH_Export::prepare_value_from_db_for_display(
+                    EEM_Transaction::instance(),
+                    'TXN_total',
+                    $reg_row['TransactionTable.TXN_total'],
+                    'localized_float'
+                ) : '0.00';
+            $reg_csv_array[ (string) esc_html__('Amount Paid', 'event_espresso') ] = $is_primary_reg
+                ? EEH_Export::prepare_value_from_db_for_display(
+                    EEM_Transaction::instance(),
+                    'TXN_paid',
+                    $reg_row['TransactionTable.TXN_paid'],
+                    'localized_float'
+                ) : '0.00';
+            $payment_methods = [];
+            $gateway_txn_ids_etc = [];
+            $payment_times = [];
+            if ($is_primary_reg && $reg_row['TransactionTable.TXN_ID']) {
+                $payments_info = EEM_Payment::instance()->get_all_wpdb_results(
+                    [
+                        [
+                            'TXN_ID' => $reg_row['TransactionTable.TXN_ID'],
+                            'STS_ID' => EEM_Payment::status_id_approved,
+                        ],
+                        'force_join' => ['Payment_Method'],
+                    ],
+                    ARRAY_A,
+                    'Payment_Method.PMD_admin_name as name, Payment.PAY_txn_id_chq_nmbr as gateway_txn_id, Payment.PAY_timestamp as payment_time'
+                );
+                foreach ($payments_info as $payment_method_and_gateway_txn_id) {
+                    $payment_methods[] = isset($payment_method_and_gateway_txn_id['name'])
+                        ? $payment_method_and_gateway_txn_id['name'] : esc_html__('Unknown', 'event_espresso');
+                    $gateway_txn_ids_etc[] = isset($payment_method_and_gateway_txn_id['gateway_txn_id'])
+                        ? $payment_method_and_gateway_txn_id['gateway_txn_id'] : '';
+                    $payment_times[] = isset($payment_method_and_gateway_txn_id['payment_time'])
+                        ? $payment_method_and_gateway_txn_id['payment_time'] : '';
+                }
+            }
+            $reg_csv_array[ (string) esc_html__('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
+            $reg_csv_array[ (string) esc_html__('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
+            $reg_csv_array[ (string) esc_html__('Gateway Transaction ID(s)', 'event_espresso') ] = implode(
+                ',',
+                $gateway_txn_ids_etc
+            );
+            // get whether or not the user has checked in
+            $reg_csv_array[ (string) esc_html__('Check-Ins', 'event_espresso') ] = $reg_model->count_related(
+                $reg_row['Registration.REG_ID'],
+                'Checkin'
+            );
+            // get ticket of registration and its price
+            $ticket_model = EE_Registry::instance()->load_model('Ticket');
+            if ($reg_row['Ticket.TKT_ID']) {
+                $ticket_name = EEH_Export::prepare_value_from_db_for_display(
+                    $ticket_model,
+                    'TKT_name',
+                    $reg_row['Ticket.TKT_name']
+                );
+                $datetimes_strings = [];
+                foreach (
+                    EEM_Datetime::instance()->get_all_wpdb_results(
+                        [
+                            ['Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID']],
+                            'order_by' => ['DTT_EVT_start' => 'ASC'],
+                            'default_where_conditions' => 'none',
+                        ]
+                    ) as $datetime
+                ) {
+                    $datetimes_strings[] = EEH_Export::prepare_value_from_db_for_display(
+                        EEM_Datetime::instance(),
+                        'DTT_EVT_start',
+                        $datetime['Datetime.DTT_EVT_start']
+                    );
+                }
+            } else {
+                $ticket_name = esc_html__('Unknown', 'event_espresso');
+                $datetimes_strings = [esc_html__('Unknown', 'event_espresso')];
+            }
+            $reg_csv_array[ (string) $ticket_model->field_settings_for('TKT_name')->get_nicename() ] = $ticket_name;
+            $reg_csv_array[ (string) esc_html__("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
+            // get datetime(s) of registration
+            // add attendee columns
+            foreach ($att_fields_to_include as $att_field_name) {
+                $field_obj = EEM_Attendee::instance()->field_settings_for($att_field_name);
+                if ($reg_row['Attendee_CPT.ID']) {
+                    if ($att_field_name == 'STA_ID') {
+                        $value = EEM_State::instance()->get_var(
+                            [
+                                ['STA_ID' => $reg_row['Attendee_Meta.STA_ID']]
+                            ],
+                            'STA_name'
                         );
-                    } elseif ($field_name == 'REG_count') {
-                        $value = sprintf(
-                            /* translators: 1: number of registration in group (REG_count), 2: registration group size (REG_group_size) */
-                            esc_html__('%1$s of %2$s', 'event_espresso'),
-                            EEH_Export::prepare_value_from_db_for_display(
-                                $reg_model,
-                                'REG_count',
-                                $reg_row['Registration.REG_count']
-                            ),
-                            EEH_Export::prepare_value_from_db_for_display(
-                                $reg_model,
-                                'REG_group_size',
-                                $reg_row['Registration.REG_group_size']
-                            )
-                        );
-                    } elseif ($field_name == 'REG_date') {
-                        $value = EEH_Export::prepare_value_from_db_for_display(
-                            $reg_model,
-                            $field_name,
-                            $reg_row['Registration.REG_date'],
-                            'no_html'
+                    } elseif ($att_field_name == 'CNT_ISO') {
+                        $value = EEM_Country::instance()->get_var(
+                            [
+                                ['CNT_ISO' => $reg_row['Attendee_Meta.CNT_ISO']]
+                            ],
+                            'CNT_name'
                         );
                     } else {
                         $value = EEH_Export::prepare_value_from_db_for_display(
-                            $reg_model,
-                            $field_name,
-                            $reg_row[ $field->get_qualified_column() ]
-                        );
-                    }
-                    $reg_csv_array[ EEH_Export::get_column_name_for_field($field) ] = $value;
-                    if ($field_name == 'REG_final_price') {
-                        // add a column named Currency after the final price
-                        $reg_csv_array[ (string) esc_html__("Currency", "event_espresso") ] = \EE_Config::instance()->currency->code;
-                    }
-                }
-                // get pretty status
-                $stati = EEM_Status::instance()->localized_status(
-                    [
-                        $reg_row['Registration.STS_ID']     => esc_html__('unknown', 'event_espresso'),
-                        $reg_row['TransactionTable.STS_ID'] => esc_html__('unknown', 'event_espresso'),
-                    ],
-                    false,
-                    'sentence'
-                );
-                $reg_csv_array[ (string) esc_html__("Registration Status", 'event_espresso') ] = $stati[ $reg_row['Registration.STS_ID'] ];
-                // get pretty transaction status
-                $reg_csv_array[ (string) esc_html__("Transaction Status", 'event_espresso') ] = $stati[ $reg_row['TransactionTable.STS_ID'] ];
-                $reg_csv_array[ (string) esc_html__('Transaction Amount Due', 'event_espresso') ] = $is_primary_reg
-                    ? EEH_Export::prepare_value_from_db_for_display(
-                        EEM_Transaction::instance(),
-                        'TXN_total',
-                        $reg_row['TransactionTable.TXN_total'],
-                        'localized_float'
-                    ) : '0.00';
-                $reg_csv_array[ (string) esc_html__('Amount Paid', 'event_espresso') ] = $is_primary_reg
-                    ? EEH_Export::prepare_value_from_db_for_display(
-                        EEM_Transaction::instance(),
-                        'TXN_paid',
-                        $reg_row['TransactionTable.TXN_paid'],
-                        'localized_float'
-                    ) : '0.00';
-                $payment_methods = [];
-                $gateway_txn_ids_etc = [];
-                $payment_times = [];
-                if ($is_primary_reg && $reg_row['TransactionTable.TXN_ID']) {
-                    $payments_info = EEM_Payment::instance()->get_all_wpdb_results(
-                        [
-                            [
-                                'TXN_ID' => $reg_row['TransactionTable.TXN_ID'],
-                                'STS_ID' => EEM_Payment::status_id_approved,
-                            ],
-                            'force_join' => ['Payment_Method'],
-                        ],
-                        ARRAY_A,
-                        'Payment_Method.PMD_admin_name as name, Payment.PAY_txn_id_chq_nmbr as gateway_txn_id, Payment.PAY_timestamp as payment_time'
-                    );
-                    foreach ($payments_info as $payment_method_and_gateway_txn_id) {
-                        $payment_methods[] = isset($payment_method_and_gateway_txn_id['name'])
-                            ? $payment_method_and_gateway_txn_id['name'] : esc_html__('Unknown', 'event_espresso');
-                        $gateway_txn_ids_etc[] = isset($payment_method_and_gateway_txn_id['gateway_txn_id'])
-                            ? $payment_method_and_gateway_txn_id['gateway_txn_id'] : '';
-                        $payment_times[] = isset($payment_method_and_gateway_txn_id['payment_time'])
-                            ? $payment_method_and_gateway_txn_id['payment_time'] : '';
-                    }
-                }
-                $reg_csv_array[ (string) esc_html__('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
-                $reg_csv_array[ (string) esc_html__('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
-                $reg_csv_array[ (string) esc_html__('Gateway Transaction ID(s)', 'event_espresso') ] = implode(
-                    ',',
-                    $gateway_txn_ids_etc
-                );
-                // get whether or not the user has checked in
-                $reg_csv_array[ (string) esc_html__('Check-Ins', 'event_espresso') ] = $reg_model->count_related(
-                    $reg_row['Registration.REG_ID'],
-                    'Checkin'
-                );
-                $checkin_rows = (array) \EEM_Checkin::instance()->get_all_wpdb_results(
-                    [
-                        [
-                            'REG_ID' => $reg_row['Registration.REG_ID'],
-                        ],
-                    ]
-                );
-                $checkins_for_csv_col = [];
-                $datetime_checkins_for_csv_col = [];
-                foreach ($checkin_rows as $checkin_row) {
-                    $checkins_for_csv_col[] = $checkin_row['Checkin.CHK_timestamp'];
-                    $checkin_for_dtt_id = $checkin_row['Checkin.DTT_ID'];
-                    $checkin_for_dtt_name = \EEM_Datetime::instance()->get_var(
-                        [
-                            ['DTT_ID' => $checkin_for_dtt_id]
-                        ],
-                        'DTT_name'
-                    );
-                    $datetime_checkins_for_csv_col[] = $checkin_for_dtt_name ?
-                        $checkin_for_dtt_name . ' - ID ' . $checkin_for_dtt_id :
-                        $checkin_for_dtt_id;
-                }
-                $reg_csv_array[ (string) esc_html__('Check-In for Datetime(s)', 'event_espresso') ] = implode(
-                    ' + ',
-                    $datetime_checkins_for_csv_col
-                );
-                $reg_csv_array[ (string) esc_html__('Check-In Time(s)', 'event_espresso') ] = implode(
-                    ' + ',
-                    $checkins_for_csv_col
-                );
-                // get ticket of registration and its price
-                $ticket_model = EE_Registry::instance()->load_model('Ticket');
-                if ($reg_row['Ticket.TKT_ID']) {
-                    $ticket_name = EEH_Export::prepare_value_from_db_for_display(
-                        $ticket_model,
-                        'TKT_name',
-                        $reg_row['Ticket.TKT_name']
-                    );
-                    $datetimes_strings = [];
-                    foreach (
-                        EEM_Datetime::instance()->get_all_wpdb_results(
-                            [
-                                ['Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID']],
-                                'order_by' => ['DTT_EVT_start' => 'ASC'],
-                                'default_where_conditions' => 'none',
-                            ]
-                        ) as $datetime
-                    ) {
-                        $datetimes_strings[] = EEH_Export::prepare_value_from_db_for_display(
-                            EEM_Datetime::instance(),
-                            'DTT_EVT_start',
-                            $datetime['Datetime.DTT_EVT_start']
+                            EEM_Attendee::instance(),
+                            $att_field_name,
+                            $reg_row[ $field_obj->get_qualified_column() ]
                         );
                     }
                 } else {
-                    $ticket_name = esc_html__('Unknown', 'event_espresso');
-                    $datetimes_strings = [esc_html__('Unknown', 'event_espresso')];
+                    $value = '';
                 }
-                $reg_csv_array[ (string) $ticket_model->field_settings_for('TKT_name')->get_nicename() ] = $ticket_name;
-                $reg_csv_array[ (string) esc_html__("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
-                // get datetime(s) of registration
-                // add attendee columns
-                foreach ($att_fields_to_include as $att_field_name) {
-                    $field_obj = EEM_Attendee::instance()->field_settings_for($att_field_name);
-                    if ($reg_row['Attendee_CPT.ID']) {
-                        if ($att_field_name == 'STA_ID') {
-                            $value = EEM_State::instance()->get_var(
-                                [
-                                    ['STA_ID' => $reg_row['Attendee_Meta.STA_ID']]
-                                ],
-                                'STA_name'
-                            );
-                        } elseif ($att_field_name == 'CNT_ISO') {
-                            $value = EEM_Country::instance()->get_var(
-                                [
-                                    ['CNT_ISO' => $reg_row['Attendee_Meta.CNT_ISO']]
-                                ],
-                                'CNT_name'
-                            );
-                        } else {
-                            $value = EEH_Export::prepare_value_from_db_for_display(
-                                EEM_Attendee::instance(),
-                                $att_field_name,
-                                $reg_row[ $field_obj->get_qualified_column() ]
-                            );
-                        }
-                    } else {
-                        $value = '';
-                    }
-                    $reg_csv_array[ EEH_Export::get_column_name_for_field($field_obj) ] = $value;
-                }
-                // make sure each registration has the same questions in the same order
-                foreach ($question_labels as $question_label) {
-                    if (! isset($reg_csv_array[ $question_label ])) {
-                        $reg_csv_array[ $question_label ] = null;
-                    }
-                }
-                $answers = EEM_Answer::instance()->get_all_wpdb_results([
-                    ['REG_ID' => $reg_row['Registration.REG_ID']],
-                    'force_join' => ['Question'],
-                ]);
-                // now fill out the questions THEY answered
-                foreach ($answers as $answer_row) {
-                    if ($answer_row['Question.QST_system']) {
-                        // it's an answer to a system question. That was already displayed as part of the attendee
-                        // fields, so don't write it out again thanks.
-                        continue;
-                    }
-                    if ($answer_row['Question.QST_ID']) {
-                        $question_label = EEH_Export::prepare_value_from_db_for_display(
-                            EEM_Question::instance(),
-                            'QST_admin_label',
-                            $answer_row['Question.QST_admin_label']
-                        );
-                    } else {
-                        $question_label = sprintf(esc_html__('Question $s', 'event_espresso'), $answer_row['Answer.QST_ID']);
-                    }
-                    if (
-                        isset($answer_row['Question.QST_type'])
-                        && $answer_row['Question.QST_type'] == EEM_Question::QST_type_state
-                    ) {
-                        $reg_csv_array[ $question_label ] = EEM_State::instance()->get_state_name_by_ID(
-                            $answer_row['Answer.ANS_value']
-                        );
-                    } else {
-                        // this isn't for html, so don't show html entities
-                        $reg_csv_array[ $question_label ] = html_entity_decode(
-                            EEH_Export::prepare_value_from_db_for_display(
-                                EEM_Answer::instance(),
-                                'ANS_value',
-                                $answer_row['Answer.ANS_value']
-                            )
-                        );
-                    }
-                }
-
-                /**
-                 * Filter to change the contents of each row of the registrations report CSV file.
-                 * This can be used to add or remote columns from the CSV file, or change their values.
-                 * Note when using: all rows in the CSV should have the same columns.
-                 * @param array $reg_csv_array keys are the column names, values are their cell values
-                 * @param array $reg_row one entry from EEM_Registration::get_all_wpdb_results()
-                 */
-                $registrations_csv_ready_array[] = apply_filters(
-                    'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array',
-                    $reg_csv_array,
-                    $reg_row
-                );
+                $reg_csv_array[ EEH_Export::get_column_name_for_field($field_obj) ] = $value;
             }
+            // make sure each registration has the same questions in the same order
+            foreach ($question_labels as $question_label) {
+                if (! isset($reg_csv_array[ $question_label ])) {
+                    $reg_csv_array[ $question_label ] = null;
+                }
+            }
+            $answers = EEM_Answer::instance()->get_all_wpdb_results([
+                ['REG_ID' => $reg_row['Registration.REG_ID']],
+                'force_join' => ['Question'],
+            ]);
+            // now fill out the questions THEY answered
+            foreach ($answers as $answer_row) {
+                if ($answer_row['Question.QST_system']) {
+                    // it's an answer to a system question. That was already displayed as part of the attendee
+                    // fields, so don't write it out again thanks.
+                    continue;
+                }
+                if ($answer_row['Question.QST_ID']) {
+                    $question_label = EEH_Export::prepare_value_from_db_for_display(
+                        EEM_Question::instance(),
+                        'QST_admin_label',
+                        $answer_row['Question.QST_admin_label']
+                    );
+                } else {
+                    $question_label = sprintf(esc_html__('Question $s', 'event_espresso'), $answer_row['Answer.QST_ID']);
+                }
+                if (
+                    isset($answer_row['Question.QST_type'])
+                    && $answer_row['Question.QST_type'] == EEM_Question::QST_type_state
+                ) {
+                    $reg_csv_array[ $question_label ] = EEM_State::instance()->get_state_name_by_ID(
+                        $answer_row['Answer.ANS_value']
+                    );
+                } else {
+                    // this isn't for html, so don't show html entities
+                    $reg_csv_array[ $question_label ] = html_entity_decode(
+                        EEH_Export::prepare_value_from_db_for_display(
+                            EEM_Answer::instance(),
+                            'ANS_value',
+                            $answer_row['Answer.ANS_value']
+                        )
+                    );
+                }
+            }
+            // Include check-in data
+            if ($incude_checkins) {
+                $datetimes = EEM_Datetime::instance()->get_all_wpdb_results(
+                    [
+                        [
+                            'Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID']
+                        ],
+                        'order_by' => ['DTT_EVT_start' => 'ASC'],
+                        'default_where_conditions' => 'none',
+                    ]
+                );
+                foreach ($datetimes as $datetime) {
+                    $checkin_row = EEM_Checkin::instance()->get_one(
+                        [
+                            [
+                                'REG_ID' => $reg_row['Registration.REG_ID'],
+                                'DTT_ID' => $datetime['Datetime.DTT_ID'],
+                            ],
+                            'limit' => 1,
+                            'order_by' => [
+                                'CHK_ID' => 'DESC'
+                            ]
+                        ]
+                    );
+                    if (trim($datetime['Datetime.DTT_name'])) {
+                        /* translators: 1: datetime name, 2: datetime ID */
+                        $datetime_name = sprintf(
+                            esc_html__('%1$s - ID: %2$s', 'event_espresso'),
+                            esc_html($datetime['Datetime.DTT_name']),
+                            esc_html($datetime['Datetime.DTT_ID'])
+                        );
+                    } else {
+                        /* translators: %s: datetime ID */
+                        $datetime_name = sprintf(
+                            esc_html__('ID: %1$s', 'event_espresso'),
+                            esc_html($datetime['Datetime.DTT_ID'])
+                        );
+                    }
+                    $checkin_value = '';
+                    if ($checkin_row instanceof EE_Checkin && $checkin_row->get('CHK_in') === true) {
+                        /* translators: 1: check-in status, 2: check-in timestamp */
+                        $checkin_value = sprintf(
+                            esc_html__('%1$s - %2$s', 'event_espresso'),
+                            esc_html__('IN', 'event_espresso'),
+                            date('Y-m-d H:i:s', $checkin_row->get_raw('CHK_timestamp'))
+                        );
+                    } elseif ($checkin_row instanceof EE_Checkin && $checkin_row->get('CHK_in') === false) {
+                        /* translators: 1: check-in status, 2: check-in timestamp */
+                        $checkin_value = sprintf(
+                            esc_html__('%1$s - %2$s', 'event_espresso'),
+                            esc_html__('OUT', 'event_espresso'),
+                            date('Y-m-d H:i:s', $checkin_row->get_raw('CHK_timestamp'))
+                        );
+                    }
+                    $reg_csv_array[ (string) $datetime_name ] = $checkin_value;
+                }
+            }
+            /**
+             * Filter to change the contents of each row of the registrations report CSV file.
+             * This can be used to add or remote columns from the CSV file, or change their values.
+             * Note when using: all rows in the CSV should have the same columns.
+             * @param array $reg_csv_array keys are the column names, values are their cell values
+             * @param array $reg_row one entry from EEM_Registration::get_all_wpdb_results()
+             */
+            $registrations_csv_ready_array[] = apply_filters(
+                'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array',
+                $reg_csv_array,
+                $reg_row
+            );
         }
         // if we couldn't export anything, we want to at least show the column headers
         if (empty($registrations_csv_ready_array)) {
