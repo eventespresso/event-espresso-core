@@ -281,7 +281,9 @@ class RegistrationsReport extends JobHandlerFile
         $query_params['limit'] = [$offset, $limit];
         $registration_rows = $reg_model->get_all_wpdb_results($query_params);
         foreach ($registration_rows as $reg_row) {
-            if (!is_array($reg_row)) continue;
+            if (!is_array($reg_row)) {
+                continue;
+            }
             $reg_csv_array = [];
             if (! $event_id) {
                 // get the event's name and Id
