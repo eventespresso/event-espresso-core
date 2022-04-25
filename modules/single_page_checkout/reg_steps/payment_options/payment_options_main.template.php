@@ -10,6 +10,8 @@
  * @type string $extra_hidden_inputs
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <h4 id="reg-page-totals-hdr" class="">
@@ -29,19 +31,19 @@
         </tr>
         </thead>
         <tbody>
-        <?php echo $transaction_details; // already escaped ?>
+        <?php echo wp_kses($transaction_details, AllowedTags::getWithFormTags()); ?>
         <?php do_action('AHEE__registration_page_payment_options__payment_info_table_tbody_end'); ?>
         </tbody>
     </table>
 </div>
 <div class="clear-float"></div>
 
-<?php echo $before_payment_options; // already escaped ?>
+<?php echo wp_kses($before_payment_options, AllowedTags::getWithFormTags()); ?>
 
 <div id="methods-of-payment">
-    <?php echo $payment_options; // already escaped ?>
+    <?php echo wp_kses($payment_options, AllowedTags::getWithFormTags()); ?>
 </div>
 <!-- end #methods-of-payment -->
 
-<?php echo $after_payment_options; // already escaped ?>
+<?php echo wp_kses($after_payment_options, AllowedTags::getWithFormTags()); ?>
 

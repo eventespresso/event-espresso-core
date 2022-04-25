@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int       $EVT_ID
  * @var int       $TKT_ID
@@ -8,9 +9,12 @@
  * @var EE_Event  $event
  * @var EE_Ticket $ticket
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
-<?php echo $hidden_inputs; // already escaped ?>
+<?php echo wp_kses($hidden_inputs, AllowedTags::getWithFormTags()); ?>
     <input type="hidden"
            name="tkt-slctr-qty-<?php echo esc_attr($EVT_ID); ?>[<?php echo absint($TKT_ID); ?>]"
            value="1"
@@ -33,7 +37,7 @@ if ($ticket instanceof EE_Ticket) {
     <div class="no-tkt-slctr-ticket-content-dv">
         <h5><?php echo esc_html($ticket->name()); ?></h5>
         <?php if (! empty($ticket_description)) { ?>
-            <?php echo $ticket_description; // already escaped ?>
+            <?php echo wp_kses($ticket_description, AllowedTags::getAllowedTags()); ?>
         <?php } ?>
     </div><!-- .no-tkt-slctr-ticket-content-dv -->
     <?php

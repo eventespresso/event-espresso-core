@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @deprecated 4.9.13
  * @var EE_Event[]        $events_for_txn
@@ -14,6 +15,9 @@
  * @var string            $questions_to_skip
  * @var string            $retry_payment_url
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id="invoice">
@@ -48,7 +52,7 @@
                     <h3 id="invoice-txn-status">
                         <?php esc_html_e('Status:', 'event_espresso') ?>
                         <span class="<?php echo esc_attr($transaction->status_ID()); ?> plain-text">
-                            <?php echo $transaction->pretty_status(); // already escaped ?>
+                            <?php echo wp_kses($transaction->pretty_status(), AllowedTags::getAllowedTags()); ?>
                         </span>
                     </h3>
                 </div>
@@ -64,7 +68,7 @@
                     "Event Name:",
                     "event_espresso"
                 ) ?>
-                <span class="plain-text"><?php echo $event->name(); ?></span>
+                <span class="plain-text"><?php echo wp_kses($event->name(), AllowedTags::getAllowedTags()); ?></span>
                 <span class="small-text link">
                 [ <a href='<?php echo esc_url_raw($event->get_permalink()) ?>'><?php esc_html_e('view', 'event_espresso'); ?></a> ]
             </span>
@@ -118,8 +122,8 @@
                                             </p>
                                         </td>
                                         <td class="item_c"><?php echo esc_html($line_item->quantity()); ?></td>
-                                        <td class="item_c"><?php echo $line_item->unit_price_no_code(); // already escaped ?></td>
-                                        <td class="item_r"><?php echo $line_item->total_no_code() // already escaped ?></td>
+                                        <td class="item_c"><?php echo wp_kses($line_item->unit_price_no_code(), AllowedTags::getAllowedTags()); ?></td>
+                                        <td class="item_r"><?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags());  ?></td>
                                     </tr>
                                     <?php
                                 } else { ?>
@@ -143,10 +147,10 @@
                                             <?php echo esc_html($line_item->quantity()); ?>
                                         </td>
                                         <td class="item_c">
-                                            <?php echo $line_item->unit_price_no_code(); // already escaped ?>
+                                            <?php echo wp_kses($line_item->unit_price_no_code(), AllowedTags::getAllowedTags()); ?>
                                         </td>
                                         <td class="item_r">
-                                            <?php echo $line_item->total_no_code(); // already escaped ?>
+                                            <?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?>
                                         </td>
                                     </tr>
                                     <?php
@@ -163,11 +167,11 @@
                                                 <?php // echo $is_percent ? '' : $sub_line_item->quantity()?>
                                             </td>
                                             <td class="item_c"><?php
-                                                echo $is_percent
+                                                echo ($is_percent
                                                     ? $sub_line_item->percent() . "%"
-                                                    : $sub_line_item->unit_price_no_code(); // already escaped ?>
+                                                    : $sub_line_item->unit_price_no_code()); ?>
                                             </td>
-                                            <td class="item_r"><?php echo $sub_line_item->total_no_code() ?></td>
+                                            <td class="item_r"><?php echo wp_kses($sub_line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
                                         </tr>
                                         <?php
                                     } ?>
@@ -177,7 +181,7 @@
                                             <?php esc_html_e("Ticket Total:", "event_espresso"); ?>
                                         </td>
                                         <td class="item_r">
-                                            <?php echo $line_item->total_no_code(); // already escaped ?>
+                                            <?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?>
                                         </td>
                                     </tr>
                                     <?php
@@ -203,18 +207,18 @@
                                         foreach ($ticket->datetimes_ordered() as $datetime) {
                                             /* @var $datetime EE_Datetime */ ?>
                                             <li><?php
-                                                echo $datetime->name()
+                                                echo ($datetime->name()
                                                     ? '<b>' . esc_html($datetime->name()) . ' </b>'
-                                                    : '';
+                                                    : '');
                                                 echo sprintf(
                                                     esc_html__("%s - %s (%s)", "event_espresso"),
                                                     $datetime->start_date_and_time(),
                                                     $datetime->end_date_and_time(),
                                                     $datetime->get_timezone()
                                                 );
-                                                echo $datetime->description()
-                                                    ? '<p class="ticket-note">' . $datetime->description() . '</p>'
-                                                    : '' ?></li>
+                                                echo ($datetime->description()
+                                                    ? '<p class="ticket-note">' . wp_kses($datetime->description(), AllowedTags::getAllowedTags()) . '</p>'
+                                                    : ''); ?></li>
                                             <?php
                                         } ?>
                                     </ul>
@@ -279,10 +283,10 @@
                                                         <?php esc_html_e("Registration Code:", "event_espresso"); ?>
                                                     </th>
                                                     <td>
-                                                        <?php echo $registration->reg_code(); // already escaped ?> -
+                                                        <?php echo wp_kses($registration->reg_code(), AllowedTags::getAllowedTags()); ?> -
                                                         <span class="<?php echo sanitize_html_class($registration->status_ID()); ?>">
-                                                    <?php echo $registration->pretty_status(); // already escaped ?>
-                                                </span>
+                                                            <?php echo wp_kses($registration->pretty_status(), AllowedTags::getAllowedTags()); ?>
+                                                        </span>
                                                     </td>
                                                 </tr>
                                                 <?php
@@ -302,10 +306,10 @@
                                                         ?>
                                                         <tr>
                                                             <th>
-                                                                <?php echo $question->display_text(); // already escaped ?>
+                                                                <?php echo wp_kses($question->display_text(), AllowedTags::getAllowedTags()); ?>
                                                             </th>
                                                             <td>
-                                                                <?php echo $registration->answer_value_to_question($question); // already escaped?>
+                                                                <?php echo wp_kses($registration->answer_value_to_question($question), AllowedTags::getAllowedTags()); ?>
                                                             </td>
                                                         </tr>
                                                     <?php }
@@ -356,13 +360,13 @@
                         <td><?php echo esc_html($child_tax->desc()); ?></td>
                         <td class="item_c"><?php echo esc_html($child_tax->percent()); ?>%
                         </td>
-                        <td class="item_r"><?php echo $child_tax->total_no_code(); // already escaped ?></td>
+                        <td class="item_r"><?php echo wp_kses($child_tax->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
                     </tr>
                 <?php } ?>
                 <tr class="total_tr odd">
                     <td class="total_tr" colspan="2"></td>
                     <td class="total"><?php esc_html_e("Tax Total:", "event_espresso"); ?></td>
-                    <td class="item_r"><?php echo $tax_total_line_item->total_no_code(); // already escaped ?></td>
+                    <td class="item_r"><?php echo wp_kses($tax_total_line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
                 </tr>
                 </tbody>
             </table>
@@ -406,7 +410,7 @@
                         <td><?php $payment->e('PAY_txn_id_chq_nmbr') ?></td>
                         <td><?php $payment->e('PAY_po_number') ?></td>
                         <td><?php $payment->e_pretty_status() ?></td>
-                        <td class='item_r'><?php echo $payment->amount_no_code(); // already escaped ?></td>
+                        <td class='item_r'><?php echo wp_kses($payment->amount_no_code(), AllowedTags::getAllowedTags()); ?></td>
                     </tr>
                 <?php }
             } else { ?>
@@ -423,7 +427,7 @@
             <tr class="item">
                 <td class='aln-cntr' colspan="6">
                     <?php if ($amount_owed) { ?>
-                        <a class="noPrint" href='<?php echo $retry_payment_url ?>'>
+                        <a class="noPrint" href='<?php echo esc_url_raw($retry_payment_url); ?>'>
                             <?php esc_html_e("Please make a payment.", "event_espresso"); ?>
                         </a>
                     <?php } ?>
@@ -464,7 +468,7 @@
                                 <?php echo esc_html($venue->name()); ?>
                             </a>
                         </h3>
-                        <p><?php echo $venue->description(); // already escaped ?></p>
+                        <p><?php echo wp_kses($venue->description(), AllowedTags::getAllowedTags()); ?></p>
                         <?php echo EEH_Address::format($venue); ?>
                     </td>
                     <?php if ($venue->enable_for_gmap()) { ?>
