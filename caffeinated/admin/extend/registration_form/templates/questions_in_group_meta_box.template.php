@@ -21,7 +21,7 @@ foreach ($all_questions as $question_option) {
             <label for="question-<?php echo absint($question_ID); ?>">
                 <input type="checkbox" name="questions[<?php echo absint($question_ID); ?>]"
                        id="question-<?php echo absint($question_ID); ?>"
-                       value="<?php echo absint($question_ID); ?>" <?php echo esc_attr($checked); ?>/>
+                       value="<?php echo absint($question_ID); ?>" <?php echo esc_attr($checked); ?>>
                 <?php echo wp_kses($question->display_text(), AllowedTags::getAllowedTags()); ?>
             </label>
         </li>

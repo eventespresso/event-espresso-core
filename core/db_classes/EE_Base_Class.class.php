@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * EE_Base_Class class
@@ -1254,7 +1255,7 @@ abstract class EE_Base_Class
      */
     public function e($field_name, $extra_cache_ref = null)
     {
-        echo $this->get_pretty($field_name, $extra_cache_ref); // sanitized
+        echo wp_kses($this->get_pretty($field_name, $extra_cache_ref), AllowedTags::getWithFormTags());
     }
 
 

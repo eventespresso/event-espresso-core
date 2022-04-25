@@ -1,4 +1,5 @@
 <?php
+
 /**
  * displays legends with an array of $items
  * that are indexed by id for each item
@@ -9,6 +10,8 @@
  */
 
 // figure out the columns based on the count of items (we want a max of 6 items per column).
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 $per_col = isset($per_column) ? absint($per_column) : 5;
 $count = 1;
 ?>
@@ -26,7 +29,7 @@ $count = 1;
             <?php $class = ! empty($details['class']) ? $details['class'] : 'ee-legend-img-container'; ?>
             <?php
             if (strpos($details['class'], '<span') !== false) {
-                echo $class; // already escaped
+                echo wp_kses($class, AllowedTags::getWithFormTags());
             } else { ?>
             <span class="<?php echo esc_attr($class); ?>">
                 <?php if (! empty($details['icon'])) : ?>

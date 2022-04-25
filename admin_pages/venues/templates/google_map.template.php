@@ -188,7 +188,7 @@
                                type="radio"
                                name="event_details_control_type"
                                value="dropdown"
-                            <?php echo esc_attr($checked); ?>/>
+                            <?php echo esc_attr($checked); ?>>
                         <?php esc_html_e(' Dropdown', 'event_espresso') ?>
                     </label>
                 </td>

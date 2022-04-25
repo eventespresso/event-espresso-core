@@ -4,6 +4,7 @@ use EventEspresso\core\domain\services\event\EventSpacesCalculator;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * EE_Event
@@ -1140,7 +1141,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                   . EEH_Template::pretty_status($active_status, false, 'sentence')
                   . '</span>';
         if ($echo) {
-            echo $status; // already escaped
+            echo wp_kses($status, AllowedTags::getAllowedTags());
             return '';
         }
         return $status; // already escaped
