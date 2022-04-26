@@ -56,6 +56,16 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected $datetimes_for_current_row;
 
+    /**
+     * @var bool
+     */
+    protected $hide_expired;
+
+    /**
+     * @var bool
+     */
+    protected $hide_upcoming;
+
 
     /**
      * EE_Event_Registrations_List_Table constructor.
@@ -236,10 +246,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     protected function _get_table_filters(): array
     {
         $filters = [];
-        $hide_expired = $this->request->getRequestParam('hide_expired', true, 'bool');
-        $hide_upcoming = $this->request->getRequestParam('hide_upcoming', true, 'bool');
-        $hide_expired_checked = $hide_expired ? 'checked' : '';
-        $hide_upcoming_checked = $hide_upcoming ? 'checked' : '';
+        $this->hide_expired = $this->request->getRequestParam('hide_expired', false, 'bool');
+        $this->hide_upcoming = $this->request->getRequestParam('hide_upcoming', false, 'bool');
+        $hide_expired_checked = $this->hide_expired ? 'checked' : '';
+        $hide_upcoming_checked = $this->hide_upcoming ? 'checked' : '';
         // get datetimes for ALL active events (note possible capability restrictions)
         $events   = $this->datetimes_for_event->getAllActiveDatetimesForAllEvents();
         $event_options[] = [
@@ -264,15 +274,15 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 'class' => $expired_class . $upcoming_class,
             ];
             if ($event->ID() === $this->event_id) {
-                $hide_expired = $expired_class === '';
+                $this->hide_expired = $expired_class === '';
                 $hide_expired_checked  = $expired_class === '' ? $hide_expired_checked : '';
-                $hide_upcoming = $upcoming_class === '';
+                $this->hide_upcoming = $upcoming_class === '';
                 $hide_upcoming_checked = $upcoming_class === '' ? $hide_upcoming_checked : '';
             }
         }
 
-        $select_class = $hide_expired ? 'ee-hide-expired-events' : '';
-        $select_class .= $hide_upcoming ? ' ee-hide-upcoming-events' : '';
+        $select_class = $this->hide_expired ? 'ee-hide-expired-events' : '';
+        $select_class .= $this->hide_upcoming ? ' ee-hide-upcoming-events' : '';
 
         $filters[] = '
         <div class="ee-event-filter">
@@ -401,7 +411,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         // (so that we don't pollute state for the entire table)
         // so let's try to get it from the registration's event
         $this->datetimes_for_current_row = DatetimesForEventCheckIn::fromRegistration($registration);
-        $datetime = $this->datetimes_for_current_row->getOneActiveDatetimeForEvent();
+        $datetime = $this->datetimes_for_current_row->getOneActiveDatetimeForEvent(null, $this->hide_expired);
 
         $DTD_ID = $datetime instanceof EE_Datetime ? $datetime->ID() : 0;
 
