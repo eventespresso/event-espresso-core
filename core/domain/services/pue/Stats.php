@@ -101,13 +101,13 @@ class Stats
     public function optinNotice()
     {
         ?>
-        <div class="updated data-collect-optin" id="espresso-data-collect-optin-container">
+        <div class="espresso-notices updated data-collect-optin" id="espresso-data-collect-optin-container">
             <div id="data-collect-optin-options-container">
                 <span class="dashicons dashicons-admin-site"></span>
                 <span class="data-optin-text"><?php self::optinText(); ?></span>
                 <span style="display: none" id="data-optin-nonce"><?php echo wp_create_nonce('ee-data-optin'); ?></span>
-                <button class="button--secondary data-optin-button" value="no">
-                    <?php esc_html_e('Dismiss', 'event_espresso'); ?>
+                <button class="button button--secondary button--small data-optin-button" value="no">
+                    <span class="dashicons dashicons-dismiss"></span><?php esc_html_e('Dismiss', 'event_espresso'); ?>
                 </button>
                 <div style="clear:both"></div>
             </div>
