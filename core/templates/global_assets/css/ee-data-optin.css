@@ -1,23 +1,27 @@
-#espresso-data-collect-optin-container {
-    padding: 10px;
+.updated.data-collect-optin {
+    flex-direction: row;
+    justify-content: flex-start;
 }
 
-#espresso-data-collect-optin-container ul {
+.data-collect-optin > div,
+.data-collect-optin .data-optin-text {
+    align-items: center;
+    display: flex;
+    width: 100%;
+}
+
+.data-collect-optin ul {
     list-style: disc;
-    margin-left: 20px;
+    margin-left: 1.5rem;
 }
 
-#espresso-data-collect-optin-container button.data-optin-button {
+.wp-core-ui .data-collect-optin button.button.button--secondary.data-optin-button {
     float: right;
-    margin-right: 8px;
+    margin-inline-start: auto;
 }
 
-#espresso-data-collect-optin-container .dashicons {
-    font-size: 22px;
-    margin-top: 4px;
-}
-
-#espresso-data-collect-optin-container .data-optin-text {
-    display: inline-block;
-    vertical-align: middle;
+.data-collect-optin .dashicons-admin-site {
+    color: var(--ee-status-color-grey);
+    font-size: 1.6rem;
+    margin-inline-end: 1rem;
 }
