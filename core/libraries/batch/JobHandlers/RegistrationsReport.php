@@ -47,6 +47,7 @@ class RegistrationsReport extends JobHandlerFile
     public function create_job(JobParameters $job_parameters)
     {
         $event_id = intval($job_parameters->request_datum('EVT_ID', '0'));
+        $DTT_id = intval($job_parameters->request_datum('DTT_ID', '0'));
         if (! \EE_Capabilities::instance()->current_user_can('ee_read_registrations', 'generating_report')) {
             throw new BatchRequestException(esc_html__('You do not have permission to view registrations', 'event_espresso'));
         }
@@ -96,8 +97,6 @@ class RegistrationsReport extends JobHandlerFile
                 )
             )
         );
-        // Include check-in, check-out data
-        $incude_checkins = (bool) $job_parameters->request_datum('incude_checkins', 0);
         // we should also set the header columns
         $csv_data_for_row = $this->get_csv_data_for(
             $event_id,
@@ -105,7 +104,7 @@ class RegistrationsReport extends JobHandlerFile
             1,
             $job_parameters->extra_datum('question_labels'),
             $job_parameters->extra_datum('query_params'),
-            $incude_checkins
+            $DTT_id
         );
         EEH_Export::write_data_array_to_csv($filepath, $csv_data_for_row, true);
         // if we actually processed a row there, record it
@@ -203,15 +202,13 @@ class RegistrationsReport extends JobHandlerFile
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
         if ($job_parameters->units_processed() < $job_parameters->job_size()) {
-            // Include check-in, check-out data
-            $incude_checkins = (bool) $job_parameters->request_datum('incude_checkins', 0);
             $csv_data = $this->get_csv_data_for(
                 $job_parameters->request_datum('EVT_ID', '0'),
                 $job_parameters->units_processed(),
                 $batch_size,
                 $job_parameters->extra_datum('question_labels'),
                 $job_parameters->extra_datum('query_params'),
-                $incude_checkins
+                $job_parameters->request_datum('DTT_ID', '0')
             );
             EEH_Export::write_data_array_to_csv($job_parameters->extra_datum('filepath'), $csv_data, false);
             $units_processed = count($csv_data);
@@ -244,17 +241,17 @@ class RegistrationsReport extends JobHandlerFile
      * @param int $limit
      * @param array $question_labels the IDs for all the questions which were answered by someone in this selection
      * @param array $query_params for using where querying the model
-     * @param bool $incude_checkins
+     * @param int|null $DTT_id
      * @return array top-level keys are numeric, next-level keys are column headers
      * @throws \EE_Error
      * @throws \ReflectionException
      */
-    public function get_csv_data_for($event_id, $offset, $limit, $question_labels, $query_params, $incude_checkins = false)
+    public function get_csv_data_for($event_id, $offset, $limit, $question_labels, $query_params, $DTT_id = null)
     {
         $reg_fields_to_include = [
+            'REG_ID',
             'TXN_ID',
             'ATT_ID',
-            'REG_ID',
             'REG_date',
             'REG_code',
             'REG_count',
@@ -396,11 +393,6 @@ class RegistrationsReport extends JobHandlerFile
                 ',',
                 $gateway_txn_ids_etc
             );
-            // get whether or not the user has checked in
-            $reg_csv_array[ (string) esc_html__('Check-Ins', 'event_espresso') ] = $reg_model->count_related(
-                $reg_row['Registration.REG_ID'],
-                'Checkin'
-            );
             // get ticket of registration and its price
             $ticket_model = EE_Registry::instance()->load_model('Ticket');
             if ($reg_row['Ticket.TKT_ID']) {
@@ -506,12 +498,74 @@ class RegistrationsReport extends JobHandlerFile
                     );
                 }
             }
-            // Include check-in data
-            if ($incude_checkins) {
+            // Include check-in data for datetime
+            if ($event_id && $DTT_id) {
+                // get whether or not the user has checked in
+                $reg_csv_array[ (string) esc_html__('Datetime Check-ins #', 'event_espresso') ] = $reg_model->count_related(
+                    $reg_row['Registration.REG_ID'],
+                    'Checkin',
+                    [
+                        [
+                            'DTT_ID' => $DTT_id
+                        ]
+                    ]
+                );
+                $datetime = EEM_Datetime::instance()->get_one_by_ID($DTT_id);
+                $checkin_rows = EEM_Checkin::instance()->get_all_wpdb_results(
+                    [
+                        [
+                            'REG_ID' => $reg_row['Registration.REG_ID'],
+                            'DTT_ID' => $datetime->get('DTT_ID'),
+                        ],
+                    ]
+                );
+                if (trim($datetime->get('DTT_name'))) {
+                    /* translators: 1: datetime name, 2: datetime ID */
+                    $datetime_name = sprintf(
+                        esc_html__('Check-ins for %1$s - ID: %2$s', 'event_espresso'),
+                        esc_html($datetime->get('DTT_name')),
+                        esc_html($datetime->get('DTT_ID'))
+                    );
+                } else {
+                    /* translators: %s: datetime ID */
+                    $datetime_name = sprintf(
+                        esc_html__('ID: %1$s', 'event_espresso'),
+                        esc_html($datetime->get('DTT_ID'))
+                    );
+                }
+                $checkins = [];
+                foreach ($checkin_rows as $checkin_row) {
+                    if ((int) $checkin_row['Checkin.CHK_in'] === 1) {
+                        /* translators: 1: check-in status, 2: check-in timestamp */
+                        $checkin_value = sprintf(
+                            esc_html__('%1$s: %2$s', 'event_espresso'),
+                            esc_html__('IN', 'event_espresso'),
+                            date('Y-m-d g:i a', strtotime($checkin_row['Checkin.CHK_timestamp']))
+                        );
+                        $checkins[] = $checkin_value;
+                    } elseif ((int) $checkin_row['Checkin.CHK_in'] === 0) {
+                        /* translators: 1: check-in status, 2: check-in timestamp */
+                        $checkin_value = sprintf(
+                            esc_html__('%1$s: %2$s', 'event_espresso'),
+                            esc_html__('OUT', 'event_espresso'),
+                            date('Y-m-d g:i a', strtotime($checkin_row['Checkin.CHK_timestamp']))
+                        );
+                        $checkins[] = $checkin_value;
+                    }
+                }
+                $reg_csv_array[ (string) $datetime_name ] = implode(' --- ', $checkins);
+            }
+            // Include check-in data for event
+            elseif ($event_id) {
+                // get whether or not the user has checked in
+                $reg_csv_array[ (string) esc_html__('Event Check-ins #', 'event_espresso') ] = $reg_model->count_related(
+                    $reg_row['Registration.REG_ID'],
+                    'Checkin'
+                );
                 $datetimes = EEM_Datetime::instance()->get_all_wpdb_results(
                     [
                         [
-                            'Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID']
+                            'Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID'],
                         ],
                         'order_by' => ['DTT_EVT_start' => 'ASC'],
                         'default_where_conditions' => 'none',
@@ -533,7 +587,7 @@ class RegistrationsReport extends JobHandlerFile
                     if (trim($datetime['Datetime.DTT_name'])) {
                         /* translators: 1: datetime name, 2: datetime ID */
                         $datetime_name = sprintf(
-                            esc_html__('%1$s - ID: %2$s', 'event_espresso'),
+                            esc_html__('Check-ins for %1$s - ID: %2$s', 'event_espresso'),
                             esc_html($datetime['Datetime.DTT_name']),
                             esc_html($datetime['Datetime.DTT_ID'])
                         );
@@ -548,16 +602,16 @@ class RegistrationsReport extends JobHandlerFile
                     if ($checkin_row instanceof EE_Checkin && $checkin_row->get('CHK_in') === true) {
                         /* translators: 1: check-in status, 2: check-in timestamp */
                         $checkin_value = sprintf(
-                            esc_html__('%1$s - %2$s', 'event_espresso'),
+                            esc_html__('%1$s: %2$s', 'event_espresso'),
                             esc_html__('IN', 'event_espresso'),
-                            date('Y-m-d H:i:s', $checkin_row->get_raw('CHK_timestamp'))
+                            $checkin_row->get_datetime('CHK_timestamp', 'Y-m-d', 'g:i a')
                         );
                     } elseif ($checkin_row instanceof EE_Checkin && $checkin_row->get('CHK_in') === false) {
                         /* translators: 1: check-in status, 2: check-in timestamp */
                         $checkin_value = sprintf(
-                            esc_html__('%1$s - %2$s', 'event_espresso'),
+                            esc_html__('%1$s: %2$s', 'event_espresso'),
                             esc_html__('OUT', 'event_espresso'),
-                            date('Y-m-d H:i:s', $checkin_row->get_raw('CHK_timestamp'))
+                            $checkin_row->get_datetime('CHK_timestamp', 'Y-m-d', 'g:i a')
                         );
                     }
                     $reg_csv_array[ (string) $datetime_name ] = $checkin_value;

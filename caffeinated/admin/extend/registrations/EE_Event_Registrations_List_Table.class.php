@@ -64,6 +64,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $return_url = $this->getReturnUrl();
 
         $evt_id = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : null;
+        $DTT_id = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : null;
         $this->_wp_list_args = array(
             'singular' => esc_html__('registrant', 'event_espresso'),
             'plural'   => esc_html__('registrants', 'event_espresso'),
@@ -100,17 +101,30 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 $evt_id
             )
         ) {
-            $this->_bottom_buttons = array(
-                'report' => array(
-                    'route'         => 'registrations_report',
-                    'extra_request' =>
-                        array(
-                            'EVT_ID'     => $evt_id,
-                            'return_url' => $return_url,
-                            'incude_checkins' => true,
-                        ),
-                ),
-            );
+            if ($DTT_id) {
+                $this->_bottom_buttons = array(
+                    'report_datetime' => array(
+                        'route'         => 'registrations_report',
+                        'extra_request' =>
+                            array(
+                                'EVT_ID'     => $evt_id,
+                                'DTT_ID'     => $DTT_id,
+                                'return_url' => $return_url,
+                            ),
+                    ),
+                );
+            } else {
+                $this->_bottom_buttons = array(
+                    'report' => array(
+                        'route'         => 'registrations_report',
+                        'extra_request' =>
+                            array(
+                                'EVT_ID'     => $evt_id,
+                                'return_url' => $return_url,
+                            ),
+                    ),
+                );
+            }
         }
         $this->_sortable_columns = array(
             /**
