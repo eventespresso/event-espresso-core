@@ -554,9 +554,7 @@ class RegistrationsReport extends JobHandlerFile
                     }
                 }
                 $reg_csv_array[ (string) $datetime_name ] = implode(' --- ', $checkins);
-            }
-            // Include check-in data for event
-            elseif ($event_id) {
+            } elseif ($event_id) {
                 // get whether or not the user has checked in
                 $reg_csv_array[ (string) esc_html__('Event Check-ins #', 'event_espresso') ] = $reg_model->count_related(
                     $reg_row['Registration.REG_ID'],
