@@ -28,7 +28,7 @@ class DatetimesForEventCheckIn
     protected $all_events;
 
     /**
-     * @var EE_Datetime[]
+     * @var EE_Datetime[][]
      */
     protected $datetimes;
 
@@ -146,23 +146,25 @@ class DatetimesForEventCheckIn
      * @param int|null $DTD_ID If specific datetime ID is supplied, will return that date, but only if it is active.
      *                         If no ID is supplied but event only has one related datetime, then it will be returned.
      *                         If the above conditions are not met, then function will return null.
+     * @param bool $active
      * @return EE_Datetime|null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function getOneActiveDatetimeForEvent(?int $DTD_ID = 0): ?EE_Datetime
+    public function getOneActiveDatetimeForEvent(?int $DTD_ID = 0, bool $active = true): ?EE_Datetime
     {
-        if ($this->datetimes === null) {
-            $this->datetimes = $this->getAllActiveDatetimesForEvent();
+        $key = $active ? 1 : 0;
+        if (! isset($this->datetimes[ $key ]) || $this->datetimes[ $key ] === null) {
+            $this->datetimes[ $key ] = $this->getAllActiveDatetimesForEvent($active);
         }
         if ($DTD_ID) {
-            foreach ($this->datetimes as $datetime) {
+            foreach ($this->datetimes[ $key ] as $datetime) {
                 if ($datetime instanceof EE_Datetime && $datetime->ID() === $DTD_ID) {
                     return $datetime;
                 }
             }
             return null;
         }
-        return count($this->datetimes) === 1 ? reset($this->datetimes) : null;
+        return count($this->datetimes[ $key ]) === 1 ? reset($this->datetimes[ $key ]) : null;
     }
 }
