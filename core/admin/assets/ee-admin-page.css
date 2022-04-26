@@ -171,7 +171,7 @@
     padding-inline: 1rem;
 }
 
-.espresso-admin .ee-status-outline {
+.ee-status-outline {
     border: 2px solid transparent;
     padding-block: 1rem !important;
     padding-inline: 2rem !important;
@@ -359,6 +359,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     padding-block-end: 1rem;
 }
 
+.wp-admin .ee-admin-container > .padding,
 .espresso-admin .ee-admin-container > .padding,
 .espresso-admin #post-body .postbox .inside,
 .espresso-admin #post-body #post-body-content > .form-table,
@@ -492,6 +493,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
         width: unset;
     }
 
+    .wp-admin .ee-admin-container > .padding,
     .espresso-admin .ee-admin-container > .padding,
     .espresso-admin #post-body .postbox .inside,
     .espresso-admin #post-body #post-body-content > .form-table,
@@ -518,6 +520,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
         width: unset;
     }
 
+    .wp-admin .ee-admin-container > .padding,
     .espresso-admin .ee-admin-container > .padding,
     .espresso-admin #post-body .postbox .inside,
     .espresso-admin #post-body #post-body-content > .form-table,
@@ -1547,14 +1550,14 @@ label.error {
     position: relative;
     z-index: 10;
 }
-.espresso-admin .dashicons,
+/* .espresso-admin .dashicons:not(.ee-help-btn),
 .espresso-admin .dashicons-before:before {
     aspect-ratio: 1;
     color: currentColor;
     font-size: 1.33rem;
     height: 1.33rem;
     width: 1.33rem;
-}
+} */
 
 .ee-composite-dashicon .ee-icon + .ee-icon,
 .ee-composite-dashicon .ee-icon + .dashicons,
@@ -3664,8 +3667,8 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 
-
 .espresso-admin.wp-core-ui .button,
+.wp-core-ui .espresso-notices .button,
 .espresso-admin.wp-core-ui #doaction,
 .espresso-admin.wp-core-ui .submitdelete,
 .espresso-admin.wp-core-ui #search-submit,
@@ -3753,6 +3756,7 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin.wp-core-ui .button.button-tiny,
 .espresso-admin.wp-core-ui .button.button--tiny,
+.wp-core-ui .espresso-notices .button.button--tiny,
 .espresso-admin.wp-core-ui a#remove-post-thumbnail,
 .espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility,
 .espresso-admin.wp-core-ui .misc-pub-section a.edit-timestamp,
@@ -3771,6 +3775,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .wrap .add-new-h2,
 .espresso-admin.wp-core-ui input.button.tagadd,
 .espresso-admin.wp-core-ui .wrap .page-title-action,
+.wp-core-ui .espresso-notices .button.button--small,
 .espresso-admin.wp-core-ui #set-post-thumbnail:not([aria-describedby="set-post-thumbnail-desc"]),
 .espresso-admin.wp-core-ui #edit-slug-box .button,
 .espresso-admin.wp-core-ui #edit-slug-box .button.button-small,
@@ -3819,6 +3824,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button-secondary,
 .espresso-admin.wp-core-ui .button.button-secondary,
 .espresso-admin.wp-core-ui .button.button--secondary,
+.wp-core-ui .espresso-notices .button.button--secondary,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a,
 .espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility,
@@ -3846,6 +3852,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button-secondary:hover,
 .espresso-admin.wp-core-ui .button.button-secondary:hover,
 .espresso-admin.wp-core-ui .button.button--secondary:hover,
+.wp-core-ui .espresso-notices .button.button--secondary:hover,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button:hover,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a:hover,
 .espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility:hover,
@@ -3873,6 +3880,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button-secondary:focus,
 .espresso-admin.wp-core-ui .button.button-secondary:focus,
 .espresso-admin.wp-core-ui .button.button--secondary:focus,
+.wp-core-ui .espresso-notices .button.button--secondary:focus,
 .espresso-admin.wp-core-ui .mce-toolbar .mce-btn button:focus,
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a:focus,
 .espresso-admin.wp-core-ui .misc-pub-section a.edit-visibility:focus,
@@ -3894,6 +3902,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button-primary:not([disabled]),
 .espresso-admin.wp-core-ui .button.button-primary:not([disabled]),
 .espresso-admin.wp-core-ui .button.button--primary:not([disabled]),
+.wp-core-ui .espresso-notices .button.button--primary:not([disabled]),
 .espresso-admin.wp-core-ui .publishing-action input[type="submit"]:not([disabled]),
 .espresso-admin.wp-core-ui input[type="submit"].button.button-primary:not([disabled]),
 .espresso-admin.wp-core-ui input[type="submit"].button.button--primary:not([disabled]),
@@ -3909,6 +3918,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button-primary:hover,
 .espresso-admin.wp-core-ui .button.button-primary:hover,
 .espresso-admin.wp-core-ui .button.button--primary:hover,
+.wp-core-ui .espresso-notices .button.button--primary:hover,
 .espresso-admin.wp-core-ui .publishing-action input[type="submit"]:hover,
 .espresso-admin.wp-core-ui input[type="submit"].button.button-primary:hover,
 .espresso-admin.wp-core-ui input[type="submit"].button.button--primary:hover,
@@ -3922,6 +3932,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button-primary:focus,
 .espresso-admin.wp-core-ui .button.button-primary:focus,
 .espresso-admin.wp-core-ui .button.button--primary:focus,
+.wp-core-ui .espresso-notices .button.button--primary:focus,
 .espresso-admin.wp-core-ui .publishing-action input[type="submit"]:focus,
 .espresso-admin.wp-core-ui input[type="submit"].button.button-primary:focus,
 .espresso-admin.wp-core-ui input[type="submit"].button.button--primary:focus,
@@ -4018,8 +4029,8 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .button.button--primary.button--small:not(.button--icon-only) .dashicons,
 .espresso-admin.wp-core-ui .button.button--secondary.button--small:not(.button--icon-only) .dashicons {
     font-size: 1.4rem;
-    margin-inline-start: -.2rem;
-    margin-inline-end: 1rem;
+    margin-inline-start: -.25rem;
+    margin-inline-end: .5rem;
     top: 0;
 }
 .espresso-admin.wp-core-ui .button.button--primary.button--big:not(.button--icon-only) .dashicons,
@@ -5352,6 +5363,11 @@ body.espresso-admin #contextual-help-wrap strong {
     width: 98%;
 }
 
+
+
+.espresso-admin .notification-dialog {
+    width: 515px;
+}
 
 
 .espresso-admin .attachment-details .setting .value,

@@ -20,7 +20,7 @@
     --ee-status-color-blue-green: hsl(172, 95%, 25%);
     --ee-status-color-blue: hsl(203, 50%, 50%);
     --ee-status-color-light-blue: hsl(203, 90%, 70%);
-    --ee-status-color-pale-blue: hsl(203, 50%, 95%);
+    --ee-status-color-pale-blue: hsl(203, 55%, 95%);
     --ee-status-color-violet: hsl(239, 35%, 60%);
     --ee-status-color-purple: hsl(279, 35%, 50%);
     --ee-status-color-pale-grey: hsl(219, 2%, 75%);
@@ -770,19 +770,24 @@ div.TB-ee-frame a {
 /**
  * fancy toggles
  */
+ .ee-switch__input,
 .ee-on-off-toggle {
   position: absolute;
   margin-left: -9999px;
   visibility: hidden;
 }
-.ee-on-off-toggle+ label {
+
+ .ee-switch__toggle,
+.ee-on-off-toggle + label:not(.ee-switch__label) {
   display: block;
   position: relative;
   cursor: pointer;
   outline: none;
   user-select: none;
 }
-input.ee-toggle-round-flat + label {
+
+ .ee-switch__toggle,
+input.ee-toggle-round-flat + label:not(.ee-switch__label) {
   width: var(--ee-switch-width);
   height: var(--ee-switch-height);
 
@@ -790,25 +795,29 @@ input.ee-toggle-round-flat + label {
   border-radius: var(--ee-switch-height);
   transition: background 0.4s;
 }
+
+ .ee-switch__toggle:after,
 input.ee-toggle-round-flat + label:after {
-  display: block;
-  position: absolute;
-  content: "";
-}
-input.ee-toggle-round-flat + label:after {
-  top: var(--ee-switch-padding);
-  left: var(--ee-switch-padding);
-  bottom: var(--ee-switch-padding);
-  height: var(--ee-switch-button);
-  width: var(--ee-switch-button);
   background-color: #FFF;
   border-radius: var(--ee-switch-button);
+  bottom: var(--ee-switch-padding);
+  content: "";
+  display: block;
+  height: var(--ee-switch-button);
+  left: var(--ee-switch-padding);
+  position: absolute;
+  top: var(--ee-switch-padding);
   transition: margin 0.4s, background 0.4s;
+  width: var(--ee-switch-button);
 }
-input.ee-toggle-round-flat:checked + label {
-    background-color: var(--ee-status-color-blue);
-    margin-block: 0;
+
+ .ee-switch__input + .ee-switch__toggle:after,
+ input.ee-toggle-round-flat:checked + label {
+     background-color: var(--ee-status-color-blue);
+     margin-block: 0;
 }
+
+ .ee-switch__input + .ee-switch__toggle:after,
 input.ee-toggle-round-flat:checked + label:after {
   margin-left: var(--ee-switch-height);
 }
@@ -827,7 +836,7 @@ input.ee-toggle-round-flat:checked + label:after {
 .espresso-notices.ee-nag-notice {
     border-left: 4px solid var(--ee-status-color-gold);
 }
-
+/*
 .dismiss-ee-nag-notice-btn {
     cursor: pointer;
     float: right;
@@ -843,4 +852,24 @@ input.ee-toggle-round-flat:checked + label:after {
     position: relative;
     top: -1px;
     margin-right: .25em;
+} */
+
+
+.wp-core-ui .espresso-notices.notice,
+.wp-core-ui .espresso-notices.error,
+.wp-core-ui .espresso-notices.updated {
+    align-items: center;
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 0.5rem 1rem;
+}
+
+.wp-core-ui .espresso-notices.notice p,
+.wp-core-ui .espresso-notices.error p,
+.wp-core-ui .espresso-notices.updated p {
+    font-size: 1rem;
+    margin: 0;
+    padding: 0;
+    margin-inline-end: auto;
+    max-width: 150ch;
 }
