@@ -112,29 +112,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 ),
             );
         }
-        $this->_bottom_buttons['report_filtered'] = array(
-            'route'         => 'registrations_checkin_report',
-            'extra_request' => array(
-                'use_filters' => true,
-                'incude_checkins' => $evt_id ? true : false,
-                'filters'     => array_merge(
-                    array(
-                        'EVT_ID' => $evt_id,
-                    ),
-                    array_diff_key(
-                        $this->_req_data,
-                        array_flip(
-                            array(
-                                'page',
-                                'action',
-                                'default_nonce',
-                            )
-                        )
-                    )
-                ),
-                'return_url'  => $return_url,
-            ),
-        );
         $this->_sortable_columns = array(
             /**
              * Allows users to change the default sort if they wish.

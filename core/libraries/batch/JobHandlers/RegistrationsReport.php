@@ -55,34 +55,30 @@ class RegistrationsReport extends JobHandlerFile
             $this->get_filename($event_id)
         );
         $job_parameters->add_extra_data('filepath', $filepath);
-        if ($job_parameters->request_datum('use_filters', false)) {
-            $query_params = maybe_unserialize($job_parameters->request_datum('filters', array()));
-        } else {
-            $query_params = apply_filters('FHEE__EE_Export__report_registration_for_event', array(
-                array(
-                    'OR'                 => array(
-                        // don't include registrations from failed or abandoned transactions...
-                        'Transaction.STS_ID' => array(
-                            'NOT IN',
-                            array(
-                                EEM_Transaction::failed_status_code,
-                                EEM_Transaction::abandoned_status_code,
-                            ),
+        $query_params = apply_filters('FHEE__EE_Export__report_registration_for_event', array(
+            array(
+                'OR'                 => array(
+                    // don't include registrations from failed or abandoned transactions...
+                    'Transaction.STS_ID' => array(
+                        'NOT IN',
+                        array(
+                            EEM_Transaction::failed_status_code,
+                            EEM_Transaction::abandoned_status_code,
                         ),
-                        // unless the registration is approved, in which case include it regardless of transaction status
-                        'STS_ID'             => \EEM_Registration::status_id_approved,
                     ),
-                    'Ticket.TKT_deleted' => array('IN', array(true, false)),
+                    // unless the registration is approved, in which case include it regardless of transaction status
+                    'STS_ID'             => \EEM_Registration::status_id_approved,
                 ),
-                'order_by'   => array('Transaction.TXN_ID' => 'asc', 'REG_count' => 'asc'),
-                'force_join' => array('Transaction', 'Ticket', 'Attendee'),
-                'caps'       => \EEM_Base::caps_read_admin,
-            ), $event_id);
-            if ($event_id) {
-                $query_params[0]['EVT_ID'] = $event_id;
-            } else {
-                $query_params['force_join'][] = 'Event';
-            }
+                'Ticket.TKT_deleted' => array('IN', array(true, false)),
+            ),
+            'order_by'   => array('Transaction.TXN_ID' => 'asc', 'REG_count' => 'asc'),
+            'force_join' => array('Transaction', 'Ticket', 'Attendee'),
+            'caps'       => \EEM_Base::caps_read_admin,
+        ), $event_id);
+        if ($event_id) {
+            $query_params[0]['EVT_ID'] = $event_id;
+        } else {
+            $query_params['force_join'][] = 'Event';
         }
         if (! isset($query_params['force_join'])) {
             $query_params['force_join'] = array('Event', 'Transaction', 'Ticket', 'Attendee');

@@ -134,27 +134,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 ],
             ];
         }
-        $this->_bottom_buttons['report_filtered'] = [
-            'route'         => 'registrations_report',
-            'extra_request' => [
-                'use_filters' => true,
-                'incude_checkins' => isset($req_data['event_id']) ? true : false,
-                'return_url'  => $return_url,
-            ],
-        ];
-        $filters                                  = array_diff_key(
-            $this->_req_data,
-            array_flip(
-                [
-                    'page',
-                    'action',
-                    'default_nonce',
-                ]
-            )
-        );
-        if (! empty($filters)) {
-            $this->_bottom_buttons['report_filtered']['extra_request']['filters'] = $filters;
-        }
         $this->_primary_column   = '_REG_ID';
         $this->_sortable_columns = [
             '_REG_date'     => ['_REG_date' => true],   // true means its already sorted
