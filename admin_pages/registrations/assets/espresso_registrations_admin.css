@@ -49,7 +49,7 @@
 .wp-list-table th.column-_REG_paid,
 .wp-list-table th.column-TXN_total,
 .wp-list-table th.column-TXN_paid {
-    width: clamp(7rem, 11rem, 15rem);
+    width: clamp(6rem, 7.5%, 15rem);
     text-align: center;
 }
 
@@ -58,7 +58,7 @@
 .wp-list-table td.column-_REG_paid,
 .wp-list-table td.column-TXN_total,
 .wp-list-table td.column-TXN_paid {
-    width: clamp(7rem, 11rem, 15rem);
+    width: clamp(6rem, 7.5%, 15rem);
     text-align: end;
 }
 
@@ -90,24 +90,51 @@
     margin-inline-start: 1rem;
 }
 
-.ee-event-filter,
-.ee-event-filter > span {
+.espresso-admin .tablenav .ee-event-filter {
+    border: 1px solid var(--ee-status-color-light-blue);
+    border-radius: 0.25rem;
+    max-width: 50%;
+    padding-block: 0.5rem;
+    padding-inline: 1rem;
+}
+
+.espresso-admin .tablenav .ee-event-filter,
+.espresso-admin .tablenav .ee-event-filter > span {
     align-items: center;
     display: flex;
     justify-content: start;
 }
+.espresso-admin .tablenav .ee-event-filter > span {
+    width: 16rem;
+}
+.espresso-admin .tablenav .ee-event-filter > span:first-child {
+    width: 35rem;
+}
+.espresso-admin .tablenav .ee-event-filter > span:first-child label:not(.ee-input-label):not(.screen-reader-text) {
+    flex-wrap: nowrap;
+    width: 9rem;
+}
+.espresso-admin .tablenav .ee-event-filter > span:first-child select {
+    max-width: clamp(24rem, 100%, 20rem);
+    width: 100%;
+}
+.espresso-admin .tablenav .ee-event-filter > span:last-child {
+    width: 14rem;
+}
 
-.ee-event-filter > span input[type="checkbox"] {
+
+
+.espresso-admin .tablenav .ee-event-filter > span input[type="checkbox"] {
     margin-inline-end: .5rem;
 }
 
-.ee-event-filter > span + span {
+.espresso-admin .tablenav .ee-event-filter > span + span {
     margin-inline-start: 1rem;
 }
-.ee-event-filter .ee-hide-expired-events .ee-expired-event {
+.espresso-admin .tablenav .ee-event-filter .ee-hide-expired-events .ee-expired-event {
     display: none;
 }
-.ee-event-filter .ee-hide-upcoming-events .ee-upcoming-event {
+.espresso-admin .tablenav .ee-event-filter .ee-hide-upcoming-events .ee-upcoming-event {
     display: none;
 }
 
