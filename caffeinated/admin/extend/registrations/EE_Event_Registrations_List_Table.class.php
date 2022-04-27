@@ -422,12 +422,18 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column__REG_att_checked_in(EE_Registration $registration): string
     {
+        $reg_date_id = 0;
+        $reg_datetimes = $registration->ticket()->datetimes();
+        if (count($reg_datetimes) === 1) {
+            $reg_datetime = reset($reg_datetimes);
+            $reg_date_id = $reg_datetime instanceof EE_Datetime ? $reg_datetime->ID() : 0;
+        }
         // we need a local variable for the datetime for each row
         // (so that we don't pollute state for the entire table)
         // so let's try to get it from the registration's event
         $this->datetimes_for_current_row = DatetimesForEventCheckIn::fromRegistration($registration);
         $datetime = $this->datetimes_for_current_row->getOneActiveDatetimeForEvent(
-            $this->datetime_id,
+            $reg_date_id ?: $this->datetime_id,
             $this->hide_expired
         );
 
