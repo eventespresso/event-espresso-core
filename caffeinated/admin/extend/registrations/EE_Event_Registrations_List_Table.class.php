@@ -52,6 +52,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     protected $datetime;
 
     /**
+     * @var EE_Event
+     */
+    protected $event;
+
+    /**
      * @var DatetimesForEventCheckIn
      */
     protected $datetimes_for_current_row;
@@ -285,44 +290,19 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $select_class .= $this->hide_upcoming ? ' ee-hide-upcoming-events' : '';
 
         $filters[] = '
-        <div class="ee-event-filter">
-            <span>
-                <label for="event_id">
-                    ' . esc_html__('Check-in Status for', 'event_espresso') . '
-                </label>
-                ' . EEH_Form_Fields::select_input(
-                        'event_id',
-                        $event_options,
-                        $this->event_id,
-                        '',
-                        $select_class
-                    ) . '
-            </span>
-            <span>
-                <label for="js-ee-hide-upcoming-events">
-                    <input type="checkbox" id="js-ee-hide-upcoming-events" name="hide_upcoming" ' . $hide_upcoming_checked . '>
-                    ' . esc_html__('Hide Upcoming Events', 'event_espresso') . '
-                </label>
-                <span class="ee-help-btn dashicons dashicons-editor-help ee-aria-tooltip" aria-label="'
-                     . esc_html__(
-                         'Will not display events with start dates in the future (ie: have not yet begun)',
-                         'event_espresso'
-                     )
-                     . '"></span>
-            </span>
-            <span>
-                <label for="js-ee-hide-expired-events">
-                    <input type="checkbox" id="js-ee-hide-expired-events" name="hide_expired" ' . $hide_expired_checked . '>
-                    ' . esc_html__('Hide Expired Events', 'event_espresso') . '
-                </label>
-                <span class="ee-help-btn dashicons dashicons-editor-help ee-aria-tooltip" aria-label="'
-                     . esc_html__(
-                         'Will not display events with end dates in the past (ie: have already finished)',
-                         'event_espresso'
-                     )
-                     . '"></span>
-            </span>
-        </div>';
+        <div class="ee-event-filter__wrapper">
+            <label class="ee-event-filter-main-label">' . esc_html__('Check-in Status for', 'event_espresso') . '</label>
+            <div class="ee-event-filter">
+                <span class="ee-event-selector">
+                    <label for="event_id">' . esc_html__('Event', 'event_espresso') . '</label>
+                    ' . EEH_Form_Fields::select_input(
+                            'event_id',
+                            $event_options,
+                            $this->event_id,
+                            '',
+                            $select_class
+                        ) . '
+                </span>';
         // DTT datetimes filter
         $datetimes_for_event = $this->datetimes_for_event->getAllActiveDatetimesForEvent($hide_upcoming_checked === 'checked');
         if (count($datetimes_for_event) > 1) {
@@ -334,16 +314,51 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     $datetime->start_date_and_time() . ' - ' . $datetime->end_date_and_time() . $datetime_string;
                 $datetimes[ $datetime->ID() ] = $datetime_string;
             }
-            $input     = new EE_Select_Input(
-                $datetimes,
-                [
-                    'html_name' => 'DTT_ID',
-                    'html_id'   => 'DTT_ID',
-                    'default'   => $this->datetime_id,
-                ]
-            );
-            $filters[] = $input->get_html_for_input();
+            $filters[] = '
+                <span class="ee-datetime-selector">
+                    <label for="DTT_ID">' . esc_html__('Datetime', 'event_espresso') . '</label>
+                    ' . EEH_Form_Fields::select_input(
+                        'DTT_ID',
+                        $datetimes,
+                        $this->datetime_id
+                    ) . '
+                </span>';
         }
+        $filters[] = '
+                <span class="ee-hide-upcoming-check">
+                    <label for="js-ee-hide-upcoming-events">
+                        <input type="checkbox" id="js-ee-hide-upcoming-events" name="hide_upcoming" '
+                         . $hide_upcoming_checked
+                         . '>
+                        '
+                         . esc_html__('Hide Upcoming Events', 'event_espresso')
+                         . '
+                    </label>
+                    <span class="ee-help-btn dashicons dashicons-editor-help ee-aria-tooltip" aria-label="'
+                         . esc_html__(
+                             'Will not display events with start dates in the future (ie: have not yet begun)',
+                             'event_espresso'
+                         )
+                         . '"></span>
+                </span>
+                <span class="ee-hide-expired-check">
+                    <label for="js-ee-hide-expired-events">
+                        <input type="checkbox" id="js-ee-hide-expired-events" name="hide_expired" '
+                         . $hide_expired_checked
+                         . '>
+                        '
+                         . esc_html__('Hide Expired Events', 'event_espresso')
+                         . '
+                    </label>
+                    <span class="ee-help-btn dashicons dashicons-editor-help ee-aria-tooltip" aria-label="'
+                         . esc_html__(
+                             'Will not display events with end dates in the past (ie: have already finished)',
+                             'event_espresso'
+                         )
+                         . '"></span>
+                </span>
+            </div>
+        </div>';
         return $filters;
     }
 
@@ -411,7 +426,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         // (so that we don't pollute state for the entire table)
         // so let's try to get it from the registration's event
         $this->datetimes_for_current_row = DatetimesForEventCheckIn::fromRegistration($registration);
-        $datetime = $this->datetimes_for_current_row->getOneActiveDatetimeForEvent(null, $this->hide_expired);
+        $datetime = $this->datetimes_for_current_row->getOneActiveDatetimeForEvent(
+            $this->datetime_id,
+            $this->hide_expired
+        );
 
         $DTD_ID = $datetime instanceof EE_Datetime ? $datetime->ID() : 0;
 
@@ -564,14 +582,14 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
     /**
      * @param EE_Registration $registration
-     * @return bool|string
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_Event(EE_Registration $registration)
+    public function column_Event(EE_Registration $registration): string
     {
         try {
-            $event            = $this->_evt instanceof EE_Event ? $this->_evt : $registration->event();
+            $event            = $this->event instanceof EE_Event ? $this->event : $registration->event();
             $checkin_link_url = EE_Admin_Page::add_query_args_and_nonce(
                 ['action' => 'event_registrations', 'event_id' => $event->ID()],
                 REG_ADMIN_URL
