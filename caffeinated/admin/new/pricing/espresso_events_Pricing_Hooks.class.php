@@ -1137,15 +1137,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $main_template_args['ticket_js_structure'] = $this->_get_ticket_js_structure($datetimes, $all_tickets);
 
         $status_change_notice = EventEspresso\core\services\loaders\LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\admin\StatusChangeNotice'
+            'EventEspresso\core\domain\services\admin\notices\status_change\StatusChangeNotice'
         );
-        if (! $status_change_notice->isDismissed()) {
-            $main_template_args['status_change_notice'] = EEH_Template::display_template(
-                EE_ADMIN_TEMPLATE . 'status_change_notice.template.php',
-                ['context' => '__event-editor', 'page_slug' => 'espresso-events'],
-                true
-            );
-        }
+        $main_template_args['status_change_notice'] = $status_change_notice->display(
+            '__event-editor',
+            'espresso-events'
+        );
 
         EEH_Template::display_template(
             PRICING_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php',
