@@ -590,7 +590,7 @@ class EEH_Debug_Tools
         } elseif ($var === null) {
             $var_name = ! $var_name ? 'null' : $var_name;
         }
-        $var_name = ucwords(str_replace(array('$', '_'), array('', ' '), $var_name));
+        $var_name = EEH_Debug_Tools::trimVarName($var_name);
         $heading_tag = EEH_Debug_Tools::headingTag($heading_tag);
         // $result = EEH_Debug_Tools::headingSpacer($heading_tag);
         $result = EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
@@ -603,6 +603,20 @@ class EEH_Debug_Tools
             die($result);
         }
         echo $result;
+    }
+
+
+    private static function trimVarName($var_name): string
+    {
+        $converted = str_replace(['$', '_', 'this->'], ['', ' ', ''], $var_name);
+        $words = explode(' ', $converted);
+        $words = array_map(
+            function($word) {
+                return $word === 'id' || $word === 'Id' ? 'ID' : $word;
+            },
+            $words
+        );
+        return ucwords(implode(' ', $words));
     }
 
 
