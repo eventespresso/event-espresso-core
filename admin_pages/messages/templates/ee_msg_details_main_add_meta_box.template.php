@@ -13,12 +13,12 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 
  $header = $event_name
-            ? sprintf(
-                /* translators: %s: event name */
-                esc_html__('%1$s Custom Template', 'event_espresso'),
-                $event_name
-            )
-            : '';
+    ? sprintf(
+        /* translators: %s: event name */
+        esc_html__('%1$s Custom Template', 'event_espresso'),
+        $event_name
+    )
+    : '';
 ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">

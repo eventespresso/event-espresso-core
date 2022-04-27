@@ -19,7 +19,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class General_Settings_Admin_Page extends EE_Admin_Page
 {
-
     /**
      * @var EE_Core_Config
      */
@@ -934,8 +933,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                         GEN_SET_ADMIN_URL
                     );
 
-                    $this->_template_args['states'][$STA_ID]['inputs']           = $inputs;
-                    $this->_template_args['states'][$STA_ID]['delete_state_url'] = $delete_state_url;
+                    $this->_template_args['states'][ $STA_ID ]['inputs']           = $inputs;
+                    $this->_template_args['states'][ $STA_ID ]['delete_state_url'] = $delete_state_url;
                 }
             }
         } else {
@@ -1061,10 +1060,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
         $success = EEM_State::instance()->delete_by_ID($STA_ID);
         if ($success !== false) {
-            do_action('AHEE__General_Settings_Admin_Page__delete_state__state_deleted',
-                      $CNT_ISO,
-                      $STA_ID,
-                      ['STA_abbrev' => $STA_abbrev]);
+            do_action(
+                'AHEE__General_Settings_Admin_Page__delete_state__state_deleted',
+                $CNT_ISO,
+                $STA_ID,
+                ['STA_abbrev' => $STA_abbrev]
+            );
             EE_Error::add_success(esc_html__('The State was deleted successfully.', 'event_espresso'));
         }
         if (defined('DOING_AJAX')) {

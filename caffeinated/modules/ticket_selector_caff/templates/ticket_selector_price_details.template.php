@@ -102,9 +102,9 @@ if ($display_ticket_price) { ?>
                             </td>
                             <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>" class="jst-rght small-text">
                                 <?php echo wp_kses(
-                                        EEH_Template::format_currency($new_sub_total),
-                                        AllowedTags::getAllowedTags()
-                                    ); ?>
+                                    EEH_Template::format_currency($new_sub_total),
+                                    AllowedTags::getAllowedTags()
+                                ); ?>
                             </td>
                             <?php $pretax_total += ! $price_mod->is_tax() ? $new_sub_total : 0; ?>
                             <?php $running_total += $new_sub_total; ?>
