@@ -19,7 +19,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         $event_name
     )
     : '';
-?>
+    ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
     <?php if ($header) : ?>
