@@ -90,53 +90,109 @@
     margin-inline-start: 1rem;
 }
 
-.espresso-admin .tablenav .ee-event-filter {
-    border: 1px solid var(--ee-status-color-light-blue);
-    border-radius: 0.25rem;
-    max-width: 50%;
-    padding-block: 0.5rem;
-    padding-inline: 1rem;
+
+/* TABLE NAV FILTERS */
+
+.espresso-admin #EE_Event_Registrations_List_Table-table-frm .tablenav {
+    margin-block-start: -1.25rem;
+}
+.espresso-admin #EE_Event_Registrations_List_Table-table-frm .tablenav > span,
+.espresso-admin #EE_Event_Registrations_List_Table-table-frm .tablenav > a.button,
+.espresso-admin #EE_Event_Registrations_List_Table-table-frm .tablenav > input.button,
+.espresso-admin #EE_Event_Registrations_List_Table-table-frm .tablenav > div:not(.ee-event-filter__wrapper) {
+    margin-block-start: 1.25rem;
+}
+.espresso-admin .tablenav .ee-event-filter__wrapper {
+    margin-inline-end: 0;
+    max-width: 100%;
+}
+
+.espresso-admin .tablenav .ee-event-filter__wrapper .ee-event-filter-main-label {
+    margin-block: 0;
 }
 
 .espresso-admin .tablenav .ee-event-filter,
 .espresso-admin .tablenav .ee-event-filter > span {
     align-items: center;
     display: flex;
-    justify-content: start;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    max-width: 100%;
+}
+
+.espresso-admin .tablenav .ee-event-filter {
+    border: 1px solid var(--ee-status-color-light-blue);
+    border-radius: 0.25rem;
+    flex-wrap: wrap !important;
+    margin-inline-end: 0;
+    padding-block: 0.5rem;
+    padding-block-end: .75rem;
+    padding-inline: 1rem;
+}
+
+.espresso-admin .tablenav .ee-event-filter .ee-event-filter-main-label {
+    width: 100%;
 }
 .espresso-admin .tablenav .ee-event-filter > span {
+    margin-inline-end: 1rem;
+    padding-block: 0.75rem;
+}
+.espresso-admin .tablenav .ee-event-filter > span:last-child {
+    margin-inline-end: 0;
+}
+.espresso-admin .tablenav .ee-event-filter > span label {
+    flex-wrap: nowrap;
+    margin-block: 0;
+}
+.espresso-admin .tablenav .ee-event-filter > span.ee-event-selector {
+    width: 28rem;
+}
+.espresso-admin .tablenav .ee-event-filter > span.ee-hide-upcoming-check {
     width: 16rem;
 }
-.espresso-admin .tablenav .ee-event-filter > span:first-child {
-    width: 35rem;
+.espresso-admin .tablenav .ee-event-filter > span.ee-hide-expired-check {
+    width: 14rem;
 }
-.espresso-admin .tablenav .ee-event-filter > span:first-child label:not(.ee-input-label):not(.screen-reader-text) {
-    flex-wrap: nowrap;
-    width: 9rem;
+.espresso-admin .tablenav .ee-event-filter > span.ee-datetime-selector {
+    width: 30rem;
 }
-.espresso-admin .tablenav .ee-event-filter > span:first-child select {
+
+.espresso-admin .tablenav .ee-event-filter > span select {
+    margin-inline: 0;
     max-width: clamp(24rem, 100%, 20rem);
     width: 100%;
 }
-.espresso-admin .tablenav .ee-event-filter > span:last-child {
-    width: 14rem;
-}
-
-
 
 .espresso-admin .tablenav .ee-event-filter > span input[type="checkbox"] {
     margin-inline-end: .5rem;
 }
 
-.espresso-admin .tablenav .ee-event-filter > span + span {
-    margin-inline-start: 1rem;
-}
 .espresso-admin .tablenav .ee-event-filter .ee-hide-expired-events .ee-expired-event {
     display: none;
 }
 .espresso-admin .tablenav .ee-event-filter .ee-hide-upcoming-events .ee-upcoming-event {
     display: none;
 }
+
+@media screen and ( min-width: 782px ) {
+    .espresso-admin .tablenav .ee-event-filter {
+        padding-block-end: .5rem;
+    }
+    .espresso-admin .tablenav .ee-event-filter > span select {
+        margin-inline: .5rem;
+    }
+}
+@media screen and ( min-width: 1920px ) {
+    .espresso-admin .tablenav .ee-event-filter__wrapper {
+        margin-inline-end: 1rem;
+    }
+
+    .espresso-admin .tablenav .ee-event-filter > span {
+        padding-block: 0;
+    }
+}
+
+
 
 .reg-overview-free-event-spn {
     display: block;
