@@ -167,30 +167,29 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * Gets all the datetimes for this event that are currently ACTIVE,
      * meaning the datetime has started and has not yet ended.
      *
-     * @param int|null $start_date      timestamp to use for event date start time, defaults to NOW unless set to null
+     * @param int|null $start_date      timestamp to use for event date start time, defaults to NOW unless set to 0
      * @param array|null $query_params  will recursively replace default values
      * @throws EE_Error
      * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function activeDatetimes(?int $start_date = 0, ?array $query_params = []): array
+    public function activeDatetimes(?int $start_date, ?array $query_params = []): array
     {
+        // if start date is null, then use current time
+        $start_date = $start_date ?? time();
         $where = [];
-        if ($start_date !== null) {
-            $start_date = $start_date ?: time();
+        if ($start_date) {
             $where['DTT_EVT_start'] = ['<', $start_date];
-            $where['DTT_EVT_end']   = ['>', $start_date];
+            $where['DTT_EVT_end']   = ['>', time()];
         }
-        return $this->get_many_related(
-            'Datetime',
-            array_replace_recursive(
-                [
-                    $where,
-                    'order_by' => ['DTT_EVT_start' => 'ASC']
-                ],
-                $query_params
-            )
+        $query_params = array_replace_recursive(
+            [
+                $where,
+                'order_by' => ['DTT_EVT_start' => 'ASC']
+            ],
+            $query_params
         );
+        return $this->get_many_related('Datetime', $query_params);
     }
 
 
