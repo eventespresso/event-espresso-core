@@ -490,6 +490,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         foreach ($filters as $filter) {
             echo $filter; // already escaped
         }
+        echo '
+        <span class="ee-list-table-filters__submit-buttons">';
         // add filter button at end
         echo '<input type="submit" class="button button--secondary" value="'
              . esc_html__('Filter', 'event_espresso')
@@ -500,6 +502,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
              . '">'
              . esc_html__('Reset Filters', 'event_espresso')
              . '</a>';
+        echo '
+        </span>';
     }
 
 
