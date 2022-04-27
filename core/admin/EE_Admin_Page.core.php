@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\admin\notices\status_change\StatusChangeNotice;
 use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\capabilities\FeatureFlags;
@@ -575,8 +576,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         $response = [];
         try {
-            /** @var EventEspresso\core\admin\StatusChangeNotice $status_change_notice */
-            $status_change_notice = $this->loader->getShared('EventEspresso\core\admin\StatusChangeNotice');
+            /** @var StatusChangeNotice $status_change_notice */
+            $status_change_notice = $this->loader->getShared(
+                'EventEspresso\core\domain\services\admin\notices\status_change\StatusChangeNotice'
+            );
             $response['success'] = $status_change_notice->dismiss() > -1;
         } catch (Exception $exception) {
             $response['errors'] = $exception->getMessage();
@@ -1897,6 +1900,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 ['espresso_news_post_box_content']
             )
         );
+        StatusChangeNotice::loadAssets();
+
         add_filter(
             'admin_body_class',
             function ($classes) {
@@ -3023,15 +3028,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             (array) $items,
             $this
         );
-        /** @var EventEspresso\core\admin\StatusChangeNotice $status_change_notice */
-        $status_change_notice = $this->loader->getShared('EventEspresso\core\admin\StatusChangeNotice');
-        if (! $status_change_notice->isDismissed()) {
-            $this->_template_args['status_change_notice'] = EEH_Template::display_template(
-                EE_ADMIN_TEMPLATE . 'status_change_notice.template.php',
-                [ 'context' => '__admin-legend', 'page_slug' => $this->page_slug ],
-                true
-            );
-        }
+        /** @var StatusChangeNotice $status_change_notice */
+        $status_change_notice = $this->loader->getShared(
+            'EventEspresso\core\domain\services\admin\notices\status_change\StatusChangeNotice'
+        );
+        $this->_template_args['status_change_notice'] = $status_change_notice->display(
+            '__admin-legend',
+            $this->page_slug
+        );
         return EEH_Template::display_template(
             EE_ADMIN_TEMPLATE . 'admin_details_legend.template.php',
             $this->_template_args,

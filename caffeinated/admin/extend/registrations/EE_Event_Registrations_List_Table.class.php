@@ -297,12 +297,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 <span class="ee-event-selector">
                     <label for="event_id">' . esc_html__('Event', 'event_espresso') . '</label>
                     ' . EEH_Form_Fields::select_input(
-                            'event_id',
-                            $event_options,
-                            $this->event_id,
-                            '',
-                            $select_class
-                        ) . '
+                        'event_id',
+                        $event_options,
+                        $this->event_id,
+                        '',
+                        $select_class
+                    ) . '
                 </span>';
         // DTT datetimes filter
         $datetimes_for_event = $this->datetimes_for_event->getAllDatetimesForEvent($hide_upcoming_checked === 'checked');
@@ -472,7 +472,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         }
 
         $content = '
-        <button aria-label="' . $aria_label . '" class="' . $button_class . '" ' . $attributes . '>   
+        <button aria-label="' . $aria_label . '" class="' . $button_class . '" ' . $attributes . '>
             <span class="' . $dashicon_class . '" ></span>
         </button>
         <span class="show-on-mobile-view-only">' . $this->column_ATT_name($registration) . '</span>';
@@ -561,8 +561,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 // get timestamp string
                 $timestamp_string   = $last_checkin->get_datetime('CHK_timestamp');
                 $actions['checkin'] = '
-                    <a  class="ee-aria-tooltip" 
-                        href="' . $checkin_list_url . '" 
+                    <a  class="ee-aria-tooltip"
+                        href="' . $checkin_list_url . '"
                         aria-label="' . esc_attr__(
                             'View this registrant\'s check-ins/checkouts for the datetime',
                             'event_espresso'

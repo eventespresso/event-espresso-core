@@ -586,10 +586,11 @@ abstract class EE_messenger extends EE_Messages_Base
                 $st_args['mt_name'] = ucwords($mtp_obj->label['singular']);
                 $st_args['mt_slug'] = $mt_slug;
                 $st_args['messenger_slug'] = $this->name;
-                $st_args['status_code'] = $msg_type_status_map[$mt_slug] ?? '';
+                $st_args['status_code'] = $msg_type_status_map[ $mt_slug ] ?? '';
                 $st_args['selector'] = EEH_Form_Fields::select_input(
                     'event_message_templates_relation[' . $mtpgID . ']',
-                    $select_values, $default_value,
+                    $select_values,
+                    $default_value,
                     'data-messenger="' . $this->name . '" data-messagetype="' . $mt_slug . '"',
                     'message-template-selector'
                 );
@@ -598,10 +599,10 @@ abstract class EE_messenger extends EE_Messages_Base
                     ? ''
                     : '
                     <a data-messenger="' . $this->name . '"
-                       data-messagetype="' . $mt_slug . '" 
-                       data-grpid="' . $default_value . '" 
-                       target="_blank" 
-                       href="' . $create_url . '" 
+                       data-messagetype="' . $mt_slug . '"
+                       data-grpid="' . $default_value . '"
+                       target="_blank"
+                       href="' . $create_url . '"
                        class="button button--secondary button--tiny create-mtpg-button"
                     >
                         ' . esc_html__('Create New Custom', 'event_espresso') . '
@@ -618,10 +619,10 @@ abstract class EE_messenger extends EE_Messages_Base
                     $mtpgID
                 )
                     ? '
-                    <a data-messagetype="' . $mt_slug . '" 
-                       data-grpid="' . $default_value . '" 
-                       target="_blank" 
-                       href="' . $edit_url . '" 
+                    <a data-messagetype="' . $mt_slug . '"
+                       data-grpid="' . $default_value . '"
+                       target="_blank"
+                       href="' . $edit_url . '"
                        class="button button--secondary button--tiny edit-mtpg-button"
                     >
                         ' . esc_html__('Edit', 'event_espresso') . '
