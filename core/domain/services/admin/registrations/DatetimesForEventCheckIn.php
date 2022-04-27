@@ -28,7 +28,7 @@ class DatetimesForEventCheckIn
     protected $all_events;
 
     /**
-     * @var EE_Datetime[][]
+     * @var EE_Datetime[]
      */
     protected $datetimes;
 
@@ -44,8 +44,8 @@ class DatetimesForEventCheckIn
      */
     public function __construct(EE_Capabilities $capabilities, ?EE_Event $event = null)
     {
-        $this->event = $event;
-        $this->caps = $capabilities;
+        $this->event             = $event;
+        $this->caps              = $capabilities;
         $this->start_date_offset = absint(
             apply_filters(
                 'FHEE__EventEspresso_core_domain_services_admin_registrations_DatetimesForEventCheckIn__start_date_offset',
@@ -105,11 +105,11 @@ class DatetimesForEventCheckIn
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function getAllActiveDatetimesForAllEvents(): array
+    public function getAllDatetimesForAllEvents(): array
     {
         if ($this->all_events === null) {
             $where = [
-                'Registration.REG_ID' => ['!=', null]
+                'Registration.REG_ID' => ['!=', null],
             ];
             if (! $this->caps->current_user_can('ee_read_private_events', 'get_events')) {
                 $where['status**'] = ['!=', 'private'];
@@ -129,42 +129,60 @@ class DatetimesForEventCheckIn
 
 
     /**
+     * @param bool|null $hide_expired
+     * @param bool|null $hide_upcoming
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function getAllActiveDatetimesForEvent(bool $active = true): array
+    public function getAllDatetimesForEvent(?bool $hide_expired = false, ?bool $hide_upcoming = false): array
     {
-        $start_date = $active ? time() - $this->start_date_offset : null;
+        // we're applying a filterable offset to the start date
+        // so that check-ins can be begin before the event actually starts
+        $start_date   = $hide_upcoming ? time() + $this->start_date_offset : null;
+        $end_date     = $hide_expired ? time() : null;
+        $query_params = [
+            'order_by' => ['DTT_EVT_start' => 'ASC'],
+        ];
+
+        if ($start_date) {
+            $query_params[0]['DTT_EVT_start'] = ['<', $start_date];
+        }
+        if ($end_date) {
+            $query_params[0]['DTT_EVT_end'] = ['>', $end_date];
+        }
         return $this->event instanceof EE_Event
-            ? $this->event->activeDatetimes($start_date)
+            ? $this->event->datetimes($query_params)
             : [];
     }
 
 
     /**
-     * @param int|null $DTD_ID If specific datetime ID is supplied, will return that date, but only if it is active.
-     *                         If no ID is supplied but event only has one related datetime, then it will be returned.
-     *                         If the above conditions are not met, then function will return null.
-     * @param bool $active
+     * @param int|null  $DTT_ID If specific datetime ID is supplied, will return that date, but only if it is active.
+     *                          If no ID is supplied but event only has one related datetime, then it will be returned.
+     *                          If the above conditions are not met, then function will return null.
+     * @param bool|null $hide_expired
+     * @param bool|null $hide_upcoming
      * @return EE_Datetime|null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function getOneActiveDatetimeForEvent(?int $DTD_ID = 0, bool $active = true): ?EE_Datetime
-    {
-        $key = $active ? 1 : 0;
-        if (! isset($this->datetimes[ $key ]) || $this->datetimes[ $key ] === null) {
-            $this->datetimes[ $key ] = $this->getAllActiveDatetimesForEvent($active);
+    public function getOneDatetimeForEvent(
+        ?int $DTT_ID = 0,
+        ?bool $hide_expired = false,
+        ?bool $hide_upcoming = false
+    ): ?EE_Datetime {
+        if (empty($this->datetimes)) {
+            $this->datetimes = $this->getAllDatetimesForEvent($hide_expired, $hide_upcoming);
         }
-        if ($DTD_ID) {
-            foreach ($this->datetimes[ $key ] as $datetime) {
-                if ($datetime instanceof EE_Datetime && $datetime->ID() === $DTD_ID) {
+        if ($DTT_ID) {
+            foreach ($this->datetimes as $datetime) {
+                if ($datetime instanceof EE_Datetime && $datetime->ID() === $DTT_ID) {
                     return $datetime;
                 }
             }
             return null;
         }
-        return count($this->datetimes[ $key ]) === 1 ? reset($this->datetimes[ $key ]) : null;
+        return count($this->datetimes) === 1 ? reset($this->datetimes) : null;
     }
 }
