@@ -68,7 +68,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                     </th>
                     <td>
                         <input class='regular-text'
-                            <?php echo $disabled; ?>
+                            <?php echo esc_attr($disabled); ?>
                                id="QSG_identifier"
                                name="QSG_identifier<?php echo esc_attr($id); ?>"
                                type="text"

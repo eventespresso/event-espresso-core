@@ -1,8 +1,12 @@
 <?php
+
 /**
  * @var EE_Price_Type $price_type
  * @var string        $base_type_select
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div class="padding">
@@ -14,7 +18,7 @@
                     <label for="basic_type"><?php esc_html_e('Basic Type', 'event_espresso'); ?></label>
                 </th>
                 <td>
-                    <?php echo $base_type_select; // already escaped ?>
+                    <?php echo wp_kses($base_type_select, AllowedTags::getWithFormTags()); ?>
                     <p class="description">
                         <?php printf(
                             esc_html__(
@@ -48,23 +52,23 @@
                     </label>
                 </th>
                 <td>
-                    <?php $yes_checked = $price_type->is_percent() ? ' checked="checked"' : ''; ?>
+                    <?php $yes_checked = $price_type->is_percent() ? ' checked' : ''; ?>
                     <label style="margin-right:15px;">
                         <input type="radio"
                                name="PRT_is_percent"
                                value="1"
                                style="margin-right:5px;"
-                                <?php echo $yes_checked; ?>
+                                <?php echo esc_attr($yes_checked); ?>
                         >
                         <?php esc_html_e('Percentage', 'event_espresso'); ?>
                     </label>
-                    <?php $no_checked = ! $price_type->is_percent() ? ' checked="checked"' : ''; ?>
+                    <?php $no_checked = ! $price_type->is_percent() ? ' checked' : ''; ?>
                     <label style="margin-right:15px;">
                         <input type='radio'
                                name='PRT_is_percent'
                                value="0"
                                style="margin-right:5px;"
-                                <?php echo $no_checked; ?>
+                                <?php echo esc_attr($no_checked); ?>
                         />
                         <?php esc_html_e('Fixed', 'event_espresso'); ?>
                     </label>

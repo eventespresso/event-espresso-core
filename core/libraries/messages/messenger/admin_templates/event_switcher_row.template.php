@@ -19,6 +19,9 @@
  * @var string $edit_button     To edit the selected template.
  * @var string $status_code
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <tr id="<?php echo esc_attr($messenger_slug); ?>-message-selector-row-<?php echo esc_attr($mt_slug); ?>">
     <td>
@@ -34,13 +37,17 @@
         <label class='screen-reader-text for-event-message-template' for="event_message_templates_relation[<?php echo esc_attr($mtpgID); ?>]">
             <?php esc_html_e('Template In Use', 'event_espresso'); ?>
         </label>
-        <div class='event-message-template'><?php echo $selector; ?></div>
+        <div class='event-message-template'>
+            <?php echo wp_kses($selector, AllowedTags::getWithFormTags()); ?>
+        </div>
     </td>
     <td class="message-selector-action-column">
 
         <label class='screen-reader-text for-event-message-actions'>
             <?php esc_html_e('Actions', 'event_espresso'); ?>
         </label>
-        <div class='event-message-actions'><?php echo $create_button . $edit_button; ?></div>
+        <div class='event-message-actions'>
+            <?php echo wp_kses($create_button . $edit_button, AllowedTags::getWithFormTags()); ?>
+    </div>
     </td>
 </tr>

@@ -17,6 +17,7 @@ use EEH_HTML;
 use EEH_Template;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -55,7 +56,7 @@ class RecaptchaAdminSettings
      */
     public function adminSettings()
     {
-        echo $this->settingsForm()->get_html_and_js();
+        echo wp_kses($this->settingsForm()->get_html_and_js(), AllowedTags::getWithFormTags());
     }
 
 

@@ -1365,15 +1365,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             foreach ($items as $item) {
                 $ID         = absint($item->ID);
                 $post_title = wp_strip_all_tags($item->post_title);
-                $pad        = str_repeat('&nbsp;', $level * 3);
-                $option     = "\n\t";
-                $option     .= '<option class="level-' . $level . '" ';
-                $option     .= 'value="' . $ID . '" ';
-                $option     .= $ID === absint($default) ? ' selected="selected"' : '';
-                $option     .= '>';
-                $option     .= "$pad $post_title";
-                $option     .= '</option>';
-                $output     .= $option;
+                $pad    = str_repeat('&nbsp;', $level * 3);
+                $option = "\n\t";
+                $option .= '<option class="level-' . $level . '" ';
+                $option .= 'value="' . $ID . '" ';
+                $option .= $ID === absint($default) ? ' selected' : '';
+                $option .= '>';
+                $option .= "$pad {$post_title}";
+                $option .= '</option>';
+                $output .= $option;
                 ob_start();
                 parent_dropdown($default, $item->ID, $level + 1);
                 $output .= ob_get_clean();

@@ -279,7 +279,7 @@ if ($show_backup_db_text) { ?>
                                    type='radio'
                                    value="0"
                                 <?php echo ($mMode_level === EE_Maintenance_Mode::level_0_not_in_maintenance
-                                    ? 'checked="checked"'
+                                    ? 'checked'
                                     : '');
                                 ?>
                             />
@@ -303,7 +303,7 @@ if ($show_backup_db_text) { ?>
                                    type='radio'
                                    value="1"
                                 <?php echo ($mMode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance
-                                    ? 'checked="checked"'
+                                    ? 'checked'
                                     : '');
                                 ?>
                             />

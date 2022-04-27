@@ -60,7 +60,7 @@
                 <td width="40%">
                     <?php
                     if ($registration->attendee() instanceof EE_Attendee) {
-                        echo $registration->attendee()->full_name(true);
+                        echo esc_html($registration->attendee()->full_name(true));
                     }
                     ?>
                     <p class="tiny-text" style="margin: .75em 0 0;">

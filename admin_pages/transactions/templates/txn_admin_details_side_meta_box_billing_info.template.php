@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @param EE_Form_Section_Proper $form_section
  * @param bool                   $found_cc_data
@@ -22,9 +25,9 @@ function ee_show_billing_info_cleaned(EE_Form_Section_Proper $form_section, $fou
             ?>
             <div class="clearfix">
             <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
-                    <?php echo $subsection->get_html_for_label(); ?>
-                </span>
-            <?php echo $subsection->pretty_value(); ?>
+                <?php echo wp_kses($subsection->get_html_for_label(), AllowedTags::getWithFormTags()); ?>
+            </span>
+            <?php echo wp_kses($subsection->pretty_value(), AllowedTags::getWithFormTags()); ?>
             </div><?php
         } elseif ($subsection instanceof EE_Form_Section_Proper) {
             $found_cc_data = ee_show_billing_info_cleaned($subsection, $found_cc_data);

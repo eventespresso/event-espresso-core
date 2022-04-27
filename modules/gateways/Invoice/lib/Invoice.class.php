@@ -2,6 +2,7 @@
 
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Class Invoice
@@ -278,7 +279,7 @@ class Invoice
 
         // Check if debugging or mobile is set
         if ($request->getRequestParam('html')) {
-            echo $content;
+            echo wp_kses($content, AllowedTags::getWithFormTags());
             exit(0);
         }
         $invoice_name = $template_args['organization'] . ' ';
@@ -288,7 +289,7 @@ class Invoice
         $invoice_name = str_replace(' ', '_', $invoice_name);
         // Create the PDF
         if ($request->requestParamIsSet('html')) {
-            echo $content;
+            echo wp_kses($content, AllowedTags::getWithFormTags());
         } else {
             // only load dompdf if nobody else has yet...
             if (! class_exists('Dompdf\Dompdf')) {

@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * EE_Transaction class
@@ -598,7 +599,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function e_pretty_status($show_icons = false)
     {
-        echo $this->pretty_status($show_icons); // already escaped
+        echo wp_kses($this->pretty_status($show_icons), AllowedTags::getAllowedTags());
     }
 
 

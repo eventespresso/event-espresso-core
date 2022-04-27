@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Event $_event
  * @var string   $active_status
@@ -7,10 +8,13 @@
  * @var string   $display_ticket_selector
  * @var string   $EVT_default_registration_status
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
     <p>
         <label><?php esc_html_e('Active Status: ', 'event_espresso'); ?></label>
-        <?php echo $active_status; // already escaped ?>
+        <?php echo wp_kses($active_status, AllowedTags::getAllowedTags()); ?>
     </p>
 
 <?php
@@ -56,5 +60,5 @@ $settings_array = apply_filters('FHEE__caffeinated_event_registration_options__t
 
 // echo
 foreach ($settings_array as $item) {
-    echo $item; // already escaped
+    echo wp_kses($item, AllowedTags::getWithFormTags());
 }

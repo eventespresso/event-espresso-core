@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var bool $add_page_frame
  * @var string           $admin_page_wrapper_div_id
@@ -7,14 +8,17 @@
  * @var string|WP_Screen $current_page
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 global $post_type, $post;
+
 // action for registering metaboxes
 do_action('add_meta_boxes', (string) $post_type, $post);
 ?>
 
 <?php if (! empty($admin_page_header)) : ?>
     <div id="admin-page-header">
-        <?php echo $admin_page_header; // already escaped ?>
+        <?php echo wp_kses($admin_page_header, AllowedTags::getWithFormTags()); ?>
     </div>
 <?php endif; ?>
 <div id="<?php echo esc_attr($admin_page_wrapper_div_id);?>" class="<?php echo esc_attr($admin_page_wrapper_div_class);?>">
@@ -36,7 +40,7 @@ do_action('add_meta_boxes', (string) $post_type, $post);
             }
             ?>
             <div id="post-body-content">
-                <?php echo $post_body_content; // already escaped ?>
+                <?php echo wp_kses($post_body_content, AllowedTags::getWithFormTags()); ?>
             </div>
             <!-- post-body-content -->
         <?php endif; ?>

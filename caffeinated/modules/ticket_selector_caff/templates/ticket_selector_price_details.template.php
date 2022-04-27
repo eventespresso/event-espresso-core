@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**
@@ -54,9 +57,12 @@ if ($display_ticket_price) { ?>
                     if ($ticket->base_price() instanceof EE_Price) { ?>
                         <tr>
                             <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>" class="small-text" colspan="2">
-                                <b><?php echo $ticket->base_price()->name(); ?></b></td>
+                                <b>
+                                    <?php echo wp_kses($ticket->base_price()->name(), AllowedTags::getAllowedTags()); ?>
+                                </b>
+                            </td>
                             <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>" class="jst-rght small-text">
-                                <?php echo $ticket->base_price()->pretty_price(); ?>
+                                <?php echo wp_kses($ticket->base_price()->pretty_price(), AllowedTags::getAllowedTags()); ?>
                             </td>
                         </tr>
                         <?php
@@ -88,13 +94,17 @@ if ($display_ticket_price) { ?>
                         <tr>
                             <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>"
                                 class="jst-rght small-text"
-                            ><?php echo $price_mod->name(); ?>
+                            >
+                            <?php echo wp_kses($price_mod->name(), AllowedTags::getAllowedTags()); ?>
                             </td>
                             <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>" class="small-text">
-                                <?php echo $description; ?>
+                                <?php echo wp_kses($description, AllowedTags::getAllowedTags()); ?>
                             </td>
                             <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>" class="jst-rght small-text">
-                                <?php echo EEH_Template::format_currency($new_sub_total); ?>
+                                <?php echo wp_kses(
+                                        EEH_Template::format_currency($new_sub_total),
+                                        AllowedTags::getAllowedTags()
+                                    ); ?>
                             </td>
                             <?php $pretax_total += ! $price_mod->is_tax() ? $new_sub_total : 0; ?>
                             <?php $running_total += $new_sub_total; ?>
@@ -106,16 +116,22 @@ if ($display_ticket_price) { ?>
                             <tr>
                                 <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>"
                                     class="jst-rght small-text"
-                                ><?php echo $tax->name(); ?></td>
+                                >
+                                    <?php echo wp_kses($tax->name(), AllowedTags::getAllowedTags()); ?>
+                                </td>
                                 <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>"
                                     class="jst-rght small-text"
-                                ><?php echo $tax->amount(); ?>%
+                                >
+                                    <?php echo wp_kses($tax->desc(), AllowedTags::getAllowedTags()); ?>%
                                 </td>
-                                <?php $tax_amount = $pretax_total * ($tax->amount() / 100); ?>
+                                    <?php $tax_amount = $pretax_total * ($tax->amount() / 100); ?>
                                 <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
                                     class="jst-rght small-text"
                                 >
-                                    <?php echo EEH_Template::format_currency($tax_amount); ?>
+                                    <?php echo wp_kses(
+                                        EEH_Template::format_currency($tax_amount),
+                                        AllowedTags::getAllowedTags()
+                                    ); ?>
                                 </td>
                                 <?php $running_total += $tax_amount; ?>
                             </tr>
@@ -139,7 +155,10 @@ if ($display_ticket_price) { ?>
                             )
                         ); ?>" class="jst-rght small-text"
                         >
-                            <b><?php echo EEH_Template::format_currency($running_total); ?></b>
+                            <b><?php  wp_kses(
+                                EEH_Template::format_currency($running_total),
+                                AllowedTags::getAllowedTags()
+                            ); ?></b>
                         </td>
                     </tr>
                 </tbody>

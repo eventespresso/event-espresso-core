@@ -42,8 +42,8 @@ class EE_Select_Multiple_Display_Strategy_Test extends EE_UnitTestCase{
 		$expected_output2 = '
 <select multiple id="form-input1" name="form[input1][]" class="" style="" >
 	<option value="foo">Foo</option>
-	<option value="bar" selected="selected">Bar</option>
-	<option value="baz&#039;em" selected="selected">Baz</option>
+	<option value="bar" selected>Bar</option>
+	<option value="baz&#039;em" selected>Baz</option>
 </select>';
 		$this->assertHTMLEquals( $expected_output2, $input->get_html_for_input() );
 

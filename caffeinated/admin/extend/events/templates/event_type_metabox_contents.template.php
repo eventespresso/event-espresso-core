@@ -5,6 +5,9 @@
  *
  * @var string $radio_list;
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <div id="taxonomy-espresso_event_type" class="categorydiv">
     <ul id="espresso_event_type-tabs" class="category-tabs">
@@ -17,7 +20,7 @@
         ?>
         <ul id="espresso_event_typechecklist" data-wp-lists="list:espresso_event_type"
             class="categorychecklist form-no-clear">
-            <?php echo $radio_list; ?>
+            <?php echo wp_kses($radio_list, AllowedTags::getWithFormTags()); ?>
         </ul>
     </div>
 </div>

@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Class Extend_Registration_Form_Admin_Page
@@ -664,15 +665,21 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $set_column_values = $this->_set_column_values_for($this->_question_group_model);
+
+        // make sure identifier is unique
+        $identifier_value = isset($set_column_values['QSG_identifier']) ? $set_column_values['QSG_identifier'] : '';
+        $where_values = ['QSG_identifier' => $set_column_values['QSG_identifier']];
+        if (! $new_question_group && isset($set_column_values['QSG_ID'])) {
+            $where_values['QSG_ID'] = ['!=', $set_column_values['QSG_ID']];
+        }
+        $identifier_exists = ! empty($identifier_value)
+            ? $this->_question_group_model->count([$where_values]) > 0
+            : false;
+        if ($identifier_exists) {
+            $set_column_values['QSG_identifier'] .= uniqid('id', true);
+        }
+
         if ($new_question_group) {
-            // make sure identifier is unique
-            $identifier_value = isset($set_column_values['QSG_identifier']) ? $set_column_values['QSG_identifier'] : '';
-            $identifier_exists = ! empty($identifier_value)
-                ? $this->_question_group_model->count([['QSG_identifier' => $set_column_values['QSG_identifier']]]) > 0
-                : false;
-            if ($identifier_exists) {
-                $set_column_values['QSG_identifier'] .= uniqid('id', true);
-            }
             $QSG_ID = $this->_question_group_model->insert($set_column_values);
             $success = $QSG_ID ? 1 : 0;
             if ($success === 0) {
@@ -1156,7 +1163,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      */
     public function copy_attendee_info_settings_form()
     {
-        echo $this->_copy_attendee_info_settings_form()->get_html();
+        echo wp_kses($this->_copy_attendee_info_settings_form()->get_html(), AllowedTags::getWithFormTags());
     }
 
     /**
@@ -1262,7 +1269,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      */
     public function email_validation_settings_form()
     {
-        echo $this->_email_validation_settings_form()->get_html();
+        echo wp_kses($this->_email_validation_settings_form()->get_html(), AllowedTags::getWithFormTags());
     }
 
 

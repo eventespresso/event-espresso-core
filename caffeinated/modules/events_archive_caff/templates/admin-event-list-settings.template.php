@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 add_filter('FHEE__EEH_Form_Fields__label_html', '__return_empty_string');
 
 $values = EEH_Form_Fields::prep_answer_options(
@@ -234,7 +237,7 @@ $event_archive_url = EEH_Event_View::event_archive_url();
                 'espresso_update_event_archive_order_nonce',
                 false
             ); ?>
-            <?php echo $event_archive_display_order; ?>
+            <?php echo wp_kses($event_archive_display_order, AllowedTags::getWithFormTags()); ?>
 
             <p class="description"><?php
                 esc_html_e(

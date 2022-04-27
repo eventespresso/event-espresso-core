@@ -325,7 +325,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $name  = "tkt-slctr-qty-{$this->EVT_ID}";
         $class = "ticket-selector-tbl-qty-slct";
         $id    = "{$class}-{$this->EVT_ID}-{$this->row}";
-        $checked = $this->total_tickets === 1 ? ' checked="checked"' : '';
+        $checked = $this->total_tickets === 1 ? ' checked' : '';
 
         $html = "<label class='ee-a11y-screen-reader-text' for='{$id}' >{$label}</label>";
         $html .= "<input type='radio'{$checked} name='{$name}' id='{$id}' class='{$class}' value='{$TKT}-1' title='' />";

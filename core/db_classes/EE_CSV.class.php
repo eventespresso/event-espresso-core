@@ -419,11 +419,11 @@ class EE_CSV
             if (EEH_Array::is_associative_array($item_in_top_level_array)) {
                 // its associative, so we want to output its keys as column headers
                 $keys = array_keys($item_in_top_level_array);
-                echo $this->fputcsv2($filehandle, $keys);
+                $this->fputcsv2($filehandle, $keys);
             }
             // start writing data
             foreach ($data as $data_row) {
-                echo $this->fputcsv2($filehandle, $data_row);
+                $this->fputcsv2($filehandle, $data_row);
             }
             return true;
         } else {
@@ -495,7 +495,7 @@ class EE_CSV
         $this->write_metadata_to_csv($filehandle);
         foreach ($model_data_array as $model_name => $model_instance_arrays) {
             // first: output a special row stating the model
-            echo $this->fputcsv2($filehandle, array('MODEL', $model_name));
+            $this->fputcsv2($filehandle, array('MODEL', $model_name));
             // if we have items to put in the CSV, do it normally
 
             if (! empty($model_instance_arrays)) {

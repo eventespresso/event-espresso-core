@@ -10,6 +10,9 @@
  * @var EE_Payment_Method $payment_method
  * @var EE_Transaction    $transaction
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <div class="padding">
     <table class="ee-payment-log-details widefat">
@@ -35,9 +38,9 @@
                     if ($payment_log->object() instanceof EE_Transaction) {
                         esc_html_e('Unknown', 'event_espresso');
                     } else {
-                        echo $payment_method
+                        echo ($payment_method
                             ? esc_html($payment_method->admin_name())
-                            : esc_html__("No Longer Exists", 'event_espresso');
+                            : esc_html__("No Longer Exists", 'event_espresso'));
                     }
                     ?>
                 </td>
@@ -49,10 +52,9 @@
                     </label>
                 </th>
                 <td>
-                    <?php echo $transaction instanceof EE_Transaction
+                    <?php echo ($$transaction instanceof EE_Transaction
                         ? absint($transaction->ID())
-                        : esc_html__('Could not be determined', 'event_espresso');
-                    ?>
+                        : esc_html__('Could not be determined', 'event_espresso')); ?>
                 </td>
             </tr>
             <tr>
@@ -62,7 +64,7 @@
                     </label>
                 </th>
                 <td class='ee-payment-log-details__content'>
-                    <?php echo $payment_log->get_pretty('LOG_message', 'as_table'); // already escaped ?>
+                    <?php echo wp_kses($payment_log->get_pretty('LOG_message', 'as_table'), AllowedTags::getWithFormTags()); ?>
                 </td>
             </tr>
         </tbody>

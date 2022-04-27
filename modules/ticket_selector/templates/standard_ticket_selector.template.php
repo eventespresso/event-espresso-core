@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\modules\ticket_selector\TicketDetails;
 
 /**
@@ -22,7 +23,7 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo esc_attr($EVT_ID); ?>" class="tkt-slctr-tbl-wrap-dv">
 
 <?php do_action('AHEE__ticket_selector_chart__template__before_ticket_selector', $event); ?>
-<?php echo $datetime_selector; // already escaped ?>
+<?php echo wp_kses($datetime_selector, AllowedTags::getWithFormTags()); ?>
 
     <table id="tkt-slctr-tbl-<?php echo esc_attr($EVT_ID); ?>" class="tkt-slctr-tbl">
         <thead>
@@ -48,7 +49,7 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
         </tr>
         </thead>
         <tbody>
-        <?php echo $ticket_row_html; // already escaped ?>
+        <?php echo wp_kses($ticket_row_html, AllowedTags::getWithFormTags()); ?>
         </tbody>
     </table>
 <?php
@@ -64,7 +65,7 @@ if ($taxable_tickets && apply_filters('FHEE__ticket_selector_chart_template__dis
 }
 ?>
 
-<?php echo $hidden_inputs; // already escaped ?>
+<?php echo wp_kses($hidden_inputs, AllowedTags::getWithFormTags()); ?>
 
 <?php
 if ($max_atndz > 0) {

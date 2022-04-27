@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int         $QST_ID
  * @var EE_Question $question
@@ -7,6 +8,8 @@
  * @var int|float   $max_max
  */
 // PARAMS THAT MUST BE PASSED ARE:
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 assert(isset($QST_ID));
 assert($question);
 assert($question instanceof EE_Question);
@@ -57,8 +60,8 @@ if ($QST_system === 'country') {
                 <tr>
                     <th>
                         <label for="QST_display_text">
-                            <?php echo $fields['QST_display_text']->get_nicename(); // already escaped ?>
-                            <?php echo EEH_Template::get_help_tab_link('question_text_info'); // already escaped ?>
+                            <?php echo wp_kses($fields['QST_display_text']->get_nicename(), AllowedTags::getAllowedTags()); ?>
+                            <?php echo wp_kses(EEH_Template::get_help_tab_link('question_text_info'), AllowedTags::getAllowedTags()); ?>
                         </label>
                     </th>
                     <td>
@@ -73,8 +76,8 @@ if ($QST_system === 'country') {
                 <tr>
                     <th>
                         <label for="QST_admin_label">
-                            <?php echo $fields['QST_admin_label']->get_nicename(); ?>
-                            <?php echo EEH_Template::get_help_tab_link('question_label_info'); // already escaped ?>
+                            <?php echo wp_kses($fields['QST_admin_label']->get_nicename(), AllowedTags::getAllowedTags()); ?>
+                            <?php echo wp_kses(EEH_Template::get_help_tab_link('question_label_info'), AllowedTags::getAllowedTags()); ?>
                         </label>
                     </th>
                     <td>
@@ -82,8 +85,8 @@ if ($QST_system === 'country') {
                         $id            = ! empty($QST_system) ? '_disabled' : '';
                         $disabled_attr = ! empty($QST_system) ? 'disabled' : '';
                         ?>
-                        <input id="QST_admin_label<?php echo absint($id); ?>"
-                               name="QST_admin_label<?php echo absint($id); ?>"
+                        <input id="QST_admin_label<?php echo esc_attr($id); ?>"
+                               name="QST_admin_label<?php echo esc_attr($id); ?>"
                                type="text"
                                value="<?php echo esc_attr($question->get_f('QST_admin_label')); ?>"
                                <?php echo esc_attr($disabled_attr); ?>
@@ -102,8 +105,8 @@ if ($QST_system === 'country') {
                             </p>
                         <?php } ?>
                         <input class="QST_order"
-                               id="QST_order<?php echo absint($id); ?>"
-                               name="QST_order<?php echo absint($id); ?>"
+                               id="QST_order<?php echo esc_attr($id); ?>"
+                               name="QST_order<?php echo esc_attr($id); ?>"
                                type="hidden"
                                value="<?php echo esc_attr($question->get('QST_order')); ?>"
                         />
@@ -125,8 +128,8 @@ if ($QST_system === 'country') {
                         $checked       = ! empty($admin_only) ? ' checked' : '';
                         ?>
                         <input class="QST_admin_only"
-                               id="QST_admin_only<?php echo absint($id); ?>"
-                               name="QST_admin_only<?php echo absint($id); ?>"
+                               id="QST_admin_only<?php echo esc_attr($id); ?>"
+                               name="QST_admin_only<?php echo esc_attr($id); ?>"
                                type="checkbox"
                                value="1"
                             <?php
@@ -199,7 +202,7 @@ if ($QST_system === 'country') {
                             </p>
                         <?php } ?>
 
-                        <?php echo $question_type_descriptions; ?>
+                        <?php echo wp_kses($question_type_descriptions, AllowedTags::getAllowedTags()); ?>
 
                     </td>
                 </tr>
@@ -211,7 +214,7 @@ if ($QST_system === 'country') {
                     </th>
                     <td>
                         <input id="QST_max"
-                            <?php echo $max_max === EE_INF ? '' : 'max="' . esc_attr($max_max) . '"'; ?>
+                            <?php echo ($max_max === EE_INF ? '' : 'max="' . esc_attr($max_max) . '"'); ?>
                                min="1"
                                name="QST_max"
                                type="number"

@@ -44,7 +44,7 @@
             'event_espresso'
         ),
         '<div class="switch">'
-        . '<input class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" checked="checked" disabled>'
+        . '<input class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" checked disabled>'
         . '<label for="ee-on-off-toggle-on"></label>'
         . '</div>',
         '<div class="switch">'

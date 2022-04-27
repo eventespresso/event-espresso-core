@@ -256,7 +256,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      */
     public function e_full_name()
     {
-        echo $this->full_name(); // sanitized
+        echo esc_html($this->full_name());
     }
 
 

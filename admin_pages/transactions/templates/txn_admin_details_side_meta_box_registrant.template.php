@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var int    $ATT_ID
  * @var string $no_attendee_message
@@ -11,6 +13,7 @@
  * @var string $edit_attendee_url
  */
 $attendee_full_name = "$prime_reg_fname $prime_reg_lname";
+
 $prime_reg_email = sanitize_email($prime_reg_email);
 $avatar = get_avatar_url($prime_reg_email);
 ?>
@@ -22,7 +25,7 @@ $avatar = get_avatar_url($prime_reg_email);
 <?php else : ?>
     <?php if (! empty($avatar)) : ?>
     <div class="ee-admin-attendee-avatar">
-        <img alt="profile pic for <?php echo esc_html($attendee_full_name); ?>" src="<?php echo $avatar; ?>" />
+        <img alt="profile pic for <?php echo esc_html($attendee_full_name); ?>" src="<?php echo esc_url_raw($avatar); ?>" />
     </div>
     <?php endif; ?>
     <div class='admin-side-mbox-text-dv'>
@@ -33,7 +36,7 @@ $avatar = get_avatar_url($prime_reg_email);
             <div class='ee-admin-contact-details-with-dashicon'>
                 <span class='dashicons dashicons-email'></span>
                 <a href="mailto:<?php echo esc_attr($prime_reg_email); ?>">
-                    <?php echo esc_attr($prime_reg_email); ?>
+                    <?php echo esc_html($prime_reg_email); ?>
                 </a>
             </div>
         </div>
@@ -51,7 +54,7 @@ $avatar = get_avatar_url($prime_reg_email);
         <div class='ee-admin-attendee-address'>
             <div class='ee-admin-contact-details-with-dashicon'>
                 <span class='dashicons dashicons-location'></span>
-                <?php echo $formatted_address; // already escaped ?>
+                <?php echo wp_kses($formatted_address, AllowedTags::getAllowedTags()); ?>
             </div>
         </div>
         <?php endif; ?>

@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * displays legends with an array of $items
  * that are indexed by id for each item
@@ -13,7 +16,7 @@
     <h3><?php esc_html_e('Legend', 'event_espresso'); ?></h3>
     <?php
     if (isset($status_change_notice)) {
-        echo $status_change_notice;
+        echo  wp_kses($status_change_notice, AllowedTags::getAllowedTags());
     }
     ?>
     <div class="ee-list-table-legend-wrap">
@@ -24,7 +27,7 @@
                 <span class="ee-legend-item-wrap">
                 <?php
                 if (strpos($details['class'], '<span') !== false) {
-                    echo $class; // already escaped
+                    echo wp_kses($class, AllowedTags::getWithFormTags());
                 } else { ?>
                 <span class="<?php echo esc_attr($class); ?>">
                     <?php if (! empty($details['icon'])) : ?>

@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\modules\invalid_checkout_access\InvalidCheckoutAccess;
 
 /**
@@ -75,7 +76,7 @@ class EED_Invalid_Checkout_Access extends EED_Module
     public static function display_invalid_checkout_access_form()
     {
         $invalid_checkout_access_form = EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
-        echo $invalid_checkout_access_form->getForm()->get_html(); // already escaped
+        echo wp_kses($invalid_checkout_access_form->getForm()->get_html(), AllowedTags::getWithFormTags());
     }
 
 

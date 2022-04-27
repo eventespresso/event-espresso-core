@@ -1,11 +1,13 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var EE_Attendee  $attendee
  * @var EE_Payment[] $payments
  * @var array        $payment_methods
  * @var array        $payment_status
- * @var array        $registrations_to_apply_payment_to
+ * @var string       $registrations_to_apply_payment_to
  * @var array        $txn_details
  * @var array        $txn_nmbr
  * @var int          $TXN_ID
@@ -24,16 +26,17 @@
  */
 
 $currency_steps = EEH_Money::getCurrencySubUnits('', true);
+
 ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
     <div class="admin-primary-mbox-tbl-wrap">
-        <?php echo $line_item_table; // already escaped ?>
+        <?php echo wp_kses($line_item_table, AllowedTags::getWithFormTags()); ?>
         <span id="txn-admin-grand-total" class="hidden"><?php echo esc_html($grand_raw_total); ?></span>
     </div>
     <div id="additional-transaction-actions-dv" class='ee-admin-button-row'>
-        <?php echo $action_buttons; // already escaped ?>
+        <?php echo wp_kses($action_buttons, AllowedTags::getWithFormTags()); ?>
     </div>
     <div class='ee-admin-button-row'>
         <a id='display-additional-transaction-session-info'
@@ -71,7 +74,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                             </label>
                         </th>
                         <td>
-                            <?php echo $txn_detail['value']; // already escaped ?>
+                            <?php echo wp_kses($txn_detail['value'], AllowedTags::getAllowedTags()); ?>
                         </td>
                     </tr>
                 <?php endforeach; // $txn_details?>
@@ -160,7 +163,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                 </td>
                                 <td class=" jst-rght">
                                     <div id="payment-id-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo absint($PAY_ID); ?>
+                                        <?php echo esc_html($PAY_ID); ?>
                                     </div>
                                 </td>
                                 <td class=" jst-left">
@@ -193,14 +196,14 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                     </span>
                                     <span class="ee-status--ignore">&raquo;</span>
                                     <span id="payment-gateway-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo $payment->payment_method() instanceof EE_Payment_Method
+                                        <?php echo ($payment->payment_method() instanceof EE_Payment_Method
                                             ? esc_html($payment->payment_method()->admin_name())
-                                            : esc_html__("Unknown", 'event_espresso'); ?>
+                                            : esc_html__("Unknown", 'event_espresso')); ?>
                                     </span>
                                     <span id="payment-gateway-id-<?php echo absint($PAY_ID); ?>" class="hidden">
-                                        <?php echo $payment->payment_method() instanceof EE_Payment_Method
+                                        <?php echo ($payment->payment_method() instanceof EE_Payment_Method
                                             ? esc_html($payment->payment_method()->ID())
-                                            : 0; ?>
+                                            : 0); ?>
                                     </span>
                                 </td>
                                 <td class=" jst-left">
@@ -273,7 +276,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                         ?>
                         <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
                             <td class=" jst-rght" colspan="10">
-                                <span class="important-notice"><?php echo $no_payment_text; // already escaped ?></span>
+                                <span class="important-notice"><?php echo wp_kses($no_payment_text, AllowedTags::getAllowedTags()); ?></span>
                             </td>
                         </tr>
                         <tr id="txn-admin-payments-total-tr"
@@ -309,7 +312,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                     <?php else : ?>
                         <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
                             <td class=" jst-rght" colspan="10">
-                                <span class="important-notice"><?php echo $no_payment_text; // already escaped ?></span>
+                                <span class="important-notice"><?php echo wp_kses($no_payment_text, AllowedTags::getAllowedTags()); ?></span>
                             </td>
                         </tr>
                         <tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
@@ -721,7 +724,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                            value="1"
                                            id="txn-admin-apply-payment-to-all-registrations-inp"
                                            name="txn_admin_payment[apply_to_all_registrations]"
-                                           checked="checked"
+                                           checked
                                     />
                                     <?php esc_html_e('ALL Registrations', 'event_espresso'); ?>
                                 </label>
@@ -733,7 +736,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                     />
                                     <?php esc_html_e('Just the following Registrations', 'event_espresso'); ?>
                                 </label>
-                                <?php echo $registrations_to_apply_payment_to; // already escaped ?>
+                                <?php echo wp_kses($registrations_to_apply_payment_to, AllowedTags::getWithFormTags()); ?>
                             </div>
                         </div>
 
@@ -742,7 +745,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                 <?php esc_html_e('Change Registration Status?', 'event_espresso'); ?>
                             </label>
                             <div class='ee-layout-stack'>
-                                <?php echo $status_change_select; // already escaped ?>
+                                <?php echo wp_kses($status_change_select, AllowedTags::getWithFormTags()); ?>
                                 <p class="description">
                                     <?php esc_html_e(
                                         'If you wish to change the status for the registrations selected above, then select which status from this dropdown.',
@@ -761,7 +764,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                     <input type="checkbox"
                                            value="1"
                                            name="txn_payments[send_notifications]"
-                                           checked="checked"
+                                           checked
                                            aria-checked="true"
                                            style="vertical-align: middle;"
                                     />
@@ -880,7 +883,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                 <?php esc_html_e('Change Registration Status?', 'event_espresso'); ?>
                             </label>
                             <div class='ee-layout-stack'>
-                                <?php echo $delete_status_change_select; // already escaped ?>
+                                <?php echo wp_kses($delete_status_change_select, AllowedTags::getWithFormTags()); ?>
                                 <p class="description">
                                     <?php printf(
                                         esc_html__(

@@ -1,7 +1,11 @@
 <?php
+
 /**
  * @var string[][] $event_attendees
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
     <br />
@@ -26,7 +30,7 @@
                                 </span>
                             </td>
                             <td class='jst-left'><?php echo esc_html($attendee['event_ticket_name']); ?></td>
-                            <td class='jst-rght'><?php echo $attendee['ticket_price']; // already escaped ?></td>
+                            <td class="jst-rght"><?php echo wp_kses($attendee['ticket_price'], AllowedTags::getAllowedTags()); ?></td>
                             <td class="jst-left">
                                 <?php
                                 $att_link = EE_Admin_Page::add_query_args_and_nonce(
@@ -40,8 +44,8 @@
                                     <?php echo esc_html($attendee['attendee']); ?>
                                 </a>
                             </td>
-                            <td class="jst-left"><?php echo $attendee['email']; // already escaped ?></td>
-                            <td class="jst-left"><?php echo $attendee['address']; // already escaped ?></td>
+                            <td class="jst-left"><?php echo wp_kses($attendee['email'], AllowedTags::getAllowedTags()); ?></td>
+                            <td class="jst-left"><?php echo wp_kses($attendee['address'], AllowedTags::getAllowedTags()); ?></td>
                         </tr>
                     <?php endforeach; // $event_attendees?>
                 <?php endif; // isset( $event_attendees )?>
