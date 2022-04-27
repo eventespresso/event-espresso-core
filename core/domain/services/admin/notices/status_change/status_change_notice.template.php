@@ -11,7 +11,6 @@
             href="javascript:void(0);"
             id="ee-open-notice-link"
     >
-            <!--onclick="StatusChangeNotice.openStatusNotice();"-->
         <?php esc_html_e('Click for an Important Notice regarding Status Color Codes', 'event_espresso'); ?>
     </button>
     <div id="ee-status-change-notice" class="ee-hide-container ee-close-notice">
@@ -22,7 +21,6 @@
                     href="javascript:void(0);"
                     id='ee-close-notice-link'
             ></button>
-                    <!--onclick="StatusChangeNotice.closeStatusNotice();"-->
             <h3><?php esc_html_e('Important Notice Regarding Status Color Codes', 'event_espresso'); ?></h3>
             <p>
                 <?php esc_html_e(
@@ -121,7 +119,6 @@
                         href="javascript:void(0);"
                         id='ee-dismiss-notice-link'
                 >
-                        <!--onclick="StatusChangeNotice.dismissStatusNotice();"-->
                     <span class="pill pink"><?php
                         esc_html_e('don\'t show this notice again please', 'event_espresso');
                     ?></span>
