@@ -8,9 +8,6 @@ use EventEspresso\core\services\database\WordPressOption;
 use RuntimeException;
 use WP_User;
 
-use function esc_html__;
-use function wp_get_current_user;
-
 /**
  * Class StatusChangeNotice
  *
