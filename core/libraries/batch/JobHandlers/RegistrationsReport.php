@@ -249,7 +249,6 @@ class RegistrationsReport extends JobHandlerFile
     public function get_csv_data_for($event_id, $offset, $limit, $question_labels, $query_params, $DTT_id = null)
     {
         $reg_fields_to_include = [
-            'REG_ID',
             'TXN_ID',
             'ATT_ID',
             'REG_date',
@@ -278,6 +277,13 @@ class RegistrationsReport extends JobHandlerFile
                 continue;
             }
             $reg_csv_array = [];
+            // registration Id
+            $reg_id_field = $reg_model->field_settings_for('REG_ID');
+            $reg_csv_array[ EEH_Export::get_column_name_for_field($reg_id_field) ] = EEH_Export::prepare_value_from_db_for_display(
+                $reg_model,
+                'REG_ID',
+                $reg_row[ $reg_id_field->get_qualified_column() ]
+            );
             if (! $event_id) {
                 // get the event's name and Id
                 $reg_csv_array[ (string) esc_html__('Event', 'event_espresso') ] = sprintf(
@@ -290,6 +296,36 @@ class RegistrationsReport extends JobHandlerFile
                     ),
                     $reg_row['Event_CPT.ID']
                 );
+            }
+            // add attendee columns
+            foreach ($att_fields_to_include as $att_field_name) {
+                $field_obj = EEM_Attendee::instance()->field_settings_for($att_field_name);
+                if ($reg_row['Attendee_CPT.ID']) {
+                    if ($att_field_name == 'STA_ID') {
+                        $value = EEM_State::instance()->get_var(
+                            [
+                                ['STA_ID' => $reg_row['Attendee_Meta.STA_ID']]
+                            ],
+                            'STA_name'
+                        );
+                    } elseif ($att_field_name == 'CNT_ISO') {
+                        $value = EEM_Country::instance()->get_var(
+                            [
+                                ['CNT_ISO' => $reg_row['Attendee_Meta.CNT_ISO']]
+                            ],
+                            'CNT_name'
+                        );
+                    } else {
+                        $value = EEH_Export::prepare_value_from_db_for_display(
+                            EEM_Attendee::instance(),
+                            $att_field_name,
+                            $reg_row[ $field_obj->get_qualified_column() ]
+                        );
+                    }
+                } else {
+                    $value = '';
+                }
+                $reg_csv_array[ EEH_Export::get_column_name_for_field($field_obj) ] = $value;
             }
             $is_primary_reg = $reg_row['Registration.REG_count'] == '1' ? true : false;
             /*@var $reg_row EE_Registration */
@@ -423,37 +459,6 @@ class RegistrationsReport extends JobHandlerFile
             }
             $reg_csv_array[ (string) $ticket_model->field_settings_for('TKT_name')->get_nicename() ] = $ticket_name;
             $reg_csv_array[ (string) esc_html__("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
-            // get datetime(s) of registration
-            // add attendee columns
-            foreach ($att_fields_to_include as $att_field_name) {
-                $field_obj = EEM_Attendee::instance()->field_settings_for($att_field_name);
-                if ($reg_row['Attendee_CPT.ID']) {
-                    if ($att_field_name == 'STA_ID') {
-                        $value = EEM_State::instance()->get_var(
-                            [
-                                ['STA_ID' => $reg_row['Attendee_Meta.STA_ID']]
-                            ],
-                            'STA_name'
-                        );
-                    } elseif ($att_field_name == 'CNT_ISO') {
-                        $value = EEM_Country::instance()->get_var(
-                            [
-                                ['CNT_ISO' => $reg_row['Attendee_Meta.CNT_ISO']]
-                            ],
-                            'CNT_name'
-                        );
-                    } else {
-                        $value = EEH_Export::prepare_value_from_db_for_display(
-                            EEM_Attendee::instance(),
-                            $att_field_name,
-                            $reg_row[ $field_obj->get_qualified_column() ]
-                        );
-                    }
-                } else {
-                    $value = '';
-                }
-                $reg_csv_array[ EEH_Export::get_column_name_for_field($field_obj) ] = $value;
-            }
             // make sure each registration has the same questions in the same order
             foreach ($question_labels as $question_label) {
                 if (! isset($reg_csv_array[ $question_label ])) {
