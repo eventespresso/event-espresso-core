@@ -2,17 +2,23 @@
 
 namespace EventEspressoBatchRequest\JobHandlers;
 
+use EE_Capabilities;
 use EE_Checkin;
+use EE_Config;
+use EE_Error;
 use EE_Registry;
 use EEH_Export;
+use EEH_File;
 use EEM_Answer;
 use EEM_Attendee;
+use EEM_Base;
 use EEM_Checkin;
 use EEM_Country;
 use EEM_Datetime;
 use EEM_Event;
 use EEM_Payment;
 use EEM_Question;
+use EEM_Registration;
 use EEM_State;
 use EEM_Status;
 use EEM_Transaction;
@@ -20,6 +26,7 @@ use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
+use ReflectionException;
 
 /**
  * Class RegistrationsReport
@@ -41,14 +48,16 @@ class RegistrationsReport extends JobHandlerFile
      * when continue_job will be called
      *
      * @param JobParameters $job_parameters
-     * @throws BatchRequestException
      * @return JobStepResponse
+     * @throws BatchRequestException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function create_job(JobParameters $job_parameters)
     {
-        $event_id = intval($job_parameters->request_datum('EVT_ID', '0'));
-        $DTT_id = intval($job_parameters->request_datum('DTT_ID', '0'));
-        if (! \EE_Capabilities::instance()->current_user_can('ee_read_registrations', 'generating_report')) {
+        $event_id = (int) $job_parameters->request_datum('EVT_ID', '0');
+        $DTT_ID = (int) $job_parameters->request_datum('DTT_ID', '0');
+        if (! EE_Capabilities::instance()->current_user_can('ee_read_registrations', 'generating_report')) {
             throw new BatchRequestException(esc_html__('You do not have permission to view registrations', 'event_espresso'));
         }
         $filepath = $this->create_file_from_job_with_name(
@@ -68,13 +77,13 @@ class RegistrationsReport extends JobHandlerFile
                         ),
                     ),
                     // unless the registration is approved, in which case include it regardless of transaction status
-                    'STS_ID'             => \EEM_Registration::status_id_approved,
+                    'STS_ID'             => EEM_Registration::status_id_approved,
                 ),
                 'Ticket.TKT_deleted' => array('IN', array(true, false)),
             ),
             'order_by'   => array('Transaction.TXN_ID' => 'asc', 'REG_count' => 'asc'),
             'force_join' => array('Transaction', 'Ticket', 'Attendee'),
-            'caps'       => \EEM_Base::caps_read_admin,
+            'caps'       => EEM_Base::caps_read_admin,
         ), $event_id);
         if ($event_id) {
             $query_params[0]['EVT_ID'] = $event_id;
@@ -88,7 +97,7 @@ class RegistrationsReport extends JobHandlerFile
         $question_labels = $this->_get_question_labels($query_params);
         $job_parameters->add_extra_data('question_labels', $question_labels);
         $job_parameters->set_job_size(
-            \EEM_Registration::instance()->count(
+            EEM_Registration::instance()->count(
                 array_diff_key(
                     $query_params,
                     array_flip(
@@ -104,7 +113,7 @@ class RegistrationsReport extends JobHandlerFile
             1,
             $job_parameters->extra_datum('question_labels'),
             $job_parameters->extra_datum('query_params'),
-            $DTT_id
+            $DTT_ID
         );
         EEH_Export::write_data_array_to_csv($filepath, $csv_data_for_row, true);
         // if we actually processed a row there, record it
@@ -180,7 +189,7 @@ class RegistrationsReport extends JobHandlerFile
     {
         $question_where_params = array();
         foreach ($reg_where_params as $key => $val) {
-            if (\EEM_Registration::instance()->is_logic_query_param_key($key)) {
+            if (EEM_Registration::instance()->is_logic_query_param_key($key)) {
                 $question_where_params[ $key ] = $this->_change_registration_where_params_to_question_where_params($val);
             } else {
                 // it's a normal where condition
@@ -195,20 +204,21 @@ class RegistrationsReport extends JobHandlerFile
      * Performs another step of the job
      *
      * @param JobParameters $job_parameters
-     * @param int           $batch_size
+     * @param int $batch_size
      * @return JobStepResponse
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
         if ($job_parameters->units_processed() < $job_parameters->job_size()) {
             $csv_data = $this->get_csv_data_for(
-                $job_parameters->request_datum('EVT_ID', '0'),
+                (int) $job_parameters->request_datum('EVT_ID', '0'),
                 $job_parameters->units_processed(),
                 $batch_size,
                 $job_parameters->extra_datum('question_labels'),
                 $job_parameters->extra_datum('query_params'),
-                $job_parameters->request_datum('DTT_ID', '0')
+                (int) $job_parameters->request_datum('DTT_ID', '0')
             );
             EEH_Export::write_data_array_to_csv($job_parameters->extra_datum('filepath'), $csv_data, false);
             $units_processed = count($csv_data);
@@ -241,12 +251,12 @@ class RegistrationsReport extends JobHandlerFile
      * @param int $limit
      * @param array $question_labels the IDs for all the questions which were answered by someone in this selection
      * @param array $query_params for using where querying the model
-     * @param int|null $DTT_id
+     * @param int $DTT_ID
      * @return array top-level keys are numeric, next-level keys are column headers
-     * @throws \EE_Error
-     * @throws \ReflectionException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_csv_data_for($event_id, $offset, $limit, $question_labels, $query_params, $DTT_id = null)
+    public function get_csv_data_for($event_id, $offset, $limit, $question_labels, $query_params, $DTT_ID = 0)
     {
         $reg_fields_to_include = [
             'TXN_ID',
@@ -370,7 +380,7 @@ class RegistrationsReport extends JobHandlerFile
                 $reg_csv_array[ EEH_Export::get_column_name_for_field($field) ] = $value;
                 if ($field_name == 'REG_final_price') {
                     // add a column named Currency after the final price
-                    $reg_csv_array[ (string) esc_html__("Currency", "event_espresso") ] = \EE_Config::instance()->currency->code;
+                    $reg_csv_array[ (string) esc_html__("Currency", "event_espresso") ] = EE_Config::instance()->currency->code;
                 }
             }
             // get pretty status
@@ -503,19 +513,19 @@ class RegistrationsReport extends JobHandlerFile
                     );
                 }
             }
-            // Include check-in data for datetime
-            if ($event_id && $DTT_id) {
+            // Include check-in data
+            if ($event_id && $DTT_ID) {
                 // get whether or not the user has checked in
                 $reg_csv_array[ (string) esc_html__('Datetime Check-ins #', 'event_espresso') ] = $reg_model->count_related(
                     $reg_row['Registration.REG_ID'],
                     'Checkin',
                     [
                         [
-                            'DTT_ID' => $DTT_id
+                            'DTT_ID' => $DTT_ID
                         ]
                     ]
                 );
-                $datetime = EEM_Datetime::instance()->get_one_by_ID($DTT_id);
+                $datetime = EEM_Datetime::instance()->get_one_by_ID($DTT_ID);
                 $checkin_rows = EEM_Checkin::instance()->get_all_wpdb_results(
                     [
                         [
@@ -541,18 +551,16 @@ class RegistrationsReport extends JobHandlerFile
                 $checkins = [];
                 foreach ($checkin_rows as $checkin_row) {
                     if ((int) $checkin_row['Checkin.CHK_in'] === 1) {
-                        /* translators: 1: check-in status, 2: check-in timestamp */
+                        /* translators: 1: check-in timestamp */
                         $checkin_value = sprintf(
-                            esc_html__('%1$s: %2$s', 'event_espresso'),
-                            esc_html__('IN', 'event_espresso'),
+                            esc_html__('IN: %1$s', 'event_espresso'),
                             date('Y-m-d g:i a', strtotime($checkin_row['Checkin.CHK_timestamp']))
                         );
                         $checkins[] = $checkin_value;
                     } elseif ((int) $checkin_row['Checkin.CHK_in'] === 0) {
-                        /* translators: 1: check-in status, 2: check-in timestamp */
+                        /* translators: 1: check-in timestamp */
                         $checkin_value = sprintf(
-                            esc_html__('%1$s: %2$s', 'event_espresso'),
-                            esc_html__('OUT', 'event_espresso'),
+                            esc_html__('OUT: %1$s', 'event_espresso'),
                             date('Y-m-d g:i a', strtotime($checkin_row['Checkin.CHK_timestamp']))
                         );
                         $checkins[] = $checkin_value;
@@ -603,17 +611,15 @@ class RegistrationsReport extends JobHandlerFile
                     }
                     $checkin_value = '';
                     if ($checkin_row instanceof EE_Checkin && $checkin_row->get('CHK_in') === true) {
-                        /* translators: 1: check-in status, 2: check-in timestamp */
+                        /* translators: 1: check-in timestamp */
                         $checkin_value = sprintf(
-                            esc_html__('%1$s: %2$s', 'event_espresso'),
-                            esc_html__('IN', 'event_espresso'),
+                            esc_html__('IN: %1$s', 'event_espresso'),
                             $checkin_row->get_datetime('CHK_timestamp', 'Y-m-d', 'g:i a')
                         );
                     } elseif ($checkin_row instanceof EE_Checkin && $checkin_row->get('CHK_in') === false) {
-                        /* translators: 1: check-in status, 2: check-in timestamp */
+                        /* translators: 1: check-in timestamp */
                         $checkin_value = sprintf(
-                            esc_html__('%1$s: %2$s', 'event_espresso'),
-                            esc_html__('OUT', 'event_espresso'),
+                            esc_html__('OUT: %1$s', 'event_espresso'),
                             $checkin_row->get_datetime('CHK_timestamp', 'Y-m-d', 'g:i a')
                         );
                     }
@@ -668,7 +674,7 @@ class RegistrationsReport extends JobHandlerFile
         } else {
             $query_params['force_join'][] = 'Event';
         }
-        return \EEM_Registration::instance()->count($query_params);
+        return EEM_Registration::instance()->count($query_params);
     }
 
 
@@ -678,11 +684,12 @@ class RegistrationsReport extends JobHandlerFile
      *
      * @param JobParameters $job_parameters
      * @return boolean
+     * @throws EE_Error
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
         $this->_file_helper->delete(
-            \EEH_File::remove_filename_from_filepath($job_parameters->extra_datum('filepath')),
+            EEH_File::remove_filename_from_filepath($job_parameters->extra_datum('filepath')),
             true,
             'd'
         );
