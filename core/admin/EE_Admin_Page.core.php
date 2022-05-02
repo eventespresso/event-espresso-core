@@ -1541,11 +1541,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $route_to_check = empty($route_to_check) ? $this->_req_action : $route_to_check;
         $capability     = ! empty($route_to_check) && isset($this->_page_routes[ $route_to_check ])
-                          && is_array(
-                              $this->_page_routes[ $route_to_check ]
-                          )
+                          && is_array($this->_page_routes[ $route_to_check ])
                           && ! empty($this->_page_routes[ $route_to_check ]['capability'])
-            ? $this->_page_routes[ $route_to_check ]['capability'] : null;
+            ? $this->_page_routes[ $route_to_check ]['capability']
+			: null;
+
         if (empty($capability) && empty($route_to_check)) {
             $capability = is_array($this->_route) && empty($this->_route['capability']) ? 'manage_options'
                 : $this->_route['capability'];

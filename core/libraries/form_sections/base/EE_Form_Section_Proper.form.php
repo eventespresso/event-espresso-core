@@ -345,12 +345,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     protected function store_submitted_form_data_in_session()
     {
-        return EE_Registry::instance()->SSN->set_session_data(
-            array(
-                EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => $this->submitted_values(true),
-            )
-        );
-    }
+		$session = EE_Registry::instance()->SSN;
+		if ($session instanceof EE_Session) {
+			return EE_Registry::instance()->SSN->set_session_data(
+				[
+					EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => $this->submitted_values(true),
+				]
+			);
+		}
+		return false;
+	}
 
 
     /**
