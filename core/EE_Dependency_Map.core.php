@@ -766,7 +766,8 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspressoBatchRequest\BatchRequestProcessor'                                                             => [
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+				'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\converters\RestApiSpoofer'                                                => [
                 'WP_REST_Server'                                               => EE_Dependency_Map::load_from_cache,
