@@ -21,7 +21,7 @@ class Answers
     /**
      * @var array
      */
-    private array $reg_row;
+    private $reg_row;
 
 
     /**

@@ -22,19 +22,19 @@ class Registration
     /**
      * @var array
      */
-    private array $fields;
+    private $fields;
 
 
     /**
      * @var array
      */
-    private array $reg_row;
+    private $reg_row;
 
 
     /**
      * @var EEM_Registration
      */
-    private EEM_Registration $reg_model;
+    private $reg_model;
 
 
     /**

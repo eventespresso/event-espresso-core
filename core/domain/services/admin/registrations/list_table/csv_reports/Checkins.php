@@ -56,7 +56,7 @@ class Checkins
      */
     public static function getCheckinValue(?EE_Checkin $checkin)
     {
-        $value = NULL;
+        $value = null;
         if ($checkin instanceof EE_Checkin && $checkin->get('CHK_in') === true) {
             /* translators: 1: check-in timestamp */
             $value = sprintf(

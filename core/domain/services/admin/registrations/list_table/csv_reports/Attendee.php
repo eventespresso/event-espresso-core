@@ -21,13 +21,13 @@ class Attendee
     /**
      * @var array
      */
-    private array $fields;
+    private $fields;
 
 
     /**
      * @var array
      */
-    private array $reg_row;
+    private $reg_row;
 
 
     /**

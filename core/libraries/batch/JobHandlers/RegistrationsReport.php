@@ -4,23 +4,18 @@ namespace EventEspressoBatchRequest\JobHandlers;
 
 use EE_Capabilities;
 use EE_Checkin;
-use EE_Config;
 use EE_Datetime;
 use EE_Error;
 use EE_Registry;
 use EEH_Export;
 use EEH_File;
-use EEM_Answer;
-use EEM_Attendee;
 use EEM_Base;
 use EEM_Checkin;
-use EEM_Country;
 use EEM_Datetime;
 use EEM_Event;
 use EEM_Payment;
 use EEM_Question;
 use EEM_Registration;
-use EEM_State;
 use EEM_Status;
 use EEM_Transaction;
 use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\Answers;
@@ -421,7 +416,9 @@ class RegistrationsReport extends JobHandlerFile
                 foreach ($checkin_rows as $checkin_row) {
                     /** @var EE_Checkin $checkin_row */
                     $checkin_value = Checkins::getCheckinValue($checkin_row);
-                    if ($checkin_value) $checkins[] = $checkin_value;
+                    if ($checkin_value) {
+                        $checkins[] = $checkin_value;
+                    }
                 }
                 $datetime_name = Checkins::getDatetineLabel($datetime);
                 $reg_csv_array[ (string) $datetime_name ] = implode(' --- ', $checkins);
