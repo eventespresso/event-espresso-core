@@ -3228,8 +3228,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             wp_redirect(
                 EE_Admin_Page::add_query_args_and_nonce(
                     [
-                        'page'        => 'espresso_batch',
-                        'batch'       => 'file',
+                        'page'        => EED_Batch::PAGE_SLUG,
+						'batch' 	  => EED_Batch::batch_file_job,
                         'EVT_ID'      => $EVT_ID,
                         'filters'     => urlencode(
                             serialize(
@@ -3291,8 +3291,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             wp_redirect(
                 EE_Admin_Page::add_query_args_and_nonce(
                     [
-                        'page'        => 'espresso_batch',
-                        'batch'       => 'file',
+                        'page'        => EED_Batch::PAGE_SLUG,
+                        'batch'       => EED_Batch::batch_file_job,
                         'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\AttendeesReport'),
                         'return_url'  => urlencode($this->request->getRequestParam('return_url', '', 'url')),
                     ]
