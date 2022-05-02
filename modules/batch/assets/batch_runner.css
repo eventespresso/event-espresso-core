@@ -1,0 +1,85 @@
+.ee-batch-runner__wrapper {
+	line-height: 1.6;
+}
+
+.ee-batch-runner__wrapper h1 {
+	color: var(--ee-font-color-light);
+	font-weight: 800;
+}
+
+.ee-batch-runner__wrapper #message-area {
+	margin-block-end: 2rem;
+}
+
+.ee-batch-runner__wrapper .progress-area {
+	background: hsl(23, 10%, 97.5%);
+	border-block: 1px solid var(--ee-border-color);
+	max-height: max(48rem, 50vh);
+	margin-block: 2rem;
+	overflow-y: scroll;
+	padding-block: 1rem;
+	padding-inline: 3rem;
+}
+.ee-batch-runner__wrapper .progress-area .spinner {
+	float: unset !important;
+	inset-block-start: -0.125rem;
+	inset-inline-start: 1rem;
+	margin: 0;
+	position: relative;
+	visibility: unset !important;
+}
+
+
+.espresso-admin .ee-batch-runner__wrapper .progress-area .ee-status-outline {
+	display: inline-block;
+	font-weight: 500;
+	margin-block: .5rem;
+	padding-block: .5rem;
+	padding-inline: 1rem;
+}
+
+.espresso-admin .ee-batch-runner__wrapper .progress-area .ee-status-outline + .ee-status-outline {
+	margin-inline-start: .5rem;
+}
+
+.espresso-admin .ee-batch-runner__wrapper .ee-batch-runner__error.ee-status-outline {
+	margin-block: 2rem;
+	padding: 1rem 2.5rem;
+}
+.ee-batch-runner__wrapper .ee-batch-runner__error h4 {
+	font-size: 1.1em;
+	font-weight: 600;
+	margin-block-start: 1rem;
+	margin-block-end: .5rem;
+}
+
+.ee-batch-runner__wrapper .ee-batch-runner__error p {
+	margin-block-start: 1rem;
+	margin-block-end: .5rem;
+}
+.ee-batch-runner__wrapper .ee-batch-runner__error code {
+	color: var(--ee-btn-caution-hover);
+	font-size: 1em;
+	font-weight: 600;
+}
+
+
+.ee-batch-runner__wrapper .ee-batch-job-update-heading {
+	color: var(--ee-font-color-light);
+	font-size: 1.2rem;
+	font-weight: 800;
+	margin: 0;
+	margin-block-start: 1rem;
+	margin-block-end: .5rem;
+}
+
+.ee-admin-container.ee-batch-runner__wrapper p.ee-batch-job-update + p.ee-batch-job-update {
+	margin-block-start: .25rem;
+}
+
+.ee-admin-container.ee-batch-runner__wrapper .ee-batch-job-update + .ee-batch-job-step-results {
+	margin-block-start: .75rem;
+}
+
+
+

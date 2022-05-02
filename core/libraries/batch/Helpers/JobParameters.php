@@ -2,6 +2,8 @@
 
 namespace EventEspressoBatchRequest\Helpers;
 
+use EventEspresso\core\services\database\WordPressOption;
+
 /**
  * Class JobParameters
  * Class for storing information about a job. Takes care of serializing the
@@ -14,397 +16,447 @@ namespace EventEspressoBatchRequest\Helpers;
  */
 class JobParameters
 {
-    // phpcs:disable Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase
-    // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
-    /**
-     * status indicating the job should continue
-     */
-    const status_continue = 'continue';
-
-    /**
-     * status indicated the job has been completed successfully and should be cleaned up next
-     */
-    const status_complete = 'complete';
-
-    /**
-     * status indicating there was an error and the job should be cleaned up
-     */
-    const status_error = 'error';
-
-    /**
-     * status indicating the job has been cleaned up, and so this is probably the last
-     * time you'll see this job
-     */
-    const status_cleaned_up = 'cleaned_up';
-
-    const wp_option_prefix = 'ee_job_parameters_';
+	// phpcs:disable Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase
+	// phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+	// phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
 
 
-    /**
-     * String uniquely identifying the job
-     *
-     * @var string
-     */
-    protected $_job_id;
+	/**
+	 * status indicating the job should advance to a secondary batch job (usually after an assessment phase)
+	 */
+	const status_advance = 'advance';
 
-    /**
-     * @var string
-     */
-    protected $_classname;
+	/**
+	 * status indicating the job has been cleaned up, and so this is probably the last
+	 * time you'll see this job
+	 */
+	const status_cleaned_up = 'cleaned_up';
 
-    /**
-     * @var array
-     */
-    protected $_request_data;
+	/**
+	 * status indicating the job should continue
+	 */
+	const status_continue = 'continue';
 
-    /**
-     * Array of any extra data we want to remember about this request, that
-     * wasn't necessarily past in with the request data
-     *
-     * @var array
-     */
-    protected $_extra_data;
+	/**
+	 * status indicated the job has been completed successfully and should be cleaned up next
+	 */
+	const status_complete = 'complete';
 
-    /**
-     * Estimate of how many units HAVE been processed
-     *
-     * @var int
-     */
-    protected $_units_processed = 0;
+	/**
+	 * status indicating there was an error and the job should be cleaned up
+	 */
+	const status_error = 'error';
 
-    /**
-     * @var string
-     */
-    protected $_status;
+	/**
+	 * status indicating to temporarily stop the current job
+	 * so that feedback can be provided to the user and/or to prompt the user for input
+	 */
+	const status_pause = 'pause';
 
-    /**
-     * The size of the total job in whatever units you want.
-     * If you can't provide an estimate leave as 0.
-     * Once _units_processed equals _job_size, we should be done
-     *
-     * @var int
-     */
-    protected $_job_size = 0;
+	/**
+	 * status indicating that the current job needs to redirect to... somewhere else...
+	 */
+	const status_redirect = 'redirect';
+
+	/**
+	 * string prepended to job ID and used for saving job data to the WP options table
+	 */
+	const wp_option_prefix = 'ee_job_parameters_';
 
 
-    /**
-     * @param string $job_id
-     * @param string $classname
-     * @param array  $request_data
-     * @param array  $extra_data
-     */
-    public function __construct($job_id, $classname, $request_data, $extra_data = array())
-    {
-        $this->set_job_id($job_id);
-        $this->set_classname($classname);
-        $this->set_request_data($request_data);
-        $this->set_extra_data($extra_data);
-        $this->set_status(JobParameters::status_continue);
-    }
+	/**
+	 * String uniquely identifying the job
+	 *
+	 * @var string
+	 */
+	protected $_job_id = '';
+
+	/**
+	 * @var string
+	 */
+	protected $_classname = '';
+
+	/**
+	 * @var array
+	 */
+	protected $_request_data = [];
+
+	/**
+	 * Array of any extra data we want to remember about this request, that
+	 * wasn't necessarily past in with the request data
+	 *
+	 * @var array
+	 */
+	protected $_extra_data = [];
+
+	/**
+	 * Estimate of how many units HAVE been processed
+	 *
+	 * @var int
+	 */
+	protected $_units_processed = 0;
+
+	/**
+	 * @var string
+	 */
+	protected $_status = '';
+
+	/**
+	 * The size of the total job in whatever units you want.
+	 * If you can't provide an estimate leave as 0.
+	 * Once _units_processed equals _job_size, we should be done
+	 *
+	 * @var int
+	 */
+	protected $_job_size = 0;
 
 
-    /**
-     * Returns the array of strings of valid stati
-     *
-     * @return array
-     */
-    public static function valid_stati()
-    {
-        return array(
-            JobParameters::status_complete,
-            JobParameters::status_continue,
-            JobParameters::status_error,
-            JobParameters::status_cleaned_up,
-        );
-    }
+	/**
+	 * @var JobParametersWordPressOption|null
+	 */
+	private $job_record;
+
+	/**
+	 * if set to false, then the job parameters record saved to the WordPress options will NOT be deleted
+	 *
+	 * @var bool
+	 */
+	protected $delete_job_record = false;
 
 
-    /**
-     * Saves this option to the database (wordpress options table)
-     *
-     * @param boolean $first
-     * @return boolean success
-     */
-    public function save($first = false)
-    {
-        $object_vars = get_object_vars($this);
-        if ($first) {
-            return add_option($this->option_name(), $object_vars, null, 'no');
-        } else {
-            return update_option($this->option_name(), $object_vars);
-        }
-    }
+	/**
+	 * @param string $job_id
+	 * @param string $classname
+	 * @param array  $request_data
+	 * @param array  $extra_data
+	 */
+	public function __construct(string $job_id, string $classname, array $request_data, array $extra_data = [])
+	{
+		$this->set_job_id($job_id);
+		$this->set_classname($classname);
+		$this->set_request_data($request_data);
+		$this->set_extra_data($extra_data);
+		$this->set_status(JobParameters::status_continue);
+		$this->job_record = new JobParametersWordPressOption($this->option_name());
+	}
 
 
-    /**
-     * Deletes the job from teh database, although this object is still usable
-     * for the rest of the request
-     *
-     * @return boolean
-     */
-    public function delete()
-    {
-        return delete_option($this->option_name());
-    }
+	/**
+	 * Returns the array of strings of valid stati
+	 *
+	 * @return array
+	 */
+	public static function valid_stati(): array
+	{
+		return [
+			JobParameters::status_complete,
+			JobParameters::status_continue,
+			JobParameters::status_error,
+			JobParameters::status_cleaned_up,
+		];
+	}
 
 
-    /**
-     * Loads the specified job from the database
-     *
-     * @param string $job_id
-     * @return JobParameters
-     * @throws BatchRequestException
-     */
-    public static function load($job_id)
-    {
-        $job_parameter_vars = get_option(JobParameters::wp_option_prefix . $job_id);
-        if (
-            ! is_array($job_parameter_vars) ||
-            ! isset($job_parameter_vars['_classname']) ||
-            ! isset($job_parameter_vars['_request_data'])
-        ) {
-            throw new BatchRequestException(
-                sprintf(
-                    esc_html__(
-                        'Could not retrieve job %1$s from the Wordpress options table, and so the job could not continue. The wordpress option was %2$s',
-                        'event_espresso'
-                    ),
-                    $job_id,
-                    get_option(JobParameters::wp_option_prefix . $job_id)
-                )
-            );
-        }
-        $job_parameters = new JobParameters(
-            $job_id,
-            $job_parameter_vars['_classname'],
-            $job_parameter_vars['_request_data']
-        );
-        foreach ($job_parameter_vars as $key => $value) {
-            $job_parameters->{$key} = $value;
-        }
-        return $job_parameters;
-    }
+	/**
+	 * Saves this option to the database (wordpress options table)
+	 *
+	 * @return bool success
+	 */
+	public function save(): bool
+	{
+		$object_vars = get_object_vars($this);
+		unset($object_vars['job_record']);
+		return $this->job_record->updateOption($object_vars);
+	}
 
 
-    /**
-     * Gets the job's unique string
-     *
-     * @return string
-     */
-    public function job_id()
-    {
-        return $this->_job_id;
-    }
+	/**
+	 * Deletes the job from the database if $this->delete_job_record is set to `true`,
+	 * although this object is still usable for the rest of the request
+	 *
+	 * @return bool
+	 */
+	public function delete(): bool
+	{
+		return $this->delete_job_record ? $this->job_record->deleteOption() : WordPressOption::UPDATE_NONE;
+	}
 
 
-    /**
-     * Gets the classname that should run this job
-     *
-     * @return string
-     */
-    public function classname()
-    {
-        return $this->_classname;
-    }
+	/**
+	 * Loads the specified job from the database JobParametersWordPressOption
+	 *
+	 * @param string $job_id
+	 * @return JobParameters
+	 * @throws BatchRequestException
+	 */
+	public static function load(string $job_id): JobParameters
+	{
+		$job_record         = new JobParametersWordPressOption(JobParameters::wp_option_prefix . $job_id);
+		$job_parameter_vars = $job_record->loadOption();
+		if (
+			! is_array($job_parameter_vars)
+			|| ! isset($job_parameter_vars['_classname'])
+			|| ! isset($job_parameter_vars['_request_data'])
+		) {
+			throw new BatchRequestException(
+				sprintf(
+					esc_html__(
+						'Could not retrieve valid data for job %1$s from the WordPress options table. The WordPress option was %2$s',
+						'event_espresso'
+					),
+					$job_id,
+					JobParameters::wp_option_prefix . $job_id
+				)
+			);
+		}
+		$job_parameters = new JobParameters(
+			$job_id,
+			$job_parameter_vars['_classname'],
+			$job_parameter_vars['_request_data']
+		);
+		foreach ($job_parameter_vars as $key => $value) {
+			$job_parameters->{$key} = $value;
+		}
+		$job_parameters->job_record = $job_record;
+		// $job_parameters->save();
+		return $job_parameters;
+	}
 
 
-    /**
-     * Gets the original array of request data for this job
-     *
-     * @return array
-     */
-    public function request_data()
-    {
-        return $this->_request_data;
-    }
+	/**
+	 * Gets the job's unique string
+	 *
+	 * @return string
+	 */
+	public function job_id(): string
+	{
+		return $this->_job_id;
+	}
 
 
-    /**
-     * Gets a single item from the request data
-     *
-     * @param string       $key
-     * @param string|array $default
-     * @return string|array
-     */
-    public function request_datum($key, $default = '')
-    {
-        if (isset($this->_request_data[ $key ])) {
-            return $this->_request_data[ $key ];
-        } else {
-            return $default;
-        }
-    }
+	/**
+	 * Gets the classname that should run this job
+	 *
+	 * @return string
+	 */
+	public function classname(): string
+	{
+		return $this->_classname;
+	}
 
 
-    /**
-     * Gets a single item from the extra data
-     *
-     * @param string       $key
-     * @param string|array $default
-     * @return string|array
-     */
-    public function extra_datum($key, $default = '')
-    {
-        if (isset($this->_extra_data[ $key ])) {
-            return $this->_extra_data[ $key ];
-        } else {
-            return $default;
-        }
-    }
+	/**
+	 * Gets the original array of request data for this job
+	 *
+	 * @return array
+	 */
+	public function request_data(): array
+	{
+		return $this->_request_data;
+	}
 
 
-    /**
-     * Adds an extra piece of extra data that we're going to want later during the job
-     *
-     * @param string                $key
-     * @param string|int|array|null $value almost any extra data you want to store
-     */
-    public function add_extra_data($key, $value)
-    {
-        $this->_extra_data[ $key ] = $value;
-    }
+	/**
+	 * Gets a single item from the request data
+	 *
+	 * @param string       $key
+	 * @param string|array $default
+	 * @return string|array
+	 */
+	public function request_datum(string $key, $default = '')
+	{
+		if (isset($this->_request_data[ $key ])) {
+			return $this->_request_data[ $key ];
+		}
+		return $default;
+	}
 
 
-    /**
-     * Array of any extra data we want to store
-     *
-     * @return array
-     */
-    public function extra_data()
-    {
-        return $this->_extra_data;
-    }
+	/**
+	 * Gets a single item from the extra data
+	 *
+	 * @param string       $key
+	 * @param string|array $default
+	 * @return string|array
+	 */
+	public function extra_datum(string $key, $default = '')
+	{
+		if (isset($this->_extra_data[ $key ])) {
+			return $this->_extra_data[ $key ];
+		}
+		return $default;
+	}
 
 
-    /**
-     * Returns the job size, in whatever units you want
-     *
-     * @return int
-     */
-    public function job_size()
-    {
-        return $this->_job_size;
-    }
+	/**
+	 * Adds an extra piece of extra data that we're going to want later during the job
+	 *
+	 * @param string                $key
+	 * @param string|int|array|null $value almost any extra data you want to store
+	 */
+	public function add_extra_data(string $key, $value)
+	{
+		$this->_extra_data[ $key ] = $value;
+	}
 
 
-    /**
-     * Sets the job size. You decide what units to use
-     *
-     * @param int $size
-     */
-    public function set_job_size($size)
-    {
-        $this->_job_size = $size;
-    }
+	/**
+	 * Array of any extra data we want to store
+	 *
+	 * @return array
+	 */
+	public function extra_data(): array
+	{
+		return $this->_extra_data;
+	}
 
 
-    /**
-     * The number of "units" processed, in the same units as the "job size"
-     *
-     * @return int
-     */
-    public function units_processed()
-    {
-        return $this->_units_processed;
-    }
+	/**
+	 * Returns the job size, in whatever units you want
+	 *
+	 * @return int
+	 */
+	public function job_size(): int
+	{
+		return $this->_job_size;
+	}
 
 
-    /**
-     * Marks more units as processed
-     *
-     * @param int $newly_processed
-     * @return int updated units processed
-     */
-    public function mark_processed($newly_processed)
-    {
-        $this->_units_processed += $newly_processed;
-        return $this->_units_processed;
-    }
+	/**
+	 * Sets the job size. You decide what units to use
+	 *
+	 * @param int $size
+	 */
+	public function set_job_size(int $size)
+	{
+		$this->_job_size = $size;
+	}
 
 
-    /**
-     * Sets the total count of units processed. You might prefer to use mark_processed
-     *
-     * @param int $total_units_processed
-     */
-    public function set_units_processed($total_units_processed)
-    {
-        $this->_units_processed = $total_units_processed;
-    }
+	/**
+	 * The number of "units" processed, in the same units as the "job size"
+	 *
+	 * @return int
+	 */
+	public function units_processed(): int
+	{
+		return $this->_units_processed;
+	}
 
 
-    /**
-     * Sets the job's ID
-     *
-     * @param string $job_id
-     */
-    public function set_job_id($job_id)
-    {
-        $this->_job_id = $job_id;
-    }
+	/**
+	 * Marks more units as processed
+	 *
+	 * @param int $newly_processed
+	 * @return int updated units processed
+	 */
+	public function mark_processed(int $newly_processed): int
+	{
+		$this->_units_processed += $newly_processed;
+		return $this->_units_processed;
+	}
 
 
-    /**
-     * sets the classname
-     *
-     * @param string $classname
-     */
-    public function set_classname($classname)
-    {
-        $this->_classname = $classname;
-    }
+	/**
+	 * Sets the total count of units processed. You might prefer to use mark_processed
+	 *
+	 * @param int $total_units_processed
+	 */
+	public function set_units_processed(int $total_units_processed)
+	{
+		$this->_units_processed = $total_units_processed;
+	}
 
 
-    /**
-     * Sets the request data
-     *
-     * @param array $request_data
-     */
-    public function set_request_data($request_data)
-    {
-        $this->_request_data = $request_data;
-    }
+	/**
+	 * Sets the job's ID
+	 *
+	 * @param string $job_id
+	 */
+	public function set_job_id(string $job_id)
+	{
+		$this->_job_id = $job_id;
+	}
 
 
-    /**
-     * Sets the array of extra data we want to store on this request
-     *
-     * @param array $extra_data
-     */
-    public function set_extra_data($extra_data)
-    {
-        $this->_extra_data = $extra_data;
-    }
+	/**
+	 * sets the classname
+	 *
+	 * @param string $classname
+	 */
+	public function set_classname(string $classname)
+	{
+		$this->_classname = $classname;
+	}
 
 
-    /**
-     * Gets the name of the wordpress option that should store these job parameters
-     *
-     * @return string
-     */
-    public function option_name()
-    {
-        return JobParameters::wp_option_prefix . $this->job_id();
-    }
+	/**
+	 * Sets the request data
+	 *
+	 * @param array $request_data
+	 */
+	public function set_request_data(array $request_data)
+	{
+		$this->_request_data = $request_data;
+	}
 
 
-    /**
-     * Gets the job\s current status. One of JobParameters::valid_stati();
-     *
-     * @return string
-     */
-    public function status()
-    {
-        return $this->_status;
-    }
+	/**
+	 * Sets the array of extra data we want to store on this request
+	 *
+	 * @param array $extra_data
+	 */
+	public function set_extra_data(array $extra_data)
+	{
+		$this->_extra_data = $extra_data;
+	}
 
 
-    /**
-     * @param string $status on eof JobParameters::valid_stati()
-     */
-    public function set_status($status)
-    {
-        $this->_status = $status;
-    }
+	/**
+	 * Gets the name of the wordpress option that should store these job parameters
+	 *
+	 * @return string
+	 */
+	public function option_name(): string
+	{
+		return JobParameters::wp_option_prefix . $this->job_id();
+	}
+
+
+	/**
+	 * Gets the job's current status. One of JobParameters::valid_stati();
+	 *
+	 * @return string
+	 */
+	public function status(): string
+	{
+		return $this->_status;
+	}
+
+
+	/**
+	 * @param string $status on eof JobParameters::valid_stati()
+	 */
+	public function set_status(string $status)
+	{
+		$this->_status = $status;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function deleteJobRecord()
+	{
+		$this->delete_job_record = true;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function dontDeleteJobRecord()
+	{
+		$this->delete_job_record = false;
+	}
 }
