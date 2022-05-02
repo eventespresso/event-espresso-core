@@ -23,14 +23,14 @@ class JsonDataHandler
     const NO_ERROR_MSG        = 'No error';
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $data_type;
+    private $data_type = null;
 
     /**
-     * @var array|stdClass
+     * @var array|stdClass|null
      */
-    private $decoded_data;
+    private $decoded_data = null;
 
     /**
      * JSON_BIGINT_AS_STRING,
@@ -41,17 +41,17 @@ class JsonDataHandler
      *
      * @var int
      */
-    private $decode_flags;
+    private $decode_flags = 0;
 
     /**
      * @var int
      */
-    private $depth;
+    private $depth = 512;
 
     /**
      * @var string
      */
-    private $encoded_data;
+    private $encoded_data = '';
 
     /**
      * JSON_FORCE_OBJECT,
@@ -72,7 +72,7 @@ class JsonDataHandler
      *
      * @var int
      */
-    private $encode_flags;
+    private $encode_flags = 0;
 
     /**
      * @var int
@@ -220,6 +220,15 @@ class JsonDataHandler
             ? $encode_flags
             : 0;
     }
+
+
+	/**
+	 * @return string|null
+	 */
+	public function dataType(): ?string
+	{
+		return $this->data_type;
+	}
 
 
     /**
