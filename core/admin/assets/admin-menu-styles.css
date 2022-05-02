@@ -770,56 +770,102 @@ div.TB-ee-frame a {
 /**
  * fancy toggles
  */
- .ee-switch__input,
+.ee-switch {
+	align-items: center;
+	display: flex;
+	height: var(--ee-switch-height);
+	justify-content: flex-start;
+	width: 100%;
+}
+
+.ee-switch .ee-switch__input,
 .ee-on-off-toggle {
-  position: absolute;
-  margin-left: -9999px;
-  visibility: hidden;
+	position: absolute;
+	margin-left: -9999px;
+	visibility: hidden;
 }
 
- .ee-switch__toggle,
-.ee-on-off-toggle + label:not(.ee-switch__label) {
-  display: block;
-  position: relative;
-  cursor: pointer;
-  outline: none;
-  user-select: none;
+.ee-switch .ee-switch__input:before {
+	background: none !important;
+	background-size: 0 !important;
+	display: none !important;
+	margin: 0 !important;
+	height: 0 !important;
+	width: 0 !important;
 }
 
- .ee-switch__toggle,
-input.ee-toggle-round-flat + label:not(.ee-switch__label) {
-  width: var(--ee-switch-width);
-  height: var(--ee-switch-height);
-
-  background-color: var(--ee-status-color-light-grey);
-  border-radius: var(--ee-switch-height);
-  transition: background 0.4s;
+.ee-switch .ee-switch__input + .ee-switch__toggle,
+.ee-on-off-toggle + label {
+	display: block;
+	position: relative;
+	cursor: pointer;
+	outline: none;
+	user-select: none;
 }
 
- .ee-switch__toggle:after,
+.ee-switch .ee-switch__input + .ee-switch__toggle,
+input.ee-toggle-round-flat + label {
+	width: var(--ee-switch-width);
+	height: var(--ee-switch-height);
+	background-color: var(--ee-status-color-light-grey);
+	border-radius: var(--ee-switch-height);
+	transition: background 0.4s;
+}
+
+.ee-switch .ee-switch__input + .ee-switch__toggle:after,
 input.ee-toggle-round-flat + label:after {
-  background-color: #FFF;
-  border-radius: var(--ee-switch-button);
-  bottom: var(--ee-switch-padding);
-  content: "";
-  display: block;
-  height: var(--ee-switch-button);
-  left: var(--ee-switch-padding);
-  position: absolute;
-  top: var(--ee-switch-padding);
-  transition: margin 0.4s, background 0.4s;
-  width: var(--ee-switch-button);
+	background-color: #FFF;
+	border-radius: var(--ee-switch-button);
+	bottom: var(--ee-switch-padding);
+	content: "";
+	display: block;
+	height: var(--ee-switch-button);
+	left: var(--ee-switch-padding);
+	position: absolute;
+	top: var(--ee-switch-padding);
+	transition: margin 0.4s, background 0.4s;
+	width: var(--ee-switch-button);
 }
 
- .ee-switch__input + .ee-switch__toggle:after,
- input.ee-toggle-round-flat:checked + label {
-     background-color: var(--ee-status-color-blue);
-     margin-block: 0;
+.ee-switch .ee-switch__input:checked + .ee-switch__toggle,
+input.ee-toggle-round-flat:checked + label {
+	background-color: var(--ee-status-color-blue);
+	margin-block: 0;
 }
 
- .ee-switch__input + .ee-switch__toggle:after,
+.ee-switch .ee-switch__input:checked + .ee-switch__toggle:after,
 input.ee-toggle-round-flat:checked + label:after {
-  margin-left: var(--ee-switch-height);
+	margin-left: var(--ee-switch-height);
+}
+
+
+.ee-switch .ee-switch__label {
+	margin-inline-end: 1rem;
+	position: relative;
+	width: calc( 100% - var(--ee-switch-width) - 1rem );
+}
+.ee-switch .ee-switch__label > span {
+	font-weight: 600;
+	position: absolute;
+	inset-inline-start: 1rem;
+	inset-block-start: -.75rem;
+	transition: opacity 100ms ease-in-out;
+}
+
+.ee-switch .ee-switch__input:checked ~ .ee-switch__label .ee-switch--ON {
+	opacity: 1;
+}
+
+.ee-switch .ee-switch__input:checked ~ .ee-switch__label .ee-switch--OFF {
+	opacity: 0;
+}
+
+.ee-switch .ee-switch__input:not(:checked) ~ .ee-switch__label .ee-switch--ON {
+	opacity: 0;
+}
+
+.ee-switch .ee-switch__input:not(:checked) ~ .ee-switch__label .ee-switch--OFF {
+	opacity: 1;
 }
 
 
@@ -836,23 +882,6 @@ input.ee-toggle-round-flat:checked + label:after {
 .espresso-notices.ee-nag-notice {
     border-left: 4px solid var(--ee-status-color-gold);
 }
-/*
-.dismiss-ee-nag-notice-btn {
-    cursor: pointer;
-    float: right;
-    margin: .25em 0 !important;
-}
-
-.dismiss-ee-nag-notice-btn a {
-    color: var(--ee-status-color-grey);
-    text-decoration: none;
-}
-
-.dismiss-ee-nag-notice-btn a .dashicons {
-    position: relative;
-    top: -1px;
-    margin-right: .25em;
-} */
 
 
 .wp-core-ui .espresso-notices.notice,

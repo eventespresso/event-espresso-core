@@ -173,8 +173,8 @@
 
 .ee-status-outline {
     border: 2px solid transparent;
-    padding-block: 1rem !important;
-    padding-inline: 2rem !important;
+    padding-block: 1rem;
+    padding-inline: 2rem;
 }
 
 .ee-status-outline.ee-status-outline--error {
@@ -359,6 +359,11 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     padding-block-end: 1rem;
 }
 
+.wp-admin:not(.espresso-admin) #wpbody-content > .ee-admin-container {
+	margin-inline-start: 1rem !important;
+	margin-inline-end: 2rem !important;
+}
+
 .wp-admin .ee-admin-container > .padding,
 .espresso-admin .ee-admin-container > .padding,
 .espresso-admin #post-body .postbox .inside,
@@ -493,7 +498,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
         width: unset;
     }
 
-    .wp-admin .ee-admin-container > .padding,
+	.wp-admin .ee-admin-container > .padding,
     .espresso-admin .ee-admin-container > .padding,
     .espresso-admin #post-body .postbox .inside,
     .espresso-admin #post-body #post-body-content > .form-table,
@@ -520,7 +525,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
         width: unset;
     }
 
-    .wp-admin .ee-admin-container > .padding,
+	.wp-admin .ee-admin-container > .padding,
     .espresso-admin .ee-admin-container > .padding,
     .espresso-admin #post-body .postbox .inside,
     .espresso-admin #post-body #post-body-content > .form-table,
