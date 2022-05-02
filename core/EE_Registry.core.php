@@ -580,7 +580,7 @@ class EE_Registry implements ResettableInterface
      * @param string $class_name - simple class name ie: price
      * @param mixed  $arguments
      * @param bool   $load_only
-     * @return EEM_Base | bool
+     * @return mixed
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
