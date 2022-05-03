@@ -600,7 +600,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function generateDisplayForDatetimes(array $datetime_strings): string
     {
         // get first item for initial visibility
-        $content = array_shift($datetime_strings);
+        $content = (string) array_shift($datetime_strings);
         if (! empty($datetime_strings)) {
             $content .= '
                 <div class="ee-registration-event-datetimes-container-wrap">
