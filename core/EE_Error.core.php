@@ -1257,16 +1257,15 @@ function espresso_error_enqueue_scripts()
         'espresso_core',
         EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
         array('jquery'),
-        EVENT_ESPRESSO_VERSION,
-        false
+        EVENT_ESPRESSO_VERSION
     );
     wp_register_script(
         'ee_error_js',
         EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js',
         array('espresso_core'),
-        EVENT_ESPRESSO_VERSION,
-        false
+        EVENT_ESPRESSO_VERSION
     );
+    wp_localize_script('ee_error_js', 'ee_settings', ['wp_debug' => WP_DEBUG]);
 }
 
 if (is_admin()) {
