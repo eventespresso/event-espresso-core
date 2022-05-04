@@ -6,6 +6,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * EE_Admin_Page class
@@ -1592,7 +1593,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             );
         }
         if ($display) {
-            echo $content; // already escaped
+            echo wp_kses($content, AllowedTags::getWithFormTags());
             return '';
         }
         return $content;
@@ -1668,7 +1669,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                    . '" target="_blank"><span class="question ee-help-popup-question"></span></a>';
         $content .= $help_content;
         if ($display) {
-            echo $content; // already escaped
+            echo wp_kses($content, AllowedTags::getWithFormTags());
             return '';
         }
         return $content;
@@ -2279,11 +2280,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $cache_key = 'ee_rss_' . md5($rss_id);
         $output    = get_transient($cache_key);
         if ($output !== false) {
-            echo $pre . $output . $post; // already escaped
+            echo wp_kses($pre . $output . $post, AllowedTags::getWithFormTags());
             return true;
         }
         if (! (defined('DOING_AJAX') && DOING_AJAX)) {
-            echo $pre . $loading . $post; // already escaped
+            echo wp_kses($pre . $loading . $post, AllowedTags::getWithFormTags());
             return false;
         }
         ob_start();

@@ -5,6 +5,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\middleware\RecommendedVersions;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * EE_Admin_Page_CPT class
@@ -1352,7 +1353,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $html .= $nav_tabs;
         // now let's handle the remaining tag ( missing ">" is CORRECT )
         $html .= '<span></span';
-        echo $html;  // already escaped
+        echo wp_kses($html, AllowedTags::getWithFormTags());
     }
 
 
@@ -1484,7 +1485,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $admin_page = ! empty($this->_req_data['post']) ? 'post-php' : 'post-new-php';
         ?>
         <script type="text/javascript">
-            adminpage = '<?php echo $admin_page; ?>';
+            adminpage = '<?php echo esc_js($admin_page); ?>';
         </script>
         <?php
     }

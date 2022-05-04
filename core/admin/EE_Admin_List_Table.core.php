@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 if (! class_exists('WP_List_Table')) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -468,7 +470,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             return;
         }
         foreach ($filters as $filter) {
-            echo $filter; // already escaped
+            echo wp_kses($filter, AllowedTags::getWithFormTags());
         }
         // add filter button at end
         echo '<input type="submit" class="button-secondary" value="'
@@ -749,7 +751,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
                     $item,
                     $this
                 );
-                echo $this->handle_row_actions($item, $column_name, $primary);
+                echo wp_kses($this->handle_row_actions($item, $column_name, $primary), AllowedTags::getWithFormTags());
                 echo "</td>";
             } else {
                 echo "<td $attributes>"; // already escaped
@@ -760,7 +762,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
                     $column_name,
                     $this
                 );
-                echo $this->handle_row_actions($item, $column_name, $primary);
+                echo wp_kses($this->handle_row_actions($item, $column_name, $primary), AllowedTags::getWithFormTags());
                 echo "</td>";
             }
         }
@@ -778,19 +780,19 @@ abstract class EE_Admin_List_Table extends WP_List_Table
     {
         if ($which === 'top') {
             $this->_filters();
-            echo $this->_get_hidden_fields(); // already escaped
+            echo wp_kses($this->_get_hidden_fields(), AllowedTags::getWithFormTags());
         } else {
             echo '<div class="list-table-bottom-buttons alignleft actions">';
             foreach ($this->_bottom_buttons as $type => $action) {
                 $route         = isset($action['route']) ? $action['route'] : '';
                 $extra_request = isset($action['extra_request']) ? $action['extra_request'] : '';
                 // already escaped
-                echo $this->_admin_page->get_action_link_or_button(
+                echo wp_kses($this->_admin_page->get_action_link_or_button(
                     $route,
                     $type,
                     $extra_request,
                     'button button-secondary'
-                );
+                ), AllowedTags::getWithFormTags());
             }
             do_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen);
             echo '</div>';
