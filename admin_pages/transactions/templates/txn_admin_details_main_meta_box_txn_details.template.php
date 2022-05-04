@@ -178,7 +178,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                         : 'txn-admin-payment-status-PDC';
                                     ?>
                                     <span class="<?php echo esc_attr($payment_class); ?>">
-                                        <span id="payment-amount-<?php echo $escaped_pay_id; ?>"
+                                        <span id="payment-amount-<?php echo absint($PAY_ID); ?>"
                                               style="display:inline;"
                                         >
                                         <?php echo EEH_Template::format_currency(
