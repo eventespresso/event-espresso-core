@@ -51,10 +51,10 @@ abstract class WordPressOption
      */
     private $value = WordPressOption::NOT_SET_YET;
 
-	/**
-	 * @var OptionEngine
-	 */
-	private $option_engine;
+    /**
+     * @var OptionEngine
+     */
+    private $option_engine;
 
 
     /**
@@ -66,15 +66,15 @@ abstract class WordPressOption
      * @param bool 	 $is_network_option		if true, will save the option to the network as opposed to the current blog
      */
     public function __construct(
-		string $option_name,
-		$default_value,
-		bool $autoload = false,
-		bool $is_network_option = false
-	) {
-		$this->setAutoload($autoload);
+        string $option_name,
+        $default_value,
+        bool $autoload = false,
+        bool $is_network_option = false
+    ) {
+        $this->setAutoload($autoload);
         $this->setDefaultValue($default_value);
         $this->setOptionName($option_name);
-		$this->option_engine = new OptionEngine($is_network_option);
+        $this->option_engine = new OptionEngine($is_network_option);
     }
 
 
@@ -110,10 +110,10 @@ abstract class WordPressOption
      */
     public function optionExists(): string
     {
-		return $this->option_engine->getOption(
-			$this->option_name,
-			WordPressOption::NOT_SET_YET
-		) !== WordPressOption::NOT_SET_YET;
+        return $this->option_engine->getOption(
+            $this->option_name,
+            WordPressOption::NOT_SET_YET
+        ) !== WordPressOption::NOT_SET_YET;
     }
 
 
@@ -145,15 +145,15 @@ abstract class WordPressOption
     public function updateOption($value): int
     {
         // don't update if value has not changed since last update
-		if ($this->valueIsUnchanged($value)) {
+        if ($this->valueIsUnchanged($value)) {
             return WordPressOption::UPDATE_NONE;
         }
-		$this->value = $value;
+        $this->value = $value;
         // because the options for updating differ when adding an option for the first time
         // we use the WordPressOption::NOT_SET_YET to determine if things already exist in the db
-		$updated = $this->optionExists()
-			? $this->option_engine->updateOption($this->option_name, $this->value)
-			: $this->option_engine->addOption($this->option_name, $this->value, $this->autoload());
+        $updated = $this->optionExists()
+            ? $this->option_engine->updateOption($this->option_name, $this->value)
+            : $this->option_engine->addOption($this->option_name, $this->value, $this->autoload());
 
         if ($updated) {
             return WordPressOption::UPDATE_SUCCESS;
@@ -162,16 +162,16 @@ abstract class WordPressOption
     }
 
 
-	private function valueIsUnchanged($value): bool
-	{
-		if (is_array($value) && is_array($this->value)) {
-			$diff = EEH_Array::array_diff_recursive($value, $this->value);
-			// $diff = array_diff($value, $this->value);
-			return empty($diff);
-		}
-		// emulate WP's method for checking equality
-		return $value === $this->value && maybe_serialize($value) === maybe_serialize($this->value);
-	}
+    private function valueIsUnchanged($value): bool
+    {
+        if (is_array($value) && is_array($this->value)) {
+            $diff = EEH_Array::array_diff_recursive($value, $this->value);
+            // $diff = array_diff($value, $this->value);
+            return empty($diff);
+        }
+        // emulate WP's method for checking equality
+        return $value === $this->value && maybe_serialize($value) === maybe_serialize($this->value);
+    }
 
 
     /**
@@ -183,15 +183,15 @@ abstract class WordPressOption
     }
 
 
-	/**
-	 * Deletes the option from the database
-	 * for the rest of the request
-	 *
-	 * @return bool
-	 * @since  $VID:$
-	 */
-	public function deleteOption(): bool
-	{
-		return $this->option_engine->deleteOption($this->option_name);
-	}
+    /**
+     * Deletes the option from the database
+     * for the rest of the request
+     *
+     * @return bool
+     * @since  $VID:$
+     */
+    public function deleteOption(): bool
+    {
+        return $this->option_engine->deleteOption($this->option_name);
+    }
 }
