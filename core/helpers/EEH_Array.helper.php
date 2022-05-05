@@ -226,4 +226,98 @@ class EEH_Array extends EEH_Base
         }
         return is_string($element) ? addslashes($element) : $element;
     }
+
+
+	/**
+	 * link https://stackoverflow.com/a/3877494
+	 *
+	 * @param array $array_1
+	 * @param array $array_2
+	 * @return array
+	 * @since   $VID:$
+	 */
+	public static function array_diff_recursive(array $array_1, array $array_2): array
+	{
+		$diff = [];
+		foreach ($array_1 as $key => $value) {
+			if (array_key_exists($key, $array_2)) {
+				if (is_array($value)) {
+					$inner_diff = EEH_Array::array_diff_recursive($value, $array_2[ $key ]);
+					if (count($inner_diff)) {
+						$diff[ $key ] = $inner_diff;
+					}
+				} else {
+					if ($value != $array_2[ $key ]) {
+						$diff[ $key ] = $value;
+					}
+				}
+			} else {
+				$diff[ $key ] = $value;
+			}
+		}
+		return $diff;
+	}
+
+
+	/**
+	 * converts multidimensional arrays into a single depth associative array
+	 * or converts arrays of any depth into a readable string representation
+	 *
+	 * 	$example = [
+	 * 		'a' => 'A',
+	 * 		'b' => 'B',
+	 * 		'c' => [
+	 * 			'd' => 'D',
+	 * 			'e' => 'E',
+	 * 			'f' => [ 'G', 'H', 'I' ],
+	 * 		],
+	 * 		[ 'J', 'K' ],
+	 *		'L',
+	 * 		'M',
+	 * 		'n' => [
+	 * 			'o' => 'P'
+	 * 		],
+	 * 	];
+	 *
+	 *	print_r( EEH_Array::flattenArray($example) );
+	 *
+	 * 	Array (
+	 * 		[a] => A
+	 * 		[b] => B
+	 * 		[c] => [ d:D, e:E, f:[ G, H, I ] ]
+	 * 		[0] => [ J, K ]
+	 * 		[1] => L
+	 * 		[2] => M
+	 * 		[n] => [ o:P ]
+	 * 	)
+	 *
+	 *	print_r( EEH_Array::flattenArray($example, true) );
+	 *
+	 * 	"a:A, b:B, c:[ d:D, e:E, f:[ G, H, I ] ], [ J, K ], L, M, n:[ o:P ]"
+ 	 *
+	 * @param array $array		the array to be flattened
+	 * @param bool  $to_string	[true] will flatten the entire array down into a string
+	 *                         	[false] will only flatten sub-arrays down into strings and return a array
+	 * @param bool  $top_level	used for formatting purposes only, best to leave this alone as it's set internally
+	 * @return array|false|string
+	 * @since $VID:$
+	 */
+	public static function flattenArray(array $array, bool $to_string = false, bool $top_level = true)
+	{
+		$flat_array = [];
+		foreach ($array as $key => $value) {
+			$flat_array[ $key ] = is_array($value)
+				? EEH_Array::flattenArray($value, true, false)
+				: $value;
+		}
+		if (! $to_string) {
+			return $flat_array;
+		}
+		$flat = '';
+		foreach ($flat_array as $key => $value) {
+			$flat .= is_int($key) ? "$value, " : "$key:$value, ";
+		}
+		$flat = substr($flat, 0, -2);
+		return $top_level ? $flat : "[ $flat ]";
+	}
 }
