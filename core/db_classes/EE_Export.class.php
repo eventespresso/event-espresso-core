@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\PaymentsInfo;
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\PaymentsInfoCSV;
 
 /**
  * EE_Export class
@@ -523,7 +523,7 @@ class EE_Export
                         ARRAY_A,
                         'Payment_Method.PMD_admin_name as name, Payment.PAY_txn_id_chq_nmbr as gateway_txn_id, Payment.PAY_timestamp as payment_time'
                     );
-                    list($payment_methods, $gateway_txn_ids_etc, $payment_times) = PaymentsInfo::extractPaymentInfo($payments_info);
+                    list($payment_methods, $gateway_txn_ids_etc, $payment_times) = PaymentsInfoCSV::extractPaymentInfo($payments_info);
                 }
                 $reg_csv_array[ esc_html__('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
                 $reg_csv_array[ esc_html__('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);

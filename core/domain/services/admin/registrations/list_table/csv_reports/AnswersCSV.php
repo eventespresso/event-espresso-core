@@ -15,34 +15,19 @@ use EEM_State;
  * @author  Hossein Rafiei
  * @package EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports
  */
-class Answers
+class AnswersCSV
 {
-
-    /**
-     * @var array
-     */
-    private $reg_row;
-
-
-    /**
-     * Answers constructor.
-     *
-     * @param array $reg_row
-     */
-    public function __construct(array $reg_row)
-    {
-        $this->reg_row = $reg_row;
-    }
 
     /**
      * Add question / answer columns to the CSV row
      *
+     * @param array $reg_row
      * @param array $data
      * @param array $question_labels
      * @return mixed
      * @throws EE_Error
      */
-    public function addAnswerColumns($data, $question_labels)
+    public static function addAnswerColumns(array $reg_row, $data, $question_labels)
     {
         // make sure each registration has the same questions in the same order
         foreach ($question_labels as $question_label) {
@@ -51,7 +36,7 @@ class Answers
             }
         }
         $answers = EEM_Answer::instance()->get_all_wpdb_results([
-            ['REG_ID' => $this->reg_row['Registration.REG_ID']],
+            ['REG_ID' => $reg_row['Registration.REG_ID']],
             'force_join' => ['Question'],
         ]);
         // now fill out the questions THEY answered

@@ -18,11 +18,11 @@ use EEM_Question;
 use EEM_Registration;
 use EEM_Status;
 use EEM_Transaction;
-use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\Answers;
-use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\Attendee;
-use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\Checkins;
-use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\PaymentsInfo;
-use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\Registration;
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\AnswersCSV;
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\AttendeeCSV;
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\CheckinsCSV;
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\PaymentsInfoCSV;
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\RegistrationCSV;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
@@ -302,11 +302,9 @@ class RegistrationsReport extends JobHandlerFile
                 );
             }
             // add attendee columns
-            $reg_csv_array = (new Attendee($att_fields_to_include, $reg_row))
-                ->addAttendeeColumns($reg_csv_array);
+            $reg_csv_array = AttendeeCSV::addAttendeeColumns($att_fields_to_include, $reg_row, $reg_csv_array);
             // add registration columns
-            $reg_csv_array = (new Registration($reg_fields_to_include, $reg_row))
-                ->addRegistrationColumns($reg_csv_array);
+            $reg_csv_array = RegistrationCSV::addRegistrationColumns($reg_fields_to_include, $reg_row, $reg_model, $reg_csv_array);
             // get pretty status
             $stati = EEM_Status::instance()->localized_status(
                 [
@@ -349,7 +347,7 @@ class RegistrationsReport extends JobHandlerFile
                     ARRAY_A,
                     'Payment_Method.PMD_admin_name as name, Payment.PAY_txn_id_chq_nmbr as gateway_txn_id, Payment.PAY_timestamp as payment_time'
                 );
-                list($payment_methods, $gateway_txn_ids_etc, $payment_times) = PaymentsInfo::extractPaymentInfo($payments_info);
+                list($payment_methods, $gateway_txn_ids_etc, $payment_times) = PaymentsInfoCSV::extractPaymentInfo($payments_info);
             }
             $reg_csv_array[ (string) esc_html__('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
             $reg_csv_array[ (string) esc_html__('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
@@ -388,8 +386,7 @@ class RegistrationsReport extends JobHandlerFile
             $reg_csv_array[ (string) $ticket_model->field_settings_for('TKT_name')->get_nicename() ] = $ticket_name;
             $reg_csv_array[ (string) esc_html__("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
             // add answer columns
-            $reg_csv_array = (new Answers($reg_row))
-                ->addAnswerColumns($reg_csv_array, $question_labels);
+            $reg_csv_array = AnswersCSV::addAnswerColumns($reg_row, $reg_csv_array, $question_labels);
             // Include check-in data
             if ($event_id && $DTT_ID) {
                 // get whether or not the user has checked in
@@ -415,12 +412,12 @@ class RegistrationsReport extends JobHandlerFile
                 $checkins = [];
                 foreach ($checkin_rows as $checkin_row) {
                     /** @var EE_Checkin $checkin_row */
-                    $checkin_value = Checkins::getCheckinValue($checkin_row);
+                    $checkin_value = CheckinsCSV::getCheckinValue($checkin_row);
                     if ($checkin_value) {
                         $checkins[] = $checkin_value;
                     }
                 }
-                $datetime_name = Checkins::getDatetineLabel($datetime);
+                $datetime_name = CheckinsCSV::getDatetineLabel($datetime);
                 $reg_csv_array[ (string) $datetime_name ] = implode(' --- ', $checkins);
             } elseif ($event_id) {
                 // get whether or not the user has checked in
@@ -451,8 +448,8 @@ class RegistrationsReport extends JobHandlerFile
                             ]
                         ]
                     );
-                    $checkin_value = Checkins::getCheckinValue($checkin_row);
-                    $datetime_name = Checkins::getDatetineLabel($datetime);
+                    $checkin_value = CheckinsCSV::getCheckinValue($checkin_row);
+                    $datetime_name = CheckinsCSV::getDatetineLabel($datetime);
                     $reg_csv_array[ (string) $datetime_name ] = $checkin_value;
                 }
             }
