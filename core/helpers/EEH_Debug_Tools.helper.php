@@ -611,7 +611,7 @@ class EEH_Debug_Tools
         $converted = str_replace(['$', '_', 'this->'], ['', ' ', ''], $var_name);
         $words = explode(' ', $converted);
         $words = array_map(
-            function($word) {
+            function ($word) {
                 return $word === 'id' || $word === 'Id' ? 'ID' : $word;
             },
             $words

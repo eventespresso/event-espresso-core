@@ -62,8 +62,8 @@ abstract class WordPressOption
      *
      * @param string $option_name
      * @param mixed  $default_value
-     * @param bool   $autoload				if true, will load the option on EVERY request
-     * @param bool 	 $is_network_option		if true, will save the option to the network as opposed to the current blog
+     * @param bool   $autoload              if true, will load the option on EVERY request
+     * @param bool   $is_network_option     if true, will save the option to the network as opposed to the current blog
      */
     public function __construct(
         string $option_name,
