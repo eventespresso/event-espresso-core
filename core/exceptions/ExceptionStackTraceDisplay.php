@@ -3,6 +3,7 @@
 namespace EventEspresso\core\exceptions;
 
 use EEH_File;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
@@ -77,7 +78,7 @@ class ExceptionStackTraceDisplay
             echo wp_json_encode(array('error' => $styles . $output . $scripts));
             exit();
         }
-        echo $styles, $output, $scripts; // already escaped
+        echo $styles, wp_kses($output, AllowedTags::getWithFormTags()), $scripts;
     }
 
 

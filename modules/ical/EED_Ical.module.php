@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * EED_Ical Class
  *
@@ -207,7 +209,7 @@ class EED_Ical extends EED_Module
 
                     // Output all remaining values from ics_data.
                     foreach ($ics_data as $key => $value) {
-                        echo $key . ':' . $value . "\r\n";
+                        echo wp_kses($key . ':' . $value, AllowedTags::getAllowedTags()) . "\r\n";
                     }
 
                     echo "END:VEVENT\r\n";

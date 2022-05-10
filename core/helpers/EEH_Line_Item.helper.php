@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * EEH_Line_Item
@@ -1576,7 +1577,7 @@ class EEH_Line_Item
                 $breakdown = '$' . "{$line_item->unit_price()} x {$line_item->quantity()}";
             }
         }
-        echo $line_item->name();
+        echo wp_kses($line_item->name(), AllowedTags::getAllowedTags());
         echo " [ ID:{$line_item->ID()} | qty:{$line_item->quantity()} ] {$line_item->type()} : ";
         echo '$' . (string) $line_item->total();
         if ($breakdown) {
