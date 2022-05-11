@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\shortcodes;
 
 use EE_Config;
+use EE_Dependency_Map;
 use EE_Error;
 use EE_Front_controller;
 use EE_Registry;
@@ -221,6 +222,15 @@ class LegacyShortcodesManager
         if (empty($this->registry->shortcodes) || ! $wp_query->is_main_query() || is_admin()) {
             return;
         }
+        // in case shortcode is loaded unexpectedly and deps haven't been set up correctly
+        EE_Dependency_Map::register_dependencies(
+            'EE_Front_Controller',
+            [
+                'EE_Registry' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\CurrentPage' => EE_Dependency_Map::load_from_cache,
+                'EE_Module_Request_Router' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
         global $wp;
         /** @var EE_Front_controller $Front_Controller */
         $Front_Controller = LoaderFactory::getLoader()->getShared('EE_Front_Controller');
