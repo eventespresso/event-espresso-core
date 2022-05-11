@@ -383,7 +383,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     protected function _update_espresso_page_settings()
     {
-		$this->core_config = EE_Registry::instance()->CFG->core;
+        $this->core_config = EE_Registry::instance()->CFG->core;
         // capture incoming request data && set page IDs
         $this->core_config->reg_page_id       = $this->request->getRequestParam(
             'reg_page_id',
