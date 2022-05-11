@@ -132,10 +132,10 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
 
         //verify new caps are in the role
         $role = get_role('administrator');
-        $this->assertContains($this->_valid_capabilities['capabilities']['administrator'], $role->capabilities);
+        $this->assertArrayContains($this->_valid_capabilities['capabilities']['administrator'], $role->capabilities);
 
         //make sure we didn't erase the existing capabilities (@see https://events.codebasehq.com/projects/event-espresso/tickets/6700)
-        $this->assertContains(array('ee_read_ee', 'ee_read_events'), $role->capabilities,
+        $this->assertArrayContains(array('ee_read_ee', 'ee_read_events'), $role->capabilities,
             'Looks like registering capabilities is overwriting default capabilites, that will cause problems');
 
         //setup user
@@ -226,7 +226,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
      */
     public function _verify_new_cap_map_ok_after_deregister($incoming_cap_map)
     {
-        $this->assertNotContains($this->_valid_capabilities['capabilities']['administrator'],
+        $this->assertArrayDoesNotContain($this->_valid_capabilities['capabilities']['administrator'],
             $incoming_cap_map['administrator']);
         return $incoming_cap_map;
     }

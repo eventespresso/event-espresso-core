@@ -317,7 +317,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
         $REG_IDs = $this->_admin_page->get_REG_IDs_to_apply_payment_to($this->_payment);
         foreach ($registrations as $registration) {
             if ($registration instanceof EE_Registration) {
-                $this->assertContains($registration->ID(), $REG_IDs);
+                $this->assertArrayContains($registration->ID(), $REG_IDs);
             }
         }
     }
@@ -337,7 +337,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
         $REG_IDs = $this->_admin_page->get_REG_IDs_to_apply_payment_to($this->_payment);
         foreach ($this->_transaction->registrations() as $registration) {
             if ($registration instanceof EE_Registration) {
-                $this->assertContains($registration->ID(), $REG_IDs);
+                $this->assertArrayContains($registration->ID(), $REG_IDs);
             }
         }
     }
@@ -360,11 +360,11 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
         $REG_IDs       = $this->_admin_page->get_existing_reg_payment_REG_IDs($this->_payment);
         $registrations = $this->_transaction->registrations();
         // $15 payment should have applied $10 to first reg and $5 to second reg
-        $this->assertContains(reset($registrations)->ID(), $REG_IDs);
-        $this->assertContains(next($registrations)->ID(), $REG_IDs);
+        $this->assertArrayContains(reset($registrations)->ID(), $REG_IDs);
+        $this->assertArrayContains(next($registrations)->ID(), $REG_IDs);
         // and nothing to the last two registrations
-        $this->assertNotContains(next($registrations)->ID(), $REG_IDs);
-        $this->assertNotContains(next($registrations)->ID(), $REG_IDs);
+        $this->assertArrayDoesNotContain(next($registrations)->ID(), $REG_IDs);
+        $this->assertArrayDoesNotContain(next($registrations)->ID(), $REG_IDs);
     }
 
 

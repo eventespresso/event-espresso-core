@@ -111,7 +111,7 @@ class EE_Payment_Test extends EE_UnitTestCase{
 			'<form method="GET" name="gateway_form" action="' . $redirect_url . '">',
 			$html_form );
 		foreach( $redirect_args as $name => $value ) {
-			$this->assertContains(
+			$this->assertStringContainsString(
 				'<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>',
 				$html_form);
 		}
