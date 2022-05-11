@@ -43,6 +43,7 @@ class DateFilterHeaderTest extends TestCase
      */
     public function set_up()
     {
+        parent::set_up();
         $this->setUpDatetime();
     }
 
@@ -151,7 +152,7 @@ class DateFilterHeaderTest extends TestCase
      */
     public function testGetHeaderText()
     {
-        foreach ($this->testDataGenerator() as list($get_params, $event_text, $expected)) {
+        foreach ($this->testDataGenerator() as [$get_params, $event_text, $expected]) {
             $datetime_filter_header = $this->getDateFilterHeader($get_params);
             $header_text = $datetime_filter_header->getHeaderText($event_text);
             $this->assertEquals($expected, $header_text);
