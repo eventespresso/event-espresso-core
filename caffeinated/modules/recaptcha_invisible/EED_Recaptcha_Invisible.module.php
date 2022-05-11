@@ -245,7 +245,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws InvalidInterfaceException
      * @throws RuntimeException
      */
-    public static function receiveSpcoRegStepForm($req_data = array(), EE_Form_Section_Proper $reg_form)
+    public static function receiveSpcoRegStepForm($req_data, EE_Form_Section_Proper $reg_form)
     {
         // do nothing if form isn't for a reg step or test has already been passed
         if (! EED_Recaptcha_Invisible::processSpcoRegStepForm($reg_form)) {
@@ -278,7 +278,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws ReflectionException
      * @throws DomainException
      */
-    public static function ticketSelectorForm($html = '', EE_Event $event, $iframe = false)
+    public static function ticketSelectorForm($html, EE_Event $event, $iframe = false)
     {
         $recaptcha = RecaptchaFactory::create();
         // do nothing if test has  already  been passed
