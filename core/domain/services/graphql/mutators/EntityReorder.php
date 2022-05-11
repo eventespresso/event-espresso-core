@@ -49,23 +49,18 @@ class EntityReorder
                     esc_html__('Sorry, you do not have the required permissions to reorder entities', 'event_espresso')
                 );
             }
-
+            $ok = true;
+            // 'entities', 'entityGuids', 'entity_db_ids', 'entityType', 'keyPrefix'
             $details = EntityReorder::prepareEntityDetailsFromInput($input);
-
             $orderKey  = $details['keyPrefix'] . '_order'; // e.g. "TKT_order"
-
-            $ok = false;
 
             // We do not want to continue reorder if one fails.
             // Thus wrap whole loop in try-catch
             try {
-                foreach ($details['entityDbids'] as $order => $entityDbid) {
-                    $args = [
-                        $orderKey => $order + 1,
-                    ];
-                    $details['entities'][ $entityDbid ]->save($args);
+                foreach ($details['entity_db_ids'] as $order => $entityDbid) {
+                    $args = [ $orderKey => $order + 1 ];
+                    $ok = $details['entities'][ $entityDbid ]->save($args) ? $ok : false;
                 }
-                $ok = true;
             } catch (Exception $exception) {
                 new ExceptionStackTraceDisplay(
                     new RuntimeException(
@@ -87,6 +82,15 @@ class EntityReorder
 
     /**
      * Prepares entity details to use for mutations
+     * input might look something like:
+     *  {
+     *      'clientMutationId' => 'REORDER_ENTITIES',
+     *      'entityIds' => {
+     *          'RGF0ZXRpbWU6Mg==',
+     *          'RGF0ZXRpbWU6MQ==',
+     *      },
+     *      'entityType' => 'Datetime',
+     *  }
      *
      * @param array $input The input for the mutation
      * @return array
