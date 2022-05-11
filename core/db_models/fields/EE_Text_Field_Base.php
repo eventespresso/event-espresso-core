@@ -50,6 +50,6 @@ abstract class EE_Text_Field_Base extends EE_Model_Field_Base
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
-        return stripslashes(parent::prepare_for_set($value_inputted_for_field_on_model_object));
+        return stripslashes( (string) parent::prepare_for_set($value_inputted_for_field_on_model_object));
     }
 }
