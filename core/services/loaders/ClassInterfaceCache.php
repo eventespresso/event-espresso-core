@@ -37,7 +37,7 @@ class ClassInterfaceCache
     public function getFqn($fqn)
     {
         $fqn = $fqn instanceof FullyQualifiedName ? $fqn->string() : $fqn;
-        return ltrim($fqn, '\\');
+        return ltrim((string) $fqn, '\\');
     }
 
 

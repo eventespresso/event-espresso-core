@@ -904,9 +904,13 @@ class Cellmap
         $str .= Helpers::pre_r($arr, true);
 
         if (php_sapi_name() == "cli") {
-            $str = strip_tags(str_replace(array("<br/>", "<b>", "</b>"),
-                array("\n", chr(27) . "[01;33m", chr(27) . "[0m"),
-                $str));
+            $str = strip_tags(
+                str_replace(
+                    array("<br/>", "<b>", "</b>"),
+                    array("\n", chr(27) . "[01;33m", chr(27) . "[0m"),
+                    $str
+                )
+            );
         }
 
         return $str;

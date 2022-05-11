@@ -256,7 +256,7 @@ class Base
                           . EEH_Inflector::humanize($notice_type)
                           . '['
                           . $notice_code
-                          . ']' ] = strip_tags($sub_notice);
+                          . ']' ] = strip_tags((string)$sub_notice);
             }
         }
         return apply_filters(

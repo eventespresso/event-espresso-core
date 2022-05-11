@@ -62,7 +62,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     ) {
         $this->cookies = ! empty($cookies)
             ? $cookies
-            : filter_input_array(INPUT_COOKIE, FILTER_SANITIZE_STRING);
+            : filter_input_array(INPUT_COOKIE, FILTER_UNSAFE_RAW);
         $this->files          = ! empty($files) ? $files : $_FILES;
         $this->request_params = $request_params;
         $this->server_params  = $server_params;
