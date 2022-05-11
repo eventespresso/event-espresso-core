@@ -63,7 +63,7 @@ class ServerSanitizer
             case 'SERVER_ADMIN':
                 return filter_var($value, FILTER_SANITIZE_EMAIL);
             default:
-                return filter_var($value, FILTER_SANITIZE_STRING);
+                return filter_var($value, FILTER_UNSAFE_RAW);
         }
     }
 }
