@@ -115,11 +115,11 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                         <th class="txn-admin-payment-date-col jst-left">
                             <?php esc_html_e('Date', 'event_espresso');?>
                         </th>
-                        <th class='jst-cntr'>
-                            <?php esc_html_e('Amount', 'event_espresso'); ?>
-                        </th>
-                        <th class="jst-left">
+                        <th class='jst-left'>
                             <?php esc_html_e('Method', 'event_espresso'); ?>
+                        </th>
+                        <th class='jst-rght'>
+                            <?php esc_html_e('Amount', 'event_espresso'); ?>
                         </th>
                         <th class="jst-left">
                             <?php esc_html_e('Gateway Response', 'event_espresso'); ?>
@@ -133,7 +133,6 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                         <th class="jst-left">
                             <?php esc_html_e('Notes / Extra Accounting', 'event_espresso'); ?>
                         </th>
-                        <!--<th class="jst-left"><?php esc_html_e('Details', 'event_espresso'); ?></th>-->
                         <th class='jst-left'>
                             <?php esc_html_e('Actions', 'event_espresso'); ?>
                         </th>
@@ -171,6 +170,22 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                         <?php echo esc_html($payment->timestamp('Y-m-d', 'g:i a')); ?>
                                     </div>
                                 </td>
+                                <td class='payment-method-gateway-td jst-left'>
+                                    <span id="payment-method-<?php echo absint($PAY_ID); ?>">
+                                        <?php echo esc_html($payment->source()); ?>
+                                    </span>
+                                    <span class="ee-status--ignore">&raquo;</span>
+                                    <span id="payment-gateway-<?php echo absint($PAY_ID); ?>">
+                                        <?php echo($payment->payment_method() instanceof EE_Payment_Method
+                                            ? esc_html($payment->payment_method()->admin_name())
+                                            : esc_html__('Unknown', 'event_espresso')); ?>
+                                    </span>
+                                    <span id="payment-gateway-id-<?php echo absint($PAY_ID); ?>" class="hidden">
+                                        <?php echo($payment->payment_method() instanceof EE_Payment_Method
+                                            ? esc_html($payment->payment_method()->ID())
+                                            : 0); ?>
+                                    </span>
+                                </td>
                                 <td class=' jst-rght'>
                                     <?php
                                     $payment_class = $payment->amount() > 0
@@ -188,22 +203,6 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                         ); // already escaped
                                         ?>
                                         </span>
-                                    </span>
-                                </td>
-                                <td class="payment-method-gateway-td jst-left">
-                                    <span id="payment-method-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo esc_html($payment->source()); ?>
-                                    </span>
-                                    <span class="ee-status--ignore">&raquo;</span>
-                                    <span id="payment-gateway-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo ($payment->payment_method() instanceof EE_Payment_Method
-                                            ? esc_html($payment->payment_method()->admin_name())
-                                            : esc_html__("Unknown", 'event_espresso')); ?>
-                                    </span>
-                                    <span id="payment-gateway-id-<?php echo absint($PAY_ID); ?>" class="hidden">
-                                        <?php echo ($payment->payment_method() instanceof EE_Payment_Method
-                                            ? esc_html($payment->payment_method()->ID())
-                                            : 0); ?>
                                     </span>
                                 </td>
                                 <td class=" jst-left">
@@ -225,23 +224,6 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                     <div id="payment-accntng-<?php echo absint($PAY_ID); ?>">
                                         <?php echo esc_html($payment->extra_accntng()); ?>
                                     </div>
-                                </td>
-                                <td class=" jst-rght">
-                                    <?php
-                                    $payment_class = $payment->amount() > 0
-                                        ? 'txn-admin-payment-status-' . $payment->STS_ID()
-                                        : 'txn-admin-payment-status-PDC';
-                                    ?>
-                                    <span class="<?php echo esc_attr($payment_class); ?>">
-                                        <span id="payment-amount-<?php echo absint($PAY_ID); ?>" style="display:inline;">
-                                        <?php echo EEH_Template::format_currency(
-                                            $payment->amount(),
-                                            false,
-                                            false
-                                        ); // already escaped
-                                        ?>
-                                        </span>
-                                    </span>
                                 </td>
                                 <td class='jst-left'>
                                     <div class='txn-overview-actions ee-list-table-actions'>
@@ -474,8 +456,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                id="espresso_apply_payment_nonce"
                                value="<?php echo esc_attr(wp_create_nonce('espresso_apply_payment_nonce')); ?>"
                         />
-                        <!--<input type="hidden" name="espresso_ajax" id="espresso-ajax" value="0" />
-                        <input type="hidden" name="noheader" id="txn-admin-noheader-inp" value="0" />-->
+
                         <input type="hidden"
                                name="txn_admin_payment[PAY_ID]"
                                id="txn-admin-payment-payment-id-inp"
@@ -864,8 +845,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                id="espresso_delete_payment_nonce"
                                value="<?php echo esc_attr(wp_create_nonce('espresso_delete_payment_nonce')); ?>"
                         />
-                        <!--<input type="hidden" name="delete_espresso_ajax" id="delete-espresso-ajax" value="0" />-->
-                        <!--<input type="hidden" name="delete_noheader" id="delete-txn-admin-noheader-inp" value="0" />-->
+
                         <input type="hidden"
                                name="delete_txn_admin_payment[PAY_ID]"
                                id="delete-txn-admin-payment-payment-id-inp"
