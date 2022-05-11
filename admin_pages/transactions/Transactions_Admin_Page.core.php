@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * EE_Admin_Transactions class
@@ -131,7 +132,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             ],
 
             'espresso_delete_payment' => [
-                'func'       => 'delete_payment',
+                'func'       => [$this, 'delete_payment'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_payments',
             ],
@@ -1934,17 +1935,28 @@ class Transactions_Admin_Page extends EE_Admin_Page
     protected function _get_REG_IDs_to_apply_payment_to(EE_Payment $payment)
     {
         // grab array of IDs for specific registrations to apply changes to
-        $REG_IDs = $this->request->getRequestParam('txn_admin_payment[registrations]', [], 'int', true);
+        $apply_to_all = $this->request->getRequestParam(
+            'txn_admin_payment[apply_to_all_registrations]',
+            false,
+            DataType::BOOL
+        );
+        $REG_IDs = ! $apply_to_all
+            ? $this->request->getRequestParam(
+                'txn_admin_payment[registrations]',
+                [],
+                DataType::INT,
+                true
+            )
+            : [];
         // nothing specified ? then get all reg IDs
-        if (empty($REG_IDs)) {
+        if ($apply_to_all || empty($REG_IDs)) {
             $registrations = $payment->transaction()->registrations();
             $REG_IDs       = ! empty($registrations)
                 ? array_keys($registrations)
                 : $this->_get_existing_reg_payment_REG_IDs($payment);
         }
-
         // ensure that REG_IDs are integers and NOT strings
-        return array_map('intval', $REG_IDs);
+        return array_map('absint', $REG_IDs);
     }
 
 
@@ -2092,10 +2104,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _process_registration_status_change(EE_Transaction $transaction, $REG_IDs = [])
+    protected function _process_registration_status_change(EE_Transaction $transaction, $REG_IDs = [], $reg_status = '')
     {
         // first if there is no change in status then we get out.
-        $reg_status = $this->request->getRequestParam('txn_reg_status_change[reg_status]', 'NAN');
+        $reg_status = $reg_status ?: $this->request->getRequestParam('txn_reg_status_change[reg_status]', 'NAN');
         if ($reg_status === 'NAN') {
             // no error message, no change requested, just nothing to do man.
             return false;
@@ -2182,7 +2194,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     public function delete_payment()
     {
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $TXD_ID = $this->request->getRequestParam('delete_txn_admin_payment[TXN_ID]', 0, 'int');
         // $json_response_data = ['return_data' => false];
         $PAY_ID = $this->request->getRequestParam('delete_txn_admin_payment[PAY_ID]', 0, 'int');
@@ -2192,11 +2203,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'delete_payment_from_registration_details'
         );
         if ($PAY_ID && $can_delete) {
-            $delete_txn_reg_status_change = $this->request->getRequestParam(
-                'delete_txn_reg_status_change',
-                false,
-                'bool'
-            );
+            $delete_txn_reg_status_change = $this->request->getRequestParam('delete_txn_reg_status_change[reg_status]');
             $payment = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
             if ($payment instanceof EE_Payment) {
                 $amount = $payment->amount();
@@ -2205,11 +2212,12 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
                 if ($transaction_payments->delete_payment_and_update_transaction($payment)) {
                     if ($delete_txn_reg_status_change) {
-                        // MAKE sure we also add the delete_txn_req_status_change to the
-                        // request data because that's how messages will be looking for it.
-                        $this->request->setRequestParam('txn_reg_status_change', $delete_txn_reg_status_change);
                         $this->_maybe_send_notifications();
-                        $this->_process_registration_status_change($payment->transaction(), $REG_IDs);
+                        $this->_process_registration_status_change(
+                            $payment->transaction(),
+                            $REG_IDs,
+                            $delete_txn_reg_status_change
+                        );
                     }
                 }
             } else {
@@ -2246,7 +2254,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'action' => 'view_transaction',
             'TXN_ID' => $TXD_ID
         ];
-
         $this->_redirect_after_action(
             ! EE_Error::has_error(),
             $amount > 0

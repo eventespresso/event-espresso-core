@@ -520,3 +520,8 @@
 .ee-txn-reg-step-status-steps {
     flex-flow: row wrap !important;
 }
+
+
+.espresso-admin.wp-core-ui .txn-overview-actions.ee-list-table-actions {
+    padding: 0;
+}
