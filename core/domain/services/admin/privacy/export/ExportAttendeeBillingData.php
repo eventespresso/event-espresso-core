@@ -102,7 +102,7 @@ class ExportAttendeeBillingData implements PersonalDataExporterInterface
                         $input_display_name = $input_name;
                     }
                     $data[] = array(
-                        'name'  => strip_tags($input_display_name),
+                        'name'  => strip_tags((string)$input_display_name),
                         'value' => $display_value,
                     );
                 }

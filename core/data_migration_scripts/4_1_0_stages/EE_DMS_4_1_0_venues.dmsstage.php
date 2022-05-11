@@ -222,7 +222,7 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
         }
         // get a state with the same name, if possible
         try {
-            $state = $this->get_migration_script()->get_or_create_state(stripslashes($old_venue['state']), isset($country['CNT_name']) ? $country['CNT_name'] : strip_tags($old_venue['country']));
+            $state = $this->get_migration_script()->get_or_create_state(stripslashes($old_venue['state']), isset($country['CNT_name']) ? $country['CNT_name'] : strip_tags((string)$old_venue['country']));
             $state_id = $state['STA_ID'];
         } catch (EE_Error $e) {
             $this->add_error(sprintf(esc_html__("%s for venue %s", "event_espresso"), $e->getMessage(), $this->_json_encode($old_venue)));

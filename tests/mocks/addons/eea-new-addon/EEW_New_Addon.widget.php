@@ -96,7 +96,7 @@ class EEW_New_Addon extends WP_Widget {
 	 */
 	public function update( $new_instance, $instance ) {
 		// Strip tags (if needed) and update the widget settings.
-		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['title'] = strip_tags((string) $new_instance['title'] );
 		return $instance;
 	}
 
