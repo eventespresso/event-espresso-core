@@ -2,8 +2,8 @@
 
 namespace EventEspresso\core\services\assets;
 
-use EventEspresso\core\domain\DomainInterface;
 use EEH_DTT_Helper;
+use EventEspresso\core\domain\DomainInterface;
 
 /**
  * I18nRegistry
@@ -25,7 +25,7 @@ class I18nRegistry
      *
      * @var array
      */
-    private $registered_i18n = array();
+    private $registered_i18n = [];
 
 
     /**
@@ -33,14 +33,14 @@ class I18nRegistry
      *
      * @var array
      */
-    private $queued_handle_translations = array();
+    private $queued_handle_translations = [];
 
     /**
      * Used to track script handles queued for adding translation strings as inline data in the dom.
      *
      * @var array
      */
-    private $queued_scripts = array();
+    private $queued_scripts = [];
 
 
     /**
@@ -64,7 +64,7 @@ class I18nRegistry
     {
         $this->domain = $domain;
         $this->setI18nMap($i18n_map);
-        add_filter('print_scripts_array', array($this, 'queueI18n'));
+        add_filter('print_scripts_array', [$this, 'queueI18n']);
     }
 
 
@@ -74,14 +74,13 @@ class I18nRegistry
      * @param string $handle The script handle reference.
      * @param string $domain The i18n domain for the strings.
      */
-    public function registerScriptI18n($handle, $domain = 'event_espresso')
+    public function registerScriptI18n(string $handle, string $domain = 'event_espresso')
     {
-        if(! isset($this->registered_i18n[$handle])) {
+        if (! isset($this->registered_i18n[ $handle ])) {
             $this->registered_i18n[ $handle ] = 1;
-            $this->queued_scripts[ $handle ] = $domain;
+            $this->queued_scripts[ $handle ]  = $domain;
         }
     }
-
 
 
     /**
@@ -90,7 +89,7 @@ class I18nRegistry
      * @param array $handles Array of registered script handles.
      * @return array
      */
-    public function queueI18n(array $handles)
+    public function queueI18n(array $handles): array
     {
         if (empty($this->queued_scripts)) {
             return $handles;
@@ -105,7 +104,7 @@ class I18nRegistry
                     $translations_for_domain['translations'],
                     $translations_for_domain['domain']
                 );
-                unset($this->queued_handle_translations[$handle]);
+                unset($this->queued_handle_translations[ $handle ]);
             }
         }
         return $handles;
@@ -120,10 +119,12 @@ class I18nRegistry
      * @param string $domain       Domain for translations.  If left empty then strings are registered with the default
      *                             domain for the javascript.
      */
-    protected function registerInlineScript($handle, array $translations, $domain)
+    protected function registerInlineScript(string $handle, array $translations, string $domain)
     {
-        $script = $domain ?
-            'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ', "' . $domain . '" );' :
+        $script = $domain
+            ?
+            'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ', "' . $domain . '" );'
+            :
             'eejs.i18n.setLocaleData( ' . wp_json_encode($translations) . ' );';
         wp_add_inline_script($handle, $script, 'before');
     }
@@ -134,18 +135,18 @@ class I18nRegistry
      *
      * @param string $handle The script handle being queued up.
      */
-    private function queueI18nTranslationsForHandle($handle)
+    private function queueI18nTranslationsForHandle(string $handle)
     {
-        if (isset($this->queued_scripts[$handle])) {
-            $domain = $this->queued_scripts[$handle];
+        if (isset($this->queued_scripts[ $handle ])) {
+            $domain       = $this->queued_scripts[ $handle ];
             $translations = $this->getJedLocaleDataForDomainAndChunk($handle, $domain);
             if (count($translations) > 0) {
-                $this->queued_handle_translations[$handle] = array(
+                $this->queued_handle_translations[ $handle ] = [
                     'domain'       => $domain,
                     'translations' => $translations,
-                );
+                ];
             }
-            unset($this->queued_scripts[$handle]);
+            unset($this->queued_scripts[ $handle ]);
         }
     }
 
@@ -162,10 +163,10 @@ class I18nRegistry
         if (empty($i18n_map)) {
             $i18n_map = file_exists($this->domain->pluginPath() . 'translation-map.json')
                 ? json_decode(
-                        file_get_contents($this->domain->pluginPath() . 'translation-map.json'),
-                        true
-                    )
-                : array();
+                    file_get_contents($this->domain->pluginPath() . 'translation-map.json'),
+                    true
+                )
+                : [];
         }
         $this->i18n_map = $i18n_map;
     }
@@ -178,12 +179,12 @@ class I18nRegistry
      * @param string $domain The i18n domain.
      * @return array
      */
-    protected function getJedLocaleDataForDomainAndChunk($handle, $domain)
+    protected function getJedLocaleDataForDomainAndChunk(string $handle, string $domain): array
     {
         $translations = $this->getJedLocaleData($domain);
         // get index for adding back after extracting strings for this $chunk.
-        $index = $translations[''];
-        $translations = $this->getLocaleDataMatchingMap(
+        $index            = $translations[''];
+        $translations     = $this->getLocaleDataMatchingMap(
             $this->getOriginalStringsForHandleFromMap($handle),
             $translations
         );
@@ -199,10 +200,10 @@ class I18nRegistry
      * @param array $translations Translation data to extra strings from.
      * @return array
      */
-    protected function getLocaleDataMatchingMap(array $string_set, array $translations)
+    protected function getLocaleDataMatchingMap(array $string_set, array $translations): array
     {
         if (empty($string_set)) {
-            return array();
+            return [];
         }
         // some strings with quotes in them will break on the array_flip, so making sure quotes in the string are
         // slashed also filter falsey values.
@@ -217,35 +218,35 @@ class I18nRegistry
      * @param string $handle The script handle name to get strings from the map for.
      * @return array
      */
-    protected function getOriginalStringsForHandleFromMap($handle)
+    protected function getOriginalStringsForHandleFromMap(string $handle): array
     {
-        return isset($this->i18n_map[$handle]) ? $this->i18n_map[$handle] : array();
+        return $this->i18n_map[ $handle ] ?? [];
     }
 
 
     /**
      * Returns Jed-formatted localization data.
      *
-     * @param  string $domain Translation domain.
+     * @param string $domain Translation domain.
      * @return array
      */
-    private function getJedLocaleData($domain)
+    private function getJedLocaleData(string $domain): array
     {
         $translations = get_translations_for_domain($domain);
 
-        $locale = array(
-            '' => array(
+        $locale = [
+            '' => [
                 'domain' => $domain,
-                'lang'   => is_admin() ? EEH_DTT_Helper::get_user_locale() : get_locale()
-            ),
-        );
+                'lang'   => is_admin() ? EEH_DTT_Helper::get_user_locale() : get_locale(),
+            ],
+        ];
 
         if (! empty($translations->headers['Plural-Forms'])) {
             $locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
         }
 
         foreach ($translations->entries as $msgid => $entry) {
-            $locale[$msgid] = $entry->translations;
+            $locale[ $msgid ] = $entry->translations;
         }
 
         return $locale;
