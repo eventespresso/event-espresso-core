@@ -24,9 +24,9 @@ class CoreLoaderTest extends EE_UnitTestCase
 
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->loader = new CoreLoader(EE_Registry::instance());
     }
 

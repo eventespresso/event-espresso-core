@@ -30,8 +30,8 @@ class EEM_WP_User_Caps_Test extends EE_UnitTestCase{
 	 */
 	public $somebody_else;
 
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		//clean out hte WP User table for these tests
 		EEM_WP_User::instance()->delete( array(), false );
 		$this->me = $this->factory->user->create_and_get();

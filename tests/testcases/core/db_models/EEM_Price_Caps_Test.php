@@ -87,8 +87,8 @@ class EEM_Price_Caps_Test extends EE_UnitTestCase{
 	 * @var EE_Event
 	 */
 	public $e_private;
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		//let's make sure we start off with NO tickets in the DB
 		EEM_Price::instance()->delete_permanently( EEM_Price::instance()->alter_query_params_so_deleted_and_undeleted_items_included(), false );
 		$this->assertEquals( 0, EEM_Price::instance()->count( EEM_Price::instance()->alter_query_params_so_deleted_and_undeleted_items_included() ) );

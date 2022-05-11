@@ -80,8 +80,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     /**
      * @dataProvider invalidTimestampDataProvider
-     * @expectedException EventEspresso\core\libraries\rest_api\RestException
-     * @expectedExceptionCode 400
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -91,6 +89,8 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function testIncomingInvalidTimestamp($timestamp, $timezone)
     {
+        $this->expectExceptionCode(400);
+        $this->expectException(EventEspresso\core\libraries\rest_api\RestException::class);
         ModelDataTranslator::prepareFieldValueFromJson(
             new EE_Datetime_Field(
                 'post_date',
@@ -344,14 +344,13 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     /**
      * @dataProvider dataProviderForTestPrepareFieldValueFromJsonBad
-     * @expectedException EventEspresso\core\libraries\rest_api\RestException
-     * @param mixed $expected_result
      * @param mixed $inputted_json_value
      * @param EE_Model_Field_Base $field_obj
      * @group 9222
      */
     public function testPrepareFieldValueFromJsonBad($inputted_json_value, EE_Model_Field_Base $field_obj)
     {
+        $this->expectException(EventEspresso\core\libraries\rest_api\RestException::class);
         //ok duck and cover! It's gonna blow!
         ModelDataTranslator::prepareFieldValueFromJson($field_obj, $inputted_json_value, '4.8.36');
     }
@@ -741,10 +740,10 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @param boolean $writing
      * @group        9222
      * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsBad
-     * @expectedException EventEspresso\core\libraries\rest_api\RestException
      */
     public function testPrepareConditionsQueryParamsForModelsBad($input, $model_name, $writing)
     {
+        $this->expectException(EventEspresso\core\libraries\rest_api\RestException::class);
         $model = EE_Registry::instance()->load_model($model_name);
         //run for cover! it's going to error!
         ModelDataTranslator::prepareConditionsQueryParamsForModels(

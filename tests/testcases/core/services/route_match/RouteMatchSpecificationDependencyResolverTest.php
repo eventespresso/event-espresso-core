@@ -38,7 +38,7 @@ class RouteMatchSpecificationDependencyResolverTest extends PHPUnit_Framework_Te
      * @throws \ReflectionException
      * @throws \PHPUnit\Framework\AssertionFailedError
      */
-    protected function setUp()
+    protected function set_up()
     {
         $this->loader = LoaderFactory::getLoader();
         $this->dependency_map = $this->loader->getShared('EE_Dependency_Map');

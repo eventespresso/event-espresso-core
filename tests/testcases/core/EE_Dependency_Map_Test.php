@@ -18,15 +18,15 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 	protected $_dependency_map;
 
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->_dependency_map = EE_Dependency_Map::instance();
 	}
 
 
-	public function tearDown() {
+	public function tear_down() {
 		$this->_dependency_map->reset();
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 

@@ -21,8 +21,8 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 	protected $_validator = null;
 
 
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		$this->_validator = new EE_Email_Validation_Strategy();
 		//finalize its construction, but we don't actually need the input anyways
 		$this->_validator->_construct_finalize( new EE_Email_Input() );

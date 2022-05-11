@@ -29,7 +29,7 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \InvalidArgumentException
      */
-    protected function setUp()
+    protected function set_up()
     {
         $this->loader = LoaderFactory::getLoader();
     }

@@ -25,8 +25,8 @@ class EE_Payment_Processor_With_Messages_Test extends EE_Payment_Processor_Test{
 	 * unit tests inherited from parent
 	 */
 
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		$this->_pretend_addon_hook_time();
 		EE_Register_Payment_Method::register('onsite', array(
 			'payment_method_paths'=>array(
@@ -44,10 +44,10 @@ class EE_Payment_Processor_With_Messages_Test extends EE_Payment_Processor_Test{
 		//and so we want to leave messages hooks in-place
 
 	}
-	public function tearDown(){
+	public function tear_down(){
 		EE_Register_Payment_Method::deregister( 'onsite' );
 		EE_Register_Payment_Method::deregister( 'offsite' );
-		parent::tearDown();
+		parent::tear_down();
 	}
 }
 

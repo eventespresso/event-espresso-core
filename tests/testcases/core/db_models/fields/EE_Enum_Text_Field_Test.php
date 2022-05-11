@@ -23,9 +23,9 @@ class EE_Enum_Text_Field_Test extends EE_UnitTestCase
 
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_an_enum_field = new EE_Enum_Text_Field(
             'A_field',
             'some field',

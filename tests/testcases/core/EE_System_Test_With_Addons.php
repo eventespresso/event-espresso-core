@@ -96,9 +96,9 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      * @throws DomainException
      * @throws ReflectionException
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_table_analysis = new TableAnalysis();
         $this->_table_manager  = new TableManager($this->_table_analysis);
         $this->_pretend_addon_hook_time();
@@ -146,7 +146,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         //if somehow $this->_addon isn't set, we don't need to worry about deregistering it right?
         if ($this->_addon instanceof EE_Addon) {
@@ -173,7 +173,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
             // because each subsequent test expects them to be gone
             $this->_table_manager->dropTables($this->_temp_tables_added_by_addon);
         }
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

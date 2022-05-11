@@ -27,8 +27,8 @@ class EE_Form_Section_Base__find_section_from_path_Test extends EE_UnitTestCase{
 	protected $_aunt_section;
 	protected $_cousin_section;
 	
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->_child_section = new EE_Text_Input();
 		$this->_sibling_section = new EE_Text_Input();
 		$this->_parent_section = new EE_Form_Section_Proper( 

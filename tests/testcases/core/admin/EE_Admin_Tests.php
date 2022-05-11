@@ -222,7 +222,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		$generated_items = EE_Admin::instance()->dashboard_glance_items( array() );
 		//first assert the elements are an array.
-		$this->assertInternalType('array', $generated_items);
+		$this->assertIsArray( $generated_items);
 
 		//assert the count for the array is two
 		$this->assertCount(
@@ -264,23 +264,22 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	}
 
 
-
-
-	/**
-	 * Test the powered by Event Espresso footer.
-	 *
-	 * @since 4.3.0
-	 * @depends test_loading_admin
-	 */
+    /**
+     * Test the powered by Event Espresso footer.
+     *
+     * @throws EE_Error
+     * @since   4.3.0
+     * @depends test_loading_admin
+     */
 	public function test_espresso_admin_footer() {
 	    // simulate being on admin page.  For the purpose of this test it doesn't matter what admin page it is.
         // we don't want modules or shortcodes loading for this test so let's unset that.
         set_current_screen('user-new');
 		$actual = EE_Admin::instance()->espresso_admin_footer();
 		//assert contains powered by text.
-		$this->assertContains('Online event registration and ticketing powered by ', $actual);
+		$this->assertStringContainsString('Online event registration and ticketing powered by ', $actual);
 		//assert contains eventespresso.com link
-		$this->assertContains('https://eventespresso.com/', $actual);
+		$this->$this->assertStringContainsString('https://eventespresso.com/', $actual);
 		global $current_screen;
 		$current_screen = null;
 	}

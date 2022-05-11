@@ -43,9 +43,9 @@ class RegisterCustomTaxonomiesTest extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->custom_taxonomies          = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions'
         );

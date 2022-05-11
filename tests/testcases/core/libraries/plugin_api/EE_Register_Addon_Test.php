@@ -52,9 +52,9 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
 
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         add_filter(
             'FHEE__EEH_Activation__create_table__short_circuit',
             array($this, 'dont_short_circuit_new_addon_table'),
@@ -330,7 +330,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
 
 
 
-    public function tearDown()
+    public function tear_down()
     {
         if (isset($this->_addon_name, EE_Registry::instance()->addons->EE_New_Addon)) {
             $main_file_path_before_deregistration = EE_Registry::instance()
@@ -356,7 +356,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         $this->_stop_pretending_addon_hook_time();
         $this->_stop_pretending_after_plugin_activation();
         remove_all_filters('AHEE__EE_System__load_espresso_addons');
-        parent::tearDown();
+        parent::tear_down();
     }
 
     /**
@@ -371,7 +371,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     //		EE_New_Addon::register_addon();
     //		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
     //
-    //		//and then it should be torn down by tearDown()
+    //		//and then it should be torn down by tear_down()
     //	}
     protected function _stop_pretending_after_plugin_activation()
     {

@@ -20,9 +20,9 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase
     protected $payment_method_manager;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_pmt_args = array(
             'payment_method_paths' =>
                 array(
@@ -34,9 +34,9 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         $this->_pmt_args = null;
         $this->_pmt_name = null;
         $this->payment_method_manager = null;

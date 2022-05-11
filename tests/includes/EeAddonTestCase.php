@@ -61,9 +61,9 @@ class EeAddonTestCase extends EE_UnitTestCase
 
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         require_once EE_TESTS_DIR . 'mocks/addons/EE_NewAddonMock.class.php';
         $this->pretendAddonHookTime();
         $this->registerAddon();
@@ -74,7 +74,7 @@ class EeAddonTestCase extends EE_UnitTestCase
 
 
 
-    public function tearDown()
+    public function tear_down()
     {
         //only need to reset if $this->_addon isn't set
         if ($this->addon instanceof EE_Addon) {
@@ -90,7 +90,7 @@ class EeAddonTestCase extends EE_UnitTestCase
             }
             $this->stopPretendingAddonHookTime();
         }
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

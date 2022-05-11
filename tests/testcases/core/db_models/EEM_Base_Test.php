@@ -408,13 +408,13 @@ class EEM_Base_Test extends EE_UnitTestCase
         EEM_Datetime::reset();
         //first test default field setup
         $formats = EEM_Datetime::instance()->get_formats_for('DTT_EVT_start');
-        $this->assertContains('F j, Y', $formats);
-        $this->assertContains('g:i a', $formats);
+        $this->$this->assertStringContainsString('F j, Y', $formats);
+        $this->$this->assertStringContainsString('g:i a', $formats);
         //test values on EE_Datetime_Field after EE_Datetime instantiation.
         $this->factory->datetime->create(array('formats' => array('Y-m-d', 'H:i:s')));
         $test_formats = EEM_Datetime::instance()->get_formats_for('DTT_EVT_start');
-        $this->assertContains('Y-m-d', $test_formats);
-        $this->assertContains('H:i:s', $test_formats);
+        $this->$this->assertStringContainsString('Y-m-d', $test_formats);
+        $this->$this->assertStringContainsString('H:i:s', $test_formats);
     }
 
 

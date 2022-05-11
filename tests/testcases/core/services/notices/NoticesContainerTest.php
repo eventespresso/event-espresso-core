@@ -24,9 +24,9 @@ class NoticesContainerTest extends EE_UnitTestCase
     private $notices_container;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->notices_container = new NoticesContainer();
     }
 

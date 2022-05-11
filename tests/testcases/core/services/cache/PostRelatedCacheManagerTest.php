@@ -27,9 +27,9 @@ class PostRelatedCacheManagerTest extends EE_UnitTestCase
 
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->cache_manager = new PostRelatedCacheManagerMock(
             new CacheStorageMock()
         );

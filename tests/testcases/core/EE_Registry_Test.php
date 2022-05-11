@@ -24,7 +24,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
-    public function setUp() {
+    public function set_up() {
 		add_filter(
 			'FHEE__EE_Registry____construct___class_abbreviations',
 			array( $this, 'unit_test_registry_class_abbreviations' )
@@ -55,7 +55,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
             $loader->getShared('EventEspresso\core\services\loaders\ObjectIdentifier')
         );
 		EE_Registry_Mock::instance()->initialize();
-		parent::setUp();
+		parent::set_up();
 	}
 
 

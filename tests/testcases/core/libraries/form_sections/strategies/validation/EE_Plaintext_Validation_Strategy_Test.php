@@ -19,8 +19,8 @@ class EE_Plaintext_Validation_Strategy_Test extends EE_UnitTestCase{
 	 * @var EE_Validation_Strategy_Base
 	 */
 	protected $_validator = null;
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		$this->_validator = new EE_Plaintext_Validation_Strategy();
 		$input = new EE_Text_Input();
 		//finalize its construction, but we don't actually need the input anyways

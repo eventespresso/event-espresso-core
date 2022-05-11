@@ -37,9 +37,9 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
      */
     protected $_meta_caps_before_registering_new_ones = array();
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $capabilities_array                         = array(
             'administrator' => array(
                 'test_reads',
@@ -395,9 +395,9 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
             array($this, '_verify_new_meta_cap_ok_after_deregister'), 200);
     }
 
-    public function tearDown()
+    public function tear_down()
     {
         EE_Register_Capabilities::deregister('Test_Capabilities');
-        parent::tearDown();
+        parent::tear_down();
     }
 }

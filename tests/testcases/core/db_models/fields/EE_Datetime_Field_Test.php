@@ -45,9 +45,9 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase
     protected $_defaultDTT;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->loadModelFieldMocks(array('EE_Datetime_Field'));
     }
 
@@ -295,12 +295,16 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase
      * invalid DateTime object on a non-nullable field and WP_DEBUG is true.
      *
      * @since                       4.7.0
-     * @expectedException    EE_Error
-     * @expectedExceptionMessage    EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value
+     *
+     *
      *                              for the $DateTime argument because the Start Date field is not nullable.
      */
     public function test_prepare_for_display_with_exception()
     {
+        $this->expectExceptionMessage(
+            'EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the Start Date field is not nullable.'
+        );
+        $this->expectException(EE_Error::class);
         $this->_set_dtt_field_object();
         if (defined('WP_DEBUG') && ! WP_DEBUG) {
             $this->markTestSkipped('Unable to complete test because WP_DEBUG is already defined and is set to false');

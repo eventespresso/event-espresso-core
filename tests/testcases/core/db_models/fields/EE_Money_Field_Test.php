@@ -20,18 +20,18 @@ class EE_Money_Field_Test extends EE_UnitTestCase
      */
     protected $_field;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_field = EEM_Price::instance()->field_settings_for('PRC_amount');
         $this->assertInstanceOf('EE_Money_Field', $this->_field);
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         $this->_field = null;
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

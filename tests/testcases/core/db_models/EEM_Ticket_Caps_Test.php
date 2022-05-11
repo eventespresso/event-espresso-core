@@ -69,8 +69,8 @@ class EEM_Ticket_Caps_Test extends EE_UnitTestCase{
 	 * @var EE_Event
 	 */
 	public $e_private;
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		//let's make sure we start off with NO tickets in the DB
 		EEM_Ticket::instance()->delete_permanently( EEM_Ticket::instance()->alter_query_params_so_deleted_and_undeleted_items_included(), false );
 		$this->assertEquals( 0, EEM_Ticket::instance()->count( EEM_Ticket::instance()->alter_query_params_so_deleted_and_undeleted_items_included() ) );

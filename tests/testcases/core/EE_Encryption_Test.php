@@ -33,9 +33,9 @@ class EE_Encryption_Test extends EE_UnitTestCase
     /**
      * @throws EE_Error
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         require_once EE_TESTS_DIR . 'mocks/core/EE_Encryption_Mock.php';
         $this->encryption = EE_Encryption_Mock::instance();
         $this->rdg = new RandomDataGenerator();

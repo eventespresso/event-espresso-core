@@ -29,9 +29,9 @@ class EE_Capabilities_Test extends EE_UnitTestCase
 
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->CAPS = EE_Registry::instance()->CAP;
     }
 

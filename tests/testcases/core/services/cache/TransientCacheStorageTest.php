@@ -25,7 +25,7 @@ class TransientCacheStorageTest extends EE_UnitTestCase
 
 
 
-    public function setUp()
+    public function set_up()
     {
         // we only want our expirations to be 1 second in the future
         add_filter(
@@ -37,14 +37,14 @@ class TransientCacheStorageTest extends EE_UnitTestCase
             2
         );
         $this->cache_storage = new \EventEspresso\core\services\cache\TransientCacheStorage();
-        parent::setUp();
+        parent::set_up();
     }
 
 
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         $this->cache_storage = null;
     }
 

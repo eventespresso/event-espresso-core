@@ -20,18 +20,18 @@ class EE_Trashed_Flag_Field_Test extends EE_UnitTestCase
      */
     protected $_field;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_field = EEM_Registration::instance()->field_settings_for('REG_deleted');
         $this->assertInstanceOf('EE_Trashed_Flag_Field', $this->_field);
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         $this->_field = null;
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

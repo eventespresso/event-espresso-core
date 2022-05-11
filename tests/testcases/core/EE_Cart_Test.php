@@ -29,8 +29,8 @@ class EE_Cart_Test extends EE_UnitTestCase{
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
-    public function setUp(){
-		parent::setUp();
+    public function set_up(){
+		parent::set_up();
 		require_once EE_TESTS_DIR . 'mocks/core/EE_Session_Mock.core.php';
 		$this->_session = LoaderFactory::getLoader()->getShared('EE_Session_Mock');
         EE_Cart::reset( null, $this->_session );

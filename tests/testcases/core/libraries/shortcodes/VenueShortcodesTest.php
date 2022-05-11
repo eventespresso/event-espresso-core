@@ -21,16 +21,16 @@ class VenueShortcodesTest extends EE_UnitTestCase
     protected $parser;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->parser = new EE_Venue_Shortcodes();
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         $this->parser = null;
     }
 

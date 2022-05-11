@@ -37,7 +37,7 @@ class CachingLoaderTest extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function setUp()
+    public function set_up()
     {
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
         //caching is turned off by default in the parent test case.  For tests in here where we're doing a number of
@@ -49,7 +49,7 @@ class CachingLoaderTest extends EE_UnitTestCase
                 new ObjectIdentifier(new ClassInterfaceCache())
             );
         }
-        parent::setUp();
+        parent::set_up();
     }
 
 

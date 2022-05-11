@@ -58,9 +58,9 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
     protected $_parse_shortcodes_helper_mock;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
 
         //all shortcode parse tests will require a full event to be setup with some datetimes and tickets.
         $price         = $this->factory->price_chained->create_object(array(
@@ -278,13 +278,13 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
         //now that we have parsed let's test the results, note for the purpose of this test we are verifying transaction shortcodes and ticket shortcodes.
 
         //testing [PRIMARY_REGISTRANT_FNAME], [PRIMARY_REGISTRANT_LNAME]
-        $this->assertContains('Luke Skywalker', $parsed);
+        $this->$this->assertStringContainsString('Luke Skywalker', $parsed);
 
         //testing [PAYMENT_STATUS]
-        $this->assertContains('Incomplete', $parsed);
+        $this->$this->assertStringContainsString('Incomplete', $parsed);
 
         //testing [TXN_ID]
-        $this->assertContains('999999', $parsed);
+        $this->$this->assertStringContainsString('999999', $parsed);
 
         //testing [TOTAL_COST] and [AMOUNT_DUE]  (should be $125*3 + 20 shipping charge + taxes)
         $total_cost = EEH_Template::format_currency('398.00');
@@ -298,10 +298,10 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
 
 
         //testing [TICKET_NAME]
-        $this->assertContains('Podracing Entry', $parsed);
+        $this->$this->assertStringContainsString('Podracing Entry', $parsed);
 
         //testing [TICKET_DESCRIPTION]
-        $this->assertContains('One entry in the event.', $parsed);
+        $this->$this->assertStringContainsString('One entry in the event.', $parsed);
 
         //testing [TICKET_PRICE]
         $this->assertContains(EEH_Template::format_currency('125.00'), $parsed);
@@ -331,7 +331,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
         $parsed = $this->_get_parsed_content('html', 'receipt', 'content', 'purchaser');
 
         //testing [PAYMENT_GATEWAY]
-        $this->assertContains('Invoice', $parsed);
+        $this->$this->assertStringContainsString('Invoice', $parsed);
     }
 
 
