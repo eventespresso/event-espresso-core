@@ -77,7 +77,7 @@ class EE_Non_Zero_Line_Item_Filter_Test extends EE_UnitTestCase{
 		$filter->process( $subtotal );
 		$filtered_children = $subtotal->children();
 		$this->assertArrayContains( $tktli1, $filtered_children );
-		$this->assertArrayDoesNotContain(( $tktli2, $filtered_children );
+		$this->assertArrayDoesNotContain( $tktli2, $filtered_children );
 		$this->assertArrayContains( $non_tkt_li, $filtered_children );
 		$this->assertArrayContains( $discount, $filtered_children );
 	}
