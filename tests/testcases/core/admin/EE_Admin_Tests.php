@@ -279,7 +279,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		//assert contains powered by text.
 		$this->assertStringContainsString('Online event registration and ticketing powered by ', $actual);
 		//assert contains eventespresso.com link
-		$this->$this->assertStringContainsString('https://eventespresso.com/', $actual);
+		$this->assertStringContainsString('https://eventespresso.com/', $actual);
 		global $current_screen;
 		$current_screen = null;
 	}

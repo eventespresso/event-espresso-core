@@ -584,7 +584,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $this->assertCount(2, $where[0]);
         $this->assertArrayHasKey('REG_date', $where[0]);
         $this->assertCount(2, $where[0]['REG_date']);
-        $this->$this->assertStringContainsString('BETWEEN', $where[0]['REG_date']);
+        $this->assertStringContainsString('BETWEEN', $where[0]['REG_date']);
         $this->assertInstanceOf('Datetime', $where[0]['REG_date'][1][0]);
         $this->assertInstanceOf('Datetime', $where[0]['REG_date'][1][1]);
         /** @var EventEspresso\core\domain\entities\DbSafeDateTime $actual_start_date */
