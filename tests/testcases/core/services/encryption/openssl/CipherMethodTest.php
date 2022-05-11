@@ -39,18 +39,18 @@ class CipherMethodTest extends TestCase
     protected $rdg;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->setUpDependencies();
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         $this->cmm = null;
         $this->rdg = null;
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

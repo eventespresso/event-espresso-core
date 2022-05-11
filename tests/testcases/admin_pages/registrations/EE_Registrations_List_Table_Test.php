@@ -23,8 +23,8 @@ class EE_Registrations_List_Table_Test extends EE_UnitTestCase {
 	protected $_mock;
 
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->loadAdminMocks();
 	}
 

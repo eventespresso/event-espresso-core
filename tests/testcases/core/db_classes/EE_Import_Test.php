@@ -397,8 +397,8 @@ class EE_Import_Test extends EE_UnitTestCase {
 //		//check
 //	}
 
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		EE_Import::reset();
 	}
 	protected function _assertNoImportErrors(){

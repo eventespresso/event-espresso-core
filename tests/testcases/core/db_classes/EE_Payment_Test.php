@@ -81,12 +81,12 @@ class EE_Payment_Test extends EE_UnitTestCase{
 		$redirect_args = array( 'arg1' => 'a', 'arg2' => 'b' );
 		$p = $this->new_model_obj_with_dependencies( 'Payment', array( 'PAY_redirect_url' => $redirect_url, 'PAY_redirect_args' => $redirect_args ) );
 		$html_form = $p->redirect_form();
-		$this->assertContains(
+		$this->assertStringContainsString(
 			'<form method="POST" name="gateway_form" action="' . $redirect_url . '">',
 			$html_form
 		);
 		foreach( $redirect_args as $name => $value ) {
-			$this->assertContains(
+			$this->assertStringContainsString(
 				'<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>',
 				$html_form
 			);
@@ -107,7 +107,7 @@ class EE_Payment_Test extends EE_UnitTestCase{
 			)
 		);
 		$html_form = $p->redirect_form();
-		$this->assertContains(
+		$this->assertStringContainsString(
 			'<form method="GET" name="gateway_form" action="' . $redirect_url . '">',
 			$html_form );
 		foreach( $redirect_args as $name => $value ) {

@@ -45,7 +45,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \InvalidArgumentException
      */
-    protected function setUp()
+    protected function set_up()
     {
         $this->loader = LoaderFactory::getLoader();
         $this->request_params = array(

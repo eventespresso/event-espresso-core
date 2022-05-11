@@ -15,7 +15,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EEH_Line_Item_Test extends EE_UnitTestCase{
 
-	static function setUpBeforeClass() {
+	static function set_up_before_class() {
 	}
 
 	public function test_get_items_subtotal(){

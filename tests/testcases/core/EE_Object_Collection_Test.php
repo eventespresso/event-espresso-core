@@ -17,8 +17,8 @@ class EE_Object_Collection_Test extends EE_UnitTestCase {
 	 */
 	protected $collection;
 
-	public function setUp() {
-        parent::setUp();
+	public function set_up() {
+        parent::set_up();
 		require_once EE_TESTS_DIR . 'mocks/core/EE_Object_Collection_Mock.php';
 		$this->collection = new EE_Object_Collection_Mock();
 	}

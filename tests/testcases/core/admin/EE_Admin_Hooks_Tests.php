@@ -34,8 +34,8 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	/**
 	 * used to set the admin page mock
 	 */
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->loadAdminMocks();
 		$this->_eeAdminMock = new Admin_Mock_Valid_Admin_Page(false);
 

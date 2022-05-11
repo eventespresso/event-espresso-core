@@ -29,10 +29,10 @@ class LoaderTest extends EE_UnitTestCase
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
-    public function setUp()
+    public function set_up()
     {
         self::$loader = LoaderFactory::getLoader();
-        parent::setUp();
+        parent::set_up();
     }
 
 

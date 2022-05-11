@@ -60,24 +60,24 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * basically used for displaying the test case class while tests are running.
      * this can be helpful if you are getting weird errors happening,
      * but the test name is not being reported anywhere.
-     * Just uncomment this method as well as the first line of setUp() below.
+     * Just uncomment this method as well as the first line of set_up() below.
      *
      * @throws EE_Error
      */
-    // public static function setUpBeforeClass() {
+    // public static function set_up_before_class() {
     //     echo "\n\n\n" . get_called_class() . "\n\n";
-    //     parent::setUpBeforeClass();
+    //     parent::set_up_before_class();
     //     \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
     // }
 
-    // public static function tearDownAfterClass() {
+    // public static function tear_down_after_class() {
     //     // echo "\n\n\n" . get_called_class() . "\n\n";
     //     \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
-    //     parent::tearDownAfterClass();
+    //     parent::tear_down_after_class();
     // }
 
 
-    public function setUp()
+    public function set_up()
     {
         // echo "\n\n" . strtoupper($this->getName()) . '()';
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
@@ -90,7 +90,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             'wp_current_filter' => $wp_current_filter
         );
         $this->_orig_current_user = $current_user instanceof WP_User ? clone $current_user : new WP_User(1);
-        parent::setUp();
+        parent::set_up();
         $auto_made_thing_seed = 1;
         //reset wpdb's list of queries executed so it only stores those from the current test
         $wpdb->queries = array();
@@ -144,9 +144,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
     }
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $current_user;
         $wp_filter = $this->wp_filters_saved['wp_filter'];
         $wp_actions = $this->wp_filters_saved['wp_actions'];

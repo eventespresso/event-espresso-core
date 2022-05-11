@@ -13,8 +13,8 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @group                Line_Item_Filter
  */
 class EE_Line_Item_Filter_Processor_Test extends EE_UnitTestCase{
-	function setUp(){
-		parent::setUp();
+	function set_up(){
+		parent::set_up();
 		EEH_Autoloader::register_line_item_filter_autoloaders();
 	}
 	/**

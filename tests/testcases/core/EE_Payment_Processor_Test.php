@@ -15,8 +15,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class EE_Payment_Processor_Test extends EE_UnitTestCase {
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->_pretend_addon_hook_time();
 		EE_Register_Payment_Method::register(
 			'onsite',
@@ -44,10 +44,10 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 
 
 
-	public function tearDown() {
+	public function tear_down() {
 		EE_Register_Payment_Method::deregister( 'onsite' );
 		EE_Register_Payment_Method::deregister( 'offsite' );
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 

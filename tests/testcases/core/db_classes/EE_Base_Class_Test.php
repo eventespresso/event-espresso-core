@@ -20,9 +20,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     /**
      * @throws EE_Error
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         //register it for realz
         EE_Register_Model::register(
             'Mock',
@@ -34,20 +34,20 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         EE_Register_Model::deregister('Mock');
-        parent::tearDown();
+        parent::tear_down();
     }
 
-    static function setUpBeforeClass()
+    static function set_up_before_class()
     {
         //		EEH_Activation::create_table('esp_mock',
         //				"MCK_ID int(11) NOT NULL,
         //				PRIMARY KEY  (MCK_ID)");
         //		require_once(EE_TESTS_DIR.'mocks/core/db_models/EEM_Mock.model.php');
         //		require_once(EE_TESTS_DIR.'mocks/core/db_classes/EE_Mock.class.php');
-        parent::setUpBeforeClass();
+        parent::set_up_before_class();
     }
 
 

@@ -4,6 +4,10 @@ use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFilePathException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\assets\AssetCollection;
 use EventEspresso\core\services\assets\I18nRegistry;
 use EventEspresso\core\services\assets\Registry;
@@ -30,12 +34,12 @@ class RegistryTest extends EE_UnitTestCase
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidClassException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidFilePathException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidClassException
+     * @throws InvalidDataTypeException
+     * @throws InvalidFilePathException
+     * @throws InvalidInterfaceException
      */
-    public function setUp()
+    public function set_up()
     {
         add_filter('FHEE__EventEspresso_core_services_assets_Registry__debug', '__return_true');
         $domain = DomainFactory::getShared(
@@ -49,15 +53,15 @@ class RegistryTest extends EE_UnitTestCase
         );
         $this->registry = new Registry(
             new AssetCollection(),
-            new i18nRegistry($domain, [])
+            new I18nRegistry($domain)
         );
-        parent::setUp();
+        parent::set_up();
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         $this->registry = null;
     }
 
@@ -84,37 +88,34 @@ class RegistryTest extends EE_UnitTestCase
     }
 
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function test_addData_no_overwrite_array()
     {
+        $this->expectException(InvalidArgumentException::class);
         $this->registry->addData('test', array('initial_value'));
         $this->registry->addData('test', array('another_value'));
     }
 
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function test_addData_no_overwrite_scalar()
     {
+        $this->expectException(InvalidArgumentException::class);
         $this->registry->addData('test', 'initial_value');
         $this->registry->addData('test', 'cause_exception');
     }
 
 	/**
-     * @expectedException InvalidArgumentException
+     *
      * @group 10304
      */
     public function test_addTemplate_no_overwrite()
     {
+        $this->expectException(InvalidArgumentException::class);
         $this->registry->addTemplate('test', 'some_test_content');
         $this->registry->addTemplate('test', 'cause exception');
     }
 
 
-    public function pushDataWithArrayProvider()
+    public function pushDataWithArrayProvider(): array
     {
         return [
             'initial creation of dataset when it does not exist' => ['test', 'foo', ['foo']],
@@ -134,24 +135,22 @@ class RegistryTest extends EE_UnitTestCase
     public function testPushDataWithArrayAddingData()
     {
         foreach ($this->pushDataWithArrayProvider() as $test_description => $test_data) {
-            list($key, $value, $expected) = $test_data;
+            [$key, $value, $expected] = $test_data;
             $this->registry->pushData($key, $value);
             $this->assertEquals($expected, $this->registry->getData($key), $test_description);
         }
     }
 
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testPushDataExceptionWhenExistingDataIsScalar()
     {
+        $this->expectException(InvalidArgumentException::class);
         $this->registry->addData( 'test', 'foo' );
         $this->registry->pushData( 'test', 'bar' );
     }
 
 
-    public function pushDataWithAssociativeArrayProvider()
+    public function pushDataWithAssociativeArrayProvider(): array
     {
         return [
             'initial creation of dataset'           => ['test', ['a' => 'foo'], ['a' => 'foo']],
@@ -161,11 +160,11 @@ class RegistryTest extends EE_UnitTestCase
         ];
     }
 
-    
+
     public function testPushDataWithAssociativeArray()
     {
         foreach ($this->pushDataWithAssociativeArrayProvider() as $test_description => $test_data) {
-            list($key, $value, $expected) = $test_data;
+            [$key, $value, $expected] = $test_data;
             $this->registry->pushData($key, $value);
             $this->assertEquals($expected, $this->registry->getData($key), $test_description);
         }

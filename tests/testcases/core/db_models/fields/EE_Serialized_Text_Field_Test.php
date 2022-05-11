@@ -20,18 +20,18 @@ class EE_Serialized_Text_Field_Test extends EE_UnitTestCase
      */
     protected $_field;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_field = EEM_Transaction::instance()->field_settings_for('TXN_session_data');
         $this->assertInstanceOf('EE_Serialized_Text_Field', $this->_field);
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         $this->_field = null;
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

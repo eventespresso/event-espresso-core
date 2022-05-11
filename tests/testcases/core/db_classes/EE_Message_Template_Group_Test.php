@@ -19,9 +19,9 @@ class EE_Message_Template_Group_Test extends EE_UnitTestCase
      */
     private $message_template_group;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->message_template_group = EEM_Message_Template_Group::instance()->get_one(
             array(
                 array(
@@ -33,9 +33,9 @@ class EE_Message_Template_Group_Test extends EE_UnitTestCase
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         $this->message_template_group = null;
     }
 
@@ -53,11 +53,9 @@ class EE_Message_Template_Group_Test extends EE_UnitTestCase
     }
 
 
-    /**
-     * @expectedException EventEspresso\core\exceptions\InvalidIdentifierException
-     */
     public function testInvalidContextTemplateForIsContextActive()
     {
+        $this->expectException(EventEspresso\core\exceptions\InvalidIdentifierException::class);
         $this->message_template_group->is_context_active('bogus');
     }
 
@@ -80,20 +78,16 @@ class EE_Message_Template_Group_Test extends EE_UnitTestCase
     }
 
 
-    /**
-     * @expectedException EventEspresso\core\exceptions\InvalidIdentifierException
-     */
     public function testActivatingInvalidContext()
     {
+        $this->expectException(EventEspresso\core\exceptions\InvalidIdentifierException::class);
         $this->message_template_group->deactivate_context('bogus');
     }
 
 
-    /**
-     * @expectedException EventEspresso\core\exceptions\InvalidIdentifierException
-     */
     public function testDeactivatingInvalidContext()
     {
+        $this->expectException(EventEspresso\core\exceptions\InvalidIdentifierException::class);
         $this->message_template_group->activate_context('bogus');
     }
 }

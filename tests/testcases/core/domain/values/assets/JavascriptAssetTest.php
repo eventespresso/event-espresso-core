@@ -37,14 +37,14 @@ class JavascriptAssetTest extends PHPUnit_Framework_TestCase
      * @throws InvalidFilePathException
      * @throws InvalidArgumentException
      */
-    public function setUp()
+    public function set_up()
     {
         $this->domain_mock = new DomainMock();
         $this->js_asset = $this->getAsset();
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         $this->domain_mock = null;
         $this->js_asset = null;

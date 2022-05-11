@@ -28,13 +28,13 @@ class CommandHandlerManagerTest extends EE_UnitTestCase
     private $command_handler_manager;
 
 
-    public function setUp()
+    public function set_up()
     {
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\tests\testcases\core\services\commands\ExtendedCommandHandlerManager',
             array('EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,)
         );
-        parent::setUp();
+        parent::set_up();
         $this->command_handler_manager = EE_Registry::instance()->create(
             'EventEspresso\tests\testcases\core\services\commands\ExtendedCommandHandlerManager'
         );

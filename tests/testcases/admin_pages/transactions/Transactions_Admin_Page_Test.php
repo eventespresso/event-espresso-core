@@ -38,9 +38,9 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
     protected $_payment_method = null;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->delayedAdminPageMocks('transactions');
     }
 
