@@ -283,9 +283,9 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
         /** @type EE_Message $msg */
         $msg = $generated_queue->get_message_repository()->current();
         $this->assertInstanceOf('EE_Message', $msg);
-        $this->$this->assertStringContainsString('Registration Notification', $msg->content());
-        $this->$this->assertStringContainsString('Luke Skywalker', $msg->content());
-        $this->$this->assertStringContainsString('Test Scenario EVT A', $msg->content());
+        $this->assertStringContainsString('Registration Notification', $msg->content());
+        $this->assertStringContainsString('Luke Skywalker', $msg->content());
+        $this->assertStringContainsString('Test Scenario EVT A', $msg->content());
 
         //messages in queue should be saved - this is because the cc field for email messages is extra meta and when
         //that's added it saves the object to get an ID for the extra meta relation.

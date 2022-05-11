@@ -70,8 +70,7 @@ class AttendeeFilterHeaderTest extends TestCase
             'ATT_lname' => 'Rogers',
             'ATT_email' => 'shaggy@mysterymachine.com'
         ]);
-        $saved = $this->attendee->save();
-        $this->assertTrue($saved > 0);
+        $this->assertTrue($this->attendee->save() > 0);
     }
 
 
@@ -166,7 +165,7 @@ class AttendeeFilterHeaderTest extends TestCase
      */
     public function testGetHeaderText()
     {
-        foreach ($this->testDataGenerator() as list($get_params, $expected)) {
+        foreach ($this->testDataGenerator() as [$get_params, $expected]) {
             $this->assertInstanceOf('EE_Attendee', $this->attendee);
             $attendee_filter_header = $this->getAttendeeFilterHeader($get_params);
             $header_text = $attendee_filter_header->getHeaderText();
