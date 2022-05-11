@@ -58,9 +58,9 @@ class EE_Messages_Validator_Test extends EE_UnitTestCase {
 		$this->assertFalse( $this->_messagesValidatorMock->invalid_shortcodes( $string_with_valid_shortcodes, $valid_shortcodes_array ) );
 
 		//test invalid shortcodes
-		$this->assertContains( '[JUST_AN_INVALID*_]', $this->_messagesValidatorMock->invalid_shortcodes( $string_with_invalid_shortcodes, $valid_shortcodes_array ) );
-		$this->assertContains( '[THIS_ONE_* (that does have a bracket)]', $this->_messagesValidatorMock->invalid_shortcodes( $string_with_invalid_shortcodes, $valid_shortcodes_array ) );
-		$this->assertContains( '[JUST_A_PLAIN_INVALID_SHORTCODE]', $this->_messagesValidatorMock->invalid_shortcodes( $string_with_invalid_shortcodes, $valid_shortcodes_array ) );
-		$this->assertContains( '[SOMEWHAT_INVALID', $this->_messagesValidatorMock->invalid_shortcodes( $string_with_invalid_shortcodes, $valid_shortcodes_array ) );
+		$this->assertStringContainsString( '[JUST_AN_INVALID*_]', $this->_messagesValidatorMock->invalid_shortcodes( $string_with_invalid_shortcodes, $valid_shortcodes_array ) );
+		$this->assertStringContainsString( '[THIS_ONE_* (that does have a bracket)]', $this->_messagesValidatorMock->invalid_shortcodes( $string_with_invalid_shortcodes, $valid_shortcodes_array ) );
+		$this->assertStringContainsString( '[JUST_A_PLAIN_INVALID_SHORTCODE]', $this->_messagesValidatorMock->invalid_shortcodes( $string_with_invalid_shortcodes, $valid_shortcodes_array ) );
+		$this->assertStringContainsString( '[SOMEWHAT_INVALID', $this->_messagesValidatorMock->invalid_shortcodes( $string_with_invalid_shortcodes, $valid_shortcodes_array ) );
 	}
 }

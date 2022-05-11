@@ -161,7 +161,7 @@ class DependencyResolverTest extends PHPUnit_Framework_TestCase
         $DependencyResolver = $this->getDependencyResolver();
         $DependencyResolver->addNamespaceRoot($namespace_root);
         $namespace_roots = $DependencyResolver->getNamespaceRoots();
-        $this->assertContains($namespace_root, $namespace_roots);
+        $this->assertArrayContains($namespace_root, $namespace_roots);
         $key = array_search($namespace_root, $namespace_roots, true);
         $this->assertEquals($namespace_root, $namespace_roots[ $key ]);
     }

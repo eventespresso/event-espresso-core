@@ -76,10 +76,10 @@ class EE_Non_Zero_Line_Item_Filter_Test extends EE_UnitTestCase{
 		$filter = new EE_Non_Zero_Line_Item_Filter();
 		$filter->process( $subtotal );
 		$filtered_children = $subtotal->children();
-		$this->assertContains( $tktli1, $filtered_children );
-		$this->assertNotContains( $tktli2, $filtered_children );
-		$this->assertContains( $non_tkt_li, $filtered_children );
-		$this->assertContains( $discount, $filtered_children );
+		$this->assertArrayContains( $tktli1, $filtered_children );
+		$this->assertArrayDoesNotContain(( $tktli2, $filtered_children );
+		$this->assertArrayContains( $non_tkt_li, $filtered_children );
+		$this->assertArrayContains( $discount, $filtered_children );
 	}
 	/**
 	 */
@@ -143,8 +143,8 @@ class EE_Non_Zero_Line_Item_Filter_Test extends EE_UnitTestCase{
 		$filter = new EE_Non_Zero_Line_Item_Filter();
 		$filter->process( $total );
 		$totals_children = $total->children();
-		$this->assertContains( $subtotal_with_tkt, $totals_children );
-		$this->assertNotContains( $subtotal_without_tkt, $totals_children );
+		$this->assertArrayContains( $subtotal_with_tkt, $totals_children );
+		$this->assertArrayDoesNotContain( $subtotal_without_tkt, $totals_children );
 	}
 }
 
