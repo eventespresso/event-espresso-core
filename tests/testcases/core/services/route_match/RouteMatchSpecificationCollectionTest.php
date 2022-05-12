@@ -11,7 +11,7 @@ use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
 use EventEspresso\core\services\request\ServerParams;
 use EventEspresso\core\services\route_match\RouteMatchSpecificationCollection;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Oof;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class RouteMatchSpecificationCollectionTest
@@ -20,7 +20,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class RouteMatchSpecificationCollectionTest extends PHPUnit_Framework_TestCase
+class RouteMatchSpecificationCollectionTest extends TestCase
 {
     /**
      * @since 4.9.71.p

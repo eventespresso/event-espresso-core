@@ -4,7 +4,7 @@ namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * RouteMatchSpecificationTestBase
@@ -13,7 +13,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
+class RouteMatchSpecificationTestBase extends TestCase
 {
     /**
      * @since 4.9.71.p
