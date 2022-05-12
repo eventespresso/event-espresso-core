@@ -247,7 +247,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws UnexpectedEntityException
      * @throws EE_Error
      */
-    public static function validate_ticket_sale($qty = 1, EE_Ticket $ticket)
+    public static function validate_ticket_sale($qty, EE_Ticket $ticket)
     {
         $qty = absint($qty);
         if ($qty > 0) {
