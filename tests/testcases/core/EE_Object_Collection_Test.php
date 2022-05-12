@@ -29,12 +29,12 @@ class EE_Object_Collection_Test extends EE_UnitTestCase {
 		$this->assertCount( 0, $this->collection );
 		$this->collection->add( $ticket_1 );
 		$this->assertCount( 1, $this->collection );
-		$this->assertArrayContains( $ticket_1, $this->collection );
+		$this->assertTrue( $this->collection->has($ticket_1) );
 		// add ticket 2
 		$ticket_2 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'   => '6' ) );
 		$this->collection->add( $ticket_2 );
 		$this->assertCount( 2, $this->collection );
-		$this->assertArrayContains( $ticket_2, $this->collection );
+		$this->assertTrue( $this->collection->has($ticket_2) );
 	}
 
 	public function test_set_info() {
@@ -69,11 +69,11 @@ class EE_Object_Collection_Test extends EE_UnitTestCase {
 		$this->assertCount( 2, $this->collection );
 		// remove ticket 1
 		$this->collection->remove( $ticket_1 );
-		$this->assertArrayDoesNotContain( $ticket_1, $this->collection );
+		$this->assertFalse($this->collection->has($ticket_1));
 		$this->assertCount( 1, $this->collection );
 		// remove ticket 2
 		$this->collection->remove( $ticket_2 );
-		$this->assertArrayDoesNotContain( $ticket_2, $this->collection );
+		$this->assertFalse($this->collection->has($ticket_2));
 		$this->assertCount( 0, $this->collection );
 	}
 
@@ -86,7 +86,7 @@ class EE_Object_Collection_Test extends EE_UnitTestCase {
 		$this->collection->add( $ticket_3 );
 		$this->collection->rewind();
 		$this->collection->set_current( $ticket_3 );
-		$this->assertEquals( $this->collection->current()->name(), 'ticket-3' );
+		$this->assertEquals('ticket-3', $this->collection->current()->name());
 	}
 
 	public function test_set_current_by_info() {
