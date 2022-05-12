@@ -7,7 +7,7 @@ use EventEspresso\core\services\request\RequestParams;
 use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
 use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
 use EventEspresso\core\services\request\ServerParams;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 
 /**
@@ -18,7 +18,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  *
  */
-class RequestTest extends PHPUnit_Framework_TestCase
+class RequestTest extends TestCase
 {
 
     public function getParams(array $params = [])

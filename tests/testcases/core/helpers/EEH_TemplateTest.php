@@ -1,4 +1,7 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
+
 /**
  * Contains test class for /core/helpers/EEH_Template.helper.php
  *
@@ -18,7 +21,7 @@
  *
  *
  */
-class EEH_TemplateTest extends PHPUnit_Framework_TestCase {
+class EEH_TemplateTest extends TestCase {
 
     /**
      * @doesNotPerformAssertions
