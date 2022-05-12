@@ -1247,8 +1247,8 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:137
 	__( 'prices initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:72
-	__( 'reordering has been applied', 'event_espresso' ),
+	// Reference: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:63
+	__( 'order updated', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/constants.ts:24
 	__( 'datetime', 'event_espresso' ),
