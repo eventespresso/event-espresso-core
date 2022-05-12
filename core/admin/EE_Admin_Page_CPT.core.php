@@ -352,7 +352,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         // inject our Admin page nav tabs...
         // let's make sure the nav tabs are set if they aren't already
         // if ( empty( $this->_nav_tabs ) ) $this->_set_nav_tabs();
-        add_action('post_edit_form_tag', [$this, 'inject_nav_tabs']);
+        add_action('edit_form_top', [$this, 'inject_nav_tabs']);
         // modify the post_updated messages array
         add_action('post_updated_messages', [$this, 'post_update_messages'], 10);
         // add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE,
@@ -1346,14 +1346,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     public function inject_nav_tabs()
     {
-        // can we hijack and insert the nav_tabs?
-        $nav_tabs = $this->_get_main_nav_tabs();
-        // first close off existing form tag
-        $html = '>';
-        $html .= $nav_tabs;
-        // now let's handle the remaining tag ( missing ">" is CORRECT )
-        $html .= '<span></span';
-        echo wp_kses($html, AllowedTags::getWithFormTags());
+        echo wp_kses($this->_get_main_nav_tabs(), AllowedTags::getWithFormTags());
     }
 
 
