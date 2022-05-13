@@ -1,75 +1,17 @@
 const { merge } = require('webpack-merge');
-const WebpackAssetsManifest = require('webpack-assets-manifest');
-const path = require('path');
-const common = require('./webpack.common.js');
-const webpack = require('webpack');
-const miniExtract = require('mini-css-extract-plugin');
-const wpi18nExtractor = require('./bin/i18n-map-extractor.js');
-const assetsData = Object.create(null);
-const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extraction-webpack-plugin');
-const {
-	requestToExternal,
-	requestToHandle,
-} = require('./bin/asset-dependency-maps');
-const pluginsConfigWithExtraction = [
-	new webpack.DefinePlugin({
-		'process.env': {
-			NODE_ENV: JSON.stringify('production'),
-		},
-	}),
-	new wpi18nExtractor({
-		excludes: [
-			'eejs-core',
-			'eventespresso-vendor',
-			'eventespresso-core-css-default',
-		],
-	}),
-	new webpack.ProvidePlugin({
-		React: 'react',
-	}),
-	new DependencyExtractionWebpackPlugin({
-		requestToExternal,
-		requestToHandle,
-	}),
-	new WebpackAssetsManifest({
-		output: path.resolve(__dirname, 'assets/dist/build-manifest.json'),
-		assets: assetsData,
-	}),
-	new miniExtract({
-		filename: '[name].[contenthash].dist.css',
-	}),
-];
-const pluginsConfigWithoutExtraction = [
-	new webpack.DefinePlugin({
-		'process.env': {
-			NODE_ENV: JSON.stringify('production'),
-		},
-	}),
-	new wpi18nExtractor({
-		excludes: [
-			'eejs-core',
-			'eventespresso-vendor',
-			'eventespresso-core-css-default',
-		],
-	}),
-	new webpack.ProvidePlugin({
-		React: 'react',
-	}),
-	new WebpackAssetsManifest({
-		output: path.resolve(__dirname, 'assets/dist/build-manifest.json'),
-		assets: assetsData,
-	}),
-	new miniExtract({
-		filename: '[name].[contenthash].dist.css',
-	}),
-];
-common.forEach((config, index) => {
+const webpackConfig = require('./webpack.common.js');
+const pluginsConfig = require('./bin/plugins-config.js');
+
+webpackConfig.shared.forEach((config, index) => {
 	const plugins = config.entry['eventespresso-vendor']
-		? pluginsConfigWithoutExtraction
-		: pluginsConfigWithExtraction;
-	common[index] = merge(config, {
-		plugins,
-		mode: 'production',
-	});
+		? pluginsConfig.withoutExtraction
+		: pluginsConfig.withExtraction;
+	webpackConfig.shared[index] = merge(
+		config,
+		{
+			mode: 'production',
+			plugins,
+		}
+	);
 });
-module.exports = common;
+module.exports = webpackConfig.shared;
