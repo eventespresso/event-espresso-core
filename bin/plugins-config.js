@@ -29,70 +29,70 @@ const pluginsConfig = {
 	],
 
 	withoutExternals: [
-			new WebpackAssetsManifest({
-				output: buildManifestPath,
-				assets: assetsData,
-			}),
-			new webpack.ProvidePlugin({
-				React: 'react',
-			}),
-			new miniExtract({
-				filename: '[name].[contenthash].dist.css',
-			}),
+		new WebpackAssetsManifest({
+			output: buildManifestPath,
+			assets: assetsData,
+		}),
+		new webpack.ProvidePlugin({
+			React: 'react',
+		}),
+		new miniExtract({
+			filename: '[name].[contenthash].dist.css',
+		}),
 	],
 
 	withExtraction: [
-			new webpack.DefinePlugin({
-				'process.env': {
-					NODE_ENV: JSON.stringify('production'),
-				},
-			}),
-			new wpi18nExtractor({
-				excludes: [
-					'eejs-core',
-					'eventespresso-vendor',
-					'eventespresso-core-css-default',
-				],
-			}),
-			new webpack.ProvidePlugin({
-				React: 'react',
-			}),
-			new DependencyExtractionWebpackPlugin({
-				requestToExternal,
-				requestToHandle,
-			}),
-			new WebpackAssetsManifest({
-				output: buildManifestPath,
-				assets: assetsData,
-			}),
-			new miniExtract({
-				filename: '[name].[contenthash].dist.css',
-			}),
+		new webpack.DefinePlugin({
+			'process.env': {
+				NODE_ENV: JSON.stringify('production'),
+			},
+		}),
+		new wpi18nExtractor({
+			excludes: [
+				'eejs-core',
+				'eventespresso-vendor',
+				'eventespresso-core-css-default',
+			],
+		}),
+		new webpack.ProvidePlugin({
+			React: 'react',
+		}),
+		new DependencyExtractionWebpackPlugin({
+			requestToExternal,
+			requestToHandle,
+		}),
+		new WebpackAssetsManifest({
+			output: buildManifestPath,
+			assets: assetsData,
+		}),
+		new miniExtract({
+			filename: '[name].[contenthash].dist.css',
+		}),
 	],
 
 	withoutExtraction: [
-			new webpack.DefinePlugin({
-				'process.env': {
-					NODE_ENV: JSON.stringify('production'),
-				},
-			}),
-			new wpi18nExtractor({
-				excludes: [
-					'eejs-core',
-					'eventespresso-vendor',
-					'eventespresso-core-css-default',
-				],
-			}),
-			new webpack.ProvidePlugin({
-				React: 'react',
-			}),
-			new WebpackAssetsManifest({
-				output: buildManifestPath,
-				assets: assetsData,
-			}),
-			new miniExtract({
-				filename: '[name].[contenthash].dist.css',
-			}),
+		new webpack.DefinePlugin({
+			'process.env': {
+				NODE_ENV: JSON.stringify('production'),
+			},
+		}),
+		new wpi18nExtractor({
+			excludes: [
+				'eejs-core',
+				'eventespresso-vendor',
+				'eventespresso-core-css-default',
+			],
+		}),
+		new webpack.ProvidePlugin({
+			React: 'react',
+		}),
+		new WebpackAssetsManifest({
+			output: buildManifestPath,
+			assets: assetsData,
+		}),
+		new miniExtract({
+			filename: '[name].[contenthash].dist.css',
+		}),
 	],
 }
 
