@@ -179,7 +179,7 @@ abstract class AssetManager implements AssetManagerInterface
         $vendor_path = $this->domain->pluginUrl() . 'assets/vendor/';
         return $this->addJavascript(
             $handle,
-            "{$vendor_path}{$handle}{$dev_suffix}.js",
+            "{$vendor_path}{$handle}{$dev_suffix}". Asset::EXT_JS,
             $dependencies,
             $load_in_footer,
             $version
