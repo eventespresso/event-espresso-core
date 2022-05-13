@@ -7,6 +7,7 @@ const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extract
 const wpi18nExtractor = require('./i18n-map-extractor.js');
 
 const assetsData = Object.create(null);
+const buildManifestPath = path.resolve(__dirname, '../assets/dist/build-manifest.json');
 
 const pluginsConfig = {
 
@@ -19,7 +20,7 @@ const pluginsConfig = {
 			requestToHandle,
 		}),
 		new WebpackAssetsManifest({
-			output: path.resolve(__dirname, 'assets/dist/build-manifest.json'),
+			output: buildManifestPath,
 			assets: assetsData,
 		}),
 		new miniExtract({
@@ -29,7 +30,7 @@ const pluginsConfig = {
 
 	withoutExternals: [
 			new WebpackAssetsManifest({
-				output: path.resolve(__dirname, 'assets/dist/build-manifest.json'),
+				output: buildManifestPath,
 				assets: assetsData,
 			}),
 			new webpack.ProvidePlugin({
@@ -61,7 +62,7 @@ const pluginsConfig = {
 				requestToHandle,
 			}),
 			new WebpackAssetsManifest({
-				output: path.resolve(__dirname, 'assets/dist/build-manifest.json'),
+				output: buildManifestPath,
 				assets: assetsData,
 			}),
 			new miniExtract({
@@ -86,7 +87,7 @@ const pluginsConfig = {
 				React: 'react',
 			}),
 			new WebpackAssetsManifest({
-				output: path.resolve(__dirname, 'assets/dist/build-manifest.json'),
+				output: buildManifestPath,
 				assets: assetsData,
 			}),
 			new miniExtract({
