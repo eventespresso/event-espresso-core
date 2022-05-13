@@ -1,9 +1,14 @@
 {
+	"author": "Event Espresso",
 	"name": "@eventespresso/core",
 	"version": "1.0.0",
 	"description": "Event Espresso core js and css.",
 	"main": "webpack.dev.js",
 	"repository": "git+https://github.com/eventespresso/event-espresso-core.git",
+	"license": "GPL-2.0",
+	"browserslist": [
+		"extends @wordpress/browserslist-config"
+	],
 	"watch": {
 		"build:css": {
 			"patterns": [
@@ -42,11 +47,6 @@
 		"test-js:update": "npm run test-js -- --updateSnapshot",
 		"test-js:watch": "npm run test-js -- --watch"
 	},
-	"author": "Event Espresso",
-	"license": "GPL-2.0",
-	"browserslist": [
-		"extends @wordpress/browserslist-config"
-	],
 	"dependencies": {
 		"@eventespresso/react-exit-modal-typeform": "^1.0.4",
 		"@wordpress/i18n": "^4.8.0",
