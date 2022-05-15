@@ -68,6 +68,6 @@ class CheckinsCSV
             );
         }
 
-        return null;
+        return '';
     }
 }
