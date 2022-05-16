@@ -383,7 +383,7 @@ class Registry
      */
     public function getData($key)
     {
-        return isset($this->jsdata[ $key ]) ? $this->jsdata[ $key ] : false;
+        return array_key_exists($key, $this->js_data) ? $this->js_data[ $key ] : null;
     }
 
 
