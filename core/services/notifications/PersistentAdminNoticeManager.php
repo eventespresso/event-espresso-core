@@ -67,7 +67,7 @@ class PersistentAdminNoticeManager
      */
     public function __construct(
         CapabilitiesChecker $capabilities_checker,
-        RequestInterface    $request,
+        RequestInterface $request,
         $return_url = ''
     ) {
         $this->setReturnUrl($return_url);
