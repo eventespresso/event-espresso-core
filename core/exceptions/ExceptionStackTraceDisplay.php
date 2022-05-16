@@ -78,7 +78,7 @@ class ExceptionStackTraceDisplay
             echo wp_json_encode(array('error' => $styles . $output . $scripts));
             exit();
         }
-        echo $styles, wp_kses($output, AllowedTags::getWithFormTags()), $scripts;
+        echo $styles, $output, $scripts;
     }
 
 
