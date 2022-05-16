@@ -49,7 +49,7 @@ class RegistryTest extends EE_UnitTestCase
         );
         $this->registry = new Registry(
             new AssetCollection(),
-            new i18nRegistry(array(), $domain)
+            new i18nRegistry($domain, [])
         );
         parent::setUp();
     }
