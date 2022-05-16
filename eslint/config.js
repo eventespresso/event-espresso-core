@@ -7,4 +7,7 @@ module.exports = {
 		'jest/valid-describe': 'off',
 		'@wordpress/dependency-group': 'off',
 	},
+	settings: {
+		jest: { version: 28 },
+	},
 };
