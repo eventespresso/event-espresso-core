@@ -49,8 +49,9 @@
 .wp-list-table th.column-_REG_paid,
 .wp-list-table th.column-TXN_total,
 .wp-list-table th.column-TXN_paid {
+    padding-inline-end: 1.5rem;
+    text-align: end;
     width: clamp(6rem, 7.5%, 15rem);
-    text-align: center;
 }
 
 .wp-list-table td.column-PRC_amount,
@@ -58,8 +59,8 @@
 .wp-list-table td.column-_REG_paid,
 .wp-list-table td.column-TXN_total,
 .wp-list-table td.column-TXN_paid {
-    width: clamp(6rem, 7.5%, 15rem);
     text-align: end;
+    width: clamp(6rem, 7.5%, 15rem);
 }
 
 .espresso-admin .wp-list-table .TXN_paid .dashicons-yes:before {
