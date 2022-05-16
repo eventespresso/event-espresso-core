@@ -8,15 +8,15 @@
  * @var int $PRC_ID
  * @var float $PRC_amount
  * @var bool $PRC_is_default
- * @var bool $show_plus
- * @var bool $show_minus
- * @var bool $show_currency_symbol
- * @var bool $show_percentage
+ * @var string $show_plus
+ * @var string $show_minus
+ * @var string $show_currency_symbol
+ * @var string $show_percentage
  * @var bool $show_trash_icon
  * @var bool $show_lock_icon
  * @var bool $show_create_button
  * @var bool $disabled
- * @var bool $show_plus_or_minus
+ * @var string $show_plus_or_minus
  * @var string $edit_prices_name
  * @var string $PRC_desc
  * @var string $price_type_selector;
@@ -49,10 +49,10 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                   placeholder="Edit the description for the price here"><?php echo esc_textarea($PRC_desc); ?></textarea>
     </td>
     <td>
-        <span class="ticket-price-info-display ticket-price-plus-minus"<?php echo $show_plus_or_minus; ?>>+/-</span>
-        <span class="ticket-price-info-display ticket-price-plus"<?php echo $show_plus; ?>>+</span>
-        <span class="ticket-price-info-display ticket-price-minus"<?php echo $show_minus; ?>>-</span>
-        <span class="ticket-price-info-display ticket-price-dollar-sign-display"<?php echo $show_currency_symbol; ?>>
+        <span class="ticket-price-info-display ticket-price-plus-minus" style="<?php echo esc_attr($show_plus_or_minus); ?>">+/-</span>
+        <span class="ticket-price-info-display ticket-price-plus" style="<?php echo esc_attr($show_plus); ?>">+</span>
+        <span class="ticket-price-info-display ticket-price-minus" style="<?php echo esc_attr($show_minus); ?>">-</span>
+        <span class="ticket-price-info-display ticket-price-dollar-sign-display" style="<?php echo esc_attr($show_currency_symbol); ?>">
             <?php echo esc_html($price_currency_symbol); ?>
         </span>
     </td>
@@ -72,7 +72,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     </td>
     <td>
         <span
-            class="ticket-price-info-display ticket-price-percentage-char-display"<?php echo $show_percentage; ?>>%</span>
+            class="ticket-price-info-display ticket-price-percentage-char-display" style="<?php echo esc_attr($show_percentage); ?>">%</span>
     </td>
     <td>
         <?php if ($disabled) : ?>

@@ -13,7 +13,7 @@
  */
 ?>
 
-<tr class="ticket-tax-row TKT-taxes-display"<?php echo $display_tax; ?>>
+<tr class="ticket-tax-row TKT-taxes-display" style="<?php echo esc_attr($display_tax); ?>">
     <td colspan="4" class="ee-numeric">
         <span class="TKT-tax-label"><?php echo esc_html($tax_label); ?></span>
     </td>

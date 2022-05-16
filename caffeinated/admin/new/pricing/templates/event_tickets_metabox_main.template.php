@@ -140,7 +140,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         'Available Tickets',
                         'event_espresso'
                     ); ?></span></h3>
-        <div class="event-tickets-container ee-create-ticket-button"<?php echo $show_tickets_container; ?>>
+        <div class="event-tickets-container ee-create-ticket-button">
             <button class="ee-create-ticket-button button-secondary ee-create-button" data-context="ticket"><?php
                 esc_html_e(
                     'Create Ticket',
@@ -148,7 +148,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 ); ?></button>
         </div>
         <div style="clear:both"></div>
-        <div class="event-tickets-container"<?php echo $show_tickets_container; ?>>
+        <div class="event-tickets-container">
             <table class="ticket-table">
                 <thead>
                 <tr valign="top">
