@@ -668,7 +668,6 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'                                      => [
-                null,
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                         => EE_Dependency_Map::load_from_cache,
             ],
