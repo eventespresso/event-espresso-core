@@ -17,6 +17,9 @@
  * @since   4.9.0
  * @package Event Espresso
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -38,9 +41,9 @@
     <?php endif; ?>
 </head>
 <body>
-<?php echo $notices; // already escaped ?>
+<?php echo wp_kses($notices, AllowedTags::getWithFormTags()); ?>
 <div style="padding: 1em;">
-    <?php echo $content; // already escaped ?>
+    <?php echo wp_kses($content, AllowedTags::getWithFormTags()); ?>
 </div>
 <?php foreach ($footer_js as $key => $url) : ?>
     <?php $footer_attributes = isset($footer_js_attributes[ $key ]) ? $footer_js_attributes[ $key ] : ''; ?>
