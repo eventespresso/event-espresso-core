@@ -525,3 +525,8 @@
 .espresso-admin.wp-core-ui .txn-overview-actions.ee-list-table-actions {
     padding: 0;
 }
+
+.ui-datepicker {
+    box-shadow: var(--ee-box-shadow-big);
+    z-index: 99 !important;
+}

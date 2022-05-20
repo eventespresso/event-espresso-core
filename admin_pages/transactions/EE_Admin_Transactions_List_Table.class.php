@@ -114,41 +114,29 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
      */
     protected function _get_table_filters()
     {
-        $filters = array();
         $start_date = isset($this->_req_data['txn-filter-start-date'])
             ? wp_strip_all_tags($this->_req_data['txn-filter-start-date'])
-            : date(
-                'm/d/Y',
-                strtotime('-10 year')
-            );
+            : date('Y-m-d', strtotime('-10 year'));
         $end_date = isset($this->_req_data['txn-filter-end-date'])
             ? wp_strip_all_tags($this->_req_data['txn-filter-end-date'])
-            : date(
-                'm/d/Y',
-                current_time('timestamp')
-            );
-        ob_start();
-        ?>
-        <label for="txn-filter-start-date">Display Transactions from </label>
-        <input class="datepicker"
-               id="txn-filter-start-date"
-               name="txn-filter-start-date"
-               size="15"
-               type="text"
-               value="<?php echo esc_html($start_date); ?>"
-        />
-        <label for="txn-filter-end-date"> until </label>
-        <input class="datepicker"
-               id="txn-filter-end-date"
-               name="txn-filter-end-date"
-               size="15"
-               type="text"
-               value="<?php echo esc_html($end_date); ?>"
-        />
-        <?php
-        $filters[] = ob_get_contents();
-        ob_end_clean();
-        return $filters;
+            : date('Y-m-d', current_time('timestamp'));
+
+        return [
+            EEH_Form_Fields::text(
+                esc_html__('Display Transactions from', 'event_espresso'),
+                esc_html($start_date),
+                'txn-filter-start-date',
+                'txn-filter-start-date',
+                'ee-datepicker'
+            ),
+            EEH_Form_Fields::text(
+                esc_html__(' until ', 'event_espresso'),
+                esc_html($end_date),
+                'txn-filter-end-date',
+                'txn-filter-end-date',
+                'ee-datepicker'
+            )
+        ];
     }
 
 
@@ -181,8 +169,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         );
         $content = '
         <span class="ee-entity-id">
-            <a  class="ee-aria-tooltip" 
-                href="' . $view_lnk_url . '" 
+            <a  class="ee-aria-tooltip"
+                href="' . $view_lnk_url . '"
                 aria-label="' . esc_attr__('Go to Transaction Details', 'event_espresso') . '"
             >
                ' . $transaction->ID() . '
@@ -256,7 +244,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         return '
             <div class="ee-layout-row">
                 <span aria-label="' . $pretty_status . '"  class="ee-status-dot ee-status-bg--' . $status . ' ee-aria-tooltip"></span>
-                <a  href="' . $view_lnk_url . '"                     
+                <a  href="' . $view_lnk_url . '"
                     class="row-title ee-status-color--' . $status . ' ee-aria-tooltip"
                     aria-label="' . esc_attr__('View Transaction Details for TXN #', 'event_espresso') . $transaction->ID(
                     ) . '">
@@ -617,7 +605,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             )
                 ? '
 					<a href="' . $url . '"
-					    aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '" 
+					    aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '"
 					    class="ee-aria-tooltip button button--icon-only"
                     >
 						<span class="dashicons dashicons-clipboard"></span>
@@ -663,8 +651,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 TXN_ADMIN_URL
             );
             return '
-                <a href="' . $url . '" 
-                    aria-label="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" 
+                <a href="' . $url . '"
+                    aria-label="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '"
                     class="ee-aria-tooltip button button--icon-only"
                 >
                     <span class="dashicons dashicons-email-alt"></span>

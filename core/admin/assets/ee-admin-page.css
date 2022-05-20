@@ -4620,11 +4620,11 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-inline:  0.5rem;
     min-width: 4rem;
 }
-.espresso-admin .tablenav select {
-    min-width: clamp(4rem, 12.5%, 8rem);
-    max-width: clamp(16rem, 25%, 20rem);
+/* .espresso-admin .tablenav select {
+    min-width: clamp(8rem, 12.5%, 16rem);
+    max-width: clamp(16rem, 25%, 32rem);
     width: fit-content;
-}
+} */
 .espresso-admin .tablenav-paging-text {
     justify-content: space-evenly;
     min-width: 3rem;
