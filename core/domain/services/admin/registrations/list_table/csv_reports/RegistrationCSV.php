@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\services\admin\registrations\list_table\csv_
 
 use EE_Config;
 use EE_Error;
-use EE_Registry;
 use EEH_Export;
 use EEM_Registration;
 use ReflectionException;
@@ -24,13 +23,14 @@ class RegistrationCSV
      *
      * @param array $fields
      * @param array $reg_row
-     * @param EEM_Registration $reg_model
      * @param array $data
-     * @return mixed
+     * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function addRegistrationColumns(array $fields, array $reg_row, EEM_Registration $reg_model, array $data)
+    public static function addRegistrationColumns(array $fields, array $reg_row, array $data): array
     {
+        $reg_model = EEM_Registration::instance();
         foreach ($fields as $field_name) {
             $field = $reg_model->field_settings_for($field_name);
             switch ($field_name) {
@@ -76,7 +76,7 @@ class RegistrationCSV
             $data[ EEH_Export::get_column_name_for_field($field) ] = $value;
             if ($field_name == 'REG_final_price') {
                 // add a column named Currency after the final price
-                $data[ (string) esc_html__("Currency", "event_espresso") ] = EE_Config::instance()->currency->code;
+                $data[ esc_html__("Currency", "event_espresso") ] = EE_Config::instance()->currency->code;
             }
         }
         return $data;

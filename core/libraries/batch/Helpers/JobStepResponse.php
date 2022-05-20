@@ -41,7 +41,7 @@ class JobStepResponse
 	 * @param array|string  $update_text
 	 * @param array         $extra_data
 	 */
-	public function __construct(JobParameters $job_parameters, $update_text, array $extra_data = [])
+	public function __construct(JobParameters $job_parameters, $update_text = [], array $extra_data = [])
 	{
 		$this->_job_parameters = $job_parameters;
 		$this->_update_text    = (array) $update_text;
@@ -65,11 +65,7 @@ class JobStepResponse
 	 */
 	public function update_text(): string
 	{
-		if (empty($this->_update_text)) {
-			return '';
-		}
-		$text = implode( "</p><p class='ee-batch-job-update'>", $this->_update_text);
-		return "<p class='ee-batch-job-update'>$text</p>";
+		return implode('', array_filter(array_map('trim', $this->_update_text)));
 	}
 
 

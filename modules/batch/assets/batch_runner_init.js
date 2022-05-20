@@ -54,11 +54,7 @@ jQuery(document).ready(function ($) {
 			'ee_front_ajax': !eei18n.is_admin
 		},
 		// cleanup callback
-		function (response) {
-			if (response.data.auto_redirect_on_complete) {
-				window.location.replace(ee_job_i18n.return_url);
-			}
-		},
+		ee_cleanup_batch_job,
 		// advance url
 		eei18n.ajax_url || window.ajaxurl,
 		// advance args
@@ -105,6 +101,23 @@ jQuery(document).ready(function ($) {
 		//once we're all done, redirect them back to the indicated page
 		if (response.data.status === 'complete') {
 			runner.cleanup_job();
+		}
+	}
+
+	/**
+	 * waits 2 seconds then redirects to return url
+	 *
+	 * @param response array
+	 * @param status string
+	 * @param {type} xhr
+	 * @returns void
+	 */
+	function ee_cleanup_batch_job(response, status, xhr) {
+		console.log('%c ee_cleanup_batch_job', 'color: SpringGreen;', {response});
+		if (response.data.auto_redirect_on_complete) {
+			setTimeout(function () {
+				window.location.replace(ee_job_i18n.return_url);
+			}, 5000);
 		}
 	}
 });

@@ -242,13 +242,15 @@ jQuery(document).ready(function ($) {
 		 * @returns void
 		 */
 		this.advance_to_next_job = function () {
-			const batch_runner = this;
-			const data = batch_runner.advance_data;
-			data['job_id'] = this.job_id;
-			this.do_ajax(this.advance_url, data, function (response) {
-				console.log('%c ADVANCE_TO_NEXT_JOB AJAX', 'color: Cyan;', {response});
-				batch_runner.updateProgressArea(response.data.update_text, 'replace');
-			});
+            if (this.advance_url) {
+                const batch_runner = this;
+                const data = batch_runner.advance_data;
+                data['job_id'] = this.job_id;
+                this.do_ajax(this.advance_url, data, function (response) {
+                    console.log('%c ADVANCE_TO_NEXT_JOB AJAX', 'color: Cyan;', {response});
+                    batch_runner.updateProgressArea(response.data.update_text, 'replace');
+                });
+            }
 		};
 
 
@@ -272,9 +274,10 @@ jQuery(document).ready(function ($) {
 			data['job_id'] = batch_runner.job_id;
 			this.do_ajax(batch_runner.cleanup_url, data, function (response, status, xhr) {
 				console.log('%c CLEANUP_JOB AJAX', 'color: Cyan;', {response});
-				this.updateProgressBar(response.data.units_processed, response.data.job_size);
+                batch_runner.updateProgressBar(response.data.units_processed, response.data.job_size);
+                batch_runner.updateProgressArea(response.data.update_text, 'append');
 				batch_runner.cleanup_required = false;
-				if (response.data.status === 'complete' && typeof (batch_runner.cleanup_callback) !== 'undefined') {
+                if (response.data.status === 'cleaned_up' && typeof batch_runner.cleanup_callback !== 'undefined') {
 					batch_runner.cleanup_callback(response, status, xhr);
 				}
 			});
@@ -336,5 +339,26 @@ jQuery(document).ready(function ($) {
 			error += '</div>'
 			this.updateProgressArea(error, 'replace');
 		};
-	}
+
+        /**
+         * waits 10 seconds then redirects to return url
+         *
+         * @function countdownRedirect
+         * @param redirectUrl string
+         * @param countdown int
+         * @returns void
+         */
+        this.countdownRedirect = function (redirectUrl, countdown = 10) {
+            if (redirectUrl) {
+                const redirectTimer = setInterval(function () {
+                    if (countdown <= 0) {
+                        clearInterval(redirectTimer);
+                        window.location.replace(redirectUrl);
+                    }
+                    $("#ee-redirect-timer").html(countdown);
+                    countdown--;
+                }, 1000);
+            }
+        };
+    }
 });

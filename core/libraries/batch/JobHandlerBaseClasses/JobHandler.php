@@ -17,6 +17,10 @@ use EventEspressoBatchRequest\Helpers\JobStepResponse;
  */
 abstract class JobHandler implements JobHandlerInterface
 {
+	/**
+	 * @var array
+	 */
+	protected $feedback = [];
 
 	/**
 	 * incoming Request data
@@ -95,7 +99,7 @@ abstract class JobHandler implements JobHandlerInterface
 	public function advance_job(JobParameters $job_parameters): JobStepResponse
 	{
 		$job_parameters->set_status(JobParameters::status_continue);
-		return new JobStepResponse($job_parameters, '');
+		return new JobStepResponse($job_parameters, $this->feedback);
 	}
 
 
@@ -171,25 +175,24 @@ abstract class JobHandler implements JobHandlerInterface
 
 
 
-	protected function displayJobStepResults(JobParameters $job_parameters, int $processed): string
+	protected function displayJobStepResults(JobParameters $job_parameters, int $processed)
 	{
-		$results = '<div class="ee-batch-job-step-results">';
-		$results .= $this->infoWrapper("processed this batch: $processed");
-		$results .= '</div>';
-		return $results;
+		$this->feedback[] = '
+			<div class="ee-batch-job-step-results">
+				' . $this->infoWrapper("processed this batch: $processed") . '
+			</div>';
 	}
 
 
-	protected function displayJobFinalResults(JobParameters $job_parameters): string
+	protected function displayJobFinalResults(JobParameters $job_parameters)
 	{
-		if ($job_parameters->status() !== JobParameters::status_complete) {
-			return '';
+		if ($job_parameters->status() === JobParameters::status_complete) {
+			$this->feedback[] = '
+			<div class="ee-batch-job-final-results">
+				' . $this->okWrapper("total units processed: {$job_parameters->units_processed()}") . '
+				' . $this->jobStatusNotice($job_parameters) . '
+			</div>';
 		}
-		$results = '<div class="ee-batch-job-final-results">';
-		$results .= $this->okWrapper("total units processed: {$job_parameters->units_processed()}");
-		$results .= $this->jobStatusNotice($job_parameters);
-		$results .= '</div>';
-		return $results;
 	}
 
 
@@ -209,9 +212,18 @@ abstract class JobHandler implements JobHandlerInterface
 	}
 
 
-	protected function updateTextHeader(string $update_text): string
+	/**
+	 * @param string $update_text
+	 */
+	protected function updateText(string $update_text)
 	{
-		return "<h4 class='ee-batch-job-update-heading'>$update_text</h4>";
+		$this->feedback[] = "<p class='ee-batch-job-update'>$update_text</p>";
+	}
+
+
+	protected function updateTextHeader(string $update_text)
+	{
+		$this->feedback[] = "<h4 class='ee-batch-job-update-heading'>$update_text</h4>";
 	}
 
 
@@ -248,5 +260,14 @@ abstract class JobHandler implements JobHandlerInterface
 	protected function warningWrapper(string $update_text): string
 	{
 		return "<span class='ee-status-outline ee-status-bg--warning'>$update_text</span>";
+	}
+
+
+	/**
+	 * @return string
+	 */
+	protected function spinner(): string
+	{
+		return '<span class="spinner"></span>';
 	}
 }

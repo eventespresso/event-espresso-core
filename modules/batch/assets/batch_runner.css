@@ -20,7 +20,7 @@
 	padding-block: 1rem;
 	padding-inline: 3rem;
 }
-.ee-batch-runner__wrapper .progress-area .spinner {
+.ee-batch-runner__wrapper .spinner {
 	float: unset !important;
 	inset-block-start: -0.125rem;
 	inset-inline-start: 1rem;
@@ -81,5 +81,11 @@
 	margin-block-start: .75rem;
 }
 
+.ee-batch-job-final-results > span,
+.ee-admin-container p.ee-batch-job-update > span {
+	display: inline-block;
+}
 
-
+.ee-admin-container p.ee-batch-job-update {
+	margin-block-end: 1rem;
+}
