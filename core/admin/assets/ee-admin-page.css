@@ -3292,7 +3292,8 @@ body.espresso-admin #contextual-help-wrap strong {
     color: var(--ee-font-color);
     cursor: pointer;
     display: inline-flex;
-    font-size: calc(var(--ee-button-height-half) - var(--ee-button-height-shim));
+    /* font-size: calc(var(--ee-button-height-half) - var(--ee-button-height-shim)); */
+    font-size: calc(var(--ee-button-height-half) - (var(--ee-button-height-shim) / 4 ));
     height:  var(--ee-input-height);
     justify-content: center;
     line-height: 2;
@@ -3660,15 +3661,15 @@ body.espresso-admin #contextual-help-wrap strong {
 
 .espresso-admin.wp-core-ui .button.button--tiny,
 .espresso-admin.wp-core-ui .button.button--tiny {
-    --ee-button-height: 1.6rem;
+    --ee-button-height: 1.5rem;
 }
 .espresso-admin.wp-core-ui .button.button--small,
 .espresso-admin.wp-core-ui .button.button--small {
-    --ee-button-height: 2rem;
+    --ee-button-height: 1.875rem;
 }
 .espresso-admin.wp-core-ui .button.button--big,
 .espresso-admin.wp-core-ui .button.button--big {
-    --ee-button-height: 4rem;
+    --ee-button-height: 3.2rem;
 }
 
 
@@ -3767,7 +3768,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .misc-pub-section a.edit-timestamp,
 .espresso-admin.wp-core-ui .misc-pub-section a.edit-post-status,
 .espresso-admin.wp-core-ui #espresso_event_categories-add-toggle {
-    --ee-button-height: 1.6rem;
+    --ee-button-height: 1.5rem;
     font-size: calc((var(--ee-button-height) * .65) - var(--ee-button-height-shim));
     height: var(--ee-button-height);
     padding-block: calc((var(--ee-button-height) * .4) - 2px);
@@ -3787,7 +3788,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui #postcustomstuff #newmetaleft a,
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button.button-small,
 .espresso-admin.wp-core-ui .quicktags-toolbar input.button:not([type="checkbox"]):not([type="radio"]):not([type="submit"]) {
-    --ee-button-height: 2rem;
+    --ee-button-height: 1.875rem;
     font-size: calc((var(--ee-button-height) * .6) - var(--ee-button-height-shim));
     height: var(--ee-button-height);
     padding-block: calc((var(--ee-button-height) * .6) - 2px);
@@ -3800,7 +3801,8 @@ body.espresso-admin #contextual-help-wrap strong {
     /* padding: calc((var(--ee-button-height) * .6) - var(--ee-button-height-shim)); */
 }
 .espresso-admin.wp-core-ui .ee-list-table-actions  {
-    padding: calc((var(--ee-button-height) * .6) - var(--ee-button-height-shim));
+    /* padding: calc((var(--ee-button-height) * .6) - var(--ee-button-height-shim)); */
+    padding: 0;
 }
 .espresso-admin.wp-core-ui .ee-list-table-actions a .dashicons,
 .espresso-admin.wp-core-ui .button.button--icon-only .dashicons,
@@ -4283,15 +4285,16 @@ body.espresso-admin #contextual-help-wrap strong {
     /* padding-block-start: 1rem; */
 }
 
-.admin-primary-mbox-tbl thead td,
-.admin-primary-mbox-tbl thead th,
+.espresso-admin .wp-list-table.widefat thead th,
 .espresso-admin .wp-list-table.widefat thead td,
-.espresso-admin .wp-list-table.widefat thead th {
+.espresso-admin .admin-primary-mbox-tbl thead th,
+.espresso-admin .admin-primary-mbox-tbl thead td {
     background: var(--ee-color-almost-white);
-    /* border-block-end: 2px solid var(--ee-border-color-table-row); */
     border-block-end: none;
     color: var(--ee-font-color-light);
-    /* padding-block-start: .5rem; */
+}
+.espresso-admin .wp-list-table.widefat thead th,
+.espresso-admin .wp-list-table.widefat thead td {
     position: sticky;
     top: 2rem;
     z-index: 25;
@@ -4577,7 +4580,8 @@ body.espresso-admin #contextual-help-wrap strong {
     font-size: 1rem;
     font-weight: 600;
     justify-content: flex-start;
-    margin-block: 0.5rem;
+    margin-block-start: 0.5rem;
+    margin-block-end: 0;
     margin-inline: 0.25rem;
 }
 
