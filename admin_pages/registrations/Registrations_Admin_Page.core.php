@@ -227,6 +227,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'add-attendee'        => esc_html__('Add Contact', 'event_espresso'),
                 'edit'                => esc_html__('Edit Contact', 'event_espresso'),
                 'report'              => esc_html__('Event Registrations CSV Report', 'event_espresso'),
+                'report_datetime'     => esc_html__('Datetime Registrations CSV Report', 'event_espresso'),
                 'report_all'          => esc_html__('All Registrations CSV Report', 'event_espresso'),
                 'report_filtered'     => esc_html__('Filtered CSV Report', 'event_espresso'),
                 'contact_list_report' => esc_html__('Contact List Report', 'event_espresso'),

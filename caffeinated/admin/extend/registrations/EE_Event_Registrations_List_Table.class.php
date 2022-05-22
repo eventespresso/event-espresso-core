@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
@@ -39,7 +40,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     /**
      * EE_Event_Registrations_List_Table constructor.
      *
-     * @param \Registrations_Admin_Page $admin_page
+     * @param Registrations_Admin_Page $admin_page
      */
     public function __construct($admin_page)
     {
@@ -64,6 +65,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $return_url = $this->getReturnUrl();
 
         $evt_id = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : null;
+        $DTT_ID = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : null;
         $this->_wp_list_args = array(
             'singular' => esc_html__('registrant', 'event_espresso'),
             'plural'   => esc_html__('registrants', 'event_espresso'),
@@ -100,39 +102,20 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 $evt_id
             )
         ) {
-            $this->_bottom_buttons = array(
-                'report' => array(
-                    'route'         => 'registrations_report',
-                    'extra_request' =>
-                        array(
-                            'EVT_ID'     => $evt_id,
-                            'return_url' => $return_url,
-                        ),
-                ),
-            );
+            $route_details = [
+                'route'         => 'registrations_report',
+                'extra_request' => [
+                    'EVT_ID'     => $evt_id,
+                    'return_url' => $return_url,
+                ]
+            ];
+            if ($DTT_ID) {
+                $route_details['extra_request']['DTT_ID'] = $DTT_ID;
+                $this->_bottom_buttons['report_datetime'] = $route_details;
+            } else {
+                $this->_bottom_buttons['report'] = $route_details;
+            }
         }
-        $this->_bottom_buttons['report_filtered'] = array(
-            'route'         => 'registrations_checkin_report',
-            'extra_request' => array(
-                'use_filters' => true,
-                'filters'     => array_merge(
-                    array(
-                        'EVT_ID' => $evt_id,
-                    ),
-                    array_diff_key(
-                        $this->_req_data,
-                        array_flip(
-                            array(
-                                'page',
-                                'action',
-                                'default_nonce',
-                            )
-                        )
-                    )
-                ),
-                'return_url'  => $return_url,
-            ),
-        );
         $this->_sortable_columns = array(
             /**
              * Allows users to change the default sort if they wish.
@@ -158,7 +141,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param \EE_Registration $item
+     * @param EE_Registration $item
      * @return string
      */
     protected function _get_row_class($item)
@@ -175,7 +158,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
     /**
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_table_filters()
     {
@@ -264,7 +248,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
     /**
      * @return int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _get_total_event_attendees()
     {
@@ -288,7 +272,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param \EE_Registration $item
+     * @param EE_Registration $item
      * @return string
      */
     public function column__Reg_Status(EE_Registration $item)
@@ -298,9 +282,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param \EE_Registration $item
+     * @param EE_Registration $item
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_cb($item)
     {
@@ -353,9 +337,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param \EE_Registration $item
+     * @param EE_Registration $item
      * @return mixed|string|void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_ATT_name(EE_Registration $item)
     {
@@ -444,7 +428,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param \EE_Registration $item
+     * @param EE_Registration $item
      * @return string
      */
     public function column_ATT_email(EE_Registration $item)
@@ -455,9 +439,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param \EE_Registration $item
+     * @param EE_Registration $item
      * @return bool|string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_Event(EE_Registration $item)
     {
@@ -475,7 +459,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     'View Checkins for this Event',
                     'event_espresso'
                 ) . '">' . $event->name() . '</a>' : $event->name();
-        } catch (\EventEspresso\core\exceptions\EntityNotFoundException $e) {
+        } catch (EntityNotFoundException $e) {
             $event_label = esc_html__('Unknown', 'event_espresso');
         }
         return $event_label;
@@ -483,7 +467,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param \EE_Registration $item
+     * @param EE_Registration $item
      * @return mixed|string|void
      */
     public function column_PRC_name(EE_Registration $item)
@@ -495,7 +479,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     /**
      * column_REG_final_price
      *
-     * @param \EE_Registration $item
+     * @param EE_Registration $item
      * @return string
      */
     public function column__REG_final_price(EE_Registration $item)
@@ -507,9 +491,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     /**
      * column_TXN_paid
      *
-     * @param \EE_Registration $item
+     * @param EE_Registration $item
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_TXN_paid(EE_Registration $item)
     {
@@ -548,9 +532,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     /**
      *        column_TXN_total
      *
-     * @param \EE_Registration $item
+     * @param EE_Registration $item
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function column_TXN_total(EE_Registration $item)
     {

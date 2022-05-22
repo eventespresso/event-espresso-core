@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\PaymentsInfoCSV;
+
 /**
  * EE_Export class
  *
@@ -126,7 +128,9 @@ class EE_Export
     /**
      * Downloads a CSV file with all the columns, but no data. This should be used for importing
      *
-     * @return null kills execution
+     * @return void kills execution
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function export_sample()
     {
@@ -140,6 +144,8 @@ class EE_Export
      * @Export data for ALL events
      * @access public
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function export_all_event_data()
     {
@@ -270,6 +276,7 @@ class EE_Export
      * @Export data for ALL attendees
      * @access public
      * @return void
+     * @throws EE_Error
      */
     public function export_attendees()
     {
@@ -307,12 +314,13 @@ class EE_Export
     /**
      * Shortcut for preparing a database result for display
      *
-     * @param EEM_Base       $model
-     * @param string         $field_name
-     * @param string         $raw_db_value
-     * @param boolean|string $pretty_schema true to display pretty, a string to use a specific "Schema", or false to
+     * @param EEM_Base $model
+     * @param string $field_name
+     * @param string $raw_db_value
+     * @param bool|string $pretty_schema true to display pretty, a string to use a specific "Schema", or false to
      *                                      NOT display pretty
      * @return string
+     * @throws EE_Error
      */
     protected function _prepare_value_from_db_for_display($model, $field_name, $raw_db_value, $pretty_schema = true)
     {
@@ -342,6 +350,8 @@ class EE_Export
      * name, and the questions associated with the registrations
      *
      * @param int $event_id
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function report_registrations_for_event($event_id = null)
     {
@@ -513,15 +523,7 @@ class EE_Export
                         ARRAY_A,
                         'Payment_Method.PMD_admin_name as name, Payment.PAY_txn_id_chq_nmbr as gateway_txn_id, Payment.PAY_timestamp as payment_time'
                     );
-
-                    foreach ($payments_info as $payment_method_and_gateway_txn_id) {
-                        $payment_methods[] = isset($payment_method_and_gateway_txn_id['name'])
-                            ? $payment_method_and_gateway_txn_id['name'] : esc_html__('Unknown', 'event_espresso');
-                        $gateway_txn_ids_etc[] = isset($payment_method_and_gateway_txn_id['gateway_txn_id'])
-                            ? $payment_method_and_gateway_txn_id['gateway_txn_id'] : '';
-                        $payment_times[] = isset($payment_method_and_gateway_txn_id['payment_time'])
-                            ? $payment_method_and_gateway_txn_id['payment_time'] : '';
-                    }
+                    list($payment_methods, $gateway_txn_ids_etc, $payment_times) = PaymentsInfoCSV::extractPaymentInfo($payments_info);
                 }
                 $reg_csv_array[ esc_html__('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
                 $reg_csv_array[ esc_html__('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
@@ -675,6 +677,7 @@ class EE_Export
      *
      * @param EE_Model_Field_Base $field
      * @return string
+     * @throws EE_Error
      */
     protected function _get_column_name_for_field(EE_Model_Field_Base $field)
     {
@@ -753,8 +756,10 @@ class EE_Export
      * @recursive function for exporting table data and merging the results with the next results
      * @access    private
      * @param array $models_to_export keys are model names (eg 'Event', 'Attendee', etc.) and values are arrays of
-     *                                query params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @return array on success, FALSE on fail
+     *                                query params @return bool on success, FALSE on fail
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     private function _get_export_data_for_models($models_to_export = array())
     {
