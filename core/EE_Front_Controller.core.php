@@ -4,6 +4,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\CurrentPage;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 use EventEspresso\widgets\EspressoWidget;
 
@@ -410,17 +411,44 @@ final class EE_Front_Controller
             && is_main_query()
             && ! is_feed()
             && in_the_loop()
-            && did_action('wp_head')
             && $this->current_page->isEspressoPage()
         ) {
-            echo EE_Error::get_notices();
             $shown_already = true;
-            EEH_Template::display_template(EE_TEMPLATES . 'espresso-ajax-notices.template.php');
+            if (did_action('wp_head')) {
+                $this->printNotices();
+            } else {
+                // block enabled themes run their query loop before headers are sent
+                // so we need to add our notices onto the beginning of the content
+                add_filter('the_content', [$this, 'prependNotices'], 1, 1);
+            }
         }
         do_action('AHEE__EE_Front_Controller__display_errors__end');
     }
 
 
+    /**
+     * @param string $the_content
+     * @return string
+     * @since $VID:$
+     */
+    public function prependNotices($the_content)
+    {
+        $notices = $this->printNotices();
+        return $notices ? $notices . $the_content : $the_content;
+    }
+
+
+    /**
+     * @return false|string
+     * @since $VID:$
+     */
+    public function printNotices()
+    {
+        ob_start();
+        echo wp_kses(EE_Error::get_notices(), AllowedTags::getWithFormTags());
+        EEH_Template::display_template(EE_TEMPLATES . 'espresso-ajax-notices.template.php');
+        return ob_get_clean();
+    }
 
 
 
