@@ -179,19 +179,6 @@ class HTML5_TreeBuilder {
             $mode = $this->mode;
         }
 
-        /*
-        $backtrace = debug_backtrace();
-        if ($backtrace[1]['class'] !== 'HTML5_TreeBuilder') echo "--\n";
-        echo $this->strConst($mode);
-        if ($this->original_mode) echo " (originally ".$this->strConst($this->original_mode).")";
-        echo "\n  ";
-        token_dump($token);
-        $this->printStack();
-        $this->printActiveFormattingElements();
-        if ($this->foster_parent) echo "  -> this is a foster parent mode\n";
-        if ($this->flag_frameset_ok) echo "  -> frameset ok\n";
-        */
-
         if ($this->ignore_lf_token) {
             $this->ignore_lf_token--;
         }

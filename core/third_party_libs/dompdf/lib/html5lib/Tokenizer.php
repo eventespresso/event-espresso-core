@@ -131,17 +131,6 @@ class HTML5_Tokenizer {
         $escape = false;
         //echo "\n\n";
         while($state !== null) {
-
-            /*echo $state . ' ';
-            switch ($this->content_model) {
-                case self::PCDATA: echo 'PCDATA'; break;
-                case self::RCDATA: echo 'RCDATA'; break;
-                case self::CDATA: echo 'CDATA'; break;
-                case self::PLAINTEXT: echo 'PLAINTEXT'; break;
-            }
-            if ($escape) echo " escape";
-            echo "\n";*/
-
             switch($state) {
                 case 'data':
 

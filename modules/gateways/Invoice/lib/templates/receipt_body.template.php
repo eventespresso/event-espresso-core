@@ -164,7 +164,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                                 <?php echo esc_html($sub_line_item->desc()) ?>
                                             </td>
                                             <td class="item_c">
-                                                <?php // echo $is_percent ? '' : $sub_line_item->quantity()?>
                                             </td>
                                             <td class="item_c"><?php
                                                 echo ($is_percent
@@ -442,7 +441,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     <?php echo EEH_Template::format_currency($amount_pd, false, false) ?>
                 </td>
             </tr>
-            <?php // echo $discount; ?>
             <tr class="total_tr odd">
                 <td colspan="4">&nbsp;</td>
                 <td class="total" id="total_currency"><?php esc_html_e('Amount Owed:', 'event_espresso'); ?></td>
