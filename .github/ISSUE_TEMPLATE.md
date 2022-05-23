@@ -1,57 +1,47 @@
 
 <!--
-BEFORE POSTING YOUR ISSUE:
-- These comments won't show up when you submit the issue.
-- Please ensure that what you are reporting is specific to this project.
-- Try to add as much detail as possible. Be specific!
-- Make sure you read the README.md for the project regarding posting issues.
-- Search this repository for issues and pull requests and whether it has been fixed or reported already.
-- Ensure you are using the latest code before reporting bugs (unless you are reporting an issue disovered in a branch).
-- Disable all plugins and switch to a default theme to ensure its not a plugin/theme conflict issue.
+PLEASE READ THIS:
+- This repo is for the Event Espresso core plugin only
+- Have you searched for existing issues and pull requests? This may be already fixed, reported, or in development.
+- Have you updated to the latest released version?
+- Have you disabled all other plugins and tried a default theme to ensure its not a plugin or theme conflict?.
 - To report a security issue, please visit this page: https://eventespresso.com/report-a-security-vulnerability/
+- Comment blocks like this get removed upon submission
 -->
 
-## Issue Overview
-<!-- Describe what this issue is about. -->
+## Issue Overview 🌐
+<!-- 
+Briefly describe your issue or feature request.
+If you were directed to create an issue here by the Event Espresso support team, please include a link to your original Event Espresso support forum thread.
+-->
 
 
-
-## Bug report or feature request?
+## Bug Report or Feature Request ❓
 
 * [ ] Bug
 * [ ] Feature
 * [ ] Neither
 
 
-## Environment Data:
+## Environment Data 💻
 
-Version of EE: <!-- Can be a branch name or the version of EE the issue happened in. -->
-
-Version of WordPress:
-
-PHP Version:  <!-- if known, add your php version here -->
-
-Browser used:  <!-- also include your browser version if possible -->
+* Version of EE:
+* Version of WordPress:
+* PHP Version:  <!-- if known -->
+* Browser:  <!-- Chrome, Firefox, Safari, etc -->
 
 
-## Steps to Reproduce (for bugs)
-<!-- If possible provide any links to a live example, or an unambiguous set of steps to reproduce this bug -->
-<!-- Feel free to include code to reproduce if relevant. -->
+## Steps to Reproduce Bug 🐞
+<!--  If possible, please provide: -->
+ - link to a live example:
+
+ - detailed steps to reproduce issue:
+ 
+ - screenshots or videos:
+
+ - code examples:
 
 
-## Expected Behaviour
-<!-- If you're describing a bug, tell us what should happen -->
-<!-- If you're describing a feature/enhancement, explain the difference from current behaviour -->
+## Feature Request 🌟
+<!-- Please provide as much detail as possible -->
 
-
-## Current Behaviour
-<!-- If describing a bug, what is the current behaviour and how does it differ from expected behaviour? -->
-<!-- If describing a feature, describe what the current behaviour is in the part of the application that you want your feature suggestion to improve on. -->
-
-
-## Related Information:
-<!-- 
-- If you were directed to create an issue here by the EE support team, you can include the link to your original EE support forum thread.
-- You can also include any other links you think may be useful (related issues and/or Pull Requests)
-- Any screenshots or screencasts that help illustrate what you are describing is always useful.
--->

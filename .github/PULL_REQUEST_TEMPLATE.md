@@ -1,14 +1,20 @@
 
-<!-- Thanks for your pull request.  Comments within these type of tags will be hidden and not show up when you submit your pull request -->
-<!-- Please answer the following questions in order to expediate acceptance -->
+<!-- 
+PLEASE READ THIS:
+Thank you for your pull request.
+Comment blocks like this get removed upon submission.
+Please answer the following questions with as much detail as possible
+-->
 
 ## Problem this Pull Request solves
-<!-- Please describe your changes in the context of the problem they solve -->
+<!-- describe the use case or issue -->
+
 
 ## How has this been tested
-<!-- Please describe in detail how you tested your changes and how testing can be reproduced -->
-<!-- Include details of your testing environment, and tests ran to see how your changes affect other areas of code -->
-<!-- Include any notes about automated tests you've written for this pull request.  Pull requests with automated tests are preferred. -->
+<!-- 
+- steps required to test this pull request
+- pull requests with automated tests are preferred. 
+-->
 
 ## Checklist
 
