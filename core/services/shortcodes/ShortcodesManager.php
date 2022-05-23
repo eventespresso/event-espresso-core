@@ -223,10 +223,10 @@ class ShortcodesManager
      */
     public function parseContentForShortcodes($content)
     {
-        $has_shortcode = false;
         if (empty($this->shortcodes)) {
-            return $has_shortcode;
+            return false;
         }
+        $has_shortcode = false;
         foreach ($this->shortcodes as $shortcode) {
             if (has_shortcode($content, $shortcode->getTag())) {
                 $shortcode->initializeShortcode();
