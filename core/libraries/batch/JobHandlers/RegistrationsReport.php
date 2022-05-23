@@ -278,9 +278,9 @@ class RegistrationsReport extends JobHandlerFile
      * @throws ReflectionException
      */
     public function get_csv_data_for(
-        ?int  $event_id,
-        int   $offset,
-        int   $limit,
+        ?int $event_id,
+        int $offset,
+        int $limit,
         array $question_labels,
         array $query_params,
         int   $DTT_ID = 0

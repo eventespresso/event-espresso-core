@@ -222,13 +222,13 @@ class JsonDataHandler
     }
 
 
-	/**
-	 * @return string|null
-	 */
-	public function dataType(): ?string
-	{
-		return $this->data_type;
-	}
+    /**
+     * @return string|null
+     */
+    public function dataType(): ?string
+    {
+        return $this->data_type;
+    }
 
 
     /**

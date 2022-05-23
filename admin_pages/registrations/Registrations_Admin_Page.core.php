@@ -3232,7 +3232,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 EE_Admin_Page::add_query_args_and_nonce(
                     [
                         'page'        => EED_Batch::PAGE_SLUG,
-						'batch' 	  => EED_Batch::batch_file_job,
+                        'batch'       => EED_Batch::batch_file_job,
                         'EVT_ID'      => $EVT_ID,
                         'filters'     => urlencode(serialize($this->$method_name_for_getting_query_params($filters))),
                         'use_filters' => urlencode($use_filters),

@@ -64,8 +64,8 @@ class StatusChangeNotice extends WordPressOption
             ? EEH_Template::display_template(
                 __DIR__ . '/status_change_notice.template.php',
                 [
-					'context'   => $context,
-					'page_slug' => ! empty($page_slug) ? "$page_slug-page" : '',
+                    'context'   => $context,
+                    'page_slug' => ! empty($page_slug) ? "$page_slug-page" : '',
                 ],
                 true
             )

@@ -648,8 +648,8 @@ abstract class FormHandler implements FormHandlerInterface
             throw new InvalidFormSubmissionException($this->form_name);
         }
         $this->form(true)->receive_form_submission($submitted_form_data);
-		if (! $this->form()->is_valid()) {
-			throw new InvalidFormSubmissionException(
+        if (! $this->form()->is_valid()) {
+            throw new InvalidFormSubmissionException(
                 $this->form_name,
                 sprintf(
                     esc_html__(

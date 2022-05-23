@@ -936,7 +936,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     EE_Admin_Page::add_query_args_and_nonce(
                         [
                             'page'        => EED_Batch::PAGE_SLUG,
-							'batch' 	  => EED_Batch::batch_job,
+                            'batch'       => EED_Batch::batch_job,
                             'label'       => esc_html__('Applying Offset', 'event_espresso'),
                             'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix'),
                             'return_url'  => urlencode(
