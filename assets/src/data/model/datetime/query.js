@@ -35,7 +35,10 @@ export const queryDataTypes = {
 		]),
 		order: PropTypes.oneOf(ALLOWED_ORDER_VALUES),
 		showExpired: PropTypes.bool,
-		month: PropTypes.month,
+		month: PropTypes.oneOf([
+			PropTypes.month,
+			null
+		]),
 	}),
 };
 

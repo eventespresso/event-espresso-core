@@ -1,11 +1,12 @@
+const del = require('del');
 const path = require('path');
-const assets = './assets/src/';
-const miniExtract = require('mini-css-extract-plugin');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
-const del = require('del');
+const miniExtract = require('mini-css-extract-plugin');
 
+const assetsSrcPath = './assets/src/';
 const outputPath = path.resolve(__dirname, 'assets/dist');
+
 /**
  * Clean build folder before running build
  */
@@ -53,19 +54,19 @@ const moduleConfigWithJsRules = { rules: [rulesConfig.jsRulesConfig] };
 const config = [
 	{
 		entry: {
-			'eejs-core': assets + 'eejs/index.js',
+			'eejs-core': assetsSrcPath + 'eejs/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
 			path: outputPath,
 			library: ['eejs'],
-			libraryTarget: 'this',
+			libraryTarget: 'window',
 		},
 	},
 	{
 		entry: {
-			'eventespresso-vendor': assets + 'eejs/vendor/index.js',
+			'eventespresso-vendor': assetsSrcPath + 'eejs/vendor/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -77,7 +78,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-validators': assets + 'eejs/validators/index.js',
+			'eventespresso-validators': assetsSrcPath + 'eejs/validators/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -89,7 +90,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-helpers': assets + 'data/helpers/index.js',
+			'eventespresso-helpers': assetsSrcPath + 'data/helpers/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -101,7 +102,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-model': assets + 'data/model/index.js',
+			'eventespresso-model': assetsSrcPath + 'data/model/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -113,7 +114,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-value-objects': assets + 'vo/index.js',
+			'eventespresso-value-objects': assetsSrcPath + 'vo/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -125,7 +126,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-hocs': assets + 'higher-order-components/index.js',
+			'eventespresso-hocs': assetsSrcPath + 'higher-order-components/index.js',
 		},
 		module: moduleConfigWithJsRules,
 		output: {
@@ -137,7 +138,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-components': assets + 'components/index.js',
+			'eventespresso-components': assetsSrcPath + 'components/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -149,7 +150,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-editor-hocs': assets + 'editor/hocs/index.js',
+			'eventespresso-editor-hocs': assetsSrcPath + 'editor/hocs/index.js',
 		},
 		module: moduleConfigWithJsAndCssRules,
 		output: {
@@ -161,7 +162,7 @@ const config = [
 	},
 	{
 		entry: {
-			'ee-wp-plugins-page': [assets + 'wp-plugins-page/index.js'],
+			'ee-wp-plugins-page': [assetsSrcPath + 'wp-plugins-page/index.js'],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -174,7 +175,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-data-stores': [assets + 'data/index.js'],
+			'eventespresso-data-stores': [assetsSrcPath + 'data/index.js'],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -187,7 +188,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks': [assets + 'blocks/index.js'],
+			'eventespresso-core-blocks': [assetsSrcPath + 'blocks/index.js'],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -201,7 +202,7 @@ const config = [
 	{
 		entry: {
 			'eventespresso-core-blocks-frontend': [
-				assets + 'blocks/index-frontend.js',
+				assetsSrcPath + 'blocks/index-frontend.js',
 			],
 		},
 		output: {
@@ -216,7 +217,7 @@ const config = [
 	{
 		entry: {
 			'eventespresso-core-css-default': [
-				assets + 'components/ui/styles/themes/default/index.js',
+				assetsSrcPath + 'components/ui/styles/themes/default/index.js',
 			],
 		},
 		output: {
@@ -229,4 +230,5 @@ const config = [
 		},
 	},
 ];
-module.exports = config;
+
+module.exports.shared = config;

@@ -39,11 +39,11 @@ class Registry
     private $i18n_registry;
 
     /**
-     * This holds the jsdata data object that will be exposed on pages that enqueue the `eejs-core` script.
+     * This holds the js_data data object that will be exposed on pages that enqueue the `eejs-core` script.
      *
      * @var array
      */
-    protected $jsdata = array();
+    protected $js_data = [];
 
     /**
      * This keeps track of all scripts with registered data.  It is used to prevent duplicate data objects setup in the
@@ -51,7 +51,7 @@ class Registry
      *
      * @var array
      */
-    private $script_handles_with_data = array();
+    private $script_handles_with_data = [];
 
 
     /**
@@ -70,12 +70,13 @@ class Registry
      *
      * @var array
      */
-    private $manifest_data = array();
+    private $manifest_data = [];
 
 
     /**
      * Holds any dependency data obtained from registered dependency map json.
      * Dependency map json is generated via the @wordpress/dependency-extraction-webpack-plugin via the webpack config.
+     *
      * @see https://github.com/WordPress/gutenberg/tree/master/packages/dependency-extraction-webpack-plugin
      *
      * @var array
@@ -88,6 +89,7 @@ class Registry
      * build process.  Currently the dependency export process in webpack does not consider css imports, so we derive
      * them via the js dependencies (WP uses the same handle for both js and css). This is a list of known handles that
      * are used for both js and css.
+     *
      * @var array
      */
     private $wp_css_handle_dependencies = [
@@ -107,24 +109,24 @@ class Registry
      * Registry constructor.
      * Hooking into WP actions for script registry.
      *
-     * @param AssetCollection      $assets
-     * @param I18nRegistry         $i18n_registry
+     * @param AssetCollection $assets
+     * @param I18nRegistry    $i18n_registry
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
     public function __construct(AssetCollection $assets, I18nRegistry $i18n_registry)
     {
-        $this->assets = $assets;
+        $this->assets        = $assets;
         $this->i18n_registry = $i18n_registry;
-        add_action('wp_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
-        add_action('admin_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
-        add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
-        add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
-        add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 4);
-        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 4);
-        add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
-        add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
+        add_action('wp_enqueue_scripts', [$this, 'registerManifestFiles'], 1);
+        add_action('admin_enqueue_scripts', [$this, 'registerManifestFiles'], 1);
+        add_action('wp_enqueue_scripts', [$this, 'registerScriptsAndStyles'], 3);
+        add_action('admin_enqueue_scripts', [$this, 'registerScriptsAndStyles'], 3);
+        add_action('wp_enqueue_scripts', [$this, 'enqueueData'], 4);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueData'], 4);
+        add_action('wp_print_footer_scripts', [$this, 'enqueueData'], 1);
+        add_action('admin_print_footer_scripts', [$this, 'enqueueData'], 1);
     }
 
 
@@ -143,8 +145,8 @@ class Registry
     /**
      * Callback for the wp_enqueue_scripts actions used to register assets.
      *
-     * @since 4.9.62.p
      * @throws Exception
+     * @since 4.9.62.p
      */
     public function registerScriptsAndStyles()
     {
@@ -244,8 +246,8 @@ class Registry
     {
         $this->removeAlreadyRegisteredDataForScriptHandles();
         wp_add_inline_script(
-            'eejs-core',
-            'var eejsdata=' . wp_json_encode(array('data' => $this->jsdata)),
+            CoreAssetManager::JS_HANDLE_JS_CORE,
+            'var eejsdata=' . wp_json_encode(['data' => $this->js_data]),
             'before'
         );
         $scripts = $this->assets->getJavascriptAssetsWithData();
@@ -275,7 +277,7 @@ class Registry
     public function addData($key, $value)
     {
         if ($this->verifyDataNotExisting($key)) {
-            $this->jsdata[ $key ] = $value;
+            $this->js_data[ $key ] = $value;
         }
     }
 
@@ -300,8 +302,9 @@ class Registry
      */
     public function pushData($key, $value)
     {
-        if (isset($this->jsdata[ $key ])
-            && ! is_array($this->jsdata[ $key ])
+        if (
+            isset($this->js_data[ $key ])
+            && ! is_array($this->js_data[ $key ])
         ) {
             if (! $this->debug()) {
                 return;
@@ -318,10 +321,10 @@ class Registry
                 )
             );
         }
-        if ( ! isset( $this->jsdata[ $key ] ) ) {
-            $this->jsdata[ $key ] = is_array($value) ? $value : [$value];
+        if (! isset($this->js_data[ $key ])) {
+            $this->js_data[ $key ] = is_array($value) ? $value : [$value];
         } else {
-            $this->jsdata[ $key ] = array_merge( $this->jsdata[$key], (array) $value);
+            $this->js_data[ $key ] = array_merge($this->js_data[ $key ], (array) $value);
         }
     }
 
@@ -336,11 +339,11 @@ class Registry
      */
     public function addTemplate($template_reference, $template_content)
     {
-        if (! isset($this->jsdata['templates'])) {
-            $this->jsdata['templates'] = array();
+        if (! isset($this->js_data['templates'])) {
+            $this->js_data['templates'] = [];
         }
         //no overrides allowed.
-        if (isset($this->jsdata['templates'][ $template_reference ])) {
+        if (isset($this->js_data['templates'][ $template_reference ])) {
             if (! $this->debug()) {
                 return;
             }
@@ -354,7 +357,7 @@ class Registry
                 )
             );
         }
-        $this->jsdata['templates'][ $template_reference ] = $template_content;
+        $this->js_data['templates'][ $template_reference ] = $template_content;
     }
 
 
@@ -366,8 +369,8 @@ class Registry
      */
     public function getTemplate($template_reference)
     {
-        return isset($this->jsdata['templates'][ $template_reference ])
-            ? $this->jsdata['templates'][ $template_reference ]
+        return isset($this->js_data['templates'][ $template_reference ])
+            ? $this->js_data['templates'][ $template_reference ]
             : '';
     }
 
@@ -380,14 +383,12 @@ class Registry
      */
     public function getData($key)
     {
-        return isset($this->jsdata[ $key ])
-            ? $this->jsdata[ $key ]
-            : false;
+        return array_key_exists($key, $this->js_data) ? $this->js_data[ $key ] : null;
     }
 
 
     /**
-     * Verifies whether the given data exists already on the jsdata array.
+     * Verifies whether the given data exists already on the js_data array.
      * Overriding data is not allowed.
      *
      * @param string $key Index for data.
@@ -396,11 +397,11 @@ class Registry
      */
     protected function verifyDataNotExisting($key)
     {
-        if (isset($this->jsdata[ $key ])) {
+        if (isset($this->js_data[ $key ])) {
             if (! $this->debug()) {
                 return false;
             }
-            if (is_array($this->jsdata[ $key ])) {
+            if (is_array($this->js_data[ $key ])) {
                 throw new InvalidArgumentException(
                     sprintf(
                         esc_html__(
@@ -460,7 +461,6 @@ class Registry
     }
 
 
-
     /**
      * Return the url to a js file for the given namespace and chunk name.
      *
@@ -499,21 +499,20 @@ class Registry
     private function getDetailsForAsset($namespace, $chunk_name, $asset_type)
     {
         $asset_index = $chunk_name . '.' . $asset_type;
-        if (! isset( $this->dependencies_data[ $namespace ][ $asset_index ])) {
+        if (! isset($this->dependencies_data[ $namespace ][ $asset_index ])) {
             $path = isset($this->manifest_data[ $namespace ]['path'])
                 ? $this->manifest_data[ $namespace ]['path']
                 : '';
-            $dependencies_index = $chunk_name . '.' . Asset::TYPE_PHP;
+            $dependencies_index = $chunk_name . Asset::EXT_PHP;
             $file_path = isset($this->manifest_data[ $namespace ][ $dependencies_index ])
                 ? $path . $this->manifest_data[ $namespace ][ $dependencies_index ]
-                :
-                '';
+                : '';
+            // if file path exists then get the asset details
             $this->dependencies_data[ $namespace ][ $asset_index ] = $file_path !== '' && file_exists($file_path)
                 ? $this->getDetailsForAssetType($namespace, $asset_type, $file_path, $chunk_name)
                 : [];
         }
-        $details = $this->dependencies_data[ $namespace ][ $asset_index ];
-        return $details;
+        return $this->dependencies_data[ $namespace ][ $asset_index ];
     }
 
 
@@ -531,17 +530,17 @@ class Registry
     private function getDetailsForAssetType($namespace, $asset_type, $file_path, $chunk_name)
     {
         // $asset_dependencies = json_decode(file_get_contents($file_path), true);
-        $asset_details = require($file_path);
+        $asset_details                 = require($file_path);
         $asset_details['dependencies'] = isset($asset_details['dependencies'])
             ? $asset_details['dependencies']
             : [];
-        $asset_details['version'] = isset($asset_details['version'])
+        $asset_details['version']      = isset($asset_details['version'])
             ? $asset_details['version']
             : '';
         if ($asset_type === Asset::TYPE_JS) {
-            $asset_details['dependencies'] =  $chunk_name === 'eejs-core'
+            $asset_details['dependencies'] = $chunk_name === CoreAssetManager::JS_HANDLE_JS_CORE
                 ? $asset_details['dependencies']
-                : $asset_details['dependencies'] + [ CoreAssetManager::JS_HANDLE_JS_CORE ];
+                : $asset_details['dependencies'] + [CoreAssetManager::JS_HANDLE_JS_CORE];
             return $asset_details;
         }
         // for css we need to make sure there is actually a css file related to this chunk.
@@ -549,17 +548,17 @@ class Registry
             // array of css chunk files for ee.
             $css_chunks = array_map(
                 static function ($value) {
-                    return str_replace('.css', '', $value);
+                    return str_replace(Asset::EXT_CSS, '', $value);
                 },
                 array_filter(
                     array_keys($this->manifest_data[ $namespace ]),
                     static function ($value) {
-                        return strpos($value, '.css') !== false;
+                        return strpos($value, Asset::EXT_CSS) !== false;
                     }
                 )
             );
             // add known wp chunks with css
-            $css_chunks = array_merge( $css_chunks, $this->wp_css_handle_dependencies);
+            $css_chunks = array_merge($css_chunks, $this->wp_css_handle_dependencies);
             // flip for easier search
             $css_chunks = array_flip($css_chunks);
             // now let's filter the dependencies for the incoming chunk to actual chunks that have styles
@@ -604,9 +603,9 @@ class Registry
 
 
     /**
-     * @since 4.9.62.p
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
+     * @since 4.9.62.p
      */
     public function registerManifestFiles()
     {
@@ -625,9 +624,9 @@ class Registry
     /**
      * Used to register a js/css manifest file with the registered_manifest_files property.
      *
-     * @param string $namespace     Provided to associate the manifest file with a specific namespace.
-     * @param string $url_base      The url base for the manifest file location.
-     * @param string $manifest_file The absolute path to the manifest file.
+     * @param string $namespace           Provided to associate the manifest file with a specific namespace.
+     * @param string $url_base            The url base for the manifest file location.
+     * @param string $manifest_file       The absolute path to the manifest file.
      * @param string $manifest_file_path  The path to the folder containing the manifest file. If not provided will be
      *                                    default to `plugin_root/assets/dist`.
      * @throws InvalidArgumentException
@@ -683,10 +682,10 @@ class Registry
     /**
      * Decodes json from the provided manifest file.
      *
-     * @since 4.9.59.p
      * @param string $manifest_file Path to manifest file.
      * @return array
      * @throws InvalidFilePathException
+     * @since 4.9.59.p
      */
     private function decodeManifestFile($manifest_file)
     {
@@ -764,8 +763,8 @@ class Registry
 
 
     /**
-     * @since 4.9.63.p
      * @return bool
+     * @since 4.9.63.p
      */
     private function debug()
     {
@@ -783,7 +782,7 @@ class Registry
      * @param string $chunk_name
      * @return array
      * @deprecated 4.10.2.p
-     * @since 4.9.82.p
+     * @since      4.9.82.p
      */
     public function getJsDependencies($namespace, $chunk_name)
     {

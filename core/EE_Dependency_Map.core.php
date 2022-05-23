@@ -613,7 +613,6 @@ class EE_Dependency_Map
                 'EE_DMS_Core_4_9_0'                                  => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\assets\I18nRegistry'                                                             => [
-                [],
                 'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\assets\Registry'                                                                 => [
@@ -669,7 +668,6 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'                                      => [
-                null,
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                         => EE_Dependency_Map::load_from_cache,
             ],

@@ -5,9 +5,7 @@
   "eventespresso-validators": [],
   "eventespresso-helpers": [],
   "eventespresso-model": [
-    null,
     "The provided entity (%s) does not have the given property (%s)",
-    null,
     "The provided immutable object (%s) does not have the given path (%s)",
     "The provided value is not an array.",
     "The provided items must not be empty",
@@ -26,9 +24,7 @@
     "The given \"%s\" fieldName is not valid for the defined schema.  It must be a \"%s\" and it must be one of \"%s\". The fieldValue given was \"%s\""
   ],
   "eventespresso-components": [
-    null,
     "The provided entity (%s) does not have the given property (%s)",
-    null,
     "The provided immutable object (%s) does not have the given path (%s)",
     "The provided value is not an array.",
     "The provided items must not be empty",
@@ -46,9 +42,7 @@
     "The given \"%1$s\" field's value (%2$s) is not valid for the defined schema type (%3$s).",
     "The given \"%s\" fieldName is not valid for the defined schema.  It must be a \"%s\" and it must be one of \"%s\". The fieldValue given was \"%s\"",
     "Select…",
-    "contact avatar",
-    null,
-    null
+    "contact avatar"
   ],
   "ee-wp-plugins-page": [
     "Do you have a moment to share why you are deactivating Event Espresso?",
@@ -58,11 +52,8 @@
   "eventespresso-data-stores": [
     "There is no relation resource for the given model (%s) and requested relation (%s)",
     "Toggling the checkin failed. Usually this is due to the checkin not having access",
-    null,
     "The given identifier (%s) does not exist in the state.",
-    null,
     "The provided entity (%s) does not have the given property (%s)",
-    null,
     "The provided immutable object (%s) does not have the given path (%s)",
     "The provided value is not an array.",
     "The provided items must not be empty",
