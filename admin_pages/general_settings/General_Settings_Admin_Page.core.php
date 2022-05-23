@@ -344,15 +344,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         EEH_Activation::verify_default_pages_exist();
         $this->_transient_garbage_collection();
 
-        $this->_template_args['values']             = $this->_yes_no_values;
+        $this->_template_args['values'] = $this->_yes_no_values;
 
-        $this->_template_args['reg_page_id']        = $this->core_config->reg_page_id ?? null;
-        $this->_template_args['reg_page_obj']       = isset($this->core_config->reg_page_id)
+        $this->_template_args['reg_page_id']  = $this->core_config->reg_page_id ?? null;
+        $this->_template_args['reg_page_obj'] = isset($this->core_config->reg_page_id)
             ? get_post($this->core_config->reg_page_id)
             : false;
 
-        $this->_template_args['txn_page_id']        = $this->core_config->txn_page_id ?? null;
-        $this->_template_args['txn_page_obj']       = isset($this->core_config->txn_page_id)
+        $this->_template_args['txn_page_id']  = $this->core_config->txn_page_id ?? null;
+        $this->_template_args['txn_page_obj'] = isset($this->core_config->txn_page_id)
             ? get_post($this->core_config->txn_page_id)
             : false;
 
@@ -361,8 +361,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             ? get_post($this->core_config->thank_you_page_id)
             : false;
 
-        $this->_template_args['cancel_page_id']     = $this->core_config->cancel_page_id ?? null;
-        $this->_template_args['cancel_page_obj']    = isset($this->core_config->cancel_page_id)
+        $this->_template_args['cancel_page_id']  = $this->core_config->cancel_page_id ?? null;
+        $this->_template_args['cancel_page_obj'] = isset($this->core_config->cancel_page_id)
             ? get_post($this->core_config->cancel_page_id)
             : false;
 
@@ -612,10 +612,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         /** @var EE_Country $country */
         return $country instanceof EE_Country && $country->ID() === $CNT_ISO
             ? $country
-            : EEM_Country::instance()
-                         ->get_one_by_ID(
-                             $CNT_ISO
-                         );
+            : EEM_Country::instance()->get_one_by_ID($CNT_ISO);
     }
 
 
@@ -634,24 +631,27 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $CNT_ISO = $this->getCountryISO();
 
         $this->_template_args['values']    = $this->_yes_no_values;
-        $this->_template_args['countries'] = new EE_Question_Form_Input(EE_Question::new_instance([
-                                                                                                      'QST_ID'           => 0,
-                                                                                                      'QST_display_text' => esc_html__(
-                                                                                                          'Select Country',
-                                                                                                          'event_espresso'
-                                                                                                      ),
-                                                                                                      'QST_system'       => 'admin-country',
-                                                                                                  ]),
-                                                                        EE_Answer::new_instance([
-                                                                                                    'ANS_ID'    => 0,
-                                                                                                    'ANS_value' => $CNT_ISO,
-                                                                                                ]),
-                                                                        [
-                                                                            'input_id'       => 'country',
-                                                                            'input_name'     => 'country',
-                                                                            'input_prefix'   => '',
-                                                                            'append_qstn_id' => false,
-                                                                        ]);
+        $this->_template_args['countries'] = new EE_Question_Form_Input(
+            EE_Question::new_instance(
+                [
+                    'QST_ID'           => 0,
+                    'QST_display_text' => esc_html__('Select Country', 'event_espresso'),
+                    'QST_system'       => 'admin-country',
+                ]
+            ),
+            EE_Answer::new_instance(
+                [
+                    'ANS_ID'    => 0,
+                    'ANS_value' => $CNT_ISO,
+                ]
+            ),
+            [
+                'input_id'       => 'country',
+                'input_name'     => 'country',
+                'input_prefix'   => '',
+                'append_qstn_id' => false,
+            ]
+        );
 
         $country = $this->verifyOrGetCountryFromIso($CNT_ISO);
         add_filter('FHEE__EEH_Form_Fields__label_html', [$this, 'country_form_field_label_wrap'], 10);
@@ -909,7 +909,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                             ],
                             'STA_active' => [
                                 'type'             => 'RADIO_BTN',
-                                'label'            => esc_html__('State Appears in Dropdown Select Lists', 'event_espresso'),
+                                'label'            => esc_html__(
+                                    'State Appears in Dropdown Select Lists',
+                                    'event_espresso'
+                                ),
                                 'input_name'       => 'states[' . $STA_ID . ']',
                                 'options'          => $this->_yes_no_values,
                                 'use_desc_4_label' => true,
@@ -928,8 +931,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                         GEN_SET_ADMIN_URL
                     );
 
-                    $this->_template_args['states'][$STA_ID]['inputs']           = $inputs;
-                    $this->_template_args['states'][$STA_ID]['delete_state_url'] = $delete_state_url;
+                    $this->_template_args['states'][ $STA_ID ]['inputs']           = $inputs;
+                    $this->_template_args['states'][ $STA_ID ]['delete_state_url'] = $delete_state_url;
                 }
             }
         } else {
@@ -1056,10 +1059,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
         $success = EEM_State::instance()->delete_by_ID($STA_ID);
         if ($success !== false) {
-            do_action('AHEE__General_Settings_Admin_Page__delete_state__state_deleted',
-                      $CNT_ISO,
-                      $STA_ID,
-                      ['STA_abbrev' => $STA_abbrev]);
+            do_action(
+                'AHEE__General_Settings_Admin_Page__delete_state__state_deleted',
+                $CNT_ISO,
+                $STA_ID,
+                ['STA_abbrev' => $STA_abbrev]
+            );
             EE_Error::add_success(esc_html__('The State was deleted successfully.', 'event_espresso'));
         }
         if (defined('DOING_AJAX')) {
@@ -1363,15 +1368,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             foreach ($items as $item) {
                 $ID         = absint($item->ID);
                 $post_title = wp_strip_all_tags($item->post_title);
-                $pad    = str_repeat('&nbsp;', $level * 3);
-                $option = "\n\t";
-                $option .= '<option class="level-' . $level . '" ';
-                $option .= 'value="' . $ID . '" ';
-                $option .= $ID === absint($default) ? ' selected' : '';
-                $option .= '>';
-                $option .= "$pad {$post_title}";
-                $option .= '</option>';
-                $output .= $option;
+                $pad        = str_repeat('&nbsp;', $level * 3);
+                $option     = "\n\t";
+                $option     .= '<option class="level-' . $level . '" ';
+                $option     .= 'value="' . $ID . '" ';
+                $option     .= $ID === absint($default) ? ' selected' : '';
+                $option     .= '>';
+                $option     .= "$pad {$post_title}";
+                $option     .= '</option>';
+                $output     .= $option;
                 ob_start();
                 parent_dropdown($default, $item->ID, $level + 1);
                 $output .= ob_get_clean();
