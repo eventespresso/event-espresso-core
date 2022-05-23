@@ -3994,4 +3994,192 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         );
         return $this->_template_args['success'];
     }
+
+
+    /**
+     * @param EEM_Base      $entity_model
+     * @param string        $entity_PK_name name of the primary key field used as a request param, ie: id, ID, etc
+     * @param string        $action         one of the EE_Admin_List_Table::ACTION_* constants: delete, restore, trash
+     * @param string        $delete_column  name of the field that denotes whether entity is trashed
+     * @param callable|null $callback       called after entity is trashed, restored, or deleted
+     * @return int|float
+     * @throws EE_Error
+     */
+    protected function trashRestoreDeleteEntities(
+        EEM_Base $entity_model,
+        string $entity_PK_name,
+        string $action = EE_Admin_List_Table::ACTION_DELETE,
+        string $delete_column = '',
+        callable $callback = null
+    ) {
+        $entity_PK      = $entity_model->get_primary_key_field();
+        $entity_PK_name = $entity_PK_name ?: $entity_PK->get_name();
+        $entity_PK_type = $this->resolveEntityFieldDataType($entity_PK);
+        // grab ID if deleting a single entity
+        if ($this->request->requestParamIsSet($entity_PK_name)) {
+            $ID = $this->request->getRequestParam($entity_PK_name, 0, $entity_PK_type);
+            return $this->trashRestoreDeleteEntity($entity_model, $ID, $action, $delete_column, $callback) ? 1 : 0;
+        }
+        // or grab checkbox array if bulk deleting
+        $checkboxes = $this->request->getRequestParam('checkbox', [], $entity_PK_type, true);
+        if (empty($checkboxes)) {
+            return 0;
+        }
+        $success = 0;
+        $IDs     = array_keys($checkboxes);
+        // cycle thru bulk action checkboxes
+        foreach ($IDs as $ID) {
+            // increment $success
+            if ($this->trashRestoreDeleteEntity($entity_model, $ID, $action, $delete_column, $callback)) {
+                $success++;
+            }
+        }
+        $count = (int) count($checkboxes);
+        // if multiple entities were deleted successfully, then $deleted will be full count of deletions,
+        // otherwise it will be a fraction of ( actual deletions / total entities to be deleted )
+        return $success === $count ? $count : $success / $count;
+    }
+
+
+    /**
+     * @param EE_Primary_Key_Field_Base $entity_PK
+     * @return string
+     * @throws EE_Error
+     * @since   $VID:$
+     */
+    private function resolveEntityFieldDataType(EE_Primary_Key_Field_Base $entity_PK): string
+    {
+        $entity_PK_type = $entity_PK->getSchemaType();
+        switch ($entity_PK_type) {
+            case 'boolean':
+                return 'bool';
+            case 'integer':
+                return 'int';
+            case 'number':
+                return 'float';
+            case 'string':
+                return 'string';
+        }
+        throw new RuntimeException(
+            sprintf(
+                esc_html__(
+                    '"%1$s" is an invalid schema type for the %2$s primary key.',
+                    'event_espresso'
+                ),
+                $entity_PK_type,
+                $entity_PK->get_name()
+            )
+        );
+    }
+
+
+    /**
+     * @param EEM_Base      $entity_model
+     * @param int|string    $entity_ID
+     * @param string        $action        one of the EE_Admin_List_Table::ACTION_* constants: delete, restore, trash
+     * @param string        $delete_column name of the field that denotes whether entity is trashed
+     * @param callable|null $callback      called after entity is trashed, restored, or deleted
+     * @return bool
+     */
+    protected function trashRestoreDeleteEntity(
+        EEM_Base $entity_model,
+        $entity_ID,
+        string $action,
+        string $delete_column,
+        callable $callback = null
+    ) {
+        $entity_ID = absint($entity_ID);
+        if (! $entity_ID) {
+            $this->trashRestoreDeleteError($action, $entity_model);
+        }
+        $result = 0;
+        try {
+            switch ($action) {
+                case EE_Admin_List_Table::ACTION_DELETE:
+                    $result = (bool) $entity_model->delete_permanently_by_ID($entity_ID);
+                    break;
+                case EE_Admin_List_Table::ACTION_RESTORE:
+                    $this->validateDeleteColumn($entity_model, $delete_column);
+                    $result = $entity_model->update_by_ID([$delete_column => 0], $entity_ID);
+                    break;
+                case EE_Admin_List_Table::ACTION_TRASH:
+                    $this->validateDeleteColumn($entity_model, $delete_column);
+                    $result = $entity_model->update_by_ID([$delete_column => 1], $entity_ID);
+                    break;
+            }
+        } catch (Exception $exception) {
+            $this->trashRestoreDeleteError($action, $entity_model, $exception);
+        }
+        if (is_callable($callback)) {
+            call_user_func_array($callback, [$entity_model, $entity_ID, $action, $result, $delete_column]);
+        }
+        return $result;
+    }
+
+
+    /**
+     * @param EEM_Base $entity_model
+     * @param string   $delete_column
+     * @since $VID:$
+     */
+    private function validateDeleteColumn(EEM_Base $entity_model, string $delete_column)
+    {
+        if (empty($delete_column)) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'You need to specify the name of the "delete column" on the %2$s model, in order to trash or restore an entity.',
+                        'event_espresso'
+                    ),
+                    $entity_model->get_this_model_name()
+                )
+            );
+        }
+        if (! $entity_model->has_field($delete_column)) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'The %1$s field does not exist on the %2$s model.',
+                        'event_espresso'
+                    ),
+                    $delete_column,
+                    $entity_model->get_this_model_name()
+                )
+            );
+        }
+    }
+
+
+    /**
+     * @param EEM_Base       $entity_model
+     * @param Exception|null $exception
+     * @param string         $action
+     * @since $VID:$
+     */
+    private function trashRestoreDeleteError(string $action, EEM_Base $entity_model, ?Exception $exception = null)
+    {
+        if ($exception instanceof Exception) {
+            throw new RuntimeException(
+                sprintf(
+                    esc_html__(
+                        'Could not %1$s the %2$s because the following error occurred: %3$s',
+                        'event_espresso'
+                    ),
+                    $action,
+                    $entity_model->get_this_model_name(),
+                    $exception->getMessage()
+                )
+            );
+        }
+        throw new RuntimeException(
+            sprintf(
+                esc_html__(
+                    'Could not %1$s the %2$s because an invalid ID was received.',
+                    'event_espresso'
+                ),
+                $action,
+                $entity_model->get_this_model_name()
+            )
+        );
+    }
 }

@@ -21,6 +21,23 @@ if (! class_exists('WP_List_Table')) {
  */
 abstract class EE_Admin_List_Table extends WP_List_Table
 {
+    const ACTION_COPY    = 'duplicate';
+
+    const ACTION_DELETE  = 'delete';
+
+    const ACTION_EDIT    = 'edit';
+
+    const ACTION_RESTORE = 'restore';
+
+    const ACTION_TRASH   = 'trash';
+
+    protected static $actions = [
+        self::ACTION_COPY,
+        self::ACTION_DELETE,
+        self::ACTION_EDIT,
+        self::ACTION_RESTORE,
+        self::ACTION_TRASH,
+    ];
 
     /**
      * holds the data that will be processed for the table
@@ -713,7 +730,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function single_row_columns($item)
     {
-        list($columns, $hidden, $sortable, $primary) = $this->get_column_info();
+        [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
 
         foreach ($columns as $column_name => $column_display_name) {
 
