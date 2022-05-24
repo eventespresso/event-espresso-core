@@ -592,8 +592,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     protected function getCountryIsoForSite(): string
     {
-        return ! empty(EE_Registry::instance()->CFG->organization->CNT_ISO) ? EE_Registry::instance(
-        )->CFG->organization->CNT_ISO : 'US';
+        return ! empty(EE_Registry::instance()->CFG->organization->CNT_ISO)
+            ? EE_Registry::instance()->CFG->organization->CNT_ISO
+            : 'US';
     }
 
 
@@ -1112,8 +1113,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $cols_n_values['CNT_ISO3']        = strtoupper(
             $this->request->getRequestParam('cntry', '', $country->ISO3())
         );
-        $cols_n_values['CNT_name']        =
-            $this->request->getRequestParam("cntry[$CNT_ISO][CNT_name]", $country->name());
+        $cols_n_values['CNT_name']        = $this->request->getRequestParam(
+            "cntry[$CNT_ISO][CNT_name]",
+            $country->name()
+        );
         $cols_n_values['CNT_cur_code']    = strtoupper(
             $this->request->getRequestParam(
                 "cntry[$CNT_ISO][CNT_cur_code]",
