@@ -4045,7 +4045,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param EE_Primary_Key_Field_Base $entity_PK
      * @return string
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   4.10.30.p
      */
     private function resolveEntityFieldDataType(EE_Primary_Key_Field_Base $entity_PK): string
     {
@@ -4120,7 +4120,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * @param EEM_Base $entity_model
      * @param string   $delete_column
-     * @since $VID:$
+     * @since 4.10.30.p
      */
     private function validateDeleteColumn(EEM_Base $entity_model, string $delete_column)
     {
@@ -4154,7 +4154,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param EEM_Base       $entity_model
      * @param Exception|null $exception
      * @param string         $action
-     * @since $VID:$
+     * @since 4.10.30.p
      */
     private function trashRestoreDeleteError(string $action, EEM_Base $entity_model, ?Exception $exception = null)
     {

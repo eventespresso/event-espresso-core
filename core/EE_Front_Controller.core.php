@@ -429,7 +429,7 @@ final class EE_Front_Controller
     /**
      * @param string $the_content
      * @return string
-     * @since $VID:$
+     * @since 4.10.30.p
      */
     public function prependNotices($the_content)
     {
@@ -440,7 +440,7 @@ final class EE_Front_Controller
 
     /**
      * @return false|string
-     * @since $VID:$
+     * @since 4.10.30.p
      */
     public function printNotices()
     {

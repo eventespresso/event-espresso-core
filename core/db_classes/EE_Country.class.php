@@ -183,7 +183,7 @@ class EE_Country extends EE_Base_Class
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.30.p
      */
     public function isEU()
     {
@@ -197,7 +197,7 @@ class EE_Country extends EE_Base_Class
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.30.p
      */
     public function telephoneCode()
     {
@@ -206,7 +206,7 @@ class EE_Country extends EE_Base_Class
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.10.30.p
      * @return bool
      */
     public function is_active()
