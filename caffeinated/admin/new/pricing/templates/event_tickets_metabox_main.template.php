@@ -17,7 +17,7 @@
  */
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
-use EventEspresso\core\services\request\sanitizers\MultipleAttributes;
+use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
 
 ?>
 
@@ -141,7 +141,7 @@ use EventEspresso\core\services\request\sanitizers\MultipleAttributes;
                         'Available Tickets',
                         'event_espresso'
                     ); ?></span></h3>
-        <div class="event-tickets-container ee-create-ticket-button" <?php echo MultipleAttributes::clean($show_tickets_container, AllowedTags::getAllowedTags()); ?>>
+        <div class="event-tickets-container ee-create-ticket-button" <?php echo AttributesSanitizer::clean($show_tickets_container, AllowedTags::getAllowedTags()); ?>>
             <button class="ee-create-ticket-button button-secondary ee-create-button" data-context="ticket"><?php
                 esc_html_e(
                     'Create Ticket',
@@ -149,7 +149,7 @@ use EventEspresso\core\services\request\sanitizers\MultipleAttributes;
                 ); ?></button>
         </div>
         <div style="clear:both"></div>
-        <div class="event-tickets-container" <?php echo MultipleAttributes::clean($show_tickets_container, AllowedTags::getAllowedTags()); ?>>
+        <div class="event-tickets-container" <?php echo AttributesSanitizer::clean($show_tickets_container, AllowedTags::getAllowedTags()); ?>>
             <table class="ticket-table">
                 <thead>
                 <tr valign="top">

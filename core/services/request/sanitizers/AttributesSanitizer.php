@@ -7,9 +7,9 @@ namespace EventEspresso\core\services\request\sanitizers;
  *
  * @author  Hossein Rafiei
  * @package EventEspresso\core\services\request\sanitizers
- * @since   4.10.30
+ * @since   $VID:$
  */
-class MultipleAttributes
+class AttributesSanitizer
 {
     /**
      * @param string $attributes
