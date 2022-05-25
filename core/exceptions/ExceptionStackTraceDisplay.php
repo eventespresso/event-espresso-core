@@ -24,13 +24,13 @@ class ExceptionStackTraceDisplay
      * @var   string
      * @since 4.10.24.p
      */
-    private string $class_name = '';
+    private $class_name = '';
 
     /**
      * @var   string
      * @since 4.10.24.p
      */
-    private string $error_code = '';
+    private $error_code = '';
 
 
     /**
@@ -76,7 +76,7 @@ class ExceptionStackTraceDisplay
             echo wp_json_encode(array('error' => $output . $scripts));
             exit();
         }
-        echo wp_kses($output.$scripts, AllowedTags::getWithScriptAndStyleTags());
+        echo wp_kses($output . $scripts, AllowedTags::getWithScriptAndStyleTags());
     }
 
 
@@ -361,18 +361,18 @@ class ExceptionStackTraceDisplay
                 return '';
             }
         }
-        $jquery = esc_url_raw(includes_url() . 'js/jquery/jquery.js');
-        $core = esc_url_raw(EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js?ver=' . espresso_version());
-        $ee_error = esc_url_raw(EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js?ver=' . espresso_version());
-        $style = esc_url_raw(EE_GLOBAL_ASSETS_URL . 'css/ee-exception-stack-display.css');
+        $jquery = includes_url() . 'js/jquery/jquery.js';
+        $core = EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js?ver=' . espresso_version();
+        $ee_error = EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js?ver=' . espresso_version();
+        $style = EE_GLOBAL_ASSETS_URL . 'css/ee-exception-stack-display.css';
         return '
             <script>
             const ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
             </script>
-            <script src="' . $jquery . '" type="text/javascript"></script>
-            <script src="' . $core . '" type="text/javascript"></script>
-            <script src="' . $ee_error . '" type="text/javascript"></script>
-            <link href="' . $style . '" rel="stylesheet" />
+            <script src="' . esc_url_raw($jquery) . '" type="text/javascript"></script>
+            <script src="' . esc_url_raw($core) . '" type="text/javascript"></script>
+            <script src="' . esc_url_raw($ee_error) . '" type="text/javascript"></script>
+            <link href="' . esc_url_raw($style) . '" rel="stylesheet" />
         ';
     }
 }
