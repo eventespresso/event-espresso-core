@@ -203,7 +203,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * Sets addon_name
      *
      * @param string $addon_name
-     * @return boolean
+     * @return bool
      */
     public function set_name($addon_name)
     {
@@ -313,6 +313,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * If the site isn't in maintenance mode, should setup the addon's database
      *
      * @return void
+     * @throws EE_Error
      */
     public function new_install()
     {
@@ -332,6 +333,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * it's good to just check that your data is still intact
      *
      * @return void
+     * @throws EE_Error
      */
     public function reactivation()
     {
@@ -367,13 +369,14 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * initializing this addon's necessary initial data. This is called by default on new activations
      * and reactivations.
      *
-     * @param boolean $verify_schema whether to verify the database's schema for this addon, or just its data.
+     * @param bool $verify_schema whether to verify the database's schema for this addon, or just its data.
      *                               This is a resource-intensive job so we prefer to only do it when necessary
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public function initialize_db_if_no_migrations_required($verify_schema = true)
     {
@@ -482,6 +485,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * they're ran
      *
      * @return void
+     * @throws EE_Error
      */
     public function upgrade()
     {
@@ -610,6 +614,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * Should only be called once per request
      *
      * @return void
+     * @throws EE_Error
      */
     public function detect_activation_or_upgrade()
     {
@@ -659,7 +664,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @param array  $version_history
      * @param string $current_version_to_add
-     * @return boolean success
+     * @return bool success
      */
     public function update_list_of_installed_versions($version_history = null, $current_version_to_add = null)
     {
@@ -810,50 +815,12 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
                 $after_plugin_row .= '<tr id="' . sanitize_title($plugin_file) . '-ee-addon" class="' . $class . '">';
                 $after_plugin_row .= '<th class="check-column" scope="row"></th>';
                 $after_plugin_row .= '<td class="ee-addon-upsell-info-title-td plugin-title column-primary">';
-                $after_plugin_row .= '<style>
-.ee-button,
-.ee-button:active,
-.ee-button:visited {
-	box-sizing: border-box;
-	display: inline-block;
-	position: relative;
-	top: -1px;
-	padding:.5em 1em;
-	margin: 0;
-	background: #00B1CA -webkit-linear-gradient( #4EBFDE, #00B1CA ); /* For Safari 5.1 to 6.0 */
-	background: #00B1CA -o-linear-gradient( #4EBFDE, #00B1CA ); /* For Opera 11.1 to 12.0 */
-	background: #00B1CA -moz-linear-gradient( #4EBFDE, #00B1CA ); /* For Firefox 3.6 to 15 */
-	background: #00B1CA linear-gradient( #4EBFDE, #00B1CA ); /* Standard syntax */
-	border: 1px solid rgba(0,0,0,0.1) !important;
-	border-top: 1px solid rgba(255,255,255,0.5) !important;
-	border-bottom: 2px solid rgba(0,0,0,0.25) !important;
-	font-weight: normal;
-	cursor: pointer;
-	color: #fff !important;
-	text-decoration: none !important;
-	text-align: center;
-	line-height: 1em;
-/*	line-height: 1;*/
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	-moz-box-shadow: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
-}
-.ee-button:hover {
-	color: #fff !important;
-	background: #4EBFDE;
-}
-.ee-button:active { top:0; }
-</style>';
-                $after_plugin_row .= '
-<p class="ee-addon-upsell-info-dv">
-	<a class="ee-button" href="' . $link_url . '">'
-                                     . $link_text
-                                     . ' &nbsp;<span class="dashicons dashicons-arrow-right-alt2" style="margin:0;"></span>'
-                                     . '</a>
-</p>';
+                $after_plugin_row .= '<p class="ee-addon-upsell-info-dv">
+	                <a class="ee-button" href="' . esc_url_raw($link_url) . '">'
+                    . $link_text
+                    . ' &nbsp;<span class="dashicons dashicons-arrow-right-alt2" style="margin:0;"></span>'
+                    . '</a>
+                </p>';
                 $after_plugin_row .= '</td>';
                 $after_plugin_row .= '<td class="ee-addon-upsell-info-desc-td column-description desc">';
                 $after_plugin_row .= $description;

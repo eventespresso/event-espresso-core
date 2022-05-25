@@ -24,13 +24,13 @@ class ExceptionStackTraceDisplay
      * @var   string
      * @since 4.10.24.p
      */
-    private $class_name = '';
+    private string $class_name = '';
 
     /**
      * @var   string
      * @since 4.10.24.p
      */
-    private $error_code = '';
+    private string $error_code = '';
 
 
     /**
@@ -68,73 +68,75 @@ class ExceptionStackTraceDisplay
             ? $this->developerError($exception, $msg, $code, $trace_details)
             : $this->genericError($msg, $code);
         // start gathering output
-        $output = '
-<div id="ee-error-message" class="error">
-    ' . $error_message . '
-</div>';
-        $styles = $this->exceptionStyles();
+        $output = '<div id="ee-error-message" class="error">
+            ' . $error_message . '
+        </div>';
         $scripts = $this->printScripts(true);
         if (defined('DOING_AJAX')) {
-            echo wp_json_encode(array('error' => $styles . $output . $scripts));
+            echo wp_json_encode(array('error' => $output . $scripts));
             exit();
         }
-        echo $styles, $output, $scripts;
+        echo wp_kses($output.$scripts, AllowedTags::getWithScriptAndStyleTags());
     }
 
 
     private function genericError($msg, $code)
     {
-        return '
-    <p>
-        <span class="ee-error-user-msg-spn">' . trim($msg) . '</span> &nbsp; <sup>' . $code . '</sup>
-    </p>';
+        return '<p>
+            <span class="ee-error-user-msg-spn">' . trim($msg) . '</span> &nbsp; <sup>' . $code . '</sup>
+        </p>';
     }
 
 
     /**
+     * @param Exception $exception
+     * @param $msg
+     * @param $code
+     * @param $trace_details
+     * @return string
      * @throws ReflectionException
      */
     private function developerError(Exception $exception, $msg, $code, $trace_details)
     {
         $time = time();
         return '
-	<div class="ee-error-dev-msg-dv">
-		<p class="ee-error-dev-msg-pg">
-		    '
-            . sprintf(
-                esc_html__('%1$sAn %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
-                '<strong class="ee-error-dev-msg-str">',
-                get_class($exception),
-                '</strong>  &nbsp; <span>',
-                $code . '</span>'
-            )
-            . '<br />
-            <span class="big-text">"' . trim($msg) . '"</span><br/>
-            <a id="display-ee-error-trace-1'
-               . $time
-               . '" class="display-ee-error-trace-lnk small-text" rel="ee-error-trace-1'
-               . $time
-               . '">
-                ' . esc_html__('click to view backtrace and class/method details', 'event_espresso') . '
-            </a><br />
-            '
-            . $exception->getFile()
-            . sprintf(
-                esc_html__('%1$s( line no: %2$s )%3$s', 'event_espresso'),
-                ' &nbsp; <span class="small-text lt-grey-text">',
-                $exception->getLine(),
-                '</span>'
-            )
-            . '
-        </p>
-        <div id="ee-error-trace-1'
-               . $time
-               . '-dv" class="ee-error-trace-dv" style="display: none;">
-            '
-               . $trace_details
-               . $this->classDetails() . '
-        </div>
-    </div>';
+        <div class="ee-error-dev-msg-dv">
+            <p class="ee-error-dev-msg-pg">
+                '
+                . sprintf(
+                    esc_html__('%1$sAn %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
+                    '<strong class="ee-error-dev-msg-str">',
+                    get_class($exception),
+                    '</strong>  &nbsp; <span>',
+                    $code . '</span>'
+                )
+                . '<br />
+                <span class="big-text">"' . trim($msg) . '"</span><br/>
+                <a id="display-ee-error-trace-1'
+                   . $time
+                   . '" class="display-ee-error-trace-lnk small-text" rel="ee-error-trace-1'
+                   . $time
+                   . '">
+                    ' . esc_html__('click to view backtrace and class/method details', 'event_espresso') . '
+                </a><br />
+                '
+                . $exception->getFile()
+                . sprintf(
+                    esc_html__('%1$s( line no: %2$s )%3$s', 'event_espresso'),
+                    ' &nbsp; <span class="small-text lt-grey-text">',
+                    $exception->getLine(),
+                    '</span>'
+                )
+                . '
+            </p>
+            <div id="ee-error-trace-1'
+                   . $time
+                   . '-dv" class="ee-error-trace-dv hidden">
+                '
+                   . $trace_details
+                   . $this->classDetails() . '
+            </div>
+        </div>';
     }
 
 
@@ -334,64 +336,7 @@ class ExceptionStackTraceDisplay
      */
     private function exceptionStyles()
     {
-        return '
-<style media="screen">
-	#ee-error-message {
-		max-width:90% !important;
-		margin: 2em 5%;
-	}
-	.ee-error-dev-msg-pg,
-	.error .ee-error-dev-msg-pg {
-		padding:1em;
-		margin:0 0 1em;
-		border:2px solid #e65983;
-		background:#fff;
-		border-radius:3px;
-		line-height: 1.5em;;
-	}
-	#ee-trace-details {
-		margin:0 0 1em;
-	}
-	#ee-trace-details table {
-		background:#fff;
-		width: 100%;
-	}
-	#ee-trace-details table th {
-		background:#e6e6e6;
-		padding: .75rem 1.5rem;
-	}
-	#ee-trace-details table td {
-		padding: .75rem 1.5rem;
-	}
-	#ee-trace-details table .ee-align-left {
-		text-align: start;
-	}
-	#ee-trace-details table .ee-align-right {
-		text-align: end;
-	}
-	#ee-trace-details tr:nth-child(odd) {
-		background:#f6f6f6;
-	}
-	.display-ee-error-trace-lnk {
-		color: #008dcb;
-		cursor:pointer;
-		font-weight: bold;
-	}
-	.display-ee-error-trace-lnk:hover {
-		text-decoration:underline;
-	}
-	.hidden {
-		display:none;
-	}
-	.small-text {
-		font-size: .85em;
-		line-height: 1.4em;
-		letter-spacing: 1px;
-	}
-	.lt-grey-text {
-		color: #999;
-	}
-</style>';
+        return '';
     }
 
 
@@ -419,15 +364,15 @@ class ExceptionStackTraceDisplay
         $jquery = esc_url_raw(includes_url() . 'js/jquery/jquery.js');
         $core = esc_url_raw(EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js?ver=' . espresso_version());
         $ee_error = esc_url_raw(EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js?ver=' . espresso_version());
+        $style = esc_url_raw(EE_GLOBAL_ASSETS_URL . 'css/ee-exception-stack-display.css');
         return '
-<script>
-/* <![CDATA[ */
-const ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
-/* ]]> */
-</script>
-<script src="' . $jquery . '" type="text/javascript" ></script>
-<script src="' . $core . '" type="text/javascript" ></script>
-<script src="' . $ee_error . '" type="text/javascript" ></script>
-';
+            <script>
+            const ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
+            </script>
+            <script src="' . $jquery . '" type="text/javascript"></script>
+            <script src="' . $core . '" type="text/javascript"></script>
+            <script src="' . $ee_error . '" type="text/javascript"></script>
+            <link href="' . $style . '" rel="stylesheet" />
+        ';
     }
 }
