@@ -32,9 +32,7 @@ class EspressoLegacyAdmin extends AdminRoute
     public function matchesCurrentRequest(): bool
     {
         global $pagenow;
-        return $this->request->isAdminAjax() || (
-            parent::matchesCurrentRequest() && $pagenow && $pagenow === 'admin.php'
-        );
+        return $pagenow === 'admin.php' && parent::matchesCurrentRequest();
     }
 
 
