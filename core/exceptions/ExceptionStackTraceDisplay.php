@@ -68,7 +68,8 @@ class ExceptionStackTraceDisplay
             ? $this->developerError($exception, $msg, $code, $trace_details)
             : $this->genericError($msg, $code);
         // start gathering output
-        $output = '<div id="ee-error-message" class="error">
+        $output = '
+        <div id="ee-error-message" class="error">
             ' . $error_message . '
         </div>';
         $scripts = $this->printScripts(true);
@@ -82,7 +83,8 @@ class ExceptionStackTraceDisplay
 
     private function genericError($msg, $code)
     {
-        return '<p>
+        return '
+        <p>
             <span class="ee-error-user-msg-spn">' . trim($msg) . '</span> &nbsp; <sup>' . $code . '</sup>
         </p>';
     }
@@ -131,7 +133,7 @@ class ExceptionStackTraceDisplay
             </p>
             <div id="ee-error-trace-1'
                    . $time
-                   . '-dv" class="ee-error-trace-dv hidden">
+                   . '-dv" class="ee-error-trace-dv ee-error-trace-dv--hidden">
                 '
                    . $trace_details
                    . $this->classDetails() . '
@@ -328,15 +330,6 @@ class ExceptionStackTraceDisplay
         $error_code .= ! empty($func) ? ' - ' . $func : '';
         $error_code .= ! empty($line) ? ' - ' . $line : '';
         return $error_code;
-    }
-
-
-    /**
-     * @return string
-     */
-    private function exceptionStyles()
-    {
-        return '';
     }
 
 

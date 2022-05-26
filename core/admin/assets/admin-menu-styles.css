@@ -626,9 +626,9 @@ input.ee-toggle-round-flat:checked + label:after {
 }
 
 /** ee buttons **/
-.ee-button,
-.ee-button:active,
-.ee-button:visited {
+.ee-addon-upsell-info-dv .ee-button,
+.ee-addon-upsell-info-dv .ee-button:active,
+.ee-addon-upsell-info-dv .ee-button:visited {
     box-sizing: border-box;
     display: inline-block;
     position: relative;
@@ -655,10 +655,10 @@ input.ee-toggle-round-flat:checked + label:after {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
-.ee-button:hover {
+.ee-addon-upsell-info-dv .ee-button:hover {
     color: #fff !important;
     background: #4EBFDE;
 }
-.ee-button:active {
+.ee-addon-upsell-info-dv .ee-button:active {
     top:0;
 }

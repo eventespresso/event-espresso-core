@@ -42,7 +42,7 @@
 .display-ee-error-trace-lnk:hover {
     text-decoration:underline;
 }
-.hidden {
+.ee-error-trace-dv--hidden, .hidden {
     display:none;
 }
 .small-text {
