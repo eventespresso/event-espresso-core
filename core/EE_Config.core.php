@@ -280,7 +280,7 @@ final class EE_Config implements ResettableInterface
         $espresso_config = (array) $this->get_espresso_config();
         // need to move the "addons" element to the end of the config array
         // in case an addon config references one of the other config classes
-        $addons = $espresso_config['addons'];
+        $addons = $espresso_config['addons'] ?? new StdClass();
         unset($espresso_config['addons']);
         $espresso_config['addons'] = $addons;
         foreach ($espresso_config as $config => $settings) {
