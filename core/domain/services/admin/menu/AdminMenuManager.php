@@ -8,8 +8,8 @@ use EE_Error;
 use EE_Maintenance_Mode;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuGroup;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
-use EventEspresso\core\domain\entities\admin\menu\AdminMenuMainItem;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuSubItem;
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuTopLevel;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use Exception;
@@ -34,17 +34,11 @@ class AdminMenuManager
      */
     const MENU_POSITION = 100;
 
-    /**
-     * @var LoaderInterface $loader
-     */
-    protected $loader;
 
     /**
-     * This is the prepared array of EE_Admin_Page_Menu_Maps for adding to the admin_menu.
-     *
      * @var AdminMenuItem[]
      */
-    private $admin_menu = [];
+    private $menu_items = [];
 
     /**
      * objects for page_init objects detected and loaded
@@ -60,37 +54,149 @@ class AdminMenuManager
      */
     protected $maintenance_mode = false;
 
-
     /**
-     * @param LoaderInterface|null $loader
+     * @var AdminMenuItem
      */
-    public function __construct(?LoaderInterface $loader)
+    private $top_level_menu_item;
+
+
+    public function __construct()
     {
-        $this->loader = $loader instanceof LoaderInterface ? $loader : LoaderFactory::getLoader();
+    }
+
+
+    public function initialize()
+    {
+        $this->maintenance_mode = EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance;
+        $this->addTopLevelMenuItem();
+        $this->initializeMenuGroups();
+        add_action('admin_menu', [$this, 'generateAdminMenu']);
+        add_action('network_admin_menu', [$this, 'generateNetworkAdminMenu']);
         add_filter('custom_menu_order', '__return_true');
         add_filter('menu_order', [$this, 'reorderAdminMenu']);
     }
 
 
     /**
-     * @since $VID:$
+     * adds the top level menu item that everything else descends from.
+     * changes depending on whether site is in full maintenance mode or not
+     *
+     * @return void
      */
-    public function initialize()
+    private function addTopLevelMenuItem()
     {
-        $this->maintenance_mode = EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance;
-        $this->initializeMenuGroups();
-        // set menus (has to be done on every load - we're not actually loading the page just setting the menus and where they point to).
-        add_action('admin_menu', [$this, 'generateAdminMenu'], 999);
-        add_action('network_admin_menu', [$this, 'generateNetworkAdminMenu'], 999);
+        $this->top_level_menu_item = $this->maintenance_mode
+            ? $this->instantiateAdminMenu(
+                [
+                    'menu_slug'    => 'espresso_maintenance_settings',
+                    'menu_label'   => esc_html__('Event Espresso', 'event_espresso'),
+                    'capability'   => 'manage_options',
+                    'menu_group'   => 'main',
+                    'menu_order'   => 10,
+                    'menu_type'    => AdminMenuItem::TYPE_MENU_TOP,
+                    'parent_slug'  => 'espresso_maintenance_settings',
+                    'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
+                ]
+            )
+            : $this->instantiateAdminMenu(
+                [
+                    'menu_slug'    => 'espresso_events',
+                    'menu_label'   => esc_html__('Event Espresso', 'event_espresso'),
+                    'capability'   => 'ee_read_events',
+                    'menu_group'   => 'main',
+                    'menu_order'   => 10,
+                    'menu_type'    => AdminMenuItem::TYPE_MENU_TOP,
+                    'parent_slug'  => 'espresso_events',
+                    'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
+                ]
+            );
     }
 
 
     /**
-     * @param EE_Admin_Page_Init[] $installed_pages
+     * sets the filterable _admin_menu_groups property (list of various "groupings" within the EE admin menu array)
+     *
+     * @return void
      */
-    public function setInstalledPages(array $installed_pages): void
+    private function initializeMenuGroups()
     {
-        $this->installed_pages = $installed_pages;
+        $this->menu_items = apply_filters(
+            'FHEE__EE_Admin_Page_Loader___set_menu_groups__admin_menu_groups',
+            [
+                'main'       => $this->instantiateAdminMenu(
+                    [
+                        'menu_slug'               => 'main',
+                        'menu_label'              => esc_html__('Main', 'event_espresso'),
+                        'capability'              => $this->maintenance_mode ? 'manage_options' : 'ee_read_ee',
+                        'maintenance_mode_parent' => 'espresso_maintenance_settings',
+                        'menu_order'              => 0,
+                        'parent_slug'             => 'espresso_events',
+                        'show_on_menu'            => AdminMenuItem::DISPLAY_NONE,
+                    ]
+                ),
+                'management' => $this->instantiateAdminMenu(
+                    [
+                        'menu_slug'    => 'management',
+                        'menu_label'   => esc_html__('Management', 'event_espresso'),
+                        'capability'   => 'ee_read_ee',
+                        'menu_order'   => 10,
+                        'parent_slug'  => 'espresso_events',
+                        'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
+                    ]
+                ),
+                'addons'     => $this->instantiateAdminMenu(
+                    [
+                        'menu_slug'    => 'addons',
+                        'menu_label'   => esc_html__('Add-ons', 'event_espresso'),
+                        'capability'   => 'ee_read_ee',
+                        'menu_order'   => 20,
+                        'parent_slug'  => 'espresso_events',
+                        'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_AND_NETWORK,
+                    ]
+                ),
+                'settings'   => $this->instantiateAdminMenu(
+                    [
+                        'menu_slug'    => 'settings',
+                        'menu_label'   => esc_html__('Settings', 'event_espresso'),
+                        'capability'   => 'ee_read_ee',
+                        'menu_order'   => 30,
+                        'parent_slug'  => 'espresso_events',
+                        'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
+                    ]
+                ),
+                'templates'  => $this->instantiateAdminMenu(
+                    [
+                        'menu_slug'    => 'templates',
+                        'menu_label'   => esc_html__('Templates', 'event_espresso'),
+                        'capability'   => 'ee_read_ee',
+                        'menu_order'   => 40,
+                        'parent_slug'  => 'espresso_events',
+                        'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
+                    ]
+                ),
+                'extras'     => $this->instantiateAdminMenu(
+                    [
+                        'menu_slug'               => 'extras',
+                        'menu_label'              => esc_html__('Extras', 'event_espresso'),
+                        'capability'              => 'ee_read_ee',
+                        'maintenance_mode_parent' => 'espresso_maintenance_settings',
+                        'menu_order'              => 50,
+                        'parent_slug'             => 'espresso_events',
+                        'show_on_menu'            => AdminMenuItem::DISPLAY_BLOG_AND_NETWORK,
+                    ]
+                ),
+                'tools'      => $this->instantiateAdminMenu(
+                    [
+                        'menu_slug'    => 'tools',
+                        'menu_label'   => esc_html__('Tools', 'event_espresso'),
+                        'capability'   => 'ee_read_ee',
+                        'menu_order'   => 60,
+                        'parent_slug'  => 'espresso_events',
+                        'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
+                    ]
+                ),
+            ]
+        );
     }
 
 
@@ -138,8 +244,8 @@ class AdminMenuManager
             case AdminMenuItem::TYPE_MENU_GROUP:
                 unset($menu_properties['menu_callback']);
                 return new AdminMenuGroup($menu_properties);
-            case AdminMenuItem::TYPE_MENU_ITEM:
-                return new AdminMenuMainItem($menu_properties);
+            case AdminMenuItem::TYPE_MENU_TOP:
+                return new AdminMenuTopLevel($menu_properties);
             case AdminMenuItem::TYPE_MENU_SUB_ITEM:
                 return new AdminMenuSubItem($menu_properties);
         }
@@ -148,98 +254,17 @@ class AdminMenuManager
 
 
     /**
-     * sets the filterable _admin_menu_groups property (list of various "groupings" within the EE admin menu array)
-     *
-     * @return void
+     * @param AdminMenuItem $admin_menu
+     * @return AdminMenuGroup
+     * @throws DomainException
+     * @throws OutOfRangeException
      */
-    private function initializeMenuGroups()
-    {
-        // set array of AdminMenuGroup objects
-        $this->admin_menu = apply_filters(
-            'FHEE__EE_Admin_Page_Loader___set_menu_groups__admin_menu_groups',
-            [
-                'main'       => $this->instantiateAdminMenu(
-                    [
-                        'menu_label'   => esc_html__('Main', 'event_espresso'),
-                        'show_on_menu' => AdminMenuItem::DISPLAY_NONE,
-                        'menu_slug'    => 'main',
-                        'capability'   => 'ee_read_ee',
-                        'menu_order'   => 0,
-                        'parent_slug'  => 'espresso_events',
-                    ]
-                ),
-                'management' => $this->instantiateAdminMenu(
-                    [
-                        'menu_label'   => esc_html__('Management', 'event_espresso'),
-                        'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
-                        'menu_slug'    => 'management',
-                        'capability'   => 'ee_read_ee',
-                        'menu_order'   => 10,
-                        'parent_slug'  => 'espresso_events',
-                    ]
-                ),
-                'addons'     => $this->instantiateAdminMenu(
-                    [
-                        'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_AND_NETWORK,
-                        'menu_label'   => esc_html__('Add-ons', 'event_espresso'),
-                        'menu_slug'    => 'addons',
-                        'capability'   => 'ee_read_ee',
-                        'menu_order'   => 20,
-                        'parent_slug'  => 'espresso_events',
-                    ]
-                ),
-                'settings'   => $this->instantiateAdminMenu(
-                    [
-                        'menu_label'   => esc_html__('Settings', 'event_espresso'),
-                        'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
-                        'menu_slug'    => 'settings',
-                        'capability'   => 'ee_read_ee',
-                        'menu_order'   => 30,
-                        'parent_slug'  => 'espresso_events',
-                    ]
-                ),
-                'templates'  => $this->instantiateAdminMenu(
-                    [
-                        'menu_label'   => esc_html__('Templates', 'event_espresso'),
-                        'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
-                        'menu_slug'    => 'templates',
-                        'capability'   => 'ee_read_ee',
-                        'menu_order'   => 40,
-                        'parent_slug'  => 'espresso_events',
-                    ]
-                ),
-                'extras'     => $this->instantiateAdminMenu(
-                    [
-                        'menu_label'              => esc_html__('Extras', 'event_espresso'),
-                        'show_on_menu'            => AdminMenuItem::DISPLAY_BLOG_AND_NETWORK,
-                        'menu_slug'               => 'extras',
-                        'capability'              => 'ee_read_ee',
-                        'menu_order'              => 50,
-                        'parent_slug'             => 'espresso_events',
-                        'maintenance_mode_parent' => 'espresso_maintenance_settings',
-                    ]
-                ),
-                'tools'      => $this->instantiateAdminMenu(
-                    [
-                        'menu_label'   => esc_html__('Tools', 'event_espresso'),
-                        'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
-                        'menu_slug'    => 'tools',
-                        'capability'   => 'ee_read_ee',
-                        'menu_order'   => 60,
-                        'parent_slug'  => 'espresso_events',
-                    ]
-                ),
-            ]
-        );
-    }
-
-
     private function getMenuGroup(AdminMenuItem $admin_menu): AdminMenuGroup
     {
-        if (! isset($this->admin_menu[ $admin_menu->menuGroup() ])) {
+        if (! isset($this->menu_items[ $admin_menu->menuGroup() ])) {
             throw new OutOfRangeException(esc_html__('AdminMenuGroup does not exist', 'event_espresso'));
         }
-        $admin_group = $this->admin_menu[ $admin_menu->menuGroup() ];
+        $admin_group = $this->menu_items[ $admin_menu->menuGroup() ];
         if (! $admin_group instanceof AdminMenuGroup) {
             throw new DomainException(esc_html__('Invalid AdminMenuGroup found', 'event_espresso'));
         }
@@ -270,41 +295,69 @@ class AdminMenuManager
      */
     public function generateAdminMenu(bool $network_admin = false)
     {
-        $admin_menu = $this->sortMenu($this->admin_menu);
+        $admin_menu = $this->sortMenu($this->menu_items);
+        $this->top_level_menu_item->registerAdminMenuItem($network_admin);
         $this->registerAdminMenu($admin_menu, $network_admin);
     }
 
 
+    /**
+     * @param array $admin_menu
+     * @param bool  $network_admin
+     */
     private function registerAdminMenu(array $admin_menu, bool $network_admin)
     {
         foreach ($admin_menu as $menu_item) {
-            if ($menu_item instanceof AdminMenuItem && $menu_item->currentUserHasAccess()) {
-                $sub_items = [];
-                // if menu item is a group and has no sub-items,
-                // or if its a regular menu item but is hidden, skip it
-                if ($menu_item instanceof AdminMenuGroup) {
-                    $sub_items = $menu_item->getMenuItems();
-                    if (empty($sub_items)) {
-                        continue;
-                    }
-                } elseif (! $menu_item->showOnMenu()) {
-                    continue;
-                }
+            if ($this->skipMenuItem($menu_item)) {
+                continue;
+            }
+            try {
                 $wp_page_slug    = $menu_item->registerAdminMenuItem($network_admin);
                 $admin_init_page = $this->installed_pages[ $menu_item->menuSlug() ] ?? null;
                 if ($wp_page_slug && $admin_init_page instanceof EE_Admin_Page_Init) {
-                    try {
-                        $admin_init_page->setWpPageSlug($wp_page_slug);
-                        $admin_init_page->set_page_dependencies($wp_page_slug);
-                    } catch (Exception $e) {
-                        EE_Error::add_error($e->getMessage(), $e->getFile(), __FUNCTION__, $e->getLine());
-                    }
+                    $admin_init_page->setWpPageSlug($wp_page_slug);
+                    $admin_init_page->set_page_dependencies($wp_page_slug);
                 }
                 if ($menu_item instanceof AdminMenuGroup) {
-                    $this->registerAdminMenu($sub_items, $network_admin);
+                    $this->registerAdminMenu($menu_item->getMenuItems(), $network_admin);
                 }
+            } catch (Exception $e) {
+                EE_Error::add_error($e->getMessage(), $e->getFile(), __FUNCTION__, $e->getLine());
             }
         }
+    }
+
+
+    /**
+     * returns TRUE if any of the following conditions is met:
+     * - menu item is NOT an instanceof AdminMenuItem
+     * - menu item has already been registered
+     * - menu item should not be shown when site is in full maintenance mode
+     * - current user does not have the required access permission
+     * - menu item is a group but has no sub items
+     *
+     * @param AdminMenuItem|null $menu_item
+     * @return bool
+     */
+    private function skipMenuItem(?AdminMenuItem $menu_item): bool
+    {
+        return ! $menu_item instanceof AdminMenuItem
+               || $menu_item->isRegistered()
+               || ! $menu_item->showOnMaintenanceModeMenu()
+               || ! $menu_item->currentUserHasAccess()
+               || (
+                   $menu_item instanceof AdminMenuGroup
+                   && $menu_item->hasNoMenuItems()
+               );
+    }
+
+
+    /**
+     * @param EE_Admin_Page_Init[] $installed_pages
+     */
+    public function setInstalledPages(array $installed_pages): void
+    {
+        $this->installed_pages = $installed_pages;
     }
 
 
@@ -333,12 +386,11 @@ class AdminMenuManager
 
 
     /**
-     * Utility method for sorting the _menu_maps (callback for usort php function)
+     *  sort sub menu items
      *
      * @param AdminMenuItem $a menu_item
      * @param AdminMenuItem $b being compared to
      * @return int    sort order
-     * @since  4.4.0
      */
     private function sortMenuItems(AdminMenuItem $a, AdminMenuItem $b): int
     {
@@ -354,11 +406,11 @@ class AdminMenuManager
      *
      * @param array $menu_order
      * @return array
-     * @since $VID:$
      */
     public function reorderAdminMenu(array $menu_order): array
     {
-        $current_index = array_search('espresso_events', $menu_order);
+        $menu_slug     = $this->maintenance_mode ? 'espresso_maintenance_settings' : 'espresso_events';
+        $current_index = array_search($menu_slug, $menu_order);
         if ($current_index === false) {
             return $menu_order;
         }
