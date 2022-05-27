@@ -151,8 +151,8 @@ class EE_Admin_Page_Loader
             $this->_installed_pages[ $page ] = $admin_page_init;
             $admin_menu = $this->menu_manager->getAdminMenu($admin_page_init);
             $admin_page_init->setCapability($admin_menu->capability(), $admin_menu->menuSlug());
-            // skip if in full maintenance mode and maintenance_mode_parent is set
-            if ($this->maintenance_mode && ! $admin_menu->maintenance_mode_parent) {
+            // skip if in full maintenance mode and maintenance_mode_parent is NOT set
+            if ($this->maintenance_mode && ! $admin_menu->maintenanceModeParent()) {
                 unset($admin_pages[ $page ]);
                 continue;
             }
@@ -163,9 +163,9 @@ class EE_Admin_Page_Loader
             // lets see if there are any caffeinated pages extending the originals.
             // If there are then let's hook into the init admin filter and load our extend instead.
             // Set flag for register hooks on extended pages b/c extended pages use the default INIT.
-            $extend =  $this->loadCaffeinatedExtensions($admin_page_init, $page, $menu_slug);
-            // let's do the registered hooks
-            $extended_hooks = $admin_page_init->register_hooks($extend);
+            $extended_hooks = $admin_page_init->register_hooks(
+                $this->loadCaffeinatedExtensions($admin_page_init, $page, $menu_slug)
+            );
             $hooks_ref      += $extended_hooks;
         }
         // the hooks_ref is all the pages where we have $extended _Hooks files
