@@ -10,8 +10,6 @@ use EventEspresso\core\domain\entities\admin\menu\AdminMenuGroup;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuSubItem;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuTopLevel;
-use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
 use Exception;
 use OutOfRangeException;
 
