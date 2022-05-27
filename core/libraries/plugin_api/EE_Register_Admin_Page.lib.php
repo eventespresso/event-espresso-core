@@ -90,13 +90,11 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
         ];
 
         // add filters
-
         add_filter(
-            'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs',
-            ['EE_Register_Admin_Page', 'set_page_basename'],
-            10
+            'FHEE__EE_Admin_Page_Loader__findAdminPages__admin_page_folders',
+            ['EE_Register_Admin_Page', 'set_page_path']
         );
-        add_filter('FHEE__EEH_Autoloader__load_admin_core', ['EE_Register_Admin_Page', 'set_page_path'], 10);
+
         return true;
     }
 
@@ -117,31 +115,16 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
 
 
     /**
-     * set_page_basename
-     *
-     * @param array $installed_refs
-     * @return mixed
-     */
-    public static function set_page_basename(array $installed_refs): array
-    {
-        if (! empty(self::$_ee_admin_page_registry)) {
-            foreach (self::$_ee_admin_page_registry as $basename => $args) {
-                $installed_refs[ $basename ] = $args['page_path'];
-            }
-        }
-        return $installed_refs;
-    }
-
-
-    /**
      * set_page_path
      *
      * @param array $paths
      * @return mixed
+     * @throws EE_Error
      */
     public static function set_page_path(array $paths): array
     {
         foreach (self::$_ee_admin_page_registry as $basename => $args) {
+            EEH_Autoloader::register_autoloaders_for_each_file_in_folder($args['page_path']);
             $paths[ $basename ] = $args['page_path'];
         }
         return $paths;
