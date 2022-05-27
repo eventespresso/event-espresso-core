@@ -583,6 +583,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     {
         $default = $default ?? $this->getCountryIsoForSite();
         $CNT_ISO = $this->request->getRequestParam('country', $default);
+        $CNT_ISO = $this->request->getRequestParam('CNT_ISO', $CNT_ISO);
         return strtoupper($CNT_ISO);
     }
 
