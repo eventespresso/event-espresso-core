@@ -58,7 +58,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init
             'menu_group'              => $this->is_full_m_mode ? 'main' : 'extras',
             'menu_order'              => 30,
             'show_on_menu'            => AdminMenuItem::DISPLAY_BLOG_ONLY,
-            'parent_slug'             =>'espresso_events',
+            'parent_slug'             => 'espresso_events',
             'menu_slug'               => EE_MAINTENANCE_PG_SLUG,
             'menu_label'              => EE_MAINTENANCE_LABEL,
             'capability'              => 'manage_options',

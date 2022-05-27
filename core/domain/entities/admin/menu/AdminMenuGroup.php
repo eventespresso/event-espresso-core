@@ -16,7 +16,6 @@ namespace EventEspresso\core\domain\entities\admin\menu;
  */
 class AdminMenuGroup extends AdminMenuItem
 {
-
     /**
      * @var AdminMenuItem[]
      */

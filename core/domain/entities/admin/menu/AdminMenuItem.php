@@ -190,10 +190,10 @@ abstract class AdminMenuItem
         $missing = array_diff($required, array_keys($menu_args));
 
         if (! empty($missing)) {
-            throw new DomainException (
+            throw new DomainException(
                 sprintf(
                     esc_html__(
-                        '%s is missing some expected keys in the argument array.  The following keys are missing: %s',
+                        '%1$s is missing some expected keys in the argument array.  The following keys are missing: %2$s',
                         'event_espresso'
                     ),
                     get_class($this),
@@ -206,7 +206,7 @@ abstract class AdminMenuItem
             in_array('admin_init_page', $required, true)
             && ! (isset($menu_args['admin_init_page']) && $menu_args['admin_init_page'] instanceof EE_Admin_Page_Init)
         ) {
-            throw new InvalidArgumentException (
+            throw new InvalidArgumentException(
                 sprintf(
                     esc_html__(
                         'The value for the "admin_init_page" argument must be an instance of an EE_Admin_Page_Init object.  Instead %s was given as the value.',
