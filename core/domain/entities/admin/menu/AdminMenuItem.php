@@ -171,12 +171,9 @@ abstract class AdminMenuItem
     public function registerAdminMenuItem(bool $network_admin = false): string
     {
         $this->registered = true;
-        return /*$this->showOnMenu()
-               &&*/ (
-                   $this->displayOnBlogAndNetworkAdmin()
-                   || $this->displayOnBlogAdmin($network_admin)
-                   || $this->displayOnNetworkAdmin($network_admin)
-               )
+        return $this->displayOnBlogAndNetworkAdmin()
+               || $this->displayOnBlogAdmin($network_admin)
+               || $this->displayOnNetworkAdmin($network_admin)
             ? $this->registerMenuItem()
             : '';
     }
