@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+
 /**
  * Registration_Form_Admin_Page_Init
  *
@@ -12,8 +14,6 @@
  * @package         Registration_Form_Admin_Page_Init
  * @subpackage      includes/core/admin/Registration_Form_Admin_Page_Init.core.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init
 {
@@ -33,25 +33,24 @@ class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init
         parent::__construct();
     }
 
+
     protected function _set_init_properties()
     {
         $this->label = esc_html__('Registration Form Overview', 'event_espresso');
     }
 
 
-    protected function _set_menu_map()
+    public function getMenuProperties(): array
     {
-        $this->_menu_map = new EE_Admin_Page_Sub_Menu(
-            array(
-                'menu_group'      => 'management',
-                'menu_order'      => 30,
-                'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
-                'parent_slug'     => 'espresso_events',
-                'menu_slug'       => REGISTRATION_FORM_PG_SLUG,
-                'menu_label'      => esc_html__('Registration Form', 'event_espresso'),
-                'capability'      => 'ee_read_questions',
-                'admin_init_page' => $this,
-            )
-        );
+        return [
+            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'      => 'management',
+            'menu_order'      => 30,
+            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'     => 'espresso_events',
+            'menu_slug'       => REGISTRATION_FORM_PG_SLUG,
+            'menu_label'      => esc_html__('Registration Form', 'event_espresso'),
+            'capability'      => 'ee_read_questions',
+        ];
     }
 }

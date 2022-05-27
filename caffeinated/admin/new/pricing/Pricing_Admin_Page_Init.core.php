@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuSubItem;
+
 /**
  * Pricing_Admin_Page_Init class
  *
@@ -49,11 +52,11 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init
      */
     protected function _set_menu_map()
     {
-        $this->_menu_map = new EE_Admin_Page_Sub_Menu(
+        $this->_menu_map = new AdminMenuSubItem(
             array(
                 'menu_group'      => 'management',
                 'menu_order'      => 20,
-                'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
+                'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
                 'parent_slug'     => 'espresso_events',
                 'menu_slug'       => PRICING_PG_SLUG,
                 'menu_label'      => PRICING_LABEL,

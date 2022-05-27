@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
 use EventEspresso\core\services\database\TableAnalysis;
 
 /**
@@ -52,26 +53,18 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
     }
 
 
-    /**
-     * _set_menu_map
-     *
-     * @return void
-     * @throws EE_Error
-     */
-    protected function _set_menu_map()
+    public function getMenuProperties(): array
     {
-        $this->_menu_map = new EE_Admin_Page_Sub_Menu(
-            [
-                'menu_group'      => 'settings',
-                'menu_order'      => 30,
-                'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
-                'parent_slug'     => 'espresso_events',
-                'menu_slug'       => EE_PAYMENTS_PG_SLUG,
-                'menu_label'      => esc_html__('Payment Methods', 'event_espresso'),
-                'capability'      => 'ee_manage_gateways',
-                'admin_init_page' => $this,
-            ]
-        );
+        return [
+            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'      => 'settings',
+            'menu_order'      => 30,
+            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'     => 'espresso_events',
+            'menu_slug'       => EE_PAYMENTS_PG_SLUG,
+            'menu_label'      => esc_html__('Payment Methods', 'event_espresso'),
+            'capability'      => 'ee_manage_gateways',
+        ];
     }
 
 
