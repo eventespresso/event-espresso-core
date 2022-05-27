@@ -38,15 +38,13 @@ abstract class EE_Admin_Page_Menu_Map extends AdminMenuItem
      */
     public function add_menu_page(bool $network_admin = false)
     {
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
-        \EEH_Debug_Tools::printr($this->menu_label, '$this->menu_label', __FILE__, __LINE__);
-
         $this->registerAdminMenuItem($network_admin);
     }
 
 
     public function __get(string $property)
     {
+        // converts a property name like 'menu_slug' into 'menuSlug'
         $getter = lcfirst(ucwords($property, '_'));
         return method_exists($this, $getter) ? $this->{$getter}() : null;
     }
@@ -54,6 +52,7 @@ abstract class EE_Admin_Page_Menu_Map extends AdminMenuItem
 
     public function __set(string $property, $value)
     {
+        // converts a property name like 'menu_slug' into 'setMenuSlug'
         $setter = 'set' . ucwords($property, '_');
         if (method_exists($this, $setter)) {
             $this->{$setter}($value);
