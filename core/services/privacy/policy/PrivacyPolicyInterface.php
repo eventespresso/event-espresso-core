@@ -15,7 +15,6 @@ namespace EventEspresso\core\services\privacy\policy;
  */
 interface PrivacyPolicyInterface
 {
-
     /**
      * Returns the translated name to display in this privacy policy's section's title
      *

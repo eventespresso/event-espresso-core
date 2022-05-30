@@ -20,7 +20,6 @@ use EED_Core_Rest_Api;
  */
 class ModelVersionInfo
 {
-
     /**
      * Constant used in the $_model_changes array to indicate that a model
      * was completely new in this version

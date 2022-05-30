@@ -11,9 +11,6 @@
  */
 class EE_Required_Validation_Strategy extends EE_Validation_Strategy_Base
 {
-
-
-
     /**
      * @param string $validation_error_message
      */

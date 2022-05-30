@@ -11,7 +11,6 @@ use EventEspresso\core\services\request\DataType;
  */
 class Pricing_Admin_Page extends EE_Admin_Page
 {
-
     protected function _init_page_props()
     {
         $this->page_slug        = PRICING_PG_SLUG;

@@ -13,8 +13,6 @@
  */
 class EE_Messages_Email_Not_Approved_Registration_Validator extends EE_Messages_Validator
 {
-
-
     public function __construct($fields, $context)
     {
         $this->_m_name = 'email';

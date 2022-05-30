@@ -13,7 +13,6 @@ use EventEspresso\core\domain\services\validation\email\EmailValidationException
  */
 interface EmailValidatorInterface
 {
-
     /**
      * Validates the supplied email address. If it is invalid, throws EmailValidationException
      *

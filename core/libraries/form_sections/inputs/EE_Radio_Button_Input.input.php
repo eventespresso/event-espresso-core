@@ -11,7 +11,6 @@
  */
 class EE_Radio_Button_Input extends EE_Form_Input_With_Options_Base
 {
-
     /**
      * @param array $answer_options
      * @param array $input_settings

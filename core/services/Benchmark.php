@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class Benchmark
 {
-
     /**
      * @var string $output
      */

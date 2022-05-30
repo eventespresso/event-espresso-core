@@ -17,7 +17,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EED_Recaptcha_Invisible extends EED_Module
 {
-
     /**
      * @var EE_Registration_Config $config
      */

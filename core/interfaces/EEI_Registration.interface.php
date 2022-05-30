@@ -5,7 +5,6 @@
  */
 interface EEI_Registration extends EEI_Base
 {
-
     /**
      * Gets the registration code
      *

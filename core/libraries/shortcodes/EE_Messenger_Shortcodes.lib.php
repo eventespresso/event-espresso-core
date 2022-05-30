@@ -22,8 +22,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Messenger_Shortcodes extends EE_Shortcodes
 {
-
-
     /**
      * Hold array of active messengers indexed by messenger name.
      *

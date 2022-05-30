@@ -11,7 +11,6 @@
  */
 class EEH_Maps
 {
-
     // array of map settings
     public static $gmap_vars = [];
 

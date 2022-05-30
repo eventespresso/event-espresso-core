@@ -13,5 +13,4 @@ namespace EventEspresso\core\interfaces;
  */
 interface ReservedInstanceInterface
 {
-
 }

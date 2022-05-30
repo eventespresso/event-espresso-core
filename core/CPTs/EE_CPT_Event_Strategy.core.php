@@ -12,7 +12,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_CPT_Event_Strategy
 {
-
     /**
      * the current page, if it utilizes CPTs
      *

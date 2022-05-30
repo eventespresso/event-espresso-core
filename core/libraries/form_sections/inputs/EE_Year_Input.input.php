@@ -11,7 +11,6 @@
  */
 class EE_Year_Input extends EE_Select_Input
 {
-
     public function __construct($input_settings = array(), $four_digit_year = true, $years_behind = 100, $years_ahead = 0)
     {
         if ($four_digit_year) {

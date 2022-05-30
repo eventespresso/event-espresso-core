@@ -14,7 +14,6 @@ use EventEspresso\core\services\commands\CommandInterface;
  */
 class AddActionHook implements CommandBusMiddlewareInterface
 {
-
     /**
      * @param CommandInterface $command
      * @param Closure          $next

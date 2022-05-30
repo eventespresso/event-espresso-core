@@ -28,8 +28,6 @@ use OutOfBoundsException;
  */
 class CoffeeShop implements CoffeePotInterface
 {
-
-
     /**
      * This was the best coffee related name I could think of to represent class name "aliases"
      * So classes can be found via an alias identifier,

@@ -12,8 +12,6 @@ namespace EventEspresso\core\domain\entities;
  */
 class RegCode
 {
-
-
     /*
      * @var string $reg_code
      */

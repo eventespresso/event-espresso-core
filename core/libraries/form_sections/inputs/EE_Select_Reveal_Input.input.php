@@ -14,7 +14,6 @@
  */
 class EE_Select_Reveal_Input extends EE_Select_Input
 {
-
     /**
      * @param array $answer_options Array keys which match a sibling section's name
      *              will show/unhide that sibling subsection. Otherwise, siblings whose names

@@ -30,7 +30,6 @@ use InvalidArgumentException;
  */
 class EspressoEventAttendees extends EspressoShortcode
 {
-
     private $query_params = array(
         0 => array(),
     );

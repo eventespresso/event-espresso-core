@@ -9,8 +9,6 @@
  */
 class EE_Fixed_Hidden_Input extends EE_Hidden_Input
 {
-
-
     /**
      * Fixed Inputs are inputs that do NOT accept user input
      * therefore they will ALWAYS return the default value that was set upon their creation

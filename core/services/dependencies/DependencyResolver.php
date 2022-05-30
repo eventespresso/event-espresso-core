@@ -22,7 +22,6 @@ use ReflectionException;
  */
 abstract class DependencyResolver implements DependencyResolverInterface
 {
-
     /**
      * @var Mirror $mirror
      */

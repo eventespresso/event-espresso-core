@@ -12,7 +12,6 @@ namespace EventEspresso\core\exceptions;
  */
 class InsufficientPermissionsException extends \RuntimeException
 {
-
     /**
      * @access public
      * @param  string     $action

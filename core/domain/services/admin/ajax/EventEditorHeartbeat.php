@@ -15,7 +15,6 @@ use EventEspresso\core\domain\Domain;
  */
 class EventEditorHeartbeat
 {
-
     /**
      * @var Domain $domain
      */

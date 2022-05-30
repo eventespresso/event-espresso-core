@@ -11,7 +11,6 @@ namespace EventEspresso\core\libraries\iframe_display;
  */
 class EventListIframeEmbedButton extends IframeEmbedButton
 {
-
     /**
      * EventListIframeEmbedButton constructor.
      */

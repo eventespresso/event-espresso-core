@@ -13,7 +13,6 @@
  */
 interface EEI_Collection
 {
-
     /**
      * add
      *

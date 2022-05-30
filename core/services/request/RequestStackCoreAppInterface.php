@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\request;
  */
 interface RequestStackCoreAppInterface
 {
-
     /**
      * gives the core app a chance to handle the response after the request stack has fully processed
      *

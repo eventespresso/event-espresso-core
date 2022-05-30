@@ -14,7 +14,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class EED_Ical extends EED_Module
 {
-
     const iCal_datetime_format = 'Ymd\THis\Z';
 
 

@@ -14,7 +14,6 @@
  */
 class EE_Help_Tour_final_stop extends EE_Help_Tour
 {
-
     protected function _set_tour_properties()
     {
         $this->_label = esc_html__('Final Stop Tour', 'event_espresso');

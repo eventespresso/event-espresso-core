@@ -14,7 +14,6 @@ use BadMethodCallException;
  */
 class InstantiationException extends BadMethodCallException
 {
-
     /**
      * InstantiationException constructor.
      *

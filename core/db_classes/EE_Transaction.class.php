@@ -13,7 +13,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class EE_Transaction extends EE_Base_Class implements EEI_Transaction
 {
-
     /**
      * The length of time in seconds that a lock is applied before being considered expired.
      * It is not long because a transaction should only be locked for the duration of the request that locked it

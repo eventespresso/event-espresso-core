@@ -15,7 +15,6 @@
  */
 abstract class EE_Compound_Input_Display_Strategy extends EE_Display_Strategy_Base
 {
-
     /**
      * Gets the html ID for the sub-input for the specified option html value (not display text)
      *

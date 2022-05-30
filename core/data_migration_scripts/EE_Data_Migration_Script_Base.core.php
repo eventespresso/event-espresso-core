@@ -14,7 +14,6 @@ use EventEspresso\core\services\database\TableManager;
  */
 abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Base
 {
-
     /**
      * Set by client code to indicate this DMS is being ran as part of a proper migration,
      * instead of being used to merely setup (or verify) the database structure.

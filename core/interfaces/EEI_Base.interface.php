@@ -5,7 +5,6 @@
  */
 interface EEI_Base
 {
-
     /**
      * gets the unique ID of the model object. If it hasn't been saved yet
      * to the database, this should be 0 or NULL

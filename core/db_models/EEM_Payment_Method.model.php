@@ -16,7 +16,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class EEM_Payment_Method extends EEM_Base
 {
-
     const scope_cart = 'CART';
 
     const scope_admin = 'ADMIN';

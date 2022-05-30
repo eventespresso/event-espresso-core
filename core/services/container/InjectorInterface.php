@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\container;
  */
 interface InjectorInterface
 {
-
     /**
      * getReflectionClass
      * checks if a ReflectionClass object has already been generated for a class

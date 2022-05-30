@@ -10,7 +10,6 @@
  */
 class EE_Email_Confirm_Input extends EE_Form_Input_Base
 {
-
     /**
      * @param array $input_settings
      */

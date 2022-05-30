@@ -16,7 +16,6 @@ use Serializable;
  */
 interface CollectionInterface extends Countable, Iterator, Serializable, ArrayAccess
 {
-
     /**
      * add
      * attaches an object to the Collection

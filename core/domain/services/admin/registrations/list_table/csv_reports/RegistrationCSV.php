@@ -18,7 +18,6 @@ use ReflectionException;
  */
 class RegistrationCSV
 {
-
     /**
      * Adds registration columns to the CSV row
      *

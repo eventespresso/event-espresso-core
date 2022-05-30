@@ -18,7 +18,6 @@ use InvalidArgumentException;
  */
 class RecaptchaFactory implements FactoryInterface
 {
-
     /**
      * @param array $arguments
      * @return InvisibleRecaptcha

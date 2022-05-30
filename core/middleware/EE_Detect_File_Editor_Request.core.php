@@ -11,7 +11,6 @@
  */
 class EE_Detect_File_Editor_Request extends EE_Middleware
 {
-
     /**
      * @deprecated
      * @param EE_Request  $request

@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\progress_steps\display_strategies;
  */
 interface ProgressStepsDisplayInterface
 {
-
     /**
      * used for setting up css and js required for the display strategy
      * ** IMPORTANT **

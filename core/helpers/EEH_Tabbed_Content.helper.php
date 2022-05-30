@@ -13,7 +13,6 @@
  */
 class EEH_Tabbed_Content
 {
-
     /**
      * assembles and returns the html structure for tabs
      *

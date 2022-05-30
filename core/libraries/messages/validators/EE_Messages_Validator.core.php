@@ -15,8 +15,6 @@
  */
 abstract class EE_Messages_Validator extends EE_Base
 {
-
-
     /**
      * These properties just hold the name for the Messenger and Message Type (defined by child classes).
      * These are used for retrieving objects etc.

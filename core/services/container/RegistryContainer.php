@@ -16,7 +16,6 @@ use OutOfBoundsException;
  */
 class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
 {
-
     /**
      * @var array $container
      */

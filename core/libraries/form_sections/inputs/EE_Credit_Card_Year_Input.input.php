@@ -9,7 +9,6 @@
  */
 class EE_Credit_Card_Year_Input extends EE_Year_Input
 {
-
     /**
      * @param array $input_settings
      * @param bool  $four_digit_year

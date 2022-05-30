@@ -16,7 +16,6 @@ use EventEspresso\core\interfaces\ResettableInterface;
  */
 class EE_Cart implements ResettableInterface
 {
-
     /**
      * instance of the EE_Cart object
      *

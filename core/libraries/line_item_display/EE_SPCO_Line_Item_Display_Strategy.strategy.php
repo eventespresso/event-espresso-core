@@ -11,7 +11,6 @@
  */
 class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 {
-
     /**
      * array of events
      *

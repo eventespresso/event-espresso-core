@@ -16,8 +16,6 @@
  */
 class EE_Billable_Line_Item_Filter extends EE_Specific_Registrations_Line_Item_Filter
 {
-
-
     /**
      * EE_Billable_Line_Item_Filter constructor.
      *

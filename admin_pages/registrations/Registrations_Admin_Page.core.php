@@ -19,7 +19,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class Registrations_Admin_Page extends EE_Admin_Page_CPT
 {
-
     /**
      * @var EE_Registration
      */

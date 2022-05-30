@@ -6,7 +6,6 @@
  */
 abstract class EE_Text_Field_Base extends EE_Model_Field_Base
 {
-
     /**
      * Gets the value in the format expected when being set.
      * For display on the front-end, usually you would use prepare_for_pretty_echoing() instead.
@@ -50,6 +49,6 @@ abstract class EE_Text_Field_Base extends EE_Model_Field_Base
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
-        return stripslashes( (string) parent::prepare_for_set($value_inputted_for_field_on_model_object));
+        return stripslashes((string) parent::prepare_for_set($value_inputted_for_field_on_model_object));
     }
 }

@@ -26,7 +26,6 @@
  */
 abstract class EEM_Soft_Delete_Base extends EEM_Base
 {
-
     /**
      * @param null $timezone
      */

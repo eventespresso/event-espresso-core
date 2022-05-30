@@ -13,7 +13,6 @@
  */
 class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
 {
-
     /**
      * EE_Non_Zero_Line_Item_Filter constructor.
      */

@@ -13,7 +13,6 @@
  */
 class EE_Registration_Payment extends EE_Base_Class
 {
-
     /**
      *
      * @param array  $props_n_values

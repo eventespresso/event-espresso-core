@@ -17,7 +17,6 @@
  */
 class EE_Datetime_Shortcodes extends EE_Shortcodes
 {
-
     /**
      * _init_props
      *

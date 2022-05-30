@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Question_Form_Input
 {
-
     /**
      *    EE_Question object
      *

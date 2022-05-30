@@ -12,7 +12,6 @@ namespace EventEspresso\core\domain\services\capabilities;
  */
 interface CapCheckInterface
 {
-
     /**
      * @return string
      */

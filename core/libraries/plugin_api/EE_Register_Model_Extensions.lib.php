@@ -11,7 +11,6 @@
  */
 class EE_Register_Model_Extensions implements EEI_Plugin_API
 {
-
     protected static $_registry;
 
     protected static $_extensions = [];

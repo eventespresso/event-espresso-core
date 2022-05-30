@@ -12,7 +12,6 @@
  */
 class EES_Espresso_Checkout extends EES_Shortcode
 {
-
     /**
      *  set_hooks - for hooking into EE Core, modules, etc
      *

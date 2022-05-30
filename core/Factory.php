@@ -17,7 +17,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class Factory
 {
-
     /**
      * @param string $class_name
      * @param array  $arguments

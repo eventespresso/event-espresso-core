@@ -12,7 +12,6 @@ use EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyT
  */
 class EE_Register_CPT implements EEI_Plugin_API
 {
-
     /**
      * Holds values for registered variations
      *

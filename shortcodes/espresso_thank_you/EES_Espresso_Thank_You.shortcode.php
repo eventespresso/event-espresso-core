@@ -11,7 +11,6 @@
  */
 class EES_Espresso_Thank_You extends EES_Shortcode
 {
-
     /**
      * time in seconds to wait for the IPN to arrive before telling the registrant to bugger off ( 1200s = 20 minutes )
      */

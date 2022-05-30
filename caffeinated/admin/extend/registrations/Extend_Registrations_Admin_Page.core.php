@@ -14,8 +14,6 @@ use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
  */
 class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
 {
-
-
     /**
      * This is used to hold the reports template data which is setup early in the request.
      *

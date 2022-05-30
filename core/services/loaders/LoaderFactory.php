@@ -69,7 +69,6 @@ use InvalidArgumentException;
  */
 class LoaderFactory
 {
-
     /**
      * @var LoaderInterface $loader ;
      */

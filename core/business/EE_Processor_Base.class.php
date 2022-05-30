@@ -13,7 +13,6 @@
  */
 class EE_Processor_Base
 {
-
     /**
      * Used to indicate whether current request is for an IPN or not.
      *

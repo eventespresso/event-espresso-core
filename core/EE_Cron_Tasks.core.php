@@ -14,7 +14,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Cron_Tasks extends EE_Base
 {
-
     /**
      * WordPress doesn't allow duplicate crons within 10 minutes of the original,
      * so we'll set our retry time for just over 10 minutes to avoid that

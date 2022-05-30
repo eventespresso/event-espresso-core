@@ -17,7 +17,6 @@ use EEM_State;
  */
 class AnswersCSV
 {
-
     /**
      * Add question / answer columns to the CSV row
      *

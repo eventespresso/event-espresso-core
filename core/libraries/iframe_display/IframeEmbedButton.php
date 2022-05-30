@@ -11,8 +11,6 @@ namespace EventEspresso\core\libraries\iframe_display;
  */
 abstract class IframeEmbedButton
 {
-
-
     /**
      * @var string $iframe_name
      */

@@ -19,7 +19,6 @@ use OutOfBoundsException;
  */
 class OpenCoffeeShop
 {
-
     /**
      * @var CoffeeShop $CoffeeShop
      */

@@ -42,7 +42,6 @@ use Exception;
  */
 class CollectionDetails implements CollectionDetailsInterface
 {
-
     /**
      * if $identifier_type is set to this,
      * then the collection will use each object's spl_object_hash() as it's identifier

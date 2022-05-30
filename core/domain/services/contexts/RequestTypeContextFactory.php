@@ -16,7 +16,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class RequestTypeContextFactory implements RequestTypeContextFactoryInterface
 {
-
     /**
      * @var LoaderInterface $loader
      */

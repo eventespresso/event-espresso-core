@@ -16,7 +16,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class FullyQualifiedName
 {
-
     /**
      * @var string $fully_qualified_name
      */

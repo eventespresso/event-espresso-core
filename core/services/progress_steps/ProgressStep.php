@@ -16,8 +16,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class ProgressStep implements ProgressStepInterface
 {
-
-
     /**
      * @var boolean $current
      */

@@ -11,8 +11,6 @@ use Exception;
 
 abstract class AbstractHelper implements HelperInterface
 {
-
-
     /**
      * Ensures that a valid timezone string is returned.
      *

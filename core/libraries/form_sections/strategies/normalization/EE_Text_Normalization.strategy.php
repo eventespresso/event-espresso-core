@@ -10,7 +10,6 @@
  */
 class EE_Text_Normalization extends EE_Normalization_Strategy_Base
 {
-
     /**
      * @param string $value_to_normalize
      * @return array|mixed|string

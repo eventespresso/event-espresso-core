@@ -16,7 +16,6 @@ use EventEspresso\core\interfaces\ReservedInstanceInterface;
  */
 class Request implements InterminableInterface, RequestInterface, ReservedInstanceInterface
 {
-
     /**
      * $_COOKIE parameters
      *

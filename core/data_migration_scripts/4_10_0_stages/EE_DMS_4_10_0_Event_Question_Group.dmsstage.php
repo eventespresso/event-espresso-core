@@ -11,9 +11,6 @@
  */
 class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_Table
 {
-
-
-
     /**
      * Just initializes the status of the migration
      */

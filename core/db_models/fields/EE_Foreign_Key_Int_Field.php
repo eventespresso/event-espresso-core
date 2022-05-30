@@ -2,7 +2,6 @@
 
 class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base
 {
-
     /**
      * @param string  $table_column  name fo column for field
      * @param string  $nicename      should eb internationalized with esc_html__('blah','event_espresso')

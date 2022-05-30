@@ -18,7 +18,6 @@ use Exception;
  */
 class PhpCompatLessFiveSixHelper extends AbstractHelper
 {
-
     /**
      * PhpCompatLessFiveSixHelper constructor.
      *

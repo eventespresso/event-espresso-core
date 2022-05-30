@@ -14,7 +14,6 @@ namespace EventEspresso\core\libraries\rest_api;
  */
 class RestException extends \EE_Error
 {
-
     /**
      * @var array
      */

@@ -23,7 +23,6 @@ use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
  */
 class CapChecker implements CommandBusMiddlewareInterface
 {
-
     /**
      * @type CapabilitiesCheckerInterface $capabilities_checker
      */

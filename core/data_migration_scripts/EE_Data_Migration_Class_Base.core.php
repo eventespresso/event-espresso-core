@@ -16,7 +16,6 @@ use EventEspresso\core\services\database\TableManager;
  */
 abstract class EE_Data_Migration_Class_Base
 {
-
     /**
      * @var $records_to_migrate int count of all that have been migrated
      */

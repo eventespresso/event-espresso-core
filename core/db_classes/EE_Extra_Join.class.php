@@ -11,7 +11,6 @@
  */
 class EE_Extra_Join extends EE_Base_Class
 {
-
     /**
      * @param array $props_n_values
      * @param null  $timezone

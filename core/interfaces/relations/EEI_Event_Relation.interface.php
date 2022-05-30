@@ -11,8 +11,6 @@
  */
 interface EEI_Event_Relation
 {
-
-
     /**
      * Used to return the event object that can be derived from the EE_Base_Class object.
      * @return EE_Event

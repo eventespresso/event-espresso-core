@@ -11,7 +11,6 @@ use FilesystemIterator;
  */
 interface LocatorInterface
 {
-
     /**
      * given a string or an array of information for where to look,
      * will find all files in that location

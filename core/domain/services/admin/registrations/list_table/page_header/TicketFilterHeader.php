@@ -22,7 +22,6 @@ use ReflectionException;
  */
 class TicketFilterHeader extends AdminPageHeaderDecorator
 {
-
     /**
      * @var EEM_Ticket $ticket_model
      */

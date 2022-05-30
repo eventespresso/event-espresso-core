@@ -6,7 +6,6 @@
  */
 class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
 {
-
     /**
      * Overriding the parent table layout to include <tbody> tags
      *

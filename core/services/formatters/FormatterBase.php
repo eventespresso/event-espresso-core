@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 abstract class FormatterBase implements FormatterInterface
 {
-
     /**
      * Recursively applies the formatting to all VALUES in this multi-dimensional array
      *

@@ -11,7 +11,6 @@
  */
 class EE_Button_Input extends EE_Form_Input_Base
 {
-
     /**
      * @var string of HTML to put between the button tags
      */

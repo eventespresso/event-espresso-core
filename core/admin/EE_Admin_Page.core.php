@@ -18,7 +18,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 {
-
     /**
      * @var LoaderInterface
      */

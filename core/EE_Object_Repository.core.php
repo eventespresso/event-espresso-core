@@ -16,7 +16,6 @@
  */
 abstract class EE_Object_Repository extends EE_Object_Collection implements EEI_Repository
 {
-
     /**
      * default persist method called on repository objects if none supplied
      *

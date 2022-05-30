@@ -44,7 +44,6 @@ namespace EventEspresso\core;
  */
 class Psr4Autoloader
 {
-
     /**
      * namespace separator
      */

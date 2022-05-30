@@ -13,7 +13,6 @@
  */
 class EE_Payment_Failed_message_type extends EE_Payment_Base_message_type
 {
-
     public function __construct()
     {
 

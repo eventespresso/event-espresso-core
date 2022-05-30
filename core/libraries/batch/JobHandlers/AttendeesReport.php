@@ -18,7 +18,6 @@ use EventEspressoBatchRequest\Helpers\JobStepResponse;
  */
 class AttendeesReport extends JobHandlerFile
 {
-
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function create_job(JobParameters $job_parameters)
     {

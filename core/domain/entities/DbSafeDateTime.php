@@ -17,7 +17,6 @@ use DomainException;
  */
 class DbSafeDateTime extends DateTime
 {
-
     // phpcs:disable Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase
     /**
      * @type string db_safe_timestamp_format

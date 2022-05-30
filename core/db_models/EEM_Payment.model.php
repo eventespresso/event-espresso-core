@@ -11,7 +11,6 @@
  */
 class EEM_Payment extends EEM_Base implements EEMI_Payment
 {
-
     // private instance of the Payment object
     protected static $_instance = null;
 

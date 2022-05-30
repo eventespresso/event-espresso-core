@@ -5,7 +5,6 @@
  */
 interface EEHI_Template
 {
-
     /**
      * EEH_Template::format_currency
      * This helper takes a raw float value and formats it according to the default config country currency settings, or the country currency settings from the supplied country ISO code

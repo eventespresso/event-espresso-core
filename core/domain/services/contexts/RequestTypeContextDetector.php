@@ -17,7 +17,6 @@ use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
  */
 class RequestTypeContextDetector
 {
-
     /**
      * @var RequestTypeContextFactoryInterface $factory
      */

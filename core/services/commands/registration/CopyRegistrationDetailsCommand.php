@@ -14,8 +14,6 @@ use EventEspresso\core\services\commands\Command;
  */
 class CopyRegistrationDetailsCommand extends Command
 {
-
-
     /**
      * @var \EE_Registration $target_registration
      */

@@ -5,7 +5,6 @@
  */
 class EEM_System_Status
 {
-
     // private instance of the EEM_System_Status object
     protected static $_instance = null;
 
@@ -205,7 +204,7 @@ class EEM_System_Status
             ob_get_clean()
         );
 
-        $sections = explode('<h2>', strip_tags((string)$pi, '<h2><th><td>'));
+        $sections = explode('<h2>', strip_tags((string) $pi, '<h2><th><td>'));
         unset($sections[0]);
 
         $pi = array();

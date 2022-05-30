@@ -15,7 +15,6 @@ use WP_Post;
  */
 class EspressoThankYou extends EspressoShortcode
 {
-
     /**
      * @var boolean $is_thank_you_page
      */

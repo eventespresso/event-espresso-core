@@ -15,9 +15,6 @@
  */
 interface EEI_Line_Item_Filter
 {
-
-
-
     /**
      * process
      *

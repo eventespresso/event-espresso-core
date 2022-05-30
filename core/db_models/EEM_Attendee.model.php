@@ -12,7 +12,6 @@ use EventEspresso\core\services\orm\ModelFieldFactory;
  */
 class EEM_Attendee extends EEM_CPT_Base
 {
-
     // private instance of the Attendee object
     protected static $_instance = null;
 

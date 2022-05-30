@@ -19,7 +19,6 @@ use ReflectionMethod;
  */
 class ExceptionStackTraceDisplay
 {
-
     /**
      * @var   string
      * @since 4.10.24.p

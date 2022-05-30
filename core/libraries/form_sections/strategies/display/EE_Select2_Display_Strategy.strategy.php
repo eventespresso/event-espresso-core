@@ -15,7 +15,6 @@
  */
 class EE_Select2_Display_Strategy extends EE_Select_Display_Strategy
 {
-
     /**
      * Arguments that will be passed into the select2 javascript constructor
      * @var array

@@ -49,8 +49,6 @@ use stdClass;
  */
 class Read extends Base
 {
-
-
     /**
      * @var CalculatedModelFields
      */

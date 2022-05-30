@@ -10,8 +10,6 @@
  */
 class EE_Message_Repository extends EE_Base_Class_Repository
 {
-
-
     /**
      *    EE_Message_Repository constructor
      */

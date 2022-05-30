@@ -16,7 +16,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Transaction_Shortcodes extends EE_Shortcodes
 {
-
     /**
      * @var EE_Payment_Method $_invoice_pm the invoice payment method for use in invoices etc
      */

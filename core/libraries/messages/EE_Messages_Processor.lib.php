@@ -14,8 +14,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Messages_Processor
 {
-
-
     /**
      * @type EE_Message_Resource_Manager $_message_resource_manager
      */

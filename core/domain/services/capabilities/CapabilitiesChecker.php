@@ -17,7 +17,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class CapabilitiesChecker implements CapabilitiesCheckerInterface
 {
-
     /**
      * @type EE_Capabilities $capabilities
      */

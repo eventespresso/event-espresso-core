@@ -15,8 +15,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 abstract class EE_message_type extends EE_Messages_Base
 {
-
-
     /**
      * message type child classes will set what contexts are associated with the message type via this array.
      * format:

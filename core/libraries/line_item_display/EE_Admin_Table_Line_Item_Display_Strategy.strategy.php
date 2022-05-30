@@ -13,8 +13,6 @@
 
 class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 {
-
-
     /**
      * whether to display the taxes row or not
      * @type bool $_show_taxes

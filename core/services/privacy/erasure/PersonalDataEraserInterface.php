@@ -14,7 +14,6 @@ namespace EventEspresso\core\services\privacy\erasure;
  */
 interface PersonalDataEraserInterface
 {
-
     /**
      * Gets a translated string name for the data eraser
      *

@@ -10,8 +10,6 @@
  */
 class EE_No_Layout extends EE_Div_Per_Section_Layout
 {
-
-
     /**
      * This is a flag indicating whether to use '<br>' tags after each input in the layout
      * strategy.

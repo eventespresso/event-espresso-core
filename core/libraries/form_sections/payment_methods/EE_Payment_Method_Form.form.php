@@ -6,7 +6,6 @@
  */
 class EE_Payment_Method_Form extends EE_Model_Form_Section
 {
-
     /**
      * All the subsection inputs that correspond ot extra meta rows
      * for this payment method

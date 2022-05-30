@@ -10,8 +10,6 @@
  */
 class EEH_Schema
 {
-
-
     /**
      * generates JSON-based linked data for an event
      *

@@ -12,7 +12,6 @@
  */
 class EE_Request_Stack_Builder
 {
-
     /**
      * EE_Request_Stack_Builder
      */

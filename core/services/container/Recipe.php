@@ -18,7 +18,6 @@ use RuntimeException;
  */
 class Recipe implements RecipeInterface
 {
-
     /**
      * A default Recipe to use if none is specified for a class
      */

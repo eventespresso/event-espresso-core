@@ -13,8 +13,6 @@ namespace EventEspresso\core\exceptions;
  */
 class EntityNotFoundException extends \UnexpectedValueException
 {
-
-
     /**
      * EntityNotFoundException constructor
      *

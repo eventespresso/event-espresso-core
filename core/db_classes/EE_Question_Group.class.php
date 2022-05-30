@@ -11,7 +11,6 @@
  */
 class EE_Question_Group extends EE_Soft_Delete_Base_Class
 {
-
     /**
      * @param array $props_n_values
      * @return EE_Question_Group|mixed

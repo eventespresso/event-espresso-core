@@ -15,8 +15,6 @@
  */
 class Tickets_List_Table extends EE_Admin_List_Table
 {
-
-
     protected function _setup_data()
     {
         $trashed = $this->_admin_page->get_view() == 'trashed' ? true : false;

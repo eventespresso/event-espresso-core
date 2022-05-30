@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class Events_Admin_List_Table extends EE_Admin_List_Table
 {
-
     /**
      * @var EE_Datetime
      */

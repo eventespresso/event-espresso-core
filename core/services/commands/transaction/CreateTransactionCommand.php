@@ -19,7 +19,6 @@ use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
  */
 class CreateTransactionCommand extends Command implements CommandRequiresCapCheckInterface
 {
-
     /**
      * @var EE_Checkout $checkout
      */

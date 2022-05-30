@@ -14,7 +14,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class AdminNotice
 {
-
     const ERROR = 'notice-error';
 
     const WARNING = 'notice-warning';

@@ -16,8 +16,6 @@
  */
 class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page
 {
-
-
     public function __construct($routing = true)
     {
         parent::__construct($routing);

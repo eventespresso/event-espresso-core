@@ -13,7 +13,6 @@
  */
 class EE_CSV
 {
-
     // instance of the EE_CSV object
     private static $_instance = null;
 

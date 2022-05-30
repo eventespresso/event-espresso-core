@@ -13,7 +13,6 @@
  */
 final class EE_Capabilities extends EE_Base
 {
-
     /**
      * the name of the wp option used to store caps previously initialized
      */
@@ -1007,7 +1006,6 @@ final class EE_Capabilities extends EE_Base
  */
 abstract class EE_Meta_Capability_Map
 {
-
     public $meta_cap;
 
     /**
@@ -1158,7 +1156,6 @@ abstract class EE_Meta_Capability_Map
  */
 class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
 {
-
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -1249,7 +1246,6 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
  */
 class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit
 {
-
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -1282,7 +1278,6 @@ class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit
  */
 class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
 {
-
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -1378,7 +1373,6 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
  */
 class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map
 {
-
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
@@ -1444,7 +1438,6 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map
  */
 class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Map
 {
-
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.

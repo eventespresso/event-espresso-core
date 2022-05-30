@@ -46,7 +46,6 @@ use ReflectionException;
  */
 class BootstrapCore
 {
-
     /**
      * @type LoaderInterface $loader
      */

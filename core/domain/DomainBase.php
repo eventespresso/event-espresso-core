@@ -16,7 +16,6 @@ use EventEspresso\core\services\assets\Registry;
  */
 abstract class DomainBase implements DomainInterface
 {
-
     /**
      * Equivalent to `__FILE__` for main plugin file.
      *

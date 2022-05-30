@@ -5,7 +5,6 @@
  */
 interface EEHI_Line_Item
 {
-
     /**
      * Adds an item to the purchase in the right spot
      *

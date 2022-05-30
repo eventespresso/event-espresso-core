@@ -15,7 +15,6 @@
 
 class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 {
-
     /**
      * total amount of tax to apply
      * @type float $_tax_rate

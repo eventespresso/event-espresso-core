@@ -12,7 +12,6 @@ use EventEspresso\core\services\request\files\FileSubmissionInterface;
  */
 class EE_File_Normalization extends EE_Normalization_Strategy_Base
 {
-
     /**
      * Keep in mind $value_to_normalize should be a FileSubmissionInterface or null, so this shouldn't really do
      * much (other than NOT convert it to a string or something).

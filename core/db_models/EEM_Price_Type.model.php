@@ -11,7 +11,6 @@
  */
 class EEM_Price_Type extends EEM_Soft_Delete_Base
 {
-
     // private instance of the Price Type object
     protected static $_instance = null;
     // An array of the price type objects

@@ -16,7 +16,6 @@ use EventEspresso\core\services\request\ResponseInterface;
  */
 final class EE_Request_Handler implements InterminableInterface
 {
-
     /**
      * @var CurrentPage
      */

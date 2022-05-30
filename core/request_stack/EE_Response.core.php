@@ -12,7 +12,6 @@
  */
 class EE_Response
 {
-
     /**
      * @access    protected
      * @type        array $_notice

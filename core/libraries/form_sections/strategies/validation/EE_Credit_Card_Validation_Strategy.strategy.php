@@ -13,7 +13,6 @@
  */
 class EE_Credit_Card_Validation_Strategy extends EE_Text_Validation_Strategy
 {
-
     /**
      * @param null $validation_error_message
      */

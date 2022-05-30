@@ -15,7 +15,6 @@ use EventEspresso\core\exceptions\UnexpectedEntityException;
  */
 class CreateTicketLineItemService extends DomainService
 {
-
     /**
      * @param \EE_Transaction $transaction
      * @param \EE_Ticket      $ticket

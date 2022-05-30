@@ -19,7 +19,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EED_Ticket_Sales_Monitor extends EED_Module
 {
-
     const debug = false;
 
     private static $nl = '';

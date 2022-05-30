@@ -14,7 +14,6 @@ use Closure;
  */
 interface CacheManagerInterface
 {
-
     /**
      * returns a string that will be prepended to all cache identifiers
      *

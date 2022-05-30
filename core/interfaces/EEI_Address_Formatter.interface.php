@@ -5,7 +5,6 @@
  */
 interface EEI_Address_Formatter
 {
-
     /**
      * @param string $address
      * @param string $address2

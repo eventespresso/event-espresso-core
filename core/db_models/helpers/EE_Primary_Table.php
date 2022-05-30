@@ -6,7 +6,6 @@
  */
 class EE_Primary_Table extends EE_Table_Base
 {
-
     /**
      *
      * @global type $wpdb

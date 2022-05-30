@@ -14,8 +14,6 @@
  */
 class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
 {
-
-
     /**
      * This is used to hold the reports template data which is setup early in the request.
      *

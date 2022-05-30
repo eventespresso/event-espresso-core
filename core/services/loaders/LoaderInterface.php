@@ -7,7 +7,6 @@ use InvalidArgumentException;
 
 interface LoaderInterface
 {
-
     /**
      * Can be for instantiating a new instance of a class,
      * or for getting a shared instance of a class (default)

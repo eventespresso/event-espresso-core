@@ -16,7 +16,6 @@ use EventEspresso\core\services\collections\Collection;
  */
 class ProgressStepCollection extends Collection
 {
-
     /**
      * ProgressStepCollection constructor.
      *

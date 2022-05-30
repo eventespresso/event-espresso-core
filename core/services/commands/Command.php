@@ -16,7 +16,6 @@ use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
  */
 abstract class Command implements CommandInterface
 {
-
     /*
      * @var CapCheckInterface $cap_check
      */

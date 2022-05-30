@@ -17,7 +17,6 @@ use InvalidArgumentException;
  */
 class SetRequestTypeContextChecker extends Middleware
 {
-
     /**
      * converts a Request to a Response
      *

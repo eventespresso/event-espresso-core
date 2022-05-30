@@ -13,8 +13,6 @@
  */
 class EE_Message_Type_Collection_Loader
 {
-
-
     /**
      * @type EE_Message_Type_Collection $_message_type_collection
      */

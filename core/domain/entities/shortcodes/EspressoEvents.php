@@ -28,8 +28,6 @@ use EventEspresso\core\services\shortcodes\EspressoShortcode;
  */
 class EspressoEvents extends EspressoShortcode
 {
-
-
     /**
      * the actual shortcode tag that gets registered with WordPress
      *

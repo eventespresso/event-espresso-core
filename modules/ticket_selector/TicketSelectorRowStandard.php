@@ -19,7 +19,6 @@ use ReflectionException;
  */
 class TicketSelectorRowStandard extends TicketSelectorRow
 {
-
     /**
      * @var TicketDetails
      */

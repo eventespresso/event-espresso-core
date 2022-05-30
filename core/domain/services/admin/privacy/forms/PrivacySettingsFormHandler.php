@@ -27,7 +27,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class PrivacySettingsFormHandler extends FormHandler
 {
-
     /**
      * @var EE_Config
      */

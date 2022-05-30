@@ -5,7 +5,6 @@
  */
 interface EEI_Request_Decorator
 {
-
     /**
      * converts a Request to a Response
      * can perform their logic either before or after the core application has run like so:

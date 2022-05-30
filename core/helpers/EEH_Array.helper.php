@@ -11,8 +11,6 @@
  */
 class EEH_Array extends EEH_Base
 {
-
-
     /**
      * This method basically works the same as the PHP core function array_diff except it allows you to compare arrays
      * of EE_Base_Class objects NOTE: This will ONLY work on an array of EE_Base_Class objects

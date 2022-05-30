@@ -15,8 +15,6 @@
  */
 class Venues_Admin_Page_Init extends EE_Admin_Page_CPT_Init
 {
-
-
     public function __construct()
     {
         // define some event categories related constants

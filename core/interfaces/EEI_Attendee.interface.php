@@ -5,7 +5,6 @@
  */
 interface EEI_Attendee
 {
-
     public function fname();
 
 

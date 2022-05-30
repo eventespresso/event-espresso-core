@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\CurrentPage;
  */
 class EE_Maintenance_Mode implements ResettableInterface
 {
-
     /**
      * constants available to client code for interpreting the values of EE_Maintenance_Mode::level().
      * level_0_not_in_maintenance means the site is NOT in maintenance mode (so everything's normal)

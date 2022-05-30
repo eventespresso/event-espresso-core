@@ -12,7 +12,6 @@ use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
  */
 class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 {
-
     /**
      * This property will hold the related Datetimes on an event IF the event id is included in the request.
      *

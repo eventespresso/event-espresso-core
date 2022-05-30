@@ -10,9 +10,6 @@
  */
 interface EEI_Deletable
 {
-
-
-
     /**
      * delete
      *

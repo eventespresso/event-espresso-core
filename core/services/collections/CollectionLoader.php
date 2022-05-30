@@ -28,7 +28,6 @@ use ReflectionException;
  */
 class CollectionLoader
 {
-
     /**
      * possible return value when adding entities to a collection.
      * denotes that the entity was NOT ADDED to the collection

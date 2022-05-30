@@ -16,7 +16,6 @@ use EventEspresso\core\domain\DomainInterface;
  */
 class PluginUpsells
 {
-
     /**
      * @var DomainInterface
      */
