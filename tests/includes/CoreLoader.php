@@ -117,7 +117,10 @@ class CoreLoader
             if (! $wp_dir) {
                 continue;
             }
-            $wp_root = $this->findFolderWithFile($wp_dir, '/vendor/yoast/phpunit-polyfills');
+            $wp_root = $this->findFolderWithFile(
+                $wp_dir,
+                '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php'
+            );
             if ($wp_root) {
                 return $wp_root;
             }
