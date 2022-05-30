@@ -58,6 +58,9 @@ jobs:
         run: |
           echo "wpVersion=latest" >> $GITHUB_ENV
 
+      - name: Remove vendor directory
+        run: rm -rf vendor/*
+
       - name: Checkout and set up LAMP
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
         with:
