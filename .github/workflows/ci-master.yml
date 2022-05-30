@@ -41,12 +41,12 @@ jobs:
       - name: Set PHPUnit version for PHP 7
         if: ${{ startsWith( matrix.php-version, '7.' ) }}
         run: |
-          echo "PHP_UNIT=phpunit:v7" >> $GITHUB_ENV
+          echo "PHP_UNIT=v7" >> $GITHUB_ENV
 
       - name: Set PHPUnit version for PHP 8+
         if: ${{ startsWith( matrix.php-version, '8.' ) }}
         run: |
-          echo "PHP_UNIT=phpunit:v9" >> $GITHUB_ENV
+          echo "PHP_UNIT=v9" >> $GITHUB_ENV
 
       - name: Set WP version for PHP 7
         if: ${{ startsWith( matrix.php-version, '7.' ) }}
@@ -63,7 +63,7 @@ jobs:
         with:
           cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-${{ env.WP_VERSION }}-test
           composer-dependencies: lowest
-          php-tools: composer:v2, phpunit-polyfills, ${{ env.PHP_UNIT }}
+          php-tools: composer:v2, phpunit-polyfills, phpunit:${{ env.PHP_UNIT }}
           php-version: ${{ matrix.php-version }}
 
       - name: Install WP Tests
