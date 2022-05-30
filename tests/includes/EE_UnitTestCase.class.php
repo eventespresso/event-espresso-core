@@ -719,12 +719,20 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function assertArrayContains($item, $haystack)
     {
-        $in_there = in_array($item, $haystack, true);
-        if ($in_there) {
-            $this->assertTrue(true);
-        } else {
-            $this->assertTrue($in_there, sprintf(esc_html__('Array %1$s does not contain %2$s', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
+        if (is_array($item)) {
+            foreach ($item as $needle) {
+                $this->assertArrayContains($needle, $haystack);
+            }
+            return;
         }
+        $this->assertTrue(
+            in_array($item, $haystack, true),
+            sprintf(
+                esc_html__('Array %1$s does not contain %2$s', 'event_espresso'),
+                print_r($haystack, true),
+                print_r($item, true)
+            )
+        );
     }
 
 
@@ -734,12 +742,20 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function assertArrayDoesNotContain($item, $haystack)
     {
-        $not_in_there = !in_array($item, $haystack, true);
-        if ($not_in_there) {
-            $this->assertTrue($not_in_there);
-        } else {
-            $this->assertTrue($not_in_there, sprintf(esc_html__('Array %1$s DOES contain %2$s when it shouldn\'t', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
+        if (is_array($item)) {
+            foreach ($item as $needle) {
+                $this->assertArrayDoesNotContain($needle, $haystack);
+            }
+            return;
         }
+        $this->assertTrue(
+            ! in_array($item, $haystack, true),
+            sprintf(
+                esc_html__('Array %1$s DOES contain %2$s when it shouldn\'t', 'event_espresso'),
+                print_r($haystack, true),
+                print_r($item, true)
+            )
+        );
     }
 
     /**
