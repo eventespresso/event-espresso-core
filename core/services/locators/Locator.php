@@ -20,36 +20,34 @@ abstract class Locator implements LocatorInterface, Countable
     /**
      * @var array $flags
      */
-    protected $flags = array();
+    protected $flags = [];
 
 
     /**
      * FileLocator constructor.
      *
-     * @access public
      * @param array $flags controls how files are found and/or file data is returned
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws InvalidDataTypeException
      */
-    public function __construct($flags = array())
+    public function __construct(array $flags = [])
     {
         if (empty($flags)) {
-            $flags = array(
+            $flags = [
                 FilesystemIterator::SKIP_DOTS,
                 FilesystemIterator::UNIX_PATHS,
                 FilesystemIterator::CURRENT_AS_PATHNAME,
-            );
+            ];
         }
         $this->setFlags($flags);
     }
 
 
     /**
-     * @see    http://php.net/manual/en/class.filesystemiterator.php#filesystemiterator.constants
-     * @access public
-     * @param array $flags
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @see http://php.net/manual/en/class.filesystemiterator.php#filesystemiterator.constants
+     * @param array|null $flags
+     * @throws InvalidDataTypeException
      */
-    public function setFlags($flags)
+    public function setFlags(?array $flags)
     {
         if (! is_array($flags)) {
             throw new InvalidDataTypeException('$flags', $flags, 'array');

@@ -2,14 +2,11 @@
 
 namespace EventEspresso\tests\mocks\core\services\request;
 
+use EE_Error;
 use EventEspresso\core\services\request\RequestDecoratorInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestStackCoreAppInterface;
 use EventEspresso\core\services\request\ResponseInterface;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class RequestStackCoreAppMock
@@ -29,9 +26,11 @@ class RequestStackCoreAppMock implements RequestDecoratorInterface, RequestStack
      */
     public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
-        \EE_Error::add_error(
+        EE_Error::add_error(
             'Back away! I will deal with this Jedi slime myself!',
-            __FILE__, __FUNCTION__, __LINE__
+            __FILE__,
+            __FUNCTION__,
+            __LINE__
         );
         return $response;
     }
@@ -43,6 +42,6 @@ class RequestStackCoreAppMock implements RequestDecoratorInterface, RequestStack
      */
     public function handleResponse(RequestInterface $request, ResponseInterface $response)
     {
-        \EE_Error::add_success('Now, let\'s get a move on. We\'ve got a battle to win here.');
+        EE_Error::add_success("Now, let's get a move on. We've got a battle to win here.");
     }
 }

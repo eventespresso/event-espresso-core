@@ -21,21 +21,19 @@ class FqcnLocator extends Locator
     /**
      * @var array $FQCNs
      */
-    protected $FQCNs = array();
+    protected $FQCNs = [];
 
     /**
      * @var array $namespaces
      */
-    protected $namespaces = array();
+    protected $namespaces = [];
 
 
     /**
-     * @access protected
-     * @param string $namespace
-     * @param string $namespace_base_dir
-     * @throws InvalidDataTypeException
+     * @param string|null $namespace
+     * @param string|null $namespace_base_dir
      */
-    protected function setNamespace($namespace, $namespace_base_dir)
+    protected function setNamespace(?string $namespace, ?string $namespace_base_dir)
     {
         if (! is_string($namespace)) {
             throw new InvalidDataTypeException('$namespace', $namespace, 'string');
@@ -48,20 +46,18 @@ class FqcnLocator extends Locator
 
 
     /**
-     * @access public
      * @return array
      */
-    public function getFQCNs()
+    public function getFQCNs(): array
     {
         return $this->FQCNs;
     }
 
 
     /**
-     * @access public
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->FQCNs);
     }
@@ -70,13 +66,12 @@ class FqcnLocator extends Locator
     /**
      * given a valid namespace, will find all files that match the provided mask
      *
-     * @access public
      * @param string|array $namespaces
      * @return array
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
      */
-    public function locate($namespaces)
+    public function locate($namespaces): array
     {
         if (! (is_string($namespaces) || is_array($namespaces))) {
             throw new InvalidDataTypeException('$namespaces', $namespaces, 'string or array');
@@ -95,13 +90,12 @@ class FqcnLocator extends Locator
      * ** PLZ NOTE **
      * This assumes that all files within the specified folder should be loaded
      *
-     * @access protected
      * @param string $partial_namespace
      * @return array
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
      */
-    protected function findFQCNsByNamespace($partial_namespace)
+    protected function findFQCNsByNamespace(string $partial_namespace): array
     {
         $iterator = new FilesystemIterator(
             $this->getDirectoryFromPartialNamespace($partial_namespace)
@@ -109,7 +103,7 @@ class FqcnLocator extends Locator
         $iterator->setFlags(FilesystemIterator::CURRENT_AS_FILEINFO);
         $iterator->setFlags(FilesystemIterator::UNIX_PATHS);
         if (iterator_count($iterator) === 0) {
-            return array();
+            return [];
         }
         foreach ($iterator as $file) {
             if ($file->isFile() && $file->getExtension() === 'php') {
@@ -118,10 +112,10 @@ class FqcnLocator extends Locator
                     $namespace .= Psr4Autoloader::NS;
                     if (strpos($file, $base_dir) === 0) {
                         $this->FQCNs[] = Psr4Autoloader::NS . str_replace(
-                            array($base_dir, '/'),
-                            array($namespace, Psr4Autoloader::NS),
-                            $file
-                        );
+                                [$base_dir, '/'],
+                                [$namespace, Psr4Autoloader::NS],
+                                $file
+                            );
                     }
                 }
             }
@@ -133,24 +127,23 @@ class FqcnLocator extends Locator
     /**
      * getDirectoryFromPartialNamespace
      *
-     * @access protected
-     * @param  string $partial_namespace almost fully qualified class name ?
+     * @param string $partial_namespace almost fully qualified class name ?
      * @return string
      * @throws InvalidDataTypeException
      * @throws InvalidClassException
      */
-    protected function getDirectoryFromPartialNamespace($partial_namespace)
+    protected function getDirectoryFromPartialNamespace(string $partial_namespace): string
     {
         if (empty($partial_namespace)) {
             throw new InvalidClassException($partial_namespace);
         }
         // load our PSR-4 Autoloader so we can get the list of registered namespaces from it
-        $psr4_loader = \EE_Psr4AutoloaderInit::psr4_loader();
+        $psr4_loader = EE_Psr4AutoloaderInit::psr4_loader();
         // breakup the incoming namespace into segments so we can loop thru them
         $namespace_segments = explode(Psr4Autoloader::NS, trim($partial_namespace, Psr4Autoloader::NS));
         // we're only interested in the Vendor and secondary base, so pull those from the array
         $vendor_base = array_slice($namespace_segments, 0, 2);
-        $namespace = $prefix = null;
+        $namespace   = $prefix = null;
         while (! empty($vendor_base)) {
             $namespace = implode(Psr4Autoloader::NS, $vendor_base);
             // check if there's a base directory registered for that namespace
