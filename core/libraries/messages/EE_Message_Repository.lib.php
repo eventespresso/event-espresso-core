@@ -258,11 +258,11 @@ class EE_Message_Repository extends EE_Base_Class_Repository
     }
 
 
-    /**
-     * @return EE_Message
-     */
-    public function current()
-    {
-        return parent::current();
-    }
+    // /**
+    //  * @return EE_Message
+    //  */
+    // public function current()
+    // {
+    //     return parent::current();
+    // }
 }
