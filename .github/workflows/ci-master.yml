@@ -175,6 +175,7 @@ jobs:
           filters: |
             js:
               - '**/*.js'
+              - 'assets/*'
             webpack:
               - 'package.json'
             php:
