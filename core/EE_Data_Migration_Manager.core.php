@@ -314,7 +314,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
             $data_migrations_ran = [];
             // convert into data migration script classes where possible
             foreach ($data_migrations_options as $data_migration_option) {
-                list($plugin_slug, $version_string) = $this->_get_plugin_slug_and_version_string_from_dms_option_name(
+                [$plugin_slug, $version_string] = $this->_get_plugin_slug_and_version_string_from_dms_option_name(
                     $data_migration_option['option_name']
                 );
 
@@ -390,7 +390,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
      */
     public function get_data_migration_script_folders()
     {
-        return apply_filters(
+        return (array) apply_filters(
             'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
             ['Core' => EE_CORE . 'data_migration_scripts']
         );
