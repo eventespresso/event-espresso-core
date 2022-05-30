@@ -39,18 +39,18 @@ class EE_Registry_Mock extends EE_Registry
 
     /**
      * @singleton method used to instantiate class object
-     * @param  EE_Dependency_Map       $dependency_map
+     * @param EE_Dependency_Map|null   $dependency_map
      * @param Mirror|null              $mirror
      * @param ClassInterfaceCache|null $class_cache
      * @param ObjectIdentifier|null    $object_identifier
-     * @return EE_Registry_Mock instance
+     * @return EE_Registry_Mock
      */
     public static function instance(
-        EE_Dependency_Map $dependency_map = null,
-        Mirror $mirror = null,
+        EE_Dependency_Map   $dependency_map = null,
+        Mirror              $mirror = null,
         ClassInterfaceCache $class_cache = null,
-        ObjectIdentifier $object_identifier = null
-    ) {
+        ObjectIdentifier    $object_identifier = null
+    ): EE_Registry {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_Registry_Mock) {
             self::$_instance = new EE_Registry_Mock($dependency_map, $mirror, $class_cache, $object_identifier);

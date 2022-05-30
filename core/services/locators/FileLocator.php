@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\locators;
 
+use EEH_File;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use FilesystemIterator;
 use GlobIterator;
@@ -25,14 +26,14 @@ class FileLocator extends Locator
     /**
      * @var array $filepaths
      */
-    protected $filepaths = array();
+    protected $filepaths = [];
 
 
     /**
-     * @param string $file_mask
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @param string|null $file_mask
+     * @throws InvalidDataTypeException
      */
-    public function setFileMask($file_mask)
+    public function setFileMask(?string $file_mask)
     {
         if (! is_string($file_mask)) {
             throw new InvalidDataTypeException('$file_mask', $file_mask, 'string');
@@ -42,20 +43,18 @@ class FileLocator extends Locator
 
 
     /**
-     * @access public
      * @return array
      */
-    public function getFilePaths()
+    public function getFilePaths(): array
     {
         return $this->filepaths;
     }
 
 
     /**
-     * @access public
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->filepaths);
     }
@@ -65,19 +64,18 @@ class FileLocator extends Locator
      * given a path to a valid directory, or an array of valid paths,
      * will find all files that match the provided mask
      *
-     * @access public
      * @param array|string $directory_paths
-     * @return \FilesystemIterator
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @return array
+     * @throws InvalidDataTypeException
      */
-    public function locate($directory_paths)
+    public function locate($directory_paths): array
     {
         if (! (is_string($directory_paths) || is_array($directory_paths))) {
             throw new InvalidDataTypeException('$directory_paths', $directory_paths, 'string or array');
         }
         foreach ((array) $directory_paths as $directory_path) {
             foreach ($this->findFilesByPath($directory_path) as $key => $file) {
-                $this->filepaths[ $key ] = \EEH_File::standardise_directory_separators($file);
+                $this->filepaths[ $key ] = EEH_File::standardise_directory_separators($file);
             }
         }
         return $this->filepaths;
@@ -87,14 +85,13 @@ class FileLocator extends Locator
     /**
      * given a path to a valid directory, will find all files that match the provided mask
      *
-     * @access protected
      * @param string $directory_path
-     * @return \FilesystemIterator
+     * @return FilesystemIterator
      */
-    protected function findFilesByPath($directory_path = '')
+    protected function findFilesByPath(string $directory_path = '')
     {
         $iterator = new GlobIterator(
-            \EEH_File::end_with_directory_separator($directory_path) . $this->file_mask
+            EEH_File::end_with_directory_separator($directory_path) . $this->file_mask
         );
         foreach ($this->flags as $flag) {
             $iterator->setFlags($flag);
