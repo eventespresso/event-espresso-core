@@ -4,12 +4,17 @@ namespace EventEspresso\tests\testcases\core\services\request;
 
 use EE_Error;
 use EE_UnitTestCase;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\InvalidRequestStackMiddlewareException;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\Response;
 use EventEspresso\tests\mocks\core\services\request\RequestStackBuilderMock;
 use EventEspresso\tests\mocks\core\services\request\RequestStackCoreAppMock;
+use Exception;
+use InvalidArgumentException;
 
 class RequestStackBuilderTest extends EE_UnitTestCase
 {
@@ -37,9 +42,9 @@ class RequestStackBuilderTest extends EE_UnitTestCase
 
     /**
      * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function set_up()
     {
@@ -91,13 +96,15 @@ class RequestStackBuilderTest extends EE_UnitTestCase
     public function getNotices()
     {
         $notices = EE_Error::get_vanilla_notices();
-        if(isset($notices['errors']['RequestStackCoreAppMock - handleRequest - 34'])) {
-            $notices['errors'][] = str_replace(
-                '<br/><span class="tiny-text">RequestStackCoreAppMock - handleRequest - 34</span>',
-                '',
-                $notices['errors']['RequestStackCoreAppMock - handleRequest - 34']
-            );
-            unset($notices['errors']['RequestStackCoreAppMock - handleRequest - 34']);
+        foreach ($notices['errors'] as $key => $error) {
+            if(strpos($key, 'RequestStackCoreAppMock - handleRequest') !== false) {
+                $notices['errors'][] = str_replace(
+                    '<br/><span class="tiny-text">' . $key . '</span>',
+                    '',
+                    $notices['errors'][ $key ]
+                );
+                unset($notices['errors'][ $key ]);
+            }
         }
         return $notices;
     }
@@ -182,7 +189,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
      * @param array  $middleware_app
      * @param bool   $recurse
      * @param string $expected
-     * @throws \EventEspresso\core\services\request\InvalidRequestStackMiddlewareException
+     * @throws InvalidRequestStackMiddlewareException
      */
     public function testValidateMiddlewareAppDetails(array $middleware_app, $recurse, $expected)
     {
@@ -209,7 +216,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function testRequestStackBuilderResolve()
     {
@@ -219,7 +226,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function testRequestStackBuilderResolveWithLegacyMiddleware()
     {
@@ -230,7 +237,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function TheBattleOfUtapau()
     {
@@ -243,15 +250,15 @@ class RequestStackBuilderTest extends EE_UnitTestCase
         $request_stack->handleRequest($this->getRequest(), $this->getResponse());
         $notices = $this->getNotices();
         $this->assertCount(1, $notices['success']);
-        $this->assertEquals('Hello There!', $notices['success'][0]);
+        $this->assertEquals('Hello There!', reset($notices['success']));
         $this->assertCount(1, $notices['attention']);
-        $this->assertEquals('General Kenobi!', $notices['attention'][0]);
+        $this->assertEquals('General Kenobi!', reset($notices['attention']));
         $this->assertCount(1, $notices['errors']);
-        $this->assertEquals('Back away! I will deal with this Jedi slime myself!', $notices['errors'][0]);
+        $this->assertEquals('Back away! I will deal with this Jedi slime myself!', reset($notices['errors']));
         $request_stack->handleResponse();
         $notices = $this->getNotices();
         $this->assertCount(2, $notices['success']);
-        $this->assertEquals('Now, let\'s get a move on. We\'ve got a battle to win here.', $notices['success'][1]);
+        $this->assertEquals("Now, let's get a move on. We've got a battle to win here.", $notices['success'][1]);
         // now clear all notices
         EE_Error::reset_notices();
     }
