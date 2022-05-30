@@ -65,6 +65,7 @@ jobs:
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
         with:
           cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-${{ env.wpVersion }}-test
+          composer-dependencies: lowest
           php-tools: composer:v2, phpunit-polyfills, ${{ env.phpUnitVersion }}
           php-version: ${{ matrix.php-version }}
 
