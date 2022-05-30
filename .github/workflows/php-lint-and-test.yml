@@ -1,0 +1,111 @@
+name: PHP Build and Test
+
+on:
+  pull_request:
+    # Prevent this workflow from running on pull requests to barista branch
+    branches-ignore:
+      - 'barista'
+
+jobs:
+  php-lint:
+    runs-on: ubuntu-latest
+    needs: what_has_changed
+    # Run only if PHP files have changed
+    if: ${{ needs.what_has_changed.outputs.php == 'true' }}
+    strategy:
+      matrix:
+        php-version: [ '7.1' ]
+    name: Lint with PHP ${{ matrix.php-version }}
+    steps:
+      - name: Checkout and set up LAMP
+        uses: eventespresso/actions/packages/checkout-and-LAMP@main
+        with:
+          cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-lint
+          php-tools: composer:v2
+          php-version: ${{ matrix.php-version }}
+
+      - name: PHP Lint
+        run: composer config-eventespressocs && composer run-script lint:skip-warnings
+
+  php-unit-tests:
+    runs-on: ubuntu-latest
+    needs: what_has_changed
+    # Run only if PHP files have changed
+    if: ${{ needs.what_has_changed.outputs.php == 'true' }}
+    strategy:
+      matrix:
+        php-version: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1' ] #'5.6', '7.0', '8.1'
+    name: Unit Tests with PHP ${{ matrix.php-version }}
+    steps:
+
+      - name: Set PHPUnit version for PHP 7
+        if: ${{ startsWith( matrix.php-version, '7.' ) }}
+        run: |
+          echo "PHP_UNIT=v7" >> $GITHUB_ENV
+
+      - name: Set PHPUnit version for PHP 8+
+        if: ${{ startsWith( matrix.php-version, '8.' ) }}
+        run: |
+          echo "PHP_UNIT=v9" >> $GITHUB_ENV
+
+      - name: Set WP version for PHP 7
+        if: ${{ startsWith( matrix.php-version, '7.' ) }}
+        run: |
+          echo "WP_VERSION=5.8.2" >> $GITHUB_ENV
+
+      - name: Set WP version for PHP 8+
+        if: ${{ startsWith( matrix.php-version, '8.' ) }}
+        run: |
+          echo "WP_VERSION=latest" >> $GITHUB_ENV
+
+      - name: Checkout and set up LAMP
+        uses: eventespresso/actions/packages/checkout-and-LAMP@main
+        with:
+          cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-${{ env.WP_VERSION }}-test
+          composer-dependencies: lowest
+          php-tools: composer:v2, phpunit-polyfills, phpunit:${{ env.PHP_UNIT }}
+          php-version: ${{ matrix.php-version }}
+
+      - name: Install WP Tests
+        uses: eventespresso/actions/packages/install-wp-tests@main
+        with:
+          wp-version: ${{ env.WP_VERSION }}
+          database: wordpress_test
+          username: root
+          password: root
+          host: localhost
+
+      - name: Run PHP Unit Tests
+        run: phpunit --configuration tests/phpunit.xml
+
+        # run multisite test only with 1 PHP version
+      - if: ${{ matrix.php-version == '7.4' }}
+        name: Run PHP Unit Tests - WP Multisite
+        env:
+          WP_MULTISITE: 1
+        run: phpunit --configuration tests/phpunit.xml
+
+  # JOB to check if the files in a path have changed
+  what_has_changed:
+    runs-on: ubuntu-latest
+    outputs:
+      js: ${{ steps.filter.outputs.js }}
+      php: ${{ steps.filter.outputs.php }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        # For pull requests it's not necessary to checkout the code
+        if: ${{ github.event_name != 'pull_request' }}
+
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          base: ${{ github.ref }}
+          filters: |
+            js:
+              - '**/*.js'
+              - 'assets/*'
+            webpack:
+              - 'package.json'
+            php:
+              - '**/*.php'
