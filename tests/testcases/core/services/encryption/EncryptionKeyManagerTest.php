@@ -40,20 +40,20 @@ class EncryptionKeyManagerTest extends TestCase
     protected $rdg;
 
 
-    public function set_up()
+    public function setUp(): void
     {
-        parent::set_up();
+        parent::setUp();
         $this->setUpDependencies();
         delete_option(self::TEST_KEYS_OPTION_NAME);
     }
 
 
-    public function tear_down()
+    public function tearDown(): void
     {
         $this->b64 = null;
         $this->ekm = null;
         $this->rdg = null;
-        parent::tear_down();
+        parent::tearDown();
     }
 
 
@@ -78,7 +78,7 @@ class EncryptionKeyManagerTest extends TestCase
     /**
      * @throws Exception
      */
-    public function generateEncryptionKeyDataProvider()
+    public function generateEncryptionKeyDataProvider(): array
     {
         $this->setUpDependencies();
         $keys = [];
@@ -101,7 +101,7 @@ class EncryptionKeyManagerTest extends TestCase
     }
 
 
-    public function bitDepthDataProvider()
+    public function bitDepthDataProvider(): array
     {
         return [
             [64, 64],
@@ -129,7 +129,7 @@ class EncryptionKeyManagerTest extends TestCase
     }
 
 
-    public function keyLengthDataProvider()
+    public function keyLengthDataProvider(): array
     {
         return [
             [0, 8],
@@ -193,7 +193,7 @@ class EncryptionKeyManagerTest extends TestCase
     /**
      * @throws Exception
      */
-    public function addEncryptionKeyDataProvider()
+    public function addEncryptionKeyDataProvider(): array
     {
         $this->setUpDependencies();
         $default_key = $this->ekm->getEncryptionKey();

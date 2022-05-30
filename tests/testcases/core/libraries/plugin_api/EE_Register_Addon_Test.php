@@ -225,10 +225,9 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         $this->assertArrayContains('edit_thing', $admin_caps_init);
         //verify new caps are in the role
         $role = get_role('administrator');
-        $this->assertArrayContains(
-            array('edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'),
-            $role->capabilities
-        );
+        $role_caps = array_keys($role->capabilities);
+        $expected_caps = ['edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'];
+        $this->assertArrayContains($expected_caps, $role_caps);
     }
 
     /**

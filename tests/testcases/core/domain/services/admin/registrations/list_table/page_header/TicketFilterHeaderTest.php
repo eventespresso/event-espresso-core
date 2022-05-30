@@ -47,8 +47,9 @@ class TicketFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @since 4.10.2.p
      */
-    public function set_up()
+    public function setUp(): void
     {
+        parent::setUp();
         $this->setUpTickets();
     }
 
@@ -100,7 +101,7 @@ class TicketFilterHeaderTest extends TestCase
      * @throws InvalidArgumentException
      * @since 4.10.2.p
      */
-    private function getTicketFilterHeader(array $get_params)
+    private function getTicketFilterHeader(array $get_params): TicketFilterHeader
     {
         return new TicketFilterHeader(
             new RequestMock($get_params, [], [], [], []),
@@ -120,10 +121,10 @@ class TicketFilterHeaderTest extends TestCase
      * testcases actually run.
      *
      * @return Generator
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      * @since  4.10.2.p
      */
-    public function testDataGenerator()
+    public function testDataGenerator(): Generator
     {
         $test_data = [
             // empty array
@@ -171,7 +172,7 @@ class TicketFilterHeaderTest extends TestCase
      */
     public function testGetHeaderText()
     {
-        foreach ($this->testDataGenerator() as list($get_params, $expected)) {
+        foreach ($this->testDataGenerator() as [$get_params, $expected]) {
             $ticket_filter_header = $this->getTicketFilterHeader($get_params);
             $header_text = $ticket_filter_header->getHeaderText();
             // strip out nonce since it constantly changes
