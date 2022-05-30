@@ -13,7 +13,6 @@
  */
 class EE_Currency_Payment_Method extends EE_Base_Class
 {
-
     /** Currency to Payment Method Link ID @var CPM_ID */
     protected $_CPM_ID = null;
     /** Currency Code @var CUR_code */

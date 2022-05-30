@@ -13,7 +13,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class Notice implements NoticeInterface
 {
-
     const ERROR = 'error';
 
     const SUCCESS = 'success';

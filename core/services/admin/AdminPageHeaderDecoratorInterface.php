@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\admin;
  */
 interface AdminPageHeaderDecoratorInterface
 {
-
     /**
      * @param string $text
      * @return string

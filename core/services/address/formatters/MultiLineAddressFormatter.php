@@ -13,8 +13,6 @@ namespace EventEspresso\core\services\address\formatters;
  */
 class MultiLineAddressFormatter extends AddressFormatter implements \EEI_Address_Formatter
 {
-
-
     /**
      * @param string $address
      * @param string $address2

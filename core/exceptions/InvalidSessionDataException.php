@@ -11,7 +11,6 @@ namespace EventEspresso\core\exceptions;
  */
 class InvalidSessionDataException extends \Exception
 {
-
     /**
      * InvalidInterfaceException constructor.
      *

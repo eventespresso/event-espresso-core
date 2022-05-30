@@ -13,7 +13,6 @@ namespace EventEspresso\core\services\blocks;
  */
 interface BlockRendererInterface
 {
-
     /**
      * This receives an array of attributes and returns rendered content for the block using those attributes.
      *

@@ -11,7 +11,6 @@
  */
 class EE_Currency extends EE_Base_Class
 {
-
     /** Currency COde @var CUR_code */
     protected $_CUR_code = null;
     /** Currency Name Singular @var CUR_single */

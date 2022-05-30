@@ -14,7 +14,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
 {
-
     /**
      *    class constructor
      *

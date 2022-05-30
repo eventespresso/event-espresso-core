@@ -17,7 +17,6 @@ use GlobIterator;
  */
 class FileLocator extends Locator
 {
-
     /**
      * @var string $file_mask
      */

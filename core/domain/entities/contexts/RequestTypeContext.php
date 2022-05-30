@@ -15,7 +15,6 @@ use InvalidArgumentException;
  */
 class RequestTypeContext extends Context
 {
-
     /**
      * indicates that the current request involves some form of activation
      */

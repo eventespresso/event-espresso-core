@@ -16,7 +16,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Registration_Form_Hooks
 {
-
     /**
      * extending the properties set in espresso_events_Registration_From_Hooks
      *

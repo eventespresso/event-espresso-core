@@ -15,7 +15,6 @@
  */
 class EE_Default_Where_Conditions
 {
-
     /**
      * This const can be used in EE_Default_Where_Conditions values, and at the time of querying it will be
      * replaced with the current user's ID (because we don't want to use the current user's ID at time of

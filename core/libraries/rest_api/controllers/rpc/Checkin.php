@@ -25,7 +25,6 @@ use EventEspresso\core\libraries\rest_api\controllers\model\Read;
  */
 class Checkin extends Base
 {
-
     /**
      * @param WP_REST_Request $request
      * @param string          $version

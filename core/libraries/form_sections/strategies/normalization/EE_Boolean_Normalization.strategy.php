@@ -13,7 +13,6 @@
  */
 class EE_Boolean_Normalization extends EE_Normalization_Strategy_Base
 {
-
     /**
      * @param string | int | bool $value_to_normalize
      * @return boolean

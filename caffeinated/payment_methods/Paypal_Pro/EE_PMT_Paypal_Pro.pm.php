@@ -13,7 +13,6 @@ use EventEspresso\caffeinated\payment_methods\Paypal_Pro\forms\PayPalProSettings
  */
 class EE_PMT_Paypal_Pro extends EE_PMT_Base
 {
-
     /**
      * @param EE_Payment_Method $pm_instance
      * @return EE_PMT_Paypal_Pro

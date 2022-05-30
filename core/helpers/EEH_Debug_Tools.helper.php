@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class EEH_Debug_Tools
 {
-
     /**
      *    instance of the EEH_Autoloader object
      *

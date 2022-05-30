@@ -24,7 +24,6 @@ use InvalidArgumentException;
  */
 class BootstrapDependencyInjectionContainer
 {
-
     /**
      * @var EE_Dependency_Map $dependency_map
      */

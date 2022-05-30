@@ -17,8 +17,6 @@
  */
 class EE_Question_Shortcodes extends EE_Shortcodes
 {
-
-
     /**
      * _init_props
      *

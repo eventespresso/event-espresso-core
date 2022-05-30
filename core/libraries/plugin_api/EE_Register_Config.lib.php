@@ -11,7 +11,6 @@
  */
 class EE_Register_Config implements EEI_Plugin_API
 {
-
     /**
      * Holds registered EE_Config items
      *

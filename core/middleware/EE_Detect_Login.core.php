@@ -11,8 +11,6 @@
  */
 class EE_Detect_Login extends EE_Middleware
 {
-
-
     /**
      * @deprecated
      * @param    EE_Request  $request

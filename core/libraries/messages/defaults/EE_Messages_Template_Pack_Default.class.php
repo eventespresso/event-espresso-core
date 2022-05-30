@@ -10,7 +10,6 @@
  */
 class EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack
 {
-
     public function _set_props()
     {
         $this->label = esc_html__('Default', 'event_espresso');

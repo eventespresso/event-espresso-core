@@ -14,7 +14,6 @@ use EventEspresso\core\domain\services\DomainService;
  */
 class UpdateRegistrationService extends DomainService
 {
-
     /**
      * @param \EE_Registration $registration
      * @return bool

@@ -13,6 +13,5 @@ namespace EventEspresso\core\interfaces;
  */
 interface InterminableInterface
 {
-
     // no specific methods required
 }

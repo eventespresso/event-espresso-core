@@ -9,7 +9,6 @@
  */
 class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map
 {
-
     /**
      * If included int incoming params, then this class will also register a Sub Menue Admin page with a different
      * subtitle than the main menu item.

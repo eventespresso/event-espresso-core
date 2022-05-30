@@ -15,8 +15,6 @@ use EventEspresso\core\Psr4Autoloader;
  */
 class EE_Psr4AutoloaderInit
 {
-
-
     /**
      * @type \EventEspresso\core\Psr4Autoloader
      */

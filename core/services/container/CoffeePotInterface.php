@@ -10,9 +10,6 @@ namespace EventEspresso\core\services\container;
  */
 interface CoffeePotInterface extends ContainerInterface
 {
-
-
-
     /**
      * returns an instance of the requested entity type using the supplied arguments.
      * If a shared service is requested and an instance is already in the carafe, then it will be returned.

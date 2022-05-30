@@ -24,7 +24,6 @@ use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
  */
 class JsonModelSchema
 {
-
     /**
      * @var EEM_Base
      */

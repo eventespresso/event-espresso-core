@@ -13,7 +13,6 @@ use EventEspresso\modules\invalid_checkout_access\InvalidCheckoutAccess;
  */
 class EED_Invalid_Checkout_Access extends EED_Module
 {
-
     /**
      * @var InvalidCheckoutAccess $invalid_checkout_access_form
      */

@@ -15,7 +15,6 @@
  */
 abstract class EE_Object_Collection extends SplObjectStorage implements EEI_Collection
 {
-
     /**
      * an interface (or class) name to be used for restricting the type of objects added to the storage
      * this should be set from within the child class constructor

@@ -8,7 +8,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 
 interface CommandFactoryInterface
 {
-
     /**
      * @param string $command_fqcn
      * @param array  $arguments

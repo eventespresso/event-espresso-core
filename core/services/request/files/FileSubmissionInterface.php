@@ -14,7 +14,6 @@ namespace EventEspresso\core\services\request\files;
  */
 interface FileSubmissionInterface
 {
-
     /**
      * @return string
      */

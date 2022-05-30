@@ -28,7 +28,6 @@ if (! function_exists('mb_strcut')) {
 }
 class EEG_Paypal_Express extends EE_Offsite_Gateway
 {
-
     /**
      * Merchant API Username.
      *

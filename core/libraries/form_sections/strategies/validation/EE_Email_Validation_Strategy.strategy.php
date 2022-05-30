@@ -15,8 +15,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy
 {
-
-
     /**
      * @param string               $validation_error_message
      */

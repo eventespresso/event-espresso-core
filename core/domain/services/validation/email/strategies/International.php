@@ -14,7 +14,6 @@ use EventEspresso\core\domain\services\validation\email\EmailValidationException
  */
 class International extends Basic
 {
-
     /**
      * @param string $email_address
      * @return bool

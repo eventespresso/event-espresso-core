@@ -9,7 +9,6 @@
  */
 class EEH_Venue_View extends EEH_Base
 {
-
     /**
      * @access    private
      * @var EE_Venue

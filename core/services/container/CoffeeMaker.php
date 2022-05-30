@@ -17,7 +17,6 @@ use EventEspresso\core\services\container\exceptions\InstantiationException;
  */
 abstract class CoffeeMaker implements CoffeeMakerInterface
 {
-
     /**
      * Indicates that CoffeeMaker should construct a NEW entity instance from the provided arguments (if given)
      */

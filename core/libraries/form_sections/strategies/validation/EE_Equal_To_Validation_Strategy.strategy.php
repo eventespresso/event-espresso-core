@@ -15,7 +15,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Equal_To_Validation_Strategy extends EE_Text_Validation_Strategy
 {
-
     protected $_compare_to = null;
 
 

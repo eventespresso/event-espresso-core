@@ -18,8 +18,6 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
  */
 class CancelTicketLineItemService extends DomainService
 {
-
-
     /**
      * @param \EE_Registration $registration
      * @param int              $quantity

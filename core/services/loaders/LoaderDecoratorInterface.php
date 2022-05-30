@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\loaders;
 
 interface LoaderDecoratorInterface
 {
-
     /**
      * @param string $fqcn
      * @param array  $arguments

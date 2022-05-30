@@ -2,7 +2,6 @@
 
 class EE_Admin_One_Column_Layout extends EE_Form_Section_Layout_Base
 {
-
     /**
      * Starts the form section
      *

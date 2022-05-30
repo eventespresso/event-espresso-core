@@ -6,7 +6,6 @@
  */
 class EE_Money_Field extends EE_Float_Field
 {
-
     /**
      * @param string $table_column
      * @param string $nicename

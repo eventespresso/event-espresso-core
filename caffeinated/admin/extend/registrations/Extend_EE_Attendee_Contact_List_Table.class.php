@@ -14,7 +14,6 @@
  */
 class Extend_EE_Attendee_Contact_List_Table extends EE_Attendee_Contact_List_Table
 {
-
     protected function _set_properties()
     {
         parent::_set_properties();

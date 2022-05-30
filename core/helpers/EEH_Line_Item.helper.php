@@ -21,7 +21,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class EEH_Line_Item
 {
-
     /**
      * Adds a simple item (unrelated to any other model object) to the provided PARENT line item.
      * Does NOT automatically re-calculate the line item totals or update the related transaction.

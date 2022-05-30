@@ -11,8 +11,6 @@
  */
 class EE_Messages_Contacts_incoming_data extends EE_Messages_incoming_data
 {
-
-
     /**
      * Constructor.
      *

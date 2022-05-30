@@ -12,7 +12,6 @@
  */
 abstract class EE_Admin_Page_CPT_Init extends EE_Admin_Page_Init
 {
-
     public function do_initial_loads()
     {
         // we want to use the corresponding admin page object (but not route it!).

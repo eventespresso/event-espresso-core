@@ -11,7 +11,6 @@
  */
 class EE_Credit_Card_Month_Input extends EE_Month_Input
 {
-
     /**
      * @param bool  $leading_zero
      * @param array $input_settings

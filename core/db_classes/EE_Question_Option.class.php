@@ -9,7 +9,6 @@
  */
 class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
 {
-
     /**
      * Question Option Opt Group Name
      *

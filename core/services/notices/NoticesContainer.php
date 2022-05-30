@@ -13,8 +13,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class NoticesContainer implements NoticesContainerInterface
 {
-
-
     /**
      * @var NoticeInterface[] $information
      */

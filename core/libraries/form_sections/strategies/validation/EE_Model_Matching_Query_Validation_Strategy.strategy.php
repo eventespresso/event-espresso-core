@@ -13,7 +13,6 @@
  */
 class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy_Base
 {
-
     /**
      *
      * @var EEM_Base

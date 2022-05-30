@@ -9,7 +9,6 @@
  */
 class EE_Price_Type extends EE_Soft_Delete_Base_Class
 {
-
     /**
      * @param array $props_n_values
      * @return EE_Price_Type

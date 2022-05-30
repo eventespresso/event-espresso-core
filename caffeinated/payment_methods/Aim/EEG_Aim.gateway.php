@@ -25,7 +25,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EEG_Aim extends EE_Onsite_Gateway
 {
-
     const LIVE_URL    = 'https://secure2.authorize.net/gateway/transact.dll'; // Authnet URL
 
     const SANDBOX_URL = 'https://test.authorize.net/gateway/transact.dll';
@@ -451,7 +450,6 @@ class EEG_Aim extends EE_Onsite_Gateway
  */
 class EE_AuthorizeNetAIM_Response
 {
-
     const APPROVED = '1';
     const DECLINED = '2';
     const ERROR = '3';
@@ -625,7 +623,6 @@ if (! class_exists('AuthorizeNetException')) {
      */
     class AuthorizeNetException extends Exception
     {
-
         /**
          * Construct the exception. Note: The message is NOT binary safe.
          *

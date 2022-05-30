@@ -15,8 +15,6 @@ use EventEspresso\core\services\request\middleware\RecommendedVersions;
  */
 class EE_Recommended_Versions extends EE_Middleware
 {
-
-
     /**
      * @deprecated
      * @param EE_Request  $request

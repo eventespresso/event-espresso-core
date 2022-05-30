@@ -27,8 +27,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEH_Form_Fields
 {
-
-
     /**
      *  Generates HTML for the forms used on admin pages
      *

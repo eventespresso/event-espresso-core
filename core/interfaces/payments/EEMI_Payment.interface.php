@@ -8,7 +8,6 @@
  */
 interface EEMI_Payment
 {
-
     /**
      * returns a string for the approved status
      */

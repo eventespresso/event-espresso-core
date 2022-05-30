@@ -15,7 +15,6 @@ use EventEspresso\core\services\loaders\Loader;
  */
 class EmailValidationService implements EmailValidatorInterface
 {
-
     /**
      * @var EE_Registration_Config $registration_config
      */

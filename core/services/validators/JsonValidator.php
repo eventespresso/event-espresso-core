@@ -17,7 +17,6 @@ use EE_Error;
  */
 class JsonValidator
 {
-
     /**
      * Call this method IMMEDIATELY after json_decode() and
      * it will will return true if the decoded JSON was valid,

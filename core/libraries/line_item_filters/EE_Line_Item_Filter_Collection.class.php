@@ -16,8 +16,6 @@
  */
 class EE_Line_Item_Filter_Collection extends EE_Object_Collection
 {
-
-
     /**
      * EE_Line_Item_Filter_Collection constructor.
      */

@@ -9,8 +9,6 @@
  */
 class EE_Messages_Template_Pack_Collection extends EE_Object_Collection
 {
-
-
     public function __construct()
     {
         $this->interface = 'EE_Messages_Template_Pack';

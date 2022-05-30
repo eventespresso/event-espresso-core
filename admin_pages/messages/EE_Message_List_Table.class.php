@@ -10,8 +10,6 @@
  */
 class EE_Message_List_Table extends EE_Admin_List_Table
 {
-
-
     /**
      * @return Messages_Admin_Page
      */

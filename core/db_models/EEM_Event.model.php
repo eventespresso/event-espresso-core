@@ -14,7 +14,6 @@ use EventEspresso\core\services\orm\ModelFieldFactory;
  */
 class EEM_Event extends EEM_CPT_Base
 {
-
     /**
      * constant used by status(), indicating that no more tickets can be purchased for any of the datetimes for the
      * event

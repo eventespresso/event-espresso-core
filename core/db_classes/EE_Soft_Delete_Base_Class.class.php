@@ -11,8 +11,6 @@
  */
 abstract class EE_Soft_Delete_Base_Class extends EE_Base_Class
 {
-
-
     /**
      * Overrides parent _delete() so that we do soft deletes.
      *

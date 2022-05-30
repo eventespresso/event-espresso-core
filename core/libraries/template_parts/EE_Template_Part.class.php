@@ -13,8 +13,6 @@
  */
 class EE_Template_Part
 {
-
-
     /**
      * @type string $name
      */

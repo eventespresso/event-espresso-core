@@ -20,7 +20,6 @@ use EventEspresso\core\exceptions\InvalidClassException;
  */
 class LoadOnlyCoffeeMaker extends CoffeeMaker
 {
-
     /**
      * @return string
      */

@@ -13,7 +13,6 @@ use EventEspresso\core\services\database\TableAnalysis;
  */
 class EEM_Registration extends EEM_Soft_Delete_Base
 {
-
     /**
      * @var EEM_Registration $_instance
      */

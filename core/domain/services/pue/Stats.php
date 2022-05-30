@@ -21,7 +21,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class Stats
 {
-
     const OPTIONS_KEY_EXPIRY_TIMESTAMP_FOR_SENDING_STATS = 'ee_uxip_stats_expiry';
 
     /**

@@ -11,7 +11,6 @@
  */
 class EE_CVV_Input extends EE_Text_Input
 {
-
     /**
      * @param array $input_settings {
      *  @type boolean $include_whats_this_link defaults to true

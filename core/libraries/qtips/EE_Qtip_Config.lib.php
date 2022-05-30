@@ -14,7 +14,6 @@
  */
 abstract class EE_Qtip_Config extends EE_Base
 {
-
     /**
      * This will hold the qtips setup array (setup by children)
      *

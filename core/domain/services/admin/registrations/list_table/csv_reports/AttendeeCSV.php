@@ -17,7 +17,6 @@ use EEM_State;
  */
 class AttendeeCSV
 {
-
     /**
      * Adds attendee columns to the CSV row
      *

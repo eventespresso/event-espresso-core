@@ -21,8 +21,6 @@ use RuntimeException;
  */
 class CancelTicketLineItemCommandHandler extends CommandHandler
 {
-
-
     /**
      * @var CancelTicketLineItemService $cancel_ticket_line_item_service
      */

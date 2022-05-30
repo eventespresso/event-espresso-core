@@ -9,8 +9,6 @@
  */
 class EE_Checkin extends EE_Base_Class
 {
-
-
     /**
      * Used to reference when a registration has been checked out.
      *

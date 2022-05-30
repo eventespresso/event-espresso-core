@@ -15,7 +15,6 @@ use WP_Query;
  */
 class EventListQuery extends WP_Query
 {
-
     /**
      * @var string $title
      */

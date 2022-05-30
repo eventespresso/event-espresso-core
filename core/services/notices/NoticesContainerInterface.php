@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\notices;
  */
 interface NoticesContainerInterface
 {
-
     /**
      * @param string $notice
      * @param bool   $dismissible

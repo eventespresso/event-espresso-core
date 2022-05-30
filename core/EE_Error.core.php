@@ -18,7 +18,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class EE_Error extends Exception
 {
-
     const OPTIONS_KEY_NOTICES = 'ee_notices';
 
     /**
@@ -66,7 +65,7 @@ class EE_Error extends Exception
      * @param int|string $line
      * @return void
      */
-    public static function error_handler(int  $code, string $message, string $file, $line)
+    public static function error_handler(int $code, string $message, string $file, $line)
     {
         $type    = EE_Error::error_type($code);
         $site    = site_url();
@@ -1061,7 +1060,7 @@ const ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
         string $message,
         string $version,
         string $applies_when = '',
-        int    $error_type = null
+        int $error_type = null
     ) {
         if (defined('WP_DEBUG') && WP_DEBUG) {
             EEH_Debug_Tools::instance()->doing_it_wrong($function, $message, $version, $applies_when, $error_type);
@@ -1095,7 +1094,7 @@ const ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
     public static function add_persistent_admin_notice(
         string $pan_name = '',
         string $pan_message = '',
-        bool   $force_update = false
+        bool $force_update = false
     ) {
         new PersistentAdminNotice(
             $pan_name,
@@ -1126,8 +1125,8 @@ const ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
      */
     public static function dismiss_persistent_admin_notice(
         string $pan_name = '',
-        bool   $purge = false,
-        bool   $return = false
+        bool $purge = false,
+        bool $return = false
     ) {
         /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
         $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(

@@ -18,7 +18,6 @@ use WP_User;
  */
 class ExitModal
 {
-
     /**
      * @var Registry
      */

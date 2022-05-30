@@ -9,7 +9,6 @@
  */
 class EE_Price extends EE_Soft_Delete_Base_Class
 {
-
     /**
      * @param array  $props_n_values          incoming values
      * @param string $timezone                incoming timezone (if not set the timezone set for the website will be

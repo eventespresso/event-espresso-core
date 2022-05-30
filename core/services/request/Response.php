@@ -14,7 +14,6 @@ use EventEspresso\core\interfaces\ReservedInstanceInterface;
  */
 class Response implements ResponseInterface, ReservedInstanceInterface
 {
-
     /**
      * @var array $notice
      */

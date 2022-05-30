@@ -23,7 +23,6 @@ use Exception;
  */
 class OpenSSLv2 extends OpenSSL
 {
-
     /**
      * name used for a default encryption key in case no others are set
      */

@@ -27,8 +27,6 @@ use OutOfRangeException;
  */
 class CreateRegistrationService extends DomainService
 {
-
-
     /**
      * @param EE_Event        $event
      * @param EE_Transaction  $transaction

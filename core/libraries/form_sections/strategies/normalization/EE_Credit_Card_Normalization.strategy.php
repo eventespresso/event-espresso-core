@@ -9,7 +9,6 @@
  */
 class EE_Credit_Card_Normalization extends EE_Text_Normalization
 {
-
     /**
      * @param string $value_to_normalize
      * @return mixed

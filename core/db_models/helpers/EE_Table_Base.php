@@ -6,7 +6,6 @@
  */
 abstract class EE_Table_Base
 {
-
     /**
      * This holds the table_name without the table prefix.
      *

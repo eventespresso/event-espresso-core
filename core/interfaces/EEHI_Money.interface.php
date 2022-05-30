@@ -5,7 +5,6 @@
  */
 interface EEHI_Money
 {
-
     /**
      * For comparing floats. Default operator is '=', but see the $operator below for all options.
      * This should be used to compare floats instead of normal '==' because floats

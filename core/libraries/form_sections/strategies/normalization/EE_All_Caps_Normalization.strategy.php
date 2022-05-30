@@ -11,7 +11,6 @@
  */
 class EE_All_Caps_Normalization extends EE_Normalization_Strategy_Base
 {
-
     /**
      * @param string $value_to_normalize
      * @return string

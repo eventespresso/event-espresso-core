@@ -17,7 +17,6 @@ use EventEspresso\core\domain\services\admin\registrations\list_table\csv_report
  */
 class EE_Export
 {
-
     const option_prefix = 'ee_report_job_';
 
 

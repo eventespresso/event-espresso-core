@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_PMT_Paypal_Standard extends EE_PMT_Base
 {
-
     const shipping_info_none     = 1;
 
     const shipping_info_optional = 0;

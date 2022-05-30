@@ -11,8 +11,6 @@ namespace EventEspresso\widgets;
  */
 class EspressoWidget extends \WP_Widget
 {
-
-
     /**
      * @param string $name
      * @param array  $widget_options

@@ -22,7 +22,6 @@ use EventEspresso\core\services\loaders\ObjectIdentifier;
  */
 class EE_Registry implements ResettableInterface
 {
-
     /**
      * @var EE_Registry $_instance
      */
@@ -188,10 +187,10 @@ class EE_Registry implements ResettableInterface
      * @return EE_Registry instance
      */
     public static function instance(
-        EE_Dependency_Map   $dependency_map = null,
-        Mirror              $mirror = null,
+        EE_Dependency_Map $dependency_map = null,
+        Mirror $mirror = null,
         ClassInterfaceCache $class_cache = null,
-        ObjectIdentifier    $object_identifier = null
+        ObjectIdentifier $object_identifier = null
     ): EE_Registry {
         // check if class object is instantiated
         if (
@@ -222,10 +221,10 @@ class EE_Registry implements ResettableInterface
      * @param ObjectIdentifier    $object_identifier
      */
     protected function __construct(
-        EE_Dependency_Map   $dependency_map,
-        Mirror              $mirror,
+        EE_Dependency_Map $dependency_map,
+        Mirror $mirror,
         ClassInterfaceCache $class_cache,
-        ObjectIdentifier    $object_identifier
+        ObjectIdentifier $object_identifier
     ) {
         $this->_dependency_map   = $dependency_map;
         $this->mirror            = $mirror;
@@ -485,10 +484,10 @@ class EE_Registry implements ResettableInterface
      */
     public function load_class(
         string $class_name,
-               $arguments = [],
-        bool   $from_db = false,
-        bool   $cache = true,
-        bool   $load_only = false
+        $arguments = [],
+        bool $from_db = false,
+        bool $cache = true,
+        bool $load_only = false
     ) {
         $paths = (array) apply_filters(
             'FHEE__EE_Registry__load_class__paths',
@@ -683,8 +682,8 @@ class EE_Registry implements ResettableInterface
         string $path_to_file,
         string $file_name,
         string $type = '',
-               $arguments = [],
-        bool   $load_only = true
+        $arguments = [],
+        bool $load_only = true
     ) {
         // retrieve instantiated class
         return $this->_load(
@@ -718,8 +717,8 @@ class EE_Registry implements ResettableInterface
         string $path_to_file,
         string $class_name,
         string $type = 'class',
-               $arguments = [],
-        bool   $load_only = false
+        $arguments = [],
+        bool $load_only = false
     ) {
         // retrieve instantiated class
         return $this->_load(
@@ -760,11 +759,11 @@ class EE_Registry implements ResettableInterface
      */
     public function create(
         string $class_name = '',
-        array  $arguments = [],
-        bool   $cache = false,
-        bool   $from_db = false,
-        bool   $load_only = false,
-        bool   $addon = false
+        array $arguments = [],
+        bool $cache = false,
+        bool $from_db = false,
+        bool $load_only = false,
+        bool $addon = false
     ) {
         $class_name   = ltrim($class_name, '\\');
         $class_name   = $this->class_cache->getFqnForAlias($class_name);
@@ -971,7 +970,7 @@ class EE_Registry implements ResettableInterface
     protected function _get_cached_class(
         string $class_name,
         string $class_prefix = '',
-        array  $arguments = []
+        array $arguments = []
     ) {
         if ($class_name === 'EE_Registry') {
             return $this;
@@ -1016,8 +1015,8 @@ class EE_Registry implements ResettableInterface
      */
     public function clear_cached_class(
         string $class_name,
-        bool   $addon = false,
-        array  $arguments = []
+        bool $addon = false,
+        array $arguments = []
     ): bool {
         $class_abbreviation = $this->get_class_abbreviation($class_name);
         // check if class has already been loaded, and return it if it has been
@@ -1243,9 +1242,9 @@ class EE_Registry implements ResettableInterface
      */
     protected function _create_object(
         string $class_name,
-        array  $arguments = [],
+        array $arguments = [],
         string $type = '',
-        bool   $from_db = false
+        bool $from_db = false
     ) {
         // create reflection
         $reflector = $this->mirror->getReflectionClass($class_name);
@@ -1340,8 +1339,8 @@ class EE_Registry implements ResettableInterface
      */
     protected function _resolve_dependencies(
         ReflectionClass $reflector,
-        string          $class_name,
-        array           $arguments = []
+        string $class_name,
+        array $arguments = []
     ): array {
         // let's examine the constructor
         $constructor = $this->mirror->getConstructorFromReflection($reflector);

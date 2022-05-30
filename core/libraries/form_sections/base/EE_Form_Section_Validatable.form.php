@@ -19,7 +19,6 @@
  */
 abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base
 {
-
     /**
      * Array of validation errors in this section. Does not contain validation errors in subsections, however.
      * Those are stored individually on each subsection.

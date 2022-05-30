@@ -15,8 +15,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EEH_DTT_Helper
 {
-
-
     /**
      * return the timezone set for the WP install
      *

@@ -10,7 +10,6 @@
  */
 class EE_Credit_Card_Input extends EE_Form_Input_Base
 {
-
     /**
      * @param array $input_settings
      */

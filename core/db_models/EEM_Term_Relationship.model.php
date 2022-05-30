@@ -9,7 +9,6 @@
  */
 class EEM_Term_Relationship extends EEM_Base
 {
-
     // private instance of the Attendee object
     protected static $_instance = null;
 

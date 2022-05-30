@@ -13,7 +13,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 abstract class EE_Base_Class
 {
-
     /**
      * This is an array of the original properties and values provided during construction
      * of this model object. (keys are model field names, values are their values).

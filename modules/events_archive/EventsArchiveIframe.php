@@ -21,8 +21,6 @@ use ReflectionException;
  */
 class EventsArchiveIframe extends Iframe
 {
-
-
     /**
      * EventsArchiveIframe constructor.
      *

@@ -18,7 +18,6 @@ use InvalidArgumentException;
  */
 abstract class SequentialStepForm extends FormHandler implements SequentialStepFormInterface
 {
-
     const REDIRECT_TO_NEXT_STEP    = 'redirect_to_next_step';
 
     const REDIRECT_TO_CURRENT_STEP = 'redirect_to_current_step';

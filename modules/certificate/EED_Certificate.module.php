@@ -10,8 +10,6 @@
  */
 class EED_Certificate extends EED_Module
 {
-
-
     /**
      * @return EED_Module|EED_Certificate
      * @throws EE_Error

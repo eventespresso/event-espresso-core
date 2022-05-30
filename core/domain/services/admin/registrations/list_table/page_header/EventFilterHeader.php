@@ -23,7 +23,6 @@ use ReflectionException;
  */
 class EventFilterHeader extends AdminPageHeaderDecorator
 {
-
     /**
      * @var EEM_Event $event_model
      */

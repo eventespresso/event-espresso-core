@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\request\sanitizers;
  */
 class AllowedTags
 {
-
     /**
      * @var array[]
      */

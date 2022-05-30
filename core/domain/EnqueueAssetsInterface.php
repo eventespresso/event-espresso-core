@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain;
 
 interface EnqueueAssetsInterface
 {
-
     /**
      * a place to register scripts and stylesheets with WordPress core
      * IMPORTANT !!!

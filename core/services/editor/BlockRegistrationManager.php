@@ -31,7 +31,6 @@ use WP_Block_Type;
  */
 class BlockRegistrationManager extends BlockManager
 {
-
     /**
      * @var BlockAssetManagerCollection $block_asset_manager_collection
      */

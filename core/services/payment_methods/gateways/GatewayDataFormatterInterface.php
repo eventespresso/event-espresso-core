@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\payment_methods\gateways;
  */
 interface GatewayDataFormatterInterface
 {
-
     /**
      * Gets the text to use for a gateway's line item name when this is a partial payment
      *

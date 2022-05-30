@@ -14,7 +14,6 @@ namespace EventEspresso\core\exceptions;
  */
 class IpnException extends \LogicException
 {
-
     const DUPLICATE = 1;
 
     const UNABLE_TO_VALIDATE = 2;

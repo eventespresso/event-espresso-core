@@ -10,8 +10,6 @@
  */
 class EE_Caf_Messages
 {
-
-
     /**
      * constructor.
      */

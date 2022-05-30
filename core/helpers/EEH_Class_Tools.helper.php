@@ -11,7 +11,6 @@
  */
 class EEH_Class_Tools
 {
-
     public static $i = 0;
     public static $file_line = null;
 

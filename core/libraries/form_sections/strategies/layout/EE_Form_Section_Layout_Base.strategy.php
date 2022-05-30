@@ -11,7 +11,6 @@
  */
 abstract class EE_Form_Section_Layout_Base
 {
-
     /**
      * Form section to lay out
      *

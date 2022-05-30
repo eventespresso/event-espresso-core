@@ -21,8 +21,6 @@ use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
  */
 class Meta extends Base
 {
-
-
     /**
      * @param \WP_REST_Request $request
      * @param string           $version

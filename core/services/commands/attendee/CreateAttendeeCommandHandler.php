@@ -19,8 +19,6 @@ use EventEspresso\core\services\commands\CommandInterface;
  */
 class CreateAttendeeCommandHandler extends CommandHandler
 {
-
-
     /**
      * @var EEM_Attendee $attendee_model
      */

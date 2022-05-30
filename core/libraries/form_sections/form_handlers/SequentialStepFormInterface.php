@@ -15,8 +15,6 @@ use InvalidArgumentException;
  */
 interface SequentialStepFormInterface extends FormHandlerInterface
 {
-
-
     /**
      * @return int
      */

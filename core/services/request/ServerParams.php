@@ -6,7 +6,6 @@ use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
 
 class ServerParams
 {
-
     /**
      * IP address for request
      *

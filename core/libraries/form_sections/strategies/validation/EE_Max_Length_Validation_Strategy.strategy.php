@@ -11,7 +11,6 @@
  */
 class EE_Max_Length_Validation_Strategy extends EE_Validation_Strategy_Base
 {
-
     protected $_max_length;
 
     public function __construct($validation_error_message = null, $max_length = EE_INF)

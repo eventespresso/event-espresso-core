@@ -16,7 +16,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EE_Admin_Page_Init extends EE_Base
 {
-
     // identity properties (set in _set_defaults and _set_init_properties)
     public $label;
 

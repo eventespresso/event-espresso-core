@@ -10,8 +10,6 @@
  */
 class EE_Integer_Input extends EE_Form_Input_Base
 {
-
-
     /**
      * @param array $input_settings
      */

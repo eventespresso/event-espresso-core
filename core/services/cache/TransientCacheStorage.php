@@ -15,7 +15,6 @@ namespace EventEspresso\core\services\cache;
  */
 class TransientCacheStorage implements CacheStorageInterface
 {
-
     /**
      * wp-option option_name for tracking transients
      *

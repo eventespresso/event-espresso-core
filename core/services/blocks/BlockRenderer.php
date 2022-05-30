@@ -14,7 +14,6 @@ use EventEspresso\core\domain\DomainInterface;
  */
 abstract class BlockRenderer implements BlockRendererInterface
 {
-
     /**
      * @var DomainInterface
      */

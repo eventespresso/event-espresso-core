@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\commands;
  */
 class InvalidCommandHandlerException extends \DomainException
 {
-
     /**
      * @access public
      * @param  string     $command_name

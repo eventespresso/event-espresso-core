@@ -13,7 +13,6 @@ namespace EventEspresso\core\services\address\formatters;
  */
 class InlineAddressFormatter extends AddressFormatter implements \EEI_Address_Formatter
 {
-
     /**
      * @param string $address
      * @param string $address2

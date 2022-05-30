@@ -12,8 +12,6 @@ namespace EventEspresso\core\services\loaders;
  */
 abstract class LoaderDecorator implements LoaderDecoratorInterface
 {
-
-
     /**
      * @var LoaderDecoratorInterface $loader
      */

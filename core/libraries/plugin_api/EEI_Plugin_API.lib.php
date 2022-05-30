@@ -17,7 +17,6 @@
  */
 interface EEI_Plugin_API
 {
-
     /**
      * Used to register a component with EE.
      *

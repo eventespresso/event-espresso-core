@@ -12,8 +12,6 @@
  */
 class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate
 {
-
-
     /**
      * Will hold an EE_Messages_Queue object
      * @type EE_Messages_Queue

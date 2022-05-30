@@ -16,7 +16,6 @@ use EventEspresso\core\services\database\TableManager;
  */
 class EEH_Activation implements ResettableInterface
 {
-
     /**
      * constant used to indicate a cron task is no longer in use
      */

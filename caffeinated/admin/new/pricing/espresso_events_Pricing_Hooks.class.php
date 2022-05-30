@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 {
-
     /**
      * This property is just used to hold the status of whether an event is currently being
      * created (true) or edited (false)

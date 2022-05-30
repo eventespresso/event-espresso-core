@@ -11,8 +11,6 @@
  */
 class EE_Text_Area_Input extends EE_Form_Input_Base
 {
-
-
     protected $_rows = 2;
     protected $_cols = 20;
 

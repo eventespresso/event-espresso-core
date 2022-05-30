@@ -6,7 +6,6 @@
  */
 abstract class EE_Form_Input_Strategy_Base
 {
-
     /**
      * Form Input to display
      *

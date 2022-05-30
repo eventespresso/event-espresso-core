@@ -33,7 +33,6 @@ use ReflectionException;
  */
 class PreviewEventDeletion extends JobHandler
 {
-
     /**
      * @var NodeGroupDao
      */

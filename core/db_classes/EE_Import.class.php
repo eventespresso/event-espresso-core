@@ -13,7 +13,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Import implements ResettableInterface
 {
-
     const do_insert = 'insert';
     const do_update = 'update';
     const do_nothing = 'nothing';

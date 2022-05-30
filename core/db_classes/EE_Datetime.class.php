@@ -12,7 +12,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Datetime extends EE_Soft_Delete_Base_Class
 {
-
     /**
      * constant used by get_active_status, indicates datetime has no more available spaces
      */

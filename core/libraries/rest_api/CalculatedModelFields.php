@@ -21,7 +21,6 @@ use EventEspresso\core\libraries\rest_api\controllers\Base as BaseController;
  */
 class CalculatedModelFields
 {
-
     /**
      * @var array
      */

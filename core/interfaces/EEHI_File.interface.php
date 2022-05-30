@@ -5,7 +5,6 @@
  */
 interface EEHI_File
 {
-
     /**
      * ensure_file_exists_and_is_writable
      * ensures that a file exists and is writable, will attempt to create file if it does not exist

@@ -15,7 +15,6 @@ use DomainException;
  */
 class InvalidInterfaceException extends DomainException
 {
-
     /**
      * InvalidInterfaceException constructor.
      *

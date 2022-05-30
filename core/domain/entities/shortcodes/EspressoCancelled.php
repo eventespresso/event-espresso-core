@@ -18,8 +18,6 @@ use EventEspresso\core\services\shortcodes\EspressoShortcode;
  */
 class EspressoCancelled extends EspressoShortcode
 {
-
-
     /**
      * the actual shortcode tag that gets registered with WordPress
      *

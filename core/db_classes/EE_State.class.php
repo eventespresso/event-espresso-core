@@ -11,7 +11,6 @@
  */
 class EE_State extends EE_Base_Class
 {
-
     /**
      * @param array $props_n_values
      * @return EE_State|mixed

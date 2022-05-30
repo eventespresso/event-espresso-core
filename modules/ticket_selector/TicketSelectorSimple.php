@@ -19,7 +19,6 @@ use EventEspresso\core\exceptions\UnexpectedEntityException;
  */
 class TicketSelectorSimple extends TicketSelector
 {
-
     /**
      * @var EE_Ticket $ticket
      */

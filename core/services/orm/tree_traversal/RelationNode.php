@@ -27,7 +27,6 @@ use ReflectionException;
  */
 class RelationNode extends BaseNode
 {
-
     /**
      * @var string|int
      */

@@ -22,8 +22,6 @@ use ReflectionException;
  */
 class EspressoTicketSelector extends EspressoShortcode
 {
-
-
     /**
      * the actual shortcode tag that gets registered with WordPress
      *

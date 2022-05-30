@@ -18,7 +18,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class PreProductionVersionWarning extends Middleware
 {
-
     /**
      * converts a Request to a Response
      *

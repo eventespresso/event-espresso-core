@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\cache;
  */
 class PostRelatedCacheManager extends BasicCacheManager
 {
-
     /**
      * @type string
      */

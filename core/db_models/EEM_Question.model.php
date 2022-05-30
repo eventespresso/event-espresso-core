@@ -10,7 +10,6 @@
  */
 class EEM_Question extends EEM_Soft_Delete_Base
 {
-
     // constant used to indicate that the question type is COUNTRY
     const QST_type_country = 'COUNTRY';
 

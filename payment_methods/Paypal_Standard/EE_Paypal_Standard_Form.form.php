@@ -13,9 +13,6 @@
  */
 class EE_Paypal_Standard_Form extends EE_Payment_Method_Form
 {
-
-
-
     /**
      * @param EE_PMT_Paypal_Standard $payment_method_type
      */

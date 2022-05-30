@@ -15,7 +15,6 @@ use DateTimeZone;
  */
 interface HelperInterface
 {
-
     /**
      * Ensures that a valid timezone string is returned.
      *

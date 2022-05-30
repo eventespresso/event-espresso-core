@@ -13,8 +13,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 abstract class IframeEmbedButton
 {
-
-
     /**
      * @var string $iframe_name
      */

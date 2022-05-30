@@ -50,7 +50,6 @@ use InvalidArgumentException;
  */
 class ModelFieldFactory
 {
-
     /**
      * @var LoaderInterface $loader
      */

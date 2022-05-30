@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hooks
 {
-
     /**
      * @var Messages_Admin_Page
      */

@@ -13,7 +13,6 @@
  */
 class EE_Template_Part_Manager
 {
-
     /**
      * @param EE_Template_Part_PriorityQueue $template_parts
      */

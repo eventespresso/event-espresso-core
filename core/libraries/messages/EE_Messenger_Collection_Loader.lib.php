@@ -13,9 +13,6 @@
  */
 class EE_Messenger_Collection_Loader
 {
-
-
-
     /**
      * @type EE_Messenger_Collection $_messenger_collection
      */

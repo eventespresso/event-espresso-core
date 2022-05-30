@@ -13,7 +13,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EEM_Term extends EEM_Base
 {
-
     // private instance of the Attendee object
     protected static $_instance = null;
 

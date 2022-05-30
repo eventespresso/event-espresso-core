@@ -24,7 +24,6 @@
  */
 class EEH_File extends EEH_Base implements EEHI_File
 {
-
     /**
      * @var string $_credentials_form
      */

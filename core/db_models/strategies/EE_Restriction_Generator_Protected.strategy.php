@@ -24,7 +24,6 @@
  */
 class EE_Restriction_Generator_Protected extends EE_Restriction_Generator_Base
 {
-
     /**
      * @return \EE_Default_Where_Conditions
      */

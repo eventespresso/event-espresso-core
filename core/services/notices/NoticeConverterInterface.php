@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\notices;
  */
 interface NoticeConverterInterface
 {
-
     /**
      * @return NoticesContainerInterface
      */

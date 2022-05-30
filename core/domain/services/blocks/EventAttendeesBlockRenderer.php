@@ -19,7 +19,6 @@ use EventEspresso\core\services\blocks\BlockRenderer;
  */
 class EventAttendeesBlockRenderer extends BlockRenderer
 {
-
     /**
      * @var EEM_Attendee
      */

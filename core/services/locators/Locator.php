@@ -16,7 +16,6 @@ use FilesystemIterator;
  */
 abstract class Locator implements LocatorInterface, Countable
 {
-
     /**
      * @var array $flags
      */

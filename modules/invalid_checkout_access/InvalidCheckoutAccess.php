@@ -26,7 +26,6 @@ use ReflectionException;
  */
 class InvalidCheckoutAccess
 {
-
     /**
      * key used for saving invalid checkout access data to the wp_options table
      */

@@ -12,9 +12,6 @@
  */
 abstract class EE_Payment_Base_message_type extends EE_message_type
 {
-
-
-
     /**
      * @see parent::get_priority() for documentation.
      * @return int

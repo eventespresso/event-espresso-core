@@ -12,7 +12,6 @@ namespace EventEspresso\core\domain\entities\custom_post_types;
  */
 class CustomTaxonomyTerm
 {
-
     /**
      * @var string $taxonomy_slug
      */

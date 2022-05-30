@@ -18,7 +18,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class Iframe
 {
-
     /*
     * HTML for notices and ajax gif
     * @var string $title

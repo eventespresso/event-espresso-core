@@ -9,7 +9,6 @@
  */
 class EE_Yes_No_Input extends EE_Select_Input
 {
-
     /**
      * @param array $options
      */

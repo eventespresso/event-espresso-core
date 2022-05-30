@@ -10,8 +10,6 @@
  */
 class EE_Register_Message_Type implements EEI_Plugin_API
 {
-
-
     /**
      * Holds values for registered message types
      *

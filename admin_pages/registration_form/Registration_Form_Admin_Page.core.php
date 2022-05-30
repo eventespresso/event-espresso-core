@@ -15,7 +15,6 @@
  */
 class Registration_Form_Admin_Page extends EE_Admin_Page
 {
-
     /**
      * holds the specific question object for the question details screen
      *

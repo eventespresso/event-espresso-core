@@ -12,8 +12,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class EE_Html_messenger extends EE_messenger
 {
-
-
     /**
      * The following are the properties that this messenger requires for displaying the html
      */

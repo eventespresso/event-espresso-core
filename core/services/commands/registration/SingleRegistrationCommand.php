@@ -14,8 +14,6 @@ use EventEspresso\core\services\commands\Command;
  */
 abstract class SingleRegistrationCommand extends Command
 {
-
-
     /**
      * @var \EE_Registration $registration
      */

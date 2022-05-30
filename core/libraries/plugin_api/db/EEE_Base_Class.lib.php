@@ -31,7 +31,6 @@
  */
 class EEE_Base_Class
 {
-
     const extending_method_prefix = 'ext_';
     const dynamic_callback_method_prefix = 'dynamic_callback_method_';
     /**

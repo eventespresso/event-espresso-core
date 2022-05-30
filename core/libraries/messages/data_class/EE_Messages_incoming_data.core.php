@@ -16,8 +16,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 abstract class EE_Messages_incoming_data
 {
-
-
     /**
      * user id for logged in user when data collected
      *

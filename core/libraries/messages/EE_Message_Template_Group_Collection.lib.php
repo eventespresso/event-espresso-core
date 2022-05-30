@@ -10,8 +10,6 @@
  */
 class EE_Message_Template_Group_Collection extends EE_Object_Collection
 {
-
-
     /**
      * EE_Message_Template_Group_Collection constructor.
      */

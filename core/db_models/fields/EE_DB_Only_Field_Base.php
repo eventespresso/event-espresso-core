@@ -9,7 +9,6 @@
  */
 abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base
 {
-
     /**
      * @param string $table_column
      * @param string $nicename
