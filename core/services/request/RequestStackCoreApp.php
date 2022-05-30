@@ -70,7 +70,7 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
         );
         $loader->getShared(
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager',
-            ['', $capabilities_checker, $request]
+            [$capabilities_checker, $request]
         );
         // WP cron jobs
         $loader->getShared('EE_Cron_Tasks');
