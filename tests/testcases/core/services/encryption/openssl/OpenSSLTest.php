@@ -54,19 +54,19 @@ class OpenSSLTest extends TestCase
     protected $rdg;
 
 
-    public function set_up()
+    public function setUp(): void
     {
-        parent::set_up();
+        parent::setUp();
         $this->setUpDependencies();
     }
 
 
-    public function tear_down()
+    public function tearDown(): void
     {
         $this->b64 = null;
         $this->osm1 = null;
         $this->rdg = null;
-        parent::tear_down();
+        parent::tearDown();
     }
 
 
@@ -106,7 +106,7 @@ class OpenSSLTest extends TestCase
     /**
      * @return array
      */
-    public function opensslEncryptionDataProvider()
+    public function opensslEncryptionDataProvider(): array
     {
         $this->setUpDependencies();
         $random_strings = [ $this->rdg->getString()];

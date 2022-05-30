@@ -3,11 +3,16 @@
 namespace EventEspresso\tests\testcases\core\services\route_match;
 
 use EE_Dependency_Map;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\route_match\RouteMatchSpecificationDependencyResolver;
+use InvalidArgumentException;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * Class RouteMatchSpecificationDependencyResolverTest
@@ -32,14 +37,15 @@ class RouteMatchSpecificationDependencyResolverTest extends TestCase
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \ReflectionException
-     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws AssertionFailedError
      */
-    protected function set_up()
+    protected function setUp(): void
     {
+        parent::setUp();
         $this->loader = LoaderFactory::getLoader();
         $this->dependency_map = $this->loader->getShared('EE_Dependency_Map');
         $class = new ReflectionClass($this->dependency_map);
@@ -56,7 +62,7 @@ class RouteMatchSpecificationDependencyResolverTest extends TestCase
      * @since 4.9.71.p
      * @return RouteMatchSpecificationDependencyResolver
      */
-    public function getDependencyResolver()
+    public function getDependencyResolver(): RouteMatchSpecificationDependencyResolver
     {
         return new RouteMatchSpecificationDependencyResolver(
             $this->loader->getShared('EventEspresso\core\services\container\Mirror'),
@@ -67,9 +73,9 @@ class RouteMatchSpecificationDependencyResolverTest extends TestCase
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \PHPUnit\Framework\AssertionFailedError
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws AssertionFailedError
+     * @throws ReflectionException
      */
     public function testResolveDependenciesForClass()
     {

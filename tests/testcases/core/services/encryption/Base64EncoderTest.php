@@ -27,18 +27,18 @@ class Base64EncoderTest extends TestCase
     protected $rdg;
 
 
-    public function set_up()
+    public function setUp(): void
     {
-        parent::set_up();
+        parent::setUp();
         $this->setUpDependencies();
     }
 
 
-    public function tear_down()
+    public function tearDown(): void
     {
         $this->b64 = null;
         $this->rdg = null;
-        parent::tear_down();
+        parent::tearDown();
     }
 
 
@@ -54,7 +54,7 @@ class Base64EncoderTest extends TestCase
     }
 
 
-    public function validBase64DataProvider()
+    public function validBase64DataProvider(): array
     {
         $this->setUpDependencies();
         return [
@@ -111,7 +111,7 @@ class Base64EncoderTest extends TestCase
     }
 
 
-    public function base64UrlDataProvider()
+    public function base64UrlDataProvider(): array
     {
         $this->setUpDependencies();
         return [
