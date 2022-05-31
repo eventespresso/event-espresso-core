@@ -48,9 +48,9 @@ class CachingLoader extends CachingLoaderDecorator
      */
     public function __construct(
         LoaderDecoratorInterface $loader,
-        CollectionInterface      $cache,
-        ObjectIdentifier         $object_identifier,
-        string                   $identifier = ''
+        CollectionInterface $cache,
+        ObjectIdentifier $object_identifier,
+        string $identifier = ''
     ) {
         parent::__construct($loader);
         $this->cache             = $cache;
