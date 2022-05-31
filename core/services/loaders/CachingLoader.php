@@ -50,7 +50,7 @@ class CachingLoader extends CachingLoaderDecorator
         LoaderDecoratorInterface $loader,
         CollectionInterface $cache,
         ObjectIdentifier $object_identifier,
-        $identifier = ''
+        string $identifier = ''
     ) {
         parent::__construct($loader);
         $this->cache       = $cache;
@@ -179,7 +179,10 @@ class CachingLoader extends CachingLoaderDecorator
      */
     public function clearCache()
     {
+        $cache_class = get_class($this->cache);
+        $collection_interface = $this->cache->collectionInterface();
         $this->cache->trashAndDetachAll();
+        $this->cache = new $cache_class($collection_interface);
     }
 
 
