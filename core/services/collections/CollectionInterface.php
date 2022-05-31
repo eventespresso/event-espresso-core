@@ -171,4 +171,11 @@ interface CollectionInterface extends Countable, Iterator, Serializable, ArrayAc
      * unsets and detaches ALL objects from the Collection
      */
     public function trashAndDetachAll();
+
+
+    /**
+     * @return string
+     * @since $VID:$
+     */
+    public function collectionInterface(): string;
 }
