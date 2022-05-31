@@ -1372,7 +1372,8 @@ class EE_Registry implements ResettableInterface
                 : $param_class;
             // param is not even a class
             if (
-                ! class_exists($param_class, false)
+                ! empty($param_class)
+                && ! class_exists($param_class, false)
                 // and something already exists in the incoming arguments for this param
                 && array_key_exists($index, $argument_keys)
                 && array_key_exists($argument_keys[ $index ], $arguments)
