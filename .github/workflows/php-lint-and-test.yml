@@ -1,17 +1,19 @@
-name: PHP Build and Test
+name: PHP Lint & Test
 
 on:
   pull_request:
     # Prevent this workflow from running on pull requests to barista branch
     branches-ignore:
       - 'barista'
+    paths:
+      - '**/*.php'
 
 jobs:
   php-lint:
     runs-on: ubuntu-latest
-    needs: what_has_changed
+#    needs: what_has_changed
     # Run only if PHP files have changed
-    if: ${{ needs.what_has_changed.outputs.php == 'true' }}
+#    if: ${{ needs.what_has_changed.outputs.php == 'true' }}
     strategy:
       matrix:
         php-version: [ '7.1' ]
@@ -29,9 +31,9 @@ jobs:
 
   php-unit-tests:
     runs-on: ubuntu-latest
-    needs: what_has_changed
+#    needs: what_has_changed
     # Run only if PHP files have changed
-    if: ${{ needs.what_has_changed.outputs.php == 'true' }}
+#    if: ${{ needs.what_has_changed.outputs.php == 'true' }}
     strategy:
       matrix:
         php-version: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1' ] #'5.6', '7.0', '8.1'
@@ -78,24 +80,24 @@ jobs:
 
       - name: Remove vendor directory and lock file
         run: |
-          rm -rf vendor/* \
+          rm -rf vendor/*
           rm composer.lock
 
       - name: Install PHPUnit for WP < 5.9
         if: ${{ env.WP_VERSION == '5.8.2' }}
         run: |
-          composer require --dev phpunit/phpunit ^7 \
+          composer require --dev phpunit/phpunit ^7
           composer install
 
       - name: Install PHPUnit for WP >= 5.9
         if: ${{ env.WP_VERSION == 'latest' }}
         run: |
-          composer require --dev phpunit/phpunit ^9 \
+          composer require --dev phpunit/phpunit ^9
           composer install
 
       - name: Run PHPUnit Tests
         run: |
-          phpunit --version \
+          phpunit --version
           phpunit --configuration tests/phpunit.xml
 
         # run multisite test only with 1 PHP version
@@ -105,27 +107,27 @@ jobs:
           WP_MULTISITE: 1
         run: phpunit --configuration tests/phpunit.xml
 
-  # JOB to check if the files in a path have changed
-  what_has_changed:
-    runs-on: ubuntu-latest
-    outputs:
-      js: ${{ steps.filter.outputs.js }}
-      php: ${{ steps.filter.outputs.php }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        # For pull requests it's not necessary to checkout the code
-        if: ${{ github.event_name != 'pull_request' }}
-
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          base: ${{ github.ref }}
-          filters: |
-            js:
-              - '**/*.js'
-              - 'assets/*'
-            webpack:
-              - 'package.json'
-            php:
-              - '**/*.php'
+#  # JOB to check if the files in a path have changed
+#  what_has_changed:
+#    runs-on: ubuntu-latest
+#    outputs:
+#      js: ${{ steps.filter.outputs.js }}
+#      php: ${{ steps.filter.outputs.php }}
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#        # For pull requests it's not necessary to checkout the code
+#        if: ${{ github.event_name != 'pull_request' }}
+#
+#      - uses: dorny/paths-filter@v2
+#        id: filter
+#        with:
+#          base: ${{ github.ref }}
+#          filters: |
+#            js:
+#              - '**/*.js'
+#              - 'assets/*'
+#            webpack:
+#              - 'package.json'
+#            php:
+#              - '**/*.php'
