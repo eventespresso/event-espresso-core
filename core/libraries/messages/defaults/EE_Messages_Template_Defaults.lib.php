@@ -78,11 +78,11 @@ class EE_Messages_Template_Defaults extends EE_Base
      * @param EEM_Message_Template       $message_template_model
      */
     public function __construct(
-        EE_messenger               $messenger,
-        EE_message_type            $message_type,
-        int                        $GRP_ID,
+        EE_messenger $messenger,
+        EE_message_type $message_type,
+        int $GRP_ID,
         EEM_Message_Template_Group $message_template_group_model,
-        EEM_Message_Template       $message_template_model
+        EEM_Message_Template $message_template_model
     ) {
         $this->_messenger    = $messenger;
         $this->_message_type = $message_type;

@@ -315,9 +315,9 @@ class EE_Html_messenger extends EE_messenger
                     'ticket_line_item_no_pms'       => [
                         'input'               => 'textarea',
                         'label'               => '[TICKET_LINE_ITEM_LIST] <br>' . esc_html__(
-                                'Ticket Line Item List with no Price Modifiers',
-                                'event_espresso'
-                            ),
+                            'Ticket Line Item List with no Price Modifiers',
+                            'event_espresso'
+                        ),
                         'type'                => 'string',
                         'required'            => false,
                         'validation'          => true,
@@ -329,9 +329,9 @@ class EE_Html_messenger extends EE_messenger
                     'ticket_line_item_pms'          => [
                         'input'               => 'textarea',
                         'label'               => '[TICKET_LINE_ITEM_LIST] <br>' . esc_html__(
-                                'Ticket Line Item List with Price Modifiers',
-                                'event_espresso'
-                            ),
+                            'Ticket Line Item List with Price Modifiers',
+                            'event_espresso'
+                        ),
                         'type'                => 'string',
                         'required'            => false,
                         'validation'          => true,
@@ -541,8 +541,8 @@ class EE_Html_messenger extends EE_messenger
      * @return string
      */
     public function add_powered_by_credit_link_to_receipt_and_invoice(
-        string          $content,
-        string          $content_again,
+        string $content,
+        string $content_again,
         EE_message_type $incoming_message_type
     ): string {
         if (
@@ -550,10 +550,10 @@ class EE_Html_messenger extends EE_messenger
             && apply_filters('FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', true)
         ) {
             $content .= EEH_Template::powered_by_event_espresso(
-                    'aln-cntr',
-                    '',
-                    ['utm_content' => 'messages_system']
-                ) . EEH_HTML::div(EEH_HTML::p('&nbsp;'));
+                'aln-cntr',
+                '',
+                ['utm_content' => 'messages_system']
+            ) . EEH_HTML::div(EEH_HTML::p('&nbsp;'));
         }
         return $content;
     }
