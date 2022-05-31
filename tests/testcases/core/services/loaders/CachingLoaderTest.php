@@ -39,6 +39,7 @@ class CachingLoaderTest extends EE_UnitTestCase
      */
     public function set_up()
     {
+        parent::set_up();
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
         //caching is turned off by default in the parent test case.  For tests in here where we're doing a number of
         //different persistence tests
@@ -49,7 +50,6 @@ class CachingLoaderTest extends EE_UnitTestCase
                 new ObjectIdentifier(new ClassInterfaceCache())
             );
         }
-        parent::set_up();
     }
 
 
