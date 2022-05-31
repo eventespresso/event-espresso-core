@@ -76,17 +76,21 @@ jobs:
           password: root
           host: localhost
 
-#      - name: Install PHPUnit for WP < 5.9
-#        if: ${{ env.WP_VERSION == '5.8.2' }}
-#        run: |
-#        composer require --dev phpunit/phpunit ^7
-#        phpunit --version
-#
-#      - name: Install PHPUnit for WP >= 5.9
-#        if: ${{ env.WP_VERSION == 'latest' }}
-#        run: |
-#        composer require --dev phpunit/phpunit ^9
-#        phpunit --version
+      - name: Remove PHPUnit
+        run: |
+          composer remove phpunit/phpunit
+
+      - name: Install PHPUnit for WP < 5.9
+        if: ${{ env.WP_VERSION == '5.8.2' }}
+        run: |
+          composer require --dev phpunit/phpunit ^7
+          composer update
+
+      - name: Install PHPUnit for WP >= 5.9
+        if: ${{ env.WP_VERSION == 'latest' }}
+        run: |
+          composer require --dev phpunit/phpunit ^9
+          composer update
 
       - name: Run PHPUnit Tests
         run: |
