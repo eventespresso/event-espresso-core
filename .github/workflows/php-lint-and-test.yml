@@ -76,20 +76,26 @@ jobs:
           password: root
           host: localhost
 
-      - name: Install PHPUnit for WP < 5.9
-        if: ${{ env.WP_VERSION == '5.8.2' }}
-        run: composer require --dev phpunit/phpunit ^7
-
-      - name: Install PHPUnit for WP >= 5.9
-        if: ${{ env.WP_VERSION == 'latest' }}
-        run: composer require --dev phpunit/phpunit ^9
+#      - name: Install PHPUnit for WP < 5.9
+#        if: ${{ env.WP_VERSION == '5.8.2' }}
+#        run: |
+#        composer require --dev phpunit/phpunit ^7
+#        phpunit --version
+#
+#      - name: Install PHPUnit for WP >= 5.9
+#        if: ${{ env.WP_VERSION == 'latest' }}
+#        run: |
+#        composer require --dev phpunit/phpunit ^9
+#        phpunit --version
 
       - name: Run PHPUnit Tests
-        run: phpunit --configuration tests/phpunit.xml
+        run: |
+          phpunit --version
+          phpunit --configuration tests/phpunit.xml
 
         # run multisite test only with 1 PHP version
       - if: ${{ matrix.php-version == '7.4' }}
-        name: Run PHP Unit Tests - WP Multisite
+        name: Run PHPUnit Tests - WP Multisite
         env:
           WP_MULTISITE: 1
         run: phpunit --configuration tests/phpunit.xml
