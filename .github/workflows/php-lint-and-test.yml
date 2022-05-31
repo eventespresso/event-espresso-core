@@ -79,24 +79,24 @@ jobs:
       - name: Remove vendor directory and lock file
         run: |
           rm -rf vendor/* \
-          rm composer.lock \
+          rm composer.lock
 
       - name: Install PHPUnit for WP < 5.9
         if: ${{ env.WP_VERSION == '5.8.2' }}
         run: |
           composer require --dev phpunit/phpunit ^7 \
-          composer install \
+          composer install
 
       - name: Install PHPUnit for WP >= 5.9
         if: ${{ env.WP_VERSION == 'latest' }}
         run: |
           composer require --dev phpunit/phpunit ^9 \
-          composer install \
+          composer install
 
       - name: Run PHPUnit Tests
         run: |
           phpunit --version \
-          phpunit --configuration tests/phpunit.xml \
+          phpunit --configuration tests/phpunit.xml
 
         # run multisite test only with 1 PHP version
       - if: ${{ matrix.php-version == '7.4' }}
