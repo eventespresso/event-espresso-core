@@ -87,6 +87,8 @@ jobs:
         run: |
           phpunit --version
           phpunit --configuration tests/phpunit.xml
+        # allow failure for PHP 8.1
+        continue-on-error: ${{ matrix.php-version == 8.1 }}
 
         # run multisite test only with 1 PHP version
       - if: ${{ matrix.php-version == '7.4' }}
