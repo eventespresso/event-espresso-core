@@ -71,6 +71,7 @@ jobs:
           host: localhost
 
       - name: Remove vendor directory and lock file
+        shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
         run: |
           rm -rf vendor/*
           rm composer.lock
@@ -84,9 +85,13 @@ jobs:
         run: composer require --dev phpunit/phpunit ^9
 
       - name: Install Composer Dependencies
-        run: composer install
+        shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+        run: |
+          composer validate
+          composer install
 
       - name: Run PHPUnit Tests
+        shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
         run: |
           phpunit --version
           phpunit --configuration tests/phpunit.xml
