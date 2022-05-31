@@ -69,27 +69,28 @@ class EE_Messages_Template_Defaults extends EE_Base
     /**
      * EE_Messages_Template_Defaults constructor.
      *
-     * @param EE_messenger               $messenger
-     * @param EE_message_type            $message_type
-     * @param int                        $GRP_ID                      Optional.  If included then we're just
+     * @param EE_messenger                    $messenger
+     * @param EE_message_type                 $message_type
+     * @param int|null                        $GRP_ID                 Optional.  If included then we're just
      *                                                                regenerating the template fields for the given
      *                                                                group not the message template group itself
-     * @param EEM_Message_Template_Group $message_template_group_model
-     * @param EEM_Message_Template       $message_template_model
+     * @param EEM_Message_Template_Group|null $message_template_group_model
+     * @param EEM_Message_Template|null       $message_template_model
+     * @throws EE_Error
      */
     public function __construct(
         EE_messenger $messenger,
         EE_message_type $message_type,
-        int $GRP_ID,
-        EEM_Message_Template_Group $message_template_group_model,
-        EEM_Message_Template $message_template_model
+        ?int $GRP_ID,
+        ?EEM_Message_Template_Group $message_template_group_model,
+        ?EEM_Message_Template $message_template_model
     ) {
         $this->_messenger    = $messenger;
         $this->_message_type = $message_type;
         $this->_GRP_ID       = $GRP_ID ?? 0;
         // set the model object
-        $this->_message_template_group_model = $message_template_group_model;
-        $this->_message_template_model       = $message_template_model;
+        $this->_message_template_group_model = $message_template_group_model ?? EEM_Message_Template_Group::instance();
+        $this->_message_template_model       = $message_template_model ?? EEM_Message_Template::instance();
         $this->_fields                       = $this->_messenger->get_template_fields();
         $this->_contexts                     = $this->_message_type->get_contexts();
     }
