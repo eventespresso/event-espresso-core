@@ -58,7 +58,7 @@ jobs:
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
         with:
           cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-${{ env.WP_VERSION }}-test
-          php-tools: composer:v2, phpunit-polyfills
+          php-tools: composer:${{ env.COMPOSER }}, phpunit-polyfills
           php-version: ${{ matrix.php-version }}
 
       - name: Install WP Tests
