@@ -54,6 +54,12 @@ jobs:
         run: |
           echo "COMPOSER=v2" >> $GITHUB_ENV
 
+      - name: Remove vendor directory and lock file
+        shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+        run: |
+          rm -rf vendor/*
+          rm composer.lock
+
       - name: Checkout and set up LAMP
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
         with:
@@ -69,12 +75,6 @@ jobs:
           username: root
           password: root
           host: localhost
-
-      - name: Remove vendor directory and lock file
-        shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
-        run: |
-          rm -rf vendor/*
-          rm composer.lock
 
       - name: Setup PHPUnit for WP < 5.9
         if: ${{ env.WP_VERSION == '5.8.2' }}
