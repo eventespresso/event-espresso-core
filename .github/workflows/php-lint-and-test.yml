@@ -47,18 +47,19 @@ jobs:
       - name: Set Composer version for PHP 7.1
         if: ${{ matrix.php-version == '7.1' }}
         run: |
-          echo "COMPOSER=v1" >> $GITHUB_ENV
+          echo "COMPOSER_VERSION=v1" >> $GITHUB_ENV
 
       - name: Set Composer version for PHP > 7.1
         if: ${{ matrix.php-version != '7.1' }}
         run: |
-          echo "COMPOSER=v2" >> $GITHUB_ENV
+          echo "COMPOSER_VERSION=v2" >> $GITHUB_ENV
 
       - name: Checkout and set up LAMP
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
         with:
           cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-${{ env.WP_VERSION }}-test
-          php-tools: composer:${{ env.COMPOSER }}, phpunit-polyfills
+          composer-options: --dev
+          php-tools: composer:${{ env.COMPOSER_VERSION }}, phpunit-polyfills
           php-version: ${{ matrix.php-version }}
 
       - name: Remove vendor directory and lock file
