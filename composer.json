@@ -38,7 +38,6 @@
 		"yoast/phpunit-polyfills": "^1.0"
 	},
 	"require": {
-		"composer/installers": "~2.0",
 		"php": ">=7.1",
 		"ext-json": "*",
 		"ext-mbstring": "*",
@@ -47,7 +46,6 @@
 	"config": {
 		"allow-plugins": {
 			"eventespresso/*": true,
-			"composer/installers": true,
 			"phpunit/phpunit": true,
 			"roave/security-advisories": true,
 			"yoast/phpunit-polyfills": true
