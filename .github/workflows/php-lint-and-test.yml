@@ -24,7 +24,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
 
       - name: PHP Lint
-        run: composer config-eventespressocs && composer run-script lint:skip-warnings
+        run: composer config-eventespressocs --ansi && composer run-script lint:skip-warnings --ansi
 
   php-unit-tests:
     runs-on: ubuntu-latest
@@ -68,8 +68,6 @@ jobs:
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
         with:
           cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-${{ env.WP_VERSION }}-test
-          # composer-dependencies: highest
-          # composer-options: --optimize-autoloader
           php-tools: composer:${{ env.COMPOSER_VERSION }}, phpunit:${{ env.PHPUNIT_VERSION }}, phpunit-polyfills
           php-version: ${{ matrix.php-version }}
 
