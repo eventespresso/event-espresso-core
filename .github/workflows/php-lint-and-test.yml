@@ -68,30 +68,10 @@ jobs:
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
         with:
           cache-key: ${{ runner.os }}-${{ secrets.GH_ACTIONS_CACHE_VERSION }}-${{ env.WP_VERSION }}-test
-          composer-dependencies: highest
-          composer-options: --optimize-autoloader
+          # composer-dependencies: highest
+          # composer-options: --optimize-autoloader
           php-tools: composer:${{ env.COMPOSER_VERSION }}, phpunit:${{ env.PHPUNIT_VERSION }}, phpunit-polyfills
           php-version: ${{ matrix.php-version }}
-
-      # - name: Remove vendor directory and lock file
-      #   shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
-      #   run: |
-      #     rm -rf vendor/*
-      #     rm composer.lock
-
-      # - name: Setup PHPUnit for WP < 5.9
-      #   if: ${{ env.WP_VERSION == '5.8.2' }}
-      #   run: composer require --dev phpunit/phpunit ^7
-
-      # - name: Setup PHPUnit for WP >= 5.9
-      #   if: ${{ env.WP_VERSION == 'latest' }}
-      #   run: composer require --dev phpunit/phpunit ^9
-
-      # - name: Install Composer Dependencies
-      #   shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
-      #   run: |
-      #     composer validate
-      #     composer install
 
       - name: Install WP Tests
         uses: eventespresso/actions/packages/install-wp-tests@main
