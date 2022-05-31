@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [ '7.1' ]
+        php-version: [ '7.3' ]
     name: Lint with PHP ${{ matrix.php-version }}
     steps:
       - name: Checkout and set up LAMP
@@ -43,6 +43,16 @@ jobs:
         if: ${{ startsWith( matrix.php-version, '8.' ) }}
         run: |
           echo "WP_VERSION=latest" >> $GITHUB_ENV
+
+      - name: Set Composer version for PHP 7.1
+        if: ${{ matrix.php-version == '7.1' }}
+        run: |
+          echo "COMPOSER=v1" >> $GITHUB_ENV
+
+      - name: Set Composer version for PHP > 7.1
+        if: ${{ matrix.php-version != '7.1' }}
+        run: |
+          echo "COMPOSER=v2" >> $GITHUB_ENV
 
       - name: Checkout and set up LAMP
         uses: eventespresso/actions/packages/checkout-and-LAMP@main
