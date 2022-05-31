@@ -44,11 +44,14 @@
 		"ext-mbstring": "*",
 		"ext-openssl": "*"
 	},
-	"allow-plugins": {
-		"eventespresso/*": true,
-		"composer/installers": true,
-		"roave/security-advisories": true,
-		"yoast/phpunit-polyfills": true
+	"config": {
+		"allow-plugins": {
+			"eventespresso/*": true,
+			"composer/installers": true,
+			"phpunit/phpunit": true,
+			"roave/security-advisories": true,
+			"yoast/phpunit-polyfills": true
+		}
 	},
 	"scripts": {
 		"config-eventespressocs": [
