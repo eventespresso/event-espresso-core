@@ -76,21 +76,22 @@ jobs:
           password: root
           host: localhost
 
-      - name: Remove PHPUnit
+      - name: Remove vendor directory and lock file
         run: |
-          composer remove phpunit/phpunit
+          rm -rf vendor/*
+          rm composer.lock
 
       - name: Install PHPUnit for WP < 5.9
         if: ${{ env.WP_VERSION == '5.8.2' }}
         run: |
           composer require --dev phpunit/phpunit ^7
-          composer update
+          composer install
 
       - name: Install PHPUnit for WP >= 5.9
         if: ${{ env.WP_VERSION == 'latest' }}
         run: |
           composer require --dev phpunit/phpunit ^9
-          composer update
+          composer install
 
       - name: Run PHPUnit Tests
         run: |
