@@ -361,7 +361,7 @@ class EEH_Activation implements ResettableInterface
      * @param EE_Config      $EE_Config
      * @return stdClass
      */
-    public static function migrate_old_config_data($settings = [], $config = '', EE_Config $EE_Config)
+    public static function migrate_old_config_data($settings, $config, EE_Config $EE_Config)
     {
         $convert_from_array = ['addons'];
         // in case old settings were saved as an array

@@ -133,15 +133,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param string $sql
      * @return bool
      */
-    public function _short_circuit_db_implicit_commits($short_circuit = FALSE, $table_name, $sql)
+    public function _short_circuit_db_implicit_commits($short_circuit, $table_name, $sql)
     {
-        $whitelisted_tables = apply_filters('FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables', array());
-        if (in_array($table_name, $whitelisted_tables, true)) {
-            //it's not altering. it's ok
-            return FALSE;
-        } else {
-            return TRUE;
-        }
+        $whitelisted_tables = apply_filters(
+            'FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables',
+            []
+        );
+        return in_array($table_name, $whitelisted_tables, true);
     }
 
     public function tear_down()
