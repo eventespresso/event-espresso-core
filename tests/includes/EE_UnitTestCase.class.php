@@ -12,6 +12,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_UnitTestCase extends WP_UnitTestCase
 {
+    const error_code_undefined_property = 8;
 
     /**
      * @var EE_UnitTest_Factory
@@ -24,8 +25,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @var array
      */
     protected $wp_filters_saved = NULL;
-    const error_code_undefined_property = 8;
+
     protected $_cached_SERVER_NAME = NULL;
+
     /**
      *
      * @var WP_User
@@ -139,9 +141,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
             'FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables',
             []
         );
-        return in_array($table_name, $whitelisted_tables, true);
+        return ! in_array($table_name, $whitelisted_tables, true);
     }
 
+
+    /**
+     * @throws EE_Error
+     */
     public function tear_down()
     {
         parent::tear_down();
