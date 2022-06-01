@@ -12,6 +12,8 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_UnitTestCase extends WP_UnitTestCase
 {
+    const TXN_COMMIT_KEY = 'accidental_txn_commit_indicator';
+
     const error_code_undefined_property = 8;
 
     /**
@@ -39,7 +41,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * keep checking or warning the test runner about it
      * @var boolean
      */
-    public static $accidental_txn_commit_noted = FALSE;
+    public static $accidental_txn_commit_noted = true;
 
 
     /**
@@ -97,7 +99,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         //reset wpdb's list of queries executed so it only stores those from the current test
         $wpdb->queries = array();
         //the accidental txn commit indicator option shouldn't be set from the previous test
-        update_option('accidental_txn_commit_indicator', TRUE);
+        update_option(EE_UnitTestCase::TXN_COMMIT_KEY, true);
 
         // Fake WP mail globals, to avoid errors
         add_filter('wp_mail', array($this, 'setUp_wp_mail'));
@@ -197,10 +199,19 @@ class EE_UnitTestCase extends WP_UnitTestCase
         //we prefer to do it now so that we can check for implicit commits
         $this->clean_up_global_scope();
         //now we can check if there was an accidental implicit commit
-        if (!self::$accidental_txn_commit_noted && get_option('accidental_txn_commit_indicator', FALSE)) {
+        if (! self::$accidental_txn_commit_noted && get_option(EE_UnitTestCase::TXN_COMMIT_KEY, false)) {
             global $wpdb;
-            self::$accidental_txn_commit_noted = TRUE;
-            throw new EE_Error(sprintf(esc_html__("Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s", 'event_espresso'), print_r($wpdb->queries, TRUE), $this->getName()));
+            self::$accidental_txn_commit_noted = true;
+            throw new EE_Error(
+                sprintf(
+                    esc_html__(
+                        "Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s",
+                        'event_espresso'
+                    ),
+                    print_r($wpdb->queries, true),
+                    $this->getName()
+                )
+            );
         }
     }
 
