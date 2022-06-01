@@ -46,6 +46,15 @@ abstract class EE_Object_Collection extends SplObjectStorage
 
 
     /**
+     * @return array|int|string
+     * @since $VID:$
+     */
+    public function getInfo()
+    {
+        return $this->valid() ? maybe_unserialize(parent::getInfo()) : '';
+    }
+
+    /**
      * Sets the data associated with an object in the Collection
      * if no $info is supplied, then the spl_object_hash() is used
      *
@@ -77,7 +86,7 @@ abstract class EE_Object_Collection extends SplObjectStorage
      * @param array|int|string $info
      * @return null | object
      */
-    public function get_by_info($info)
+    public function get_by_info($info = '')
     {
         $info = $this->prepInfo($info);
         $this->rewind();
