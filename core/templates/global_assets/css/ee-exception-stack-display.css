@@ -1,0 +1,55 @@
+#ee-error-message {
+    max-width:90% !important;
+    margin: 2em 5%;
+}
+.ee-error-dev-msg-pg,
+.error .ee-error-dev-msg-pg {
+    padding:1em;
+    margin:0 0 1em;
+    border:2px solid #e65983;
+    background:#fff;
+    border-radius:3px;
+    line-height: 1.5em;;
+}
+#ee-trace-details {
+    margin:0 0 1em;
+}
+#ee-trace-details table {
+    background:#fff;
+    width: 100%;
+}
+#ee-trace-details table th {
+    background:#e6e6e6;
+    padding: .75rem 1.5rem;
+}
+#ee-trace-details table td {
+    padding: .75rem 1.5rem;
+}
+#ee-trace-details table .ee-align-left {
+    text-align: start;
+}
+#ee-trace-details table .ee-align-right {
+    text-align: end;
+}
+#ee-trace-details tr:nth-child(odd) {
+    background:#f6f6f6;
+}
+.display-ee-error-trace-lnk {
+    color: #008dcb;
+    cursor:pointer;
+    font-weight: bold;
+}
+.display-ee-error-trace-lnk:hover {
+    text-decoration:underline;
+}
+.ee-error-trace-dv--hidden, .hidden {
+    display:none;
+}
+.small-text {
+    font-size: .85em;
+    line-height: 1.4em;
+    letter-spacing: 1px;
+}
+.lt-grey-text {
+    color: #999;
+}
