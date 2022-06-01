@@ -63,7 +63,7 @@ class EE_Messenger_Collection extends EE_Object_Collection
      * @param mixed
      * @return null | object
      */
-    public function get_by_info($info)
+    public function get_by_info($info = '')
     {
         return parent::get_by_info(str_replace(' ', '_', strtolower($info)));
     }
