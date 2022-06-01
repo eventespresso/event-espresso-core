@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * EE_Html_messenger class
  *
@@ -473,7 +475,8 @@ class EE_Html_messenger extends EE_messenger
         );
         $this->_deregister_wp_hooks();
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts_styles'));
-        echo $this->_get_main_template(); // already escaped
+
+        echo $this->_get_main_template();
         exit();
     }
 

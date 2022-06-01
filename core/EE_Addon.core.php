@@ -6,6 +6,7 @@ use EventEspresso\core\domain\RequiresDomainInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Class EE_Addon
@@ -831,7 +832,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
             }
         }
 
-        echo $after_plugin_row;
+        echo wp_kses($after_plugin_row, AllowedTags::getAllowedTags());
     }
 
 

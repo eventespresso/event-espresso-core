@@ -17,6 +17,8 @@
  * @subpackage messages
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <!doctype html>
 <html>
@@ -43,7 +45,7 @@
     <?php do_action('AHEE__EE_Html_Messenger_main_wrapper_template_header', $message_type, $page_title, $base_css, $print_css, $main_css, $main_body); ?>
     <body>
         <?php do_action('AHEE__EE_Html_Messenger_main_wrapper_template_before_main_body', $message_type, $page_title, $base_css, $print_css, $main_css, $main_body); ?>
-        <?php echo $main_body; // already escaped ?>
+        <?php echo wp_kses($main_body, AllowedTags::getWithFormTags()); ?>
         <?php do_action('AHEE__EE_Html_Messenger_main_wrapper_template_after_main_body', $message_type, $page_title, $base_css, $print_css, $main_css, $main_body); ?>
     </body>
     <?php do_action('AHEE__EE_Html_Messenger_main_wrapper_template_footer', $message_type, $page_title, $base_css, $print_css, $main_css, $main_body); ?>
