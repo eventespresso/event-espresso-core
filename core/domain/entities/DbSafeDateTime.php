@@ -5,12 +5,14 @@ namespace EventEspresso\core\domain\entities;
 use DateTime;
 use DateTimeZone;
 use DomainException;
+use EE_Datetime_Field;
+use Exception;
 
 /**
  * Class DbSafeDateTime
  * Some versions of PHP do bad things when you try to serialize a DateTime object for storage.
  * This DateTime class extension can be safely serialized and unserialized,
- * because the only data it stores is a string containing all o fits relevant details
+ * because the only data it stores is a string containing all of its relevant details
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -44,7 +46,7 @@ class DbSafeDateTime extends DateTime
     /**
      * @param string $error_log_dir
      */
-    public function setErrorLogDir($error_log_dir)
+    public function setErrorLogDir(string $error_log_dir): void
     {
         // if the folder path is writable, then except the path + filename, else keep empty
         $this->_error_log_dir = is_writable(str_replace(basename($error_log_dir), '', $error_log_dir))
@@ -56,7 +58,7 @@ class DbSafeDateTime extends DateTime
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->format(DbSafeDateTime::db_safe_timestamp_format);
     }
@@ -65,10 +67,10 @@ class DbSafeDateTime extends DateTime
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $this->_datetime_string = $this->format(DbSafeDateTime::db_safe_timestamp_format);
-        $date = DateTime::createFromFormat(
+        $date                   = DateTime::createFromFormat(
             DbSafeDateTime::db_safe_timestamp_format,
             $this->_datetime_string
         );
@@ -93,7 +95,7 @@ class DbSafeDateTime extends DateTime
                 )
             );
         }
-        return array('_datetime_string');
+        return ['_datetime_string'];
     }
 
 
@@ -107,8 +109,10 @@ class DbSafeDateTime extends DateTime
      * We'll replace those with "0000-00-00" which will allow a valid DateTime object to be created,
      * but still result in the internal date for that object being set to "-0001-11-30 10:00:00.000000".
      * so we're no better off, but at least things won't go fatal on us.
+     *
+     * @throws Exception
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $date = self::createFromFormat(
             DbSafeDateTime::db_safe_timestamp_format,
@@ -129,7 +133,7 @@ class DbSafeDateTime extends DateTime
             );
         } else {
             $this->__construct(
-                $date->format(\EE_Datetime_Field::mysql_timestamp_format),
+                $date->format(EE_Datetime_Field::mysql_timestamp_format),
                 new DateTimeZone($date->format('e'))
             );
         }
@@ -138,13 +142,14 @@ class DbSafeDateTime extends DateTime
 
     /**
      * Normalizes incoming date string so that it is a bit more stable for use.
+     *
      * @param string $date_string
      * @return string
      */
-    public static function normalizeInvalidDate($date_string)
+    public static function normalizeInvalidDate(string $date_string): string
     {
         return str_replace(
-            array('-0001-11-29', '-0001-11-30', '0000-00-00'),
+            ['-0001-11-29', '-0001-11-30', '0000-00-00'],
             '0000-01-03',
             $date_string
         );
@@ -155,12 +160,13 @@ class DbSafeDateTime extends DateTime
      * Creates a DbSafeDateTime from ye old DateTime
      *
      * @param DateTime $datetime
-     * @return \EventEspresso\core\domain\entities\DbSafeDateTime
+     * @return DbSafeDateTime
+     * @throws Exception
      */
-    public static function createFromDateTime(DateTime $datetime)
+    public static function createFromDateTime(DateTime $datetime): DbSafeDateTime
     {
         return new DbSafeDateTime(
-            $datetime->format(\EE_Datetime_Field::mysql_timestamp_format),
+            $datetime->format(EE_Datetime_Field::mysql_timestamp_format),
             new DateTimeZone($datetime->format('e'))
         );
     }
@@ -169,13 +175,14 @@ class DbSafeDateTime extends DateTime
     /**
      * Parse a string into a new DateTime object according to the specified format
      *
-     * @param string       $format   Format accepted by date().
-     * @param string       $time     String representing the time.
-     * @param DateTimeZone $timezone A DateTimeZone object representing the desired time zone.
+     * @param string            $format   Format accepted by date().
+     * @param string            $time     String representing the time.
+     * @param DateTimeZone|null $timezone A DateTimeZone object representing the desired time zone.
      * @return DbSafeDateTime|boolean
+     * @throws Exception
      * @link https://php.net/manual/en/datetime.createfromformat.php
      */
-    public static function createFromFormat($format, $time, $timezone = null)
+    public static function createFromFormat(string $format, string $time, ?DateTimeZone $timezone = null)
     {
         $time = self::normalizeInvalidDate($time);
         // Various php versions handle the third argument differently.  This conditional accounts for that.
@@ -191,7 +198,7 @@ class DbSafeDateTime extends DateTime
     /**
      * @param string $message
      */
-    private function writeToErrorLog($message)
+    private function writeToErrorLog(string $message)
     {
         if (! empty($this->_error_log_dir)) {
             /** @noinspection ForgottenDebugOutputInspection */
