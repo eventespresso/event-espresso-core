@@ -202,7 +202,7 @@ class Registry
             $this->removeAlreadyRegisteredDataForScriptHandles();
             wp_add_inline_script(
                 CoreAssetManager::JS_HANDLE_JS_CORE,
-                'var eejsdata=' . wp_json_encode(['data' => $this->jsdata]),
+                'var eejsdata=' . wp_json_encode(['data' => $this->js_data]),
                 'before'
             );
             foreach ($this->assets as $asset_collection) {
@@ -235,7 +235,7 @@ class Registry
      * @param string|array $value Value to attach to key
      * @throws InvalidArgumentException
      */
-    public function addData($key, $value)
+    public function addData(string $key, $value)
     {
         if ($this->verifyDataNotExisting($key)) {
             $this->js_data[ $key ] = $value;
@@ -261,7 +261,7 @@ class Registry
      * @param string|array $value Value being registered.
      * @throws InvalidArgumentException
      */
-    public function pushData($key, $value)
+    public function pushData(string $key, $value)
     {
         if (
             isset($this->js_data[ $key ])
@@ -298,7 +298,7 @@ class Registry
      * @param string $template_content
      * @throws InvalidArgumentException
      */
-    public function addTemplate($template_reference, $template_content)
+    public function addTemplate(string $template_reference, string $template_content)
     {
         if (! isset($this->js_data['templates'])) {
             $this->js_data['templates'] = [];
@@ -328,11 +328,9 @@ class Registry
      * @param string $template_reference
      * @return string
      */
-    public function getTemplate($template_reference)
+    public function getTemplate(string $template_reference): string
     {
-        return isset($this->js_data['templates'][ $template_reference ])
-            ? $this->js_data['templates'][ $template_reference ]
-            : '';
+        return $this->js_data['templates'][ $template_reference ] ?? '';
     }
 
 
@@ -342,7 +340,7 @@ class Registry
      * @param string $key Name of key to attach data to.
      * @return mixed                If there is no for the given key, then false is returned.
      */
-    public function getData($key)
+    public function getData(string $key)
     {
         return array_key_exists($key, $this->js_data) ? $this->js_data[ $key ] : null;
     }
@@ -356,7 +354,7 @@ class Registry
      * @return bool        If valid then return true.
      * @throws InvalidArgumentException if data already exists.
      */
-    protected function verifyDataNotExisting($key)
+    protected function verifyDataNotExisting(string $key): bool
     {
         if (isset($this->js_data[ $key ])) {
             if (! $this->debug()) {
@@ -402,7 +400,7 @@ class Registry
      * @return string
      * @since 4.9.59.p
      */
-    public function getAssetUrl($namespace, $chunk_name, $asset_type)
+    public function getAssetUrl(string $namespace, string $chunk_name, string $asset_type): string
     {
         return apply_filters(
             'FHEE__EventEspresso_core_services_assets_Registry__getAssetUrl',
@@ -421,7 +419,7 @@ class Registry
      * @param string $chunk_name
      * @return string
      */
-    public function getJsUrl($namespace, $chunk_name)
+    public function getJsUrl(string $namespace, string $chunk_name): string
     {
         return $this->getAssetUrl($namespace, $chunk_name, Asset::TYPE_JS);
     }
@@ -434,7 +432,7 @@ class Registry
      * @param string $chunk_name
      * @return string
      */
-    public function getCssUrl($namespace, $chunk_name)
+    public function getCssUrl(string $namespace, string $chunk_name): string
     {
         return $this->getAssetUrl($namespace, $chunk_name, Asset::TYPE_CSS);
     }
@@ -445,7 +443,7 @@ class Registry
      *
      * @param string $script_handle
      */
-    private function addRegisteredScriptHandlesWithData($script_handle)
+    private function addRegisteredScriptHandlesWithData(string $script_handle)
     {
         $this->script_handles_with_data[ $script_handle ] = $script_handle;
     }
@@ -471,7 +469,7 @@ class Registry
      *
      * @param string $script_handle
      */
-    private function removeAlreadyRegisteredDataForScriptHandle($script_handle)
+    private function removeAlreadyRegisteredDataForScriptHandle(string $script_handle)
     {
         if (isset($this->script_handles_with_data[ $script_handle ])) {
             global $wp_scripts;
@@ -500,7 +498,7 @@ class Registry
      * @return bool
      * @since 4.9.63.p
      */
-    private function debug()
+    private function debug(): bool
     {
         return apply_filters(
             'FHEE__EventEspresso_core_services_assets_Registry__debug',
