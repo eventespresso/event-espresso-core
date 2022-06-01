@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $subject
  * @var string $message_type
