@@ -873,3 +873,41 @@ input.ee-toggle-round-flat:checked + label:after {
     margin-inline-end: auto;
     max-width: 150ch;
 }
+
+/** ee buttons **/
+.ee-addon-upsell-info-dv .ee-button,
+.ee-addon-upsell-info-dv .ee-button:active,
+.ee-addon-upsell-info-dv .ee-button:visited {
+    box-sizing: border-box;
+    display: inline-block;
+    position: relative;
+    top: -1px;
+    padding:.5em 1em;
+    margin: 0;
+    background: #00B1CA -webkit-linear-gradient( #4EBFDE, #00B1CA ); /* For Safari 5.1 to 6.0 */
+    background: #00B1CA -o-linear-gradient( #4EBFDE, #00B1CA ); /* For Opera 11.1 to 12.0 */
+    background: #00B1CA -moz-linear-gradient( #4EBFDE, #00B1CA ); /* For Firefox 3.6 to 15 */
+    background: #00B1CA linear-gradient( #4EBFDE, #00B1CA ); /* Standard syntax */
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    border-top: 1px solid rgba(255,255,255,0.5) !important;
+    border-bottom: 2px solid rgba(0,0,0,0.25) !important;
+    font-weight: normal;
+    cursor: pointer;
+    color: #fff !important;
+    text-decoration: none !important;
+    text-align: center;
+    line-height: 1em;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.ee-addon-upsell-info-dv .ee-button:hover {
+    color: #fff !important;
+    background: #4EBFDE;
+}
+.ee-addon-upsell-info-dv .ee-button:active {
+    top:0;
+}

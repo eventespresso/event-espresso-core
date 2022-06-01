@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\assets;
 
 use DomainException;
 use EE_Error;
+use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\values\assets\Asset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
@@ -37,11 +38,11 @@ class Registry
     private $asset_manifest;
 
     /**
-     * This holds the jsdata data object that will be exposed on pages that enqueue the `eejs-core` script.
+     * This holds the js_data data object that will be exposed on pages that enqueue the `eejs-core` script.
      *
      * @var array
      */
-    protected $jsdata = array();
+    protected $js_data = [];
 
     /**
      * This keeps track of all scripts with registered data.  It is used to prevent duplicate data objects setup in the
@@ -49,7 +50,7 @@ class Registry
      *
      * @var array
      */
-    private $script_handles_with_data = array();
+    private $script_handles_with_data = [];
 
 
     /**
@@ -92,8 +93,8 @@ class Registry
     /**
      * Callback for the wp_enqueue_scripts actions used to register assets.
      *
-     * @since 4.9.62.p
      * @throws Exception
+     * @since 4.9.62.p
      */
     public function registerScriptsAndStyles()
     {
@@ -200,7 +201,7 @@ class Registry
         try {
             $this->removeAlreadyRegisteredDataForScriptHandles();
             wp_add_inline_script(
-                'eejs-core',
+                CoreAssetManager::JS_HANDLE_JS_CORE,
                 'var eejsdata=' . wp_json_encode(['data' => $this->jsdata]),
                 'before'
             );
@@ -237,7 +238,7 @@ class Registry
     public function addData($key, $value)
     {
         if ($this->verifyDataNotExisting($key)) {
-            $this->jsdata[ $key ] = $value;
+            $this->js_data[ $key ] = $value;
         }
     }
 
@@ -262,8 +263,9 @@ class Registry
      */
     public function pushData($key, $value)
     {
-        if (isset($this->jsdata[ $key ])
-            && ! is_array($this->jsdata[ $key ])
+        if (
+            isset($this->js_data[ $key ])
+            && ! is_array($this->js_data[ $key ])
         ) {
             if (! $this->debug()) {
                 return;
@@ -280,10 +282,10 @@ class Registry
                 )
             );
         }
-        if ( ! isset( $this->jsdata[ $key ] ) ) {
-            $this->jsdata[ $key ] = is_array($value) ? $value : [$value];
+        if (! isset($this->js_data[ $key ])) {
+            $this->js_data[ $key ] = is_array($value) ? $value : [$value];
         } else {
-            $this->jsdata[ $key ] = array_merge( $this->jsdata[$key], (array) $value);
+            $this->js_data[ $key ] = array_merge($this->js_data[ $key ], (array) $value);
         }
     }
 
@@ -298,11 +300,11 @@ class Registry
      */
     public function addTemplate($template_reference, $template_content)
     {
-        if (! isset($this->jsdata['templates'])) {
-            $this->jsdata['templates'] = array();
+        if (! isset($this->js_data['templates'])) {
+            $this->js_data['templates'] = [];
         }
         //no overrides allowed.
-        if (isset($this->jsdata['templates'][ $template_reference ])) {
+        if (isset($this->js_data['templates'][ $template_reference ])) {
             if (! $this->debug()) {
                 return;
             }
@@ -316,7 +318,7 @@ class Registry
                 )
             );
         }
-        $this->jsdata['templates'][ $template_reference ] = $template_content;
+        $this->js_data['templates'][ $template_reference ] = $template_content;
     }
 
 
@@ -328,8 +330,8 @@ class Registry
      */
     public function getTemplate($template_reference)
     {
-        return isset($this->jsdata['templates'][ $template_reference ])
-            ? $this->jsdata['templates'][ $template_reference ]
+        return isset($this->js_data['templates'][ $template_reference ])
+            ? $this->js_data['templates'][ $template_reference ]
             : '';
     }
 
@@ -342,14 +344,12 @@ class Registry
      */
     public function getData($key)
     {
-        return isset($this->jsdata[ $key ])
-            ? $this->jsdata[ $key ]
-            : false;
+        return array_key_exists($key, $this->js_data) ? $this->js_data[ $key ] : null;
     }
 
 
     /**
-     * Verifies whether the given data exists already on the jsdata array.
+     * Verifies whether the given data exists already on the js_data array.
      * Overriding data is not allowed.
      *
      * @param string $key Index for data.
@@ -358,11 +358,11 @@ class Registry
      */
     protected function verifyDataNotExisting($key)
     {
-        if (isset($this->jsdata[ $key ])) {
+        if (isset($this->js_data[ $key ])) {
             if (! $this->debug()) {
                 return false;
             }
-            if (is_array($this->jsdata[ $key ])) {
+            if (is_array($this->js_data[ $key ])) {
                 throw new InvalidArgumentException(
                     sprintf(
                         esc_html__(
@@ -412,7 +412,6 @@ class Registry
             $asset_type
         );
     }
-
 
 
     /**
@@ -499,6 +498,7 @@ class Registry
     /**
      * @since 4.9.63.p
      * @return bool
+     * @since 4.9.63.p
      */
     private function debug()
     {

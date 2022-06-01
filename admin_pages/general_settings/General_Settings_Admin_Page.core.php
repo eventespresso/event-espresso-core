@@ -343,15 +343,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         EEH_Activation::verify_default_pages_exist();
         $this->_transient_garbage_collection();
 
-        $this->_template_args['values']             = $this->_yes_no_values;
+        $this->_template_args['values'] = $this->_yes_no_values;
 
-        $this->_template_args['reg_page_id']        = $this->core_config->reg_page_id ?? null;
-        $this->_template_args['reg_page_obj']       = isset($this->core_config->reg_page_id)
+        $this->_template_args['reg_page_id']  = $this->core_config->reg_page_id ?? null;
+        $this->_template_args['reg_page_obj'] = isset($this->core_config->reg_page_id)
             ? get_post($this->core_config->reg_page_id)
             : false;
 
-        $this->_template_args['txn_page_id']        = $this->core_config->txn_page_id ?? null;
-        $this->_template_args['txn_page_obj']       = isset($this->core_config->txn_page_id)
+        $this->_template_args['txn_page_id']  = $this->core_config->txn_page_id ?? null;
+        $this->_template_args['txn_page_obj'] = isset($this->core_config->txn_page_id)
             ? get_post($this->core_config->txn_page_id)
             : false;
 
@@ -360,8 +360,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             ? get_post($this->core_config->thank_you_page_id)
             : false;
 
-        $this->_template_args['cancel_page_id']     = $this->core_config->cancel_page_id ?? null;
-        $this->_template_args['cancel_page_obj']    = isset($this->core_config->cancel_page_id)
+        $this->_template_args['cancel_page_id']  = $this->core_config->cancel_page_id ?? null;
+        $this->_template_args['cancel_page_obj'] = isset($this->core_config->cancel_page_id)
             ? get_post($this->core_config->cancel_page_id)
             : false;
 
@@ -588,6 +588,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     {
         $default = $default ?? $this->getCountryIsoForSite();
         $CNT_ISO = $this->request->getRequestParam('country', $default);
+        $CNT_ISO = $this->request->getRequestParam('CNT_ISO', $CNT_ISO);
         return strtoupper($CNT_ISO);
     }
 
@@ -915,7 +916,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                             ],
                             'STA_active' => [
                                 'type'             => 'RADIO_BTN',
-                                'label'            => esc_html__('State Appears in Dropdown Select Lists', 'event_espresso'),
+                                'label'            => esc_html__(
+                                    'State Appears in Dropdown Select Lists',
+                                    'event_espresso'
+                                ),
                                 'input_name'       => "states[$STA_ID]",
                                 'options'          => $this->_yes_no_values,
                                 'use_desc_4_label' => true,
@@ -1111,8 +1115,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $cols_n_values['CNT_ISO3']        = strtoupper(
             $this->request->getRequestParam('cntry', '', $country->ISO3())
         );
-        $cols_n_values['CNT_name']        =
-            $this->request->getRequestParam("cntry[$CNT_ISO][CNT_name]", $country->name());
+        $cols_n_values['CNT_name']        = $this->request->getRequestParam(
+            "cntry[$CNT_ISO][CNT_name]",
+            $country->name()
+        );
         $cols_n_values['CNT_cur_code']    = strtoupper(
             $this->request->getRequestParam(
                 "cntry[$CNT_ISO][CNT_cur_code]",
@@ -1367,15 +1373,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             foreach ($items as $item) {
                 $ID         = absint($item->ID);
                 $post_title = wp_strip_all_tags($item->post_title);
-                $pad    = str_repeat('&nbsp;', $level * 3);
-                $option = "\n\t";
-                $option .= '<option class="level-' . $level . '" ';
-                $option .= 'value="' . $ID . '" ';
-                $option .= $ID === absint($default) ? ' selected' : '';
-                $option .= '>';
-                $option .= "$pad {$post_title}";
-                $option .= '</option>';
-                $output .= $option;
+                $pad        = str_repeat('&nbsp;', $level * 3);
+                $option     = "\n\t";
+                $option     .= '<option class="level-' . $level . '" ';
+                $option     .= 'value="' . $ID . '" ';
+                $option     .= $ID === absint($default) ? ' selected' : '';
+                $option     .= '>';
+                $option     .= "$pad {$post_title}";
+                $option     .= '</option>';
+                $output     .= $option;
                 ob_start();
                 parent_dropdown($default, $item->ID, $level + 1);
                 $output .= ob_get_clean();

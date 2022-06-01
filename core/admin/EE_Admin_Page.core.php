@@ -10,6 +10,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * EE_Admin_Page class
@@ -1752,7 +1753,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             );
         }
         if ($display) {
-            echo $content; // already escaped
+            echo wp_kses($content, AllowedTags::getWithFormTags());
             return '';
         }
         return $content;
@@ -1828,7 +1829,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                    . '" target="_blank"><span class="question ee-help-popup-question"></span></a>';
         $content .= $help_content;
         if ($display) {
-            echo $content; // already escaped
+            echo wp_kses($content, AllowedTags::getWithFormTags());
             return '';
         }
         return $content;
@@ -2346,11 +2347,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $cache_key = 'ee_rss_' . md5($rss_id);
         $output    = get_transient($cache_key);
         if ($output !== false) {
-            echo $pre . $output . $post; // already escaped
+            echo wp_kses($pre . $output . $post, AllowedTags::getWithFormTags());
             return true;
         }
         if (! (defined('DOING_AJAX') && DOING_AJAX)) {
-            echo $pre . $loading . $post; // already escaped
+            echo wp_kses($pre . $loading . $post, AllowedTags::getWithFormTags());
             return false;
         }
         ob_start();
@@ -4144,7 +4145,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param EE_Primary_Key_Field_Base $entity_PK
      * @return string
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   4.10.30.p
      */
     private function resolveEntityFieldDataType(EE_Primary_Key_Field_Base $entity_PK): string
     {
@@ -4219,7 +4220,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * @param EEM_Base $entity_model
      * @param string   $delete_column
-     * @since $VID:$
+     * @since 4.10.30.p
      */
     private function validateDeleteColumn(EEM_Base $entity_model, string $delete_column)
     {
@@ -4253,7 +4254,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param EEM_Base       $entity_model
      * @param Exception|null $exception
      * @param string         $action
-     * @since $VID:$
+     * @since 4.10.30.p
      */
     private function trashRestoreDeleteError(string $action, EEM_Base $entity_model, ?Exception $exception = null)
     {

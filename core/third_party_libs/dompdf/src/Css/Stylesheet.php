@@ -1191,11 +1191,6 @@ class Stylesheet
                 print "/$debug_nodename]\n</pre>";
             }
 
-            /*DEBUGCSS print: see below different print debugging method
-            Helpers::pre_r($frame->get_node()->nodeName . ":");
-            echo "<pre>";
-            echo $style;
-            echo "</pre>";*/
             $frame->set_style($style);
 
             if (!$root_flg && $this->_page_styles["base"]) {

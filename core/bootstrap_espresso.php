@@ -1,5 +1,13 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\container\exceptions\ServiceExistsException;
+use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
+
 /**
  *    espresso_load_error_handling
  *    this function loads EE's class for handling exceptions and errors
@@ -13,7 +21,7 @@ function espresso_load_error_handling()
     // load debugging tools
     if (WP_DEBUG === true && is_readable(EE_HELPERS . 'EEH_Debug_Tools.helper.php')) {
         require_once EE_HELPERS . 'EEH_Debug_Tools.helper.php';
-        \EEH_Debug_Tools::instance();
+        EEH_Debug_Tools::instance();
     }
     // load error handling
     if (is_readable(EE_CORE . 'EE_Error.core.php')) {
@@ -38,7 +46,7 @@ function espresso_load_required($classname, $full_path_to_file)
     if (is_readable($full_path_to_file)) {
         require_once $full_path_to_file;
     } else {
-        throw new \EE_Error(
+        throw new EE_Error(
             sprintf(
                 esc_html__(
                     'The %s class file could not be located or is not readable due to file permissions.',
@@ -53,15 +61,14 @@ function espresso_load_required($classname, $full_path_to_file)
 
 /**
  * @since 4.9.27
- * @throws \EE_Error
- * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
- * @throws \EventEspresso\core\exceptions\InvalidEntityException
- * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
- * @throws \EventEspresso\core\exceptions\InvalidClassException
- * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
- * @throws \EventEspresso\core\services\container\exceptions\ServiceExistsException
- * @throws \EventEspresso\core\services\container\exceptions\ServiceNotFoundException
- * @throws \OutOfBoundsException
+ * @throws InvalidInterfaceException
+ * @throws InvalidEntityException
+ * @throws InvalidIdentifierException
+ * @throws InvalidClassException
+ * @throws InvalidDataTypeException
+ * @throws ServiceExistsException
+ * @throws ServiceNotFoundException
+ * @throws OutOfBoundsException
  * @throws Exception
  */
 function bootstrap_espresso()

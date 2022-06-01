@@ -15,6 +15,20 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 abstract class Asset
 {
+    /**
+     * indicates the file extension for a CSS file
+     */
+    const EXT_CSS = '.css';
+
+    /**
+     * indicates the file extension for a JS file
+     */
+    const EXT_JS = '.js';
+
+    /**
+     * indicates the file extension for a JS file
+     */
+    const EXT_PHP = '.php';
 
     /**
      * indicates the file extension for a build distribution CSS file

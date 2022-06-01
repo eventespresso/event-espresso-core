@@ -5,5 +5,5 @@
             'event_espresso'
         ); ?>
     </div>
-    <?php // echo $form; ?>
+    <?php // echo wp_kses($form, \EventEspresso\core\services\request\sanitizers\AllowedTags::getWithFormTags()); ?>
 </div>

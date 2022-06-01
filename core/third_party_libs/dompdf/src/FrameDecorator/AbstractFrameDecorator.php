@@ -888,9 +888,6 @@ abstract class AbstractFrameDecorator extends Frame
      */
     final function reflow(Block $block = null)
     {
-        // Uncomment this to see the frames before they're laid out, instead of
-        // during rendering.
-        //echo $this->_frame; flush();
         $this->_reflower->reflow($block);
     }
 

@@ -105,7 +105,7 @@ class EE_Registry implements ResettableInterface
     /**
      * RegistryContainer for holding addons which have registered themselves to work with EE core
      *
-     * @var EE_Addon[] $addons
+     * @var RegistryContainer|EE_Addon[] $addons
      */
     public $addons;
 
@@ -117,17 +117,17 @@ class EE_Registry implements ResettableInterface
     public $models = array();
 
     /**
-     * @var EED_Module[] $modules
+     * @var RegistryContainer|EED_Module[] $modules
      */
     public $modules;
 
     /**
-     * @var EES_Shortcode[] $shortcodes
+     * @var RegistryContainer|EES_Shortcode[] $shortcodes
      */
     public $shortcodes;
 
     /**
-     * @var WP_Widget[] $widgets
+     * @var RegistryContainer|WP_Widget[] $widgets
      */
     public $widgets;
 
@@ -579,7 +579,7 @@ class EE_Registry implements ResettableInterface
      * @param string $class_name - simple class name ie: price
      * @param mixed  $arguments
      * @param bool   $load_only
-     * @return EEM_Base | bool
+     * @return mixed
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error

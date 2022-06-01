@@ -477,8 +477,6 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $event_pricing = [];
 
         require_once(PRICING_ADMIN . 'Prices_List_Table.class.php');
-        require_once(EE_MODELS . 'EEM_Price.model.php');
-        // $PRC = EEM_Price::instance();
 
         $orderby = $this->request->getRequestParam('orderby', '');
         $order   = $this->request->getRequestParam('order', 'ASC');
@@ -581,11 +579,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
             );
         }
 
-
         $this->_template_args['PRC_ID'] = $PRC_ID;
         $this->_template_args['price']  = $price;
 
-        $default_base_price                         = $price->type_obj() && $price->type_obj()->base_type() === 1;
+        $default_base_price = $price->type_obj() && $price->type_obj()->base_type() === 1;
+
         $this->_template_args['default_base_price'] = $default_base_price;
 
         // get price types
@@ -786,7 +784,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
      * @param int        $result
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.30.p
      */
     public function adjustTicketRelations(
         EEM_Base $entity_model,
@@ -874,10 +872,6 @@ class Pricing_Admin_Page extends EE_Admin_Page
         echo wp_json_encode(['return_data' => false, 'success' => $success, 'errors' => $errors]);
         die();
     }
-
-
-
-
 
 
     /******************************************************************************************************************
@@ -1176,10 +1170,10 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     protected function _learn_more_about_pricing_link(): string
     {
-        return '<a class="hidden" style="margin:0 20px; cursor:pointer; font-size:12px;" >' . esc_html__(
-            'learn more about how pricing works',
-            'event_espresso'
-        ) . '</a>';
+        return '
+            <a class="hidden" style="margin:0 20px; cursor:pointer; font-size:12px;" >
+                ' . esc_html__('learn more about how pricing works', 'event_espresso') . '
+            </a>';
     }
 
 
@@ -1221,7 +1215,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
                                     'prices_displayed_including_taxes' => new EE_Yes_No_Input(
                                         [
                                             'html_label_text'         => esc_html__(
-                                                "Show Prices With Taxes Included?",
+                                                'Show Prices With Taxes Included?',
                                                 'event_espresso'
                                             ),
                                             'html_help_text'          => esc_html__(
@@ -1229,8 +1223,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
                                                 'event_espresso'
                                             ),
                                             'default'                 => $tax_settings->prices_displayed_including_taxes
-                                                                         ??
-                                                                         true,
+                                                                         ?? true,
                                             'display_html_label_text' => false,
                                         ]
                                     ),

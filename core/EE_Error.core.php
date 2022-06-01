@@ -7,6 +7,7 @@ use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 // if you're a dev and want to receive all errors via email
 // add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
@@ -106,7 +107,7 @@ class EE_Error extends Exception
             wp_mail($to, $subject, $msg);
         }
         echo '<div id="message" class="espresso-notices error"><p>';
-        echo $type . ': ' . $message . '<br />' . $file . ' line ' . $line;
+        echo wp_kses($type . ': ' . $message . '<br />' . $file . ' line ' . $line, AllowedTags::getWithFormTags());
         echo '<br /></p></div>';
     }
 
@@ -1265,9 +1266,9 @@ function espresso_error_enqueue_scripts()
         'ee_error_js',
         EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js',
         array('espresso_core'),
-        EVENT_ESPRESSO_VERSION,
-        false
+        EVENT_ESPRESSO_VERSION
     );
+    wp_localize_script('ee_error_js', 'ee_settings', ['wp_debug' => WP_DEBUG]);
 }
 
 if (is_admin()) {

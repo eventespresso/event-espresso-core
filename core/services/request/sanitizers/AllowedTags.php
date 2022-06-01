@@ -184,6 +184,7 @@ class AllowedTags
         $script_and_style_tags = [
             'script' => AllowedTags::$attributes,
             'style' => AllowedTags::$attributes,
+            'link' => AllowedTags::$attributes,
         ];
         AllowedTags::$allowed_with_script_and_style_tags = array_merge_recursive($all_tags, $script_and_style_tags);
     }

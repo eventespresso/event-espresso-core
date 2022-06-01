@@ -422,7 +422,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
 
         $content = '<input type="checkbox" name="_REG_ID[]" value="' . $REG_ID . '" />';
         $content .= $payment_count > 0 || ! $this->caps_handler->userCanEditRegistration($item)
-            ? '<span class="ee-locked-entity dashicons dashicons-lock ee-aria-tooltip ee-aria-tooltip--big-box" 
+            ? '<span class="ee-locked-entity dashicons dashicons-lock ee-aria-tooltip ee-aria-tooltip--big-box"
                     aria-label="' . $this->lockedRegMessage() . '"></span>'
             : '';
         return $this->columnContent('cb', $content, 'center');
@@ -485,7 +485,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
 
         $content = '
         <div class="ee-layout-row">
-            <span aria-label="' . $pretty_status . '" 
+            <span aria-label="' . $pretty_status . '"
                   class="ee-status-dot ee-status-bg--' . $status . ' ee-aria-tooltip"
             ></span>
             ' . $this->viewRegistrationLink($registration, $status)
@@ -604,7 +604,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         if (! empty($datetime_strings)) {
             $content .= '
                 <div class="ee-registration-event-datetimes-container-wrap">
-                    <button aria-label="' . esc_attr__('Click to view all dates', 'event_espresso') . '" 
+                    <button aria-label="' . esc_attr__('Click to view all dates', 'event_espresso') . '"
                           class="ee-aria-tooltip button button--secondary button--tiny button--icon-only ee-js ee-more-datetimes-toggle"
                     >
                         <span class="dashicons dashicons-admin-collapse"></span>
@@ -746,8 +746,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         if ($registration->transaction()) {
             $content = $this->caps_handler->userCanViewTransaction()
                 ? '
-                    <a class="ee-aria-tooltip ee-status-color--' . $registration->transaction()->status_ID() . '" 
-                        href="' . $this->viewTransactionUrl() . '" 
+                    <a class="ee-aria-tooltip ee-status-color--' . $registration->transaction()->status_ID() . '"
+                        href="' . $this->viewTransactionUrl() . '"
                         aria-label="' . esc_attr__('View Transaction', 'event_espresso') . '"
                     >
                         ' . $registration->transaction()->pretty_total() . '
@@ -784,8 +784,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             } else {
                 $content = $this->caps_handler->userCanViewTransaction()
                     ? '
-                    <a class="ee-aria-tooltip ee-status-color--' . $transaction->status_ID() . '" 
-                        href="' . $this->viewTransactionUrl() . '"  
+                    <a class="ee-aria-tooltip ee-status-color--' . $transaction->status_ID() . '"
+                        href="' . $this->viewTransactionUrl() . '"
                         aria-label="' . esc_attr__('View Transaction', 'event_espresso') . '"
                     >
                         ' . $registration->transaction()->pretty_paid() . '
@@ -867,8 +867,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             : '';
         return $this->caps_handler->userCanReadRegistration($registration)
             ? '
-            <a  href="' . $this->viewRegistrationUrl($registration) . '"  
-                class="row-title ee-status-color--' . $status . ' ee-aria-tooltip" 
+            <a  href="' . $this->viewRegistrationUrl($registration) . '"
+                class="row-title ee-status-color--' . $status . ' ee-aria-tooltip"
                 aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '"
             >
                 ' . $attendee_name . '
@@ -885,7 +885,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     {
         return $this->caps_handler->userCanReadRegistration($registration)
             ? '
-            <a  href="' . $this->viewRegistrationUrl($registration) . '"  
+            <a  href="' . $this->viewRegistrationUrl($registration) . '"
                 class="ee-aria-tooltip button button--icon-only"
                 aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '"
             >
@@ -907,8 +907,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 REG_ADMIN_URL
             );
             return '
-                <a href="' . $edit_link_url . '" 
-                   aria-label="' . esc_attr__('Edit Contact Details', 'event_espresso') . '" 
+                <a href="' . $edit_link_url . '"
+                   aria-label="' . esc_attr__('Edit Contact Details', 'event_espresso') . '"
                    class="ee-aria-tooltip button button--secondary button--icon-only"
                 >
                     <span class="dashicons dashicons-admin-users"></span>
@@ -962,8 +962,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     {
         if ($this->caps_handler->userCanViewTransaction()) {
             return '
-                <a class="ee-aria-tooltip button button--icon-only" 
-                   href="' . $this->viewTransactionUrl() . '"  
+                <a class="ee-aria-tooltip button button--icon-only"
+                   href="' . $this->viewTransactionUrl() . '"
                    aria-label="' . $this->_transaction_details['title_attr'] . '"
                 >
                     <span class="dashicons dashicons-cart"></span>
@@ -1046,8 +1046,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $url_params['action'] = 'trash_registrations';
         $trash_link_url       = EE_Admin_Page::add_query_args_and_nonce($url_params, REG_ADMIN_URL);
         $actions['trash']     = '
-            <a class="ee-aria-tooltip" 
-                href="' . $trash_link_url . '" 
+            <a class="ee-aria-tooltip"
+                href="' . $trash_link_url . '"
                 aria-label="' . esc_attr__('Trash Registration', 'event_espresso') . '"
             >
                 ' . esc_html__('Trash', 'event_espresso') . '
@@ -1075,8 +1075,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             $url_params['action'] = 'restore_registrations';
             $restore_link_url     = EE_Admin_Page::add_query_args_and_nonce($url_params, REG_ADMIN_URL);
             $actions['restore']   = '
-                <a class="ee-aria-tooltip" 
-                    href="' . $restore_link_url . '" 
+                <a class="ee-aria-tooltip"
+                    href="' . $restore_link_url . '"
                     aria-label="' . esc_attr__('Restore Registration', 'event_espresso') . '"
                 >
                     ' . esc_html__('Restore', 'event_espresso') . '
@@ -1100,8 +1100,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             $url_params['action'] = 'delete_registrations';
             $delete_link_url      = EE_Admin_Page::add_query_args_and_nonce($url_params, REG_ADMIN_URL);
             $actions['delete']    = '
-                <a class="ee-aria-tooltip" 
-                    href="' . $delete_link_url . '" 
+                <a class="ee-aria-tooltip"
+                    href="' . $delete_link_url . '"
                     aria-label="' . esc_attr__('Delete Registration Permanently', 'event_espresso') . '"
                 >
                     ' . esc_html__('Delete', 'event_espresso') . '
@@ -1121,8 +1121,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             EVENTS_ADMIN_URL
         );
         return '
-            <a class="ee-aria-tooltip ee-status-color--' . $this->_event_details['status'] . '" 
-                href="' . $edit_event_url . '" 
+            <a class="ee-aria-tooltip ee-status-color--' . $this->_event_details['status'] . '"
+                href="' . $edit_event_url . '"
                 aria-label="' . esc_attr($this->_event_details['title_attr']) . '"
             >
                 ' . $event_name . '
@@ -1137,8 +1137,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         }
         $event_filter_url = EE_Admin_Page::add_query_args_and_nonce(['event_id' => $EVT_ID], REG_ADMIN_URL);
         return '
-            <a  class="ee-aria-tooltip ee-event-filter-link" 
-                href="' . $event_filter_url . '" 
+            <a  class="ee-aria-tooltip ee-event-filter-link"
+                href="' . $event_filter_url . '"
                 aria-label="' . sprintf(
                     esc_attr__('Filter this list to only show registrations for %s', 'event_espresso'),
                     $event_name

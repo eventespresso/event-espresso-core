@@ -219,17 +219,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         /* @var $transaction EE_Transaction */
         $total_line_item = $transaction->total_line_item();
         ee_invoice_display_line_item($total_line_item, $show_line_item_description);
-        /* foreach($transaction->registrations() as $registration){
-             ?>
-            <tr class="item <?php echo ($c = !$c) ? ' odd' : ''; ?>">
-                <td class="item_l">1</td>
-                <td class="item_l"><?php echo $registration->event_name() ?></td>
-                <td class="item_l"><?php echo $registration->ticket()->name() ?></td>
-                <td class="item_l"><?php $datetimes = $registration->ticket()->datetimes(); $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings); ?></td>
-                <td class="item_l"><?php echo $registration->attendee()->full_name() ?></td>
-                <td class="item_r"><?php echo EEH_Template::format_currency($registration->final_price())?></td>
-            </tr>
-        <?php } */ ?>
+        ?>
         </tbody>
 
     </table>
@@ -280,7 +270,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             <td class="item_r"><?php esc_html_e('Total Paid', 'event_espresso') ?></td>
             <td class="item_r"><?php echo EEH_Template::format_currency($amount_pd) ?> </td>
         </tr>
-        <?php // echo $discount; ?>
         <tr class="total_tr">
             <td colspan="4"></td>
             <td class="total" id="total_currency"><?php esc_html_e('Amount Owed', 'event_espresso'); ?></td>
