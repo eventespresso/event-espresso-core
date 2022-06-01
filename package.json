@@ -94,7 +94,7 @@
 		"@wordpress/is-shallow-equal": "^4.8.0",
 		"@wordpress/jest-preset-default": "^8.1.1",
 		"@wordpress/keycodes": "^3.8.0",
-		"@wordpress/plugins": "^4.6.0",
+		"@wordpress/plugins": "^4.8.0",
 		"@wordpress/prettier-config": "^1.2.0",
 		"@wordpress/scripts": "^23.0.0",
 		"@wordpress/server-side-render": "^3.6.0",
