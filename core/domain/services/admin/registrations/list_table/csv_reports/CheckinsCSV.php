@@ -16,7 +16,6 @@ use ReflectionException;
  */
 class CheckinsCSV
 {
-
     /**
      * Returns datetime label
      *
