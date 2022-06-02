@@ -283,7 +283,7 @@ class RegistrationsReport extends JobHandlerFile
         int $limit,
         array $question_labels,
         array $query_params,
-        int   $DTT_ID = 0
+        int $DTT_ID = 0
     ): array {
         $reg_fields_to_include = [
             'TXN_ID',
