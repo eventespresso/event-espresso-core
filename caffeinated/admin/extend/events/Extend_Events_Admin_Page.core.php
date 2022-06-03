@@ -173,9 +173,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $new_page_config['template_settings'] = [
             'nav'           => [
                 'label' => esc_html__('Templates', 'event_espresso'),
+                'icon' => 'dashicons-layout',
                 'order' => 30,
             ],
-            'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
+            'metaboxes'     => array_merge(['_publish_post_box'], $this->_default_espresso_metaboxes),
             'help_tabs'     => [
                 'general_settings_templates_help_tab' => [
                     'title'    => esc_html__('Templates', 'event_espresso'),

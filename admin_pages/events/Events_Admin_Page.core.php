@@ -266,6 +266,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'default'                => [
                 'nav'           => [
                     'label' => esc_html__('Overview', 'event_espresso'),
+                    'icon' => 'dashicons-list-view',
                     'order' => 10,
                 ],
                 'list_table'    => 'Events_Admin_List_Table',
@@ -296,6 +297,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'create_new'             => [
                 'nav'           => [
                     'label'      => esc_html__('Add New Event', 'event_espresso'),
+                    'icon' => 'dashicons-plus-alt',
                     'order'      => 5,
                     'persistent' => false,
                 ],
@@ -348,6 +350,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'edit'                   => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Event', 'event_espresso'),
+                    'icon' => 'dashicons-edit',
                     'order'      => 5,
                     'persistent' => false,
                     'url'        => $post_id
@@ -405,9 +408,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'default_event_settings' => [
                 'nav'           => [
                     'label' => esc_html__('Default Settings', 'event_espresso'),
+                    'icon' => 'dashicons-admin-generic',
                     'order' => 40,
                 ],
-                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
+                'metaboxes'     => array_merge(['_publish_post_box'], $this->_default_espresso_metaboxes),
                 'labels'        => [
                     'publishbox' => esc_html__('Update Settings', 'event_espresso'),
                 ],
@@ -430,7 +434,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             // template settings
             'template_settings'      => [
                 'nav'           => [
-                    'label' => esc_html__('Templates', 'event_espresso'),
+                    'label' => esc_html__( 'Templates', 'event_espresso'),
+                    'icon' => 'dashicons-layout',
                     'order' => 30,
                 ],
                 'metaboxes'     => $this->_default_espresso_metaboxes,
@@ -446,7 +451,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'add_category'           => [
                 'nav'           => [
                     'label'      => esc_html__('Add Category', 'event_espresso'),
-                    'order'      => 15,
+                    'icon' => 'dashicons-plus-alt',
+                    'order'      => 25,
                     'persistent' => false,
                 ],
                 'help_tabs'     => [
@@ -461,7 +467,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'edit_category'          => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Category', 'event_espresso'),
-                    'order'      => 15,
+                    'icon' => 'dashicons-edit',
+                    'order'      => 25,
                     'persistent' => false,
                     'url'        => $EVT_CAT_ID
                         ? add_query_arg(
@@ -482,6 +489,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'category_list'          => [
                 'nav'           => [
                     'label' => esc_html__('Categories', 'event_espresso'),
+                    'icon' => 'dashicons-networking',
                     'order' => 20,
                 ],
                 'list_table'    => 'Event_Categories_Admin_List_Table',
@@ -509,6 +517,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'preview_deletion'       => [
                 'nav'           => [
                     'label'      => esc_html__('Preview Deletion', 'event_espresso'),
+                    'icon' => 'dashicons-remove',
                     'order'      => 15,
                     'persistent' => false,
                     'url'        => '',
