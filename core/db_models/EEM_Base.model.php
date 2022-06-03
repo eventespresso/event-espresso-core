@@ -1168,7 +1168,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * If there is no primary key on this model, $id is treated as primary key string
      *
      * @param mixed $id int or string, depending on the type of the model's primary key
-     * @return EE_Base_Class
+     * @return EE_Base_Class|mixed|null
      * @throws EE_Error
      */
     public function get_one_by_ID($id)
@@ -5526,15 +5526,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
 
-
     /**
      * refresh_entity_map_from_db
      * Makes sure the model object in the entity map at $id assumes the values
      * of the database (opposite of EE_base_Class::save())
      *
      * @param int|string $id
-     * @return EE_Base_Class
+     * @return EE_Base_Class|EE_Soft_Delete_Base_Class|mixed|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function refresh_entity_map_from_db($id)
     {

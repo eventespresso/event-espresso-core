@@ -24,11 +24,11 @@ abstract class CommandHandler implements CommandHandlerInterface
      * because the CommandBus utilizes method chaining.
      *
      * @param CommandInterface $command
-     * @return CommandHandler
+     * @return CommandHandlerInterface
      * @throws InvalidEntityException
      * @since 4.9.80.p
      */
-    public function verify(CommandInterface $command)
+    public function verify(CommandInterface $command): CommandHandlerInterface
     {
         $expected = str_replace('CommandHandler', 'Command', get_class($this));
         if (! $command instanceof $expected) {
