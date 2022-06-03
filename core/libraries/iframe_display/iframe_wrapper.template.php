@@ -17,6 +17,10 @@
  * @since   4.9.0
  * @package Event Espresso
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -33,18 +37,18 @@
             </script>
         <?php foreach ($header_js as $key => $url) :?>
             <?php $header_attributes = isset($header_js_attributes[ $key ]) ? $header_js_attributes[ $key ] : ''; ?>
-        <script type="text/javascript" src="<?php echo esc_url_raw($url); ?>"<?php echo $header_attributes; ?>></script>
+        <script type="text/javascript" src="<?php echo esc_url_raw($url); ?>" <?php echo AttributesSanitizer::clean($header_attributes, AllowedTags::getAllowedTags(), 'script'); ?>></script>
         <?php endforeach; ?>
     <?php endif; ?>
 </head>
 <body>
-<?php echo $notices; // already escaped ?>
+<?php echo wp_kses($notices, AllowedTags::getWithFormTags()); ?>
 <div style="padding: 1em;">
-    <?php echo $content; // already escaped ?>
+    <?php echo wp_kses($content, AllowedTags::getWithFormTags()); ?>
 </div>
 <?php foreach ($footer_js as $key => $url) : ?>
     <?php $footer_attributes = isset($footer_js_attributes[ $key ]) ? $footer_js_attributes[ $key ] : ''; ?>
-    <script type="text/javascript" src="<?php echo esc_url_raw($url); ?>"<?php echo $footer_attributes; ?>></script>
+    <script type="text/javascript" src="<?php echo esc_url_raw($url); ?>" <?php echo AttributesSanitizer::clean($footer_attributes, AllowedTags::getAllowedTags(), 'script'); ?>></script>
 <?php endforeach; ?>
 <?php if ($enqueue_wp_assets) : ?>
     <?php wp_footer(); ?>

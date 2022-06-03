@@ -6,6 +6,7 @@ use DomainException;
 use EE_Registry;
 use EE_System;
 use EEH_Template;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Class Iframe
