@@ -4,17 +4,19 @@
 }
 
 .ee-msg-admin-header {
-    display: grid;
-    grid-gap: 0;
-    grid-template-columns: 2fr 1.5fr 1.5rem var(--ee-admin-sidebar-width);
-    grid-template-areas:
-    "msg-header-1 msg-header-2 postbox-1";
-    margin-block-start: 2.25rem;
+    align-items: center;
+    display: flex;
+    flex-flow:  row wrap;
+    background: white;
+    box-sizing: border-box;
+    margin-block-end: 1rem;
+    padding: 1rem;
+    width: 100%;
 }
 
-.espresso-admin #ee-msg-edit-frm  #post-body.columns-2 #postbox-container-1 {
+/* .espresso-admin #ee-msg-edit-frm  #post-body.columns-2 #postbox-container-1 {
     margin-block-start: -5.5rem;
-}
+} */
 
 #mtp_valid_shortcodes .shortcode-field-table {
     margin-top: 12px;
@@ -59,13 +61,13 @@
 
 .ee-msg-switcher-container {
     align-items: center;
-    background: white;
     display: flex;
     flex-flow: row wrap;
-    grid-area: msg-header-2;
     margin: 0;
-    padding: 1rem 1rem 1rem 0;
     width: 100%;
+}
+.ee-msg-switcher-container select {
+    width: 16rem;
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {
@@ -430,7 +432,7 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     align-items: center;
     background: white;
     display: flex;
-    grid-area: msg-header-1;
+    /* grid-area: msg-header-1; */
     padding: 1rem 0 1rem 1rem;
     --ee-switch-size: 1.5rem;
     --ee-switch-size-btn: calc(var(--ee-switch-size) * .75);

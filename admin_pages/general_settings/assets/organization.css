@@ -113,10 +113,15 @@
     }
 }
 
+
 #site_license_key {
-    margin-right: 10px;
+    margin-right: .5rem;
+    max-width: calc(100% - 3rem) !important;
 }
 #site_license_key + .dashicons.dashicons-admin-network {
     font-size: 2rem;
-    margin: .25rem
+    margin: .5rem .25rem 0
+}
+.espresso-admin input.ee_media_url {
+    max-width: calc(100% - 4rem) !important;
 }

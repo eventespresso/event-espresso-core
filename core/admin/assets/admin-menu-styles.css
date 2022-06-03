@@ -6,6 +6,7 @@
 :root {
 
     --ee-color-white: hsl(207, 0%, 100%);
+    --ee-color-may-as-well-be-white: hsl(207, 0%, 97.5%);
     --ee-color-almost-white: hsl(207, 0%, 95%);
     --ee-color-off-white: hsl(207, 0%, 90%);
     --ee-status-color-pink: hsl(340, 100%, 70%);
@@ -187,7 +188,7 @@
 
     --ee-border-color: hsla(var(--ee-btn-secondary-hue), 2%, 70%, 1);
     --ee-border-color-table-row: hsla(var(--ee-btn-secondary-hue), 0%, 90%, 1);
-    --ee-table-row-stripe-bg: hsl(207, 25%, 98%);
+    --ee-table-row-stripe-bg: var(--ee-color-may-as-well-be-white);
 
     --ee-admin-sidebar-width: 100%;
 
