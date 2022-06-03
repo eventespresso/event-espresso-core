@@ -603,7 +603,7 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 
 
 .espresso-admin .postbox:not([style*="display: none;"]) + .postbox {
-    margin-block-start: 1rem;
+    margin-block-start: 1rem !important;
 }
 
 .post-type-espresso_events #wpcontent {
