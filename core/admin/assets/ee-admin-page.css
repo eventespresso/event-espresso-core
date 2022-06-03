@@ -4539,7 +4539,6 @@ body.espresso-admin #contextual-help-wrap strong {
     color: var(--ee-font-color-light);
     font-size: 1rem;
     font-weight: 800;
-    /* padding-block-start: 1rem; */
 }
 
 .espresso-admin .wp-list-table.widefat thead th,
@@ -4549,12 +4548,10 @@ body.espresso-admin #contextual-help-wrap strong {
     background: var(--ee-color-almost-white);
     border-block-end: none;
     color: var(--ee-font-color-light);
-}
-.espresso-admin .wp-list-table.widefat thead th,
-.espresso-admin .wp-list-table.widefat thead td {
+    /* position: -webkit-sticky;
     position: sticky;
     top: 2rem;
-    z-index: 25;
+    z-index: 25; */
 }
 .admin-primary-mbox-tbl tfoot td,
 .admin-primary-mbox-tbl tfoot th,
