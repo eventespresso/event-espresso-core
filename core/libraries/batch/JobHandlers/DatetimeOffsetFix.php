@@ -187,9 +187,9 @@ class DatetimeOffsetFix extends JobHandler
                 case $result === false:
                     // record error.
                     $error_message = $wpdb->last_error;
-                    // handle the edgecases where last_error might be empty.
+                    // handle the edge cases where last_error might be empty.
                     if (! $error_message) {
-                        $error_message = esc_html__('Unknown mysql error occured.', 'event_espresso');
+                        $error_message = esc_html__('Unknown mysql error occurred.', 'event_espresso');
                     }
                     $this->recordChangeLog($model, $original_offset, $table, $fields_affected, $error_message);
                     break;

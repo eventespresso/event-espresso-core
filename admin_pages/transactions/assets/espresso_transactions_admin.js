@@ -296,4 +296,13 @@ jQuery(document).ready(function ($) {
             update_registration_payments_inputs();
         }
     });
+
+
+
+	$('.tablenav ').on('focusin', '.ee-datepicker', function(e) {
+		e.preventDefault();
+        e.stopPropagation();
+        $( this ).datepicker({ dateFormat: 'yy-mm-dd' });
+	});
+
 });

@@ -258,9 +258,9 @@ class EE_Dependency_Map
 
 
     /**
-     * @param string $class_name
+     * @param string         $class_name
      * @param Closure|string $loader
-     * @param bool   $overwrite
+     * @param bool           $overwrite
      * @return bool
      * @throws DomainException
      */
@@ -766,7 +766,8 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspressoBatchRequest\BatchRequestProcessor'                                                             => [
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\converters\RestApiSpoofer'                                                => [
                 'WP_REST_Server'                                               => EE_Dependency_Map::load_from_cache,
@@ -800,7 +801,7 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\domain\services\capabilities\FeatureFlags'                                                => [
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain'                                    => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\addon\AddonManager'                                                              => [
                 'EventEspresso\core\services\addon\AddonCollection'              => EE_Dependency_Map::load_from_cache,

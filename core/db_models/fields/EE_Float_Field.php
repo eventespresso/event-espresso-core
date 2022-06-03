@@ -20,7 +20,9 @@ class EE_Float_Field extends EE_Model_Field_Base
      */
     public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
-        $this->currency = EE_Config::instance()->currency;
+        $this->currency = EE_Config::instance()->currency instanceof EE_Currency_Config
+            ? EE_Config::instance()->currency
+            : new EE_Currency_Config();
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType('number');
     }

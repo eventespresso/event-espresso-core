@@ -71,7 +71,7 @@ class ConfirmDeletion
             EEH_URL::safeRedirectAndExit(
                 EE_Admin_Page::add_query_args_and_nonce(
                     array(
-                        'page' => 'espresso_batch',
+                        'page' => EED_Batch::PAGE_SLUG,
                         'batch' => EED_Batch::batch_job,
                         'deletion_job_code' => $deletion_job_code,
                         'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),

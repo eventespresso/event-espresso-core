@@ -606,7 +606,7 @@ class EEH_Form_Fields
             $chars = 0;
             foreach ($value as $val) {
                 $length = self::getInputValueLength($val);
-                $chars = $length > $chars ? $length : $chars;
+                $chars = max($length, $chars);
             }
             return $chars;
         }
@@ -633,7 +633,7 @@ class EEH_Form_Fields
         if ($chars && $chars < 5) {
             return "{$class} ee-input-width--tiny";
         }
-        if ($chars && $chars < 15) {
+        if ($chars && $chars < 25) {
             return "{$class} ee-input-width--small";
         }
         if ($chars && $chars > 100) {
@@ -1046,7 +1046,8 @@ class EEH_Form_Fields
         $disabled = false,
         $system_ID = false,
         $use_html_entities = true,
-        $add_mobile_label = false
+        $add_mobile_label = false,
+        $extra_attributes = ''
     ) {
         // need these
         if (! $question || ! $name) {
@@ -1064,7 +1065,7 @@ class EEH_Form_Fields
         $class     .= ! empty($system_ID) ? ' ' . $system_ID : '';
         $class = self::appendInputSizeClass($class, $answer);
         $class .= ! empty($required['class']) ? ' ' . $required['class'] : '';
-        $extra     = apply_filters('FHEE__EEH_Form_Fields__additional_form_field_attributes', '');
+        $extra_attributes = apply_filters('FHEE__EEH_Form_Fields__additional_form_field_attributes', $extra_attributes);
 
         $label_html = self::label($question, $required_text, $required['label'], $name, $label_class);
         $mobile_label = self::mobileLabel(
@@ -1083,7 +1084,7 @@ class EEH_Form_Fields
                     class="' . trim($class) . '"
                     value="' . esc_attr($answer) . '"
                     aria-label="' . esc_attr($required['msg']) . '"
-                    ' . $disabled . ' ' . $extra . '
+                    ' . $disabled . ' ' . $extra_attributes . '
             />';
 
         $input_html = apply_filters('FHEE__EEH_Form_Fields__input_html', $input_html, $label_html, $id);

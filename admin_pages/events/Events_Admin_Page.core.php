@@ -2333,7 +2333,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         EEH_URL::safeRedirectAndExit(
             EE_Admin_Page::add_query_args_and_nonce(
                 [
-                    'page'              => 'espresso_batch',
+                    'page'              => EED_Batch::PAGE_SLUG,
                     'batch'             => EED_Batch::batch_job,
                     'EVT_IDs'           => $event_ids,
                     'deletion_job_code' => $deletion_job_code,

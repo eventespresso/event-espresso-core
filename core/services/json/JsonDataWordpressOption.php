@@ -16,12 +16,12 @@ use stdClass;
 abstract class JsonDataWordpressOption extends WordPressOption
 {
     /**
-     * @var array
+     * @var array|mixed|stdClass
      */
-    private $options;
+    private $options = [];
 
     /**
-     * @var JsonDataHandler
+     * @var JsonDataHandler|null
      */
     private $json_data_handler;
 
@@ -32,23 +32,33 @@ abstract class JsonDataWordpressOption extends WordPressOption
      * @param JsonDataHandler $json_data_handler
      * @param string          $option_name
      * @param                 $default_value
+     * @param bool            $autoload
      */
-    public function __construct(JsonDataHandler $json_data_handler, string $option_name, $default_value)
-    {
+    public function __construct(
+        JsonDataHandler $json_data_handler,
+        string $option_name,
+        $default_value,
+        bool $autoload = false
+    ) {
         $this->json_data_handler = $json_data_handler;
-        $this->json_data_handler->configure(JsonDataHandler::DATA_TYPE_OBJECT);
-        parent::__construct($option_name, $default_value);
+        if (! $this->json_data_handler->dataType()) {
+            $this->json_data_handler->configure(JsonDataHandler::DATA_TYPE_OBJECT);
+        }
+        parent::__construct($option_name, $default_value, $autoload);
     }
 
 
     /**
-     * @param $options
+     * @param $value
+     * @return int
      */
-    private function update($options)
+    public function updateOption($value): int
     {
-        if ($this->updateOption($this->json_data_handler->encodeData($options))) {
-            $this->options = $options;
+        if (parent::updateOption($this->json_data_handler->encodeData($value))) {
+            $this->options = $value;
+            return WordPressOption::UPDATE_SUCCESS;
         }
+        return WordPressOption::UPDATE_ERROR;
     }
 
 
@@ -61,7 +71,7 @@ abstract class JsonDataWordpressOption extends WordPressOption
     {
         $options = $this->getAll();
         $options->{$property} = $value;
-        $this->update($options);
+        $this->updateOption($options);
     }
 
 
@@ -96,6 +106,6 @@ abstract class JsonDataWordpressOption extends WordPressOption
     {
         $options = $this->getAll();
         unset($options->{$property});
-        $this->update($options);
+        $this->updateOption($options);
     }
 }

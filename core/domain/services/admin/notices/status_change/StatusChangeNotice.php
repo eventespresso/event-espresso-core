@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\services\admin\notices\status_change;
 
-use EE_Registry;
 use EEH_Template;
 use EventEspresso\core\services\database\WordPressOption;
 use RuntimeException;
@@ -66,7 +65,7 @@ class StatusChangeNotice extends WordPressOption
                 __DIR__ . '/status_change_notice.template.php',
                 [
                     'context'   => $context,
-                    'page_slug' => ! empty($page_slug) ? "{$page_slug}-page" : '',
+                    'page_slug' => ! empty($page_slug) ? "$page_slug-page" : '',
                 ],
                 true
             )

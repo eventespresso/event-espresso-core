@@ -1,10 +1,12 @@
 <?php
 
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
+use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspressoBatchRequest\BatchRequestProcessor;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 
 define('BATCH_URL', plugin_dir_url(__FILE__));
@@ -22,10 +24,12 @@ define('BATCH_URL', plugin_dir_url(__FILE__));
  * @subpackage  /modules/batch/
  * @author      Mike Nelson
  * @since       4.8.30.rc.007
- * @method EED_Batch get_instance($module_name)
+ * @method EED_Batch get_instance($module_name): EED_Batch
  */
 class EED_Batch extends EED_Module
 {
+    public const PAGE_SLUG = 'espresso_batch';
+
     /**
      * Possibly value for $_REQUEST[ 'batch' ]. Indicates to run a job that
      * processes data only
@@ -49,20 +53,20 @@ class EED_Batch extends EED_Module
      *
      * @var string 'file', or 'job', or false to indicate its not a batch request at all
      */
-    protected $_batch_request_type = null;
+    protected $_batch_request_type = '';
 
     /**
      * Because we want to use the response in both the localized JS and in the body
      * we need to make this response available between method calls
      *
-     * @var JobStepResponse
+     * @var JobStepResponse|null
      */
     protected $_job_step_response = null;
 
     /**
-     * @var LoaderInterface
+     * @var LoaderInterface|null
      */
-    protected $loader;
+    protected $loader = null;
 
 
     /**
@@ -72,7 +76,7 @@ class EED_Batch extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function instance()
+    public static function instance(): EED_Batch
     {
         return parent::get_instance(__CLASS__);
     }
@@ -108,10 +112,21 @@ class EED_Batch extends EED_Module
         add_action('admin_enqueue_scripts', [self::instance(), 'enqueue_scripts']);
 
         // ajax
-        add_action('wp_ajax_espresso_batch_continue', [self::instance(), 'batch_continue']);
-        add_action('wp_ajax_espresso_batch_cleanup', [self::instance(), 'batch_cleanup']);
-        add_action('wp_ajax_nopriv_espresso_batch_continue', [self::instance(), 'batch_continue']);
-        add_action('wp_ajax_nopriv_espresso_batch_cleanup', [self::instance(), 'batch_cleanup']);
+        add_action('wp_ajax_espresso_batch_continue', [self::instance(), 'continueBatchJob']);
+        add_action('wp_ajax_espresso_batch_advance', [self::instance(), 'advanceBatchJob']);
+        add_action('wp_ajax_espresso_batch_cleanup', [self::instance(), 'cleanupBatchJob']);
+        add_action('wp_ajax_nopriv_espresso_batch_continue', [self::instance(), 'continueBatchJob']);
+        add_action('wp_ajax_nopriv_espresso_batch_advance', [self::instance(), 'advanceBatchJob']);
+        add_action('wp_ajax_nopriv_espresso_batch_cleanup', [self::instance(), 'cleanupBatchJob']);
+        add_filter(
+            'admin_body_class',
+            function ($classes) {
+                if (strpos($classes, 'espresso-admin') === false) {
+                    $classes .= ' espresso-admin';
+                }
+                return $classes;
+            }
+        );
     }
 
 
@@ -122,7 +137,7 @@ class EED_Batch extends EED_Module
      * @throws InvalidInterfaceException
      * @since 4.9.80.p
      */
-    protected function getLoader()
+    protected function getLoader(): LoaderInterface
     {
         if (! $this->loader instanceof LoaderInterface) {
             $this->loader = LoaderFactory::getLoader();
@@ -138,8 +153,8 @@ class EED_Batch extends EED_Module
     {
         $request = EED_Batch::getRequest();
         if (
-            $request->getRequestParam('espresso_batch')
-            || $request->getRequestParam('page') === 'espresso_batch'
+            $request->getRequestParam(EED_Batch::PAGE_SLUG)
+            || $request->getRequestParam('page') === EED_Batch::PAGE_SLUG
         ) {
             if (
                 ! $request->requestParamIsSet('default_nonce')
@@ -174,17 +189,27 @@ class EED_Batch extends EED_Module
             'batch_runner_init',
             BATCH_URL . 'assets/batch_runner_init.js',
             ['batch_runner'],
-            EVENT_ESPRESSO_VERSION,
+            date('Y-m-d-H:i', time()),
             true
         );
         wp_localize_script('batch_runner_init', 'ee_job_response', $job_response->to_array());
-        wp_localize_script(
-            'batch_runner_init',
-            'ee_job_i18n',
-            [
-                'return_url' => EED_Batch::getRequest()->getRequestParam('return_url', '', 'url'),
-            ]
-        );
+        wp_localize_script('batch_runner_init', 'eei18n', EE_Registry::$i18n_js_strings);
+
+        $return_url = EED_Batch::getRequest()->getRequestParam('return_url', '', 'url');
+        if ($return_url) {
+            wp_localize_script(
+                'batch_runner_init',
+                'ee_job_i18n',
+                [
+                    'return_url'                => $return_url,
+                    'auto_redirect_on_complete' => EED_Batch::getRequest()->getRequestParam(
+                        'auto_redirect_on_complete'
+                    ),
+                    'user_message'              => EED_Batch::getRequest()->getRequestParam('assessment_notice')
+                        ?: EED_Batch::getRequest()->getRequestParam('job_start_notice'),
+                ]
+            );
+        }
     }
 
 
@@ -193,31 +218,26 @@ class EED_Batch extends EED_Module
      */
     public function enqueue_scripts_styles_batch_file_create()
     {
-        $return_url = EED_Batch::getRequest()->getRequestParam('return_url', '', 'url');
         // creates a job based on the request variable
         $job_response = $this->_enqueue_batch_job_scripts_and_styles_and_start_job();
         wp_enqueue_script(
             'batch_file_runner_init',
             BATCH_URL . 'assets/batch_file_runner_init.js',
             ['batch_runner'],
-            EVENT_ESPRESSO_VERSION,
+            date('Y-m-d-H:i', time()),
             true
         );
         wp_localize_script('batch_file_runner_init', 'ee_job_response', $job_response->to_array());
-        wp_localize_script(
-            'batch_file_runner_init',
-            'ee_job_i18n',
-            [
-                'download_and_redirecting' => sprintf(
-                    wp_strip_all_tags(
-                        __('File Generation complete. Downloading, and %1$sredirecting%2$s...', 'event_espresso')
-                    ),
-                    '<a href="' . $return_url . '">',
-                    '</a>'
-                ),
-                'return_url'               => $return_url,
-            ]
-        );
+        wp_localize_script('batch_file_runner_init', 'eei18n', EE_Registry::$i18n_js_strings);
+
+        $return_url = EED_Batch::getRequest()->getRequestParam('return_url', '', 'url');
+        if ($return_url) {
+            wp_localize_script(
+                'batch_file_runner_init',
+                'ee_job_i18n',
+                ['return_url' => $return_url]
+            );
+        }
     }
 
 
@@ -228,47 +248,52 @@ class EED_Batch extends EED_Module
      *
      * @return JobStepResponse
      */
-    protected function _enqueue_batch_job_scripts_and_styles_and_start_job()
+    protected function _enqueue_batch_job_scripts_and_styles_and_start_job(): JobStepResponse
     {
-        $request = EED_Batch::getRequest();
         // just copy the bits of EE admin's eei18n that we need in the JS
         EE_Registry::$i18n_js_strings['batchJobError'] = __(
             'An error occurred and the job has been stopped. Please refresh the page to try again.',
             'event_espresso'
         );
+        EE_Registry::$i18n_js_strings['is_admin']      = is_admin();
+        wp_enqueue_style(
+            EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN,
+            EE_ADMIN_URL . 'assets/ee-admin-page.css',
+            [],
+            EVENT_ESPRESSO_VERSION
+        );
+        wp_enqueue_style(
+            'batch_runner',
+            BATCH_URL . 'assets/batch_runner.css',
+            [EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN],
+            date('Y-m-d-H:i', time())
+        );
         wp_register_script(
             'progress_bar',
             EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.js',
             ['jquery'],
-            EVENT_ESPRESSO_VERSION,
+            date('Y-m-d-H:i', time()),
             true
         );
         wp_enqueue_style(
             'progress_bar',
             EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.css',
             [],
-            EVENT_ESPRESSO_VERSION
+            date('Y-m-d-H:i', time())
         );
         wp_enqueue_script(
             'batch_runner',
             EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/batch_runner.js',
             ['progress_bar', CoreAssetManager::JS_HANDLE_CORE],
-            EVENT_ESPRESSO_VERSION,
+            date('Y-m-d-H:i', time()),
             true
         );
-        $job_handler_classname = $request->getRequestParam('job_handler', '', 'fqcn');
-        $request_data          = $request->requestParams();
-        $request_data          = array_diff_key(
-            $request_data,
-            array_flip(['action', 'page', 'ee', 'batch'])
-        );
-        /** @var EventEspressoBatchRequest\BatchRequestProcessor $batch_runner */
+        /** @var BatchRequestProcessor $batch_runner */
         $batch_runner = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
         // eg 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport'
-        $job_response = $batch_runner->create_job($job_handler_classname, $request_data);
         // remember the response for later. We need it to display the page body
-        $this->_job_step_response = $job_response;
-        return $job_response;
+        $this->_job_step_response = $batch_runner->createJob();
+        return $this->_job_step_response;
     }
 
 
@@ -278,11 +303,11 @@ class EED_Batch extends EED_Module
      * @param string $template
      * @return string
      */
-    public function override_template($template)
+    public function override_template(string $template): string
     {
         $request = EED_Batch::getRequest();
-        if ($request->requestParamIsSet('batch') && $request->requestParamIsSet('espresso_batch')) {
-            return EE_MODULES . 'batch/templates/batch_frontend_wrapper.template.html';
+        if ($request->requestParamIsSet('batch') && $request->requestParamIsSet(EED_Batch::PAGE_SLUG)) {
+            return EE_MODULES . 'batch/templates/batch_frontend_wrapper.template.php';
         }
         return $template;
     }
@@ -297,11 +322,16 @@ class EED_Batch extends EED_Module
     public function register_admin_pages()
     {
         add_submenu_page(
-            '',                                        // parent slug. we don't want this to actually appear in the menu
-            esc_html__('Batch Job', 'event_espresso'), // page title
-            'n/a',                                     // menu title
-            'read',                                    // we want this page to actually be accessible to anyone,
-            'espresso_batch',                          // menu slug
+            '',
+            // parent slug. we don't want this to actually appear in the menu
+            esc_html__('Batch Job', 'event_espresso'),
+            // page title
+            'n/a',
+            // menu title
+            'read',
+            // we want this page to actually be accessible to anyone,
+            EED_Batch::PAGE_SLUG,
+            // menu slug
             [self::instance(), 'show_admin_page']
         );
     }
@@ -314,21 +344,42 @@ class EED_Batch extends EED_Module
     public function show_admin_page()
     {
         echo EEH_Template::locate_template(
-            EE_MODULES . 'batch/templates/batch_wrapper.template.html',
-            ['batch_request_type' => $this->batch_request_type()]
+            EE_MODULES . 'batch/templates/batch_wrapper.template.php',
+            [
+                'batch_request_type'        => $this->batch_request_type(),
+                'auto_redirect_on_complete' => EED_Batch::getRequest()->getRequestParam('auto_redirect_on_complete'),
+                'user_message'              => EED_Batch::getRequest()->getRequestParam('assessment_notice')
+                    ?: EED_Batch::getRequest()->getRequestParam('job_start_notice'),
+            ]
         );
+    }
+
+
+    private function runBatchRunnerJob(string $job)
+    {
+        $job_id = EED_Batch::getRequest()->getRequestParam('job_id');
+        /** @var BatchRequestProcessor $batch_runner */
+        $batch_runner = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
+        $job_response = $batch_runner->{$job}($job_id);
+        $this->_return_json($job_response->to_array());
     }
 
 
     /**
      * Receives ajax calls for continuing a job
      */
-    public function batch_continue()
+    public function continueBatchJob()
     {
-        $job_id       = EED_Batch::getRequest()->getRequestParam('job_id');
-        $batch_runner = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
-        $response_obj = $batch_runner->continue_job($job_id);
-        $this->_return_json($response_obj->to_array());
+        $this->runBatchRunnerJob('continueJob');
+    }
+
+
+    /**
+     * Receives ajax calls for continuing a job
+     */
+    public function advanceBatchJob()
+    {
+        $this->runBatchRunnerJob('advanceJob');
     }
 
 
@@ -337,12 +388,9 @@ class EED_Batch extends EED_Module
      *
      * @return void
      */
-    public function batch_cleanup()
+    public function cleanupBatchJob()
     {
-        $job_id       = EED_Batch::getRequest()->getRequestParam('job_id');
-        $batch_runner = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
-        $response_obj = $batch_runner->cleanup_job($job_id);
-        $this->_return_json($response_obj->to_array());
+        $this->runBatchRunnerJob('cleanupJob');
     }
 
 
@@ -360,7 +408,7 @@ class EED_Batch extends EED_Module
      *    'isEEajax' => true,//indicates this is a response from EE
      * )
      */
-    protected function _return_json($data)
+    protected function _return_json(array $data)
     {
         $json = [
             'notices'  => EE_Error::get_notices(),
@@ -369,13 +417,12 @@ class EED_Batch extends EED_Module
             // special flag so any ajax.Success methods in js can identify this return package as a EEajax package.
         ];
 
-
         // make sure there are no php errors or headers_sent.  Then we can set correct json header.
-        if (null === error_get_last() || ! headers_sent()) {
+        if (error_get_last() === null || ! headers_sent()) {
             header('Content-Type: application/json; charset=UTF-8');
+            echo wp_json_encode($json);
+            exit();
         }
-        echo wp_json_encode($json);
-        exit();
     }
 
 
@@ -384,7 +431,7 @@ class EED_Batch extends EED_Module
      *
      * @return JobStepResponse
      */
-    public function job_step_response()
+    public function job_step_response(): JobStepResponse
     {
         return $this->_job_step_response;
     }
@@ -395,11 +442,11 @@ class EED_Batch extends EED_Module
      *
      * @return string: EED_Batch::batch_job, EED_Batch::batch_file_job, EED_Batch::batch_not_job
      */
-    public function batch_request_type()
+    public function batch_request_type(): string
     {
-        $request = EED_Batch::getRequest();
-        if ($this->_batch_request_type === null) {
-            $batch = $request->getRequestParam('batch');
+        if (! $this->_batch_request_type) {
+            $request = EED_Batch::getRequest();
+            $batch   = $request->getRequestParam('batch');
             switch ($batch) {
                 case self::batch_job:
                     $this->_batch_request_type = self::batch_job;

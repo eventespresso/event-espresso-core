@@ -8,6 +8,7 @@ use EE_Form_Section_HTML;
 use EE_Registry;
 use EE_Submit_Input;
 use EEH_HTML;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 use LogicException;
 use DomainException;
@@ -571,9 +572,9 @@ abstract class FormHandler implements FormHandlerInterface
      * returns a string of HTML that can be directly echoed in a template
      *
      * @return string
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws LogicException
      * @throws EE_Error
      */
@@ -634,9 +635,9 @@ abstract class FormHandler implements FormHandlerInterface
      *
      * @param array $submitted_form_data
      * @return array
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws LogicException
      * @throws InvalidFormSubmissionException
