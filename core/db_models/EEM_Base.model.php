@@ -5585,7 +5585,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * happen?) they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg,
      * filters_hook_espresso__EE_Answer__my_great_function) and accepts 2 arguments: the object on which the function
      * was called, and an array of the original arguments passed to the function. Whatever their callback function
-     * returns will be returned by this function.
+     * returns will be returned by this function. Example: in functions.php (or in a plugin):
+     * add_filter('FHEE__EE_Answer__my_callback','my_callback',10,3); function
+     * my_callback($previousReturnValue,EE_TempBase $object,$argsArray){
+     * $returnString= "you called my_callback! and passed args:".implode(",",$argsArray);
+     *        return $previousReturnValue.$returnString;
+     * }
+     * require('EEM_Answer.model.php');
+     * echo EEM_Answer::instance()->my_callback('monkeys',100);
+     * // will output "you called my_callback! and passed args:monkeys,100"
      *
      * @param string $methodName name of method which was called on a child of EE_TempBase, but which
      * @param array  $args       array of original arguments passed to the function
