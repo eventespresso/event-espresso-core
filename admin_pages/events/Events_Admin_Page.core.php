@@ -298,7 +298,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'nav'           => [
                     'label'      => esc_html__('Add New Event', 'event_espresso'),
                     'icon' => 'dashicons-plus-alt',
-                    'order'      => 5,
+                    'order'      => 15,
                     'persistent' => false,
                 ],
                 'metaboxes'     => ['_register_event_editor_meta_boxes'],
@@ -351,7 +351,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'nav'           => [
                     'label'      => esc_html__('Edit Event', 'event_espresso'),
                     'icon' => 'dashicons-edit',
-                    'order'      => 5,
+                    'order'      => 15,
                     'persistent' => false,
                     'url'        => $post_id
                         ? EE_Admin_Page::add_query_args_and_nonce(
