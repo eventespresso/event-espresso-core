@@ -162,6 +162,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'ticket_list_table' => [
                     'nav'           => [
                         'label' => esc_html__('Default Tickets', 'event_espresso'),
+                        'icon'  => 'dashicons-tickets-alt',
                         'order' => 60,
                     ],
                     'list_table'    => 'Tickets_List_Table',
