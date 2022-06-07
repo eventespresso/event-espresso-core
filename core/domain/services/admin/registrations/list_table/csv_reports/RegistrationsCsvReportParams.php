@@ -43,23 +43,27 @@ class RegistrationsCsvReportParams
 
         $route_details = [
             'route'         => 'registrations_report',
-            'extra_request' => [
-                'return_url' => $return_url,
-                'filters'    => array_diff_key(
-                    $request_params,
-                    [
-                        'page'          => '',
-                        'action'        => '',
-                        'default_nonce' => '',
-                    ]
-                ),
-            ],
+            'extra_request' => [ 'return_url' => $return_url ],
         ];
         if (! empty($EVT_ID)) {
             $route_details['extra_request']['EVT_ID'] = $EVT_ID;
         }
         if ($DTT_ID) {
             $route_details['extra_request']['DTT_ID'] = $DTT_ID;
+        }
+        if (
+            isset($request_params['month_range'])
+            || isset($request_params['EVT_CAT'])
+            || isset($request_params['_reg_status'])
+        ) {
+            $route_details['extra_request']['filters'] = array_diff_key(
+                $request_params,
+                [
+                    'page'          => '',
+                    'action'        => '',
+                    'default_nonce' => '',
+                ]
+            );
         }
         return $route_details;
     }
