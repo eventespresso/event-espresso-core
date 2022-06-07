@@ -1112,7 +1112,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
 
         $cols_n_values                    = [];
         $cols_n_values['CNT_ISO3']        = strtoupper(
-            $this->request->getRequestParam('cntry', '', $country->ISO3())
+            $this->request->getRequestParam('cntry', $country->ISO3())
         );
         $cols_n_values['CNT_name']        = $this->request->getRequestParam(
             "cntry[$CNT_ISO][CNT_name]",
