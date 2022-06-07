@@ -1005,9 +1005,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         );
         if (! empty($func)) {
             if (is_array($func)) {
-                list($class, $method) = $func;
+                [$class, $method] = $func;
             } elseif (strpos($func, '::') !== false) {
-                list($class, $method) = explode('::', $func);
+                [$class, $method] = explode('::', $func);
             } else {
                 $class  = $this;
                 $method = $func;
@@ -3505,7 +3505,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $action,
         $type = 'add',
         $extra_request = [],
-        $class = 'button-primary',
+        $class = 'button button--primary',
         $base_url = '',
         $exclude_nonce = false
     ) {

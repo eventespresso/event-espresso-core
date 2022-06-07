@@ -801,14 +801,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         } else {
             echo '<div class="list-table-bottom-buttons alignleft actions">';
             foreach ($this->_bottom_buttons as $type => $action) {
-                $route         = isset($action['route']) ? $action['route'] : '';
-                $extra_request = isset($action['extra_request']) ? $action['extra_request'] : '';
+                $route         = $action['route'] ?? '';
+                $extra_request = $action['extra_request'] ?? '';
                 // already escaped
                 echo wp_kses($this->_admin_page->get_action_link_or_button(
                     $route,
                     $type,
                     $extra_request,
-                    'button button-secondary'
+                    'button button--secondary'
                 ), AllowedTags::getWithFormTags());
             }
             do_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen);
