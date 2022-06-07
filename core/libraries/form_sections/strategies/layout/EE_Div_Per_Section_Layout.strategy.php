@@ -44,44 +44,74 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
             ? (string) $input->html_id()
             : spl_object_hash($input);
         // and add a generic input type class
-        $html_class = sanitize_key(str_replace('_', '-', get_class($input))) . '-dv';
+        $html_class = $this->processHtmlClasses(
+            sanitize_key(str_replace('_', '-', get_class($input))),
+            '-dv'
+        );
         if ($input instanceof EE_Hidden_Input) {
             $html .= EEH_HTML::nl() . $input->get_html_for_input();
         } elseif ($input instanceof EE_Submit_Input) {
+            $input_class = $this->processHtmlClasses($input->html_class(), '-submit-dv');
             $html .= EEH_HTML::div(
                 $input->get_html_for_input(),
                 $html_id . '-submit-dv',
-                "{$input->html_class()}-submit-dv {$html_class}"
+                "$input_class $html_class"
             );
         } elseif ($input instanceof EE_Select_Input) {
+            $input_class = $this->processHtmlClasses($input->html_class(), '-input-dv');
             $html .= EEH_HTML::div(
                 EEH_HTML::nl(1) . $input->get_html_for_label() .
                 EEH_HTML::nl() . $input->get_html_for_errors() .
                 EEH_HTML::nl() . $input->get_html_for_input() .
                 EEH_HTML::nl() . $input->get_html_for_help(),
                 $html_id . '-input-dv',
-                "{$input->html_class()}-input-dv {$html_class}"
+                "$input_class $html_class"
             );
         } elseif ($input instanceof EE_Form_Input_With_Options_Base) {
+            $input_class = $this->processHtmlClasses($input->html_class(), '-input-dv');
             $html .= EEH_HTML::div(
                 EEH_HTML::nl() . $this->_display_label_for_option_type_question($input) .
                 EEH_HTML::nl() . $input->get_html_for_errors() .
                 EEH_HTML::nl() . $input->get_html_for_input() .
                 EEH_HTML::nl() . $input->get_html_for_help(),
                 $html_id . '-input-dv',
-                "{$input->html_class()}-input-dv {$html_class}"
+                "$input_class $html_class"
             );
         } else {
+            $input_class = $this->processHtmlClasses($input->html_class(), '-input-dv');
             $html .= EEH_HTML::div(
                 EEH_HTML::nl(1) . $input->get_html_for_label() .
                 EEH_HTML::nl() . $input->get_html_for_errors() .
                 EEH_HTML::nl() . $input->get_html_for_input() .
                 EEH_HTML::nl() . $input->get_html_for_help(),
                 $html_id . '-input-dv',
-                "{$input->html_class()}-input-dv {$html_class}"
+                "$input_class $html_class"
             );
         }
         return $html;
+    }
+
+
+    /**
+     * appends one or more css classes in a string with the provided suffix
+     *
+     * @param array|string $classes
+     * @param string $suffix
+     * @return string
+     * @since $VID:$
+     */
+    private function processHtmlClasses($classes, string $suffix): string
+    {
+        $html_classes = [];
+        $classes = is_string($classes) ? explode(' ', $classes) : $classes;
+        $classes = (array) $classes;
+        foreach ($classes as $class) {
+            // don't append suffix if class already has "-js" suffix
+            $html_classes[] = strpos($class, '-js') !== strlen($class) - 3
+                ? "$class$suffix"
+                : $class;
+        }
+        return implode(' ', $html_classes);
     }
 
 
