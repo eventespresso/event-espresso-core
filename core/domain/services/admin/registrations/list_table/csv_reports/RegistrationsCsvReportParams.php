@@ -79,4 +79,4 @@ class RegistrationsCsvReportParams
         </span>
     </span>';
     }
-}#ebf4f9
+}
