@@ -61,10 +61,10 @@ jQuery(document).ready(function($) {
 
 			// disable state dropdown if adding a new state
 			$('.ee-form-add-new-state-submit').click(function(e) {
-				SPCO.enable_submit_buttons();
-				EE_ANS.submit_new_state( $(this) );
 				e.preventDefault();
 				e.stopPropagation();
+				SPCO.enable_submit_buttons();
+				EE_ANS.submit_new_state( $(this) );
 			});
 
 			// disable state dropdown if adding a new state
