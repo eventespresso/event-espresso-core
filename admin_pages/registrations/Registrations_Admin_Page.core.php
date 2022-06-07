@@ -226,10 +226,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'add-registrant'      => esc_html__('Add New Registration', 'event_espresso'),
                 'add-attendee'        => esc_html__('Add Contact', 'event_espresso'),
                 'edit'                => esc_html__('Edit Contact', 'event_espresso'),
-                'report'              => esc_html__('Event Registrations CSV Report', 'event_espresso'),
-                'report_datetime'     => esc_html__('Datetime Registrations CSV Report', 'event_espresso'),
-                'report_all'          => esc_html__('All Registrations CSV Report', 'event_espresso'),
-                'report_filtered'     => esc_html__('Filtered CSV Report', 'event_espresso'),
+                'csv_reg_report'      => esc_html__('Registrations CSV Report', 'event_espresso'),
                 'contact_list_report' => esc_html__('Contact List Report', 'event_espresso'),
                 'contact_list_export' => esc_html__('Export Data', 'event_espresso'),
             ],
@@ -3252,6 +3249,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $EVT_ID = $this->request->requestParamIsSet('EVT_ID')
             ? $this->request->getRequestParam('EVT_ID', 0, 'int')
             : null;
+        \EEH_Debug_Tools::printr(
+            $method_name_for_getting_query_params,
+            '$method_name_for_getting_query_params',
+            __FILE__,
+            __LINE__
+        );
         if (! defined('EE_USE_OLD_CSV_REPORT_CLASS')) {
             $request_params = $this->request->requestParams();
             wp_redirect(
@@ -3267,7 +3270,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                                 )
                             )
                         ),
-                        'use_filters' => EEH_Array::is_set($request_params, 'use_filters', false),
                         'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
                         'return_url'  => urlencode($this->request->getRequestParam('return_url', '', 'url')),
                     ]
