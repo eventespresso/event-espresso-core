@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\RegistrationsCsvReportParams;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -87,8 +88,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $ID_column_name      .= ' : <span class="show-on-mobile-view-only" style="float:none">';
         $ID_column_name      .= esc_html__('Registrant Name', 'event_espresso');
         $ID_column_name      .= '</span> ';
-        $req_data            = $this->_admin_page->get_request_data();
-        if (isset($req_data['event_id'])) {
+
+        $EVT_ID = $this->_req_data['event_id'] ?? 0;
+        $DTT_ID = $this->_req_data['DTT_ID'] ?? 0;
+
+        if ($EVT_ID) {
             $this->_columns        = [
                 'cb'               => '<input type="checkbox" />', // Render a checkbox instead of text
                 '_REG_ID'          => $ID_column_name,
@@ -101,19 +105,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'TXN_paid'         => esc_html__('Paid', 'event_espresso'),
                 'actions'          => esc_html__('Actions', 'event_espresso'),
             ];
-            $route_details = [
-                'route'         => 'registrations_report',
-                'extra_request' => [
-                    'EVT_ID'     => $this->_req_data['event_id'],
-                    'return_url' => $return_url,
-                ]
-            ];
-            if (isset($req_data['datetime_id']) && $req_data['datetime_id']) {
-                $route_details['extra_request']['DTT_ID'] = $req_data['datetime_id'];
-                $this->_bottom_buttons['report_datetime'] = $route_details;
-            } else {
-                $this->_bottom_buttons['report'] = $route_details;
-            }
         } else {
             $this->_columns        = [
                 'cb'               => '<input type="checkbox" />', // Render a checkbox instead of text
@@ -126,15 +117,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 '_REG_paid'        => esc_html__('Paid', 'event_espresso'),
                 'actions'          => esc_html__('Actions', 'event_espresso'),
             ];
-            $this->_bottom_buttons = [
-                'report_all' => [
-                    'route'         => 'registrations_report',
-                    'extra_request' => [
-                        'return_url' => $return_url,
-                    ],
-                ],
-            ];
         }
+
+        $csv_report = RegistrationsCsvReportParams::getRequestParams($return_url, $this->_req_data, $EVT_ID, $DTT_ID);
+        if (! empty($csv_report)) {
+            $this->_bottom_buttons['csv_reg_report'] = $csv_report;
+        }
+
         $this->_primary_column   = '_REG_ID';
         $this->_sortable_columns = [
             '_REG_date'     => ['_REG_date' => true],   // true means its already sorted

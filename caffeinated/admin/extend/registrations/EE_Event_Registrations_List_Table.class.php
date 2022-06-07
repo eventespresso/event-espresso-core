@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\RegistrationsCsvReportParams;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -64,8 +65,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     {
         $return_url = $this->getReturnUrl();
 
-        $evt_id = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : null;
-        $DTT_ID = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : null;
+        $EVT_ID = $this->_req_data['event_id'] ?? 0;
+        $DTT_ID = $this->_req_data['DTT_ID'] ?? 0;
+
         $this->_wp_list_args = array(
             'singular' => esc_html__('registrant', 'event_espresso'),
             'plural'   => esc_html__('registrants', 'event_espresso'),
@@ -85,7 +87,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'TXN_total'           => esc_html__('Total', 'event_espresso'),
         );
         // Add/remove columns when an event has been selected
-        if (! empty($evt_id)) {
+        if (! empty($EVT_ID)) {
             // Render a checkbox column
             $columns['cb'] = '<input type="checkbox" />';
             $this->_has_checkbox_column = true;
@@ -94,28 +96,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         }
         $this->_columns = array_merge($columns, $this->_columns);
         $this->_primary_column = '_REG_att_checked_in';
-        if (
-            ! empty($evt_id)
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_read_registrations',
-                'espresso_registrations_registrations_reports',
-                $evt_id
-            )
-        ) {
-            $route_details = [
-                'route'         => 'registrations_report',
-                'extra_request' => [
-                    'EVT_ID'     => $evt_id,
-                    'return_url' => $return_url,
-                ]
-            ];
-            if ($DTT_ID) {
-                $route_details['extra_request']['DTT_ID'] = $DTT_ID;
-                $this->_bottom_buttons['report_datetime'] = $route_details;
-            } else {
-                $this->_bottom_buttons['report'] = $route_details;
-            }
+
+        $csv_report = RegistrationsCsvReportParams::getRequestParams($return_url, $this->_req_data, $EVT_ID, $DTT_ID);
+        if (! empty($csv_report)) {
+            $this->_bottom_buttons['csv_reg_report'] = $csv_report;
         }
+
         $this->_sortable_columns = array(
             /**
              * Allows users to change the default sort if they wish.
@@ -135,7 +121,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'Event'    => array('Event.EVT_name' => false),
         );
         $this->_hidden_columns = array();
-        $this->_evt = EEM_Event::instance()->get_one_by_ID($evt_id);
+        $this->_evt = EEM_Event::instance()->get_one_by_ID($EVT_ID);
         $this->_dtts_for_event = $this->_evt instanceof EE_Event ? $this->_evt->datetimes_ordered() : array();
     }
 
