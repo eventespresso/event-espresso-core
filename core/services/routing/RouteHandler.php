@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\routing;
 
 use DomainException;
+use EventEspresso\core\domain\services\capabilities\CapabilitiesCheckerInterface;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\services\json\JsonDataNode;
@@ -20,6 +21,11 @@ use Exception;
  */
 class RouteHandler
 {
+    /**
+     * @var CapabilitiesCheckerInterface $capabilities_checker
+     */
+    private $capabilities_checker;
+
     /**
      * @var JsonDataNodeHandler $data_node_handler
      */
@@ -54,17 +60,20 @@ class RouteHandler
     /**
      * RouteHandler constructor.
      *
+     * @param CapabilitiesCheckerInterface $capabilities_checker
      * @param JsonDataNodeHandler $data_node_handler
      * @param LoaderInterface     $loader
      * @param RequestInterface    $request
      * @param RouteCollection     $routes
      */
     public function __construct(
+        CapabilitiesCheckerInterface $capabilities_checker,
         JsonDataNodeHandler $data_node_handler,
         LoaderInterface $loader,
         RequestInterface $request,
         RouteCollection $routes
     ) {
+        $this->capabilities_checker = $capabilities_checker;
         $this->data_node_handler = $data_node_handler;
         $this->loader            = $loader;
         $this->request           = $request;
@@ -82,8 +91,10 @@ class RouteHandler
         try {
             $route = $this->loader->getShared($fqcn);
             $this->validateRoute($route, $fqcn);
-            $this->routes->add($route);
-            $this->handle($route, $handle);
+            if ($this->capabilities_checker->processCapCheck($route->getCapCheck(), true)) {
+                $this->routes->add($route);
+                $this->handle($route, $handle);
+            }
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay(
                 new DomainException(
@@ -167,10 +178,10 @@ class RouteHandler
 
 
     /**
-     * @param RouteInterface $route
-     * @param string         $fqcn
+     * @param RouteInterface|null $route
+     * @param string              $fqcn
      */
-    private function validateRoute(RouteInterface $route, string $fqcn)
+    private function validateRoute(?RouteInterface $route, string $fqcn = '')
     {
         if (! $route instanceof RouteInterface) {
             throw new InvalidClassException(
