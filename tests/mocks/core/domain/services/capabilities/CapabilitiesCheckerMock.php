@@ -32,11 +32,12 @@ class CapabilitiesCheckerMock implements CapabilitiesCheckerInterface
      * If any of the individual capability checks fails, then the command will NOT be executed.
      *
      * @param CapCheckInterface|CapCheckInterface[] $cap_check
+     * @param bool                                  $suppress_exceptions
      * @return bool
      * @throws InvalidClassException
      * @throws InsufficientPermissionsException
      */
-    public function processCapCheck($cap_check)
+    public function processCapCheck($cap_check, bool $suppress_exceptions = false): bool
     {
         if(! $this->cap_check_passes) {
             throw new InsufficientPermissionsException($cap_check->context());
@@ -54,7 +55,7 @@ class CapabilitiesCheckerMock implements CapabilitiesCheckerInterface
      * @throws InsufficientPermissionsException
      * @throws InvalidClassException
      */
-    public function process($capability, $context, $ID = 0)
+    public function process($capability, string $context, $ID = 0): bool
     {
         return $this->processCapCheck(new CapCheckMock());
     }
