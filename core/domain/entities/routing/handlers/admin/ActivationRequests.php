@@ -2,10 +2,8 @@
 
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
-use EE_Dependency_Map;
 use EventEspresso\core\services\routing\PrimaryRoute;
 use EventEspresso\core\services\routing\Route;
-use EventEspresso\core\services\routing\Router;
 
 /**
  * Class ActivationRequests
@@ -37,15 +35,15 @@ class ActivationRequests extends PrimaryRoute
         $admin_dependencies = ['EE_Admin_Config' => EE_Dependency_Map::load_from_cache] + Route::$default_dependencies;
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute',
-            $admin_dependencies
+            AdminRoute::getDefaultDependencies()
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests',
-            Route::$default_dependencies
+            Route::getDefaultDependencies()
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage',
-            $admin_dependencies
+            Route::getDefaultDependencies()
         );
     }
 

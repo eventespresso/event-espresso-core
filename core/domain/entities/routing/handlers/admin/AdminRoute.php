@@ -4,6 +4,8 @@ namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Admin_Config;
 use EE_Dependency_Map;
+use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
+use EventEspresso\core\domain\services\capabilities\CapCheck;
 use EventEspresso\core\services\routing\Route;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
 use EventEspresso\core\services\json\JsonDataNode;
@@ -29,6 +31,16 @@ class AdminRoute extends Route
      */
     protected $admin_config;
 
+    /**
+     * @var array $default_dependencies
+     */
+    protected static $default_dependencies = [
+        'EE_Admin_Config'                             => EE_Dependency_Map::load_from_cache,
+        'EE_Dependency_Map'                           => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+    ];
+
 
     /**
      * Route constructor.
@@ -50,6 +62,21 @@ class AdminRoute extends Route
     ) {
         $this->admin_config = $admin_config;
         parent::__construct($dependency_map, $loader, $request, $data_node, $specification);
+    }
+
+
+    public function getCapCheck()
+    {
+        return new CapCheck('edit_posts', 'access Event Espresso admin route');
+    }
+
+
+    /**
+     * @return array
+     */
+    public static function getDefaultDependencies(): array
+    {
+        return self::$default_dependencies;
     }
 
 
