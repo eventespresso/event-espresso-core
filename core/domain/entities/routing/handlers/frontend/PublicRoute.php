@@ -33,12 +33,12 @@ abstract class PublicRoute extends Route
     /**
      * FrontendRequests constructor.
      *
-     * @param EE_Maintenance_Mode $maintenance_mode
-     * @param EE_Dependency_Map   $dependency_map
-     * @param LoaderInterface     $loader
-     * @param RequestInterface    $request
-     * @param JsonDataNode        $data_node
-     * @param RouteMatchSpecificationInterface $specification
+     * @param EE_Maintenance_Mode                   $maintenance_mode
+     * @param EE_Dependency_Map                     $dependency_map
+     * @param LoaderInterface                       $loader
+     * @param RequestInterface                      $request
+     * @param JsonDataNode|null                     $data_node
+     * @param RouteMatchSpecificationInterface|null $specification
      */
     public function __construct(
         EE_Maintenance_Mode $maintenance_mode,
