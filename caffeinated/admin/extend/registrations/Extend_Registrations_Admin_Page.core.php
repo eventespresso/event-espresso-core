@@ -98,6 +98,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'reports'               => array(
                 'nav'           => array(
                     'label' => esc_html__('Reports', 'event_espresso'),
+                    'icon' => 'dashicons-chart-bar',
                     'order' => 30,
                 ),
                 'help_tabs'     => array(
@@ -111,6 +112,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'event_registrations'   => array(
                 'nav'           => array(
                     'label'      => esc_html__('Event Check-In', 'event_espresso'),
+                    'icon' => 'dashicons-yes-alt',
                     'order'      => 10,
                     'persistent' => true,
                 ),
@@ -143,6 +145,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'registration_checkins' => array(
                 'nav'           => array(
                     'label'      => esc_html__('Check-In Records', 'event_espresso'),
+                    'icon' => 'dashicons-list-view',
                     'order'      => 15,
                     'persistent' => false,
                     'url'        => '',

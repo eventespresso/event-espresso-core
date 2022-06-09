@@ -197,6 +197,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'question_groups' => array(
                 'nav'           => array(
                     'label' => esc_html__('Question Groups', 'event_espresso'),
+                    'icon' => 'dashicons-forms',
                     'order' => 20,
                 ),
                 'list_table'    => 'Registration_Form_Question_Groups_Admin_List_Table',
@@ -221,7 +222,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'add_question' => array(
                 'nav'           => array(
                     'label'      => esc_html__('Add Question', 'event_espresso'),
-                    'order'      => 5,
+                    'icon' => 'dashicons-plus-alt',
+                    'order'      => 15,
                     'persistent' => false,
                 ),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
@@ -237,7 +239,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'add_question_group' => array(
                 'nav'           => array(
                     'label'      => esc_html__('Add Question Group', 'event_espresso'),
-                    'order'      => 5,
+                    'icon' => 'dashicons-plus-alt',
+                    'order'      => 25,
                     'persistent' => false,
                 ),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
@@ -253,7 +256,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'edit_question_group' => array(
                 'nav'           => array(
                     'label'      => esc_html__('Edit Question Group', 'event_espresso'),
-                    'order'      => 5,
+                    'icon' => 'dashicons-edit-large',
+                    'order'      => 25,
                     'persistent' => false,
                     'url'        => isset($this->_req_data['question_group_id']) ? add_query_arg(
                         array('question_group_id' => $this->_req_data['question_group_id']),
@@ -273,6 +277,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'view_reg_form_settings' => array(
                 'nav'           => array(
                     'label' => esc_html__('Reg Form Settings', 'event_espresso'),
+                    'icon' => 'dashicons-admin-generic',
                     'order' => 40,
                 ),
                 'labels'        => array(

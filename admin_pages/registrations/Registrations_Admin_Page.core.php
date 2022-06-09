@@ -547,6 +547,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'default'           => [
                 'nav'           => [
                     'label' => esc_html__('Overview', 'event_espresso'),
+                    'icon' => 'dashicons-list-view',
                     'order' => 5,
                 ],
                 'help_tabs'     => [
@@ -577,6 +578,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'view_registration' => [
                 'nav'           => [
                     'label'      => esc_html__('REG Details', 'event_espresso'),
+                    'icon' => 'dashicons-clipboard',
                     'order'      => 15,
                     'url'        => $REG_ID
                         ? add_query_arg(['_REG_ID' => $REG_ID], $this->_current_page_view_url)
@@ -610,6 +612,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'new_registration'  => [
                 'nav'           => [
                     'label'      => esc_html__('Add New Registration', 'event_espresso'),
+                    'icon' => 'dashicons-plus-alt',
                     'url'        => '#',
                     'order'      => 15,
                     'persistent' => false,
@@ -623,6 +626,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'add_new_attendee'  => [
                 'nav'           => [
                     'label'      => esc_html__('Add Contact', 'event_espresso'),
+                    'icon' => 'dashicons-plus-alt',
                     'order'      => 15,
                     'persistent' => false,
                 ],
@@ -635,6 +639,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'edit_attendee'     => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Contact', 'event_espresso'),
+                    'icon' => 'dashicons-edit-large',
                     'order'      => 15,
                     'persistent' => false,
                     'url'        => $ATT_ID
@@ -650,6 +655,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'contact_list'      => [
                 'nav'           => [
                     'label' => esc_html__('Contact List', 'event_espresso'),
+                    'icon' => 'dashicons-id-alt',
                     'order' => 20,
                 ],
                 'list_table'    => 'EE_Attendee_Contact_List_Table',
@@ -1170,7 +1176,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $filter_header_decorator = $this->loader->getNew($admin_page_header_decorator);
             $header_text = $filter_header_decorator->getHeaderText($header_text);
         }
-        $this->_template_args['admin_page_header'] = $header_text;
+        $this->_template_args['before_list_table']  = $header_text;
         $this->_template_args['after_list_table']  = $this->_display_legend($this->_registration_legend_items());
         $this->display_admin_list_table_page_with_no_sidebar();
     }

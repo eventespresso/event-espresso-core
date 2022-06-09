@@ -58,24 +58,24 @@ class Pricing_Admin_Page extends EE_Admin_Page
             ],
             'add_new_price'               => [
                 'func'       => '_edit_price_details',
-                'args'       => ['new_price' => true],
+                // 'args'       => ['new_price' => true],
                 'capability' => 'ee_edit_default_prices',
             ],
             'edit_price'                  => [
                 'func'       => '_edit_price_details',
-                'args'       => ['new_price' => false],
+                // 'args'       => ['new_price' => false],
                 'capability' => 'ee_edit_default_price',
                 'obj_id'     => $PRC_ID,
             ],
             'insert_price'                => [
                 'func'       => '_insert_or_update_price',
-                'args'       => ['new_price' => true],
+                'args'       => ['insert' => true],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_prices',
             ],
             'update_price'                => [
                 'func'       => '_insert_or_update_price',
-                'args'       => ['new_price' => false],
+                'args'       => ['insert' => false],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_price',
                 'obj_id'     => $PRC_ID,
@@ -172,6 +172,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'default'            => [
                 'nav'           => [
                     'label' => esc_html__('Default Pricing', 'event_espresso'),
+                    'icon' => 'dashicons-money-alt',
                     'order' => 10,
                 ],
                 'list_table'    => 'Prices_List_Table',
@@ -195,6 +196,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'add_new_price'      => [
                 'nav'           => [
                     'label'      => esc_html__('Add New Default Price', 'event_espresso'),
+                    'icon' => 'dashicons-plus-alt',
                     'order'      => 20,
                     'persistent' => false,
                 ],
@@ -213,6 +215,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'edit_price'         => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Default Price', 'event_espresso'),
+                    'icon' => 'dashicons-edit-large',
                     'order'      => 20,
                     'url'        => $PRC_ID
                         ? add_query_arg(['id' => $PRC_ID], $this->_current_page_view_url)
@@ -234,6 +237,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'price_types'        => [
                 'nav'           => [
                     'label' => esc_html__('Price Types', 'event_espresso'),
+                    'icon' => 'dashicons-networking',
                     'order' => 30,
                 ],
                 'list_table'    => 'Price_Types_List_Table',
@@ -257,6 +261,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'add_new_price_type' => [
                 'nav'           => [
                     'label'      => esc_html__('Add New Price Type', 'event_espresso'),
+                    'icon' => 'dashicons-plus-alt',
                     'order'      => 40,
                     'persistent' => false,
                 ],
@@ -275,6 +280,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'edit_price_type'    => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Price Type', 'event_espresso'),
+                    'icon' => 'dashicons-edit-large',
                     'order'      => 40,
                     'persistent' => false,
                 ],
@@ -291,9 +297,10 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 'require_nonce' => false,
             ],
             'tax_settings'       => [
-                'nav'           => [
+                'nav' => [
                     'label' => esc_html__('Tax Settings', 'event_espresso'),
-                    'order' => 40,
+                    'icon' => 'dashicons-sticky',
+                    'order' => 50,
                 ],
                 'labels'        => [
                     'publishbox' => esc_html__('Update Tax Settings', 'event_espresso'),

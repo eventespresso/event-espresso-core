@@ -61,6 +61,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
             'reports' => array(
                 'nav'           => array(
                     'label' => esc_html__('Reports', 'event_espresso'),
+                    'icon' => 'dashicons-chart-bar',
                     'order' => 20,
                 ),
                 'help_tabs'     => array(

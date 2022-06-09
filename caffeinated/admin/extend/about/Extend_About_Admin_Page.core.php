@@ -63,6 +63,7 @@ class Extend_About_Admin_Page extends About_Admin_Page
             'default'  => array(
                 'nav'           => array(
                     'label' => esc_html__('What\'s New', 'event_espresso'),
+                    'icon' => 'dashicons-bell',
                     'order' => 10,
                 ),
                 'require_nonce' => false,
@@ -70,6 +71,7 @@ class Extend_About_Admin_Page extends About_Admin_Page
             'overview' => array(
                 'nav'           => array(
                     'label' => esc_html__('About', 'event_espresso'),
+                    'icon' => 'dashicons-info',
                     'order' => 20,
                 ),
                 'require_nonce' => false,
@@ -77,6 +79,7 @@ class Extend_About_Admin_Page extends About_Admin_Page
             'credits'  => array(
                 'nav'           => array(
                     'label' => esc_html__('Credits', 'event_espresso'),
+                    'icon' => 'dashicons-thumbs-up',
                     'order' => 30,
                 ),
                 'require_nonce' => false,
@@ -90,6 +93,7 @@ class Extend_About_Admin_Page extends About_Admin_Page
             'reviews'  => array(
                 'nav'           => array(
                     'label' => esc_html__('Reviews', 'event_espresso'),
+                    'icon' => 'dashicons-star-filled',
                     'order' => 50,
                 ),
                 'require_nonce' => false,

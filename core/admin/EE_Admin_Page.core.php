@@ -1454,8 +1454,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function _set_nav_tabs()
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $i = 0;
+        $only_tab = count($this->_page_config) < 2;
         foreach ($this->_page_config as $slug => $config) {
             if (! is_array($config) || empty($config['nav'])) {
                 continue;
@@ -1470,21 +1470,17 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 // no nav tab because current user does not have access.
                 continue;
             }
-            $css_class                = isset($config['css_class']) ? $config['css_class'] . ' ' : '';
+            $css_class = isset($config['css_class']) ? $config['css_class'] . ' ' : '';
+            $css_class .= $only_tab ? ' ee-only-tab' : '';
+
             $this->_nav_tabs[ $slug ] = [
-                'url'       => isset($config['nav']['url'])
-                    ? $config['nav']['url']
-                    : EE_Admin_Page::add_query_args_and_nonce(
-                        ['action' => $slug],
-                        $this->_admin_base_url
-                    ),
-                'link_text' => isset($config['nav']['label'])
-                    ? $config['nav']['label']
-                    : ucwords(
-                        str_replace('_', ' ', $slug)
-                    ),
-                'css_class' => $this->_req_action === $slug ? $css_class . 'nav-tab-active' : $css_class,
-                'order'     => isset($config['nav']['order']) ? $config['nav']['order'] : $i,
+                'url'       => $config['nav']['url'] ?? EE_Admin_Page::add_query_args_and_nonce(
+                    ['action' => $slug],
+                    $this->_admin_base_url
+                ),
+                'link_text' => $this->navTabLabel($config['nav'], $slug),
+                'css_class' => $this->_req_action === $slug ? $css_class . ' nav-tab-active' : $css_class,
+                'order'     => $config['nav']['order'] ?? $i,
             ];
             $i++;
         }
@@ -1501,6 +1497,18 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         usort($this->_nav_tabs, [$this, '_sort_nav_tabs']);
     }
 
+
+    private function navTabLabel(array $nav_tab, string $slug): string
+    {
+        $label = $nav_tab['label'] ?? ucwords(str_replace('_', ' ', $slug));
+        $icon = $nav_tab['icon'] ?? null;
+        $icon = $icon ? '<span class="dashicons ' . $icon . '"></span>' : '';
+        return '
+            <span class="ee-admin-screen-tab__label">
+                ' . $icon . '
+                <span class="ee-nav-label__text">' . $label . '</span>
+            </span>';
+    }
 
     /**
      * _set_current_labels
@@ -3189,7 +3197,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // let's generate the html using the EEH_Tabbed_Content helper.
         // We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute
         // (rather than setting in the page_routes array)
-        return EEH_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
+        return EEH_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs, $this->page_slug);
     }
 
 

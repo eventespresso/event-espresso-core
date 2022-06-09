@@ -37,6 +37,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page
         $this->_page_config['custom_mtps'] = array(
             'nav'           => array(
                 'label' => esc_html__('Custom Message Templates', 'event_espresso'),
+                'icon' => 'dashicons-art',
                 'order' => 30,
             ),
             'list_table'    => 'Custom_Messages_Template_List_Table',

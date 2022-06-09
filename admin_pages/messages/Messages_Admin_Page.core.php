@@ -584,6 +584,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'default'                  => [
                 'nav'           => [
                     'label' => esc_html__('Message Activity', 'event_espresso'),
+                    'icon' => 'dashicons-email',
                     'order' => 10,
                 ],
                 'list_table'    => 'EE_Message_List_Table',
@@ -593,6 +594,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'global_mtps'              => [
                 'nav'           => [
                     'label' => esc_html__('Default Message Templates', 'event_espresso'),
+                    'icon' => 'dashicons-layout',
                     'order' => 20,
                 ],
                 'list_table'    => 'Messages_Template_List_Table',
@@ -627,6 +629,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'custom_mtps'              => [
                 'nav'           => [
                     'label' => esc_html__('Custom Message Templates', 'event_espresso'),
+                    'icon' => 'dashicons-admin-customizer',
                     'order' => 30,
                 ],
                 'help_tabs'     => [],
@@ -635,6 +638,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'add_new_message_template' => [
                 'nav'           => [
                     'label'      => esc_html__('Add New Message Templates', 'event_espresso'),
+                    'icon' => 'dashicons-plus-alt',
                     'order'      => 5,
                     'persistent' => false,
                 ],
@@ -649,6 +653,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 ],
                 'nav'           => [
                     'label'      => esc_html__('Edit Message Templates', 'event_espresso'),
+                    'icon' => 'dashicons-edit-large',
                     'order'      => 5,
                     'persistent' => false,
                     'url'        => '',
@@ -682,6 +687,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'display_preview_message'  => [
                 'nav'           => [
                     'label'      => esc_html__('Message Preview', 'event_espresso'),
+                    'icon' => 'dashicons-visibility-bar',
                     'order'      => 5,
                     'url'        => '',
                     'persistent' => false,
@@ -697,6 +703,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'settings'                 => [
                 'nav'           => [
                     'label' => esc_html__('Settings', 'event_espresso'),
+                    'icon' => 'dashicons-admin-generic',
                     'order' => 40,
                 ],
                 'metaboxes'     => ['_messages_settings_metaboxes'],

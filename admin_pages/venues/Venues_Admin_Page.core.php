@@ -225,6 +225,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             'default'             => [
                 'nav'           => [
                     'label' => esc_html__('Overview', 'event_espresso'),
+                    'icon' => 'dashicons-list-view',
                     'order' => 10,
                 ],
                 'list_table'    => 'Venues_Admin_List_Table',
@@ -248,7 +249,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             'create_new'          => [
                 'nav'           => [
                     'label'      => esc_html__('Add Venue', 'event_espresso'),
-                    'order'      => 5,
+                    'icon' => 'dashicons-plus-alt',
+                    'order'      => 15,
                     'persistent' => false,
                 ],
                 'help_tabs'     => [
@@ -286,7 +288,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             'edit'                => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Venue', 'event_espresso'),
-                    'order'      => 5,
+                    'icon' => 'dashicons-edit-large',
+                    'order'      => 15,
                     'persistent' => false,
                     'url'        => $VNU_ID
                         ? add_query_arg(['post' => $VNU_ID], $this->_current_page_view_url)
@@ -327,6 +330,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             'google_map_settings' => [
                 'nav'           => [
                     'label' => esc_html__('Google Maps', 'event_espresso'),
+                    'icon' => 'dashicons-location-alt',
                     'order' => 40,
                 ],
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
@@ -342,7 +346,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             'add_category'        => [
                 'nav'           => [
                     'label'      => esc_html__('Add Category', 'event_espresso'),
-                    'order'      => 15,
+                    'icon' => 'dashicons-plus-alt',
+                    'order'      => 25,
                     'persistent' => false,
                 ],
                 'metaboxes'     => ['_publish_post_box'],
@@ -357,7 +362,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             'edit_category'       => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Category', 'event_espresso'),
-                    'order'      => 15,
+                    'icon' => 'dashicons-edit-large',
+                    'order'      => 25,
                     'persistent' => false,
                     'url'        => $EVT_CAT_ID
                         ? add_query_arg(['EVT_CAT_ID' => $EVT_CAT_ID], $this->_current_page_view_url)
@@ -375,6 +381,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
             'category_list'       => [
                 'nav'           => [
                     'label' => esc_html__('Categories', 'event_espresso'),
+                    'icon' => 'dashicons-networking',
                     'order' => 20,
                 ],
                 'list_table'    => 'Venue_Categories_Admin_List_Table',

@@ -154,6 +154,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'default'          => [
                 'nav'           => [
                     'label' => esc_html__('Overview', 'event_espresso'),
+                    'icon' => 'dashicons-list-view',
                     'order' => 10,
                 ],
                 'list_table'    => 'EE_Admin_Transactions_List_Table',
@@ -176,6 +177,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             'view_transaction' => [
                 'nav'       => [
                     'label'      => esc_html__('View Transaction', 'event_espresso'),
+                    'icon' => 'dashicons-cart',
                     'order'      => 5,
                     'url'        => $TXN_ID
                         ? add_query_arg(['TXN_ID' => $TXN_ID], $this->_current_page_view_url)

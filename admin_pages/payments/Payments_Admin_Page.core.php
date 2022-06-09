@@ -126,6 +126,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         $payment_method_list_config = array(
             'nav'           => array(
                 'label' => esc_html__('Payment Methods', 'event_espresso'),
+                'icon' => 'dashicons-bank',
                 'order' => 10,
             ),
             'metaboxes'     => $this->_default_espresso_metaboxes,
@@ -145,6 +146,7 @@ class Payments_Admin_Page extends EE_Admin_Page
             'payment_settings' => array(
                 'nav'           => array(
                     'label' => esc_html__('Settings', 'event_espresso'),
+                    'icon' => 'dashicons-admin-generic',
                     'order' => 20,
                 ),
                 'help_tabs'     => array(
@@ -159,6 +161,7 @@ class Payments_Admin_Page extends EE_Admin_Page
             'payment_log'      => array(
                 'nav'           => array(
                     'label' => esc_html__("Logs", 'event_espresso'),
+                    'icon' => 'dashicons-text-page',
                     'order' => 30,
                 ),
                 'list_table'    => 'Payment_Log_Admin_List_Table',

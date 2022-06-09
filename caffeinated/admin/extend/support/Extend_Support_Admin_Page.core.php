@@ -33,6 +33,7 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
             'faq' => array(
                 'nav'           => array(
                     'label' => esc_html__('FAQ', 'event_espresso'),
+                    'icon' => 'dashicons-editor-help',
                     'order' => 40,
                 ),
                 'metaboxes'     => array('_espresso_news_post_box', '_espresso_links_post_box'),

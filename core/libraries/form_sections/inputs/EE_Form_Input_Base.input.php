@@ -217,9 +217,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         // ensure that "required" is set correctly
         $this->set_required(
             $this->_required,
-            isset($input_args['required_validation_error_message'])
-            ? $input_args['required_validation_error_message']
-            : null
+            $input_args['required_validation_error_message'] ?? null
         );
         // $this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
         $this->_display_strategy->_construct_finalize($this);

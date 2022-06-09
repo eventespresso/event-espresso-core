@@ -128,7 +128,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         $this->_page_config = [
             'default' => [
                 'nav'           => [
-                    'label' => esc_html__('Questions', 'event_espresso'),
+                    'label' =>  esc_html__('Questions', 'event_espresso'),
+                    'icon' => 'dashicons-editor-help',
                     'order' => 10,
                 ],
                 'list_table'    => 'Registration_Form_Questions_Admin_List_Table',
@@ -152,7 +153,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
             'question_groups' => [
                 'nav'           => [
-                    'label' => esc_html__('Question Groups', 'event_espresso'),
+                    'label' =>  esc_html__('Question Groups', 'event_espresso'),
+                    'icon' => 'dashicons-forms',
                     'order' => 20,
                 ],
                 'metaboxes'     => $this->_default_espresso_metaboxes,
@@ -168,6 +170,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             'edit_question' => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Question', 'event_espresso'),
+                    'icon' => 'dashicons-edit-large',
                     'order'      => 15,
                     'persistent' => false,
                     'url'        => isset($this->_req_data['question_id'])

@@ -52,12 +52,12 @@
                         </option>
                         <?php General_Settings_Admin_Page::page_settings_dropdown($reg_page_id); // already escaped ?>
                     </select>
-                    <span>
+                    <div class="ee-page-status__wrapper">
                     <?php echo General_Settings_Admin_Page::page_and_shortcode_status(
                         $reg_page_obj,
                         '[ESPRESSO_CHECKOUT]'
                     ); // already escaped ?>
-                </span>
+                    </div>
                     <br />
                     <p class="description">
                         <?php printf(
@@ -99,12 +99,12 @@
                         </option>
                         <?php General_Settings_Admin_Page::page_settings_dropdown($txn_page_id); // already escaped ?>
                     </select>
-                    <span>
+                    <div class='ee-page-status__wrapper'>
                     <?php echo General_Settings_Admin_Page::page_and_shortcode_status(
                         $txn_page_obj,
                         '[ESPRESSO_TXN_PAGE]'
                     ); // already escaped ?>
-                </span>
+                    </div>
                     <br />
                     <p class="description">
                         <?php printf(
@@ -142,12 +142,12 @@
                         </option>
                         <?php General_Settings_Admin_Page::page_settings_dropdown($thank_you_page_id); // already escaped ?>
                     </select>
-                    <span>
+                    <div class='ee-page-status__wrapper'>
                     <?php echo General_Settings_Admin_Page::page_and_shortcode_status(
                         $thank_you_page_obj,
                         '[ESPRESSO_THANK_YOU]'
                     ); // already escaped ?>
-                </span>
+                    </div>
                     <br />
                     <p class="description">
                         <?php printf(
@@ -185,12 +185,12 @@
                         </option>
                         <?php General_Settings_Admin_Page::page_settings_dropdown($cancel_page_id); // already escaped ?>
                     </select>
-                    <span>
+                    <div class='ee-page-status__wrapper'>
                     <?php echo General_Settings_Admin_Page::page_and_shortcode_status(
                         $cancel_page_obj,
                         '[ESPRESSO_CANCELLED]'
                     ); // already escaped ?>
-                </span>
+                    </div>
                     <br />
                     <p class="description">
                         <?php printf(

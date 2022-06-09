@@ -83,7 +83,7 @@ class EEH_Tabbed_Content
      * @return string
      * @throws EE_Error
      */
-    public static function display_admin_nav_tabs($nav_tabs = [])
+    public static function display_admin_nav_tabs(array $nav_tabs = [], string $page_slug = '')
     {
         if (empty($nav_tabs)) {
             throw new EE_Error(
@@ -91,12 +91,16 @@ class EEH_Tabbed_Content
             );
         }
         $tab_content = '';
+        $tab_count = 0;
         foreach ($nav_tabs as $slug => $tab) {
+            $tab_count++;
             $tab_content .= self::tab($slug, false, $tab['link_text'], $tab['url'], $tab['css_class']);
         }
         $aria_label = esc_attr__('Secondary menu', 'event_espresso');
+        $css_class = "ee-nav-tabs--{$tab_count}";
+        $css_class .= $page_slug ? " ee-nav-tabs--$page_slug" : '';
         return "
-        <nav class='nav-tab-wrapper wp-clearfix' aria-label='{$aria_label}'>
+        <nav class='nav-tab-wrapper wp-clearfix {$css_class}' aria-label='{$aria_label}'>
             {$tab_content}
         </nav>
         ";

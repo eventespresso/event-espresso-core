@@ -147,6 +147,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'critical_pages'        => [
                 'nav'           => [
                     'label' => esc_html__('Critical Pages', 'event_espresso'),
+                    'icon' => 'dashicons-warning',
                     'order' => 50,
                 ],
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
@@ -161,6 +162,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'default'               => [
                 'nav'           => [
                     'label' => esc_html__('Your Organization', 'event_espresso'),
+                    'icon' => 'dashicons-admin-home',
                     'order' => 20,
                 ],
                 'help_tabs'     => [
@@ -175,6 +177,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'admin_option_settings' => [
                 'nav'           => [
                     'label' => esc_html__('Admin Options', 'event_espresso'),
+                    'icon' => 'dashicons-admin-settings',
                     'order' => 60,
                 ],
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
@@ -189,6 +192,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'country_settings'      => [
                 'nav'           => [
                     'label' => esc_html__('Countries', 'event_espresso'),
+                    'icon' => 'dashicons-admin-site',
                     'order' => 70,
                 ],
                 'help_tabs'     => [
@@ -202,6 +206,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'privacy_settings'      => [
                 'nav'           => [
                     'label' => esc_html__('Privacy', 'event_espresso'),
+                    'icon' => 'dashicons-privacy',
                     'order' => 80,
                 ],
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),

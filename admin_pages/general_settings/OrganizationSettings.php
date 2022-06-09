@@ -160,6 +160,7 @@ class OrganizationSettings extends FormHandler
                     'organization_city'       => new EE_Text_Input(
                         [
                             'html_name'       => 'organization_city',
+                            'html_class'      => 'ee-input-size--reg',
                             'html_label_text' => esc_html__('City', 'event_espresso'),
                             'default'         => $this->organization_config->get_pretty('city'),
                             'required'        => false,
@@ -170,6 +171,7 @@ class OrganizationSettings extends FormHandler
                         [
                             EE_Country_Select_Input::OPTION_GET_KEY => EE_Country_Select_Input::OPTION_GET_ALL,
                             'html_name'                             => 'organization_country',
+                            'html_class'                            => 'ee-input-size--reg',
                             'html_label_text'                       => esc_html__('Country', 'event_espresso'),
                             'default'                               => $this->organization_config->CNT_ISO,
                             'required'                              => false,
@@ -206,6 +208,7 @@ class OrganizationSettings extends FormHandler
                     'organization_zip'        => new EE_Text_Input(
                         [
                             'html_name'       => 'organization_zip',
+                            'html_class'      => 'ee-input-size--small',
                             'html_label_text' => esc_html__('Zip/Postal Code', 'event_espresso'),
                             'default'         => $this->organization_config->get_pretty('zip'),
                             'required'        => false,
@@ -230,6 +233,7 @@ class OrganizationSettings extends FormHandler
                     'organization_phone'      => new EE_Text_Input(
                         [
                             'html_name'       => 'organization_phone',
+                            'html_class'      => 'ee-input-size--small',
                             'html_label_text' => esc_html__('Phone Number', 'event_espresso'),
                             'html_help_text'  => esc_html__(
                                 'The phone number for your organization.',
@@ -242,6 +246,7 @@ class OrganizationSettings extends FormHandler
                     'organization_vat'        => new EE_Text_Input(
                         [
                             'html_name'       => 'organization_vat',
+                            'html_class'      => 'ee-input-size--reg',
                             'html_label_text' => esc_html__('VAT/Tax Number', 'event_espresso'),
                             'html_help_text'  => esc_html__(
                                 'The VAT/Tax Number may be displayed on invoices and receipts.',

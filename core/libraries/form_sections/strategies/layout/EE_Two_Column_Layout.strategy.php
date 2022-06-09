@@ -3,10 +3,21 @@
 class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base
 {
     /**
+     * @param EE_Form_Section_Proper $form
+     */
+    public function _construct_finalize(EE_Form_Section_Proper $form)
+    {
+        parent::_construct_finalize($form);
+        $this->_form_section->set_html_class('ee-two-column-layout');
+    }
+
+
+    /**
      * Should be used to start teh form section (Eg a table tag, or a div tag, etc.)
      *
      * @param array $additional_args
      * @return string
+     * @throws EE_Error
      */
     public function layout_form_begin($additional_args = array())
     {
