@@ -7,6 +7,10 @@ on:
             - dev
 
 jobs:
+    pr-branch:
+        shell: bash
+        run: echo "${GITHUB_REF_NAME}"
+
     php-lint:
         runs-on: ubuntu-latest
         needs: what_has_changed
