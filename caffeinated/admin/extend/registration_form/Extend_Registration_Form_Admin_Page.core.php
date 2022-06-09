@@ -194,7 +194,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
         $new_page_config = array(
 
-            'question_groups' => array(//dashicons-editor-help
+            'question_groups' => array(
                 'nav'           => array(
                     'label' => esc_html__('Question Groups', 'event_espresso'),
                     'icon' => 'dashicons-forms',

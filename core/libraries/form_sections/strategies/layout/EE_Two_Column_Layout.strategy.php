@@ -8,7 +8,7 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base
     public function _construct_finalize(EE_Form_Section_Proper $form)
     {
         parent::_construct_finalize($form);
-        $this->_form_section->set_html_class( 'ee-two-column-layout');
+        $this->_form_section->set_html_class('ee-two-column-layout');
     }
 
 

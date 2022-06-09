@@ -1475,9 +1475,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
             $this->_nav_tabs[ $slug ] = [
                 'url'       => $config['nav']['url'] ?? EE_Admin_Page::add_query_args_and_nonce(
-                        ['action' => $slug],
-                        $this->_admin_base_url
-                    ),
+                    ['action' => $slug],
+                    $this->_admin_base_url
+                ),
                 'link_text' => $this->navTabLabel($config['nav'], $slug),
                 'css_class' => $this->_req_action === $slug ? $css_class . ' nav-tab-active' : $css_class,
                 'order'     => $config['nav']['order'] ?? $i,

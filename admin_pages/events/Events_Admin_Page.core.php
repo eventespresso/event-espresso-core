@@ -434,7 +434,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             // template settings
             'template_settings'      => [
                 'nav'           => [
-                    'label' => esc_html__( 'Templates', 'event_espresso'),
+                    'label' => esc_html__('Templates', 'event_espresso'),
                     'icon' => 'dashicons-layout',
                     'order' => 30,
                 ],
