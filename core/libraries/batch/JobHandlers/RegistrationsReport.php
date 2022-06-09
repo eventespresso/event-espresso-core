@@ -69,12 +69,10 @@ class RegistrationsReport extends JobHandlerFile
         );
         $job_parameters->add_extra_data('filepath', $filepath);
 
-
-        $filter_params = maybe_unserialize($job_parameters->request_datum('filters', []));
-
-        $query_params = is_array($filter_params) && ! empty($filter_params)
-            ? $filter_params
-            : [
+        if ($job_parameters->request_datum('use_filters', false)) {
+            $query_params = maybe_unserialize($job_parameters->request_datum('filters', []));
+        } else {
+            $query_params = [
                 [
                     'OR'                 => [
                         // don't include registrations from failed or abandoned transactions...
@@ -94,12 +92,13 @@ class RegistrationsReport extends JobHandlerFile
                 'force_join' => ['Transaction', 'Ticket', 'Attendee'],
                 'caps'       => EEM_Base::caps_read_admin,
             ];
-
-        if ($event_id) {
-            $query_params[0]['EVT_ID'] = $event_id;
-        } else {
-            $query_params['force_join'][] = 'Event';
+            if ($event_id) {
+                $query_params[0]['EVT_ID'] = $event_id;
+            } else {
+                $query_params['force_join'][] = 'Event';
+            }
         }
+
         if (! isset($query_params['force_join'])) {
             $query_params['force_join'] = ['Event', 'Transaction', 'Ticket', 'Attendee'];
         }

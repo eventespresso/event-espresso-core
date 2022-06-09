@@ -22,11 +22,11 @@ class RegistrationsCsvReportParams
      * @return array
      */
     public static function getRequestParams(
-        string $return_url,
-        array $request_params = [],
-        int $EVT_ID = 0,
-        int $DTT_ID = 0
-    ): array {
+        $return_url,
+        $request_params = [],
+        $EVT_ID = 0,
+        $DTT_ID = 0
+    ) {
         if (
             ! EE_Capabilities::instance()->current_user_can(
                 'ee_read_registrations',
@@ -52,9 +52,8 @@ class RegistrationsCsvReportParams
             $route_details['extra_request']['DTT_ID'] = $DTT_ID;
         }
         if (
-            isset($request_params['month_range'])
-            || isset($request_params['EVT_CAT'])
-            || isset($request_params['_reg_status'])
+            isset($request_params['use_filters'])
+            && filter_var($request_params['use_filters'], FILTER_VALIDATE_BOOLEAN)
         ) {
             $route_details['extra_request']['filters'] = array_diff_key(
                 $request_params,
