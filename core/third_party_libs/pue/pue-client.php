@@ -1767,6 +1767,11 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         public function injectUpdate($updates)
         {
+            // Fix for update_plugins returning false
+            if (! is_object($updates)) {
+                $updates = new stdClass();
+            }
+
             $state = get_site_option($this->optionName);
 
             //first remove any existing WP update message that might have snuck in before we have any return from our
