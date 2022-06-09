@@ -490,11 +490,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             echo wp_kses($filter, AllowedTags::getWithFormTags());
         }
         // add filter button at end
-        echo '<input type="submit" class="button-secondary" value="'
+        echo '<input type="submit" class="ee-list-table-filter-submit button button--secondary" value="'
              . esc_html__('Filter', 'event_espresso')
              . '" id="post-query-submit" />';
+        echo '<input type="hidden" id="ee-list-table-use-filters" name="use_filters" value="no"/>';
+
         // add reset filters button at end
-        echo '<a class="button button-secondary"  href="'
+        echo '<a class="button button--secondary"  href="'
              . esc_url_raw($this->_admin_page->get_current_page_view_url())
              . '" style="display:inline-block">'
              . esc_html__('Reset Filters', 'event_espresso')

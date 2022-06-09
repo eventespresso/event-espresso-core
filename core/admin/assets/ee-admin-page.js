@@ -261,9 +261,7 @@ jQuery(document).ready(function($) {
 	}
 
 
-
-
-
-
-
+	$('.ee-list-table-filter-submit').click(function () {
+		$('#ee-list-table-use-filters').val('yes');
+	});
 });
