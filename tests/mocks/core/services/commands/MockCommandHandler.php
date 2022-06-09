@@ -39,7 +39,7 @@ class MockCommandHandler implements CommandHandlerInterface
      * @throws InvalidEntityException
      * @since 4.9.80.p
      */
-    public function verify(CommandInterface $command)
+    public function verify(CommandInterface $command): CommandHandlerInterface
     {
         if (! $command instanceof $this->expected) {
             throw new InvalidEntityException($command, $this->expected);
