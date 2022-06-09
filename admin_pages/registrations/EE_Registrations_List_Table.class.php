@@ -89,8 +89,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $ID_column_name      .= esc_html__('Registrant Name', 'event_espresso');
         $ID_column_name      .= '</span> ';
 
-        $EVT_ID = $this->_req_data['event_id'] ?? 0;
-        $DTT_ID = $this->_req_data['DTT_ID'] ?? 0;
+        $EVT_ID = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : 0;
+        $DTT_ID = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : 0;
 
         if ($EVT_ID) {
             $this->_columns        = [
@@ -219,6 +219,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      *    _get_table_filters
      *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_table_filters()
     {
