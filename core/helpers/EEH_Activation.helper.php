@@ -115,6 +115,8 @@ class EEH_Activation implements ResettableInterface
      */
     public static function initialize_db_and_folders()
     {
+        EEH_File::ensure_folder_exists_and_is_writable(EVENT_ESPRESSO_UPLOAD_DIR);
+        EEH_File::ensure_folder_exists_and_is_writable(EVENT_ESPRESSO_UPLOAD_DIR . 'logs');
         return EEH_Activation::create_database_tables();
     }
 

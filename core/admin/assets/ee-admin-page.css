@@ -2187,7 +2187,7 @@ label.error {
 }
 .espresso-rss-display a.rsswidget {
     color: var(--ee-status-color-blue);
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: 600;
     text-decoration: none;
 }

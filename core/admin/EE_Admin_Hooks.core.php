@@ -221,18 +221,12 @@ abstract class EE_Admin_Hooks extends EE_Base
         $this->_adminpage_obj = $admin_page;
         $this->request        = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $this->_req_data      = $this->request->requestParams();
-        $this->_set_defaults();
-        $this->_set_hooks_properties();
         // first let's verify we're on the right page
-        if (
-            ! isset($this->_req_data['page'])
-            || (
-                isset($this->_req_data['page'])
-                && $this->_adminpage_obj->page_slug != $this->_req_data['page']
-            )
-        ) {
+        if ($this->request->getRequestParam('page') !== $this->_adminpage_obj->page_slug) {
             return;
         }
+        $this->_set_defaults();
+        $this->_set_hooks_properties();
         // get out nothing more to be done here.
         // allow for extends to modify properties
         if (method_exists($this, '_extend_properties')) {

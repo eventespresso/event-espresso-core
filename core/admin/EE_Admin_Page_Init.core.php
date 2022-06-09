@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -32,9 +33,9 @@ abstract class EE_Admin_Page_Init extends EE_Base
     /**
      * This holds the menu map object for this admin page.
      *
-     * @var EE_Admin_Page_Menu_Map
+     * @var AdminMenuItem
      */
-    protected $_menu_map;
+    protected $_menu_map = null;
 
     /**
      * deprecated
@@ -104,12 +105,6 @@ abstract class EE_Admin_Page_Init extends EE_Base
         add_action('admin_enqueue_scripts', [$this, 'load_wp_global_scripts_styles'], 5);
         // load initial stuff.
         $this->_set_file_and_folder_name();
-        $this->_set_menu_map();
-        if (! $this->verifyMenuMapSet()) {
-            return;
-        }
-        // set default capability
-        $this->_set_capability();
     }
 
 
@@ -125,51 +120,81 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
 
     /**
+     * @return AdminMenuItem|null
+     * @since       4.4.0
+     * @deprecated  $VID:$
+     */
+    public function get_menu_map()
+    {
+        return $this->adminMenu();
+    }
+
+
+    /**
      * _set_menu_map is a function that child classes use to set the menu_map property (which should be an instance of
-     * EE_Admin_Page_Menu_Map.  Their menu can either be EE_Admin_Page_Main_Menu or EE_Admin_Page_Sub_Menu.
+     * EE_Admin_Page_Menu_Map.  Their menu can either be EE_Admin_Page_Main_Menu or AdminMenuSubItem.
      *
-     * @since 4.4.0
-     * @ return void.
+     * @since       4.4.0
+     * @deprecated  $VID:$
      */
     protected function _set_menu_map()
+    {
+        $this->_menu_map = null;
+    }
+
+
+    /**
+     * @since   $VID:$
+     */
+    public function setupLegacyAdminMenuItem()
+    {
+        // will be overridden by child classes not using new system
+        $this->_set_menu_map();
+    }
+
+
+    /**
+     * Child classes should return an array of properties used to construct the AdminMenuItem
+     *
+     * @return array
+     * @since $VID:$
+     */
+    public function getMenuProperties(): array
     {
         return [];
     }
 
 
     /**
-     * @return bool
-     * @since   4.10.14.p
+     * @param AdminMenuItem $menu
+     * @return void
+     * @since $VID:$
      */
-    private function verifyMenuMapSet()
+    public function setAdminMenu(AdminMenuItem $menu): void
     {
-        if (empty($this->_menu_map) || is_array($this->_menu_map)) {
-            EE_Error::doing_it_wrong(
-                get_class($this) . '::$_menu_map',
-                sprintf(
-                    esc_html__(
-                        'The EE4 addon with the class %s is setting up the _menu_map property incorrectly for this version of EE core.  Please see Admin_Page_Init class examples in core for the new way of setting this property up.',
-                        'event_espresso'
-                    ),
-                    get_class($this)
-                ),
-                '4.4.0'
-            );
-            return true;
-        }
-        return false;
+        $this->_menu_map = $menu;
     }
 
 
     /**
      * returns the menu map for this admin page
      *
-     * @return EE_Admin_Page_Menu_Map
-     * @since 4.4.0
+     * @return AdminMenuItem|null
+     * @since $VID:$
      */
-    public function get_menu_map()
+    public function adminMenu(): ?AdminMenuItem
     {
         return $this->_menu_map;
+    }
+
+
+    /**
+     * @param string $wp_page_slug
+     * @since $VID:$
+     */
+    public function setWpPageSlug(string $wp_page_slug): void
+    {
+        $this->_wp_page_slug = $wp_page_slug;
     }
 
 
@@ -202,15 +227,23 @@ abstract class EE_Admin_Page_Init extends EE_Base
         $this->_routing      = true;
         $this->_load_page    = false;
         $this->_files_hooked = $this->_hook_paths = [];
-        // menu_map
-        $this->_menu_map = $this->get_menu_map();
     }
 
 
+    public function setCapability($capability, $menu_slug)
+    {
+        $this->capability = apply_filters('FHEE_' . $menu_slug . '_capability', $capability);
+    }
+
+
+    /**
+     * @deprecated $VID:$
+     */
     protected function _set_capability()
     {
-        $capability       = empty($this->capability) ? $this->_menu_map->capability : $this->capability;
-        $this->capability = apply_filters('FHEE_' . $this->_menu_map->menu_slug . '_capability', $capability);
+        if ($this->_menu_map instanceof AdminMenuItem) {
+            $this->setCapability($this->_menu_map->capability(), $this->_menu_map->menuSlug());
+        }
     }
 
 
@@ -238,7 +271,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * @param string $wp_page_slug
      * @throws EE_Error
      */
-    public function set_page_dependencies($wp_page_slug)
+    public function set_page_dependencies(string $wp_page_slug)
     {
         if (! $this->_load_page) {
             return;
@@ -257,12 +290,12 @@ abstract class EE_Admin_Page_Init extends EE_Base
                          $this->_file_name,
                          $this->_file_name,
                          $this->_folder_path . $this->_file_name,
-                         $this->_menu_map->menu_slug
+                         $this->_menu_map->menuSlug()
                      );
             throw new EE_Error(implode('||', $msg));
         }
         $this->_loaded_page_object->set_wp_page_slug($wp_page_slug);
-        $page_hook = 'load-' . $wp_page_slug;
+        $page_hook = "load-$wp_page_slug";
         // hook into page load hook so all page specific stuff gets loaded.
         if (! empty($wp_page_slug)) {
             add_action($page_hook, [$this->_loaded_page_object, 'load_page_dependencies']);
@@ -279,11 +312,12 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function do_initial_loads()
     {
         // no loading or initializing if menu map is setup incorrectly.
-        if (empty($this->_menu_map) || is_array($this->_menu_map)) {
+        if (! $this->_menu_map instanceof AdminMenuItem) {
             return;
         }
         $this->_initialize_admin_page();
@@ -327,9 +361,8 @@ abstract class EE_Admin_Page_Init extends EE_Base
      *                     files/classes
      * @return array
      */
-    public function register_hooks($extend = false)
+    public function register_hooks(bool $extend = false): array
     {
-
         // get a list of files in the directory that have the "Hook" in their name an
         // if this is an extended check (i.e. caf is active) then we will scan the caffeinated/extend directory first and any hook files that are found will be have their reference added to the $_files_hook array property.  Then, we make sure that when we loop through the core decaf directories to find hook files that we skip over any hooks files that have already been set by caf.
         if ($extend) {
@@ -356,7 +389,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
     }
 
 
-    protected function _register_hook_files($hook_files_glob_path, $extend = false)
+    protected function _register_hook_files($hook_files_glob_path, $extend = false): array
     {
         $hook_paths = glob($hook_files_glob_path);
         if (empty($hook_paths)) {
@@ -367,15 +400,16 @@ abstract class EE_Admin_Page_Init extends EE_Base
             $hook_file = $extend
                 ? str_replace(EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . '/', '', $file)
                 : str_replace($this->_folder_path, '', $file);
-            $replace         = $extend
+            $replace   = $extend
                 ? '_' . $this->_file_name . '_Hooks_Extend.class.php'
                 : '_' . $this->_file_name . '_Hooks.class.php';
-            $rel_admin       = str_replace($replace, '', $hook_file);
-            $rel_admin       = strtolower($rel_admin);
+            $rel_admin = str_replace($replace, '', $hook_file);
+            $rel_admin = strtolower($rel_admin);
             // make sure we haven't already got a hook setup for this page path
             if (in_array($rel_admin, $this->_files_hooked)) {
                 continue;
             }
+            require_once $file;
             $this->hook_file = $hook_file;
             $rel_admin_hook  = 'FHEE_do_other_page_hooks_' . $rel_admin;
             add_filter($rel_admin_hook, [$this, 'load_admin_hook']);
@@ -403,7 +437,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
         // JUST CHECK WE'RE ON RIGHT PAGE.
         $page      = $this->request->getRequestParam('page');
         $page      = $this->request->getRequestParam('current_page', $page);
-        $menu_slug = $this->_menu_map->menu_slug;
+        $menu_slug = $this->_menu_map->menuSlug();
 
 
         if ($this->_routing && ($page === '' || $page !== $menu_slug)) {
@@ -414,9 +448,9 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
         // we don't need to do a page_request check here because it's only called via WP menu system.
         $admin_page  = $this->_file_name . '_Admin_Page';
-        $hook_suffix = "{$menu_slug}_{$admin_page}";
+        $hook_suffix = "{$menu_slug}_$admin_page";
         $admin_page  = apply_filters(
-            "FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__{$hook_suffix}",
+            "FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__$hook_suffix",
             $admin_page
         );
         if (empty($admin_page)) {
@@ -427,7 +461,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
         // so if the file would be in EE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be:
         // FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__attendees_Attendee_Admin_Page
         $path_to_file = apply_filters(
-            "FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__{$hook_suffix}",
+            "FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__$hook_suffix",
             $path_to_file
         );
         if (! is_readable($path_to_file)) {
@@ -435,17 +469,17 @@ abstract class EE_Admin_Page_Init extends EE_Base
         }
         // This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
         do_action('AHEE__EE_Admin_Page___initialize_admin_page__before_initialization');
-        do_action("AHEE__EE_Admin_Page___initialize_admin_page__before_initialization_{$menu_slug}");
+        do_action("AHEE__EE_Admin_Page___initialize_admin_page__before_initialization_$menu_slug");
         require_once($path_to_file);
         $this->_loaded_page_object = $this->loader->getShared($admin_page, [$this->_routing]);
         $this->_loaded_page_object->initializePage();
 
         do_action('AHEE__EE_Admin_Page___initialize_admin_page__after_initialization');
-        do_action("AHEE__EE_Admin_Page___initialize_admin_page__after_initialization_{$menu_slug}");
+        do_action("AHEE__EE_Admin_Page___initialize_admin_page__after_initialization_$menu_slug");
     }
 
 
-    public function get_admin_page_name()
+    public function get_admin_page_name(): string
     {
         return $this->_file_name . '_Admin_Page';
     }
@@ -454,7 +488,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
     /**
      * @return EE_Admin_Page
      */
-    public function loaded_page_object()
+    public function loaded_page_object(): EE_Admin_Page
     {
         return $this->_loaded_page_object;
     }
@@ -469,13 +503,12 @@ abstract class EE_Admin_Page_Init extends EE_Base
      */
     private function _check_user_access()
     {
-        if (
-            ! EE_Registry::instance()->CAP->current_user_can(
-                $this->_menu_map->capability,
-                $this->_menu_map->menu_slug
-            )
-        ) {
-            wp_die(esc_html__('You don\'t have access to this page.', 'event_espresso'), '', ['back_link' => true]);
+        if (! $this->_menu_map->currentUserHasAccess()) {
+            wp_die(
+                esc_html__('You don\'t have access to this page.', 'event_espresso'),
+                '',
+                ['back_link' => true]
+            );
         }
     }
 }

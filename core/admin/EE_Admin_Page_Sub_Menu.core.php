@@ -1,29 +1,23 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuSubItem;
+
 /**
  * Defines the menu map structure for sub menu pages.
  *
  * @since      4.4.0
  * @package    Event Espresso
  * @subpackage admin
+ * @deprecated $VID:$
  */
-class EE_Admin_Page_Sub_Menu extends EE_Admin_Page_Main_Menu
+class EE_Admin_Page_Sub_Menu extends AdminMenuSubItem
 {
-    public function __construct($menu_args)
-    {
-        parent::__construct($menu_args);
-    }
-
-
+    /**
+     * @return string
+     * @deprecated $VID:$
+     */
     protected function _add_menu_page()
     {
-        return add_submenu_page(
-            $this->parent_slug,
-            $this->title,
-            $this->menu_label,
-            $this->capability,
-            $this->menu_slug,
-            $this->menu_callback
-        );
+        return $this->registerMenuItem();
     }
 }

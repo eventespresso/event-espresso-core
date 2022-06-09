@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+
 /**
  * Events_Admin_Page_Init
  *
@@ -9,8 +11,6 @@
  * @abstract
  * @subpackage         includes/core/admin/events/Events_Admin_Page_Init.core.php
  * @author             Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Events_Admin_Page_Init extends EE_Admin_Page_CPT_Init
 {
@@ -31,25 +31,24 @@ class Events_Admin_Page_Init extends EE_Admin_Page_CPT_Init
         parent::__construct();
     }
 
+
     protected function _set_init_properties()
     {
         $this->label = esc_html__('Event Espresso - Event Details', 'event_espresso');
     }
 
-    protected function _set_menu_map()
+
+    public function getMenuProperties(): array
     {
-        $this->_menu_map = new EE_Admin_Page_Main_Menu(
-            array(
-                'menu_group'      => 'main',
-                'menu_order'      => 10,
-                'subtitle'        => esc_html__('Events', 'event_espresso'),
-                'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
-                'parent_slug'     => 'espresso_events',
-                'menu_slug'       => 'espresso_events',
-                'menu_label'      => esc_html__('Event Espresso', 'event_espresso'),
-                'capability'      => 'ee_read_events',
-                'admin_init_page' => $this,
-            )
-        );
+        return [
+            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'      => 'main',
+            'menu_order'      => 10,
+            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'     => 'espresso_events',
+            'menu_slug'       => 'espresso_events',
+            'menu_label'      => esc_html__('Events', 'event_espresso'),
+            'capability'      => 'ee_read_events',
+        ];
     }
 }

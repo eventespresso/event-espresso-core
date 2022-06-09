@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuSubItem;
+
 /**
  * Tickets_Admin_Page_Init class
  *
@@ -20,18 +23,16 @@ class Tickets_Admin_Page_Init extends EE_Admin_Page_Init
      */
     public function __construct()
     {
-
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
-        define('TICKETS_PG_SLUG', 'tickets');
-        define('TICKETS_LABEL', esc_html__('Default Tickets', 'event_espresso'));
-        define('TICKETS_ADMIN', EE_CORE_CAF_ADMIN . 'new/' . TICKETS_PG_SLUG . '/');
-        define('TICKETS_ADMIN_URL', admin_url('admin.php?page=' . TICKETS_PG_SLUG));
-        define('TICKETS_ASSETS_PATH', TICKETS_ADMIN . 'assets/');
-        define('TICKETS_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'new/' . TICKETS_PG_SLUG . '/assets/');
-        define('TICKETS_TEMPLATE_PATH', TICKETS_ADMIN . 'templates/');
-        define('TICKETS_TEMPLATE_URL', EE_CORE_CAF_ADMIN_URL . 'new/' . TICKETS_PG_SLUG . '/templates/');
-
+        if (! defined('TICKETS_PG_SLUG')) {
+            define('TICKETS_PG_SLUG', 'tickets');
+            define('TICKETS_LABEL', esc_html__('Default Tickets', 'event_espresso'));
+            define('TICKETS_ADMIN', EE_CORE_CAF_ADMIN . 'new/' . TICKETS_PG_SLUG . '/');
+            define('TICKETS_ADMIN_URL', admin_url('admin.php?page=' . TICKETS_PG_SLUG));
+            define('TICKETS_ASSETS_PATH', TICKETS_ADMIN . 'assets/');
+            define('TICKETS_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'new/' . TICKETS_PG_SLUG . '/assets/');
+            define('TICKETS_TEMPLATE_PATH', TICKETS_ADMIN . 'templates/');
+            define('TICKETS_TEMPLATE_URL', EE_CORE_CAF_ADMIN_URL . 'new/' . TICKETS_PG_SLUG . '/templates/');
+        }
         parent::__construct();
         $this->_folder_path = EE_CORE_CAF_ADMIN . 'new/' . $this->_folder_name . DS;
     }
@@ -45,11 +46,11 @@ class Tickets_Admin_Page_Init extends EE_Admin_Page_Init
 
     protected function _set_menu_map()
     {
-        $this->_menu_map = new EE_Admin_Page_Sub_Menu(
+        $this->_menu_map = new AdminMenuSubItem(
             array(
                 'menu_group'      => 'management',
                 'menu_order'      => 15,
-                'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
+                'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
                 'parent_slug'     => 'espresso_events',
                 'menu_slug'       => TICKETS_PG_SLUG,
                 'menu_label'      => TICKETS_LABEL,

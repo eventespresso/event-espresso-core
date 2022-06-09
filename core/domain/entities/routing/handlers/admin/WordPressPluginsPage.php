@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
 use EventEspresso\core\domain\services\assets\WordPressPluginsPageAssetManager;
-use EventEspresso\core\services\routing\Route;
 use EventEspresso\core\domain\entities\routing\data_nodes\domains\WordPressPluginsPageData;
 use EventEspresso\core\domain\services\admin\PluginUpsells;
 
@@ -16,7 +15,7 @@ use EventEspresso\core\domain\services\admin\PluginUpsells;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class WordPressPluginsPage extends Route
+class WordPressPluginsPage extends AdminRoute
 {
     /**
      * returns true if the current request matches this route
@@ -27,7 +26,7 @@ class WordPressPluginsPage extends Route
     public function matchesCurrentRequest(): bool
     {
         global $pagenow;
-        return $this->request->isAdmin() && $pagenow && $pagenow === 'plugins.php';
+        return $pagenow === 'plugins.php' && ($this->request->isAdmin() || $this->request->isAdminAjax());
     }
 
 

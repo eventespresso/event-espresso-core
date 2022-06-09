@@ -12,6 +12,9 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Load_Textdomain extends EE_Base
 {
+    private const REPO_BASE_URL = 'https://raw.githubusercontent.com/eventespresso/languages-ee4/master/event_espresso';
+
+
     /**
      * holds the current lang in WP
      *
@@ -76,12 +79,10 @@ class EE_Load_Textdomain extends EE_Base
             return;
         }
 
-        $repo_base_URL = 'https://github.com/eventespresso/languages-ee4/blob/master/event_espresso';
-
         // load sideloader and sideload the .POT file as this should always be included.
         $sideloader_args = array(
             '_upload_to'     => EE_PLUGIN_DIR_PATH . 'languages/',
-            '_download_from'   => $repo_base_URL . '.pot?raw=true',
+            '_download_from'   => EE_Load_Textdomain::REPO_BASE_URL . '.pot',
             '_new_file_name' => 'event_espresso.pot',
         );
         /** @var EEH_Sideloader $sideloader */
@@ -97,16 +98,16 @@ class EE_Load_Textdomain extends EE_Base
             update_option($language_check_option_name, 1);
             return;
         }
-        $repo_locale_URL = $repo_base_URL . '-' . EE_Load_Textdomain::$locale;
+        $repo_locale_URL = EE_Load_Textdomain::REPO_BASE_URL . '-' . EE_Load_Textdomain::$locale;
         $file_name_base = 'event_espresso-' . EE_Load_Textdomain::$locale;
 
         // made it here so let's get the language files from the github repo, first the .mo file
-        $sideloader->set_download_from("{$repo_locale_URL}.mo?raw=true");
+        $sideloader->set_download_from("{$repo_locale_URL}.mo");
         $sideloader->set_new_file_name("{$file_name_base}.mo");
         $sideloader->sideload();
 
         // now the .po file:
-        $sideloader->set_download_from("{$repo_locale_URL}.po?raw=true");
+        $sideloader->set_download_from("{$repo_locale_URL}.po");
         $sideloader->set_new_file_name("{$file_name_base}.po");
         $sideloader->sideload();
 

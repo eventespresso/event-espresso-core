@@ -92,11 +92,11 @@ final class EE_Admin implements InterminableInterface
         // load EE_Request_Handler early
         add_action('AHEE__EE_System__initialize_last', [$this, 'init']);
         add_action('admin_init', [$this, 'admin_init'], 100);
-        add_action('admin_notices', [$this, 'display_admin_notices'], 10);
-        add_action('network_admin_notices', [$this, 'display_admin_notices'], 10);
-        add_filter('pre_update_option', [$this, 'check_for_invalid_datetime_formats'], 100, 2);
         if (! $this->request->isAjax()) {
             // admin hooks
+            add_action('admin_notices', [$this, 'display_admin_notices'], 10);
+            add_action('network_admin_notices', [$this, 'display_admin_notices'], 10);
+            add_filter('pre_update_option', [$this, 'check_for_invalid_datetime_formats'], 100, 2);
             add_filter('plugin_action_links', [$this, 'filter_plugin_actions'], 10, 2);
             add_filter('admin_footer_text', [$this, 'espresso_admin_footer']);
             add_action('display_post_states', [$this, 'displayStateForCriticalPages'], 10, 2);
@@ -199,10 +199,11 @@ final class EE_Admin implements InterminableInterface
         // run the admin page factory but ONLY if:
         // - it is a regular non ajax admin request
         // - we are doing an ee admin ajax request
-        if ($this->request->isAdmin() || $this->request->isAdminAjax()) {
+        if ($this->request->isAdmin() || $this->request->isAdminAjax() || $this->request->isActivation()) {
             try {
                 // this loads the controller for the admin pages which will setup routing etc
                 $admin_page_loader = $this->loader->getShared('EE_Admin_Page_Loader', [$this->loader]);
+                /** @var EE_Admin_Page_Loader $admin_page_loader */
                 $admin_page_loader->init();
             } catch (EE_Error $e) {
                 $e->get_error();
@@ -341,8 +342,8 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * WP by default only shows three metaboxes in "nav-menus.php" for first times users.  We want to make sure our
-     * metaboxes get shown as well
+     * WP by default only shows three metaboxes in "nav-menus.php" for first times users.
+     * We want to make sure our metaboxes get shown as well
      *
      * @return void
      */
