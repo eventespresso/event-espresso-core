@@ -326,12 +326,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             $item,
             $this->_cur_dtt_id
         );
-        $nonce                   = wp_create_nonce('checkin_nonce');
-        $toggle_active           = ! empty($this->_cur_dtt_id)
-                                   && EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_checkin',
-            'espresso_registrations_toggle_checkin_status',
-            $item->ID()
+        $nonce         = wp_create_nonce('checkin_nonce');
+        $toggle_active = ! empty($this->_cur_dtt_id) && EE_Registry::instance()->CAP->current_user_can(
+           'ee_edit_checkin',
+           'espresso_registrations_toggle_checkin_status',
+           $item->ID()
         )
             ? ' clickable trigger-checkin'
             : '';
@@ -379,10 +378,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             : '';
         // add group details
         $name_link .= '&nbsp;' . sprintf(
-                esc_html__('(%s of %s)', 'event_espresso'),
-                $item->count(),
-                $item->group_size()
-            );
+            esc_html__('(%s of %s)', 'event_espresso'),
+            $item->count(),
+            $item->group_size()
+        );
         // add regcode
         $link      = EE_Admin_Page::add_query_args_and_nonce(
             ['action' => 'view_registration', '_REG_ID' => $item->ID()],
