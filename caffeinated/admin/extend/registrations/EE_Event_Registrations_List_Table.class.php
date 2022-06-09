@@ -328,9 +328,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         );
         $nonce         = wp_create_nonce('checkin_nonce');
         $toggle_active = ! empty($this->_cur_dtt_id) && EE_Registry::instance()->CAP->current_user_can(
-           'ee_edit_checkin',
-           'espresso_registrations_toggle_checkin_status',
-           $item->ID()
+            'ee_edit_checkin',
+            'espresso_registrations_toggle_checkin_status',
+            $item->ID()
         )
             ? ' clickable trigger-checkin'
             : '';
