@@ -231,6 +231,7 @@ class EE_Admin_Page_Loader
     public function get_admin_page_object(string $page_slug = ''): ?EE_Admin_Page
     {
         return isset($this->_installed_pages[ $page_slug ])
+               && $this->_installed_pages[ $page_slug ] instanceof EE_Admin_Page_Init
             ? $this->_installed_pages[ $page_slug ]->loaded_page_object()
             : null;
     }

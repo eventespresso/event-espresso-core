@@ -260,7 +260,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
     {
         // let's check user access first
         $this->_check_user_access();
-        if (! is_object($this->_loaded_page_object)) {
+        if (! $this->_loaded_page_object instanceof EE_Admin_Page) {
             return;
         }
         $this->_loaded_page_object->route_admin_request();
@@ -276,7 +276,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
         if (! $this->_load_page) {
             return;
         }
-        if (! is_object($this->_loaded_page_object)) {
+        if (! $this->_loaded_page_object instanceof EE_Admin_Page) {
             $msg[] = esc_html__(
                 'We can\'t load the page because we\'re missing a valid page object that tells us what to load',
                 'event_espresso'
@@ -486,9 +486,9 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
 
     /**
-     * @return EE_Admin_Page
+     * @return EE_Admin_Page|null
      */
-    public function loaded_page_object(): EE_Admin_Page
+    public function loaded_page_object(): ?EE_Admin_Page
     {
         return $this->_loaded_page_object;
     }
