@@ -20,20 +20,21 @@ interface CapabilitiesCheckerInterface
      * If any of the individual capability checks fails, then the command will NOT be executed.
      *
      * @param CapCheckInterface|CapCheckInterface[] $cap_check
+     * @param bool                                  $suppress_exceptions
      * @return bool
      * @throws InvalidClassException
      * @throws InsufficientPermissionsException
      */
-    public function processCapCheck($cap_check);
+    public function processCapCheck($cap_check, bool $suppress_exceptions = false): bool;
 
 
     /**
-     * @param string $capability - the capability to be checked, like: 'ee_edit_registrations'
+     * @param array|string $capability - the capability to be checked, like: 'ee_edit_registrations'
      * @param string $context    - what the user is attempting to do, like: 'Edit Registration'
-     * @param int    $ID         - (optional) ID for item where current_user_can is being called from
+     * @param int|string    $ID         - (optional) ID for item where current_user_can is being called from
      * @return bool
      * @throws InsufficientPermissionsException
      * @throws InvalidClassException
      */
-    public function process($capability, $context, $ID = 0);
+    public function process($capability, string $context, $ID = 0): bool;
 }

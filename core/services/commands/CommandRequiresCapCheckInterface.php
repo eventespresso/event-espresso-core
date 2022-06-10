@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\commands;
 
+use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
+
 /**
  * Interface CommandRequiresCapCheckInterface
  * this interface is used to identify Command classes
@@ -12,7 +14,7 @@ namespace EventEspresso\core\services\commands;
 interface CommandRequiresCapCheckInterface
 {
     /**
-     * @return \EventEspresso\core\domain\services\capabilities\CapCheck
+     * @return CapCheckInterface
      */
     public function getCapCheck();
 }

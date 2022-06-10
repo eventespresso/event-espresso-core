@@ -5,6 +5,8 @@ namespace EventEspresso\core\services\routing;
 use DomainException;
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
+use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
+use EventEspresso\core\domain\services\capabilities\RequiresCapCheckInterface;
 use EventEspresso\core\services\assets\AssetManagerInterface;
 use EventEspresso\core\services\assets\BaristaFactory;
 use EventEspresso\core\services\assets\BaristaInterface;
@@ -24,7 +26,7 @@ use EventEspresso\core\services\request\RequestInterface;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-abstract class Route implements RouteInterface
+abstract class Route implements RouteInterface, RequiresCapCheckInterface
 {
     /**
      * @var AssetManagerInterface $asset_manager
@@ -74,11 +76,11 @@ abstract class Route implements RouteInterface
      * @var array $full_dependencies
      */
     protected static $full_dependencies = [
-        'EE_Dependency_Map'                                                                          => EE_Dependency_Map::load_from_cache,
-        'EventEspresso\core\services\loaders\Loader'                                                 => EE_Dependency_Map::load_from_cache,
-        'EventEspresso\core\services\request\Request'                                                => EE_Dependency_Map::load_from_cache,
-        'EventEspresso\core\services\json\JsonDataNode'                                              => EE_Dependency_Map::load_from_cache,
-        'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface' => EE_Dependency_Map::load_from_cache,
+        'EE_Dependency_Map'                             => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\services\loaders\Loader'    => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\services\request\Request'   => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\services\json\JsonDataNode' => EE_Dependency_Map::load_from_cache,
+        RouteMatchSpecificationInterface::class         => EE_Dependency_Map::load_from_cache,
     ];
 
 
@@ -154,6 +156,12 @@ abstract class Route implements RouteInterface
     protected function dataNodeClass(): string
     {
         return '';
+    }
+
+
+    public function getCapCheck()
+    {
+        return new PublicCapabilities('', 'access Event Espresso route');
     }
 
 

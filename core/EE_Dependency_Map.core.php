@@ -776,10 +776,11 @@ class EE_Dependency_Map
                 null,
             ],
             'EventEspresso\core\services\routing\RouteHandler'                                                            => [
-                'EventEspresso\core\services\json\JsonDataNodeHandler' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader'           => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\request\Request'          => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\routing\RouteCollection'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\json\JsonDataNodeHandler'                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'                          => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'                         => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\routing\RouteCollection'                 => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\json\JsonDataNodeHandler'                                                        => [
                 'EventEspresso\core\services\json\JsonDataNodeValidator' => EE_Dependency_Map::load_from_cache,

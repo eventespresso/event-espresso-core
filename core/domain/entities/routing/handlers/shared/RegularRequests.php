@@ -3,6 +3,18 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
+use EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute;
+use EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventEditor;
+use EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin;
+use EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin;
+use EventEspresso\core\domain\entities\routing\handlers\admin\GutenbergEditor;
+use EventEspresso\core\domain\entities\routing\handlers\admin\PersonalDataRequests;
+use EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests;
+use EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage;
+use EventEspresso\core\domain\entities\routing\handlers\frontend\FrontendRequests;
+use EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests;
+use EventEspresso\core\services\assets\AssetManifestFactory;
+use EventEspresso\core\services\assets\BaristaFactory;
 use EventEspresso\core\services\routing\PrimaryRoute;
 use EventEspresso\core\services\routing\Route;
 
@@ -116,33 +128,32 @@ class RegularRequests extends PrimaryRoute
      */
     protected function registerDependencies()
     {
-        $admin_dependencies = ['EE_Admin_Config' => EE_Dependency_Map::load_from_cache] + Route::$default_dependencies;
-        $public_dependencies = ['EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache] + Route::$default_dependencies;
-        $default_with_barista = [
-                                    'EventEspresso\core\services\assets\BaristaFactory' => EE_Dependency_Map::load_from_cache,
-                                ] + Route::$default_dependencies;
-        $default_with_manifest = [
-                                     'EventEspresso\core\services\assets\AssetManifestFactory' => EE_Dependency_Map::load_from_cache,
-                                 ] + Route::$default_dependencies;
+        $public = ['EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache] + Route::getDefaultDependencies();
+
+        $default_with_barista  = [BaristaFactory::class => EE_Dependency_Map::load_from_cache] +
+                                 Route::getDefaultDependencies();
+        $default_with_manifest = [AssetManifestFactory::class => EE_Dependency_Map::load_from_cache] +
+                                 Route::getDefaultDependencies();
+
         $default_routes = [
             // default dependencies
-            'EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests'          => Route::$default_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests' => Route::$default_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\RestApiRequests'     => Route::$default_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\SessionRequests'     => Route::$default_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat'  => Route::$default_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\AssetRequests'       => $default_with_barista,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\GQLRequests'         => $default_with_manifest,
+            PueRequests::class          => Route::getDefaultDependencies(),
+            ShortcodeRequests::class    => Route::getDefaultDependencies(),
+            RestApiRequests::class      => Route::getDefaultDependencies(),
+            SessionRequests::class      => Route::getDefaultDependencies(),
+            WordPressHeartbeat::class   => Route::getDefaultDependencies(),
+            AssetRequests::class        => $default_with_barista,
+            GQLRequests::class          => $default_with_manifest,
             // admin dependencies
-            'EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute'           => $admin_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin'  => $admin_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventEditor'  => $admin_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin'  => $admin_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\admin\GutenbergEditor'      => $admin_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage' => $admin_dependencies,
+            AdminRoute::class           => AdminRoute::getDefaultDependencies(),
+            EspressoEventsAdmin::class  => AdminRoute::getDefaultDependencies(),
+            EspressoEventEditor::class  => AdminRoute::getDefaultDependencies(),
+            EspressoLegacyAdmin::class  => AdminRoute::getDefaultDependencies(),
+            GutenbergEditor::class      => AdminRoute::getDefaultDependencies(),
+            WordPressPluginsPage::class => AdminRoute::getDefaultDependencies(),
             // public dependencies
-            'EventEspresso\core\domain\entities\routing\handlers\admin\PersonalDataRequests' => $public_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\frontend\FrontendRequests'  => $public_dependencies,
+            PersonalDataRequests::class => $public,
+            FrontendRequests::class     => $public,
         ];
         foreach ($default_routes as $route => $dependencies) {
             $this->dependency_map->registerDependencies($route, $dependencies);
