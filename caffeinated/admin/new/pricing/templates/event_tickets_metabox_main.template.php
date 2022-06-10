@@ -17,6 +17,7 @@
  */
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
+use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
 
 ?>
 
@@ -149,18 +150,20 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     <div class="available-tickets-container">
         <h3 class="event-tickets-datetimes-title">
             <span data-target=".event-tickets-container"
-                class="clickable ee-collapsible<?php echo sanitize_html_class($ee_collapsible_status); ?>">
+                class="clickable ee-collapsible <?php echo sanitize_html_class($ee_collapsible_status); ?>">
                 <span class="ee-icon ee-icon-tickets ee-icon-size-20"></span>
                 <?php esc_html_e('Available Tickets', 'event_espresso'); ?>
             </span>
         </h3>
-        <div class="event-tickets-container ee-create-ticket-button"<?php echo esc_attr($show_tickets_container); ?>>
+        <div class="event-tickets-container ee-create-ticket-button"
+            <?php echo AttributesSanitizer::clean($show_tickets_container, AllowedTags::getAllowedTags()); ?>
+        >
             <button class="ee-create-ticket-button button button--secondary ee-create-button" data-context="ticket">
                 <?php esc_html_e('Create Ticket', 'event_espresso'); ?>
             </button>
         </div>
         <div style="clear:both"></div>
-        <div class="event-tickets-container"<?php echo $show_tickets_container; ?>>
+        <div class="event-tickets-container" <?php echo AttributesSanitizer::clean($show_tickets_container, AllowedTags::getAllowedTags()); ?>>
             <table class="ticket-table">
                 <thead>
                     <tr valign="top">

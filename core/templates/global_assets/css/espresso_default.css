@@ -1038,7 +1038,9 @@ input.ee-register-button {
 .submit-this-form,
 .display-the-hidden,
 .hide-the-displayed,
-.ee-form-cancel-new-state-lnk {
+.ee-form-add-new-state-lnk,
+.ee-form-cancel-new-state-lnk,
+.ee-form-add-new-state-submit {
 	cursor: pointer;
 }
 .espresso-txn-status-icon {
@@ -1055,15 +1057,31 @@ input.ee-register-button {
 }
 .ee-gmap-wrapper .gmnoprint img { max-width:none; }
 
+.ee-form-add-new-state-lnk {
+    display: inline-block;
+    margin-block-end: 1rem;
+}
+
 .ee-form-add-new-state-dv {
-	padding:1.5em 1.5em .5em;
-	background: #f8f8f8;
-	color: #444;
+	background:hsla(0deg 0% 2.5% / 2.5%);
+    margin-block: 1rem;
+	padding:1.5em;
+}
+
+.ee-form-add-new-state-dv h6 {
+    margin-block-start: 0.25rem;
 }
 
 .ee-form-add-new-state-dv li {
 	line-height: 1.2em;
 	margin:0 0 .5em;
+}
+
+.ee-form-add-new-state-dv .new-state-country-input-dv,
+.ee-form-add-new-state-dv .new-state-state-input-dv,
+.ee-form-add-new-state-dv .new-state-abbrv-input-dv,
+.ee-form-add-new-state-dv .ee-form-add-new-state-submit-dv {
+    padding-block: 0.5rem;
 }
 
 .ee-really-important-notice-dv {

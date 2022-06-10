@@ -71,7 +71,7 @@
         <span data-context="datetime" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
               class="<?php echo esc_attr($clone_icon); ?> clickable"></span>
         <span data-context="datetime" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
-              class="<?php echo esc_attr($trash_icon); ?> clickable"<?php echo $show_trash; ?>></span>
+              class="<?php echo esc_attr($trash_icon); ?> clickable" style="<?php echo esc_attr($show_trash); ?>"></span>
         <?php if ($reg_list_url !== '') : ?>
             <a href="<?php echo esc_url_raw($reg_list_url); ?>"
                title="<?php esc_attr_e('View registrations for this datetime.', 'event_espresso'); ?>"

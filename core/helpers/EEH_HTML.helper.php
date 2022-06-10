@@ -584,8 +584,8 @@ class EEH_HTML
 
 
     /**
-     * Generates HTML <label></label> tags, inserts content, and adds any passed attributes
-     * usage: echo EEH_HTML::span( 'this is some inline text' );
+     * Generates HTML <a href="url">text</a> tags, inserts content, and adds any passed attributes
+     * usage: echo EEH_HTML::link( 'domain.com', 'this is a link' );
      *
      * @access public
      * @param string $href URL to link to
@@ -607,6 +607,36 @@ class EEH_HTML
         $attributes .= ! empty($title) ? ' title="' . esc_attr($title) . '"' : '';
         $attributes .= ! empty($other_attributes) ? ' ' . $other_attributes : '';
         return "<a{$attributes}>{$link_text}</a>";
+    }
+
+
+
+    /**
+     * Generates HTML <button>text</button> tags, inserts content, and adds any passed attributes
+     * usage: echo EEH_HTML::button( 'this is a button' );
+     *
+     * @param string $btn_text - the text that will become "hyperlinked"
+     * @param string $class - html class attribute
+     * @param string $aria_label - aria-label attribute
+     * @param string $id - html id attribute
+     * @param string $style - html style attribute for applying inline styles
+     * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+     * @return string
+     */
+    public static function button(
+        $btn_text = '',
+        $class = '',
+        $aria_label = '',
+        $id = '',
+        $style = '',
+        $other_attributes = ''
+    ) {
+        $attributes = ! empty($aria_label) ? ' aria-label="' . $aria_label . '"' : '';
+        $attributes .= ! empty($id) ? ' id="' . EEH_HTML::sanitize_id($id) . '"' : '';
+        $attributes .= ! empty($class) ? ' class="' . $class . '"' : '';
+        $attributes .= ! empty($style) ? ' style="' . $style . '"' : '';
+        $attributes .= ! empty($other_attributes) ? ' ' . $other_attributes : '';
+        return "<button type='button' {$attributes}>{$btn_text}</button>";
     }
 
 

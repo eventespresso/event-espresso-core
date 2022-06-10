@@ -241,7 +241,7 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
         ></span>
         <span class="<?php echo esc_attr($trash_icon); ?>"
               data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
-              data-context="ticket"<?php echo $trash_hidden; ?>
+              data-context="ticket" style="<?php echo esc_attr($trash_hidden); ?>"
         ></span>
         <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle"></span>
     </td>
@@ -253,7 +253,7 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
     <td colspan="9">
     <?php } ?>
         <fieldset id="fieldset-edit-ticketrow-<?php echo esc_attr($tkt_row); ?>"
-                  class="ticket-fieldset"<?php echo $display_edit_tkt_row; ?>
+                  class="ticket-fieldset" style="<?php echo esc_attr($display_edit_tkt_row); ?>"
         >
             <legend></legend>
             <input type="hidden"
@@ -399,7 +399,7 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                 <button class="button button--secondary ee-create-button ee-price-create-button"
                         data-context="price-create"
                         data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
-                        <?php echo $show_price_mod_button; ?>
+                        style="<?php echo esc_attr($show_price_mod_button); ?>">
                 >
                     <?php esc_html_e('Add Price Modifier', 'event_espresso'); ?>
                 </button>
@@ -435,7 +435,8 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                                class="TKT-taxable-checkbox"
                                id="edit-ticket-TKT_taxable-<?php echo esc_attr($tkt_row); ?>"
                                name="archived_ticket[<?php echo esc_attr($tkt_row); ?>][TKT_taxable]"
-                               value="1"<?php echo $TKT_taxable; ?>
+                               value="1"
+                               <?php echo esc_attr($TKT_taxable); ?>
                         />
                         <?php else : ?>
                         <input type='checkbox'
@@ -443,7 +444,7 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                                id="edit-ticket-TKT_taxable-<?php echo esc_attr($tkt_row); ?>"
                                name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_taxable]"
                                value="1"
-                               <?php echo $TKT_taxable; ?>
+                               <?php echo esc_attr($TKT_taxable); ?>
                         />
                         <?php endif; ?>
                         <?php esc_html_e('This ticket is taxable.', 'event_espresso'); ?>
@@ -453,11 +454,11 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
             </div>
 
             <div class="price-table-container">
-                <h4 class="tickets-heading price-table-info"<?php echo $show_price_modifier; ?>>
+                <h4 class="tickets-heading price-table-info" style="<?php echo esc_attr($show_price_modifier); ?>">
                     <?php esc_html_e('Price Modifiers', 'event_espresso'); ?>
                 </h4>
                 <table class="price-table">
-                    <thead class="price-table-info"<?php echo $show_price_modifier; ?>>
+                    <thead class="price-table-info" style="<?php echo esc_attr($show_price_modifier); ?>">
                     <tr>
                         <td><?php esc_html_e('Price Type', 'event_espresso'); ?></td>
                         <td><?php esc_html_e('Name', 'event_espresso'); ?></td>
@@ -468,11 +469,11 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                         <td></td>
                     </tr>
                     </thead>
-                    <tbody class="ticket-price-rows price-table-info"<?php echo $show_price_modifier; ?>>
+                    <tbody class="ticket-price-rows price-table-info" style="<?php echo esc_attr($show_price_modifier); ?>">
                     <?php echo wp_kses($ticket_price_rows, AllowedTags::getWithFormTags()); ?>
                     </tbody>
                     <tfoot>
-                    <tr class="price-subtotal-row TKT-taxes-display"<?php echo $display_subtotal; ?>>
+                    <tr class="price-subtotal-row TKT-taxes-display" style="<?php echo esc_attr($display_subtotal); ?>">
                         <td colspan="4" class="ee-numeric">
                             <span class="TKT-taxable-subtotal-label">
                                 <strong><?php esc_html_e('Subtotal', 'event_espresso'); ?></strong>

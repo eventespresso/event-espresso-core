@@ -12,6 +12,7 @@ namespace EventEspresso\core\services\request\sanitizers;
 class ServerSanitizer
 {
     /**
+     * @param string $key
      * @param string $value
      * @return mixed|string
      */

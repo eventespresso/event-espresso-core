@@ -1242,8 +1242,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     REG_ADMIN_URL
                 ),
         );
-        $template_args['show_trash'] = count($all_datetimes) === 1 && $template_args['trash_icon'] !== 'dashicons dashicons-lock'
-            ? ' style="display:none"'
+        $template_args['show_trash'] = count($all_datetimes) === 1
+                                       && $template_args['trash_icon'] !== 'dashicons dashicons-lock'
+            ? 'display:none'
             : '';
         // allow filtering of template args at this point.
         $template_args = apply_filters(
@@ -1285,7 +1286,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'event_datetimes_name'              => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
             'DTT_description'                   => $default ? '' : $datetime->get_f('DTT_description'),
             'datetime_tickets_list'             => $default ? '<li class="hidden"></li>' : '',
-            'show_tickets_row'                  => ' style="display:none;"',
+            'show_tickets_row'                  => 'display:none;',
             'add_new_datetime_ticket_help_link' => EEH_Template::get_help_tab_link(
                 'add_new_ticket_via_datetime',
                 $this->_adminpage_obj->page_slug,
@@ -1462,7 +1463,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             $TKT_taxable = '';
         } else {
             $TKT_taxable = $ticket->taxable()
-                ? ' checked'
+                ? 'checked'
                 : '';
         }
         if ($default) {
@@ -1485,7 +1486,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'TKT_order'                     => $default ? 'TICKETNUM' : $ticket_row,
             // on initial page load this will always be the correct order.
             'tkt_status_class'              => $ticket_status_class,
-            'display_edit_tkt_row'          => ' style="display:none;"',
+            'display_edit_tkt_row'          => 'display:none;',
             'edit_tkt_expanded'             => '',
             'edit_tickets_name'             => $default ? 'TICKETNAMEATTR' : 'edit_tickets',
             'TKT_name'                      => $default ? '' : $ticket->get_f('TKT_name'),
@@ -1544,11 +1545,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'TKT_base_price_ID'             => $default || ! $base_price instanceof EE_Price ? 0 : $base_price->ID(),
             'show_price_modifier'           => count($prices) > 1 || ($default && $count_price_mods > 0)
                 ? ''
-                : ' style="display:none;"',
+                : 'display:none;',
             'show_price_mod_button'         => count($prices) > 1
                                                || ($default && $count_price_mods > 0)
                                                || (! $default && $ticket->deleted())
-                ? ' style="display:none;"'
+                ? 'display:none;'
                 : '',
             'total_price_rows'              => count($prices) > 1 ? count($prices) : 1,
             'ticket_datetimes_list'         => $default ? '<li class="hidden"></li>' : '',
@@ -1559,7 +1560,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'TKT_taxable'                   => $TKT_taxable,
             'display_subtotal'              => $ticket instanceof EE_Ticket && $ticket->taxable()
                 ? ''
-                : ' style="display:none"',
+                : 'display:none;',
             'price_currency_symbol'         => EE_Registry::instance()->CFG->currency->sign,
             'TKT_subtotal_amount_display'   => EEH_Template::format_currency(
                 $ticket_subtotal,
@@ -1581,8 +1582,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 ? ''
                 : 'clone-icon ee-icon ee-icon-clone clickable',
         );
-        $template_args['trash_hidden'] = count($all_tickets) === 1 && $template_args['trash_icon'] !== 'dashicons dashicons-lock'
-            ? ' style="display:none"'
+        $template_args['trash_hidden'] = count($all_tickets) === 1
+                                         && $template_args['trash_icon'] !== 'dashicons dashicons-lock'
+            ? 'display:none'
             : '';
         // handle rows that should NOT be empty
         if (empty($template_args['TKT_start_date'])) {
@@ -1696,7 +1698,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             $template_args = array(
                 'display_tax'       => ! empty($ticket) && $ticket->get('TKT_taxable')
                     ? ''
-                    : ' style="display:none;"',
+                    : 'display:none;',
                 'tax_id'            => $tax->ID(),
                 'tkt_row'           => $ticket_row,
                 'tax_label'         => $tax->get('PRC_name'),
@@ -1791,21 +1793,21 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
             'show_plus_or_minus'    => $default && empty($price)
                 ? ''
-                : ' style="display:none;"',
+                : 'display:none;',
             'show_plus'             => ($default && empty($price)) || ($price->is_discount() || $price->is_base_price())
-                ? ' style="display:none;"'
+                ? 'display:none;'
                 : '',
             'show_minus'            => ($default && empty($price)) || ! $price->is_discount()
-                ? ' style="display:none;"'
+                ? 'display:none;'
                 : '',
             'show_currency_symbol'  => ($default && empty($price)) || $price->is_percent()
-                ? ' style="display:none"'
+                ? 'display:none'
                 : '',
             'PRC_amount'            => $default && empty($price)
                 ? 0
                 : $price->get_pretty('PRC_amount', 'localized_float'),
             'show_percentage'       => ($default && empty($price)) || ! $price->is_percent()
-                ? ' style="display:none;"'
+                ? 'display:none;'
                 : '',
             'show_trash_icon'       => $show_trash
                 ? ''

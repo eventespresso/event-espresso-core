@@ -18,7 +18,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 <tr id="advanced-dtt-edit-row-<?php echo esc_attr($dtt_row); ?>" class="advanced-dtt-edit-row">
     <td colspan="7">
         <section id="edit-event-datetime-tickets-<?php echo esc_attr($dtt_row); ?>"
-                 class="datetime-tickets-edit"<?php echo $show_tickets_row; ?>>
+                 class="datetime-tickets-edit" style="<?php echo esc_attr($show_tickets_row); ?>">
             <div class="datetime-description-container">
                 <textarea name="<?php echo esc_attr($event_datetimes_name); ?>[<?php echo esc_attr($dtt_row); ?>][DTT_description]"
                           class="event-datetime-DTT_description ee-full-textarea-inp"

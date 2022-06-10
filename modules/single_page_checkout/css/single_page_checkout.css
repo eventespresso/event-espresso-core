@@ -142,6 +142,11 @@
 
 
 /*** REG STEPS ***/
+input.ee-reg-qstn,
+select.ee-reg-qstn,
+textarea.ee-reg-qstn {
+    min-height: 2rem;
+}
 
 #spco-attendee_information-pg {
     margin:0 0 2em;
