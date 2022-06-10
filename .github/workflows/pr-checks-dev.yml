@@ -7,6 +7,10 @@ on:
             - dev
 
 jobs:
+    concurrency:
+        group: ${{ github.ref }}
+        cancel-in-progress: true
+
     pr-branch:
         shell: bash
         run: echo "${GITHUB_REF_NAME}"
