@@ -330,4 +330,8 @@ jQuery(document).ready(function($) {
 	$wpContent.on('mouseleave', '.ee-aria-tooltip', function () {
 		$(this).find('.ee-tooltip').fadeOut(125).remove();
 	});
+
+	$('.ee-list-table-filter-submit').click(function () {
+		$('#ee-list-table-use-filters').val('yes');
+	});
 });

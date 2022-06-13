@@ -486,23 +486,30 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         if (empty($filters)) {
             return;
         }
+
+        $filters_html = '';
         foreach ($filters as $filter) {
-            echo wp_kses($filter, AllowedTags::getWithFormTags());
+            $filters_html .= wp_kses($filter, AllowedTags::getWithFormTags());
         }
-        echo '
-        <span class="ee-list-table-filters__submit-buttons">';
-        // add filter button at end
-        echo '<input type="submit" class="button button--secondary" value="'
-             . esc_html__('Filter', 'event_espresso')
-             . '" id="post-query-submit" />';
-        // add reset filters button at end
-        echo '<a class="button button--secondary"  href="'
-             . esc_url_raw($this->_admin_page->get_current_page_view_url())
-             . '">'
-             . esc_html__('Reset Filters', 'event_espresso')
-             . '</a>';
-        echo '
-        </span>';
+        $filter_submit_btn_text = esc_html__('Filter', 'event_espresso');
+        $filter_reset_btn_text = esc_html__('Reset Filters', 'event_espresso');
+        $filter_reset_btn_url = esc_url_raw($this->_admin_page->get_current_page_view_url());
+
+        echo "
+        <div class='ee-list-table-filters actions alignleft'>
+           $filters_html
+            <span class='ee-list-table-filters__submit-buttons'>
+                <input type='submit'
+                       class='ee-list-table-filter-submit button button--secondary'
+                       id='post-query-submit'
+                       value='$filter_submit_btn_text'
+                />
+                <input type='hidden' id='ee-list-table-use-filters' name='use_filters' value='no' />
+                <a class='ee-list-table-filter-reset button button--secondary' href='$filter_reset_btn_url'>
+                    $filter_reset_btn_text
+                </a>
+            </span>
+        </div>";
     }
 
 
@@ -804,8 +811,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         } else {
             echo '<div class="list-table-bottom-buttons alignleft actions">';
             foreach ($this->_bottom_buttons as $type => $action) {
-                $route         = isset($action['route']) ? $action['route'] : '';
-                $extra_request = isset($action['extra_request']) ? $action['extra_request'] : '';
+                $route         = $action['route'] ?? '';
+                $extra_request = $action['extra_request'] ?? '';
                 // already escaped
                 echo wp_kses($this->_admin_page->get_action_link_or_button(
                     $route,

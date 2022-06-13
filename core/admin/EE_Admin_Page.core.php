@@ -1120,12 +1120,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // strip _wp_http_referer from the server REQUEST_URI
         // else it grows in length on every submission due to recursion,
         // ultimately causing a "Request-URI Too Large" error
-        $request_uri = remove_query_arg(
+        $this->request->unSetRequestParam('_wp_http_referer');
+        $this->request->unSetServerParam('_wp_http_referer');
+        $cleaner_request_uri = remove_query_arg(
             '_wp_http_referer',
             wp_unslash($this->request->getServerParam('REQUEST_URI'))
         );
-        // set new value in both our Request object and the super global
-        $this->request->setServerParam('REQUEST_URI', $request_uri, true);
+        $this->request->setRequestParam('_wp_http_referer', $cleaner_request_uri, true);
+        $this->request->setServerParam('REQUEST_URI', $cleaner_request_uri, true);
         if (! empty($func)) {
             if (is_array($func)) {
                 [$class, $method] = $func;
@@ -3608,7 +3610,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $action,
         $type = 'add',
         $extra_request = [],
-        $class = 'button--primary',
+        $class = 'button button--primary',
         $base_url = '',
         $exclude_nonce = false
     ) {

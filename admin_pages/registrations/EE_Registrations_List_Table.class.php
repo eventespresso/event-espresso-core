@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\RegistrationsCsvReportParams;
 use EventEspresso\core\domain\services\capabilities\user_caps\RegistrationsListTableUserCapabilities;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -82,14 +83,23 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $return_url          = $this->getReturnUrl();
+        $req_data            = $this->_admin_page->get_request_data();
+
         $this->_wp_list_args = [
             'singular' => esc_html__('registration', 'event_espresso'),
             'plural'   => esc_html__('registrations', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         ];
-        $req_data            = $this->_admin_page->get_request_data();
-        if (isset($req_data['event_id'])) {
+        $ID_column_name      = esc_html__('ID', 'event_espresso');
+        $ID_column_name      .= ' : <span class="show-on-mobile-view-only" style="float:none">';
+        $ID_column_name      .= esc_html__('Registrant Name', 'event_espresso');
+        $ID_column_name      .= '</span> ';
+
+        $EVT_ID = isset($req_data['event_id']) ? $req_data['event_id'] : 0;
+        $DTT_ID = isset($req_data['DTT_ID']) ? $req_data['DTT_ID'] : 0;
+
+        if ($EVT_ID) {
             $this->_columns        = [
                 'cb'               => '<input type="checkbox" />', // Render a checkbox instead of text
                 'id'               => esc_html__('ID', 'event_espresso'),
@@ -102,19 +112,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'TXN_paid'         => esc_html__('Paid', 'event_espresso'),
                 'actions'          => $this->actionsColumnHeader(),
             ];
-            $route_details = [
-                'route'         => 'registrations_report',
-                'extra_request' => [
-                    'EVT_ID'     => $this->_req_data['event_id'],
-                    'return_url' => $return_url,
-                ]
-            ];
-            if (isset($req_data['datetime_id']) && $req_data['datetime_id']) {
-                $route_details['extra_request']['DTT_ID'] = $req_data['datetime_id'];
-                $this->_bottom_buttons['report_datetime'] = $route_details;
-            } else {
-                $this->_bottom_buttons['report'] = $route_details;
-            }
         } else {
             $this->_columns        = [
                 'cb'               => '<input type="checkbox" />', // Render a checkbox instead of text
@@ -127,35 +124,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 '_REG_paid'        => esc_html__('Paid', 'event_espresso'),
                 'actions'          => $this->actionsColumnHeader(),
             ];
-            $this->_bottom_buttons = [
-                'report_all' => [
-                    'route'         => 'registrations_report',
-                    'extra_request' => [
-                        'return_url' => $return_url,
-                    ],
-                ],
-            ];
         }
-        $this->_bottom_buttons['report_filtered'] = [
-            'route'         => 'registrations_report',
-            'extra_request' => [
-                'use_filters' => true,
-                'return_url'  => $return_url,
-            ],
-        ];
-        $filters                                  = array_diff_key(
-            $this->_req_data,
-            array_flip(
-                [
-                    'page',
-                    'action',
-                    'default_nonce',
-                ]
-            )
-        );
-        if (! empty($filters)) {
-            $this->_bottom_buttons['report_filtered']['extra_request']['filters'] = $filters;
+
+        $csv_report = RegistrationsCsvReportParams::getRequestParams($return_url, $req_data, $EVT_ID, $DTT_ID);
+        if (! empty($csv_report)) {
+            $this->_bottom_buttons['csv_reg_report'] = $csv_report;
         }
+
         $this->_primary_column   = 'id';
         $this->_sortable_columns = [
             '_REG_date'     => ['_REG_date' => true],   // true means its already sorted

@@ -69,34 +69,31 @@ class RegistrationsReport extends JobHandlerFile
             $this->get_filename()
         );
         $job_parameters->add_extra_data('filepath', $filepath);
+
         if ($job_parameters->request_datum('use_filters', false)) {
             $query_params = maybe_unserialize($job_parameters->request_datum('filters', []));
         } else {
-            $query_params = apply_filters(
-                'FHEE__EE_Export__report_registration_for_event',
+            $query_params = [
                 [
-                    [
-                        'OR' => [
-                            // don't include registrations from failed or abandoned transactions...
-                            'Transaction.STS_ID' => [
-                                'NOT IN',
-                                [
-                                    EEM_Transaction::failed_status_code,
-                                    EEM_Transaction::abandoned_status_code,
-                                ],
+                    'OR'                 => [
+                        // don't include registrations from failed or abandoned transactions...
+                        'Transaction.STS_ID' => [
+                            'NOT IN',
+                            [
+                                EEM_Transaction::failed_status_code,
+                                EEM_Transaction::abandoned_status_code,
                             ],
-                            // unless the registration is approved,
-                            // in which case include it regardless of transaction status
-                            'STS_ID' => EEM_Registration::status_id_approved,
                         ],
-                        'Ticket.TKT_deleted' => ['IN', [true, false]],
+                        // unless the registration is approved,
+                        // in which case include it regardless of transaction status
+                        'STS_ID'             => EEM_Registration::status_id_approved,
                     ],
-                    'order_by'   => ['Transaction.TXN_ID' => 'asc', 'REG_count' => 'asc'],
-                    'force_join' => ['Transaction', 'Ticket', 'Attendee'],
-                    'caps'       => EEM_Base::caps_read_admin,
+                    'Ticket.TKT_deleted' => ['IN', [true, false]],
                 ],
-                $event_id
-            );
+                'order_by'   => ['Transaction.TXN_ID' => 'asc', 'REG_count' => 'asc'],
+                'force_join' => ['Transaction', 'Ticket', 'Attendee'],
+                'caps'       => EEM_Base::caps_read_admin,
+            ];
             if ($event_id) {
                 $query_params[0]['EVT_ID'] = $event_id;
             } else {
@@ -107,6 +104,13 @@ class RegistrationsReport extends JobHandlerFile
         if (! isset($query_params['force_join'])) {
             $query_params['force_join'] = ['Event', 'Transaction', 'Ticket', 'Attendee'];
         }
+
+        $query_params = apply_filters(
+            'FHEE__EE_Export__report_registration_for_event',
+            $query_params,
+            $event_id
+        );
+
         $job_parameters->add_extra_data('query_params', $query_params);
         $question_labels = $this->_get_question_labels($query_params);
         $job_parameters->add_extra_data('question_labels', $question_labels);

@@ -226,10 +226,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'add-registrant'      => esc_html__('Add New Registration', 'event_espresso'),
                 'add-attendee'        => esc_html__('Add Contact', 'event_espresso'),
                 'edit'                => esc_html__('Edit Contact', 'event_espresso'),
-                'report'              => esc_html__('Event Registrations CSV Report', 'event_espresso'),
-                'report_datetime'     => esc_html__('Datetime Registrations CSV Report', 'event_espresso'),
-                'report_all'          => esc_html__('All Registrations CSV Report', 'event_espresso'),
-                'report_filtered'     => esc_html__('Filtered CSV Report', 'event_espresso'),
+                'csv_reg_report'      => esc_html__('Registrations CSV Report', 'event_espresso'),
                 'contact_list_report' => esc_html__('Contact List Report', 'event_espresso'),
                 'contact_list_export' => esc_html__('Export Data', 'event_espresso'),
             ],
@@ -259,7 +256,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $ATT_ID             = $this->request->getRequestParam('post', $ATT_ID, 'int');
         $this->_page_routes = [
             'default'                             => [
-                'func'       => '_registrations_overview_list_table',
+                'func'       => [$this, '_registrations_overview_list_table'],
                 'capability' => 'ee_read_registrations',
             ],
             'view_registration'                   => [
@@ -521,7 +518,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_send_message',
             ],
             'registrations_report'                => [
-                'func'       => '_registrations_report',
+                'func'       => [$this, '_registrations_report'],
                 'noheader'   => true,
                 'capability' => 'ee_read_registrations',
             ],
@@ -1265,7 +1262,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         if ($today) {
             $this->request->setRequestParam('status', 'today');
         }
-        $query_params = $this->_get_registration_query_parameters($this->request->requestParams(), $per_page, $count);
+        $query_params = $this->_get_registration_query_parameters([], $per_page, $count);
         /**
          * Override the default groupby added by EEM_Base so that sorts with multiple order bys work as expected
          *
@@ -3230,6 +3227,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $EVT_ID = $this->request->requestParamIsSet('EVT_ID')
             ? $this->request->getRequestParam('EVT_ID', 0, DataType::INT)
             : null;
+
         if (! defined('EE_USE_OLD_CSV_REPORT_CLASS')) {
             $return_url = $this->request->getRequestParam('return_url', '', DataType::URL);
             $filters = $this->request->getRequestParam('filters', [], DataType::STRING, true);

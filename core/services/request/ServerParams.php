@@ -108,6 +108,8 @@ class ServerParams
      */
     public function unSetServerParam(string $key, bool $unset_from_global_too = false)
     {
+        // because unset may not actually remove var
+        $this->server[ $key ] = null;
         unset($this->server[ $key ]);
         if ($unset_from_global_too) {
             unset($_SERVER[ $key ]);

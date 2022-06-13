@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\admin\registrations\list_table;
 
 use EE_Error;
 use EEH_DTT_Helper;
+use EEM_Base;
 use EEM_Registration;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -56,7 +57,9 @@ class QueryBuilder
         $this->request = $request;
         $this->registration_model = $registration_model;
         foreach ($extra_request_params as $key => $value) {
-            $this->request->setRequestParam($key, $value);
+            if (! $this->request->requestParamIsSet($key)) {
+                $this->request->setRequestParam($key, $value);
+            }
         }
         $this->view = $this->request->getRequestParam('status', '');
         $this->where_params = [];
@@ -78,7 +81,7 @@ class QueryBuilder
     {
         $query_params = [
             0                          => $this->getWhereClause(),
-            'caps'                     => EEM_Registration::caps_read_admin,
+            'caps'                     => EEM_Base::caps_read_admin,
             'default_where_conditions' => 'this_model_only',
         ];
         if (! $count_query) {

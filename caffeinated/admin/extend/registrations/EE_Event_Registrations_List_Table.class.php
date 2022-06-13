@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\services\admin\registrations\DatetimesForEventCheckIn;
+use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\RegistrationsCsvReportParams;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -71,6 +72,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected $hide_upcoming;
 
+    /**
+     * @var   array
+     * @since $VID:$
+     */
+    protected $_status;
+
 
     /**
      * EE_Event_Registrations_List_Table constructor.
@@ -123,18 +130,27 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
     protected function _set_properties()
     {
+        $return_url = $this->getReturnUrl();
+
+        $EVT_ID = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : 0;
+        $DTT_ID = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : 0;
+
         $this->_wp_list_args = [
             'singular' => esc_html__('registrant', 'event_espresso'),
             'plural'   => esc_html__('registrants', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         ];
+        $columns             = [];
 
-        $this->_columns      = [
-            'cb' => '<input type="checkbox" />', // Render a checkbox instead of text
-            '_REG_att_checked_in' => esc_html__('Check In', 'event_espresso'),
+        $this->_columns = [
+            '_REG_att_checked_in' => '<span class="dashicons dashicons-yes ee-icon-size-18"></span>',
             'ATT_name'            => esc_html__('Registrant', 'event_espresso'),
             'ATT_email'           => esc_html__('Email Address', 'event_espresso'),
             'Event'               => esc_html__('Event', 'event_espresso'),
@@ -143,16 +159,21 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'TXN_paid'            => esc_html__('Paid', 'event_espresso'),
             'TXN_total'           => esc_html__('Total', 'event_espresso'),
         ];
-        $this->_primary_column = '_REG_att_checked_in';
-
         // Add/remove columns when an event has been selected
-        if ($this->event_id) {
+        if (! empty($EVT_ID)) {
             // Render a checkbox column
-            $this->_columns['cb'] = '<input type="checkbox" />';
+            $columns['cb']              = '<input type="checkbox" />';
             $this->_has_checkbox_column = true;
             // Remove the 'Event' column
             unset($this->_columns['Event']);
             $this->setBottomButtons();
+        }
+        $this->_columns        = array_merge($columns, $this->_columns);
+        $this->_primary_column = '_REG_att_checked_in';
+
+        $csv_report = RegistrationsCsvReportParams::getRequestParams($return_url, $this->_req_data, $EVT_ID, $DTT_ID);
+        if (! empty($csv_report)) {
+            $this->_bottom_buttons['csv_reg_report'] = $csv_report;
         }
 
         $this->_sortable_columns = [
@@ -173,59 +194,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 : ['ATT_fname' => true],
             'Event'    => ['Event.EVT_name' => false],
         ];
-
-        $this->_hidden_columns = [];
-    }
-
-
-    private function setBottomButtons()
-    {
-        if (
-            ! EE_Registry::instance()->CAP->current_user_can(
-                'ee_read_registrations',
-                'espresso_registrations_registrations_reports',
-                $this->event_id
-            )
-        ) {
-            return;
-        }
-
-        $return_url = $this->getReturnUrl();
-        $this->_bottom_buttons = [
-            'report' => [
-                'route'         => 'registrations_report',
-                'extra_request' =>
-                    [
-                        'EVT_ID'     => $this->event_id,
-                        'return_url' => $return_url,
-                    ],
-            ],
-        ];
-
-        $request_params = $this->request->requestParams();
-
-        $this->_bottom_buttons['report_filtered'] = [
-            'route'         => 'registrations_checkin_report',
-            'extra_request' => [
-                'use_filters' => true,
-                'filters'     => array_merge(
-                    [
-                        'EVT_ID' => $this->event_id,
-                    ],
-                    array_diff_key(
-                        $request_params,
-                        array_flip(
-                            [
-                                'page',
-                                'action',
-                                'default_nonce',
-                            ]
-                        )
-                    )
-                ),
-                'return_url'  => $return_url,
-            ],
-        ];
+        $this->_hidden_columns   = [];
+        $this->_evt              = EEM_Event::instance()->get_one_by_ID($EVT_ID);
+        $this->datetimes_for_event   = $this->_evt instanceof EE_Event ? $this->_evt->datetimes_ordered() : [];
     }
 
 
@@ -584,6 +555,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws EE_Error
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_ATT_email(EE_Registration $registration): string
     {

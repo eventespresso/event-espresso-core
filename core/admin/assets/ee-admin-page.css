@@ -746,6 +746,56 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
     top: 0;
 }
 
+.espresso-admin .tablenav,
+.espresso-admin .tablenav,
+.espresso-admin .tablenav .actions,
+.espresso-admin .tablenav .tablenav-pages  {
+    align-content: center;
+    align-items: center;
+    display: inline-flex;
+    flex-wrap: wrap;
+    height: auto;
+}
+.espresso-admin .tablenav {
+    display: flex;
+    padding-block: .5rem;
+    padding-inline: 0;
+    width: 100%;
+}
+.espresso-admin .tablenav .actions {
+    padding-block: .25rem;
+    padding-inline: 0;
+}
+.espresso-admin .tablenav .tablenav-pages {
+    margin-block: 0;
+    margin-inline-start: auto;
+    padding: .5rem;
+    padding-inline-start: 1rem;
+    padding-inline-end: 0;
+}
+
+.espresso-admin .tablenav > a,
+.espresso-admin .tablenav > span,
+.espresso-admin .tablenav > input,
+.espresso-admin .tablenav > select,
+.espresso-admin .tablenav > button,
+.espresso-admin .tablenav .actions > a,
+.espresso-admin .tablenav .actions > span,
+.espresso-admin .tablenav .actions > input,
+.espresso-admin .tablenav .actions > select,
+.espresso-admin .tablenav .actions > button,
+.espresso-admin .tablenav .actions > #doaction,
+.espresso-admin .tablenav .actions > #doaction2,
+.espresso-admin .tablenav .actions > #post-query-submit {
+    margin: .25rem;
+    margin-inline-end: .5rem;
+}
+
+.espresso-admin .tablenav div {
+    margin-inline-end: .5rem;
+}
+
+
 /*** Save buttons ***/
 .espresso-admin #major-publishing-actions {
     align-items: flex-end;
@@ -1762,9 +1812,9 @@ label.error {
 }
 
 /** LIST-TABLE-LEGEND **/
-
-.ee-list-table-legend-wrap {
-    font-size: 1rem;
+.ee-list-table-legend-container {
+    clear: both;
+    padding-block: .25rem;
 }
 
 .ee-list-table-legend {
@@ -4865,8 +4915,6 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 
-
-.espresso-admin .subsubsub,
 .espresso-admin .pagination-links .button,
 .espresso-admin .pagination-links .paging-input,
 .espresso-admin .pagination-links #table-paging,
