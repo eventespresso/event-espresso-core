@@ -67,7 +67,6 @@
 .espresso-admin .tablenav .actions > #doaction,
 .espresso-admin .tablenav .actions > #doaction2,
 .espresso-admin .tablenav .actions > #post-query-submit {
-    height: 2rem;
     margin: .25rem;
     margin-inline-end: .5rem;
 }
