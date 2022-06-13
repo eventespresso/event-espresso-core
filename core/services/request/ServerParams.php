@@ -123,7 +123,6 @@ class ServerParams
         if ($unset_from_global_too) {
             unset($_SERVER[ $key ]);
         }
-
     }
 
 
