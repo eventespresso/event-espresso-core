@@ -486,6 +486,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         if (empty($filters)) {
             return;
         }
+
+        echo '<div class="ee-list-table-filters actions alignleft">';
         foreach ($filters as $filter) {
             echo wp_kses($filter, AllowedTags::getWithFormTags());
         }
@@ -501,6 +503,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
              . '" style="display:inline-block">'
              . esc_html__('Reset Filters', 'event_espresso')
              . '</a>';
+        echo '</div>';
     }
 
 
