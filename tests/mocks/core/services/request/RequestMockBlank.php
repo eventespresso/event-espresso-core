@@ -225,4 +225,9 @@ class RequestMockBlank implements RequestInterface
     public function mergeRequestParams(array $request_params)
     {
     }
+
+
+    public function unSetServerParam($key, $unset_from_global_too = false)
+    {
+    }
 }
