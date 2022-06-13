@@ -295,6 +295,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                         [
                             'Event.EVT_ID' => $registration->event()->ID(),
                             $field_name    => true,
+                            'QSG_deleted'  => false
                         ],
                         'order_by' => ['QSG_order' => 'ASC'],
                     ],
