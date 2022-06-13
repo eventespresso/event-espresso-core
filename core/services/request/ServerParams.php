@@ -93,7 +93,10 @@ class ServerParams
      */
     public function setServerParam($key, $value)
     {
-        $this->server[ $key ] = $this->sanitizer->clean($key, $value);
+        $clean_value = $this->sanitizer->clean($key, $value);
+        $this->server[ $key ] = $clean_value;
+        // modify global too
+        $_SERVER[ $key ] = $clean_value;
     }
 
 
@@ -103,6 +106,24 @@ class ServerParams
     public function serverParamIsSet($key)
     {
         return isset($this->server[ $key ]);
+    }
+
+
+    /**
+     * remove param
+     *
+     * @param string $key
+     * @param bool   $unset_from_global_too
+     */
+    public function unSetServerParam($key, $unset_from_global_too = false)
+    {
+        // because unset may not actually remove var
+        $this->server[ $key ] = null;
+        unset($this->server[ $key ]);
+        if ($unset_from_global_too) {
+            unset($_SERVER[ $key ]);
+        }
+
     }
 
 

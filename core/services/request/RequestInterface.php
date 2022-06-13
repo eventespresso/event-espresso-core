@@ -63,6 +63,15 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
+     * remove param
+     *
+     * @param string $key
+     * @param bool   $unset_from_global_too
+     */
+    public function unSetServerParam($key, $unset_from_global_too = false);
+
+
+    /**
      * @param string $key
      * @return bool
      */

@@ -268,6 +268,18 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
+     * remove param
+     *
+     * @param      $key
+     * @param bool $unset_from_global_too
+     */
+    public function unSetServerParam($key, $unset_from_global_too = false)
+    {
+        $this->server_params->unSetServerParam($key, $unset_from_global_too);
+    }
+
+
+    /**
      * remove params
      *
      * @param array $keys
