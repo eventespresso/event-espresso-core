@@ -486,19 +486,24 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         if (empty($filters)) {
             return;
         }
+
+        echo '<div class="ee-list-table-filters actions alignleft">';
         foreach ($filters as $filter) {
             echo wp_kses($filter, AllowedTags::getWithFormTags());
         }
         // add filter button at end
-        echo '<input type="submit" class="button-secondary" value="'
+        echo '<input type="submit" class="ee-list-table-filter-submit button button--secondary" value="'
              . esc_html__('Filter', 'event_espresso')
              . '" id="post-query-submit" />';
+        echo '<input type="hidden" id="ee-list-table-use-filters" name="use_filters" value="no"/>';
+
         // add reset filters button at end
-        echo '<a class="button button-secondary"  href="'
+        echo '<a class="button button--secondary"  href="'
              . esc_url_raw($this->_admin_page->get_current_page_view_url())
              . '" style="display:inline-block">'
              . esc_html__('Reset Filters', 'event_espresso')
              . '</a>';
+        echo '</div>';
     }
 
 
@@ -801,14 +806,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         } else {
             echo '<div class="list-table-bottom-buttons alignleft actions">';
             foreach ($this->_bottom_buttons as $type => $action) {
-                $route         = isset($action['route']) ? $action['route'] : '';
-                $extra_request = isset($action['extra_request']) ? $action['extra_request'] : '';
+                $route         = $action['route'] ?? '';
+                $extra_request = $action['extra_request'] ?? '';
                 // already escaped
                 echo wp_kses($this->_admin_page->get_action_link_or_button(
                     $route,
                     $type,
                     $extra_request,
-                    'button button-secondary'
+                    'button button--secondary'
                 ), AllowedTags::getWithFormTags());
             }
             do_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen);

@@ -1263,14 +1263,16 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
      */
     public function get_event_attendees($per_page = 10, $count = false, $trash = false, $orderby = 'ATT_fname')
     {
-        // normalize some request params that get setup by the parent `get_registrations` method.
-        $request = $this->_req_data;
-        $request['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
-        $request['order'] = ! empty($this->_req_data['order']) ? $this->_req_data['order'] : 'ASC';
+        // set some defaults, these will get overridden if included in the actual request parameters
+        $defaults = [
+            'orderby' => $orderby,
+            'order' => 'ASC',
+        ];
         if ($trash) {
-            $request['status'] = 'trash';
+            $defaults['status'] = 'trash';
         }
-        $query_params = $this->_get_checkin_query_params_from_request($request, $per_page, $count);
+        $query_params = $this->_get_checkin_query_params_from_request($defaults, $per_page, $count);
+
         /**
          * Override the default groupby added by EEM_Base so that sorts with multiple order bys work as expected
          *

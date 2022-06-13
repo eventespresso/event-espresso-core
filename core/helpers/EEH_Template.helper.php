@@ -553,7 +553,7 @@ class EEH_Template
      * @param string $title
      * @return string the html output for the button
      */
-    public static function get_button_or_link($url, $label, $class = 'button-primary', $icon = '', $title = '')
+    public static function get_button_or_link($url, $label, $class = 'button button--primary', $icon = '', $title = '')
     {
         $icon_html = '';
         if (! empty($icon)) {

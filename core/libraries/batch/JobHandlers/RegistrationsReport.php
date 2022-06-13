@@ -57,43 +57,58 @@ class RegistrationsReport extends JobHandlerFile
     public function create_job(JobParameters $job_parameters)
     {
         $event_id = (int) $job_parameters->request_datum('EVT_ID', '0');
-        $DTT_ID = (int) $job_parameters->request_datum('DTT_ID', '0');
+        $DTT_ID   = (int) $job_parameters->request_datum('DTT_ID', '0');
         if (! EE_Capabilities::instance()->current_user_can('ee_read_registrations', 'generating_report')) {
-            throw new BatchRequestException(esc_html__('You do not have permission to view registrations', 'event_espresso'));
+            throw new BatchRequestException(
+                esc_html__('You do not have permission to view registrations', 'event_espresso')
+            );
         }
         $filepath = $this->create_file_from_job_with_name(
             $job_parameters->job_id(),
             $this->get_filename()
         );
         $job_parameters->add_extra_data('filepath', $filepath);
-        $query_params = apply_filters('FHEE__EE_Export__report_registration_for_event', array(
-            array(
-                'OR'                 => array(
-                    // don't include registrations from failed or abandoned transactions...
-                    'Transaction.STS_ID' => array(
-                        'NOT IN',
-                        array(
-                            EEM_Transaction::failed_status_code,
-                            EEM_Transaction::abandoned_status_code,
-                        ),
-                    ),
-                    // unless the registration is approved, in which case include it regardless of transaction status
-                    'STS_ID'             => EEM_Registration::status_id_approved,
-                ),
-                'Ticket.TKT_deleted' => array('IN', array(true, false)),
-            ),
-            'order_by'   => array('Transaction.TXN_ID' => 'asc', 'REG_count' => 'asc'),
-            'force_join' => array('Transaction', 'Ticket', 'Attendee'),
-            'caps'       => EEM_Base::caps_read_admin,
-        ), $event_id);
-        if ($event_id) {
-            $query_params[0]['EVT_ID'] = $event_id;
+
+        if ($job_parameters->request_datum('use_filters', false)) {
+            $query_params = maybe_unserialize($job_parameters->request_datum('filters', []));
         } else {
-            $query_params['force_join'][] = 'Event';
+            $query_params = [
+                [
+                    'OR'                 => [
+                        // don't include registrations from failed or abandoned transactions...
+                        'Transaction.STS_ID' => [
+                            'NOT IN',
+                            [
+                                EEM_Transaction::failed_status_code,
+                                EEM_Transaction::abandoned_status_code,
+                            ],
+                        ],
+                        // unless the registration is approved, in which case include it regardless of transaction status
+                        'STS_ID'             => EEM_Registration::status_id_approved,
+                    ],
+                    'Ticket.TKT_deleted' => ['IN', [true, false]],
+                ],
+                'order_by'   => ['Transaction.TXN_ID' => 'asc', 'REG_count' => 'asc'],
+                'force_join' => ['Transaction', 'Ticket', 'Attendee'],
+                'caps'       => EEM_Base::caps_read_admin,
+            ];
+            if ($event_id) {
+                $query_params[0]['EVT_ID'] = $event_id;
+            } else {
+                $query_params['force_join'][] = 'Event';
+            }
         }
+
         if (! isset($query_params['force_join'])) {
-            $query_params['force_join'] = array('Event', 'Transaction', 'Ticket', 'Attendee');
+            $query_params['force_join'] = ['Event', 'Transaction', 'Ticket', 'Attendee'];
         }
+
+        $query_params = apply_filters(
+            'FHEE__EE_Export__report_registration_for_event',
+            $query_params,
+            $event_id
+        );
+
         $job_parameters->add_extra_data('query_params', $query_params);
         $question_labels = $this->_get_question_labels($query_params);
         $job_parameters->add_extra_data('question_labels', $question_labels);
@@ -347,7 +362,7 @@ class RegistrationsReport extends JobHandlerFile
                     ARRAY_A,
                     'Payment_Method.PMD_admin_name as name, Payment.PAY_txn_id_chq_nmbr as gateway_txn_id, Payment.PAY_timestamp as payment_time'
                 );
-                list($payment_methods, $gateway_txn_ids_etc, $payment_times) = PaymentsInfoCSV::extractPaymentInfo($payments_info);
+                [$payment_methods, $gateway_txn_ids_etc, $payment_times] = PaymentsInfoCSV::extractPaymentInfo($payments_info);
             }
             $reg_csv_array[ (string) esc_html__('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
             $reg_csv_array[ (string) esc_html__('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
