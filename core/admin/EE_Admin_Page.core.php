@@ -996,13 +996,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             do_action('AHEE__EE_Admin_Page__route_admin_request', $this->_current_view, $this);
         }
         // right before calling the route, let's clean the _wp_http_referer
-        $this->request->setServerParam(
-            'REQUEST_URI',
-            remove_query_arg(
-                '_wp_http_referer',
-                wp_unslash($this->request->getServerParam('REQUEST_URI'))
-            )
+        $this->request->unSetRequestParam('_wp_http_referer');
+        $this->request->unSetServerParam('_wp_http_referer');
+        $cleaner_request_uri = remove_query_arg(
+            '_wp_http_referer',
+            wp_unslash($this->request->getServerParam('REQUEST_URI'))
         );
+        $this->request->setRequestParam('_wp_http_referer', $cleaner_request_uri);
+        $this->request->setServerParam('REQUEST_URI', $cleaner_request_uri);
         if (! empty($func)) {
             if (is_array($func)) {
                 [$class, $method] = $func;
@@ -1132,7 +1133,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if ($sticky) {
             /** @var RequestInterface $request */
             $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-            $request->unSetRequestParams(['_wp_http_referer', 'wp_referer']);
+            $request->unSetRequestParams(['_wp_http_referer', 'wp_referer'], true);
             foreach ($request->requestParams() as $key => $value) {
                 // do not add nonces
                 if (strpos($key, 'nonce') !== false) {

@@ -36,6 +36,7 @@ class RegistrationsCsvReportParams
         ) {
             return [];
         }
+        unset($request_params['_wp_http_referer']);
         add_action(
             'AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons',
             [RegistrationsCsvReportParams::class, 'csvReportNotice']
