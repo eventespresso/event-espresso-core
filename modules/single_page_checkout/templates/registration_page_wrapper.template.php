@@ -85,7 +85,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 <div id="spco-<?php echo esc_attr($slug); ?>-dv"
                      class="spco-step-dv <?php echo esc_attr($reg_step->div_class()); ?>"
                 >
-                    <?php echo wp_kses($reg_step->display_reg_form(), AllowedTags::getWithFormTags()); ?>
+                    <?php echo $reg_step->display_reg_form(); // already escaped ?>
                     <?php do_action('AHEE__SPCO_after_reg_step_form', $slug, $next_step); ?>
                 </div>
                 <?php $step_nmbr++;
