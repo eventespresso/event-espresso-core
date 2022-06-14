@@ -10,7 +10,7 @@ use EE_Capabilities;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports
- * @since   $VID:$
+ * @since   4.10.31.p
  */
 class RegistrationsCsvReportParams
 {

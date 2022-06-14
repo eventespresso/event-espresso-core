@@ -7,7 +7,7 @@ namespace EventEspresso\core\services\request\sanitizers;
  *
  * @author  Hossein Rafiei
  * @package EventEspresso\core\services\request\sanitizers
- * @since   $VID:$
+ * @since   4.10.31.p
  */
 class AttributesSanitizer
 {
