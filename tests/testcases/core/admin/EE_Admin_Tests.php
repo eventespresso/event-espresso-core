@@ -222,7 +222,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		$generated_items = EE_Admin::instance()->dashboard_glance_items( array() );
 		//first assert the elements are an array.
-		$this->assertIsArray( $generated_items);
+		$this->assertIsArray($generated_items);
 
 		//assert the count for the array is two
 		$this->assertCount(

@@ -469,7 +469,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
         $this->assertCount(1, $where[0]);
         $this->assertArrayHasKey('STS_ID', $where[0]);
-        $this->assertIsArray( $where[0]['STS_ID']);
+        $this->assertIsArray($where[0]['STS_ID']);
         $this->assertArrayContains('!=', $where[0]['STS_ID']);
         $this->assertArrayContains(EEM_Registration::status_id_incomplete, $where[0]['STS_ID']);
     }
@@ -621,7 +621,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $this->assertCount(2, $where[0]);
         $this->assertArrayHasKey('OR*search_conditions', $where[0]);
         $this->assertArrayHasKey('Event.EVT_name', $where[0]['OR*search_conditions']);
-        $this->assertIsArray( $where[0]['OR*search_conditions']['Event.EVT_name']);
+        $this->assertIsArray($where[0]['OR*search_conditions']['Event.EVT_name']);
         $this->assertEquals('%gogogo%', $where[0]['OR*search_conditions']['Event.EVT_name'][1]);
         $this->request->unSetRequestParam('s', true);
     }
@@ -645,7 +645,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $this->assertArrayHasKey('order_by', $query_params);
         $orderby = $query_params['order_by'];
         $this->assertCount(2, $orderby);
-        $this->assertIsArray( $orderby);
+        $this->assertIsArray($orderby);
         $this->assertArrayHasKey('REG_date', $orderby);
         $this->assertEquals('DESC', $orderby['REG_date']);
     }
@@ -669,7 +669,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $this->assertArrayHasKey('order_by', $query_params);
         $orderby = $query_params['order_by'];
         $this->assertCount(2, $orderby);
-        $this->assertIsArray( $orderby);
+        $this->assertIsArray($orderby);
         $this->assertArrayHasKey('STS_ID', $orderby);
         $this->assertEquals('ASC', $orderby['STS_ID']);
         $this->assertArrayHasKey('REG_ID', $orderby);
