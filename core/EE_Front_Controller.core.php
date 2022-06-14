@@ -415,7 +415,7 @@ final class EE_Front_Controller
         ) {
             $shown_already = true;
             if (did_action('wp_head')) {
-                echo $this->printNotices();
+                echo wp_kses($this->printNotices(), AllowedTags::getAllowedTags());
             } else {
                 // block enabled themes run their query loop before headers are sent
                 // so we need to add our notices onto the beginning of the content

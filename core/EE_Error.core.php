@@ -241,10 +241,9 @@ class EE_Error extends Exception
      * @param bool   $check_stored
      * @param string $type_to_check
      * @return bool
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
      */
     public static function has_error($check_stored = false, $type_to_check = 'errors')
     {
@@ -266,70 +265,16 @@ class EE_Error extends Exception
 
     /**
      * @echo string
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function display_errors()
     {
         $trace_details = '';
         $output = '
-<style type="text/css">
-	#ee-error-message {
-		max-width:90% !important;
-		margin: 0 5%;
-	}
-	.ee-error-dev-msg-pg,
-	.error .ee-error-dev-msg-pg {
-		padding:1em;
-		margin:0 0 1em;
-		border:2px solid #E44064;
-		background:#fff;
-		border-radius:3px;
-	}
-	#ee-trace-details {
-		padding:3px;
-		margin:0 0 1em;
-		border:1px solid #666;
-		background:#fff;
-		border-radius:3px;
-	}
-	#ee-trace-details table {
-		border:1px solid #666;
-		border-bottom:none;
-		background:#f9f9f9;
-	}
-	#ee-trace-details table th {
-		background:#eee;
-		border-bottom:1px solid #666;
-	}
-	#ee-trace-details table td {
-		border-bottom:1px solid #666;
-	}
-	#ee-trace-details table td.odd {
-		background:#f3f3f3;
-	}
-	.display-ee-error-trace-lnk {
-		color:blue;
-		cursor:pointer;
-	}
-	.display-ee-error-trace-lnk:hover {
-		text-decoration:underline;
-	}
-	.hidden {
-		display:none;
-	}
-	.small-text {
-		font-size: .85em;
-		line-height: 1.4em;
-		letter-spacing: 1px;
-	}
-	.lt-grey-text {
-		color: #a8a8a8;
-	}
-</style>
-<div id="ee-error-message" class="error">';
+        <div id="ee-error-message" class="error">';
         if (! WP_DEBUG) {
             $output .= '
-	<p>';
+	        <p>';
         }
         // cycle thru errors
         foreach (self::$_all_exceptions as $time => $ex) {
@@ -466,16 +411,16 @@ class EE_Error extends Exception
         $output = substr($output, 0, -6);
         if (! WP_DEBUG) {
             $output .= '
-	</p>';
+	        </p>';
         }
         $output .= '
-</div>';
+        </div>';
         $output .= self::_print_scripts(true);
         if (defined('DOING_AJAX')) {
             echo wp_json_encode(array('error' => $output));
             exit();
         }
-        echo $output;
+        echo wp_kses($output, AllowedTags::getWithFormTags());
         die();
     }
 
@@ -841,11 +786,11 @@ class EE_Error extends Exception
      * compile all error or success messages into one string
      *
      * @see EE_Error::get_raw_notices if you want the raw notices without any preparations made to them
-     * @param boolean $format_output            whether or not to format the messages for display in the WP admin
-     * @param boolean $save_to_transient        whether or not to save notices to the db for retrieval on next request
+     * @param bool $format_output            whether or not to format the messages for display in the WP admin
+     * @param bool $save_to_transient        whether or not to save notices to the db for retrieval on next request
      *                                          - ONLY do this just before redirecting
-     * @param boolean $remove_empty             whether or not to unset empty messages
-     * @return array
+     * @param bool $remove_empty             whether or not to unset empty messages
+     * @return array|string
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -1017,15 +962,15 @@ class EE_Error extends Exception
             }
         } else {
             return '
-<script>
-/* <![CDATA[ */
-var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
-/* ]]> */
-</script>
-<script src="' . includes_url() . 'js/jquery/jquery.js" type="text/javascript"></script>
-<script src="' . EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js' . '?ver=' . espresso_version() . '" type="text/javascript"></script>
-<script src="' . EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js' . '?ver=' . espresso_version() . '" type="text/javascript"></script>
-';
+                <script>
+                /* <![CDATA[ */
+                var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
+                /* ]]> */
+                </script>
+                <script src="' . includes_url() . 'js/jquery/jquery.js" type="text/javascript"></script>
+                <script src="' . EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js' . '?ver=' . espresso_version() . '" type="text/javascript"></script>
+                <script src="' . EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js' . '?ver=' . espresso_version() . '" type="text/javascript"></script>
+            ';
         }
         return '';
     }
@@ -1160,7 +1105,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
      * @return void
      * @throws InvalidDataTypeException
      */
-    public static function add_persistent_admin_notice($pan_name = '', $pan_message, $force_update = false)
+    public static function add_persistent_admin_notice($pan_name, $pan_message, $force_update = false)
     {
         new PersistentAdminNotice(
             $pan_name,
@@ -1189,7 +1134,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
      * @throws ServiceNotFoundException
      * @throws InvalidArgumentException
      */
-    public static function dismiss_persistent_admin_notice($pan_name = '', $purge = false, $return = false)
+    public static function dismiss_persistent_admin_notice($pan_name, $purge = false, $return = false)
     {
         /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
         $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
