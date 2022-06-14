@@ -12,14 +12,12 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
              data-theme="<?php echo esc_attr($recaptcha_theme); ?>" data-type="<?php echo esc_attr($recaptcha_type); ?>"
              data-callback="espresso_recaptcha_verification"></div>
         <noscript>
-            <div style="width: 302px; height: 352px;">
-                <div style="width: 302px; height: 352px; position: relative;">
-                    <div style="width: 302px; height: 352px; position: absolute;">
-                        <iframe
-                            src="https://www.google.com/recaptcha/api/fallback?k=<?php echo esc_attr($recaptcha_publickey); ?>"
-                            frameborder="0" scrolling="no" style="width: 302px; height:352px; border-style: none;">
-                        </iframe>
-                    </div>
+            <div style="position: relative;">
+                <div style="position: absolute;">
+                    <iframe
+                        src="https://www.google.com/recaptcha/api/fallback?k=<?php echo esc_attr($recaptcha_publickey); ?>"
+                        style="border-style: none;">
+                    </iframe>
                 </div>
             </div>
         </noscript>
