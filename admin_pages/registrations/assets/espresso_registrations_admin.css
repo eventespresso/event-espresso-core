@@ -636,12 +636,6 @@
 }
 
 
-#registrations-csv-report {
-    background-color: hsl(207deg 65% 50%);
-    color: white;
-}
-
-
 .csv-report-notice__wrapper {
     align-items: center;
     background-color: hsl(207deg 40% 87.5%);
@@ -654,5 +648,6 @@
 .csv-report-notice__wrapper .dashicons-info {
     color: hsl(207deg 65% 50%);
     font-size: 1.5rem;
+    margin-inline-end: .5rem;
     top: 1px;
 }
