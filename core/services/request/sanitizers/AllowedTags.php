@@ -198,9 +198,10 @@ class AllowedTags
     {
         $all_tags = AllowedTags::getAllowedTags();
         $script_and_style_tags = [
-            'script' => AllowedTags::$attributes,
-            'style'  => AllowedTags::$attributes,
-            'link'   => AllowedTags::$attributes,
+            'script'   => AllowedTags::$attributes,
+            'style'    => AllowedTags::$attributes,
+            'link'     => AllowedTags::$attributes,
+            'noscript' => AllowedTags::$attributes,
         ];
         AllowedTags::$allowed_with_script_and_style_tags = array_merge_recursive($all_tags, $script_and_style_tags);
     }
@@ -228,6 +229,7 @@ class AllowedTags
             'button'    => AllowedTags::$attributes,
             'fieldset'  => AllowedTags::$attributes,
             'output'    => AllowedTags::$attributes,
+            'noscript'  => AllowedTags::$attributes,
         ];
         AllowedTags::$allowed_with_full_tags = array_merge_recursive($all_tags, $full_tags);
     }
