@@ -427,7 +427,7 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.activate_messages_on_off_toggle_container').on('click', '.ee-on-off-toggle', function(e) {
+	$('.activate_messages_on_off_toggle_container').on('click', '.ee-switch__input', function(e) {
 		const messenger = $(this).attr('id').replace('ee-on-off-toggle-','')
 		const status = $(this).prop('checked') ? 'on' : 'off';
 		// change dashicon on text link

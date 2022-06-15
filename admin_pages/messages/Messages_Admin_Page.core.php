@@ -855,15 +855,13 @@ class Messages_Admin_Page extends EE_Admin_Page
                         . '" alt="' . esc_attr__('Active Email Tab', 'event_espresso') . '" />';
         $args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png'
                         . '" alt="' . esc_attr__('Inactive Email Tab', 'event_espresso') . '" />';
-        $args['img3'] = '<div class="switch">'
-                        . '<input class="ee-on-off-toggle ee-toggle-round-flat"'
-                        . ' type="checkbox" checked>'
-                        . '<label for="ee-on-off-toggle-on"></label>'
+        $args['img3'] = '<div class="ee-switch">'
+                        . '<input class="ee-switch__input" id="ee-on-off-toggle-on" type="checkbox" checked>'
+                        . '<label class="ee-switch__toggle" for="ee-on-off-toggle-on"></label>'
                         . '</div>';
         $args['img4'] = '<div class="switch">'
-                        . '<input class="ee-on-off-toggle ee-toggle-round-flat"'
-                        . ' type="checkbox">'
-                        . '<label for="ee-on-off-toggle-on"></label>'
+                        . '<input class="ee-switch__input" id="ee-on-off-toggle-off" type="checkbox">'
+                        . '<label class="ee-switch__toggle" for="ee-on-off-toggle-off"></label>'
                         . '</div>';
         EEH_Template::display_template(EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_settings_help_tab.template.php', $args);
     }

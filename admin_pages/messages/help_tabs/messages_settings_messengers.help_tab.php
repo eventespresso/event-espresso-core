@@ -43,13 +43,13 @@
             '%1$s means of course that the messenger is active and %2$s means the messenger is inactive.',
             'event_espresso'
         ),
-        '<div class="switch">'
-        . '<input class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" checked disabled>'
-        . '<label for="ee-on-off-toggle-on"></label>'
+        '<div class="ee-switch">'
+        . '<input class="ee-switch__input" type="checkbox" checked disabled>'
+        . '<label class="ee-switch__toggle" for="ee-on-off-toggle-on"></label>'
         . '</div>',
-        '<div class="switch">'
-        . '<input class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" disabled>'
-        . '<label for="ee-on-off-toggle-on"></label>'
+        '<div class="ee-switch">'
+        . '<input class="ee-switch__input" type="checkbox" disabled>'
+        . '<label class="ee-switch__toggle" for="ee-on-off-toggle-off"></label>'
         . '</div>'
     ); ?>
 </p>

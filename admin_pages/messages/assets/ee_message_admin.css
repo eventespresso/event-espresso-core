@@ -64,7 +64,6 @@
     display: flex;
     flex-flow: row wrap;
     margin: 0;
-    width: 100%;
 }
 .ee-msg-switcher-container select {
     width: 16rem;
@@ -429,21 +428,24 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
 
 /** context toggle **/
  .context-active-control-container {
-    align-items: center;
-    background: white;
-    display: flex;
-    /* grid-area: msg-header-1; */
-    padding: 1rem 0 1rem 1rem;
-    --ee-switch-size: 1.5rem;
-    --ee-switch-size-btn: calc(var(--ee-switch-size) * .75);
-    --ee-switch-size-width: calc(var(--ee-switch-size) * 2);
+     align-items: center;
+     background: white;
+     display: flex;
+     /* grid-area: msg-header-1; */
+     padding: 1rem 0 1rem 1rem;
+     width: 40rem;
+     --ee-switch-size: 1.5rem;
+     --ee-switch-size-btn: calc(var(--ee-switch-size) * .75);
+     --ee-switch-size-width: calc(var(--ee-switch-size) * 2);
 }
  .context-active-control-container .spinner {
      margin: 0;
      margin-inline: 1rem;
 }
 .activate_context_on_off_toggle_container {
+    align-items: center;
     display: flex;
+    width: 100%;
 }
 .activate_context_on_off_toggle_container .ee-on-off-toggle-label {
     /* width: 24rem; */
