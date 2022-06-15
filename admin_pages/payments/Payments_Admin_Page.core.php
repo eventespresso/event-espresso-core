@@ -469,6 +469,18 @@ class Payments_Admin_Page extends EE_Admin_Page
         if (! $payment_method instanceof EE_Payment_Method) {
             return new EE_Form_Section_Proper();
         }
+        $subsections = apply_filters(
+            'FHEE__Payments_Admin_Page___generate_payment_method_settings_form__form_subsections',
+            [
+                'pci_dss_compliance'      => $this->_pci_dss_compliance($payment_method),
+                'currency_support'        => $this->_currency_support($payment_method),
+                'payment_method_settings' => $this->_payment_method_settings($payment_method),
+                'update'                  => $this->_update_payment_method_button($payment_method),
+                'deactivate'              => $this->_deactivate_payment_method_button($payment_method),
+                'fine_print'              => $this->_fine_print(),
+            ],
+            $payment_method
+        );
         return new EE_Form_Section_Proper(
             array(
                 'name'            => $payment_method->slug() . '_settings_form',
@@ -481,18 +493,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                     EE_PAYMENTS_ADMIN_URL
                 ),
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
-                'subsections'     => apply_filters(
-                    'FHEE__Payments_Admin_Page___generate_payment_method_settings_form__form_subsections',
-                    array(
-                        'pci_dss_compliance'      => $this->_pci_dss_compliance($payment_method),
-                        'currency_support'        => $this->_currency_support($payment_method),
-                        'payment_method_settings' => $this->_payment_method_settings($payment_method),
-                        'update'                  => $this->_update_payment_method_button($payment_method),
-                        'deactivate'              => $this->_deactivate_payment_method_button($payment_method),
-                        'fine_print'              => $this->_fine_print(),
-                    ),
-                    $payment_method
-                ),
+                'subsections'     => array_filter($subsections),
             )
         );
     }
@@ -503,45 +504,45 @@ class Payments_Admin_Page extends EE_Admin_Page
      *
      * @access protected
      * @param EE_Payment_Method $payment_method
-     * @return EE_Form_Section_HTML
+     * @return EE_Form_Section_HTML|null
      * @throws EE_Error
      */
-    protected function _pci_dss_compliance(EE_Payment_Method $payment_method)
+    protected function _pci_dss_compliance(EE_Payment_Method $payment_method): ?EE_Form_Section_HTML
     {
-        if ($payment_method->type_obj()->requires_https()) {
-            return new EE_Form_Section_HTML(
-                EEH_HTML::table(
-                    EEH_HTML::tr(
-                        EEH_HTML::th(
-                            EEH_HTML::label(
-                                EEH_HTML::strong(
-                                    esc_html__('IMPORTANT', 'event_espresso'),
-                                    '',
-                                    'important-notice'
-                                )
-                            )
-                        ) .
-                        EEH_HTML::td(
+        if (!$payment_method->type_obj()->requires_https()) {
+            return null;
+        }
+        return new EE_Form_Section_HTML(
+            EEH_HTML::table(
+                EEH_HTML::tr(
+                    EEH_HTML::th(
+                        EEH_HTML::label(
                             EEH_HTML::strong(
-                                esc_html__(
-                                    'You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.',
-                                    'event_espresso'
-                                )
+                                esc_html__('IMPORTANT', 'event_espresso'),
+                                '',
+                                'important-notice'
                             )
-                            .
-                            EEH_HTML::br()
-                            .
-                            esc_html__('Learn more about ', 'event_espresso')
-                            . EEH_HTML::link(
-                                'https://www.pcisecuritystandards.org/merchants/index.php',
-                                esc_html__('PCI DSS compliance', 'event_espresso')
+                        )
+                    ) .
+                    EEH_HTML::td(
+                        EEH_HTML::strong(
+                            esc_html__(
+                                'You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.',
+                                'event_espresso'
                             )
+                        )
+                        .
+                        EEH_HTML::br()
+                        .
+                        esc_html__('Learn more about ', 'event_espresso')
+                        . EEH_HTML::link(
+                            'https://www.pcisecuritystandards.org/merchants/index.php',
+                            esc_html__('PCI DSS compliance', 'event_espresso')
                         )
                     )
                 )
-            );
-        }
-        return new EE_Form_Section_HTML('');
+            )
+        );
     }
 
 
@@ -550,40 +551,40 @@ class Payments_Admin_Page extends EE_Admin_Page
      *
      * @access protected
      * @param EE_Payment_Method $payment_method
-     * @return EE_Form_Section_HTML
+     * @return EE_Form_Section_HTML|null
      * @throws EE_Error
      */
-    protected function _currency_support(EE_Payment_Method $payment_method)
+    protected function _currency_support(EE_Payment_Method $payment_method): ?EE_Form_Section_HTML
     {
-        if (! $payment_method->usable_for_currency(EE_Config::instance()->currency->code)) {
-            return new EE_Form_Section_HTML(
-                EEH_HTML::table(
-                    EEH_HTML::tr(
-                        EEH_HTML::th(
-                            EEH_HTML::label(
-                                EEH_HTML::strong(
-                                    esc_html__('IMPORTANT', 'event_espresso'),
-                                    '',
-                                    'important-notice'
-                                )
-                            )
-                        ) .
-                        EEH_HTML::td(
+        if ($payment_method->usable_for_currency(EE_Config::instance()->currency->code)) {
+            return null;
+        }
+        return new EE_Form_Section_HTML(
+            EEH_HTML::table(
+                EEH_HTML::tr(
+                    EEH_HTML::th(
+                        EEH_HTML::label(
                             EEH_HTML::strong(
-                                sprintf(
-                                    esc_html__(
-                                        'This payment method does not support the currency set on your site (%1$s). Please activate a different payment method or change your site\'s country and associated currency.',
-                                        'event_espresso'
-                                    ),
-                                    EE_Config::instance()->currency->code
-                                )
+                                esc_html__('IMPORTANT', 'event_espresso'),
+                                '',
+                                'important-notice'
+                            )
+                        )
+                    ) .
+                    EEH_HTML::td(
+                        EEH_HTML::strong(
+                            sprintf(
+                                esc_html__(
+                                    'This payment method does not support the currency set on your site (%1$s). Please activate a different payment method or change your site\'s country and associated currency.',
+                                    'event_espresso'
+                                ),
+                                EE_Config::instance()->currency->code
                             )
                         )
                     )
                 )
-            );
-        }
-        return new EE_Form_Section_HTML('');
+            )
+        );
     }
 
 
