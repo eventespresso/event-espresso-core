@@ -30,7 +30,7 @@ $event_archive_url = EEH_Event_View::event_archive_url();
 <h2 class="ee-admin-settings-hdr">
     <?php esc_html_e('Event List Pages', 'event_espresso'); ?>
 </h2>
-<table class="form-table">
+<table class="ee-admin-two-column-layout form-table">
     <tbody>
 
     <tr>

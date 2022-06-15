@@ -18,7 +18,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         echo EEH_Template::get_help_tab_link('country_select_info'); // already escaped
         ?>
     </h2>
-    <table class="form-table">
+    <table class="ee-admin-two-column-layout form-table">
         <tbody>
         <?php echo EEH_Form_Fields::generate_form_input($countries); // already escaped ?>
         </tbody>
