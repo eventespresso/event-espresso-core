@@ -55,7 +55,7 @@ class AnswersCSV
             } else {
                 $question_label = sprintf(esc_html__('Question $s', 'event_espresso'), $answer_row['Answer.QST_ID']);
             }
-            if(! array_key_exists($question_label, $data)) {
+            if (! array_key_exists($question_label, $data)) {
                 // We don't need an answer for this specific question in the current dataset
                 // so skip adding this value to $data.
                 continue;
