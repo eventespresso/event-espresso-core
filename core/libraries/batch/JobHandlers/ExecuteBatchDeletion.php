@@ -3,22 +3,16 @@
 namespace EventEspressoBatchRequest\JobHandlers;
 
 use EE_Change_Log;
+use EE_Error;
 use EE_Registry;
-use EEM_Event;
-use EEM_Price;
-use EEM_Ticket;
-use EventEspresso\core\exceptions\InvalidClassException;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
-use InvalidArgumentException;
+use Exception;
+use ReflectionException;
 
 /**
  * Class EventDeletion
@@ -36,6 +30,11 @@ class ExecuteBatchDeletion extends JobHandler
      * @var NodeGroupDao
      */
     protected $model_obj_node_group_persister;
+
+
+    /**
+     * @param NodeGroupDao $model_obj_node_group_persister
+     */
     public function __construct(NodeGroupDao $model_obj_node_group_persister)
     {
         $this->model_obj_node_group_persister = $model_obj_node_group_persister;
@@ -43,11 +42,15 @@ class ExecuteBatchDeletion extends JobHandler
 
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
+
     /**
      *
      * @param JobParameters $job_parameters
-     * @throws BatchRequestException
      * @return JobStepResponse
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws Exception
      */
     public function create_job(JobParameters $job_parameters)
     {
@@ -70,22 +73,23 @@ class ExecuteBatchDeletion extends JobHandler
         );
         // Find the job's actual size.
         $job_size = 0;
-        foreach ($models_and_ids_to_delete as $model_name => $ids) {
+        foreach ($models_and_ids_to_delete as $ids) {
             $job_size += count($ids);
         }
         $job_parameters->set_job_size($job_size);
-        return new JobStepResponse(
-            $job_parameters,
-            esc_html__('Beginning to delete items...', 'event_espresso')
-        );
+        $this->updateTextHeader(esc_html__('Beginning to delete items...', 'event_espresso'));
+        return new JobStepResponse($job_parameters, $this->feedback);
     }
+
 
     /**
      * Performs another step of the job
+     *
      * @param JobParameters $job_parameters
-     * @param int $batch_size
+     * @param int           $batch_size
      * @return JobStepResponse
-     * @throws BatchRequestException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function continue_job(JobParameters $job_parameters, $batch_size = 50)
     {
@@ -131,32 +135,35 @@ class ExecuteBatchDeletion extends JobHandler
                     $models_and_ids_remaining[ $model_name ] = $remaining_ids;
                 }
             } else {
-                $models_and_ids_remaining[ $model_name ] = $models_and_ids_to_delete[ $model_name ];
+                $models_and_ids_remaining[ $model_name ] = $ids_to_delete;
             }
         }
         $job_parameters->mark_processed($units_processed);
         // All done deleting for this request. Is there anything to do next time?
         if (empty($models_and_ids_remaining)) {
             $job_parameters->set_status(JobParameters::status_complete);
-            return new JobStepResponse(
+            $this->displayJobFinalResults(
                 $job_parameters,
-                esc_html__('Deletion complete.', 'event_espresso')
+                esc_html__('Done. Deleted a total of %d items.', 'event_espresso')
             );
+            return new JobStepResponse($job_parameters, $this->feedback);
         }
         $job_parameters->add_extra_data('models_and_ids_to_delete', $models_and_ids_remaining);
-        return new JobStepResponse(
-            $job_parameters,
-            sprintf(
-                esc_html__('Deleted %d items.', 'event_espresso'),
-                $units_processed
-            )
+        $this->displayJobStepResults(
+            $units_processed,
+            esc_html__('Deleted %d items.', 'event_espresso')
         );
+        return new JobStepResponse($job_parameters, $this->feedback);
     }
+
 
     /**
      * Performs any clean-up logic when we know the job is completed
+     *
      * @param JobParameters $job_parameters
      * @return JobStepResponse
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
@@ -179,10 +186,21 @@ class ExecuteBatchDeletion extends JobHandler
             ))->save();
             do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $event_id);
         }
-        return new JobStepResponse(
-            $job_parameters,
-            esc_html__('All done', 'event_espresso')
+        $this->updateText(esc_html__('All done', 'event_espresso'));
+        $this->updateText(
+            $this->infoWrapper(
+                sprintf(
+                    esc_html__(
+                        'If not automatically redirected in %1$s seconds, click here to return to the %2$sprevious admin screen%3$s',
+                        'event_espresso'
+                    ),
+                    '<span id="ee-redirect-timer">10</span>',
+                    '<a href="' . $job_parameters->request_datum('return_url') . '">',
+                    '</a>'
+                )
+            )
         );
+        return new JobStepResponse($job_parameters, $this->feedback);
     }
 }
 // End of file EventDeletion.php
