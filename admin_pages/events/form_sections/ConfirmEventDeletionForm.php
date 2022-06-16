@@ -35,8 +35,10 @@ class ConfirmEventDeletionForm extends EE_Form_Section_Proper
             $options_array['subsections'] = [];
         }
         if (
-            isset($options_array['subsections']['events'])
-            || ! $options_array['subsections']['events'] instanceof EE_Form_Section_Proper
+            ! (
+                isset($options_array['subsections']['events'])
+                && $options_array['subsections']['events'] instanceof EE_Form_Section_Proper
+            )
         ) {
             $options_array['subsections']['events'] = new EE_Form_Section_Proper();
         }
