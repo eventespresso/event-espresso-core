@@ -60,9 +60,9 @@ class PreviewDeletion
      * @param EEM_Registration $registration_model
      */
     public function __construct(
-        NodeGroupDao     $dao,
-        EEM_Event        $event_model,
-        EEM_Datetime     $datetime_model,
+        NodeGroupDao $dao,
+        EEM_Event $event_model,
+        EEM_Datetime $datetime_model,
         EEM_Registration $registration_model
     ) {
         $this->dao                = $dao;

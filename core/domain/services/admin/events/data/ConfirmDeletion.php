@@ -40,7 +40,8 @@ class ConfirmDeletion
      *
      * @param NodeGroupDao $dao
      */
-    public function __construct(NodeGroupDao $dao) {
+    public function __construct(NodeGroupDao $dao)
+    {
         $this->dao = $dao;
     }
 

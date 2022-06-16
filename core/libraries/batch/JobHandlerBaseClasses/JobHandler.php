@@ -180,13 +180,13 @@ abstract class JobHandler implements JobHandlerInterface
         $this->feedback[] = '
 			<div class="ee-batch-job-step-results">
 			' . $this->infoWrapper(
-                sprintf(
-                    $custom_message !== ''
+            sprintf(
+                $custom_message !== ''
                         ? $custom_message
                         : esc_html__('processed this batch: %d', 'event_espresso'),
-                    $processed
-                )
-            ) . '
+                $processed
+            )
+        ) . '
 			</div>';
     }
 
@@ -197,13 +197,13 @@ abstract class JobHandler implements JobHandlerInterface
             $this->feedback[] = '
 			<div class="ee-batch-job-final-results">
 				' . $this->okWrapper(
-                    sprintf(
-                        $custom_message !== ''
+                sprintf(
+                    $custom_message !== ''
                             ? $custom_message
                             : esc_html__('total units processed: %d', 'event_espresso'),
-                        $job_parameters->units_processed()
-                    )
-                ) . '
+                    $job_parameters->units_processed()
+                )
+            ) . '
 				' . $this->jobStatusNotice($job_parameters) . '
 			</div>';
         }
