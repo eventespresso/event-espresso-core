@@ -248,14 +248,14 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @param bool $try_to_exclude_expired
      * @param bool $try_to_exclude_deleted
-     * @return EE_Datetime
+     * @return EE_Datetime|null
      * @throws EE_Error
      * @throws ReflectionException
      */
     public function primary_datetime(
         bool $try_to_exclude_expired = true,
         bool $try_to_exclude_deleted = true
-    ): EE_Datetime {
+    ): ?EE_Datetime {
         if (! empty($this->_Primary_Datetime)) {
             return $this->_Primary_Datetime;
         }
@@ -321,11 +321,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
-     * @return bool
+     * @return int
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function additional_limit(): bool
+    public function additional_limit(): int
     {
         return $this->get('EVT_additional_limit');
     }
@@ -343,22 +343,22 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
-     * @return bool
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function created(): bool
+    public function created(): string
     {
         return $this->get('EVT_created');
     }
 
 
     /**
-     * @return bool
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function description(): bool
+    public function description(): string
     {
         return $this->get('EVT_desc');
     }
@@ -422,55 +422,55 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
-     * @return bool
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function phone(): bool
+    public function phone(): string
     {
         return $this->get('EVT_phone');
     }
 
 
     /**
-     * @return bool
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function modified(): bool
+    public function modified(): string
     {
         return $this->get('EVT_modified');
     }
 
 
     /**
-     * @return bool
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function name(): bool
+    public function name(): string
     {
         return $this->get('EVT_name');
     }
 
 
     /**
-     * @return bool
+     * @return int
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function order(): bool
+    public function order(): int
     {
         return $this->get('EVT_order');
     }
 
 
     /**
-     * @return bool|string
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function default_registration_status()
+    public function default_registration_status(): string
     {
         $event_default_registration_status = $this->get('EVT_default_registration_status');
         return ! empty($event_default_registration_status)
@@ -483,11 +483,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @param int|null    $num_words
      * @param string|null $more
      * @param bool        $not_full_desc
-     * @return bool|string
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function short_description(?int $num_words = 55, string $more = null, bool $not_full_desc = false)
+    public function short_description(?int $num_words = 55, string $more = null, bool $not_full_desc = false): string
     {
         $short_desc = $this->get('EVT_short_desc');
         if (! empty($short_desc) || $not_full_desc) {
@@ -499,33 +499,33 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
-     * @return bool
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function slug(): bool
+    public function slug(): string
     {
         return $this->get('EVT_slug');
     }
 
 
     /**
-     * @return bool
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function timezone_string(): bool
+    public function timezone_string(): string
     {
         return $this->get('EVT_timezone_string');
     }
 
 
     /**
-     * @return bool
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function visible_on(): bool
+    public function visible_on(): string
     {
         return $this->get('EVT_visible_on');
     }
@@ -554,11 +554,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
-     * @param $limit
+     * @param int $limit
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function set_additional_limit($limit)
+    public function set_additional_limit(int $limit)
     {
         $this->set('EVT_additional_limit', $limit);
     }
@@ -963,18 +963,18 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @param array|null $tickets
      * @param bool       $filtered
-     * @return int
+     * @return int|float
      * @throws EE_Error
      * @throws DomainException
      * @throws UnexpectedEntityException
      * @throws ReflectionException
      */
-    public function spaces_remaining(?array $tickets = [], ?bool $filtered = true): int
+    public function spaces_remaining(?array $tickets = [], ?bool $filtered = true)
     {
         $this->getAvailableSpacesCalculator()->setActiveTickets($tickets);
         $spaces_remaining = $this->getAvailableSpacesCalculator()->spacesRemaining();
         return $filtered
-            ? (int) apply_filters(
+            ? apply_filters(
                 'FHEE_EE_Event__spaces_remaining',
                 $spaces_remaining,
                 $this,
@@ -1042,7 +1042,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * This returns the total remaining spaces for sale on this event.
      *
-     * @return float|int
+     * @return int|float
      * @throws EE_Error
      * @throws DomainException
      * @throws UnexpectedEntityException
@@ -1067,7 +1067,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *                              based on tickets sold.  Depending on setup and stage of sales, this
      *                              may appear to equal remaining tickets.  However, the more tickets are
      *                              sold out, the more accurate the "live" total is.
-     * @return float|int
+     * @return int|float
      * @throws EE_Error
      * @throws DomainException
      * @throws UnexpectedEntityException

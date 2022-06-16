@@ -95,12 +95,12 @@ class EventSpacesCalculator
     private $debug = false; // true false
 
     /**
-     * @var null|int $spaces_remaining
+     * @var int|float|null $spaces_remaining
      */
     private $spaces_remaining;
 
     /**
-     * @var null|int $total_spaces_available
+     * @var int|float|null $total_spaces_available
      */
     private $total_spaces_available;
 
@@ -274,7 +274,7 @@ class EventSpacesCalculator
     /**
      * calculate spaces remaining based on "saleable" tickets
      *
-     * @return int
+     * @return int|float
      * @throws EE_Error
      * @throws DomainException
      * @throws UnexpectedEntityException
@@ -283,7 +283,7 @@ class EventSpacesCalculator
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public function spacesRemaining(): int
+    public function spacesRemaining()
     {
         if ($this->debug) {
             EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
@@ -292,14 +292,14 @@ class EventSpacesCalculator
             $this->initialize();
             $this->spaces_remaining = $this->calculate();
         }
-        return (int) $this->spaces_remaining;
+        return $this->spaces_remaining;
     }
 
 
     /**
      * calculates total available spaces for an event with no regard for sold tickets
      *
-     * @return int
+     * @return int|float
      * @throws EE_Error
      * @throws DomainException
      * @throws UnexpectedEntityException
@@ -308,7 +308,7 @@ class EventSpacesCalculator
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public function totalSpacesAvailable(): int
+    public function totalSpacesAvailable()
     {
         if ($this->debug) {
             EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
@@ -317,7 +317,7 @@ class EventSpacesCalculator
             $this->initialize();
             $this->total_spaces_available = $this->calculate(false);
         }
-        return (int) $this->total_spaces_available;
+        return $this->total_spaces_available;
     }
 
 
@@ -404,9 +404,9 @@ class EventSpacesCalculator
      * performs calculations on initialized data
      *
      * @param bool $consider_sold
-     * @return int
+     * @return int|float
      */
-    private function calculate(bool $consider_sold = true): int
+    private function calculate(bool $consider_sold = true)
     {
         if ($this->debug) {
             EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
@@ -426,7 +426,7 @@ class EventSpacesCalculator
             EEH_Debug_Tools::printr($this->tickets_sold, '$this->tickets_sold', __FILE__, __LINE__);
             EEH_Debug_Tools::printr($spaces_remaining, '$spaces_remaining', __FILE__, __LINE__);
         }
-        return (int) $spaces_remaining;
+        return $spaces_remaining;
     }
 
 
@@ -545,17 +545,17 @@ class EventSpacesCalculator
 
     /**
      * @param string $datetime_identifier
-     * @param int    $reg_limit
+     * @param int|float $reg_limit
      * @param string $ticket_identifier
-     * @param int    $spaces_allocated
-     * @return int
+     * @param int|float $spaces_allocated
+     * @return int|float
      */
     private function calculateAvailableSpacesForTicket(
         string $datetime_identifier,
-        int $reg_limit,
+        $reg_limit,
         string $ticket_identifier,
-        int $spaces_allocated
-    ): int {
+        $spaces_allocated
+    ) {
         // make sure ticket quantity is set
         $ticket_quantity = $this->ticket_quantities[ $ticket_identifier ] ?? 0;
         if ($this->debug) {
@@ -624,12 +624,12 @@ class EventSpacesCalculator
      * @param string $datetime_identifier
      * @param string $ticket_identifier
      * @param bool   $at_capacity
-     * @param int    $ticket_quantity
+     * @param int|float $ticket_quantity
      */
     private function adjustDatetimes(
         string $datetime_identifier,
         string $ticket_identifier,
-        int $ticket_quantity,
+        $ticket_quantity,
         bool $at_capacity
     ) {
         /** @var array $datetime_tickets */
@@ -711,15 +711,15 @@ class EventSpacesCalculator
 
 
     /**
-     * @param string   $datetime_identifier
-     * @param string   $ticket_identifier
-     * @param int|null $ticket_quantity
+     * @param string $datetime_identifier
+     * @param string $ticket_identifier
+     * @param int|float $ticket_quantity
      * @return bool
      */
     private function adjustDatetimeSpaces(
         string $datetime_identifier,
         string $ticket_identifier,
-        ?int $ticket_quantity = 0
+        $ticket_quantity = 0
     ): bool {
         // does datetime have spaces available?
         // and does the supplied ticket have access to this datetime ?

@@ -5284,7 +5284,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function create_default_object(): EE_Base_Class
+    public function create_default_object()
     {
         $this_model_fields_and_values = [];
         // setup the row using default values;
