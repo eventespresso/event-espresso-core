@@ -62,7 +62,7 @@ jQuery(document).ready(function() {
 			window.location.href=response.data.file_url;
 			//and redirect a little later
 			setTimeout(function() {
-				runner.cleanup_job();
+				runner.cleanup_job(ee_job_i18n.return_url);
 			}, 2000 );
 		}
 	}

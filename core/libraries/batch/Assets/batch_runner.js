@@ -59,7 +59,7 @@ jQuery(document).ready(function ($) {
 
 		this.setup_clean_up_on_page_exit = function () {
 			window.onbeforeunload = function () {
-				thisBatchRunner.cleanup_job();
+				thisBatchRunner.cleanup_job(ee_job_i18n.return_url);
 			};
 		}
 		this.setup_clean_up_on_page_exit();
@@ -265,7 +265,7 @@ jQuery(document).ready(function ($) {
 		 * }}
 		 * @returns void
 		 */
-		this.cleanup_job = function () {
+		this.cleanup_job = function (return_url = '') {
 			if (this.cleanup_required === false) {
 				return;
 			}
@@ -281,6 +281,9 @@ jQuery(document).ready(function ($) {
 					batch_runner.cleanup_callback(response, status, xhr);
 				}
 			});
+			if (return_url) {
+				this.countdownRedirect(return_url, 9);
+			}
 		};
 
 
