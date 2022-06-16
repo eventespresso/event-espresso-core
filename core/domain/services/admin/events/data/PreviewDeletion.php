@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
-use Events_Admin_Page;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -24,9 +23,9 @@ use ReflectionException;
  * Displays the important data that will be deleted. If the form had been submitted earlier but wasn't valid, the
  * user is redirected here, and the forms system takes care of populating the form with that invalid data.
  *
- * @package     Event Espresso
+ * @package        Event Espresso
  * @author         Mike Nelson
- * @since         4.10.12.p
+ * @since          4.10.12.p
  *
  */
 class PreviewDeletion
@@ -51,30 +50,33 @@ class PreviewDeletion
      */
     protected $registration_model;
 
+
     /**
      * PreviewDeletion constructor.
-     * @param NodeGroupDao $dao
-     * @param EEM_Event $event_model
-     * @param EEM_Datetime $datetime_model
+     *
+     * @param NodeGroupDao     $dao
+     * @param EEM_Event        $event_model
+     * @param EEM_Datetime     $datetime_model
      * @param EEM_Registration $registration_model
      */
     public function __construct(
-        NodeGroupDao $dao,
-        EEM_Event $event_model,
-        EEM_Datetime $datetime_model,
+        NodeGroupDao     $dao,
+        EEM_Event        $event_model,
+        EEM_Datetime     $datetime_model,
         EEM_Registration $registration_model
     ) {
-        $this->dao = $dao;
-        $this->event_model = $event_model;
-        $this->datetime_model = $datetime_model;
+        $this->dao                = $dao;
+        $this->event_model        = $event_model;
+        $this->datetime_model     = $datetime_model;
         $this->registration_model = $registration_model;
     }
 
+
     /**
      * Renders the preview deletion page.
-     * @since 4.10.12.p
-     * @param $request_data
-     * @param $admin_base_url
+     *
+     * @param array  $request_data
+     * @param string $admin_base_url
      * @return array
      * @throws UnexpectedEntityException
      * @throws DomainException
@@ -83,73 +85,64 @@ class PreviewDeletion
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @since 4.10.12.p
      */
-    public function handle($request_data, $admin_base_url)
+    public function handle(array $request_data, string $admin_base_url): array
     {
-        $deletion_job_code = isset($request_data['deletion_job_code']) ? sanitize_key($request_data['deletion_job_code']) : '';
+        $deletion_job_code        = isset($request_data['deletion_job_code'])
+            ? sanitize_key($request_data['deletion_job_code'])
+            : '';
         $models_and_ids_to_delete = $this->dao->getModelsAndIdsFromGroup($deletion_job_code);
-        $event_ids = isset($models_and_ids_to_delete['Event']) ? $models_and_ids_to_delete['Event'] : array();
-        if (empty($event_ids) || !is_array($event_ids)) {
+        $event_ids                = $models_and_ids_to_delete['Event'] ?? [];
+        if (empty($event_ids) || ! is_array($event_ids)) {
             throw new EE_Error(
                 esc_html__('No Events were found to delete.', 'event_espresso')
             );
         }
-        $datetime_ids = isset($models_and_ids_to_delete['Datetime']) ? $models_and_ids_to_delete['Datetime'] : array();
-        if (!is_array($datetime_ids)) {
+        $datetime_ids = $models_and_ids_to_delete['Datetime'] ?? [];
+        if (! is_array($datetime_ids)) {
             throw new UnexpectedEntityException($datetime_ids, 'array');
         }
-        $registration_ids = isset($models_and_ids_to_delete['Registration']) ? $models_and_ids_to_delete['Registration'] : array();
-        if (!is_array($registration_ids)) {
+        $registration_ids = $models_and_ids_to_delete['Registration'] ?? [];
+        if (! is_array($registration_ids)) {
             throw new UnexpectedEntityException($registration_ids, 'array');
         }
         $num_registrations_to_show = 10;
-        $reg_count = count($registration_ids);
+        $reg_count                 = count($registration_ids);
         if ($reg_count > $num_registrations_to_show) {
             $registration_ids = array_slice($registration_ids, 0, $num_registrations_to_show);
         }
-        $form = new ConfirmEventDeletionForm($event_ids);
-        $events = $this->event_model->get_all_deleted_and_undeleted(
-            [
-                [
-                    'EVT_ID' => ['IN', $event_ids]
-                ]
-            ]
+        $form                  = new ConfirmEventDeletionForm($event_ids);
+        $events                = $this->event_model->get_all_deleted_and_undeleted(
+            [['EVT_ID' => ['IN', $event_ids]]]
         );
-        $datetimes = $this->datetime_model->get_all_deleted_and_undeleted(
-            [
-                [
-                    'DTT_ID' => ['IN', $datetime_ids]
-                ]
-            ]
+        $datetimes             = $this->datetime_model->get_all_deleted_and_undeleted(
+            [['DTT_ID' => ['IN', $datetime_ids]]]
         );
-        $registrations = $this->registration_model->get_all_deleted_and_undeleted(
-            [
-                [
-                    'REG_ID' => ['IN', $registration_ids]
-                ]
-            ]
+        $registrations         = $this->registration_model->get_all_deleted_and_undeleted(
+            [['REG_ID' => ['IN', $registration_ids]]]
         );
         $confirm_deletion_args = [
-            'action' => 'confirm_deletion',
-            'deletion_job_code' => $deletion_job_code
+            'action'            => 'confirm_deletion',
+            'deletion_job_code' => $deletion_job_code,
         ];
         return [
             'admin_page_content' => EEH_Template::display_template(
                 EVENTS_TEMPLATE_PATH . 'event_preview_deletion.template.php',
                 [
-                    'form_url' => EE_Admin_Page::add_query_args_and_nonce(
+                    'form_url'                  => EE_Admin_Page::add_query_args_and_nonce(
                         $confirm_deletion_args,
                         $admin_base_url
                     ),
-                    'form' => $form,
-                    'events' => $events,
-                    'datetimes' => $datetimes,
-                    'registrations' => $registrations,
-                    'reg_count' => $reg_count,
-                    'num_registrations_to_show' => $num_registrations_to_show
+                    'form'                      => $form,
+                    'events'                    => $events,
+                    'datetimes'                 => $datetimes,
+                    'registrations'             => $registrations,
+                    'reg_count'                 => $reg_count,
+                    'num_registrations_to_show' => $num_registrations_to_show,
                 ],
                 true
-            )
+            ),
         ];
     }
 }
