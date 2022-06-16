@@ -87,7 +87,8 @@ class EEM_Event extends EEM_CPT_Base
                 ),
             )
         );
-        self::$_default_reg_status = empty(self::$_default_reg_status) ? EEM_Registration::status_id_pending_payment
+        self::$_default_reg_status = empty(self::$_default_reg_status)
+            ? EEM_Registration::status_id_pending_payment
             : self::$_default_reg_status;
         $this->_tables = array(
             'Event_CPT'  => new EE_Primary_Table('posts', 'ID'),
@@ -222,7 +223,7 @@ class EEM_Event extends EEM_CPT_Base
                 'EVT_additional_limit'            => new EE_Integer_Field(
                     'EVT_additional_limit',
                     esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
-                    true,
+                    false,
                     self::$_default_additional_limit
                 ),
                 'EVT_default_registration_status' => new EE_Enum_Text_Field(
@@ -336,7 +337,7 @@ class EEM_Event extends EEM_CPT_Base
             self::$_instance->_fields['Event_Meta']['EVT_additional_limit'] = new EE_Integer_Field(
                 'EVT_additional_limit',
                 esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
-                true,
+                false,
                 self::$_default_additional_limit
             );
             self::$_instance->_fields['Event_Meta']['EVT_additional_limit']->_construct_finalize(
