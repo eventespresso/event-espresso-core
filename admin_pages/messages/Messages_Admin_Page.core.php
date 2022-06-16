@@ -855,15 +855,13 @@ class Messages_Admin_Page extends EE_Admin_Page
                         . '" alt="' . esc_attr__('Active Email Tab', 'event_espresso') . '" />';
         $args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png'
                         . '" alt="' . esc_attr__('Inactive Email Tab', 'event_espresso') . '" />';
-        $args['img3'] = '<div class="switch">'
-                        . '<input class="ee-on-off-toggle ee-toggle-round-flat"'
-                        . ' type="checkbox" checked>'
-                        . '<label for="ee-on-off-toggle-on"></label>'
+        $args['img3'] = '<div class="ee-switch">'
+                        . '<input class="ee-switch__input" id="ee-on-off-toggle-on" type="checkbox" checked>'
+                        . '<label class="ee-switch__toggle" for="ee-on-off-toggle-on"></label>'
                         . '</div>';
         $args['img4'] = '<div class="switch">'
-                        . '<input class="ee-on-off-toggle ee-toggle-round-flat"'
-                        . ' type="checkbox">'
-                        . '<label for="ee-on-off-toggle-on"></label>'
+                        . '<input class="ee-switch__input" id="ee-on-off-toggle-off" type="checkbox">'
+                        . '<label class="ee-switch__toggle" for="ee-on-off-toggle-off"></label>'
                         . '</div>';
         EEH_Template::display_template(EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_settings_help_tab.template.php', $args);
     }
@@ -3894,9 +3892,9 @@ class Messages_Admin_Page extends EE_Admin_Page
     protected function _get_messenger_box_content(EE_messenger $messenger)
     {
 
-        $fields                                         = $messenger->get_admin_settings_fields();
-        $settings_template_args['template_form_fields'] = '';
+        $fields = $messenger->get_admin_settings_fields();
 
+        $settings_template_args['template_form_fields'] = '';
         // is $messenger active?
         $settings_template_args['active'] = $this->_message_resource_manager->is_messenger_active($messenger->name);
 
@@ -3904,23 +3902,20 @@ class Messages_Admin_Page extends EE_Admin_Page
         if (! empty($fields)) {
             $existing_settings = $messenger->get_existing_admin_settings();
 
-            foreach ($fields as $fldname => $fldprops) {
-                $field_id                         = $messenger->name . '-' . $fldname;
+            foreach ($fields as $field_name => $field_props) {
+                $field_id                         = $messenger->name . '-' . $field_name;
                 $template_form_field[ $field_id ] = [
                     'name'       => 'messenger_settings[' . $field_id . ']',
-                    'label'      => $fldprops['label'],
-                    'input'      => $fldprops['field_type'],
-                    'type'       => $fldprops['value_type'],
-                    'required'   => $fldprops['required'],
-                    'validation' => $fldprops['validation'],
-                    'value'      => isset($existing_settings[ $field_id ])
-                        ? $existing_settings[ $field_id ]
-                        : $fldprops['default'],
+                    'label'      => $field_props['label'],
+                    'input'      => $field_props['field_type'],
+                    'type'       => $field_props['value_type'],
+                    'required'   => $field_props['required'],
+                    'validation' => $field_props['validation'],
+                    'value'      => $existing_settings[ $field_id ] ?? $field_props['default'],
                     'css_class'  => '',
-                    'format'     => $fldprops['format'],
+                    'format'     => $field_props['format'],
                 ];
             }
-
 
             $settings_template_args['template_form_fields'] = ! empty($template_form_field)
                 ? $this->_generate_admin_form_fields($template_form_field, 'string', 'ee_m_activate_form')

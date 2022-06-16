@@ -27,7 +27,7 @@
 ?>
     </p>
 
-    <table class="form-table">
+    <table class="ee-admin-two-column-layout form-table">
         <tbody>
 
             <tr>

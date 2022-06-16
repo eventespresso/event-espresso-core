@@ -19,7 +19,7 @@ $values = EEH_Form_Fields::prep_answer_options(
         'event_espresso'
     ); ?><?php // echo EEH_Template::get_help_tab_link('event_single_settings_info');?>
 </h2>
-<table class="form-table">
+<table class="ee-admin-two-column-layout form-table">
     <tbody>
     <tr>
         <th>

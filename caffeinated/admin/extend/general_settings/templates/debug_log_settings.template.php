@@ -8,7 +8,7 @@
         <?php esc_html_e('Debug/Logging Options', 'event_espresso'); ?>
     </h2>
 
-    <table class="form-table">
+    <table class="ee-admin-two-column-layout form-table">
         <tbody>
             <tr>
                 <th>

@@ -64,6 +64,16 @@ li.mt-tab:hover .mt-handlediv {
     cursor: pointer;
 }
 
+.messenger-settings-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.mt-settings-form {
+    margin-inline: 1rem;
+}
+
 .activate_messages_on_off_toggle_container {
-    float:right;
+    margin-inline-start: auto;
 }

@@ -66,7 +66,7 @@
         <?php echo EEH_Template::get_help_tab_link('gmaps_info'); // already escaped ?>
     </h2>
 
-    <table class="form-table">
+    <table class="ee-admin-two-column-layout form-table">
         <tbody>
             <tr>
                 <th>
@@ -260,7 +260,7 @@
         <?php esc_html_e('Events List Options', 'event_espresso'); ?>
     </h2>
 
-    <table class="form-table">
+    <table class="ee-admin-two-column-layout form-table">
         <tbody>
             <tr>
                 <th>

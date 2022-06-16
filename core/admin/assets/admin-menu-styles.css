@@ -795,6 +795,10 @@ div.TB-ee-frame a {
 	width: 0 !important;
 }
 
+.ee-switch .ee-switch__toggle {
+	margin: 0 !important;
+}
+
 .ee-switch .ee-switch__input + .ee-switch__toggle,
 .ee-on-off-toggle + label {
 	display: block;

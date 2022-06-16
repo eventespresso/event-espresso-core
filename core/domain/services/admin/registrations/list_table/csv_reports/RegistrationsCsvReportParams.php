@@ -45,6 +45,7 @@ class RegistrationsCsvReportParams
         $route_details = [
             'route'         => 'registrations_report',
             'extra_request' => [ 'return_url' => $return_url ],
+            'btn_class'     => 'button button--primary',
         ];
         if (! empty($EVT_ID)) {
             $route_details['extra_request']['EVT_ID'] = $EVT_ID;

@@ -813,12 +813,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             foreach ($this->_bottom_buttons as $type => $action) {
                 $route         = $action['route'] ?? '';
                 $extra_request = $action['extra_request'] ?? '';
+                $btn_class     = $action['btn_class'] ?? 'button button--secondary';
                 // already escaped
                 echo wp_kses($this->_admin_page->get_action_link_or_button(
                     $route,
                     $type,
                     $extra_request,
-                    'button button--secondary'
+                    $btn_class
                 ), AllowedTags::getWithFormTags());
             }
             do_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen);
@@ -948,7 +949,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
     {
         return '
         <div class="ee-modal-menu">
-            <button class="ee-modal-menu__button button button--small button--icon-only ee-aria-tooltip"
+            <button class="ee-modal-menu__button button button--secondary button--icon-only ee-aria-tooltip"
                     aria-label="' . esc_attr__('list table actions menu', 'event_espresso') . '"
             >
                 <span class="dashicons dashicons-menu"></span>

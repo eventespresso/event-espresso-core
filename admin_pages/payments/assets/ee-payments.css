@@ -36,7 +36,16 @@
 
 h4.ee-status-outline {
     display: inline-block;
+    margin-block: 0.5em;
 }
+
+.espresso-admin .ee-admin-two-column-layout h3 {
+    margin-block-start: 3.5rem;
+}
+.espresso-admin .ee-admin-two-column-layout h4.ee-status-outline {
+    margin-block-start: 3rem;
+}
+
 
 table.widefat.ee-payment-log-details,
 table.widefat.ee-payment-log-details table.widefat {
@@ -54,4 +63,11 @@ table.widefat.ee-payment-log-details table.widefat {
 .ee-payment-log-details__content td:not(:first-child) {
     word-break: break-word;
     white-space: normal;
+}
+
+
+.espresso-admin form > .ee-admin-two-column-layout > tbody > tr > th,
+.espresso-admin form > .ee-admin-two-column-layout > tbody > tr > td {
+    min-width: unset;
+    max-width: 100%;
 }
