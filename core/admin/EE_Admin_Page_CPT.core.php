@@ -498,13 +498,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         }
         ?>
         <p><strong><?php esc_html_e('Template', 'event_espresso') ?></strong></p>
-        <label class="screen-reader-text" for="page_template"><?php esc_html_e(
-            'Page Template',
-            'event_espresso'
-        ) ?></label>
-        <select
-            name="page_template" id="page_template"
-        >
+        <label class="screen-reader-text" for="page_template">
+            <?php esc_html_e('Page Template', 'event_espresso') ?>
+        </label>
+        <select name="page_template" id="page_template">
             <option value='default'><?php esc_html_e('Default Template', 'event_espresso'); ?></option>
             <?php page_template_dropdown($template); ?>
         </select>
@@ -526,19 +523,20 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         $post = get_post($id);
         if ('publish' !== get_post_status($post)) {
-            $return .= '<span id="view-post-btn"><a target="_blank" href="'
-                       . get_preview_post_link($id)
-                       . '" class="button button--secondary">'
-                       . esc_html__('Preview', 'event_espresso')
-                       . '</a></span>'
-                       . "\n";
+            $return .= '
+            <span id="view-post-btn">
+                <a target="_blank" href="' . get_preview_post_link($id) . '" class="button button--secondary">
+                    ' . esc_html__('Preview', 'event_espresso') . '
+                </a>
+            </span>
+            ';
         }
         return $return;
     }
 
 
     /**
-     * add our custom post stati dropdown on the wp post page for this cpt
+     * add our custom post status dropdown on the wp post page for this cpt
      *
      * @return void
      */
@@ -1108,9 +1106,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     public function add_custom_editor_default_title($title)
     {
-        return isset($this->_labels['editor_title'][ $this->_cpt_routes[ $this->_req_action ] ])
-            ? $this->_labels['editor_title'][ $this->_cpt_routes[ $this->_req_action ] ]
-            : $title;
+        return $this->_labels['editor_title'][ $this->_cpt_routes[ $this->_req_action ] ] ?? $title;
     }
 
 
@@ -1184,7 +1180,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     public function revision_redirect($location, $status)
     {
         // get revision
-        $rev_id = isset($this->_req_data['revision']) ? $this->_req_data['revision'] : null;
+        $rev_id = $this->_req_data['revision'] ?? null;
         // can't do anything without revision so let's get out if not present
         if (empty($rev_id)) {
             return $location;
