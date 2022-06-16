@@ -203,7 +203,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				EVT_visible_on datetime NULL DEFAULT NULL,
 				EVT_default_registration_status varchar(3),
 				EVT_phone varchar(45) DEFAULT NULL,
-				EVT_additional_limit tinyint(2) unsigned NOT NULL 10,
+				EVT_additional_limit tinyint(2) unsigned NOT NULL DEFAULT 10,
 				EVT_member_only tinyint(1) unsigned NOT NULL DEFAULT 0,
 				EVT_allow_overflow tinyint(1) unsigned NOT NULL DEFAULT 0,
 				EVT_timezone_string varchar(45) NULL,
