@@ -175,21 +175,35 @@ abstract class JobHandler implements JobHandlerInterface
 
 
 
-    protected function displayJobStepResults(JobParameters $job_parameters, int $processed)
+    protected function displayJobStepResults(int $processed, string $custom_message = '')
     {
         $this->feedback[] = '
 			<div class="ee-batch-job-step-results">
-				' . $this->infoWrapper("processed this batch: $processed") . '
+			' . $this->infoWrapper(
+                sprintf(
+                    $custom_message !== ''
+                        ? $custom_message
+                        : esc_html__('processed this batch: %d', 'event_espresso'),
+                    $processed
+                )
+            ) . '
 			</div>';
     }
 
 
-    protected function displayJobFinalResults(JobParameters $job_parameters)
+    protected function displayJobFinalResults(JobParameters $job_parameters, string $custom_message = '')
     {
         if ($job_parameters->status() === JobParameters::status_complete) {
             $this->feedback[] = '
 			<div class="ee-batch-job-final-results">
-				' . $this->okWrapper("total units processed: {$job_parameters->units_processed()}") . '
+				' . $this->okWrapper(
+                    sprintf(
+                        $custom_message !== ''
+                            ? $custom_message
+                            : esc_html__('total units processed: %d', 'event_espresso'),
+                        $job_parameters->units_processed()
+                    )
+                ) . '
 				' . $this->jobStatusNotice($job_parameters) . '
 			</div>';
         }
