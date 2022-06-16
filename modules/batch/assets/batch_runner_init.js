@@ -101,6 +101,7 @@ jQuery(document).ready(function ($) {
 		//once we're all done, redirect them back to the indicated page
 		if (response.data.status === 'complete') {
 			runner.cleanup_job();
+			runner.countdownRedirect(ee_job_i18n.return_url, 9)
 		}
 	}
 
