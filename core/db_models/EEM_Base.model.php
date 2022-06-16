@@ -3706,8 +3706,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     private function _get_default_where_conditions_for_models_in_query(
         EE_Model_Query_Info_Carrier $query_info_carrier,
-                                    $use_default_where_conditions = EEM_Base::default_where_conditions_all,
-                                    $where_query_params = []
+        $use_default_where_conditions = EEM_Base::default_where_conditions_all,
+        $where_query_params = []
     ) {
         $allowed_used_default_where_conditions_values = EEM_Base::valid_default_where_conditions();
         if (! in_array($use_default_where_conditions, $allowed_used_default_where_conditions_values)) {
@@ -4115,9 +4115,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     private function extractJoinModelFromQueryParams(
         EE_Model_Query_Info_Carrier $query_info_carrier,
-                                    $possible_join_string,
-                                    $original_query_param,
-                                    $query_parameter_type
+        $possible_join_string,
+        $original_query_param,
+        $query_parameter_type
     ) {
         foreach ($this->_model_relations as $valid_related_model_name => $relation_obj) {
             if (strpos($possible_join_string, $valid_related_model_name . ".") === 0) {
@@ -4300,27 +4300,27 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     case 'NOT':
                         $where_clauses[] = "! ("
                                            . $this->_construct_condition_clause_recursive(
-                                $op_and_value_or_sub_condition,
-                                $glue
-                            )
+                                               $op_and_value_or_sub_condition,
+                                               $glue
+                                           )
                                            . ")";
                         break;
                     case 'and':
                     case 'AND':
                         $where_clauses[] = " ("
                                            . $this->_construct_condition_clause_recursive(
-                                $op_and_value_or_sub_condition,
-                                ' AND '
-                            )
+                                               $op_and_value_or_sub_condition,
+                                               ' AND '
+                                           )
                                            . ")";
                         break;
                     case 'or':
                     case 'OR':
                         $where_clauses[] = " ("
                                            . $this->_construct_condition_clause_recursive(
-                                $op_and_value_or_sub_condition,
-                                ' OR '
-                            )
+                                               $op_and_value_or_sub_condition,
+                                               ' OR '
+                                           )
                                            . ")";
                         break;
                 }
