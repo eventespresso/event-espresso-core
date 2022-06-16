@@ -229,11 +229,6 @@ class PreviewEventDeletion extends JobHandler
                 $job_parameters->extra_datum('roots'),
                 $deletion_job_code
             );
-
-            $this->displayJobFinalResults(
-                $job_parameters,
-                esc_html__('found %d potential items for deletion.', 'event_espresso')
-            );
             return new JobStepResponse($job_parameters, $this->feedback);
         }
         // Because the job size was a guess, it may have likely been proven wrong.
@@ -256,7 +251,10 @@ class PreviewEventDeletion extends JobHandler
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
-        $this->updateText(esc_html__('All done', 'event_espresso'));
+        $this->displayJobFinalResults(
+            $job_parameters,
+            esc_html__('found %d potential items for deletion.', 'event_espresso')
+        );
         $this->updateText(
             $this->infoWrapper(
                 sprintf(

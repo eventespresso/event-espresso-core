@@ -142,10 +142,6 @@ class ExecuteBatchDeletion extends JobHandler
         // All done deleting for this request. Is there anything to do next time?
         if (empty($models_and_ids_remaining)) {
             $job_parameters->set_status(JobParameters::status_complete);
-            $this->displayJobFinalResults(
-                $job_parameters,
-                esc_html__('Done. Deleted a total of %d items.', 'event_espresso')
-            );
             return new JobStepResponse($job_parameters, $this->feedback);
         }
         $job_parameters->add_extra_data('models_and_ids_to_delete', $models_and_ids_remaining);
@@ -186,7 +182,10 @@ class ExecuteBatchDeletion extends JobHandler
             ))->save();
             do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $event_id);
         }
-        $this->updateText(esc_html__('All done', 'event_espresso'));
+        $this->displayJobFinalResults(
+            $job_parameters,
+            esc_html__('All Done. Deleted a total of %d items.', 'event_espresso')
+        );
         $this->updateText(
             $this->infoWrapper(
                 sprintf(
