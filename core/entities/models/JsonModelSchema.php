@@ -267,7 +267,7 @@ class JsonModelSchema
      * Allows one to just use the object as a string to get the json.
      * eg.
      * $json_schema = new JsonModelSchema(EEM_Event::instance(), new CalculatedModelFields);
-     * echo $json_schema; //outputs the schema as a json formatted string.
+     * // if echoed, would convert schema to a json formatted string.
      *
      * @return string
      */

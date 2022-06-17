@@ -37,6 +37,7 @@
 
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 if (! class_exists('PluginUpdateEngineChecker')):
     /**
@@ -513,7 +514,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
         {
             ?>
             <div class="error" style="padding:15px; position:relative;" id="pue_option_error">
-                <?php echo $this->_error_msg; ?>
+                <?php echo wp_kses($this->_error_msg, AllowedTags::getAllowedTags()); ?>
             </div>
             <?php
         }
@@ -1232,8 +1233,8 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ob_start();
                 ?>
                 <div class="error" id="pue_error_notices">
-                    <?php echo $this->_sanitize_notices($errors); ?>
-                    <a class="button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );"
+                    <?php echo wp_kses($errors, AllowedTags::getAllowedTags()); ?>
+                    <a class="button button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );"
                        style="float:right; margin-bottom: 10px;">
                         <?php esc_html_e('Dismiss'); ?>
                     </a>
@@ -1248,8 +1249,8 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ob_start();
                 ?>
                 <div class="notice notice-info" id="pue_attention_notices">
-                    <?php echo $this->_sanitize_notices($attentions); ?>
-                    <a class="button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );"
+                    <?php echo wp_kses($attentions, AllowedTags::getAllowedTags()); ?>
+                    <a class="button button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );"
                        style="float:right; margin-bottom: 10px;">
                         <?php esc_html_e('Dismiss'); ?>
                     </a>
@@ -1264,8 +1265,8 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ob_start();
                 ?>
                 <div class="success" id="pue_success_notices">
-                    <?php echo $this->_sanitize_notices($successes); ?>
-                    <a class="button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );"
+                    <?php echo wp_kses($successes, AllowedTags::getAllowedTags()); ?>
+                    <a class="button button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );"
                        style="float:right; margin-bottom: 10px;">
                         <?php esc_html_e('Dismiss'); ?>
                     </a>
@@ -1475,8 +1476,8 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ob_start();
                 ?>
                 <div class="updated" style="padding:15px; position:relative;"
-                     id="pu_dashboard_message"><?php echo $this->_sanitize_notices($msg); ?>
-                    <a class="button--secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();"
+                     id="pu_dashboard_message"><?php echo wp_kses($msg, AllowedTags::getAllowedTags()); ?>
+                    <a class="button button--secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();"
                        style='float:right;'><?php esc_html_e("Dismiss") ?></a>
                     <div style="clear:both;"></div>
                 </div>

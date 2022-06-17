@@ -93,8 +93,6 @@ class EE_SPCO_JSON_Response
      *    __toString
      *
      *        allows you to simply echo or print an EE_SPCO_JSON_Response object to produce a  JSON encoded string
-     *        ie: $json_response = new EE_SPCO_JSON_Response();
-     *        echo $json_response;
      *
      * @access    public
      * @return    string

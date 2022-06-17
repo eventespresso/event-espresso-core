@@ -2772,9 +2772,9 @@ abstract class EE_Base_Class
      *          return $previousReturnValue.$returnString;
      *      }
      * require('EE_Answer.class.php');
-     * $answer= EE_Answer::new_instance(array('REG_ID' => 2,'QST_ID' => 3,'ANS_value' => The answer is 42'));
-     * echo $answer->my_callback('monkeys',100);
-     * //will output "you called my_callback! and passed args:monkeys,100"
+     * echo EE_Answer::new_instance(['REG_ID' => 2,'QST_ID' => 3,'ANS_value' => The answer is 42'])
+     *      ->my_callback('monkeys',100);
+     * // will output "you called my_callback! and passed args:monkeys,100"
      *
      * @param string $methodName name of method which was called on a child of EE_Base_Class, but which
      * @param array  $args       array of original arguments passed to the function

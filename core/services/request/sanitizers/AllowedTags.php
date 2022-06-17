@@ -65,6 +65,16 @@ class AllowedTags
         'type'              => 1,
         'value'             => 1,
         'width'             => 1,
+        'topmargin'         => 1,
+        'leftmargin'        => 1,
+        'marginheight'      => 1,
+        'marginwidth'       => 1,
+        'property'          => 1,
+        'bgcolor'           => 1,
+        'media'             => 1,
+        'cellpadding'       => 1,
+        'cellspacing'       => 1,
+        'border'            => 1,
     ];
 
 
@@ -125,6 +135,11 @@ class AllowedTags
      */
     private static $allowed_with_script_and_style_tags;
 
+    /**
+     * @var array
+     */
+    private static $allowed_with_full_tags;
+
 
     /**
      * merges additional tags and attributes into the WP post tags
@@ -160,16 +175,16 @@ class AllowedTags
     {
         $all_tags = AllowedTags::getAllowedTags();
         $form_tags = [
-            'form' => AllowedTags::$attributes,
-            'label' => AllowedTags::$attributes,
-            'input' => AllowedTags::$attributes,
-            'select' => AllowedTags::$attributes,
-            'option' => AllowedTags::$attributes,
+            'form'     => AllowedTags::$attributes,
+            'label'    => AllowedTags::$attributes,
+            'input'    => AllowedTags::$attributes,
+            'select'   => AllowedTags::$attributes,
+            'option'   => AllowedTags::$attributes,
             'optgroup' => AllowedTags::$attributes,
             'textarea' => AllowedTags::$attributes,
-            'button' => AllowedTags::$attributes,
+            'button'   => AllowedTags::$attributes,
             'fieldset' => AllowedTags::$attributes,
-            'output' => AllowedTags::$attributes,
+            'output'   => AllowedTags::$attributes,
         ];
         AllowedTags::$allowed_with_form_tags = array_merge_recursive($all_tags, $form_tags);
     }
@@ -183,10 +198,37 @@ class AllowedTags
         $all_tags = AllowedTags::getAllowedTags();
         $script_and_style_tags = [
             'script' => AllowedTags::$attributes,
-            'style' => AllowedTags::$attributes,
-            'link' => AllowedTags::$attributes,
+            'style'  => AllowedTags::$attributes,
+            'link'   => AllowedTags::$attributes,
         ];
         AllowedTags::$allowed_with_script_and_style_tags = array_merge_recursive($all_tags, $script_and_style_tags);
+    }
+
+    /**
+     * merges all head and body tags and attributes into the EE all tags
+     */
+    private static function initializeWithFullTags()
+    {
+        $all_tags = AllowedTags::getAllowedTags();
+        $full_tags = [
+            'script'    => AllowedTags::$attributes,
+            'style'     => AllowedTags::$attributes,
+            'link'      => AllowedTags::$attributes,
+            'title'     => AllowedTags::$attributes,
+            'meta'      => AllowedTags::$attributes,
+            'iframe'    => AllowedTags::$attributes,
+            'form'      => AllowedTags::$attributes,
+            'label'     => AllowedTags::$attributes,
+            'input'     => AllowedTags::$attributes,
+            'select'    => AllowedTags::$attributes,
+            'option'    => AllowedTags::$attributes,
+            'optgroup'  => AllowedTags::$attributes,
+            'textarea'  => AllowedTags::$attributes,
+            'button'    => AllowedTags::$attributes,
+            'fieldset'  => AllowedTags::$attributes,
+            'output'    => AllowedTags::$attributes,
+        ];
+        AllowedTags::$allowed_with_full_tags = array_merge_recursive($all_tags, $full_tags);
     }
 
 
@@ -235,5 +277,16 @@ class AllowedTags
             AllowedTags::initializeWithScriptAndStyleTags();
         }
         return AllowedTags::$allowed_with_script_and_style_tags;
+    }
+
+    /**
+     * @return array[]
+     */
+    public static function getWithFullTags()
+    {
+        if (empty(AllowedTags::$allowed_with_full_tags)) {
+            AllowedTags::initializeWithFullTags();
+        }
+        return AllowedTags::$allowed_with_full_tags;
     }
 }

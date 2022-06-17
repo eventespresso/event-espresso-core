@@ -1,4 +1,9 @@
-<?php /** @var string $main_body */ ?>
+<?php
+
+/** @var string $main_body */
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
+?>
 <div id="ee-message-preview-container" style="margin-top: 10px">
-    <?php echo $main_body; // already escaped ?>
+    <?php echo wp_kses($main_body, AllowedTags::getWithFormTags()); ?>
 </div>

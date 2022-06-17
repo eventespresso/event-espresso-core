@@ -294,7 +294,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param array|null $req_data should usually be post data (the default).
      *                             However, you CAN supply a different array.
      *                             Consider using set_defaults() instead however.
-     *                             (If you rendered the form in the page using echo $form_x->get_html()
+     *                             (If you rendered the form in the page using $form_x->get_html()
      *                             the inputs will have the correct name in the request data for this function
      *                             to find them and populate the form with them.
      *                             If you have a flat form (with only input subsections),

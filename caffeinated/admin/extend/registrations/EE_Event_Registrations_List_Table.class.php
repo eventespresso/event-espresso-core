@@ -74,7 +74,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
     /**
      * @var   array
-     * @since $VID:$
+     * @since 4.10.31.p
      */
     protected $_status;
 

@@ -97,7 +97,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
      * @param array|string $classes
      * @param string $suffix
      * @return string
-     * @since $VID:$
+     * @since 4.10.31.p
      */
     private function processHtmlClasses($classes, string $suffix): string
     {
