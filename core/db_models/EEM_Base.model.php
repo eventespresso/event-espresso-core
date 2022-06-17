@@ -5448,8 +5448,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param array $cols_n_values
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function deduce_fields_n_values_from_cols_n_values($cols_n_values)
+    public function deduce_fields_n_values_from_cols_n_values(array $cols_n_values): array
     {
         return $this->_deduce_fields_n_values_from_cols_n_values($cols_n_values);
     }
@@ -5460,10 +5462,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Given an array where keys are column (or column alias) names and values,
      * returns an array of their corresponding field names and database values
      *
-     * @param string $cols_n_values
+     * @param array $cols_n_values
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _deduce_fields_n_values_from_cols_n_values($cols_n_values)
+    protected function _deduce_fields_n_values_from_cols_n_values(array $cols_n_values): array
     {
         $this_model_fields_n_values = [];
         foreach ($this->get_tables() as $table_alias => $table_obj) {
@@ -5477,8 +5481,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 foreach ($this->_get_fields_for_table($table_alias) as $field_name => $field_obj) {
                     if (! $field_obj->is_db_only_field()) {
                         // prepare field as if its coming from db
-                        $prepared_value                            =
-                            $field_obj->prepare_for_set($field_obj->get_default_value());
+                        $prepared_value = $field_obj->prepare_for_set($field_obj->get_default_value());
                         $this_model_fields_n_values[ $field_name ] = $field_obj->prepare_for_use_in_db($prepared_value);
                     }
                 }
@@ -5500,14 +5503,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * @param $cols_n_values
+     * @param array $cols_n_values
      * @param $qualified_column
      * @param $regular_column
      * @return null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_column_value_with_table_alias_or_not($cols_n_values, $qualified_column, $regular_column)
+    protected function _get_column_value_with_table_alias_or_not(array $cols_n_values, $qualified_column, $regular_column)
     {
         $value = null;
         // ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
