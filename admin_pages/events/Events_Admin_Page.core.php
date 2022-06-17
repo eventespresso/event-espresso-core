@@ -1061,7 +1061,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             );
             $event_values['EVT_additional_limit']            = min(
                 apply_filters('FHEE__EE_Events_Admin__insert_update_cpt_item__EVT_additional_limit_max', 255),
-                $this->request->getRequestParam('additional_limit', null, 'int')
+                $this->request->getRequestParam(
+                    'additional_limit',
+                    EEM_Event::get_default_additional_limit(),
+                    'int'
+                )
             );
             $event_values['EVT_default_registration_status'] = $this->request->getRequestParam(
                 'EVT_default_registration_status',
@@ -1077,7 +1081,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         // get event_object for other metaboxes...
         // though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id )..
         // i have to setup where conditions to override the filters in the model
-        // that filter out autodraft and inherit statuses so we GET the inherit id!
+        // that filter out auto-draft and inherit statuses so we GET the inherit id!
+        /** @var EE_Event $event */
         $event = $this->_event_model()->get_one(
             [
                 [

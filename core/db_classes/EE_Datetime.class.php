@@ -192,7 +192,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Set registration limit
      * set the maximum number of attendees that can be registered for this datetime slot
      *
-     * @param int $reg_limit
+     * @param int|float $reg_limit
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -250,7 +250,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function increaseSold($qty = 1, $also_decrease_reserved = true)
+    public function increaseSold(int $qty = 1, bool $also_decrease_reserved = true): bool
     {
         $qty = absint($qty);
         if ($also_decrease_reserved) {
@@ -291,7 +291,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function decreaseSold($qty = 1)
+    public function decreaseSold(int $qty = 1): bool
     {
         $qty = absint($qty);
         $success = $this->adjustNumericFieldsInDb(
@@ -320,7 +320,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function reserved()
+    public function reserved(): int
     {
         return $this->get_raw('DTT_reserved');
     }
@@ -336,10 +336,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function set_reserved($reserved)
+    public function set_reserved(int $reserved)
     {
         // reserved can not go below zero
-        $reserved = max(0, (int) $reserved);
+        $reserved = max(0, $reserved);
         $this->set('DTT_reserved', $reserved);
     }
 
@@ -355,7 +355,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function increaseReserved($qty = 1)
+    public function increaseReserved(int $qty = 1): bool
     {
         $qty = absint($qty);
         $success = $this->incrementFieldConditionallyInDb(
@@ -386,7 +386,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function decreaseReserved($qty = 1)
+    public function decreaseReserved(int $qty = 1): bool
     {
         $qty = absint($qty);
         $success = $this->adjustNumericFieldsInDb(
@@ -415,7 +415,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function sold_and_reserved()
+    public function sold_and_reserved(): int
     {
         return $this->sold() + $this->reserved();
     }
@@ -431,7 +431,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function name()
+    public function name(): string
     {
         return $this->get('DTT_name');
     }
@@ -447,7 +447,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function description()
+    public function description(): string
     {
         return $this->get('DTT_description');
     }
@@ -463,7 +463,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function is_primary()
+    public function is_primary(): bool
     {
         return $this->get('DTT_is_primary');
     }
@@ -479,7 +479,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function order()
+    public function order(): int
     {
         return $this->get('DTT_order');
     }
@@ -495,7 +495,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function parent()
+    public function parent(): int
     {
         return $this->get('DTT_parent');
     }
@@ -978,7 +978,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      *    get the registration limit for this datetime slot
      *
-     * @return        mixed        int on success, FALSE on fail
+     * @return int|float                int = finite limit   EE_INF(float) = unlimited
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -994,7 +994,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      *    have the tickets sold for this datetime, met or exceed the registration limit ?
      *
-     * @return        boolean
+     * @return boolean
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -1016,7 +1016,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *                               then this datetime IS effectively sold out.
      *                               However, there are cases where we just want to know the spaces
      *                               remaining for this particular datetime, hence the flag.
-     * @return int
+     * @return int|float
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException

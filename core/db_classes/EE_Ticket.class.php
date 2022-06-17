@@ -864,9 +864,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function sold()
+    public function sold(): int
     {
-        return $this->get_raw('TKT_sold');
+        return (int) $this->get_raw('TKT_sold');
     }
 
 
@@ -1012,9 +1012,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function reserved()
+    public function reserved(): int
     {
-        return $this->get_raw('TKT_reserved');
+        return (int) $this->get_raw('TKT_reserved');
     }
 
 
