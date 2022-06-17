@@ -84,7 +84,7 @@ jQuery(document).ready(function ($) {
 	function ee_continue_batch_job(response, status, xhr) {
 		//once we're all done, redirect them back to the indicated page
 		if (response.data.status === 'complete') {
-			runner.cleanup_job();
+			runner.cleanup_job(ee_job_i18n.return_url);
 		}
 	}
 
@@ -100,7 +100,7 @@ jQuery(document).ready(function ($) {
 	function ee_advance_to_next_batch_job(response, status, xhr) {
 		//once we're all done, redirect them back to the indicated page
 		if (response.data.status === 'complete') {
-			runner.cleanup_job();
+			runner.cleanup_job(ee_job_i18n.return_url);
 		}
 	}
 

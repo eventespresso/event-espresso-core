@@ -119,10 +119,8 @@ class PreviewEventDeletion extends JobHandler
             ]
         );
         $job_parameters->set_job_size((count($roots) + $count_regs) * $estimated_work_per_model_obj);
-        return new JobStepResponse(
-            $job_parameters,
-            esc_html__('Generating preview of data to be deleted...', 'event_espresso')
-        );
+        $this->updateTextHeader(esc_html__('Generating preview of data to be deleted...', 'event_espresso'));
+        return new JobStepResponse($job_parameters, $this->feedback);
     }
 
     /**
@@ -162,10 +160,7 @@ class PreviewEventDeletion extends JobHandler
             return [];
         }
         global $wpdb;
-        $event_ids = array_map(
-            'intval',
-            $event_ids
-        );
+        $event_ids = array_map('absint', $event_ids);
         $imploded_sanitized_event_ids = implode(',', $event_ids);
         // Select transactions with registrations for the events $event_ids which also don't have registrations
         // for any events NOT in $event_ids.
@@ -173,7 +168,7 @@ class PreviewEventDeletion extends JobHandler
         // whereas the inner query checks if the outer query's transaction has any registrations that are
         // NOT IN $event_ids (ie, don't have registrations for events we're not just about to delete.)
         return array_map(
-            'intval',
+            'absint',
             $wpdb->get_col(
                 "SELECT
                       DISTINCT t.TXN_ID
@@ -225,7 +220,7 @@ class PreviewEventDeletion extends JobHandler
         $job_parameters->mark_processed($units_processed);
         // If the most-recently processed root node is complete, we must be all done because we're doing them
         // sequentially.
-        if (! isset($root_node) || (isset($root_node) && $root_node instanceof ModelObjNode && $root_node->isComplete())) {
+        if (! isset($root_node) || ($root_node instanceof ModelObjNode && $root_node->isComplete())) {
             $job_parameters->set_status(JobParameters::status_complete);
             // Show a full progress bar.
             $job_parameters->set_units_processed($job_parameters->job_size());
@@ -234,27 +229,19 @@ class PreviewEventDeletion extends JobHandler
                 $job_parameters->extra_datum('roots'),
                 $deletion_job_code
             );
-            return new JobStepResponse(
-                $job_parameters,
-                esc_html__('Finished identifying items for deletion.', 'event_espresso'),
-                [
-                    'deletion_job_code' => $deletion_job_code
-                ]
-            );
-        } else {
-            // Because the job size was a guess, it may have likely been proven wrong. We don't want to show more work
-            // done than we originally said there would be. So adjust the estimate.
-            if (($job_parameters->units_processed() / $job_parameters->job_size()) > .8) {
-                $job_parameters->set_job_size($job_parameters->job_size() * 2);
-            }
-            return new JobStepResponse(
-                $job_parameters,
-                sprintf(
-                    esc_html__('Identified %d items for deletion.', 'event_espresso'),
-                    $units_processed
-                )
-            );
+            return new JobStepResponse($job_parameters, $this->feedback);
         }
+        // Because the job size was a guess, it may have likely been proven wrong.
+        // We don't want to show more work done than we originally said there would be.
+        // So adjust the estimate.
+        if (($job_parameters->units_processed() / $job_parameters->job_size()) > .8) {
+            $job_parameters->set_job_size($job_parameters->job_size() * 2);
+        }
+        $this->displayJobStepResults(
+            $units_processed,
+            esc_html__('Identified up to %d potential items for deletion.', 'event_espresso')
+        );
+        return new JobStepResponse($job_parameters, $this->feedback);
     }
 
     /**
@@ -264,11 +251,26 @@ class PreviewEventDeletion extends JobHandler
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
-        // Nothing much to do. We can't delete the option with the built tree because we may need it in a moment for the deletion
-        return new JobStepResponse(
+        $this->displayJobFinalResults(
             $job_parameters,
-            esc_html__('All done', 'event_espresso')
+            esc_html__('found %d potential items for deletion.', 'event_espresso')
         );
+        $this->updateText(
+            $this->infoWrapper(
+                sprintf(
+                    esc_html__(
+                        'If not automatically redirected in %1$s seconds, click here to %2$scontinue to the confirmation step%3$s',
+                        'event_espresso'
+                    ),
+                    '<span id="ee-redirect-timer">10</span>',
+                    '<a href="' . $job_parameters->request_datum('return_url') . '">',
+                    '</a>'
+                )
+            )
+        );
+        // Nothing much to do.
+        // We can't delete the option with the built tree because we may need it in a moment for the deletion
+        return new JobStepResponse($job_parameters, $this->feedback);
     }
 }
 // End of file EventDeletion.php

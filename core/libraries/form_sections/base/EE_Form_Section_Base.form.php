@@ -380,7 +380,7 @@ abstract class EE_Form_Section_Base
         }
         $html = EEH_HTML::nl(1, 'form') . '<form';
         $html .= $this->html_id() !== '' ? ' id="' . $this->get_html_id_for_form($this->html_id()) . '"' : '';
-        $html .= ' action="' . $this->action() . '"';
+        $html .= ' action="' . esc_url_raw($this->action()) . '"';
         $html .= ' method="' . $this->method() . '"';
         $html .= ' name="' . $this->name() . '"';
         $html .= $other_attributes . '>';

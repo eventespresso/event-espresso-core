@@ -87,8 +87,7 @@ jQuery(document).ready(function ($) {
             // - start cleaning up and redirecting the user
             setTimeout(function () {
                 runner.setup_clean_up_on_page_exit();
-                runner.cleanup_job();
-                runner.countdownRedirect(ee_job_i18n.return_url, 9)
+                runner.cleanup_job(ee_job_i18n.return_url);
             }, 1000);
 		}
 	}

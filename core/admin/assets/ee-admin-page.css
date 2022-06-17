@@ -5220,7 +5220,8 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .ee-admin-button-row.ee-admin-button-row--align-center {
     justify-content: center;
 }
-.espresso-admin .ee-admin-button-row + .ee-admin-button-row {
+.espresso-admin .ee-admin-button-row + .ee-admin-button-row,
+.espresso-admin.wp-core-ui .ee-admin-two-column-layout .ee-admin-button-row {
     margin-block-start: 2rem;
 }
 .espresso-admin.wp-core-ui .ee-admin-button-row .button {
@@ -5232,6 +5233,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .ee-admin-button-row input[type="text"] {
     max-width: clamp(12rem, 50%, 16rem) !important;
 }
+
 .espresso-admin.wp-core-ui .ee-admin-button-row .button + span,
 .espresso-admin.wp-core-ui .ee-admin-button-row .button + input[type="text"] {
     margin-inline-start: 2rem !important;
@@ -5837,4 +5839,11 @@ body.espresso-admin #contextual-help-wrap strong {
         bottom: 0;
         width: 100%;
     }
+}
+
+.ee-asterisk,
+.ee-input-error,
+.ee-required-text {
+    font-weight: 900;
+    color: var(--ee-status-color-red) !important;
 }

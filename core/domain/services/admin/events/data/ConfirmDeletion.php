@@ -11,7 +11,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
-use Events_Admin_Page;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -23,9 +22,9 @@ use ReflectionException;
  * page (the forms system takes care of stashing the invalid form submission data and then populating that form with
  * it).
  *
- * @package     Event Espresso
+ * @package        Event Espresso
  * @author         Mike Nelson
- * @since         4.10.12.p
+ * @since          4.10.12.p
  *
  */
 class ConfirmDeletion
@@ -35,21 +34,22 @@ class ConfirmDeletion
      */
     private $dao;
 
+
     /**
      * ConfirmDeletion constructor.
+     *
      * @param NodeGroupDao $dao
      */
-    public function __construct(
-        NodeGroupDao $dao
-    ) {
-
+    public function __construct(NodeGroupDao $dao)
+    {
         $this->dao = $dao;
     }
+
 
     /**
      * Redirects to the batch job for deleting events if the form submission is valid, otherwise back to the deletion
      * preview page.
-     * @since 4.10.12.p
+     *
      * @param $request_data
      * @param $admin_base_url
      * @throws EE_Error
@@ -58,32 +58,34 @@ class ConfirmDeletion
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws UnexpectedEntityException
+     * @since 4.10.12.p
      */
     public function handle($request_data, $admin_base_url)
     {
-        $deletion_job_code = isset($request_data['deletion_job_code']) ? sanitize_key($request_data['deletion_job_code']) : '';
+        $deletion_job_code        =
+            isset($request_data['deletion_job_code']) ? sanitize_key($request_data['deletion_job_code']) : '';
         $models_and_ids_to_delete = $this->dao->getModelsAndIdsFromGroup($deletion_job_code);
-        $form = new ConfirmEventDeletionForm($models_and_ids_to_delete['Event']);
+        $form                     = new ConfirmEventDeletionForm($models_and_ids_to_delete['Event']);
         // Initialize the form from the request, and check if its valid.
         $form->receive_form_submission($request_data);
         if ($form->is_valid()) {
             // Redirect the user to the deletion batch job.
             EEH_URL::safeRedirectAndExit(
                 EE_Admin_Page::add_query_args_and_nonce(
-                    array(
-                        'page' => EED_Batch::PAGE_SLUG,
-                        'batch' => EED_Batch::batch_job,
+                    [
+                        'page'              => EED_Batch::PAGE_SLUG,
+                        'batch'             => EED_Batch::batch_job,
                         'deletion_job_code' => $deletion_job_code,
-                        'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),
-                        'return_url' => urlencode(
+                        'job_handler'       => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),
+                        'return_url'        => urlencode(
                             add_query_arg(
                                 [
-                                    'status' => 'trash'
+                                    'status' => 'trash',
                                 ],
                                 EVENTS_ADMIN_URL
                             )
-                        )
-                    ),
+                        ),
+                    ],
                     admin_url()
                 )
             );
@@ -103,8 +105,8 @@ class ConfirmDeletion
         EEH_URL::safeRedirectAndExit(
             EE_Admin_Page::add_query_args_and_nonce(
                 [
-                    'action' => 'preview_deletion',
-                    'deletion_job_code' => $deletion_job_code
+                    'action'            => 'preview_deletion',
+                    'deletion_job_code' => $deletion_job_code,
                 ],
                 $admin_base_url
             )
