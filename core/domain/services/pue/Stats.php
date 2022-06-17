@@ -66,7 +66,7 @@ class Stats
 
 
     /**
-     * This returns the callback that PluginUpdateEngineChecker will use for getting any extra stats to send.
+     * This returns the callback that PluginUpdateEngine will use for getting any extra stats to send.
      *
      * @return Closure
      */
