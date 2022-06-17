@@ -878,28 +878,21 @@ class PluginUpdateEngine
     /**
      * Manually trigger an update check.
      *
-     * @return bool
+     * @return void
      */
-    private function trigger_update_check(): bool
+    private function trigger_update_check()
     {
         // we're just using this to trigger a PUE ping
         // whenever an option matching the given $this->option_key is saved..
-
         if ($this->request->isCron() || $this->request->isAjax()) {
-            return false;
+            return;
         }
         $post_params = $this->request->postParams();
-
-        $triggered = false;
         if (! empty($post_params) && ! empty($this->option_key)) {
             foreach ($post_params as $key => $value) {
-                // set triggered to true, but only if maybe_trigger_update() returns true
-                $triggered = $this->maybe_trigger_update($value, $key, $this->option_key)
-                    ? true
-                    : $triggered;
+                $this->maybe_trigger_update($value, $key, $this->option_key);
             }
         }
-        return $triggered;
     }
 
 
@@ -909,16 +902,16 @@ class PluginUpdateEngine
      * @param mixed  $value
      * @param string $key
      * @param string $site_key_search_string
-     * @return bool
+     * @return void
      */
-    private function maybe_trigger_update($value, string $key, string $site_key_search_string): bool
+    private function maybe_trigger_update($value, string $key, string $site_key_search_string)
     {
         if (
             $key === $site_key_search_string
             || (is_array($value) && isset($value[ $site_key_search_string ]))
         ) {
-            //if $site_key_search_string exists but the actual key field is empty...let's reset the install key as
-            // well.
+            // if $site_key_search_string exists but the actual key field is empty...
+            // let's reset the install key as well.
             if (
                 empty($value)
                 || (! is_array($value) && $value !== $this->api_secret_key)
@@ -941,9 +934,7 @@ class PluginUpdateEngine
             }
 
             $this->checkForUpdates();
-            return true;
         }
-        return false;
     }
 
 
