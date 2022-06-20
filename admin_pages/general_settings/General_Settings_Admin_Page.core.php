@@ -812,6 +812,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                         'id'   => '&nbsp;',
                         'text' => esc_html__('(space)', 'event_espresso'),
                     ],
+                    [
+                        'id'   => '_',
+                        'text' => esc_html__('_ (underscore)', 'event_espresso'),
+                    ],
+                    [
+                        'id'   => "'",
+                        'text' => esc_html__("' (apostrophe)", 'event_espresso'),
+                    ],
                 ],
                 'use_desc_4_label' => true,
                 'disabled'         => $CNT_cur_disabled,
