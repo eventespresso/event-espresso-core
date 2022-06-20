@@ -267,7 +267,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
             // During multisite migrations, it's possible we already grabbed another instance of this class
             // but for a different blog. Make sure we don't reuse them (as they store info specific
             // to their respective blog, like which database table to migrate).
-            $class = LoaderFactory::getLoader()->getShared($data_migration_data['class'], [], false);
+            $class = LoaderFactory::getLoader()->getNew($data_migration_data['class']);
             if ($class instanceof EE_Data_Migration_Script_Base) {
                 $class->instantiate_from_array_of_properties($data_migration_data);
                 return $class;
@@ -540,7 +540,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                     // note that we've added an autoloader for it on get_all_data_migration_scripts_available
                     // Also, make sure we get a new one. It's possible this is being ran during a multisite migration,
                     // in which case we don't want to reuse a DMS script from a different blog!
-                    $script = LoaderFactory::getLoader()->load($classname, [], false);
+                    $script = LoaderFactory::getLoader()->getNew($classname);
                     /* @var $script EE_Data_Migration_Script_Base */
                     $can_migrate = $script->can_migrate_from_version($theoretical_database_state);
                     if ($can_migrate) {
