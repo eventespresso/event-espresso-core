@@ -567,7 +567,9 @@ abstract class EE_messenger extends EE_Messages_Base
                 $create_url_query_args = [
                     'page' => 'espresso_messages',
                     'action' => 'add_new_message_template',
-                    'GRP_ID' => $default_value
+                    'GRP_ID' => $default_value,
+                    'message_type' => $mtpg->message_type(),
+                    'messenger' => $this->name
                 ];
                 $create_url = EEH_URL::add_query_args_and_nonce($create_url_query_args, admin_url('admin.php'));
                 $st_args['mt_name'] = ucwords($mtp_obj->label['singular']);
