@@ -800,12 +800,12 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * Gets the venue related to the event. May provide additional $query_params if desired
      *
      * @param array $query_params
-     * @return EE_Base_Class|EE_Venue
+     * @return EE_Base_Class|EE_Venue|null
      * @throws EE_Error
      * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function venue(array $query_params = []): EE_Venue
+    public function venue(array $query_params = []): ?EE_Venue
     {
         return $this->get_first_related('Venue', $query_params);
     }
