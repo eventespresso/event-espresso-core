@@ -56,9 +56,7 @@ $event_archive_url = EEH_Event_View::event_archive_url();
             </label>
         </th>
         <td>
-            <span class="base-url"><?php 
-                echo site_url() . '/ ';
-            ?></span>
+            <span class="base-url"><?php echo site_url() . '/ ';?></span>
             <?php echo EEH_Form_Fields::text(
                           'not_used',
                           EE_Registry::instance()->CFG->core->event_cpt_slug,
