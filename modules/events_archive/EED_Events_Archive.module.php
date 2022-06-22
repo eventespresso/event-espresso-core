@@ -310,24 +310,10 @@ class EED_Events_Archive extends EED_Module
                               ->load_core('Front_Controller')
                               ->get_selected_template() !== 'archive-espresso_events.php'
             ) {
-                // don't display entry meta because the existing theme will take care of that
                 add_filter('FHEE__EED_Events_Archive__template_include__events_list_active', '__return_true');
                 // load functions.php file for the theme (loaded by WP if using child theme)
                 EEH_Template::load_espresso_theme_functions();
-                // because we don't know if the theme is using the_excerpt()
-                add_filter(
-                    'get_the_excerpt',
-                    array('EED_Events_Archive', 'event_details'),
-                    EED_Events_Archive::EVENT_DETAILS_PRIORITY
-                );
-                // or the_content
-                add_filter(
-                    'the_content',
-                    array('EED_Events_Archive', 'event_details'),
-                    EED_Events_Archive::EVENT_DETAILS_PRIORITY
-                );
-                // and just in case they are running get_the_excerpt() which DESTROYS things
-                add_filter('get_the_excerpt', array('EED_Events_Archive', 'get_the_excerpt'), 1, 1);
+                EED_Events_Archive::addEventDetailsFilters();
                 // don't display entry meta because the existing theme will take care of that
                 add_filter('FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false');
             }
@@ -350,16 +336,7 @@ class EED_Events_Archive extends EED_Module
             return $excerpt;
         }
         if (apply_filters('FHEE__EED_Events_Archive__get_the_excerpt__theme_uses_get_the_excerpt', false)) {
-            remove_filter(
-                'get_the_excerpt',
-                array('EED_Events_Archive', 'event_details'),
-                EED_Events_Archive::EVENT_DETAILS_PRIORITY
-            );
-            remove_filter(
-                'the_content',
-                array('EED_Events_Archive', 'event_details'),
-                EED_Events_Archive::EVENT_DETAILS_PRIORITY
-            );
+            EED_Events_Archive::removeEventDetailsFilters(false);
             $excerpt = EED_Events_Archive::event_details($excerpt);
         } else {
             EED_Events_Archive::$using_get_the_excerpt = true;
@@ -395,7 +372,7 @@ class EED_Events_Archive extends EED_Module
     {
         global $post;
         if ($post instanceof WP_Post) {
-            return ((function_exists('wp_is_block_theme') && wp_is_block_theme()) || in_the_loop()) && $post->ID == $id
+            return (EED_Events_Archive::isBlockTheme() || in_the_loop()) && $post->ID == $id
                 ? espresso_event_status_banner($post->ID) . $title
                 : $title;
         }
@@ -451,35 +428,14 @@ class EED_Events_Archive extends EED_Module
     {
         // no further password checks required atm
         add_filter('FHEE__EED_Events_Archive__event_details__no_post_password_required', '__return_true');
-        // we need to first remove this callback from being applied to the_content() or the_excerpt()
-        // (otherwise it will recurse and blow up the interweb)
-        remove_filter(
-            'get_the_excerpt',
-            array('EED_Events_Archive', 'event_details'),
-            EED_Events_Archive::EVENT_DETAILS_PRIORITY
-        );
-        remove_filter(
-            'the_content',
-            array('EED_Events_Archive', 'event_details'),
-            EED_Events_Archive::EVENT_DETAILS_PRIORITY
-        );
-        remove_filter('get_the_excerpt', array('EED_Events_Archive', 'get_the_excerpt'), 1);
+        // remove this callback from being applied to the_content()
+        EED_Events_Archive::removeEventDetailsFilters();
         // now add additional content depending on whether event is using the_excerpt() or the_content()
         EED_Events_Archive::instance()->template_parts = EED_Events_Archive::instance()->initialize_template_parts();
         $content = EEH_Template::locate_template('content-espresso_events-details.php');
         $content = EED_Events_Archive::instance()->template_parts->apply_template_part_filters($content);
         // re-add our main filters (or else the next event won't have them)
-        add_filter(
-            'get_the_excerpt',
-            array('EED_Events_Archive', 'event_details'),
-            EED_Events_Archive::EVENT_DETAILS_PRIORITY
-        );
-        add_filter(
-            'the_content',
-            array('EED_Events_Archive', 'event_details'),
-            EED_Events_Archive::EVENT_DETAILS_PRIORITY
-        );
-        add_filter('get_the_excerpt', array('EED_Events_Archive', 'get_the_excerpt'), 1, 1);
+        EED_Events_Archive::addEventDetailsFilters();
         remove_filter(
             'FHEE__EED_Events_Archive__event_details__no_post_password_required',
             '__return_true'
@@ -496,19 +452,8 @@ class EED_Events_Archive extends EED_Module
      */
     protected static function use_filterable_display_order()
     {
-        // we need to first remove this callback from being applied to the_content()
-        // (otherwise it will recurse and blow up the interweb)
-        remove_filter(
-            'get_the_excerpt',
-            array('EED_Events_Archive', 'event_details'),
-            EED_Events_Archive::EVENT_DETAILS_PRIORITY
-        );
-        remove_filter(
-            'the_content',
-            array('EED_Events_Archive', 'event_details'),
-            EED_Events_Archive::EVENT_DETAILS_PRIORITY
-        );
-        remove_filter('get_the_excerpt', array('EED_Events_Archive', 'get_the_excerpt'), 1);
+        // remove this callback from being applied to the_content()
+        EED_Events_Archive::removeEventDetailsFilters();
         // now add additional content depending on whether event is using the_excerpt() or the_content()
         EED_Events_Archive::_add_additional_excerpt_filters();
         EED_Events_Archive::_add_additional_content_filters();
@@ -516,17 +461,7 @@ class EED_Events_Archive extends EED_Module
         // now load our template
         $content = EEH_Template::locate_template('content-espresso_events-details.php');
         // re-add our main filters (or else the next event won't have them)
-        add_filter(
-            'get_the_excerpt',
-            array('EED_Events_Archive', 'event_details'),
-            EED_Events_Archive::EVENT_DETAILS_PRIORITY
-        );
-        add_filter(
-            'the_content',
-            array('EED_Events_Archive', 'event_details'),
-            EED_Events_Archive::EVENT_DETAILS_PRIORITY
-        );
-        add_filter('get_the_excerpt', array('EED_Events_Archive', 'get_the_excerpt'), 1, 1);
+        EED_Events_Archive::addEventDetailsFilters();
         // but remove the other filters so that they don't get applied to the next post
         EED_Events_Archive::_remove_additional_events_archive_filters();
         do_action('AHEE__EED_Events_Archive__use_filterable_display_order__after_remove_filters');
@@ -598,6 +533,75 @@ class EED_Events_Archive extends EED_Module
 
 
     /**
+     * @return bool
+     * @since $VID:$
+     */
+    public static function isBlockTheme()
+    {
+        return function_exists('wp_is_block_theme') && wp_is_block_theme();
+    }
+
+
+    /**
+     * @return string
+     * @since $VID:$
+     */
+    public static function getExcerptFilter()
+    {
+        static $excerpt_filter = null;
+        if ($excerpt_filter === null) {
+            $excerpt_filter = EED_Events_Archive::isBlockTheme() ? 'get_the_excerpt' : 'the_excerpt';
+        }
+        return $excerpt_filter;
+    }
+
+
+    /**
+     * @since $VID:$
+     */
+    protected static function addEventDetailsFilters()
+    {
+        add_filter(
+            'the_content',
+            ['EED_Events_Archive', 'event_details'],
+            EED_Events_Archive::EVENT_DETAILS_PRIORITY
+        );
+        // but because we don't know if the theme is using the_excerpt()
+        add_filter(
+            EED_Events_Archive::getExcerptFilter(),
+            ['EED_Events_Archive', 'event_details'],
+            EED_Events_Archive::EVENT_DETAILS_PRIORITY
+        );
+        // and just in case they are running get_the_excerpt() which DESTROYS things
+        add_filter('get_the_excerpt', ['EED_Events_Archive', 'get_the_excerpt'], 1, 1);
+    }
+
+
+    /**
+     * @param bool $and_get_the_excerpt
+     * @since $VID:$
+     */
+    protected static function removeEventDetailsFilters($and_get_the_excerpt = true)
+    {
+        // we need to first remove all callbacks from being applied to the_content()
+        // (otherwise it will recurse and blow up the interweb)
+        remove_filter(
+            'the_content',
+            ['EED_Events_Archive', 'event_details'],
+            EED_Events_Archive::EVENT_DETAILS_PRIORITY
+        );
+        remove_filter(
+            EED_Events_Archive::getExcerptFilter(),
+            ['EED_Events_Archive', 'event_details'],
+            EED_Events_Archive::EVENT_DETAILS_PRIORITY
+        );
+        if ($and_get_the_excerpt) {
+            remove_filter('get_the_excerpt', ['EED_Events_Archive', 'get_the_excerpt'], 1);
+        }
+    }
+
+
+    /**
      *    _add_additional_content_filters
      *
      * @access    private
@@ -606,17 +610,17 @@ class EED_Events_Archive extends EED_Module
     private static function _add_additional_excerpt_filters()
     {
         add_filter(
-            'get_the_excerpt',
+            EED_Events_Archive::getExcerptFilter(),
             array('EED_Events_Archive', 'event_datetimes'),
             EED_Events_Archive::EVENT_DATETIMES_PRIORITY
         );
         add_filter(
-            'get_the_excerpt',
+            EED_Events_Archive::getExcerptFilter(),
             array('EED_Events_Archive', 'event_tickets'),
             EED_Events_Archive::EVENT_TICKETS_PRIORITY
         );
         add_filter(
-            'get_the_excerpt',
+            EED_Events_Archive::getExcerptFilter(),
             array('EED_Events_Archive', 'event_venues'),
             EED_Events_Archive::EVENT_VENUES_PRIORITY
         );
@@ -650,7 +654,7 @@ class EED_Events_Archive extends EED_Module
 
 
     /**
-     *    _remove_additional_events_archive_filters
+     * _remove_additional_events_archive_filters
      *
      * @access    private
      * @return        void
@@ -658,17 +662,17 @@ class EED_Events_Archive extends EED_Module
     private static function _remove_additional_events_archive_filters()
     {
         remove_filter(
-            'get_the_excerpt',
+            EED_Events_Archive::getExcerptFilter(),
             array('EED_Events_Archive', 'event_datetimes'),
             EED_Events_Archive::EVENT_DATETIMES_PRIORITY
         );
         remove_filter(
-            'get_the_excerpt',
+            EED_Events_Archive::getExcerptFilter(),
             array('EED_Events_Archive', 'event_tickets'),
             EED_Events_Archive::EVENT_TICKETS_PRIORITY
         );
         remove_filter(
-            'get_the_excerpt',
+            EED_Events_Archive::getExcerptFilter(),
             array('EED_Events_Archive', 'event_venues'),
             EED_Events_Archive::EVENT_VENUES_PRIORITY
         );
@@ -691,7 +695,7 @@ class EED_Events_Archive extends EED_Module
 
 
     /**
-     *    remove_all_events_archive_filters
+     * remove_all_events_archive_filters
      *
      * @access    public
      * @return        void
@@ -701,22 +705,22 @@ class EED_Events_Archive extends EED_Module
         // remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1 );
         remove_filter('the_title', array('EED_Events_Archive', 'the_title'), 1);
         remove_filter(
-            'get_the_excerpt',
+            EED_Events_Archive::getExcerptFilter(),
             array('EED_Events_Archive', 'event_details'),
             EED_Events_Archive::EVENT_DETAILS_PRIORITY
         );
         remove_filter(
-            'get_the_excerpt',
+            EED_Events_Archive::getExcerptFilter(),
             array('EED_Events_Archive', 'event_datetimes'),
             EED_Events_Archive::EVENT_DATETIMES_PRIORITY
         );
         remove_filter(
-            'get_the_excerpt',
+            EED_Events_Archive::getExcerptFilter(),
             array('EED_Events_Archive', 'event_tickets'),
             EED_Events_Archive::EVENT_TICKETS_PRIORITY
         );
         remove_filter(
-            'get_the_excerpt',
+            EED_Events_Archive::getExcerptFilter(),
             array('EED_Events_Archive', 'event_venues'),
             EED_Events_Archive::EVENT_VENUES_PRIORITY
         );
