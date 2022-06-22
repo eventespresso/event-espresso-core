@@ -86,7 +86,7 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
 
     /**
      * @param string $module_name
-     * @return EED_Module
+     * @return EED_Module|mixed
      * @throws EE_Error
      * @throws ReflectionException
      */
