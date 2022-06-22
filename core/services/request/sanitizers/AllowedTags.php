@@ -25,6 +25,10 @@ class AllowedTags
         'align'             => 1,
         'aria-*'            => 1,
         'autocomplete'      => 1,
+        'bgcolor'           => 1,
+        'border'            => 1,
+        'cellpadding'       => 1,
+        'cellspacing'       => 1,
         'checked'           => 1,
         'class'             => 1,
         'cols'              => 1,
@@ -43,14 +47,19 @@ class AllowedTags
         'itemtype'          => 1,
         'label'             => 1,
         'lang'              => 1,
+        'leftmargin'        => 1,
+        'marginheight'      => 1,
+        'marginwidth'       => 1,
         'max'               => 1,
         'maxlength'         => 1,
+        'media'             => 1,
         'method'            => 1,
         'min'               => 1,
         'multiple'          => 1,
         'name'              => 1,
         'novalidate'        => 1,
         'placeholder'       => 1,
+        'property'          => 1,
         'readonly'          => 1,
         'rel'               => 1,
         'required'          => 1,
@@ -63,19 +72,10 @@ class AllowedTags
         'tabindex'          => 1,
         'target'            => 1,
         'title'             => 1,
+        'topmargin'         => 1,
         'type'              => 1,
         'value'             => 1,
         'width'             => 1,
-        'topmargin'         => 1,
-        'leftmargin'        => 1,
-        'marginheight'      => 1,
-        'marginwidth'       => 1,
-        'property'          => 1,
-        'bgcolor'           => 1,
-        'media'             => 1,
-        'cellpadding'       => 1,
-        'cellspacing'       => 1,
-        'border'            => 1,
     ];
 
 
@@ -281,6 +281,7 @@ class AllowedTags
         }
         return AllowedTags::$allowed_with_script_and_style_tags;
     }
+
 
     /**
      * @return array[]
