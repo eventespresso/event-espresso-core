@@ -58,12 +58,12 @@ $event_archive_url = EEH_Event_View::event_archive_url();
         <td>
             <span class="base-url"><?php echo site_url() . '/ ';?></span>
             <?php echo EEH_Form_Fields::text(
-                          'not_used',
-                          EE_Registry::instance()->CFG->core->event_cpt_slug,
-                          'event_cpt_slug',
-                          'event_cpt_slug',
-                          'regular'
-                      ); ?>
+                'not_used',
+                EE_Registry::instance()->CFG->core->event_cpt_slug,
+                'event_cpt_slug',
+                'event_cpt_slug',
+                'regular'
+            ); ?>
             <p class="description"><?php
                 esc_html_e(
                     'This allows you to configure what slug is used for the url of all event pages.',
