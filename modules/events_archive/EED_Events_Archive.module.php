@@ -412,10 +412,8 @@ class EED_Events_Archive extends EED_Module
         EED_Events_Archive::removeEventDetailsFilters();
         // now add additional content depending on whether event is using the_excerpt() or the_content()
         EED_Events_Archive::instance()->template_parts = EED_Events_Archive::instance()->initialize_template_parts();
-        $content                                       =
-            EEH_Template::locate_template('content-espresso_events-details.php');
-        $content                                       =
-            EED_Events_Archive::instance()->template_parts->apply_template_part_filters($content);
+        $content = EEH_Template::locate_template('content-espresso_events-details.php');
+        $content = EED_Events_Archive::instance()->template_parts->apply_template_part_filters($content);
         // re-add our main filters (or else the next event won't have them)
         EED_Events_Archive::addEventDetailsFilters();
         remove_filter(
@@ -797,22 +795,23 @@ class EED_Events_Archive extends EED_Module
             || absint($REQ['EED_Events_Archive_reset_event_list_settings']) !== 1
         ) {
             $CFG->EED_Events_Archive->display_status_banner   = isset($REQ['EED_Events_Archive_display_status_banner'])
-                ? absint($REQ['EED_Events_Archive_display_status_banner']) : 0;
+                ? absint($REQ['EED_Events_Archive_display_status_banner'])
+                : 0;
             $CFG->EED_Events_Archive->display_description     = isset($REQ['EED_Events_Archive_display_description'])
-                ? absint($REQ['EED_Events_Archive_display_description']) : 1;
-            $CFG->EED_Events_Archive->display_ticket_selector =
-                isset($REQ['EED_Events_Archive_display_ticket_selector'])
-                    ? absint($REQ['EED_Events_Archive_display_ticket_selector']) : 0;
-            $CFG->EED_Events_Archive->display_datetimes       =
-                isset($REQ['EED_Events_Archive_display_datetimes']) ? absint(
-                    $REQ['EED_Events_Archive_display_datetimes']
-                ) : 1;
-            $CFG->EED_Events_Archive->display_venue           =
-                isset($REQ['EED_Events_Archive_display_venue']) ? absint(
-                    $REQ['EED_Events_Archive_display_venue']
-                ) : 0;
+                ? absint($REQ['EED_Events_Archive_display_description'])
+                : 1;
+            $CFG->EED_Events_Archive->display_ticket_selector = isset($REQ['EED_Events_Archive_display_ticket_selector'])
+                ? absint($REQ['EED_Events_Archive_display_ticket_selector'])
+                : 0;
+            $CFG->EED_Events_Archive->display_datetimes       = isset($REQ['EED_Events_Archive_display_datetimes'])
+                ? absint($REQ['EED_Events_Archive_display_datetimes'])
+                : 1;
+            $CFG->EED_Events_Archive->display_venue           = isset($REQ['EED_Events_Archive_display_venue'])
+                ? absint($REQ['EED_Events_Archive_display_venue'])
+                : 0;
             $CFG->EED_Events_Archive->display_expired_events  = isset($REQ['EED_Events_Archive_display_expired_events'])
-                ? absint($REQ['EED_Events_Archive_display_expired_events']) : 0;
+                ? absint($REQ['EED_Events_Archive_display_expired_events'])
+                : 0;
         }
         return $CFG;
     }
