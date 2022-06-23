@@ -1120,6 +1120,14 @@ final class EE_System implements ResettableInterface
             function ($styles) {
                 $styles[] = 'display';
                 $styles[] = 'visibility';
+                $styles[] = 'position';
+                $styles[] = 'top';
+                $styles[] = 'right';
+                $styles[] = 'bottom';
+                $styles[] = 'left';
+                $styles[] = 'resize';
+                $styles[] = 'max-width';
+                $styles[] = 'max-height';
                 return $styles;
             }
         );

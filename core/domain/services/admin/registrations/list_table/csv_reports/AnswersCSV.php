@@ -59,6 +59,12 @@ class AnswersCSV
                 )
                 : sprintf(esc_html__('Question $s', 'event_espresso'), $answer_row['Answer.QST_ID']);
 
+            if (! array_key_exists($question_label, $data)) {
+                // We don't need an answer for this specific question in the current dataset
+                // so skip adding this value to $data.
+                continue;
+            }
+
             $data[ $question_label ] = isset($answer_row['Question.QST_type'])
                                        && $answer_row['Question.QST_type'] === EEM_Question::QST_type_state
                 ? $state_model->get_state_name_by_ID($answer_row['Answer.ANS_value'])

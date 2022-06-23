@@ -568,17 +568,22 @@ abstract class EE_messenger extends EE_Messages_Base
                 }
                 // if there is no $default_value then we set it as the global
                 $default_value = empty($default_value) ? $mtpgID : $default_value;
+                $c_config = $mtpg->contexts_config();
+                $edit_context = key(array_slice($c_config, -1));
                 $edit_url_query_args = [
                     'page' => 'espresso_messages',
                     'action' => 'edit_message_template',
                     'id' => $default_value,
-                    'evt_id' => $event_id
+                    'evt_id' => $event_id,
+                    'context' => $edit_context,
                 ];
                 $edit_url = EEH_URL::add_query_args_and_nonce($edit_url_query_args, admin_url('admin.php'));
                 $create_url_query_args = [
                     'page' => 'espresso_messages',
                     'action' => 'add_new_message_template',
-                    'GRP_ID' => $default_value
+                    'GRP_ID' => $default_value,
+                    'message_type' => $mtpg->message_type(),
+                    'messenger' => $this->name
                 ];
                 $mt_slug = $mtpg->message_type();
                 $create_url = EEH_URL::add_query_args_and_nonce($create_url_query_args, admin_url('admin.php'));

@@ -1169,7 +1169,7 @@ class EEH_MSG_Template
             $new_message_template->set('MTP_ID', 0);
             $new_message_template->set('GRP_ID', $new_mtg->ID()); // relation
             $new_message_template->save();
-            if (empty($success['MTP_context'])) {
+            if (empty($success['MTP_context']) && $new_message_template->get('MTP_context') !== 'admin') {
                 $success['MTP_context'] = $new_message_template->get('MTP_context');
             }
         }

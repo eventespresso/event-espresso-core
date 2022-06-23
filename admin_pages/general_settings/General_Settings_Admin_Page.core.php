@@ -34,6 +34,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $this->page_label       = GEN_SET_LABEL;
         $this->_admin_base_url  = GEN_SET_ADMIN_URL;
         $this->_admin_base_path = GEN_SET_ADMIN;
+
+        $this->core_config = EE_Registry::instance()->CFG->core;
     }
 
 
@@ -243,8 +245,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function admin_init()
     {
-        $this->core_config = EE_Registry::instance()->CFG->core;
-
         EE_Registry::$i18n_js_strings['invalid_server_response'] = wp_strip_all_tags(
             esc_html__(
                 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.',
@@ -821,6 +821,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                     [
                         'id'   => '&nbsp;',
                         'text' => esc_html__('(space)', 'event_espresso'),
+                    ],
+                    [
+                        'id'   => '_',
+                        'text' => esc_html__('_ (underscore)', 'event_espresso'),
+                    ],
+                    [
+                        'id'   => "'",
+                        'text' => esc_html__("' (apostrophe)", 'event_espresso'),
                     ],
                 ],
                 'use_desc_4_label' => true,
