@@ -31,16 +31,11 @@ class FormSubmissionHandler
     public function __construct(EE_Checkout $checkout)
     {
         $this->checkout = $checkout;
-
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         add_action(
             'AHEE__EE_Form_Section_Proper__receive_form_submission__end',
-            [$this]
+            [$this, 'receiveFormSubmission']
         );
-        /*
-            $req_data,
-            $this,
-            $validate
-        */
     }
 
 
@@ -51,6 +46,7 @@ class FormSubmissionHandler
      */
     public function getFormDataAPI(): JsonDataAPI
     {
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $this->getFormSubmission();
         $form_data = $this->form_submission instanceof EE_Form_Submission ? $this->form_submission->data() : '{}';
         return new JsonDataAPI($form_data);
@@ -58,12 +54,13 @@ class FormSubmissionHandler
 
 
     /**
-     * @return EE_Form_Submission
+     * @return EE_Form_Submission|null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function getFormSubmission(): EE_Form_Submission
+    public function getFormSubmission(): ?EE_Form_Submission
     {
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         if (! $this->form_submission instanceof EE_Form_Submission) {
             $form_submission = $this->getFormSubmissionForTransaction($this->checkout->transaction);
             if ($form_submission instanceof EE_Form_Submission) {
@@ -71,7 +68,7 @@ class FormSubmissionHandler
             }
         }
         \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
-        \EEH_Debug_Tools::printr($this->form_submission->data(), '$this->form_submission->data()', __FILE__, __LINE__);
+        \EEH_Debug_Tools::printr($this->form_submission, '$this->form_submission->data()', __FILE__, __LINE__);
         return $this->form_submission;
     }
 
@@ -84,13 +81,22 @@ class FormSubmissionHandler
      */
     public function getFormSubmissionForTransaction(EE_Transaction $transaction): ?EE_Form_Submission
     {
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $form_submission = EEM_Form_Submission::instance()->getFormSubmissionForTransaction($transaction);
-        return $form_submission instanceof EE_Form_Submission ? $form_submission : null;
+        return $form_submission instanceof EE_Form_Submission
+            ? $form_submission
+            : null;
         // if () {
         // }
         // return $this->generateFormSubmission($transaction);
     }
 
+
+    public function receiveFormSubmission($form_data)
+    {
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        \EEH_Debug_Tools::printr($form_data, '$form_data', __FILE__, __LINE__);
+    }
 
     /**
      * @return EE_Form_Submission
