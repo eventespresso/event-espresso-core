@@ -3249,9 +3249,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $EVT_ID = $this->request->requestParamIsSet('EVT_ID')
             ? $this->request->getRequestParam('EVT_ID', 0, 'int')
             : null;
-
         if (! defined('EE_USE_OLD_CSV_REPORT_CLASS')) {
-            $request_params = $this->request->requestParams();
+            $filters = $this->request->getRequestParam('filters', [], DataType::STRING, true);
+            $report_params  = $this->$method_name_for_getting_query_params($filters);
             wp_redirect(
                 EE_Admin_Page::add_query_args_and_nonce(
                     [
@@ -3260,13 +3260,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'EVT_ID'      => $EVT_ID,
                         'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
                         'return_url'  => urlencode($this->request->getRequestParam('return_url', '', DataType::URL)),
-                        'filters'     => urlencode(
-                            serialize(
-                                $this->$method_name_for_getting_query_params(
-                                    (isset($request_params['filters']) ? $request_params['filters'] : [])
-                                )
-                            )
-                        ),
+                        'filters'     => urlencode(serialize($report_params)),
                         'use_filters' => $this->request->getRequestParam('use_filters', false, DataType::BOOL)
                     ]
                 )
