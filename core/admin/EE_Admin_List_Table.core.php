@@ -499,7 +499,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         echo '<input type="submit" class="ee-list-table-filter-submit button button--secondary" value="'
              . esc_html__('Filter', 'event_espresso')
              . '" id="post-query-submit" />';
-        echo '<input type="hidden" id="ee-list-table-use-filters" name="use_filters" value="' . $use_filters .'"/>';
+        echo '<input type="hidden" id="ee-list-table-use-filters" name="use_filters" value="' . $use_filters . '"/>';
 
         // add reset filters button at end
         echo '<a class="button button--secondary"  href="'
