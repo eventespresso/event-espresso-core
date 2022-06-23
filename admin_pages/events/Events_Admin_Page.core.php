@@ -1075,6 +1075,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $event_values['EVT_external_URL'] = $this->request->getRequestParam('externalURL');
             $event_values['EVT_phone']        = $this->request->getRequestParam('event_phone');
             $event_values['EVT_display_desc'] = $this->request->getRequestParam('display_desc', false, 'bool');
+        } elseif ($post instanceof WP_Post) {
+            $event_values['EVT_name'] = $post->post_title;
+            $event_values['EVT_desc'] = $post->post_content;
         }
         // update event
         $success = $this->_event_model()->update_by_ID($event_values, $post_id);
