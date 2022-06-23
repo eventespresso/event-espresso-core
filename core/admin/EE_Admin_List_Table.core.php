@@ -486,6 +486,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         if (empty($filters)) {
             return;
         }
+        $use_filters = isset($this->_req_data['use_filters'])
+                       && filter_var($this->_req_data['use_filters'], FILTER_VALIDATE_BOOLEAN)
+            ? 'yes'
+            : 'no';
 
         echo '<div class="ee-list-table-filters actions alignleft">';
         foreach ($filters as $filter) {
@@ -495,7 +499,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         echo '<input type="submit" class="ee-list-table-filter-submit button button--secondary" value="'
              . esc_html__('Filter', 'event_espresso')
              . '" id="post-query-submit" />';
-        echo '<input type="hidden" id="ee-list-table-use-filters" name="use_filters" value="no"/>';
+        echo '<input type="hidden" id="ee-list-table-use-filters" name="use_filters" value="' . $use_filters .'"/>';
 
         // add reset filters button at end
         echo '<a class="button button--secondary"  href="'
@@ -735,7 +739,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function single_row_columns($item)
     {
-        [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
+        list($columns, $hidden, $sortable, $primary) = $this->get_column_info();
 
         foreach ($columns as $column_name => $column_display_name) {
 
@@ -806,8 +810,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         } else {
             echo '<div class="list-table-bottom-buttons alignleft actions">';
             foreach ($this->_bottom_buttons as $type => $action) {
-                $route         = $action['route'] ?? '';
-                $extra_request = $action['extra_request'] ?? '';
+                $route         = isset($action['route']) ? $action['route'] : '';
+                $extra_request = isset($action['extra_request']) ? $action['extra_request'] : '';
                 // already escaped
                 echo wp_kses($this->_admin_page->get_action_link_or_button(
                     $route,
