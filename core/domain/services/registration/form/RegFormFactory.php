@@ -44,6 +44,14 @@ class RegFormFactory
      */
     private $reg_form_version;
 
+    /**
+     * @var array
+     */
+    private static $valid_reg_form_versions = [
+        RegFormFactory::VERSION_1,
+        RegFormFactory::VERSION_2,
+    ];
+
 
     /**
      * RegFormFactory constructor.
@@ -52,10 +60,27 @@ class RegFormFactory
      */
     public function __construct(string $reg_form_version = RegFormFactory::VERSION_1)
     {
-        $this->reg_form_version = $reg_form_version;
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 1);
-        \EEH_Debug_Tools::printr($this->reg_form_version, '$this->reg_form_version', __FILE__, __LINE__);
+        $this->setRegFormVersion($reg_form_version);
     }
+
+
+    /**
+     * @param string $reg_form_version
+     */
+    public function setRegFormVersion(string $reg_form_version): void
+    {
+        if (! in_array($reg_form_version, RegFormFactory::$valid_reg_form_versions)) {
+            throw new InvalidArgumentException(
+                esc_html__(
+                    'Invalid registration form version requested. Version number must match one of the RegFormFactory::VERSION_* constants.',
+                    'event_espresso'
+                )
+            );
+        }
+        $this->reg_form_version = $reg_form_version;
+    }
+
+
 
 
     /**
@@ -66,7 +91,6 @@ class RegFormFactory
      */
     public function getRegForm(array $dependencies): FormSectionProperInterface
     {
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $this->registerDependencies();
         switch ($this->reg_form_version) {
             case RegFormFactory::VERSION_2:
@@ -79,7 +103,7 @@ class RegFormFactory
                 /** @var FormSubmissionHandler $form_submission_handler */
                 $form_submission_handler = LoaderFactory::getNew(
                     FormSubmissionHandler::class,
-                    [$reg_step->checkout->transaction]
+                    [$reg_step->checkout]
                 );
                 $form_data_api           = $form_submission_handler->getFormDataAPI();
                 return LoaderFactory::getShared(RegFormV2::class, [$reg_step, $form_data_api]);
@@ -96,6 +120,7 @@ class RegFormFactory
      */
     private function registerDependencies()
     {
+        $dependency_handler = null;
         switch ($this->reg_form_version) {
             case RegFormFactory::VERSION_1:
                 /** @var RegFormDepHandlerV1 $dependency_handler */
@@ -105,13 +130,6 @@ class RegFormFactory
                 /** @var RegFormDepHandlerV2 $dependency_handler */
                 $dependency_handler = LoaderFactory::getShared(RegFormDepHandlerV2::class);
                 break;
-            default:
-                throw new InvalidArgumentException(
-                    esc_html__(
-                        'Invalid registration form version requested. Version number must match one of the RegFormFactory::VERSION_* constants.',
-                        'event_espresso'
-                    )
-                );
         }
         if (! $dependency_handler instanceof DependencyHandler) {
             throw new DomainException(
@@ -130,7 +148,6 @@ class RegFormFactory
      */
     public function getRegFormHandler(EE_Checkout $checkout): RegFormHandlerInterface
     {
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         switch ($this->reg_form_version) {
             case RegFormFactory::VERSION_2:
                 /** @var RegFormHandlerV2 $handler */
