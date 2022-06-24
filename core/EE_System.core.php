@@ -656,15 +656,6 @@ final class EE_System implements ActivatableInterface, ResettableInterface
         if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
             $this->_incompatible_addon_error();
         }
-        try {
-            // load, register, and add shortcodes the new way
-            new ShortcodesManager(
-            // and the old way, but we'll put it under control of the new system
-                EE_Config::getLegacyShortcodesManager()
-            );
-        } catch (Exception $exception) {
-            new ExceptionStackTraceDisplay($exception);
-        }
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
     }
 
