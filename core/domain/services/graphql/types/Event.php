@@ -193,6 +193,12 @@ class Event extends TypeBase
                     esc_html__('Event Phone Number', 'event_espresso')
                 ),
                 new GraphQLField(
+                    'regFormUuid',
+                    'String',
+                    'registrationFormUuid',
+                    esc_html__('Registration Form Uuid', 'event_espresso')
+                ),
+                new GraphQLField(
                     'shortDescription',
                     'String',
                     'short_description',
