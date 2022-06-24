@@ -129,7 +129,7 @@ class EEM_Attendee extends EEM_CPT_Base
     /**
      * EEM_Attendee constructor.
      *
-     * @param null              $timezone
+     * @param string|null       $timezone
      * @param ModelFieldFactory $model_field_factory
      * @throws EE_Error
      * @throws InvalidArgumentException

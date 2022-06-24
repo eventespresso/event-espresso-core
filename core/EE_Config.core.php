@@ -396,14 +396,11 @@ final class EE_Config implements ResettableInterface
 
 
     /**
-     *    double_check_config_comparison
-     *
-     * @access    public
      * @param string $option
-     * @param        $old_value
-     * @param        $value
+     * @param mixed  $old_value
+     * @param mixed  $value
      */
-    public function double_check_config_comparison($option, $old_value, $value)
+    public function double_check_config_comparison(string $option, $old_value, $value)
     {
         // make sure we're checking the ee config
         if ($option === EE_Config::OPTION_NAME) {

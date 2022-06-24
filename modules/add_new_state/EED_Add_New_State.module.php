@@ -693,7 +693,7 @@ class EED_Add_New_State extends EED_Module
      * @param EE_SPCO_Reg_Step_Attendee_Information|null $reg_step
      * @param EE_Registration|null                       $registration
      * @param EE_Question|null                           $question
-     * @param null                                       $answer
+     * @param EE_Answer|null                        $answer
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
@@ -703,12 +703,9 @@ class EED_Add_New_State extends EED_Module
         EE_SPCO_Reg_Step_Attendee_Information $reg_step = null,
         EE_Registration $registration = null,
         EE_Question $question = null,
-        $answer = null
+        ?EE_Answer $answer = null
     ) {
-        if (
-            $answer instanceof EE_Answer && $question instanceof EE_Question
-            && $question->type() === EEM_Question::QST_type_state
-        ) {
+        if ($answer instanceof EE_Answer && $question->type() === EEM_Question::QST_type_state) {
             $STA_ID = $answer->value();
             if (! empty($STA_ID)) {
                 $state = EEM_State::instance()->get_one_by_ID($STA_ID);
@@ -734,7 +731,7 @@ class EED_Add_New_State extends EED_Module
      * @param EE_SPCO_Reg_Step_Attendee_Information|null $reg_step
      * @param EE_Registration|null                       $registration
      * @param EE_Question|null                           $question
-     * @param null                                       $answer
+     * @param EE_Answer|null                        $answer
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
@@ -744,7 +741,7 @@ class EED_Add_New_State extends EED_Module
         EE_SPCO_Reg_Step_Attendee_Information $reg_step = null,
         EE_Registration $registration = null,
         EE_Question $question = null,
-        $answer = null
+        ?EE_Answer $answer = null
     ) {
         if (
             $answer instanceof EE_Answer

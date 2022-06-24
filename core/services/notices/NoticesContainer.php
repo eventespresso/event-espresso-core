@@ -124,7 +124,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return boolean
      */
-    public function hasInformation()
+    public function hasInformation(): bool
     {
         return ! empty($this->information);
     }
@@ -133,7 +133,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return boolean
      */
-    public function hasAttention()
+    public function hasAttention(): bool
     {
         return ! empty($this->attention);
     }
@@ -142,7 +142,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return boolean
      */
-    public function hasError()
+    public function hasError(): bool
     {
         return ! empty($this->error);
     }
@@ -151,7 +151,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return boolean
      */
-    public function hasSuccess()
+    public function hasSuccess(): bool
     {
         return ! empty($this->success);
     }
@@ -160,7 +160,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return int
      */
-    public function countInformation()
+    public function countInformation(): int
     {
         return count($this->information);
     }
@@ -169,7 +169,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return int
      */
-    public function countAttention()
+    public function countAttention(): int
     {
         return count($this->attention);
     }
@@ -178,7 +178,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return int
      */
-    public function countError()
+    public function countError(): int
     {
         return count($this->error);
     }
@@ -187,7 +187,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return int
      */
-    public function countSuccess()
+    public function countSuccess(): int
     {
         return count($this->success);
     }
@@ -196,7 +196,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return NoticeInterface[]
      */
-    public function getInformation()
+    public function getInformation(): array
     {
         return $this->information;
     }
@@ -205,7 +205,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return NoticeInterface[]
      */
-    public function getAttention()
+    public function getAttention(): array
     {
         return $this->attention;
     }
@@ -214,7 +214,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return NoticeInterface[]
      */
-    public function getError()
+    public function getError(): array
     {
         return $this->error;
     }
@@ -223,7 +223,7 @@ class NoticesContainer implements NoticesContainerInterface
     /**
      * @return NoticeInterface[]
      */
-    public function getSuccess()
+    public function getSuccess(): array
     {
         return $this->success;
     }

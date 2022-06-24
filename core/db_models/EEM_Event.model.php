@@ -445,7 +445,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_question_groups_for_event($EVT_ID, EE_Registration $registration)
+    public function get_question_groups_for_event(int $EVT_ID, EE_Registration $registration)
     {
         if (! isset($EVT_ID) || ! absint($EVT_ID)) {
             EE_Error::add_error(
