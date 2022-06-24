@@ -1022,7 +1022,7 @@ class EE_Register_Addon implements EEI_Plugin_API
     {
         $addon = LoaderFactory::getLoader()->getShared(
             self::$_settings[ $addon_name ]['class_name'],
-            array('EE_Registry::create(addon)' => true)
+            ['EE_Registry::create(addon)' => true]
         );
         if (! $addon instanceof EE_Addon) {
             throw new DomainException(

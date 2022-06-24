@@ -41,7 +41,7 @@ class ActivationsFactory
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function createActivationHistory(ActivatableInterface $activation): ActivationHistory
+    public static function createActivationHistory(ActivatableInterface $activation): ?ActivationHistory
     {
         return LoaderFactory::getLoader()->getNew(
             'EventEspresso\core\services\activation\ActivationHistory',
@@ -49,7 +49,7 @@ class ActivationsFactory
                 ? [
                 $activation->get_activation_history_option_name(),
                 $activation->get_activation_indicator_option_name(),
-                $activation->version()
+                $activation->version(),
             ]
                 : []
         );

@@ -8,9 +8,7 @@ use EE_Error;
 use EE_Maintenance_Mode;
 use EEH_Activation;
 use EventEspresso\core\services\request\RequestInterface;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
+use ReflectionException;
 
 /**
  * InitializeCore
@@ -23,7 +21,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class InitializeCore implements InitializeInterface
 {
-
     /**
      * @var EE_Capabilities $capabilities
      */
@@ -66,20 +63,20 @@ class InitializeCore implements InitializeInterface
         EE_Maintenance_Mode $maintenance_mode,
         RequestInterface $request
     ) {
+        defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
         $this->activation_type        = $activation_type;
         $this->capabilities           = $capabilities;
         $this->data_migration_manager = $data_migration_manager;
         $this->maintenance_mode       = $maintenance_mode;
-        $this->request = $request;
+        $this->request                = $request;
     }
-
-
 
 
     /**
      * @param bool $verify_schema
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initialize($verify_schema = true)
     {
@@ -99,18 +96,17 @@ class InitializeCore implements InitializeInterface
         } else {
             $this->data_migration_manager->enqueue_db_initialization_for('Core');
         }
-        if ($activation_type === ActivationType::NEW_ACTIVATION
+        if (
+            $activation_type === ActivationType::NEW_ACTIVATION
             || $activation_type === ActivationType::REACTIVATION
             || (
                 $activation_type === ActivationType::UPGRADE
                 && $this->activation_type->isMajorVersionChange()
             )
         ) {
-            add_action('init', array($this, 'redirectToAboutPage'), 1);
+            add_action('init', [$this, 'redirectToAboutPage'], 1);
         }
     }
-
-
 
 
     /**
@@ -129,11 +125,11 @@ class InitializeCore implements InitializeInterface
                 $this->capabilities->current_user_can('manage_options', 'espresso_about_default')
             )
         ) {
-            $query_params = array('page' => 'espresso_about');
+            $query_params    = ['page' => 'espresso_about'];
             $activation_type = $this->activation_type->getActivationType();
             if ($activation_type === ActivationType::NEW_ACTIVATION) {
                 $query_params['new_activation'] = true;
-            } else if ($activation_type === ActivationType::REACTIVATION) {
+            } elseif ($activation_type === ActivationType::REACTIVATION) {
                 $query_params['reactivation'] = true;
             }
             wp_safe_redirect(

@@ -44,7 +44,7 @@ class ObjectIdentifier
      * @param string $object_identifier
      * @return bool
      */
-    public function hasArguments($object_identifier)
+    public function hasArguments(string $object_identifier): bool
     {
         // type casting to bool instead of using strpos() !== false
         // because an object identifier should never begin with the delimiter
@@ -65,7 +65,7 @@ class ObjectIdentifier
      * @param string $object_identifier
      * @return bool
      */
-    public function fqcnMatchesObjectIdentifier($fqcn, $object_identifier)
+    public function fqcnMatchesObjectIdentifier(string $fqcn, string $object_identifier): bool
     {
         return $fqcn === $object_identifier
                || strpos($object_identifier, $fqcn . ObjectIdentifier::DELIMITER) === 0;
@@ -79,7 +79,7 @@ class ObjectIdentifier
      * @param array  $arguments
      * @return string
      */
-    public function getIdentifier($fqcn, array $arguments = array())
+    public function getIdentifier(string $fqcn, array $arguments = array()): string
     {
         // only build identifier from arguments if class is not ReservedInstanceInterface
         $identifier = ! $this->class_cache->hasInterface(
@@ -102,7 +102,7 @@ class ObjectIdentifier
      * @param array $arguments
      * @return string
      */
-    protected function getIdentifierForArguments(array $arguments)
+    protected function getIdentifierForArguments(array $arguments): string
     {
         if (empty($arguments)) {
             return '';

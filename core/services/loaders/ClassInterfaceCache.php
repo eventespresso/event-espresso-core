@@ -21,19 +21,19 @@ class ClassInterfaceCache
      *
      * @var string[][] $interfaces
      */
-    private $interfaces = array();
+    private $interfaces = [];
 
     /**
      * @type string[][] $aliases
      */
-    protected $aliases = array();
+    protected $aliases = [];
 
 
     /**
-     * @param string $fqn
+     * @param string|FullyQualifiedName $fqn
      * @return string
      */
-    public function getFqn($fqn)
+    public function getFqn($fqn): string
     {
         $fqn = $fqn instanceof FullyQualifiedName ? $fqn->string() : $fqn;
         return ltrim((string) $fqn, '\\');
@@ -41,20 +41,20 @@ class ClassInterfaceCache
 
 
     /**
-     * @param string $fqn
+     * @param string|FullyQualifiedName $fqn
      * @return array
      */
-    public function getInterfaces($fqn)
+    public function getInterfaces($fqn): array
     {
         $fqn = $this->getFqn($fqn);
         // have we already seen this FQCN ?
         if (! array_key_exists($fqn, $this->interfaces)) {
-            $this->interfaces[ $fqn ] = array();
+            $this->interfaces[ $fqn ] = [];
             if (class_exists($fqn)) {
                 $this->interfaces[ $fqn ] = class_implements($fqn, false);
                 $this->interfaces[ $fqn ] = $this->interfaces[ $fqn ] !== false
                     ? $this->interfaces[ $fqn ]
-                    : array();
+                    : [];
             }
         }
         return $this->interfaces[ $fqn ];
@@ -62,11 +62,11 @@ class ClassInterfaceCache
 
 
     /**
-     * @param string $fqn
-     * @param string $interface
+     * @param string|FullyQualifiedName $fqn
+     * @param string                    $interface
      * @return bool
      */
-    public function hasInterface($fqn, $interface)
+    public function hasInterface($fqn, string $interface): bool
     {
         $fqn        = $this->getFqn($fqn);
         $interfaces = $this->getInterfaces($fqn);
@@ -77,12 +77,14 @@ class ClassInterfaceCache
     /**
      * adds an alias for a classname
      *
-     * @param string $fqn       the class name that should be used (concrete class to replace interface)
-     * @param string $alias     the class name that would be type hinted for (abstract parent or interface)
-     * @param string $for_class the class that has the dependency (is type hinting for the interface)
-     * @throws InvalidAliasException
+     * @param string|FullyQualifiedName $fqn       the class name that should be used (concrete class to replace
+     *                                             interface)
+     * @param string                    $alias     the class name that would be type hinted for (abstract parent or
+     *                                             interface)
+     * @param string|null               $for_class the class that has the dependency (is type hinting for the
+     *                                             interface)
      */
-    public function addAlias($fqn, $alias, $for_class = '')
+    public function addAlias($fqn, string $alias, ?string $for_class = '')
     {
         $fqn   = $this->getFqn($fqn);
         $alias = $this->getFqn($alias);
@@ -93,7 +95,7 @@ class ClassInterfaceCache
         if ($for_class !== '') {
             // make sure it's set up as an array
             if (! isset($this->aliases[ $for_class ])) {
-                $this->aliases[ $for_class ] = array();
+                $this->aliases[ $for_class ] = [];
             }
             $this->aliases[ $for_class ][ $alias ] = $fqn;
             return;
@@ -105,11 +107,11 @@ class ClassInterfaceCache
     /**
      * returns TRUE if the provided FQN is an alias
      *
-     * @param string $fqn
-     * @param string $for_class
+     * @param string|FullyQualifiedName $fqn
+     * @param string                    $for_class
      * @return bool
      */
-    public function isAlias($fqn = '', $for_class = '')
+    public function isAlias($fqn = '', string $for_class = ''): bool
     {
         $fqn = $this->getFqn($fqn);
         if ($this->isAliasForClass($fqn, $for_class)) {
@@ -128,9 +130,9 @@ class ClassInterfaceCache
      * @param string $fqn
      * @return bool
      */
-    protected function isDirectAlias($fqn = '')
+    protected function isDirectAlias(string $fqn = ''): bool
     {
-        return isset($this->aliases[ (string) $fqn ]) && ! is_array($this->aliases[ (string) $fqn ]);
+        return isset($this->aliases[ $fqn ]) && ! is_array($this->aliases[ $fqn ]);
     }
 
 
@@ -141,11 +143,11 @@ class ClassInterfaceCache
      * @param string $for_class
      * @return bool
      */
-    protected function isAliasForClass($fqn = '', $for_class = '')
+    protected function isAliasForClass(string $fqn = '', string $for_class = ''): bool
     {
         return (
             $for_class !== ''
-            && isset($this->aliases[ (string) $for_class ][ (string) $fqn ])
+            && isset($this->aliases[ $for_class ][ $fqn ])
         );
     }
 
@@ -162,19 +164,19 @@ class ClassInterfaceCache
      *      then one could use Loader::getNew( 'interface_alias' )
      *      to load an instance of 'some\namespace\classname'
      *
-     * @param string $alias
-     * @param string $for_class
+     * @param string|FullyQualifiedName $alias
+     * @param string                    $for_class
      * @return string
      */
-    public function getFqnForAlias($alias = '', $for_class = '')
+    public function getFqnForAlias($alias = '', string $for_class = ''): string
     {
         $alias = $this->getFqn($alias);
         if ($this->isAliasForClass($alias, $for_class)) {
-            return $this->getFqnForAlias($this->aliases[ (string) $for_class ][ (string) $alias ], $for_class);
+            return $this->getFqnForAlias($this->aliases[ $for_class ][ $alias ], $for_class);
         }
         if ($this->isDirectAlias($alias)) {
             // note: changed '' to $for_class
-            return $this->getFqnForAlias($this->aliases[ (string) $alias ], $for_class);
+            return $this->getFqnForAlias($this->aliases[ $alias ], $for_class);
         }
         return $alias;
     }

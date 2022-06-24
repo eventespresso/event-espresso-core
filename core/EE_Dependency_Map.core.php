@@ -242,14 +242,14 @@ class EE_Dependency_Map
 
     /**
      * @param string $class_name
-     * @param string $loader
+     * @param string|Closure $loader
      * @param bool   $overwrite
      * @return bool
      * @throws DomainException
      */
     public static function register_class_loader(
         string $class_name,
-        string $loader = 'load_core',
+        $loader = 'load_core',
         bool $overwrite = false
     ): bool {
         if (! $loader instanceof Closure && strpos($class_name, '\\') !== false) {

@@ -216,6 +216,9 @@ class CoreAssetManager extends AssetManager
         $this->addJs(self::JS_HANDLE_EDITOR_HOCS)->setRequiresTranslation();
 
         $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
+        if (! class_exists('EED_Core_Rest_Api')) {
+            require_once EE_MODULES . 'core_rest_api/EED_Core_Rest_Api.module.php';
+        }
         $this->registry->addData(
             'paths',
             array(

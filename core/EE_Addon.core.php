@@ -117,7 +117,7 @@ abstract class EE_Addon extends EE_Configurable
      * @param EE_Dependency_Map|null $dependency_map [optional]
      * @param DomainInterface|null   $domain         [optional]
      */
-    public function __construct(?EE_Dependency_Map $dependency_map, ?DomainInterface $domain)
+    public function __construct(?EE_Dependency_Map $dependency_map = null, ?DomainInterface $domain = null)
     {
         if ($dependency_map instanceof EE_Dependency_Map) {
             $this->setDependencyMap($dependency_map);
@@ -139,9 +139,9 @@ abstract class EE_Addon extends EE_Configurable
 
 
     /**
-     * @return EE_Dependency_Map
+     * @return EE_Dependency_Map|null
      */
-    public function dependencyMap(): EE_Dependency_Map
+    public function dependencyMap(): ?EE_Dependency_Map
     {
         return $this->dependency_map;
     }
@@ -157,9 +157,9 @@ abstract class EE_Addon extends EE_Configurable
 
 
     /**
-     * @return DomainInterface
+     * @return DomainInterface|null
      */
-    public function domain(): DomainInterface
+    public function domain(): ?DomainInterface
     {
         return $this->domain;
     }
@@ -433,11 +433,11 @@ abstract class EE_Addon extends EE_Configurable
      * plugin_actions
      * Add a settings link to the Plugins page, so people can go straight from the plugin page to the settings page.
      *
-     * @param $links
-     * @param $file
+     * @param array  $links
+     * @param string $file
      * @return array
      */
-    public function plugin_action_links($links, $file): array
+    public function plugin_action_links(array $links, string $file): array
     {
         if ($file === $this->plugin_basename() && $this->plugin_action_slug() !== '') {
             // before other links
@@ -523,9 +523,9 @@ abstract class EE_Addon extends EE_Configurable
 
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPueSlug(): string
+    public function getPueSlug(): ?string
     {
         return $this->pue_slug;
     }

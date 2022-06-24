@@ -19,7 +19,6 @@ class EE_Messenger_Collection_Loader
     protected $_messenger_collection = null;
 
 
-
     /**
      * EE_Messenger_Collection_Loader constructor.
      *
@@ -31,7 +30,6 @@ class EE_Messenger_Collection_Loader
     }
 
 
-
     /**
      * @return EE_Messenger_Collection
      */
@@ -39,7 +37,6 @@ class EE_Messenger_Collection_Loader
     {
         return $this->_messenger_collection;
     }
-
 
 
     /**
@@ -51,16 +48,18 @@ class EE_Messenger_Collection_Loader
     }
 
 
-
     /**
      * load_messengers
      * globs the supplied filepath and adds any found
      *
-     * @param  string $folder
-     * @throws \EE_Error
+     * @param string $folder
+     * @throws EE_Error
      */
     public function load_messengers_from_folder($folder = '')
     {
+        if (! class_exists('EED_Messages')) {
+            require_once EE_MODULES . 'messages/EED_Messages.module.php';
+        }
         // make sure autoloaders are set (fail-safe)
         EED_Messages::set_autoloaders();
         $folder = ! empty($folder) ? $folder : EE_LIBRARIES . 'messages/messenger';
@@ -87,7 +86,10 @@ class EE_Messenger_Collection_Loader
             if (! class_exists($messenger_class_name)) {
                 throw new EE_Error(
                     sprintf(
-                        esc_html__('The "%1$s" messenger class can\'t be loaded from %2$s.  Likely there is a typo in the class name or the file name.', 'event_espresso'),
+                        esc_html__(
+                            'The "%1$s" messenger class can\'t be loaded from %2$s.  Likely there is a typo in the class name or the file name.',
+                            'event_espresso'
+                        ),
                         $messenger_class_name,
                         $file_path
                     )
@@ -111,7 +113,7 @@ class EE_Messenger_Collection_Loader
         EED_Messages::set_autoloaders();
         $active_messengers = apply_filters(
             'FHEE__EEH_MSG_Template__get_active_messengers_in_db',
-            get_option('ee_active_messengers', array())
+            get_option('ee_active_messengers', [])
         );
         foreach ((array) $active_messengers as $active_messenger_classname => $active_messenger) {
             $this->_load_messenger($active_messenger);
@@ -119,11 +121,10 @@ class EE_Messenger_Collection_Loader
     }
 
 
-
     /**
      * load_messenger
      *
-     * @param \EE_messenger $messenger
+     * @param EE_messenger $messenger
      * @return bool
      */
     protected function _load_messenger(EE_messenger $messenger)

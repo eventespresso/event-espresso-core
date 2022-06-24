@@ -1667,4 +1667,16 @@ class EEH_Activation implements ResettableInterface
             ]
         );
     }
+
+
+    public static function upload_directories_incomplete(): bool
+    {
+        return false;
+    }
+
+
+    public static function create_upload_directories()
+    {
+
+    }
 }

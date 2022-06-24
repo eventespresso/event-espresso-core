@@ -3,14 +3,13 @@
 namespace EventEspresso\core\services\activation;
 
 use DomainException;
+use EE_Error;
 use EE_System;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
-
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
-
+use ReflectionException;
 
 /**
  * Class ActivationsAndUpgradesManager
@@ -58,6 +57,7 @@ class ActivationsAndUpgradesManager
         ActivationHandler $activation_handler,
         ActivationTypeDetector $activation_type_detector
     ) {
+        defined('EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
         $this->activation_handler       = $activation_handler;
         $this->activation_type_detector = $activation_type_detector;
     }
@@ -73,7 +73,7 @@ class ActivationsAndUpgradesManager
      * @throws InvalidArgumentException
      * @throws DomainException
      */
-    public function detectActivationsAndVersionChanges(array $activations)
+    public function detectActivationsAndVersionChanges(array $activations): bool
     {
         foreach ($activations as $activation) {
             if ( ! $activation instanceof ActivatableInterface) {
@@ -114,7 +114,7 @@ class ActivationsAndUpgradesManager
      * @throws InvalidDataTypeException
      * @throws DomainException
      */
-    private function getActivationHistory(ActivatableInterface $activation)
+    private function getActivationHistory(ActivatableInterface $activation): ActivationHistory
     {
         // get activation history and set arguments array based on activation type
         $activation_history = ActivationsFactory::createActivationHistory($activation);
@@ -146,7 +146,7 @@ class ActivationsAndUpgradesManager
      * @return ActivationType
      * @throws InvalidArgumentException
      */
-    private function getActivationType(ActivatableInterface $activation, ActivationHistory $activation_history)
+    private function getActivationType(ActivatableInterface $activation, ActivationHistory $activation_history): ActivationType
     {
         // determine whether current request is new activation, upgrade, etc
         $activation_type = $this->activation_type_detector->resolveActivationTypeFromActivationHistory(
@@ -157,12 +157,10 @@ class ActivationsAndUpgradesManager
     }
 
 
-
     /**
      * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function performActivationsAndUpgrades()
     {

@@ -67,7 +67,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_All_Caps_Text_Field
      */
@@ -87,7 +87,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @param string $model_name
      * @return EE_Any_Foreign_Model_Name_Field
@@ -109,7 +109,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Boolean_Field
      */
@@ -129,16 +129,16 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
-     * @param string $default_value
+     * @param bool|null $nullable
+     * @param string|null $default_value
      * @return EE_Datetime_Field
      * @throws InvalidArgumentException
      */
     public function createDatetimeField(
         string $table_column,
         string $nice_name,
-        bool $nullable = false,
-        string $default_value = EE_Datetime_Field::now
+        ?bool $nullable = false,
+        ?string $default_value = EE_Datetime_Field::now
     ): EE_Datetime_Field {
         return $this->loader->getNew(
             'EE_Datetime_Field',
@@ -155,7 +155,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_DB_Only_Float_Field
      */
@@ -175,7 +175,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_DB_Only_Int_Field
      */
@@ -195,7 +195,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_DB_Only_Text_Field
      */
@@ -215,15 +215,15 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
-     * @param string $default_value
+     * @param bool|null $nullable
+     * @param string|null $default_value
      * @return EE_Email_Field
      */
     public function createEmailField(
         string $table_column,
         string $nice_name,
         bool $nullable = true,
-        string $default_value = ''
+        ?string $default_value = ''
     ): EE_Email_Field {
         return $this->loader->getNew(
             'EE_Email_Field',
@@ -235,7 +235,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @param array  $allowed_enum_values keys are values to be used in the DB,
      *                                    values are how they should be displayed
@@ -245,7 +245,7 @@ class ModelFieldFactory
         string $table_column,
         string $nice_name,
         bool $nullable = true,
-        string $default_value = '',
+        ?string $default_value = '',
         array $allowed_enum_values = []
     ): EE_Enum_Integer_Field {
         return $this->loader->getNew(
@@ -258,7 +258,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @param array  $allowed_enum_values keys are values to be used in the DB,
      *                                    values are how they should be displayed
@@ -268,7 +268,7 @@ class ModelFieldFactory
         string $table_column,
         string $nice_name,
         bool $nullable = true,
-        string $default_value = '',
+        ?string $default_value = '',
         array $allowed_enum_values = []
     ): EE_Enum_Text_Field {
         return $this->loader->getNew(
@@ -281,7 +281,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Float_Field
      */
@@ -301,7 +301,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @param string $model_name
      * @return EE_Foreign_Key_Int_Field
@@ -323,7 +323,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @param string $model_name
      * @return EE_Foreign_Key_String_Field
@@ -345,7 +345,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Full_HTML_Field
      */
@@ -365,7 +365,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Infinite_Integer_Field
      */
@@ -385,7 +385,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param int    $default_value
      * @return EE_Integer_Field
      */
@@ -405,7 +405,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Maybe_Serialized_Simple_HTML_Field
      */
@@ -425,7 +425,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Maybe_Serialized_Text_Field
      */
@@ -445,7 +445,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Money_Field
      */
@@ -465,7 +465,7 @@ class ModelFieldFactory
     /**
      * @param string      $table_column
      * @param string      $nice_name
-     * @param bool        $nullable
+     * @param bool|null $nullable
      * @param string|null $default_value
      * @return EE_Plain_Text_Field
      */
@@ -485,7 +485,7 @@ class ModelFieldFactory
     /**
      * @param string      $table_column
      * @param string      $nice_name
-     * @param bool        $nullable
+     * @param bool|null $nullable
      * @param string|null $default_value
      * @return EE_Post_Content_Field
      */
@@ -527,7 +527,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Serialized_Text_Field
      */
@@ -547,7 +547,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Simple_HTML_Field
      */
@@ -567,7 +567,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Slug_Field
      */
@@ -587,7 +587,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @return EE_Trashed_Flag_Field
      */
@@ -607,7 +607,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @param mixed  $default_value
      * @param array  $values                    If additional status are to be used other than the default WP
      *                                          statuses, then they can be registered via this property. The
@@ -668,7 +668,7 @@ class ModelFieldFactory
     /**
      * @param string $table_column
      * @param string $nice_name
-     * @param bool   $nullable
+     * @param bool|null $nullable
      * @return EE_WP_User_Field
      */
     public function createWpUserField(string $table_column, string $nice_name, bool $nullable): EE_WP_User_Field
