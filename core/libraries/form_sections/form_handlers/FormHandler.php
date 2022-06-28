@@ -590,7 +590,7 @@ abstract class FormHandler implements FormHandlerInterface
             || $form_config === FormHandler::ADD_FORM_TAGS_ONLY
         ) {
             $additional_props = $this->requiresMultipartEnctype()
-                ? 'enctype="multipart/form-data"'
+                ? ' enctype="multipart/form-data"'
                 : '';
             $form_html .= $this->form()->form_open(
                 $this->formAction(),
