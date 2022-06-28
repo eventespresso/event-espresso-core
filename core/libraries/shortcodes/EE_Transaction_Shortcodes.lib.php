@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\formatters\CurrencyFormatter;
 
 /**
  * EE_Transaction_Shortcodes
@@ -304,7 +305,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                 return $this->_get_invoice_payee_email();
             case '[TOTAL_COST]':
                 $total = $transaction->total();
-                return ! empty($total) ? EEH_Money::formatForLocale($total, '', 4) : '';
+                return ! empty($total)
+                    ? EEH_Money::formatForLocale($total, CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE)
+                    : '';
             case '[PAYMENT_STATUS]':
                 // note the [payment_status] shortcode is kind of misleading because payment status might be different
                 // from txn status so I'm adding this here for clarity.

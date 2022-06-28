@@ -1210,8 +1210,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function amountOwing($schema = 'localized_float')
     {
-        $format = $this->currency_formatter->getFormatFromLegacySchema($schema);
-        return $this->currency_formatter->formatForLocale($this->final_price() - $this->paid(), $format);
+        return $this->currency_formatter->formatForLocale(
+            $this->final_price() - $this->paid(),
+            $this->currency_formatter->getFormatFromLegacySchema($schema)
+        );
     }
 
 
@@ -1226,8 +1228,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function prettyAmountOwing($schema = 'localized_currency')
     {
-        $format = $this->currency_formatter->getFormatFromLegacySchema($schema);
-        return $this->currency_formatter->formatForLocale($this->amountOwing(), $format);
+        return $this->currency_formatter->formatForLocale(
+            $this->amountOwing(),
+            $this->currency_formatter->getFormatFromLegacySchema($schema)
+        );
     }
 
 

@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\formatters\CurrencyFormatter;
 
 /**
  *
@@ -352,13 +353,16 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                 } else {
                     $new_sub_total = $price_modifier->is_discount()
                         ? (float) $price_modifier->amount() * -1
-                        : $price_modifier->pretty_price();
+                        : $price_modifier->amount();
                 }
                 $ticket_price_modifier->sub_total = EEH_Money::formatForLocale($new_sub_total);
                 $ticket_price_modifiers[] = $ticket_price_modifier;
                 $running_total += $new_sub_total;
             }
-            $pre_tax_subtotal = EEH_Money::formatForLocale($running_total, '', 4);
+            $pre_tax_subtotal = EEH_Money::formatForLocale(
+                $running_total,
+                CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE
+            );
             // taxes
             $taxes = [];
             $total_taxes = 0;
@@ -369,12 +373,18 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                     $ticket_tax->name = $tax->name();
                     $ticket_tax->rate = $tax->amount() . '%';
                     $tax_amount = $running_total * ($tax->amount() / 100);
-                    $ticket_tax->amount = EEH_Money::formatForLocale($tax_amount, '', 4);
+                    $ticket_tax->amount = EEH_Money::formatForLocale(
+                        $tax_amount,
+                        CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE
+                    );
                     $total_taxes += $tax_amount;
                     $taxes[] = $ticket_tax;
                 }
             }
-            $ticket_total = EEH_Money::formatForLocale($running_total + $total_taxes, '', 4);
+            $ticket_total = EEH_Money::formatForLocale(
+                $running_total + $total_taxes,
+                CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE
+            );
         } catch (Exception $exception) {
             EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
             new ExceptionStackTraceDisplay($exception);

@@ -347,8 +347,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function prettyRemaining($schema = 'localized_currency')
     {
-        $format = $this->currency_formatter->getFormatFromLegacySchema($schema);
-        return $this->currency_formatter->formatForLocale($this->remaining(), $format);
+        return $this->currency_formatter->formatForLocale(
+            $this->remaining(),
+            $this->currency_formatter->getFormatFromLegacySchema($schema)
+        );
     }
 
 

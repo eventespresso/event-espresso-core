@@ -27,20 +27,20 @@ class EE_Money_Field extends EE_Float_Field
 
 
     /**
-     * @param string $table_column
-     * @param string $nicename
-     * @param bool   $nullable
-     * @param float  $default_value
-     * @param bool   $allow_fractional_subunits
+     * @param string     $table_column
+     * @param string     $nice_name
+     * @param bool|null  $nullable
+     * @param float|null $default_value
+     * @param bool|null  $allow_fractional_subunits
      */
     public function __construct(
-        $table_column,
-        $nicename,
-        $nullable = false,
-        $default_value = 0,
-        $allow_fractional_subunits = true
+        string $table_column,
+        string $nice_name,
+        ?bool $nullable = false,
+        ?float $default_value = 0,
+        ?bool $allow_fractional_subunits = true
     ) {
-        parent::__construct($table_column, $nicename, $nullable, $default_value);
+        parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->allow_fractional_subunits = $allow_fractional_subunits;
         // in a better world this would have been injected upon construction
         if (! $this->currency_formatter instanceof CurrencyFormatter) {
@@ -55,7 +55,7 @@ class EE_Money_Field extends EE_Float_Field
      *
      * @return boolean
      */
-    public function allowFractionalSubunits()
+    public function allowFractionalSubunits(): ?bool
     {
         return $this->allow_fractional_subunits;
     }
@@ -68,15 +68,17 @@ class EE_Money_Field extends EE_Float_Field
      *    null: '$3,023.00<span>USD</span>'
      *
      * @param float|int|string $amount
-     * @param string           $schema
+     * @param string|null      $schema
      * @return string
      * @since $VID:$
      */
-    public function prepare_for_get($amount, $schema = 'precision_float')
+    public function prepare_for_get($amount, ?string $schema = 'precision_float'): string
     {
         $schema = $schema ? $schema : 'precision_float';
-        $format = $this->currency_formatter->getFormatFromLegacySchema($schema, $this->allow_fractional_subunits);
-        return $this->currency_formatter->formatForLocale((float) $amount, $format);
+        return $this->currency_formatter->formatForLocale(
+            (float) $amount,
+            $this->currency_formatter->getFormatFromLegacySchema($schema, $this->allow_fractional_subunits)
+        );
     }
 
 
@@ -87,13 +89,15 @@ class EE_Money_Field extends EE_Float_Field
      *    null: "$3,023.00<span>USD</span>"
      *
      * @param float|int|string $amount
-     * @param string           $schema
+     * @param string|null      $schema
      * @return string
      */
-    public function prepare_for_pretty_echoing($amount, $schema = 'localized_currency')
+    public function prepare_for_pretty_echoing($amount, ?string $schema = 'localized_currency'): string
     {
-        $format = $this->currency_formatter->getFormatFromLegacySchema($schema, $this->allow_fractional_subunits);
-        return $this->currency_formatter->formatForLocale((float) $amount, $format);
+        return $this->currency_formatter->formatForLocale(
+            (float) $amount,
+            $this->currency_formatter->getFormatFromLegacySchema($schema, $this->allow_fractional_subunits)
+        );
     }
 
 
@@ -104,10 +108,10 @@ class EE_Money_Field extends EE_Float_Field
      * it rounds the float to the correct number of decimal places for this country's currency.
      *
      * @param float|int|string $amount
-     * @param string           $schema
+     * @param string|null      $schema
      * @return float
      */
-    public function prepare_for_set($amount, $schema = '')
+    public function prepare_for_set($amount, ?string $schema = ''): float
     {
         $amount = $this->currency_formatter->parseForLocale($amount);
         return $this->prepare_for_set_from_db($amount);
@@ -118,7 +122,7 @@ class EE_Money_Field extends EE_Float_Field
      * @param float $amount
      * @return float
      */
-    public function prepare_for_set_from_db($amount)
+    public function prepare_for_set_from_db($amount): float
     {
         return $this->allowFractionalSubunits()
             ? $this->currency_formatter->precisionRound($amount)
@@ -129,7 +133,7 @@ class EE_Money_Field extends EE_Float_Field
     /**
      * @return array[]
      */
-    public function getSchemaProperties()
+    public function getSchemaProperties(): array
     {
         return [
             'raw'    => [
@@ -163,7 +167,7 @@ class EE_Money_Field extends EE_Float_Field
      * @deprecatd $VID:$
      * @return boolean
      */
-    public function whole_pennies_only()
+    public function whole_pennies_only(): ?bool
     {
         return $this->allow_fractional_subunits;
     }

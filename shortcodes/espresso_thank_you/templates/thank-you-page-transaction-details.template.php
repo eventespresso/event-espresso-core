@@ -23,7 +23,6 @@ use EventEspresso\core\services\formatters\CurrencyFormatter;
                     <?php
                     echo EEH_Money::formatForLocale(
                         $transaction->total(),
-                        '',
                         CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE
                     );
                     ?>

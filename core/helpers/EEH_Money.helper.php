@@ -48,16 +48,16 @@ class EEH_Money extends EEH_Base
 
 
     /**
-     * @param float  $money_value
-     * @param string|Locale $locale locale name ex: en_US, en_CA, fr_CA, de_DE, etc, or Locale object
-     * @param int           $format
+     * @param float|int|string $money_value
+     * @param int|null         $format one of the CurrencyFormatter::FORMAT_* constants
+     * @param string|Locale    $locale locale name ex: en_US, en_CA, fr_CA, de_DE, etc, or Locale object
      * @return string
      * @since $VID:$
      */
     public static function formatForLocale(
         $money_value,
-        $locale = '',
-        $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY
+        $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
+        $locale = ''
     ) {
         return EEH_Money::getCurrencyFormatter()->formatForLocale($money_value, $format, $locale);
     }

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\formatters\CurrencyFormatter;
+
 /**
  *EE_Ticket_Shortcodes
  *
@@ -115,7 +117,10 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes
                 break;
 
             case '[TICKET_PRICE_WITH_TAXES]':
-                return EEH_Money::formatForLocale($this->_ticket->get_ticket_total_with_taxes(), '', 4);
+                return EEH_Money::formatForLocale(
+                    $this->_ticket->get_ticket_total_with_taxes(),
+                    CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE
+                );
                 break;
 
             case '[TKT_QTY_PURCHASED]':
