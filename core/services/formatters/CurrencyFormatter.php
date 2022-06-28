@@ -49,10 +49,8 @@ class CurrencyFormatter extends LocaleFloatFormatter
         ?int $precision = null
     ): string {
         // if a specific decimal precision has been requested then use that, otherwise set it for the locale
-        $precision = $precision !== null
-            ? absint($precision)
-            : $locale->decimalPrecision();
-        // BUT... if the precision format has been requested, and the currency is just set at the locale
+        $precision = $precision !== null ? absint($precision) : $locale->decimalPrecision();
+        // BUT... if a specific decimal precision has been requested with no extra locale formatting
         // then bump the precision up to our max internal value
         $precision = $format === CurrencyFormatter::FORMAT_PRECISION_FLOAT && $precision === $locale->decimalPrecision()
             ? LocaleFloatFormatter::DECIMAL_PRECISION
@@ -73,18 +71,12 @@ class CurrencyFormatter extends LocaleFloatFormatter
             $locale->currencyThousandsSeparator()
         );
 
-        $is_negative = $amount < 0;
-        // set the currency symbol based on the format (no currency symbol for float formats)
-        $currency_symbol = $format >= CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY
-            ? $locale->currencySymbol()
-            : '';
-
         // inserts the locale's currency symbol, negative sign, and spaces at the appropriate places
         $formatted_amount = $this->formatSymbolAndSignPositions(
             $locale,
             $formatted_amount,
-            $is_negative,
-            $currency_symbol
+            $amount < 0, // negative
+            $locale->currencySymbol()
         );
         return $this->appendCurrencyIsoCode($locale, $formatted_amount, $format);
     }
@@ -197,18 +189,20 @@ class CurrencyFormatter extends LocaleFloatFormatter
     /**
      * formats the provided number for the selected locale (defaults to site locale) and returns a string
      *
-     * @param float|int|string $number    unformatted number value, ex: 1234.56789
-     * @param int|null         $precision the number of decimal places to round to
-     * @param string|Locale    $locale    ex: "en_US" or Locale object
-     * @return string                     formatted value, ex: '1,234.57'
+     * @param float|int|string   $number unformatted number value, ex: 1234.56789
+     * @param int|null           $format one of the CurrencyFormatter::FORMAT_* constants
+     * @param int|null           $precision the number of decimal places to round to
+     * @param string|Locale|null $locale ex: "en_US" or Locale object
+     * @return string            formatted value, ex: '1,234.57'
      */
     public function formatForLocale(
         $number,
-        ?int $precision = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
+        ?int $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
+        ?int $precision = null,
         $locale = ''
     ): string {
         $locale = $this->locales->getLocale($locale);
-        return $this->format($locale, (float) $number, $precision, $precision);
+        return $this->format($locale, (float) $number, $format, $precision);
     }
 
 

@@ -72,7 +72,7 @@ class NumberFormatter extends LocaleFloatFormatter
      * @param string|Locale    $locale    ex: 'en_US' or Locale object
      * @return string                     formatted value, ex: '1,234.57'
      */
-    public function formatForLocale($number, int $precision = null, $locale = ''): string
+    public function formatForLocale($number, ?int $precision = null, $locale = ''): string
     {
         $locale = $this->locales->getLocale($locale);
         return $this->format($locale, (float) $number, $precision);
