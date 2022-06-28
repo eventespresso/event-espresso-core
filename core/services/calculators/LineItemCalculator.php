@@ -157,7 +157,7 @@ class LineItemCalculator
                     }
                     $quantity_for_total = $child_line_item->quantity();
                     $this->recalculatePreTaxTotal($child_line_item);
-                    $unit_price_for_total += $child_line_item->unit_price(true);
+                    $unit_price_for_total += $child_line_item->unit_price('precision_float');
                 }
             }
         }
@@ -229,7 +229,7 @@ class LineItemCalculator
         if ($has_children && $line_item->is_line_item()) {
             $total = $this->recalculatePretaxTotalForLineItem($line_item, $children);
         } elseif (! $has_children && ($line_item->is_sub_line_item() || $line_item->is_line_item())) {
-            $total = $line_item->unit_price(true) * $line_item->quantity();
+            $total = $line_item->unit_price('precision_float') * $line_item->quantity();
         } elseif ($line_item->is_sub_total() || $line_item->is_total()) {
             $total = $this->recalculatePretaxTotalForSubtotal($line_item, $total, $children);
         } elseif ($line_item->is_tax_sub_total() || $line_item->is_tax() || $line_item->is_cancelled()) {

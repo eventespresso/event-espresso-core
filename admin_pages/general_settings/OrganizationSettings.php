@@ -263,7 +263,7 @@ class OrganizationSettings extends FormHandler
                             'html_name' => 'currency_locale',
                             'html_label_text' => esc_html__('Currency Locale', 'event_espresso'),
                             'html_help_text'  => sprintf(
-                                __(
+                                esc_html__(
                                     'The locale used to set the currency for all money values. Defaults to the website locale.%4$sIf the desired locale does not appear in the above list, then please try the following:%4$s%5$sgo to the %1$sWordPress General Settings admin page%3$s%4$s%5$sselect the locale from the "Site Language" input%4$s%5$sclick "Save Changes" at the bottom of the page.%4$s%5$syou will then need to download the translations for the locale via the %2$sWordPress Updates admin page%3$s.%4$s%5$sthen return to this page and select the desired locale for your currency settings.%4$s%5$safter this is done, you can change the "Site Language" option back to what it was.%4$sIf your currency settings do not look correct or cause errors after doing the above, then you may need to contact your hosting provider and have them generate the desired locale settings and install the appropriate language packs on your server.',
                                     'event_espresso'
                                 ),
@@ -271,7 +271,7 @@ class OrganizationSettings extends FormHandler
                                 '<a href="' .admin_url('update-core.php') . '" target="_blank">',
                                 '</a>',
                                 '<br />',
-                                '&nbsp;&bullet;&nbsp;'
+                                '&nbsp;•&nbsp;'
                             ),
                             'default'         => $this->currency_config->locale(),
                             'required'        => false,

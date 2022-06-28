@@ -57,23 +57,23 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 'capability' => 'ee_read_default_prices',
             ],
             'add_new_price'               => [
-                'func'       => '_edit_price_details',
+                'func'       => [$this, '_edit_price_details'],
                 'capability' => 'ee_edit_default_prices',
             ],
             'edit_price'                  => [
-                'func'       => '_edit_price_details',
+                'func'       => [$this, '_edit_price_details'],
                 'capability' => 'ee_edit_default_price',
                 'obj_id'     => $PRC_ID,
             ],
             'insert_price'                => [
-                'func'       => '_insert_or_update_price',
-                'args'       => ['insert' => true],
+                'func'       => [$this, '_insert_or_update_price'],
+                'args'       => ['new_price' => true],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_prices',
             ],
             'update_price'                => [
-                'func'       => '_insert_or_update_price',
-                'args'       => ['insert' => false],
+                'func'       => [$this, '_insert_or_update_price'],
+                'args'       => ['new_price' => false],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_price',
                 'obj_id'     => $PRC_ID,
@@ -661,19 +661,19 @@ class Pricing_Admin_Page extends EE_Admin_Page
 
 
     /**
-     * @param bool $insert - whether to insert or update
+     * @param bool $new_price - whether to insert or update
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _insert_or_update_price(bool $insert = false)
+    protected function _insert_or_update_price($new_price = false)
     {
         // why be so pessimistic ???  : (
         $updated = 0;
 
         $set_column_values = $this->set_price_column_values();
         // is this a new Price ?
-        if ($insert) {
+        if ($new_price) {
             // run the insert
             $PRC_ID = EEM_Price::instance()->insert($set_column_values);
             if ($PRC_ID) {

@@ -4,6 +4,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\request\DataType;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  *

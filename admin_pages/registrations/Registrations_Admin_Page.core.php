@@ -2085,7 +2085,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             : $payment;
 
         $payment_method = $payment->get_first_related('Payment_Method');
-        $payment_method = $payment_method instanceof EE_Payment_Method
+        $payment_method = ! $payment_method instanceof EE_Payment_Method
             ? EE_Payment_Method::new_instance()
             : $payment_method;
 

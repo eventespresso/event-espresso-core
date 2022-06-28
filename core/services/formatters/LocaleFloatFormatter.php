@@ -90,7 +90,7 @@ abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface
             return $formatted_number;
         }
         // now let's deal with the decimal places, by first adding a decimal to an otherwise non-decimal number
-        $decimal = "0.{$decimal}";
+        $decimal = "0.$decimal";
         // then type cast the string to a float and round to the appropriate precision for the locale
         $decimal = round((float) $decimal, $precision);
         // now type cast back to a string, and remove the first two characters ( the "0." added earlier )

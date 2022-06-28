@@ -742,11 +742,12 @@ class EE_Dependency_Map implements InterminableInterface
                 'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\assets\CoreAssetManager'                                                  => [
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
-                'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
-                'EE_Template_Config'                                 => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetCollection'       => EE_Dependency_Map::load_from_cache,
+                'EEM_Country'                                              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\formatters\CurrencyFormatter' => EE_Dependency_Map::load_from_cache,
+                'EE_Template_Config'                                       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain'                         => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry'              => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\privacy\policy\PrivacyPolicy'                                       => [
                 'EEM_Payment_Method'                                       => EE_Dependency_Map::load_from_cache,
@@ -854,6 +855,7 @@ class EE_Dependency_Map implements InterminableInterface
                 'EE_Core_Config'                                          => EE_Dependency_Map::load_from_cache,
                 'EE_Network_Core_Config'                                  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\address\CountrySubRegionDao' => EE_Dependency_Map::load_from_cache,
+                'EE_Currency_Config'                                      => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\address\CountrySubRegionDao'                                                     => [
                 'EEM_State'                                            => EE_Dependency_Map::load_from_cache,
