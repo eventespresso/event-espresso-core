@@ -120,7 +120,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             'Notes / Extra&nbsp;Accounting',
                             'event_espresso'
                         ); ?></th>
-                        <!--<th class="jst-left"><?php esc_html_e('Details', 'event_espresso'); ?></th>-->
                         <th class="jst-cntr"><?php esc_html_e('Amount', 'event_espresso'); ?></th>
                     </tr>
                 </thead>
@@ -260,12 +259,13 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                               . __('This transaction has been overpaid ! ', 'event_espresso')
                               . '</span>'
                             : '';
-                        echo esc_html(
+                        echo wp_kses(
                             $overpaid
                             . sprintf(
                                 __('Payments Total %s', 'event_espresso'),
                                 '(' . EE_Registry::instance()->CFG->currency->code . ')'
-                            )
+                            ),
+                            AllowedTags::getAllowedTags()
                         ); ?>
                         </span>
                             </th>
