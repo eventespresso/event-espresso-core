@@ -41,7 +41,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 <?php echo wp_kses($before_payment_options, AllowedTags::getWithFormTags()); ?>
 
 <div id="methods-of-payment">
-    <?php echo wp_kses($payment_options, AllowedTags::getWithFormTags()); ?>
+    <?php echo wp_kses($payment_options, AllowedTags::getWithFullTags()); ?>
 </div>
 <!-- end #methods-of-payment -->
 
