@@ -451,67 +451,67 @@ class OrganizationSettings extends FormHandler
         }
 
         if (is_main_site()) {
-            $this->network_core_config->site_license_key = isset($form_data['ee_site_license_key'])
-                ? sanitize_text_field($form_data['ee_site_license_key'])
+            $this->network_core_config->site_license_key = isset($valid_data['ee_site_license_key'])
+                ? sanitize_text_field($valid_data['ee_site_license_key'])
                 : $this->network_core_config->site_license_key;
         }
-        $this->organization_config->name = isset($form_data['organization_name'])
-            ? sanitize_text_field($form_data['organization_name'])
+        $this->organization_config->name = isset($valid_data['organization_name'])
+            ? sanitize_text_field($valid_data['organization_name'])
             : $this->organization_config->name;
-        $this->organization_config->address_1 = isset($form_data['organization_address_1'])
-            ? sanitize_text_field($form_data['organization_address_1'])
+        $this->organization_config->address_1 = isset($valid_data['organization_address_1'])
+            ? sanitize_text_field($valid_data['organization_address_1'])
             : $this->organization_config->address_1;
-        $this->organization_config->address_2 = isset($form_data['organization_address_2'])
-            ? sanitize_text_field($form_data['organization_address_2'])
+        $this->organization_config->address_2 = isset($valid_data['organization_address_2'])
+            ? sanitize_text_field($valid_data['organization_address_2'])
             : $this->organization_config->address_2;
-        $this->organization_config->city = isset($form_data['organization_city'])
-            ? sanitize_text_field($form_data['organization_city'])
+        $this->organization_config->city = isset($valid_data['organization_city'])
+            ? sanitize_text_field($valid_data['organization_city'])
             : $this->organization_config->city;
-        $this->organization_config->STA_ID = isset($form_data['organization_state'])
-            ? absint($form_data['organization_state'])
+        $this->organization_config->STA_ID = isset($valid_data['organization_state'])
+            ? absint($valid_data['organization_state'])
             : $this->organization_config->STA_ID;
-        $this->organization_config->CNT_ISO = isset($form_data['organization_country'])
-            ? sanitize_text_field($form_data['organization_country'])
+        $this->organization_config->CNT_ISO = isset($valid_data['organization_country'])
+            ? sanitize_text_field($valid_data['organization_country'])
             : $this->organization_config->CNT_ISO;
-        $this->organization_config->zip = isset($form_data['organization_zip'])
-            ? sanitize_text_field($form_data['organization_zip'])
+        $this->organization_config->zip = isset($valid_data['organization_zip'])
+            ? sanitize_text_field($valid_data['organization_zip'])
             : $this->organization_config->zip;
-        $this->organization_config->email = isset($form_data['organization_email'])
-            ? sanitize_email($form_data['organization_email'])
+        $this->organization_config->email = isset($valid_data['organization_email'])
+            ? sanitize_email($valid_data['organization_email'])
             : $this->organization_config->email;
-        $this->organization_config->vat = isset($form_data['organization_vat'])
-            ? sanitize_text_field($form_data['organization_vat'])
+        $this->organization_config->vat = isset($valid_data['organization_vat'])
+            ? sanitize_text_field($valid_data['organization_vat'])
             : $this->organization_config->vat;
-        $this->organization_config->phone = isset($form_data['organization_phone'])
-            ? sanitize_text_field($form_data['organization_phone'])
+        $this->organization_config->phone = isset($valid_data['organization_phone'])
+            ? sanitize_text_field($valid_data['organization_phone'])
             : $this->organization_config->phone;
-        $locale = isset($form_data['currency_locale'])
-            ? $form_data['currency_locale']
+        $locale = isset($valid_data['currency_locale'])
+            ? sanitize_text_field($valid_data['currency_locale'])
             : $this->currency_config->locale();
         $this->currency_config->setLocale($locale);
-        $this->organization_config->logo_url = isset($form_data['organization_logo_url'])
-            ? esc_url_raw($form_data['organization_logo_url'])
+        $this->organization_config->logo_url = isset($valid_data['organization_logo_url'])
+            ? esc_url_raw($valid_data['organization_logo_url'])
             : $this->organization_config->logo_url;
-        $this->organization_config->facebook = isset($form_data['organization_facebook'])
-            ? esc_url_raw($form_data['organization_facebook'])
+        $this->organization_config->facebook = isset($valid_data['organization_facebook'])
+            ? esc_url_raw($valid_data['organization_facebook'])
             : $this->organization_config->facebook;
-        $this->organization_config->twitter = isset($form_data['organization_twitter'])
-            ? esc_url_raw($form_data['organization_twitter'])
+        $this->organization_config->twitter = isset($valid_data['organization_twitter'])
+            ? esc_url_raw($valid_data['organization_twitter'])
             : $this->organization_config->twitter;
-        $this->organization_config->linkedin = isset($form_data['organization_linkedin'])
-            ? esc_url_raw($form_data['organization_linkedin'])
+        $this->organization_config->linkedin = isset($valid_data['organization_linkedin'])
+            ? esc_url_raw($valid_data['organization_linkedin'])
             : $this->organization_config->linkedin;
-        $this->organization_config->pinterest = isset($form_data['organization_pinterest'])
-            ? esc_url_raw($form_data['organization_pinterest'])
+        $this->organization_config->pinterest = isset($valid_data['organization_pinterest'])
+            ? esc_url_raw($valid_data['organization_pinterest'])
             : $this->organization_config->pinterest;
-        $this->organization_config->google = isset($form_data['organization_google'])
-            ? esc_url_raw($form_data['organization_google'])
+        $this->organization_config->google = isset($valid_data['organization_google'])
+            ? esc_url_raw($valid_data['organization_google'])
             : $this->organization_config->google;
-        $this->organization_config->instagram = isset($form_data['organization_instagram'])
-            ? esc_url_raw($form_data['organization_instagram'])
+        $this->organization_config->instagram = isset($valid_data['organization_instagram'])
+            ? esc_url_raw($valid_data['organization_instagram'])
             : $this->organization_config->instagram;
-        $this->core_config->ee_ueip_optin = isset($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0])
-            ? filter_var($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0], FILTER_VALIDATE_BOOLEAN)
+        $this->core_config->ee_ueip_optin = isset($valid_data[ EE_Core_Config::OPTION_NAME_UXIP ][0])
+            ? filter_var($valid_data[ EE_Core_Config::OPTION_NAME_UXIP ][0], FILTER_VALIDATE_BOOLEAN)
             : false;
         $this->core_config->ee_ueip_has_notified = true;
 
