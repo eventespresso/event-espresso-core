@@ -24,17 +24,6 @@ interface LocaleFloatFormatterInterface
 
 
     /**
-     * formats the provided number for the selected locale (defaults to site locale) and returns a string
-     *
-     * @param float|int|string $number    unformatted number value, ex: 1234.56789
-     * @param int|null         $precision the number of decimal places to round to
-     * @param string|Locale    $locale    ex: 'en_US' or Locale object
-     * @return string                     formatted value, ex: '1,234.57'
-     */
-    public function formatForLocale($number, ?int $precision = null, $locale = ''): string;
-
-
-    /**
      * This removes all localized formatting from the incoming value and returns a float
      *
      * @param float|int|string $number formatted numeric value as string, ex: '1,234,567.89'
