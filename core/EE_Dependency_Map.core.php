@@ -931,6 +931,7 @@ class EE_Dependency_Map implements InterminableInterface
                 'EE_Currency_Config' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\formatters\CurrencyFormatter' => [
+                'EE_Currency_Config'                         => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\locale\Locales' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\formatters\NumberFormatter'       => [
