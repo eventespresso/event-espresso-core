@@ -38,7 +38,7 @@ class Windows1252 extends FormatterBase
                     get_class($this),
                     $input,
                     'iconv',
-                    '<a href="http://php.net/manual/en/iconv.installation.php">http://php.net/manual/en/iconv.installation.php</a>'
+                    '<a href="https://www.php.net/manual/en/iconv.installation.php">https://www.php.net/manual/en/iconv.installation.php</a>'
                 )
             );
         }
