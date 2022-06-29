@@ -5,6 +5,7 @@ namespace EventEspresso\core\libraries\form_sections\inputs;
 use EE_Select_Input;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\locale\WordPressLocales;
 
 /**
  * Class EE_Locale_Select_Input
@@ -45,9 +46,7 @@ class EE_Locale_Select_Input extends EE_Select_Input
         $lang = get_site_option('WPLANG');
         $this->selected = in_array($lang, $this->available_languages, true) ? $lang : 'en_US';
 
-        $input_settings['default'] = isset($input_settings['default'])
-            ? $input_settings['default']
-            : $this->selected;
+        $input_settings['default'] = $input_settings['default'] ?? $this->selected;
         $input_settings['html_class'] = isset($input_settings['html_class'])
             ? $input_settings['html_class'] . ' ee-locale-select-js'
             : 'ee-locale-select-js';
@@ -58,7 +57,7 @@ class EE_Locale_Select_Input extends EE_Select_Input
     /**
      * @return array
      */
-    private function getLocaleOptions()
+    private function getLocaleOptions(): array
     {
         /*
          * $this->available_languages should only contain the locales.
@@ -68,38 +67,52 @@ class EE_Locale_Select_Input extends EE_Select_Input
         foreach ($this->available_languages as $locale) {
             if (isset($this->translations[ $locale ])) {
                 $languages[] = [
-                    'language'    => $this->translations[ $locale ]['language'],
+                    'locale'      => $this->translations[ $locale ]['language'],
                     'native_name' => $this->translations[ $locale ]['native_name'],
-                    'lang'        => current($this->translations[ $locale ]['iso']),
+                    'language'    => current($this->translations[ $locale ]['iso']),
                 ];
             } else {
                 $languages[] = [
-                    'language'    => $locale,
+                    'locale'      => $locale,
                     'native_name' => $locale,
-                    'lang'        => '',
+                    'language'    => '',
                 ];
             }
         }
 
-        $options = [];
-
-        // Site default.
-        $options['site-default'] = _x('Site Default', 'default site language');
-
-        $options['en_US'] = [
-            'display_text' => 'en_US : English(United States)',
-            'lang' => 'en',
+        // default.
+        $options = [
+            'en' => ['en_US' => 'en_US : English (United States)']
         ];
 
         // List installed languages.
-        foreach ($languages as $language) {
-            $value = esc_attr($language['language']);
-            $options[ $value ] = [
-                'display_text' => $value . ' : ' . esc_html($language['native_name']),
-                'lang'         => $language['lang'],
-            ];
-        }
+        foreach ($languages as $language_data) {
+            $language = $language_data['language'];
 
+            $locale = $language_data['locale'];
+            $locale = WordPressLocales::hasLocaleForLanguage($locale)
+                ? WordPressLocales::getLocaleForLanguage($locale)
+                : $locale;
+            $locale = esc_attr($locale);
+
+            if (WordPressLocales::hasExtraLocalesForLanguage($locale)) {
+                $extra_locales = WordPressLocales::getExtraLocalesForLanguage($locale);
+                foreach ($extra_locales as $extra_locale => $native_name) {
+                    $options[ $language ][ $extra_locale ] = $extra_locale . ' : ' . esc_html($native_name);
+                }
+            } else {
+                $options[ $language ][ $locale ] = $locale . ' : ' . esc_html($language_data['native_name']);
+            }
+
+        }
+        // now sort it
+        ksort($options, SORT_NATURAL | SORT_FLAG_CASE);
+        foreach ($options as $key => $option) {
+            if (is_array($option)) {
+                ksort($option, SORT_NATURAL | SORT_FLAG_CASE);
+                $options[ $key ] = $option;
+            }
+        }
         return $options;
     }
 }
