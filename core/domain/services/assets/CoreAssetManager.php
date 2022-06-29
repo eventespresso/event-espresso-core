@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\assets;
 
 use DomainException;
+use EE_Country;
 use EE_Error;
 use EE_Registry;
 use EE_Template_Config;
@@ -377,18 +378,20 @@ class CoreAssetManager extends AssetManager
      */
     private function getCurrencySettings()
     {
-        $site = $this->currency_formatter->getSiteLocale();
+        $site             = $this->currency_formatter->getSiteLocale();
         $currency_country = $this->country_model->getCountryForCurrencyISO($site->currencyIsoCode());
-        return array(
-            'code' => $site->currencyIsoCode(),
-            'singularLabel' => $currency_country->currency_name_single(),
-            'pluralLabel' => $currency_country->currency_name_plural(),
-            'sign' => $site->currencySymbol(),
-            'signB4' => $site->currencySymbolB4Positive(),
-            'decimalPlaces' => $site->decimalPrecision(),
-            'decimalMark' => $site->currencyDecimalPoint(),
-            'thousandsSeparator' => $site->currencyThousandsSeparator(),
-        );
+        return $currency_country instanceof EE_Country
+            ? [
+                'code'               => $site->currencyIsoCode(),
+                'singularLabel'      => $currency_country->currency_name_single(),
+                'pluralLabel'        => $currency_country->currency_name_plural(),
+                'sign'               => $site->currencySymbol(),
+                'signB4'             => $site->currencySymbolB4Positive(),
+                'decimalPlaces'      => $site->decimalPrecision(),
+                'decimalMark'        => $site->currencyDecimalPoint(),
+                'thousandsSeparator' => $site->currencyThousandsSeparator(),
+            ]
+            : [];
     }
 
 
