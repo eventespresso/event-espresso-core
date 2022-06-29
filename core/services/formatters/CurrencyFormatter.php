@@ -2,7 +2,9 @@
 
 namespace EventEspresso\core\services\formatters;
 
+use EE_Currency_Config;
 use EventEspresso\core\services\locale\Locale;
+use EventEspresso\core\services\locale\Locales;
 
 class CurrencyFormatter extends LocaleFloatFormatter
 {
@@ -31,6 +33,24 @@ class CurrencyFormatter extends LocaleFloatFormatter
      * localized number with currency symbol and code wrapped in span: '$123,456.12 <span>USD</span>'
      */
     const FORMAT_LOCALIZED_CURRENCY_HTML_CODE = 4;
+
+    /**
+     * @var EE_Currency_Config
+     */
+    protected $currency_config;
+
+
+    /**
+     * LocaleFloatFormatter constructor.
+     *
+     * @param EE_Currency_Config $currency_config
+     * @param Locales            $locales
+     */
+    public function __construct(EE_Currency_Config $currency_config, Locales $locales)
+    {
+        $this->currency_config = $currency_config;
+        parent::__construct($locales);
+    }
 
 
     /**
@@ -201,7 +221,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
         ?int $precision = null,
         $locale = ''
     ): string {
-        $locale = $this->locales->getLocale($locale);
+        $locale = $this->getLocale($locale);
         return $this->format($locale, (float) $number, $format, $precision);
     }
 
@@ -212,7 +232,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
      */
     public function getCurrencyIsoCodeForLocale($locale = ''): string
     {
-        $locale = $this->locales->getLocale($locale);
+        $locale = $this->getLocale($locale);
         return $locale->currencyIsoCode();
     }
 
@@ -223,7 +243,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
      */
     public function getCurrencySymbolForLocale($locale = ''): string
     {
-        $locale = $this->locales->getLocale($locale);
+        $locale = $this->getLocale($locale);
         return $locale->currencySymbol();
     }
 
@@ -265,6 +285,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
      */
     public function getLocale($locale = ''): Locale
     {
+        $locale = $locale ?: $this->currency_config->locale();
         return $this->locales->getLocale($locale);
     }
 
@@ -303,7 +324,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
         if (! is_string($number)) {
             return (float) $number;
         }
-        $locale = $this->locales->getLocale($locale);
+        $locale = $this->getLocale($locale);
         return $this->filterNumericValue(
             str_replace(
                 [

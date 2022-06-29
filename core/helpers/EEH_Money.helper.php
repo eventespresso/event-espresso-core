@@ -59,7 +59,7 @@ class EEH_Money extends EEH_Base
         $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
         $locale = ''
     ) {
-        return EEH_Money::getCurrencyFormatter()->formatForLocale($money_value, $format, $locale);
+        return EEH_Money::getCurrencyFormatter()->formatForLocale($money_value, $format, null, $locale);
     }
 
 
