@@ -37,7 +37,11 @@ class SessionLifespan
     public function __construct($lifespan = 0)
     {
         $lifespan = absint($lifespan);
-        $lifespan = $lifespan > 0 ? $lifespan : (int) HOUR_IN_SECONDS;
+        if ($lifespan <= 0)
+        {
+            $lifespanOption = new SessionLifespanOption();
+            $lifespan = $lifespanOption->getSessionLifeSpan();
+        }
         $this->setLifespan($lifespan);
     }
 
