@@ -40,7 +40,7 @@ class SessionLifespan
         if ($lifespan <= 0)
         {
             $lifespanOption = new SessionLifespanOption();
-            $lifespan = $lifespanOption->getSessionLifeSpan();
+            $lifespan = $lifespanOption->getSessionLifespan();
         }
         $this->setLifespan($lifespan);
     }

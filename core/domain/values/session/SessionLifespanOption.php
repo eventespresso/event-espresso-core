@@ -6,7 +6,7 @@ use EventEspresso\core\services\database\WordPressOption;
 
 /**
  * Class SessionLifespanOption
- * @todo description
+ * Use this class to access and update session life span
  *
  * @package EventEspresso\core\services\session
  * @author  Hossein Rafiei
@@ -14,9 +14,9 @@ use EventEspresso\core\services\database\WordPressOption;
  */
 class SessionLifespanOption extends WordPressOption
 {
-    const DEFAULT_LIFE_SPAN = (int) HOUR_IN_SECONDS;
+    const DEFAULT_LIFESPAN  = HOUR_IN_SECONDS;
 
-    const OPTION_NAME       = 'ee-session-life-span';
+    const OPTION_NAME       = 'ee-session-lifespan';
 
 
     /**
@@ -26,7 +26,7 @@ class SessionLifespanOption extends WordPressOption
     {
         parent::__construct(
             SessionLifespanOption::OPTION_NAME,
-            SessionLifespanOption::DEFAULT_LIFE_SPAN,
+            SessionLifespanOption::DEFAULT_LIFESPAN,
             false
         );
     }
@@ -35,7 +35,7 @@ class SessionLifespanOption extends WordPressOption
     /**
      * @return false|mixed|void
      */
-    public function getSessionLifeSpan()
+    public function getSessionLifespan()
     {
         return $this->loadOption();
     }
@@ -44,9 +44,9 @@ class SessionLifespanOption extends WordPressOption
      * @param int $value
      * @return false|mixed|void
      */
-    public function setSessionLifeSpan(int $value)
+    public function setSessionLifespan(int $value)
     {
-        if ($value <= 0) $value = SessionLifespanOption::DEFAULT_LIFE_SPAN;
+        if ($value <= 0) $value = SessionLifespanOption::DEFAULT_LIFESPAN;
         return $this->updateOption($value);
     }
 }
