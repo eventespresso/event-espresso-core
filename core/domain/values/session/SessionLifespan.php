@@ -37,8 +37,7 @@ class SessionLifespan
     public function __construct($lifespan = 0)
     {
         $lifespan = absint($lifespan);
-        if ($lifespan <= 0)
-        {
+        if ($lifespan <= 0) {
             $lifespanOption = new SessionLifespanOption();
             $lifespan = $lifespanOption->getSessionLifespan();
         }

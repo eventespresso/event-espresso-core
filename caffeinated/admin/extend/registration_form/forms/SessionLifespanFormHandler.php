@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\caffeinated\admin\extend\registration_form\forms;
 
 use EE_Admin_Two_Column_Layout;
