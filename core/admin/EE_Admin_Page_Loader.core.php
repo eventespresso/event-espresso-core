@@ -13,7 +13,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class EE_Admin_Page_Loader
 {
-
     /**
      * _installed_pages
      * objects for page_init objects detected and loaded

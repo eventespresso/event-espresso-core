@@ -13,7 +13,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Messages_Scheduler extends EE_Base
 {
-
     /**
      * Number of seconds between batch sends/generates on the cron job.
      * Defaults to 5 minutes in seconds.  If you want to change this interval, you can use the native WordPress

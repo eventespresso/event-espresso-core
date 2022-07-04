@@ -12,8 +12,6 @@
  */
 class EE_Alpha_Banner_Warning extends EE_Middleware
 {
-
-
     /**
      * @deprecated 4.9.53
      * @param    EE_Request  $request

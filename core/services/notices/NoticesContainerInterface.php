@@ -12,7 +12,6 @@ namespace EventEspresso\core\services\notices;
  */
 interface NoticesContainerInterface
 {
-
     /**
      * @param string $notice
      * @param bool   $dismissible
@@ -42,7 +41,7 @@ interface NoticesContainerInterface
      * @param string $func
      * @param string $line
      */
-    public function addError($notice, $dismissible = true, $file, $func, $line);
+    public function addError($notice, $dismissible = true, $file = '', $func = '', $line = '');
 
 
 

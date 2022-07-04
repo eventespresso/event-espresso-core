@@ -15,7 +15,6 @@
  */
 class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_Form_Questions_Admin_List_Table
 {
-
     public function __construct($admin_page)
     {
         parent::__construct($admin_page);

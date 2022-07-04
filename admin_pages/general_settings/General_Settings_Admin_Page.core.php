@@ -19,7 +19,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class General_Settings_Admin_Page extends EE_Admin_Page
 {
-
     /**
      * @var EE_Core_Config
      */

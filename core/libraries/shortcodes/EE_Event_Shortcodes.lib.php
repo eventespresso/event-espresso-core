@@ -17,8 +17,6 @@
  */
 class EE_Event_Shortcodes extends EE_Shortcodes
 {
-
-
     /**
      * Will hold the EE_Event if available
      *

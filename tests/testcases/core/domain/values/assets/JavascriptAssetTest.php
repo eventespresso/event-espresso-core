@@ -8,7 +8,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\tests\mocks\core\domain\DomainMock;
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * JavascriptAssetTest
@@ -18,7 +18,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Darren Ethier
  * @since   4.9.70.p
  */
-class JavascriptAssetTest extends PHPUnit_Framework_TestCase
+class JavascriptAssetTest extends TestCase
 {
 
     /**
@@ -37,15 +37,17 @@ class JavascriptAssetTest extends PHPUnit_Framework_TestCase
      * @throws InvalidFilePathException
      * @throws InvalidArgumentException
      */
-    public function setUp()
+    public function setUp(): void
     {
+        parent::setUp();
         $this->domain_mock = new DomainMock();
         $this->js_asset = $this->getAsset();
     }
 
 
-    public function tearDown()
+    public function tearDown(): void
     {
+        parent::tearDown();
         $this->domain_mock = null;
         $this->js_asset = null;
     }
@@ -53,9 +55,9 @@ class JavascriptAssetTest extends PHPUnit_Framework_TestCase
 
     private function getAsset(
         $source = 'https://testurl.com/test.js',
-        $dependencies = array(),
-        $load_in_footer = true
-    ) {
+        array $dependencies = array(),
+        bool $load_in_footer = true
+    ): JavascriptAsset {
         return new JavascriptAsset(
             'test-handle',
             $source,

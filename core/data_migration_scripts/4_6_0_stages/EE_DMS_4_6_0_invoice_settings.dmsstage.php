@@ -27,7 +27,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class EE_DMS_4_6_0_invoice_settings extends EE_Data_Migration_Script_Stage
 {
-
     /**
      * Just initializes the status of the migration
      */

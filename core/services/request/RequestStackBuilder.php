@@ -19,7 +19,6 @@ use SplDoublyLinkedList;
  */
 class RequestStackBuilder extends SplDoublyLinkedList
 {
-
     /**
      * @type LoaderInterface $loader
      */

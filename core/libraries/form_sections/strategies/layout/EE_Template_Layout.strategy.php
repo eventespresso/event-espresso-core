@@ -22,7 +22,6 @@
  */
 class EE_Template_Layout extends EE_Div_Per_Section_Layout
 {
-
     protected $_layout_template_file       = null;
 
     protected $_layout_begin_template_file = null;

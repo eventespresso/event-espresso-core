@@ -531,9 +531,9 @@ class EE_Message_Template_Defaults extends EE_Base
         return EE_Registry::instance()->load_lib(
             'Messages_Template_Defaults',
             array(
-                $GRP_ID,
                 $messenger,
                 $message_type,
+                $GRP_ID,
             )
         );
     }

@@ -14,7 +14,6 @@ use EventEspresso\core\libraries\form_sections\strategies\filter\FormHtmlFilter;
  */
 abstract class EE_Form_Section_Base
 {
-
     /**
      * the URL the form is submitted to
      *

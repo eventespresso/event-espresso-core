@@ -16,8 +16,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registration, EEI_Admin_Links
 {
-
-
     /**
      * Used to reference when a registration has never been checked in.
      *

@@ -30,7 +30,7 @@ class CommandBusTest extends EE_UnitTestCase
 
 
 
-    public function setUp()
+    public function set_up()
     {
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock',
@@ -42,7 +42,7 @@ class CommandBusTest extends EE_UnitTestCase
             'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock',
             'EventEspresso\core\services\commands\CommandHandlerManagerInterface'
         );
-        parent::setUp();
+        parent::set_up();
     }
 
 

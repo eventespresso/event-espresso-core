@@ -20,7 +20,6 @@ use UnexpectedValueException;
  */
 class DependencyInjector implements InjectorInterface
 {
-
     /**
      * @var CoffeePotInterface $coffee_pot
      */

@@ -16,11 +16,11 @@ use OutOfBoundsException;
  */
 class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
 {
-
     /**
      * @var array $container
      */
     private $container = [];
+
 
     /**
      * RegistryContainer constructor.
@@ -36,7 +36,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @param mixed $offset
      * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->container[ $offset ] = $value;
     }
@@ -46,7 +46,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->container[ $offset ]);
     }
@@ -55,7 +55,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     /**
      * @param mixed $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->container[ $offset ]);
     }
@@ -74,7 +74,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     /**
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->container);
     }
@@ -83,7 +83,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     /**
      * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->container);
     }
@@ -164,7 +164,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @param $offset
      * @return bool
      */
-    public function has($offset)
+    public function has($offset): bool
     {
         return $this->offsetExists($offset);
     }

@@ -21,7 +21,6 @@ use WP_Block_Type;
  */
 interface BlockInterface
 {
-
     const NAME_SPACE = 'eventespresso';
 
     /**

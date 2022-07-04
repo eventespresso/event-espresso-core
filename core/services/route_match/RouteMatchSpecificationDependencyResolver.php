@@ -21,7 +21,6 @@ use EventEspresso\core\services\dependencies\DependencyResolver;
  */
 class RouteMatchSpecificationDependencyResolver extends DependencyResolver
 {
-
     /**
      * Used to configure and/or setup any aliases or namespace roots required by the DependencyResolver
      *

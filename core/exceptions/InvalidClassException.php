@@ -14,7 +14,6 @@ use DomainException;
  */
 class InvalidClassException extends DomainException
 {
-
     /**
      * InvalidClassException constructor.
      *

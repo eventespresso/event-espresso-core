@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\collections;
  */
 interface CollectionDetailsInterface
 {
-
     /**
      * @access public
      * @return string

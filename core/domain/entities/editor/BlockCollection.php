@@ -15,7 +15,6 @@ use EventEspresso\core\services\collections\Collection;
  */
 class BlockCollection extends Collection
 {
-
     /**
      * Collection constructor
      *

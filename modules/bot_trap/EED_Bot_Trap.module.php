@@ -17,7 +17,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class EED_Bot_Trap extends EED_Module
 {
-
     /**
      * @return EED_Module|EED_Bot_Trap
      * @throws EE_Error

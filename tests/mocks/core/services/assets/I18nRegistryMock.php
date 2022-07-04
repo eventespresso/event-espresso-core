@@ -11,7 +11,7 @@ class I18nRegistryMock extends I18nRegistry
     private $track_calls_to_method = array();
 
 
-    protected function registerInlineScript($handle, array $translations, $domain)
+    protected function registerInlineScript(string $handle, array $translations, string $domain)
     {
         $this->incrementCallToMethod(__METHOD__);
         parent::registerInlineScript($handle, $translations, $domain);

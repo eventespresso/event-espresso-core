@@ -30,7 +30,6 @@ use InvalidArgumentException;
  */
 class PersistentAdminNoticeManager
 {
-
     const WP_OPTION_KEY = 'ee_pers_admin_notices';
 
     /**
@@ -68,7 +67,7 @@ class PersistentAdminNoticeManager
     public function __construct(
         CapabilitiesChecker $capabilities_checker,
         RequestInterface $request,
-        $return_url = ''
+        string $return_url = ''
     ) {
         $this->setReturnUrl($return_url);
         $this->capabilities_checker = $capabilities_checker;

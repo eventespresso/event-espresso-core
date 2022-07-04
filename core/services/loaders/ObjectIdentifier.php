@@ -15,7 +15,6 @@ use Closure;
  */
 class ObjectIdentifier
 {
-
     /**
      * used to separate the FQCN from the class's arguments identifier
      */

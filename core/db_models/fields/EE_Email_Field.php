@@ -14,8 +14,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Email_Field extends EE_Text_Field_Base
 {
-
-
     /**
      * @param string $table_column
      * @param string $nice_name

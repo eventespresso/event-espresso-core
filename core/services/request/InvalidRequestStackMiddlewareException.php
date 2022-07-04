@@ -14,7 +14,6 @@ use Exception;
  */
 class InvalidRequestStackMiddlewareException extends InvalidDataTypeException
 {
-
     /**
      * @param  mixed    $middleware_app_class
      * @param  string   $message

@@ -31,7 +31,7 @@ class EE_Injector_Tester_With_Array_Session_Int_Constructor_Params {
 	 * @param EE_Session_Mock $session
 	 * @param int             $some_int
 	 */
-	public function __construct( $some_array = array(), EE_Session_Mock $session, $some_int = 0 ) {
+	public function __construct(EE_Session_Mock $session, array $some_array = [], int $some_int = 0 ) {
 		$this->array_property 	= $some_array;
 		$this->session_property = $session;
 		$this->integer_property = $some_int;

@@ -14,8 +14,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Registrations_List_Table extends EE_Admin_List_Table
 {
-
-
     /**
      * @var Registrations_Admin_Page
      */

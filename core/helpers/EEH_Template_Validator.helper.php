@@ -24,11 +24,6 @@
  */
 class EEH_Template_Validator
 {
-
-
-
-
-
     /**
      * Throws an EE_Error if $variabel_to_test isn't an array of objects of class $class_name
      * @param mixed $variable_to_test

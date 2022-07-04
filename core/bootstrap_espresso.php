@@ -26,6 +26,17 @@ function espresso_load_error_handling()
     // load error handling
     if (is_readable(EE_CORE . 'EE_Error.core.php')) {
         require_once EE_CORE . 'EE_Error.core.php';
+        // if you're a dev and want to receive all errors via email
+        // add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
+        if (
+            defined('WP_DEBUG')
+            && WP_DEBUG === true
+            && defined('EE_ERROR_EMAILS')
+            && EE_ERROR_EMAILS === true
+        ) {
+            set_error_handler(['EE_Error', 'error_handler']);
+            register_shutdown_function(['EE_Error', 'fatal_error_handler']);
+        }
     } else {
         wp_die(esc_html__('The EE_Error core class could not be loaded.', 'event_espresso'));
     }

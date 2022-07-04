@@ -147,8 +147,8 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 		EE_Registry::instance()->load_model('Attendee')->get_all();
 
 	}
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		//whitelist the table we're about to add
 		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array($this, 'dont_short_circuit_mock_table' ), 25, 3 );
 		//add table from related DMS
@@ -184,11 +184,11 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 			return $short_circuit;
 		}
 	}
-	public function tearDown(){
+	public function tear_down(){
 		//ensure the models aren't stil registered. they should have either been
 		//deregistered during the test, or not been registered at all
 		$this->_stop_pretending_addon_hook_time();
-		parent::tearDown();
+		parent::tear_down();
 	}
 }
 

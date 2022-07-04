@@ -21,8 +21,6 @@ use RuntimeException;
  */
 class CopyRegistrationPaymentsCommandHandler extends CommandHandler
 {
-
-
     /**
      * @var CopyRegistrationService $copy_registration_service
      */

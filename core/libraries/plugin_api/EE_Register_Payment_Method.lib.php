@@ -18,7 +18,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Register_Payment_Method implements EEI_Plugin_API
 {
-
     /**
      * Holds values for registered payment methods
      *

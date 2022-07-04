@@ -13,7 +13,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EE_SPCO_Reg_Step
 {
-
     /**
      *    $_completed - TRUE if this step has fully completed it's duties
      *

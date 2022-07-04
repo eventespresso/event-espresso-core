@@ -18,7 +18,6 @@ use SplObjectStorage;
  */
 class Collection extends SplObjectStorage implements CollectionInterface
 {
-
     /**
      * a unique string for identifying this collection
      *
@@ -57,6 +56,16 @@ class Collection extends SplObjectStorage implements CollectionInterface
         $this->setCollectionInterface($collection_interface);
         $this->setCollectionName($collection_name);
         $this->setCollectionIdentifier();
+    }
+
+
+    /**
+     * @return string
+     * @since $VID:$
+     */
+    public function collectionInterface(): string
+    {
+        return $this->collection_interface;
     }
 
 

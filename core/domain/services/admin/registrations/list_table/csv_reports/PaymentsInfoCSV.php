@@ -11,7 +11,6 @@ namespace EventEspresso\core\domain\services\admin\registrations\list_table\csv_
  */
 class PaymentsInfoCSV
 {
-
     /**
      * Extracts payment information using the payment records
      *

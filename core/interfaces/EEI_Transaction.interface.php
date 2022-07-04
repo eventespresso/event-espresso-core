@@ -5,7 +5,6 @@
  */
 interface EEI_Transaction extends EEI_Base
 {
-
     /**
      * @return EEI_Payment
      */

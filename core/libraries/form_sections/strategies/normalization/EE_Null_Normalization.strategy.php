@@ -10,7 +10,6 @@
  */
 class EE_Null_Normalization extends EE_Normalization_Strategy_Base
 {
-
     /**
      * @param string $value_to_normalize
      * @return null

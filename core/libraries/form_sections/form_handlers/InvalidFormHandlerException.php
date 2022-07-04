@@ -12,7 +12,6 @@ namespace EventEspresso\core\libraries\form_sections\form_handlers;
  */
 class InvalidFormHandlerException extends \UnexpectedValueException
 {
-
     /**
      * InvalidFormHandlerException constructor.
      *

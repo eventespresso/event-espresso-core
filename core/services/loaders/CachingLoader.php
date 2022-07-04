@@ -16,7 +16,6 @@ use InvalidArgumentException;
  */
 class CachingLoader extends CachingLoaderDecorator
 {
-
     /**
      * @var bool
      */
@@ -51,10 +50,10 @@ class CachingLoader extends CachingLoaderDecorator
         LoaderDecoratorInterface $loader,
         CollectionInterface $cache,
         ObjectIdentifier $object_identifier,
-        $identifier = ''
+        string $identifier = ''
     ) {
         parent::__construct($loader);
-        $this->cache       = $cache;
+        $this->cache             = $cache;
         $this->object_identifier = $object_identifier;
         $this->setIdentifier($identifier);
         if ($this->identifier !== '') {
@@ -62,15 +61,15 @@ class CachingLoader extends CachingLoaderDecorator
             // do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__IDENTIFIER');
             // where "IDENTIFIER" = the string that was set during construction
             add_action(
-                "AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__{$identifier}",
-                array($this, 'reset')
+                "AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__$identifier",
+                [$this, 'reset']
             );
         }
         // to clear ALL caches, simply do the following:
         // do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
         add_action(
             'AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache',
-            array($this, 'reset')
+            [$this, 'reset']
         );
         // caching can be turned off via the following code:
         // add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
@@ -88,17 +87,17 @@ class CachingLoader extends CachingLoaderDecorator
     /**
      * @return string
      */
-    public function identifier()
+    public function identifier(): string
     {
         return $this->identifier;
     }
 
 
     /**
-     * @param string $identifier
+     * @param string|null $identifier
      * @throws InvalidDataTypeException
      */
-    private function setIdentifier($identifier)
+    private function setIdentifier(?string $identifier)
     {
         if (! is_string($identifier)) {
             throw new InvalidDataTypeException('$identifier', $identifier, 'string');
@@ -114,7 +113,7 @@ class CachingLoader extends CachingLoaderDecorator
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function share($fqcn, $object, array $arguments = array())
+    public function share($fqcn, $object, array $arguments = []): bool
     {
         if ($object instanceof $fqcn) {
             return $this->cache->add(
@@ -141,7 +140,7 @@ class CachingLoader extends CachingLoaderDecorator
      * @param array                     $interfaces
      * @return mixed
      */
-    public function load($fqcn, $arguments = array(), $shared = true, array $interfaces = array())
+    public function load($fqcn, $arguments = [], $shared = true, array $interfaces = [])
     {
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
@@ -180,7 +179,13 @@ class CachingLoader extends CachingLoaderDecorator
      */
     public function clearCache()
     {
+        $cache_class          = get_class($this->cache);
+        $collection_interface = $this->cache->collectionInterface();
         $this->cache->trashAndDetachAll();
+        $this->cache = new $cache_class($collection_interface);
+        if (! $this->cache instanceof CollectionInterface) {
+            throw new InvalidDataTypeException('CachingLoader::$cache', $this->cache, 'CollectionInterface');
+        }
     }
 
 
@@ -190,11 +195,11 @@ class CachingLoader extends CachingLoaderDecorator
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function remove($fqcn, array $arguments = [])
+    public function remove($fqcn, array $arguments = []): bool
     {
-        $fqcn = ltrim($fqcn, '\\');
+        $fqcn              = ltrim($fqcn, '\\');
         $object_identifier = $this->object_identifier->getIdentifier($fqcn, $arguments);
-        $object = $this->cache->has($object_identifier)
+        $object            = $this->cache->has($object_identifier)
             ? $this->cache->get($object_identifier)
             : $this->loader->load($fqcn, $arguments);
         return $this->cache->remove($object);

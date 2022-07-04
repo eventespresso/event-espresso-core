@@ -20,7 +20,6 @@ use ReflectionException;
  */
 class TicketSelectorStandard extends TicketSelector
 {
-
     /**
      * @var string $date_format
      */

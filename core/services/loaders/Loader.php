@@ -14,7 +14,6 @@ use InvalidArgumentException;
  */
 class Loader implements LoaderInterface
 {
-
     /**
      * @var LoaderDecoratorInterface $new_loader
      */

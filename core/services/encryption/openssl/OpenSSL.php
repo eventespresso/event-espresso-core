@@ -17,7 +17,6 @@ use RuntimeException;
  */
 abstract class OpenSSL implements EncryptionMethodInterface
 {
-
     /**
      * the default OPENSSL digest method to use
      */

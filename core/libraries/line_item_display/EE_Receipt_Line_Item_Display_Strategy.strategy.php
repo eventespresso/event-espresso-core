@@ -29,7 +29,6 @@
 
 class EE_Receipt_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 {
-
     /**
      * @param EE_Line_Item $line_item
      * @param array        $options

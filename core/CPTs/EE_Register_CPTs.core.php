@@ -17,8 +17,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Register_CPTs
 {
-
-
     /**
      * instantiated at init priority 5
      *
@@ -326,7 +324,6 @@ class EE_Register_CPTs
  */
 class EE_Default_Term
 {
-
     // props holding the items
     public $taxonomy = '';
 

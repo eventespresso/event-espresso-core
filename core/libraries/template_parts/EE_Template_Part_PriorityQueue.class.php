@@ -14,8 +14,6 @@
  */
 class EE_Template_Part_PriorityQueue extends \SplPriorityQueue
 {
-
-
     /**
      * add
      *

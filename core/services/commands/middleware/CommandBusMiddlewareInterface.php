@@ -12,7 +12,6 @@ use EventEspresso\core\services\commands\CommandInterface;
  */
 interface CommandBusMiddlewareInterface
 {
-
     /**
      * @param CommandInterface $command
      * @param Closure         $next

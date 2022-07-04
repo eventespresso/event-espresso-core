@@ -39,7 +39,7 @@ class I18nRegistryTest extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws EE_Error
      */
-    public function setUp()
+    public function set_up()
     {
         $domain     = DomainFactory::getShared(
             new FullyQualifiedName(
@@ -51,13 +51,13 @@ class I18nRegistryTest extends EE_UnitTestCase
             ]
         );
         $this->i18n = new I18nRegistryMock($domain, I18nRegistryTest::$test_map);
-        parent::setUp();
+        parent::set_up();
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         $this->i18n = null;
     }
 

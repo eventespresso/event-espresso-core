@@ -11,7 +11,6 @@
  */
 interface EEI_Line_Item_Object
 {
-
     /**
      * Return the name representing the object (i.e. Event Title, or Ticket Name).
      * @return string

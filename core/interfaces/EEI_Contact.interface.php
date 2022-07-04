@@ -5,7 +5,6 @@
  */
 interface EEI_Contact
 {
-
     public function fname();
 
 

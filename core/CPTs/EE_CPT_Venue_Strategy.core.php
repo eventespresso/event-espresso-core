@@ -11,7 +11,6 @@
  */
 class EE_CPT_Venue_Strategy
 {
-
     /**
      * $CPT - the current page, if it utilizes CPTs
      *

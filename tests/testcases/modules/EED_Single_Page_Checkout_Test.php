@@ -25,8 +25,8 @@ class EED_Single_Page_Checkout_Test extends EE_UnitTestCase {
 
 
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->loadModuleMocks( array( 'EED_Single_Page_Checkout' ) );
 		$this->spco_mock = EED_Single_Page_Checkout_Mock::instance();
 		//add filter on permalink to add some noise
@@ -41,11 +41,11 @@ class EED_Single_Page_Checkout_Test extends EE_UnitTestCase {
 
 
 
-	public function tearDown() {
+	public function tear_down() {
 		EE_Config::instance()->core->reg_page_id = $this->original_reg_page_id;
 		// remove filter on permalink
 		remove_filter( 'page_link', array( $this, 'add_dummy_query_args' ) );
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 

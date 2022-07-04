@@ -10,8 +10,6 @@
  */
 class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
 {
-
-
     /**
      * Holds values for registered template pack
      *

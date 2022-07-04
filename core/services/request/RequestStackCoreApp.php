@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\request;
 
+use EE_Capabilities;
 use EE_Error;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -22,7 +23,6 @@ use InvalidArgumentException;
  */
 class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCoreAppInterface
 {
-
     /**
      * @var RequestInterface $request
      */
@@ -64,8 +64,13 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
         $this->setupFramework();
         $loader = LoaderFactory::getLoader();
+        $capabilities_checker = $loader->getShared(
+            'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
+            [EE_Capabilities::instance()]
+        );
         $loader->getShared(
-            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager',
+            [$capabilities_checker, $request]
         );
         // WP cron jobs
         $loader->getShared('EE_Cron_Tasks');

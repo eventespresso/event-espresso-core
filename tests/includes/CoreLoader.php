@@ -94,7 +94,7 @@ class CoreLoader
             }
         }
         // if WordPress test suite isn't found then we can't do anything.
-        die("The WordPress PHPUnit test suite could not be found.");
+        die('The WordPress PHPUnit test suite could not be found.');
     }
 
 
@@ -117,7 +117,10 @@ class CoreLoader
             if (! $wp_dir) {
                 continue;
             }
-            $wp_root = $this->findFolderWithFile($wp_dir, '/vendor/yoast/phpunit-polyfills');
+            $wp_root = $this->findFolderWithFile(
+                $wp_dir,
+                '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php'
+            );
             if ($wp_root) {
                 return $wp_root;
             }
@@ -263,7 +266,7 @@ class CoreLoader
     public function setupDependencyMap()
     {
         /** @var RequestMock $mock */
-        $mock = LoaderFactory::getLoader()->getShared( RequestMock::class );
+        $mock           = LoaderFactory::getLoader()->getShared(RequestMock::class);
         $getRequestMock = function () use ($mock) {
             return $mock;
         };
@@ -275,28 +278,28 @@ class CoreLoader
         EE_Dependency_Map::register_class_loader('EE_Session_Mock');
         EE_Dependency_Map::register_dependencies(
             'EE_Session_Mock',
-            array(
+            [
                 'EventEspresso\core\services\cache\TransientCacheStorage'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\RequestInterface'     => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\session\SessionStartHandler'  => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                            => EE_Dependency_Map::load_from_cache,
-            )
+            ]
         );
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\core\services\cache\BasicCacheManager',
-            array(
+            [
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EE_Session_Mock' => EE_Dependency_Map::load_from_cache
-            ),
+                'EE_Session_Mock'                                         => EE_Dependency_Map::load_from_cache
+            ],
             true
         );
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\core\services\cache\PostRelatedCacheManager',
-            array(
+            [
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EE_Session_Mock' => EE_Dependency_Map::load_from_cache
-            ),
+                'EE_Session_Mock'                                         => EE_Dependency_Map::load_from_cache
+            ],
             true
         );
     }
@@ -335,6 +338,10 @@ class CoreLoader
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function onShutdown()
     {
         //nuke all EE4 data once the tests are done, so that it doesn't carry over to the next time we run tests

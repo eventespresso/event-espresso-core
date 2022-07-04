@@ -17,7 +17,6 @@ use InvalidArgumentException;
  */
 class RegUrlLink
 {
-
     /*
      * @var string $reg_url_link
      */

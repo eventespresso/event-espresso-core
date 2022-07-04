@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain;
 
 interface SetHooksInterface
 {
-
     /**
      * a place to add action and filter hooks for regular frontend requests
      *

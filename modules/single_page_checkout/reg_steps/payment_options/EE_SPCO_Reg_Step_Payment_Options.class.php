@@ -19,7 +19,6 @@ use EventEspresso\core\services\request\ResponseInterface;
  */
 class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
 {
-
     /**
      * @var EE_Line_Item_Display $Line_Item_Display
      */

@@ -16,7 +16,6 @@ use EventEspressoVendor\Jaybizzle\CrawlerDetect\CrawlerDetect;
  */
 class BotDetector extends Middleware
 {
-
     /**
      * converts a Request to a Response
      *

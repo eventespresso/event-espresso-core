@@ -13,8 +13,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class NoticesContainer implements NoticesContainerInterface
 {
-
-
     /**
      * @var NoticeInterface[] $information
      */
@@ -89,7 +87,7 @@ class NoticesContainer implements NoticesContainerInterface
      * @param string $line
      * @throws InvalidDataTypeException
      */
-    public function addError($notice, $dismissible = true, $file, $func, $line)
+    public function addError($notice, $dismissible = true, $file = '', $func = '', $line = '')
     {
         $this->error[] = new Notice(
             Notice::ERROR,

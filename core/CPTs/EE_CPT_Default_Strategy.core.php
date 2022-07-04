@@ -11,8 +11,6 @@
  */
 class EE_CPT_Default_Strategy
 {
-
-
     /**
      * $CPT - the current page, if it utilizes CPTs
      *

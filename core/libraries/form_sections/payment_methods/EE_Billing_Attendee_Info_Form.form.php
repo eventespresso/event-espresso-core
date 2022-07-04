@@ -13,7 +13,6 @@
  */
 class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
 {
-
     /**
      *
      * @param EE_Payment_Method $payment_method

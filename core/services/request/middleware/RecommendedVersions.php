@@ -18,7 +18,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class RecommendedVersions extends Middleware
 {
-
     /**
      * converts a Request to a Response
      *

@@ -19,7 +19,6 @@ use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
  */
 class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckInterface
 {
-
     /**
      * array of details where keys are names of EEM_Attendee model fields
      *

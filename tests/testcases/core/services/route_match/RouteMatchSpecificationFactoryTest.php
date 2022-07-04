@@ -2,10 +2,15 @@
 
 namespace EventEspresso\tests\testcases\core\services\route_match;
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\route_match\RouteMatchSpecificationFactory;
-use PHPUnit_Framework_TestCase;
+use InvalidArgumentException;
+use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 /**
  * Class RouteMatchSpecificationFactoryTest
@@ -15,9 +20,8 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
+class RouteMatchSpecificationFactoryTest extends TestCase
 {
-
     /**
      * @var LoaderInterface $loader
      */
@@ -25,12 +29,13 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
-    protected function setUp()
+    protected function setUp(): void
     {
+        parent::setUp();
         $this->loader = LoaderFactory::getLoader();
     }
 
@@ -38,7 +43,7 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
      * @since 4.9.71.p
      * @return RouteMatchSpecificationFactory
      */
-    public function getFactory()
+    public function getFactory(): RouteMatchSpecificationFactory
     {
         return new RouteMatchSpecificationFactory(
             $this->loader->getShared(
@@ -50,7 +55,7 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      */
     public function test__construct()
     {
@@ -62,9 +67,9 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws Exception
+     * @throws ReflectionException
      */
     public function testCreateNewRouteMatchSpecification()
     {
@@ -77,11 +82,11 @@ class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws Exception
+     * @throws ReflectionException
      */
     public function testCreate()
     {

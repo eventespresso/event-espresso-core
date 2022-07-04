@@ -15,8 +15,6 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
  */
 class EE_Venue_Shortcodes extends EE_Shortcodes
 {
-
-
     /**
      * Will hold the EE_Event if available
      *

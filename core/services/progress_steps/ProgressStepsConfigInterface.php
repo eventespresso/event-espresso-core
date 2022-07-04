@@ -10,7 +10,6 @@ namespace EventEspresso\core\services\progress_steps;
  */
 interface ProgressStepsConfigInterface
 {
-
     public function get();
 
     public function update();

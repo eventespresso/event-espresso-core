@@ -14,8 +14,6 @@
  */
 class EE_Data_Mapper
 {
-
-
     /**
      * instance of the EE_Data_Mapper Object
      *

@@ -16,7 +16,6 @@ use EventEspresso\core\interfaces\ResettableInterface;
  */
 class EE_Payment_Method_Manager implements ResettableInterface
 {
-
     /**
      * prefix added to all payment method capabilities names
      */

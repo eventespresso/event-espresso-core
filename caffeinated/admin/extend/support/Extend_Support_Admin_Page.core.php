@@ -11,7 +11,6 @@
  */
 class Extend_Support_Admin_Page extends Support_Admin_Page
 {
-
     public function __construct($routing = true)
     {
         parent::__construct($routing);

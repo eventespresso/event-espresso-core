@@ -11,8 +11,6 @@
  */
 class EED_Csv extends EED_Module
 {
-
-
     /**
      * @return EED_Csv
      */

@@ -34,9 +34,9 @@ class ObjectIdentifierTest extends EE_UnitTestCase
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      * @throws \InvalidArgumentException
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->object_identifier = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\services\loaders\ObjectIdentifier'
         );

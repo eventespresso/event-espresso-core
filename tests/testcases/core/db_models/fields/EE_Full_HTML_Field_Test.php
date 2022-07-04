@@ -20,18 +20,18 @@ class EE_Full_HTML_Field_Test extends EE_UnitTestCase
      */
     protected $_field;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_field = EEM_Line_Item::instance()->field_settings_for('LIN_name');
         $this->assertInstanceOf('EE_Full_HTML_Field', $this->_field);
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         $this->_field = null;
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

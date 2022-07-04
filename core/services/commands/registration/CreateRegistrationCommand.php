@@ -23,7 +23,6 @@ use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
  */
 class CreateRegistrationCommand extends Command implements CommandRequiresCapCheckInterface
 {
-
     /**
      * @var EE_Transaction $transaction
      */

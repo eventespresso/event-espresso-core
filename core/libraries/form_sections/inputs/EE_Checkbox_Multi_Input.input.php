@@ -14,7 +14,6 @@
  */
 class EE_Checkbox_Multi_Input extends EE_Form_Input_With_Options_Base
 {
-
     /**
      * @param array $input_settings
      * @param array | EE_Question_Option[] $answer_options

@@ -17,7 +17,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEH_Event_Query
 {
-
     /**
      * Start Date
      *

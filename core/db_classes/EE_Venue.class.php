@@ -9,7 +9,6 @@
  */
 class EE_Venue extends EE_CPT_Base implements EEI_Address
 {
-
     /**
      *
      * @param array  $props_n_values          incoming values

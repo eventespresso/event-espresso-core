@@ -19,7 +19,6 @@ use DomainException;
  */
 class SessionLifespan
 {
-
     /**
      * how long an EE session lasts in seconds
      * default session lifespan of 1 hour (for not so instant IPNs)

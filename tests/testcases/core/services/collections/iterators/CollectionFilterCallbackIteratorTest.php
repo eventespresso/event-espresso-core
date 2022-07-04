@@ -22,17 +22,17 @@ class CollectionFilterCallbackIteratorTest extends EE_UnitTestCase
     private $loose_collection;
 
 
-    public function setUp()
+    public function set_up()
     {
         $this->loose_collection = new LooseCollection('');
-        parent::setUp();
+        parent::set_up();
     }
 
 
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         $this->loose_collection = null;
     }
 

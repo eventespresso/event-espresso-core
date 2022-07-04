@@ -12,7 +12,6 @@
  */
 class EE_Register_Personal_Data_Eraser implements EEI_Plugin_API
 {
-
     /**
      * FQCN for all privacy policy generators
      *

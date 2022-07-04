@@ -18,7 +18,6 @@ use InvalidArgumentException;
  */
 class CartFactory
 {
-
     /**
      * @return EE_Cart
      * @throws InvalidArgumentException

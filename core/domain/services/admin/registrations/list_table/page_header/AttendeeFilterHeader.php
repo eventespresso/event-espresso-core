@@ -19,7 +19,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class AttendeeFilterHeader extends AdminPageHeaderDecorator
 {
-
     /**
      * @var EEM_Attendee $attendee_model
      */

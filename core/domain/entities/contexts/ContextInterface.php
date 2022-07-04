@@ -13,7 +13,6 @@ namespace EventEspresso\core\domain\entities\contexts;
  */
 interface ContextInterface
 {
-
     /**
      * @return string
      */

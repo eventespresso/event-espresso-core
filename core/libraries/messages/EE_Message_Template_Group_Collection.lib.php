@@ -10,8 +10,6 @@
  */
 class EE_Message_Template_Group_Collection extends EE_Object_Collection
 {
-
-
     /**
      * EE_Message_Template_Group_Collection constructor.
      */
@@ -30,7 +28,7 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection
      *                         include the events as an array.
      * @return bool
      */
-    public function add($message_template_group, $EVT_ID = array())
+    public function add($message_template_group, $EVT_ID = array()): bool
     {
         $EVT_ID = is_array($EVT_ID) ? $EVT_ID : (array) $EVT_ID;
         if ($message_template_group instanceof $this->interface) {

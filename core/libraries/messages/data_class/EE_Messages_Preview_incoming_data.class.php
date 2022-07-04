@@ -20,7 +20,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
 {
-
     // some specific properties we need for this class
     private $_events        = [];
 

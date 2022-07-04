@@ -3,7 +3,7 @@
 namespace EventEspresso\tests\includes;
 
 use PHPUnit\Framework\Exception;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EspressoPHPUnitFrameworkTestCase
@@ -13,7 +13,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  * @since   4.10.7.p
  */
-class EspressoPHPUnitFrameworkTestCase extends PHPUnit_Framework_TestCase
+class EspressoPHPUnitFrameworkTestCase extends TestCase
 {
 
     /**

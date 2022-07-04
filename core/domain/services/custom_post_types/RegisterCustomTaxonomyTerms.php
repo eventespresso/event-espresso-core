@@ -15,7 +15,6 @@ use WP_Post;
  */
 class RegisterCustomTaxonomyTerms
 {
-
     /**
      * @var array[] $custom_taxonomy_terms
      */

@@ -58,9 +58,9 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
     protected $_parse_shortcodes_helper_mock;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
 
         //all shortcode parse tests will require a full event to be setup with some datetimes and tickets.
         $price         = $this->factory->price_chained->create_object(array(
@@ -278,38 +278,38 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
         //now that we have parsed let's test the results, note for the purpose of this test we are verifying transaction shortcodes and ticket shortcodes.
 
         //testing [PRIMARY_REGISTRANT_FNAME], [PRIMARY_REGISTRANT_LNAME]
-        $this->assertContains('Luke Skywalker', $parsed);
+        $this->assertStringContainsString('Luke Skywalker', $parsed);
 
         //testing [PAYMENT_STATUS]
-        $this->assertContains('Incomplete', $parsed);
+        $this->assertStringContainsString('Incomplete', $parsed);
 
         //testing [TXN_ID]
-        $this->assertContains('999999', $parsed);
+        $this->assertStringContainsString('999999', $parsed);
 
         //testing [TOTAL_COST] and [AMOUNT_DUE]  (should be $125*3 + 20 shipping charge + taxes)
         $total_cost = EEH_Template::format_currency('398.00');
-        $this->assertContains($total_cost, $parsed);
+        $this->assertStringContainsString($total_cost, $parsed);
         //but we should also have a count of TWO for this string
         $this->assertEquals(2, substr_count($parsed, $total_cost));
 
         //testing [AMOUNT_PAID]
         $amount_paid = EEH_Template::format_currency('0');
-        $this->assertContains($amount_paid, $parsed);
+        $this->assertStringContainsString($amount_paid, $parsed);
 
 
         //testing [TICKET_NAME]
-        $this->assertContains('Podracing Entry', $parsed);
+        $this->assertStringContainsString('Podracing Entry', $parsed);
 
         //testing [TICKET_DESCRIPTION]
-        $this->assertContains('One entry in the event.', $parsed);
+        $this->assertStringContainsString('One entry in the event.', $parsed);
 
         //testing [TICKET_PRICE]
-        $this->assertContains(EEH_Template::format_currency('125.00'), $parsed);
+        $this->assertStringContainsString(EEH_Template::format_currency('125.00'), $parsed);
 
 
         //testing [TKT_QTY_PURCHASED]
         $expected = '<strong>Quantity Purchased:</strong> 3';
-        $this->assertContains($expected, $parsed,
+        $this->assertStringContainsString($expected, $parsed,
             '[TKT_QTY_PURCHASED] shortcode was not parsed correctly to the expected value which is 3');
 
     }
@@ -331,7 +331,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
         $parsed = $this->_get_parsed_content('html', 'receipt', 'content', 'purchaser');
 
         //testing [PAYMENT_GATEWAY]
-        $this->assertContains('Invoice', $parsed);
+        $this->assertStringContainsString('Invoice', $parsed);
     }
 
 

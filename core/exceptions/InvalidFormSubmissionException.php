@@ -11,8 +11,6 @@ namespace EventEspresso\core\exceptions;
  */
 class InvalidFormSubmissionException extends \OutOfBoundsException
 {
-
-
     /**
      * InvalidFormSubmissionException constructor
      *

@@ -15,7 +15,6 @@
  */
 abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Script_Stage
 {
-
     protected $_old_table;
 
     /**

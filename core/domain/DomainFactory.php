@@ -22,7 +22,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class DomainFactory
 {
-
     /**
      * @param FullyQualifiedName $domain_fqcn   [required] Fully Qualified Class Name for the Domain class
      * @param array $arguments                  [required] array of arguments to be passed to the Domain class

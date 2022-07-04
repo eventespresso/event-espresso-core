@@ -15,7 +15,6 @@ use EventEspresso\core\domain\entities\contexts\ContextInterface;
  */
 class ContextChecker
 {
-
     /**
      * A unique string used to identify where this ContextChecker is being employed
      * Is currently only used within the hook name for the filterable return value of isAllowed().

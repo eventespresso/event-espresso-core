@@ -10,7 +10,6 @@
  */
 interface EEI_Line_Item
 {
-
     /**
      * generic setter
      * @param    string $field_name

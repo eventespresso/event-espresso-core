@@ -16,7 +16,6 @@ use WP_REST_Request;
  */
 class Attendee extends AttendeeCalculationsBase
 {
-
     /**
      * @param array                  $wpdb_row
      * @param WP_REST_Request        $request

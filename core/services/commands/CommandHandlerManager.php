@@ -17,7 +17,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class CommandHandlerManager implements CommandHandlerManagerInterface
 {
-
     /**
      * @var CommandHandlerInterface[] $command_handlers
      */

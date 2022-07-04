@@ -31,7 +31,6 @@ use ReflectionException;
  */
 class RecaptchaAdminSettings
 {
-
     /**
      * @var EE_Registration_Config $config
      */

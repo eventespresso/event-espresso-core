@@ -13,7 +13,6 @@
  */
 final class EE_Network_Config
 {
-
     /**
      * @var EE_Network_Config $_instance
      */
@@ -196,7 +195,6 @@ final class EE_Network_Config
  */
 class EE_Network_Core_Config extends EE_Config_Base
 {
-
     /**
      * PUE site license key
      *

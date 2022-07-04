@@ -24,7 +24,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
-    public function setUp() {
+    public function set_up() {
 		add_filter(
 			'FHEE__EE_Registry____construct___class_abbreviations',
 			array( $this, 'unit_test_registry_class_abbreviations' )
@@ -55,7 +55,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
             $loader->getShared('EventEspresso\core\services\loaders\ObjectIdentifier')
         );
 		EE_Registry_Mock::instance()->initialize();
-		parent::setUp();
+		parent::set_up();
 	}
 
 
@@ -623,7 +623,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		/** @type EE_Injector_Tester_With_Array_Session_Int_Constructor_Params $class */
 		$class = EE_Registry_Mock::instance()->load_service(
 			'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params',
-			array( $numerically_indexed_array )
+			array( null, $numerically_indexed_array )
 		);
 		$this->assertEquals( $numerically_indexed_array, $class->array_property() );
 		$this->assertInstanceOf( 'EE_Session_Mock', $class->session_property() );
@@ -642,7 +642,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		/** @type EE_Injector_Tester_With_Array_Session_Int_Constructor_Params $class */
 		$class = EE_Registry_Mock::instance()->load_service(
 			'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params',
-			array( $string_indexed_array, null, 2 )
+			array(null, $string_indexed_array, 2 )
 		);
 		$this->assertEquals( $string_indexed_array, $class->array_property() );
 		$this->assertInstanceOf( 'EE_Session_Mock', $class->session_property() );

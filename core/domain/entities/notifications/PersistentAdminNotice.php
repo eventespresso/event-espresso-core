@@ -25,7 +25,6 @@ use Exception;
  */
 class PersistentAdminNotice implements RequiresCapCheckInterface
 {
-
     /**
      * @var string $name
      */

@@ -26,7 +26,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 final class EE_System implements ResettableInterface
 {
-
     /**
      * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
      * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc
@@ -1203,6 +1202,7 @@ final class EE_System implements ResettableInterface
             || $this->request->isWordPressApi()
         ) {
             try {
+                $this->loader->getShared('EventEspresso\core\services\assets\I18nRegistry', [[]]);
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
                 $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
                 if ($this->canLoadBlocks()) {

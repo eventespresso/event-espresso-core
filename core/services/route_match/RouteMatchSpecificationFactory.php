@@ -23,7 +23,6 @@ use ReflectionException;
  */
 class RouteMatchSpecificationFactory extends FactoryWithDependencyResolver
 {
-
     /**
      * RouteMatchSpecificationFactory constructor
      *

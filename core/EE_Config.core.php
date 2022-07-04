@@ -18,7 +18,6 @@ use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
  */
 final class EE_Config implements ResettableInterface
 {
-
     const OPTION_NAME = 'ee_config';
 
     const LOG_NAME = 'ee_config_log';
@@ -404,7 +403,7 @@ final class EE_Config implements ResettableInterface
      * @param        $old_value
      * @param        $value
      */
-    public function double_check_config_comparison($option = '', $old_value, $value)
+    public function double_check_config_comparison($option, $old_value, $value)
     {
         // make sure we're checking the ee config
         if ($option === EE_Config::OPTION_NAME) {
@@ -1516,7 +1515,6 @@ final class EE_Config implements ResettableInterface
  */
 class EE_Config_Base
 {
-
     /**
      * Utility function for escaping the value of a property and returning.
      *
@@ -1616,7 +1614,6 @@ class EE_Config_Base
  */
 class EE_Core_Config extends EE_Config_Base
 {
-
     const OPTION_NAME_UXIP = 'ee_ueip_optin';
 
 
@@ -1922,7 +1919,6 @@ class EE_Core_Config extends EE_Config_Base
  */
 class EE_Organization_Config extends EE_Config_Base
 {
-
     /**
      * @var string $name
      * eg EE4.1
@@ -2056,7 +2052,6 @@ class EE_Organization_Config extends EE_Config_Base
  */
 class EE_Currency_Config extends EE_Config_Base
 {
-
     /**
      * @var string $code
      * eg 'US'
@@ -2177,7 +2172,6 @@ class EE_Currency_Config extends EE_Config_Base
  */
 class EE_Registration_Config extends EE_Config_Base
 {
-
     /**
      * Default registration status
      *
@@ -2566,7 +2560,6 @@ class EE_Registration_Config extends EE_Config_Base
  */
 class EE_Admin_Config extends EE_Config_Base
 {
-
     /**
      * @var boolean $use_personnel_manager
      */
@@ -2711,7 +2704,6 @@ class EE_Admin_Config extends EE_Config_Base
  */
 class EE_Template_Config extends EE_Config_Base
 {
-
     /**
      * @var boolean $enable_default_style
      */
@@ -2783,7 +2775,6 @@ class EE_Template_Config extends EE_Config_Base
  */
 class EE_Map_Config extends EE_Config_Base
 {
-
     /**
      * @var boolean $use_google_maps
      */
@@ -2899,7 +2890,6 @@ class EE_Map_Config extends EE_Config_Base
  */
 class EE_Events_Archive_Config extends EE_Config_Base
 {
-
     public $display_status_banner;
 
     public $display_description;
@@ -2947,7 +2937,6 @@ class EE_Events_Archive_Config extends EE_Config_Base
  */
 class EE_Event_Single_Config extends EE_Config_Base
 {
-
     public $display_status_banner_single;
 
     public $display_venue;
@@ -2983,7 +2972,6 @@ class EE_Event_Single_Config extends EE_Config_Base
  */
 class EE_Ticket_Selector_Config extends EE_Config_Base
 {
-
     /**
      * constant to indicate that a datetime selector should NEVER be shown for ticket selectors
      */
@@ -3161,7 +3149,6 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
  */
 class EE_Environment_Config extends EE_Config_Base
 {
-
     /**
      * Hold any php environment variables that we want to track.
      *
@@ -3254,7 +3241,6 @@ class EE_Environment_Config extends EE_Config_Base
  */
 class EE_Tax_Config extends EE_Config_Base
 {
-
     /*
      * flag to indicate whether or not to display ticket prices with the taxes included
      *
@@ -3282,7 +3268,6 @@ class EE_Tax_Config extends EE_Config_Base
  */
 class EE_Messages_Config extends EE_Config_Base
 {
-
     /**
      * This is an integer representing the deletion threshold in months for when old messages will get deleted.
      * A value of 0 represents never deleting.  Default is 0.
@@ -3305,7 +3290,6 @@ class EE_Messages_Config extends EE_Config_Base
  */
 class EE_Gateway_Config extends EE_Config_Base
 {
-
     /**
      * Array with keys that are payment gateways slugs, and values are arrays
      * with any config info the gateway wants to store

@@ -142,7 +142,9 @@ class EE_Messages_Generator
              * an object is removed from the repo then valid for the next object will fail.
              */
             $this->_generation_queue->get_message_repository()->next();
-            $next_msg = $this->_generation_queue->get_message_repository()->current();
+            $next_msg = $this->_generation_queue->get_message_repository()->valid()
+                ? $this->_generation_queue->get_message_repository()->current()
+                :  null;
             // restore pointer to current item
             $this->_generation_queue->get_message_repository()->set_current($msg);
 

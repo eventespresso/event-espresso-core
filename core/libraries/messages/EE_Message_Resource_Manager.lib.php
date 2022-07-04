@@ -11,7 +11,6 @@
  */
 class EE_Message_Resource_Manager
 {
-
     /**
      * This option in the database is used to keep a record of message types that have been activated for a messenger
      * at some point in the history of the site.  It is utilized by the implementation of the 'force' flag in

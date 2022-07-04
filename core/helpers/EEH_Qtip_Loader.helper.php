@@ -11,7 +11,6 @@
  */
 class EEH_Qtip_Loader extends EEH_Base
 {
-
     /**
      * EEH_Qtip_Loader Object
      * @var EEH_Qtip_Loader

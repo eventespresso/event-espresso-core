@@ -14,7 +14,6 @@ use EventEspresso\core\interfaces\InterminableInterface;
  */
 interface DomainInterface extends InterminableInterface
 {
-
     /**
      * @return string
      * @throws DomainException

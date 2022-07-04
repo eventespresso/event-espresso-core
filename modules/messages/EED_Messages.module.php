@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\InvalidSessionDataException;
 
 /**
  * Messages module.  Takes care of registering all the triggers for messages.
@@ -15,7 +16,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EED_Messages extends EED_Module
 {
-
     /**
      * This holds the EE_messages controller
      *
@@ -1324,21 +1324,22 @@ class EED_Messages extends EED_Module
     /**
      * debug
      *
-     * @param string          $class
-     * @param string          $func
-     * @param string          $line
-     * @param \EE_Transaction $transaction
-     * @param array           $info
-     * @param bool            $display_request
+     * @param string              $class
+     * @param string              $func
+     * @param string              $line
+     * @param EE_Transaction|null $transaction
+     * @param array               $info
+     * @param bool                $display_request
      * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
+     * @throws ReflectionException
+     * @throws InvalidSessionDataException
      */
     protected static function log(
         $class = '',
         $func = '',
         $line = '',
-        EE_Transaction $transaction,
-        $info = [],
+        EE_Transaction $transaction = null,
+        $info = array(),
         $display_request = false
     ) {
         if (defined('EE_DEBUG') && EE_DEBUG) {

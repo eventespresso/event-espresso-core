@@ -28,7 +28,6 @@ use EventEspresso\core\exceptions\InvalidFormSubmissionException;
  */
 abstract class FormHandler implements FormHandlerInterface
 {
-
     /**
      * will add opening and closing HTML form tags as well as a submit button
      */
@@ -118,18 +117,17 @@ abstract class FormHandler implements FormHandlerInterface
     protected $registry;
 
     // phpcs:disable PEAR.Functions.ValidDefaultValue.NotAtEnd
+
+
     /**
      * Form constructor.
      *
-     * @param string      $form_name
-     * @param string      $admin_name
-     * @param string      $slug
-     * @param string      $form_action
-     * @param string      $form_config
-     * @param EE_Registry $registry
-     * @throws InvalidDataTypeException
-     * @throws DomainException
-     * @throws InvalidArgumentException
+     * @param string           $form_name
+     * @param string           $admin_name
+     * @param string           $slug
+     * @param string           $form_action
+     * @param string           $form_config
+     * @param EE_Registry|null $registry
      */
     public function __construct(
         $form_name,
@@ -137,7 +135,7 @@ abstract class FormHandler implements FormHandlerInterface
         $slug,
         $form_action = '',
         $form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
-        EE_Registry $registry
+        EE_Registry $registry = null
     ) {
         $this->setFormName($form_name);
         $this->setAdminName($admin_name);

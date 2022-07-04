@@ -3,7 +3,7 @@
 namespace EventEspresso\tests\testcases\core\services\dependencies;
 
 use EventEspresso\core\services\dependencies\ClassAlias;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ClassAliasTest
@@ -12,7 +12,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class ClassAliasTest extends PHPUnit_Framework_TestCase
+class ClassAliasTest extends TestCase
 {
 
     /**

@@ -13,7 +13,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Invisible_Recaptcha_Display_Strategy extends EE_Display_Strategy_Base
 {
-
     /**
      * @return EE_Form_Input_Base|EE_Invisible_Recaptcha_Input
      */

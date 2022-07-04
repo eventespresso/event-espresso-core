@@ -15,7 +15,6 @@
  */
 class EE_CPT_Minimum_Where_Conditions extends EE_Default_Where_Conditions
 {
-
     protected $_post_type;
     protected $_meta_field;
     public function __construct($post_type, $meta_field_to_chk = '')

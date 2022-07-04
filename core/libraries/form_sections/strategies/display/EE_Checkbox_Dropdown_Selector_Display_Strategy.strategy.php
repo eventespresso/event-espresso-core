@@ -11,8 +11,6 @@
  */
 class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_Display_Strategy
 {
-
-
     /**
      * enqueues css and js, so that this can be called statically
      */

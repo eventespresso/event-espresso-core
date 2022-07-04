@@ -16,7 +16,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class CustomPostTypeDefinitions
 {
-
     /**
      * @var EE_Core_Config
      */

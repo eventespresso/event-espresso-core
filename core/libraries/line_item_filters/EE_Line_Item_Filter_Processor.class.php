@@ -35,7 +35,6 @@
  */
 class EE_Line_Item_Filter_Processor
 {
-
     /**
      * @type EE_Line_Item_Filter_Collection $line_item_filters
      */

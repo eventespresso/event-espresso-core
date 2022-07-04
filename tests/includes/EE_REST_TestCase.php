@@ -12,13 +12,13 @@ abstract class EE_REST_TestCase extends EE_UnitTestCase
 {
     protected $server;
 
-    public function setUp()
+    public function set_up()
     {
         //let's know about any errors
         if (!defined('EE_REST_API_DEBUG_MODE')) {
             define('EE_REST_API_DEBUG_MODE', true);
         }
-        parent::setUp();
+        parent::set_up();
         if (! class_exists('WP_Rest_Request')
             || ! class_exists('Spy_REST_Server')) {
             $this->markTestSkipped(
@@ -39,9 +39,9 @@ abstract class EE_REST_TestCase extends EE_UnitTestCase
         do_action('rest_api_init');
     }
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         remove_filter('rest_url', array($this, 'test_rest_url_for_leading_slash'), 10, 2);
         /** @var WP_REST_Server $wp_rest_server */
         global $wp_rest_server;

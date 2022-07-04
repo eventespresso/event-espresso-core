@@ -5,7 +5,6 @@
  */
 interface EEMI_Payment_Log
 {
-
     /**
      * Logs a message
      *

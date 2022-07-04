@@ -19,7 +19,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Register_Shortcode implements EEI_Plugin_API
 {
-
     /**
      * Holds values for registered shortcodes
      *

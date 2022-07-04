@@ -13,7 +13,6 @@
  */
 class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base
 {
-
     /**
      * @param null $validation_error_message
      */

@@ -12,7 +12,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class Invoice
 {
-
     /**
      *
      * @var EE_Registration

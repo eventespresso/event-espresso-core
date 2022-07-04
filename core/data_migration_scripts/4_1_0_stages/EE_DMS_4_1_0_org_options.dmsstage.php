@@ -102,7 +102,6 @@ Cli'... (length=607)
  */
 class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
 {
-
     public function _migration_step($num_items = 50)
     {
 

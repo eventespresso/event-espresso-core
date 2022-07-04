@@ -15,8 +15,6 @@ use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
  */
 class EED_Add_New_State extends EED_Module
 {
-
-
     /**
      * @return EED_Add_New_State|EED_Module
      * @throws EE_Error
@@ -691,21 +689,21 @@ class EED_Add_New_State extends EED_Module
 
 
     /**
-     * @param EE_State[]                            $state_options
-     * @param EE_SPCO_Reg_Step_Attendee_Information $reg_step
-     * @param EE_Registration                       $registration
-     * @param EE_Question                           $question
-     * @param                                       $answer
+     * @param EE_State[]                                 $state_options
+     * @param EE_SPCO_Reg_Step_Attendee_Information|null $reg_step
+     * @param EE_Registration|null                       $registration
+     * @param EE_Question|null                           $question
+     * @param null                                       $answer
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
     public static function inject_new_reg_state_into_options(
         array $state_options,
-        EE_SPCO_Reg_Step_Attendee_Information $reg_step,
-        EE_Registration $registration,
-        EE_Question $question,
-        $answer
+        EE_SPCO_Reg_Step_Attendee_Information $reg_step = null,
+        EE_Registration $registration = null,
+        EE_Question $question = null,
+        $answer = null
     ) {
         if (
             $answer instanceof EE_Answer && $question instanceof EE_Question
@@ -732,26 +730,26 @@ class EED_Add_New_State extends EED_Module
 
 
     /**
-     * @param EE_Country[]                          $country_options
-     * @param EE_SPCO_Reg_Step_Attendee_Information $reg_step
-     * @param EE_Registration                       $registration
-     * @param EE_Question                           $question
-     * @param                                       $answer
+     * @param EE_Country[]                               $country_options
+     * @param EE_SPCO_Reg_Step_Attendee_Information|null $reg_step
+     * @param EE_Registration|null                       $registration
+     * @param EE_Question|null                           $question
+     * @param null                                       $answer
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
     public static function inject_new_reg_country_into_options(
         array $country_options,
-        EE_SPCO_Reg_Step_Attendee_Information $reg_step,
-        EE_Registration $registration,
-        EE_Question $question,
-        $answer
+        EE_SPCO_Reg_Step_Attendee_Information $reg_step = null,
+        EE_Registration $registration = null,
+        EE_Question $question = null,
+        $answer = null
     ) {
         if (
-            $answer instanceof EE_Answer && $question instanceof EE_Question
-            && $question->type()
-               === EEM_Question::QST_type_country
+            $answer instanceof EE_Answer
+            && $question instanceof EE_Question
+            && $question->type() === EEM_Question::QST_type_country
         ) {
             $CNT_ISO = $answer->value();
             if (! empty($CNT_ISO)) {

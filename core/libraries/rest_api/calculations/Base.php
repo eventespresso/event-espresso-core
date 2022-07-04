@@ -15,7 +15,6 @@ use EEH_Inflector;
  */
 class Base
 {
-
     /**
      * @param $required_permission
      * @param $attempted_calculation

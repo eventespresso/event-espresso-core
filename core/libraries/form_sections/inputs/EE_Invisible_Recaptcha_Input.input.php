@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
 {
-
     const SCRIPT_HANDLE_GOOGLE_INVISIBLE_RECAPTCHA   = 'google_invisible_recaptcha';
 
     const SCRIPT_HANDLE_ESPRESSO_INVISIBLE_RECAPTCHA = 'espresso_invisible_recaptcha';

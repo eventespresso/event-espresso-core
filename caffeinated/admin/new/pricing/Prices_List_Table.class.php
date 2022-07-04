@@ -15,7 +15,6 @@
  */
 class Prices_List_Table extends EE_Admin_List_Table
 {
-
     private $_PRT;
 
     /**

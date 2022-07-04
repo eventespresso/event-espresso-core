@@ -28,7 +28,6 @@ use ReflectionException;
  */
 class CoreLoader implements LoaderDecoratorInterface
 {
-
     /**
      * @var EE_Registry|CoffeeShop $generator
      */

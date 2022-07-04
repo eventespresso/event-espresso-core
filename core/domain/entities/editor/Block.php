@@ -20,7 +20,6 @@ use WP_Block_Type;
  */
 abstract class Block implements BlockInterface
 {
-
     /**
      * BlockAssetManager that this editor block uses for asset registration
      *

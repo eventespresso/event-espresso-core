@@ -19,7 +19,6 @@ use EEH_DTT_Helper;
  */
 class Read
 {
-
     /**
      * @param WP_REST_Request $request
      * @param string          $version

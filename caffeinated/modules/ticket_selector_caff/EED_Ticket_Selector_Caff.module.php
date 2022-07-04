@@ -15,8 +15,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 {
-
-
     /**
      * @return EED_Module|EED_Ticket_Selector_Caff
      */

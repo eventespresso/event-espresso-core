@@ -13,7 +13,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 abstract class EE_Base_Class
 {
-
     /**
      * This is an array of the original properties and values provided during construction
      * of this model object. (keys are model field names, values are their values).
@@ -1579,8 +1578,9 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    protected function _set_date_time($what = 'T', $datetime_value, $fieldname)
+    protected function _set_date_time($what, $datetime_value, $fieldname)
     {
+        $what  = $what ?: 'T';
         $field = $this->_get_dtt_field_settings($fieldname);
         $field->set_timezone($this->_timezone);
         $field->set_date_format($this->_dt_frmt);

@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class LeaveAlone extends FormatterBase
 {
-
     /**
      * Removes the emojis from the inputted string
      *

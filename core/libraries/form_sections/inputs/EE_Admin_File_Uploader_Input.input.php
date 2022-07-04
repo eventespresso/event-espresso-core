@@ -13,7 +13,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Admin_File_Uploader_Input extends EE_Form_Input_Base
 {
-
     /**
      * @param array $input_settings
      * @throws InvalidArgumentException

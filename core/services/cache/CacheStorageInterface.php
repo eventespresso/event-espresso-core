@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\cache;
  */
 interface CacheStorageInterface
 {
-
     /**
      * Saves supplied data
      * if an expiration is set, then it automatically schedules the cache for deletion

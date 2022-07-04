@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\ResponseInterface;
  */
 class DetectLogin extends Middleware
 {
-
     /**
      * converts a Request to a Response
      *

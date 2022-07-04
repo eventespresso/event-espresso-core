@@ -14,7 +14,6 @@
  */
 class EE_Register_Module implements EEI_Plugin_API
 {
-
     /**
      * Holds values for registered modules
      *

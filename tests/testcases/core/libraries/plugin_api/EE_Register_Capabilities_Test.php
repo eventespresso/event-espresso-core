@@ -37,9 +37,9 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
      */
     protected $_meta_caps_before_registering_new_ones = array();
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $capabilities_array                         = array(
             'administrator' => array(
                 'test_reads',
@@ -132,11 +132,13 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
 
         //verify new caps are in the role
         $role = get_role('administrator');
-        $this->assertContains($this->_valid_capabilities['capabilities']['administrator'], $role->capabilities);
+        $role_caps = array_keys($role->capabilities);
+        $this->assertArrayContains($this->_valid_capabilities['capabilities']['administrator'], $role_caps);
 
-        //make sure we didn't erase the existing capabilities (@see https://events.codebasehq.com/projects/event-espresso/tickets/6700)
-        $this->assertContains(array('ee_read_ee', 'ee_read_events'), $role->capabilities,
-            'Looks like registering capabilities is overwriting default capabilites, that will cause problems');
+        // make sure we didn't erase the existing capabilities
+        // @see https://events.codebasehq.com/projects/event-espresso/tickets/6700
+        // Looks like registering capabilities is overwriting default capabilities, that will cause problems
+        $this->assertArrayContains(array('ee_read_ee', 'ee_read_events'), $role_caps);
 
         //setup user
         $this->setupUser();
@@ -226,7 +228,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
      */
     public function _verify_new_cap_map_ok_after_deregister($incoming_cap_map)
     {
-        $this->assertNotContains($this->_valid_capabilities['capabilities']['administrator'],
+        $this->assertArrayDoesNotContain($this->_valid_capabilities['capabilities']['administrator'],
             $incoming_cap_map['administrator']);
         return $incoming_cap_map;
     }
@@ -395,9 +397,9 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
             array($this, '_verify_new_meta_cap_ok_after_deregister'), 200);
     }
 
-    public function tearDown()
+    public function tear_down()
     {
         EE_Register_Capabilities::deregister('Test_Capabilities');
-        parent::tearDown();
+        parent::tear_down();
     }
 }

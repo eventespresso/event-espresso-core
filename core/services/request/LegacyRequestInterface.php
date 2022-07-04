@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\request;
  */
 interface LegacyRequestInterface
 {
-
     /**
      * @return array
      */

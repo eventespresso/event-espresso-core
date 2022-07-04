@@ -19,7 +19,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Log
 {
-
     /**
      * @var string
      */

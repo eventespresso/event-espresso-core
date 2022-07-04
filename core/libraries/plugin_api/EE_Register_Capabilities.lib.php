@@ -14,7 +14,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Register_Capabilities implements EEI_Plugin_API
 {
-
     /**
      * Holds the settings for a specific registration.
      *

@@ -6,7 +6,6 @@
  */
 class EE_Float_Field extends EE_Model_Field_Base
 {
-
     /**
      * @param string $table_column
      * @param string $nicename

@@ -28,7 +28,6 @@ use InvalidArgumentException;
  */
 class BootstrapRequestResponseObjects
 {
-
     /**
      * @type LegacyRequestInterface $legacy_request
      */

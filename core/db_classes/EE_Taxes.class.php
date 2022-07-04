@@ -9,7 +9,6 @@
  */
 class EE_Taxes extends EE_Base
 {
-
     /**
      * This is used for when EE_Taxes is used statically by the admin
      *

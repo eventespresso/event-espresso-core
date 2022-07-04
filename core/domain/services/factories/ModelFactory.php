@@ -20,7 +20,6 @@ use ReflectionException;
  */
 class ModelFactory
 {
-
     /**
      * @param string $model_name
      * @return bool|EEM_Base

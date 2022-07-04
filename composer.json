@@ -38,15 +38,18 @@
 		"yoast/phpunit-polyfills": "^1.0"
 	},
 	"require": {
-		"composer/installers": "~2.0",
-		"php": ">=7.2",
-		"ext-json": "*"
+		"php": ">=7.1",
+		"ext-json": "*",
+		"ext-mbstring": "*",
+		"ext-openssl": "*"
 	},
-	"allow-plugins": {
-		"eventespresso/*": true,
-		"composer/installers": true,
-		"roave/security-advisories": true,
-		"yoast/phpunit-polyfills": true
+	"config": {
+		"allow-plugins": {
+			"eventespresso/*": true,
+			"phpunit/phpunit": true,
+			"roave/security-advisories": true,
+			"yoast/phpunit-polyfills": true
+		}
 	},
 	"scripts": {
 		"config-eventespressocs": [

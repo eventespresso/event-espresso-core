@@ -9,7 +9,6 @@
  */
 class EEM_Ticket extends EEM_Soft_Delete_Base
 {
-
     /**
      * private instance of the EEM_Ticket object
      *

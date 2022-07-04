@@ -14,7 +14,6 @@
  */
 class EE_Has_Many_Any_Relation extends EE_Has_Many_Relation
 {
-
     /**
      * Gets the SQL string for performing the join between this model and the other model.
      *

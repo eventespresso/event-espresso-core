@@ -14,7 +14,6 @@ use EventEspresso\core\domain\entities\route_match\RouteMatchSpecification;
  */
 class EspressoBlockRenderer extends RouteMatchSpecification
 {
-
     /**
      * returns true if current request matches specification
      *

@@ -16,7 +16,6 @@ use EventEspresso\core\exceptions\InvalidAliasException;
  */
 class ClassInterfaceCache
 {
-
     /**
      * array of interfaces indexed by FQCNs where values are arrays of interface FQNs
      *
@@ -37,7 +36,7 @@ class ClassInterfaceCache
     public function getFqn($fqn)
     {
         $fqn = $fqn instanceof FullyQualifiedName ? $fqn->string() : $fqn;
-        return ltrim($fqn, '\\');
+        return ltrim((string) $fqn, '\\');
     }
 
 

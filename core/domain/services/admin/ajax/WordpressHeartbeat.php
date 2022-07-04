@@ -16,7 +16,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class WordpressHeartbeat
 {
-
     const RESPONSE_KEY_THANK_YOU_PAGE = 'espresso_thank_you_page';
 
     /**

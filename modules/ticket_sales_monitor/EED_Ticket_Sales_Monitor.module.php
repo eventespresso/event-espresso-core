@@ -19,7 +19,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EED_Ticket_Sales_Monitor extends EED_Module
 {
-
     const debug = false;
 
     private static $nl = '';
@@ -247,7 +246,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws UnexpectedEntityException
      * @throws EE_Error
      */
-    public static function validate_ticket_sale($qty = 1, EE_Ticket $ticket)
+    public static function validate_ticket_sale($qty, EE_Ticket $ticket)
     {
         $qty = absint($qty);
         if ($qty > 0) {
@@ -1008,7 +1007,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected static function release_reservations_for_tickets(
         array $tickets_with_reservations,
         array $valid_reserved_ticket_line_items = array(),
-        $source
+        $source = ''
     ) {
         $total_tickets_released = 0;
         $sold_out_events = array();

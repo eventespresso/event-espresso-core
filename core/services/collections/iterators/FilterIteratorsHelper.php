@@ -16,8 +16,6 @@ use EventEspresso\core\services\collections\iterators\CollectionFilterCallbackIt
  */
 class FilterIteratorsHelper
 {
-
-
     /**
      * Uses CollectionFilterCallbackIterator on a provided collection with provided Closure for filtering each object
      * in the collection.

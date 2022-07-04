@@ -11,7 +11,6 @@ namespace EventEspresso\core\services\notices;
  */
 abstract class NoticeConverter implements NoticeConverterInterface
 {
-
     /**
      * @var NoticesContainerInterface $notices
      */

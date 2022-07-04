@@ -18,7 +18,6 @@ use EventEspresso\core\exceptions\IpnException;
  */
 class EEG_Paypal_Standard extends EE_Offsite_Gateway
 {
-
     /**
      * Name for the wp option used to save the itemized payment
      */

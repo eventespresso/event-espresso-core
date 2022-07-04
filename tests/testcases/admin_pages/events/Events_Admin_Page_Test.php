@@ -32,18 +32,18 @@ class Events_Admin_Page_Test extends EE_UnitTestCase
     protected $_event;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->delayedAdminPageMocks('events');
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         unset($this->_admin_page);
         unset($this->_event);
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

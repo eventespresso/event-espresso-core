@@ -9,7 +9,6 @@
  */
 class EE_Int_Validation_Strategy extends EE_Validation_Strategy_Base
 {
-
     /**
      * @param null $validation_error_message
      */

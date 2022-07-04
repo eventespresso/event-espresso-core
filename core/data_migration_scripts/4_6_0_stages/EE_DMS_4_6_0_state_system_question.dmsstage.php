@@ -11,9 +11,6 @@
  */
 class EE_DMS_4_6_0_state_system_question extends EE_Data_Migration_Script_Stage_Table
 {
-
-
-
     /**
      * Just initializes the status of the migration
      *

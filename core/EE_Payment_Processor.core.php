@@ -17,7 +17,6 @@ EE_Registry::instance()->load_class('Processor_Base');
  */
 class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterface
 {
-
     /**
      * @var EE_Payment_Processor $_instance
      * @access    private

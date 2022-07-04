@@ -13,7 +13,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
 {
-
     /**
      * for children line items (currently not a normal relation)
      *

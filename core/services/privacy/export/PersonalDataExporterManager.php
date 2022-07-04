@@ -22,7 +22,6 @@ use EventEspresso\core\services\collections\CollectionLoader;
  */
 class PersonalDataExporterManager
 {
-
     public function __construct()
     {
         add_filter(

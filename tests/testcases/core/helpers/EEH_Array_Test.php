@@ -24,9 +24,9 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class EEH_Array_Test extends EE_UnitTestCase {
 
 	/**
-	 * 	setUpBeforeClass
+	 * 	set_up_before_class
 	 */
-	static function setUpBeforeClass() {
+	static function set_up_before_class() {
 	}
 
 

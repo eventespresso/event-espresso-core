@@ -14,7 +14,6 @@ use ReflectionException;
  */
 class TicketSelectorRowSimple extends TicketSelectorRow
 {
-
     /**
      * @throws EE_Error
      * @throws ReflectionException

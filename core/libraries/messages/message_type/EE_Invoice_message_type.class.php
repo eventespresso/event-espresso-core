@@ -12,7 +12,6 @@
  */
 class EE_Invoice_message_type extends EE_message_type
 {
-
     public function __construct()
     {
         $this->name = 'invoice';

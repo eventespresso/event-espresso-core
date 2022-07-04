@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 {
-
     /**
      * This property is just used to hold the status of whether an event is currently being
      * created (true) or edited (false)
@@ -870,7 +869,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @throws EE_Error
      */
     protected function _add_prices_to_ticket(
-        $prices = array(),
+        array $prices,
         EE_Ticket $ticket,
         $new_prices = false,
         $base_price = false,
@@ -1271,7 +1270,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @param EE_Datetime $datetime
      * @param array       $datetime_tickets
      * @param array       $all_tickets
-     * @param bool        $default
+     * @param bool       $default
      * @return mixed
      * @throws DomainException
      * @throws EE_Error
@@ -1281,7 +1280,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $datetime,
         $datetime_tickets = array(),
         $all_tickets = array(),
-        $default
+        $default = false
     ) {
         $template_args = array(
             'dtt_row'                           => $default ? 'DTTNUM' : $datetime_row,
@@ -1350,7 +1349,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $datetime,
         $ticket,
         $datetime_tickets = array(),
-        $default
+        $default = false
     ) {
         $dtt_tkts = $datetime instanceof EE_Datetime && isset($datetime_tickets[ $datetime->ID() ])
             ? $datetime_tickets[ $datetime->ID() ]
@@ -2029,7 +2028,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $datetime,
         $ticket,
         $ticket_datetimes = array(),
-        $default
+        $default = false
     ) {
         $tkt_datetimes = $ticket instanceof EE_Ticket && isset($ticket_datetimes[ $ticket->ID() ])
             ? $ticket_datetimes[ $ticket->ID() ]
