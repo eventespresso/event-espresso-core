@@ -32,7 +32,7 @@ class SessionLifespanForm extends EE_Form_Section_Proper
             'html_id'         => 'session_lifespan',
             'layout_strategy' => new EE_Admin_Two_Column_Layout(),
             'subsections'     => apply_filters(
-                'FHEE__EventEspresso_caffeinated_admin_extend_registration_form_forms__get_form__form_subsections',
+                'FHEE__EventEspresso_caffeinated_admin_extend_registration_form_forms_SessionLifespanForm__construct__form_subsections',
                 [
                     'session_lifespan_hdr'   => new EE_Form_Section_HTML(
                         EEH_HTML::h2(esc_html__('Session Settings', 'event_espresso'))
