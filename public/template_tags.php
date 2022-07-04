@@ -605,7 +605,7 @@ if (! function_exists('espresso_list_of_event_dates')) {
             <br/>';
         }
         if ($echo) {
-            echo wp_kses($html, AllowedTags::getAllowedTags());
+            echo wp_kses($html, AllowedTags::getWithFormTags());
             return '';
         }
         return $html;
