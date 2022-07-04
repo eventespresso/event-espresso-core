@@ -181,8 +181,9 @@ jQuery( document ).ready( function ( $ ) {
 
 
 
-	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, removeExisting ) {
+	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, removeExisting, doScroll ) {
 		removeExisting = typeof removeExisting !== false;
+		doScroll = typeof doScroll === 'undefined' ? true : doScroll;
 		var messages = $( '#ajax-notices-container' );
 		// if there is no existing message...
 		if ( removeExisting === true ) {
@@ -221,12 +222,13 @@ jQuery( document ).ready( function ( $ ) {
 		messages.remove();
 		beforeWhat = typeof beforeWhat !== 'undefined' && beforeWhat !== '' ? beforeWhat : '.nav-tab-wrapper';
 		// set message content
-		var messages_displayed = false;
-		$( 'body, html' ).animate( { scrollTop : 0 }, 'normal', function() {
-			if ( ! messages_displayed ) {
+		if ( doScroll ) {
+			$( 'body, html' ).animate( { scrollTop : 0 }, 'normal', function() {
 				$( beforeWhat ).before( new_messages );
-			}
-		} );
+			} );
+		} else {
+			$( beforeWhat ).before( new_messages );
+		}
 		// and display it
 		new_messages.find('.ee-admin-notification').each( function() {
 			$( this ).removeAttr( 'style' ).removeClass( 'hidden' ).show();

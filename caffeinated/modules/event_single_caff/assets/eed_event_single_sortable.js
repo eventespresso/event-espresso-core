@@ -70,7 +70,7 @@ jQuery( document ).ready( function( $ ) {
 							do_before_admin_page_ajax();
 						},
 						success : function( response ) {
-							show_admin_page_ajax_msg( response );
+							show_admin_page_ajax_msg( response, '#event-single-sortable-js', true, false );
 						},
 						error : function( response ) {
 							show_admin_page_ajax_msg( response );
@@ -167,7 +167,7 @@ jQuery( document ).ready( function( $ ) {
 							do_before_admin_page_ajax();
 						},
 						success : function( response ) {
-							show_admin_page_ajax_msg( response );
+							show_admin_page_ajax_msg( response, '#event-archive-sortable-js', true, false );
 						},
 						error : function( response ) {
 							show_admin_page_ajax_msg( response );
