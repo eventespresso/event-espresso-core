@@ -26,8 +26,8 @@ abstract class SingleRegistrationCommand extends Command
      *
      * @param EE_Registration $registration
      */
-    public function __construct(EE_Registration $registration) {
-        defined('EVENT_ESPRESSO_VERSION') || exit;
+    public function __construct(EE_Registration $registration)
+    {
         $this->registration = $registration;
     }
 

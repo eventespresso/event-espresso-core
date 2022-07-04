@@ -7,9 +7,6 @@ use EE_Ticket;
 use EE_Transaction;
 use EventEspresso\core\services\commands\Command;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 /**
  * Class CreateTicketLineItemCommand
  * DTO for passing data to CreateTicketLineItemCommandHandler
@@ -20,7 +17,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class CreateTicketLineItemCommand extends Command
 {
-
     /**
      * @var EE_Transaction $transaction
      */
@@ -47,7 +43,7 @@ class CreateTicketLineItemCommand extends Command
      *
      * @param EE_Transaction $transaction
      * @param EE_Ticket      $ticket
-     * @param int             $quantity
+     * @param int            $quantity
      */
     public function __construct(
         EE_Transaction $transaction,

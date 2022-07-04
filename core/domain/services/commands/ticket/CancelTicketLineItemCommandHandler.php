@@ -34,6 +34,7 @@ class CancelTicketLineItemCommandHandler extends CommandHandler
      */
     public function __construct(CancelTicketLineItemService $cancel_ticket_line_item_service)
     {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->cancel_ticket_line_item_service = $cancel_ticket_line_item_service;
     }
 

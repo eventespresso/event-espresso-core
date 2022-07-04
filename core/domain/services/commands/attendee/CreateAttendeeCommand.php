@@ -10,10 +10,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\commands\Command;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CreateAttendeeCommand
  * DTO for passing data to a CreateAttendeeCommandHandler
@@ -24,7 +20,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckInterface
 {
-
     /**
      * array of details where keys are names of EEM_Attendee model fields
      *

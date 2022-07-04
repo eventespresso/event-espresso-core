@@ -10,10 +10,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\commands\Command;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CreateTransactionCommand
  * DTO for passing data to a CreateTransactionCommandHandler
@@ -24,7 +20,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class CreateTransactionCommand extends Command implements CommandRequiresCapCheckInterface
 {
-
     /**
      * @var EE_Checkout $checkout
      */
@@ -39,10 +34,10 @@ class CreateTransactionCommand extends Command implements CommandRequiresCapChec
     /**
      * CreateTransactionCommand constructor.
      *
-     * @param EE_Checkout $checkout
-     * @param array       $transaction_details
+     * @param EE_Checkout|null $checkout
+     * @param array            $transaction_details
      */
-    public function __construct(EE_Checkout $checkout = null, array $transaction_details = array())
+    public function __construct(EE_Checkout $checkout = null, array $transaction_details = [])
     {
         $this->checkout            = $checkout;
         $this->transaction_details = $transaction_details;

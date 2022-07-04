@@ -33,6 +33,7 @@ class CreateTicketLineItemCommandHandler extends CommandHandler
      */
     public function __construct(CreateTicketLineItemService $factory)
     {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->factory = $factory;
     }
 

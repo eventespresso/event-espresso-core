@@ -31,6 +31,7 @@ class CreateAttendeeCommandHandler extends CommandHandler
      */
     public function __construct(EEM_Attendee $attendee_model)
     {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->attendee_model = $attendee_model;
     }
 
@@ -72,7 +73,7 @@ class CreateAttendeeCommandHandler extends CommandHandler
      * find_existing_attendee
      *
      * @param EE_Registration $registration
-     * @param  array          $attendee_data
+     * @param array           $attendee_data
      * @return EE_Attendee
      * @throws EE_Error
      */
@@ -93,11 +94,11 @@ class CreateAttendeeCommandHandler extends CommandHandler
         // but only if those have values
         if ($ATT_fname && $ATT_lname && $ATT_email) {
             $existing_attendee = $this->attendee_model->find_existing_attendee(
-                array(
+                [
                     'ATT_fname' => $ATT_fname,
                     'ATT_lname' => $ATT_lname,
                     'ATT_email' => $ATT_email,
-                )
+                ]
             );
         }
         return apply_filters(
@@ -114,7 +115,7 @@ class CreateAttendeeCommandHandler extends CommandHandler
      * in case it has changed since last time they registered for an event
      *
      * @param EE_Attendee $existing_attendee
-     * @param  array      $attendee_data
+     * @param array       $attendee_data
      * @return EE_Attendee
      * @throws EE_Error
      */
@@ -123,7 +124,7 @@ class CreateAttendeeCommandHandler extends CommandHandler
         // first remove fname, lname, and email from attendee data
         // because these properties will be exactly the same as the returned attendee object,
         // since they were used in the query to get the attendee object in the first place
-        $dont_set = array('ATT_fname', 'ATT_lname', 'ATT_email');
+        $dont_set = ['ATT_fname', 'ATT_lname', 'ATT_email'];
         // now loop thru what's left and add to attendee CPT
         foreach ($attendee_data as $property_name => $property_value) {
             if (
@@ -143,7 +144,7 @@ class CreateAttendeeCommandHandler extends CommandHandler
      * create_new_attendee
      *
      * @param EE_Registration $registration
-     * @param  array          $attendee_data
+     * @param array           $attendee_data
      * @return EE_Attendee
      * @throws EE_Error
      * @throws EntityNotFoundException

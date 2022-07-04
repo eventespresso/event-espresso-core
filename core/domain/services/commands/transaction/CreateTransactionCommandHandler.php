@@ -25,6 +25,12 @@ use RuntimeException;
  */
 class CreateTransactionCommandHandler extends CommandHandler
 {
+    public function __construct()
+    {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
+    }
+
+
     /**
      * @param CommandInterface|CreateTransactionCommand $command
      * @return mixed

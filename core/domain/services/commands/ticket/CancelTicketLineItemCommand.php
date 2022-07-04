@@ -10,10 +10,6 @@ use EE_Transaction;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\services\commands\Command;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class CancelTicketLineItemCommand
  * DTO for passing data to CancelTicketLineItemCommandHandler
@@ -24,7 +20,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class CancelTicketLineItemCommand extends Command
 {
-
     /**
      * @var EE_Transaction $transaction
      */

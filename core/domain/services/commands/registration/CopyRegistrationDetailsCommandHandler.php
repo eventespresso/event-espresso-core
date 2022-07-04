@@ -35,6 +35,7 @@ class CopyRegistrationDetailsCommandHandler extends CommandHandler
      */
     public function __construct(CopyRegistrationService $copy_registration_service)
     {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->copy_registration_service = $copy_registration_service;
     }
 

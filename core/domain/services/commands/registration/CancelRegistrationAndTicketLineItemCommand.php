@@ -12,5 +12,4 @@ namespace EventEspresso\core\domain\services\commands\registration;
  */
 class CancelRegistrationAndTicketLineItemCommand extends SingleRegistrationCommand
 {
-
 }

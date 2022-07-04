@@ -37,7 +37,6 @@ class CopyRegistrationDetailsCommand extends Command
         EE_Registration $target_registration,
         EE_Registration $registration_to_copy
     ) {
-        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->target_registration  = $target_registration;
         $this->registration_to_copy = $registration_to_copy;
     }
