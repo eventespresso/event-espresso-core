@@ -1775,16 +1775,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
 
 
     /**
-     * _maybe_set_completed
-     *
-     * @param EE_Payment_Method $payment_method
+     * @param EE_Payment $payment
      * @return void
      * @throws EE_Error
      */
     protected function _maybe_set_completed(EE_Payment $payment)
     {
         // Do we need to redirect them? If so, there's more work to be done.
-        if (! $payment->redirect_url()){
+        if (! $payment->redirect_url()) {
             $this->set_completed();
         }
     }
@@ -1893,7 +1891,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             // we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned
             $this->checkout->transaction->toggle_failed_transaction_status();
             $payment_status = $payment->status();
-            if ($payment_status === EEM_Payment::status_id_approved
+            if (
+                $payment_status === EEM_Payment::status_id_approved
                 || $payment_status === EEM_Payment::status_id_pending
             ) {
                 return $payment;
@@ -2376,7 +2375,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * _post_payment_processing
      *
      * @param EE_Payment|bool $payment
-     * @return bool
+     * @return bool|EE_Payment
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -2388,9 +2387,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         // Off-Line payment?
         if ($payment === true) {
             return true;
-        } elseif ($payment instanceof EE_Payment){
+        }
+        if ($payment instanceof EE_Payment) {
             // Should the user be redirected?
-            if($payment->redirect_url()) {
+            if ($payment->redirect_url()) {
                 do_action('AHEE_log', __CLASS__, __FUNCTION__, $payment->redirect_url(), '$payment->redirect_url()');
                 $this->checkout->redirect      = true;
                 $this->checkout->redirect_form = $payment->redirect_form();
@@ -2400,18 +2400,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 // and lastly, let's bump the payment status to pending
                 $payment->set_status(EEM_Payment::status_id_pending);
                 $payment->save();
-            } else
+            } else if (! $this->_process_payment_status($payment, EE_PMT_Base::onsite)) {
                 // User shouldn't be redirected. So let's process it here.
-                if (! $this->_process_payment_status($payment, EE_PMT_Base::onsite)) {
                 // $this->_setup_redirect_for_next_step();
                 $this->checkout->continue_reg = false;
             }
-        } else {
-            // ummm ya... not Off-Line, not On-Site, not off-Site ????
-            $this->checkout->continue_reg = false;
-            return false;
+            return $payment;
         }
-        return $payment;
+        // ummm ya... not Off-Line, not On-Site, not off-Site ????
+        $this->checkout->continue_reg = false;
+        return false;
     }
 
 
