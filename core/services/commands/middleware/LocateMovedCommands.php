@@ -12,8 +12,9 @@ use EventEspresso\core\domain\services\commands\registration\CreateRegistrationC
 use EventEspresso\core\domain\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommand;
 use EventEspresso\core\domain\services\commands\ticket\CancelTicketLineItemCommand;
 use EventEspresso\core\domain\services\commands\ticket\CreateTicketLineItemCommand;
-use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand as OldCreateAttendeeCommand;
+use EventEspresso\core\domain\services\commands\transaction\CreateTransactionCommand;
 use EventEspresso\core\services\commands\CommandInterface;
+use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand as OldCreateAttendeeCommand;
 use EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommand as OldCancelRegistrationAndTicketLineItemCommand;
 use EventEspresso\core\services\commands\registration\CopyRegistrationDetailsCommand as OldCopyRegistrationDetailsCommand;
 use EventEspresso\core\services\commands\registration\CopyRegistrationPaymentsCommand as OldCopyRegistrationPaymentsCommand;
@@ -21,7 +22,6 @@ use EventEspresso\core\services\commands\registration\CreateRegistrationCommand 
 use EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommand as OldUpdateRegistrationAndTransactionAfterChangeCommand;
 use EventEspresso\core\services\commands\ticket\CancelTicketLineItemCommand as OldCancelTicketLineItemCommand;
 use EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand as OldCreateTicketLineItemCommand;
-use EventEspresso\core\services\commands\transaction\CreateTransactionCommand;
 use EventEspresso\core\services\commands\transaction\CreateTransactionCommand as OldCreateTransactionCommand;
 
 /**
@@ -39,6 +39,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
      * @param CommandInterface $command
      * @param Closure          $next
      * @return mixed
+     * @throws EE_Error
      */
     public function handle(CommandInterface $command, Closure $next)
     {
@@ -98,7 +99,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
     private function getCancelRegistrationAndTicketLineItemCommand(
         OldCancelRegistrationAndTicketLineItemCommand $command
     ) {
-        return class_exists('EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommand')
+        return class_exists('EventEspresso\core\domain\services\commands\registration\CancelRegistrationAndTicketLineItemCommand')
             ? new CancelRegistrationAndTicketLineItemCommand($command->registration())
             : $command;
     }
@@ -111,7 +112,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
     private function getCopyRegistrationDetailsCommand(
         OldCopyRegistrationDetailsCommand $command
     ) {
-        return class_exists('EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommand')
+        return class_exists('EventEspresso\core\domain\services\commands\registration\CopyRegistrationDetailsCommand')
             ? new CopyRegistrationDetailsCommand(
                 $command->targetRegistration(),
                 $command->registrationToCopy()
@@ -127,7 +128,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
     private function getCopyRegistrationPaymentsCommand(
         OldCopyRegistrationPaymentsCommand $command
     ) {
-        return class_exists('EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommand')
+        return class_exists('EventEspresso\core\domain\services\commands\registration\CopyRegistrationPaymentsCommand')
             ? new CopyRegistrationPaymentsCommand(
                 $command->targetRegistration(),
                 $command->registrationToCopy()
@@ -144,7 +145,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
     private function getCreateRegistrationCommand(
         OldCreateRegistrationCommand $command
     ) {
-        return class_exists('EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommand')
+        return class_exists('EventEspresso\core\domain\services\commands\registration\CreateRegistrationCommand')
             ? new CreateRegistrationCommand(
                 $command->transaction(),
                 $command->ticketLineItem(),
@@ -164,7 +165,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
     private function getUpdateRegistrationAndTransactionAfterChangeCommand(
         OldUpdateRegistrationAndTransactionAfterChangeCommand $command
     ) {
-        return class_exists('EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommand')
+        return class_exists('EventEspresso\core\domain\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommand')
             ? new UpdateRegistrationAndTransactionAfterChangeCommand($command->registration())
             : $command;
     }
@@ -177,7 +178,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
     private function getCancelTicketLineItemCommand(
         OldCancelTicketLineItemCommand $command
     ) {
-        return class_exists('EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommand')
+        return class_exists('EventEspresso\core\domain\services\commands\ticket\CancelTicketLineItemCommand')
             ? new CancelTicketLineItemCommand(
                 $command->transaction(),
                 $command->ticket(),
@@ -195,7 +196,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
     private function getCreateTicketLineItemCommand(
         OldCreateTicketLineItemCommand $command
     ) {
-        return class_exists('EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommand')
+        return class_exists('EventEspresso\core\domain\services\commands\ticket\CreateTicketLineItemCommand')
             ? new CreateTicketLineItemCommand(
                 $command->transaction(),
                 $command->ticket(),
@@ -212,7 +213,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
     private function getCreateTransactionCommand(
         OldCreateTransactionCommand $command
     ) {
-        return class_exists('EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommand')
+        return class_exists('EventEspresso\core\domain\services\commands\transaction\CreateTransactionCommand')
             ? new CreateTransactionCommand(
                 $command->checkout(),
                 $command->transactionDetails()

@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
+use EventEspresso\core\domain\services\commands\registration\CreateRegistrationCommand;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -1066,15 +1067,15 @@ class EED_Single_Page_Checkout extends EED_Module
                 // do the following for each ticket of this type they selected
                 for ($x = 1; $x <= $line_item->quantity(); $x++) {
                     $att_nmbr++;
-                    /** @var EventEspresso\core\services\commands\registration\CreateRegistrationCommand $CreateRegistrationCommand */
+                    /** @var CreateRegistrationCommand $CreateRegistrationCommand */
                     $CreateRegistrationCommand = EE_Registry::instance()->create(
-                        'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
-                        array(
+                        CreateRegistrationCommand::class,
+                        [
                             $transaction,
                             $line_item,
                             $att_nmbr,
                             $this->checkout->total_ticket_count,
-                        )
+                        ]
                     );
                     // override capabilities for frontend registrations
                     if (! is_admin()) {
