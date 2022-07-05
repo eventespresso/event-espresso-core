@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\commands\middleware;
 
 use Closure;
+use EE_Error;
 use EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommand;
 use EventEspresso\core\domain\services\commands\registration\CancelRegistrationAndTicketLineItemCommand;
 use EventEspresso\core\domain\services\commands\registration\CopyRegistrationDetailsCommand;
@@ -11,9 +12,8 @@ use EventEspresso\core\domain\services\commands\registration\CreateRegistrationC
 use EventEspresso\core\domain\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommand;
 use EventEspresso\core\domain\services\commands\ticket\CancelTicketLineItemCommand;
 use EventEspresso\core\domain\services\commands\ticket\CreateTicketLineItemCommand;
-use EventEspresso\core\services\commands\transaction\CreateTransactionCommand;
-use EventEspresso\core\services\commands\CommandInterface;
 use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand as OldCreateAttendeeCommand;
+use EventEspresso\core\services\commands\CommandInterface;
 use EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommand as OldCancelRegistrationAndTicketLineItemCommand;
 use EventEspresso\core\services\commands\registration\CopyRegistrationDetailsCommand as OldCopyRegistrationDetailsCommand;
 use EventEspresso\core\services\commands\registration\CopyRegistrationPaymentsCommand as OldCopyRegistrationPaymentsCommand;
@@ -21,11 +21,8 @@ use EventEspresso\core\services\commands\registration\CreateRegistrationCommand 
 use EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommand as OldUpdateRegistrationAndTransactionAfterChangeCommand;
 use EventEspresso\core\services\commands\ticket\CancelTicketLineItemCommand as OldCancelTicketLineItemCommand;
 use EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand as OldCreateTicketLineItemCommand;
+use EventEspresso\core\services\commands\transaction\CreateTransactionCommand;
 use EventEspresso\core\services\commands\transaction\CreateTransactionCommand as OldCreateTransactionCommand;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class LocateMovedCommands
@@ -38,7 +35,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class LocateMovedCommands implements CommandBusMiddlewareInterface
 {
-
     /**
      * @param CommandInterface $command
      * @param Closure          $next
@@ -48,31 +44,31 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
     {
         $command_class = get_class($command);
         switch ($command_class) {
-            case 'EventEspresso\core\services\commands\attendee\CreateAttendeeCommand' :
+            case 'EventEspresso\core\services\commands\attendee\CreateAttendeeCommand':
                 $command = $this->getCreateAttendeeCommand($command);
                 break;
-            case 'EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommand' :
+            case 'EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommand':
                 $command = $this->getCancelRegistrationAndTicketLineItemCommand($command);
                 break;
-            case 'EventEspresso\core\services\commands\registration\CopyRegistrationDetailsCommand' :
+            case 'EventEspresso\core\services\commands\registration\CopyRegistrationDetailsCommand':
                 $command = $this->getCopyRegistrationDetailsCommand($command);
                 break;
-            case 'EventEspresso\core\services\commands\registration\CopyRegistrationPaymentsCommand' :
+            case 'EventEspresso\core\services\commands\registration\CopyRegistrationPaymentsCommand':
                 $command = $this->getCopyRegistrationPaymentsCommand($command);
                 break;
-            case 'EventEspresso\core\services\commands\registration\CreateRegistrationCommand' :
+            case 'EventEspresso\core\services\commands\registration\CreateRegistrationCommand':
                 $command = $this->getCreateRegistrationCommand($command);
                 break;
-            case 'EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommand' :
+            case 'EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommand':
                 $command = $this->getUpdateRegistrationAndTransactionAfterChangeCommand($command);
                 break;
-            case 'EventEspresso\core\services\commands\ticket\CancelTicketLineItemCommand' :
+            case 'EventEspresso\core\services\commands\ticket\CancelTicketLineItemCommand':
                 $command = $this->getCancelTicketLineItemCommand($command);
                 break;
-            case 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand' :
+            case 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand':
                 $command = $this->getCreateTicketLineItemCommand($command);
                 break;
-            case 'EventEspresso\core\services\commands\transaction\CreateTransactionCommand' :
+            case 'EventEspresso\core\services\commands\transaction\CreateTransactionCommand':
                 $command = $this->getCreateTransactionCommand($command);
                 break;
         }
@@ -143,6 +139,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
     /**
      * @param OldCreateRegistrationCommand|CommandInterface $command
      * @return CreateRegistrationCommand|OldCreateRegistrationCommand
+     * @throws EE_Error
      */
     private function getCreateRegistrationCommand(
         OldCreateRegistrationCommand $command
