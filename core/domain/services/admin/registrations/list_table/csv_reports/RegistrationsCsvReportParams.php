@@ -65,6 +65,13 @@ class RegistrationsCsvReportParams
                 ]
             );
         }
+        if (isset($request_params['status'])) {
+            $route_details['extra_request']['use_filters']  = true;
+            $route_details['extra_request']['filters']  = isset($route_details['extra_request']['filters'])
+                ? $route_details['extra_request']['filters']
+                : [];
+                $route_details['extra_request']['filters']['status'] = $request_params['status'];
+        }
         return $route_details;
     }
 
