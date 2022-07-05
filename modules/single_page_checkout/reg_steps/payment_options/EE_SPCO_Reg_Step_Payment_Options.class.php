@@ -2400,7 +2400,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 // and lastly, let's bump the payment status to pending
                 $payment->set_status(EEM_Payment::status_id_pending);
                 $payment->save();
-            } else if (! $this->_process_payment_status($payment, EE_PMT_Base::onsite)) {
+            } elseif (! $this->_process_payment_status($payment, EE_PMT_Base::onsite)) {
                 // User shouldn't be redirected. So let's process it here.
                 // $this->_setup_redirect_for_next_step();
                 $this->checkout->continue_reg = false;
