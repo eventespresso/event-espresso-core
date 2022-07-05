@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\ticket;
+namespace EventEspresso\core\domain\services\commands\ticket;
 
 use EventEspresso\core\domain\services\ticket\CancelTicketLineItemService;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -34,6 +34,7 @@ class CancelTicketLineItemCommandHandler extends CommandHandler
      */
     public function __construct(CancelTicketLineItemService $cancel_ticket_line_item_service)
     {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->cancel_ticket_line_item_service = $cancel_ticket_line_item_service;
     }
 
@@ -46,6 +47,10 @@ class CancelTicketLineItemCommandHandler extends CommandHandler
      */
     public function handle(CommandInterface $command)
     {
+        /** @var CancelTicketLineItemCommand $command */
+        if (! $command instanceof CancelTicketLineItemCommand) {
+            throw new InvalidEntityException(get_class($command), 'CancelTicketLineItemCommand');
+        }
         return $this->cancel_ticket_line_item_service->cancel(
             $command->transaction(),
             $command->ticket(),

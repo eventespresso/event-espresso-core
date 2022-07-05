@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\transaction;
+namespace EventEspresso\core\domain\services\commands\transaction;
 
 use EE_Checkout;
 use EventEspresso\core\domain\services\capabilities\CapCheck;
@@ -14,9 +14,9 @@ use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
  * Class CreateTransactionCommand
  * DTO for passing data to a CreateTransactionCommandHandler
  *
- * @deprecated 4.9.54
  * @package       Event Espresso
  * @author        Brent Christensen
+ * @since         $VID:$
  */
 class CreateTransactionCommand extends Command implements CommandRequiresCapCheckInterface
 {
@@ -34,10 +34,10 @@ class CreateTransactionCommand extends Command implements CommandRequiresCapChec
     /**
      * CreateTransactionCommand constructor.
      *
-     * @param EE_Checkout $checkout
-     * @param array       $transaction_details
+     * @param EE_Checkout|null $checkout
+     * @param array            $transaction_details
      */
-    public function __construct(EE_Checkout $checkout = null, array $transaction_details = array())
+    public function __construct(EE_Checkout $checkout = null, array $transaction_details = [])
     {
         $this->checkout            = $checkout;
         $this->transaction_details = $transaction_details;

@@ -1,26 +1,25 @@
 <?php
 
-namespace EventEspresso\core\services\commands\registration;
+namespace EventEspresso\core\domain\services\commands\registration;
 
 use EE_Error;
 use EventEspresso\core\domain\services\registration\CopyRegistrationService;
-use EventEspresso\core\exceptions\EntityNotFoundException;
-use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
 use RuntimeException;
 
 /**
- * Class CopyRegistrationDetailsCommandHandler
+ * Class CopyRegistrationPaymentsCommandHandler
  * Given two EE_Registrations supplied via a CopyRegistrationDetailsCommand object,
- * will copy attendee and event details from the registration to copy to the target
+ * will copy payment details from one registration to the target,
+ * and then remove the original copied payment details from the registration
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CopyRegistrationDetailsCommandHandler extends CommandHandler
+class CopyRegistrationPaymentsCommandHandler extends CommandHandler
 {
     /**
      * @var CopyRegistrationService $copy_registration_service
@@ -35,22 +34,21 @@ class CopyRegistrationDetailsCommandHandler extends CommandHandler
      */
     public function __construct(CopyRegistrationService $copy_registration_service)
     {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->copy_registration_service = $copy_registration_service;
     }
 
 
     /**
-     * @param CommandInterface|CopyRegistrationDetailsCommand $command
+     * @param CommandInterface|CopyRegistrationPaymentsCommand $command
      * @return boolean
-     * @throws InvalidEntityException
      * @throws EE_Error
-     * @throws EntityNotFoundException
      * @throws UnexpectedEntityException
      * @throws RuntimeException
      */
     public function handle(CommandInterface $command)
     {
-        return $this->copy_registration_service->copyRegistrationDetails(
+        return $this->copy_registration_service->copyPaymentDetails(
             $command->targetRegistration(),
             $command->registrationToCopy()
         );

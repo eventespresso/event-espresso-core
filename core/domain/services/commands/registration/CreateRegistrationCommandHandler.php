@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\registration;
+namespace EventEspresso\core\domain\services\commands\registration;
 
 use EE_Error;
 use EventEspresso\core\domain\services\registration\CreateRegistrationService;
@@ -33,6 +33,7 @@ class CreateRegistrationCommandHandler extends CommandHandler
      */
     public function __construct(CreateRegistrationService $registration_service)
     {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->registration_service = $registration_service;
     }
 
@@ -47,6 +48,10 @@ class CreateRegistrationCommandHandler extends CommandHandler
      */
     public function handle(CommandInterface $command)
     {
+        /** @var CreateRegistrationCommand $command */
+        if (! $command instanceof CreateRegistrationCommand) {
+            throw new InvalidEntityException(get_class($command), 'CreateRegistrationCommand');
+        }
         // now create a new registration for the ticket
         return $this->registration_service->create(
             $command->ticket()->get_related_event(),

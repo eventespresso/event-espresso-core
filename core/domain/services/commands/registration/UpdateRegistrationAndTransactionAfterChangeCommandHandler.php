@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\registration;
+namespace EventEspresso\core\domain\services\commands\registration;
 
 use EventEspresso\core\domain\services\registration\UpdateRegistrationService;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -31,6 +31,7 @@ class UpdateRegistrationAndTransactionAfterChangeCommandHandler extends CommandH
     public function __construct(
         UpdateRegistrationService $update_registration_service
     ) {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->update_registration_service = $update_registration_service;
     }
 
@@ -42,6 +43,13 @@ class UpdateRegistrationAndTransactionAfterChangeCommandHandler extends CommandH
      */
     public function handle(CommandInterface $command)
     {
+        /** @var UpdateRegistrationAndTransactionAfterChangeCommand $command */
+        if (! $command instanceof UpdateRegistrationAndTransactionAfterChangeCommand) {
+            throw new InvalidEntityException(
+                get_class($command),
+                'UpdateRegistrationAndTransactionAfterChangeCommand'
+            );
+        }
         return $this->update_registration_service->updateRegistrationAndTransaction($command->registration());
     }
 }

@@ -1,14 +1,16 @@
 <?php
 
-namespace EventEspresso\core\services\commands\ticket;
+namespace EventEspresso\core\domain\services\commands\ticket;
 
+use EE_Line_Item;
+use EE_Ticket;
+use EE_Transaction;
 use EventEspresso\core\services\commands\Command;
 
 /**
  * Class CreateTicketLineItemCommand
  * DTO for passing data to CreateTicketLineItemCommandHandler
  *
- * @deprecated 4.9.54
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0
@@ -16,12 +18,12 @@ use EventEspresso\core\services\commands\Command;
 class CreateTicketLineItemCommand extends Command
 {
     /**
-     * @var \EE_Transaction $transaction
+     * @var EE_Transaction $transaction
      */
     private $transaction;
 
     /**
-     * @var \EE_Ticket $ticket
+     * @var EE_Ticket $ticket
      */
     private $ticket;
 
@@ -31,7 +33,7 @@ class CreateTicketLineItemCommand extends Command
     private $quantity = 1;
 
     /**
-     * @var \EE_Line_Item $ticket_line_item
+     * @var EE_Line_Item $ticket_line_item
      */
     protected $ticket_line_item;
 
@@ -39,23 +41,23 @@ class CreateTicketLineItemCommand extends Command
     /**
      * CreateTicketLineItemCommand constructor.
      *
-     * @param \EE_Transaction $transaction
-     * @param \EE_Ticket      $ticket
-     * @param int             $quantity
+     * @param EE_Transaction $transaction
+     * @param EE_Ticket      $ticket
+     * @param int            $quantity
      */
     public function __construct(
-        \EE_Transaction $transaction,
-        \EE_Ticket $ticket,
+        EE_Transaction $transaction,
+        EE_Ticket $ticket,
         $quantity = 1
     ) {
         $this->transaction = $transaction;
-        $this->ticket = $ticket;
-        $this->quantity = $quantity;
+        $this->ticket      = $ticket;
+        $this->quantity    = $quantity;
     }
 
 
     /**
-     * @return \EE_Transaction
+     * @return EE_Transaction
      */
     public function transaction()
     {
@@ -64,7 +66,7 @@ class CreateTicketLineItemCommand extends Command
 
 
     /**
-     * @return \EE_Ticket
+     * @return EE_Ticket
      */
     public function ticket()
     {
@@ -82,7 +84,7 @@ class CreateTicketLineItemCommand extends Command
 
 
     /**
-     * @return \EE_Line_Item
+     * @return EE_Line_Item
      */
     public function ticketLineItem()
     {

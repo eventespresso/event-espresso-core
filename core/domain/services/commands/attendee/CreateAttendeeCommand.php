@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\attendee;
+namespace EventEspresso\core\domain\services\commands\attendee;
 
 use EE_Registration;
 use EventEspresso\core\domain\services\capabilities\CapCheck;
@@ -14,9 +14,9 @@ use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
  * Class CreateAttendeeCommand
  * DTO for passing data to a CreateAttendeeCommandHandler
  *
- * @deprecated 4.9.54
  * @package       Event Espresso
  * @author        Brent Christensen
+ * @since         $VID:$
  */
 class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckInterface
 {
@@ -44,7 +44,7 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
     public function __construct(array $attendee_details, EE_Registration $registration)
     {
         $this->attendee_details = $attendee_details;
-        $this->registration = $registration;
+        $this->registration     = $registration;
     }
 
 
