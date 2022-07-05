@@ -51,6 +51,10 @@ class RegistrationsCsvReportParams
         if ($DTT_ID) {
             $route_details['extra_request']['DTT_ID'] = $DTT_ID;
         }
+        // detect views (status) or searches (s) and set "use_filters" to true
+        if (isset($request_params['status']) || isset($request_params['s'])) {
+            $request_params['use_filters'] = true;
+        }
         if (
             isset($request_params['use_filters'])
             && filter_var($request_params['use_filters'], FILTER_VALIDATE_BOOLEAN)
@@ -63,13 +67,6 @@ class RegistrationsCsvReportParams
                     'default_nonce' => '',
                 ]
             );
-        }
-        if (isset($request_params['status'])) {
-            $route_details['extra_request']['use_filters']  = true;
-            $route_details['extra_request']['filters']  = isset($route_details['extra_request']['filters'])
-                ? $route_details['extra_request']['filters']
-                : [];
-                $route_details['extra_request']['filters']['status'] = $request_params['status'];
         }
         return $route_details;
     }
