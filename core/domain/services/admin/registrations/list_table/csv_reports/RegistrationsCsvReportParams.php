@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports;
 
-use EE_Admin_List_Table;
 use EE_Capabilities;
 
 /**
