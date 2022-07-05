@@ -563,7 +563,7 @@ class EED_Add_New_State extends EED_Module
      */
     public static function filter_checkout_request_params($request_params)
     {
-        foreach ($request_params as $form_section) {
+        foreach ((array) $request_params as $form_section) {
             if (is_array($form_section)) {
                 EED_Add_New_State::unset_new_state_request_params($form_section);
                 EED_Add_New_State::filter_checkout_request_params($form_section);
