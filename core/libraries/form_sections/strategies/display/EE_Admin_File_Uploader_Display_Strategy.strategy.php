@@ -61,7 +61,7 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
             '<img src="' . admin_url('images/media-button-image.gif') . '" >',
             esc_html__('click to add an image', 'event_espresso'),
             '',
-            'ee_media_upload button'
+            'ee_media_upload button button--secondary'
         );
         // only attempt to show the image if it at least exists
         $image = $this->src_exists($this->_input->raw_value()) ? EEH_HTML::br(2) . EEH_HTML::img($this->_input->raw_value(), esc_html__('logo', 'event_espresso'), '', 'ee_media_image') : '';
