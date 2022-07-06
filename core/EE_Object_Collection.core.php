@@ -47,7 +47,7 @@ abstract class EE_Object_Collection extends SplObjectStorage
 
     /**
      * @return array|int|string
-     * @since $VID:$
+     * @since 4.10.33.p
      */
     public function getInfo()
     {
@@ -167,7 +167,7 @@ abstract class EE_Object_Collection extends SplObjectStorage
     /**
      * @param array|int|string $info
      * @return string
-     * @since $VID:$
+     * @since 4.10.33.p
      */
     private function prepInfo($info = ''): string
     {

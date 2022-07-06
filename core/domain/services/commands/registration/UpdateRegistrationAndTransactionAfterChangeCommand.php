@@ -8,7 +8,7 @@ namespace EventEspresso\core\domain\services\commands\registration;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.10.33.p
  */
 class UpdateRegistrationAndTransactionAfterChangeCommand extends SingleRegistrationCommand
 {

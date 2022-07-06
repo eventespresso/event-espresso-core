@@ -16,7 +16,7 @@ use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.10.33.p
  */
 class CreateTransactionCommand extends Command implements CommandRequiresCapCheckInterface
 {

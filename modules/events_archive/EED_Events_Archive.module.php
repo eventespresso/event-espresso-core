@@ -506,7 +506,7 @@ class EED_Events_Archive extends EED_Module
 
     /**
      * @return bool
-     * @since $VID:$
+     * @since 4.10.33.p
      */
     public static function isBlockTheme()
     {
@@ -516,7 +516,7 @@ class EED_Events_Archive extends EED_Module
 
     /**
      * @return string
-     * @since $VID:$
+     * @since 4.10.33.p
      */
     public static function getExcerptFilter()
     {
@@ -529,7 +529,7 @@ class EED_Events_Archive extends EED_Module
 
 
     /**
-     * @since $VID:$
+     * @since 4.10.33.p
      */
     protected static function addEventDetailsFilters()
     {
@@ -551,7 +551,7 @@ class EED_Events_Archive extends EED_Module
 
     /**
      * @param bool $and_get_the_excerpt
-     * @since $VID:$
+     * @since 4.10.33.p
      */
     protected static function removeEventDetailsFilters($and_get_the_excerpt = true)
     {

@@ -413,7 +413,7 @@ class EE_Registry implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      * @throws InvalidArgumentException
-     * @deprecated  $VID:$
+     * @deprecated  4.10.33.p
      */
     public function load_service(string $class_name, $arguments = [], bool $load_only = false)
     {
@@ -627,7 +627,7 @@ class EE_Registry implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      * @throws InvalidArgumentException
-     * @deprecated  $VID:$
+     * @deprecated  4.10.33.p
      */
     public function load_model_class(string $class_name, $arguments = [], bool $load_only = true)
     {
@@ -711,7 +711,7 @@ class EE_Registry implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      * @throws InvalidArgumentException
-     * @deprecated  $VID:$
+     * @deprecated  4.10.33.p
      */
     public function load_addon(
         string $path_to_file,

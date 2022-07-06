@@ -31,7 +31,7 @@ use EventEspresso\core\services\commands\transaction\CreateTransactionCommand as
  *
  * @package EventEspresso\core\services\commands\middleware
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.10.33.p
  */
 class LocateMovedCommands implements CommandBusMiddlewareInterface
 {
