@@ -162,6 +162,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
          */
         $variables = [
             'first' => 1,
+            'limit' => 1,
             'where' => [
                 'orderby' => [
                     [
@@ -229,3 +230,4 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         $this->assertEquals($event->description(), $results['data']['espressoEvent']['description']);
     }
 }
+// tests/testcases/core/domain/services/graphql/connections/EventConnectionQueriesTest.php
