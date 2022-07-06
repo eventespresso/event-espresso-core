@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\graphql;
 
+use EventEspresso\core\domain\services\graphql\connection_resolvers\AbstractConnectionResolver;
 use EventEspresso\core\services\collections\CollectionDetailsException;
 use EventEspresso\core\services\collections\CollectionLoaderException;
 use EventEspresso\core\services\graphql\connections\ConnectionCollection;
@@ -44,6 +45,7 @@ class ConnectionsManager implements GQLManagerInterface
         $this->connections->loadConnections();
         add_action('graphql_register_types', [$this, 'registerConnections'], 20);
         add_filter('graphql_connection_amount_requested', [$this, 'setDefaultConnectionAmount']);
+        add_filter('graphql_connection_max_query_amount', [$this, 'setDefaultConnectionAmount']);
     }
 
 
@@ -58,6 +60,6 @@ class ConnectionsManager implements GQLManagerInterface
 
     public function setDefaultConnectionAmount(): int
     {
-        return 500;
+        return AbstractConnectionResolver::MAX_QUERY_LIMIT;
     }
 }
