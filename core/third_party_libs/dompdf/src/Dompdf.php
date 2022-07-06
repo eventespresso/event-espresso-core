@@ -14,6 +14,7 @@ use Dompdf\Adapter\CPDF;
 use DOMXPath;
 use Dompdf\Frame\Factory;
 use Dompdf\Frame\FrameTree;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use HTML5_Tokenizer;
 use HTML5_TreeBuilder;
 use Dompdf\Image\Cache;
@@ -346,7 +347,7 @@ class Dompdf
         $this->saveLocale();
 
         if (!$this->protocol && !$this->baseHost && !$this->basePath) {
-            list($this->protocol, $this->baseHost, $this->basePath) = Helpers::explode_url($file);
+            [$this->protocol, $this->baseHost, $this->basePath] = Helpers::explode_url($file);
         }
         $protocol = strtolower($this->protocol);
 
@@ -378,7 +379,7 @@ class Dompdf
             $file = $realfile;
         }
 
-        list($contents, $http_response_header) = Helpers::getFileContent($file, $this->httpContext);
+        [$contents, $http_response_header] = Helpers::getFileContent($file, $this->httpContext);
         $encoding = 'UTF-8';
 
         // See http://the-stickman.com/web-development/php/getting-http-response-headers-when-using-file_get_contents/
@@ -572,7 +573,7 @@ class Dompdf
         // <base href="" />
         $base_nodes = $this->dom->getElementsByTagName("base");
         if ($base_nodes->length && ($href = $base_nodes->item(0)->getAttribute("href"))) {
-            list($this->protocol, $this->baseHost, $this->basePath) = Helpers::explode_url($href);
+            [$this->protocol, $this->baseHost, $this->basePath] = Helpers::explode_url($href);
         }
 
         // Set the base path of the Stylesheet to that of the file being processed
@@ -848,11 +849,11 @@ class Dompdf
         if ($_dompdf_show_warnings && isset($_dompdf_warnings)) {
             echo '<b>Dompdf Warnings</b><br><pre>';
             foreach ($_dompdf_warnings as $msg) {
-                echo $msg . "\n";
+                echo wp_kses($msg, AllowedTags::getWithFullTags()) . "\n";
             }
 
             if ($canvas instanceof CPDF) {
-                echo $canvas->get_cpdf()->messages;
+                echo wp_kses($canvas->get_cpdf()->messages, AllowedTags::getWithFullTags());
             }
             echo '</pre>';
             flush();

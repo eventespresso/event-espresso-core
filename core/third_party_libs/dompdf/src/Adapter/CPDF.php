@@ -1151,7 +1151,7 @@ class CPDF implements Canvas
         $attachment = $options["Attachment"] ? "attachment" : "inline";
         header(Helpers::buildContentDispositionHeader($attachment, $filename));
 
-        echo $tmp;
+        echo ($tmp);
         flush();
     }
 
