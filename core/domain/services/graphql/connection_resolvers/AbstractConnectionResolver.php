@@ -51,7 +51,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
 
 
     /**
-     * Set limit the highest value of first and last, with a (filterable) max of 100
+     * Set limit the highest value of first and last, with a (filterable) max of 500
      *
      * @return int
      */
@@ -65,7 +65,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
             : null;
 
         $limit = min(
-            max($first, $last, 100),
+            max($first, $last, 500),
             $this->query_amount
         );
         $limit++;
@@ -90,7 +90,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
          * work properly
          */
         if (empty($this->args['first']) && empty($this->args['last']) && $amount_requested === 10) {
-            return 100; // default.
+            return 500; // default.
         }
 
         return $amount_requested;

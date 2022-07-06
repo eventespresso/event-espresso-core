@@ -43,6 +43,7 @@ class ConnectionsManager implements GQLManagerInterface
     {
         $this->connections->loadConnections();
         add_action('graphql_register_types', [$this, 'registerConnections'], 20);
+        add_filter('graphql_connection_amount_requested', [$this, 'setDefaultConnectionAmount']);
     }
 
 
@@ -52,5 +53,11 @@ class ConnectionsManager implements GQLManagerInterface
         foreach ($this->connections as $connection) {
             register_graphql_connection($connection->config());
         }
+    }
+
+
+    public function setDefaultConnectionAmount(): int
+    {
+        return 500;
     }
 }
