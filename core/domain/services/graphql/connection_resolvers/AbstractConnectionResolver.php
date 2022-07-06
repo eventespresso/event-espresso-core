@@ -18,6 +18,10 @@ use WPGraphQL\Data\Connection\AbstractConnectionResolver as WPGraphQLConnectionR
  */
 abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
 {
+
+    const MAX_QUERY_LIMIT = 500;
+
+
     /**
      * @var Utilities
      */
@@ -65,7 +69,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
             : null;
 
         $limit = min(
-            max($first, $last, 500),
+            max($first, $last, AbstractConnectionResolver::MAX_QUERY_LIMIT),
             $this->query_amount
         );
         $limit++;
@@ -90,7 +94,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
          * work properly
          */
         if (empty($this->args['first']) && empty($this->args['last']) && $amount_requested === 10) {
-            return 500; // default.
+            return AbstractConnectionResolver::MAX_QUERY_LIMIT; // default.
         }
 
         return $amount_requested;
