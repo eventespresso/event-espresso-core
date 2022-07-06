@@ -18,8 +18,8 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 
 
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		$this->assertInstanceOf( 'EE_Message_Resource_Manager', $this->_message_resource_manager );
 		//make sure message type and messenger that might be persisting inactive between tests are fixed.
@@ -27,9 +27,9 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 	}
 
 
-	public function tearDown() {
+	public function tear_down() {
 		$this->_message_resource_manager = null;
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 

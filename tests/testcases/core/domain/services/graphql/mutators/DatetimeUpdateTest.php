@@ -9,11 +9,11 @@ use GraphQLRelay\Relay;
  */
 class DatetimeUpdateTest extends BaseMutationTest
 {
-    public function setUp()
+    public function set_up()
     {
         $this->model_name = 'Datetime';
         // before
-        parent::setUp();
+        parent::set_up();
     }
 
     /**

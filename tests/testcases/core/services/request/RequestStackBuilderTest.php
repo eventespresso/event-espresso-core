@@ -36,9 +36,9 @@ class RequestStackBuilderTest extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->request_stack_builder = $this->loader->getShared(
             'EventEspresso\tests\mocks\core\services\request\RequestStackBuilderMock',
             [$this->loader]

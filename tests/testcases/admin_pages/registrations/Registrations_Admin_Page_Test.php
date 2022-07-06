@@ -61,9 +61,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @since 4.10.2.p
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder',
             [
@@ -91,11 +91,11 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         //restore timezone to original setting
         update_option('timezone_string', $this->original_timezone_string);
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

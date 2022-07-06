@@ -21,8 +21,8 @@ class EE_Messages_Validator_Test extends EE_UnitTestCase {
 	private $_messagesValidatorMock;
 
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->loadMessagesMocks();
 		$this->_messagesValidatorMock = new EE_Messages_Validator_Mock();
 	}

@@ -40,7 +40,7 @@ class EncryptionKeyManagerTest extends TestCase
     protected $rdg;
 
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->setUpDependencies();
@@ -48,7 +48,7 @@ class EncryptionKeyManagerTest extends TestCase
     }
 
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->b64 = null;
         $this->ekm = null;

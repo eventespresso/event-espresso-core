@@ -19,9 +19,9 @@ class EE_Message_Template_Group_Test extends EE_UnitTestCase
      */
     private $message_template_group;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->message_template_group = EEM_Message_Template_Group::instance()->get_one(
             array(
                 array(
@@ -33,9 +33,9 @@ class EE_Message_Template_Group_Test extends EE_UnitTestCase
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         $this->message_template_group = null;
     }
 

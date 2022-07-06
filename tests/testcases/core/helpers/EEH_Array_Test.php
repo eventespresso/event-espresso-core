@@ -21,16 +21,8 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @group helpersArray
  *
  */
-class EEH_Array_Test extends EE_UnitTestCase {
-
-	/**
-	 * 	setUpBeforeClass
-	 */
-	static function setUpBeforeClass() {
-	}
-
-
-
+class EEH_Array_Test extends EE_UnitTestCase
+{
 	/**
 	 *    test_insert_into_array_with_string_indexes
 	 */

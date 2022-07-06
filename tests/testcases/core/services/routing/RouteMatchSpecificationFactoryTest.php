@@ -34,7 +34,7 @@ class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCas
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->loader = LoaderFactory::getLoader();
     }

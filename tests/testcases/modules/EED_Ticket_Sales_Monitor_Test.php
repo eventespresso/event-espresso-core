@@ -19,9 +19,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
 {
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         require_once(EE_TESTS_DIR . 'mocks/modules/EED_Ticket_Sales_Monitor_Mock.php');
     }
 

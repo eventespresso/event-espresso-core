@@ -45,9 +45,9 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase
     protected $_defaultDTT;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->loadModelFieldMocks(array('EE_Datetime_Field'));
     }
 

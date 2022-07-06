@@ -21,8 +21,9 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
     protected $_strategy;
 
 
-    public function setUp(){
-        parent::setUp();
+    public function set_up()
+{
+        parent::set_up();
         $this->_strategy = new EE_Int_Normalization();
         $input = new EE_Text_Input();
         $this->_strategy->_construct_finalize( $input );

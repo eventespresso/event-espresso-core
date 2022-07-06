@@ -24,9 +24,9 @@ class EE_Admin_Tests extends EE_UnitTestCase {
     public $admin;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->loader->getShared('EE_Admin');
         $this->setupRequest();
         $this->admin = EE_Admin::reset();

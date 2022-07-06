@@ -60,8 +60,8 @@ class EE_PMT_Aim_Test extends EE_UnitTestCase{
 			'phone' => '1231231231',
 		);
 	}
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		EE_Payment_Method_Manager::reset();
 	}
 	public function test_do_direct_payment__success(){

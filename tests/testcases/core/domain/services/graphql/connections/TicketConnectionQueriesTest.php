@@ -9,10 +9,10 @@ use EEM_Ticket;
  */
 class TicketConnectionQueriesTest extends BaseQueriesTest
 {
-    public function setUp()
+    public function set_up()
     {
         $this->model_name = 'Ticket';
-        parent::setUp();
+        parent::set_up();
 
         $this->model = EEM_Ticket::instance();
     }

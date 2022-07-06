@@ -29,8 +29,8 @@ class EE_System_Test extends EE_UnitTestCase{
 	/**
 	 * remember teh espresso_db_update's option before these tests
 	 */
-	function setUp() {
-		parent::setUp();
+	function set_up() {
+		parent::set_up();
 		$this->_original_espresso_db_update = get_option('espresso_db_update');
 		$this->_original_db_state = get_option( EE_Data_Migration_Manager::current_database_state );
 		EE_System::reset();
@@ -371,12 +371,12 @@ class EE_System_Test extends EE_UnitTestCase{
 	/**
 	 * restore the epsresso_db_update option
 	 */
-	function tearDown() {
+	function tear_down() {
 		update_option('espresso_db_update',$this->_original_espresso_db_update);
 		EE_System::reset()->detect_req_type();
 		EE_Data_Migration_Manager::reset();
 		update_option( EE_Data_Migration_Manager::current_database_state, $this->_original_db_state );
-		parent::tearDown();
+		parent::tear_down();
 	}
 }
 

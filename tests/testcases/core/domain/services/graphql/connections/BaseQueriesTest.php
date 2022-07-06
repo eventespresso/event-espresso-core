@@ -19,9 +19,9 @@ class BaseQueriesTest extends GraphQLUnitTestCase
     public $admin;
     public $subscriber;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         if (!$this->model_name) {
             return;
         }

@@ -28,9 +28,9 @@ class EE_Line_Item_Test extends EE_UnitTestCase
     protected $numeric_utilities;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->numeric_utilities = LoaderFactory::getShared(DecimalValues::class);
     }
 

@@ -13,11 +13,8 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @author				Mike Nelson
  * @group                 line-item-calculator
  */
-class EEH_Line_Item_Test extends EE_UnitTestCase{
-
-	static function setUpBeforeClass() {
-	}
-
+class EEH_Line_Item_Test extends EE_UnitTestCase
+{
 	public function test_get_items_subtotal(){
 		$transaction = $this->new_typical_transaction();
 		$items_subtotals = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_sub_total, $transaction );

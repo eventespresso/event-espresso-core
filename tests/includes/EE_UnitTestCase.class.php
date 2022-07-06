@@ -85,13 +85,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
     //  * basically used for displaying the test case class while tests are running.
     //  * this can be helpful if you are getting weird errors happening,
     //  * but the test name is not being reported anywhere.
-    //  * Just uncomment this method as well as the first line of setUp() below.
+    //  * Just uncomment this method as well as the first line of set_up() below.
     //  *
     //  * @throws \EE_Error
     //  */
-    // public static function setUpBeforeClass() {
+    // public static function set_up_before_class() {
     //     echo "\n\n\n" . get_called_class() . "\n\n";
-    //     parent::setUpBeforeClass();
+    //     parent::set_up_before_class();
     //     // \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
     // }
 
@@ -102,7 +102,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
     // }
 
 
-    public function setUp()
+    public function set_up()
     {
         // echo "\n\n" . strtoupper($this->getName()) . '()';
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
@@ -115,7 +115,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             'wp_current_filter' => $wp_current_filter
         );
         $this->_orig_current_user = $current_user instanceof WP_User ? clone $current_user : new WP_User(1);
-        parent::setUp();
+        parent::set_up();
         $auto_made_thing_seed = 1;
         //reset wpdb's list of queries executed so it only stores those from the current test
         $wpdb->queries = array();
@@ -171,9 +171,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
         return true;
     }
 
-    public function tearDown()
+    public function tear_down()
     {
-        parent::tearDown();
+        parent::tear_down();
         $addon_count = count(EE_Registry::instance()->addons);
         if ($addon_count) {
             foreach (EE_Registry::instance()->addons as $addon) {

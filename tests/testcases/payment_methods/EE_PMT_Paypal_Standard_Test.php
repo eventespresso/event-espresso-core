@@ -29,8 +29,8 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 	const notify_url = 'http://mysite.com/notify';
 	const cancel_url = 'http://mysite.com/cancel';
 
-	public function setUp(){
-        parent::setUp();
+	public function set_up(){
+        parent::set_up();
 		EEM_Payment::reset();
 		EEM_Transaction::reset();
 //		EEM_Payment_Method::reset();

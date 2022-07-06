@@ -31,9 +31,9 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
      * @throws InvalidArgumentException
      * @since $VID:$
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         if (PHP_VERSION_ID < 70100) {
             $this->markTestSkipped('WP GraphQL compatible with PHP 7+ only');
         }

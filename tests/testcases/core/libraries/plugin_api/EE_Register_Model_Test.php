@@ -37,9 +37,9 @@ class EE_Register_Model_Test extends EE_UnitTestCase
 
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_stop_pretending_addon_hook_time();
         //		EE_System::instance()->load_core_configuration();
     }
@@ -109,14 +109,14 @@ class EE_Register_Model_Test extends EE_UnitTestCase
 
 
 
-    public function tearDown()
+    public function tear_down()
     {
         //ensure the models aren't stil registered. they should have either been
         //deregistered during the test, or not been registered at all
         $this->assertArrayDoesNotContain('EEM_Mock', EE_Registry::instance()->non_abstract_db_models);
         $this->assertArrayDoesNotContain('EEM_Mock', EE_Registry::instance()->models);
         $this->_stop_pretending_addon_hook_time();
-        parent::tearDown();
+        parent::tear_down();
     }
 }
 

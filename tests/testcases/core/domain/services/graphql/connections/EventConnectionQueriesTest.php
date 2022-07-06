@@ -14,10 +14,10 @@ class EventConnectionQueriesTest extends BaseQueriesTest
     public $current_date_gmt;
     public $created_event_ids;
 
-    public function setUp()
+    public function set_up()
     {
         $this->model_name = 'Event';
-        parent::setUp();
+        parent::set_up();
 
         $this->model = EEM_Event::instance();
 

@@ -9,11 +9,11 @@ use EEM_Price_Type;
  */
 class PriceTypeConnectionQueriesTest extends BaseQueriesTest
 {
-    public function setUp()
+    public function set_up()
     {
         $this->model_name = 'Price_Type';
         $this->skip_create_entities = true;
-        parent::setUp();
+        parent::set_up();
 
         $this->model = EEM_Price_Type::instance();
     }

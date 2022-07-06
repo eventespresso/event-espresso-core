@@ -40,9 +40,9 @@ class CoffeeShopTest extends EE_UnitTestCase
     /**
      * setUp
      */
-    public function setUp()
+    public function set_up()
     {
-    	parent::setUp();
+    	parent::set_up();
         $this->markTestSkipped('CoffeeShop DI not implemented yet.');
         // instantiate the container
         $this->CoffeeShop = new CoffeeShop();

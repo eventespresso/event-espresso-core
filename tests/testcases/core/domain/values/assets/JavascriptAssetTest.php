@@ -40,7 +40,7 @@ class JavascriptAssetTest extends EspressoPHPUnitFrameworkTestCase
      * @throws InvalidFilePathException
      * @throws InvalidArgumentException
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->domain_mock = new Domain(
             new FilePath(EVENT_ESPRESSO_MAIN_FILE),
@@ -50,7 +50,7 @@ class JavascriptAssetTest extends EspressoPHPUnitFrameworkTestCase
     }
 
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->domain_mock = null;
         $this->js_asset = null;

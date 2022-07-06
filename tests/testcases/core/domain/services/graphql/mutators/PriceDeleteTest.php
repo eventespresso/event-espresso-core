@@ -9,11 +9,11 @@ use GraphQLRelay\Relay;
  */
 class PriceDeleteTest extends BaseMutationTest
 {
-    public function setUp()
+    public function set_up()
     {
         $this->model_name = 'Price';
         // before
-        parent::setUp();
+        parent::set_up();
     }
 
     /**

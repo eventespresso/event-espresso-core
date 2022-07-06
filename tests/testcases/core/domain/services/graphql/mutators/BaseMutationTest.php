@@ -15,9 +15,9 @@ class BaseMutationTest extends GraphQLUnitTestCase
     public $entity;
     public $model_name;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         if (!$this->model_name) {
             return;
         }

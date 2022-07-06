@@ -23,7 +23,7 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
      * @param string $page_now
      * @since $VID:$
      */
-    public function setUp(string $page_now = 'admin.php')
+    public function setUp(string $page_now = 'admin.php'): void
     {
         parent::setUp();
         global $pagenow;
@@ -32,7 +32,7 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
     }
 
 
-    public function tearDown()
+    public function tearDown(): void
     {
         global $pagenow;
         $pagenow = $this->pagenow;
