@@ -13,6 +13,12 @@
  */
 final class EE_Capabilities extends EE_Base
 {
+
+    const ROLE_ADMINISTRATOR = 'administrator';
+
+    const ROLE_EVENTS_ADMINISTRATOR = 'ee_events_administrator';
+
+
     /**
      * the name of the wp option used to store caps previously initialized
      */
@@ -341,7 +347,7 @@ final class EE_Capabilities extends EE_Base
         return apply_filters(
             'FHEE__EE_Capabilities__init_caps_map__caps',
             array(
-                'administrator'           => array(
+                EE_Capabilities::ROLE_ADMINISTRATOR => array(
                     // basic access
                     'ee_read_ee',
                     // gateways
@@ -461,7 +467,7 @@ final class EE_Capabilities extends EE_Base
                     'ee_edit_event_type',
                     'ee_delete_event_type',
                 ),
-                'ee_events_administrator' => array(
+                EE_Capabilities::ROLE_EVENTS_ADMINISTRATOR => array(
                     // core wp caps
                     'read',
                     'read_private_pages',
@@ -935,23 +941,21 @@ final class EE_Capabilities extends EE_Base
     /**
      * This helper method just returns an array of registered EE capabilities.
      *
-     * @since 4.5.0
-     * @param string $role If empty then the entire role/capability map is returned.
-     *                     Otherwise just the capabilities for the given role are returned.
+     * @param string|null $role If empty then the entire role/capability map is returned.
+     *                          Otherwise just the capabilities for the given role are returned.
      * @return array
      * @throws EE_Error
+     * @since 4.5.0
      */
-    public function get_ee_capabilities($role = 'administrator')
+    public function get_ee_capabilities(?string $role = EE_Capabilities::ROLE_ADMINISTRATOR): array
     {
         if (! $this->initialized) {
             $this->init_caps();
         }
-        if (empty($role)) {
+        if ($role === '') {
             return $this->capabilities_map;
         }
-        return isset($this->capabilities_map[ $role ])
-            ? $this->capabilities_map[ $role ]
-            : array();
+        return $this->capabilities_map[ $role ] ?? [];
     }
 
 
