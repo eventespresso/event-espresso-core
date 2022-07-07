@@ -53,11 +53,9 @@ class EE_Message_Template_Group_Test extends EE_UnitTestCase
     }
 
 
-    /**
-     * @expectedException EventEspresso\core\exceptions\InvalidIdentifierException
-     */
     public function testInvalidContextTemplateForIsContextActive()
     {
+        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidIdentifierException');
         $this->message_template_group->is_context_active('bogus');
     }
 
@@ -80,20 +78,16 @@ class EE_Message_Template_Group_Test extends EE_UnitTestCase
     }
 
 
-    /**
-     * @expectedException EventEspresso\core\exceptions\InvalidIdentifierException
-     */
     public function testActivatingInvalidContext()
     {
+        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidIdentifierException');
         $this->message_template_group->deactivate_context('bogus');
     }
 
 
-    /**
-     * @expectedException EventEspresso\core\exceptions\InvalidIdentifierException
-     */
     public function testDeactivatingInvalidContext()
     {
+        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidIdentifierException');
         $this->message_template_group->activate_context('bogus');
     }
 }

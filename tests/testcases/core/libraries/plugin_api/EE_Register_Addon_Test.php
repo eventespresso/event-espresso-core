@@ -170,6 +170,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         $this->assertEquals(0, did_action('activate_plugin'));
         $this->assertEquals(1, did_action('AHEE__EE_System__load_espresso_addons'));
         $this->assertEquals(0, did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin'));
+
         // $this->assertArrayNotHasKey('EE_New_Addon', (array) EE_Registry::instance()->addons);
         $this->assertFalse(isset(EE_Registry::instance()->addons->EE_New_Addon));
         //just to make this test truly test the "eea-new-addon", use its own addon params
@@ -209,7 +210,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         $current_user = $this->factory->user->create_and_get();
         $other_user = $this->factory->user->create_and_get();
         //give user administrator role for test!
-        $current_user->add_role('administrator');
+        $current_user->add_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $a_thing = $this->new_model_obj_with_dependencies('New_Addon_Thing', array('NEW_wp_user' => $current_user->ID));
         $others_thing = $this->new_model_obj_with_dependencies(
         	'New_Addon_Thing',
@@ -224,27 +225,36 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * Utility function to just setup valid capabilities for tests in this suite.
      *
-     * @since 1.0.0
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 1.0.0
      */
     private function _pretend_capabilities_registered()
     {
         EE_Registry::instance()->load_core('Capabilities');
         EE_Capabilities::instance()->init_caps(true);
         //validate caps were registered and init saved.
-        $admin_caps_init = EE_Capabilities::instance()->get_ee_capabilities('administrator');
+        $admin_caps_init = EE_Capabilities::instance()->get_ee_capabilities(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertArrayContains('edit_thing', $admin_caps_init);
         //verify new caps are in the role
-        $role = get_role('administrator');
-        $this->assertContains(
-            array('edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'),
-            $role->capabilities
+        $role = get_role(EE_Capabilities::ROLE_ADMINISTRATOR);
+        $this->assertTrue(
+            ! array_diff(
+                [
+                    'edit_thing'          => true,
+                    'edit_things'         => true,
+                    'edit_others_things'  => true,
+                    'edit_private_things' => true,
+                ],
+                $role->capabilities
+            )
         );
     }
+
 
     /**
      * uses the connection settings on EE_New_Addon::register() instead

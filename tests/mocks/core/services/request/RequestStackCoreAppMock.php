@@ -21,7 +21,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  */
 class RequestStackCoreAppMock implements RequestDecoratorInterface, RequestStackCoreAppInterface
 {
-
     /**
      * @param RequestInterface  $request
      * @param ResponseInterface $response
@@ -31,7 +30,7 @@ class RequestStackCoreAppMock implements RequestDecoratorInterface, RequestStack
     {
         \EE_Error::add_error(
             'Back away! I will deal with this Jedi slime myself!',
-            __FILE__, __FUNCTION__, __LINE__
+            'RequestStackCoreAppMock', 'handleRequest', 34
         );
         return $response;
     }

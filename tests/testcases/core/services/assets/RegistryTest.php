@@ -85,31 +85,27 @@ class RegistryTest extends EE_UnitTestCase
     }
 
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function test_addData_no_overwrite_array()
     {
+        $this->setExceptionExpected(InvalidArgumentException::class);
         $this->registry->addData('test', array('initial_value'));
         $this->registry->addData('test', array('another_value'));
     }
 
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function test_addData_no_overwrite_scalar()
     {
+        $this->setExceptionExpected(InvalidArgumentException::class);
         $this->registry->addData('test', 'initial_value');
         $this->registry->addData('test', 'cause_exception');
     }
 
 	/**
-     * @expectedException InvalidArgumentException
      * @group 10304
      */
     public function test_addTemplate_no_overwrite()
     {
+        $this->setExceptionExpected(InvalidArgumentException::class);
         $this->registry->addTemplate('test', 'some_test_content');
         $this->registry->addTemplate('test', 'cause exception');
     }
@@ -135,7 +131,7 @@ class RegistryTest extends EE_UnitTestCase
     public function testPushDataWithArrayAddingData()
     {
         foreach ($this->pushDataWithArrayProvider() as $test_description => $test_data) {
-            list($key, $value, $expected) = $test_data;
+            [$key, $value, $expected] = $test_data;
             $this->registry->pushData($key, $value);
             $this->assertEquals($expected, $this->registry->getData($key), $test_description);
         }
@@ -143,10 +139,10 @@ class RegistryTest extends EE_UnitTestCase
 
 
     /**
-     * @expectedException InvalidArgumentException
      */
     public function testPushDataExceptionWhenExistingDataIsScalar()
     {
+        $this->setExceptionExpected(InvalidArgumentException::class);
         $this->registry->addData( 'test', 'foo' );
         $this->registry->pushData( 'test', 'bar' );
     }
@@ -166,7 +162,7 @@ class RegistryTest extends EE_UnitTestCase
     public function testPushDataWithAssociativeArray()
     {
         foreach ($this->pushDataWithAssociativeArrayProvider() as $test_description => $test_data) {
-            list($key, $value, $expected) = $test_data;
+            [$key, $value, $expected] = $test_data;
             $this->registry->pushData($key, $value);
             $this->assertEquals($expected, $this->registry->getData($key), $test_description);
         }

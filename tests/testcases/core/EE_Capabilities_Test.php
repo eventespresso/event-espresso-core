@@ -36,24 +36,24 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * test the get_ee_capabilities method on EE_Capabilities class.
      *
+     * @throws EE_Error
      * @since 4.5.0
      */
     public function test_get_ee_capabilities()
     {
         //test getting admin capabilities (default)
         $admin_capabilities = $this->CAPS->get_ee_capabilities();
-        $this->assertFalse(isset($admin_capabilities[self::ADMINISTRATOR_ROLE]));
-        $this->assertTrue(is_array($admin_capabilities) && isset($admin_capabilities[0]));
+        $this->assertFalse(isset($admin_capabilities[EE_Capabilities::ROLE_ADMINISTRATOR]));
+        $this->assertTrue(isset($admin_capabilities[0]));
         $first_cap = $admin_capabilities[0];
         $this->assertEquals('ee_read_ee', $first_cap);
 
         //test getting all capabilities
         $all_caps = $this->CAPS->get_ee_capabilities('');
-        $this->assertArrayHasKey(self::ADMINISTRATOR_ROLE, $all_caps);
+        $this->assertArrayHasKey(EE_Capabilities::ROLE_ADMINISTRATOR, $all_caps);
 
         //test getting invalid capability
         $caps = $this->CAPS->get_ee_capabilities('no_exist');
@@ -76,8 +76,8 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         // but we'll need to set the reset flag to true if we want to do things this way
         $this->CAPS->init_caps(true);
         //check it got added
-        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities(self::ADMINISTRATOR_ROLE));
-        $user->add_role(self::ADMINISTRATOR_ROLE);
+        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities(EE_Capabilities::ROLE_ADMINISTRATOR));
+        $user->add_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertTrue($this->CAPS->user_can($user, 'ee_new_cap', 'test'));
         //then check newly-created users get that new role
         //refresh the roles' caps and the user object
@@ -88,7 +88,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
 
     public function add_new_caps($existing_caps)
     {
-        $existing_caps[self::ADMINISTRATOR_ROLE][] = 'ee_new_cap';
+        $existing_caps[EE_Capabilities::ROLE_ADMINISTRATOR][] = 'ee_new_cap';
         return $existing_caps;
     }
 
@@ -103,10 +103,10 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $this->assertInstanceOf('WP_User', $user);
         $this->assertFalse($this->CAPS->user_can($user, 'ee_new_cap', 'test'));
         // ok now add a new cap, but this time using addCaps
-         $this->CAPS->addCaps(array(self::ADMINISTRATOR_ROLE => array('ee_new_cap')));
+         $this->CAPS->addCaps(array(EE_Capabilities::ROLE_ADMINISTRATOR => array('ee_new_cap')));
         //check it got added
-        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities(self::ADMINISTRATOR_ROLE));
-        $user->add_role(self::ADMINISTRATOR_ROLE);
+        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities(EE_Capabilities::ROLE_ADMINISTRATOR));
+        $user->add_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertTrue($this->CAPS->user_can($user, 'ee_new_cap', 'test'));
         //then check newly-created users get that new role
         //refresh the roles' caps and the user object
@@ -126,10 +126,10 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $this->assertInstanceOf('WP_User', $user);
         $this->assertFalse($this->CAPS->user_can($user, 'ee_new_cap', 'test'));
         // ok now add a new cap, but this time using addCaps
-         $this->CAPS->add_cap_to_role(self::ADMINISTRATOR_ROLE, 'ee_new_cap');
+         $this->CAPS->add_cap_to_role(EE_Capabilities::ROLE_ADMINISTRATOR, 'ee_new_cap');
         //check it got added
-        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities(self::ADMINISTRATOR_ROLE));
-        $user->add_role(self::ADMINISTRATOR_ROLE);
+        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities(EE_Capabilities::ROLE_ADMINISTRATOR));
+        $user->add_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertTrue($this->CAPS->user_can($user, 'ee_new_cap', 'test'));
         //then check newly-created users get that new role
         //refresh the roles' caps and the user object
@@ -149,7 +149,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         //setup our user and set as current user.
         $user = $this->factory->user->create_and_get();
         $this->assertInstanceOf('WP_User', $user);
-        $user->add_role(self::ADMINISTRATOR_ROLE);
+        $user->add_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $current_user = $user;
 
         //check what should be a valid  cap
@@ -199,7 +199,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     {
         $this->CAPS->init_caps(true);
         /** @var WP_Role $administrator_role */
-        $administrator_role = get_role(self::ADMINISTRATOR_ROLE);
+        $administrator_role = get_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertInstanceOf('WP_Role', $administrator_role);
         // verify two ways that cap exists
         $this->assertTrue(isset($administrator_role->capabilities['ee_manage_gateways']));
@@ -207,7 +207,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         // for whatever reason, this site wants to have all gateways
         // under control of someone other than the standard administrator
         // so they want to remove the 'ee_manage_gateways' cap from the above administrator role
-        $this->CAPS->removeCaps(array(self::ADMINISTRATOR_ROLE => array('ee_manage_gateways')));
+        $this->CAPS->removeCaps(array(EE_Capabilities::ROLE_ADMINISTRATOR => array('ee_manage_gateways')));
         $user = $this->setupAdminUserAndTestCapDoesNOtExist('ee_manage_gateways');
         $this->assertFalse(
             $this->CAPS->user_can($user, 'ee_manage_gateways', 'test'),
@@ -221,14 +221,14 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     {
         $this->CAPS->init_caps(true);
         /** @var WP_Role $administrator_role */
-        $administrator_role = get_role(self::ADMINISTRATOR_ROLE);
+        $administrator_role = get_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertInstanceOf('WP_Role', $administrator_role);
         // verify that cap exists
         $this->assertTrue($administrator_role->has_cap('ee_manage_gateways'));
         // for whatever reason, this site wants to have all gateways
         // under control of someone other than the standard administrator
         // so they want to remove the 'ee_manage_gateways' cap from the above administrator role
-        $this->CAPS->remove_cap_from_role(self::ADMINISTRATOR_ROLE, 'ee_manage_gateways');
+        $this->CAPS->remove_cap_from_role(EE_Capabilities::ROLE_ADMINISTRATOR, 'ee_manage_gateways');
         $user = $this->setupAdminUserAndTestCapDoesNOtExist('ee_manage_gateways');
         $this->assertFalse(
             $this->CAPS->user_can($user, 'ee_manage_gateways', 'test'),
@@ -253,8 +253,8 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         // verify that no other roles exist that could be granting caps
         $this->assertEmpty($user->roles);
         // now make this user an administrator
-        $user->add_role(self::ADMINISTRATOR_ROLE);
-        $this->assertEquals(self::ADMINISTRATOR_ROLE, reset($user->roles));
+        $user->add_role(EE_Capabilities::ROLE_ADMINISTRATOR);
+        $this->assertEquals(EE_Capabilities::ROLE_ADMINISTRATOR, reset($user->roles));
         return $user;
     }
 
@@ -268,7 +268,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $this->go_to(admin_url());
         // first let's verify that admins do not currently have this cap
         /** @var WP_Role $administrator_role */
-        $administrator_role = get_role(self::ADMINISTRATOR_ROLE);
+        $administrator_role = get_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertInstanceOf('WP_Role', $administrator_role);
         // verify two ways that cap does not exist YET...
         $this->assertFalse(isset($administrator_role->capabilities[$mock_onsite_capability]));

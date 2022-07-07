@@ -3,6 +3,7 @@
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections;
 
 use EEM_Event;
+use GraphQLRelay\Connection\ArrayConnection;
 
 /**
  * @group wpGraphQL
@@ -182,7 +183,16 @@ class EventConnectionQueriesTest extends BaseQueriesTest
 
         $first_event     = reset($events);
         $first_event_id  = $first_event->ID();
-        $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_event_id);
+        $expected_cursor = ArrayConnection::offsetToCursor($first_event_id);
+        $this->assertArrayHasKey('data', $results);
+        $this->assertIsArray($results['data']);
+        $this->assertArrayHasKey('espressoEvents', $results['data']);
+        $this->assertIsArray(
+            $results['data']['espressoEvents'],
+            "Query result \$results['data']['espressoEvents'] is not an array. \$results: " . print_r($results, true)
+        );
+        $this->assertArrayHasKey('edges', $results['data']['espressoEvents']);
+        $this->assertIsArray($results['data']['espressoEvents']['edges']);
         $this->assertCount(1, $results['data']['espressoEvents']['edges']);
 
         $first_edge = $results['data']['espressoEvents']['edges'][0];

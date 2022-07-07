@@ -89,11 +89,11 @@ class EE_Float_Normalization_Test extends EE_UnitTestCase{
     /**
      * @group        10586
      * @dataProvider bad_float_inputs
-     * @expectedException EE_Validation_Error
      * @param $input
      * @throws EE_Validation_Error
      */
 	public function test_bad_float_inputs($input){
+        $this->setExceptionExpected(EE_Validation_Error::class);
         $this->_strategy->normalize( $input );
 	}
 }
