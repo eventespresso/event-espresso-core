@@ -1376,7 +1376,7 @@ class EE_Registry implements ResettableInterface
                 && ! class_exists($param_class, false)
                 // and something already exists in the incoming arguments for this param
                 && array_key_exists($index, $argument_keys)
-                && array_key_exists($argument_keys[ $index ], $arguments)
+                && isset($arguments[ $argument_keys[ $index ] ])
             ) {
                 // so let's skip this argument and move on to the next
                 continue;
