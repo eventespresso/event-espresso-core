@@ -701,7 +701,7 @@ class EED_Add_New_State extends EED_Module
      * @throws ReflectionException
      */
     public static function inject_new_reg_state_into_options(
-        array $state_options = array(),
+        array $state_options,
         $deprecated,
         EE_Registration $registration,
         EE_Question $question,
@@ -745,7 +745,7 @@ class EED_Add_New_State extends EED_Module
      * @throws ReflectionException
      */
     public static function inject_new_reg_country_into_options(
-        array $country_options = array(),
+        array $country_options,
         $deprecated,
         EE_Registration $registration,
         EE_Question $question,

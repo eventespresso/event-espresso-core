@@ -52,18 +52,20 @@ class EE_Processor_Base
     /**
      * debug
      *
-     * @param string          $class
-     * @param string          $func
-     * @param string          $line
-     * @param \EE_Transaction $transaction
-     * @param array           $info
-     * @param bool            $display_request
+     * @param string              $class
+     * @param string              $func
+     * @param string              $line
+     * @param EE_Transaction|null $transaction
+     * @param array               $info
+     * @param bool                $display_request
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function log(
         $class = '',
         $func = '',
         $line = '',
-        EE_Transaction $transaction,
+        EE_Transaction $transaction = null,
         $info = array(),
         $display_request = false
     ) {

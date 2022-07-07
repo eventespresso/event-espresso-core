@@ -82,7 +82,7 @@ class EE_Messages_Template_Defaults extends EE_Base
     public function __construct(
         EE_messenger $messenger,
         EE_message_type $message_type,
-        $GRP_ID = 0,
+        $GRP_ID,
         EEM_Message_Template_Group $message_template_group_model,
         EEM_Message_Template $message_template_model
     ) {
@@ -105,7 +105,7 @@ class EE_Messages_Template_Defaults extends EE_Base
      *                              about where to obtain the templates.
      *
      */
-    final private function _set_templates($template_pack)
+    private function _set_templates($template_pack)
     {
 
         // get the corresponding template pack object (if present.  If not then we just load the default and add a

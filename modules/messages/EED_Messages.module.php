@@ -1334,7 +1334,7 @@ class EED_Messages extends EED_Module
         $class = '',
         $func = '',
         $line = '',
-        EE_Transaction $transaction,
+        EE_Transaction $transaction = null,
         $info = [],
         $display_request = false
     ) {

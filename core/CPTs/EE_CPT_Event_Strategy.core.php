@@ -21,17 +21,17 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     * @param WP_Query $wp_query
-     * @param array    $CPT
+     * @param array|WP_Query $wp_query
+     * @param array          $CPT
      */
-    public function __construct($wp_query, $CPT = array())
+    public function __construct($wp_query, array $CPT = array())
     {
         if ($wp_query instanceof WP_Query) {
             $WP_Query = $wp_query;
             $this->CPT = $CPT;
         } else {
-            $WP_Query = isset($wp_query['WP_Query']) ? $wp_query['WP_Query'] : null;
-            $this->CPT = isset($wp_query['CPT']) ? $wp_query['CPT'] : null;
+            $WP_Query = $wp_query['WP_Query'] ?? null;
+            $this->CPT = $wp_query['CPT'] ?? null;
         }
         // !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
         // here's the list of available filters in the WP_Query object
@@ -256,13 +256,13 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     * @param null $meta_value
-     * @param      $post_id
-     * @param      $meta_key
-     * @param      $single
-     * @return    string
+     * @param mixed $meta_value
+     * @param $post_id
+     * @param $meta_key
+     * @param $single
+     * @return mixed
      */
-    public function get_EE_post_type_metadata($meta_value = null, $post_id, $meta_key, $single)
+    public function get_EE_post_type_metadata($meta_value, $post_id, $meta_key, $single)
     {
         return $meta_value;
     }

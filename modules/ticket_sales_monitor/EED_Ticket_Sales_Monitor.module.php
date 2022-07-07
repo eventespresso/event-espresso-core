@@ -246,7 +246,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      * @throws UnexpectedEntityException
      * @throws EE_Error
      */
-    public static function validate_ticket_sale($qty = 1, EE_Ticket $ticket)
+    public static function validate_ticket_sale(int $qty, EE_Ticket $ticket)
     {
         $qty = absint($qty);
         if ($qty > 0) {
@@ -1006,7 +1006,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     protected static function release_reservations_for_tickets(
         array $tickets_with_reservations,
-        array $valid_reserved_ticket_line_items = array(),
+        array $valid_reserved_ticket_line_items,
         $source
     ) {
         $total_tickets_released = 0;
