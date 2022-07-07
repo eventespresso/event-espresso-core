@@ -404,9 +404,9 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function external_url(): string
+    public function external_url(): ?string
     {
-        return $this->get('EVT_external_URL');
+        return $this->get('EVT_external_URL') ?? '';
     }
 
 
@@ -1557,7 +1557,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function registrationFormUuid(): ?string
     {
-        return $this->get('FSC_UUID');
+        return $this->get('FSC_UUID') ?? '';
     }
 
 

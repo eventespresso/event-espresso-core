@@ -14,14 +14,17 @@ abstract class EE_Text_Field_Base extends EE_Model_Field_Base
      */
     public function prepare_for_get($value_of_field_on_model_object)
     {
+        if (empty($value_of_field_on_model_object)) {
+            return $this->is_nullable() ? $value_of_field_on_model_object : '';
+        }
         return $value_of_field_on_model_object;
     }
 
     /**
      * Accepts schema of 'form_input' which formats the string for echoing in form input's value.
      *
-     * @param string $value_on_field_to_be_outputted
-     * @param string $schema
+     * @param string      $value_on_field_to_be_outputted
+     * @param string|null $schema
      * @return string
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
