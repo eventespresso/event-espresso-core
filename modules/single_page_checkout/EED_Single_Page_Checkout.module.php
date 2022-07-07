@@ -1078,7 +1078,7 @@ class EED_Single_Page_Checkout extends EED_Module
                         ]
                     );
                     // override capabilities for frontend registrations
-                    if (! is_admin()) {
+                    if ($this->request->isFrontend()) {
                         $CreateRegistrationCommand->setCapCheck(
                             new PublicCapabilities('', 'create_new_registration')
                         );
