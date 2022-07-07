@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 
 use EE_Base_Class;
 use EventEspresso\core\domain\services\graphql\Utilities;
+use EventEspresso\core\services\graphql\ConnectionsManager;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
 use WPGraphQL\Data\Connection\AbstractConnectionResolver as WPGraphQLConnectionResolver;
@@ -18,9 +19,7 @@ use WPGraphQL\Data\Connection\AbstractConnectionResolver as WPGraphQLConnectionR
  */
 abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
 {
-
-    const MAX_QUERY_LIMIT = 500;
-
+    const MAX_QUERY_LIMIT = 250;
 
     /**
      * @var Utilities
@@ -69,36 +68,36 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
             : null;
 
         $limit = min(
-            max($first, $last, AbstractConnectionResolver::MAX_QUERY_LIMIT),
+            max($first, $last, self::MAX_QUERY_LIMIT),
             $this->query_amount
         );
         $limit++;
         return $limit;
     }
 
-    /**
-     * Get_amount_requested
-     *
-     * This checks the $args to determine the amount requested
-     *
-     * @return int|null
-     * @throws Exception
-     */
-    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_amount_requested(): ?int
-    {
-        $amount_requested = parent::get_amount_requested();
-
-        /**
-         * If both first & last are used in the input args, throw an exception as that won't
-         * work properly
-         */
-        if (empty($this->args['first']) && empty($this->args['last']) && $amount_requested === 10) {
-            return AbstractConnectionResolver::MAX_QUERY_LIMIT; // default.
-        }
-
-        return $amount_requested;
-    }
+    // /**
+    //  * Get_amount_requested
+    //  *
+    //  * This checks the $args to determine the amount requested
+    //  *
+    //  * @return int|null
+    //  * @throws Exception
+    //  */
+    // // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    // public function get_amount_requested(): ?int
+    // {
+    //     $amount_requested = parent::get_amount_requested();
+    //
+    //     /**
+    //      * If both first & last are used in the input args, throw an exception as that won't
+    //      * work properly
+    //      */
+    //     if (empty($this->args['first']) && empty($this->args['last']) && $amount_requested === ConnectionsManager::MAX_AMOUNT_REQUESTED) {
+    //         return ConnectionsManager::MAX_AMOUNT_REQUESTED; // default.
+    //     }
+    //
+    //     return $amount_requested;
+    // }
 
     /**
      * Determine whether or not the the offset is valid, i.e the entity corresponding to the

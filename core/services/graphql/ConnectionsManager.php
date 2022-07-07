@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\graphql;
 
-use EventEspresso\core\domain\services\graphql\connection_resolvers\AbstractConnectionResolver;
 use EventEspresso\core\services\collections\CollectionDetailsException;
 use EventEspresso\core\services\collections\CollectionLoaderException;
 use EventEspresso\core\services\graphql\connections\ConnectionCollection;
@@ -18,6 +17,11 @@ use EventEspresso\core\services\graphql\connections\ConnectionInterface;
  */
 class ConnectionsManager implements GQLManagerInterface
 {
+    const MAX_AMOUNT_REQUESTED = 250;
+
+    const MAX_QUERY_AMOUNT = 250;
+
+
     /**
      * @var ConnectionCollection|ConnectionInterface[] $connections
      */
@@ -44,8 +48,8 @@ class ConnectionsManager implements GQLManagerInterface
     {
         $this->connections->loadConnections();
         add_action('graphql_register_types', [$this, 'registerConnections'], 20);
-        add_filter('graphql_connection_amount_requested', [$this, 'setDefaultConnectionAmount']);
-        add_filter('graphql_connection_max_query_amount', [$this, 'setDefaultConnectionAmount']);
+        add_filter('graphql_connection_amount_requested', [$this, 'setMaxAmountRequested']);
+        add_filter('graphql_connection_max_query_amount', [$this, 'setMaxQueryAmount']);
     }
 
 
@@ -58,8 +62,13 @@ class ConnectionsManager implements GQLManagerInterface
     }
 
 
-    public function setDefaultConnectionAmount(): int
+    public function setMaxAmountRequested(): int
     {
-        return AbstractConnectionResolver::MAX_QUERY_LIMIT;
+        return ConnectionsManager::MAX_AMOUNT_REQUESTED;
+    }
+
+    public function setMaxQueryAmount(): int
+    {
+        return ConnectionsManager::MAX_QUERY_AMOUNT;
     }
 }
