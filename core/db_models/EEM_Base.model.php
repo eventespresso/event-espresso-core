@@ -1798,7 +1798,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         $model_query_info = $this->_create_model_query_info_carrier($query_params);
 
-        $SQL = "UPDATE {$model_query_info->get_full_join_sql()} 
+        $SQL = "UPDATE {$model_query_info->get_full_join_sql()}
                 SET {$this->_construct_update_sql($fields_n_values)}
                 {$model_query_info->get_where_sql()}";
         // note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
@@ -5482,13 +5482,16 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Given an array where keys are column (or column alias) names and values,
      * returns an array of their corresponding field names and database values
      *
-     * @param array|bool $cols_n_values
+     * @param array|stdClass $cols_n_values
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
     protected function _deduce_fields_n_values_from_cols_n_values($cols_n_values): array
     {
+        if ($cols_n_values instanceof stdClass) {
+            $cols_n_values = get_object_vars($cols_n_values);
+        }
         $this_model_fields_n_values = [];
         foreach ($this->get_tables() as $table_alias => $table_obj) {
             $table_pk_value = $this->_get_column_value_with_table_alias_or_not(
