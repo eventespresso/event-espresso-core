@@ -733,13 +733,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets start_date
      *
-     * @param string $date_format
-     * @param string $time_format
+     * @param string|null $date_format
+     * @param string|null $time_format
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function start_date($date_format = '', $time_format = '')
+    public function start_date(?string $date_format = '', ?string $time_format = ''): string
     {
         return $this->_get_datetime('TKT_start_date', $date_format, $time_format);
     }
@@ -762,13 +762,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets end_date
      *
-     * @param string $date_format
-     * @param string $time_format
+     * @param string|null $date_format
+     * @param string|null $time_format
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function end_date($date_format = '', $time_format = '')
+    public function end_date(?string $date_format = '', ?string $time_format = ''): string
     {
         return $this->_get_datetime('TKT_end_date', $date_format, $time_format);
     }
