@@ -1420,10 +1420,10 @@ class EE_UnitTestCase extends WP_UnitTestCase
         foreach ($ticket_args as $prop => $value) {
             switch ($prop) {
                 case 'TKT_start_date':
-                    $this->assertEquals($value, $ticket->start_date('U', null));
+                    $this->assertEquals($value, trim($ticket->start_date('U', null)));
                     break;
                 case 'TKT_end_date':
-                    $this->assertEquals($value, $ticket->end_date('U', null));
+                    $this->assertEquals($value, trim($ticket->end_date('U', null)));
                     break;
                 default:
                     $this->assertEquals($value, $ticket->get($prop));

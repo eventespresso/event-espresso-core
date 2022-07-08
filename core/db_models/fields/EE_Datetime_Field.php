@@ -212,8 +212,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
             default:
                 return $pretty
-                    ? $this->_pretty_date_format . ' ' . $this->_pretty_time_format
-                    : $this->_date_format . ' ' . $this->_time_format;
+                    ? trim($this->_pretty_date_format . ' ' . $this->_pretty_time_format)
+                    : trim($this->_date_format . ' ' . $this->_time_format);
         }
     }
 
