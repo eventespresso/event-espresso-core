@@ -118,6 +118,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
             $handler = $this->command_handlers[ $command_name ];
         } elseif (class_exists($command_handler)) {
             $handler = $this->loader->getShared($command_handler);
+            $this->addCommandHandler($handler, $command_name);
         }
         // if Handler requires an instance of the CommandBus, but that has not yet been set
         if ($handler instanceof CompositeCommandHandler && ! $handler->commandBus() instanceof CommandBusInterface) {

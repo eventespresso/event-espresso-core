@@ -4,7 +4,7 @@ use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\commands\attendee\CreateAttendeeCommand;
+use EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommand;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**

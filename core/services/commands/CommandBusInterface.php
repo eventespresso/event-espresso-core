@@ -15,7 +15,7 @@ interface CommandBusInterface
     public function getCommandHandlerManager();
 
     /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @param CommandInterface $command
      * @return mixed
      */
     public function execute($command);

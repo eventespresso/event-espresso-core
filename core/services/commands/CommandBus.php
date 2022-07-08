@@ -91,8 +91,9 @@ class CommandBus implements CommandBusInterface
                                ->verify($command)
                                ->handle($command);
         };
+        $command_bus_middleware_array = $this->command_bus_middleware;
         // now build the rest of the middleware stack
-        while ($command_bus_middleware = array_pop($this->command_bus_middleware)) {
+        while ($command_bus_middleware = array_pop($command_bus_middleware_array)) {
             if (! $command_bus_middleware instanceof CommandBusMiddlewareInterface) {
                 throw new InvalidCommandBusMiddlewareException($command_bus_middleware);
             }
