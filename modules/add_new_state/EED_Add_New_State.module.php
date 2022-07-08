@@ -390,9 +390,9 @@ class EED_Add_New_State extends EED_Module
                                 ),
                                 'html_class'            => $input->html_class() . ' new-state-abbrv',
                                 'html_label_text'       => esc_html__(
-                                    'New State/Province Abbreviation',
-                                    'event_espresso'
-                                ) . ' *',
+                                                               'New State/Province Abbreviation',
+                                                               'event_espresso'
+                                                           ) . ' *',
                                 'other_html_attributes' => 'size="24"',
                                 'default'               => $request->getRequestParam($abbrv_name),
                                 'required'              => false,
