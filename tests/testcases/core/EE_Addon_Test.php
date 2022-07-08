@@ -40,8 +40,8 @@ class EE_Addon_Test extends EE_UnitTestCase{
         $this->_table_manager = new \EventEspresso\core\services\database\TableManager( $this->_table_analysis );
 		parent::__construct($name, $data, $dataName);
 	}
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		//let's just make a generic addon, but not bother registering it
         $loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
         require_once dirname($this->_main_file_path) . '/EE_New_Addon.class.php';
@@ -60,10 +60,10 @@ class EE_Addon_Test extends EE_UnitTestCase{
 		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array( $this, 'dont_short_circuit_new_addon_table' ), 20, 3 );
 	}
 
-	public function tearDown(){
+	public function tear_down(){
         //drop all the temporary tables we created during this test, because each subsequent test expects them to be gone
         $this->_table_manager->dropTables( $this->_temp_tables_added_by_addon );
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

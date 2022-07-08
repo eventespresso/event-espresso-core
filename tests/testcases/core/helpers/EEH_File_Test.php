@@ -17,9 +17,9 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EEH_File_Test extends EE_UnitTestCase
 {
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         add_filter('filesystem_method_file', array($this, 'filter_abstraction_file'));
         add_filter('filesystem_method', array($this, 'filter_fs_method'));
         add_filter('FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct', '__return_false');
@@ -28,7 +28,7 @@ class EEH_File_Test extends EE_UnitTestCase
         $wp_filesystem->init('/');
     }
 
-    public function tearDown()
+    public function tear_down()
     {
         remove_action('wp_footer', array('EE_Error', 'enqueue_error_scripts'), 1);
         // restore to using the normal WP filesystem
@@ -36,7 +36,7 @@ class EEH_File_Test extends EE_UnitTestCase
         remove_filter('filesystem_method_file', array($this, 'filter_abstraction_file'));
         remove_filter('filesystem_method', array($this, 'filter_fs_method'));
 
-        parent::tearDown();
+        parent::tear_down();
     }
 
     public function filter_fs_method($method)

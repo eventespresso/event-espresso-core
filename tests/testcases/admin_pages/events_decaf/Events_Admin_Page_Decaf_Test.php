@@ -42,16 +42,16 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 
 
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->delayedAdminPageMocks( 'decaf_events' );
         $this->setupRequest();
         $this->useAdvancedEditor= EE_Registry::instance()->CFG->admin->useAdvancedEditor();
         EE_Registry::instance()->CFG->admin->setUseAdvancedEditor(false);
 	}
 
-	public function tearDown() {
-		parent::tearDown();
+	public function tear_down() {
+		parent::tear_down();
         EE_Registry::instance()->CFG->admin->setUseAdvancedEditor($this->useAdvancedEditor);
 	}
 

@@ -70,8 +70,8 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 	/**
 	 * setUp
 	 */
-	public function setUp(){
-		parent::setUp();
+	public function set_up(){
+		parent::set_up();
 		//EEG_Paypal_Pro uses $_SERVER at some point, so we need to pretend this is a regular request
 		$this->go_to( 'http://localhost/' );
 		//just set a random address

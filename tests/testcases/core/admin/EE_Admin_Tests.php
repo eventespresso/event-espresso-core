@@ -24,9 +24,9 @@ class EE_Admin_Tests extends EE_UnitTestCase {
     public $admin;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->loader->getShared('EE_Admin');
         $this->setupRequest();
         $this->admin = EE_Admin::reset();
@@ -232,7 +232,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		$generated_items = EE_Admin::instance()->dashboard_glance_items( array() );
 		//first assert the elements are an array.
-		$this->assertInternalType('array', $generated_items);
+		$this->assertIsArray($generated_items);
 
 		//assert the count for the array is two
 		$this->assertCount(
@@ -288,9 +288,9 @@ class EE_Admin_Tests extends EE_UnitTestCase {
         set_current_screen('user-new');
 		$actual = EE_Admin::instance()->espresso_admin_footer();
 		//assert contains powered by text.
-		$this->assertContains('Online event registration and ticketing powered by ', $actual);
+		$this->assertStringContainsString('Online event registration and ticketing powered by ', $actual);
 		//assert contains eventespresso.com link
-		$this->assertContains('https://eventespresso.com/', $actual);
+		$this->assertStringContainsString('https://eventespresso.com/', $actual);
 		global $current_screen;
 		$current_screen = null;
 	}

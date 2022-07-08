@@ -701,24 +701,22 @@ abstract class EE_Base_Class
         if (! isset($this->_fields[ $fieldname ])) {
             $this->_fields[ $fieldname ] = null;
         }
-        $value = $pretty
+        return $pretty
             ? $field_obj->prepare_for_pretty_echoing($this->_fields[ $fieldname ], $extra_cache_ref)
             : $field_obj->prepare_for_get($this->_fields[ $fieldname ]);
-        return $value;
     }
 
 
     /**
      * set timezone, formats, and output for EE_Datetime_Field objects
      *
-     * @param \EE_Datetime_Field $datetime_field
-     * @param bool               $pretty
-     * @param null               $date_or_time
+     * @param EE_Datetime_Field $datetime_field
+     * @param bool              $pretty
+     * @param null              $date_or_time
      * @return void
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
-     * @throws EE_Error
      */
     protected function _prepare_datetime_field(
         EE_Datetime_Field $datetime_field,
@@ -1321,28 +1319,30 @@ abstract class EE_Base_Class
      * (and the equivalent e_date, e_time, e_datetime).
      *
      * @access   protected
-     * @param string   $field_name   Field on the instantiated EE_Base_Class child object
-     * @param string   $dt_frmt      valid datetime format used for date
-     *                               (if '' then we just use the default on the field,
-     *                               if NULL we use the last-used format)
-     * @param string   $tm_frmt      Same as above except this is for time format
-     * @param string   $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time.
-     * @param  boolean $echo         Whether the dtt is echoing using pretty echoing or just returned using vanilla get
+     * @param string      $field_name   Field on the instantiated EE_Base_Class child object
+     * @param string|null $date_format  valid datetime format used for date
+     *                                  (if '' then we just use the default on the field,
+     *                                  if NULL we use the last-used format)
+     * @param string|null $time_format  Same as above except this is for time format
+     * @param string|null $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time.
+     * @param bool|null   $echo         Whether the datetime is pretty echoing or just returned using vanilla get
      * @return string|bool|EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown
-     *                               if field is not a valid dtt field, or void if echoing
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
+     *                                  if field is not a valid dtt field, or void if echoing
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _get_datetime($field_name, $dt_frmt = '', $tm_frmt = '', $date_or_time = '', $echo = false)
-    {
+    protected function _get_datetime(
+        string $field_name,
+        ?string $date_format = '',
+        ?string $time_format = '',
+        ?string $date_or_time = '',
+        ?bool $echo = false
+    ) {
         // clear cached property
         $this->_clear_cached_property($field_name);
         // reset format properties because they are used in get()
-        $this->_dt_frmt = $dt_frmt !== '' ? $dt_frmt : $this->_dt_frmt;
-        $this->_tm_frmt = $tm_frmt !== '' ? $tm_frmt : $this->_tm_frmt;
+        $this->_dt_frmt = $date_format !== '' ? $date_format : $this->_dt_frmt;
+        $this->_tm_frmt = $time_format !== '' ? $time_format : $this->_tm_frmt;
         if ($echo) {
             $this->e($field_name, $date_or_time);
             return '';
@@ -1565,12 +1565,12 @@ abstract class EE_Base_Class
 
     /**
      * This takes care of setting a date or time independently on a given model object property. This method also
-     * verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
+     * verifies that the given field_name matches a model object property and is for a EE_Datetime_Field field
      *
      * @access protected
      * @param string          $what           "T" for time, 'B' for both, 'D' for Date.
      * @param string|DateTime $datetime_value A valid Date or Time string (or DateTime object)
-     * @param string          $fieldname      the name of the field the date OR time is being set on (must match a
+     * @param string          $field_name     the name of the field the date OR time is being set on (must match a
      *                                        EE_Datetime_Field property)
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1578,33 +1578,33 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    protected function _set_date_time($what = 'T', $datetime_value, $fieldname)
+    protected function _set_date_time(string $what, $datetime_value, string $field_name)
     {
-        $field = $this->_get_dtt_field_settings($fieldname);
+        $field = $this->_get_dtt_field_settings($field_name);
         $field->set_timezone($this->_timezone);
         $field->set_date_format($this->_dt_frmt);
         $field->set_time_format($this->_tm_frmt);
         switch ($what) {
             case 'T':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set_with_new_time(
+                $this->_fields[ $field_name ] = $field->prepare_for_set_with_new_time(
                     $datetime_value,
-                    $this->_fields[ $fieldname ]
+                    $this->_fields[ $field_name ]
                 );
                 $this->_has_changes = true;
                 break;
             case 'D':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set_with_new_date(
+                $this->_fields[ $field_name ] = $field->prepare_for_set_with_new_date(
                     $datetime_value,
-                    $this->_fields[ $fieldname ]
+                    $this->_fields[ $field_name ]
                 );
                 $this->_has_changes = true;
                 break;
             case 'B':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set($datetime_value);
+                $this->_fields[ $field_name ] = $field->prepare_for_set($datetime_value);
                 $this->_has_changes = true;
                 break;
         }
-        $this->_clear_cached_property($fieldname);
+        $this->_clear_cached_property($field_name);
     }
 
 

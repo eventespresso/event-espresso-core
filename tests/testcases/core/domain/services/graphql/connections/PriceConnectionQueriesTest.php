@@ -12,11 +12,11 @@ use GraphQLRelay\Relay;
  */
 class PriceConnectionQueriesTest extends BaseQueriesTest
 {
-    public function setUp()
+    public function set_up()
     {
         $this->model_name = 'Price';
         $this->model = EEM_Price::instance();
-        parent::setUp();
+        parent::set_up();
     }
 
     public function pricesQuery($variables)

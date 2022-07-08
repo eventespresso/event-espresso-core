@@ -20,18 +20,18 @@ class EE_Infinite_Integer_Field_Test extends EE_UnitTestCase
      */
     protected $_field;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_field = EEM_Ticket::instance()->field_settings_for('TKT_qty');
         $this->assertInstanceOf('EE_Infinite_Integer_Field', $this->_field);
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         $this->_field = null;
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

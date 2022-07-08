@@ -173,6 +173,9 @@ class EEM_Term extends EEM_Base
                 'limit' => 2
             )
         );
+        if (! $post_tag_results) {
+            return null;
+        }
 
         $post_types = array();
         foreach ((array) $post_tag_results as $row) {

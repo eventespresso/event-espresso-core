@@ -39,7 +39,7 @@ class EspressoPHPUnitFrameworkTestCase extends TestCase
     }
 
 
-    public function setUp()
+    public function setUp(): void
     {
         // echo "\n\n" . strtoupper($this->getName()) . '()';
         parent::setUp();
@@ -47,7 +47,7 @@ class EspressoPHPUnitFrameworkTestCase extends TestCase
     }
 
 
-    public function tearDown()
+    public function tearDown(): void
     {
         if ($this->request instanceof RequestMock && ! $this->request->requestTypeIsSet()) {
             $this->request->setRequestType(RequestTypeContext::ADMIN);

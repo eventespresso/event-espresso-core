@@ -51,7 +51,7 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
      * @throws InvalidArgumentException
      * @since 4.9.71.p
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->loader = LoaderFactory::getLoader();
         $this->request_params = [

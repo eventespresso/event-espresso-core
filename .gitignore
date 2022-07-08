@@ -18,3 +18,4 @@ languages/
 
 # temporary
 #/assets/dist/
+tests/.phpunit.result.cache

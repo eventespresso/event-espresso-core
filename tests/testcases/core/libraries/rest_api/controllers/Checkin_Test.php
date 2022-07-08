@@ -21,9 +21,9 @@ class Checkin_Test extends EE_UnitTestCase
      * @throws Exception
      * @since $VID:$
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         if (! class_exists('WP_Rest_Request')) {
             $this->markTestSkipped(
                 'Test being run on a version of WP that does not have the REST framework installed'
@@ -40,10 +40,10 @@ class Checkin_Test extends EE_UnitTestCase
      *
      * @since $VID:$
      */
-    public function tearDown()
+    public function tear_down()
     {
         EE_Error::reset_notices();
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

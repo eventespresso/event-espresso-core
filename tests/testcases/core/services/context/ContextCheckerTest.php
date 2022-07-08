@@ -27,9 +27,9 @@ class ContextCheckerTest extends EE_UnitTestCase
     private $acceptable_values = array('context-one', 'context-two');
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->context_checker = new ContextCheckerMock(
             'This-is-a-Test',
             $this->acceptable_values

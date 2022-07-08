@@ -2,13 +2,15 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections;
 
+use EE_Error;
+use EEM_Base;
 use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
+use ReflectionException;
 use WPGraphQL\AppContext;
 use WPGraphQL;
 
-class BaseQueriesTest extends GraphQLUnitTestCase
+abstract class BaseQueriesTest extends GraphQLUnitTestCase
 {
-
     /**
      * @var EEM_Base $model
      */
@@ -19,9 +21,19 @@ class BaseQueriesTest extends GraphQLUnitTestCase
     public $admin;
     public $subscriber;
 
-    public function setUp()
+    /**
+     * @var   AppContext
+     */
+    protected $app_context;
+
+
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         if (!$this->model_name) {
             return;
         }
@@ -43,16 +55,17 @@ class BaseQueriesTest extends GraphQLUnitTestCase
         $this->app_context = new AppContext();
     }
 
+
     /**
      * Creates several entities for use in cursor query tests
      *
-     * @param  int $count Number of entities to create.
-     *
+     * @param int $count Number of entities to create.
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function create_entities($count = 20)
+    public function create_entities(int $count = 20): array
     {
-
         // Create entities
         $created_entities = [];
         for ($i = 1; $i <= $count; $i ++) {

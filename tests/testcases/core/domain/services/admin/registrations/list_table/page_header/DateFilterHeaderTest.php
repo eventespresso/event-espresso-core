@@ -41,7 +41,7 @@ class DateFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @since 4.10.2.p
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->setUpDatetime();
     }

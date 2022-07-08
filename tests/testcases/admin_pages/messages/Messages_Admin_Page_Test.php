@@ -21,8 +21,8 @@ class Messages_Admin_Page_Test extends EE_UnitTestCase {
 	protected $_MessageResourceManager;
 
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->delayedAdminPageMocks( 'messages' );
 		$this->_load_requirements();
 	}

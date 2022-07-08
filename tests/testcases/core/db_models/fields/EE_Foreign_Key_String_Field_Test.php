@@ -20,18 +20,18 @@ class EE_Foreign_Key_String_Field_Test extends EE_UnitTestCase
      */
     protected $_field;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_field = EEM_Attendee::instance()->field_settings_for('CNT_ISO');
         $this->assertInstanceOf('EE_Foreign_Key_String_Field', $this->_field);
     }
 
 
-    public function tearDown()
+    public function tear_down()
     {
         $this->_field = null;
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

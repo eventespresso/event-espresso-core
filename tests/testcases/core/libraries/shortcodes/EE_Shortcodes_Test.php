@@ -17,9 +17,9 @@ class EE_Shortcodes_Test extends EE_UnitTestCase
     protected $shortcode_mock;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         require_once EE_TESTS_DIR . 'mocks/core/libraries/shortcodes/EE_Shortcodes_Mock.php';
         $this->shortcode_mock = new EE_Shortcodes_Mock;
     }

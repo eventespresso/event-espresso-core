@@ -148,18 +148,18 @@ class EEH_Line_Item
      * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
      * after using this, to keep the registration final prices in-sync with the transaction's total.
      *
-     * @param EE_Line_Item $total_line_item grand total line item of type EEM_Line_Item::type_total
-     * @param EE_Ticket    $ticket
-     * @param int          $qty
+     * @param EE_Line_Item|null $total_line_item grand total line item of type EEM_Line_Item::type_total
+     * @param EE_Ticket         $ticket
+     * @param int               $qty
      * @return EE_Line_Item
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function add_ticket_purchase(EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1)
-    {
+    public static function add_ticket_purchase(
+        ?EE_Line_Item $total_line_item,
+        EE_Ticket $ticket,
+        int $qty = 1
+    ): ?EE_Line_Item {
         if (! $total_line_item instanceof EE_Line_Item || ! $total_line_item->is_total()) {
             throw new EE_Error(
                 sprintf(
@@ -204,7 +204,7 @@ class EEH_Line_Item
         $line_item = null;
         if ($total_line_item instanceof EE_Line_Item && $total_line_item->is_total()) {
             $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
-            foreach ((array) $ticket_line_items as $ticket_line_item) {
+            foreach ($ticket_line_items as $ticket_line_item) {
                 if (
                     $ticket_line_item instanceof EE_Line_Item
                     && (int) $ticket_line_item->OBJ_ID() === (int) $ticket->ID()

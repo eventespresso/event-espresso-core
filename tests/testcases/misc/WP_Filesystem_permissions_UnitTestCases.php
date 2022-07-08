@@ -1,7 +1,6 @@
 <?php
 
 
-
 /**
  * permissions
  *
@@ -12,39 +11,34 @@
  */
 class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
 {
-
-    function setUp()
+    function set_up()
     {
-        add_filter('filesystem_method_file', array($this, 'filter_abstraction_file'));
-        add_filter('filesystem_method', array($this, 'filter_fs_method'));
+        add_filter('filesystem_method_file', [$this, 'filter_abstraction_file']);
+        add_filter('filesystem_method', [$this, 'filter_fs_method']);
         WP_Filesystem();
     }
 
 
-
-    function tearDown()
+    function tear_down()
     {
         global $wp_filesystem;
-        remove_filter('filesystem_method_file', array($this, 'filter_abstraction_file'));
-        remove_filter('filesystem_method', array($this, 'filter_fs_method'));
+        remove_filter('filesystem_method_file', [$this, 'filter_abstraction_file']);
+        remove_filter('filesystem_method', [$this, 'filter_fs_method']);
         unset($wp_filesystem);
-        parent::tearDown();
+        parent::tear_down();
     }
 
 
-
-    function filter_fs_method($method)
+    function filter_fs_method($method): string
     {
         return 'MockEEFS';
     }
 
 
-
-    function filter_abstraction_file($file)
+    function filter_abstraction_file($file): string
     {
-        return dirname(dirname(dirname(__FILE__))) . '/includes/mock-ee-fs.php';
+        return dirname(__FILE__, 3) . '/includes/mock-ee-fs.php';
     }
-
 
 
     function test_is_MockFS_sane()
@@ -62,7 +56,6 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
     }
 
 
-
     function test_mkdir()
     {
         global $wp_filesystem;
@@ -74,7 +67,6 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
         $this->assertEquals(WP_Filesystem_MockFS_default_owner, $wp_filesystem->owner($folder_path));
         $this->assertEquals(WP_Filesystem_MockFS_default_group, $wp_filesystem->group($folder_path));
     }
-
 
 
     function test_chmod()
@@ -89,7 +81,6 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
     }
 
 
-
     function test_chown()
     {
         global $wp_filesystem;
@@ -102,7 +93,6 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
     }
 
 
-
     function test_chgroup()
     {
         global $wp_filesystem;
@@ -110,10 +100,9 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
         $folder_path = '/test/';
         $wp_filesystem->mkdir($folder_path);
         $this->assertEquals(WP_Filesystem_MockFS_default_group, $wp_filesystem->group($folder_path));
-        $success = $wp_filesystem->chgrp($folder_path, 'globe-trotters');
+        $wp_filesystem->chgrp($folder_path, 'globe-trotters');
         $this->assertEquals('globe-trotters', $wp_filesystem->group($folder_path));
     }
-
 
 
     function test_is_readable()
@@ -125,7 +114,8 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
         $this->assertEquals(WP_Filesystem_MockFS_default_perms, $wp_filesystem->getchmod($folder_path));
         $this->assertTrue($wp_filesystem->is_readable($folder_path));
         //switch to another user, although they should be able to read it too
-        $other_user_same_group = $wp_filesystem->add_system_user('other_user_same_group', WP_Filesystem_MockFS_default_group);
+        $other_user_same_group  =
+            $wp_filesystem->add_system_user('other_user_same_group', WP_Filesystem_MockFS_default_group);
         $other_user_other_group = $wp_filesystem->add_system_user('other_user_other_group', 'other_group');
         $wp_filesystem->change_current_system_user($other_user_other_group->username);
         $this->assertTrue($wp_filesystem->is_readable($folder_path));
@@ -137,11 +127,10 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
         //and now check the user in the same group can still read...
         $wp_filesystem->change_current_system_user($other_user_same_group->username);
         $this->assertTrue($wp_filesystem->is_readable($folder_path));
-        //..bu tthe user in a differeng group can't
+        //..bu the user in a different group can't
         $wp_filesystem->change_current_system_user($other_user_other_group->username);
         $this->assertFalse($wp_filesystem->is_readable($folder_path));
     }
-
 
 
     function test_is_writable()
@@ -153,7 +142,8 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
         $this->assertEquals(WP_Filesystem_MockFS_default_perms, $wp_filesystem->getchmod($folder_path));
         $this->assertTrue($wp_filesystem->is_writable($folder_path));
         //switch to another user, although they should be able to write it too
-        $other_user_same_group = $wp_filesystem->add_system_user('other_user_same_group', WP_Filesystem_MockFS_default_group);
+        $other_user_same_group  =
+            $wp_filesystem->add_system_user('other_user_same_group', WP_Filesystem_MockFS_default_group);
         $other_user_other_group = $wp_filesystem->add_system_user('other_user_other_group', 'other_group');
         $wp_filesystem->change_current_system_user($other_user_other_group->username);
         $this->assertTrue($wp_filesystem->is_writable($folder_path));
@@ -165,11 +155,8 @@ class WP_Filesystem_permissions_UnitTestCases extends WP_UnitTestCase
         //and now check the user in the same group can still write...
         $wp_filesystem->change_current_system_user($other_user_same_group->username);
         $this->assertTrue($wp_filesystem->is_writable($folder_path));
-        //..bu tthe user in a differeng group can't
+        //..bu the user in a different group can't
         $wp_filesystem->change_current_system_user($other_user_other_group->username);
         $this->assertFalse($wp_filesystem->is_writable($folder_path));
     }
-
 }
-
-

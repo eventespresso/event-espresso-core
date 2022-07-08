@@ -541,8 +541,8 @@ class EE_Html_messenger extends EE_messenger
      * @return string
      */
     public function add_powered_by_credit_link_to_receipt_and_invoice(
-        $content = '',
-        $content_again = '',
+        $content,
+        $content_again,
         EE_message_type $incoming_message_type
     ) {
         if (

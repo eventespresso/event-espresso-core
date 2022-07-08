@@ -26,15 +26,15 @@ class EEH_MSG_Template_Test extends EE_UnitTestCase {
 
 
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		$this->assertInstanceOf( 'EE_Message_Resource_Manager', $this->_message_resource_manager );
 	}
 
 
-	public function tearDown() {
-		parent::tearDown();
+	public function tear_down() {
+		parent::tear_down();
 		$this->_message_resource_manager = null;
 	}
 

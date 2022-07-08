@@ -408,7 +408,7 @@ final class EE_Config implements ResettableInterface
      * @param        $old_value
      * @param        $value
      */
-    public function double_check_config_comparison($option = '', $old_value, $value)
+    public function double_check_config_comparison($option, $old_value, $value)
     {
         // make sure we're checking the ee config
         if ($option === EE_Config::OPTION_NAME) {

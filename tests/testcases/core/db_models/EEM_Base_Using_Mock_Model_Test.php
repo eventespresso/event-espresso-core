@@ -15,9 +15,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
 {
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_stop_pretending_addon_hook_time();
         $this->_pretend_addon_hook_time();
         $this->assertArrayDoesNotContain('EEM_Mock', EE_Registry::instance()->non_abstract_db_models);
@@ -150,14 +150,14 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
 
 
 
-    public function tearDown()
+    public function tear_down()
     {
         EE_Register_Model::deregister('Mock');
         EE_System::instance()->load_core_configuration();
         $this->assertArrayDoesNotContain('EEM_Mock', EE_Registry::instance()->non_abstract_db_models);
         $this->assertArrayDoesNotContain('EEM_Mock', EE_Registry::instance()->models);
         $this->_stop_pretending_addon_hook_time();
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

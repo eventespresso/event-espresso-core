@@ -20,9 +20,9 @@ class DatetimeOffsetFixTest extends EE_UnitTestCase
     protected $datetime_offset_fix_mock;
 
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->datetime_offset_fix_mock = new DatetimeOffsetFixMock();
     }
 

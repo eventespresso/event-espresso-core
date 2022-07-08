@@ -36,9 +36,9 @@ class RequestStackBuilderTest extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->request_stack_builder = $this->loader->getShared(
             'EventEspresso\tests\mocks\core\services\request\RequestStackBuilderMock',
             [$this->loader]
@@ -220,7 +220,11 @@ class RequestStackBuilderTest extends EE_UnitTestCase
         $this->assertCount(1, $notices['attention']);
         $this->assertEquals('General Kenobi!', $notices['attention'][0]);
         $this->assertCount(1, $notices['errors']);
-        $this->assertEquals('Back away! I will deal with this Jedi slime myself!', $notices['errors'][0]);
+        $this->assertEquals(
+            'Back away! I will deal with this Jedi slime myself!',
+            $notices['errors'][0],
+            'notices array: ' . var_export($notices, true)
+        );
         $request_stack->handleResponse();
         $notices = $this->getNotices();
         $this->assertCount(2, $notices['success']);

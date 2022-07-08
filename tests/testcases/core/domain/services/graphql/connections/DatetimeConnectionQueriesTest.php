@@ -11,10 +11,10 @@ use GraphQLRelay\Connection\ArrayConnection;
  */
 class DatetimeConnectionQueriesTest extends BaseQueriesTest
 {
-    public function setUp()
+    public function set_up()
     {
         $this->model_name = 'Datetime';
-        parent::setUp();
+        parent::set_up();
 
         $this->model = EEM_Datetime::instance();
     }

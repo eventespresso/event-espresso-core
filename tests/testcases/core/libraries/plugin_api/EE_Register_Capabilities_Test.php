@@ -37,11 +37,11 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
      */
     protected $_meta_caps_before_registering_new_ones = array();
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $capabilities_array                         = array(
-            'administrator' => array(
+            EE_Capabilities::ROLE_ADMINISTRATOR => array(
                 'test_reads',
                 'test_writes',
                 'test_others_read',
@@ -100,10 +100,10 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
         $user_id     = $this->factory->user->create();
         $this->_user = $this->factory->user->get_object_by_id($user_id);
         //give user administrator role for test!
-        $this->_user->add_role('administrator');
+        $this->_user->add_role(EE_Capabilities::ROLE_ADMINISTRATOR);
 
         //verify administrator role set
-        $this->assertTrue(user_can($this->_user, 'administrator'));
+        $this->assertTrue(user_can($this->_user, EE_Capabilities::ROLE_ADMINISTRATOR));
     }
 
 
@@ -130,16 +130,23 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
         //remove filters that were added to prevent pollution in other tests
         $this->_remove_test_helper_filters();
         //validate caps were registered and init saved.
-        $admin_caps_init = EE_Capabilities::instance()->get_ee_capabilities('administrator');
+        $admin_caps_init = EE_Capabilities::instance()->get_ee_capabilities(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertArrayContains('test_reads', $admin_caps_init);
 
         //verify new caps are in the role
-        $role = get_role('administrator');
-        $this->assertContains($this->_valid_capabilities['capabilities']['administrator'], $role->capabilities);
+        $role = get_role(EE_Capabilities::ROLE_ADMINISTRATOR);
+        foreach ($this->_valid_capabilities['capabilities'][ EE_Capabilities::ROLE_ADMINISTRATOR ] as $capability) {
+            $this->assertArrayHasKey($capability, $role->capabilities);
+        }
 
         //make sure we didn't erase the existing capabilities (@see https://events.codebasehq.com/projects/event-espresso/tickets/6700)
-        $this->assertContains(array('ee_read_ee', 'ee_read_events'), $role->capabilities,
-            'Looks like registering capabilities is overwriting default capabilites, that will cause problems');
+        $this->assertTrue(
+            ! array_diff(
+                ['ee_read_ee' => true, 'ee_read_events' => true],
+                $role->capabilities
+            ),
+            'Looks like registering capabilities is overwriting default capabilites, that will cause problems'
+        );
 
         //setup user
         $this->setupUser();
@@ -229,8 +236,8 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
      */
     public function _verify_new_cap_map_ok_after_deregister($incoming_cap_map)
     {
-        $this->assertNotContains($this->_valid_capabilities['capabilities']['administrator'],
-            $incoming_cap_map['administrator']);
+        $this->assertNotContains($this->_valid_capabilities['capabilities'][EE_Capabilities::ROLE_ADMINISTRATOR],
+            $incoming_cap_map[EE_Capabilities::ROLE_ADMINISTRATOR]);
         return $incoming_cap_map;
     }
 
@@ -400,9 +407,9 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
             array($this, '_verify_new_meta_cap_ok_after_deregister'), 200);
     }
 
-    public function tearDown()
+    public function tear_down()
     {
         EE_Register_Capabilities::deregister('Test_Capabilities');
-        parent::tearDown();
+        parent::tear_down();
     }
 }

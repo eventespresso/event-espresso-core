@@ -75,7 +75,7 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 	 * @since 4.3.0
 	 * @param int $PRT_ID EE_Price_Type ID
 	 */
-	private function _set_new_price_type( $PRT_ID = 0, $args ) {
+	private function _set_new_price_type( $PRT_ID = 0, $args = array() ) {
 		$this->_price_type = empty( $PRT_ID ) ? EEM_Price_Type::instance()->get_one_by_ID( $PRT_ID ) : $this->_create_price_type( $args );
 		//fail safe just in case (so we can be sure to have an price_type).
 		if ( empty( $this->_price_type ) ) {

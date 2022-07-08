@@ -21,8 +21,9 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
     protected $_strategy;
 
 
-    public function setUp(){
-        parent::setUp();
+    public function set_up()
+{
+        parent::set_up();
         $this->_strategy = new EE_Int_Normalization();
         $input = new EE_Text_Input();
         $this->_strategy->_construct_finalize( $input );
@@ -91,11 +92,11 @@ class EE_Int_Normalization_Test extends EE_UnitTestCase{
     /**
      * @group        10586
      * @dataProvider bad_int_inputs
-     * @expectedException EE_Validation_Error
      * @param $input
      * @throws EE_Validation_Error
      */
     public function test_bad_float_inputs($input){
+        $this->setExceptionExpected('EE_Validation_Error');
         $this->_strategy->normalize( $input );
     }
 }

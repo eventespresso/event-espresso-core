@@ -22,18 +22,19 @@ use WPGraphQL\Router;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class GraphQLUnitTestCase extends EE_UnitTestCase
+abstract class GraphQLUnitTestCase extends EE_UnitTestCase
 {
 
     /**
+     * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @since $VID:$
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         if (PHP_VERSION_ID < 70100) {
             $this->markTestSkipped('WP GraphQL compatible with PHP 7+ only');
         }

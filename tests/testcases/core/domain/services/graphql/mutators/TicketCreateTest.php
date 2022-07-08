@@ -7,11 +7,11 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
  */
 class TicketCreateTest extends BaseMutationTest
 {
-    public function setUp()
+    public function set_up()
     {
         $this->model_name = 'Ticket';
         // before
-        parent::setUp();
+        parent::set_up();
     }
 
     /**
