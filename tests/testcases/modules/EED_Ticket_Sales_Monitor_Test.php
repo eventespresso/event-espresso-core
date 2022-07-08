@@ -39,12 +39,15 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
      */
-    protected function setup_cart_and_get_ticket_line_item($ticket_count = 1, $expired = false)
-    {
+    protected function setup_cart_and_get_ticket_line_item(
+        int $ticket_count = 1,
+        bool $expired = false,
+        ?array $ticket_args = []
+    ): EE_Line_Item {
         $total_line_item = EEH_Line_Item::create_total_line_item();
         $total_line_item->set('TXN_ID', 0);
         $this->assertEquals(0, $total_line_item->total());
-        $ticket = $this->new_ticket();
+        $ticket = $this->new_ticket($ticket_args);
         $ticket_line_item = EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket, $ticket_count);
         $this->assertInstanceOf('EE_Line_Item', $ticket_line_item);
         $this->assertEquals($ticket_count, $ticket_line_item->quantity());
@@ -77,9 +80,9 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function fake_expired_cart(EE_Line_Item $line_item, $timestamp = 0)
+    protected function fake_expired_cart(EE_Line_Item $line_item, int $timestamp = 0)
     {
-        $line_item->set('LIN_timestamp', $timestamp);
+        $line_item->setTimestamp($timestamp);
         $children = $line_item->children();
         foreach ($children as $child_line_item) {
             if ($child_line_item instanceof EE_Line_Item) {
@@ -98,8 +101,9 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws \PHPUnit\Framework\Exception
+     * @throws ReflectionException
      */
-    protected function confirm_ticket_line_item_counts($ticket_count = 1, $line_item_count = 1)
+    protected function confirm_ticket_line_item_counts(int $ticket_count = 1, int $line_item_count = 1)
     {
         $ticket_line_items = EEM_Line_Item::instance()->get_all(array(array('OBJ_type' => 'Ticket')));
         $this->assertCount(
@@ -142,7 +146,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @throws UnexpectedEntityException
      * @throws \PHPUnit\Framework\Exception
      */
-    protected function setup_and_validate_tickets_for_carts(array $cart_details)
+    protected function setup_and_validate_tickets_for_carts(array $cart_details): array
     {
         $cart_count = 0;
         $total_ticket_count = 0;
@@ -152,7 +156,8 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
             // simulate a couple of tickets that were added to the cart in the past
             $ticket_line_item = $this->setup_cart_and_get_ticket_line_item(
                 $details['ticket_count'],
-                $details['expired']
+                $details['expired'],
+                $details['ticket_args'] ?? []
             );
             // get ticket from line item
             $ticket = $ticket_line_item->ticket();
@@ -184,6 +189,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      *
      * @param array $cart_details
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function process_cart_results(array $cart_details)
     {
@@ -221,10 +227,12 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
                 'expired cart' => array(
                     'ticket_count' => 2,
                     'expired' => true,
+                    'ticket_args' => ['TKT_reserved' => 2],
                 ),
                 'valid cart' => array(
                     'ticket_count' => 2,
                     'expired' => false,
+                    'ticket_args' => ['TKT_reserved' => 2],
                 ),
             )
         );
@@ -250,10 +258,12 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
                 'first cart' => array(
                     'ticket_count' => 4,
                     'expired'      => false,
+                    'ticket_args' => ['TKT_reserved' => 4]
                 ),
                 'second cart'   => array(
                     'ticket_count' => 2,
                     'expired'      => false,
+                    'ticket_args' => ['TKT_reserved' => 2]
                 ),
             )
         );
@@ -561,12 +571,14 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
         $this->assertEquals(1, $new_transaction->primary_registration()->ticket()->reserved());
     }
 
+
     /**
      * Try to release reservations for the ticket, but there is a valid reservation for it.
-     * @since 4.10.4.p
+     *
      * @throws DomainException
      * @throws EE_Error
-     * @throws UnexpectedEntityException
+     * @throws UnexpectedEntityException*@throws ReflectionException
+     * @since 4.10.4.p
      */
     public function testReleaseReservationForTicketsAllValid()
     {
@@ -643,7 +655,6 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
             $t3->reserved()
         );
     }
-
 }
 // End of file EED_Ticket_Sales_Monitor_Test.php
 // Location: /tests/testcases/modules/EED_Ticket_Sales_Monitor_Test.php

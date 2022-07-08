@@ -1297,6 +1297,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function new_ticket(array $options = []): EE_Ticket
     {
+        // echo "\n\noptions\n";
+        // var_export($options);
         // copy incoming options to use for ticket args
         $ticket_args = $options;
         // make sure ticket price is set or use default of 16.50
@@ -1414,6 +1416,21 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 $this->assertArrayContains($ddt, $ticket->datetimes());
             }
         }
+
+        foreach ($ticket_args as $prop => $value) {
+            switch ($prop) {
+                case 'TKT_start_date':
+                    $this->assertEquals($value, $ticket->start_date('U', null));
+                    break;
+                case 'TKT_end_date':
+                    $this->assertEquals($value, $ticket->end_date('U', null));
+                    break;
+                default:
+                    $this->assertEquals($value, $ticket->get($prop));
+            }
+        }
+        // echo "\n\nticket_args\n";
+        // var_export($ticket_args);
 
         //resave ticket to account for possible field value changes
         $ticket->save();
