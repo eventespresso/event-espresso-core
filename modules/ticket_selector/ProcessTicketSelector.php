@@ -70,11 +70,11 @@ class ProcessTicketSelector
      * so that all dependencies get injected correctly (which will happen automatically)
      * Null values for parameters are only for backwards compatibility but will be removed later on.
      *
-     * @param EE_Core_Config                    $core_config
-     * @param RequestInterface                           $request
-     * @param EE_Session                        $session
-     * @param EEM_Ticket                        $ticket_model
-     * @param TicketDatetimeAvailabilityTracker $tracker
+     * @param EE_Core_Config|null                    $core_config
+     * @param RequestInterface|null                  $request
+     * @param EE_Session|null                        $session
+     * @param EEM_Ticket|null                        $ticket_model
+     * @param TicketDatetimeAvailabilityTracker|null $tracker
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -115,7 +115,7 @@ class ProcessTicketSelector
      * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
-    public function cancelTicketSelections()
+    public function cancelTicketSelections(): bool
     {
         // check nonce
         if (! $this->processTicketSelectorNonce()) {
@@ -141,7 +141,7 @@ class ProcessTicketSelector
      *
      * @return bool
      */
-    private function processTicketSelectorNonce()
+    private function processTicketSelectorNonce(): bool
     {
         if (
             ! $this->request->isAdmin()
@@ -181,7 +181,7 @@ class ProcessTicketSelector
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function processTicketSelections()
+    public function processTicketSelections(): bool
     {
         do_action('EED_Ticket_Selector__process_ticket_selections__before');
         if ($this->request->isBot()) {
@@ -272,6 +272,7 @@ class ProcessTicketSelector
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function addTicketsToCart(array $valid)
     {
@@ -345,7 +346,7 @@ class ProcessTicketSelector
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    private function addTicketToCart(EE_Ticket $ticket, $qty = 1)
+    private function addTicketToCart(EE_Ticket $ticket, int $qty = 1): bool
     {
         // get the number of spaces left for this datetime ticket
         $available_spaces = $this->tracker->ticketDatetimeAvailability($ticket);
@@ -384,7 +385,7 @@ class ProcessTicketSelector
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
-    private function processSuccessfulCart($tickets_added)
+    private function processSuccessfulCart($tickets_added): bool
     {
         // exit('KILL REDIRECT BEFORE CART UPDATE'); // <<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
         if (apply_filters('FHEE__EED_Ticket_Selector__process_ticket_selections__success', $tickets_added)) {
