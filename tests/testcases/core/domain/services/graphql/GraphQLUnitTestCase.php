@@ -22,10 +22,11 @@ use WPGraphQL\Router;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class GraphQLUnitTestCase extends EE_UnitTestCase
+abstract class GraphQLUnitTestCase extends EE_UnitTestCase
 {
 
     /**
+     * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException

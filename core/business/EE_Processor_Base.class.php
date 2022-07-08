@@ -3,13 +3,10 @@
 /**
  * Class EE_Processor_Base
  *
- * Description
- *
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen
  * @since                 4.6
- *
  */
 class EE_Processor_Base
 {
@@ -29,7 +26,7 @@ class EE_Processor_Base
 
 
     /**
-     * @param boolean $IPN
+     * @param bool|int|string|null $IPN
      */
     public static function set_IPN($IPN)
     {
@@ -40,7 +37,7 @@ class EE_Processor_Base
     /**
      * Allows external class (usually checkout) to set whether SPCO is being revisited by registrant or not.
      *
-     * @param bool $revisit
+     * @param bool|int|string|null $revisit
      * @return void
      */
     public function set_revisit($revisit = false)
@@ -54,7 +51,7 @@ class EE_Processor_Base
      *
      * @param string              $class
      * @param string              $func
-     * @param string              $line
+     * @param int|string              $line
      * @param EE_Transaction|null $transaction
      * @param array               $info
      * @param bool                $display_request
@@ -62,21 +59,21 @@ class EE_Processor_Base
      * @throws ReflectionException
      */
     protected function log(
-        $class = '',
-        $func = '',
+        string $class = '',
+        string $func = '',
         $line = '',
-        EE_Transaction $transaction = null,
-        $info = array(),
-        $display_request = false
+        ?EE_Transaction $transaction = null,
+        array $info = [],
+        bool $display_request = false
     ) {
         if (WP_DEBUG && false) {
             if ($transaction instanceof EE_Transaction) {
                 // don't serialize objects
                 $info = EEH_Debug_Tools::strip_objects($info);
                 if ($transaction->ID()) {
-                    $info['TXN_status'] = $transaction->status_ID();
+                    $info['TXN_status']    = $transaction->status_ID();
                     $info['TXN_reg_steps'] = $transaction->reg_steps();
-                    $index = 'EE_Transaction: ' . $transaction->ID();
+                    $index                 = 'EE_Transaction: ' . $transaction->ID();
                     EEH_Debug_Tools::log($class, $func, $line, $info, $display_request, $index);
                 }
             }

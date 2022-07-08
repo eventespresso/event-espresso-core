@@ -1,8 +1,5 @@
 <?php
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-
 /**
  *EE_CPT_Event_Strategy
  *
@@ -24,13 +21,13 @@ class EE_CPT_Event_Strategy
      * @param array|WP_Query $wp_query
      * @param array          $CPT
      */
-    public function __construct($wp_query, array $CPT = array())
+    public function __construct($wp_query, array $CPT = [])
     {
         if ($wp_query instanceof WP_Query) {
-            $WP_Query = $wp_query;
+            $WP_Query  = $wp_query;
             $this->CPT = $CPT;
         } else {
-            $WP_Query = $wp_query['WP_Query'] ?? null;
+            $WP_Query  = $wp_query['WP_Query'] ?? null;
             $this->CPT = $wp_query['CPT'] ?? null;
         }
         // !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
@@ -46,10 +43,10 @@ class EE_CPT_Event_Strategy
         // 'posts_join'
         $this->_add_filters();
         if ($WP_Query instanceof WP_Query) {
-            $WP_Query->is_espresso_event_single = is_singular()
-                                                  && isset($WP_Query->query->post_type)
-                                                  && $WP_Query->query->post_type === 'espresso_events';
-            $WP_Query->is_espresso_event_archive = is_post_type_archive('espresso_events');
+            $WP_Query->is_espresso_event_single   = is_singular()
+                                                    && isset($WP_Query->query->post_type)
+                                                    && $WP_Query->query->post_type === 'espresso_events';
+            $WP_Query->is_espresso_event_archive  = is_post_type_archive('espresso_events');
             $WP_Query->is_espresso_event_taxonomy = is_tax('espresso_event_categories');
         }
     }
@@ -62,13 +59,13 @@ class EE_CPT_Event_Strategy
      */
     protected function _add_filters()
     {
-        add_filter('posts_fields', array($this, 'posts_fields'), 1, 2);
-        add_filter('posts_join', array($this, 'posts_join'), 1, 2);
-        add_filter('posts_where', array($this, 'posts_where'), 10, 2);
+        add_filter('posts_fields', [$this, 'posts_fields'], 1, 2);
+        add_filter('posts_join', [$this, 'posts_join'], 1, 2);
+        add_filter('posts_where', [$this, 'posts_where'], 10, 2);
         // add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
-        add_filter('posts_orderby', array($this, 'posts_orderby'), 1, 2);
-        add_filter('posts_groupby', array($this, 'posts_groupby'), 1, 2);
-        add_action('posts_selection', array($this, 'remove_filters'));
+        add_filter('posts_orderby', [$this, 'posts_orderby'], 1, 2);
+        add_filter('posts_groupby', [$this, 'posts_groupby'], 1, 2);
+        add_action('posts_selection', [$this, 'remove_filters']);
     }
 
 
@@ -90,31 +87,28 @@ class EE_CPT_Event_Strategy
      */
     protected function _remove_filters()
     {
-        remove_filter('posts_fields', array($this, 'posts_fields'), 1);
-        remove_filter('posts_join', array($this, 'posts_join'), 1);
-        remove_filter('posts_where', array($this, 'posts_where'), 10);
+        remove_filter('posts_fields', [$this, 'posts_fields'], 1);
+        remove_filter('posts_join', [$this, 'posts_join'], 1);
+        remove_filter('posts_where', [$this, 'posts_where']);
         // remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
-        remove_filter('posts_orderby', array($this, 'posts_orderby'), 1);
-        remove_filter('posts_groupby', array($this, 'posts_groupby'), 1);
-        remove_action('posts_selection', array($this, 'remove_filters'));
+        remove_filter('posts_orderby', [$this, 'posts_orderby'], 1);
+        remove_filter('posts_groupby', [$this, 'posts_groupby'], 1);
+        remove_action('posts_selection', [$this, 'remove_filters']);
     }
 
 
     /**
-     * @param string   $SQL
-     * @param WP_Query $wp_query
+     * @param string        $SQL
+     * @param WP_Query|null $wp_query
      * @return    string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public function posts_fields($SQL, WP_Query $wp_query)
+    public function posts_fields(string $SQL, ?WP_Query $wp_query): string
     {
         if (
             $wp_query instanceof WP_Query
-            &&
-            (
+            && (
                 $wp_query->is_espresso_event_single
                 || $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
@@ -135,20 +129,17 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     * @param string   $SQL
-     * @param WP_Query $wp_query
+     * @param string        $SQL
+     * @param WP_Query|null $wp_query
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public function posts_join($SQL, WP_Query $wp_query)
+    public function posts_join(string $SQL, ?WP_Query $wp_query): string
     {
         if (
             $wp_query instanceof WP_Query
-            &&
-            (
+            && (
                 $wp_query->is_espresso_event_single
                 || $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
@@ -166,20 +157,17 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     * @param string   $SQL
-     * @param WP_Query $wp_query
+     * @param string        $SQL
+     * @param WP_Query|null $wp_query
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public function posts_where($SQL, WP_Query $wp_query)
+    public function posts_where(string $SQL, ?WP_Query $wp_query): string
     {
         if (
             $wp_query instanceof WP_Query
-            &&
-            (
+            && (
                 $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
             )
@@ -198,16 +186,15 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     * @param string   $SQL
-     * @param WP_Query $wp_query
+     * @param string        $SQL
+     * @param WP_Query|null $wp_query
      * @return string
      */
-    public function posts_orderby($SQL, WP_Query $wp_query)
+    public function posts_orderby(string $SQL, ?WP_Query $wp_query): string
     {
         if (
             $wp_query instanceof WP_Query
-            &&
-            (
+            && (
                 $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
             )
@@ -219,16 +206,15 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     * @param string   $SQL
-     * @param WP_Query $wp_query
+     * @param string        $SQL
+     * @param WP_Query|null $wp_query
      * @return string
      */
-    public function posts_groupby($SQL, WP_Query $wp_query)
+    public function posts_groupby(string $SQL, ?WP_Query $wp_query): string
     {
         if (
             $wp_query instanceof WP_Query
-            &&
-            (
+            && (
                 $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
             )
@@ -245,11 +231,11 @@ class EE_CPT_Event_Strategy
 
 
     /**
-     * @param array    $posts
-     * @param WP_Query $wp_query
+     * @param array         $posts
+     * @param WP_Query|null $wp_query
      * @return array
      */
-    public function the_posts($posts, WP_Query $wp_query)
+    public function the_posts(array $posts, WP_Query $wp_query): array
     {
         return $posts;
     }
@@ -257,9 +243,9 @@ class EE_CPT_Event_Strategy
 
     /**
      * @param mixed $meta_value
-     * @param $post_id
-     * @param $meta_key
-     * @param $single
+     * @param       $post_id
+     * @param       $meta_key
+     * @param       $single
      * @return mixed
      */
     public function get_EE_post_type_metadata($meta_value, $post_id, $meta_key, $single)

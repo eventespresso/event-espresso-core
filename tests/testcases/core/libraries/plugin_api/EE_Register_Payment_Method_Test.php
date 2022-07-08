@@ -2,7 +2,6 @@
 
 use EventEspresso\core\services\loaders\LoaderFactory;
 
-
 /**
  * @group core/libraries/plugin_api
  * @group core
@@ -12,6 +11,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 class EE_Register_Payment_Method_Test extends EE_UnitTestCase
 {
     protected $_pmt_name;
+
     protected $_pmt_args;
 
     /**
@@ -23,13 +23,13 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase
     public function set_up()
     {
         parent::set_up();
-        $this->_pmt_args = array(
+        $this->_pmt_args              = [
             'payment_method_paths' =>
-                array(
+                [
                     EE_TESTS_DIR . 'mocks/payment_methods/Mock_Onsite',
-                ),
-        );
-        $this->_pmt_name = 'Mock_Onsite';
+                ],
+        ];
+        $this->_pmt_name              = 'Mock_Onsite';
         $this->payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
     }
 
@@ -37,11 +37,15 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase
     public function tear_down()
     {
         parent::tear_down();
-        $this->_pmt_args = null;
-        $this->_pmt_name = null;
+        $this->_pmt_args              = null;
+        $this->_pmt_name              = null;
         $this->payment_method_manager = null;
     }
 
+
+    /**
+     * @throws EE_Error
+     */
     public function test_register__fail()
     {
         $this->_stop_pretending_addon_hook_time();
@@ -54,12 +58,18 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase
         //try registering at wrong time
         try {
             EE_Register_Payment_Method::register($this->_pmt_name, $this->_pmt_args);
-            $this->fail('We should have had a warning saying that we are setting up the payment methods at the wrong time');
-        } catch (PHPUnit_Framework_Error_Notice $e) {
+            $this->fail(
+                'We should have had a warning saying that we are setting up the payment methods at the wrong time'
+            );
+        } catch (PHPUnit\Framework\Error\Notice $e) {
             $this->assertTrue(true);
         }
     }
 
+
+    /**
+     * @throws EE_Error
+     */
     public function test_register__success()
     {
         $this->_pretend_addon_hook_time();
@@ -69,7 +79,6 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase
         //first verify it doesn't already exists
         $pmt_exists = $this->payment_method_manager->payment_method_type_exists($this->_pmt_name);
         $this->assertFalse($pmt_exists);
-
 
         EE_Register_Payment_Method::register($this->_pmt_name, $this->_pmt_args);
         //now check it does exist

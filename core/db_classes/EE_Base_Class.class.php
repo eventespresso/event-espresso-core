@@ -1565,12 +1565,12 @@ abstract class EE_Base_Class
 
     /**
      * This takes care of setting a date or time independently on a given model object property. This method also
-     * verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
+     * verifies that the given field_name matches a model object property and is for a EE_Datetime_Field field
      *
      * @access protected
      * @param string          $what           "T" for time, 'B' for both, 'D' for Date.
      * @param string|DateTime $datetime_value A valid Date or Time string (or DateTime object)
-     * @param string          $fieldname      the name of the field the date OR time is being set on (must match a
+     * @param string          $field_name     the name of the field the date OR time is being set on (must match a
      *                                        EE_Datetime_Field property)
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1578,33 +1578,33 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    protected function _set_date_time($what, $datetime_value, $fieldname)
+    protected function _set_date_time(string $what, $datetime_value, string $field_name)
     {
-        $field = $this->_get_dtt_field_settings($fieldname);
+        $field = $this->_get_dtt_field_settings($field_name);
         $field->set_timezone($this->_timezone);
         $field->set_date_format($this->_dt_frmt);
         $field->set_time_format($this->_tm_frmt);
         switch ($what) {
             case 'T':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set_with_new_time(
+                $this->_fields[ $field_name ] = $field->prepare_for_set_with_new_time(
                     $datetime_value,
-                    $this->_fields[ $fieldname ]
+                    $this->_fields[ $field_name ]
                 );
                 $this->_has_changes = true;
                 break;
             case 'D':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set_with_new_date(
+                $this->_fields[ $field_name ] = $field->prepare_for_set_with_new_date(
                     $datetime_value,
-                    $this->_fields[ $fieldname ]
+                    $this->_fields[ $field_name ]
                 );
                 $this->_has_changes = true;
                 break;
             case 'B':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set($datetime_value);
+                $this->_fields[ $field_name ] = $field->prepare_for_set($datetime_value);
                 $this->_has_changes = true;
                 break;
         }
-        $this->_clear_cached_property($fieldname);
+        $this->_clear_cached_property($field_name);
     }
 
 

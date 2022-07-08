@@ -1282,7 +1282,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             // echo "\n . qty: " . $qty . '<br />';
         }
         // echo "\nFINAL QTY: " . $qty . "<br /><br />";
-        return $qty;
+        return (int) $qty;
     }
 
 

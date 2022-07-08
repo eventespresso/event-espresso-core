@@ -1,32 +1,23 @@
 <?php
+
 /**
  * Contains test class for /core/EE_Capabilities.core.php
  *
  * @since          4.5.0
  * @package        Event Espresso
  * @subpackage     tests
- */
-
-/**
- * All tests for the EE_Admin_Hooks class.
- *
- * @since          4.5.0
- * @package        Event Espresso
- * @subpackage     tests
- *
  * @group          caps
  */
 class EE_Capabilities_Test extends EE_UnitTestCase
 {
-
     const ADMINISTRATOR_ROLE = 'administrator';
-    const SUBSCRIBER_ROLE = 'subscriber';
+
+    const SUBSCRIBER_ROLE    = 'subscriber';
 
     /**
      * @var EE_Capabilities $CAPS
      */
     private $CAPS;
-
 
 
     public function set_up()
@@ -46,7 +37,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     {
         //test getting admin capabilities (default)
         $admin_capabilities = $this->CAPS->get_ee_capabilities();
-        $this->assertFalse(isset($admin_capabilities[EE_Capabilities::ROLE_ADMINISTRATOR]));
+        $this->assertFalse(isset($admin_capabilities[ EE_Capabilities::ROLE_ADMINISTRATOR ]));
         $this->assertTrue(isset($admin_capabilities[0]));
         $first_cap = $admin_capabilities[0];
         $this->assertEquals('ee_read_ee', $first_cap);
@@ -61,7 +52,9 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws EE_Error
+     */
     public function test_add_new_capabilities_via_filtering_init_caps()
     {
         global $wp_roles;
@@ -72,11 +65,11 @@ class EE_Capabilities_Test extends EE_UnitTestCase
 
         //ok now add another cap, and re-init stuff and verify it got added correctly
         //add a new cap
-        add_filter('FHEE__EE_Capabilities__init_caps_map__caps', array($this, 'add_new_caps'));
+        add_filter('FHEE__EE_Capabilities__init_caps_map__caps', [$this, 'add_new_caps']);
         // but we'll need to set the reset flag to true if we want to do things this way
         $this->CAPS->init_caps(true);
         //check it got added
-        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities(EE_Capabilities::ROLE_ADMINISTRATOR));
+        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities());
         $user->add_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertTrue($this->CAPS->user_can($user, 'ee_new_cap', 'test'));
         //then check newly-created users get that new role
@@ -86,14 +79,17 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $this->assertTrue($this->CAPS->user_can($user_refreshed, 'ee_new_cap', 'test'));
     }
 
-    public function add_new_caps($existing_caps)
+
+    public function add_new_caps($existing_caps): array
     {
-        $existing_caps[EE_Capabilities::ROLE_ADMINISTRATOR][] = 'ee_new_cap';
+        $existing_caps[ EE_Capabilities::ROLE_ADMINISTRATOR ][] = 'ee_new_cap';
         return $existing_caps;
     }
 
 
-
+    /**
+     * @throws EE_Error
+     */
     public function testAddCaps()
     {
         $this->CAPS->init_caps(true);
@@ -103,20 +99,22 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $this->assertInstanceOf('WP_User', $user);
         $this->assertFalse($this->CAPS->user_can($user, 'ee_new_cap', 'test'));
         // ok now add a new cap, but this time using addCaps
-         $this->CAPS->addCaps(array(EE_Capabilities::ROLE_ADMINISTRATOR => array('ee_new_cap')));
+        $this->CAPS->addCaps([EE_Capabilities::ROLE_ADMINISTRATOR => ['ee_new_cap']]);
         //check it got added
-        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities(EE_Capabilities::ROLE_ADMINISTRATOR));
+        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities());
         $user->add_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertTrue($this->CAPS->user_can($user, 'ee_new_cap', 'test'));
         //then check newly-created users get that new role
         //refresh the roles' caps and the user object
-        $wp_roles = new WP_Roles();
+        $wp_roles       = new WP_Roles();
         $user_refreshed = get_user_by('id', $user->ID);
         $this->assertTrue($this->CAPS->user_can($user_refreshed, 'ee_new_cap', 'test'));
     }
 
 
-
+    /**
+     * @throws EE_Error
+     */
     public function test_add_cap_to_role()
     {
         $this->CAPS->init_caps(true);
@@ -126,18 +124,17 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $this->assertInstanceOf('WP_User', $user);
         $this->assertFalse($this->CAPS->user_can($user, 'ee_new_cap', 'test'));
         // ok now add a new cap, but this time using addCaps
-         $this->CAPS->add_cap_to_role(EE_Capabilities::ROLE_ADMINISTRATOR, 'ee_new_cap');
+        $this->CAPS->add_cap_to_role(EE_Capabilities::ROLE_ADMINISTRATOR, 'ee_new_cap');
         //check it got added
-        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities(EE_Capabilities::ROLE_ADMINISTRATOR));
+        $this->assertArrayContains('ee_new_cap', $this->CAPS->get_ee_capabilities());
         $user->add_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertTrue($this->CAPS->user_can($user, 'ee_new_cap', 'test'));
         //then check newly-created users get that new role
         //refresh the roles' caps and the user object
-        $wp_roles = new WP_Roles();
+        $wp_roles       = new WP_Roles();
         $user_refreshed = get_user_by('id', $user->ID);
         $this->assertTrue($this->CAPS->user_can($user_refreshed, 'ee_new_cap', 'test'));
     }
-
 
 
     /**
@@ -161,14 +158,11 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $this->assertFalse($this->CAPS->user_can($user, 'invalid_cap', 'tests'));
 
         //test context filter
-        function test_custom_filter($cap, $id)
+        function test_custom_filter($cap)
         {
-            if ($cap == 'ee_read_ee') {
-                return 'need_this_instead';
-            }
-
-            return $cap;
+            return $cap === 'ee_read_ee' ? 'need_this_instead' : $cap;
         }
+
 
         add_filter('FHEE__EE_Capabilities__current_user_can__cap__tests', 'test_custom_filter', 10, 2);
         add_filter('FHEE__EE_Capabilities__user_can__cap__tests', 'test_custom_filter', 10, 2);
@@ -186,6 +180,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
             return $cap;
         }
 
+
         add_filter('FHEE__EE_Capabilities__current_user_can__cap', 'test_global_filter', 10, 4);
         add_filter('FHEE__EE_Capabilities__user_can__cap', 'test_global_filter', 10, 4);
 
@@ -194,7 +189,9 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws EE_Error
+     */
     public function testRemoveCaps()
     {
         $this->CAPS->init_caps(true);
@@ -207,7 +204,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         // for whatever reason, this site wants to have all gateways
         // under control of someone other than the standard administrator
         // so they want to remove the 'ee_manage_gateways' cap from the above administrator role
-        $this->CAPS->removeCaps(array(EE_Capabilities::ROLE_ADMINISTRATOR => array('ee_manage_gateways')));
+        $this->CAPS->removeCaps([EE_Capabilities::ROLE_ADMINISTRATOR => ['ee_manage_gateways']]);
         $user = $this->setupAdminUserAndTestCapDoesNOtExist('ee_manage_gateways');
         $this->assertFalse(
             $this->CAPS->user_can($user, 'ee_manage_gateways', 'test'),
@@ -216,7 +213,9 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws EE_Error
+     */
     public function test_remove_cap_from_role()
     {
         $this->CAPS->init_caps(true);
@@ -237,8 +236,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-
-    private function setupAdminUserAndTestCapDoesNOtExist($cap_to_test = '')
+    private function setupAdminUserAndTestCapDoesNOtExist($cap_to_test = ''): WP_User
     {
         /** @var WP_User $user */
         $user = $this->factory->user->create_and_get();
@@ -246,7 +244,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         // verify they don't have the $cap_to_test YET...
         $this->assertFalse(
             $this->CAPS->user_can($user, $cap_to_test, 'test'),
-            'The admin user should NOT have the "'. $cap_to_test .'" capability YET!'
+            'The admin user should NOT have the "' . $cap_to_test . '" capability YET!'
         );
         // first remove the existing default role
         $user->remove_role(self::SUBSCRIBER_ROLE);
@@ -259,6 +257,9 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     public function testPaymentMethodCaps()
     {
         // we're going to fake the activation of the Mock_Onsite payment method
@@ -271,7 +272,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $administrator_role = get_role(EE_Capabilities::ROLE_ADMINISTRATOR);
         $this->assertInstanceOf('WP_Role', $administrator_role);
         // verify two ways that cap does not exist YET...
-        $this->assertFalse(isset($administrator_role->capabilities[$mock_onsite_capability]));
+        $this->assertFalse(isset($administrator_role->capabilities[ $mock_onsite_capability ]));
         $this->assertFalse($administrator_role->has_cap($mock_onsite_capability));
         // now create an admin user
         $user = $this->setupAdminUserAndTestCapDoesNOtExist($mock_onsite_capability);
@@ -279,11 +280,11 @@ class EE_Capabilities_Test extends EE_UnitTestCase
         $this->_pretend_addon_hook_time();
         EE_Register_Payment_Method::register(
             'onsite',
-            array(
-                'payment_method_paths' => array(
+            [
+                'payment_method_paths' => [
                     EE_TESTS_DIR . 'mocks/payment_methods/Mock_Onsite',
-                ),
-            )
+                ],
+            ]
         );
         // to complete the fake PM registration, we need to reset the EE_Payment_Method_Manager
         // which will take care of injecting all Payment Method caps into the default cap map
@@ -322,7 +323,9 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws EE_Error
+     */
     public function testAddNewRoleWhenAddingCap()
     {
         $this->CAPS->init_caps(true);
