@@ -390,9 +390,9 @@ abstract class AbstractConnectionResolver {
 	public function get_query_amount() {
 
 		/**
-		 * Filter the maximum number of posts per page that should be quried. The default is 100 to prevent queries from
-		 * being exceedingly resource intensive, however individual systems can override this for their specific needs.
-		 *
+         * Filter the maximum number of posts per page that should be quried. The default is 100 to prevent queries from
+         * being exceedingly resource intensive, however individual systems can override this for their specific needs.
+         *
 		 * This filter is intentionally applied AFTER the query_args filter, as
 		 *
 		 * @param array       $query_args array of query_args being passed to the
@@ -403,9 +403,17 @@ abstract class AbstractConnectionResolver {
 		 *
 		 * @since 0.0.6
 		 */
-		$max_query_amount = apply_filters( 'graphql_connection_max_query_amount', 100, $this->source, $this->args, $this->context, $this->info );
+        $max_query_amount = apply_filters(
+            'graphql_connection_max_query_amount',
+            100,
+            $this->source,
+            $this->args,
+            $this->context,
+            $this->info
+        );
 
-		return min( $max_query_amount, absint( $this->get_amount_requested() ) );
+
+        return min( $max_query_amount, absint( $this->get_amount_requested() ) );
 
 	}
 
@@ -891,7 +899,9 @@ abstract class AbstractConnectionResolver {
 
 				if ( true === $this->one_to_one ) {
 					// For one to one connections, return the first edge.
-					$connection = ! empty( $this->edges[ array_key_first( $this->edges ) ] ) ? $this->edges[ array_key_first( $this->edges ) ] : null;
+					$connection = ! empty( $this->edges[ array_key_first( $this->edges ) ] )
+                        ? $this->edges[ array_key_first( $this->edges ) ]
+                        : null;
 				} else {
 					// For plural connections (default) return edges/nodes/pageInfo
 					$connection = [

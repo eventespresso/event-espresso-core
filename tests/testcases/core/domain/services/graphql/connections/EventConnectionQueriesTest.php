@@ -2,8 +2,11 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections;
 
+use EE_Error;
 use EEM_Event;
+use Exception;
 use GraphQLRelay\Connection\ArrayConnection;
+use ReflectionException;
 
 /**
  * @group wpGraphQL
@@ -15,6 +18,11 @@ class EventConnectionQueriesTest extends BaseQueriesTest
     public $current_date_gmt;
     public $created_event_ids;
 
+
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
     public function set_up()
     {
         $this->model_name = 'Event';
@@ -101,6 +109,10 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         return $created_posts;
     }
 
+
+    /**
+     * @throws Exception
+     */
     public function eventsQuery($variables)
     {
         $query = 'query eventsQuery($first:Int $last:Int $after:String $before:String $where:RootQueryToEspressoEventConnectionWhereArgs ){
@@ -135,6 +147,10 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         return graphql(compact('query', 'variables'));
     }
 
+
+    /**
+     * @throws Exception
+     */
     public function eventByQuery($variables)
     {
         $query = 'query GET_EVENT($id: ID!) {
@@ -208,7 +224,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         $this->assertEquals($expected_cursor, $results['data']['espressoEvents']['pageInfo']['endCursor']);
         $this->assertEquals($first_event_id, $results['data']['espressoEvents']['nodes'][0]['dbId']);
         $this->assertEquals(false, $results['data']['espressoEvents']['pageInfo']['hasPreviousPage']);
-        $this->assertEquals(true, $results['data']['espressoEvents']['pageInfo']['hasNextPage']);
+        $this->assertEquals(false, $results['data']['espressoEvents']['pageInfo']['hasNextPage']);
     }
 
     public function testEventBy()
@@ -229,3 +245,4 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         $this->assertEquals($event->description(), $results['data']['espressoEvent']['description']);
     }
 }
+// tests/testcases/core/domain/services/graphql/connections/EventConnectionQueriesTest.php

@@ -6,8 +6,9 @@ use EE_Error;
 use EEM_Base;
 use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
 use ReflectionException;
-use WPGraphQL\AppContext;
+use WP_User;
 use WPGraphQL;
+use WPGraphQL\AppContext;
 
 abstract class BaseQueriesTest extends GraphQLUnitTestCase
 {
@@ -15,16 +16,36 @@ abstract class BaseQueriesTest extends GraphQLUnitTestCase
      * @var EEM_Base $model
      */
     protected $model;
-    public $model_name;
-    public $skip_create_entities;
-    public $created_entities;
-    public $admin;
-    public $subscriber;
 
     /**
-     * @var   AppContext
+     * @var AppContext
      */
     protected $app_context;
+
+    /**
+     * @var string
+     */
+    public $model_name;
+
+    /**
+     * @var bool
+     */
+    public $skip_create_entities;
+
+    /**
+     * @var array
+     */
+    public $created_entities = [];
+
+    /**
+     * @var WP_User
+     */
+    public $admin;
+
+    /**
+     * @var WP_User
+     */
+    public $subscriber;
 
 
     /**
@@ -34,7 +55,7 @@ abstract class BaseQueriesTest extends GraphQLUnitTestCase
     public function set_up()
     {
         parent::set_up();
-        if (!$this->model_name) {
+        if (! $this->model_name) {
             return;
         }
         WPGraphQL::clear_schema();
@@ -68,7 +89,7 @@ abstract class BaseQueriesTest extends GraphQLUnitTestCase
     {
         // Create entities
         $created_entities = [];
-        for ($i = 1; $i <= $count; $i ++) {
+        for ($i = 1; $i <= $count; $i++) {
             $created_entities[ $i ] = $this->new_model_obj_with_dependencies($this->model_name);
         }
 

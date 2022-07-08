@@ -63,7 +63,7 @@ class CountryConnectionResolver extends AbstractConnectionResolver
     public function get_query_amount()
     {
         // Override the default limit (100) for countries
-        return 300;
+        return 500;
     }
 
 
