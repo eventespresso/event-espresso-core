@@ -1519,6 +1519,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'action'      => 'default',
                     'event_id'    => $this->_cpt_model_obj->ID(),
                     '_reg_status' => EEM_Registration::status_id_approved,
+                    'use_filters' => true,
                 ],
                 REG_ADMIN_URL
             ),
@@ -1527,6 +1528,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'action'      => 'default',
                     'event_id'    => $this->_cpt_model_obj->ID(),
                     '_reg_status' => EEM_Registration::status_id_not_approved,
+                    'use_filters' => true,
                 ],
                 REG_ADMIN_URL
             ),
@@ -1535,6 +1537,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'action'      => 'default',
                     'event_id'    => $this->_cpt_model_obj->ID(),
                     '_reg_status' => EEM_Registration::status_id_pending_payment,
+                    'use_filters' => true,
                 ],
                 REG_ADMIN_URL
             ),
