@@ -236,7 +236,8 @@ class EED_Add_New_State extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function display_add_new_state_micro_form(EE_Form_Section_Proper $question_group_reg_form
+    public static function display_add_new_state_micro_form(
+        EE_Form_Section_Proper $question_group_reg_form
     ): EE_Form_Section_Proper {
         $request = self::getRequest();
         // only add the 'new_state_micro_form' when displaying reg forms,
@@ -389,9 +390,9 @@ class EED_Add_New_State extends EED_Module
                                 ),
                                 'html_class'            => $input->html_class() . ' new-state-abbrv',
                                 'html_label_text'       => esc_html__(
-                                                               'New State/Province Abbreviation',
-                                                               'event_espresso'
-                                                           ) . ' *',
+                                    'New State/Province Abbreviation',
+                                    'event_espresso'
+                                ) . ' *',
                                 'other_html_attributes' => 'size="24"',
                                 'default'               => $request->getRequestParam($abbrv_name),
                                 'required'              => false,

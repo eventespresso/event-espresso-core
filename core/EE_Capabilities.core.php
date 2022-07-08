@@ -755,8 +755,12 @@ final class EE_Capabilities extends EE_Base
      * @see   wp-includes/capabilities.php
      * @since 4.5.0
      */
-    public function add_cap_to_role($role, string $cap, bool $grant = true, bool $update_capabilities_map = true):
-    bool {
+    public function add_cap_to_role(
+        $role,
+        string $cap,
+        bool $grant = true,
+        bool $update_capabilities_map = true
+    ): bool {
         // capture incoming value for $role because we may need it to create a new WP_Role
         $orig_role = $role;
         $role      = $role instanceof WP_Role ? $role : get_role($role);
@@ -1009,20 +1013,35 @@ final class EE_Capabilities extends EE_Base
  */
 abstract class EE_Meta_Capability_Map
 {
-    public $meta_cap;
-
     /**
      * @var EEM_Base
      */
     protected $_model;
 
+    /**
+     * @var string
+     */
     protected $_model_name;
 
-    public    $published_cap = '';
+    /**
+     * @var string
+     */
+    public $meta_cap;
 
-    public    $others_cap    = '';
+    /**
+     * @var string
+     */
+    public $published_cap = '';
 
-    public    $private_cap   = '';
+    /**
+     * @var string
+     */
+    public $others_cap = '';
+
+    /**
+     * @var string
+     */
+    public $private_cap = '';
 
 
     /**
