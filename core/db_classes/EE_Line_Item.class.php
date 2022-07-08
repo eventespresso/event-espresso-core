@@ -259,7 +259,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     /**
      * Gets item_id
      *
-     * @return string
+     * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -275,7 +275,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     /**
      * Sets item_id
      *
-     * @param string $item_id
+     * @param int $item_id
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -763,6 +763,18 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     public function set_is_taxable($is_taxable)
     {
         $this->set('LIN_is_taxable', $is_taxable);
+    }
+
+
+    /**
+     * @param int $timestamp
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function setTimestamp(int $timestamp)
+    {
+        $this->set('LIN_timestamp', $timestamp);
     }
 
 
