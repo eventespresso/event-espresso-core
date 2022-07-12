@@ -14,8 +14,8 @@ abstract class EE_Text_Field_Base extends EE_Model_Field_Base
      */
     public function prepare_for_get($value_of_field_on_model_object)
     {
-        if (empty($value_of_field_on_model_object)) {
-            return $this->is_nullable() ? $value_of_field_on_model_object : '';
+        if ($value_of_field_on_model_object === null) {
+            return $this->is_nullable() ? null : '';
         }
         return $value_of_field_on_model_object;
     }
