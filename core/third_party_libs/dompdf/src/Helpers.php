@@ -511,7 +511,7 @@ class Helpers
         global $_dompdf_show_warnings;
 
         if ($_dompdf_show_warnings) {
-            echo $errstr . "\n";
+            echo ($errstr) . "\n";
         }
 
         $_dompdf_warnings[] = $errstr;

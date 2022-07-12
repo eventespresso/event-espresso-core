@@ -1293,7 +1293,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
             <?php
             $content .= ob_get_contents();
             ob_end_clean();
-            echo $content;
+            echo ($content);
         }
 
 
@@ -1495,7 +1495,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 $content = ob_get_contents();
                 ob_end_clean();
                 if ($echo !== false) {
-                    echo $content;
+                    echo ($content);
                 } else {
                     return $content;
                 }
@@ -1621,7 +1621,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 </script>'
                 : '';
 
-            echo $content;
+            echo ($content);
         }
 
 

@@ -14,6 +14,7 @@ use Dompdf\Adapter\CPDF;
 use DOMXPath;
 use Dompdf\Frame\Factory;
 use Dompdf\Frame\FrameTree;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use HTML5_Tokenizer;
 use HTML5_TreeBuilder;
 use Dompdf\Image\Cache;
@@ -848,11 +849,11 @@ class Dompdf
         if ($_dompdf_show_warnings && isset($_dompdf_warnings)) {
             echo '<b>Dompdf Warnings</b><br><pre>';
             foreach ($_dompdf_warnings as $msg) {
-                echo $msg . "\n";
+                echo wp_kses($msg, AllowedTags::getWithFullTags()) . "\n";
             }
 
             if ($canvas instanceof CPDF) {
-                echo $canvas->get_cpdf()->messages;
+                echo wp_kses($canvas->get_cpdf()->messages, AllowedTags::getWithFullTags());
             }
             echo '</pre>';
             flush();

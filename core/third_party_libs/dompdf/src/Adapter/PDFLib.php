@@ -1336,7 +1336,7 @@ class PDFLib implements Canvas
         header(Helpers::buildContentDispositionHeader($attachment, $filename));
 
         if (self::$IN_MEMORY) {
-            echo $data;
+            echo ($data);
         } else {
             // Chunked readfile()
             $chunk = (1 << 21); // 2 MB

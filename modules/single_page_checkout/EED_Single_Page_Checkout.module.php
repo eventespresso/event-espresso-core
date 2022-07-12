@@ -1751,7 +1751,7 @@ class EED_Single_Page_Checkout extends EED_Module
                 'FHEE__EE_Single_Page_Checkout__JSON_response',
                 $this->checkout->json_response
             );
-            echo $json_response;
+            echo ($json_response);
             exit();
         }
     }
