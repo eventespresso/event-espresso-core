@@ -47,11 +47,12 @@ class CoreLoader
      * @return string
      * @since $VID:$
      */
-    private function findWordpressVersion(): ?string
+    private function findWordpressVersion($wp_test_dir): ?string
     {
         global $wp_version;
         if (! $wp_version) {
             $wp_dirs = [
+                str_replace('tests/phpunit', '', $wp_test_dir) . 'build',
                 '/tmp/wordpress',
                 __DIR__,
             ];
@@ -155,8 +156,8 @@ class CoreLoader
     protected function setConstants()
     {
         if (! defined('EE_TESTS_DIR')) {
-            $wp_version  = $this->findWordpressVersion();
             $wp_test_dir = $this->findWordpressTestsFolder();
+            $wp_version  = $this->findWordpressVersion($wp_test_dir);
             define('WP_TESTS_DIR', $wp_test_dir);
 
             // load polyfills
