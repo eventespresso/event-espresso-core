@@ -329,7 +329,7 @@ class EEW_Upcoming_Events extends EspressoWidget
                 if (! empty($title)) {
                     echo wp_kses($before_title . $title . $after_title, AllowedTags::getAllowedTags());
                 }
-                echo wp_kses($this->widgetContent($post), AllowedTags::getAllowedTags());
+                echo wp_kses($this->widgetContent($post), AllowedTags::getWithFormTags());
                 // After widget (defined by themes).
                 echo wp_kses($after_widget, AllowedTags::getAllowedTags());
             }
