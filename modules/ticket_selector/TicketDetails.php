@@ -165,16 +165,16 @@ class TicketDetails
 
 
     /**
-     * @param float $ticket_price
-     * @param int   $remaining
-     * @param int   $cols
+     * @param float     $ticket_price
+     * @param int|float $remaining
+     * @param int       $cols
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
     public function display(
         float $ticket_price = 0.00,
-        int $remaining = 0,
+        $remaining = 0,
         int $cols = 2
     ): string {
         $template_args                             = [];
