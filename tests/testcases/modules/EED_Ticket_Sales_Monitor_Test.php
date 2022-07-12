@@ -4,10 +4,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class EED_Ticket_Sales_Monitor_Test
  *
@@ -29,15 +25,12 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
     /**
      * creates line items that would be generated when a cart is created and tickets are added
      *
-     * @param int  $ticket_count
-     * @param bool $expired
+     * @param int        $ticket_count
+     * @param bool       $expired
+     * @param array|null $ticket_args
      * @return EE_Line_Item
      * @throws EE_Error
-     * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws \PHPUnit\Framework\Exception
      */
     protected function setup_cart_and_get_ticket_line_item(
         int $ticket_count = 1,
@@ -75,10 +68,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @param int          $timestamp
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     protected function fake_expired_cart(EE_Line_Item $line_item, int $timestamp = 0)
     {
@@ -97,10 +87,6 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @param int $line_item_count
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws \PHPUnit\Framework\Exception
      * @throws ReflectionException
      */
     protected function confirm_ticket_line_item_counts(int $ticket_count = 1, int $line_item_count = 1)
@@ -139,12 +125,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      * @param array $cart_details
      * @return array
      * @throws EE_Error
-     * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws UnexpectedEntityException
-     * @throws \PHPUnit\Framework\Exception
      */
     protected function setup_and_validate_tickets_for_carts(array $cart_details): array
     {
@@ -213,12 +194,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
     /**
      * @throws DomainException
      * @throws EE_Error
-     * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws UnexpectedEntityException
-     * @throws \PHPUnit\Framework\Exception
      */
     public function test_release_tickets_with_expired_carts()
     {
@@ -227,12 +203,10 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
                 'expired cart' => array(
                     'ticket_count' => 2,
                     'expired' => true,
-                    'ticket_args' => ['TKT_reserved' => 2],
                 ),
                 'valid cart' => array(
                     'ticket_count' => 2,
                     'expired' => false,
-                    'ticket_args' => ['TKT_reserved' => 2],
                 ),
             )
         );
@@ -258,12 +232,10 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
                 'first cart' => array(
                     'ticket_count' => 4,
                     'expired'      => false,
-                    'ticket_args' => ['TKT_reserved' => 4]
                 ),
                 'second cart'   => array(
                     'ticket_count' => 2,
                     'expired'      => false,
-                    'ticket_args' => ['TKT_reserved' => 2]
                 ),
             )
         );
