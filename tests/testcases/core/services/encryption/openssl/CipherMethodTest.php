@@ -80,7 +80,7 @@ class CipherMethodTest extends TestCase
     /**
      * @return string[][]
      */
-    public function getCipherMethodDataProvider()
+    public function getCipherMethodDataProvider(): array
     {
         $this->setUpDependencies();
 
@@ -132,7 +132,7 @@ class CipherMethodTest extends TestCase
     }
 
 
-    public function usesAuthEncryptionModeDataProvider()
+    public function usesAuthEncryptionModeDataProvider(): array
     {
         return [
             ['aes-128-cbc', false],
@@ -174,7 +174,7 @@ class CipherMethodTest extends TestCase
     }
 
 
-    public function getAvailableCipherMethodDataProvider()
+    public function getAvailableCipherMethodDataProvider(): array
     {
         $this->setUpDependencies();
 
@@ -212,7 +212,7 @@ class CipherMethodTest extends TestCase
     }
 
 
-    private function generateBogusCipherMethod()
+    private function generateBogusCipherMethod(): string
     {
         $bogus_cm   = [];
         $bogus_cm[] = $this->rdg->generateRandomString(mt_rand(3, 4), true, true);
@@ -251,7 +251,7 @@ class CipherMethodTest extends TestCase
     }
 
 
-    public function weakAlgorithmFilterDataProvider()
+    public function weakAlgorithmFilterDataProvider(): array
     {
         return [
             ['aes-128-cbc', true],

@@ -34,6 +34,7 @@ class EventFilterHeaderTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
+        parent::setUpBeforeClass();
         require_once EE_ADMIN . 'EE_Admin_Page.core.php';
         if (! defined('EVENTS_ADMIN_URL')) {
             define('EVENTS_ADMIN_URL', admin_url('admin.php?page=espresso_events'));
@@ -52,6 +53,7 @@ class EventFilterHeaderTest extends TestCase
      */
     public function setUp(): void
     {
+        parent::setUp();
         $this->setUpEvent();
     }
 

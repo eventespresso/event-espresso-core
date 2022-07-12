@@ -216,9 +216,9 @@ class RequestStackBuilderTest extends EE_UnitTestCase
         $request_stack->handleRequest($this->request, $this->getResponse());
         $notices = $this->getNotices();
         $this->assertCount(1, $notices['success']);
-        $this->assertEquals('Hello There!', $notices['success'][0]);
+        $this->assertEquals('Hello There!', reset($notices['success']));
         $this->assertCount(1, $notices['attention']);
-        $this->assertEquals('General Kenobi!', $notices['attention'][0]);
+        $this->assertEquals('General Kenobi!', reset($notices['attention']));
         $this->assertCount(1, $notices['errors']);
         $this->assertEquals(
             'Back away! I will deal with this Jedi slime myself!',
@@ -228,7 +228,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
         $request_stack->handleResponse();
         $notices = $this->getNotices();
         $this->assertCount(2, $notices['success']);
-        $this->assertEquals('Now, let\'s get a move on. We\'ve got a battle to win here.', $notices['success'][1]);
+        $this->assertEquals("Now, let's get a move on. We've got a battle to win here.", $notices['success'][1]);
         // now clear all notices
         EE_Error::reset_notices();
     }

@@ -42,7 +42,7 @@ class I18nRegistry
      * @param string $domain The i18n domain for the strings.
      * @deprecated $VID:$
      */
-    public function registerScriptI18n($handle, $domain = Domain::TEXT_DOMAIN)
+    public function registerScriptI18n(string $handle, string $domain = Domain::TEXT_DOMAIN)
     {
     }
 
@@ -51,7 +51,7 @@ class I18nRegistry
      * @return array
      * @deprecated $VID:$
      */
-    public function queueI18n(array $handles)
+    public function queueI18n(array $handles): array
     {
         return $handles;
     }

@@ -272,11 +272,13 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                               . __('This transaction has been overpaid ! ', 'event_espresso')
                               . '</span>'
                             : '';
-                        echo $overpaid . esc_html(
-                            sprintf(
+                        echo wp_kses(
+                            $overpaid
+                            . sprintf(
                                 __('Payments Total %s', 'event_espresso'),
                                 '(' . EE_Registry::instance()->CFG->currency->code . ')'
-                            )
+                            ),
+                            AllowedTags::getAllowedTags()
                         ); ?>
                         </span>
                             </th>
@@ -532,6 +534,9 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                         </div>
 
                         <div class="txn-admin-apply-payment-method-dv admin-modal-dialog-row ee-layout-row">
+                            <div class="validation-notice-dv">
+                                <?php esc_html_e('The following is  a required field', 'event_espresso'); ?>
+                            </div>
                             <label for="txn-admin-payment-method-slct" class="">
                                 <?php esc_html_e('Method of Payment', 'event_espresso'); ?>
                             </label>

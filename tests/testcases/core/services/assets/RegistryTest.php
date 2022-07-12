@@ -111,7 +111,7 @@ class RegistryTest extends EE_UnitTestCase
     }
 
 
-    public function pushDataWithArrayProvider()
+    public function pushDataWithArrayProvider(): array
     {
         return [
             'initial creation of dataset when it does not exist' => ['test', 'foo', ['foo']],
@@ -148,7 +148,7 @@ class RegistryTest extends EE_UnitTestCase
     }
 
 
-    public function pushDataWithAssociativeArrayProvider()
+    public function pushDataWithAssociativeArrayProvider(): array
     {
         return [
             'initial creation of dataset'           => ['test', ['a' => 'foo'], ['a' => 'foo']],

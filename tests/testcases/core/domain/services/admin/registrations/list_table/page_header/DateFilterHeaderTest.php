@@ -43,6 +43,7 @@ class DateFilterHeaderTest extends TestCase
      */
     public function setUp(): void
     {
+        parent::setUp();
         $this->setUpDatetime();
     }
 
@@ -76,7 +77,7 @@ class DateFilterHeaderTest extends TestCase
      * @throws InvalidArgumentException
      * @since 4.10.2.p
      */
-    private function getDateFilterHeader(array $get_params)
+    private function getDateFilterHeader(array $get_params): DateFilterHeader
     {
         return new DateFilterHeader(
             new RequestMock($get_params, [], [], [], []),
@@ -103,7 +104,7 @@ class DateFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @since  4.10.2.p
      */
-    public function testDataGenerator()
+    public function testDataGenerator(): Generator
     {
         $date = $this->datetime->start_date('F d, Y');
         $test_data = [
@@ -151,7 +152,7 @@ class DateFilterHeaderTest extends TestCase
      */
     public function testGetHeaderText()
     {
-        foreach ($this->testDataGenerator() as list($get_params, $event_text, $expected)) {
+        foreach ($this->testDataGenerator() as [$get_params, $event_text, $expected]) {
             $datetime_filter_header = $this->getDateFilterHeader($get_params);
             $header_text = $datetime_filter_header->getHeaderText($event_text);
             $this->assertEquals($expected, $header_text);

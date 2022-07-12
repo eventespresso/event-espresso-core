@@ -16,6 +16,8 @@ class EE_Message_To_Generate
      */
     protected $_messenger_name;
 
+=======
+>>>>>>> master
     /**
      * @var string
      */

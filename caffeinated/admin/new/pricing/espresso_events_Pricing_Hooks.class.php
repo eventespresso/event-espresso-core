@@ -752,6 +752,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             foreach ($added_datetimes as $row_id) {
                 if (isset($saved_datetimes[ $row_id ]) && $saved_datetimes[ $row_id ] instanceof EE_Datetime) {
                     $ticket->_add_relation_to($saved_datetimes[ $row_id ], 'Datetime');
+                    // Is this an existing ticket (has an ID) and does it have any sold?
+                    // If so, then we need to add that to the DTT sold because this DTT is getting added.
+                    if ($ticket->ID() && $ticket->sold() > 0) {
+                        $saved_datetimes[ $row_id ]->increaseSold($ticket->sold(), false);
+                    }
                 }
             }
         }

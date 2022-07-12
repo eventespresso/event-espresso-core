@@ -40,9 +40,12 @@ class EE_Messages_Generator_Test extends EE_UnitTestCase
      *
      * @see   https://events.codebasehq.com/projects/event-espresso/tickets/9787
      * @group 9787
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_generate_only_incomplete_messages()
     {
+        /** @var EE_Messages_Processor $message_processor */
         $message_processor = EE_Registry::instance()->load_lib('Messages_Processor');
         //make sure there is nothing in the queue
         $this->assertFalse($message_processor->batch_generate_from_queue(array(), true));

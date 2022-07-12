@@ -54,7 +54,7 @@ class Base64EncoderTest extends TestCase
     }
 
 
-    public function validBase64DataProvider()
+    public function validBase64DataProvider(): array
     {
         $this->setUpDependencies();
         return [
@@ -111,7 +111,7 @@ class Base64EncoderTest extends TestCase
     }
 
 
-    public function base64UrlDataProvider()
+    public function base64UrlDataProvider(): array
     {
         $this->setUpDependencies();
         return [

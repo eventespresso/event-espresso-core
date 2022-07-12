@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 /**

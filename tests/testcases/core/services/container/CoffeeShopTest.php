@@ -38,7 +38,7 @@ class CoffeeShopTest extends EE_UnitTestCase
 
 
     /**
-     * setUp
+     * set_up
      */
     public function set_up()
     {

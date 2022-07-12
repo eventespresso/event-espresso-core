@@ -277,7 +277,7 @@ class EEW_Upcoming_Events extends EspressoWidget
     public function update($new_instance, $old_instance)
     {
         $instance                    = $old_instance;
-        $instance['title']           = ! empty($new_instance['title']) ? strip_tags($new_instance['title']) : '';
+        $instance['title']           = ! empty($new_instance['title']) ? strip_tags((string) $new_instance['title']) : '';
         $instance['category_name']   = $new_instance['category_name'];
         $instance['show_expired']    = $new_instance['show_expired'];
         $instance['limit']           = $new_instance['limit'];
@@ -329,7 +329,7 @@ class EEW_Upcoming_Events extends EspressoWidget
                 if (! empty($title)) {
                     echo wp_kses($before_title . $title . $after_title, AllowedTags::getAllowedTags());
                 }
-                echo wp_kses($this->widgetContent($post), AllowedTags::getAllowedTags());
+                echo wp_kses($this->widgetContent($post), AllowedTags::getWithFormTags());
                 // After widget (defined by themes).
                 echo wp_kses($after_widget, AllowedTags::getAllowedTags());
             }

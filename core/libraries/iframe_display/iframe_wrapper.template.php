@@ -33,7 +33,7 @@ use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
     <link rel="stylesheet" type="text/css" href="<?php echo esc_url_raw($url); ?>">
         <?php endforeach; ?>
             <script type="text/javascript">
-                <?php echo $eei18n; ?>
+                <?php echo ($eei18n); ?>
             </script>
         <?php foreach ($header_js as $key => $url) :?>
             <?php $header_attributes = isset($header_js_attributes[ $key ]) ? $header_js_attributes[ $key ] : ''; ?>
@@ -44,7 +44,7 @@ use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
 <body>
 <?php echo wp_kses($notices, AllowedTags::getWithFormTags()); ?>
 <div style="padding: 1em;">
-    <?php echo wp_kses($content, AllowedTags::getWithFormTags()); ?>
+    <?php echo wp_kses($content, AllowedTags::getWithFullTags()); ?>
 </div>
 <?php foreach ($footer_js as $key => $url) : ?>
     <?php $footer_attributes = isset($footer_js_attributes[ $key ]) ? $footer_js_attributes[ $key ] : ''; ?>

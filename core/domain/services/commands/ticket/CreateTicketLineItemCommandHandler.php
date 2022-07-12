@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\commands\ticket;
+namespace EventEspresso\core\domain\services\commands\ticket;
 
 use EE_Error;
 use EE_Line_Item;
@@ -33,6 +33,7 @@ class CreateTicketLineItemCommandHandler extends CommandHandler
      */
     public function __construct(CreateTicketLineItemService $factory)
     {
+        defined('EVENT_ESPRESSO_VERSION') || exit;
         $this->factory = $factory;
     }
 
@@ -46,6 +47,10 @@ class CreateTicketLineItemCommandHandler extends CommandHandler
      */
     public function handle(CommandInterface $command)
     {
+        /** @var CreateTicketLineItemCommand $command */
+        if (! $command instanceof CreateTicketLineItemCommand) {
+            throw new InvalidEntityException(get_class($command), 'CreateTicketLineItemCommand');
+        }
         // create new line item for ticket
         return $this->factory->create(
             $command->transaction(),

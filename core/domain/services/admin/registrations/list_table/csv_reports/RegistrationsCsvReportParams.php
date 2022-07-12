@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports;
 
-use EE_Admin_List_Table;
 use EE_Capabilities;
 
 /**
@@ -52,6 +51,10 @@ class RegistrationsCsvReportParams
         }
         if ($DTT_ID) {
             $route_details['extra_request']['DTT_ID'] = $DTT_ID;
+        }
+        // detect views (status) or searches (s) and set "use_filters" to true
+        if (isset($request_params['status']) || isset($request_params['s'])) {
+            $request_params['use_filters'] = true;
         }
         if (
             isset($request_params['use_filters'])

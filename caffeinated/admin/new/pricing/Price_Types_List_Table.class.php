@@ -19,6 +19,14 @@ class Price_Types_List_Table extends EE_Admin_List_Table
     protected $_admin_page;
 
 
+    public function __construct($admin_page)
+    {
+        parent::__construct($admin_page);
+        require_once(EE_MODELS . 'EEM_Price_Type.model.php');
+        $this->_PRT = EEM_Price_Type::instance();
+    }
+
+
     protected function _setup_data()
     {
         $trashed               = $this->_admin_page->get_view() == 'trashed';

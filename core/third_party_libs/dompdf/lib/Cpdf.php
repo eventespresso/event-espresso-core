@@ -3903,7 +3903,7 @@ EOT;
         }
         header($contentDisposition);
 
-        echo $tmp;
+        echo ($tmp);
         flush();
     }
 

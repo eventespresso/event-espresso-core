@@ -566,7 +566,7 @@ class EED_Add_New_State extends EED_Module
      */
     public static function filter_checkout_request_params(array $request_params): array
     {
-        foreach ($request_params as $form_section) {
+        foreach ((array) $request_params as $form_section) {
             if (is_array($form_section)) {
                 EED_Add_New_State::unset_new_state_request_params($form_section);
                 EED_Add_New_State::filter_checkout_request_params($form_section);
@@ -754,7 +754,8 @@ class EED_Add_New_State extends EED_Module
         ?EE_Answer $answer
     ): array {
         if (
-            $answer instanceof EE_Answer && $question instanceof EE_Question
+            $answer instanceof EE_Answer
+            && $question instanceof EE_Question
             && $question->type() === EEM_Question::QST_type_country
         ) {
             $CNT_ISO = $answer->value();

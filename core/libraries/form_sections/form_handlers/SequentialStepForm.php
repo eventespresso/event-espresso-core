@@ -65,7 +65,6 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
     private $redirect_to = SequentialStepForm::REDIRECT_TO_CURRENT_STEP;
 
 
-
     /**
      * SequentialStepForm constructor
      *

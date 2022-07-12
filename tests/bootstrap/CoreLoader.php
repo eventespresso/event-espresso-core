@@ -95,7 +95,7 @@ class CoreLoader
             }
         }
         // if WordPress test suite isn't found then we can't do anything.
-        die("The WordPress PHPUnit test suite could not be found.");
+        die('The WordPress PHPUnit test suite could not be found.');
     }
 
 
@@ -118,7 +118,10 @@ class CoreLoader
             if (! $wp_dir) {
                 continue;
             }
-            $wp_root = $this->findFolderWithFile($wp_dir, '/vendor/yoast/phpunit-polyfills');
+            $wp_root = $this->findFolderWithFile(
+                $wp_dir,
+                '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php'
+            );
             if ($wp_root) {
                 return $wp_root;
             }
@@ -351,6 +354,10 @@ class CoreLoader
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function onShutdown()
     {
         //nuke all EE4 data once the tests are done, so that it doesn't carry over to the next time we run tests

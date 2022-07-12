@@ -82,7 +82,7 @@ class ProcessTicketSelectorTest extends TestCase
      *
      * @return array[]
      */
-    public function postDataProvider()
+    public function postDataProvider(): array
     {
         return [
             // Dude Where's My Ticket Selector? ( max attendees = 1 & ticket options = 1  )

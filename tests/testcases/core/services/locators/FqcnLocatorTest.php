@@ -17,7 +17,7 @@ class FqcnLocatorTest extends TestCase
 {
 
     /**
-     * @var \EventEspresso\core\services\locators\FqcnLocator $file_locator
+     * @var FqcnLocator $file_locator
      */
     private $file_locator;
 

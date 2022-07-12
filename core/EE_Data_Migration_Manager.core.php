@@ -269,7 +269,10 @@ class EE_Data_Migration_Manager implements ResettableInterface
     {
         $data_migration_data = maybe_unserialize($dms_option_value);
         if (isset($data_migration_data['class']) && class_exists($data_migration_data['class'])) {
-            $class = LoaderFactory::getLoader()->getShared($data_migration_data['class']);
+            // During multisite migrations, it's possible we already grabbed another instance of this class
+            // but for a different blog. Make sure we don't reuse them (as they store info specific
+            // to their respective blog, like which database table to migrate).
+            $class = LoaderFactory::getLoader()->getNew($data_migration_data['class']);
             if ($class instanceof EE_Data_Migration_Script_Base) {
                 $class->instantiate_from_array_of_properties($data_migration_data);
                 return $class;
@@ -318,7 +321,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
             $data_migrations_ran = [];
             // convert into data migration script classes where possible
             foreach ($data_migrations_options as $data_migration_option) {
-                list($plugin_slug, $version_string) = $this->_get_plugin_slug_and_version_string_from_dms_option_name(
+                [$plugin_slug, $version_string] = $this->_get_plugin_slug_and_version_string_from_dms_option_name(
                     $data_migration_option['option_name']
                 );
 
@@ -395,7 +398,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
     public function get_data_migration_script_folders()
     {
         if (empty($this->dms_folders)) {
-            $this->dms_folders = apply_filters(
+            $this->dms_folders = (array) apply_filters(
                 'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
                 ['Core' => EE_CORE . 'data_migration_scripts']
             );
@@ -537,13 +540,14 @@ class EE_Data_Migration_Manager implements ResettableInterface
                 // check if this version script is DONE or not; or if it's never been run
                 if (
                     ! $scripts_ran
-                    || ! isset($scripts_ran[ $script_converts_plugin_slug ])
                     || ! isset($scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ])
                 ) {
                     // we haven't run this conversion script before
                     // now check if it applies...
                     // note that we've added an autoloader for it on get_all_data_migration_scripts_available
-                    $script = LoaderFactory::getLoader()->load($classname);
+                    // Also, make sure we get a new one. It's possible this is being ran during a multisite migration,
+                    // in which case we don't want to reuse a DMS script from a different blog!
+                    $script = LoaderFactory::getLoader()->getNew($classname);
                     /* @var $script EE_Data_Migration_Script_Base */
                     $can_migrate = $script->can_migrate_from_version($theoretical_database_state);
                     if ($can_migrate) {
@@ -865,7 +869,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
             // no version was provided, assume it should be at the current code version
             $slug_and_version = ['slug' => 'Core', 'version' => espresso_version()];
         }
-        $current_database_state                              = get_option(self::current_database_state);
+        $current_database_state                              = get_option(self::current_database_state, []);
         $current_database_state[ $slug_and_version['slug'] ] = $slug_and_version['version'];
         update_option(self::current_database_state, $current_database_state);
     }
@@ -885,22 +889,21 @@ class EE_Data_Migration_Manager implements ResettableInterface
 
         $slug                   = $slug_and_version['slug'];
         $version                = $slug_and_version['version'];
-        $current_database_state = get_option(self::current_database_state);
+        $current_database_state = get_option(self::current_database_state, []);
         if (! isset($current_database_state[ $slug ])) {
             return true;
-        } else {
-            // just compare the first 3 parts of version string, eg "4.7.1", not "4.7.1.dev.032" because DBs shouldn't change on nano version changes
-            $version_parts_current_db_state     = array_slice(explode('.', $current_database_state[ $slug ]), 0, 3);
-            $version_parts_of_provided_db_state = array_slice(explode('.', $version), 0, 3);
-            $needs_updating                     = false;
-            foreach ($version_parts_current_db_state as $offset => $version_part_in_current_db_state) {
-                if ($version_part_in_current_db_state < $version_parts_of_provided_db_state[ $offset ]) {
-                    $needs_updating = true;
-                    break;
-                }
-            }
-            return $needs_updating;
         }
+        // just compare the first 3 parts of version string, eg "4.7.1", not "4.7.1.dev.032" because DBs shouldn't change on nano version changes
+        $version_parts_current_db_state     = array_slice(explode('.', $current_database_state[ $slug ]), 0, 3);
+        $version_parts_of_provided_db_state = array_slice(explode('.', $version), 0, 3);
+        $needs_updating                     = false;
+        foreach ($version_parts_current_db_state as $offset => $version_part_in_current_db_state) {
+            if ($version_part_in_current_db_state < $version_parts_of_provided_db_state[ $offset ]) {
+                $needs_updating = true;
+                break;
+            }
+        }
+        return $needs_updating;
     }
 
 

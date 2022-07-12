@@ -149,7 +149,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
      */
     public function column_name(EE_Question_Group $question_group, bool $prep_content = true): string
     {
-        $actions = [];
+        $actions = array();
 
         if ($this->caps_handler->userCanEditQuestionGroup($question_group)) {
             $actions['edit'] = $this->getActionLink(

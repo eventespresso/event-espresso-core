@@ -109,7 +109,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
 
         return $system_question || $has_answers
             ? '
-            <span class="dashicons dashicons-lock ee-locked-entity ee-aria-tooltip" 
+            <span class="dashicons dashicons-lock ee-locked-entity ee-aria-tooltip"
                     aria-label="' . $notice . '"></span>
             ' . sprintf('<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />', $item->ID())
             : sprintf('<input type="checkbox" class="QST_ID" name="checkbox[%1$d]" value="%1$d" />', $item->ID());

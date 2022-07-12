@@ -78,7 +78,7 @@ class EncryptionKeyManagerTest extends TestCase
     /**
      * @throws Exception
      */
-    public function generateEncryptionKeyDataProvider()
+    public function generateEncryptionKeyDataProvider(): array
     {
         $this->setUpDependencies();
         $keys = [];
@@ -101,7 +101,7 @@ class EncryptionKeyManagerTest extends TestCase
     }
 
 
-    public function bitDepthDataProvider()
+    public function bitDepthDataProvider(): array
     {
         return [
             [64, 64],
@@ -129,7 +129,7 @@ class EncryptionKeyManagerTest extends TestCase
     }
 
 
-    public function keyLengthDataProvider()
+    public function keyLengthDataProvider(): array
     {
         return [
             [0, 8],
@@ -193,7 +193,7 @@ class EncryptionKeyManagerTest extends TestCase
     /**
      * @throws Exception
      */
-    public function addEncryptionKeyDataProvider()
+    public function addEncryptionKeyDataProvider(): array
     {
         $this->setUpDependencies();
         $default_key = $this->ekm->getEncryptionKey();

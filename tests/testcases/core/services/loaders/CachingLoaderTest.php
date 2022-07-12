@@ -8,6 +8,7 @@ use EventEspresso\core\services\loaders\CoreLoader;
 use EventEspresso\core\services\loaders\LoaderDecorator;
 use EventEspresso\core\services\loaders\ObjectIdentifier;
 use EventEspresso\tests\mocks\core\services\loaders\CachingLoaderMock;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Exception;
 
 /**
@@ -23,8 +24,6 @@ use PHPUnit\Framework\Exception;
  */
 class CachingLoaderTest extends EE_UnitTestCase
 {
-
-
     /**
      * @var CachingLoaderMock $caching_loader
      */
@@ -38,6 +37,7 @@ class CachingLoaderTest extends EE_UnitTestCase
      */
     public function set_up()
     {
+        parent::set_up();
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
         //caching is turned off by default in the parent test case.  For tests in here where we're doing a number of
         //different persistence tests
@@ -52,7 +52,7 @@ class CachingLoaderTest extends EE_UnitTestCase
     }
 
 
-    private function getFqcnForTest()
+    private function getFqcnForTest(): string
     {
         return '\EventEspresso\core\services\address\formatters\AddressFormatter';
     }
@@ -63,7 +63,7 @@ class CachingLoaderTest extends EE_UnitTestCase
      *
      * @throws Exception
      */
-    public function testLoadCachingOff()
+    public function testLoadCachingOff(): string
     {
         CachingLoaderTest::$caching_loader->setBypass(true);
         $object = CachingLoaderTest::$caching_loader->load($this->getFqcnForTest());
@@ -140,7 +140,7 @@ class CachingLoaderTest extends EE_UnitTestCase
      * @since 4.9.66.p
      * @throws Exception
      * @throws InvalidArgumentException
-     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws AssertionFailedError
      */
     public function testShare()
     {

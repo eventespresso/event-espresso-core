@@ -67,16 +67,19 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 	}
 
 
-
-	/**
-	 * This allows setting the $_price_type property to a new price_type object if the incoming args for the
-	 * new price have a prt_id (or set to default if no prt_id).  This optionally will use any args for price type that is included in the incoming arguments.
-	 *
-	 * @since 4.3.0
-	 * @param int $PRT_ID EE_Price_Type ID
-	 */
-	private function _set_new_price_type( $PRT_ID = 0, $args = array() ) {
-		$this->_price_type = empty( $PRT_ID ) ? EEM_Price_Type::instance()->get_one_by_ID( $PRT_ID ) : $this->_create_price_type( $args );
+    /**
+     * This allows setting the $_price_type property to a new price_type object if the incoming args for the
+     * new price have a prt_id (or set to default if no prt_id).  This optionally will use any args for price type that is included in the incoming arguments.
+     *
+     * @param int   $PRT_ID EE_Price_Type ID
+     * @param array $args
+     * @throws EE_Error
+     * @since 4.3.0
+     */
+	private function _set_new_price_type(int $PRT_ID, array $args = [] ) {
+		$this->_price_type = empty( $PRT_ID )
+            ? EEM_Price_Type::instance()->get_one_by_ID( $PRT_ID )
+            : $this->_create_price_type( $args );
 		//fail safe just in case (so we can be sure to have an price_type).
 		if ( empty( $this->_price_type ) ) {
 			$this->_price_type = $this->_create_price_type( $args );

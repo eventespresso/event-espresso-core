@@ -277,7 +277,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 	 * @since 4.6.x
 	 */
 	public function test_create_new_blank_datetime() {
-		//if timezone is empty string then the setUp didn't work correctly.  For the purpose of this test
+		//if timezone is empty string then the set_up didn't work correctly.  For the purpose of this test
 		//we want a high positive timezone, so let's force that if necessary
 		if ( get_option( 'timezone_string' ) != 'Australia/Sydney' ) {
 			update_option( 'timezone_string', 'Australia/Sydney' );

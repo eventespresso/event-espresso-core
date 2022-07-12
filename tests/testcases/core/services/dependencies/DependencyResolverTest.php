@@ -33,7 +33,6 @@ use ReflectionException;
  */
 class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
 {
-
     /**
      * @var LoaderInterface $loader
      */
@@ -66,7 +65,7 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
      * @return DependencyResolverMock
      * @since 4.9.71.p
      */
-    public function getDependencyResolver()
+    public function getDependencyResolver(): DependencyResolverMock
     {
         return new DependencyResolverMock(
             $this->loader->getShared('EventEspresso\core\services\container\Mirror'),
@@ -121,8 +120,8 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
      */
     public function testAddAlias()
     {
-        $alias = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwieInterface';
-        $fqcn = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwie';
+        $alias              = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwieInterface';
+        $fqcn               = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwie';
         $DependencyResolver = $this->getDependencyResolver();
         $DependencyResolver->addAlias($fqcn, $alias);
         $aliases = $DependencyResolver->getAliases();
@@ -139,7 +138,7 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
     public function testResolveAlias()
     {
         $request_alias = 'EventEspresso\core\services\request\RequestInterface';
-        $request_fqcn = 'EventEspresso\core\services\request\Request';
+        $request_fqcn  = 'EventEspresso\core\services\request\Request';
 
         $DependencyResolver = $this->getDependencyResolver();
         $this->assertFalse(EE_Dependency_Map::instance()->has($request_fqcn));
@@ -165,7 +164,7 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
      */
     public function testAddNamespaceRoot()
     {
-        $namespace_root = 'EventEspresso\tests\mocks\core\services\dependencies\composites';
+        $namespace_root     = 'EventEspresso\tests\mocks\core\services\dependencies\composites';
         $DependencyResolver = $this->getDependencyResolver();
         $DependencyResolver->addNamespaceRoot($namespace_root);
         $namespace_roots = $DependencyResolver->getNamespaceRoots();
@@ -181,7 +180,7 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
      */
     public function testDependencyRecursionExists()
     {
-        $namespace_root = 'EventEspresso\tests\mocks\core\services\dependencies\composites';
+        $namespace_root     = 'EventEspresso\tests\mocks\core\services\dependencies\composites';
         $DependencyResolver = $this->getDependencyResolver();
         $DependencyResolver->addNamespaceRoot($namespace_root);
         $this->assertTrue(
@@ -196,11 +195,11 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
      * @return Owie
      * @since 4.9.71.p
      */
-    public function getBoneHurtingJuice()
+    public function getBoneHurtingJuice(): Owie
     {
         $request_params = new RequestParams(new RequestSanitizer(), $this->request_params);
         $server_params  = new ServerParams(new ServerSanitizer());
-        $request = new Request($request_params, $server_params);
+        $request        = new Request($request_params, $server_params);
         return new Owie(
             new Ouch(
                 new Oof($request),
@@ -232,8 +231,8 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
     public function testResolveDependenciesForClass()
     {
         $namespace_root = 'EventEspresso\tests\mocks\core\services\dependencies\composites';
-        $alias = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwieInterface';
-        $fqcn = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwie';
+        $alias          = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwieInterface';
+        $fqcn           = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwie';
         $this->assertFalse(EE_Dependency_Map::instance()->has($fqcn));
         $DependencyResolver = $this->getDependencyResolver();
         $DependencyResolver->addNamespaceRoot($namespace_root);

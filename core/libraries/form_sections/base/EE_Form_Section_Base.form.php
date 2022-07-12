@@ -383,7 +383,7 @@ abstract class EE_Form_Section_Base
         $html .= ' action="' . esc_url_raw($this->action()) . '"';
         $html .= ' method="' . $this->method() . '"';
         $html .= ' name="' . $this->name() . '"';
-        $html .= $other_attributes . '>';
+        $html .= ' ' . $other_attributes . '>';
         return $html;
     }
 

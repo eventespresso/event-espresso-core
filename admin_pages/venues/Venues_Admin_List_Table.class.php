@@ -190,7 +190,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                 break;
             default:
                 $actions['view'] = '
-                    <a  href="' . get_permalink($item->ID()) . '" 
+                    <a  href="' . get_permalink($item->ID()) . '"
                         title="' . esc_attr__('View Venue', 'event_espresso') . '"
                     >
                         ' . esc_html__('View', 'event_espresso') . '

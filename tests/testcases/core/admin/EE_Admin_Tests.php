@@ -274,14 +274,13 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	}
 
 
-
-
-	/**
-	 * Test the powered by Event Espresso footer.
-	 *
-	 * @since 4.3.0
-	 * @depends test_loading_admin
-	 */
+    /**
+     * Test the powered by Event Espresso footer.
+     *
+     * @throws EE_Error
+     * @since   4.3.0
+     * @depends test_loading_admin
+     */
 	public function test_espresso_admin_footer() {
 	    // simulate being on admin page.  For the purpose of this test it doesn't matter what admin page it is.
         // we don't want modules or shortcodes loading for this test so let's unset that.

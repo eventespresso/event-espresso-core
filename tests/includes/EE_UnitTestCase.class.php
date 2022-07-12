@@ -39,13 +39,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     protected $_orig_current_user;
 
-    /**
-     * Boolean indicating we've already noted an accidental txn commit and we don't need to
-     * keep checking or warning the test runner about it
-     *
-     * @var boolean
-     */
-    public static $accidental_txn_commit_noted = false;
 
     /**
      * Holds an array of default DateTime objects for testing with.
@@ -95,10 +88,10 @@ class EE_UnitTestCase extends WP_UnitTestCase
     //     // \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
     // }
 
-    // public static function tearDownAfterClass() {
+    // public static function tear_down_after_class() {
     //     // echo "\n\n\n" . get_called_class() . "\n\n";
     //     \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
-    //     parent::tearDownAfterClass();
+    //     parent::tear_down_after_class();
     // }
 
 
@@ -121,9 +114,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         parent::set_up();
         $auto_made_thing_seed = 1;
         //reset wpdb's list of queries executed so it only stores those from the current test
-        $wpdb->queries = [];
-        //the accidental txn commit indicator option shouldn't be set from the previous test
-        update_option('accidental_txn_commit_indicator', true);
+        $wpdb->queries = array();
 
         // Fake WP mail globals, to avoid errors
         add_filter('wp_mail', [$this, 'setUp_wp_mail']);
@@ -153,18 +144,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param string $sql
      * @return bool
      */
-    public function _short_circuit_db_implicit_commits(
-        bool $short_circuit = false,
-        string $table_name = '',
-        string $sql = ''
-    ): bool {
-        $whitelisted_tables =
-            apply_filters('FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables', []);
-        if (in_array($table_name, $whitelisted_tables, true)) {
-            //it's not altering. it's ok
-            return false;
-        }
-        return true;
+    public function _short_circuit_db_implicit_commits($short_circuit, $table_name, $sql)
+    {
+        $whitelisted_tables = apply_filters(
+            'FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables',
+            []
+        );
+        return ! in_array($table_name, $whitelisted_tables, true);
     }
 
 
@@ -191,8 +177,10 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $wp_actions        = $this->wp_filters_saved['wp_actions'];
         $merged_filters    = $this->wp_filters_saved['merged_filters'];
         $wp_current_filter = $this->wp_filters_saved['wp_current_filter'];
-        $current_user      = $this->_orig_current_user;
-        $this->_detect_accidental_txn_commit();
+        $current_user = $this->_orig_current_user;
+        //for some reason WP waits until the start of the next test to do this. but
+        //we prefer to do it now so that we can check for implicit commits
+        $this->clean_up_global_scope();
         $notices = EE_Error::get_notices(false, false, true);
         EE_Error::reset_notices();
         if (! empty($notices['errors'])) {
@@ -278,52 +266,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
         // load scenarios
         require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
         $this->scenarios = new EE_Test_Scenario_Factory($this);
-    }
-
-
-    /**
-     * Detects whether or not a MYSQL query was issued which caused an implicit commit
-     * (or an explicit one). Basically, we can't do a commit mid-test because it messes
-     * up the test's state (which means the database state at the time of the commit will
-     * become the new starting state for all future tests, which will likely cause hard-to-find
-     * bugs, and makes test results dependent on order of execution)
-     *
-     * @throws EE_Error
-     * @global WPDB $wpdb
-     */
-    protected function _detect_accidental_txn_commit()
-    {
-        //for some reason WP waits until the start of the next test to do this. but
-        //we prefer to do it now so that we can check for implicit commits
-        $this->clean_up_global_scope();
-        //now we can check if there was an accidental implicit commit
-        if (! self::$accidental_txn_commit_noted && get_option('accidental_txn_commit_indicator', false)) {
-            global $wpdb;
-            self::$accidental_txn_commit_noted = true;
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        "Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s",
-                        'event_espresso'
-                    ),
-                    print_r($wpdb->queries, true),
-                    $this->getName()
-                )
-            );
-        }
-    }
-
-
-    /**
-     *  Use this to clean up any global scope singletons etc that we may have being used by EE so
-     *  that they are fresh between tests.
-     *
-     * @todo this of course means we need an easy way to reset our singletons...
-     * @see  parent::cleanup_global_scope();
-     */
-    public function clean_up_global_scope()
-    {
-        parent::clean_up_global_scope();
     }
 
 
@@ -840,6 +782,12 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function assertArrayContains($item, array $haystack)
     {
+        if (is_array($item)) {
+            foreach ($item as $needle) {
+                $this->assertArrayContains($needle, $haystack);
+            }
+            return;
+        }
         $this->assertTrue(
             in_array($item, $haystack, true),
             sprintf(
@@ -857,8 +805,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function assertArrayDoesNotContain($item, array $haystack)
     {
-        $this->assertFalse(
-            in_array($item, $haystack, true),
+        if (is_array($item)) {
+            foreach ($item as $needle) {
+                $this->assertArrayDoesNotContain($needle, $haystack);
+            }
+            return;
+        }
+        $this->assertTrue(
+            ! in_array($item, $haystack, true),
             sprintf(
                 esc_html__('Array %1$s DOES contain %2$s when it shouldn\'t', 'event_espresso'),
                 print_r($haystack, true),

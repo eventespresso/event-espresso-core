@@ -36,6 +36,7 @@ class AllowedTags
         'dir'               => 1,
         'disabled'          => 1,
         'enctype'           => 1,
+        'extension'         => 1,
         'for'               => 1,
         'frameborder'       => 1,
         'height'            => 1,

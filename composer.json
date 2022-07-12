@@ -25,21 +25,21 @@
 			"url": "https://github.com/eventespresso/ee-coding-standards"
 		}
 	],
-	"allow-plugins": {
-		"eventespresso/*": true,
-		"composer/installers": true,
-		"roave/security-advisories": true,
-		"yoast/phpunit-polyfills": true
+	"require-dev": {
+		"eventespresso/ee-coding-standards": "dev-master",
+		"roave/security-advisories": "dev-master",
+		"yoast/phpunit-polyfills": "^1.0"
 	},
 	"require": {
 		"composer/installers": "~2.0",
 		"php": ">=7.2",
 		"ext-json": "*"
 	},
-	"require-dev": {
-		"eventespresso/ee-coding-standards": "dev-master",
-		"roave/security-advisories": "dev-master",
-		"yoast/phpunit-polyfills": "^1.0"
+	"allow-plugins": {
+		"eventespresso/*": true,
+		"composer/installers": true,
+		"roave/security-advisories": true,
+		"yoast/phpunit-polyfills": true
 	},
 	"scripts": {
 		"config-eventespressocs": [

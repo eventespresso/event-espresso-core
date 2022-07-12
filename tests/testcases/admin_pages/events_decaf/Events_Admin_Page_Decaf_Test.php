@@ -42,7 +42,8 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 
 
 
-	public function set_up() {
+	public function set_up()
+	{
 		parent::set_up();
 		$this->delayedAdminPageMocks( 'decaf_events' );
         $this->setupRequest();
@@ -50,7 +51,8 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
         EE_Registry::instance()->CFG->admin->setUseAdvancedEditor(false);
 	}
 
-	public function tear_down() {
+	public function tear_down()
+	{
 		parent::tear_down();
         EE_Registry::instance()->CFG->admin->setUseAdvancedEditor($this->useAdvancedEditor);
 	}
@@ -62,7 +64,8 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 	 * @param string $timezone Timezone string to initialize the times in.
 	 * @since 4.6
 	 */
-	protected function _load_requirements( $timezone = 'America/Vancouver' ) {
+	protected function _load_requirements( $timezone = 'America/Vancouver' )
+	{
 		$this->_admin_page = new Events_Admin_Page_Mock();
 		$this->_event = $this->factory->event->create();
 		$this->_event->set_timezone( $timezone );

@@ -185,8 +185,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $status_dot      = '<span class="ee-status-dot ee-status-bg--' . $status . '"></span>';
         $content         = '
             <div class="ee-layout-row ee-layout-row--fixed">
-                <a  class="row-title ee-status-color--' . $status . ' ee-aria-tooltip" 
-                    aria-label="' . $pretty_status . '" 
+                <a  class="row-title ee-status-color--' . $status . ' ee-aria-tooltip"
+                    aria-label="' . $pretty_status . '"
                     href="' . $edit_link . '"
                 >
                     ' . $status_dot . $event->name() . '

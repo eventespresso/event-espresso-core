@@ -486,6 +486,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         if (empty($filters)) {
             return;
         }
+        $use_filters = isset($this->_req_data['use_filters'])
+                       && filter_var($this->_req_data['use_filters'], FILTER_VALIDATE_BOOLEAN)
+            ? 'yes'
+            : 'no';
 
         $filters_html = '';
         foreach ($filters as $filter) {
@@ -504,7 +508,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
                        id='post-query-submit'
                        value='$filter_submit_btn_text'
                 />
-                <input type='hidden' id='ee-list-table-use-filters' name='use_filters' value='no' />
+                <input type='hidden' id='ee-list-table-use-filters' name='use_filters' value='$use_filters' />
                 <a class='ee-list-table-filter-reset button button--secondary' href='$filter_reset_btn_url'>
                     $filter_reset_btn_text
                 </a>
@@ -740,7 +744,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function single_row_columns($item)
     {
-        [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
+        list($columns, $hidden, $sortable, $primary) = $this->get_column_info();
 
         foreach ($columns as $column_name => $column_display_name) {
 

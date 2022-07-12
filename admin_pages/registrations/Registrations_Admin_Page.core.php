@@ -3227,10 +3227,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $EVT_ID = $this->request->requestParamIsSet('EVT_ID')
             ? $this->request->getRequestParam('EVT_ID', 0, DataType::INT)
             : null;
-
         if (! defined('EE_USE_OLD_CSV_REPORT_CLASS')) {
             $return_url = $this->request->getRequestParam('return_url', '', DataType::URL);
             $filters = $this->request->getRequestParam('filters', [], DataType::STRING, true);
+            $report_params  = $this->$method_name_for_getting_query_params($filters);
             $use_filters = $this->request->getRequestParam('use_filters', false, DataType::BOOL);
             wp_redirect(
                 EE_Admin_Page::add_query_args_and_nonce(
@@ -3238,7 +3238,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'page'        => EED_Batch::PAGE_SLUG,
                         'batch'       => EED_Batch::batch_file_job,
                         'EVT_ID'      => $EVT_ID,
-                        'filters'     => urlencode(serialize($this->$method_name_for_getting_query_params($filters))),
+                        'filters'     => urlencode(serialize($report_params)),
                         'use_filters' => urlencode($use_filters),
                         'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
                         'return_url'  => urlencode($return_url),

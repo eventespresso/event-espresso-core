@@ -445,8 +445,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             );
 
             $action_links[]     = '
-                <a href="' . $reports_link . '" 
-                    aria-label="' . esc_attr__('View Report', 'event_espresso') . '" 
+                <a href="' . $reports_link . '"
+                    aria-label="' . esc_attr__('View Report', 'event_espresso') . '"
                     class="ee-aria-tooltip button button--icon-only"
                 >
                     <span class="dashicons dashicons-chart-bar"></span>

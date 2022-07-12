@@ -45,6 +45,7 @@ class RouteMatchSpecificationDependencyResolverTest extends EspressoPHPUnitFrame
      */
     public function setUp(): void
     {
+        parent::setUp();
         $this->loader = LoaderFactory::getLoader();
         $this->dependency_map = $this->loader->getShared('EE_Dependency_Map');
         $class = new ReflectionClass($this->dependency_map);
@@ -61,7 +62,7 @@ class RouteMatchSpecificationDependencyResolverTest extends EspressoPHPUnitFrame
      * @since 4.9.71.p
      * @return RouteMatchSpecificationDependencyResolver
      */
-    public function getDependencyResolver()
+    public function getDependencyResolver(): RouteMatchSpecificationDependencyResolver
     {
         return new RouteMatchSpecificationDependencyResolver(
             $this->loader->getShared('EventEspresso\core\services\container\Mirror'),

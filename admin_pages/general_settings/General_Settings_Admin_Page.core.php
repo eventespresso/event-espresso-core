@@ -68,70 +68,70 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     {
         $this->_page_routes = [
             'critical_pages'                => [
-                'func'       => '_espresso_page_settings',
+                'func'       => [$this, '_espresso_page_settings'],
                 'capability' => 'manage_options',
             ],
             'update_espresso_page_settings' => [
-                'func'       => '_update_espresso_page_settings',
+                'func'       => [$this, '_update_espresso_page_settings'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'default'                       => [
-                'func'       => '_your_organization_settings',
+                'func'       => [$this, '_your_organization_settings'],
                 'capability' => 'manage_options',
             ],
 
             'update_your_organization_settings' => [
-                'func'       => '_update_your_organization_settings',
+                'func'       => [$this, '_update_your_organization_settings'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
 
             'admin_option_settings' => [
-                'func'       => '_admin_option_settings',
+                'func'       => [$this, '_admin_option_settings'],
                 'capability' => 'manage_options',
             ],
 
             'update_admin_option_settings' => [
-                'func'       => '_update_admin_option_settings',
+                'func'       => [$this, '_update_admin_option_settings'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
 
             'country_settings' => [
-                'func'       => '_country_settings',
+                'func'       => [$this, '_country_settings'],
                 'capability' => 'manage_options',
             ],
 
             'update_country_settings' => [
-                'func'       => '_update_country_settings',
+                'func'       => [$this, '_update_country_settings'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
 
             'display_country_settings' => [
-                'func'       => 'display_country_settings',
+                'func'       => [$this, 'display_country_settings'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
 
             'add_new_state' => [
-                'func'       => 'add_new_state',
+                'func'       => [$this, 'add_new_state'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
 
             'delete_state'            => [
-                'func'       => 'delete_state',
+                'func'       => [$this, 'delete_state'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'privacy_settings'        => [
-                'func'       => 'privacySettings',
+                'func'       => [$this, 'privacySettings'],
                 'capability' => 'manage_options',
             ],
             'update_privacy_settings' => [
-                'func'               => 'updatePrivacySettings',
+                'func'               => [$this, 'updatePrivacySettings'],
                 'capability'         => 'manage_options',
                 'noheader'           => true,
                 'headers_sent_route' => 'privacy_settings',

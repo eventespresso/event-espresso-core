@@ -68,7 +68,7 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 	}
 
 	/**
-	 * setUp
+	 * set_up
 	 */
 	public function set_up(){
 		parent::set_up();

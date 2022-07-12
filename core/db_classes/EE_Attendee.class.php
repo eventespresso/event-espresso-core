@@ -9,8 +9,8 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @ package            Event Espresso
  * @ author                Seth Shoultes
  * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @linkense            {@link https://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @linkk                    {@link http://www.eventespresso.com}
+ * @link                    {@link https://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @link                    {@link http://www.eventespresso.com}
  * @ since                4.0
  */
 

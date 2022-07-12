@@ -52,6 +52,7 @@ class JavascriptAssetTest extends EspressoPHPUnitFrameworkTestCase
 
     public function tearDown(): void
     {
+        parent::tearDown();
         $this->domain_mock = null;
         $this->js_asset = null;
     }
@@ -59,9 +60,9 @@ class JavascriptAssetTest extends EspressoPHPUnitFrameworkTestCase
 
     private function getAsset(
         $source = 'https://testurl.com/test.js',
-        $dependencies = array(),
-        $load_in_footer = true
-    ) {
+        array $dependencies = array(),
+        bool $load_in_footer = true
+    ): JavascriptAsset {
         return new JavascriptAsset(
             'test-handle',
             $source,

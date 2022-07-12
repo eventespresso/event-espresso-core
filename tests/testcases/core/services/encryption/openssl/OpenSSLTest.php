@@ -106,7 +106,7 @@ class OpenSSLTest extends TestCase
     /**
      * @return array
      */
-    public function opensslEncryptionDataProvider()
+    public function opensslEncryptionDataProvider(): array
     {
         $this->setUpDependencies();
         $random_strings = [ $this->rdg->getString()];

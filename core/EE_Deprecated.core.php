@@ -531,9 +531,9 @@ class EE_Message_Template_Defaults extends EE_Base
         return EE_Registry::instance()->load_lib(
             'Messages_Template_Defaults',
             array(
-                $GRP_ID,
                 $messenger,
                 $message_type,
+                $GRP_ID,
             )
         );
     }
@@ -1191,15 +1191,15 @@ add_action(
 );
 
 add_filter(
-    'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
-    function ($existing_attendee, $registration, $attendee_data) {
-        if (! has_filter('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee')) {
+    'FHEE_EventEspresso_core_domain_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
+    function($existing_attendee, $registration, $attendee_data) {
+        if ( ! has_filter( 'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee' )) {
             return $existing_attendee;
         }
         deprecated_espresso_action_or_filter_doing_it_wrong(
             'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee',
-            'FHEE_EventEspresso_core_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
-            '\EventEspresso\core\services\commands\attendee\CreateAttendeeCommandHandler::findExistingAttendee()',
+            'FHEE_EventEspresso_core_domain_services_commands_attendee_CreateAttendeeCommandHandler__findExistingAttendee__existing_attendee',
+            '\EventEspresso\core\domain\services\commands\attendee\CreateAttendeeCommandHandler::findExistingAttendee()',
             '4.9.34',
             '5.0.0',
             'filter'

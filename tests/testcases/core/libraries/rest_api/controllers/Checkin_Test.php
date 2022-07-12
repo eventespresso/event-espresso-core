@@ -216,4 +216,3 @@ class Checkin_Test extends EE_UnitTestCase
         $this->assertEquals($checkins_before + 1, EEM_Checkin::instance()->count());
     }
 }
-

@@ -8,6 +8,7 @@ use EventEspresso\core\services\commands\Command;
  * Class CancelTicketLineItemCommand
  * DTO for passing data to CancelTicketLineItemCommandHandler
  *
+ * @deprecated 4.9.54
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0

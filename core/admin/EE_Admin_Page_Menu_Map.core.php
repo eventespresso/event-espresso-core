@@ -49,7 +49,6 @@ abstract class EE_Admin_Page_Menu_Map extends AdminMenuItem
         return method_exists($this, $getter) ? $this->{$getter}() : null;
     }
 
-
     public function __set(string $property, $value)
     {
         // converts a property name like 'menu_slug' into 'setMenuSlug'
