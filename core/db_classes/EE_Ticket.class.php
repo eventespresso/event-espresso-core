@@ -1219,7 +1219,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *                            is therefore the truest measure of tickets that can be purchased at the moment
      * @param int    $DTT_ID      the primary key for a particular datetime.
      *                            set to 0 for all related datetimes
-     * @return int
+     * @return int|float          int for finite quantity or float for INF
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -1282,7 +1282,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             // echo "\n . qty: " . $qty . '<br />';
         }
         // echo "\nFINAL QTY: " . $qty . "<br /><br />";
-        return (int) $qty;
+        return $qty;
     }
 
 
