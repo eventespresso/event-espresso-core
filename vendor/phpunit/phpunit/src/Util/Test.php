@@ -37,7 +37,6 @@ use function strpos;
 use function strtolower;
 use function trim;
 use function version_compare;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\CodeCoverageException;
 use PHPUnit\Framework\ExecutionOrderDependency;
 use PHPUnit\Framework\InvalidCoversTargetException;
@@ -150,7 +149,8 @@ final class Test
         // If there is no @covers annotation but a @coversNothing annotation on
         // the test method then code coverage data does not need to be collected
         if (isset($annotations['method']['coversNothing'])) {
-            return false;
+            // @see https://github.com/sebastianbergmann/phpunit/issues/4947#issuecomment-1084480950
+            // return false;
         }
 
         // If there is at least one @covers annotation then
@@ -162,7 +162,8 @@ final class Test
         // If there is no @covers annotation but a @coversNothing annotation
         // then code coverage data does not need to be collected
         if (isset($annotations['class']['coversNothing'])) {
-            return false;
+            // @see https://github.com/sebastianbergmann/phpunit/issues/4947#issuecomment-1084480950
+            // return false;
         }
 
         // If there is no @coversNothing annotation then
@@ -524,15 +525,7 @@ final class Test
             self::$hookMethods[$className] = self::emptyHookMethodsArray();
 
             try {
-                foreach ((new ReflectionClass($className))->getMethods() as $method) {
-                    if ($method->getDeclaringClass()->getName() === Assert::class) {
-                        continue;
-                    }
-
-                    if ($method->getDeclaringClass()->getName() === TestCase::class) {
-                        continue;
-                    }
-
+                foreach ((new Reflection)->methodsInTestClass(new ReflectionClass($className)) as $method) {
                     $docBlock = Registry::getInstance()->forMethod($className, $method->getName());
 
                     if ($method->isStatic()) {

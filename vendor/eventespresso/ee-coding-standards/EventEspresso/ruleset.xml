@@ -163,6 +163,7 @@
         <exclude-pattern>*.model_ext.php</exclude-pattern>
         <exclude-pattern>*.model.ext.php</exclude-pattern>
         <exclude-pattern>EE_Mailchimp_Config_Api_Settings.php</exclude-pattern>
+        <exclude-pattern>EE_Multisite_Migration_Manager.php</exclude-pattern>
     </rule>
 
     <rule ref="Squiz.Classes.ValidClassName.NotCamelCaps">
@@ -206,6 +207,8 @@
         <exclude-pattern>*.model_ext.php</exclude-pattern>
         <exclude-pattern>*.model.ext.php</exclude-pattern>
         <exclude-pattern>EE_Mailchimp_Config_Api_Settings.php</exclude-pattern>
+        <exclude-pattern>EE_Multisite_Migration_Manager.php</exclude-pattern>
+        <exclude-pattern>MultisiteQueryer.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
@@ -243,6 +246,7 @@
         <exclude-pattern>*.class_ext.php</exclude-pattern>
         <exclude-pattern>*.model_ext.php</exclude-pattern>
         <exclude-pattern>*.model.ext.php</exclude-pattern>
+        <exclude-pattern>EE_Multisite_Migration_Manager.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR2.Methods.MethodDeclaration.Underscore">
@@ -281,6 +285,9 @@
         <exclude-pattern>*.class_ext.php</exclude-pattern>
         <exclude-pattern>*.model_ext.php</exclude-pattern>
         <exclude-pattern>*.model.ext.php</exclude-pattern>
+        <exclude-pattern>EE_Multisite_Migration_Manager.php</exclude-pattern>
+        <exclude-pattern>MultisiteQueryer.php</exclude-pattern>
+        <exclude-pattern>MultisiteMigration.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
@@ -324,6 +331,10 @@
         <exclude-pattern>*.class_ext.php</exclude-pattern>
         <exclude-pattern>*.model_ext.php</exclude-pattern>
         <exclude-pattern>*.model.ext.php</exclude-pattern>
+        <exclude-pattern>EE_Multisite_Migration_Manager.php</exclude-pattern>
+        <exclude-pattern>MultisiteQueryer.php</exclude-pattern>
+        <exclude-pattern>MultisiteMigration.php</exclude-pattern>
+        <exclude-pattern>EventSmart\Multisite\core\services\database\service\DbServiceJobHandler</exclude-pattern>
     </rule>
 
     <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
@@ -448,5 +459,9 @@
         <exclude-pattern>EE_Config.core.php</exclude-pattern>
         <exclude-pattern>EE_Qtip_Config.lib.php</exclude-pattern>
         <exclude-pattern>EEG_Aim.gateway.php</exclude-pattern>
+    </rule>
+
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <exclude-pattern>eea-multisite.php</exclude-pattern>
     </rule>
 </ruleset>
