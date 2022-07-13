@@ -67,7 +67,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     <!-- we need to loop through the template_fields so we know our structure -->
     <?php
     if (isset($template_fields) && ! empty($template_fields) && ! is_wp_error($template_fields)) {
-        echo wp_kses($template_fields, AllowedTags::getWithFormTags());
+        echo wp_kses($template_fields, AllowedTags::getWithFullTags());
     } else {
         ?>
         <p>
