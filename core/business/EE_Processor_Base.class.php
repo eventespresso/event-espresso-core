@@ -55,17 +55,17 @@ class EE_Processor_Base
      * @param string          $class
      * @param string          $func
      * @param string          $line
-     * @param \EE_Transaction $transaction
-     * @param array           $info
-     * @param bool            $display_request
+     * @param EE_Transaction|null $transaction
+     * @param array|null           $info
+     * @param bool|null            $display_request
      */
     protected function log(
-        $class = '',
-        $func = '',
-        $line = '',
-        EE_Transaction $transaction,
-        $info = array(),
-        $display_request = false
+        string $class = '',
+        string $func = '',
+        string $line = '',
+        ?EE_Transaction $transaction = null,
+        ?array $info = array(),
+        ?bool $display_request = false
     ) {
         if (WP_DEBUG && false) {
             if ($transaction instanceof EE_Transaction) {
