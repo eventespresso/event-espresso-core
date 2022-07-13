@@ -53,10 +53,10 @@ class EE_Float_Field extends EE_Model_Field_Base
      * Returns the number formatted according to local custom (set by the country of the blog).
      *
      * @param float $value
-     * @param null  $schema
+     * @param string|null  $schema
      * @return string
      */
-    public function prepare_for_pretty_echoing($value, $schema = null)
+    public function prepare_for_pretty_echoing($value, ?string $schema = null)
     {
         return $this->number_formatter->formatForLocale($value);
     }

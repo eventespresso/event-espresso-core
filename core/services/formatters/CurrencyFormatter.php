@@ -256,10 +256,10 @@ class CurrencyFormatter extends LocaleFloatFormatter
      *    null: "$1,234.57<span>USD</span>"
      *
      * @param string $schema
-     * @param bool   $allow_fractional_subunits
+     * @param bool|null   $allow_fractional_subunits
      * @return int
      */
-    public function getFormatFromLegacySchema(string $schema, bool $allow_fractional_subunits = true): int
+    public function getFormatFromLegacySchema(string $schema, ?bool $allow_fractional_subunits = true): int
     {
         switch ($schema) {
             case 'precision_float';

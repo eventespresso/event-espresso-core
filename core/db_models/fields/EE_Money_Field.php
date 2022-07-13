@@ -72,7 +72,7 @@ class EE_Money_Field extends EE_Float_Field
      * @return string
      * @since $VID:$
      */
-    public function prepare_for_get($amount, $schema = 'precision_float'): string
+    public function prepare_for_get($amount, ?string $schema = 'precision_float'): string
     {
         $schema = $schema ? $schema : 'precision_float';
         return $this->currency_formatter->formatForLocale(
@@ -92,8 +92,9 @@ class EE_Money_Field extends EE_Float_Field
      * @param string|null      $schema
      * @return string
      */
-    public function prepare_for_pretty_echoing($amount, $schema = 'localized_currency'): string
+    public function prepare_for_pretty_echoing($amount, ?string $schema = 'localized_currency'): string
     {
+        $schema = $schema ?? 'localized_currency';
         return $this->currency_formatter->formatForLocale(
             (float) $amount,
             $this->currency_formatter->getFormatFromLegacySchema($schema, $this->allow_fractional_subunits)
