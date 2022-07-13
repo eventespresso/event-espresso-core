@@ -23,7 +23,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     <?php
     do_action('AHEE__admin_wrapper__template__before_admin_page_content');
     echo wp_kses($before_admin_page_content, AllowedTags::getWithFormTags());
-    echo wp_kses($admin_page_content, AllowedTags::getWithFormTags());
+    echo wp_kses($admin_page_content, AllowedTags::getWithFullTags());
     echo wp_kses($after_admin_page_content, AllowedTags::getWithFormTags());
     do_action('AHEE__admin_wrapper__template__after_admin_page_content');
     ?>

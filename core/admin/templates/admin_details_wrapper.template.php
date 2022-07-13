@@ -25,7 +25,7 @@ do_action('add_meta_boxes', (string) $post_type, $post);
 
         <?php if (! empty($post_body_content)) : ?>
             <div id="post-body-content">
-                <?php echo wp_kses($post_body_content, AllowedTags::getWithFormTags()); ?>
+                <?php echo wp_kses($post_body_content, AllowedTags::getWithFullTags()); ?>
             </div>
             <!-- post-body-content -->
         <?php endif; ?>
