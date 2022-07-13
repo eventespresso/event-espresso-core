@@ -43,9 +43,9 @@ class RouteMatchSpecificationDependencyResolverTest extends TestCase
      * @throws ReflectionException
      * @throws AssertionFailedError
      */
-    protected function setUp(): void
+    protected function set_up(): void
     {
-        parent::setUp();
+        parent::set_up();
         $this->loader = LoaderFactory::getLoader();
         $this->dependency_map = $this->loader->getShared('EE_Dependency_Map');
         $class = new ReflectionClass($this->dependency_map);

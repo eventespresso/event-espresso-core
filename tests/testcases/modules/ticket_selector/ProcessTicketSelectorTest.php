@@ -39,9 +39,9 @@ class ProcessTicketSelectorTest extends TestCase
     private $request;
 
 
-    public function setUp(): void
+    public function set_up(): void
     {
-        parent::setUp();
+        parent::set_up();
         $this->request = new RequestMock();
     }
 

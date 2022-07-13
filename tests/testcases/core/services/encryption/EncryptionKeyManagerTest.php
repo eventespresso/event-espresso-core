@@ -40,20 +40,20 @@ class EncryptionKeyManagerTest extends TestCase
     protected $rdg;
 
 
-    public function setUp(): void
+    public function set_up(): void
     {
-        parent::setUp();
+        parent::set_up();
         $this->setUpDependencies();
         delete_option(self::TEST_KEYS_OPTION_NAME);
     }
 
 
-    public function tearDown(): void
+    public function tear_down(): void
     {
         $this->b64 = null;
         $this->ekm = null;
         $this->rdg = null;
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

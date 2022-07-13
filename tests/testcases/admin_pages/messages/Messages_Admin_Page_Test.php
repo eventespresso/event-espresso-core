@@ -32,7 +32,7 @@ class Messages_Admin_Page_Test extends EE_UnitTestCase {
 	}
 
 
-    public function tearDown()
+    public function tear_down()
     {
         //lets just reset notices because we don't care about them for this test. This prevents a fail from automatically firing.
         EE_Error::reset_notices();
@@ -40,7 +40,7 @@ class Messages_Admin_Page_Test extends EE_UnitTestCase {
         $this->loader()->remove('EE_Message_Resource_Manager', $this->_MessageResourceManager);
         unset($this->_MessagesAdminPage);
         unset($this->_MessageResourceManager);
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

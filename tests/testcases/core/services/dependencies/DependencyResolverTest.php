@@ -51,9 +51,9 @@ class DependencyResolverTest extends TestCase
      * @throws InvalidArgumentException
      * @since 4.9.71.p
      */
-    protected function setUp(): void
+    protected function set_up(): void
     {
-        parent::setUp();
+        parent::set_up();
         $this->loader         = LoaderFactory::getLoader();
         $this->request_params = [
             'oof'  => 'OOF!',

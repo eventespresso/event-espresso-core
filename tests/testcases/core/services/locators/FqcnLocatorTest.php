@@ -31,16 +31,16 @@ class FqcnLocatorTest extends TestCase
      * @since 4.9.80.p
      * @throws InvalidDataTypeException
      */
-    public function setUp(): void
+    public function set_up(): void
     {
-        parent::setUp();
+        parent::set_up();
         $this->file_locator = new FqcnLocator();
     }
 
 
-    public function tearDown(): void
+    public function tear_down(): void
     {
-        parent::tearDown();
+        parent::tear_down();
         unset($this->file_locator);
     }
 

@@ -27,18 +27,18 @@ class Base64EncoderTest extends TestCase
     protected $rdg;
 
 
-    public function setUp(): void
+    public function set_up(): void
     {
-        parent::setUp();
+        parent::set_up();
         $this->setUpDependencies();
     }
 
 
-    public function tearDown(): void
+    public function tear_down(): void
     {
         $this->b64 = null;
         $this->rdg = null;
-        parent::tearDown();
+        parent::tear_down();
     }
 
 

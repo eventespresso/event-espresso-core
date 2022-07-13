@@ -33,9 +33,9 @@ class RouteMatchSpecificationFactoryTest extends TestCase
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    protected function setUp(): void
+    protected function set_up(): void
     {
-        parent::setUp();
+        parent::set_up();
         $this->loader = LoaderFactory::getLoader();
     }
 
