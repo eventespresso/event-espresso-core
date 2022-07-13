@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\formatters\CurrencyFormatter;
 
 /**
  * EE_Base_Class_Test
@@ -104,12 +105,18 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $t = EE_Transaction::new_instance();
         $t->set('TXN_total', 10.53);
         $this->assertEquals($t->get('TXN_total'), 10.53);
-        $this->assertEquals($t->get_pretty('TXN_total'), '$10.53&nbsp;<span class="currency-code">(USD)</span>');
+        $this->assertEquals(
+            $t->get_pretty('TXN_total', CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE),
+            '$10.53&nbsp;<span class="currency-code">(USD)</span>'
+        );
         //make sure the caching of pretty and normal fields doesn't mess us up
         $this->assertEquals($t->get('TXN_total'), 10.53);
         $t->set('TXN_total', 0.00);
         $this->assertEquals($t->get('TXN_total'), 0);
-        $this->assertEquals($t->get_pretty('TXN_total'), '$0.00&nbsp;<span class="currency-code">(USD)</span>');
+        $this->assertEquals(
+            $t->get_pretty('TXN_total', CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE),
+            '$0.00&nbsp;<span class="currency-code">(USD)</span>'
+        );
         $this->assertEquals($t->get('TXN_total'), 0);
     }
 
