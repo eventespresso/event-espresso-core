@@ -153,7 +153,7 @@ class BootstrapCore
      * @return BootstrapRequestResponseObjects
      * @throws InvalidArgumentException
      */
-    private function bootstrapRequestResponseObjects()
+    private function bootstrapRequestResponseObjects(): BootstrapRequestResponseObjects
     {
         /** @var BootstrapRequestResponseObjects $bootstrap_request */
         $bootstrap_request = $this->loader->getShared(
@@ -227,7 +227,7 @@ class BootstrapCore
      *
      * @return RequestStackBuilder
      */
-    public function buildRequestStack()
+    public function buildRequestStack(): RequestStackBuilder
     {
         $request_stack_builder = new RequestStackBuilder($this->loader);
         /**

@@ -23,11 +23,11 @@ class EmailAddress
     /**
      * EmailAddress constructor.
      *
-     * @param string                  $email_address
+     * @param string|null             $email_address
      * @param EmailValidatorInterface $validator
      * @throws EmailValidationException
      */
-    public function __construct($email_address, EmailValidatorInterface $validator)
+    public function __construct(?string $email_address, EmailValidatorInterface $validator)
     {
         $validator->validate($email_address);
         $this->email_address = $email_address;
@@ -39,7 +39,7 @@ class EmailAddress
      *
      * @return string
      */
-    public function get()
+    public function get(): ?string
     {
         return $this->email_address;
     }
@@ -51,7 +51,7 @@ class EmailAddress
      * @param EmailAddress $address
      * @return bool
      */
-    public function equals(EmailAddress $address)
+    public function equals(EmailAddress $address): bool
     {
         return strtolower((string) $this->email_address) === strtolower((string) $address);
     }

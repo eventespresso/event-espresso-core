@@ -9,8 +9,8 @@ use EventEspresso\core\domain\services\validation\email\EmailValidatorInterface;
  * Class Basic
  * Performs super basic email validation
  *
- * @package        Event Espresso
- * @author         Mike Nelson
+ * @package Event Espresso
+ * @author  Mike Nelson
  */
 class Basic implements EmailValidatorInterface
 {
@@ -19,7 +19,7 @@ class Basic implements EmailValidatorInterface
      * @return bool
      * @throws EmailValidationException
      */
-    public function validate($email_address)
+    public function validate(string $email_address): bool
     {
         if (! preg_match('/^.+\@\S+$/', (string) $email_address)) {
             // email not in correct {string}@{string} format
@@ -90,9 +90,9 @@ class Basic implements EmailValidatorInterface
      * returns the location of the @ symbol
      *
      * @param string $email_address
-     * @return bool|string
+     * @return bool|int
      */
-    protected function getAtIndex($email_address)
+    protected function getAtIndex(string $email_address)
     {
         return strrpos($email_address, '@');
     }
@@ -105,7 +105,7 @@ class Basic implements EmailValidatorInterface
      * @param bool|int $atIndex
      * @return bool|string
      */
-    protected function getLocalPartOfEmail($email_address, $atIndex)
+    protected function getLocalPartOfEmail(string $email_address, $atIndex)
     {
         return substr($email_address, 0, $atIndex);
     }
@@ -118,7 +118,7 @@ class Basic implements EmailValidatorInterface
      * @param bool|int $atIndex
      * @return bool|string
      */
-    protected function getDomainPartOfEmail($email_address, $atIndex)
+    protected function getDomainPartOfEmail(string $email_address, $atIndex)
     {
         return substr($email_address, $atIndex + 1);
     }

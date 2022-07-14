@@ -20,5 +20,5 @@ interface EmailValidatorInterface
      * @return boolean
      * @throws EmailValidationException
      */
-    public function validate($email_address);
+    public function validate(string $email_address): bool;
 }

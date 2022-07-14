@@ -35,12 +35,12 @@ class NumberFormatter extends LocaleFloatFormatter
 
 
     /**
-     * @param Locale $locale
-     * @param int    $number
-     * @param bool   $is_negative
+     * @param Locale           $locale
+     * @param int|float|string $number
+     * @param bool             $is_negative
      * @return string
      */
-    protected function formatSymbolAndSignPositions(Locale $locale, int $number, bool $is_negative)
+    protected function formatSymbolAndSignPositions(Locale $locale, $number, bool $is_negative)
     {
         // format for positive or negative values
         if ($is_negative) {

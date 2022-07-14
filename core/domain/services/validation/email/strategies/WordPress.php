@@ -19,7 +19,7 @@ class WordPress extends Basic
      * @return boolean
      * @throws EmailValidationException
      */
-    public function validate($email_address)
+    public function validate(string $email_address): bool
     {
         parent::validate($email_address);
         if (! is_email($email_address)) {

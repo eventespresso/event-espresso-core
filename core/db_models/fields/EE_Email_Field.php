@@ -58,7 +58,7 @@ class EE_Email_Field extends EE_Text_Field_Base
     /**
      * @param bool $show_errors
      */
-    public function setShowErrors($show_errors = true)
+    public function setShowErrors(bool $show_errors = true)
     {
         $this->show_errors = filter_var($show_errors, FILTER_VALIDATE_BOOLEAN);
     }

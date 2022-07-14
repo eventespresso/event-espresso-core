@@ -2,11 +2,8 @@
 
 namespace EventEspresso\tests\mocks\core\services\request;
 
+use EventEspresso\core\services\request\InvalidRequestStackMiddlewareException;
 use EventEspresso\core\services\request\RequestStackBuilder;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
 
 /**
  * Class RequestStackBuilderMock
@@ -21,9 +18,9 @@ class RequestStackBuilderMock extends RequestStackBuilder
      * @param array $middleware_app
      * @param bool  $recurse
      * @return array
-     * @throws \EventEspresso\core\services\request\InvalidRequestStackMiddlewareException
+     * @throws InvalidRequestStackMiddlewareException
      */
-    public function validateMiddlewareAppDetails(array $middleware_app, $recurse = false)
+    public function validateMiddlewareAppDetails(array $middleware_app, bool $recurse = false): array
     {
         return parent::validateMiddlewareAppDetails($middleware_app, $recurse);
     }

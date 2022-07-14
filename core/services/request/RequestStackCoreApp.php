@@ -49,7 +49,7 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    public function handleRequest(RequestInterface $request, ResponseInterface $response)
+    public function handleRequest(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $this->request = $request;
         $this->response = $response;
