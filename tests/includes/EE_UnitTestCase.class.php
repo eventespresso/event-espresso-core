@@ -69,20 +69,22 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * this can be helpful if you are getting weird errors happening,
      * but the test name is not being reported anywhere.
      * Just uncomment this method as well as the first line of set_up() below.
-     *
-     * @throws EE_Error
      */
-    // public static function set_up_before_class() {
-    //     echo "\n\n\n" . get_called_class() . "\n\n";
-    //     parent::set_up_before_class();
-    //     \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
-    // }
+    public static function set_up_before_class() {
+        if (EE_UnitTestCase::$debug) {
+            echo "\n\n\n" . get_called_class() . "\n\n";
+        }
+        parent::set_up_before_class();
+        // \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
+    }
 
-    // public static function tear_down_after_class() {
-    //     // echo "\n\n\n" . get_called_class() . "\n\n";
-    //     \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
-    //     parent::tear_down_after_class();
-    // }
+    public static function tear_down_after_class() {
+        if (EE_UnitTestCase::$debug) {
+            echo "\n\n\n" . get_called_class() . "\n\n";
+        }
+        // \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
+        parent::tear_down_after_class();
+    }
 
 
     public function set_up()
@@ -93,7 +95,15 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
         //as it immediately adds a few hooks we might not want to backup
-        global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
+        global $auto_made_thing_seed,
+               $current_user,
+               $espresso_unit_tests,
+               $merged_filters,
+               $wp_actions,
+               $wp_current_filter,
+               $wp_filter,
+               $wpdb;
+        $espresso_unit_tests = true;
         $this->wp_filters_saved = array(
             'wp_filter' => $wp_filter,
             'wp_actions' => $wp_actions,
@@ -102,6 +112,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
         );
         // $wp_filter = $wp_actions = $merged_filters = $wp_current_filter = [];
         $this->_orig_current_user = $current_user instanceof WP_User ? clone $current_user : new WP_User(1);
+        if (EE_UnitTestCase::$debug) {
+            echo "\n    WP_UnitTestCase::set_up()";
+        }
         parent::set_up();
         $auto_made_thing_seed = 1;
         //reset wpdb's list of queries executed so it only stores those from the current test
@@ -113,15 +126,15 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__create_table__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
-        $this->setUserCapsForWp41();
-        // load factories
-        $this->factory = new EE_UnitTest_Factory();
+        EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
         // turn off caching for any loaders in use during tests
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
         add_filter('FHEE__EE_System__canLoadBlocks', '__return_false');
         // do_action('AHEE__EE_Bootstrap__load_espresso_addons');
-        EE_Registry::instance()->SSN = $this->loader()->getShared('EE_Session_Mock');
         // $this->setCoreConfig();
+        EE_Registry::instance()->SSN = $this->loader()->getShared('EE_Session_Mock');
+        // load factories
+        $this->factory = new EE_UnitTest_Factory();
         if (EE_UnitTestCase::$debug) {
             echo "\n    FINISH: " . __METHOD__ . '()';
         }
@@ -150,8 +163,10 @@ class EE_UnitTestCase extends WP_UnitTestCase
     public function tear_down()
     {
         parent::tear_down();
+        global $espresso_unit_tests;
+        $espresso_unit_tests = false;
         if ($this->wp_filters_saved !== null) {
-            global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $current_user;
+            global $current_user, $merged_filters, $wp_actions, $wp_current_filter, $wp_filter;
             $wp_filter         = $this->wp_filters_saved['wp_filter'];
             $wp_actions        = $this->wp_filters_saved['wp_actions'];
             $merged_filters    = $this->wp_filters_saved['merged_filters'];
@@ -191,33 +206,18 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @return LoaderInterface
      * @since   $VID:$
      */
-    protected function loader()
+    protected function loader(): LoaderInterface
     {
         static $loader;
         if (! $loader instanceof LoaderInterface) {
+            if (EE_UnitTestCase::$debug) {
+                echo "\n  LoaderFactory::getLoader()";
+            }
             $loader = LoaderFactory::getLoader();
         }
         return $loader;
     }
 
-    protected function setUserCapsForWp41()
-    {
-        // IF we detect we're running tests on WP4.1,
-        // then we need to make sure current_user_can tests pass by updating all_caps when `WP_User::add_cap` is run
-        // (which is fixed in later wp versions).  So we hook into the 'user_has_cap' filter to do this
-        $_wp_test_version = getenv('WP_VERSION');
-        if ($_wp_test_version && $_wp_test_version === '4.1') {
-            add_filter(
-                'user_has_cap',
-                function ($all_caps, $caps, $args, WP_User $WP_User) {
-                    $WP_User->get_role_caps();
-                    return $WP_User->allcaps;
-                },
-                10,
-                4
-            );
-        }
-    }
 
     protected function loadTestScenarios()
     {
