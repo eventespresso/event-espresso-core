@@ -69,11 +69,10 @@ class EmailValidationService implements EmailValidatorInterface
      * Validates the email address. If it's invalid, an EmailValidationException
      * is thrown that describes why its invalid.
      *
-     * @param string $email_address
+     * @param string|null $email_address
      * @return boolean
-     * @throws EmailValidationException
      */
-    public function validate(string $email_address): bool
+    public function validate(?string $email_address): bool
     {
         // pick the correct validator according to the config
         switch ($this->registration_config->email_validation_level) {

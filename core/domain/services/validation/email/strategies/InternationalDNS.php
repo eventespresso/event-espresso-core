@@ -18,11 +18,11 @@ class InternationalDNS extends International
      * Validates the email in teh same way as the parent, but also
      * verifies the domain exists.
      *
-     * @param string $email_address
+     * @param string|null $email_address
      * @return bool
      * @throws EmailValidationException
      */
-    public function validate(string $email_address): bool
+    public function validate(?string $email_address): bool
     {
         parent::validate($email_address);
         $domain = $this->getDomainPartOfEmail(

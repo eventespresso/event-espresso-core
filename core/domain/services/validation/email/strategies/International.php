@@ -15,11 +15,11 @@ use EventEspresso\core\domain\services\validation\email\EmailValidationException
 class International extends Basic
 {
     /**
-     * @param string $email_address
+     * @param string|null $email_address
      * @return bool
      * @throws EmailValidationException
      */
-    public function validate(string $email_address): bool
+    public function validate(?string $email_address): bool
     {
         parent::validate($email_address);
         if (

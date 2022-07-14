@@ -15,11 +15,11 @@ use EventEspresso\core\domain\services\validation\email\EmailValidationException
 class WordPress extends Basic
 {
     /**
-     * @param string $email_address
+     * @param string|null $email_address
      * @return boolean
      * @throws EmailValidationException
      */
-    public function validate(string $email_address): bool
+    public function validate(?string $email_address): bool
     {
         parent::validate($email_address);
         if (! is_email($email_address)) {
