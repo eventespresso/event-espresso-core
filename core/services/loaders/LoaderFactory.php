@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\loaders;
 use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\collections\LooseCollection;
 use EventEspresso\core\services\container\CoffeeShop;
 use InvalidArgumentException;
 
@@ -80,7 +81,6 @@ class LoaderFactory
      *                                              otherwise can be left null
      * @param ClassInterfaceCache|null $class_cache also provided during first instantiation
      * @param ObjectIdentifier|null    $object_identifier
-     * @param ObjectCache|null         $object_cache
      * @return LoaderInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -89,17 +89,16 @@ class LoaderFactory
     public static function getLoader(
         $generator = null,
         ?ClassInterfaceCache $class_cache = null,
-        ?ObjectCache $object_cache = null,
         ?ObjectIdentifier $object_identifier = null
     ): LoaderInterface {
         if (
             ! LoaderFactory::$loader instanceof LoaderInterface
             && $generator instanceof EE_Registry // || $generator instanceof CoffeeShop
             && $class_cache instanceof ClassInterfaceCache
-            && $object_cache instanceof ObjectCache
             && $object_identifier instanceof ObjectIdentifier
         ) {
             $core_loader = new CoreLoader($generator);
+            $object_cache = new LooseCollection('');
             LoaderFactory::$loader = new Loader(
                 $core_loader,
                 new CachingLoader($core_loader, $object_cache, $object_identifier),
@@ -114,7 +113,7 @@ class LoaderFactory
      * @param string $fqcn
      * @param array  $arguments
      * @return mixed
-     * @since   $VID:$
+     * @since $VID:$
      */
     protected static function getNew(string $fqcn, array $arguments = [])
     {
@@ -126,7 +125,7 @@ class LoaderFactory
      * @param string $fqcn
      * @param array  $arguments
      * @return mixed
-     * @since   $VID:$
+     * @since $VID:$
      */
     protected static function getShared(string $fqcn, array $arguments = [])
     {
