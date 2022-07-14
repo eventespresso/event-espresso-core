@@ -3,10 +3,7 @@
 namespace EventEspresso\core\domain\services\factories;
 
 use EE_Cart;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use InvalidArgumentException;
 
 /**
  * Class CartFactory
@@ -16,16 +13,13 @@ use InvalidArgumentException;
  * @author  Brent Christensen
  * @since   4.9.59.p
  */
-class CartFactory
+class CartFactory extends LoaderFactory
 {
     /**
      * @return EE_Cart
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      */
-    public static function getCart()
+    public static function getCart(): EE_Cart
     {
-        return LoaderFactory::getLoader()->getShared('EE_Cart');
+        return CartFactory::getShared('EE_Cart');
     }
 }
