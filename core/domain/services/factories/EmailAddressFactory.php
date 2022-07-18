@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\factories;
 
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
+use EventEspresso\core\domain\services\validation\email\EmailValidationService;
 use EventEspresso\core\domain\values\EmailAddress;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
@@ -22,6 +23,7 @@ class EmailAddressFactory extends LoaderFactory implements FactoryInterface
      */
     public static function create($email_address): EmailAddress
     {
-        return EmailAddressFactory::getNew(EmailAddress::class, [$email_address]);
+        $validator = EmailAddressFactory::getShared(EmailValidationService::class);
+        return EmailAddressFactory::getNew(EmailAddress::class, [$email_address, $validator]);
     }
 }
