@@ -3,7 +3,7 @@
 use EventEspresso\core\services\helpers\datetime\HelperInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\helpers\datetime\PhpCompatGreaterFiveSixHelper;
 
 /**
  * EEH_DTT_Helper
@@ -1035,10 +1035,11 @@ class EEH_DTT_Helper
      */
     private static function getHelperAdapter()
     {
-        $dtt_helper_fqcn = PHP_VERSION_ID < 50600
-            ? 'EventEspresso\core\services\helpers\datetime\PhpCompatLessFiveSixHelper'
-            : 'EventEspresso\core\services\helpers\datetime\PhpCompatGreaterFiveSixHelper';
-        return LoaderFactory::getLoader()->getShared($dtt_helper_fqcn);
+        static $dtt_helper_fqcn;
+        if (! $dtt_helper_fqcn instanceof PhpCompatGreaterFiveSixHelper) {
+            $dtt_helper_fqcn = new PhpCompatGreaterFiveSixHelper();
+        }
+        return $dtt_helper_fqcn;
     }
 
 
