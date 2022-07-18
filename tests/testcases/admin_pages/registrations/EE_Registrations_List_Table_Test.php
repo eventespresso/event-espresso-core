@@ -36,9 +36,6 @@ class EE_Registrations_List_Table_Test extends EE_UnitTestCase {
 
 
 	public function _load_mock() {
-        if (EE_UnitTestCase::$debug) {
-            echo "\n    " . __METHOD__ . '()';
-        }
 		$this->_mock = new EE_Registrations_List_Table_Mock();
 	}
 
@@ -50,9 +47,6 @@ class EE_Registrations_List_Table_Test extends EE_UnitTestCase {
 	 * @since 4.6.0
 	 */
 	public function test_total_registrations_this_month() {
-        if (EE_UnitTestCase::$debug) {
-            echo "\n      " . __METHOD__ . '()';
-        }
 		// baseline dates
 		$now = new DateTime( 'now' );
 
@@ -88,9 +82,6 @@ class EE_Registrations_List_Table_Test extends EE_UnitTestCase {
 	 * @since 4.6.x
 	 */
 	public function test_total_registrations_today() {
-        if (EE_UnitTestCase::$debug) {
-            echo "\n      " . __METHOD__ . '()';
-        }
 		//baseline dates
 		$now = new DateTime( 'now' );
 

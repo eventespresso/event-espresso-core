@@ -28,9 +28,6 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page
 
     public function __construct($routing = true)
     {
-        if (EE_UnitTestCase::$debug) {
-            echo "\n      " . __METHOD__ . '()';
-        }
         //define any constants that might not be defined yet when using this mock.
         if ( ! defined('REG_PG_SLUG')) {
             define('REG_PG_SLUG', 'espresso_registrations');

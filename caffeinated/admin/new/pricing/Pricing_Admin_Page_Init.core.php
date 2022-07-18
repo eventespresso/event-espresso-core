@@ -8,18 +8,9 @@
  * @package               Event Espresso
  * @subpackage            includes/core/admin/pricing/Pricing_Admin_Page_Init.core.php
  * @author                Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
 class Pricing_Admin_Page_Init extends EE_Admin_Page_Init
 {
-    /**
-     *        constructor
-     *
-     * @Constructor
-     * @access public
-     * @return Pricing_Admin_Page_Init
-     */
     public function __construct()
     {
 
