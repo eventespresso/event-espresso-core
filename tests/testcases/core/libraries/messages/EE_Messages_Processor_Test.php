@@ -40,16 +40,16 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
      */
     protected function _test_components()
     {
-        return array(
+        return [
             'proc' => EE_Registry::instance()->load_lib('Messages_Processor'),
             'mtg'  => new EE_Message_To_Generate(
                 'email',
                 'registration',
-                array(),
+                [],
                 'admin',
                 true
             ),
-        );
+        ];
     }
 
 
@@ -82,7 +82,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
     function test_batch_generate_from_queue(EE_Messages_Processor $message_proc)
     {
         //first we know there is nothing in the db, so let's verify that returns false. (this also verifies the clear param)
-        $this->assertFalse($message_proc->batch_generate_from_queue(array(), true));
+        $this->assertFalse($message_proc->batch_generate_from_queue([], true));
 
         //now let's test getting some batch ready to generate.
         $this->factory->message->create_many(5);
@@ -99,12 +99,12 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
      * Same as above test except only doing batch generation on specific messages
      *
      * @depends test_construct_and_get_queue
-     * @param   EE_Messages_Processor $message_proc
+     * @param EE_Messages_Processor $message_proc
      */
     function test_batch_generate_from_queue_with_messages(EE_Messages_Processor $message_proc)
     {
         //make sure clear works
-        $this->assertFalse($message_proc->batch_generate_from_queue(array(), true));
+        $this->assertFalse($message_proc->batch_generate_from_queue([], true));
 
         //setup some messages for generation.
         $messages_to_test = $this->factory->message->create_many(5);
@@ -120,11 +120,11 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
         $this->assertEquals(5, $new_queue->get_message_repository()->count());
 
         //verify the original MIC Messages do not exist in the db anymore.
-        $messages_no_exist = EEM_Message::instance()->count(array(
-            array(
-                'MSG_ID' => array('IN', array_keys($messages_to_test)),
-            ),
-        ));
+        $messages_no_exist = EEM_Message::instance()->count([
+                                                                [
+                                                                    'MSG_ID' => ['IN', array_keys($messages_to_test)],
+                                                                ],
+                                                            ]);
 
         $this->assertEquals(0, $messages_no_exist);
     }
@@ -136,18 +136,19 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
      */
     function test_batch_send_from_queue(EE_Messages_Processor $message_proc)
     {
-
         //create messages ready to send.
-        $this->factory->message->create_many(5, array('STS_ID' => EEM_Message::status_idle));
+        $this->factory->message->create_many(5, ['STS_ID' => EEM_Message::status_idle]);
 
-        $sent_queue = $message_proc->batch_send_from_queue(array(), true);
+        $sent_queue = $message_proc->batch_send_from_queue([], true);
 
         $this->assertInstanceOf('EE_Messages_Queue', $sent_queue);
         $this->assertEquals(5, $sent_queue->get_message_repository()->count());
 
         //verify no errors
-        $this->assertEquals(0,
-            $sent_queue->count_STS_in_queue(EEM_Message::instance()->stati_indicating_failed_sending()));
+        $this->assertEquals(
+            0,
+            $sent_queue->count_STS_in_queue(EEM_Message::instance()->stati_indicating_failed_sending())
+        );
 
         $this->assertEquals(5, $sent_queue->count_STS_in_queue(EEM_Message::status_sent));
     }
@@ -162,7 +163,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
     function test_batch_send_from_queue_with_messages(EE_Messages_Processor $messages_proc)
     {
         //create messages we're going to use for sending
-        $messages_to_send = $this->factory->message->create_many(5, array('STS_ID' => EEM_Message::status_idle));
+        $messages_to_send = $this->factory->message->create_many(5, ['STS_ID' => EEM_Message::status_idle]);
 
         //create messages that are not ready for sending as a foil.
         $this->factory->message->create_many(3);
@@ -173,8 +174,10 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
         $this->assertEquals(5, $sent_queue->get_message_repository()->count());
 
         //verify no errors
-        $this->assertEquals(0,
-            $sent_queue->count_STS_in_queue(EEM_Message::instance()->stati_indicating_failed_sending()));
+        $this->assertEquals(
+            0,
+            $sent_queue->count_STS_in_queue(EEM_Message::instance()->stati_indicating_failed_sending())
+        );
         $this->assertEquals(5, $sent_queue->count_STS_in_queue(EEM_Message::status_sent));
     }
 
@@ -230,28 +233,38 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
     }
 
 
-    function test_batch_queue_for_generation_and_persist()
+    function test_batch_queue_for_generation_no_persist()
     {
-        $this->_common_test_with_specific_expected_status('batch_queue_for_generation_and_persist', null, false, 0);
+        $this->_common_test_with_specific_expected_status(
+            'batch_queue_for_generation_no_persist',
+            null,
+            false,
+            0
+        );
     }
 
 
-    function test_batch_queue_for_generation_no_persist()
+    function test_batch_queue_for_generation_and_persist()
     {
-        $this->_common_test_with_specific_expected_status('batch_queue_for_generation_no_persist', null, false, 0);
+        $this->_common_test_with_specific_expected_status(
+            'batch_queue_for_generation_and_persist',
+            null,
+            false,
+            0
+        );
     }
 
 
     function test_generate_and_queue_for_sending()
     {
-        $this->_common_test_with_specific_expected_status('generate_and_queue_for_sending', EEM_Message::status_idle,
-            false, 0);
+        $this->_common_test_with_specific_expected_status(
+            'generate_and_queue_for_sending',
+            EEM_Message::status_idle,
+            false,
+            0
+        );
         //now there should be Messages in the database all queued up for sending.  Let's check
-        $messages = EEM_Message::instance()->get_all(array(
-            array(
-                'STS_ID' => EEM_Message::status_idle,
-            ),
-        ));
+        $messages = EEM_Message::instance()->get_all([['STS_ID' => EEM_Message::status_idle]]);
 
         //expecting only one message because the specific context was provided.
         $this->assertEquals(1, count($messages));
@@ -304,8 +317,10 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
         $proc = EE_Registry::instance()->load_lib('Messages_Processor');
 
         //setup up messages we'll use for sending that have the right status
-        $messages_with_right_status = $this->factory->message->create_many(5,
-            array('STS_ID' => EEM_Message::status_sent));
+        $messages_with_right_status = $this->factory->message->create_many(
+            5,
+            ['STS_ID' => EEM_Message::status_sent]
+        );
         //include some EEM_Message::status_retry messages in the "right_status" group
         $i = 0;
         foreach ($messages_with_right_status as $message) {
@@ -362,25 +377,35 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
         $mtg = $test_components['mtg'];
 
         $queue = $proc->get_queue();
+        $queue->get_message_repository()->delete_all();
 
-        $proc->$method_to_test(array($mtg));
+        $proc->$method_to_test([$mtg]);
 
         //queue should have $expected_message_objects EE_Message_object(s) and it/they should not be in the db and it/they
         //should have status for the sent in status.
-        $this->assertEquals($expected_message_objects, $queue->get_message_repository()->count(),
-            sprintf('Failed test for the %s method', $method_to_test));
+        $this->assertEquals(
+            $expected_message_objects,
+            $queue->get_message_repository()->count(),
+            sprintf('Failed test for the %s method', $method_to_test)
+        );
         if ($expected_message_objects > 0) {
             $queue->get_message_repository()->rewind();
             $msg = $queue->get_message_repository()->current();
             $this->assertInstanceOf('EE_Message', $msg, sprintf('Failed test for the %s method', $method_to_test));
             if ($in_database) {
-                $this->assertInstanceOf('EE_Message', EEM_Message::instance()->get_one_by_ID($msg->ID()),
-                    sprintf('Failed test for the %s method', $method_to_test));
+                $this->assertInstanceOf(
+                    'EE_Message',
+                    EEM_Message::instance()->get_one_by_ID($msg->ID()),
+                    sprintf('Failed test for the %s method', $method_to_test)
+                );
             } else {
                 $this->assertEquals(0, $msg->ID(), sprintf('Failed test for the %s method', $method_to_test));
             }
-            $this->assertEquals($expected_status, $msg->STS_ID(),
-                sprintf('Failed test for the %s method', $method_to_test));
+            $this->assertEquals(
+                $expected_status,
+                $msg->STS_ID(),
+                sprintf('Failed test for the %s method', $method_to_test)
+            );
         }
     }
 

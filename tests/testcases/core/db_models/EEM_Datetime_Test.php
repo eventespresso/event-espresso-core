@@ -454,6 +454,13 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 
 	    $existing_datetimes = EEM_Datetime::instance()->get_all();
         $this->assertIsArray($existing_datetimes);
+        foreach ($existing_datetimes as $key => $existing_datetime) {
+            if ($existing_datetime instanceof EE_Datetime) {
+                $existing_datetime->delete();
+                $existing_datetime->save();
+                unset($existing_datetimes[$key]);
+            }
+        }
         $this->assertCount(0, $existing_datetimes);
 		//setup some datetimes for testing with
 		$upcoming_datetimes = $this->factory->datetime->create_many(5);

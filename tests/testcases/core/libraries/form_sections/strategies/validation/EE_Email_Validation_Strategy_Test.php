@@ -1,5 +1,9 @@
 <?php
 
+use EventEspresso\core\domain\services\factories\EmailAddressFactory;
+use EventEspresso\core\domain\services\validation\email\EmailValidationService;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -18,7 +22,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase
 
     /**
      *
-     * @var EE_Validation_Strategy_Base
+     * @var EE_Email_Validation_Strategy
      */
     protected $_validator = null;
 
@@ -37,24 +41,28 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase
 	}
 
 
+	public function setValidationLevel(string $email_validation_level){
+        $this->registration_config->email_validation_level = $email_validation_level;
+        EmailAddressFactory::setValidator(
+            LoaderFactory::getNew(
+                EmailValidationService::class,
+                [$this->registration_config]
+            )
+        );
+	}
+
+
     /**
      * @param int    $counter
      * @param string $email_address
      * @param bool   $assert_success
      */
-    public function validate_email_address($counter, $email_address, $assert_success = true)
+    public function validate_email_address(int $counter, string $email_address, bool $assert_success = true)
     {
-        if ($assert_success) {
-            $success = true;
-            $fail    = false;
-        } else {
-            $success = false;
-            $fail    = true;
-        }
         try {
             $this->_validator->validate($email_address);
             $this->assertTrue(
-                $success,
+                $assert_success,
                 sprintf(
                     'Email addy #%1$s "%2$s" passed validation when it should have failed while employing %3$s email validation level.',
                     $counter,
@@ -64,7 +72,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase
             );
         } catch (EE_Validation_Error $e) {
             $this->assertTrue(
-                $fail,
+                ! $assert_success,
                 sprintf(
                     'Email addy #%1$s "%2$s" failed validation when it should have passed while employing %3$s email validation level.',
                     $counter,
@@ -119,7 +127,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase
 
     public function test_validate__pass_basic()
     {
-        $this->registration_config->email_validation_level = 'basic';
+        $this->setValidationLevel(EmailValidationService::VALIDATION_LEVEL_BASIC);
         // these should pass ALL validations
         $good_addys = [
             'bogus@eventespresso.com',
@@ -162,7 +170,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase
 
     public function test_validate__fail_basic()
     {
-        $this->registration_config->email_validation_level = 'basic';
+        $this->setValidationLevel(EmailValidationService::VALIDATION_LEVEL_BASIC);
         $bad_addys                                                         = [
             // double dots
             'develop..ers@eventespresso.com',
@@ -180,7 +188,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase
 
     public function test_validate__pass_wp_default()
     {
-        $this->registration_config->email_validation_level = 'wp_default';
+        $this->setValidationLevel(EmailValidationService::VALIDATION_LEVEL_WP_DEFAULT);
         // these should pass ALL validations
         $good_addys = [
             'bogus@eventespresso.com',
@@ -220,7 +228,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase
 
     public function test_validate__fail_wp_default()
     {
-        $this->registration_config->email_validation_level = 'wp_default';
+        $this->setValidationLevel(EmailValidationService::VALIDATION_LEVEL_WP_DEFAULT);
         $bad_addys                                                         = [
             // double dots
             'develop..ers@eventespresso.com',
@@ -248,7 +256,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase
 
     public function test_validate__pass_i18n()
     {
-        $this->registration_config->email_validation_level = 'i18n';
+        $this->setValidationLevel(EmailValidationService::VALIDATION_LEVEL_I18N);
         // these should pass ALL validations
         $good_addys = [
             'bogus@eventespresso.com',
@@ -287,7 +295,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase
 
     public function test_validate__fail_i18n()
     {
-        $this->registration_config->email_validation_level = 'i18n';
+        $this->setValidationLevel(EmailValidationService::VALIDATION_LEVEL_I18N);
         $bad_addys                                                         = [
             // double dots
             'develop..ers@eventespresso.com',
@@ -309,7 +317,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase
 
     public function test_DNS_and_MX_record_check_fail()
     {
-        $this->registration_config->email_validation_level = 'i18n_dns';
+        $this->setValidationLevel(EmailValidationService::VALIDATION_LEVEL_I18N_DNS);
         $bad_addys                                                         = [
             // no MX records (bogus addresses)
             'valid-but-not-real@siiiiiiiiiiiiiiite.com',

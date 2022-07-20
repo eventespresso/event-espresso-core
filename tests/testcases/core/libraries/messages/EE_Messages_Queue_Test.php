@@ -7,6 +7,8 @@
  * @subpackage    tests
  */
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * All tests for the EE_Messages_Queue class.
  *
@@ -31,9 +33,14 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase
      *
      * @return EE_Messages_Queue
      */
-    protected function _get_queue()
+    protected function _get_queue(): EE_Messages_Queue
     {
-        return EE_Registry::instance()->load_lib('Messages_Queue');
+        /** @var EE_Messages_Queue $queue */
+        $queue = LoaderFactory::getNew(
+            'EE_Messages_Queue',
+            [new EE_Message_Repository()]
+        );
+        return $queue;
     }
 
 
@@ -42,7 +49,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase
      *
      * @return EE_Messages_Queue
      */
-    function test_add_and_get_queue()
+    function test_add_and_get_queue(): EE_Messages_Queue
     {
         $queue = $this->_get_queue();
         $message = $this->factory->message->create(['nosave' => 1]);
@@ -71,7 +78,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase
      * @depends test_add_and_get_queue
      * @return EE_Messages_Queue
      */
-    function test_remove(EE_Messages_Queue $queue)
+    function test_remove(EE_Messages_Queue $queue): EE_Messages_Queue
     {
         $test_queue = $queue->get_message_repository();
 
@@ -92,10 +99,11 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase
 
     /**
      * @param EE_Messages_Queue $queue
-     * @depends test_remove
      * @return EE_Messages_Queue
+     * @throws EE_Error
+     * @depends test_remove
      */
-    function test_save(EE_Messages_Queue $queue)
+    function test_save(EE_Messages_Queue $queue): EE_Messages_Queue
     {
         //first verify that the current EE_Message object in the queue does
         //not have an ID() (it shouldn't)
@@ -115,8 +123,10 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase
 
     /**
      * @param EE_Messages_Queue $queue
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      * @depends test_save
-     * @return EE_Messages_Queue
      */
     function test_remove_with_persist(EE_Messages_Queue $queue)
     {
@@ -142,7 +152,8 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase
     /**
      * This is also testing the lock functionality
      *
-     * @return EE_Messages_Queue
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_get_batch_to_generate()
     {
@@ -171,6 +182,10 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_get_to_send_batch_and_send()
     {
         //grab a bunch of message objects and add to queue.
@@ -213,6 +228,8 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase
      * representing to send.  They should NOT get sent if that's the case.
      *
      * @group 9787
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_send_only_ready_to_send_messages()
     {
