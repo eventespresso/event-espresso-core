@@ -54,19 +54,19 @@ class OpenSSLTest extends TestCase
     protected $rdg;
 
 
-    public function set_up(): void
+    public function setUp(): void
     {
-        parent::set_up();
+        parent::setUp();
         $this->setUpDependencies();
     }
 
 
-    public function tear_down(): void
+    public function tearDown(): void
     {
         $this->b64 = null;
         $this->osm1 = null;
         $this->rdg = null;
-        parent::tear_down();
+        parent::tearDown();
     }
 
 

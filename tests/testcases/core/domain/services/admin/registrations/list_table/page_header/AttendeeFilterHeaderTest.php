@@ -50,9 +50,9 @@ class AttendeeFilterHeaderTest extends TestCase
      * @throws ReflectionException
      * @since 4.10.2.p
      */
-    public function set_up(): void
+    public function setUp(): void
     {
-        parent::set_up();
+        parent::setUp();
         $this->setUpAttendee();
     }
 
