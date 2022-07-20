@@ -530,12 +530,13 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             throw new EE_Error(
                 sprintf(
                     esc_html__(
-                        'The incoming value being prepared for setting in the database must either be empty or a php 
+                        'The incoming %3$s value being prepared for saving to the database must either be empty or a php 
             		    DateTime object, instead of: %1$s %2$s',
                         'event_espresso'
                     ),
                     '<br />',
-                    print_r($datetime_value, true)
+                    print_r($datetime_value, true),
+                    $this->_name
                 )
             );
         }
