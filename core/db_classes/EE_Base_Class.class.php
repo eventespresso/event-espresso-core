@@ -1848,9 +1848,8 @@ abstract class EE_Base_Class
         // if the object already has an ID, update it. Otherwise, insert it
         // also: change the assumption about values passed to the model NOT being prepare dby the model object.
         // They have been
-        $old_assumption_concerning_value_preparation = $model
-            ->get_assumption_concerning_values_already_prepared_by_model_object();
-        $model->assume_values_already_prepared_by_model_object(true);
+        $old_assumption_concerning_value_preparation = $model->get_assumption_concerning_values_already_prepared_by_model_object();
+        $model->assume_values_already_prepared_by_model_object(EEM_Base::prepared_by_model_object);
         // does this model have an autoincrement PK?
         if ($model->has_primary_key_field()) {
             if ($model->get_primary_key_field()->is_auto_increment()) {
