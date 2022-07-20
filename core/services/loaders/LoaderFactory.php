@@ -115,7 +115,7 @@ class LoaderFactory
      * @return mixed
      * @since $VID:$
      */
-    protected static function getNew(string $fqcn, array $arguments = [])
+    public static function getNew(string $fqcn, array $arguments = [])
     {
         return LoaderFactory::getLoader()->getNew($fqcn, $arguments);
     }
@@ -127,7 +127,7 @@ class LoaderFactory
      * @return mixed
      * @since $VID:$
      */
-    protected static function getShared(string $fqcn, array $arguments = [])
+    public static function getShared(string $fqcn, array $arguments = [])
     {
         return LoaderFactory::getLoader()->getShared($fqcn, $arguments);
     }
