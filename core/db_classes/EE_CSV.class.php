@@ -13,74 +13,31 @@
  */
 class EE_CSV
 {
-    // instance of the EE_CSV object
-    private static $_instance = null;
-
-
-    // multidimensional array to store update & error messages
-    // var $_notices = array( 'updates' => array(), 'errors' => array() );
-
-
-    private $_primary_keys;
-
-    /**
-     *
-     * @var EE_Registry
-     */
-    private $EE;
     /**
      * string used for 1st cell in exports, which indicates that the following 2 rows will be metadata keys and values
      */
     const metadata_header = 'Event Espresso Export Meta Data';
 
     /**
-     *        private constructor to prevent direct creation
-     *
-     * @Constructor
-     * @access private
+     * @var EE_CSV
+     */
+    private static $_instance = null;
+
+
+    /**
      * @return void
      */
     private function __construct()
     {
-        global $wpdb;
-
-        $this->_primary_keys = array(
-            $wpdb->prefix . 'esp_answer'                  => array('ANS_ID'),
-            $wpdb->prefix . 'esp_attendee'                => array('ATT_ID'),
-            $wpdb->prefix . 'esp_datetime'                => array('DTT_ID'),
-            $wpdb->prefix . 'esp_event_question_group'    => array('EQG_ID'),
-            $wpdb->prefix . 'esp_message_template'        => array('MTP_ID'),
-            $wpdb->prefix . 'esp_payment'                 => array('PAY_ID'),
-            $wpdb->prefix . 'esp_price'                   => array('PRC_ID'),
-            $wpdb->prefix . 'esp_price_type'              => array('PRT_ID'),
-            $wpdb->prefix . 'esp_question'                => array('QST_ID'),
-            $wpdb->prefix . 'esp_question_group'          => array('QSG_ID'),
-            $wpdb->prefix . 'esp_question_group_question' => array('QGQ_ID'),
-            $wpdb->prefix . 'esp_question_option'         => array('QSO_ID'),
-            $wpdb->prefix . 'esp_registration'            => array('REG_ID'),
-            $wpdb->prefix . 'esp_status'                  => array('STS_ID'),
-            $wpdb->prefix . 'esp_transaction'             => array('TXN_ID'),
-            $wpdb->prefix . 'esp_transaction'             => array('TXN_ID'),
-            $wpdb->prefix . 'events_detail'               => array('id'),
-            $wpdb->prefix . 'events_category_detail'      => array('id'),
-            $wpdb->prefix . 'events_category_rel'         => array('id'),
-            $wpdb->prefix . 'events_venue'                => array('id'),
-            $wpdb->prefix . 'events_venue_rel'            => array('emeta_id'),
-            $wpdb->prefix . 'events_locale'               => array('id'),
-            $wpdb->prefix . 'events_locale_rel'           => array('id'),
-            $wpdb->prefix . 'events_personnel'            => array('id'),
-            $wpdb->prefix . 'events_personnel_rel'        => array('id'),
-        );
     }
 
 
     /**
-     *        @ singleton method used to instantiate class object
-     *        @ access public
+     * singleton method used to instantiate class object
      *
      * @return EE_CSV
      */
-    public static function instance()
+    public static function instance(): EE_CSV
     {
         // check if class object is instantiated
         if (self::$_instance === null or ! is_object(self::$_instance) or ! (self::$_instance instanceof EE_CSV)) {
@@ -89,24 +46,28 @@ class EE_CSV
         return self::$_instance;
     }
 
+
     /**
-     * Opens a unicode or utf file (normal file_get_contents has difficulty readin ga unicode file. @see
-     * http://stackoverflow.com/questions/15092764/how-to-read-unicode-text-file-in-php
+     * Opens a unicode or utf file (normal file_get_contents has difficulty reading a unicode file. @param string
+     * $file_path
      *
-     * @param string $file_path
      * @return string
      * @throws EE_Error
+     * @see http://stackoverflow.com/questions/15092764/how-to-read-unicode-text-file-in-php
+     *
      */
-    private function read_unicode_file($file_path)
+    private function read_unicode_file(string $file_path): string
     {
         $fc = "";
         $fh = fopen($file_path, "rb");
         if (! $fh) {
-            throw new EE_Error(sprintf(esc_html__("Cannot open file for read: %s<br>\n", 'event_espresso'), $file_path));
+            throw new EE_Error(
+                sprintf(esc_html__("Cannot open file for read: %s<br>\n", 'event_espresso'), $file_path)
+            );
         }
-        $flen = filesize($file_path);
-        $bc = fread($fh, $flen);
-        for ($i = 0; $i < $flen; $i++) {
+        $file_length = filesize($file_path);
+        $bc   = fread($fh, $file_length);
+        for ($i = 0; $i < $file_length; $i++) {
             $c = substr($bc, $i, 1);
             if ((ord($c) != 0) && (ord($c) != 13)) {
                 $fc = $fc . $c;
@@ -126,12 +87,12 @@ class EE_CSV
      *
      * @param string $path_to_file
      * @return array of arrays. Top-level array has rows, second-level array has each item
+     * @throws EE_Error
      */
-    public function import_csv_to_multi_dimensional_array($path_to_file)
+    public function import_csv_to_multi_dimensional_array(string $path_to_file): array
     {
         // needed to deal with Mac line endings
         ini_set('auto_detect_line_endings', true);
-
         // because fgetcsv does not correctly deal with backslashed quotes such as \"
         // we'll read the file into a string
         $file_contents = $this->read_unicode_file($path_to_file);
@@ -141,41 +102,31 @@ class EE_CSV
         file_put_contents($path_to_file, $file_contents);
 
         if (($file_handle = fopen($path_to_file, "r")) !== false) {
-            # Set the parent multidimensional array key to 0.
-            $nn = 0;
-            $csvarray = array();
-
-            // in PHP 5.3 fgetcsv accepts a 5th parameter, but the pre 5.3 versions of fgetcsv choke if passed more than 4 - is that crazy or what?
-            if (version_compare(PHP_VERSION, '5.3.0') < 0) {
-                //  PHP 5.2- version
-                // loop through each row of the file
-                while (($data = fgetcsv($file_handle, 0, ',', '"')) !== false) {
-                    $csvarray[] = $data;
-                }
-            } else {
-                // loop through each row of the file
-                while (($data = fgetcsv($file_handle, 0, ',', '"', '\\')) !== false) {
-                    $csvarray[] = $data;
-                }
+            $csv_array = [];
+            // loop through each row of the file
+            while (($data = fgetcsv($file_handle, 0)) !== false) {
+                $csv_array[] = $data;
             }
             # Close the File.
             fclose($file_handle);
-            return $csvarray;
-        } else {
-            EE_Error::add_error(
-                sprintf(esc_html__("An error occurred - the file: %s could not opened.", "event_espresso"), $path_to_file),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
-            return false;
+            return $csv_array;
         }
+        EE_Error::add_error(
+            sprintf(
+                esc_html__('An error occurred - the file: %s could not opened.', 'event_espresso'),
+                $path_to_file
+            ),
+            __FILE__,
+            __FUNCTION__,
+            __LINE__
+        );
+        return [];
     }
 
 
     /**
-     * @Import contents of csv file and store values in an array to be manipulated by other functions
-     * @access public
+     * import contents of csv file and store values in an array to be manipulated by other functions
+     *
      * @param string  $path_to_file         - the csv file to be imported including the path to it's location.
      *                                      If $model_name is provided, assumes that each row in the CSV represents a
      *                                      model object for that model If $model_name ISN'T provided, assumes that
@@ -188,9 +139,11 @@ class EE_CSV
      * @param string  $model_name           model name if we know what model we're importing
      * @param boolean $first_row_is_headers - whether the first row of data is headers or not - TRUE = headers, FALSE =
      *                                      data
-     * @return mixed - array on success - multi dimensional with headers as keys (if headers exist) OR string on fail -
-     *               error message like the following array('Event'=>array( array('EVT_ID'=>1,'EVT_name'=>'bob
-     *               party',...), array('EVT_ID'=>2,'EVT_name'=>'llamarama',...),
+     * @return array|false                  - array on success - multi dimensional with headers as keys
+     *                                      (if headers exist) OR string on fail -
+     *                                      error message like the following array('Event'=>array(
+     *                                      array('EVT_ID'=>1,'EVT_name'=>'bob party',...),
+     *                                      array('EVT_ID'=>2,'EVT_name'=>'llamarama',...),
      *                                      ...
      *                                      )
      *                                      'Venue'=>array(
@@ -200,19 +153,23 @@ class EE_CSV
      *                                      )
      *                                      ...
      *                                      )
+     * @throws EE_Error
      */
-    public function import_csv_to_model_data_array($path_to_file, $model_name = false, $first_row_is_headers = true)
-    {
+    public function import_csv_to_model_data_array(
+        string $path_to_file,
+        string $model_name = '',
+        bool $first_row_is_headers = true
+    ) {
         $multi_dimensional_array = $this->import_csv_to_multi_dimensional_array($path_to_file);
-        if (! $multi_dimensional_array) {
+        if (empty($multi_dimensional_array)) {
             return false;
         }
         // gotta start somewhere
         $row = 1;
         // array to store csv data in
-        $ee_formatted_data = array();
+        $ee_formatted_data = [];
         // array to store headers (column names)
-        $headers = array();
+        $headers = [];
         foreach ($multi_dimensional_array as $data) {
             // if first cell is MODEL, then second cell is the MODEL name
             if ($data[0] == 'MODEL') {
@@ -222,7 +179,7 @@ class EE_CSV
                 // AND pretend this is the first row again
                 $row = 1;
                 // reset headers
-                $headers = array();
+                $headers = [];
                 continue;
             }
             if (strpos($data[0], EE_CSV::metadata_header) !== false) {
@@ -236,7 +193,7 @@ class EE_CSV
             // how many columns are there?
             $columns = count($data);
 
-            $model_entry = array();
+            $model_entry = [];
             // loop through each column
             for ($i = 0; $i < $columns; $i++) {
                 // replace csv_enclosures with backslashed quotes
@@ -246,11 +203,11 @@ class EE_CSV
                     if ($first_row_is_headers) {
                         // store the column names to use for keys
                         $column_name = $data[ $i ];
-                        // check it's not blank... sometimes CSV editign programs adda bunch of empty columns onto the end...
+                        // check it's not blank... sometimes CSV editing programs adda bunch of empty columns onto the end...
                         if (! $column_name) {
                             continue;
                         }
-                        $matches = array();
+                        $matches = [];
                         if ($model_name == EE_CSV::metadata_header) {
                             $headers[ $i ] = $column_name;
                         } else {
@@ -277,7 +234,7 @@ class EE_CSV
                     } else {
                         // no column names means our final array will just use counters for keys
                         $model_entry[ $headers[ $i ] ] = $data[ $i ];
-                        $headers[ $i ] = $i;
+                        $headers[ $i ]                 = $i;
                     }
                     // and we need to store csv data
                 } else {
@@ -288,7 +245,7 @@ class EE_CSV
                 }
             }
             // save the row's data IF it's a non-header-row
-            if (! $first_row_is_headers || ($first_row_is_headers && $row > 1)) {
+            if (! $first_row_is_headers || $row > 1) {
                 $ee_formatted_data[ $model_name ][] = $model_entry;
             }
             // advance to next row
@@ -305,7 +262,10 @@ class EE_CSV
     }
 
 
-    public function save_csv_to_db($csv_data_array, $model_name = false)
+    /**
+     * @throws EE_Error
+     */
+    public function save_csv_to_db($csv_data_array, $model_name = false): bool
     {
         EE_Error::doing_it_wrong(
             'save_csv_to_db',
@@ -318,15 +278,16 @@ class EE_CSV
         return EE_Import::instance()->save_csv_data_array_to_db($csv_data_array, $model_name);
     }
 
+
     /**
      * Sends HTTP headers to indicate that the browser should download a file,
      * and starts writing the file to PHP's output. Returns the file handle so other functions can
      * also write to it
      *
-     * @param string $new_filename the name of the file that the user will download
+     * @param string $filename the name of the file that the user will download
      * @return resource, like the results of fopen(), which can be used for fwrite, fputcsv2, etc.
      */
-    public function begin_sending_csv($filename)
+    public function begin_sending_csv(string $filename)
     {
         // grab file extension
         $ext = substr(strrchr($filename, '.'), 1);
@@ -356,53 +317,52 @@ class EE_CSV
         echo apply_filters(
             'FHEE__EE_CSV__begin_sending_csv__start_writing',
             "\xEF\xBB\xBF"
-        ); // makes excel open it as UTF-8. UTF-8 BOM, see http://stackoverflow.com/a/4440143/2773835
-        $fh = fopen('php://output', 'w');
-        return $fh;
+        );
+        // makes excel open it as UTF-8. UTF-8 BOM, see http://stackoverflow.com/a/4440143/2773835
+        return fopen('php://output', 'w');
     }
+
 
     /**
      * Writes some meta data to the CSV as a bunch of columns. Initially we're only
      * mentioning the version and timezone
      *
-     * @param resource $filehandle
+     * @param resource $file_handle
+     * @throws EE_Error
+     * @throws EE_Error
      */
-    public function write_metadata_to_csv($filehandle)
+    public function write_metadata_to_csv($file_handle)
     {
-        $data_row = array(EE_CSV::metadata_header);// do NOT translate because this exact string is used when importing
-        $this->fputcsv2($filehandle, $data_row);
-        $meta_data = array(
-            0 => array(
+        $data_row = [EE_CSV::metadata_header];// do NOT translate because this exact string is used when importing
+        $this->fputcsv2($file_handle, $data_row);
+        $meta_data = [
+            0 => [
                 'version'        => espresso_version(),
                 'timezone'       => EEH_DTT_Helper::get_timezone(),
                 'time_of_export' => current_time('mysql'),
                 'site_url'       => site_url(),
-            ),
-        );
-        $this->write_data_array_to_csv($filehandle, $meta_data);
+            ],
+        ];
+        $this->write_data_array_to_csv($file_handle, $meta_data);
     }
 
 
     /**
-     * Writes $data to the csv file open in $filehandle. uses the array indices of $data for column headers
+     * Writes $data to the csv file open in $file_handle. uses the array indices of $data for column headers
      *
-     * @param array   $data                 2D array, first numerically-indexed, and next-level-down preferably indexed
-     *                                      by string
-     * @param boolean $add_csv_column_names whether or not we should add the keys in the bottom-most array as a row for
-     *                                      headers in the CSV. Eg, if $data looked like
-     *                                      array(0=>array('EVT_ID'=>1,'EVT_name'=>'monkey'...), 1=>array(...),...))
-     *                                      then the first row we'd write to the CSV would be "EVT_ID,EVT_name,..."
-     * @return boolean if we successfully wrote to the CSV or not. If there's no $data, we consider that a success
-     *                 (because we wrote everything there was...nothing)
+     * @param resource   $file_handle
+     * @param array|null $data          2D array, first numerically-indexed,
+     *                                  and next-level-down preferably indexed by string
+     * @return boolean                  if we successfully wrote to the CSV or not.
+     *                                  If there's no $data, we consider that a success
+     *                                  (because we wrote everything there was...nothing)
+     * @throws EE_Error
      */
-    public function write_data_array_to_csv($filehandle, $data)
+    public function write_data_array_to_csv($file_handle, ?array $data): bool
     {
-
-
         // determine if $data is actually a 2d array
-        if ($data && is_array($data) && is_array(EEH_Array::get_one_item_from_array($data))) {
+        if ($data && is_array(EEH_Array::get_one_item_from_array($data))) {
             // make sure top level is numerically indexed,
-
             if (EEH_Array::is_associative_array($data)) {
                 throw new EE_Error(
                     sprintf(
@@ -419,59 +379,24 @@ class EE_CSV
             if (EEH_Array::is_associative_array($item_in_top_level_array)) {
                 // its associative, so we want to output its keys as column headers
                 $keys = array_keys($item_in_top_level_array);
-                $this->fputcsv2($filehandle, $keys);
+                $this->fputcsv2($file_handle, $keys);
             }
             // start writing data
             foreach ($data as $data_row) {
-                $this->fputcsv2($filehandle, $data_row);
+                $this->fputcsv2($file_handle, $data_row);
             }
             return true;
-        } else {
-            // no data TO write... so we can assume that's a success
-            return true;
         }
-        // //if 2nd level is indexed by strings, use those as csv column headers (ie, the first row)
-        //
-        //
-        // $no_table = TRUE;
-        //
-        // // loop through data and add each row to the file/stream as csv
-        // foreach ( $data as $model_name => $model_data ) {
-        // // test first row to see if it is data or a model name
-        // $model = EE_Registry::instance();->load_model($model_name);
-        // //if the model really exists,
-        // if ( $model ) {
-        //
-        // // we have a table name
-        // $no_table = FALSE;
-        //
-        // // put the tablename into an array cuz that's how fputcsv rolls
-        // $model_name_row = array( 'MODEL', $model_name );
-        //
-        // // add table name to csv output
-        // echo self::fputcsv2($filehandle, $model_name_row);
-        //
-        // // now get the rest of the data
-        // foreach ( $model_data as $row ) {
-        // // output the row
-        // echo self::fputcsv2($filehandle, $row);
-        // }
-        //
-        // }
-        //
-        // if ( $no_table ) {
-        // // no table so just put the data
-        // echo self::fputcsv2($filehandle, $model_data);
-        // }
-        //
-        // } // END OF foreach ( $data )
+        // no data TO write... so we can assume that's a success
+        return true;
     }
+
 
     /**
      * Should be called after begin_sending_csv(), and one or more write_data_array_to_csv()s.
      * Calls exit to prevent polluting the CSV file with other junk
      *
-     * @param resource $fh filehandle where we're writing the CSV to
+     * @param resource $fh file handle where we're writing the CSV to
      */
     public function end_sending_csv($fh)
     {
@@ -479,40 +404,44 @@ class EE_CSV
         exit(0);
     }
 
+
     /**
      * Given an open file, writes all the model data to it in the format the importer expects.
-     * Usually preceded by begin_sending_csv($filename), and followed by end_sending_csv($filehandle).
+     * Usually preceded by begin_sending_csv($filename), and followed by end_sending_csv($file_handle).
      *
-     * @param resource $filehandle
+     * @param resource $file_handle
      * @param array    $model_data_array is assumed to be a 3d array: 1st layer has keys of model names (eg 'Event'),
      *                                   next layer is numerically indexed to represent each model object (eg, each
-     *                                   individual event), and the last layer has all the attributes o fthat model
+     *                                   individual event), and the last layer has all the attributes of that model
      *                                   object (eg, the event's id, name, etc)
-     * @return boolean success
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function write_model_data_to_csv($filehandle, $model_data_array)
+    public function write_model_data_to_csv($file_handle, array $model_data_array)
     {
-        $this->write_metadata_to_csv($filehandle);
+        $this->write_metadata_to_csv($file_handle);
         foreach ($model_data_array as $model_name => $model_instance_arrays) {
             // first: output a special row stating the model
-            $this->fputcsv2($filehandle, array('MODEL', $model_name));
+            $this->fputcsv2($file_handle, ['MODEL', $model_name]);
             // if we have items to put in the CSV, do it normally
 
             if (! empty($model_instance_arrays)) {
-                $this->write_data_array_to_csv($filehandle, $model_instance_arrays);
+                $this->write_data_array_to_csv($file_handle, $model_instance_arrays);
             } else {
                 // echo "no data to write... so just write the headers";
                 // so there's actually NO model objects for that model.
                 // probably still want to show the columns
-                $model = EE_Registry::instance()->load_model($model_name);
-                $column_names = array();
+                $model        = EE_Registry::instance()->load_model($model_name);
+                $column_names = [];
                 foreach ($model->field_settings() as $field) {
                     $column_names[ $field->get_nicename() . "[" . $field->get_name() . "]" ] = null;
                 }
-                $this->write_data_array_to_csv($filehandle, array($column_names));
+                $this->write_data_array_to_csv($file_handle, [$column_names]);
             }
         }
     }
+
 
     /**
      * Writes the CSV file to the output buffer, with rows corresponding to $model_data_array,
@@ -520,44 +449,32 @@ class EE_CSV
      *
      * @param string $filename         the filename you want to give the file
      * @param array  $model_data_array 3d array, as described in EE_CSV::write_model_data_to_csv()
-     * @return bool | void writes CSV file to output and dies
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function export_multiple_model_data_to_csv($filename, $model_data_array)
+    public function export_multiple_model_data_to_csv(string $filename, array $model_data_array)
     {
-        $filehandle = $this->begin_sending_csv($filename);
-        $this->write_model_data_to_csv($filehandle, $model_data_array);
-        $this->end_sending_csv($filehandle);
+        $file_handle = $this->begin_sending_csv($filename);
+        $this->write_model_data_to_csv($file_handle, $model_data_array);
+        $this->end_sending_csv($file_handle);
     }
 
+
     /**
-     * @Export contents of an array to csv file
-     * @access public
-     * @param array  $data     - the array of data to be converted to csv and exported
-     * @param string $filename - name for newly created csv file
-     * @return TRUE on success, FALSE on fail
+     * export contents of an array to csv file
+     *
+     * @param array|null $data     - the array of data to be converted to csv and exported
+     * @param string     $filename - name for newly created csv file
+     * @return void
      */
-    public function export_array_to_csv($data = false, $filename = false)
+    public function export_array_to_csv(?array $data, string $filename = '')
     {
-
-        // no data file?? get outta here
-        if (! $data or ! is_array($data) or empty($data)) {
-            return false;
+        // no data file or filename?? get outta here
+        if (empty($data) || ! $filename) {
+            return;
         }
-
-        // no filename?? get outta here
-        if (! $filename) {
-            return false;
-        }
-
-
-        // somebody told me i might need this ???
-        global $wpdb;
-        $prefix = $wpdb->prefix;
-
-
         $fh = $this->begin_sending_csv($filename);
-
-
         $this->end_sending_csv($fh);
     }
 
@@ -568,11 +485,10 @@ class EE_CSV
      * @param int $percent_of_max - desired percentage of the max upload_mb
      * @return int KB
      */
-    public function get_max_upload_size($percent_of_max = false)
+    public function get_max_upload_size(int $percent_of_max = 0)
     {
-
-        $max_upload = (int) (ini_get('upload_max_filesize'));
-        $max_post = (int) (ini_get('post_max_size'));
+        $max_upload   = (int) (ini_get('upload_max_filesize'));
+        $max_post     = (int) (ini_get('post_max_size'));
         $memory_limit = (int) (ini_get('memory_limit'));
 
         // determine the smallest of the three values from above
@@ -581,11 +497,11 @@ class EE_CSV
         // convert MB to KB
         $upload_mb = $upload_mb * 1024;
 
-        // don't want the full monty? then reduce the max uplaod size
+        // don't want the full monty? then reduce the max upload size
         if ($percent_of_max) {
             // is percent_of_max like this -> 50 or like this -> 0.50 ?
             if ($percent_of_max > 1) {
-                // chnages 50 to 0.50
+                // changes 50 to 0.50
                 $percent_of_max = $percent_of_max / 100;
             }
             // make upload_mb a percentage of the max upload_mb
@@ -597,17 +513,23 @@ class EE_CSV
 
 
     /**
-     * @Drop   in replacement for PHP's fputcsv function - but this one works!!!
-     * @access private
+     * drop in replacement for PHP's fputcsv function - but this one works!!!
+     *
      * @param resource $fh         - file handle - what we are writing to
      * @param array    $row        - individual row of csv data
      * @param string   $delimiter  - csv delimiter
      * @param string   $enclosure  - csv enclosure
-     * @param string   $mysql_null - allows php NULL to be overridden with MySQl's insertable NULL value
+     * @param bool     $mysql_null - allows php NULL to be overridden with MySQL's insertable NULL value
      * @return void
      */
-    private function fputcsv2($fh, array $row, $delimiter = ',', $enclosure = '"', $mysql_null = false)
-    {
+    private function fputcsv2(
+        $fh,
+        array $row,
+        string $delimiter = ',',
+        string $enclosure = '"',
+        bool $mysql_null =
+        false
+    ) {
         // Allow user to filter the csv delimiter and enclosure for other countries csv standards
         $delimiter = apply_filters('FHEE__EE_CSV__fputcsv2__delimiter', $delimiter);
         $enclosure = apply_filters('FHEE__EE_CSV__fputcsv2__enclosure', $enclosure);
@@ -615,7 +537,7 @@ class EE_CSV
         $delimiter_esc = preg_quote($delimiter, '/');
         $enclosure_esc = preg_quote($enclosure, '/');
 
-        $output = array();
+        $output = [];
         foreach ($row as $field_value) {
             if (is_object($field_value) || is_array($field_value)) {
                 $field_value = serialize($field_value);
@@ -625,8 +547,8 @@ class EE_CSV
                 continue;
             }
 
-            $output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field_value) ?
-                ($enclosure . str_replace($enclosure, $enclosure . $enclosure, $field_value) . $enclosure)
+            $output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field_value)
+                ? ($enclosure . str_replace($enclosure, $enclosure . $enclosure, $field_value) . $enclosure)
                 : $field_value;
         }
 
@@ -634,43 +556,17 @@ class EE_CSV
     }
 
 
-    // /**
-    //  * @CSV    Import / Export messages
-    //  * @access public
-    //  * @return void
-    //  */
-    // public function csv_admin_notices()
-    // {
-    //
-    //     // We play both kinds of music here! Country AND Western! - err... I mean, cycle through both types of notices
-    //     foreach (array('updates', 'errors') as $type) {
-    //
-    //         // if particular notice type is not empty, then "You've got Mail"
-    //         if (! empty($this->_notices[ $type ])) {
-    //
-    //             // is it an update or an error ?
-    //             $msg_class = $type == 'updates' ? 'updated' : 'error';
-    //             echo '<div id="message" class="' . $msg_class . '">';
-    //             // display each notice, however many that may be
-    //             foreach ($this->_notices[ $type ] as $message) {
-    //                 echo '<p>' . $message . '</p>';
-    //             }
-    //             // wrap it up
-    //             echo '</div>';
-    //         }
-    //     }
-    // }
-
     /**
      * Gets the date format to use in teh csv. filterable
      *
      * @param string $current_format
      * @return string
      */
-    public function get_date_format_for_csv($current_format = null)
+    public function get_date_format_for_csv(string $current_format = ''): string
     {
         return apply_filters('FHEE__EE_CSV__get_date_format_for_csv__format', 'Y-m-d', $current_format);
     }
+
 
     /**
      * Gets the time format we want to use in CSV reports. Filterable
@@ -678,7 +574,7 @@ class EE_CSV
      * @param string $current_format
      * @return string
      */
-    public function get_time_format_for_csv($current_format = null)
+    public function get_time_format_for_csv(string $current_format = ''): string
     {
         return apply_filters('FHEE__EE_CSV__get_time_format_for_csv__format', 'H:i:s', $current_format);
     }
