@@ -17,13 +17,46 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 class EmailAddressFactory extends LoaderFactory implements FactoryInterface
 {
     /**
+     * @var EmailValidationService
+     * @since $VID:$
+     */
+    private static $validator;
+
+
+    /**
+     * @return EmailValidationService
+     */
+    public static function getValidator(): EmailValidationService
+    {
+        if (! EmailAddressFactory::$validator instanceof EmailValidationService) {
+            EmailAddressFactory::setValidator(EmailAddressFactory::getShared(EmailValidationService::class));
+        }
+        return EmailAddressFactory::$validator;
+    }
+
+
+    /**
+     * @param EmailValidationService $validator
+     */
+    public static function setValidator(EmailValidationService $validator): void
+    {
+        EmailAddressFactory::$validator = $validator;
+    }
+
+
+    /**
      * @param string $email_address
      * @return EmailAddress
      * @throws EmailValidationException
      */
     public static function create($email_address): EmailAddress
     {
-        $validator = EmailAddressFactory::getShared(EmailValidationService::class);
-        return EmailAddressFactory::getNew(EmailAddress::class, [$email_address, $validator]);
+        return EmailAddressFactory::getNew(
+            EmailAddress::class,
+            [
+                $email_address,
+                EmailAddressFactory::getValidator()
+            ]
+        );
     }
 }
