@@ -19,6 +19,15 @@ use EventEspresso\core\services\loaders\Loader;
  */
 class EmailValidationService implements EmailValidatorInterface
 {
+    public const VALIDATION_LEVEL_BASIC      = 'basic';
+
+    public const VALIDATION_LEVEL_I18N       = 'i18n';
+
+    public const VALIDATION_LEVEL_I18N_DNS   = 'i18n_dns';
+
+    public const VALIDATION_LEVEL_WP_DEFAULT = 'wp_default';
+
+
     /**
      * @var EE_Registration_Config
      */
@@ -76,13 +85,13 @@ class EmailValidationService implements EmailValidatorInterface
     {
         // pick the correct validator according to the config
         switch ($this->registration_config->email_validation_level) {
-            case 'basic':
+            case EmailValidationService::VALIDATION_LEVEL_BASIC:
                 return $this->basicValidator()->validate($email_address);
-            case 'i18n':
+            case EmailValidationService::VALIDATION_LEVEL_I18N:
                 return $this->i18nValidator()->validate($email_address);
-            case 'i18n_dns':
+            case EmailValidationService::VALIDATION_LEVEL_I18N_DNS:
                 return $this->i18nDnsValidator()->validate($email_address);
-            case 'wp_default':
+            case EmailValidationService::VALIDATION_LEVEL_WP_DEFAULT:
             default:
             return $this->wordpressValidator()->validate($email_address);
         }
