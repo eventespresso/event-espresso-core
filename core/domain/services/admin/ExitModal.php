@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\admin;
 
+use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\services\assets\Registry;
 use InvalidArgumentException;
 use WP_User;
@@ -85,8 +86,8 @@ class ExitModal
             )
         );
 
-        wp_enqueue_script('ee-wp-plugins-page');
-        wp_enqueue_style('ee-wp-plugins-page');
+        wp_enqueue_script(CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE);
+        wp_enqueue_style(CoreAssetManager::CSS_HANDLE_WP_PLUGINS_PAGE);
     }
 
 

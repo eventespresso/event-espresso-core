@@ -88,7 +88,7 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_ACCOUNTING = 'ee-accounting';
 
-    const JS_HANDLE_WP_PLUGINS_PAGE = 'ee-wp-plugins-page';
+    const JS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page-js';
 
     // EE CSS assets handles
     const CSS_HANDLE_DEFAULT = 'espresso_default';
@@ -98,6 +98,8 @@ class CoreAssetManager extends AssetManager
     const CSS_HANDLE_COMPONENTS = 'eventespresso-components';
 
     const CSS_HANDLE_CORE_CSS_DEFAULT = 'eventespresso-core-css-default';
+
+    const CSS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page-css';
 
     /**
      * @var EEM_Country
@@ -523,8 +525,7 @@ class CoreAssetManager extends AssetManager
      */
     private function registerAdminAssets()
     {
-        $this->addJs(self::JS_HANDLE_WP_PLUGINS_PAGE)->setRequiresTranslation();
-        // note usage of the "JS_HANDLE.." constant is intentional here because css uses the same handle.
-        $this->addCss(self::JS_HANDLE_WP_PLUGINS_PAGE);
+        $this->addJs(CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE)->setRequiresTranslation();
+        $this->addCss(CoreAssetManager::CSS_HANDLE_WP_PLUGINS_PAGE);
     }
 }
