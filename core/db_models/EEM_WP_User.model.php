@@ -60,13 +60,13 @@ class EEM_WP_User extends EEM_Base
                 'user_email'          => $model_field_factory->createEmailField(
                     'user_email',
                     esc_html__('User Email', 'event_espresso'),
-                    false,
-                    null
+                    false
                 ),
                 'user_registered'     => $model_field_factory->createDatetimeField(
                     'user_registered',
                     esc_html__('Date User Registered', 'event_espresso'),
-                    $timezone
+                    $timezone,
+                    false
                 ),
                 'user_activation_key' => $model_field_factory->createPlainTextField(
                     'user_activation_key',
@@ -126,7 +126,7 @@ class EEM_WP_User extends EEM_Base
      * @return string
      * @throws EE_Error
      */
-    public function wp_user_field_name()
+    public function wp_user_field_name(): string
     {
         return $this->primary_key_name();
     }
@@ -137,7 +137,7 @@ class EEM_WP_User extends EEM_Base
      *
      * @return boolean
      */
-    public function is_owned()
+    public function is_owned(): bool
     {
         return true;
     }
