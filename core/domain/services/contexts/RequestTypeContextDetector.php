@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\contexts;
 
 use EventEspresso\core\domain\Domain;
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\graphql\GraphQLEndpoint;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
@@ -16,7 +17,7 @@ use InvalidArgumentException;
  * @author  Brent Christensen
  * @since   4.9.51
  */
-class RequestTypeContextDetector
+class RequestTypeContextDetector implements InterminableInterface
 {
     /**
      * @var GraphQLEndpoint $gql_endpoint
@@ -101,7 +102,7 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::GQL);
         }
         // Detect AJAX
-        if ($this->getGlobalRouteCondition('DOING_AJAX', false)) {
+        if ($this->getGlobalRouteCondition('DOING_AJAX')) {
             return $this->isAjaxRequest();
         }
         // Detect WP_Cron
@@ -109,11 +110,11 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::CRON);
         }
         // Detect command line requests
-        if ($this->getGlobalRouteCondition('WP_CLI', false)) {
+        if ($this->getGlobalRouteCondition('WP_CLI')) {
             return $this->factory->create(RequestTypeContext::CLI);
         }
         // detect WordPress admin (ie: "Dashboard")
-        if ($this->getGlobalRouteCondition('is_admin', false)) {
+        if ($this->getGlobalRouteCondition('is_admin')) {
             return $this->factory->create(RequestTypeContext::ADMIN);
         }
         // Detect iFrames

@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\routing;
 
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
 use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\collections\CollectionDetails;
 use EventEspresso\core\services\collections\CollectionDetailsException;
 use EventEspresso\core\services\collections\CollectionInterface;
@@ -16,14 +17,14 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  * and compares specifications in it via the currentRequestMatches() method.
  * Folders containing RouteMatchSpecification classes can be added to the collection using the
  * FHEE__EventEspresso_core_services_route_match_RouteMatchSpecificationManager__populateSpecificationCollection__collection_FQCNs
- * filter prior to the AHEE__EE_System__initialize hookpoint
+ * filter prior to the AHEE__EE_System__initialize hook point
  *
  *
  * @package EventEspresso\core\services\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class RouteMatchSpecificationManager
+class RouteMatchSpecificationManager implements InterminableInterface
 {
     /**
      * @var CollectionInterface[]|RouteMatchSpecificationInterface[] $specifications
@@ -61,19 +62,23 @@ class RouteMatchSpecificationManager
      */
     public function initialize()
     {
-        $this->populateSpecificationCollection();
+        // static $initialized = false;
+        // if (! $initialized) {
+            $this->populateSpecificationCollection();
+        //     $initialized = true;
+        // }
     }
 
 
     /**
-     * @return CollectionInterface|RouteMatchSpecificationInterface[]
+     * @return void
      * @throws CollectionLoaderException
      * @throws CollectionDetailsException
      * @since 4.9.71.p
      */
     private function populateSpecificationCollection()
     {
-        $loader = new CollectionLoader(
+        new CollectionLoader(
             new CollectionDetails(
                 // collection name
                 RouteMatchSpecificationCollection::COLLECTION_NAME,
@@ -99,7 +104,6 @@ class RouteMatchSpecificationManager
             null,
             $this->specifications_factory
         );
-        return $loader->getCollection();
     }
 
 
@@ -111,7 +115,7 @@ class RouteMatchSpecificationManager
      * @throws InvalidClassException
      * @since 4.9.71.p
      */
-    public function routeMatchesCurrentRequest($routeMatchSpecificationFqcn)
+    public function routeMatchesCurrentRequest(string $routeMatchSpecificationFqcn): bool
     {
         /** @var RouteMatchSpecificationInterface $specification */
         $specification = $this->specifications->get($routeMatchSpecificationFqcn);
@@ -132,7 +136,7 @@ class RouteMatchSpecificationManager
      * @return array
      * @since 4.9.71.p
      */
-    public function findRouteMatchSpecificationsMatchingCurrentRequest()
+    public function findRouteMatchSpecificationsMatchingCurrentRequest(): array
     {
         $matches = array();
         foreach ($this->specifications as $specification) {
