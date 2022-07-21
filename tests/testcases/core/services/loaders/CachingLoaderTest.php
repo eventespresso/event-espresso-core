@@ -8,7 +8,6 @@ use EventEspresso\core\services\loaders\CoreLoader;
 use EventEspresso\core\services\loaders\LoaderDecorator;
 use EventEspresso\core\services\loaders\ObjectIdentifier;
 use EventEspresso\tests\mocks\core\services\loaders\CachingLoaderMock;
-use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Exception;
 
 /**
@@ -35,6 +34,7 @@ class CachingLoaderTest extends EE_UnitTestCase
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function set_up()
     {
@@ -44,7 +44,7 @@ class CachingLoaderTest extends EE_UnitTestCase
         //different persistence tests
         if (! $this->loader instanceof LoaderDecorator) {
             $this->loader = new CachingLoaderMock(
-                new CoreLoader(EE_Registry::instance()),
+                new CoreLoader(EE_Registry::reset()),
                 new LooseCollection(''),
                 new ObjectIdentifier(new ClassInterfaceCache())
             );
@@ -131,9 +131,9 @@ class CachingLoaderTest extends EE_UnitTestCase
         do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
         $this->assertCount(0, $this->loader->getCache());
         // confirm that reloading the same FCQNs as above results in new objects
-        $this->assertNotEquals(spl_object_hash($object7), spl_object_hash($this->loader->load($fqcn7)));
-        $this->assertNotEquals(spl_object_hash($object8), spl_object_hash($this->loader->load($fqcn8)));
-        $this->assertNotEquals(spl_object_hash($object9), spl_object_hash($this->loader->load($fqcn9)));
+        $this->assertNotEquals(spl_object_hash($object7), spl_object_hash($this->loader->load($fqcn7)), $fqcn7);
+        $this->assertNotEquals(spl_object_hash($object8), spl_object_hash($this->loader->load($fqcn8)), $fqcn8);
+        $this->assertNotEquals(spl_object_hash($object9), spl_object_hash($this->loader->load($fqcn9)), $fqcn9);
     }
 
     /**
