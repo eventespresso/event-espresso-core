@@ -30,7 +30,7 @@ class FullyQualifiedNameTest extends EE_UnitTestCase
 
     public function test_constructor_with_invalid_data_type()
     {
-        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
+        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidClassException');
         new FullyQualifiedName(1234);
     }
 
