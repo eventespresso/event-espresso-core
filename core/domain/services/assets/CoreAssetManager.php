@@ -30,15 +30,17 @@ class CoreAssetManager extends AssetManager
 {
 
     // WordPress core / Third party JS asset handles
-    const JS_HANDLE_JS_CORE = 'eejs-core';
-
     const JS_HANDLE_CORE    = 'espresso_core';
+
+    const JS_HANDLE_JS_CORE = 'eejs-core';
 
     const JS_HANDLE_I18N    = 'eei18n';
 
+    const JS_HANDLE_RAMDA  = 'ramda';
+
     const JS_HANDLE_VENDOR  = 'eventespresso-vendor';
 
-    const JS_HANDLE_RAMDA  = 'ramda';
+    const JS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page-js';
 
     const RAMDA_VERSION = '0.27.1';
 
@@ -46,6 +48,8 @@ class CoreAssetManager extends AssetManager
     const CSS_HANDLE_DEFAULT = 'espresso_default';
 
     const CSS_HANDLE_CUSTOM  = 'espresso_custom_css';
+
+    const CSS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page-css';
 
     /**
      * @var EE_Currency_Config $currency_config
