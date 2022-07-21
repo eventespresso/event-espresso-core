@@ -184,10 +184,10 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment
      * to the payment. This is handy for verifying an IPN hasn't already been processed.
      *
      * @param string $PAY_txn_id_chq_nmbr
-     * @return EE_Payment
+     * @return EE_Payment|null
      * @throws EE_Error
      */
-    public function get_payment_by_txn_id_chq_nmbr($PAY_txn_id_chq_nmbr): EE_Payment
+    public function get_payment_by_txn_id_chq_nmbr($PAY_txn_id_chq_nmbr): ?EE_Payment
     {
         return $this->get_one([['PAY_txn_id_chq_nmbr' => $PAY_txn_id_chq_nmbr]]);
     }

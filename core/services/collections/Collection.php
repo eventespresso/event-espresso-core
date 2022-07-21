@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\collections;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\interfaces\InterminableInterface;
 use LimitIterator;
 use SplObjectStorage;
 
@@ -51,7 +52,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param string $collection_name
      * @throws InvalidInterfaceException
      */
-    public function __construct($collection_interface, $collection_name = '')
+    public function __construct(string $collection_interface, string $collection_name = '')
     {
         $this->setCollectionInterface($collection_interface);
         $this->setCollectionName($collection_name);
@@ -75,7 +76,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param  string $collection_interface
      * @throws InvalidInterfaceException
      */
-    protected function setCollectionInterface($collection_interface)
+    protected function setCollectionInterface(string $collection_interface)
     {
         if (! (interface_exists($collection_interface) || class_exists($collection_interface))) {
             throw new InvalidInterfaceException($collection_interface);
@@ -87,7 +88,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
     /**
      * @return string
      */
-    public function collectionName()
+    public function collectionName(): string
     {
         return $this->collection_name;
     }
@@ -96,7 +97,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
     /**
      * @param string $collection_name
      */
-    protected function setCollectionName($collection_name)
+    protected function setCollectionName(string $collection_name)
     {
         $this->collection_name = ! empty($collection_name)
             ? sanitize_key($collection_name)
@@ -107,7 +108,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
     /**
      * @return string
      */
-    public function collectionIdentifier()
+    public function collectionIdentifier(): string
     {
         return $this->collection_identifier;
     }
@@ -138,22 +139,22 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * and sets any supplied data associated with the current iterator entry
      * by calling EE_Object_Collection::set_identifier()
      *
-     * @param        $object
-     * @param  mixed $identifier
+     * @param mixed $object
+     * @param mixed $identifier
      * @return bool
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function add($object, $identifier = null)
+    public function add($object, $identifier = null): bool
     {
         if (! $object instanceof $this->collection_interface) {
             throw new InvalidEntityException($object, $this->collection_interface);
         }
-        if ($this->contains($object)) {
+        $identifier = $this->getIdentifier($object, $identifier);
+        if ($this->contains($object) || $this->has($identifier)) {
             throw new DuplicateCollectionIdentifierException($identifier);
         }
-        $this->attach($object);
-        $this->setIdentifier($object, $identifier);
+        parent::attach($object, $identifier);
         return $this->contains($object);
     }
 
@@ -164,13 +165,11 @@ class Collection extends SplObjectStorage implements CollectionInterface
      *
      * @param        $object
      * @param  mixed $identifier
-     * @return bool
+     * @return string
      */
-    public function getIdentifier($object, $identifier = null)
+    public function getIdentifier($object, $identifier = null): string
     {
-        return ! empty($identifier)
-            ? $identifier
-            : spl_object_hash($object);
+        return ! empty($identifier) ? $identifier : spl_object_hash($object);
     }
 
 
@@ -183,7 +182,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param  mixed $identifier
      * @return bool
      */
-    public function setIdentifier($object, $identifier = null)
+    public function setIdentifier($object, $identifier = null): bool
     {
         $identifier = $this->getIdentifier($object, $identifier);
         $this->rewind();
@@ -231,7 +230,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param  mixed $identifier
      * @return bool
      */
-    public function has($identifier)
+    public function has($identifier): bool
     {
         $this->rewind();
         while ($this->valid()) {
@@ -252,7 +251,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param $object
      * @return bool
      */
-    public function hasObject($object)
+    public function hasObject($object): bool
     {
         return $this->contains($object);
     }
@@ -264,7 +263,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      *
      * @return bool
      */
-    public function hasObjects()
+    public function hasObjects(): bool
     {
         return $this->count() !== 0;
     }
@@ -276,7 +275,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      *
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return $this->count() === 0;
     }
@@ -289,7 +288,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param $object
      * @return bool
      */
-    public function remove($object)
+    public function remove($object): bool
     {
         $this->detach($object);
         return true;
@@ -302,7 +301,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param mixed $identifier
      * @return bool
      */
-    public function removeByIdentifier($identifier)
+    public function removeByIdentifier($identifier): bool
     {
         $this->rewind();
         while ($this->valid()) {
@@ -325,7 +324,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param mixed $identifier
      * @return boolean
      */
-    public function setCurrent($identifier)
+    public function setCurrent($identifier): bool
     {
         $this->rewind();
         while ($this->valid()) {
@@ -345,7 +344,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param $object
      * @return boolean
      */
-    public function setCurrentUsingObject($object)
+    public function setCurrentUsingObject($object): bool
     {
         $this->rewind();
         while ($this->valid()) {
@@ -380,7 +379,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      *
      * @see http://stackoverflow.com/a/8736013
      * @param $object
-     * @return boolean|int|string
+     * @return boolean|int
      */
     public function indexOf($object)
     {
@@ -419,7 +418,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @param int $length
      * @return array
      */
-    public function slice($offset, $length)
+    public function slice($offset, $length): array
     {
         $slice = array();
         $iterator = new LimitIterator($this, $offset, $length);
@@ -441,7 +440,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidEntityException
      */
-    public function insertObjectAt($object, $index, $identifier = null)
+    public function insertObjectAt($object, int $index, $identifier = null): bool
     {
         // check to ensure that objects don't already exist in the collection
         if ($this->has($identifier)) {
@@ -502,11 +501,11 @@ class Collection extends SplObjectStorage implements CollectionInterface
         }
         // add the new objects we're splicing in
         foreach ($objects as $object) {
-            $this->attach($object);
+            $this->add($object);
         }
         // attach the objects we previously detached
         foreach ($remaining as $object) {
-            $this->attach($object);
+            $this->add($object);
         }
     }
 
@@ -545,9 +544,12 @@ class Collection extends SplObjectStorage implements CollectionInterface
         $this->rewind();
         while ($this->valid()) {
             $object = $this->current();
+            $getInfo = $this->getInfo();
             $this->next();
-            $this->detach($object);
-            unset($object);
+            if (! $object instanceof InterminableInterface) {
+                $this->detach($object);
+                unset($object);
+            }
         }
     }
 }

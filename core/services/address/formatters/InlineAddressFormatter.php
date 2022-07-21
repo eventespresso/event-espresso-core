@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\address\formatters;
 
+use EEI_Address_Formatter;
+
 /**
  * Class InlineAddressFormatter
  * This class will format an address and add commas in appropriate places
@@ -11,7 +13,7 @@ namespace EventEspresso\core\services\address\formatters;
  * @author        Brent Christensen
  * @since         4.8
  */
-class InlineAddressFormatter extends AddressFormatter implements \EEI_Address_Formatter
+class InlineAddressFormatter extends AddressFormatter implements EEI_Address_Formatter
 {
     /**
      * @param string $address
@@ -23,8 +25,15 @@ class InlineAddressFormatter extends AddressFormatter implements \EEI_Address_Fo
      * @param string $CNT_ISO
      * @return string
      */
-    public function format($address, $address2, $city, $state, $zip, $country, $CNT_ISO)
-    {
+    public function format(
+        string $address,
+        string $address2,
+        string $city,
+        string $state,
+        string $zip,
+        string $country,
+        string $CNT_ISO
+    ): string {
         $address_formats = apply_filters(
             'FHEE__EE_Inline_Address_Formatter__address_formats',
             array(
@@ -35,8 +44,7 @@ class InlineAddressFormatter extends AddressFormatter implements \EEI_Address_Fo
             )
         );
         // if the incoming country has a set format, use that, else use the default
-        $formatted_address = isset($address_formats[ $CNT_ISO ]) ? $address_formats[ $CNT_ISO ]
-            : $address_formats['ZZZ'];
+        $formatted_address = $address_formats[ $CNT_ISO ] ?? $address_formats['ZZZ'];
         return $this->parse_formatted_address(
             $address,
             $address2,

@@ -14,5 +14,13 @@ interface EEI_Address_Formatter
      * @param string $country
      * @param string $CNT_ISO
      */
-    public function format($address, $address2, $city, $state, $zip, $country, $CNT_ISO);
+    public function format(
+        string $address,
+        string $address2,
+        string $city,
+        string $state,
+        string $zip,
+        string $country,
+        string $CNT_ISO
+    ): ?string;
 }

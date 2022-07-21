@@ -5,7 +5,6 @@ namespace EventEspresso\core\services\address;
 use EE_Country;
 use EE_Error;
 use EE_State;
-use EEM_Country;
 use EEM_State;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -72,11 +71,11 @@ class CountrySubRegionDao
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function saveCountrySubRegions(EE_Country $country_object)
+    public function saveCountrySubRegions(EE_Country $country_object): bool
     {
         $CNT_ISO = $country_object->ID();
         $has_sub_regions = $this->state_model->count(array(array('Country.CNT_ISO' => $CNT_ISO)));
-        $data = [];
+        $data = new stdClass();
         if (empty($this->countries)) {
             $this->data_version = $this->getCountrySubRegionDataVersion();
             $data = $this->retrieveJsonData(self::REPO_URL . 'countries.json');
@@ -110,7 +109,7 @@ class CountrySubRegionDao
      * @since 4.9.70.p
      * @return string
      */
-    private function getCountrySubRegionDataVersion()
+    private function getCountrySubRegionDataVersion(): string
     {
         return get_option(self::OPTION_NAME_COUNTRY_DATA_VERSION, null);
     }
@@ -119,7 +118,7 @@ class CountrySubRegionDao
     /**
      * @param string $version
      */
-    private function updateCountrySubRegionDataVersion($version = '')
+    private function updateCountrySubRegionDataVersion(string $version = '')
     {
         // add version option if it has never been added before, or update existing
         if ($this->data_version === null) {
@@ -135,16 +134,12 @@ class CountrySubRegionDao
      * @param array  $countries
      * @return int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
      * @since 4.9.70.p
      */
-    private function processCountryData($CNT_ISO, $countries = array())
+    private function processCountryData(string $CNT_ISO, array $countries = array()): int
     {
         if (! empty($countries)) {
-            foreach ($countries as $key => $country) {
+            foreach ($countries as $country) {
                 if (
                     $country instanceof stdClass
                     && $country->code === $CNT_ISO
@@ -166,7 +161,7 @@ class CountrySubRegionDao
      * @param string $url
      * @return array
      */
-    private function retrieveJsonData($url)
+    private function retrieveJsonData(string $url): array
     {
         if (empty($url)) {
             EE_Error::add_error(
@@ -204,9 +199,8 @@ class CountrySubRegionDao
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
-    private function saveSubRegionData(stdClass $country, $sub_regions = array())
+    private function saveSubRegionData(stdClass $country, array $sub_regions = array()): int
     {
         $results = 0;
         if (is_array($sub_regions)) {
@@ -244,15 +238,14 @@ class CountrySubRegionDao
 
     /**
      * @param string $CNT_ISO
-     * @since 4.9.76.p
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
+     *@since 4.9.76.p
      */
-    private function getExistingStateAbbreviations($CNT_ISO)
+    private function getExistingStateAbbreviations(string $CNT_ISO): array
     {
         $existing_sub_region_IDs = [];
         $existing_sub_regions = $this->state_model->get_all(array(
