@@ -179,10 +179,10 @@ class CoreLoader
             }
 
             if (getenv('EE_TESTS_DIR')) {
-                define('EE_TESTS_DIR', getenv('EE_TESTS_DIR'));
-                define('EE_PLUGIN_DIR', dirname(EE_TESTS_DIR, 2) . '/');
+                define('EE_TESTS_DIR', addTrailingBackSlash(getenv('EE_TESTS_DIR')));
+                define('EE_PLUGIN_DIR', addTrailingBackSlash(dirname(EE_TESTS_DIR, 2)));
             } else {
-                define('EE_PLUGIN_DIR', dirname(__DIR__, 2) . '/');
+                define('EE_PLUGIN_DIR', addTrailingBackSlash(dirname(__DIR__, 2)));
                 define('EE_TESTS_DIR', EE_PLUGIN_DIR . 'tests/');
             }
 
