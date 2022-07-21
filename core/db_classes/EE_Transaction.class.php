@@ -897,14 +897,14 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * Gets all the extra meta info on this payment
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
      * @return EE_Base_Class[]|EE_Extra_Meta
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function extra_meta($query_params = [])
     {
@@ -1246,7 +1246,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         if ($new_txn_status !== $this->status_ID()) {
             $this->set_status($new_txn_status);
             if ($update) {
-                return $this->save() ? true : false;
+                return (bool) $this->save();
             }
         }
         return false;
@@ -1731,6 +1731,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * @param string $source function name that called this method
      * @return boolean | int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function delete($source = 'unknown')
     {
