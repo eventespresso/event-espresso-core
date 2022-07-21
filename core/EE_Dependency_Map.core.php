@@ -996,6 +996,7 @@ class EE_Dependency_Map
             'EE_Register_CPTs'                             => 'load_core',
             'EE_Admin'                                     => 'load_core',
             'EE_CPT_Strategy'                              => 'load_core',
+            'EE_Data_Migration_Manager'                    => 'load_core',
             // load_class
             'EE_Registration_Processor'                    => 'load_class',
             // load_lib
