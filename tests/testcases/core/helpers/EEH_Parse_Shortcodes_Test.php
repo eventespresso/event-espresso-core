@@ -329,9 +329,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
         EE_Registry::instance()->load_lib('Message_Resource_Manager')->ensure_messenger_is_active('html');
         //currently with @group 7623 just testing if there are any error notices.
         $parsed = $this->_get_parsed_content('html', 'receipt', 'content', 'purchaser');
-
-        //testing [PAYMENT_GATEWAY]
-        $this->assertStringContainsString('Invoice', $parsed);
+        $this->assertStringContainsString('Order Confirmation', $parsed);
     }
 
 
