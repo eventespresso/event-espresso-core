@@ -76,7 +76,7 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_HOCS = 'eventespresso-hocs';
 
-    const JS_HANDLE_COMPONENTS = 'eventespresso-components';
+    const JS_HANDLE_COMPONENTS = 'eventespresso-components-js';
 
     const JS_HANDLE_EDITOR_HOCS = 'eventespresso-editor-hocs';
 
@@ -95,7 +95,7 @@ class CoreAssetManager extends AssetManager
 
     const CSS_HANDLE_CUSTOM = 'espresso_custom_css';
 
-    const CSS_HANDLE_COMPONENTS = 'eventespresso-components';
+    const CSS_HANDLE_COMPONENTS = 'eventespresso-components-css';
 
     const CSS_HANDLE_CORE_CSS_DEFAULT = 'eventespresso-core-css-default';
 
