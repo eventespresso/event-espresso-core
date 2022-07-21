@@ -19,9 +19,9 @@ class ActivationHistoryTest extends EE_UnitTestCase
     /**
      * @throws EE_Error
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         delete_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_HISTORY_OPTION_NAME);
         delete_option(ActivationHistoryExtendedMock::EE_ADDON_ACTIVATION_INDICATOR_OPTION_NAME);
     }
@@ -150,7 +150,7 @@ class ActivationHistoryTest extends EE_UnitTestCase
     public function testGetMostRecentActiveVersion()
     {
         /** @var ActivationHistoryExtendedMock $activation_history */
-        list($activation_history, $version_history) = AddonActivationTestsHelper::getActivationAndVersionHistory(
+        [$activation_history, $version_history] = AddonActivationTestsHelper::getActivationAndVersionHistory(
             '2.3.4.p'
         );
         PHPUnit_Framework_TestCase::assertEquals(
@@ -176,7 +176,7 @@ class ActivationHistoryTest extends EE_UnitTestCase
     {
         $current_version = '2.3.4.p';
         /** @var ActivationHistoryExtendedMock $activation_history */
-        list($activation_history, $version_history) = AddonActivationTestsHelper::getActivationAndVersionHistory(
+        [$activation_history, $version_history] = AddonActivationTestsHelper::getActivationAndVersionHistory(
             $current_version,
             1,
             2,
@@ -211,7 +211,7 @@ class ActivationHistoryTest extends EE_UnitTestCase
         );
         $current_version = '1.4.8.p';
         /** @var ActivationHistoryExtendedMock $activation_history */
-        list($activation_history, $version_history) = AddonActivationTestsHelper::getActivationAndVersionHistory(
+        [$activation_history, $version_history] = AddonActivationTestsHelper::getActivationAndVersionHistory(
             $current_version
         );
         $activation_history->addActivationHistory($version_history, $current_version);

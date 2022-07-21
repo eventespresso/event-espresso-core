@@ -20,9 +20,9 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class EEDCoreRestApiTest extends EE_REST_TestCase
 {
 
-    public static function setUpBeforeClass()
+    public static function set_up_before_class()
     {
-        parent::setUpBeforeClass();
+        parent::set_up_before_class();
         require_once EE_MODULES . 'core_rest_api/EED_Core_Rest_Api.module.php';
     }
 

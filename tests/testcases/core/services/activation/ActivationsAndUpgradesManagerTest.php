@@ -26,9 +26,9 @@ class ActivationsAndUpgradesManagerTest extends EE_UnitTestCase
     /**
      * @throws EE_Error
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         delete_option(ActivationHistory::EE_ACTIVATION_HISTORY_OPTION_NAME);
         delete_option(ActivationHistory::EE_ACTIVATION_INDICATOR_OPTION_NAME);
         remove_all_filters('AHEE__EE_System__perform_activations_upgrades_and_migrations');

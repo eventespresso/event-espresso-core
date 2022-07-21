@@ -36,9 +36,9 @@ class ActivationHandlerTest extends EE_UnitTestCase
     /**
      * @throws EE_Error
      */
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         $this->_pretend_addon_hook_time();
         remove_all_filters('AHEE__EE_System__perform_activations_upgrades_and_migrations');
     }
@@ -51,13 +51,13 @@ class ActivationHandlerTest extends EE_UnitTestCase
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
      */
-    public function tearDown()
+    public function tear_down()
     {
         if ($this->addon instanceof EE_Addon) {
             EE_Register_Addon::deregister($this->addon_name);
             $this->_stop_pretending_addon_hook_time();
         }
-        parent::tearDown();
+        parent::tear_down();
     }
 
 
