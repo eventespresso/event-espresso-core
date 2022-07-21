@@ -38,7 +38,7 @@ class LooseCollection extends Collection
      * @return bool
      * @throws InvalidEntityException
      */
-    public function add($object, $identifier = null)
+    public function add($object, $identifier = null): bool
     {
         if (! is_object($object)) {
             throw new InvalidEntityException($object, 'object');

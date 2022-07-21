@@ -37,7 +37,7 @@ class RequestTypeContextFactory implements RequestTypeContextFactoryInterface
      * @param string $slug
      * @return RequestTypeContext
      */
-    public function create($slug)
+    public function create($slug): RequestTypeContext
     {
         switch ($slug) {
             case RequestTypeContext::ACTIVATION:
