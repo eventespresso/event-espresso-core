@@ -30,7 +30,7 @@ class ActivationTypeDetectorMock extends ActivationTypeDetector
      * @param ActivationHistory $activation_history
      * @return int
      */
-    public function versionChange(ActivationHistory $activation_history)
+    public function versionChange(ActivationHistory $activation_history): int
     {
         return parent::versionChange($activation_history);
     }

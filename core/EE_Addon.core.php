@@ -566,7 +566,7 @@ abstract class EE_Addon extends EE_Configurable
      * @return ActivationHistory
      * @throws InvalidDataTypeException
      */
-    public function getActivationHistory(): ActivationHistory
+    public function getActivationHistory(): ?ActivationHistory
     {
         $this->setup_activation_history();
         return $this->activation_history;
@@ -585,7 +585,7 @@ abstract class EE_Addon extends EE_Configurable
     /**
      * @return ActivationType
      */
-    public function getActivationType(): ActivationType
+    public function getActivationType(): ?ActivationType
     {
         return $this->activation_type;
     }

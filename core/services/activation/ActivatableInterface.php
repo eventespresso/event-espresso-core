@@ -19,7 +19,7 @@ interface ActivatableInterface
      *
      * @return ActivationHistory
      */
-    public function getActivationHistory(): ActivationHistory;
+    public function getActivationHistory(): ?ActivationHistory;
 
 
     /**
@@ -31,7 +31,7 @@ interface ActivatableInterface
     /**
      * @return ActivationType
      */
-    public function getActivationType(): ActivationType;
+    public function getActivationType(): ?ActivationType;
 
 
     /**
