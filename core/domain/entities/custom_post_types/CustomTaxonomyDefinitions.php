@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\custom_post_types;
 
 use EEH_URL;
+use EventEspresso\core\interfaces\InterminableInterface;
 
 /**
  * Class CustomTaxonomyDefinitions
@@ -12,7 +13,7 @@ use EEH_URL;
  * @author  Darren Ethier / Brent Christensen
  * @since   4.9.62.p
  */
-class CustomTaxonomyDefinitions
+class CustomTaxonomyDefinitions implements InterminableInterface
 {
     /**
      * @var array $taxonomies
@@ -104,7 +105,7 @@ class CustomTaxonomyDefinitions
     /**
      * @return array
      */
-    public function getCustomTaxonomyDefinitions()
+    public function getCustomTaxonomyDefinitions(): array
     {
         return (array) apply_filters(
             'FHEE__EventEspresso_core_domain_entities_custom_post_types_TaxonomyDefinitions__getTaxonomies',
@@ -121,7 +122,7 @@ class CustomTaxonomyDefinitions
     /**
      * @return array
      */
-    public function getCustomTaxonomySlugs()
+    public function getCustomTaxonomySlugs(): array
     {
         return array_keys($this->getCustomTaxonomyDefinitions());
     }
@@ -142,7 +143,7 @@ class CustomTaxonomyDefinitions
      * @param string $taxonomy    The taxonomy name for the taxonomy being filtered.
      * @return string
      */
-    public function filterCustomTermDescription($description, $taxonomy)
+    public function filterCustomTermDescription(string $description, string $taxonomy): string
     {
         // get a list of EE taxonomies
         $custom_taxonomies = $this->getCustomTaxonomySlugs();
