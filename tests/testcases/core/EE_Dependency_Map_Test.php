@@ -87,6 +87,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
             'EE_CPT_Attendee_Strategy'      => 'has required arguments',
             'EE_CPT_Event_Strategy'         => 'has required arguments',
             'EE_CPT_Venue_Strategy'         => 'has required arguments',
+            'EE_Ticket_Selector_Config'     => 'Closure has required arguments',
 		);
 		//loop through and verify the class loader can successfully load the class it is set for
 		foreach ( $this->_dependency_map->class_loaders() as $class => $loader ) {
@@ -104,7 +105,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 					sprintf(
 						'The "%1$s" class has "%2$s" set as its loader, but instead of an object, we received "%3$s"',
 						$class,
-						$loader instanceof Closure ? print_r( $loader, true ) : $loader,
+						$loader instanceof Closure ? get_class($loader) : $loader,
 						print_r( $dependency, true )
 					)
 				);
