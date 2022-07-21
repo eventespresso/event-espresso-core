@@ -2,10 +2,11 @@
 
 namespace EventEspresso\core\services\formatters;
 
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\locale\Locale;
 use EventEspresso\core\services\locale\Locales;
 
-abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface
+abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface, InterminableInterface
 {
     /**
      * number of decimal places used for high precision internal calculations and storage

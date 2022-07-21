@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\locale;
 
+use EventEspresso\core\interfaces\InterminableInterface;
+
 /**
  * Class LocaleSwitcher
  * really more of a data store for raw locale data
@@ -12,7 +14,7 @@ namespace EventEspresso\core\services\locale;
  * @package EventEspresso\core\services\locale
  * @since   $VID:$
  */
-class LocaleSwitcher
+class LocaleSwitcher implements InterminableInterface
 {
     /**
      * @var array

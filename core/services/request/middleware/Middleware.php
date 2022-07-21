@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\request\middleware;
 
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestDecoratorInterface;
 use EventEspresso\core\services\request\RequestInterface;
@@ -22,7 +23,7 @@ use EventEspresso\core\services\request\ResponseInterface;
  * @author  Brent Christensen
  * @since   4.9.52
  */
-abstract class Middleware implements RequestDecoratorInterface
+abstract class Middleware implements InterminableInterface, RequestDecoratorInterface
 {
     /**
      * @var RequestDecoratorInterface $request_stack_app

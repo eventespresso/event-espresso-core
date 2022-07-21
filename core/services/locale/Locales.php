@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\locale;
 
 use DomainException;
+use EventEspresso\core\interfaces\InterminableInterface;
 
 /**
  * Class Locales
@@ -12,9 +13,8 @@ use DomainException;
  * @package EventEspresso\core\services\formatters
  * @since   $VID:$
  */
-class Locales
+class Locales implements InterminableInterface
 {
-
     /**
      * Locale string for the site as set in the WP Settings admin
      */
