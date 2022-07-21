@@ -20,7 +20,7 @@ class LooseCollection extends Collection
      * @access protected
      * @param  string $collection_interface
      */
-    protected function setCollectionInterface($collection_interface)
+    protected function setCollectionInterface(string $collection_interface)
     {
         $this->collection_interface = '';
     }
@@ -43,8 +43,8 @@ class LooseCollection extends Collection
         if (! is_object($object)) {
             throw new InvalidEntityException($object, 'object');
         }
-        $this->attach($object);
-        $this->setIdentifier($object, $identifier);
+        $identifier = $this->getIdentifier($object, $identifier);
+        parent::attach($object, $identifier);
         return $this->contains($object);
     }
 }
