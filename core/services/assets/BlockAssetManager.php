@@ -3,7 +3,6 @@
 namespace EventEspresso\core\services\assets;
 
 use EventEspresso\core\domain\entities\editor\BlockInterface;
-use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\values\assets\BrowserAsset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
@@ -46,7 +45,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @return string
      */
-    public function getEditorScriptHandle()
+    public function getEditorScriptHandle(): string
     {
         return $this->editor_script_handle;
     }
@@ -55,7 +54,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param string $editor_script_handle
      */
-    public function setEditorScriptHandle($editor_script_handle)
+    public function setEditorScriptHandle(string $editor_script_handle)
     {
         if(strpos($editor_script_handle, BlockInterface::NAME_SPACE . '-') !== 0) {
             $editor_script_handle = BlockInterface::NAME_SPACE . '-' . $editor_script_handle;
@@ -67,7 +66,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @return string
      */
-    public function getEditorStyleHandle()
+    public function getEditorStyleHandle(): string
     {
         return $this->editor_style_handle;
     }
@@ -76,7 +75,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param string $editor_style_handle
      */
-    public function setEditorStyleHandle($editor_style_handle)
+    public function setEditorStyleHandle(string $editor_style_handle)
     {
         if (strpos($editor_style_handle, BlockInterface::NAME_SPACE . '-') !== 0) {
             $editor_style_handle = BlockInterface::NAME_SPACE . '-' . $editor_style_handle;
@@ -88,7 +87,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @return string
      */
-    public function getScriptHandle()
+    public function getScriptHandle(): string
     {
         return $this->script_handle;
     }
@@ -97,7 +96,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param string $script_handle
      */
-    public function setScriptHandle($script_handle)
+    public function setScriptHandle(string $script_handle)
     {
         if (strpos($script_handle, BlockInterface::NAME_SPACE . '-') !== 0) {
             $script_handle = BlockInterface::NAME_SPACE . '-' . $script_handle;
@@ -109,7 +108,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @return string
      */
-    public function getStyleHandle()
+    public function getStyleHandle(): string
     {
         return $this->style_handle;
     }
@@ -118,7 +117,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @param string $style_handle
      */
-    public function setStyleHandle($style_handle)
+    public function setStyleHandle(string $style_handle)
     {
         if (strpos($style_handle, BlockInterface::NAME_SPACE . '-') !== 0) {
             $style_handle = BlockInterface::NAME_SPACE . '-' . $style_handle;
@@ -150,7 +149,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function addEditorScript($handle, array $dependencies = array())
+    public function addEditorScript($handle, array $dependencies = array()): JavascriptAsset
     {
         if ($this->assets->hasJavascriptAsset($handle)){
             return $this->assets->getJavascriptAsset($handle);
@@ -168,7 +167,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function addEditorStyle($handle, array $dependencies = array())
+    public function addEditorStyle($handle, array $dependencies = array()): StylesheetAsset
     {
         if ($this->assets->hasStylesheetAsset($handle)) {
             return $this->assets->getStylesheetAsset($handle);
@@ -186,7 +185,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function addScript($handle, array $dependencies = array())
+    public function addScript($handle, array $dependencies = array()): JavascriptAsset
     {
         if ($this->assets->hasJavascriptAsset($handle)) {
             return $this->assets->getJavascriptAsset($handle);
@@ -204,7 +203,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function addStyle($handle, array $dependencies = array())
+    public function addStyle($handle, array $dependencies = array()): StylesheetAsset
     {
         if ($this->assets->hasStylesheetAsset($handle)) {
             return $this->assets->getStylesheetAsset($handle);
@@ -216,7 +215,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @return JavascriptAsset|null
      */
-    public function getEditorScript()
+    public function getEditorScript(): ?JavascriptAsset
     {
         return $this->assets->getJavascriptAsset($this->editor_script_handle);
     }
@@ -225,7 +224,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @return StylesheetAsset|null
      */
-    public function getEditorStyle()
+    public function getEditorStyle(): ?StylesheetAsset
     {
         return $this->assets->getStylesheetAsset($this->editor_style_handle);
     }
@@ -234,7 +233,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @return JavascriptAsset|null
      */
-    public function getScript()
+    public function getScript(): ?JavascriptAsset
     {
         return $this->assets->getJavascriptAsset($this->script_handle);
     }
@@ -243,7 +242,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     /**
      * @return StylesheetAsset|null
      */
-    public function getStyle()
+    public function getStyle(): ?StylesheetAsset
     {
         return $this->assets->getStylesheetAsset($this->style_handle);
     }

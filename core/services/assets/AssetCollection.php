@@ -2,12 +2,14 @@
 
 namespace EventEspresso\core\services\assets;
 
+use EventEspresso\core\domain\values\assets\Asset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
+use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
-use EventEspresso\core\domain\values\assets\Asset;
+use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 
 /**
  * Class AssetCollection
@@ -36,7 +38,7 @@ class AssetCollection extends Collection
      * @return StylesheetAsset[]
      * @since 4.9.62.p
      */
-    public function getStylesheetAssets()
+    public function getStylesheetAssets(): array
     {
         return $this->getAssetsOfType(Asset::TYPE_CSS);
     }
@@ -46,7 +48,7 @@ class AssetCollection extends Collection
      * @return JavascriptAsset[]
      * @since 4.9.62.p
      */
-    public function getJavascriptAssets()
+    public function getJavascriptAssets(): array
     {
         return $this->getAssetsOfType(Asset::TYPE_JS);
     }
@@ -56,20 +58,20 @@ class AssetCollection extends Collection
      * @return ManifestFile[]
      * @since 4.9.62.p
      */
-    public function getManifestFiles()
+    public function getManifestFiles(): array
     {
         return $this->getAssetsOfType(Asset::TYPE_MANIFEST);
     }
 
 
     /**
-     * @param $type
+     * @param string $type
      * @return JavascriptAsset[]|StylesheetAsset[]|ManifestFile[]
      * @since 4.9.62.p
      */
-    protected function getAssetsOfType($type)
+    protected function getAssetsOfType(string $type): array
     {
-        $files = array();
+        $files = [];
         $this->rewind();
         while ($this->valid()) {
             /** @var Asset $asset */
@@ -88,9 +90,9 @@ class AssetCollection extends Collection
      * @return JavascriptAsset[]
      * @since 4.9.62.p
      */
-    public function getJavascriptAssetsWithData()
+    public function getJavascriptAssetsWithData(): array
     {
-        $files = array();
+        $files = [];
         $this->rewind();
         while ($this->valid()) {
             /** @var JavascriptAsset $asset */
@@ -110,12 +112,12 @@ class AssetCollection extends Collection
      * depending on whether the object is within the Collection
      * based on the supplied $identifier and type
      *
-     * @param  mixed $identifier
+     * @param string $identifier
      * @param string $type
      * @return bool
      * @since 4.9.63.p
      */
-    public function hasAssetOfType($identifier, $type = Asset::TYPE_JS)
+    public function hasAssetOfType(string $identifier, string $type = Asset::TYPE_JS): bool
     {
         $this->rewind();
         while ($this->valid()) {
@@ -134,11 +136,11 @@ class AssetCollection extends Collection
      * depending on whether the Javascript Asset is within the Collection
      * based on the supplied $identifier
      *
-     * @param  mixed $identifier
+     * @param string $identifier
      * @return bool
      * @since 4.9.63.p
      */
-    public function hasJavascriptAsset($identifier)
+    public function hasJavascriptAsset(string $identifier): bool
     {
         return $this->hasAssetOfType($identifier, Asset::TYPE_JS);
     }
@@ -149,25 +151,26 @@ class AssetCollection extends Collection
      * depending on whether the Stylesheet Asset is within the Collection
      * based on the supplied $identifier
      *
-     * @param  mixed $identifier
+     * @param string $identifier
      * @return bool
      * @since 4.9.63.p
      */
-    public function hasStylesheetAsset($identifier)
+    public function hasStylesheetAsset(string $identifier): bool
     {
         return $this->hasAssetOfType($identifier, Asset::TYPE_CSS);
     }
+
 
     /**
      * returns the object from the Collection
      * based on the supplied $identifier and type
      *
-     * @param  mixed $identifier
+     * @param string $identifier
      * @param string $type
      * @return JavascriptAsset|StylesheetAsset
      * @since 4.9.63.p
      */
-    public function getAssetOfType($identifier, $type = Asset::TYPE_JS)
+    public function getAssetOfType(string $identifier, string $type = Asset::TYPE_JS)
     {
         $this->rewind();
         while ($this->valid()) {
@@ -187,11 +190,11 @@ class AssetCollection extends Collection
      * returns the Stylesheet Asset from the Collection
      * based on the supplied $identifier
      *
-     * @param  mixed $identifier
+     * @param string $identifier
      * @return StylesheetAsset
      * @since 4.9.63.p
      */
-    public function getStylesheetAsset($identifier)
+    public function getStylesheetAsset(string $identifier)
     {
         return $this->getAssetOfType($identifier, Asset::TYPE_CSS);
     }
@@ -201,11 +204,11 @@ class AssetCollection extends Collection
      * returns the Javascript Asset from the Collection
      * based on the supplied $identifier
      *
-     * @param  mixed $identifier
+     * @param string $identifier
      * @return JavascriptAsset
      * @since 4.9.63.p
      */
-    public function getJavascriptAsset($identifier)
+    public function getJavascriptAsset(string $identifier)
     {
         return $this->getAssetOfType($identifier, Asset::TYPE_JS);
     }

@@ -16,7 +16,7 @@ interface BlockAssetManagerInterface
      * @since 4.9.71.p
      * @return string
      */
-    public function assetNamespace();
+    public function assetNamespace(): string;
 
     /**
      * @since 4.9.71.p
@@ -28,26 +28,26 @@ interface BlockAssetManagerInterface
      * @since 4.9.71.p
      * @return string
      */
-    public function getEditorScriptHandle();
+    public function getEditorScriptHandle(): string;
 
 
     /**
      * @since 4.9.71.p
      * @return string
      */
-    public function getEditorStyleHandle();
+    public function getEditorStyleHandle(): string;
 
 
     /**
      * @since 4.9.71.p
      * @return string
      */
-    public function getScriptHandle();
+    public function getScriptHandle(): string;
 
 
     /**
      * @since 4.9.71.p
      * @return string
      */
-    public function getStyleHandle();
+    public function getStyleHandle(): string;
 }

@@ -45,8 +45,15 @@ abstract class BrowserAsset extends Asset
      * @throws DomainException
      * @throws InvalidDataTypeException
      */
-    public function __construct($type, $handle, $source, array $dependencies, DomainInterface $domain, $version = '')
-    {
+    public function __construct(
+        $type,
+        $handle,
+        $source,
+        array $dependencies,
+        DomainInterface $domain,
+        string $version =
+        ''
+    ) {
         parent::__construct($type, $handle, $domain);
         $this->setSource($source);
         $this->setDependencies($dependencies);
@@ -63,7 +70,7 @@ abstract class BrowserAsset extends Asset
     /**
      * @return array
      */
-    public function dependencies()
+    public function dependencies(): array
     {
         return $this->dependencies;
     }
@@ -79,10 +86,10 @@ abstract class BrowserAsset extends Asset
 
 
     /**
-     * @since 4.9.62.p
      * @return bool
+     * @since 4.9.62.p
      */
-    public function hasDependencies()
+    public function hasDependencies(): bool
     {
         return count($this->dependencies) > 0;
     }
@@ -91,7 +98,7 @@ abstract class BrowserAsset extends Asset
     /**
      * @return string
      */
-    public function source()
+    public function source(): string
     {
         return $this->source;
     }
@@ -99,27 +106,17 @@ abstract class BrowserAsset extends Asset
 
     /**
      * @param string $source
-     * @throws InvalidDataTypeException
      */
-    private function setSource($source)
+    private function setSource(string $source)
     {
-        if (! is_string($source)) {
-            throw new InvalidDataTypeException(
-                '$source',
-                $source,
-                'string'
-            );
-        }
         $this->source = $source;
     }
 
 
     /**
      * @return string
-     * @throws InvalidDataTypeException
-     * @throws DomainException
      */
-    public function version()
+    public function version(): string
     {
         return $this->version;
     }
@@ -132,7 +129,7 @@ abstract class BrowserAsset extends Asset
      * @throws DomainException
      * @throws InvalidDataTypeException
      */
-    public function setVersion($version, $fluent = true)
+    public function setVersion(string $version, bool $fluent = true): ?BrowserAsset
     {
         // if version is NOT set and this asset was NOT built for distribution,
         // then set the version equal to the EE core plugin version
@@ -157,7 +154,8 @@ abstract class BrowserAsset extends Asset
     /**
      * @return bool
      */
-    public function isBuiltDistributionSource() {
+    public function isBuiltDistributionSource(): bool
+    {
         return substr($this->source, -8) === Asset::FILE_EXTENSION_DISTRIBUTION_JS
                || substr($this->source, -9) === Asset::FILE_EXTENSION_DISTRIBUTION_CSS;
     }

@@ -336,7 +336,8 @@ class CoreAssetManager extends AssetManager
      * @since 4.9.71.p
      * @return array
      */
-    private function getAccountingSettings() {
+    private function getAccountingSettings(): array
+    {
         $site = $this->currency_formatter->getSiteLocale();
         $spacer_pos = $site->currencySymbolSpaceB4Positive() ? ' ' : '';
         $spacer_neg = $site->currencySymbolSpaceB4Negative() ? ' ' : '';
@@ -376,7 +377,7 @@ class CoreAssetManager extends AssetManager
      * @throws ReflectionException
      * @since 4.9.71.p
      */
-    private function getCurrencySettings()
+    private function getCurrencySettings(): array
     {
         $site             = $this->currency_formatter->getSiteLocale();
         $currency_country = $this->country_model->getCountryForCurrencyISO($site->currencyIsoCode());

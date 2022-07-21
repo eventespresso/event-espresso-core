@@ -5,7 +5,6 @@ namespace EventEspresso\core\services\assets;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
-use EventEspresso\core\domain\values\assets\VendorJavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
@@ -24,7 +23,7 @@ interface AssetManagerInterface
      * @since 4.9.71.p
      * @return string
      */
-    public function assetNamespace();
+    public function assetNamespace(): string;
 
     /**
      * @since 4.9.62.p
@@ -33,7 +32,7 @@ interface AssetManagerInterface
 
 
     /**
-     * @return ManifestFile
+     * @return void
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
@@ -46,7 +45,7 @@ interface AssetManagerInterface
      * @return ManifestFile[]
      * @since 4.9.62.p
      */
-    public function getManifestFile();
+    public function getManifestFile(): array;
 
 
     /**
@@ -61,11 +60,11 @@ interface AssetManagerInterface
      * @since 4.9.62.p
      */
     public function addJavascript(
-        $handle,
-        $source,
+        string $handle,
+        string $source,
         array $dependencies = array(),
-        $load_in_footer = true
-    );
+        bool $load_in_footer = true
+    ): JavascriptAsset;
 
 
     /**
@@ -76,10 +75,10 @@ interface AssetManagerInterface
      * @return JavascriptAsset
      */
     public function addVendorJavascript(
-        $handle,
+        string $handle,
         array $dependencies = array(),
-        $load_in_footer = true
-    );
+        bool $load_in_footer = true
+    ): JavascriptAsset;
 
 
 
@@ -95,11 +94,11 @@ interface AssetManagerInterface
      * @since 4.9.62.p
      */
     public function addStylesheet(
-        $handle,
-        $source,
+        string $handle,
+        string $source,
         array $dependencies = array(),
-        $media = 'all'
-    );
+        string $media = 'all'
+    ): StylesheetAsset;
 
 
     /**
@@ -107,5 +106,5 @@ interface AssetManagerInterface
      * @return bool
      * @since 4.9.62.p
      */
-    public function enqueueAsset($handle);
+    public function enqueueAsset(string $handle): bool;
 }

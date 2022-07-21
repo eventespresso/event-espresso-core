@@ -62,7 +62,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @since 4.9.71.p
      * @return string
      */
-    public function assetNamespace()
+    public function assetNamespace(): string
     {
         return $this->domain->assetNamespace();
     }
@@ -90,7 +90,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @return ManifestFile[]
      * @since 4.9.62.p
      */
-    public function getManifestFile()
+    public function getManifestFile(): array
     {
         return $this->assets->getManifestFiles();
     }
@@ -110,12 +110,12 @@ abstract class AssetManager implements AssetManagerInterface
      * @since 4.9.62.p
      */
     public function addJavascript(
-        $handle,
-        $source,
+        string $handle,
+        string $source,
         array $dependencies = array(),
-        $load_in_footer = true,
-        $version = ''
-    ) {
+        bool $load_in_footer = true,
+        string $version = ''
+    ): JavascriptAsset {
         $asset = new JavascriptAsset(
             $handle,
             $source,
@@ -140,7 +140,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @throws InvalidEntityException
      * @throws DomainException
      */
-    public function addJs($handle, $extra_dependencies = [])
+    public function addJs(string $handle, $extra_dependencies = []): JavascriptAsset
     {
         $details = $this->getAssetDetails(
             Asset::TYPE_JS,
@@ -170,11 +170,11 @@ abstract class AssetManager implements AssetManagerInterface
      * @since 4.9.71.p
      */
     public function addVendorJavascript(
-        $handle,
+        string $handle,
         array $dependencies = array(),
-        $load_in_footer = true,
-        $version = ''
-    ) {
+        bool $load_in_footer = true,
+        string $version = ''
+    ): JavascriptAsset {
         $dev_suffix = wp_scripts_get_suffix('dev');
         $vendor_path = $this->domain->pluginUrl() . 'assets/vendor/';
         return $this->addJavascript(
@@ -201,12 +201,12 @@ abstract class AssetManager implements AssetManagerInterface
      * @since 4.9.62.p
      */
     public function addStylesheet(
-        $handle,
-        $source,
+        string $handle,
+        string $source,
         array $dependencies = array(),
-        $media = 'all',
-        $version = ''
-    ) {
+        string $media = 'all',
+        string $version = ''
+    ): StylesheetAsset {
         $asset = new StylesheetAsset(
             $handle,
             $source,
@@ -224,14 +224,14 @@ abstract class AssetManager implements AssetManagerInterface
      * Used to register a css asset where everything is dynamically derived from the given handle.
      *
      * @param string       $handle
-     * @param string|array $extra_dependencies
+     * @param array $extra_dependencies
      * @return StylesheetAsset
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws DomainException
      */
-    public function addCss($handle, $extra_dependencies = [])
+    public function addCss(string $handle, array $extra_dependencies = []): StylesheetAsset
     {
         $details = $this->getAssetDetails(
             Asset::TYPE_CSS,
@@ -253,7 +253,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @return bool
      * @since 4.9.62.p
      */
-    public function enqueueAsset($handle)
+    public function enqueueAsset(string $handle): bool
     {
         if ($this->assets->has($handle)) {
             $asset = $this->assets->get($handle);
@@ -273,7 +273,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @return array
      * @since 4.10.2.p
      */
-    private function getAssetDetails($asset_type, $handle, $extra_dependencies = [])
+    private function getAssetDetails(string $asset_type, string $handle, array $extra_dependencies = []): array
     {
         $getAssetDetails = '';
         switch ($asset_type) {
@@ -291,14 +291,10 @@ abstract class AssetManager implements AssetManagerInterface
             $this->domain->assetNamespace(),
             $handle
         );
-        $details['dependencies'] = isset($details['dependencies'])
-            ? $details['dependencies']
-            : [];
-        $details['version'] = isset($details['version'])
-            ? $details['version']
-            : '';
+        $details['dependencies'] = $details['dependencies'] ?? [];
+        $details['version'] = $details['version'] ?? '';
         $details['dependencies'] = ! empty($extra_dependencies)
-            ? array_merge($details['dependencies'], (array) $extra_dependencies)
+            ? array_merge($details['dependencies'], $extra_dependencies)
             : $details['dependencies'];
         return $details;
 
