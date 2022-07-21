@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\progress_steps;
 
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 
 /**
@@ -19,7 +20,7 @@ class ProgressStepCollection extends Collection
     /**
      * ProgressStepCollection constructor.
      *
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
     public function __construct()
     {
