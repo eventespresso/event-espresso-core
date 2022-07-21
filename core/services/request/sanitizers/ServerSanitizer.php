@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\request\sanitizers;
 
+use EventEspresso\core\interfaces\InterminableInterface;
+
 /**
  * Class ServerSanitizer
  *
@@ -9,7 +11,7 @@ namespace EventEspresso\core\services\request\sanitizers;
  * @package EventEspresso\core\services\request\sanitizers
  * @since   4.10.14.p
  */
-class ServerSanitizer
+class ServerSanitizer implements InterminableInterface
 {
     /**
      * @param string $key

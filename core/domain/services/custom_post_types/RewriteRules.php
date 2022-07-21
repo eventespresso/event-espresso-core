@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\services\custom_post_types;
 
+use EventEspresso\core\interfaces\InterminableInterface;
+
 /**
  * Class RewriteRules
  * Manages the flushing of rewrite rules
@@ -10,7 +12,7 @@ namespace EventEspresso\core\domain\services\custom_post_types;
  * @author  Brent Christensen
  * @since   4.9.62.p
  */
-class RewriteRules
+class RewriteRules implements InterminableInterface
 {
     const OPTION_KEY_FLUSH_REWRITE_RULES = 'ee_flush_rewrite_rules';
 

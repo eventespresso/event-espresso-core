@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\commands\middleware;
 
 use Closure;
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\commands\CommandInterface;
 
 /**
@@ -10,7 +11,7 @@ use EventEspresso\core\services\commands\CommandInterface;
  *
  * @package EventEspresso\core\services\commands
  */
-interface CommandBusMiddlewareInterface
+interface CommandBusMiddlewareInterface extends InterminableInterface
 {
     /**
      * @param CommandInterface $command

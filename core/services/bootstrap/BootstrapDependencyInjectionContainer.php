@@ -7,6 +7,7 @@ use EE_Error;
 use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\container\Mirror;
 use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -22,7 +23,7 @@ use InvalidArgumentException;
  * @author  Brent Christensen
  * @since   4.9.59.p
  */
-class BootstrapDependencyInjectionContainer
+class BootstrapDependencyInjectionContainer implements InterminableInterface
 {
     /**
      * @var EE_Dependency_Map $dependency_map
