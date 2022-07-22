@@ -290,30 +290,19 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
     }
 
 
-
     /**
      * For deleting or restoring a particular item. Note that this model is a SOFT-DELETABLE model! However,
      * this function will ignore whether the items have been soft-deleted or not.
      *
      * @param boolean $delete true for delete, false for restore
      * @param mixed   $ID     int if primary key is an int, string otherwise
-     * @return boolean
+     * @return bool
+     * @throws EE_Error
      */
     public function delete_or_restore_by_ID($delete = true, $ID = false)
     {
-        if (! $ID) {
-            return false;
-        }
-        if (
-            $this->delete_or_restore(
-                $delete,
-                $this->alter_query_params_to_restrict_by_ID($ID)
-            )
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        // returns false if entity doesn't have an ID or if delete/restore action failed
+        return $ID && $this->delete_or_restore($delete, $this->alter_query_params_to_restrict_by_ID($ID));
     }
 
 
@@ -326,7 +315,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      *
      * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param bool  $block_deletes
-     * @return boolean
+     * @return bool
      */
     public function delete($query_params = array(), $block_deletes = false)
     {
@@ -341,7 +330,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * items are ignored in queries. However, this particular function ignores whether the items have been soft-deleted or not.
      *
      * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @return boolean
+     * @return bool
      */
     public function restore($query_params = array())
     {
@@ -349,23 +338,20 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
     }
 
 
-
     /**
      * Performs deletes or restores on items. Both soft-deleted and non-soft-deleted items considered.
      *
      * @param boolean $delete       true to indicate deletion, false to indicate restoration
-     * @param array   $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
      * @return boolean
+     * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function delete_or_restore($delete = true, $query_params = array())
     {
         $deletedFlagFieldName = $this->deleted_field_name();
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
-        if ($this->update(array($deletedFlagFieldName => $delete), $query_params)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (bool) $this->update([$deletedFlagFieldName => $delete], $query_params);
     }
 
 

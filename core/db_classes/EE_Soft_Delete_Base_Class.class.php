@@ -14,7 +14,9 @@ abstract class EE_Soft_Delete_Base_Class extends EE_Base_Class
     /**
      * Overrides parent _delete() so that we do soft deletes.
      *
-     * @return bool|int
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _delete()
     {
@@ -26,7 +28,9 @@ abstract class EE_Soft_Delete_Base_Class extends EE_Base_Class
      * Deletes or restores this object.
      *
      * @param bool $delete true=>delete, false=>restore
-     * @return bool|int
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function delete_or_restore($delete = true)
     {
@@ -54,7 +58,9 @@ abstract class EE_Soft_Delete_Base_Class extends EE_Base_Class
     /**
      * Performs a restoration (un-deletes) this object
      *
-     * @return bool|int
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function restore()
     {
