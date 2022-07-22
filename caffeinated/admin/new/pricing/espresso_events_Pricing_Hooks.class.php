@@ -1201,7 +1201,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'reg_list_url'         => $default || ! $datetime->event() instanceof EE_Event
                 ? ''
                 : EE_Admin_Page::add_query_args_and_nonce(
-                    ['event_id' => $datetime->event()->ID(), 'datetime_id' => $datetime->ID()],
+                    [
+                        'event_id' => $datetime->event()->ID(),
+                        'datetime_id' => $datetime->ID(),
+                        'use_filters' => true
+                    ],
                     REG_ADMIN_URL
                 ),
         ];
