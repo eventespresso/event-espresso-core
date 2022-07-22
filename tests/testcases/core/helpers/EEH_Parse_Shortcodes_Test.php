@@ -351,8 +351,13 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
             'main'          => '[ATTENDEE_LIST]',
         );
 
-        $parsed = $this->_get_parsed_content('email', 'registration', 'attendee_list', 'attendee',
-            $test_answer_attendee_list_event_list_append);
+        $parsed = $this->_get_parsed_content(
+            'email',
+            'registration',
+            'attendee_list',
+            'attendee',
+            $test_answer_attendee_list_event_list_append
+        );
 
         //testing [ATTENDEE_LIST] and [ANSWER_*] which should appear three times (because [ATTENDEE_LIST] was added to three fields),
         $this->assertEquals(3, substr_count($parsed, 'Custom Answer: Tattoine'));
