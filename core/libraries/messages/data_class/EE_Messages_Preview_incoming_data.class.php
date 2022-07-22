@@ -300,7 +300,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
      */
     private function _get_some_q_and_as()
     {
-        $quests_array = [
+        $questions_data = [
             0 => [
                 555,
                 esc_html__('What is your favorite planet?', 'event_espresso'),
@@ -318,7 +318,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
             ],
         ];
 
-        $ans_array = [
+        $answers_data = [
             0 => [
                 999,
                 555,
@@ -366,29 +366,30 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
             ],
         ];
 
-        $qst_columns = ['QST_ID', 'QST_display_text', 'QST_system'];
-        $ans_columns = ['ANS_ID', 'QST_ID', 'ANS_value'];
+        $question_columns = ['QST_ID', 'QST_display_text', 'QST_system'];
+        $answer_columns = ['ANS_ID', 'QST_ID', 'ANS_value'];
 
         // EE_Registry::instance()->load_class( 'Question', array(), FALSE, TRUE, TRUE );
         // EE_Registry::instance()->load_class( 'Answer', array(), FALSE, TRUE, TRUE );
 
-        $qsts = [];
+        $questions = [];
         // first the questions
-        foreach ($quests_array as $qst) {
-            $qstobj                    = array_combine($qst_columns, $qst);
-            $qsts[ $qstobj['QST_ID'] ] = EE_Question::new_instance($qstobj);
+        foreach ($questions_data as $question_data) {
+            $question_data_with_keys      = array_combine($question_columns, $question_data);
+            $question                     = EE_Question::new_instance($question_data_with_keys);
+            $questions[ $question->ID() ] = $question;
         }
 
         // now the answers (and we'll setup our arrays)
-        $q_n_as = [];
-        foreach ($ans_array as $ans) {
-            $ansobj                               = array_combine($ans_columns, $ans);
-            $ansobj                               = EE_Answer::new_instance($ansobj);
-            $q_n_as['answers'][ $ansobj->ID() ]   = $ansobj;
-            $q_n_as['questions'][ $ansobj->get('QST_ID') ] = $qsts[ $ansobj->get('QST_ID') ];
+        $questions_and_answers = [];
+        foreach ($answers_data as $answer_data) {
+            $answer_data_with_keys                               = array_combine($answer_columns, $answer_data);
+            $answer                                              = EE_Answer::new_instance($answer_data_with_keys);
+            $questions_and_answers['answers'][ $answer->ID() ]   = $answer;
+            $questions_and_answers['questions'][ $answer->ID() ] = $questions[ $answer->question_ID() ];
         }
 
-        return $q_n_as;
+        return $questions_and_answers;
     }
 
 
