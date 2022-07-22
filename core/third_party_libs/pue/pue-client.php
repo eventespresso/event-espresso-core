@@ -315,7 +315,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
          * This function will also take care of deleting any previous force_update options IF our current installed
          * plugin IS premium.
          *
-         * @deprecated $VID:$
+         * @deprecated 4.10.37.p
          * @access private
          * @return void
          * @throws EE_Error
@@ -328,7 +328,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     'This method is no longer in use. There is no replacement for it. The method was used to check and setup for a premium upgrade via 1-click which is no longer available from within WP admin.',
                     'event_espresso'
                 ),
-                '$VID:$'
+                '4.10.37.p'
             );
 
             /**
@@ -1517,7 +1517,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
          * allows them to click a button to get the premium version.
          * Note: we'll alternatively display any json errors that may be present from the returned package.
          *
-         * @deprecated $VID:$
+         * @deprecated 4.10.37.p
          * @access  public
          * @return string html
          * @throws EE_Error
@@ -1530,7 +1530,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     'This method is no longer in use. There is no replacement for it. The method was used to show an admin notice for a 1-click premium upgrade which is no longer available from within WP admin.',
                     'event_espresso'
                 ),
-                '$VID:$'
+                '4.10.37.p'
             );
 
             global $current_screen;
