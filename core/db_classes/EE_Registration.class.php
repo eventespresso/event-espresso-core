@@ -54,20 +54,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     const HAS_RESERVED_TICKET_KEY = 'has_reserved_ticket';
 
-    /**
-     * extra meta key for tracking when registrations are trashed and by who
-     *
-     * @type string
-     */
-    const EXTRA_META_KEY_REG_TRASHED = 'registration-trashed';
-
-    /**
-     * extra meta key for tracking when registrations are restored and by who
-     *
-     * @type string
-     */
-    const EXTRA_META_KEY_REG_RESTORED = 'registration-restored';
-
 
     /**
      * @param array  $props_n_values          incoming values
@@ -1641,9 +1627,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function set_deleted($deleted)
     {
         if ($deleted) {
-            $this->delete(__METHOD__);
+            $this->delete();
         } else {
-            $this->restore(__METHOD__);
+            $this->restore();
         }
     }
 
@@ -2331,18 +2317,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws RuntimeException
      * @throws UnexpectedEntityException
      */
-    public function delete($source = 'unknown')
+    public function delete()
     {
         if ($this->update_extra_meta(EE_Registration::PRE_TRASH_REG_STATUS_KEY, $this->status_ID()) === true) {
-            $current_user = wp_get_current_user();
-            $this->add_extra_meta(
-                EE_Registration::EXTRA_META_KEY_REG_TRASHED,
-                array(
-                    'trashed-by' => $current_user->ID ? $current_user->display_name : 'unauthed user',
-                    'timestamp'  => time(),
-                    'source'     => $source,
-                )
-            );
             $this->set_status(EEM_Registration::status_id_cancelled);
         }
         return parent::delete();
@@ -2364,7 +2341,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws RuntimeException
      * @throws UnexpectedEntityException
      */
-    public function restore($source = 'unknown')
+    public function restore()
     {
         $previous_status = $this->get_extra_meta(
             EE_Registration::PRE_TRASH_REG_STATUS_KEY,
@@ -2375,15 +2352,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             $this->delete_extra_meta(EE_Registration::PRE_TRASH_REG_STATUS_KEY);
             $this->set_status($previous_status);
         }
-        $current_user = wp_get_current_user();
-        $this->add_extra_meta(
-            EE_Registration::EXTRA_META_KEY_REG_RESTORED,
-            array(
-                'restored-by' => $current_user->ID ? $current_user->display_name : 'unauthed user',
-                'timestamp'   => time(),
-                'source'      => $source,
-            )
-        );
         return parent::restore();
     }
 

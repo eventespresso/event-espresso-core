@@ -2616,7 +2616,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 // can't trash this registration because it has payments.
                 continue;
             }
-            $updated = $trash ? $REG->delete(__METHOD__) : $REG->restore(__METHOD__);
+            $updated = $trash ? $REG->delete() : $REG->restore();
             if ($updated) {
                 $success++;
             }

@@ -20,13 +20,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     const LOCK_EXPIRATION = 2;
 
     /**
-     * extra meta key for tracking when transactions are deleted and by who
-     *
-     * @type string
-     */
-    const EXTRA_META_KEY_TXN_DELETED = 'transaction-deleted';
-
-    /**
      * txn status upon initial construction.
      *
      * @var string
@@ -1725,26 +1718,5 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
             return EEH_Line_Item::apply_taxes($total_line_item, true);
         }
         return false;
-    }
-
-
-    /**
-     * @param string $source function name that called this method
-     * @return boolean | int
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function delete($source = 'unknown')
-    {
-        $current_user = wp_get_current_user();
-        $this->add_extra_meta(
-            EE_Transaction::EXTRA_META_KEY_TXN_DELETED,
-            [
-                'deleted-by' => $current_user->ID ? $current_user->display_name : 'unauthed user',
-                'timestamp'  => time(),
-                'source'     => $source,
-            ]
-        );
-        return parent::delete();
     }
 }
