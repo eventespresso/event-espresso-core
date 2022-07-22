@@ -1485,9 +1485,9 @@ class EE_Registry implements ResettableInterface
      *                          in the EE_Dependency_Map::$_class_loaders array,
      *                          including the class prefix, ie: "EE_", "EEM_", "EEH_", etc
      * @param array  $arguments
-     * @return object
+     * @return mixed
      */
-    public static function factory(string $classname, array $arguments = []): ?object
+    public static function factory(string $classname, array $arguments = [])
     {
         $loader = self::instance()->_dependency_map->class_loader($classname);
         if ($loader instanceof Closure) {
