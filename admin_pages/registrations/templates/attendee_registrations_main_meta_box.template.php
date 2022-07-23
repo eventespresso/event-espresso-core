@@ -75,9 +75,9 @@
                                   title="' . esc_attr__('View Transaction Details', 'event_espresso') . '"
                                 >
                                     ' . sprintf(
-                                        esc_html__('View Transaction %d', 'event_espresso'),
-                                        $TXN_ID
-                                    ) . '
+                                      esc_html__('View Transaction %d', 'event_espresso'),
+                                      $TXN_ID
+                                  ) . '
                                 </a>'
                             : $TXN_ID;
                         ?>

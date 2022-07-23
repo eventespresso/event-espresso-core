@@ -27,7 +27,7 @@ class EEH_Money extends EEH_Base
      */
     private static function getCurrencyFormatter()
     {
-        if(! EEH_Money::$currency_formatter instanceof CurrencyFormatter) {
+        if (! EEH_Money::$currency_formatter instanceof CurrencyFormatter) {
             EEH_Money::$currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
         }
         return EEH_Money::$currency_formatter;
@@ -163,7 +163,8 @@ class EEH_Money extends EEH_Base
             // less than or equal
             case "<=":
             case "lte":
-                if (EEH_Money::compare_floats($float1, $float2, '<')
+                if (
+                    EEH_Money::compare_floats($float1, $float2, '<')
                     || EEH_Money::compare_floats($float1, $float2, '=')
                 ) {
                     return true;
@@ -183,7 +184,8 @@ class EEH_Money extends EEH_Base
             // greater than or equal
             case ">=":
             case "gte":
-                if (EEH_Money::compare_floats($float1, $float2, '>')
+                if (
+                    EEH_Money::compare_floats($float1, $float2, '>')
                     || EEH_Money::compare_floats($float1, $float2, '=')
                 ) {
                     return true;

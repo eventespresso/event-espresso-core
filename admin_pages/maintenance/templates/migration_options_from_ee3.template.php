@@ -198,8 +198,7 @@
                                     ),
                                     $ultimate_db_state
                                 )
-                            );
-                            ?>
+                            ); ?>
                         </a>
                     </td>
                 </tr>

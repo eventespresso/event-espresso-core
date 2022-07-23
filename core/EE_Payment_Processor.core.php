@@ -650,7 +650,6 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                         'A remainder of %1$s exists after applying this payment to Registration(s) %2$s.%3$sPlease verify that the original payment amount of %4$s is correct. If so, you should edit this payment and select at least one additional registration in the "Registrations to Apply Payment to" section, so that the remainder of this payment can be applied to the additional registration(s).',
                         'event_espresso'
                     ),
-
                     $this->currency_formatter->formatForLocale($available_payment_amount),
                     implode(', ', array_keys($registrations)),
                     '<br/>',

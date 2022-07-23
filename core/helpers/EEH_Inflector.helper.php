@@ -33,7 +33,6 @@
  */
 class EEH_Inflector
 {
-
     /**
      * Just calls self::pluralize and strtolower on $word and returns it
      *

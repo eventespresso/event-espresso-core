@@ -443,10 +443,10 @@ class ModelDataTranslator
     public static function isGmtDateFieldName($field_name)
     {
         return substr(
-                   ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($field_name),
-                   -4,
-                   4
-               ) === '_gmt';
+            ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($field_name),
+            -4,
+            4
+        ) === '_gmt';
     }
 
 

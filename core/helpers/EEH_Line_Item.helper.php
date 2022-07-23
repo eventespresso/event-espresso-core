@@ -1774,7 +1774,7 @@ class EEH_Line_Item
                             if ($child_line_item->is_taxable()) {
                                 $running_totals['taxable'][ $line_item_id ] =
                                     EEH_Line_Item::currencyFormatter()->roundForLocale(
-                                    $line_items_percent_of_running_total * $running_totals['taxable'][ $line_item_id ]
+                                        $line_items_percent_of_running_total * $running_totals['taxable'][ $line_item_id ]
                                     );
                             }
                         }
@@ -1802,11 +1802,7 @@ class EEH_Line_Item
         EE_Line_Item $ticket_line_item
     ) {
         static $final_prices_per_ticket_line_item = [];
-        if (empty($final_prices_per_ticket_line_item)
-            || empty(
-            $final_prices_per_ticket_line_item[ $total_line_item->ID() ]
-            )
-        ) {
+        if (empty($final_prices_per_ticket_line_item[ $total_line_item->ID() ])) {
             $final_prices_per_ticket_line_item[ $total_line_item->ID() ] =
                 EEH_Line_Item::calculate_reg_final_prices_per_line_item(
                     $total_line_item

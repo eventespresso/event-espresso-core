@@ -16,7 +16,7 @@ class About_Admin_Page_Init extends EE_Admin_Page_Init
 {
     public function __construct()
     {
-        if (! defined('EE_ABOUT_PG_SLUG')){
+        if (! defined('EE_ABOUT_PG_SLUG')) {
             // define some events related constants
             define('EE_ABOUT_PG_SLUG', 'espresso_about');
             define('EE_ABOUT_LABEL', esc_html__('About', 'event_espresso'));

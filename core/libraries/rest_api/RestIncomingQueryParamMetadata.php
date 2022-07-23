@@ -588,9 +588,9 @@ class RestIncomingQueryParamMetadata
     {
         $valueArray = $this->getQueryParamValue();
         return array_key_exists(
-                   $operator,
-                   $this->getContext()->getModel()->valid_in_style_operators()
-               )
+            $operator,
+            $this->getContext()->getModel()->valid_in_style_operators()
+        )
                && isset($valueArray[1])
                && is_array($valueArray[1])
                && ! isset($valueArray[2]);
@@ -663,14 +663,14 @@ class RestIncomingQueryParamMetadata
         return isset($query_param_value[1])
                && ! isset($query_param_value[2])
                && ! array_key_exists(
-                $operator,
-                array_merge(
-                    $model->valid_in_style_operators(),
-                    $model->valid_null_style_operators(),
-                    $model->valid_like_style_operators(),
-                    $model->valid_between_style_operators()
-                )
-            );
+                   $operator,
+                   array_merge(
+                       $model->valid_in_style_operators(),
+                       $model->valid_null_style_operators(),
+                       $model->valid_like_style_operators(),
+                       $model->valid_between_style_operators()
+                   )
+               );
     }
 
 

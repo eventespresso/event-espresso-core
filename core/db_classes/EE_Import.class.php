@@ -890,8 +890,7 @@ class EE_Import implements ResettableInterface
         array $model_object_data,
         EEM_Base $model,
         array $old_db_to_new_db_mapping
-    ): array
-    {
+    ): array {
         $conditions = null;
         try {
             // let's keep two copies of the model object data:

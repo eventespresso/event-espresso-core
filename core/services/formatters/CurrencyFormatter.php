@@ -8,7 +8,6 @@ use EventEspresso\core\services\locale\Locales;
 
 class CurrencyFormatter extends LocaleFloatFormatter
 {
-
     /**
      * non-localized number no symbol or code: '123456.123456'
      */
@@ -262,18 +261,18 @@ class CurrencyFormatter extends LocaleFloatFormatter
     public function getFormatFromLegacySchema(string $schema, ?bool $allow_fractional_subunits = true): int
     {
         switch ($schema) {
-            case 'precision_float';
+            case 'precision_float':
                 // return a localized float if fractional subunits are not allowed
                 return $allow_fractional_subunits
                     ? CurrencyFormatter::FORMAT_PRECISION_FLOAT
                     : CurrencyFormatter::FORMAT_LOCALIZED_FLOAT;
-            case 'localized_float';
+            case 'localized_float':
                 return CurrencyFormatter::FORMAT_LOCALIZED_FLOAT;
-            case 'localized';
-            case 'localized_currency';
-            case 'no_currency_code';
+            case 'localized':
+            case 'localized_currency':
+            case 'no_currency_code':
                 return CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY;
-            default;
+            default:
                 return CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE;
         }
     }

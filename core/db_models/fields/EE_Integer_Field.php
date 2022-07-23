@@ -9,7 +9,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Integer_Field extends EE_Model_Field_Base
 {
-
     /**
      * @var NumberFormatter
      * @since $VID:$

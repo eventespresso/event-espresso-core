@@ -527,8 +527,7 @@ class EE_CSV
         array $row,
         string $delimiter = ',',
         string $enclosure = '"',
-        bool $mysql_null =
-        false
+        bool $mysql_null = false
     ) {
         // Allow user to filter the csv delimiter and enclosure for other countries csv standards
         $delimiter = apply_filters('FHEE__EE_CSV__fputcsv2__delimiter', $delimiter);

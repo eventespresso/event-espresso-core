@@ -6,6 +6,13 @@ use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\locale\Locale;
 use EventEspresso\core\services\locale\Locales;
 
+/**
+ * Class LocaleFloatFormatter
+ *
+ * @author  Brent Christensen
+ * @package EventEspresso\core\services\formatters
+ * @since   $VID:$
+ */
 abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface, InterminableInterface
 {
     /**

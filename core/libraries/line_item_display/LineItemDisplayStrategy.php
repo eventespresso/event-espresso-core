@@ -9,7 +9,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 
 abstract class LineItemDisplayStrategy implements EEI_Line_Item_Display
 {
-
     /**
      * @var CurrencyFormatter
      * @since $VID:$

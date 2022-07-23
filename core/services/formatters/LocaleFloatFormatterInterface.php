@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\formatters;
 
-
 use EventEspresso\core\services\locale\Locale;
 
 /**

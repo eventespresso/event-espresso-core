@@ -215,7 +215,7 @@ class CachingLoader extends CachingLoaderDecorator
      */
     public function remove($fqcn, $object = null)
     {
-        if (is_object($object)){
+        if (is_object($object)) {
             return $this->cache->remove($object);
         }
         $object_identifier = $this->object_identifier->getIdentifier($fqcn);

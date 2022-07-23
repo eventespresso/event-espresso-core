@@ -16,7 +16,6 @@ use EventEspresso\core\services\locale\WordPressLocales;
  */
 class EE_Locale_Select_Input extends EE_Select_Input
 {
-
     /**
      * @var array
      */
@@ -103,8 +102,8 @@ class EE_Locale_Select_Input extends EE_Select_Input
             } else {
                 $options[ $language ][ $locale ] = $locale . ' : ' . esc_html($language_data['native_name']);
             }
-
         }
+
         // now sort it
         ksort($options, SORT_NATURAL | SORT_FLAG_CASE);
         foreach ($options as $key => $option) {

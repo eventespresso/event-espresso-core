@@ -123,7 +123,8 @@ class EEH_Template
      */
     public static function load_espresso_theme_functions()
     {
-        if (! defined('EE_THEME_FUNCTIONS_LOADED')
+        if (
+            ! defined('EE_THEME_FUNCTIONS_LOADED')
             && is_readable(EE_PUBLIC . EE_Config::get_current_theme() . '/functions.php')
         ) {
             require_once(EE_PUBLIC . EE_Config::get_current_theme() . '/functions.php');
@@ -550,8 +551,7 @@ class EEH_Template
             // don't like this but it maintains backwards compatibility with how things were done before
             $precision = $allow_fractional_subunits
                 ? $currency_locale->decimalPrecision() + 2
-                : $currency_locale->decimalPrecision(
-            );
+                : $currency_locale->decimalPrecision();
 
             $amount_formatted = $currency_formatter->formatForLocale(
                 $amount_formatted,
@@ -568,7 +568,6 @@ class EEH_Template
                 $return_raw,
                 $display_code
             );
-
         } catch (Exception $e) {
             // eat exception
         }

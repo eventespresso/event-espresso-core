@@ -16,6 +16,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 /** @var string $venue_name */
 /** @var string $venue_region */
 /** @var string $venue_url */
+// phpcs:Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace
 ?>
 <script type="application/ld+json">
 {
@@ -39,7 +40,8 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
       "validThrough": "<?php echo esc_html($ticket['end_date']); ?>",
       "price": "<?php echo esc_html($ticket['price']); ?>",
       "priceCurrency": "<?php echo esc_html($currency); ?>"
-      <?php if (isset($ticket['availability'])) { ?>,
+      <?php if (isset($ticket['availability'])) {
+            ?>,
       "availability": "<?php echo esc_url_raw('https://schema.org/' . $ticket['availability']); ?>"
       <?php } ?>
     }<?php

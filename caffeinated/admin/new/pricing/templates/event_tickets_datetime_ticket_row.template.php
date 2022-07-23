@@ -424,28 +424,29 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                 <div class="ticket-is-taxable-container">
                     <?php if (! empty($tax_rows)) { ?>
                         <?php if ($disabled) : ?>
-                            <?php $tax_value = ! empty($TKT_taxable) ? 1 : 0; ?>
-                            <input type='hidden'
-                            class="TKT-taxable-checkbox"
-                            name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_taxable]"
-                            value="<?php echo esc_attr($tax_value); ?>"
-                            />
-                            <input type='checkbox' disabled
-                            class="TKT-taxable-checkbox"
-                            id="edit-ticket-TKT_taxable-<?php echo esc_attr($tkt_row); ?>"
-                            name="archived_ticket[<?php echo esc_attr($tkt_row); ?>][TKT_taxable]"
-                            value="1"
-                            <?php echo esc_attr($TKT_taxable); ?>
-                            />
-                            <?php else : ?>
-                                <input type='checkbox'
+                        <?php $tax_value = ! empty($TKT_taxable) ? 1 : 0; ?>
+                        <input type='hidden'
+                               class="TKT-taxable-checkbox"
+                               name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_taxable]"
+                               value="<?php echo esc_attr($tax_value); ?>"
+                        />
+                        <input type='checkbox'
+                               disabled
+                               class="TKT-taxable-checkbox"
+                               id="edit-ticket-TKT_taxable-<?php echo esc_attr($tkt_row); ?>"
+                               name="archived_ticket[<?php echo esc_attr($tkt_row); ?>][TKT_taxable]"
+                               value="1"
+                               <?php echo esc_attr($TKT_taxable); ?>
+                        />
+                        <?php else : ?>
+                        <input type='checkbox'
                                class="TKT-taxable-checkbox"
                                id="edit-ticket-TKT_taxable-<?php echo esc_attr($tkt_row); ?>"
                                name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_taxable]"
                                value="1"
                                <?php echo esc_attr($TKT_taxable); ?>
-                               />
-                            <?php endif; ?>
+                        />
+                        <?php endif; ?>
                     <label for="edit-ticket-TKT_taxable-<?php echo esc_attr($tkt_row); ?>">
                         <?php esc_html_e('This ticket is taxable.', 'event_espresso'); ?>
                     </label>

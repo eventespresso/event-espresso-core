@@ -31,7 +31,8 @@ class EE_Line_Item_Display
     public function __construct($context = '', $other_line_item_display_strategy = '')
     {
         $currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
-        if (! empty($other_line_item_display_strategy)
+        if (
+            ! empty($other_line_item_display_strategy)
             && class_exists($other_line_item_display_strategy)
         ) {
             $this->strategy = new  $other_line_item_display_strategy($currency_formatter);

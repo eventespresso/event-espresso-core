@@ -281,16 +281,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     {
         $date_format = ! empty($date_format) ? $date_format : $this->_dt_frmt;
         $first_date  = $this->first_datetime() instanceof EE_Datetime
-             ? $this->first_datetime()->get_i18n_datetime(
-                'DTT_EVT_start',
-                $date_format
-            )
+            ? $this->first_datetime()->get_i18n_datetime('DTT_EVT_start', $date_format)
             : '';
         $last_date   = $this->last_datetime() instanceof EE_Datetime
-            ? $this->last_datetime()->get_i18n_datetime(
-                'DTT_EVT_end',
-                $date_format
-            )
+            ? $this->last_datetime()->get_i18n_datetime('DTT_EVT_end', $date_format)
             : '';
 
         return $first_date && $last_date ? $first_date . $conjunction . $last_date : '';

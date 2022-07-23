@@ -191,7 +191,8 @@ class LineItemCalculator
         $line_item->set_total($this->currency_formatter->roundForLocale($total));
         // only update the related transaction's total
         // if we intend to save this line item and its a grand total
-        if ($line_item->allow_persist()
+        if (
+            $line_item->allow_persist()
             && $line_item->type() === EEM_Line_Item::type_total
             && $line_item->transaction() instanceof EE_Transaction
         ) {

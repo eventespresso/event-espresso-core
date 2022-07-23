@@ -9,7 +9,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Money_Field extends EE_Float_Field
 {
-
     /**
      * if true, then money values will be accurate to 6 decimal places
      * if false, then money values will be rounded to the correct number of subunits for the site's currency

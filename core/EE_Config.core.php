@@ -2194,8 +2194,8 @@ class EE_Currency_Config extends EE_Config_Base
     {
         $this->locale = sanitize_text_field($locale);
     }
-
 }
+
 
 /**
  * Class for defining what's in the EE_Config relating to registration settings

@@ -1663,7 +1663,8 @@ class EE_Registry implements ResettableInterface
             if (EE_UnitTestCase::$debug) {
                 echo "\n\n" . __LINE__ . ') ' . strtoupper($cached_property);
             }
-            if (! property_exists(self::$_instance, $cached_property)
+            if (
+                ! property_exists(self::$_instance, $cached_property)
                 || ! isset(self::$_instance->{$cached_property})
             ) {
                 continue;
