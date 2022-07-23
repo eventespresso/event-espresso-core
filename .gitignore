@@ -16,3 +16,4 @@ vendor/
 *.DS_Store
 *.idea
 *.vscode
+tests/.phpunit.result.cache
