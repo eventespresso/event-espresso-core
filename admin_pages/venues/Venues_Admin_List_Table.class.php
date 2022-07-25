@@ -237,9 +237,11 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
 
     /**
      * @param EE_Venue $venue
-     * @return int
+     * @return int|string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function column_capacity(EE_Venue $venue): int
+    public function column_capacity(EE_Venue $venue)
     {
         return $venue->capacity();
     }

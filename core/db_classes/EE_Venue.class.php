@@ -254,7 +254,9 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
     /**
      * Gets capacity
      *
-     * @return int
+     * @return int|string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function capacity()
     {
