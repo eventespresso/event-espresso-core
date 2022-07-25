@@ -113,7 +113,7 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
             // need cap for non-AJAX admin requests
             $this->cap_check = ! (defined('DOING_AJAX') && DOING_AJAX) && is_admin()
                 ? new CapCheck('ee_edit_registrations', 'create_new_registration')
-                : new PublicCapabilities('', 'create_new_transaction');
+                : new PublicCapabilities('', 'create_new_registration');
         }
         return $this->cap_check;
     }
