@@ -1226,29 +1226,37 @@ class EEH_MSG_Template
 
     /**
      * get_fields
-     * This takes a given messenger and message type and returns all the template fields indexed by context (and with field type).
+     * This takes a given messenger and message type
+     * and returns all the template fields indexed by context with field type.
      *
      * @param string $messenger_name    name of EE_messenger
      * @param string $message_type_name name of EE_message_type
+     * @param string $current_context   current context [optional]
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function get_fields($messenger_name, $message_type_name)
-    {
-        $template_fields = array();
+    public static function get_fields(
+        string $messenger_name,
+        string $message_type_name,
+        string $current_context = ''
+    ): array {
+        $template_fields = [];
         /** @type EE_Message_Resource_Manager $Message_Resource_Manager */
         $Message_Resource_Manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
-        $messenger = $Message_Resource_Manager->valid_messenger($messenger_name);
-        $message_type = $Message_Resource_Manager->valid_message_type($message_type_name);
+        $messenger                = $Message_Resource_Manager->valid_messenger($messenger_name);
+        $message_type             = $Message_Resource_Manager->valid_message_type($message_type_name);
         if (! EEH_MSG_Template::message_type_has_active_templates_for_messenger($messenger, $message_type)) {
-            return array();
+            return [];
         }
 
         $excluded_fields_for_messenger = $message_type->excludedFieldsForMessenger($messenger_name);
 
         // okay now let's assemble an array with the messenger template fields added to the message_type contexts.
         foreach ($message_type->get_contexts() as $context => $details) {
+            if ($current_context && $current_context !== $context) {
+                continue;
+            }
             foreach ($messenger->get_template_fields() as $field => $value) {
                 if (in_array($field, $excluded_fields_for_messenger, true)) {
                     continue;
@@ -1263,7 +1271,7 @@ class EEH_MSG_Template
                 __FUNCTION__,
                 __LINE__
             );
-            return array();
+            return [];
         }
         return $template_fields;
     }
