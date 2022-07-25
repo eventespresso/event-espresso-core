@@ -37,7 +37,7 @@
                    id="delete-state-<?php echo absint($STA_ID); ?>-lnk"
                    href="<?php echo esc_url_raw($state['delete_state_url']); ?>"
                    rel="<?php echo esc_attr($STA_ID); ?>"
-                   title="<?php echo sprintf(esc_attr__('Delete State #%d?', 'event_espresso'), $STA_ID); ?>"
+                   aria-label="<?php echo sprintf(esc_attr__('Delete State #%d?', 'event_espresso'), $STA_ID); ?>"
                 >
                 </a>
             </td>
@@ -73,7 +73,7 @@
             <input class="STA_abbrev small-text "
                    id='STA_abbrev-XXX'
                    name="STA_abbrev_XXX"
-                   title=""
+                   aria-label=""
                    type="text"
                    value=""
             />
@@ -81,7 +81,7 @@
         <td class="general-settings-country-state-input-td">
             <label for="STA_name_XXX"><?php esc_html_e('Name', 'event_espresso'); ?></label>
             <br/>
-            <input id="STA_name-XXX" class="STA_name regular-text " type="text" title="" value="" name="STA_name_XXX">
+            <input id="STA_name-XXX" class="STA_name regular-text " type="text" aria-label="" value="" name="STA_name_XXX">
         </td>
     </tr>
     <tr>

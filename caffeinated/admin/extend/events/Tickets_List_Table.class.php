@@ -95,7 +95,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
                     'action' => 'trash_ticket',
                     'TKT_ID' => $item->ID(),
                 ), EVENTS_ADMIN_URL);
-                $actions['trash'] = '<a href="' . $trash_lnk_url . '" title="'
+                $actions['trash'] = '<a href="' . $trash_lnk_url . '" aria-label="'
                                     . esc_attr__('Move Ticket to trash', 'event_espresso') . '">'
                                     . esc_html__('Trash', 'event_espresso') . '</a>';
             } else {
@@ -104,7 +104,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
                     'action' => 'restore_ticket',
                     'TKT_ID' => $item->ID(),
                 ), EVENTS_ADMIN_URL);
-                $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
+                $actions['restore'] = '<a href="' . $restore_lnk_url . '" aria-label="'
                                       . esc_attr__('Restore Ticket', 'event_espresso') . '">'
                                       . esc_html__('Restore', 'event_espresso') . '</a>';
                 // delete price link
@@ -112,7 +112,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
                     'action' => 'delete_ticket',
                     'TKT_ID' => $item->ID(),
                 ), EVENTS_ADMIN_URL);
-                $actions['delete'] = '<a href="' . $delete_lnk_url . '" title="'
+                $actions['delete'] = '<a href="' . $delete_lnk_url . '" aria-label="'
                                      . esc_attr__('Delete Ticket Permanently', 'event_espresso') . '">'
                                      . esc_html__('Delete Permanently', 'event_espresso') . '</a>';
             }

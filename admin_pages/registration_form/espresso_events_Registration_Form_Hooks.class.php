@@ -171,7 +171,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
                              . $checked . ' 
                         />
 						<a href="' . esc_url_raw($edit_link) . '" 
-						    title="' . esc_attr($edit_link_title) . '" 
+						    aria-label="' . esc_attr($edit_link_title) . '" 
 						    target="_blank"
 						    >
 						    ' . $QSG->get('QSG_name') . '

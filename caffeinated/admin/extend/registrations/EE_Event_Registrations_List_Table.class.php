@@ -367,7 +367,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         )
             ? '<a href="'
               . $edit_lnk_url
-              . '" title="'
+              . '" aria-label="'
               . esc_attr__('View Registration Details', 'event_espresso')
               . '">'
               . $item->attendee()->full_name()
@@ -393,7 +393,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'view_registration',
             $item->ID()
         )
-            ? '<a href="' . $link . '" title="' . esc_attr__('View Registration Details', 'event_espresso') . '">'
+            ? '<a href="' . $link . '" aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '">'
               . $item->reg_code()
               . '</a>'
             : $item->reg_code();
@@ -432,7 +432,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     : esc_html__('Checked Out', 'event_espresso');
                 // get timestamp string
                 $timestamp_string   = $last_timestamp->get_datetime('CHK_timestamp');
-                $actions['checkin'] = '<a href="' . $checkin_list_url . '" title="'
+                $actions['checkin'] = '<a href="' . $checkin_list_url . '" aria-label="'
                                       . esc_attr__(
                                           'View this registrant\'s check-ins/checkouts for the datetime',
                                           'event_espresso'
@@ -475,7 +475,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             $event_label   = EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_checkins',
                 'espresso_registrations_registration_checkins'
-            ) ? '<a href="' . $chkin_lnk_url . '" title="'
+            ) ? '<a href="' . $chkin_lnk_url . '" aria-label="'
                 . esc_attr__(
                     'View Checkins for this Event',
                     'event_espresso'
@@ -540,7 +540,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     . $item->transaction()->status_ID()
                     . '" href="'
                     . $view_txn_lnk_url
-                    . '"  title="'
+                    . '"  aria-label="'
                     . esc_attr__('View Transaction', 'event_espresso')
                     . '">
 						'
@@ -580,7 +580,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_transactions_view_transaction'
             ) ? '<a href="'
                 . $view_txn_url
-                . '" title="'
+                . '" aria-label="'
                 . esc_attr__('View Transaction', 'event_espresso')
                 . '"><span class="reg-pad-rght">'
                 . $txn_total

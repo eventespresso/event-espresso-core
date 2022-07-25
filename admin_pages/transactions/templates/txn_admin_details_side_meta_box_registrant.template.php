@@ -64,7 +64,7 @@ $prime_reg_email = sanitize_email($prime_reg_email);
     ) : ?>
         <p style="text-align:right;">
             <a class="button button-small" href="<?php echo esc_url_raw($edit_attendee_url); ?>"
-               title="<?php esc_attr_e('View details for this contact.', 'event_espresso'); ?>"
+               aria-label="<?php esc_attr_e('View details for this contact.', 'event_espresso'); ?>"
             >
                 <span class="ee-icon ee-icon-user-edit"></span>
                 <?php esc_html_e('View / Edit this Contact', 'event_espresso'); ?>

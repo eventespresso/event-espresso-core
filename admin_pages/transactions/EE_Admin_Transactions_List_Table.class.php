@@ -180,7 +180,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             TXN_ADMIN_URL
         );
         $content = '<a href="' . $view_lnk_url . '"'
-                   . ' title="' . esc_attr__('Go to Transaction Details', 'event_espresso') . '">'
+                   . ' aria-label="' . esc_attr__('Go to Transaction Details', 'event_espresso') . '">'
                    . $transaction->ID()
                    . '</a>';
 
@@ -247,7 +247,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             TXN_ADMIN_URL
         );
         $txn_date = '<a href="' . $view_lnk_url . '"'
-                    . ' title="'
+                    . ' aria-label="'
                     . esc_attr__('View Transaction Details for TXN #', 'event_espresso') . $transaction->ID() . '">'
                     . $this->_get_txn_timestamp($transaction)
                     . '</a>';
@@ -361,7 +361,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 $primary_reg->ID()
             )
                 ? '<a href="' . $edit_lnk_url . '"'
-                  . ' title="' . esc_attr__('View Registration Details', 'event_espresso') . '">'
+                  . ' aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '">'
                   . $attendee->full_name()
                   . '</a>'
                 : $attendee->full_name();
@@ -439,7 +439,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 )
             ) {
                 $actions['filter_by_event'] = '<a href="' . $txn_by_event_lnk . '"'
-                                              . ' title="' . esc_attr__(
+                                              . ' aria-label="' . esc_attr__(
                                                   'Filter transactions by this event',
                                                   'event_espresso'
                                               ) . '">'
@@ -455,7 +455,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                     $event->ID()
                 )
                     ? '<a href="' . $edit_event_url . '"'
-                      . ' title="'
+                      . ' aria-label="'
                       . sprintf(
                           esc_attr__('Edit Event: %s', 'event_espresso'),
                           $event->get('EVT_name')
@@ -522,7 +522,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         return '
 			<li>
 				<a href="' . $url . '"'
-               . ' title="' . esc_attr__('View Transaction Details', 'event_espresso') . '" class="tiny-text">
+               . ' aria-label="' . esc_attr__('View Transaction Details', 'event_espresso') . '" class="tiny-text">
 					<span class="dashicons dashicons-cart"></span>
 				</a>
 			</li>';
@@ -548,7 +548,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             ) {
                 return '
                 <li>
-                    <a title="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '"'
+                    <a aria-label="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '"'
                        . ' target="_blank" href="' . $url . '" class="tiny-text">
                         <span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
                     </a>
@@ -578,7 +578,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             ) {
                 return '
 			<li>
-				<a title="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
+				<a aria-label="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
                        . ' target="_blank" href="' . $url . '" class="tiny-text">
 					<span class="dashicons dashicons-media-default ee-icon-size-18"></span>
 				</a>
@@ -618,7 +618,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                 ? '
 				<li>
 					<a href="' . $url . '"'
-                  . ' title="' . esc_attr__('View Registration Details', 'event_espresso') . '" class="tiny-text">
+                  . ' aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '" class="tiny-text">
 						<span class="dashicons dashicons-clipboard"></span>
 					</a>
 				</li>'
@@ -665,7 +665,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             return '
             <li>
                 <a href="' . $url . '"'
-                   . ' title="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" class="tiny-text">
+                   . ' aria-label="' . esc_attr__('Send Payment Reminder', 'event_espresso') . '" class="tiny-text">
                     <span class="dashicons dashicons-email-alt"></span>
                 </a>
             </li>';
@@ -717,7 +717,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         ) {
             return '
             <li>
-                <a title="' . esc_attr__('Make Payment from the Frontend.', 'event_espresso') . '"'
+                <a aria-label="' . esc_attr__('Make Payment from the Frontend.', 'event_espresso') . '"'
                    . ' target="_blank" href="' . $registration->payment_overview_url(true) . '"'
                    . ' class="tiny-text">
                     <span class="dashicons dashicons-money ee-icon-size-18"></span>

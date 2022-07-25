@@ -68,7 +68,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
             )
         ) {
             $actions = array(
-                'edit' => '<a href="' . $edit_link . '" title="'
+                'edit' => '<a href="' . $edit_link . '" aria-label="'
                           . esc_html__('Edit Question', 'event_espresso') . '">'
                           . esc_html__('Edit', 'event_espresso') . '</a>',
             );
@@ -83,7 +83,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
                 $item->ID()
             )
         ) {
-                $actions['delete'] = '<a href="' . $trash_link . '" title="'
+                $actions['delete'] = '<a href="' . $trash_link . '" aria-label="'
                                      . esc_html__('Trash Question', 'event_espresso') . '">'
                                      . esc_html__('Trash', 'event_espresso') . '</a>';
         }
@@ -96,7 +96,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
                     $item->ID()
                 )
             ) {
-                $actions['restore'] = '<a href="' . $restore_link . '" title="'
+                $actions['restore'] = '<a href="' . $restore_link . '" aria-label="'
                                       . esc_html__('Restore Question', 'event_espresso') . '">'
                                       . esc_html__('Restore', 'event_espresso') . '</a>';
             }
@@ -108,7 +108,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
                     $item->ID()
                 )
             ) {
-                    $actions['delete'] = '<a href="' . $delete_link . '" title="'
+                    $actions['delete'] = '<a href="' . $delete_link . '" aria-label="'
                                          . esc_html__('Delete Question Permanently', 'event_espresso') . '">'
                                          . esc_html__('Delete Permanently', 'event_espresso') . '</a>';
             }
@@ -119,7 +119,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
                 'espresso_registration_form_edit_question'
             )
         ) {
-            $actions['duplicate'] = '<a href="' . $duplicate_link . '" title="'
+            $actions['duplicate'] = '<a href="' . $duplicate_link . '" aria-label="'
                                     . esc_html__('Duplicate Question', 'event_espresso') . '">'
                                     . esc_html__('Duplicate', 'event_espresso') . '</a>';
         }

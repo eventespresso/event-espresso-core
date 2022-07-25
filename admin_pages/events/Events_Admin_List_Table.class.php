@@ -404,7 +404,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         );
         $filter_url = EE_Admin_Page::add_query_args_and_nonce($query_args, EVENTS_ADMIN_URL);
         return $gravatar . '  <a href="' . $filter_url . '"'
-               . ' title="' . esc_attr__('Click to filter events by this author.', 'event_espresso') . '">'
+               . ' aria-label="' . esc_attr__('Click to filter events by this author.', 'event_espresso') . '">'
                . $event_author->display_name
                . '</a>';
     }
@@ -532,7 +532,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $action_links = array();
         $view_link = get_permalink($item->ID());
         $action_links[] = '<a href="' . $view_link . '"'
-                          . ' title="' . esc_attr__('View Event', 'event_espresso') . '" target="_blank">';
+                          . ' aria-label="' . esc_attr__('View Event', 'event_espresso') . '" target="_blank">';
         $action_links[] = '<div class="dashicons dashicons-search"></div></a>';
         if (
             EE_Registry::instance()->CAP->current_user_can(
@@ -547,7 +547,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             );
             $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EVENTS_ADMIN_URL);
             $action_links[] = '<a href="' . $edit_link . '"'
-                              . ' title="' . esc_attr__('Edit Event', 'event_espresso') . '">'
+                              . ' aria-label="' . esc_attr__('Edit Event', 'event_espresso') . '">'
                               . '<div class="ee-icon ee-icon-calendar-edit"></div>'
                               . '</a>';
         }
@@ -567,7 +567,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
             );
             $attendees_link = EE_Admin_Page::add_query_args_and_nonce($attendees_query_args, REG_ADMIN_URL);
             $action_links[] = '<a href="' . $attendees_link . '"'
-                              . ' title="' . esc_attr__('View Registrants', 'event_espresso') . '">'
+                              . ' aria-label="' . esc_attr__('View Registrants', 'event_espresso') . '">'
                               . '<div class="dashicons dashicons-groups"></div>'
                               . '</a>';
         }

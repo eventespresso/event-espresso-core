@@ -268,7 +268,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
                 TXN_ADMIN_URL
             );
             return '<a href="' . esc_url_raw($view_txn_lnk_url) . '"  '
-                   . 'title="' . sprintf(
+                   . 'aria-label="' . sprintf(
                        esc_attr__('click to view transaction #%s', 'event_espresso'),
                        $transaction_id
                    ) . '">'

@@ -43,7 +43,7 @@
                     <div class="review-topic-content">
                         <p class="review-user-nicename">
                             <a href="https://wordpress.org/support/users/sock2me/"
-                               title="View sock2me's profile"
+                               aria-label="View sock2me's profile"
                                class="bbp-author-avatar"
                                rel="nofollow"
                             >
@@ -57,7 +57,7 @@
                             </a>
                             <br>
                             <a href="https://wordpress.org/support/users/sock2me/"
-                               title="View sock2me's profile"
+                               aria-label="View sock2me's profile"
                                class="bbp-author-name"
                                rel="nofollow"
                             >
@@ -104,7 +104,7 @@
                     <div class="review-topic-content">
                         <p class="review-user-nicename">
                             <a href="https://wordpress.org/support/users/ivycat/"
-                               title="View ivycat's profile"
+                               aria-label="View ivycat's profile"
                                class="bbp-author-avatar"
                                rel="nofollow"
                             >
@@ -118,7 +118,7 @@
                             </a>
                             <br>
                             <a href="https://wordpress.org/support/users/ivycat/"
-                               title="View ivycat's profile"
+                               aria-label="View ivycat's profile"
                                class="bbp-author-name"
                                rel="nofollow"
                             >
@@ -167,7 +167,7 @@
                     <div class="review-topic-content">
                         <p class="review-user-nicename">
                             <a href="https://wordpress.org/support/users/amandaleigh/"
-                               title="View amandaleigh's profile"
+                               aria-label="View amandaleigh's profile"
                                class="bbp-author-avatar"
                                rel="nofollow"
                             >
@@ -182,7 +182,7 @@
                             <br>
                             <a
                                 href="https://wordpress.org/support/users/amandaleigh/"
-                                title="View amandaleigh's profile"
+                                aria-label="View amandaleigh's profile"
                                 class="bbp-author-name"
                                 rel="nofollow"
                             >
@@ -242,7 +242,7 @@ if (! defined('EE_CAF_URL')) {
                     <div class="review-topic-content">
                         <p class="review-user-nicename">
                             <a href="https://wordpress.org/support/users/birchfinch/"
-                               title="View Bryan's profile"
+                               aria-label="View Bryan's profile"
                                class="bbp-author-avatar"
                                rel="nofollow"
                             >
@@ -256,7 +256,7 @@ if (! defined('EE_CAF_URL')) {
                             </a>
                             <br>
                             <a href="https://wordpress.org/support/users/birchfinch/"
-                               title="View Bryan's profile"
+                               aria-label="View Bryan's profile"
                                class="bbp-author-name"
                                rel="nofollow"
                             >
@@ -303,7 +303,7 @@ if (! defined('EE_CAF_URL')) {
                     <div class="review-topic-content">
                         <p class="review-user-nicename">
                             <a href="https://wordpress.org/support/users/elainewildash/"
-                               title="View elaine.wildash's profile"
+                               aria-label="View elaine.wildash's profile"
                                class="bbp-author-avatar"
                                rel="nofollow"
                             >
@@ -317,7 +317,7 @@ if (! defined('EE_CAF_URL')) {
                             </a>
                             <br>
                             <a href="https://wordpress.org/support/users/elainewildash/"
-                               title="View elaine.wildash's profile"
+                               aria-label="View elaine.wildash's profile"
                                class="bbp-author-name"
                                rel="nofollow"
                             >
@@ -359,7 +359,7 @@ if (! defined('EE_CAF_URL')) {
                     <div class="review-topic-content">
                         <p class="review-user-nicename">
                             <a href="https://wordpress.org/support/users/rhj4/"
-                               title="View rhj4's profile"
+                               aria-label="View rhj4's profile"
                                class="bbp-author-avatar"
                                rel="nofollow"
                             >
@@ -373,7 +373,7 @@ if (! defined('EE_CAF_URL')) {
                             </a>
                             <br>
                             <a href="https://wordpress.org/support/users/rhj4/"
-                               title="View rhj4's profile"
+                               aria-label="View rhj4's profile"
                                class="bbp-author-name"
                                rel="nofollow"
                             >
@@ -432,7 +432,7 @@ if (! defined('EE_CAF_URL')) {
                     <div class="review-topic-content">
                         <p class="review-user-nicename">
                             <a href="https://wordpress.org/support/users/wooninjas/"
-                               title="View Wooninjas's profile"
+                               aria-label="View Wooninjas's profile"
                                class="bbp-author-avatar"
                                rel="nofollow"
                             >
@@ -447,7 +447,7 @@ if (! defined('EE_CAF_URL')) {
                             <br>
                             <a
                                 href="https://wordpress.org/support/users/wooninjas/"
-                                title="View Wooninjas's profile"
+                                aria-label="View Wooninjas's profile"
                                 class="bbp-author-name"
                                 rel="nofollow"
                             >
@@ -485,7 +485,7 @@ if (! defined('EE_CAF_URL')) {
                     <div class="review-topic-content">
                         <p class="review-user-nicename">
                             <a href="https://wordpress.org/support/users/johnmacek/"
-                               title="View johnmacek's profile"
+                               aria-label="View johnmacek's profile"
                                class="bbp-author-avatar"
                                rel="nofollow"
                             >
@@ -500,7 +500,7 @@ if (! defined('EE_CAF_URL')) {
                             <br>
                             <a
                                 href="https://wordpress.org/support/users/johnmacek/"
-                                title="View johnmacek's profile"
+                                aria-label="View johnmacek's profile"
                                 class="bbp-author-name"
                                 rel="nofollow"
                             >
@@ -538,7 +538,7 @@ if (! defined('EE_CAF_URL')) {
                     <div class="review-topic-content">
                         <p class="review-user-nicename">
                             <a href="https://wordpress.org/support/users/10bradders10/"
-                               title="View 10bradders10's profile"
+                               aria-label="View 10bradders10's profile"
                                class="bbp-author-avatar"
                                rel="nofollow"
                             >
@@ -552,7 +552,7 @@ if (! defined('EE_CAF_URL')) {
                             </a>
                             <br>
                             <a href="https://wordpress.org/support/users/10bradders10/"
-                               title="View 10bradders10's profile"
+                               aria-label="View 10bradders10's profile"
                                class="bbp-author-name"
                                rel="nofollow"
                             >
