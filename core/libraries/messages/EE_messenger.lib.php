@@ -652,16 +652,20 @@ abstract class EE_messenger extends EE_Messages_Base
 
 
     /**
-     * get_template_fields
+     * returns $this->_template_fields,
+     * filtered first by child class specific filter named something like
+     * FHEE__EE_Email_messenger__get_template_fields,
+     * followed by global FHEE__EE_messenger__get_template_fields filter
      *
-     * @access public
-     * @return array $this->_template_fields
+     * @return array
      */
-    public function get_template_fields()
+    public function get_template_fields(): array
     {
-        $template_fields = apply_filters('FHEE__' . get_class($this) . '__get_template_fields', $this->_template_fields, $this);
-        $template_fields = apply_filters('FHEE__EE_messenger__get_template_fields', $template_fields, $this);
-        return $template_fields;
+        return (array) apply_filters(
+            'FHEE__EE_messenger__get_template_fields',
+            apply_filters('FHEE__' . get_class($this) . '__get_template_fields', $this->_template_fields, $this),
+            $this
+        );
     }
 
 
