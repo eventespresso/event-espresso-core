@@ -730,9 +730,8 @@ class Pricing_Admin_Page extends EE_Admin_Page
      * @param bool $trash - whether to move item to trash (TRUE) or restore it (FALSE)
      * @return void
      * @throws EE_Error
-     * @throws ReflectionException
      */
-    protected function _trash_or_restore_price(bool $trash = true)
+    protected function _trash_or_restore_price($trash = true)
     {
         $entity_model = EEM_Price::instance();
         $action       = $trash ? EE_Admin_List_Table::ACTION_TRASH : EE_Admin_List_Table::ACTION_RESTORE;
