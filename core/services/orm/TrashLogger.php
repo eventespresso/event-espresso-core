@@ -3,8 +3,10 @@
 namespace EventEspresso\core\services\orm;
 
 use EE_Base_Class;
+use EE_Change_Log;
 use EE_Error;
 use EE_Soft_Delete_Base_Class;
+use EEM_Change_Log;
 use ReflectionException;
 
 /**
@@ -52,7 +54,7 @@ class TrashLogger
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function logSoftDelete(EE_Soft_Delete_Base_Class $entity, bool $delete, bool $result)
+    public function logSoftDelete(EE_Soft_Delete_Base_Class $entity, $delete, $result)
     {
         // which base meta key to use... trashed or restored?
         $action = $delete
@@ -68,7 +70,7 @@ class TrashLogger
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function logHardDelete(EE_Base_Class $entity, bool $result)
+    public function logHardDelete(EE_Base_Class $entity, $result)
     {
         $this->logDelete($entity, TrashLogger::EXTRA_META_KEY_ENTITY_DELETED, $result);
     }
@@ -80,9 +82,9 @@ class TrashLogger
      * @param EE_Base_Class $entity
      * @return string
      */
-    private function getEntityClass(EE_Base_Class $entity): string
+    private function getEntityClass(EE_Base_Class $entity)
     {
-        return strtolower(str_replace('EE_', '', get_class($entity)));
+        return str_replace('EE_', '', get_class($entity));
     }
 
 
@@ -93,20 +95,29 @@ class TrashLogger
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function logDelete(EE_Base_Class $entity, string $action, bool $result)
+    private function logDelete(EE_Base_Class $entity, $action, $result)
     {
         // if trash/restore/delete was not successful, then get out
         if (! $result) {
             return;
         }
 
-        // convert 'entity-deleted' to  'registration-deleted'
-        $key = str_replace('entity', $this->getEntityClass($entity), $action);
+        $entity_class = $this->getEntityClass($entity);
+        // convert 'entity-deleted' to just 'deleted'
+        $action = str_replace('entity-', '', $action);
 
         $current_user = wp_get_current_user();
         $user_name    = $current_user->ID ? $current_user->display_name : 'unknown user';
         $timestamp    = date("D M j, Y @ g:i:s a", current_time('timestamp'));
 
-        $entity->add_extra_meta($key, "by $user_name on $timestamp");
+        $log = EE_Change_Log::new_instance(
+            [
+                'OBJ_ID'      => $entity->ID(),
+                'OBJ_type'    => $entity_class,
+                'LOG_type'    => EEM_Change_Log::type_delete,
+                'LOG_message' => "$action by $user_name on $timestamp",
+            ]
+        );
+        $log->save();
     }
 }
