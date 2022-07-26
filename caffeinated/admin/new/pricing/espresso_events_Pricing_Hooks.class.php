@@ -411,6 +411,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 if (empty($id)) {
                     continue;
                 }
+                /** @var EE_Datetime $dtt_to_remove */
                 $dtt_to_remove = EE_Registry::instance()->load_model('Datetime')->get_one_by_ID($id);
                 // remove tkt relationships.
                 $related_tickets = $dtt_to_remove->get_many_related('Ticket');
@@ -419,6 +420,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 }
                 $event->_remove_relation_to($id, 'Datetime');
                 $dtt_to_remove->refresh_cache_of_related_objects();
+                $dtt_to_remove->delete_or_restore();
             }
         }
         return $saved_dtt_objs;
