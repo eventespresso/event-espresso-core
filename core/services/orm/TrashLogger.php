@@ -44,6 +44,13 @@ class TrashLogger
     {
         add_action('AHEE__EE_Soft_Delete_Base_Class__delete_or_restore__after', [$this, 'logSoftDelete'], 10, 3);
         add_action('AHEE__EE_Base_Class__delete_permanently__end', [$this, 'logHardDelete'], 10, 2);
+        add_action(
+            'AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted',
+            [$this, 'logBatchDelete'],
+            10,
+            2
+        );
+
     }
 
 
@@ -60,7 +67,9 @@ class TrashLogger
         $action = $delete
             ? TrashLogger::EXTRA_META_KEY_ENTITY_TRASHED
             : TrashLogger::EXTRA_META_KEY_ENTITY_RESTORED;
-        $this->logDelete($entity, $action, $result);
+
+        $entity_class = $this->getEntityClass($entity);
+        $this->logDelete($entity->ID(), $entity_class, $action, $result);
     }
 
 
@@ -72,7 +81,21 @@ class TrashLogger
      */
     public function logHardDelete(EE_Base_Class $entity, $result)
     {
-        $this->logDelete($entity, TrashLogger::EXTRA_META_KEY_ENTITY_DELETED, $result);
+        $entity_class = $this->getEntityClass($entity);
+        $this->logDelete($entity->ID(), $entity_class, TrashLogger::EXTRA_META_KEY_ENTITY_DELETED, $result);
+    }
+
+
+    /**
+     * @param int|string $entity_ID
+     * @param string     $entity_type
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function logBatchDelete($entity_ID, $entity_type)
+    {
+        $entity_type = str_replace(['EE_', 'EEM_'], '', $entity_type);
+        $this->logDelete($entity_ID, $entity_type,TrashLogger::EXTRA_META_KEY_ENTITY_DELETED, true);
     }
 
 
@@ -89,31 +112,30 @@ class TrashLogger
 
 
     /**
-     * @param EE_Base_Class $entity
-     * @param string        $action
-     * @param bool          $result
+     * @param string $entity_ID
+     * @param string $entity_type
+     * @param string $action
+     * @param bool   $result
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function logDelete(EE_Base_Class $entity, $action, $result)
+    private function logDelete($entity_ID, $entity_type, $action, $result)
     {
         // if trash/restore/delete was not successful, then get out
         if (! $result) {
             return;
         }
 
-        $entity_class = $this->getEntityClass($entity);
         // convert 'entity-deleted' to just 'deleted'
-        $action = str_replace('entity-', '', $action);
-
+        $action       = str_replace('entity-', '', $action);
         $current_user = wp_get_current_user();
         $user_name    = $current_user->ID ? $current_user->display_name : 'unknown user';
         $timestamp    = date("D M j, Y @ g:i:s a", current_time('timestamp'));
 
         $log = EE_Change_Log::new_instance(
             [
-                'OBJ_ID'      => $entity->ID(),
-                'OBJ_type'    => $entity_class,
+                'OBJ_ID'      => $entity_ID,
+                'OBJ_type'    => $entity_type,
                 'LOG_type'    => EEM_Change_Log::type_delete,
                 'LOG_message' => "$action by $user_name on $timestamp",
             ]
