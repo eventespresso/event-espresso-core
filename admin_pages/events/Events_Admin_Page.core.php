@@ -127,121 +127,121 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
         $this->_page_routes = [
             'default'                       => [
-                'func'       => '_events_overview_list_table',
+                'func'       => [$this, '_events_overview_list_table'],
                 'capability' => 'ee_read_events',
             ],
             'create_new'                    => [
-                'func'       => '_create_new_cpt_item',
+                'func'       => [$this, '_create_new_cpt_item'],
                 'capability' => 'ee_edit_events',
             ],
             'edit'                          => [
-                'func'       => '_edit_cpt_item',
+                'func'       => [$this, '_edit_cpt_item'],
                 'capability' => 'ee_edit_event',
                 'obj_id'     => $EVT_ID,
             ],
             'copy_event'                    => [
-                'func'       => '_copy_events',
+                'func'       => [$this, '_copy_events'],
                 'capability' => 'ee_edit_event',
                 'obj_id'     => $EVT_ID,
                 'noheader'   => true,
             ],
             'trash_event'                   => [
-                'func'       => '_trash_or_restore_event',
+                'func'       => [$this, '_trash_or_restore_event'],
                 'args'       => ['event_status' => 'trash'],
                 'capability' => 'ee_delete_event',
                 'obj_id'     => $EVT_ID,
                 'noheader'   => true,
             ],
             'trash_events'                  => [
-                'func'       => '_trash_or_restore_events',
+                'func'       => [$this, '_trash_or_restore_events'],
                 'args'       => ['event_status' => 'trash'],
                 'capability' => 'ee_delete_events',
                 'noheader'   => true,
             ],
             'restore_event'                 => [
-                'func'       => '_trash_or_restore_event',
+                'func'       => [$this, '_trash_or_restore_event'],
                 'args'       => ['event_status' => 'draft'],
                 'capability' => 'ee_delete_event',
                 'obj_id'     => $EVT_ID,
                 'noheader'   => true,
             ],
             'restore_events'                => [
-                'func'       => '_trash_or_restore_events',
+                'func'       => [$this, '_trash_or_restore_events'],
                 'args'       => ['event_status' => 'draft'],
                 'capability' => 'ee_delete_events',
                 'noheader'   => true,
             ],
             'delete_event'                  => [
-                'func'       => '_delete_event',
+                'func'       => [$this, '_delete_event'],
                 'capability' => 'ee_delete_event',
                 'obj_id'     => $EVT_ID,
                 'noheader'   => true,
             ],
             'delete_events'                 => [
-                'func'       => '_delete_events',
+                'func'       => [$this, '_delete_events'],
                 'capability' => 'ee_delete_events',
                 'noheader'   => true,
             ],
             'view_report'                   => [
-                'func'       => '_view_report',
+                'func'       => [$this, '_view_report'],
                 'capability' => 'ee_edit_events',
             ],
             'default_event_settings'        => [
-                'func'       => '_default_event_settings',
+                'func'       => [$this, '_default_event_settings'],
                 'capability' => 'manage_options',
             ],
             'update_default_event_settings' => [
-                'func'       => '_update_default_event_settings',
+                'func'       => [$this, '_update_default_event_settings'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'template_settings'             => [
-                'func'       => '_template_settings',
+                'func'       => [$this, '_template_settings'],
                 'capability' => 'manage_options',
             ],
             // event category tab related
             'add_category'                  => [
-                'func'       => '_category_details',
+                'func'       => [$this, '_category_details'],
                 'capability' => 'ee_edit_event_category',
                 'args'       => ['add'],
             ],
             'edit_category'                 => [
-                'func'       => '_category_details',
+                'func'       => [$this, '_category_details'],
                 'capability' => 'ee_edit_event_category',
                 'args'       => ['edit'],
             ],
             'delete_categories'             => [
-                'func'       => '_delete_categories',
+                'func'       => [$this, '_delete_categories'],
                 'capability' => 'ee_delete_event_category',
                 'noheader'   => true,
             ],
             'delete_category'               => [
-                'func'       => '_delete_categories',
+                'func'       => [$this, '_delete_categories'],
                 'capability' => 'ee_delete_event_category',
                 'noheader'   => true,
             ],
             'insert_category'               => [
-                'func'       => '_insert_or_update_category',
+                'func'       => [$this, '_insert_or_update_category'],
                 'args'       => ['new_category' => true],
                 'capability' => 'ee_edit_event_category',
                 'noheader'   => true,
             ],
             'update_category'               => [
-                'func'       => '_insert_or_update_category',
+                'func'       => [$this, '_insert_or_update_category'],
                 'args'       => ['new_category' => false],
                 'capability' => 'ee_edit_event_category',
                 'noheader'   => true,
             ],
             'category_list'                 => [
-                'func'       => '_category_list_table',
+                'func'       => [$this, '_category_list_table'],
                 'capability' => 'ee_manage_event_categories',
             ],
             'preview_deletion'              => [
-                'func'       => 'previewDeletion',
+                'func'       => [$this, 'previewDeletion'],
                 'capability' => 'ee_delete_events',
             ],
             'confirm_deletion'              => [
-                'func'       => 'confirmDeletion',
+                'func'       => [$this, 'confirmDeletion'],
                 'capability' => 'ee_delete_events',
                 'noheader'   => true,
             ],
@@ -1026,7 +1026,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         // get event_object for other metaboxes...
         // though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id )..
         // i have to setup where conditions to override the filters in the model
-        // that filter out autodraft and inherit statuses so we GET the inherit id!
+        // that filter out auto-draft and inherit statuses so we GET the inherit id!
         $event = $this->_event_model()->get_one(
             [
                 [
@@ -1627,14 +1627,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $existing_datetime_ids = $existing_ticket_ids = [];
         // defaults for template args
         $template_args = [
-            'existing_datetime_ids'    => '',
-            'event_datetime_help_link' => '',
-            'ticket_options_help_link' => '',
-            'time'                     => null,
             'ticket_rows'              => '',
-            'existing_ticket_ids'      => '',
             'total_ticket_rows'        => 1,
-            'ticket_js_structure'      => '',
             'trash_icon'               => 'ee-lock-icon',
             'disabled'                 => '',
         ];
@@ -1669,7 +1663,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 }
             } else {
                 $template_args['total_ticket_rows'] = 1;
-                /** @type EE_Ticket $ticket */
                 $ticket                       = EEM_Ticket::instance()->create_default_object();
                 $template_args['ticket_rows'] .= $this->_get_ticket_row($ticket);
             }
@@ -2172,6 +2165,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         }
         if ($hook) {
             do_action($hook);
+            // fake the action hook in EE_Soft_Delete_Base_Class::delete_or_restore()
+            // because events side step that and it otherwise won't get called
+            do_action(
+                'AHEE__EE_Soft_Delete_Base_Class__delete_or_restore__after',
+                $this->_cpt_model_obj,
+                $hook === 'AHEE_event_moved_to_trash',
+                $success
+            );
         }
         return true;
     }
@@ -2205,6 +2206,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * @param bool $preview_delete
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _delete_event($preview_delete = true)
     {
@@ -2235,6 +2237,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $preview_delete
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _delete_events($preview_delete = true)
     {
@@ -2242,7 +2245,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         if ($preview_delete) {
             $this->generateDeletionPreview($event_ids);
         } else {
-            EEM_Event::instance()->delete_permanently([['EVT_ID' => ['IN', $event_ids]]]);
+            foreach ($event_ids as $event_id) {
+                $event = EEM_Event::instance()->get_one_by_ID($event_id);
+                if ($event instanceof EE_Event) {
+                    $event->delete_permanently();
+                }
+            }
         }
     }
 
@@ -2285,8 +2293,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function confirmDeletion()
     {
-        $deletion_redirect_logic =
-            $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion');
+        $deletion_redirect_logic = $this->getLoader()->getShared(
+            'EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion'
+        );
         $deletion_redirect_logic->handle($this->get_request_data(), $this->admin_base_url());
     }
 
@@ -2299,8 +2308,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function previewDeletion()
     {
-        $preview_deletion_logic =
-            $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\PreviewDeletion');
+        $preview_deletion_logic = $this->getLoader()->getShared(
+            'EventEspresso\core\domain\services\admin\events\data\PreviewDeletion'
+        );
         $this->set_template_args($preview_deletion_logic->handle($this->get_request_data(), $this->admin_base_url()));
         $this->display_admin_page_with_no_sidebar();
     }
