@@ -139,7 +139,6 @@ class EEH_Activation implements ResettableInterface
         EEH_Activation::initialize_system_questions();
         EEH_Activation::insert_default_status_codes();
         EEH_Activation::generate_default_message_templates();
-        EEH_Activation::create_no_ticket_prices_array();
         EEH_Activation::removeEmailConfirmFromAddressGroup();
 
         EEH_Activation::validate_messages_system();
@@ -1392,20 +1391,6 @@ class EEH_Activation implements ResettableInterface
         $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
         $message_resource_manager->validate_active_message_types_are_installed();
         do_action('AHEE__EEH_Activation__validate_messages_system');
-    }
-
-
-    /**
-     * @return void
-     */
-    public static function create_no_ticket_prices_array()
-    {
-        // this creates an array for tracking events that have no active ticket prices created
-        // this allows us to warn admins of the situation so that it can be corrected
-        $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', false);
-        if (! $espresso_no_ticket_prices) {
-            add_option('ee_no_ticket_prices', [], '', false);
-        }
     }
 
 
