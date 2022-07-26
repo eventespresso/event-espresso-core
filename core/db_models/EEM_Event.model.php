@@ -936,14 +936,15 @@ class EEM_Event extends EEM_CPT_Base
      * in EEM_Soft_Delete_Base so that soft-deleted model objects are instead only flagged
      * as archived, not actually deleted
      *
-     * @param array   $query_params   @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array   $query_params
      * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
-     *                                that blocks it (ie, there' sno other data that depends on this data); if false,
-     *                                deletes regardless of other objects which may depend on it. Its generally
-     *                                advisable to always leave this as TRUE, otherwise you could easily corrupt your
-     *                                DB
+     *                                that blocks it (ie, there' sno other data that depends on this data);
+     *                                if false, deletes regardless of other objects which may depend on it.
+     *                                Its generally advisable to always leave this as TRUE,
+     *                                otherwise you could easily corrupt your DB
      * @return int                    number of rows deleted
      * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function delete_permanently($query_params, $allow_blocking = true)
     {

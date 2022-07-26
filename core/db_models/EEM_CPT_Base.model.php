@@ -235,19 +235,21 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      * Performs deletes or restores on items. Both soft-deleted and non-soft-deleted items considered.
      *
      * @param boolean $delete       true to indicate deletion, false to indicate restoration
-     * @param array   $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
      * @return boolean success
+     * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function delete_or_restore($delete = true, $query_params = array())
     {
         $post_status_field_name = $this->post_status_field_name();
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         $new_status = $delete ? self::post_status_trashed : 'draft';
-        if ($this->update(array($post_status_field_name => $new_status), $query_params)) {
-            return true;
-        } else {
-            return false;
+        $fields_n_values = [$post_status_field_name => $new_status];
+        if ($this->update($fields_n_values, $query_params)) {
+            return parent::delete_or_restore($delete, $query_params);
         }
+        return false;
     }
 
 
