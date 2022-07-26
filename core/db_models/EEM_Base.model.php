@@ -844,7 +844,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param array $query_params  @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      *                             or if you have the development copy of EE you can view this at the path:
      *                             /docs/G--Model-System/model-query-params.md
-     * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different
+     * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results
+     *                             different
      *                                        from EE_Base_Class[], use get_all_wpdb_results(). Array keys are object IDs (if there is a primary key on the model.
      *                                        if not, numerically indexed) Some full examples: get 10 transactions
      *                                        which have Scottish attendees: EEM_Transaction::instance()->get_all(
@@ -1785,8 +1786,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         } elseif ($this->has_primary_key_field()) {
             $field = $this->get_primary_key_field();
         } else {
+            $field_settings = $this->field_settings();
             // no primary key, just grab the first column
-            $field = reset($this->field_settings());
+            $field = reset($field_settings);
+            // don't need this array now
+            unset($field_settings);
         }
         $model_query_info = $this->_create_model_query_info_carrier($query_params);
         $select_expressions = $field->get_qualified_column();
@@ -2004,15 +2008,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     $this
                 )
             ) {
-                EEM_Extra_Meta::instance()->delete_permanently(array(
-                    0 => array(
-                        'EXM_type' => $this->get_this_model_name(),
-                        'OBJ_ID'   => array(
-                            'IN',
-                            $ids_for_removal
-                        )
-                    )
-                ));
+                EEM_Extra_Meta::instance()->delete_permanently(
+                    [
+                        0 => [
+                            'OBJ_ID'   => ['IN', $ids_for_removal],
+                            'EXM_type' => $this->get_this_model_name(),
+                        ]
+                    ]
+                );
             }
         }
 
@@ -5460,7 +5463,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             foreach ($this->foreign_key_aliases as $FK_alias => $PK_column) {
                 if ($PK_column === $qualified_column && isset($cols_n_values[ $FK_alias ])) {
                     $value = $cols_n_values[ $FK_alias ];
-                    list($pk_class) = explode('.', $PK_column);
+                    [$pk_class] = explode('.', $PK_column);
                     $pk_model_name = "EEM_{$pk_class}";
                     /** @var EEM_Base $pk_model */
                     $pk_model = EE_Registry::instance()->load_model($pk_model_name);
