@@ -50,7 +50,6 @@ class TrashLogger
             10,
             2
         );
-
     }
 
 
@@ -95,7 +94,7 @@ class TrashLogger
     public function logBatchDelete($entity_ID, $entity_type)
     {
         $entity_type = str_replace(['EE_', 'EEM_'], '', $entity_type);
-        $this->logDelete($entity_ID, $entity_type,TrashLogger::EXTRA_META_KEY_ENTITY_DELETED, true);
+        $this->logDelete($entity_ID, $entity_type, TrashLogger::EXTRA_META_KEY_ENTITY_DELETED, true);
     }
 
 
