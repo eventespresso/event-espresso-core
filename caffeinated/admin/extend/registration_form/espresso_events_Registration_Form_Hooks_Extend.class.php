@@ -160,10 +160,10 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
                     if ($QSG->ID() === 2) {
                         $html .= '
 					    <p id="question-group-requirements-notice-pg" class="important-notice small-text" style="display: none;">
-					        ' . esc_html__(
-                                'The Personal Information question group is required whenever the Address Information question group is activated.',
-                                'event_espresso'
-                            ) . '
+                        ' . esc_html__(
+                            'The Personal Information question group is required whenever the Address Information question group is activated.',
+                            'event_espresso'
+                        ) . '
                         </p>';
                     }
                 }
