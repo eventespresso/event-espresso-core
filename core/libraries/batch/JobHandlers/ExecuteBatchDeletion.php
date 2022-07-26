@@ -2,7 +2,6 @@
 
 namespace EventEspressoBatchRequest\JobHandlers;
 
-use EE_Change_Log;
 use EE_Error;
 use EE_Registry;
 use EEM_Base;
@@ -105,6 +104,10 @@ class ExecuteBatchDeletion extends JobHandler
         // Build a new list of everything leftover after this request's of deletions.
         $models_and_ids_remaining = [];
         foreach ($models_and_ids_to_delete as $model_name => $ids_to_delete) {
+            // don't delete logs
+            if ($model_name === 'Change_Log') {
+                continue;
+            }
             if ($units_processed < $batch_size) {
                 /** @var EEM_Base $model */
                 $model                    = EE_Registry::instance()->load_model($model_name);
@@ -165,8 +168,6 @@ class ExecuteBatchDeletion extends JobHandler
      *
      * @param JobParameters $job_parameters
      * @return JobStepResponse
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     public function cleanup_job(JobParameters $job_parameters)
     {
@@ -176,18 +177,14 @@ class ExecuteBatchDeletion extends JobHandler
         // For backwards compatibility with how we used to delete events, make sure we still trigger the old action.
         $models_and_ids_to_delete = $job_parameters->extra_datum('models_and_ids_to_delete', []);
         foreach ($models_and_ids_to_delete['Event'] as $event_id) {
-            // Create a log entry so we know who and when this event was permanently deleted.
-            (EE_Change_Log::new_instance(
-                [
-                    'OBJ_ID'      => $event_id,
-                    'OBJ_type'    => 'Event',
-                    'LOG_message' => sprintf(
-                        esc_html__('Event %1$d permanently deleted using ExecuteBatchDeletion.', 'event_espresso'),
-                        $event_id
-                    ),
-                ]
-            ))->save();
-            do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $event_id);
+            // TrashLogger hooks into the following to create a log entry
+            // so we know when and who permanently deleted this event.
+            do_action(
+                'AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted',
+                $event_id,
+                'Event',
+                $job_parameters
+            );
         }
         return new JobStepResponse(
             $job_parameters,
