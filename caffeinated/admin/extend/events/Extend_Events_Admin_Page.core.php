@@ -420,7 +420,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                    aria-label="' . esc_attr__('View Report', 'event_espresso') . '"
                 >
                     <div class="dashicons dashicons-chart-bar"></div>
-                </a>' . "\n\t";
+                </a>';
         }
         if (EE_Registry::instance()->CAP->current_user_can('ee_read_global_messages', 'view_filtered_messages')) {
             EE_Registry::instance()->load_helper('MSG_Template');

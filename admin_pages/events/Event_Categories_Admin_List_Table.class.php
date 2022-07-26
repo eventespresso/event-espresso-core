@@ -86,7 +86,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
     {
         $category_name = $item->get_first_related('Term')->get('name');
         $content       = $item->get('term_id');
-        $content       .= '  <span class="show-on-mobile-view-only">' . $category_name . '</span>';
+        $content       .= ' <span class="show-on-mobile-view-only">' . $category_name . '</span>';
         return $content;
     }
 
