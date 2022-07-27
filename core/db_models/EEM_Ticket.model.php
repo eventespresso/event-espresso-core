@@ -9,6 +9,7 @@
  * @method EE_Ticket    create_default_object()
  * @method EE_Ticket[]  get_all($query_params = [])
  * @method EE_Ticket    get_one($query_params = [])
+ * @method EE_Ticket    get_one_by_ID($query_params = [])
  */
 class EEM_Ticket extends EEM_Soft_Delete_Base
 {
