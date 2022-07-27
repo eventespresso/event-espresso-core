@@ -31,35 +31,39 @@ class EE_Float_Field extends EE_Model_Field_Base
     /**
      * If provided a string, strips out number-related formatting, like commas, periods, spaces, other junk, etc.
      * However, treats commas and periods as thousand-separators ro decimal marks, as indicate by the config's currency.
-     * So if you want to pass in a string that NEEDS to interpret periods as decimal marks, call floatval() on it first.
+     * So if you want to pass in a string that NEEDS to interpret periods as decimal marks, typecast as float first.
      * Returns a float
      *
-     * @param float|string $value_inputted_for_field_on_model_object
+     * @param float|string $number
      * @return float
      */
-    public function prepare_for_set($value_inputted_for_field_on_model_object)
+    public function prepare_for_set($number)
     {
         // remove whitespaces and thousands separators
-        if (is_string($value_inputted_for_field_on_model_object)) {
-            $value_inputted_for_field_on_model_object = str_replace(
+        if (is_string($number)) {
+            // scientific notation can just be cast as a float
+            if (strpos($number, 'e') || strpos($number, 'E')) {
+                return (float) $number;
+            }
+            $number = str_replace(
                 array(" ", $this->currency->thsnds),
                 "",
-                $value_inputted_for_field_on_model_object
+                $number
             );
             // normalize it so periods are decimal marks (we don't care where you're from: we're talking PHP now)
-            $value_inputted_for_field_on_model_object = str_replace(
+            $number = str_replace(
                 $this->currency->dec_mrk,
                 ".",
-                $value_inputted_for_field_on_model_object
+                $number
             );
             // double-check there's absolutely nothing left on this string besides numbers
-            $value_inputted_for_field_on_model_object = preg_replace(
+            $number = preg_replace(
                 "/[^0-9,.]/",
                 "",
-                $value_inputted_for_field_on_model_object
+                $number
             );
         }
-        return floatval($value_inputted_for_field_on_model_object);
+        return (float) $number;
     }
 
     /**
