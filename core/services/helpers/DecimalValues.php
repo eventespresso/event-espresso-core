@@ -57,6 +57,6 @@ class DecimalValues
      */
     public function filterDecimalValue($number): float
     {
-        return (float) filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        return (float) $number;
     }
 }
