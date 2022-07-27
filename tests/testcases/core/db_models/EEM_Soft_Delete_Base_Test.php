@@ -22,11 +22,10 @@ class EEM_Soft_Delete_Base_Test extends EE_UnitTestCase
         $a1->save();
 
 
-        $a2 =
-            EE_Attendee::new_instance(['ATT_fname' => 'update-me', 'ATT_lname' => 'man', 'ATT_email' => 'few@ew.efds']);
+        $a2 = EE_Attendee::new_instance(['ATT_fname' => 'update-me', 'ATT_lname' => 'man', 'ATT_email' => 'few@ew.efds']);
         $a2->save();
 
-        //and isnert another attendee NOT using the models system
+        //and insert another attendee NOT using the models system
         $new_attendee_id = wp_insert_post(
             [
                 'post_name'    => 'update-me-abnormal-man',
@@ -57,13 +56,13 @@ class EEM_Soft_Delete_Base_Test extends EE_UnitTestCase
         $this->assertNotEmpty($wpdb->insert_id);
 
         //soft delete 'update-me' and 'update-me-abnormal'
-        $att_model = EEM_Attendee::instance();
-        $att_model->delete([['ATT_lname' => 'man']]);
+        $a2->delete();
         $this->assertNotEquals(EEM_CPT_Base::post_status_trashed, $a1->status());
         $this->assertEquals(EEM_CPT_Base::post_status_trashed, $a2->status());
 
-        $abnormal_attendee = $att_model->get_one_by_ID($new_attendee_id);
+        $abnormal_attendee = EEM_Attendee::instance()->get_one_by_ID($new_attendee_id);
         $this->assertInstanceOf('EE_Attendee', $abnormal_attendee);
+        $abnormal_attendee->delete();
         $this->assertEquals(EEM_CPT_Base::post_status_trashed, $abnormal_attendee->status());
     }
 
