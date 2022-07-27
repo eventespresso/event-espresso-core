@@ -4098,7 +4098,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 throw new DomainException(
                     sprintf(
                         esc_html__(
-                            'Missing or invalid &1%s entity with ID of "%2$s" returned from db.',
+                            'Missing or invalid %1$s entity with ID of "%2$s" returned from db.',
                             'event_espresso'
                         ),
                         str_replace('EEM_', '', $entity_model->get_this_model_name()),
