@@ -2,6 +2,7 @@
 
 namespace EventEspresso\tests\testcases\core\domain\values\session;
 
+use EE_Error;
 use EE_UnitTestCase;
 use EventEspresso\core\domain\values\session\SessionLifespanOption;
 
@@ -20,12 +21,18 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class SessionLifespanOptionTest extends EE_UnitTestCase
 {
 
+    /**
+     * @var SessionLifespanOption
+     */
     private $lifespanOption;
 
 
-    public function __construct()
+    /**
+     * @throws EE_Error
+     */
+    public function set_up()
     {
-        parent::__construct();
+        parent::set_up();
         $this->lifespanOption = new SessionLifespanOption();
     }
 
