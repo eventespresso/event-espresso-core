@@ -246,8 +246,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
         $post_status_field_name = $this->post_status_field_name();
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         $new_status = $delete ? self::post_status_trashed : 'draft';
-        $fields_n_values = [$post_status_field_name => $new_status];
-        return (bool) $this->update($fields_n_values, $query_params);
+        return (bool) $this->update([$post_status_field_name => $new_status], $query_params);
     }
 
 
