@@ -20,7 +20,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
 class SessionLifespanOptionTest extends EE_UnitTestCase
 {
 
-    private SessionLifespanOption $lifespanOption;
+    private $lifespanOption;
 
 
     public function __construct()
