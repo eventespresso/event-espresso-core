@@ -77,12 +77,12 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param EE_Term $item
+     * @param EE_Term_Taxonomy $item
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_id(EE_Term $item)
+    public function column_id(EE_Term_Taxonomy $item)
     {
         $category_name = $item->get_first_related('Term')->get('name');
         $content       = $item->get('term_id');
@@ -92,12 +92,12 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param EE_Term $item
+     * @param EE_Term_Taxonomy $item
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_name(EE_Term $item)
+    public function column_name(EE_Term_Taxonomy $item)
     {
         $edit_query_args = [
             'action'     => 'edit_category',
@@ -158,24 +158,24 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * @param EE_Term $item
+     * @param EE_Term_Taxonomy $item
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_shortcode(EE_Term $item)
+    public function column_shortcode(EE_Term_Taxonomy $item)
     {
         return '[ESPRESSO_EVENTS category_slug=' . $item->get_first_related('Term')->get('slug') . ']';
     }
 
 
     /**
-     * @param EE_Term $item
+     * @param EE_Term_Taxonomy $item
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_count(EE_Term $item)
+    public function column_count(EE_Term_Taxonomy $item)
     {
         $category_url = EE_Admin_Page::add_query_args_and_nonce(
             [
