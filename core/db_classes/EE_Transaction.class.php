@@ -40,10 +40,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = null, $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        $txn = $has_object
+        $txn        = $has_object
             ? $has_object
             : new self($props_n_values, false, $timezone, $date_formats);
         if (! $has_object) {
@@ -64,7 +64,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = null)
     {
         $txn = new self($props_n_values, true, $timezone);
         $txn->set_old_txn_status($txn->status_ID());
@@ -283,7 +283,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     public function reg_steps()
     {
         $TXN_reg_steps = $this->get('TXN_reg_steps');
-        return is_array($TXN_reg_steps) ? (array) $TXN_reg_steps : array();
+        return is_array($TXN_reg_steps) ? $TXN_reg_steps : [];
     }
 
 
@@ -396,15 +396,15 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         $session_data = $this->get('TXN_session_data');
         if (empty($session_data)) {
-            $session_data = array(
+            $session_data = [
                 'id'            => null,
                 'user_id'       => null,
                 'ip_address'    => null,
                 'user_agent'    => null,
                 'init_access'   => null,
                 'last_access'   => null,
-                'pages_visited' => array(),
-            );
+                'pages_visited' => [],
+            ];
         }
         return $session_data;
     }
@@ -488,18 +488,18 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function registrations($query_params = array(), $get_cached = false)
+    public function registrations($query_params = [], $get_cached = false)
     {
         $query_params = (empty($query_params) || ! is_array($query_params))
-            ? array(
-                'order_by' => array(
+            ? [
+                'order_by' => [
                     'Event.EVT_name'     => 'ASC',
                     'Attendee.ATT_lname' => 'ASC',
                     'Attendee.ATT_fname' => 'ASC',
-                ),
-            )
+                ],
+            ]
             : $query_params;
-        $query_params = $get_cached ? array() : $query_params;
+        $query_params = $get_cached ? [] : $query_params;
         return $this->get_many_related('Registration', $query_params);
     }
 
@@ -517,14 +517,15 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function attendees()
     {
-        return $this->get_many_related('Attendee', array(array('Registration.Transaction.TXN_ID' => $this->ID())));
+        return $this->get_many_related('Attendee', [['Registration.Transaction.TXN_ID' => $this->ID()]]);
     }
 
 
     /**
      * Gets payments for this transaction. Unlike other such functions, order by 'DESC' by default
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Payment[]
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -532,7 +533,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function payments($query_params = array())
+    public function payments($query_params = [])
     {
         return $this->get_many_related('Payment', $query_params);
     }
@@ -553,10 +554,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         EE_Registry::instance()->load_model('Payment');
         return $this->get_many_related(
             'Payment',
-            array(
-                array('STS_ID' => EEM_Payment::status_id_approved),
-                'order_by' => array('PAY_timestamp' => 'DESC'),
-            )
+            [
+                ['STS_ID' => EEM_Payment::status_id_approved],
+                'order_by' => ['PAY_timestamp' => 'DESC'],
+            ]
         );
     }
 
@@ -575,14 +576,14 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         return $this->get_many_related(
             'Payment',
-            array(
-                array(
+            [
+                [
                     'STS_ID' => EEM_Payment::status_id_pending,
-                ),
-                'order_by' => array(
+                ],
+                'order_by' => [
                     'PAY_timestamp' => 'DESC',
-                ),
-            )
+                ],
+            ]
         );
     }
 
@@ -617,11 +618,11 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     public function pretty_status($show_icons = false)
     {
         $status = EEM_Status::instance()->localized_status(
-            array($this->status_ID() => esc_html__('unknown', 'event_espresso')),
+            [$this->status_ID() => esc_html__('unknown', 'event_espresso')],
             false,
             'sentence'
         );
-        $icon = '';
+        $icon   = '';
         switch ($this->status_ID()) {
             case EEM_Transaction::complete_status_code:
                 $icon = $show_icons ? '<span class="dashicons dashicons-yes ee-icon-size-24 green-text"></span>' : '';
@@ -768,6 +769,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      *
      * @param string $type 'html' or 'pdf' (default is pdf)
      * @return string
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -798,7 +800,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         $registrations = (array) $this->get_many_related(
             'Registration',
-            array(array('REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT))
+            [['REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT]]
         );
         foreach ($registrations as $registration) {
             // valid registration that is NOT cancelled or declined ?
@@ -819,6 +821,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      *
      * @param string $type 'pdf' or 'html' (default is 'html')
      * @return string
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -887,15 +890,16 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * Gets all the extra meta info on this payment
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
      * @return EE_Base_Class[]|EE_Extra_Meta
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function extra_meta($query_params = array())
+    public function extra_meta($query_params = [])
     {
         return $this->get_many_related('Extra_Meta', $query_params);
     }
@@ -948,7 +952,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function items_purchased()
     {
-        return $this->line_items(array(array('LIN_type' => EEM_Line_Item::type_line_item)));
+        return $this->line_items([['LIN_type' => EEM_Line_Item::type_line_item]]);
     }
 
 
@@ -980,7 +984,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function line_items($query_params = array())
+    public function line_items($query_params = [])
     {
         return $this->get_many_related('Line_Item', $query_params);
     }
@@ -998,7 +1002,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function tax_items()
     {
-        return $this->line_items(array(array('LIN_type' => EEM_Line_Item::type_tax)));
+        return $this->line_items([['LIN_type' => EEM_Line_Item::type_tax]]);
     }
 
 
@@ -1016,7 +1020,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function total_line_item($create_if_not_found = true)
     {
-        $item = $this->get_first_related('Line_Item', array(array('LIN_type' => EEM_Line_Item::type_total)));
+        $item = $this->get_first_related('Line_Item', [['LIN_type' => EEM_Line_Item::type_total]]);
         if (! $item && $create_if_not_found) {
             $item = EEH_Line_Item::create_total_line_item($this);
         }
@@ -1186,7 +1190,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function last_payment()
     {
-        return $this->get_first_related('Payment', array('order_by' => array('PAY_ID' => 'desc')));
+        return $this->get_first_related('Payment', ['order_by' => ['PAY_ID' => 'desc']]);
     }
 
 
@@ -1209,7 +1213,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * possibly toggles TXN status
      *
-     * @param  boolean $update whether to save the TXN
+     * @param boolean $update whether to save the TXN
      * @return bool whether the TXN was saved
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1235,7 +1239,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         if ($new_txn_status !== $this->status_ID()) {
             $this->set_status($new_txn_status);
             if ($update) {
-                return $this->save() ? true : false;
+                return (bool) $this->save();
             }
         }
         return false;
@@ -1246,13 +1250,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * Updates the transaction's status and total_paid based on all the payments
      * that apply to it
      *
-     * @deprecated
      * @return array|bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @deprecated
      */
     public function update_based_on_payments()
     {
@@ -1518,8 +1522,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * set_reg_step_completed
      * given a valid reg step slug, this sets the TXN_reg_step completed status which is either:
      *
-     * @param  string      $reg_step_slug
-     * @param  boolean|int $status
+     * @param string      $reg_step_slug
+     * @param boolean|int $status
      * @return boolean
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1653,9 +1657,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * updates the TXN status based on the amount paid
      *
      * @throws EE_Error
+     * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
+     * @throws ReflectionException
      * @throws RuntimeException
      * @throws ReflectionException
      */
@@ -1697,13 +1702,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
 
 
     /**
-     * @since 4.10.4.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws RuntimeException
+     * @since 4.10.4.p
      */
     public function recalculateLineItems()
     {

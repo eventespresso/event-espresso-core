@@ -32,7 +32,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     const checkin_status_in = 1;
 
-
     /**
      * Used to reference when a registration has been checked out.
      *
@@ -41,14 +40,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     const checkin_status_out = 0;
 
-
     /**
      * extra meta key for tracking reg status os trashed registrations
      *
      * @type string
      */
     const PRE_TRASH_REG_STATUS_KEY = 'pre_trash_registration_status';
-
 
     /**
      * extra meta key for tracking if registration has reserved ticket
@@ -66,6 +63,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *                                        date_format and the second value is the time format
      * @return EE_Registration
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
@@ -79,6 +80,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
      * @return EE_Registration
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function new_instance_from_db($props_n_values = array(), $timezone = null)
     {
@@ -90,8 +96,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *        Set Event ID
      *
      * @param        int $EVT_ID Event ID
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_event($EVT_ID = 0)
     {
@@ -106,6 +119,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param string $field_name
      * @param mixed  $field_value
      * @param bool   $use_default
+     * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
      * @throws InvalidArgumentException
@@ -113,6 +127,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set($field_name, $field_value, $use_default = false)
     {
@@ -294,6 +309,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws RuntimeException
      */
     private function updateIfReinstated(
         array $closed_reg_statuses,
@@ -364,12 +380,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         /** @type EE_Transaction_Payments $transaction_payments */
         $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
         $transaction_payments->recalculate_transaction_total($this->transaction(), false);
-        $this->transaction()->update_status_based_on_total_paid(true);
+        $this->transaction()->update_status_based_on_total_paid();
     }
 
 
     /**
-     *        get Status ID
+     * get Status ID
+     *
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function status_ID()
     {
@@ -381,9 +403,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Gets the ticket this registration is for
      *
      * @param boolean $include_archived whether to include archived tickets or not.
-     *
      * @return EE_Ticket|EE_Base_Class
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function ticket($include_archived = true)
     {
@@ -401,6 +426,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @return EE_Event
      * @throws EE_Error
      * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function event()
     {
@@ -420,6 +449,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @return int
      * @throws EE_Error
      * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function wp_user()
     {
@@ -482,7 +515,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * tracks this registration's ticket reservation in extra meta
      * and can increment related ticket reserved and corresponding datetime reserved values
      *
-     * @param bool $update_ticket if true, will increment ticket and datetime reserved count
+     * @param bool   $update_ticket if true, will increment ticket and datetime reserved count
+     * @param string $source
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -494,16 +528,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         // only reserve ticket if space is not currently reserved
         if ((bool) $this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true) !== true) {
-            $this->update_extra_meta('reserve_ticket', "{$this->ticket_ID()} from {$source}");
-            // IMPORTANT !!!
-            // although checking $update_ticket first would be more efficient,
-            // we NEED to ALWAYS call update_extra_meta(), which is why that is done first
-            if (
-                $this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true)
-                && $update_ticket
-            ) {
+            $reserved = $this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true);
+            if ($reserved && $update_ticket) {
                 $ticket = $this->ticket();
                 $ticket->increaseReserved(1, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
+                $this->update_extra_meta('reserve_ticket', "{$this->ticket_ID()} from {$source}");
                 $ticket->save();
             }
         }
@@ -514,7 +543,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * stops tracking this registration's ticket reservation in extra meta
      * decrements (subtracts) related ticket reserved and corresponding datetime reserved values
      *
-     * @param bool $update_ticket if true, will decrement ticket and datetime reserved count
+     * @param bool   $update_ticket if true, will decrement ticket and datetime reserved count
+     * @param string $source
      * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -526,16 +556,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         // only release ticket if space is currently reserved
         if ((bool) $this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true) === true) {
-            $this->update_extra_meta('release_reserved_ticket', "{$this->ticket_ID()} from {$source}");
-            // IMPORTANT !!!
-            // although checking $update_ticket first would be more efficient,
-            // we NEED to ALWAYS call update_extra_meta(), which is why that is done first
-            if (
-                $this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, false)
-                && $update_ticket
-            ) {
+            $reserved = $this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, false);
+            if ($reserved && $update_ticket) {
                 $ticket = $this->ticket();
                 $ticket->decreaseReserved(1, true, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
+                $this->update_extra_meta('release_reserved_ticket', "{$this->ticket_ID()} from {$source}");
             }
         }
     }
@@ -545,8 +570,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Set Attendee ID
      *
      * @param        int $ATT_ID Attendee ID
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_attendee_id($ATT_ID = 0)
     {
@@ -558,8 +590,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *        Set Transaction ID
      *
      * @param        int $TXN_ID Transaction ID
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_transaction_id($TXN_ID = 0)
     {
@@ -571,8 +610,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *        Set Session
      *
      * @param    string $REG_session PHP Session ID
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_session($REG_session = '')
     {
@@ -584,8 +630,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *        Set Registration URL Link
      *
      * @param    string $REG_url_link Registration URL Link
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_reg_url_link($REG_url_link = '')
     {
@@ -597,8 +650,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *        Set Attendee Counter
      *
      * @param        int $REG_count Primary Attendee
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_count($REG_count = 1)
     {
@@ -610,8 +670,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *        Set Group Size
      *
      * @param        boolean $REG_group_size Group Registration
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_group_size($REG_group_size = false)
     {
@@ -624,10 +691,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *    EEM_Registration::status_id_not_approved
      *
      * @return        boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function is_not_approved()
     {
-        return $this->status_ID() == EEM_Registration::status_id_not_approved ? true : false;
+        return $this->status_ID() === EEM_Registration::status_id_not_approved;
     }
 
 
@@ -636,10 +708,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *    EEM_Registration::status_id_pending_payment
      *
      * @return        boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function is_pending_payment()
     {
-        return $this->status_ID() == EEM_Registration::status_id_pending_payment ? true : false;
+        return $this->status_ID() === EEM_Registration::status_id_pending_payment;
     }
 
 
@@ -647,10 +724,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *    is_approved -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_approved
      *
      * @return        boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function is_approved()
     {
-        return $this->status_ID() == EEM_Registration::status_id_approved ? true : false;
+        return $this->status_ID() === EEM_Registration::status_id_approved;
     }
 
 
@@ -658,10 +740,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *    is_cancelled -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_cancelled
      *
      * @return        boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function is_cancelled()
     {
-        return $this->status_ID() == EEM_Registration::status_id_cancelled ? true : false;
+        return $this->status_ID() === EEM_Registration::status_id_cancelled;
     }
 
 
@@ -669,10 +756,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *    is_declined -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_declined
      *
      * @return        boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function is_declined()
     {
-        return $this->status_ID() == EEM_Registration::status_id_declined ? true : false;
+        return $this->status_ID() === EEM_Registration::status_id_declined;
     }
 
 
@@ -681,10 +773,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *    EEM_Registration::status_id_incomplete
      *
      * @return        boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function is_incomplete()
     {
-        return $this->status_ID() == EEM_Registration::status_id_incomplete ? true : false;
+        return $this->status_ID() === EEM_Registration::status_id_incomplete;
     }
 
 
@@ -693,8 +790,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param        mixed ( int or string ) $REG_date Registration Date - Unix timestamp or string representation of
      *                                                 Date
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_reg_date($REG_date = false)
     {
@@ -705,10 +809,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *    Set final price owing for this registration after all ticket/price modifications
      *
-     * @access    public
      * @param    float $REG_final_price
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_final_price($REG_final_price = 0.00)
     {
@@ -719,10 +829,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *    Set amount paid towards this registration's final price
      *
-     * @access    public
      * @param    float $REG_paid
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_paid($REG_paid = 0.00)
     {
@@ -734,8 +850,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *        Attendee Is Going
      *
      * @param        boolean $REG_att_is_going Attendee Is Going
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_att_is_going($REG_att_is_going = false)
     {
@@ -746,8 +869,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Gets the related attendee
      *
-     * @return EE_Attendee
+     * @return EE_Attendee|EE_Base_Class
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function attendee()
     {
@@ -803,8 +930,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Fetches the event this registration is for
      *
-     * @return EE_Event
+     * @return EE_Base_Class|EE_Event
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function event_obj()
     {
@@ -835,6 +966,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param string $messenger 'pdf' or 'html'.  Default 'html'.
      * @return string
+     * @throws DomainException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function receipt_url($messenger = 'html')
     {
@@ -866,7 +1003,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param string $messenger 'pdf' or 'html'.  Default 'html'.
      * @return string
+     * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function invoice_url($messenger = 'html')
     {
@@ -904,9 +1046,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * get Registration URL Link
      *
-     * @access public
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function reg_url_link()
     {
@@ -919,7 +1064,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @param string $type 'download','launch', or 'html' (default is 'launch')
      * @return void
+     * @throws DomainException
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function e_invoice_url($type = 'launch')
     {
@@ -943,10 +1093,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param bool $clear_session Set to true when you want to clear the session on revisiting the
      *                            payment overview url.
      * @return string
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function payment_overview_url($clear_session = false)
     {
@@ -971,10 +1122,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * with this registration's REG_url_link added as a query parameter
      *
      * @return string
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function edit_attendee_information_url()
     {
@@ -998,6 +1150,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_admin_edit_url()
     {
@@ -1013,11 +1169,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     *    is_primary_registrant?
+     * is_primary_registrant?
+     *
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function is_primary_registrant()
     {
-        return $this->get('REG_count') === 1 ? true : false;
+        return (int) $this->get('REG_count') === 1;
     }
 
 
@@ -1026,6 +1188,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return EE_Registration
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_primary_registration()
     {
@@ -1048,9 +1214,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     *        get  Attendee Number
+     * get  Attendee Number
      *
-     * @access        public
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function count()
     {
@@ -1059,7 +1229,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     *        get Group Size
+     * get Group Size
+     *
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function group_size()
     {
@@ -1068,7 +1244,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     *        get Registration Date
+     * get Registration Date
+     *
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function date()
     {
@@ -1083,6 +1265,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param string $time_format
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function pretty_date($date_format = null, $time_format = null)
     {
@@ -1097,6 +1283,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return float
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function final_price()
     {
@@ -1110,6 +1300,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function pretty_final_price()
     {
@@ -1122,6 +1316,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return float
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function paid()
     {
@@ -1134,6 +1332,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return float
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function pretty_paid()
     {
@@ -1148,6 +1350,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param array $requires_payment
      * @return bool
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function owes_monies_and_can_pay($requires_payment = array())
     {
@@ -1156,14 +1362,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             ? $requires_payment
             : EEM_Registration::reg_statuses_that_allow_payment();
         if (
-            in_array($this->status_ID(), $requires_payment) &&
-            $this->final_price() != 0 &&
-            $this->final_price() != $this->paid()
+            $this->final_price() !== 0 &&
+            $this->final_price() !== $this->paid() &&
+            in_array($this->status_ID(), $requires_payment)
         ) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -1173,6 +1378,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param bool $show_icons
      * @return void
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function e_pretty_status($show_icons = false)
     {
@@ -1186,6 +1395,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param bool $show_icons
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function pretty_status($show_icons = false)
     {
@@ -1248,9 +1461,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Gets related answers
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @return EE_Answer[]
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return EE_Answer[]|EE_Base_Class[]
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function answers($query_params = null)
     {
@@ -1268,6 +1486,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * (because the answer might be an array of answer values, so passing pretty_value=true
      * will convert it into some kind of string)
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function answer_value_to_question($question, $pretty_value = true)
     {
@@ -1326,6 +1547,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function reg_date()
     {
@@ -1338,8 +1563,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * the ticket this registration purchased, or the datetime they have registered
      * to attend)
      *
-     * @return EE_Datetime_Ticket
+     * @return EE_Base_Class|EE_Datetime_Ticket
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function datetime_ticket()
     {
@@ -1351,32 +1580,49 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Sets the registration's datetime_ticket.
      *
      * @param EE_Datetime_Ticket $datetime_ticket
-     * @return EE_Datetime_Ticket
+     * @return EE_Base_Class|EE_Datetime_Ticket
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function set_datetime_ticket($datetime_ticket)
     {
         return $this->_add_relation_to($datetime_ticket, 'Datetime_Ticket');
     }
 
+
     /**
      * Gets deleted
      *
      * @return bool
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function deleted()
     {
         return $this->get('REG_deleted');
     }
 
+
     /**
      * Sets deleted
      *
      * @param boolean $deleted
-     * @return bool
+     * @return void
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function set_deleted($deleted)
     {
@@ -1391,8 +1637,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Get the status object of this object
      *
-     * @return EE_Status
+     * @return EE_Base_Class|EE_Status
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function status_obj()
     {
@@ -1406,6 +1656,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function count_checkins()
     {
@@ -1419,6 +1673,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function count_checkins_not_checkedout()
     {
@@ -1434,23 +1692,26 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *                                          consider registration status as well as datetime access.
      * @return bool
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function can_checkin($DTT_OR_ID, $check_approved = true)
     {
         $DTT_ID = EEM_Datetime::instance()->ensure_is_ID($DTT_OR_ID);
-
         // first check registration status
-        if (($check_approved && ! $this->is_approved()) || ! $DTT_ID) {
+        if (! $DTT_ID || ($check_approved && ! $this->is_approved())) {
             return false;
         }
         // is there a datetime ticket that matches this dtt_ID?
         if (
             ! (EEM_Datetime_Ticket::instance()->exists(
                 array(
-                array(
-                    'TKT_ID' => $this->get('TKT_ID'),
-                    'DTT_ID' => $DTT_ID,
-                ),
+                    array(
+                        'TKT_ID' => $this->get('TKT_ID'),
+                        'DTT_ID' => $DTT_ID,
+                    ),
                 )
             ))
         ) {
@@ -1471,6 +1732,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param int | EE_Datetime $DTT_OR_ID The datetime the registration is being checked against
      * @return bool true means can checkin.  false means cannot checkin.
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function verify_can_checkin_against_TKT_uses($DTT_OR_ID)
     {
@@ -1537,6 +1802,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *                      can be checked in or not.  Otherwise this forces change in checkin status.
      * @return bool|int     the chk_in status toggled to OR false if nothing got changed.
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function toggle_checkin_status($DTT_ID = null, $verify = false)
     {
@@ -1566,11 +1835,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             EE_Checkin::status_checked_out   => EE_Checkin::status_checked_in,
         );
         // start by getting the current status so we know what status we'll be changing to.
-        $cur_status = $this->check_in_status_for_datetime($DTT_ID, null);
+        $cur_status = $this->check_in_status_for_datetime($DTT_ID);
         $status_to = $status_paths[ $cur_status ];
         // database only records true for checked IN or false for checked OUT
         // no record ( null ) means checked in NEVER, but we obviously don't save that
-        $new_status = $status_to === EE_Checkin::status_checked_in ? true : false;
+        $new_status = $status_to === EE_Checkin::status_checked_in;
         // add relation - note Check-ins are always creating new rows
         // because we are keeping track of Check-ins over time.
         // Eventually we'll probably want to show a list table
@@ -1616,6 +1885,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @return EE_Datetime|null
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_latest_related_datetime()
     {
@@ -1634,7 +1907,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Returns the earliest datetime related to this registration (via the ticket attached to the registration).
      * "Earliest" is defined by the `DTT_EVT_start` column.
      *
+     * @return EE_Base_Class|EE_Soft_Delete_Base_Class|NULL
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_earliest_related_datetime()
     {
@@ -1658,9 +1936,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *                            (if empty we'll get the primary datetime for
      *                            this registration (via event) and use it's ID);
      * @param EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
-     *
      * @return int                Integer representing Check-in status.
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function check_in_status_for_datetime($DTT_ID = 0, $checkin = null)
     {
@@ -1695,6 +1976,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *                     message can be customized with the attendee name.
      * @return string internationalized message
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_checkin_msg($DTT_ID, $error = false)
     {
@@ -1702,14 +1987,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         $attendee = $this->get_first_related('Attendee');
         if ($attendee instanceof EE_Attendee) {
             if ($error) {
-                return sprintf(esc_html__("%s's check-in status was not changed.", "event_espresso"), $attendee->full_name());
+                return sprintf(
+                    esc_html__("%s's check-in status was not changed.", "event_espresso"),
+                    $attendee->full_name()
+                );
             }
             $cur_status = $this->check_in_status_for_datetime($DTT_ID);
             // what is the status message going to be?
             switch ($cur_status) {
                 case EE_Checkin::status_checked_never:
                     return sprintf(
-                        esc_html__("%s has been removed from Check-in records", "event_espresso"),
+                        esc_html__('%s has been removed from Check-in records', 'event_espresso'),
                         $attendee->full_name()
                     );
                     break;
@@ -1721,7 +2009,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                     break;
             }
         }
-        return esc_html__("The check-in status could not be determined.", "event_espresso");
+        return esc_html__('The check-in status could not be determined.', 'event_espresso');
     }
 
 
@@ -1731,6 +2019,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @return EE_Transaction
      * @throws EE_Error
      * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function transaction()
     {
@@ -1743,7 +2035,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     *        get Registration Code
+     * get Registration Code
+     *
+     * @return mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function reg_code()
     {
@@ -1752,7 +2051,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     *        get Transaction ID
+     * @return mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function transaction_ID()
     {
@@ -1763,6 +2067,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * @return int
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function ticket_ID()
     {
@@ -1771,12 +2079,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     *        Set Registration Code
+     * Set Registration Code
      *
-     * @access    public
      * @param    string  $REG_code Registration Code
      * @param    boolean $use_default
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function set_reg_code($REG_code, $use_default = false)
     {
@@ -1809,6 +2120,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @since 4.5.0
      * @return EE_Registration[] or empty array if this isn't a group registration.
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_all_other_registrations_in_group()
     {
@@ -1826,11 +2141,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return $registrations;
     }
 
+
     /**
      * Return the link to the admin details for the object.
      *
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_admin_details_link()
     {
@@ -1845,32 +2165,48 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         );
     }
 
+
     /**
      * Returns the link to the editor for the object.  Sometimes this is the same as the details.
      *
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_admin_edit_link()
     {
         return $this->get_admin_details_link();
     }
 
+
     /**
      * Returns the link to a settings page for the object.
      *
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_admin_settings_link()
     {
         return $this->get_admin_details_link();
     }
 
+
     /**
      * Returns the link to the "overview" for the object (typically the "list table" view).
      *
      * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_admin_overview_link()
     {
@@ -1886,9 +2222,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * @param array $query_params
-     *
-     * @return \EE_Registration[]
+     * @return EE_Base_Class[]|EE_Registration[]
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function payments($query_params = array())
     {
@@ -1898,9 +2237,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * @param array $query_params
-     *
-     * @return \EE_Registration_Payment[]
+     * @return EE_Base_Class[]|EE_Registration_Payment[]
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function registration_payments($query_params = array())
     {
@@ -1912,7 +2254,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * This grabs the payment method corresponding to the last payment made for the amount owing on the registration.
      * Note: if there are no payments on the registration there will be no payment method returned.
      *
-     * @return EE_Payment_Method|null
+     * @return EE_Payment|EE_Payment_Method|null
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function payment_method()
     {
@@ -1922,8 +2268,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * @return \EE_Line_Item
-     * @throws EntityNotFoundException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function ticket_line_item()
     {
@@ -1955,9 +2305,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Soft Deletes this model object.
      *
+     * @param string $source function name that called this method
      * @return boolean | int
-     * @throws RuntimeException
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function delete()
     {
@@ -1971,8 +2329,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Restores whatever the previous status was on a registration before it was trashed (if possible)
      *
+     * @param string $source function name that called this method
+     * @return bool|int
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function restore()
     {
@@ -1995,8 +2362,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param  boolean $trigger_set_status_logic EE_Registration::set_status() can trigger additional logic
      *                                           depending on whether the reg status changes to or from "Approved"
      * @return boolean whether the Registration status was updated
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     public function updateStatusBasedOnTotalPaid($trigger_set_status_logic = true)
     {
@@ -2035,7 +2409,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * @deprecated
      * @since     4.7.0
-     * @access    public
      */
     public function price_paid()
     {
@@ -2054,10 +2427,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * @deprecated
      * @since     4.7.0
-     * @access    public
      * @param    float $REG_final_price
      * @throws EE_Error
+     * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws DomainException
      */
     public function set_price_paid($REG_final_price = 0.00)
     {
@@ -2078,6 +2456,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @since 4.7.0
      * @return string
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function pretty_price_paid()
     {
@@ -2100,6 +2482,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @return EE_Datetime
      * @throws EE_Error
      * @throws EntityNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_related_primary_datetime()
     {

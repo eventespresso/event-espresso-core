@@ -4006,9 +4006,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function trashRestoreDeleteEntities(
         EEM_Base $entity_model,
-        string $entity_PK_name,
-        string $action = EE_Admin_List_Table::ACTION_DELETE,
-        string $delete_column = '',
+        $entity_PK_name,
+        $action = EE_Admin_List_Table::ACTION_DELETE,
+        $delete_column = '',
         callable $callback = null
     ) {
         $entity_PK      = $entity_model->get_primary_key_field();
@@ -4046,7 +4046,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws EE_Error
      * @since   4.10.30.p
      */
-    private function resolveEntityFieldDataType(EE_Primary_Key_Field_Base $entity_PK): string
+    private function resolveEntityFieldDataType(EE_Primary_Key_Field_Base $entity_PK)
     {
         $entity_PK_type = $entity_PK->getSchemaType();
         switch ($entity_PK_type) {
@@ -4083,8 +4083,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function trashRestoreDeleteEntity(
         EEM_Base $entity_model,
         $entity_ID,
-        string $action,
-        string $delete_column,
+        $action,
+        $delete_column,
         callable $callback = null
     ) {
         $entity_ID = absint($entity_ID);
@@ -4093,17 +4093,28 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         }
         $result = 0;
         try {
+            $entity = $entity_model->get_one_by_ID($entity_ID);
+            if (! $entity instanceof EE_Base_Class) {
+                throw new DomainException(
+                    sprintf(
+                        esc_html__(
+                            'Missing or invalid %1$s entity with ID of "%2$s" returned from db.',
+                            'event_espresso'
+                        ),
+                        str_replace('EEM_', '', $entity_model->get_this_model_name()),
+                        $entity_ID
+                    )
+                );
+            }
             switch ($action) {
                 case EE_Admin_List_Table::ACTION_DELETE:
-                    $result = (bool) $entity_model->delete_permanently_by_ID($entity_ID);
+                    $result = (bool) $entity->delete_permanently();
                     break;
                 case EE_Admin_List_Table::ACTION_RESTORE:
-                    $this->validateDeleteColumn($entity_model, $delete_column);
-                    $result = $entity_model->update_by_ID([$delete_column => 0], $entity_ID);
+                    $result = $entity->delete_or_restore(false);
                     break;
                 case EE_Admin_List_Table::ACTION_TRASH:
-                    $this->validateDeleteColumn($entity_model, $delete_column);
-                    $result = $entity_model->update_by_ID([$delete_column => 1], $entity_ID);
+                    $result = $entity->delete_or_restore();
                     break;
             }
         } catch (Exception $exception) {
@@ -4121,7 +4132,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string   $delete_column
      * @since 4.10.30.p
      */
-    private function validateDeleteColumn(EEM_Base $entity_model, string $delete_column)
+    private function validateDeleteColumn(EEM_Base $entity_model, $delete_column)
     {
         if (empty($delete_column)) {
             throw new DomainException(
@@ -4155,7 +4166,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string         $action
      * @since 4.10.30.p
      */
-    private function trashRestoreDeleteError(string $action, EEM_Base $entity_model, ?Exception $exception = null)
+    private function trashRestoreDeleteError($action, EEM_Base $entity_model, Exception $exception = null)
     {
         if ($exception instanceof Exception) {
             throw new RuntimeException(

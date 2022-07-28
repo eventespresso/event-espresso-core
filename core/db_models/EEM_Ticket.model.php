@@ -3,9 +3,13 @@
 /**
  * Ticket Model
  *
- * @package            Event Espresso
- * @subpackage         includes/models/EEM_Ticket.model.php
- * @author             Darren Ethier
+ * @package     Event Espresso
+ * @subpackage  core/db_models
+ * @author      Darren Ethier
+ * @method EE_Ticket    create_default_object()
+ * @method EE_Ticket[]  get_all($query_params = [])
+ * @method EE_Ticket    get_one($query_params = [])
+ * @method EE_Ticket    get_one_by_ID($query_params = [])
  */
 class EEM_Ticket extends EEM_Soft_Delete_Base
 {
@@ -31,13 +35,13 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      */
     protected function __construct($timezone)
     {
-        $this->singular_item = esc_html__('Ticket', 'event_espresso');
-        $this->plural_item = esc_html__('Tickets', 'event_espresso');
-        $this->_tables = array(
+        $this->singular_item    = esc_html__('Ticket', 'event_espresso');
+        $this->plural_item      = esc_html__('Tickets', 'event_espresso');
+        $this->_tables          = [
             'Ticket' => new EE_Primary_Table('esp_ticket', 'TKT_ID'),
-        );
-        $this->_fields = array(
-            'Ticket' => array(
+        ];
+        $this->_fields          = [
+            'Ticket' => [
                 'TKT_ID'          => new EE_Primary_Key_Int_Field(
                     'TKT_ID',
                     esc_html__('Ticket ID', 'event_espresso')
@@ -182,35 +186,40 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                     true,
                     0
                 ),
-            ),
-        );
-        $this->_model_relations = array(
+            ],
+        ];
+        $this->_model_relations = [
             'Datetime'        => new EE_HABTM_Relation('Datetime_Ticket'),
             'Datetime_Ticket' => new EE_Has_Many_Relation(),
             'Price'           => new EE_HABTM_Relation('Ticket_Price'),
             'Ticket_Template' => new EE_Belongs_To_Relation(),
             'Registration'    => new EE_Has_Many_Relation(),
             'WP_User'         => new EE_Belongs_To_Relation(),
-        );
+        ];
         // this model is generally available for reading
-        $path_to_event = 'Datetime.Event';
+        $path_to_event                                            = 'Datetime.Event';
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public(
             'TKT_is_default',
             $path_to_event
         );
+
         // account for default tickets in the caps
-        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Default_Protected(
-            'TKT_is_default',
-            $path_to_event
-        );
-        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Default_Protected(
-            'TKT_is_default',
-            $path_to_event
-        );
-        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Default_Protected(
-            'TKT_is_default',
-            $path_to_event
-        );
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] =
+            new EE_Restriction_Generator_Default_Protected(
+                'TKT_is_default',
+                $path_to_event
+            );
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ]       =
+            new EE_Restriction_Generator_Default_Protected(
+                'TKT_is_default',
+                $path_to_event
+            );
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     =
+            new EE_Restriction_Generator_Default_Protected(
+                'TKT_is_default',
+                $path_to_event
+            );
+
         $this->model_chain_to_password = $path_to_event;
         parent::__construct($timezone);
     }
@@ -221,11 +230,11 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      *
      * @return EE_Ticket[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_default_tickets()
     {
-        /** @type EE_Ticket[] $tickets */
-        $tickets = $this->get_all(array(array('TKT_is_default' => 1), 'order_by' => array('TKT_ID' => 'ASC')));
+        $tickets = $this->get_all([['TKT_is_default' => 1], 'order_by' => ['TKT_ID' => 'ASC']]);
         // we need to set the start date and end date to today's date and the start of the default dtt
         return $this->_set_default_dates($tickets);
     }
@@ -237,6 +246,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      * @param EE_Ticket[] $tickets
      * @return EE_Ticket[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _set_default_dates($tickets)
     {
@@ -269,8 +279,10 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      * @param int   $DTT_ID
      * @param array $query_params
      * @return int
+     * @throws EE_Error
+     * @throws EE_Error
      */
-    public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = array())
+    public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = [])
     {
         return EEM_Datetime::instance()->sum_tickets_currently_available_at_datetime($DTT_ID, $query_params);
     }
@@ -282,11 +294,11 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      * @param EE_Ticket[] $tickets
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function update_tickets_sold($tickets)
     {
         foreach ($tickets as $ticket) {
-            /* @var  $ticket EE_Ticket */
             $ticket->update_tickets_sold();
         }
     }
@@ -300,13 +312,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      */
     public function get_tickets_with_reservations()
     {
-        return $this->get_all(
-            array(
-                array(
-                    'TKT_reserved' => array('>', 0),
-                ),
-            )
-        );
+        return $this->get_all([['TKT_reserved' => ['>', 0]]]);
     }
 
 
@@ -319,12 +325,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      */
     public function get_tickets_with_IDs(array $ticket_IDs)
     {
-        return $this->get_all(
-            array(
-                array(
-                    'TKT_ID' => array('IN', $ticket_IDs),
-                ),
-            )
-        );
+        return $this->get_all([['TKT_ID' => ['IN', $ticket_IDs]]]);
     }
 }

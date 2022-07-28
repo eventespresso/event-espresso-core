@@ -881,6 +881,7 @@ final class EE_System implements ResettableInterface
         $this->loader->getShared('EE_Network_Config');
         // setup autoloaders
         // enable logging?
+        $this->loader->getShared('EventEspresso\core\services\orm\TrashLogger');
         if ($config->admin->use_remote_logging) {
             $this->loader->getShared('EE_Log');
         }

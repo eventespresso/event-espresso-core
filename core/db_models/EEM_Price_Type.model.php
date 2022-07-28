@@ -115,29 +115,20 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- *
- * @param type $query_params
- * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
-     * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
-     * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
- * @return boolean
- */
+    /**
+     *
+     * @param array   $query_params
+     * @param bool    $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
+     *                                that blocks it (ie, there' sno other data that depends on this data);
+     *                                if false, deletes regardless of other objects which may depend on it.
+     *                                Its generally advisable to always leave this as TRUE,
+     *                                otherwise you could easily corrupt your DB
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function delete_permanently($query_params = array(), $allow_blocking = true)
     {
-
         $would_be_deleted_price_types = $this->get_all_deleted_and_undeleted($query_params);
         $would_be_deleted_price_type_ids = array_keys($would_be_deleted_price_types);
 
@@ -155,8 +146,6 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
-
-
 
         return parent::delete_permanently($query_params);
     }

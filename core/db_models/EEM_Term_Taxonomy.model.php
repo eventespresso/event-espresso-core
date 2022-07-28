@@ -3,18 +3,23 @@
 /**
  * EEM_Term_Taxonomy model
  *
- * @package               Event Espresso
- * @subpackage            includes/models/
- * @author                Michael Nelson
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  core/db_models
+ * @author      Michael Nelson
+ * @method EE_Term_Taxonomy[] get_all($query_params)
  */
 class EEM_Term_Taxonomy extends EEM_Base
 {
-    // private instance of the Attendee object
+    /**
+     * @var EEM_Term_Taxonomy
+     */
     protected static $_instance = null;
 
 
-
+    /**
+     * @param $timezone
+     * @throws EE_Error
+     */
     protected function __construct($timezone = null)
     {
         $this->singular_item = esc_html__('Term Taxonomy', 'event_espresso');
@@ -112,7 +117,6 @@ class EEM_Term_Taxonomy extends EEM_Base
     }
 
 
-
     /**
      * Makes sure that during REST API queries, we only return term-taxonomies
      * for term taxonomies which should be shown in the rest api
@@ -121,6 +125,7 @@ class EEM_Term_Taxonomy extends EEM_Base
      * @param array    $querystring_query_params
      * @param EEM_Base $model
      * @return array
+     * @throws EE_Error
      */
     public static function rest_api_query_params($model_query_params, $querystring_query_params, $model)
     {

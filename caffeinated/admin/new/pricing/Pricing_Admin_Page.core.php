@@ -53,109 +53,109 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $PRT_ID             = $this->request->getRequestParam('PRT_ID', 0, DataType::INTEGER);
         $this->_page_routes = [
             'default'                     => [
-                'func'       => '_price_overview_list_table',
+                'func'       => [$this, '_price_overview_list_table'],
                 'capability' => 'ee_read_default_prices',
             ],
             'add_new_price'               => [
-                'func'       => '_edit_price_details',
+                'func'       => [$this, '_edit_price_details'],
                 'capability' => 'ee_edit_default_prices',
             ],
             'edit_price'                  => [
-                'func'       => '_edit_price_details',
+                'func'       => [$this, '_edit_price_details'],
                 'capability' => 'ee_edit_default_price',
                 'obj_id'     => $PRC_ID,
             ],
             'insert_price'                => [
-                'func'       => '_insert_or_update_price',
+                'func'       => [$this, '_insert_or_update_price'],
                 'args'       => ['insert' => true],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_prices',
             ],
             'update_price'                => [
-                'func'       => '_insert_or_update_price',
+                'func'       => [$this, '_insert_or_update_price'],
                 'args'       => ['insert' => false],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_price',
                 'obj_id'     => $PRC_ID,
             ],
             'trash_price'                 => [
-                'func'       => '_trash_or_restore_price',
+                'func'       => [$this, '_trash_or_restore_price'],
                 'args'       => ['trash' => true],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price',
                 'obj_id'     => $PRC_ID,
             ],
             'restore_price'               => [
-                'func'       => '_trash_or_restore_price',
+                'func'       => [$this, '_trash_or_restore_price'],
                 'args'       => ['trash' => false],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price',
                 'obj_id'     => $PRC_ID,
             ],
             'delete_price'                => [
-                'func'       => '_delete_price',
+                'func'       => [$this, '_delete_price'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price',
                 'obj_id'     => $PRC_ID,
             ],
             'espresso_update_price_order' => [
-                'func'       => 'update_price_order',
+                'func'       => [$this, 'update_price_order'],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_prices',
             ],
             // price types
             'price_types'                 => [
-                'func'       => '_price_types_overview_list_table',
+                'func'       => [$this, '_price_types_overview_list_table'],
                 'capability' => 'ee_read_default_price_types',
             ],
             'add_new_price_type'          => [
-                'func'       => '_edit_price_type_details',
+                'func'       => [$this, '_edit_price_type_details'],
                 'capability' => 'ee_edit_default_price_types',
             ],
             'edit_price_type'             => [
-                'func'       => '_edit_price_type_details',
+                'func'       => [$this, '_edit_price_type_details'],
                 'capability' => 'ee_edit_default_price_type',
                 'obj_id'     => $PRT_ID,
             ],
             'insert_price_type'           => [
-                'func'       => '_insert_or_update_price_type',
+                'func'       => [$this, '_insert_or_update_price_type'],
                 'args'       => ['new_price_type' => true],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_price_types',
             ],
             'update_price_type'           => [
-                'func'       => '_insert_or_update_price_type',
+                'func'       => [$this, '_insert_or_update_price_type'],
                 'args'       => ['new_price_type' => false],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_price_type',
                 'obj_id'     => $PRT_ID,
             ],
             'trash_price_type'            => [
-                'func'       => '_trash_or_restore_price_type',
+                'func'       => [$this, '_trash_or_restore_price_type'],
                 'args'       => ['trash' => true],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price_type',
                 'obj_id'     => $PRT_ID,
             ],
             'restore_price_type'          => [
-                'func'       => '_trash_or_restore_price_type',
+                'func'       => [$this, '_trash_or_restore_price_type'],
                 'args'       => ['trash' => false],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price_type',
                 'obj_id'     => $PRT_ID,
             ],
             'delete_price_type'           => [
-                'func'       => '_delete_price_type',
+                'func'       => [$this, '_delete_price_type'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_price_type',
                 'obj_id'     => $PRT_ID,
             ],
             'tax_settings'                => [
-                'func'       => '_tax_settings',
+                'func'       => [$this, '_tax_settings'],
                 'capability' => 'manage_options',
             ],
             'update_tax_settings'         => [
-                'func'       => '_update_tax_settings',
+                'func'       => [$this, '_update_tax_settings'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
@@ -730,9 +730,8 @@ class Pricing_Admin_Page extends EE_Admin_Page
      * @param bool $trash - whether to move item to trash (TRUE) or restore it (FALSE)
      * @return void
      * @throws EE_Error
-     * @throws ReflectionException
      */
-    protected function _trash_or_restore_price(bool $trash = true)
+    protected function _trash_or_restore_price($trash = true)
     {
         $entity_model = EEM_Price::instance();
         $action       = $trash ? EE_Admin_List_Table::ACTION_TRASH : EE_Admin_List_Table::ACTION_RESTORE;

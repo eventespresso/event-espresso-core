@@ -170,9 +170,10 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
         throw new EE_Error(
             sprintf(
                 esc_html__(
-                    "EEM_CPT_Base should nto call deleted_field_name! It should instead use post_status_field_name",
+                    '%1$s should not call deleted_field_name()! It should instead use post_status_field_name',
                     "event_espresso"
-                )
+                ),
+                get_called_class()
             )
         );
     }
@@ -196,8 +197,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
                         'We are trying to find the post status flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?',
                         'event_espresso'
                     ),
-                    get_class($this),
-                    get_class($this)
+                    get_called_class(),
+                    get_called_class()
                 )
             );
         }
@@ -235,19 +236,17 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      * Performs deletes or restores on items. Both soft-deleted and non-soft-deleted items considered.
      *
      * @param boolean $delete       true to indicate deletion, false to indicate restoration
-     * @param array   $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
      * @return boolean success
+     * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function delete_or_restore($delete = true, $query_params = array())
     {
         $post_status_field_name = $this->post_status_field_name();
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         $new_status = $delete ? self::post_status_trashed : 'draft';
-        if ($this->update(array($post_status_field_name => $new_status), $query_params)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (bool) $this->update([$post_status_field_name => $new_status], $query_params);
     }
 
 
