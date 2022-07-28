@@ -711,13 +711,14 @@ abstract class EE_Admin_Hooks extends EE_Base
     {
         $current_screen = get_current_screen();
         $screen_id      = is_object($current_screen) ? $current_screen->id : null;
-        $func           = isset($args['func']) ? $args['func'] : 'some_invalid_callback';
+        $callback       = $args['func'] ?? 'some_invalid_callback';
+        $callback_function = is_array($callback) ? end($callback) : $callback;
         // set defaults
         $defaults      = [
             'callback_args' => [],
             'context'       => 'advanced',
-            'func'          => $func,
-            'id'            => $this->caller . '_' . $func . '_metabox',
+            'func'          => $callback,
+            'id'            => $this->caller . '_' . $callback_function . '_metabox',
             'label'         => $this->caller,
             'page'          => isset($args['page']) ? $args['page'] : $screen_id,
             'priority'      => 'default',
@@ -725,13 +726,12 @@ abstract class EE_Admin_Hooks extends EE_Base
         $args          = wp_parse_args($args, $defaults);
         $callback_args = $args['callback_args'];
         $context       = $args['context'];
-        $func          = $args['func'];
         $id            = $args['id'];
         $label         = $args['label'];
         $page          = $args['page'];
         $priority      = $args['priority'];
         // make sure method exists
-        if (! method_exists($this, $func)) {
+        if (! method_exists($this, $callback_function)) {
             $msg[] =
                 esc_html__('There is no corresponding method to display the metabox content', 'event_espresso')
                 . '<br />';
@@ -740,13 +740,13 @@ abstract class EE_Admin_Hooks extends EE_Base
                     'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
                     'event_espresso'
                 ),
-                $func,
+                $callback_function,
                 $this->caller
             );
             throw new EE_Error(implode('||', $msg));
         }
         // everything checks out so let's add the metabox
-        add_meta_box($id, $label, [$this, $func], $page, $context, $priority, $callback_args);
+        add_meta_box($id, $label, [$this, $callback_function], $page, $context, $priority, $callback_args);
         add_filter(
             "postbox_classes_{$page}_{$id}",
             function ($classes) {
