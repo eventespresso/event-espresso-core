@@ -990,7 +990,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             [],
             EVENT_ESPRESSO_VERSION
         );
-        wp_enqueue_style('ee-text-links');
+        wp_enqueue_style('ee-text-links-css');
         wp_enqueue_style('ee-message-settings');
         wp_enqueue_script('ee-messages-settings');
     }
