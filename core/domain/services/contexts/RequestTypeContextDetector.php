@@ -102,7 +102,7 @@ class RequestTypeContextDetector implements InterminableInterface
             return $this->factory->create(RequestTypeContext::GQL);
         }
         // Detect AJAX
-        if ($this->getGlobalRouteCondition('DOING_AJAX')) {
+        if ($this->getGlobalRouteCondition('DOING_AJAX', false)) {
             return $this->isAjaxRequest();
         }
         // Detect WP_Cron
@@ -110,11 +110,11 @@ class RequestTypeContextDetector implements InterminableInterface
             return $this->factory->create(RequestTypeContext::CRON);
         }
         // Detect command line requests
-        if ($this->getGlobalRouteCondition('WP_CLI')) {
+        if ($this->getGlobalRouteCondition('WP_CLI', false)) {
             return $this->factory->create(RequestTypeContext::CLI);
         }
         // detect WordPress admin (ie: "Dashboard")
-        if ($this->getGlobalRouteCondition('is_admin')) {
+        if ($this->getGlobalRouteCondition('is_admin', false)) {
             return $this->factory->create(RequestTypeContext::ADMIN);
         }
         // Detect iFrames
