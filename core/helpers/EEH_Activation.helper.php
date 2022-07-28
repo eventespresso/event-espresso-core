@@ -587,7 +587,12 @@ class EEH_Activation implements ResettableInterface
         }
         $capabilities_key = EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix('capabilities');
         $query            = $wpdb->prepare(
-            "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 0,1",
+            "SELECT user_id 
+            FROM $wpdb->usermeta 
+            WHERE meta_key = '$capabilities_key' 
+              AND meta_value LIKE %s 
+            ORDER BY user_id ASC 
+            LIMIT 0,1",
             '%' . $role_to_check . '%'
         );
         $user_id          = $wpdb->get_var($query);
@@ -595,9 +600,8 @@ class EEH_Activation implements ResettableInterface
         if ($user_id && (int) $user_id) {
             self::$_default_creator_id = (int) $user_id;
             return self::$_default_creator_id;
-        } else {
-            return null;
         }
+        return null;
     }
 
 
