@@ -25,20 +25,16 @@ class GraphQLInputField extends GraphQLField
         $type,
         string $key = null,
         string $description = '',
-        callable $formatter = null,
-        callable $resolver = null,
-        array $caps = [],
-        array $args = []
+        array $caps = []
     ) {
         parent::__construct(
             $name,
             $type,
             $key,
             $description,
-            $formatter,
-            $resolver,
-            $caps,
-            $args
+            null,
+            null,
+            $caps
         );
 
         $this->setUseForOutput(false);
