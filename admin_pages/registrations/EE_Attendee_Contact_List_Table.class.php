@@ -179,7 +179,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
             'ee_edit_contacts',
             'espresso_registrations_edit_attendee'
         )
-            ? '<a href="' . $edit_lnk_url . '" title="'
+            ? '<a href="' . $edit_lnk_url . '" aria-label="'
               . esc_attr__('Edit Contact', 'event_espresso') . '">'
               . $attendee->lname() . '</a>'
             : $attendee->lname();
@@ -215,7 +215,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                 ),
                 REG_ADMIN_URL
             );
-            $actions['edit'] = '<a href="' . $edit_lnk_url . '" title="'
+            $actions['edit'] = '<a href="' . $edit_lnk_url . '" aria-label="'
                                . esc_attr__('Edit Contact', 'event_espresso') . '">'
                                . esc_html__('Edit', 'event_espresso') . '</a>';
         }
@@ -235,7 +235,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                     ),
                     REG_ADMIN_URL
                 );
-                $actions['trash'] = '<a href="' . $trash_lnk_url . '" title="'
+                $actions['trash'] = '<a href="' . $trash_lnk_url . '" aria-label="'
                                     . esc_attr__('Move Contact to Trash', 'event_espresso')
                                     . '">' . esc_html__('Trash', 'event_espresso') . '</a>';
             }
@@ -254,7 +254,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                     ),
                     REG_ADMIN_URL
                 );
-                $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
+                $actions['restore'] = '<a href="' . $restore_lnk_url . '" aria-label="'
                                       . esc_attr__('Restore Contact', 'event_espresso') . '">'
                                       . esc_html__('Restore', 'event_espresso') . '</a>';
             }
@@ -271,7 +271,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
             'ee_edit_contacts',
             'espresso_registrations_edit_attendee'
         )
-            ? '<a href="' . $edit_lnk_url . '" title="'
+            ? '<a href="' . $edit_lnk_url . '" aria-label="'
               . esc_attr__('Edit Contact', 'event_espresso') . '">' . $attendee->fname() . '</a>'
             : $attendee->fname();
 

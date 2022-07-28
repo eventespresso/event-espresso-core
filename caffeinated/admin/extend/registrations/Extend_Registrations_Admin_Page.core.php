@@ -863,7 +863,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             : '';
         $attendee_link = ! empty($attendee_link)
             ? '<a href="' . $attendee->get_admin_details_link() . '"'
-              . ' title="' . esc_html__('Click for attendee details', 'event_espresso') . '">'
+              . ' aria-label="' . esc_html__('Click for attendee details', 'event_espresso') . '">'
               . '<span id="checkin-attendee-name">'
               . $attendee_name
               . '</span></a>'
@@ -873,7 +873,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             : '';
         $event_link = ! empty($event_link)
             ? '<a href="' . $event_link . '"'
-              . ' title="' . esc_html__('Click here to edit event.', 'event_espresso') . '">'
+              . ' aria-label="' . esc_html__('Click here to edit event.', 'event_espresso') . '">'
               . '<span id="checkin-event-name">'
               . $registration->event_name()
               . '</span>'

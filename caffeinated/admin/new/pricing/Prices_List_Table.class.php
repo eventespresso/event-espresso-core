@@ -136,7 +136,7 @@ class Prices_List_Table extends EE_Admin_List_Table
                 'action' => 'edit_price',
                 'id'     => $item->ID(),
             ), PRICING_ADMIN_URL);
-            $actions['edit'] = '<a href="' . $edit_lnk_url . '" title="'
+            $actions['edit'] = '<a href="' . $edit_lnk_url . '" aria-label="'
                                . esc_attr__('Edit Price', 'event_espresso') . '">'
                                . esc_html__('Edit', 'event_espresso') . '</a>';
         }
@@ -146,7 +146,7 @@ class Prices_List_Table extends EE_Admin_List_Table
             'edit_price',
             $item->ID()
         )
-            ? '<a href="' . $edit_lnk_url . '" title="'
+            ? '<a href="' . $edit_lnk_url . '" aria-label="'
               . esc_attr__('Edit Price', 'event_espresso') . '">'
               . stripslashes($item->name()) . '</a>'
             : $item->name();
@@ -166,7 +166,7 @@ class Prices_List_Table extends EE_Admin_List_Table
                         'id'       => $item->ID(),
                         'noheader' => true,
                     ), PRICING_ADMIN_URL);
-                    $actions['trash'] = '<a href="' . $trash_lnk_url . '" title="'
+                    $actions['trash'] = '<a href="' . $trash_lnk_url . '" aria-label="'
                                         . esc_attr__('Move Price to Trash', 'event_espresso') . '">'
                                         . esc_html__('Move to Trash', 'event_espresso') . '</a>';
                 }
@@ -184,7 +184,7 @@ class Prices_List_Table extends EE_Admin_List_Table
                         'id'       => $item->ID(),
                         'noheader' => true,
                     ), PRICING_ADMIN_URL);
-                    $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
+                    $actions['restore'] = '<a href="' . $restore_lnk_url . '" aria-label="'
                                           . esc_attr__('Restore Price', 'event_espresso') . '">'
                                           . esc_html__('Restore', 'event_espresso') . '</a>';
                 }
@@ -202,7 +202,7 @@ class Prices_List_Table extends EE_Admin_List_Table
                         'id'       => $item->ID(),
                         'noheader' => true,
                     ), PRICING_ADMIN_URL);
-                    $actions['delete'] = '<a href="' . $delete_lnk_url . '" title="'
+                    $actions['delete'] = '<a href="' . $delete_lnk_url . '" aria-label="'
                                          . esc_attr__('Delete Price Permanently', 'event_espresso') . '">'
                                          . esc_html__('Delete Permanently', 'event_espresso') . '</a>';
                 }

@@ -649,7 +649,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ['action' => 'edit', 'post' => $event->ID()],
                     EVENTS_ADMIN_URL
                 )
-                . '" title="'
+                . '" aria-label="'
                 . esc_attr__('Click to Edit event', 'event_espresso')
                 . '">' . $event->name() . '</a>',
                 '</h3>'

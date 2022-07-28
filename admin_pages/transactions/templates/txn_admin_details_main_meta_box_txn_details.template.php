@@ -153,7 +153,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                         <li>
                                             <?php if ($can_edit_payments) : ?>
                                                 <a class="txn-admin-payment-action-edit-lnk"
-                                                   title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
+                                                   aria-label="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
                                                    data-payment-id="<?php echo absint($PAY_ID); ?>"
                                                 >
                                                     <div class="dashicons dashicons-edit" style="margin: 0;"></div>
@@ -163,7 +163,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                         <li>
                                             <?php if ($can_delete_payments) : ?>
                                                 <a class="txn-admin-payment-action-delete-lnk"
-                                                   title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
+                                                   aria-label="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
                                                    data-payment-id="<?php echo absint($PAY_ID); ?>"
                                                 >
                                                     <div class="dashicons dashicons-trash" style="margin: 0;"></div>
@@ -307,7 +307,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             <ul class="txn-overview-actions-ul">
                                 <li>
                                     <a class="txn-admin-payment-action-edit-lnk"
-                                       title="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
+                                       aria-label="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
                                        data-payment-id="PAY_ID"
                                     >
                                         <div class="dashicons dashicons-edit" style="margin: 0;"></div>
@@ -315,7 +315,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                 </li>
                                 <li>
                                     <a class="txn-admin-payment-action-delete-lnk"
-                                       title="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
+                                       aria-label="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
                                        data-payment-id="PAY_ID"
                                     >
                                         <div class="dashicons dashicons-trash" style="margin: 0;"></div>

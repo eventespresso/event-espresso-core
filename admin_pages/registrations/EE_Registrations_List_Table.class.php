@@ -478,7 +478,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
               . $this->_transaction_details['status']
               . '" href="'
               . $view_lnk_url
-              . '" title="'
+              . '" aria-label="'
               . esc_attr($this->_transaction_details['title_attr'])
               . '">'
               . $item->get_i18n_datetime('REG_date')
@@ -521,14 +521,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                       . $this->_event_details['status']
                       . '" href="'
                       . $edit_event_url
-                      . '" title="'
+                      . '" aria-label="'
                       . esc_attr($this->_event_details['title_attr'])
                       . '">'
                       . $event_name
                       . '</a>'
                     : $event_name;
             $edit_event_url          = EE_Admin_Page::add_query_args_and_nonce(['event_id' => $EVT_ID], REG_ADMIN_URL);
-            $actions['event_filter'] = '<a href="' . $edit_event_url . '" title="';
+            $actions['event_filter'] = '<a href="' . $edit_event_url . '" aria-label="';
             $actions['event_filter'] .= sprintf(
                 esc_attr__('Filter this list to only show registrations for %s', 'event_espresso'),
                 $event_name
@@ -623,7 +623,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         )
             ? '<a href="'
               . $edit_lnk_url
-              . '" title="'
+              . '" aria-label="'
               . esc_attr__('View Registration Details', 'event_espresso')
               . '">'
               . $attendee_name
@@ -666,7 +666,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             );
             $actions['trash'] = '<a href="'
                                 . $trash_lnk_url
-                                . '" title="'
+                                . '" aria-label="'
                                 . esc_attr__('Trash Registration', 'event_espresso')
                                 . '">' . esc_html__('Trash', 'event_espresso') . '</a>';
         } elseif ($this->_view === 'trash') {
@@ -683,11 +683,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                     $action,
                     REG_ADMIN_URL
                 );
-                $actions['restore'] = '<a href="'
-                                      . $restore_lnk_url
-                                      . '" title="'
-                                      . esc_attr__('Restore Registration', 'event_espresso') . '">'
-                                      . esc_html__('Restore', 'event_espresso') . '</a>';
+                $actions['restore'] = '
+                    <a href="' . $restore_lnk_url . '" 
+                       aria-label="' . esc_attr__('Restore Registration', 'event_espresso') . '"
+                   >
+                       ' . esc_html__('Restore', 'event_espresso') . '
+                   </a>';
             }
             if (
                 EE_Registry::instance()->CAP->current_user_can(
@@ -701,13 +702,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                     $action,
                     REG_ADMIN_URL
                 );
-                $actions['delete'] = '<a href="'
-                                     . $delete_lnk_url
-                                     . '" title="'
-                                     . esc_attr__('Delete Registration Permanently', 'event_espresso')
-                                     . '">'
-                                     . esc_html__('Delete', 'event_espresso')
-                                     . '</a>';
+                $actions['delete'] = '
+                    <a href="' . $delete_lnk_url . '" 
+                       aria-label="' . esc_attr__('Delete Registration Permanently', 'event_espresso') . '"
+                    >
+                        ' . esc_html__('Delete', 'event_espresso') . '
+                    </a>';
             }
         }
         return sprintf('%1$s %2$s', $link, $this->row_actions($actions));
@@ -834,15 +834,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_transactions_view_transaction',
                 $item->transaction_ID()
             )
-                ? '<span class="reg-pad-rght"><a class="status-'
-                  . $item->transaction()->status_ID()
-                  . '" href="'
-                  . $view_txn_lnk_url
-                  . '"  title="'
-                  . esc_attr__('View Transaction', 'event_espresso')
-                  . '">'
-                  . $item->transaction()->pretty_total()
-                  . '</a></span>'
+                ? '<span class="reg-pad-rght">
+                    <a class="status-' . $item->transaction()->status_ID() . '" 
+                       href="' . $view_txn_lnk_url . '"  
+                       aria-label="' . esc_attr__('View Transaction', 'event_espresso') . '"
+                    >
+                        ' . $item->transaction()->pretty_total() . '
+                    </a>
+                  </span>'
                 : '<span class="reg-pad-rght">' . $item->transaction()->pretty_total() . '</span>';
         } else {
             return esc_html__("None", "event_espresso");
@@ -881,15 +880,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                     'espresso_transactions_view_transaction',
                     $item->transaction_ID()
                 )
-                    ? '<span class="reg-pad-rght"><a class="status-'
-                      . $transaction->status_ID()
-                      . '" href="'
-                      . $view_txn_lnk_url
-                      . '"  title="'
-                      . esc_attr__('View Transaction', 'event_espresso')
-                      . '">'
-                      . $item->transaction()->pretty_paid()
-                      . '</a><span>'
+                    ? '<span class="reg-pad-rght">
+                        <a class="status-' . $transaction->status_ID() . '" 
+                           href="' . $view_txn_lnk_url . '"  
+                           aria-label="' . esc_attr__('View Transaction', 'event_espresso') . '"
+                        >
+                            ' . $item->transaction()->pretty_paid() . '
+                        </a>
+                       <span>'
                     : '<span class="reg-pad-rght">' . $item->transaction()->pretty_paid() . '</span>';
             }
         }
@@ -931,9 +929,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             );
             $actions['view_lnk'] = '
             <li>
-                <a href="' . $view_lnk_url . '" title="'
-                . esc_attr__('View Registration Details', 'event_espresso')
-                . '" class="tiny-text">
+                <a href="' . $view_lnk_url . '" 
+                   aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '" 
+                   class="tiny-text"
+               >
 				    <div class="dashicons dashicons-clipboard"></div>
 			    </a>
 			</li>';
@@ -955,9 +954,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             );
             $actions['edit_lnk'] = '
 			<li>
-                <a href="' . $edit_lnk_url . '" title="'
-                . esc_attr__('Edit Contact Details', 'event_espresso')
-                . '" class="tiny-text">
+			    <a href="' . $edit_lnk_url . '" 
+                   aria-label="' . esc_attr__('Edit Contact Details', 'event_espresso') . '" 
+                   class="tiny-text"
+                >
                     <div class="ee-icon ee-icon-user-edit ee-icon-size-16"></div>
                 </a>
 			</li>';
@@ -981,9 +981,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             );
             $actions['resend_reg_lnk'] = '
 			<li>
-			    <a href="' . $resend_reg_lnk_url . '" title="'
-                . esc_attr__('Resend Registration Details', 'event_espresso')
-                . '" class="tiny-text">
+			    <a href="' . $resend_reg_lnk_url . '" 
+			       aria-label="' . esc_attr__('Resend Registration Details', 'event_espresso') . '" 
+			       class="tiny-text"
+                >
 			        <div class="dashicons dashicons-email-alt"></div>
 			    </a>
             </li>';
@@ -1005,9 +1006,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             );
             $actions['view_txn_lnk'] = '
 			<li>
-                <a class="ee-status-color-' . $this->_transaction_details['status']
-                . ' tiny-text" href="' . $view_txn_lnk_url
-                . '"  title="' . $this->_transaction_details['title_attr'] . '">
+                <a class="ee-status-color-' . $this->_transaction_details['status'] . ' tiny-text" 
+                   href="' . $view_txn_lnk_url . '"  
+                   aria-label="' . $this->_transaction_details['title_attr'] . '"
+                >
                     <div class="dashicons dashicons-cart"></div>
                 </a>
 			</li>';
@@ -1021,8 +1023,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         ) {
             $actions['dl_invoice_lnk'] = '
             <li>
-                <a title="' . esc_attr__('View Transaction Invoice', 'event_espresso')
-                . '" target="_blank" href="' . $item->invoice_url() . '" class="tiny-text">
+                <a aria-label="' . esc_attr__('View Transaction Invoice', 'event_espresso') . '" 
+                   class="tiny-text"
+                   href="' . $item->invoice_url() . '" 
+                   target="_blank" 
+                >
                     <span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
                 </a>
             </li>';

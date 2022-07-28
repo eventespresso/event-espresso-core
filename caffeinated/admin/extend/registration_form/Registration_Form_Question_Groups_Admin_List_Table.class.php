@@ -185,7 +185,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
             )
         ) {
             $actions = array(
-                'edit' => '<a href="' . $edit_link . '" title="'
+                'edit' => '<a href="' . $edit_link . '" aria-label="'
                           . esc_attr__('Edit Question Group', 'event_espresso') . '">'
                           . esc_html__('Edit', 'event_espresso') . '</a>',
             );
@@ -199,7 +199,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
                 $item->ID()
             )
         ) {
-            $actions['delete'] = '<a href="' . $trash_link . '" title="'
+            $actions['delete'] = '<a href="' . $trash_link . '" aria-label="'
                                  . esc_attr__('Delete Question Group', 'event_espresso') . '">'
                                  . esc_html__('Trash', 'event_espresso') . '</a>';
         }
@@ -212,7 +212,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
                     $item->ID()
                 )
             ) {
-                $actions['restore'] = '<a href="' . $restore_link . '" title="'
+                $actions['restore'] = '<a href="' . $restore_link . '" aria-label="'
                                       . esc_attr__('Restore Question Group', 'event_espresso') . '">'
                                       . esc_html__('Restore', 'event_espresso') . '</a>';
             }
@@ -225,7 +225,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
                     $item->ID()
                 )
             ) {
-                    $actions['delete'] = '<a href="' . $delete_link . '" title="'
+                    $actions['delete'] = '<a href="' . $delete_link . '" aria-label="'
                                          . esc_attr__('Delete Question Group Permanently', 'event_espresso') . '">'
                                          . esc_html__('Delete Permanently', 'event_espresso') . '</a>';
             }

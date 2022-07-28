@@ -156,7 +156,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
             'ee_delete_checkins',
             'espresso_registrations_delete_checkin_row'
         )
-            ? '<a href="' . $delete_url . '" title="'
+            ? '<a href="' . $delete_url . '" aria-label="'
               . esc_attr__('Click here to delete this check-in record', 'event_espresso') . '">'
               . esc_html__('Delete', 'event_espresso') . '</a>'
             : '';

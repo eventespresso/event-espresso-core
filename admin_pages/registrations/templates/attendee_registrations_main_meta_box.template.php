@@ -32,7 +32,7 @@
                                 'espresso_events_edit',
                                 $EVT_ID
                             )
-                                ? '<a href="' . esc_url_raw($event_url) . '"  title="'
+                                ? '<a href="' . esc_url_raw($event_url) . '"  aria-label="'
                                   . esc_attr__('Edit Event', 'event_espresso') . '">'
                                   . esc_html($registration->event_name()) . '</a>'
                                 : esc_html($registration->event_name());
@@ -50,7 +50,7 @@
                                 'espresso_registrations_view_registration',
                                 $REG_ID
                             )
-                                ? '<a href="' . esc_url_raw($reg_url) . '" title="'
+                                ? '<a href="' . esc_url_raw($reg_url) . '" aria-label="'
                                   . esc_attr__('View Registration Details', 'event_espresso') . '">'
                                   . esc_html__('View Registration', 'event_espresso') . '</a>'
                                 : $REG_ID;
@@ -67,7 +67,7 @@
                                 'ee_read_transaction',
                                 'espresso_transactions_view_transaction'
                             )
-                                ? '<a href="' . esc_url_raw($txn_url) . '" title="'
+                                ? '<a href="' . esc_url_raw($txn_url) . '" aria-label="'
                                   . esc_attr__('View Transaction Details', 'event_espresso') . '">'
                                   . sprintf(
                                       esc_html__('View Transaction %d', 'event_espresso'),

@@ -353,7 +353,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
             );
             $context_array[] = '<a href="' . $edit_link . '"'
                                . ' class="' . "{$item->message_type()}-{$context}-edit-link{$inactive_class}" . '"'
-                               . ' title="' . esc_attr__('Edit Context', 'event_espresso') . '">'
+                               . ' aria-label="' . esc_attr__('Edit Context', 'event_espresso') . '">'
                                . $context_title
                                . '</a>';
         }

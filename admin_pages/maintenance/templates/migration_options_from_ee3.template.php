@@ -44,7 +44,7 @@
                                 ),
                                 '<strong>',
                                 '</strong>',
-                                '<a id="migration-risks" class="" title="'
+                                '<a id="migration-risks" class="" aria-label="'
                                 . esc_attr__('click for more details', "event_espresso")
                                 . '">',
                                 '</a>',

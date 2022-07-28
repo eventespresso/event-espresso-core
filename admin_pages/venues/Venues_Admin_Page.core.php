@@ -104,112 +104,112 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
 
         $this->_page_routes = [
             'default'                    => [
-                'func'       => '_overview_list_table',
+                'func'       => [$this, '_overview_list_table'],
                 'capability' => 'ee_read_venues',
             ],
             'create_new'                 => [
-                'func'       => '_create_new_cpt_item',
+                'func'       => [$this, '_create_new_cpt_item'],
                 'capability' => 'ee_edit_venues',
             ],
             'edit'                       => [
-                'func'       => '_edit_cpt_item',
+                'func'       => [$this, '_edit_cpt_item'],
                 'capability' => 'ee_edit_venue',
                 'obj_id'     => $VNU_ID,
             ],
             'trash_venue'                => [
-                'func'       => '_trash_or_restore_venue',
+                'func'       => [$this, '_trash_or_restore_venue'],
                 'args'       => ['venue_status' => 'trash'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venue',
                 'obj_id'     => $VNU_ID,
             ],
             'trash_venues'               => [
-                'func'       => '_trash_or_restore_venues',
+                'func'       => [$this, '_trash_or_restore_venues'],
                 'args'       => ['venue_status' => 'trash'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venues',
             ],
             'restore_venue'              => [
-                'func'       => '_trash_or_restore_venue',
+                'func'       => [$this, '_trash_or_restore_venue'],
                 'args'       => ['venue_status' => 'draft'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venue',
                 'obj_id'     => $VNU_ID,
             ],
             'restore_venues'             => [
-                'func'       => '_trash_or_restore_venues',
+                'func'       => [$this, '_trash_or_restore_venues'],
                 'args'       => ['venue_status' => 'draft'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venues',
             ],
             'delete_venues'              => [
-                'func'       => '_delete_venues',
+                'func'       => [$this, '_delete_venues'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venues',
             ],
             'delete_venue'               => [
-                'func'       => '_delete_venue',
+                'func'       => [$this, '_delete_venue'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venue',
                 'obj_id'     => $VNU_ID,
             ],
             // settings related
             'google_map_settings'        => [
-                'func'       => '_google_map_settings',
+                'func'       => [$this, '_google_map_settings'],
                 'capability' => 'manage_options',
             ],
             'update_google_map_settings' => [
-                'func'       => '_update_google_map_settings',
+                'func'       => [$this, '_update_google_map_settings'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             // venue category tab related
             'add_category'               => [
-                'func'       => '_category_details',
+                'func'       => [$this, '_category_details'],
                 'args'       => ['add'],
                 'capability' => 'ee_edit_venue_category',
             ],
             'edit_category'              => [
-                'func'       => '_category_details',
+                'func'       => [$this, '_category_details'],
                 'args'       => ['edit'],
                 'capability' => 'ee_edit_venue_category',
             ],
             'delete_categories'          => [
-                'func'       => '_delete_categories',
+                'func'       => [$this, '_delete_categories'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venue_category',
             ],
 
             'delete_category' => [
-                'func'       => '_delete_categories',
+                'func'       => [$this, '_delete_categories'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_venue_category',
             ],
 
             'insert_category' => [
-                'func'       => '_insert_or_update_category',
+                'func'       => [$this, '_insert_or_update_category'],
                 'args'       => ['new_category' => true],
                 'noheader'   => true,
                 'capability' => 'ee_edit_venue_category',
             ],
 
             'update_category'   => [
-                'func'       => '_insert_or_update_category',
+                'func'       => [$this, '_insert_or_update_category'],
                 'args'       => ['new_category' => false],
                 'noheader'   => true,
                 'capability' => 'ee_edit_venue_category',
             ],
             'export_categories' => [
-                'func'       => '_categories_export',
+                'func'       => [$this, '_categories_export'],
                 'noheader'   => true,
                 'capability' => 'export',
             ],
             'import_categories' => [
-                'func'       => '_import_categories',
+                'func'       => [$this, '_import_categories'],
                 'capability' => 'import',
             ],
             'category_list'     => [
-                'func'       => '_category_list_table',
+                'func'       => [$this, '_category_list_table'],
                 'capability' => 'ee_manage_venue_categories',
             ],
         ];
@@ -926,7 +926,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     protected function _trash_or_restore_venue($venue_status = 'trash', $redirect_after = true)
     {
         $VNU_ID = $this->request->getRequestParam('VNU_ID', 0, 'int');
-
         // loop thru venues
         if ($VNU_ID) {
             // clean status

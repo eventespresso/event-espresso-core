@@ -2234,7 +2234,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 			<tr class="hide-if-no-js">
 				<th> </th>
 				<td class="reg-admin-edit-attendee-question-td">
-					<a class="reg-admin-edit-attendee-question-lnk" href="#" title="'
+					<a class="reg-admin-edit-attendee-question-lnk" href="#" aria-label="'
                . esc_attr__('click to edit question', 'event_espresso')
                . '">
 						<span class="reg-admin-edit-question-group-spn lt-grey-txt">'
@@ -2825,7 +2825,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             );
             $edit_event_lnk                     = '<a href="'
                                                   . $edit_event_url
-                                                  . '" title="'
+                                                  . '" aria-label="'
                                                   . esc_attr__('Edit ', 'event_espresso')
                                                   . $this->_reg_event->name()
                                                   . '">'

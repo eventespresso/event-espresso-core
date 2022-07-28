@@ -32,7 +32,7 @@
                             <td class="jst-left"><?php echo esc_html($attendee['event_name']); ?></td>
                             <td class="jst-left">
                                 <a href="<?php echo esc_url_raw($attendee['att_link']); ?>"
-                                   title="<?php esc_attr_e('View details for this attendee', 'event_espresso'); ?>"
+                                   aria-label="<?php esc_attr_e('View details for this attendee', 'event_espresso'); ?>"
                                 >
                                     <?php echo esc_html($attendee['fname'] . ' ' . $attendee['lname']); ?>
                                 </a>

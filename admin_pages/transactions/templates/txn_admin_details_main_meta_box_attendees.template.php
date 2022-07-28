@@ -37,7 +37,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                 );
                                 ?>
                                 <a href="<?php echo esc_url_raw($att_link); ?>"
-                                   title="<?php esc_attr_e('View details for this registrant', 'event_espresso'); ?>"
+                                   aria-label="<?php esc_attr_e('View details for this registrant', 'event_espresso'); ?>"
                                 >
                                     <?php echo esc_html($attendee['attendee']); ?>
                                 </a>
