@@ -270,7 +270,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.38.p
      */
     public function getVenueActionLink(
         EE_Venue $venue,

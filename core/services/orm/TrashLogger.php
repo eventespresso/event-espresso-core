@@ -14,7 +14,7 @@ use ReflectionException;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\orm
- * @since   $VID:$
+ * @since   4.10.38.p
  */
 class TrashLogger
 {
