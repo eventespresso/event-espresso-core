@@ -69,7 +69,7 @@ class EE_Money_Field extends EE_Float_Field
         // now it's a float-style string or number
         $float_val = parent::prepare_for_set($amount);
         // round to the correctly number of decimal places for this  currency
-        $float_val = $this->decimal_values->roundDecimalValue($float_val, true);
+        $float_val = $this->decimal_values->roundDecimalValue($float_val);
         // finally, cap money values so they fit nicely within the db's Decimal(12,6) schema
         return min($float_val, 999999.999999);
     }
