@@ -69,21 +69,21 @@ class EE_Float_Field extends EE_Model_Field_Base
     /**
      * Returns the number formatted according to local custom (set by the country of the blog).
      *
-     * @param float $value_on_field_to_be_outputted
+     * @param float $number
      * @return string
      */
-    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($number, $schema = null)
     {
         return number_format(
-            $value_on_field_to_be_outputted,
+            $number,
             $this->currency->dec_plc,
             $this->currency->dec_mrk,
             $this->currency->thsnds
         );
     }
 
-    public function prepare_for_set_from_db($value_found_in_db_for_model_object)
+    public function prepare_for_set_from_db($number)
     {
-        return floatval($value_found_in_db_for_model_object);
+        return (float) $number;
     }
 }
