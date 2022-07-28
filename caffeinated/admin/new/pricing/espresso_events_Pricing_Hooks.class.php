@@ -1111,7 +1111,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
-     * @param int         $datetime_row
+     * @param int|string  $datetime_row
      * @param EE_Datetime $datetime
      * @param array       $datetime_tickets
      * @param array       $all_tickets
@@ -1123,7 +1123,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @throws ReflectionException
      */
     protected function _get_datetime_row(
-        int $datetime_row,
+        $datetime_row,
         EE_Datetime $datetime,
         array $datetime_tickets = [],
         array $all_tickets = [],
@@ -1158,7 +1158,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * The same row is used to generate a row with valid DTT objects
      * and the default row that is used as the skeleton by the js.
      *
-     * @param int              $datetime_row  The row number for the row being generated.
+     * @param int|string       $datetime_row  The row number for the row being generated.
      * @param EE_Datetime|null $datetime
      * @param bool             $default       Whether a default row is being generated or not.
      * @param EE_Datetime[]    $all_datetimes This is the array of all datetimes used in the editor.
@@ -1167,7 +1167,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @throws ReflectionException
      */
     protected function _get_dtt_edit_row(
-        int $datetime_row,
+        $datetime_row,
         ?EE_Datetime $datetime,
         bool $default,
         array $all_datetimes
@@ -1232,23 +1232,24 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
-     * @param int         $datetime_row
-     * @param EE_Datetime $datetime
-     * @param array       $datetime_tickets
-     * @param array       $all_tickets
-     * @param bool        $default
+     * @param int|string       $datetime_row
+     * @param EE_Datetime|null $datetime
+     * @param array            $datetime_tickets
+     * @param array            $all_tickets
+     * @param bool             $default
      * @return string
      * @throws DomainException
      * @throws EE_Error
      * @throws ReflectionException
      */
     protected function _get_dtt_attached_tickets_row(
-        int $datetime_row,
-        EE_Datetime $datetime,
+        $datetime_row,
+        ?EE_Datetime $datetime,
         array $datetime_tickets = [],
         array $all_tickets = [],
         bool $default = false
     ): string {
+        $default = $default || ! $datetime instanceof EE_Datetime;
         $template_args = [
             'dtt_row'                           => $default ? 'DTTNUM' : $datetime_row,
             'event_datetimes_name'              => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
@@ -1298,8 +1299,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
-     * @param int              $datetime_row
-     * @param int              $ticket_row
+     * @param int|string       $datetime_row
+     * @param int|string       $ticket_row
      * @param EE_Datetime|null $datetime
      * @param EE_Ticket|null   $ticket
      * @param array            $datetime_tickets
@@ -1309,8 +1310,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @throws ReflectionException
      */
     protected function _get_datetime_tickets_list_item(
-        int $datetime_row,
-        int $ticket_row,
+        $datetime_row,
+        $ticket_row,
         ?EE_Datetime $datetime,
         ?EE_Ticket $ticket,
         array $datetime_tickets = [],
@@ -1366,7 +1367,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * This same method is used to generate both the actual rows and the js skeleton row
      * (when default === true)
      *
-     * @param int            $ticket_row       Represents the row number being generated.
+     * @param int|string     $ticket_row       Represents the row number being generated.
      * @param EE_Ticket|null $ticket
      * @param EE_Datetime[]  $ticket_datetimes Either an array of all datetimes on all tickets indexed by each ticket
      *                                         or empty for default
@@ -1383,7 +1384,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @throws ReflectionException
      */
     protected function _get_ticket_row(
-        int $ticket_row,
+        $ticket_row,
         ?EE_Ticket $ticket,
         array $ticket_datetimes,
         array $all_datetimes,
@@ -1650,14 +1651,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
-     * @param int            $ticket_row
+     * @param int|string     $ticket_row
      * @param EE_Ticket|null $ticket
      * @return string
      * @throws DomainException
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_tax_rows(int $ticket_row, ?EE_Ticket $ticket): string
+    protected function _get_tax_rows($ticket_row, ?EE_Ticket $ticket): string
     {
         $tax_rows = '';
         /** @var EE_Price[] $taxes */
@@ -1707,8 +1708,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
-     * @param int            $ticket_row
-     * @param int            $price_row
+     * @param int|string     $ticket_row
+     * @param int|string     $price_row
      * @param EE_Price|null  $price
      * @param bool           $default
      * @param EE_Ticket|null $ticket
@@ -1723,8 +1724,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @throws ReflectionException
      */
     protected function _get_ticket_price_row(
-        int $ticket_row,
-        int $price_row,
+        $ticket_row,
+        $price_row,
         ?EE_Price $price,
         bool $default,
         ?EE_Ticket $ticket,
@@ -1811,8 +1812,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
-     * @param int           $ticket_row
-     * @param int           $price_row
+     * @param int|string    $ticket_row
+     * @param int|string    $price_row
      * @param EE_Price|null $price
      * @param bool          $default
      * @param bool          $disabled
@@ -1825,8 +1826,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @throws EE_Error
      */
     protected function _get_price_type_selector(
-        int $ticket_row,
-        int $price_row,
+        $ticket_row,
+        $price_row,
         ?EE_Price $price,
         bool $default,
         bool $disabled = false
@@ -1850,8 +1851,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
-     * @param int           $ticket_row
-     * @param int           $price_row
+     * @param int|string    $ticket_row
+     * @param int|string    $price_row
      * @param EE_Price|null $price
      * @param bool          $default
      * @return string
@@ -1860,8 +1861,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @throws ReflectionException
      */
     protected function _get_base_price_template(
-        int $ticket_row,
-        int $price_row,
+        $ticket_row,
+        $price_row,
         ?EE_Price $price,
         bool $default
     ): string {
@@ -1891,8 +1892,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
-     * @param int           $ticket_row
-     * @param int           $price_row
+     * @param int|string    $ticket_row
+     * @param int|string    $price_row
      * @param EE_Price|null $price
      * @param bool          $default
      * @param bool          $disabled
@@ -1905,8 +1906,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @throws EE_Error
      */
     protected function _get_price_modifier_template(
-        int $ticket_row,
-        int $price_row,
+        $ticket_row,
+        $price_row,
         ?EE_Price $price,
         bool $default,
         bool $disabled = false
@@ -1998,8 +1999,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
 
 
     /**
-     * @param int              $datetime_row
-     * @param int              $ticket_row
+     * @param int|string       $datetime_row
+     * @param int|string       $ticket_row
      * @param EE_Datetime|null $datetime
      * @param EE_Ticket|null   $ticket
      * @param array            $ticket_datetimes
@@ -2010,8 +2011,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @throws ReflectionException
      */
     protected function _get_ticket_datetime_list_item(
-        int $datetime_row,
-        int $ticket_row,
+        $datetime_row,
+        $ticket_row,
         ?EE_Datetime $datetime,
         ?EE_Ticket $ticket,
         array $ticket_datetimes = [],
