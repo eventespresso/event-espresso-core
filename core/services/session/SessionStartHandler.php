@@ -28,15 +28,20 @@ use EventEspresso\core\services\request\RequestInterface;
 class SessionStartHandler
 {
     const OPTION_NAME_SESSION_SAVE_HANDLER_STATUS = 'ee_session_save_handler_status';
-    const REQUEST_PARAM_RETRY_SESSION = 'ee_retry_session';
-    const SESSION_SAVE_HANDLER_STATUS_FAILED = 'session_save_handler_failed';
-    const SESSION_SAVE_HANDLER_STATUS_SUCCESS = 'session_save_handler_success';
-    const SESSION_SAVE_HANDLER_STATUS_UNKNOWN = 'session_save_handler_untested';
+
+    const REQUEST_PARAM_RETRY_SESSION             = 'ee_retry_session';
+
+    const SESSION_SAVE_HANDLER_STATUS_FAILED      = 'session_save_handler_failed';
+
+    const SESSION_SAVE_HANDLER_STATUS_SUCCESS     = 'session_save_handler_success';
+
+    const SESSION_SAVE_HANDLER_STATUS_UNKNOWN     = 'session_save_handler_untested';
 
     /**
      * @var RequestInterface $request
      */
     protected $request;
+
 
     /**
      * StartSession constructor.
@@ -47,6 +52,7 @@ class SessionStartHandler
     {
         $this->request = $request;
     }
+
 
     /**
      * Check if a custom session save handler is in play
@@ -68,22 +74,18 @@ class SessionStartHandler
         }
     }
 
+
     /**
      * Returns `true` if the 'session.save_handler' ini setting matches a known custom handler
      *
-     * @since 4.9.68.p
      * @return bool
+     * @since 4.9.68.p
      */
-    private function hasKnownCustomSessionSaveHandler()
+    private function hasKnownCustomSessionSaveHandler(): bool
     {
-        return in_array(
-            ini_get('session.save_handler'),
-            array(
-                'user',
-            ),
-            true
-        );
+        return ini_get('session.save_handler') === 'user';
     }
+
 
     /**
      * Attempt to start the PHP session when a custom Session Save Handler is known to be set.
@@ -119,10 +121,10 @@ class SessionStartHandler
      * retrieves the value for the 'ee_session_save_handler_status' WP option.
      * default value = 'session_save_handler_untested'
      *
-     * @since 4.9.68.p
      * @return string
+     * @since 4.9.68.p
      */
-    private function getSessionSaveHandlerStatus()
+    private function getSessionSaveHandlerStatus(): string
     {
         return get_option(
             SessionStartHandler::OPTION_NAME_SESSION_SAVE_HANDLER_STATUS,
@@ -130,72 +132,78 @@ class SessionStartHandler
         );
     }
 
+
     /**
      * Sets the 'ee_session_save_handler_status' WP option value to 'session_save_handler_failed'
      * which can then be upgraded is everything works correctly
      *
+     * @return void
      * @since 4.9.68.p
-     * @return bool
      */
-    private function initializeSessionSaveHandlerStatus()
+    private function initializeSessionSaveHandlerStatus(): void
     {
-        return update_option(
+        update_option(
             SessionStartHandler::OPTION_NAME_SESSION_SAVE_HANDLER_STATUS,
             SessionStartHandler::SESSION_SAVE_HANDLER_STATUS_FAILED
         );
     }
 
+
     /**
      * Sets the 'ee_session_save_handler_status' WP option value to 'session_save_handler_success'
      *
+     * @return void
      * @since 4.9.68.p
-     * @return bool
      */
-    private function setSessionSaveHandlerStatusToValid()
+    private function setSessionSaveHandlerStatusToValid(): void
     {
-        return update_option(
+        update_option(
             SessionStartHandler::OPTION_NAME_SESSION_SAVE_HANDLER_STATUS,
             SessionStartHandler::SESSION_SAVE_HANDLER_STATUS_SUCCESS
         );
     }
 
+
     /**
      * Sets the 'ee_session_save_handler_status' WP option value to 'session_save_handler_untested'
      *
+     * @return void
      * @since 4.9.68.p
-     * @return bool
      */
-    private function resetSessionSaveHandlerStatus()
+    private function resetSessionSaveHandlerStatus(): void
     {
-        return update_option(
+        update_option(
             SessionStartHandler::OPTION_NAME_SESSION_SAVE_HANDLER_STATUS,
             SessionStartHandler::SESSION_SAVE_HANDLER_STATUS_UNKNOWN
         );
     }
 
+
     /**
      * Returns `true` if the 'ee_session_save_handler_status' WP option value
      * is equal to 'session_save_handler_success'
      *
-     * @since 4.9.68.p
      * @return bool
+     * @since 4.9.68.p
      */
-    private function sessionSaveHandlerIsValid()
+    private function sessionSaveHandlerIsValid(): bool
     {
         return $this->getSessionSaveHandlerStatus() === SessionStartHandler::SESSION_SAVE_HANDLER_STATUS_SUCCESS;
     }
+
 
     /**
      * Returns `true` if the 'ee_session_save_handler_status' WP option value
      * is equal to 'session_save_handler_failed'
      *
-     * @since 4.9.68.p
      * @return bool
+     * @since 4.9.68.p
      */
-    private function sessionSaveHandlerFailed()
+    private function sessionSaveHandlerFailed(): bool
     {
         return $this->getSessionSaveHandlerStatus() === SessionStartHandler::SESSION_SAVE_HANDLER_STATUS_FAILED;
     }
+
 
     /**
      * Returns `true` if no errors were detected with the session save handler,
@@ -203,10 +211,10 @@ class SessionStartHandler
      * with a suggestion for how to fix the issue, and returns `false`.
      *
      *
-     * @since 4.9.68.p
      * @return bool
+     * @since 4.9.68.p
      */
-    private function handleSessionSaveHandlerErrors()
+    private function handleSessionSaveHandlerErrors(): bool
     {
         // Check if we had a fatal error last time while trying to start the session
         if ($this->sessionSaveHandlerFailed()) {
@@ -218,7 +226,7 @@ class SessionStartHandler
                 // Better to remove it and redirect, and try on the next request
                 EEH_URL::safeRedirectAndExit(
                     remove_query_arg(
-                        array(SessionStartHandler::REQUEST_PARAM_RETRY_SESSION),
+                        [SessionStartHandler::REQUEST_PARAM_RETRY_SESSION],
                         EEH_URL::current_url()
                     )
                 );
@@ -231,6 +239,7 @@ class SessionStartHandler
         return true;
     }
 
+
     /**
      * Generates an EE_Error notice regarding the current session woes
      * but only if the current user is an admin with permission to 'install_plugins'.
@@ -241,7 +250,7 @@ class SessionStartHandler
     {
         if (current_user_can('install_plugins')) {
             $retry_session_url = add_query_arg(
-                array(SessionStartHandler::REQUEST_PARAM_RETRY_SESSION => true),
+                [SessionStartHandler::REQUEST_PARAM_RETRY_SESSION => true],
                 EEH_URL::current_url()
             );
             EE_Error::add_error(
