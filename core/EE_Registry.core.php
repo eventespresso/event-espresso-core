@@ -1020,12 +1020,12 @@ class EE_Registry implements ResettableInterface
     ): bool {
         $class_abbreviation = $this->get_class_abbreviation($class_name);
         // check if class has already been loaded, and return it if it has been
-        if (isset($this->{$class_abbreviation})) {
+        if (isset($this->{$class_abbreviation}) && ! $this->{$class_abbreviation} instanceof InterminableInterface) {
             $this->{$class_abbreviation} = null;
             return true;
         }
         $class_name = str_replace('\\', '_', $class_name);
-        if (isset($this->{$class_name})) {
+        if (isset($this->{$class_name}) && ! $this->{$class_name} instanceof InterminableInterface) {
             $this->{$class_name} = null;
             return true;
         }
@@ -1033,9 +1033,12 @@ class EE_Registry implements ResettableInterface
             $this->addons->remove($class_name);
             return true;
         }
-        $class_name = $this->object_identifier->getIdentifier($class_name, $arguments);
-        if ($this->LIB->has($class_name)) {
-            $this->LIB->remove($class_name);
+        $object_identifier = $this->object_identifier->getIdentifier($class_name, $arguments);
+        if (
+            $this->LIB->has($object_identifier)
+            && ! $this->LIB->get($object_identifier) instanceof InterminableInterface
+        ) {
+            $this->LIB->remove($object_identifier);
             return true;
         }
         return false;
@@ -1382,9 +1385,7 @@ class EE_Registry implements ResettableInterface
                 $param_class = str_replace(' ', '_', $param_class);
             }
             // BUT WAIT !!! This class may be an alias for something else (or getting replaced at runtime)
-            $param_class = $this->class_cache->isAlias($param_class, $class_name)
-                ? $this->class_cache->getFqnForAlias($param_class, $class_name)
-                : $param_class;
+            $param_class = $this->class_cache->getFqnForAlias($param_class, $class_name);
             if (
                 // param is not even a class
                 ($param_class === null || $this->parameterIsPrimitive($param_class))
@@ -1498,7 +1499,7 @@ class EE_Registry implements ResettableInterface
      *                          in the EE_Dependency_Map::$_class_loaders array,
      *                          including the class prefix, ie: "EE_", "EEM_", "EEH_", etc
      * @param array  $arguments
-     * @return object
+     * @return mixed
      */
     public static function factory(string $classname, array $arguments = [])
     {
@@ -1690,6 +1691,10 @@ class EE_Registry implements ResettableInterface
             // don't unset anything that's not an object
             return false;
         }
+        if ($object instanceof InterminableInterface) {
+            // don't unset anything that's not terminable
+            return false;
+        }
         if ($object instanceof EED_Module) {
             $object::reset();
             // don't unset modules
@@ -1706,9 +1711,8 @@ class EE_Registry implements ResettableInterface
             $object->reset();
             return true;
         }
-        if (! $object instanceof InterminableInterface) {
-            return true;
-        }
+        // at least clear object from cache
+        self::$_instance->clear_cached_class(get_class($object));
         return false;
     }
 
