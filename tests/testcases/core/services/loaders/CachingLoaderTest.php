@@ -111,6 +111,7 @@ class CachingLoaderTest extends EE_UnitTestCase
      */
     public function testResetCache()
     {
+        $this->markTestSkipped('plz see: https://github.com/eventespresso/event-espresso-core/pull/3970');
         // turn caching on again
         CachingLoaderTest::$caching_loader->setBypass(false);
         // add a few different objects this time, but confirm that they are getting cached
