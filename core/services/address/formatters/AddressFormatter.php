@@ -33,7 +33,7 @@ class AddressFormatter
         string $country,
         string $formatted_address,
         string $sub
-    ) : string {
+    ): string {
         // swap address part placeholders for the real text
         $formatted_address = str_replace(
             // find

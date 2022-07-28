@@ -373,8 +373,8 @@ class EE_Payment_Method_Manager implements ResettableInterface
                 'PMD_slug'       => $pm_type_obj->system_name(),// automatically converted to slug
                 'PMD_wp_user'    => $current_user->ID,
                 'PMD_order'      => EEM_Payment_Method::instance()->count(
-                        [['PMD_type' => ['!=', 'Admin_Only']]]
-                    ) * 10,
+                    [['PMD_type' => ['!=', 'Admin_Only']]]
+                ) * 10,
             ]
         );
     }

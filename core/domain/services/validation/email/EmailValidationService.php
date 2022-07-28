@@ -93,7 +93,7 @@ class EmailValidationService implements EmailValidatorInterface
                 return $this->i18nDnsValidator()->validate($email_address);
             case EmailValidationService::VALIDATION_LEVEL_WP_DEFAULT:
             default:
-            return $this->wordpressValidator()->validate($email_address);
+                return $this->wordpressValidator()->validate($email_address);
         }
     }
 
@@ -152,5 +152,4 @@ class EmailValidationService implements EmailValidatorInterface
         }
         return $this->validator_wordpress;
     }
-
 }
