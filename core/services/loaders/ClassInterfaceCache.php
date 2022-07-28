@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\loaders;
 
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\exceptions\InvalidAliasException;
+use EventEspresso\core\interfaces\InterminableInterface;
 
 /**
  * Class ClassInterfaceCache
