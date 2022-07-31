@@ -2,6 +2,7 @@
 
 use EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanForm;
 use EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanFormHandler;
+use EventEspresso\core\domain\values\session\SessionLifespanOption;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -1462,14 +1463,15 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
     public function setSessionLifespan()
     {
-        $session_lifespan_form = new SessionLifespanForm();
+        $session_lifespan_form = new SessionLifespanForm(new SessionLifespanOption());
         echo wp_kses($session_lifespan_form->get_html(), AllowedTags::getWithFormTags());
     }
 
 
     public function updateSessionLifespan()
     {
-        $handler = new SessionLifespanFormHandler();
-        $handler->process(new SessionLifespanForm());
+        $session_lifespan_option = new SessionLifespanOption();
+        $handler = new SessionLifespanFormHandler($session_lifespan_option);
+        $handler->process(new SessionLifespanForm($session_lifespan_option));
     }
 }

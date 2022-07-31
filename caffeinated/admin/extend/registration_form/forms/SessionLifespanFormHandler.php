@@ -15,17 +15,17 @@ class SessionLifespanFormHandler
     /**
      * @var SessionLifespanOption
      */
-    private $sessionLifespanOption;
+    private $session_lifespan_option;
 
 
     /**
      * SessionLifespanForm constructor.
      *
-     * @throws EE_Error
+     * @param SessionLifespanOption $session_lifespan_option
      */
-    public function __construct()
+    public function __construct(SessionLifespanOption $session_lifespan_option)
     {
-        $this->sessionLifespanOption = new SessionLifespanOption();
+        $this->session_lifespan_option = $session_lifespan_option;
     }
 
 
@@ -42,7 +42,7 @@ class SessionLifespanFormHandler
                     $valid_data = $form->valid_data();
                     if (isset($valid_data['session_lifespan'])) {
                         $session_lifespan = (int) $valid_data['session_lifespan'];
-                        $this->sessionLifespanOption->setSessionLifespan($session_lifespan);
+                        $this->session_lifespan_option->setSessionLifespan($session_lifespan);
                     } else {
                         EE_Error::add_error(
                             esc_html__(

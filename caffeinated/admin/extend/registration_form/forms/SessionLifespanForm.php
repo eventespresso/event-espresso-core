@@ -13,20 +13,13 @@ use EventEspresso\core\domain\values\session\SessionLifespanOption;
 class SessionLifespanForm extends EE_Form_Section_Proper
 {
     /**
-     * @var SessionLifespanOption
-     */
-    private $sessionLifespanOption;
-
-
-    /**
      * SessionLifespanForm constructor.
      *
+     * @param SessionLifespanOption $session_lifespan_option
      * @throws EE_Error
      */
-    public function __construct()
+    public function __construct(SessionLifespanOption $session_lifespan_option)
     {
-        $this->sessionLifespanOption = new SessionLifespanOption();
-
         parent::__construct([
             'name'            => 'session_lifespan',
             'html_id'         => 'session_lifespan',
@@ -51,7 +44,7 @@ class SessionLifespanForm extends EE_Form_Section_Proper
                                 'Controls how long a user has to complete the registration form. Defaults to 1 hour.',
                                 'event_espresso'
                             ),
-                            'default'         => $this->sessionLifespanOption->getSessionLifespan(),
+                            'default'         => $session_lifespan_option->getSessionLifespan(),
                             'required'        => false,
                         ]
                     ),
