@@ -31,17 +31,12 @@ class SessionLifespan
     /**
      * SessionLifespan constructor.
      *
-     * @param int $lifespan
+     * @param SessionLifespanOption $session_lifespan_option
      * @throws DomainException
      */
-    public function __construct($lifespan = 0)
+    public function __construct(SessionLifespanOption $session_lifespan_option)
     {
-        $lifespan = absint($lifespan);
-        if ($lifespan <= 0) {
-            $lifespanOption = new SessionLifespanOption();
-            $lifespan = $lifespanOption->getSessionLifespan();
-        }
-        $this->setLifespan($lifespan);
+        $this->setLifespan($session_lifespan_option->getSessionLifespan());
     }
 
 
