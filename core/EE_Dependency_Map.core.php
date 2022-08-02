@@ -920,6 +920,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\shortcodes\LegacyShortcodesManager' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\CurrentPage'                => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\services\activation\plugin_prompt\DownloadPluginPromptManager' => [
+                'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache
+            ],
         ];
     }
 
