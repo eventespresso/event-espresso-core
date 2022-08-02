@@ -80,6 +80,7 @@ class FqcnLocator extends Locator
                 $this->FQCNs[ $key ] = $file;
             }
         }
+        $this->FQCNs = array_unique($this->FQCNs, SORT_STRING);
         return $this->FQCNs;
     }
 
@@ -104,22 +105,23 @@ class FqcnLocator extends Locator
         if (iterator_count($iterator) === 0) {
             return [];
         }
+        $FQCNs = [];
         foreach ($iterator as $file) {
             if ($file->isFile() && $file->getExtension() === 'php') {
-                $file = $file->getPath() . '/' . $file->getBasename('.php');
+                $file_name = $file->getPath() . '/' . $file->getBasename('.php');
                 foreach ($this->namespaces as $namespace => $base_dir) {
                     $namespace .= Psr4Autoloader::NS;
-                    if (strpos($file, $base_dir) === 0) {
-                        $this->FQCNs[] = Psr4Autoloader::NS . str_replace(
+                    if (strpos($file_name, $base_dir) === 0) {
+                        $FQCNs[] = Psr4Autoloader::NS . str_replace(
                             [$base_dir, '/'],
                             [$namespace, Psr4Autoloader::NS],
-                            $file
+                            $file_name
                         );
                     }
                 }
             }
         }
-        return $this->FQCNs;
+        return array_unique($FQCNs, SORT_STRING);
     }
 
 

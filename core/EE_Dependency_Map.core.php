@@ -485,6 +485,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\session\SessionStartHandler'  => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                            => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\services\session\SessionStartHandler'                                                                                                     => [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+            ],
             'EE_Cart'                                                                                                     => [
                 'EE_Session' => EE_Dependency_Map::load_from_cache,
             ],

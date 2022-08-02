@@ -1020,12 +1020,12 @@ class EE_Registry implements ResettableInterface
     ): bool {
         $class_abbreviation = $this->get_class_abbreviation($class_name);
         // check if class has already been loaded, and return it if it has been
-        if (isset($this->{$class_abbreviation})) {
+        if (isset($this->{$class_abbreviation}) && ! $this->{$class_abbreviation} instanceof InterminableInterface) {
             $this->{$class_abbreviation} = null;
             return true;
         }
         $class_name = str_replace('\\', '_', $class_name);
-        if (isset($this->{$class_name})) {
+        if (isset($this->{$class_name}) && ! $this->{$class_name} instanceof InterminableInterface) {
             $this->{$class_name} = null;
             return true;
         }
@@ -1033,9 +1033,12 @@ class EE_Registry implements ResettableInterface
             $this->addons->remove($class_name);
             return true;
         }
-        $class_name = $this->object_identifier->getIdentifier($class_name, $arguments);
-        if ($this->LIB->has($class_name)) {
-            $this->LIB->remove($class_name);
+        $object_identifier = $this->object_identifier->getIdentifier($class_name, $arguments);
+        if (
+            $this->LIB->has($object_identifier)
+            && ! $this->LIB->get($object_identifier) instanceof InterminableInterface
+        ) {
+            $this->LIB->remove($object_identifier);
             return true;
         }
         return false;
@@ -1382,9 +1385,7 @@ class EE_Registry implements ResettableInterface
                 $param_class = str_replace(' ', '_', $param_class);
             }
             // BUT WAIT !!! This class may be an alias for something else (or getting replaced at runtime)
-            $param_class = $this->class_cache->isAlias($param_class, $class_name)
-                ? $this->class_cache->getFqnForAlias($param_class, $class_name)
-                : $param_class;
+            $param_class = $this->class_cache->getFqnForAlias($param_class, $class_name);
             if (
                 // param is not even a class
                 ($param_class === null || $this->parameterIsPrimitive($param_class))
@@ -1498,7 +1499,7 @@ class EE_Registry implements ResettableInterface
      *                          in the EE_Dependency_Map::$_class_loaders array,
      *                          including the class prefix, ie: "EE_", "EEM_", "EEH_", etc
      * @param array  $arguments
-     * @return object
+     * @return mixed
      */
     public static function factory(string $classname, array $arguments = [])
     {
@@ -1522,6 +1523,10 @@ class EE_Registry implements ResettableInterface
     public function getAddon(string $class_name): ?EE_Addon
     {
         $class_name = str_replace('\\', '_', $class_name);
+        $addon      = $this->_get_cached_class($class_name);
+        if ($addon) {
+            return $addon;
+        }
         return $this->addons->{$class_name} ?? null;
     }
 
@@ -1648,28 +1653,59 @@ class EE_Registry implements ResettableInterface
      * @return EE_Registry
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws InvalidArgumentException
      */
     public static function reset(bool $hard = false, bool $reinstantiate = true, bool $reset_models = true): EE_Registry
     {
-        $instance            = self::instance();
-        $instance->_cache_on = true;
-        // reset some "special" classes
-        EEH_Activation::reset();
-        $hard = apply_filters('FHEE__EE_Registry__reset__hard', $hard);
-        $instance->CFG = EE_Config::reset($hard, $reinstantiate);
-        $instance->CART = null;
-        $instance->MRM = null;
-        // messages reset
-        EED_Messages::reset();
-        // handle of objects cached on LIB
-        foreach (['LIB', 'modules'] as $cache) {
-            foreach ($instance->{$cache} as $class_name => $class) {
-                if (self::_reset_and_unset_object($class, $reset_models)) {
-                    unset($instance->{$cache}->{$class_name});
+        $hard              = apply_filters('FHEE__EE_Registry__reset__hard', $hard);
+        $cached_properties = [
+            'BUS',
+            'CART',
+            'CFG',
+            'LIB',
+            'MRM',
+            'REQ',
+            'SSN',
+            'AssetsRegistry',
+            // 'addons',
+            // 'models',
+            'modules',
+            'shortcodes',
+            'widgets',
+        ];
+        foreach ($cached_properties as $cached_property) {
+            // if (EE_UnitTestCase::$debug) {
+            //     echo "\n\n" . __LINE__ . ') ' . strtoupper($cached_property);
+            // }
+            if (
+                ! property_exists(self::$_instance, $cached_property)
+                || ! isset(self::$_instance->{$cached_property})
+            ) {
+                continue;
+            }
+            $cached = self::$_instance->{$cached_property};
+            if (is_array($cached) || $cached instanceof RegistryContainer) {
+                foreach ($cached as $class_name => $class) {
+                    if (self::_reset_object($class_name, $class, $reset_models, $hard, $reinstantiate)) {
+                        // because unset() doesn't guarantee object destruction
+                        self::$_instance->{$cached_property}->{$class_name} = null;
+                        unset(self::$_instance->{$cached_property}->{$class_name});
+                    }
+                }
+                continue;
+            }
+            if (is_object($cached)) {
+                if (self::_reset_object(get_class($cached), $cached, $reset_models, $hard, $reinstantiate)) {
+                    // because unset() doesn't guarantee object destruction
+                    self::$_instance->{$cached_property} = null;
+                    unset(self::$_instance->{$cached_property});
                 }
             }
         }
-        return $instance;
+        // if (EE_UnitTestCase::$debug) {
+        //     echo "\n\n";
+        // }
+        return self::$_instance;
     }
 
 
@@ -1678,37 +1714,82 @@ class EE_Registry implements ResettableInterface
      * if passed object implements InterminableInterface, then return false,
      * to indicate that it should NOT be cleared from the Registry cache
      *
-     * @param      $object
-     * @param bool $reset_models
+     * @param string $class_name
+     * @param        $object
+     * @param bool   $reset_models
+     * @param bool   $hard
+     * @param bool   $reinstantiate
      * @return bool returns true if cached object should be unset
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private static function _reset_and_unset_object($object, bool $reset_models): bool
-    {
+    private static function _reset_object(
+        string $class_name,
+        $object,
+        bool $reset_models,
+        bool $hard,
+        bool $reinstantiate
+    ): bool {
+        // if (EE_UnitTestCase::$debug) {
+        //     echo "\n\n - reset $class_name";
+        // }
         if (! is_object($object)) {
+            // if (EE_UnitTestCase::$debug) {
+            //     echo "\n --> not an object";
+            // }
             // don't unset anything that's not an object
+            return false;
+        }
+        if ($object instanceof InterminableInterface) {
+            // if (EE_UnitTestCase::$debug) {
+            //     echo "\n --> NO (interminable)";
+            // }
+            // don't unset anything that's not terminable
             return false;
         }
         if ($object instanceof EED_Module) {
             $object::reset();
+            // if (EE_UnitTestCase::$debug) {
+            //     echo "\n --> NO (module)";
+            // }
             // don't unset modules
             return false;
         }
         if ($object instanceof ResettableInterface) {
+            // reset some "special" classes
+            if ($object instanceof EE_Config) {
+                EE_Config::reset($hard, $reinstantiate);
+                // if (EE_UnitTestCase::$debug) {
+                //     echo "\n --> NO (config)";
+                // }
+                return false;
+            }
+            if ($object instanceof EEH_Activation) {
+                EEH_Activation::reset();
+                // if (EE_UnitTestCase::$debug) {
+                //     echo "\n --> NO (activation)";
+                // }
+                return false;
+            }
             if ($object instanceof EEM_Base) {
                 if ($reset_models) {
-                    $object->reset();
-                    return true;
+                    self::$_instance->reset_model($class_name);
                 }
                 return false;
             }
-            $object->reset();
-            return true;
+            if (method_exists($object, 'reset') && is_callable([$object, 'reset'])) {
+                // if (EE_UnitTestCase::$debug) {
+                //     echo "\n  --> NO (has reset)";
+                // }
+                $object->reset();
+                return false;
+            }
         }
-        if (! $object instanceof InterminableInterface) {
-            return true;
-        }
+        // if (EE_UnitTestCase::$debug) {
+        //     echo "\n  --> YES ??? " . get_class($object);
+        // }
+        // at least clear object from cache
+        self::$_instance->clear_cached_class(get_class($object));
         return false;
     }
 

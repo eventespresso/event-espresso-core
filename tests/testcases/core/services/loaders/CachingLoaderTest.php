@@ -43,7 +43,7 @@ class CachingLoaderTest extends EE_UnitTestCase
         //different persistence tests
         if (! CachingLoaderTest::$caching_loader instanceof LoaderDecorator) {
             CachingLoaderTest::$caching_loader = new CachingLoaderMock(
-                new CoreLoader(EE_Registry::instance()),
+                new CoreLoader(EE_Registry::reset()),
                 new LooseCollection(''),
                 new ObjectIdentifier(new ClassInterfaceCache())
             );

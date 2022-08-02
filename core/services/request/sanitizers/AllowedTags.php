@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\request\sanitizers;
 
+use EventEspresso\core\interfaces\InterminableInterface;
+
 /**
  * Class AllowedTags
  * expanded list of tags and attributes for use with wp_kses()
@@ -10,7 +12,7 @@ namespace EventEspresso\core\services\request\sanitizers;
  * @package EventEspresso\core\services\request\sanitizers
  * @since   4.10.29.p
  */
-class AllowedTags
+class AllowedTags implements InterminableInterface
 {
     /**
      * @var array[]

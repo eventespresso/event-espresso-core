@@ -94,9 +94,9 @@ class InputCollection extends Collection
      *
      * @param        $object
      * @param mixed  $identifier
-     * @return bool
+     * @return string
      */
-    public function getIdentifier($object, $identifier = null)
+    public function getIdentifier($object, $identifier = null): string
     {
         return ! empty($identifier)
             ? $identifier

@@ -2,12 +2,14 @@
 
 namespace EventEspresso\core\services\commands;
 
+use EventEspresso\core\interfaces\InterminableInterface;
+
 /**
  * Interface CommandHandlerInterface
  *
  * @package EventEspresso\core\services\commands
  */
-interface CommandHandlerInterface
+interface CommandHandlerInterface extends InterminableInterface
 {
     /**
      * verifies that the supplied command is the correct class for the handler.

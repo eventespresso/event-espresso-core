@@ -2,9 +2,10 @@
 
 namespace EventEspresso\core\services\request\sanitizers;
 
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\request\DataType;
 
-class RequestSanitizer
+class RequestSanitizer implements InterminableInterface
 {
     /**
      * Will sanitize the supplied request parameter based on the specified data type

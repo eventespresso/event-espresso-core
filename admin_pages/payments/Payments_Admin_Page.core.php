@@ -242,6 +242,7 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         // styles
         wp_enqueue_style('espresso-ui-theme');
+        wp_enqueue_style('ee-text-links-css');
         wp_register_style(
             'espresso_payments',
             EE_PAYMENTS_ASSETS_URL . 'ee-payments.css',
@@ -250,7 +251,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         );
         // scripts
         wp_enqueue_script('ee_admin_js');
-        wp_enqueue_script('ee-text-links');
+        wp_enqueue_script('ee-text-links-js');
         wp_enqueue_script(
             'espresso_payments',
             EE_PAYMENTS_ASSETS_URL . 'espresso_payments_admin.js',
@@ -264,7 +265,7 @@ class Payments_Admin_Page extends EE_Admin_Page
     public function load_scripts_styles_default()
     {
         wp_enqueue_style('espresso_payments');
-        wp_enqueue_style('ee-text-links');
+        wp_enqueue_style('ee-text-links-css');
     }
 
 

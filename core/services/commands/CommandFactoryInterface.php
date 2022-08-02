@@ -2,11 +2,12 @@
 
 namespace EventEspresso\core\services\commands;
 
+use EventEspresso\core\interfaces\InterminableInterface;
 use InvalidArgumentException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
-interface CommandFactoryInterface
+interface CommandFactoryInterface extends InterminableInterface
 {
     /**
      * @param string $command_fqcn

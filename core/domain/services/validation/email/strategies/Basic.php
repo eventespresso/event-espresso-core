@@ -15,11 +15,11 @@ use EventEspresso\core\domain\services\validation\email\EmailValidatorInterface;
 class Basic implements EmailValidatorInterface
 {
     /**
-     * @param string $email_address
+     * @param string|null $email_address
      * @return bool
      * @throws EmailValidationException
      */
-    public function validate($email_address)
+    public function validate(?string $email_address): bool
     {
         if (! preg_match('/^.+\@\S+$/', (string) $email_address)) {
             // email not in correct {string}@{string} format

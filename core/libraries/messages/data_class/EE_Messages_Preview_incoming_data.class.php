@@ -432,13 +432,11 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
      */
     protected function _setup_data()
     {
-        // need to figure out the running total for test purposes so... we're going to create a temp cart and add the tickets to it!
-        if (EE_Registry::instance()->SSN instanceof EE_Session) {
-            EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
-            $session = EE_Registry::instance()->SSN;
-        } else {
-            $session = EE_Registry::instance()->load_core('Session');
-        }
+        /** @var EE_Session $session */
+        $session = LoaderFactory::getLoader()->getNew(EE_Session::class);
+        $session->clear_session(__CLASS__, __FUNCTION__);
+        // need to figure out the running total for test purposes so...
+        // we're going to create a temp cart and add the tickets to it!
         $cart = EE_Cart::instance(null, $session);
 
         // add tickets to cart

@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\routing;
 
-use EventEspresso\core\services\routing\RouteInterface;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 
@@ -40,9 +39,9 @@ class RouteCollection extends Collection
      *
      * @param        $object
      * @param mixed  $identifier
-     * @return bool
+     * @return string
      */
-    public function getIdentifier($object, $identifier = null)
+    public function getIdentifier($object, $identifier = null): string
     {
         return ! empty($identifier)
             ? $identifier
@@ -55,7 +54,7 @@ class RouteCollection extends Collection
      *
      * @return RouteInterface[]
      */
-    public function getRoutesForCurrentRequest()
+    public function getRoutesForCurrentRequest(): array
     {
         $routes = [];
         $this->rewind();

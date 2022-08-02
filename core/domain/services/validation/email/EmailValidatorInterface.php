@@ -16,9 +16,9 @@ interface EmailValidatorInterface
     /**
      * Validates the supplied email address. If it is invalid, throws EmailValidationException
      *
-     * @param string $email_address
+     * @param string|null $email_address
      * @return boolean
      * @throws EmailValidationException
      */
-    public function validate($email_address);
+    public function validate(?string $email_address): bool;
 }

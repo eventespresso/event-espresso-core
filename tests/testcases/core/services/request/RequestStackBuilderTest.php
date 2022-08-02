@@ -91,6 +91,11 @@ class RequestStackBuilderTest extends EE_UnitTestCase
      */
     public function addMiddleware(bool $legacy = false)
     {
+        // but first, clear out any existing middleware
+        while ($this->request_stack_builder->count() > 0) {
+            $this->request_stack_builder->pop();
+        }
+        $this->assertCount(0, $this->request_stack_builder);
         $this->setMiddlewareFQCNs();
         if ($legacy) {
             $this->request_stack_builder->push([0, $this->general_grievous]);
@@ -215,14 +220,14 @@ class RequestStackBuilderTest extends EE_UnitTestCase
         $this->assertEquals(0, EE_Error::has_notices());
         $request_stack->handleRequest($this->request, $this->getResponse());
         $notices = $this->getNotices();
-        $this->assertCount(1, $notices['success']);
+        $this->assertCount(1, $notices['success'], var_export($notices['success'], true));
         $this->assertEquals('Hello There!', reset($notices['success']));
-        $this->assertCount(1, $notices['attention']);
+        $this->assertCount(1, $notices['attention'], var_export($notices['attention'], true));
         $this->assertEquals('General Kenobi!', reset($notices['attention']));
         $this->assertCount(1, $notices['errors']);
         $this->assertEquals(
             'Back away! I will deal with this Jedi slime myself!',
-            $notices['errors'][0],
+            reset($notices['errors']),
             'notices array: ' . var_export($notices, true)
         );
         $request_stack->handleResponse();

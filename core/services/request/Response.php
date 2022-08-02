@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\request;
 
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\interfaces\ReservedInstanceInterface;
 
 /**
@@ -12,7 +13,7 @@ use EventEspresso\core\interfaces\ReservedInstanceInterface;
  * @subpackage      /core/
  * @author          Brent Christensen
  */
-class Response implements ResponseInterface, ReservedInstanceInterface
+class Response implements InterminableInterface, ResponseInterface, ReservedInstanceInterface
 {
     /**
      * @var array $notice
@@ -63,14 +64,14 @@ class Response implements ResponseInterface, ReservedInstanceInterface
      */
     public function getNotice($key)
     {
-        return isset($this->notice[ $key ]) ? $this->notice[ $key ] : null;
+        return $this->notice[ $key ] ?? null;
     }
 
 
     /**
      * @return array
      */
-    public function getNotices()
+    public function getNotices(): array
     {
         return $this->notice;
     }
@@ -102,16 +103,16 @@ class Response implements ResponseInterface, ReservedInstanceInterface
 
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function requestTerminated()
+    public function requestTerminated(): bool
     {
         return $this->request_terminated;
     }
 
 
     /**
-     * @param boolean $request_terminated
+     * @param bool $request_terminated
      */
     public function terminateRequest($request_terminated = true)
     {
@@ -120,9 +121,9 @@ class Response implements ResponseInterface, ReservedInstanceInterface
 
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function pluginDeactivated()
+    public function pluginDeactivated(): bool
     {
         return $this->deactivate_plugin;
     }

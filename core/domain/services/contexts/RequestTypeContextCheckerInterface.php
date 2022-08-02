@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\services\contexts;
 
+use EventEspresso\core\interfaces\InterminableInterface;
+
 /**
  * RequestTypeContextCheckerInterface
  * Service class that provides useful methods for evaluating the current request type
@@ -10,7 +12,7 @@ namespace EventEspresso\core\domain\services\contexts;
  * @author  Brent Christensen
  * @since   4.9.53
  */
-interface RequestTypeContextCheckerInterface
+interface RequestTypeContextCheckerInterface extends InterminableInterface
 {
     /**
      * true if the current request involves some form of activation

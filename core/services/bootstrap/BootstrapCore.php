@@ -10,6 +10,7 @@ use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\InvalidRequestStackMiddlewareException;
 use EventEspresso\core\services\request\RequestInterface;
@@ -44,7 +45,7 @@ use ReflectionException;
  * @author  Brent Christensen
  * @since   4.9.59.p
  */
-class BootstrapCore
+class BootstrapCore implements InterminableInterface
 {
     /**
      * @type LoaderInterface $loader

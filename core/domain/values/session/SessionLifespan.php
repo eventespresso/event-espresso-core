@@ -34,7 +34,7 @@ class SessionLifespan
      * @param int $lifespan
      * @throws DomainException
      */
-    public function __construct($lifespan = 0)
+    public function __construct(int $lifespan = 0)
     {
         $lifespan = absint($lifespan);
         $lifespan = $lifespan > 0 ? $lifespan : (int) HOUR_IN_SECONDS;
@@ -46,7 +46,7 @@ class SessionLifespan
      * @param int $lifespan
      * @throws DomainException
      */
-    protected function setLifespan($lifespan)
+    protected function setLifespan(int $lifespan)
     {
         if ($lifespan < 60) {
             throw new DomainException(
@@ -70,7 +70,7 @@ class SessionLifespan
     /**
      * @return int
      */
-    public function inSeconds()
+    public function inSeconds(): int
     {
         return $this->lifespan;
     }
@@ -80,7 +80,7 @@ class SessionLifespan
      * @param string $separator
      * @return string
      */
-    public function inHoursMinutesSeconds($separator = ':')
+    public function inHoursMinutesSeconds(string $separator = ':'): string
     {
         return sprintf(
             '%02d%s%02d%s%02d',
@@ -100,7 +100,7 @@ class SessionLifespan
      *                  If false, displays expiration in local time
      * @return int
      */
-    public function expiration($utc = true)
+    public function expiration(bool $utc = true): int
     {
         return (int) current_time('timestamp', $utc) - $this->lifespan;
     }
@@ -109,7 +109,7 @@ class SessionLifespan
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->inSeconds();
     }

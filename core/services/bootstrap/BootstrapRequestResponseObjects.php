@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\bootstrap;
 use EE_Dependency_Map;
 use EE_Error;
 use EE_Request;
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\LegacyRequestInterface;
 use EventEspresso\core\services\request\Request;
@@ -26,7 +27,7 @@ use InvalidArgumentException;
  * @author  Brent Christensen
  * @since   4.9.53
  */
-class BootstrapRequestResponseObjects
+class BootstrapRequestResponseObjects implements InterminableInterface
 {
     /**
      * @type LegacyRequestInterface $legacy_request

@@ -73,8 +73,8 @@ class CollectionLoader
      * CollectionLoader constructor.
      *
      * @param CollectionDetailsInterface $collection_details
-     * @param CollectionInterface        $collection
-     * @param LocatorInterface           $file_locator
+     * @param CollectionInterface|null   $collection
+     * @param LocatorInterface|null      $file_locator
      * @param FactoryInterface|null      $entity_factory
      * @throws CollectionLoaderException
      */
@@ -141,7 +141,7 @@ class CollectionLoader
 
 
     /**
-     * @param  string $filepath
+     * @param string|null $filepath
      * @return string
      * @throws InvalidEntityException
      * @throws InvalidDataTypeException
@@ -149,7 +149,7 @@ class CollectionLoader
      * @throws InvalidClassException
      * @throws DuplicateCollectionIdentifierException
      */
-    protected function loadClassFromFilepath($filepath)
+    protected function loadClassFromFilepath(?string $filepath): string
     {
         if (! is_string($filepath)) {
             throw new InvalidDataTypeException('$filepath', $filepath, 'string');
@@ -179,7 +179,7 @@ class CollectionLoader
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    protected function addEntityToCollection($entity, $identifier)
+    protected function addEntityToCollection($entity, $identifier): string
     {
         do_action(
             'FHEE__CollectionLoader__addEntityToCollection__entity',
@@ -188,7 +188,7 @@ class CollectionLoader
             $this->collection_details
         );
         $identifier = $this->setIdentifier($entity, $identifier);
-        if ($this->collection->has($identifier)) {
+        if ($this->collection->contains($entity) || $this->collection->has($identifier)) {
             do_action(
                 'FHEE__CollectionLoader__addEntityToCollection__entity_already_added',
                 $this,
@@ -222,7 +222,7 @@ class CollectionLoader
      * @return string
      * @throws InvalidEntityException
      */
-    protected function setIdentifier($entity, $identifier)
+    protected function setIdentifier($entity, $identifier): string
     {
         switch ($this->collection_details->identifierType()) {
             // every unique object gets added to the collection, but not duplicates of the exact same object
@@ -289,7 +289,7 @@ class CollectionLoader
 
 
     /**
-     * @param  string $FQCN Fully Qualified Class Name
+     * @param string|null $FQCN Fully Qualified Class Name
      * @return string
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -300,7 +300,7 @@ class CollectionLoader
      * @throws InvalidClassException
      * @throws DuplicateCollectionIdentifierException
      */
-    protected function loadClassFromFQCN($FQCN)
+    protected function loadClassFromFQCN(?string $FQCN): string
     {
         if (! is_string($FQCN)) {
             throw new InvalidDataTypeException('$FQCN', $FQCN, 'string');

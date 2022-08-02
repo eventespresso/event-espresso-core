@@ -45,7 +45,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @var boolean
      */
-    private $_values_already_prepared_by_model_object = 0;
+    private $_values_already_prepared_by_model_object = EEM_Base::not_prepared_by_model_object;
 
     /**
      * when $_values_already_prepared_by_model_object equals this, we assume
@@ -581,6 +581,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (empty(EEM_Base::$_model_query_blog_id)) {
             EEM_Base::set_model_query_blog_id();
         }
+        $this->_values_already_prepared_by_model_object = EEM_Base::not_prepared_by_model_object;
         /**
          * Filters the list of tables on a model. It is best to NOT use this directly and instead
          * just use EE_Register_Model_Extension
@@ -1552,9 +1553,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                 formatted string matching the set format for the field in the set timezone will
      *                                 be returned.
      * @param string $what             Whether to return the string in just the time format, the date format, or both.
-     * @return int|string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error
+     * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error
      *                                 exception is triggered.
-     * @throws EE_Error    If the given field_name is not of the EE_Datetime_Field type.
+     * @throws Exception
+     * @throws EE_Error    If the given field_name is not of the EE_Datetime_Field type.*
      * @since 4.6.x
      */
     public function current_time_for_query($field_name, $timestamp = false, $what = 'both')
@@ -1568,13 +1570,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         switch ($what) {
             case 'time':
                 return $DateTime->format($formats[1]);
-                break;
             case 'date':
                 return $DateTime->format($formats[0]);
-                break;
             default:
                 return $DateTime->format(implode(' ', $formats));
-                break;
         }
     }
 
@@ -1835,9 +1834,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         } elseif ($this->has_primary_key_field()) {
             $field = $this->get_primary_key_field();
         } else {
-            // no primary key, just grab the first column
             $field_settings = $this->field_settings();
-            $field          = reset($field_settings);
+            // no primary key, just grab the first column
+            $field = reset($field_settings);
         }
         $model_query_info   = $this->_create_model_query_info_carrier($query_params);
         $select_expressions = $field->get_qualified_column();
@@ -2459,7 +2458,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 case EEM_Base::db_verified_addons:
                     // ummmm... you in trouble
                     return $result;
-                    break;
             }
             if (! empty($error_message)) {
                 EE_Log::instance()->log(__FILE__, __FUNCTION__, $error_message, 'error');
@@ -2478,6 +2476,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param string $wpdb_method
      * @param array  $arguments_to_provide
      * @return string
+     * @throws EE_Error
      */
     private function _verify_core_db($wpdb_method, $arguments_to_provide)
     {
@@ -5830,7 +5829,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @return void
      */
     public function assume_values_already_prepared_by_model_object(
-        $values_already_prepared = self::not_prepared_by_model_object
+        int $values_already_prepared = self::not_prepared_by_model_object
     ) {
         $this->_values_already_prepared_by_model_object = $values_already_prepared;
     }

@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\services\collections;
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -139,7 +139,6 @@ class CollectionDetails implements CollectionDetailsInterface
     /**
      * CollectionDetails constructor.
      *
-     * @access public
      * @param string           $collection_name
      * @param string           $collection_interface
      * @param array            $collection_FQCNs
@@ -147,17 +146,17 @@ class CollectionDetails implements CollectionDetailsInterface
      * @param string           $file_mask
      * @param string           $identifier_type
      * @param string           $identifier_callback
-     * @param LocatorInterface $file_locator
+     * @param LocatorInterface|null $file_locator
      * @throws CollectionDetailsException
      */
     public function __construct(
-        $collection_name,
-        $collection_interface,
+        string $collection_name,
+        string $collection_interface,
         array $collection_FQCNs = array(),
         array $collection_paths = array(),
-        $file_mask = '',
-        $identifier_type = CollectionDetails::ID_OBJECT_HASH,
-        $identifier_callback = '',
+        string $file_mask = '',
+        string $identifier_type = CollectionDetails::ID_OBJECT_HASH,
+        string $identifier_callback = '',
         LocatorInterface $file_locator = null
     ) {
         try {
@@ -176,21 +175,19 @@ class CollectionDetails implements CollectionDetailsInterface
 
 
     /**
-     * @access public
-     * @return mixed
+     * @return string
      */
-    public function getCollectionInterface()
+    public function getCollectionInterface(): string
     {
         return $this->collection_interface;
     }
 
 
     /**
-     * @access protected
      * @param string $collection_interface
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
      */
-    protected function setCollectionInterface($collection_interface)
+    protected function setCollectionInterface(string $collection_interface)
     {
         if (! (interface_exists($collection_interface) || class_exists($collection_interface))) {
             throw new InvalidInterfaceException($collection_interface);
@@ -202,10 +199,9 @@ class CollectionDetails implements CollectionDetailsInterface
     /**
      * the collection name will be used for creating dynamic filters
      *
-     * @access public
      * @return string
      */
-    public function collectionName()
+    public function collectionName(): string
     {
         return $this->collection_name;
     }
@@ -214,15 +210,10 @@ class CollectionDetails implements CollectionDetailsInterface
     /**
      * sanitizes collection name and converts spaces and dashes to underscores
      *
-     * @access protected
      * @param string $collection_name
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      */
-    protected function setCollectionName($collection_name)
+    protected function setCollectionName(string $collection_name)
     {
-        if (! is_string($collection_name)) {
-            throw new InvalidDataTypeException('$collection_name', $collection_name, 'string');
-        }
         $this->collection_name = str_replace(
             '-',
             '_',
@@ -232,26 +223,25 @@ class CollectionDetails implements CollectionDetailsInterface
 
 
     /**
-     * @access public
      * @return string
      */
-    public function identifierType()
+    public function identifierType(): string
     {
         return $this->identifier_type;
     }
 
 
     /**
-     * @access protected
      * @param string $identifier_type
      * @throws InvalidIdentifierException
      */
-    protected function setIdentifierType($identifier_type)
+    protected function setIdentifierType(string $identifier_type)
     {
         if (
-            ! ($identifier_type === CollectionDetails::ID_CLASS_NAME
-               || $identifier_type === CollectionDetails::ID_OBJECT_HASH
-               || $identifier_type === CollectionDetails::ID_CALLBACK_METHOD
+            ! (
+                $identifier_type === CollectionDetails::ID_CLASS_NAME
+                || $identifier_type === CollectionDetails::ID_OBJECT_HASH
+                || $identifier_type === CollectionDetails::ID_CALLBACK_METHOD
             )
         ) {
             throw new InvalidIdentifierException(
@@ -264,34 +254,27 @@ class CollectionDetails implements CollectionDetailsInterface
 
 
     /**
-     * @access public
      * @return string
      */
-    public function identifierCallback()
+    public function identifierCallback(): string
     {
         return $this->identifier_callback;
     }
 
 
     /**
-     * @access protected
      * @param string $identifier_callback
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      */
-    protected function setIdentifierCallback($identifier_callback = 'identifier')
+    protected function setIdentifierCallback(string $identifier_callback = 'identifier')
     {
-        if (! is_string($identifier_callback)) {
-            throw new InvalidDataTypeException('$identifier_callback', $identifier_callback, 'string');
-        }
         $this->identifier_callback = $identifier_callback;
     }
 
 
     /**
-     * @access public
      * @return string
      */
-    public function getFileMask()
+    public function getFileMask(): string
     {
         return $this->file_mask;
     }
@@ -301,36 +284,26 @@ class CollectionDetails implements CollectionDetailsInterface
      * sets the file mask which is then used to filter what files get loaded
      * when searching for classes to add to the collection. Defaults to '*.php'
      *
-     * @access protected
      * @param string $file_mask
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      */
-    protected function setFileMasks($file_mask)
+    protected function setFileMasks(string $file_mask)
     {
         $this->file_mask = ! empty($file_mask) ? $file_mask : '*.php';
-        // we know our default is a string, so if it's not a string now,
-        // then that means the incoming parameter was something else
-        if (! is_string($this->file_mask)) {
-            throw new InvalidDataTypeException('$file_mask', $this->file_mask, 'string');
-        }
     }
 
 
     /**
-     * @access public
      * @return array
      */
-    public function getCollectionFQCNs()
+    public function getCollectionFQCNs(): array
     {
         return $this->collection_FQCNs;
     }
 
 
     /**
-     * @access public
      * @param string|array $collection_FQCNs
-     * @throws \EventEspresso\core\exceptions\InvalidClassException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws InvalidClassException
      */
     public function setCollectionFQCNs($collection_FQCNs)
     {
@@ -339,7 +312,8 @@ class CollectionDetails implements CollectionDetailsInterface
                 if (class_exists($collection_FQCN)) {
                     $this->collection_FQCNs[] = $collection_FQCN;
                 } else {
-                    foreach ($this->getFQCNsFromPartialNamespace($collection_FQCN) as $FQCN) {
+                    $FQCNs = $this->getFQCNsFromPartialNamespace($collection_FQCN);
+                    foreach ($FQCNs as $FQCN) {
                         $this->collection_FQCNs[] = $FQCN;
                     }
                 }
@@ -349,13 +323,11 @@ class CollectionDetails implements CollectionDetailsInterface
 
 
     /**
-     * @access protected
-     * @param  string $partial_FQCN
+     * @param string $partial_FQCN
      * @return array
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidClassException
+     * @throws InvalidClassException
      */
-    protected function getFQCNsFromPartialNamespace($partial_FQCN)
+    protected function getFQCNsFromPartialNamespace(string $partial_FQCN): array
     {
         if (! $this->file_locator instanceof FqcnLocator) {
             $this->file_locator = new FqcnLocator();
@@ -366,19 +338,17 @@ class CollectionDetails implements CollectionDetailsInterface
 
 
     /**
-     * @access public
      * @return array
      */
-    public function getCollectionPaths()
+    public function getCollectionPaths(): array
     {
         return $this->collection_paths;
     }
 
 
     /**
-     * @access public
      * @param string|array $collection_paths
-     * @throws \EventEspresso\core\exceptions\InvalidFilePathException
+     * @throws InvalidFilePathException
      */
     public function setCollectionPaths($collection_paths)
     {

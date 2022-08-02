@@ -278,6 +278,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
      */
     public function test_parsing_email_payment_received()
     {
+        tests_add_filter('FHEE_load_EE_Session', '__return_true');
         $parsed = $this->_get_parsed_content('email', 'payment', 'content', 'primary_attendee');
 
         //now that we have parsed let's test the results, note for the purpose of this test we are verifying transaction shortcodes and ticket shortcodes.
@@ -319,7 +320,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
             $parsed,
             '[TKT_QTY_PURCHASED] shortcode was not parsed correctly to the expected value which is 3'
         );
-
+        tests_add_filter('FHEE_load_EE_Session', '__return_true');
     }
 
 

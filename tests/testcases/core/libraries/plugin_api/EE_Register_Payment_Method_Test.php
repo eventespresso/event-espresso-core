@@ -30,7 +30,7 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase
                 ],
         ];
         $this->_pmt_name              = 'Mock_Onsite';
-        $this->payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
+        $this->payment_method_manager = EE_Payment_Method_Manager::reset();
     }
 
 
@@ -51,7 +51,7 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase
         $this->_stop_pretending_addon_hook_time();
         remove_all_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register');
 
-        //first verify it doesn't already exists
+        // first verify it doesn't already exists
         $pmt_exists = $this->payment_method_manager->payment_method_type_exists($this->_pmt_name);
         $this->assertFalse($pmt_exists);
 

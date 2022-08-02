@@ -35,7 +35,7 @@ class EspressoLegacyAdminAssetManager extends AssetManager
 
     const JS_HANDLE_PARSE_URI               = 'ee-parse-uri';
 
-    const JS_HANDLE_EE_TEXT_LINKS           = 'ee-text-links';
+    const JS_HANDLE_EE_TEXT_LINKS           = 'ee-text-links-js';
 
     const JS_HANDLE_EE_SERIALIZE_FULL_ARRAY = 'ee-serialize-full-array';
 
@@ -47,7 +47,7 @@ class EspressoLegacyAdminAssetManager extends AssetManager
 
     const CSS_HANDLE_EE_JOYRIDE             = 'ee-joyride-css';
 
-    const CSS_HANDLE_EE_TEXT_LINKS          = 'ee-text-links';
+    const CSS_HANDLE_EE_TEXT_LINKS          = 'ee-text-links-css';
 
     const CSS_HANDLE_EE_UI_THEME            = 'espresso-ui-theme';
 
