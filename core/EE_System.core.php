@@ -1182,6 +1182,9 @@ final class EE_System implements ResettableInterface
         } elseif ($this->request->isAdmin() || $this->request->isAdminAjax()) {
             do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
             $this->loader->getShared('EE_Admin');
+            $this->loader->getShared(
+                'EventEspresso\core\services\activation\plugin_prompt\DownloadPluginPromptManager'
+            );
         } elseif ($this->request->isWordPressHeartbeat()) {
             $this->loader->getShared('EventEspresso\core\domain\services\admin\ajax\WordpressHeartbeat');
         }
