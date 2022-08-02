@@ -77,15 +77,14 @@ class GraphQLField implements GraphQLFieldInterface
      * @param string          $description
      * @param callable|null   $formatter
      * @param callable|null   $resolver
-     * @param array           $args
      * @param array           $caps
      * @param array           $args
      */
     public function __construct(
-        $name,
+        string $name,
         $type,
-        $key = null,
-        $description = '',
+        string $key = null,
+        string $description = '',
         callable $formatter = null,
         callable $resolver = null,
         array $caps = [],
@@ -105,7 +104,7 @@ class GraphQLField implements GraphQLFieldInterface
     /**
      * @return array
      */
-    public function caps()
+    public function caps(): array
     {
         return $this->caps;
     }
@@ -114,7 +113,7 @@ class GraphQLField implements GraphQLFieldInterface
     /**
      * @return string
      */
-    public function description()
+    public function description(): string
     {
         return $this->description;
     }
@@ -123,7 +122,7 @@ class GraphQLField implements GraphQLFieldInterface
     /**
      * @return string
      */
-    public function key()
+    public function key(): ?string
     {
         return $this->key;
     }
@@ -132,7 +131,7 @@ class GraphQLField implements GraphQLFieldInterface
     /**
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->name;
     }
@@ -153,7 +152,7 @@ class GraphQLField implements GraphQLFieldInterface
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return get_object_vars($this);
     }
@@ -164,7 +163,7 @@ class GraphQLField implements GraphQLFieldInterface
      *
      * @param bool $use_for_input
      */
-    protected function setUseForInput($use_for_input)
+    protected function setUseForInput(bool $use_for_input)
     {
         $this->use_for_input = filter_var($use_for_input, FILTER_VALIDATE_BOOLEAN);
     }
@@ -176,9 +175,9 @@ class GraphQLField implements GraphQLFieldInterface
      *
      * @return bool
      */
-    public function useForInput()
+    public function useForInput(): bool
     {
-        return (bool) $this->use_for_input;
+        return $this->use_for_input;
     }
 
 
@@ -188,9 +187,9 @@ class GraphQLField implements GraphQLFieldInterface
      *
      * @return bool
      */
-    public function useForOutput()
+    public function useForOutput(): bool
     {
-        return (bool) $this->use_for_output;
+        return $this->use_for_output;
     }
 
 
@@ -199,7 +198,7 @@ class GraphQLField implements GraphQLFieldInterface
      *
      * @param bool $use_for_output
      */
-    protected function setUseForOutput($use_for_output)
+    protected function setUseForOutput(bool $use_for_output)
     {
         $this->use_for_output = filter_var($use_for_output, FILTER_VALIDATE_BOOLEAN);
     }
@@ -211,7 +210,7 @@ class GraphQLField implements GraphQLFieldInterface
      *
      * @return boolean
      */
-    public function shouldResolve()
+    public function shouldResolve(): bool
     {
         foreach ($this->caps as $cap) {
             if (! current_user_can($cap)) {
@@ -227,7 +226,7 @@ class GraphQLField implements GraphQLFieldInterface
      *
      * @return boolean
      */
-    public function hasInternalResolver()
+    public function hasInternalResolver(): bool
     {
         return is_callable($this->resolver);
     }

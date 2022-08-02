@@ -59,17 +59,19 @@ class EE_Money_Field extends EE_Float_Field
      * If provided with a string, strips out money-related formatting to turn it into a proper float.
      * Rounds the float to the correct number of decimal places for this country's currency.
      * Also, interprets periods and commas according to the country's currency settings.
-     * So if you want to pass in a string that NEEDS to interpret periods as decimal marks, call floatval() on it first.
+     * So if you want to pass in a string that NEEDS to interpret periods as decimal marks,typecast as a float first.
      *
-     * @param string $value_inputted_for_field_on_model_object
+     * @param string $amount
      * @return float
      */
-    public function prepare_for_set($value_inputted_for_field_on_model_object): float
+    public function prepare_for_set($amount): float
     {
         // now it's a float-style string or number
-        $float_val = parent::prepare_for_set($value_inputted_for_field_on_model_object);
+        $float_val = parent::prepare_for_set($amount);
         // round to the correctly number of decimal places for this  currency
-        return $this->decimal_values->roundDecimalValue($float_val);
+        $float_val = $this->decimal_values->roundDecimalValue($float_val);
+        // finally, cap money values so they fit nicely within the db's Decimal(12,6) schema
+        return min($float_val, 999999.999999);
     }
 
 
