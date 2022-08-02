@@ -662,3 +662,179 @@ input.ee-toggle-round-flat:checked + label:after {
 .ee-addon-upsell-info-dv .ee-button:active {
     top:0;
 }
+
+.wp-core-ui .espresso-admin-notice {
+	background: #fff;
+	border   : none;
+	border-radius: .25rem;
+	box-shadow: 0 2px 3px -1px rgba(0,0,0,.5);
+	box-sizing: border-box;
+	color: #444;
+	height: auto;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	z-index: 999;
+}
+.wp-core-ui .espresso-admin-notice p {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    margin: 0;
+}
+.wp-core-ui .espresso-admin-notice p + p {
+    margin-block-start: 1.5rem;
+}
+
+.wp-core-ui .ee-download-plugin-prompts__grid{
+	display: grid;
+    grid-gap: 1rem;
+    margin: 1em 0;
+}
+
+.wp-core-ui .ee-download-plugin-prompt {
+	border: 1rem solid #fff;
+    box-sizing: border-box;
+	isolation: isolate;
+	overflow: hidden;
+	position: relative;
+    width: 100%;
+}
+
+/* background plugins dashicon watermark */
+.wp-core-ui .ee-download-plugin-prompt .dashicons-admin-plugins {
+	color: hsl(207deg 15% 97%);
+	font-size: 20rem;
+	margin: 0;
+    inset-block-start: -0.0625em;
+	position: absolute;
+	z-index: -1;
+}
+
+.wp-core-ui .ee-download-plugin-prompt__content {
+	display: flex;
+	flex-direction: column-reverse;
+    justify-content: space-evenly;
+	overflow: hidden;
+	z-index: 2;
+}
+.wp-core-ui .ee-download-plugin-prompt__message {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 1em 2em;
+	position: relative;
+    text-align: center;
+    z-index: 2;
+}
+
+.wp-core-ui .ee-download-plugin-prompt :is( h1, h2, h3, h4, h5, h6) {
+	color: hsl(207deg 60% 50%);
+	font-weight: 800;
+	line-height: 1.5rem;
+	margin: .5em 0;
+    max-width: 35ch;
+    text-transform: uppercase;
+}
+.wp-core-ui .ee-download-plugin-prompt h1{
+	font-size: 2.5rem;
+	line-height: 2.5rem;
+}
+.wp-core-ui .ee-download-plugin-prompt h2 {
+    font-size: 2rem;
+    line-height: 2.5rem;
+}
+.wp-core-ui .ee-download-plugin-prompt h3 {
+	font-size: 1.625rem;
+	line-height: 1.625rem;
+}
+
+.wp-core-ui .ee-download-plugin-prompt__message p {
+    max-width: 50ch;
+}
+.wp-core-ui .ee-download-plugin-prompt a {
+	color: hsl(207deg 60% 50%);
+}
+
+.wp-core-ui .ee-download-plugin-prompt__image {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    margin-inline-end: 0.5rem;
+    max-height: 300px;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.wp-core-ui a.button--primary.ee-download-plugin-prompt__button {
+	background: hsl(207deg 60% 50%);
+	margin: 0;
+    color: hsl(0deg 0% 100%);
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: .025rem;
+    line-height: 1.375;
+    padding: 0.5em 1.5em 0.75em;
+    white-space: normal;
+	width: 100%;
+}
+
+
+@media screen and (min-width : 768px) {
+	.wp-core-ui .ee-download-plugin-prompts__grid{
+		grid-template-columns: repeat(auto-fit, minmax(750px, 1fr));
+	}
+	.wp-core-ui .ee-download-plugin-prompt__content {
+		flex-direction: row;
+	}
+	.wp-core-ui .ee-download-plugin-prompt:nth-child(even) .ee-download-plugin-prompt__content  {
+		flex-direction: row-reverse;
+	}
+	.wp-core-ui .ee-download-plugin-prompt__message {
+		text-align: unset;
+		align-items: unset;
+	}
+	.wp-core-ui .ee-download-plugin-prompt__message p {
+		max-width: 40ch;
+	}
+	.wp-core-ui .ee-download-plugin-prompt__image {
+		max-width: 380px;
+	}
+	.wp-core-ui a.button--primary.ee-download-plugin-prompt__button {
+		line-height: 2;
+		white-space: nowrap;
+		width: fit-content;
+	}
+}
+
+
+@media screen and (min-width : 1920px) {
+	.wp-core-ui .ee-download-plugin-prompts__grid{
+		grid-template-columns: repeat(2, minmax(900px, 1fr));
+	}
+	.wp-core-ui .ee-download-plugin-prompt:nth-child(even) .ee-download-plugin-prompt__content  {
+		flex-direction: row;
+	}
+	.wp-core-ui .ee-download-plugin-prompt h1{
+		font-size: 3rem;
+	}
+	.wp-core-ui .ee-download-plugin-prompt h2 {
+		font-size: 2.5rem;
+		line-height: 2.5rem;
+	}
+	.wp-core-ui .ee-download-plugin-prompt h3 {
+		font-size: 2rem;
+	}
+	.wp-core-ui .ee-download-plugin-prompt__message p {
+		max-width: 65ch;
+	}
+	.wp-core-ui a.button--primary.ee-download-plugin-prompt__button {
+		font-size: 1.125rem;
+		letter-spacing: .05rem;
+	}
+	.wp-core-ui .ee-download-plugin-prompt__image {
+		max-width: 100%;
+	}
+}
