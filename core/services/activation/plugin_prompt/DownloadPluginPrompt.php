@@ -24,7 +24,12 @@ class DownloadPluginPrompt extends AdminNotification
     /**
      * @var int
      */
-    protected $image_size = 384;
+    protected $image_size = 0;
+
+    /**
+     * @var string
+     */
+    protected $message = '';
 
     /**
      * @var string
@@ -52,17 +57,17 @@ class DownloadPluginPrompt extends AdminNotification
         ?string $heading = '',
         ?string $message = '',
         ?string $image = '',
-        ?int $image_size = 384
+        ?int $image_size = 480
     ) {
         $this->plugin_name = $plugin_name;
         $this->plugin_url  = $plugin_url;
         $this->dependency  = $dependency;
         $this->heading     = $heading;
+        $this->message     = $message;
         $this->image       = $image;
-        $this->image_size  = absint($image_size) ?? 384;
+        $this->image_size  = absint($image_size) ?? 480;
         $identifier        = "$plugin_name-download-plugin-prompt";
-        $message           = $message ?? $this->defaultMessage();
-        parent::__construct($identifier, $message, AdminNotification::TYPE_CUSTOM, false);
+        parent::__construct($identifier, $this->content(), AdminNotification::TYPE_CUSTOM, false);
         $this->addCssClass("ee-download-plugin-prompt");
         $this->setIsDismissible(true);
         $this->setCapability('activate_plugins');
@@ -70,10 +75,10 @@ class DownloadPluginPrompt extends AdminNotification
     }
 
 
-    private function defaultMessage(): string
+    private function content(): string
     {
         $heading = $this->heading ?? esc_html__("Don't miss out on exciting new features!", 'event_espresso');
-        $message = sprintf(
+        $message = $this->message ?? sprintf(
         /* translators: 'Some Feature' needs the 'Plugin Name' plugin in order provide your site with the maximum functionality it can offer. */
             esc_html__(
                 '%1$s needs the %2$s plugin in order provide your site with the maximum functionality it can offer.',
@@ -97,8 +102,7 @@ class DownloadPluginPrompt extends AdminNotification
                 <p>$message</p>
                 <p>
                     <a class='ee-download-plugin-prompt__button button button--primary'
-                       href='http://www.dev.test/wp-admin/plugin-install.php?s={$this->plugin_name}&tab=search&type=term' 
-                       target='_blank'
+                       href='http://www.dev.test/wp-admin/plugin-install.php?s={$this->plugin_name}&tab=search&type=term'                    
                     >
                         $button
                     </a>
