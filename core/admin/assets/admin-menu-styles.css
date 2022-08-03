@@ -711,6 +711,7 @@ input.ee-toggle-round-flat:checked + label:after {
 }
 
 .wp-core-ui .ee-download-plugin-prompt__content {
+    align-items: center;
 	display: flex;
 	flex-direction: column-reverse;
     justify-content: space-evenly;
@@ -723,7 +724,7 @@ input.ee-toggle-round-flat:checked + label:after {
     display: flex;
     flex-direction: column;
     height: 100%;
-    margin: 1em 2em;
+    margin: 1em 1em 1em 3em;
 	position: relative;
     text-align: center;
     z-index: 2;
@@ -756,16 +757,26 @@ input.ee-toggle-round-flat:checked + label:after {
 .wp-core-ui .ee-download-plugin-prompt a {
 	color: hsl(207deg 60% 50%);
 }
+.wp-core-ui .ee-download-plugin-prompt__message ul li {
+    font-size: 1.25rem;
+    line-height: 2rem;
+    max-width: 50ch;
+}
 
 .wp-core-ui .ee-download-plugin-prompt__image {
     align-items: center;
     box-sizing: border-box;
     display: flex;
+	height: 100%;
     justify-content: center;
     margin-inline-end: 0.5rem;
-    max-height: 300px;
+    /* max-height: 300px; */
     overflow: hidden;
     z-index: 1;
+}
+
+.wp-core-ui .ee-download-plugin-prompt__image img {
+    max-height: 450px;
 }
 
 .wp-core-ui a.button--primary.ee-download-plugin-prompt__button {
