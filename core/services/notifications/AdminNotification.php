@@ -9,7 +9,7 @@ use EventEspresso\core\domain\services\capabilities\RequiresCapCheckInterface;
 use EventEspresso\core\exceptions\InvalidStatusException;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
-abstract class AdminNotification implements RequiresCapCheckInterface
+class AdminNotification implements RequiresCapCheckInterface
 {
     const STATUS_OPEN      = 'status-open';
 
