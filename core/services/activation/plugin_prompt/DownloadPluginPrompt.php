@@ -136,4 +136,3 @@ class DownloadPluginPrompt extends AdminNotification
         return file_exists($file_path) ? EE_GLOBAL_ASSETS_URL . "images/download_plugin_prompt/{$this->image}" : '';
     }
 }
-
