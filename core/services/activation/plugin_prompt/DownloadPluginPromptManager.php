@@ -33,7 +33,28 @@ class DownloadPluginPromptManager
 
     public function loadPluginPrompts()
     {
-        // WPGraphQL
+        $this->wpGraphQlPrompt();
+        $this->restApiAuthPrompt();
+    }
+
+
+    public function displayPluginPrompts()
+    {
+        $notifications = '';
+        foreach ($this->plugin_prompts as $plugin_prompt) {
+            if ($this->cap_checker->processCapCheck($plugin_prompt->getCapCheck())) {
+                $notifications .= $plugin_prompt->displayNotification(true);
+            }
+        }
+        echo "
+        <div class='ee-download-plugin-prompts__grid'>
+            " . wp_kses($notifications, AllowedTags::getWithFullTags()) . "
+        </div>";
+    }
+
+
+    private function wpGraphQlPrompt()
+    {
         if (class_exists('EventEspresso\core\services\graphql\GraphQLManager') && ! class_exists('WPGraphQL')) {
             $this->plugin_prompts['WPGraphQL'] = new DownloadPluginPrompt(
                 'WPGraphQL',
@@ -45,8 +66,11 @@ class DownloadPluginPromptManager
                 500
             );
         }
+    }
 
-        // REST API Authentication
+
+    private function restApiAuthPrompt()
+    {
         if (
             class_exists('EED_Core_Rest_Api')
             && ! (class_exists('Jwt_Auth') || defined('MINIORANGE_API_AUTHENTICATION_VERSION'))
@@ -54,10 +78,10 @@ class DownloadPluginPromptManager
             $this->plugin_prompts['REST-API-Auth'] = new DownloadPluginPrompt(
                 'WP REST API Authentication',
                 '',
-                "The Event Espresso REST API",
-                esc_html__("REST API Authentication!", 'event_espresso'),
+                'The Event Espresso REST API',
+                esc_html__('REST API Authentication!', 'event_espresso'),
                 sprintf(
-                    /* translators: 'Some Feature' needs the 'Plugin Name' plugin in order provide your site with the maximum functionality it can offer. */
+                /* translators: 'Some Feature' needs the 'Plugin Name' plugin in order provide your site with the maximum functionality it can offer. */
                     esc_html__(
                         'The Event Espresso REST API requires an Authentication plugin to protect your site\'s data endpoints. We highly encourage you to secure your site using one of the following plugins: %1$s',
                         'event_espresso'
@@ -81,20 +105,5 @@ class DownloadPluginPromptManager
                 570
             );
         }
-    }
-
-
-    public function displayPluginPrompts()
-    {
-        $notifications = '';
-        foreach ($this->plugin_prompts as $plugin_prompt) {
-            if ($this->cap_checker->processCapCheck($plugin_prompt->getCapCheck())) {
-                $notifications .= $plugin_prompt->displayNotification(true);
-            }
-        }
-        echo "
-        <div class='ee-download-plugin-prompts__grid'>
-            " . wp_kses($notifications, AllowedTags::getWithFullTags()) . "
-        </div>";
     }
 }
