@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace EventEspressoVendor\Jaybizzle\CrawlerDetect\Fixtures;
+namespace EventEspressoVendor\CrawlerDetect\Fixtures;
 
 /**
  * Class AbstractProvider
