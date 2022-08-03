@@ -1463,15 +1463,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
     public function setSessionLifespan()
     {
-        $session_lifespan_form = new SessionLifespanForm(new SessionLifespanOption());
+        $session_lifespan_form = $this->loader->getNew(SessionLifespanForm::class);
         echo wp_kses($session_lifespan_form->get_html(), AllowedTags::getWithFormTags());
     }
 
 
     public function updateSessionLifespan()
     {
-        $session_lifespan_option = new SessionLifespanOption();
-        $handler = new SessionLifespanFormHandler($session_lifespan_option);
-        $handler->process(new SessionLifespanForm($session_lifespan_option));
+        $handler = $this->loader->getNew(SessionLifespanFormHandler::class);
+        $handler->process($this->loader->getNew(SessionLifespanForm::class));
     }
 }

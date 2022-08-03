@@ -581,6 +581,12 @@ class EE_Dependency_Map
             'EventEspresso\core\domain\values\session\SessionLifespan'                                                    => [
                 'EventEspresso\core\domain\values\session\SessionLifespanOption' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanForm'                          => [
+                'EventEspresso\core\domain\values\session\SessionLifespanOption' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanFormHandler'                   => [
+                'EventEspresso\core\domain\values\session\SessionLifespanOption' => EE_Dependency_Map::load_from_cache,
+            ],
             'EventEspresso\core\services\database\TableManager'                                                           => [
                 'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
             ],
