@@ -33,6 +33,7 @@ class DownloadPluginPromptManager
 
     public function loadPluginPrompts()
     {
+        // WPGraphQL
         if (class_exists('EventEspresso\core\services\graphql\GraphQLManager') && ! class_exists('WPGraphQL')) {
             $this->plugin_prompts['WPGraphQL'] = new DownloadPluginPrompt(
                 'WPGraphQL',
@@ -41,17 +42,45 @@ class DownloadPluginPromptManager
                 null,
                 null,
                 'keen-performance.svg',
-                480
+                500
             );
         }
-        $this->plugin_prompts['Sharks'] = new DownloadPluginPrompt(
-            'Sharks with Lasers',
-            'https://www.wired.com/2012/05/wicked-lasers-shark/',
-            "Dr Evil",
-            'Sharks with Frickin’ Laser Beams',
-            null,
-            'https://assets.vg247.com/current//2018/07/Fortnite_Laser_chomp.png'
-        );
+
+        // REST API Authentication
+        if (
+            class_exists('EED_Core_Rest_Api')
+            && ! (class_exists('Jwt_Auth') || defined('MINIORANGE_API_AUTHENTICATION_VERSION'))
+        ) {
+            $this->plugin_prompts['REST-API-Auth'] = new DownloadPluginPrompt(
+                'WP REST API Authentication',
+                '',
+                "The Event Espresso REST API",
+                esc_html__("REST API Authentication!", 'event_espresso'),
+                sprintf(
+                    /* translators: 'Some Feature' needs the 'Plugin Name' plugin in order provide your site with the maximum functionality it can offer. */
+                    esc_html__(
+                        'The Event Espresso REST API requires an Authentication plugin to protect your site\'s data endpoints. We highly encourage you to secure your site using one of the following plugins: %1$s',
+                        'event_espresso'
+                    ),
+                    // 'Plugin Name & Link'
+                    "
+                    <ul>
+                        <li>
+                            <a href='https://wordpress.org/plugins/jwt-authentication-for-wp-rest-api/' target='_blank'>
+                                JWT Authentication for WP REST API
+                            </a>
+                        </li>
+                        <li>
+                            <a href='https://wordpress.org/plugins/wp-rest-api-authentication/' target='_blank'>
+                                WordPress REST API Authentication
+                            </a>
+                        </li>
+                    </ul>"
+                ),
+                'password.svg',
+                570
+            );
+        }
     }
 
 
