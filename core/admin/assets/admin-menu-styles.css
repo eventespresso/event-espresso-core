@@ -702,7 +702,7 @@ input.ee-toggle-round-flat:checked + label:after {
 
 /* background plugins dashicon watermark */
 .wp-core-ui .ee-download-plugin-prompt .dashicons-admin-plugins {
-	color: hsl(207deg 15% 97%);
+	color: hsla(207deg 15% 50% / 10%);
 	font-size: 20rem;
 	margin: 0;
     inset-block-start: -0.0625em;
