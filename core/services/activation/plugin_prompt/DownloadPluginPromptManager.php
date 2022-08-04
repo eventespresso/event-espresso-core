@@ -73,7 +73,11 @@ class DownloadPluginPromptManager
     {
         if (
             class_exists('EED_Core_Rest_Api')
-            && ! (class_exists('Jwt_Auth') || defined('MINIORANGE_API_AUTHENTICATION_VERSION'))
+            && ! (
+                is_readable(EE_THIRD_PARTY . 'wp-api-basic-auth/basic-auth.php')
+                || class_exists('Jwt_Auth')
+                || defined('MINIORANGE_API_AUTHENTICATION_VERSION')
+            )
         ) {
             $this->plugin_prompts['REST-API-Auth'] = new DownloadPluginPrompt(
                 'WP REST API Authentication',
