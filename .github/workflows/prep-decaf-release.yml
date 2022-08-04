@@ -5,7 +5,7 @@ on:
         branches: [prep-decaf]
 
 jobs:
-    makepot:
+    prep-decaf-release:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout the commit
@@ -23,3 +23,10 @@ jobs:
               uses: eventespresso/actions/packages/remove-files@main
               with:
                   paths: ${{ steps.files-to-remove.outputs.value }}
+
+            - name: Generate POT
+              uses: eventespresso/actions/packages/makepot@main
+              with:
+                  save-path: languages
+                  slug: event-espresso-decaf
+                  text-domain: event_espresso
