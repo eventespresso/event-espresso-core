@@ -18,8 +18,7 @@
 		"src\/docs\/**",
 		"src\/eslint\/**",
 		"src\/info.json",
-		"src\/tests\/**",
-		"src\/wp-assets\/**"
+		"src\/tests\/**"
 	],
 	"jsBuildDirectory": ".\/",
 	"name": "Event Espresso Core",
@@ -40,8 +39,7 @@
 		"src\/eslint\/**",
 		"src\/info.json",
 		"src\/readme.txt",
-		"src\/tests\/**",
-		"src\/wp-assets\/**"
+		"src\/tests\/**"
 	],
 	"remoteNamesToPushTo": [],
 	"slug": "event-espresso-core-reg",
