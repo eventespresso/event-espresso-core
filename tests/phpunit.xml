@@ -23,7 +23,7 @@
                 <directory>../public</directory>
                 <directory>../tests</directory>
                 <directory>../vendor</directory>
-                <directory>../wp-assets</directory>
+                <directory>../wp-org-assets</directory>
             </exclude>
         </whitelist>
     </filter>
