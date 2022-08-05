@@ -85,14 +85,21 @@ class DownloadPluginPromptManager
                 'The Event Espresso REST API',
                 esc_html__('REST API Authentication!', 'event_espresso'),
                 sprintf(
-                /* translators: 'Some Feature' needs the 'Plugin Name' plugin in order provide your site with the maximum functionality it can offer. */
+                    /* translators: The Event Espresso REST API requires an Authentication plugin to protect your
+                    site\'s data endpoints. We highly encourage you to secure your site using one of the following:
+                    <list of plugins> */
                     esc_html__(
-                        'The Event Espresso REST API requires an Authentication plugin to protect your site\'s data endpoints. We highly encourage you to secure your site using one of the following plugins: %1$s',
+                        'The Event Espresso REST API requires an Authentication plugin to protect your site\'s data endpoints. We highly encourage you to secure your site using one of the following: %1$s',
                         'event_espresso'
                     ),
                     // 'Plugin Name & Link'
                     "
                     <ul>
+                        <li>
+                            <a href='https://github.com/WP-API/Basic-Auth' target='_blank'>
+                                Basic Authentication Handler for WP REST API
+                            </a>
+                        </li>
                         <li>
                             <a href='https://wordpress.org/plugins/jwt-authentication-for-wp-rest-api/' target='_blank'>
                                 JWT Authentication for WP REST API
