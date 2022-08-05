@@ -3,10 +3,9 @@
 namespace EventEspresso\core\libraries\rest_api;
 
 use EE_Error;
-use EEM_Base;
+use EE_Return_None_Where_Conditions;
 use EEH_Inflector;
-use EEM_CPT_Base;
-use WP_REST_Request;
+use EEM_Base;
 
 /**
  * Capabilities
@@ -23,9 +22,12 @@ class Capabilities
      * @param EEM_Base $model
      * @param string   $model_context one of the return values from EEM_Base::valid_cap_contexts()
      * @return boolean
+     * @throws EE_Error
      */
-    public static function currentUserHasPartialAccessTo($model, $model_context = EEM_Base::caps_read)
-    {
+    public static function currentUserHasPartialAccessTo(
+        EEM_Base $model,
+        string $model_context = EEM_Base::caps_read
+    ): bool {
         if (
             apply_filters(
                 'FHEE__Capabilities__current_user_has_partial_access_to__override_begin',
@@ -36,8 +38,8 @@ class Capabilities
         ) {
             return true;
         }
-        foreach ($model->caps_missing($model_context) as $capability_name => $restriction_obj) {
-            if ($restriction_obj instanceof \EE_Return_None_Where_Conditions) {
+        foreach ($model->caps_missing($model_context) as $restriction_obj) {
+            if ($restriction_obj instanceof EE_Return_None_Where_Conditions) {
                 return false;
             }
         }
@@ -62,8 +64,9 @@ class Capabilities
      * @param EEM_Base $model
      * @param string   $request_type one of the constants on WP_JSON_Server
      * @return array
+     * @throws EE_Error
      */
-    public static function getMissingPermissions($model, $request_type = EEM_Base::caps_read)
+    public static function getMissingPermissions(EEM_Base $model, string $request_type = EEM_Base::caps_read): array
     {
         return $model->caps_missing($request_type);
     }
@@ -76,26 +79,31 @@ class Capabilities
      * @param EEM_Base $model
      * @param string   $model_context one of the return values from EEM_Base::valid_cap_contexts()
      * @return string
+     * @throws EE_Error
      */
-    public static function getMissingPermissionsString($model, $model_context = EEM_Base::caps_read)
-    {
+    public static function getMissingPermissionsString(
+        EEM_Base $model,
+        string $model_context = EEM_Base::caps_read
+    ): string {
         return implode(',', array_keys(self::getMissingPermissions($model, $model_context)));
     }
 
+
     /**
      * "Removes" password-protected fields. Currently that means setting their values to their default.
-     * @since 4.9.74.p
-     * @param array $entity
-     * @param EEM_Base $model
+     *
+     * @param array            $entity
+     * @param EEM_Base         $model
      * @param ModelVersionInfo $model_version_info
      * @return array
      * @throws EE_Error
+     * @since 4.9.74.p
      */
     public static function filterOutPasswordProtectedFields(
-        $entity,
+        array $entity,
         EEM_Base $model,
         ModelVersionInfo $model_version_info
-    ) {
+    ): array {
         $has_password = $model->hasPassword();
         if ($has_password) {
             $entity[ $model->getPasswordField()->get_name() ] = ModelDataTranslator::prepareFieldValueForJson(
@@ -118,7 +126,7 @@ class Capabilities
                 if ($model_version_info->fieldHasRenderedFormat($field_obj)) {
                     $entity[ $field_name ]['rendered'] = $replacement_value;
                 } elseif ($model_version_info->fieldHasPrettyFormat($field_obj)) {
-                    $entity[ $field_name ]['raw'] = $replacement_value;
+                    $entity[ $field_name ]['raw']    = $replacement_value;
                     $entity[ $field_name ]['pretty'] = ModelDataTranslator::prepareFieldValueForJson(
                         $field_obj,
                         $field_obj->prepare_for_pretty_echoing($field_obj->get_default_value()),
@@ -141,21 +149,18 @@ class Capabilities
     /**
      * Takes a entity that's ready to be returned and removes fields which the user shouldn't be able to access.
      *
-     * @param array $entity
-     * @param EEM_Base $model
-     * @param string $request_type one of the return values from EEM_Base::valid_cap_contexts()
+     * @param array            $entity
+     * @param EEM_Base         $model
+     * @param string           $request_type one of the return values from EEM_Base::valid_cap_contexts()
      * @param ModelVersionInfo $model_version_info
-     * @param string $primary_key_string result of EEM_Base::get_index_primary_key_string(), so that we can
-     *                                               use this with models that have no primary key
      * @return array ready for converting into json
      */
     public static function filterOutInaccessibleEntityFields(
-        $entity,
-        $model,
-        $request_type,
-        $model_version_info,
-        $primary_key_string = null
-    ) {
+        array $entity,
+        EEM_Base $model,
+        string $request_type,
+        ModelVersionInfo $model_version_info
+    ): array {
         foreach ($model->field_settings() as $field_name => $field_obj) {
             if (
                 $model_version_info->fieldHasRenderedFormat($field_obj)
@@ -186,9 +191,13 @@ class Capabilities
      * @param string   $action_name
      * @return void
      * @throws RestException
+     * @throws EE_Error
      */
-    public static function verifyAtLeastPartialAccessTo($model, $model_action_context, $action_name = 'list')
-    {
+    public static function verifyAtLeastPartialAccessTo(
+        EEM_Base $model,
+        string $model_action_context,
+        string $action_name = 'list'
+    ) {
         if (! Capabilities::currentUserHasPartialAccessTo($model, $model_action_context)) {
             $model_name_plural = EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
             throw new RestException(
@@ -199,7 +208,7 @@ class Capabilities
                     $model_name_plural,
                     Capabilities::getMissingPermissionsString($model, $model_action_context)
                 ),
-                array('status' => 403)
+                ['status' => 403]
             );
         }
     }

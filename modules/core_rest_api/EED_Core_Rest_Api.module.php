@@ -1,14 +1,13 @@
 <?php
 
 use EventEspresso\core\domain\Domain;
-use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\domain\services\factories\EmailAddressFactory;
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
-use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
 use EventEspresso\core\libraries\rest_api\changes\ChangesInBase;
+use EventEspresso\core\libraries\rest_api\controllers\model\Read as ModelRead;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -20,13 +19,13 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * @subpackage         eea-rest-api
  * @author             Mike Nelson
  */
-class EED_Core_Rest_Api extends \EED_Module
+class EED_Core_Rest_Api extends EED_Module
 {
-    const ee_api_namespace = Domain::API_NAMESPACE;
+    const ee_api_namespace           = Domain::API_NAMESPACE;
 
     const ee_api_namespace_for_regex = 'ee\/v([^/]*)\/';
 
-    const saved_routes_option_names = 'ee_core_routes';
+    const saved_routes_option_names  = 'ee_core_routes';
 
     /**
      * string used in _links response bodies to make them globally unique.
@@ -43,10 +42,13 @@ class EED_Core_Rest_Api extends \EED_Module
 
     /**
      * @return EED_Core_Rest_Api|EED_Module
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
-        self::$_field_calculator = LoaderFactory::getLoader()->load('EventEspresso\core\libraries\rest_api\CalculatedModelFields');
+        self::$_field_calculator =
+            LoaderFactory::getLoader()->load('EventEspresso\core\libraries\rest_api\CalculatedModelFields');
         return parent::get_instance(__CLASS__);
     }
 
@@ -77,12 +79,12 @@ class EED_Core_Rest_Api extends \EED_Module
 
     public static function set_hooks_both()
     {
-        add_action('rest_api_init', array('EED_Core_Rest_Api', 'set_hooks_rest_api'), 5);
-        add_action('rest_api_init', array('EED_Core_Rest_Api', 'register_routes'), 10);
-        add_filter('rest_route_data', array('EED_Core_Rest_Api', 'hide_old_endpoints'), 10, 2);
+        add_action('rest_api_init', ['EED_Core_Rest_Api', 'set_hooks_rest_api'], 5);
+        add_action('rest_api_init', ['EED_Core_Rest_Api', 'register_routes'], 10);
+        add_filter('rest_route_data', ['EED_Core_Rest_Api', 'hide_old_endpoints'], 10, 2);
         add_filter(
             'rest_index',
-            array('EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filterEeMetadataIntoIndex')
+            ['EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filterEeMetadataIntoIndex']
         );
         EED_Core_Rest_Api::invalidate_cached_route_data_on_version_change();
     }
@@ -92,7 +94,7 @@ class EED_Core_Rest_Api extends \EED_Module
      * sets up hooks which only need to be included as part of REST API requests;
      * other requests like to the frontend or admin etc don't need them
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function set_hooks_rest_api()
     {
@@ -122,7 +124,7 @@ class EED_Core_Rest_Api extends \EED_Module
      */
     protected static function _set_hooks_for_changes()
     {
-        $folder_contents = EEH_File::get_contents_of_folders(array(EE_LIBRARIES . 'rest_api/changes'), false);
+        $folder_contents = EEH_File::get_contents_of_folders([EE_LIBRARIES . 'rest_api/changes']);
         foreach ($folder_contents as $classname_in_namespace => $filepath) {
             // ignore the base parent class
             // and legacy named classes
@@ -147,7 +149,8 @@ class EED_Core_Rest_Api extends \EED_Module
      * Filters the WP routes to add our EE-related ones. This takes a bit of time
      * so we actually prefer to only do it when an EE plugin is activated or upgraded
      *
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function register_routes()
     {
@@ -164,7 +167,7 @@ class EED_Core_Rest_Api extends \EED_Module
                  * }
                  */
                 // when registering routes, register all the endpoints' data at the same time
-                $multiple_endpoint_args = array();
+                $multiple_endpoint_args = [];
                 foreach ($data_for_multiple_endpoints as $endpoint_key => $data_for_single_endpoint) {
                     /**
                      * @var array     $data_for_single_endpoint {
@@ -190,18 +193,17 @@ class EED_Core_Rest_Api extends \EED_Module
                             )
                         );
                     }
-                    $callback = $data_for_single_endpoint['callback'];
-                    $single_endpoint_args = array(
+                    $callback             = $data_for_single_endpoint['callback'];
+                    $single_endpoint_args = [
                         'methods' => $data_for_single_endpoint['methods'],
-                        'args'    => isset($data_for_single_endpoint['args']) ? $data_for_single_endpoint['args']
-                            : array(),
-                    );
+                        'args'    => $data_for_single_endpoint['args'] ?? [],
+                    ];
                     if (isset($data_for_single_endpoint['_links'])) {
                         $single_endpoint_args['_links'] = $data_for_single_endpoint['_links'];
                     }
                     if (isset($data_for_single_endpoint['callback_args'])) {
-                        $callback_args = $data_for_single_endpoint['callback_args'];
-                        $single_endpoint_args['callback'] = function (\WP_REST_Request $request) use (
+                        $callback_args                    = $data_for_single_endpoint['callback_args'];
+                        $single_endpoint_args['callback'] = function (WP_REST_Request $request) use (
                             $callback,
                             $callback_args
                         ) {
@@ -224,9 +226,9 @@ class EED_Core_Rest_Api extends \EED_Module
                     $multiple_endpoint_args[] = $single_endpoint_args;
                 }
                 if (isset($data_for_multiple_endpoints['schema'])) {
-                    $schema_route_data = $data_for_multiple_endpoints['schema'];
-                    $schema_callback = $schema_route_data['schema_callback'];
-                    $callback_args = $schema_route_data['callback_args'];
+                    $schema_route_data                = $data_for_multiple_endpoints['schema'];
+                    $schema_callback                  = $schema_route_data['schema_callback'];
+                    $callback_args                    = $schema_route_data['callback_args'];
                     $multiple_endpoint_args['schema'] = function () use ($schema_callback, $callback_args) {
                         return call_user_func_array(
                             $schema_callback,
@@ -278,15 +280,16 @@ class EED_Core_Rest_Api extends \EED_Module
      * Gets the EE route data
      *
      * @return array top-level key is the namespace, next-level key is the route and its value is array{
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      * @type string|array $callback
      * @type string       $methods
      * @type boolean      $hidden_endpoint
      * }
      */
-    public static function get_ee_route_data()
+    public static function get_ee_route_data(): array
     {
-        $ee_routes = array();
+        $ee_routes = [];
         foreach (self::versions_served() as $version => $hidden_endpoints) {
             $ee_routes[ self::ee_api_namespace . $version ] = self::_get_ee_route_data_for_version(
                 $version,
@@ -304,9 +307,10 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param string  $version
      * @param boolean $hidden_endpoints
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected static function _get_ee_route_data_for_version($version, $hidden_endpoints = false)
+    protected static function _get_ee_route_data_for_version(string $version, bool $hidden_endpoints = false): array
     {
         $ee_routes = get_option(self::saved_routes_option_names . $version, null);
         if (! $ee_routes || EED_Core_Rest_Api::debugMode()) {
@@ -322,12 +326,13 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param string  $version
      * @param boolean $hidden_endpoints
      * @return mixed|null
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected static function _save_ee_route_data_for_version($version, $hidden_endpoints = false)
+    protected static function _save_ee_route_data_for_version(string $version, bool $hidden_endpoints = false)
     {
-        $instance = self::instance();
-        $routes = apply_filters(
+        $instance    = self::instance();
+        $routes      = apply_filters(
             'EED_Core_Rest_Api__save_ee_route_data_for_version__routes',
             array_replace_recursive(
                 $instance->_get_config_route_data_for_version($version, $hidden_endpoints),
@@ -350,14 +355,16 @@ class EED_Core_Rest_Api extends \EED_Module
      * Calculates all the EE routes and saves it to a WordPress option so we don't
      * need to calculate it on every request
      *
-     * @deprecated since version 4.9.1
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @deprecated since version 4.9.1
      */
     public static function save_ee_routes()
     {
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
             $instance = self::instance();
-            $routes = apply_filters(
+            $routes   = apply_filters(
                 'EED_Core_Rest_Api__save_ee_routes__routes',
                 array_replace_recursive(
                     $instance->_register_config_routes(),
@@ -377,9 +384,9 @@ class EED_Core_Rest_Api extends \EED_Module
      * @return array @see get_ee_route_data
      * @deprecated since version 4.9.1
      */
-    protected function _register_model_routes()
+    protected function _register_model_routes(): array
     {
-        $model_routes = array();
+        $model_routes = [];
         foreach (self::versions_served() as $version => $hidden_endpoint) {
             $model_routes[ EED_Core_Rest_Api::ee_api_namespace
                            . $version ] = $this->_get_config_route_data_for_version($version, $hidden_endpoint);
@@ -398,7 +405,7 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param EEM_Base $model
      * @return bool
      */
-    public static function should_have_write_endpoints(EEM_Base $model)
+    public static function should_have_write_endpoints(EEM_Base $model): bool
     {
         if ($model->is_wp_core_model()) {
             return false;
@@ -419,7 +426,7 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param $version
      * @return array keys are model names (eg 'Event') and values ar either classnames (eg 'EEM_Event')
      */
-    public static function model_names_with_plural_routes($version)
+    public static function model_names_with_plural_routes($version): array
     {
         $model_version_info = new ModelVersionInfo($version);
         $models_to_register = $model_version_info->modelsForRequestedVersion();
@@ -443,54 +450,55 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param boolean $hidden_endpoint
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _get_model_route_data_for_version($version, $hidden_endpoint = false)
+    protected function _get_model_route_data_for_version(string $version, bool $hidden_endpoint = false): array
     {
-        $model_routes = array();
+        $model_routes       = [];
         $model_version_info = new ModelVersionInfo($version);
         foreach (EED_Core_Rest_Api::model_names_with_plural_routes($version) as $model_name => $model_classname) {
-            $model = \EE_Registry::instance()->load_model($model_name);
+            $model = EE_Registry::instance()->load_model($model_name);
             // if this isn't a valid model then let's skip iterate to the next item in the loop.
             if (! $model instanceof EEM_Base) {
                 continue;
             }
             // yes we could just register one route for ALL models, but then they wouldn't show up in the index
-            $plural_model_route = EED_Core_Rest_Api::get_collection_route($model);
-            $singular_model_route = EED_Core_Rest_Api::get_entity_route($model, '(?P<id>[^\/]+)');
-            $model_routes[ $plural_model_route ] = array(
-                array(
-                    'callback'        => array(
+            $plural_model_route                    = EED_Core_Rest_Api::get_collection_route($model);
+            $singular_model_route                  = EED_Core_Rest_Api::get_entity_route($model, '(?P<id>[^\/]+)');
+            $model_routes[ $plural_model_route ]   = [
+                [
+                    'callback'        => [
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
                         'handleRequestGetAll',
-                    ),
-                    'callback_args'   => array($version, $model_name),
+                    ],
+                    'callback_args'   => [$version, $model_name],
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
                     'args'            => $this->_get_read_query_params($model, $version),
-                    '_links'          => array(
+                    '_links'          => [
                         'self' => rest_url(EED_Core_Rest_Api::ee_api_namespace . $version . $singular_model_route),
-                    ),
-                ),
-                'schema' => array(
-                    'schema_callback' => array(
+                    ],
+                ],
+                'schema' => [
+                    'schema_callback' => [
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
                         'handleSchemaRequest',
-                    ),
-                    'callback_args'   => array($version, $model_name),
-                ),
-            );
-            $model_routes[ $singular_model_route ] = array(
-                array(
-                    'callback'        => array(
+                    ],
+                    'callback_args'   => [$version, $model_name],
+                ],
+            ];
+            $model_routes[ $singular_model_route ] = [
+                [
+                    'callback'        => [
                         'EventEspresso\core\libraries\rest_api\controllers\model\Read',
                         'handleRequestGetOne',
-                    ),
-                    'callback_args'   => array($version, $model_name),
+                    ],
+                    'callback_args'   => [$version, $model_name],
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'args'            => $this->_get_response_selection_query_params($model, $version, true),
-                ),
-            );
+                    'args'            => $this->_get_response_selection_query_params($model, $version),
+                ],
+            ];
             if (
                 apply_filters(
                     'FHEE__EED_Core_Rest_Api___get_model_route_data_for_version__add_write_endpoints',
@@ -498,84 +506,88 @@ class EED_Core_Rest_Api extends \EED_Module
                     $model
                 )
             ) {
-                $model_routes[ $plural_model_route ][] = array(
-                    'callback'        => array(
+                $model_routes[ $plural_model_route ][] = [
+                    'callback'        => [
                         'EventEspresso\core\libraries\rest_api\controllers\model\Write',
                         'handleRequestInsert',
-                    ),
-                    'callback_args'   => array($version, $model_name),
+                    ],
+                    'callback_args'   => [$version, $model_name],
                     'methods'         => WP_REST_Server::CREATABLE,
                     'hidden_endpoint' => $hidden_endpoint,
                     'args'            => $this->_get_write_params($model_name, $model_version_info, true),
-                );
+                ];
                 $model_routes[ $singular_model_route ] = array_merge(
                     $model_routes[ $singular_model_route ],
-                    array(
-                        array(
-                            'callback'        => array(
+                    [
+                        [
+                            'callback'        => [
                                 'EventEspresso\core\libraries\rest_api\controllers\model\Write',
                                 'handleRequestUpdate',
-                            ),
-                            'callback_args'   => array($version, $model_name),
+                            ],
+                            'callback_args'   => [$version, $model_name],
                             'methods'         => WP_REST_Server::EDITABLE,
                             'hidden_endpoint' => $hidden_endpoint,
                             'args'            => $this->_get_write_params($model_name, $model_version_info),
-                        ),
-                        array(
-                            'callback'        => array(
+                        ],
+                        [
+                            'callback'        => [
                                 'EventEspresso\core\libraries\rest_api\controllers\model\Write',
                                 'handleRequestDelete',
-                            ),
-                            'callback_args'   => array($version, $model_name),
+                            ],
+                            'callback_args'   => [$version, $model_name],
                             'methods'         => WP_REST_Server::DELETABLE,
                             'hidden_endpoint' => $hidden_endpoint,
                             'args'            => $this->_get_delete_query_params($model, $version),
-                        ),
-                    )
+                        ],
+                    ]
                 );
             }
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
-                $related_route = EED_Core_Rest_Api::get_relation_route_via(
+                $related_route                  = EED_Core_Rest_Api::get_relation_route_via(
                     $model,
                     '(?P<id>[^\/]+)',
                     $relation_obj
                 );
-                $model_routes[ $related_route ] = array(
-                    array(
-                        'callback'        => array(
+                $model_routes[ $related_route ] = [
+                    [
+                        'callback'        => [
                             'EventEspresso\core\libraries\rest_api\controllers\model\Read',
                             'handleRequestGetRelated',
-                        ),
-                        'callback_args'   => array($version, $model_name, $relation_name),
+                        ],
+                        'callback_args'   => [$version, $model_name, $relation_name],
                         'methods'         => WP_REST_Server::READABLE,
                         'hidden_endpoint' => $hidden_endpoint,
                         'args'            => $this->_get_read_query_params($relation_obj->get_other_model(), $version),
-                    ),
-                );
+                    ],
+                ];
 
-                $related_write_route = $related_route . '/' . '(?P<related_id>[^\/]+)';
-                $model_routes[ $related_write_route ] = array(
-                    array(
-                        'callback'        => array(
+                $related_write_route                  = $related_route . '/' . '(?P<related_id>[^\/]+)';
+                $model_routes[ $related_write_route ] = [
+                    [
+                        'callback'        => [
                             'EventEspresso\core\libraries\rest_api\controllers\model\Write',
                             'handleRequestAddRelation',
-                        ),
-                        'callback_args'   => array($version, $model_name, $relation_name),
+                        ],
+                        'callback_args'   => [$version, $model_name, $relation_name],
                         'methods'         => WP_REST_Server::EDITABLE,
                         'hidden_endpoint' => $hidden_endpoint,
-                        'args'            => $this->_get_add_relation_query_params($model, $relation_obj->get_other_model(), $version)
-                    ),
-                    array(
-                        'callback'        => array(
+                        'args'            => $this->_get_add_relation_query_params(
+                            $model,
+                            $relation_obj->get_other_model(),
+                            $version
+                        ),
+                    ],
+                    [
+                        'callback'        => [
                             'EventEspresso\core\libraries\rest_api\controllers\model\Write',
                             'handleRequestRemoveRelation',
-                        ),
-                        'callback_args'   => array($version, $model_name, $relation_name),
+                        ],
+                        'callback_args'   => [$version, $model_name, $relation_name],
                         'methods'         => WP_REST_Server::DELETABLE,
                         'hidden_endpoint' => $hidden_endpoint,
-                        'args'            => array()
-                    ),
-                );
+                        'args'            => [],
+                    ],
+                ];
             }
         }
         return $model_routes;
@@ -590,7 +602,7 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param EEM_Base $model
      * @return string
      */
-    public static function get_collection_route(EEM_Base $model)
+    public static function get_collection_route(EEM_Base $model): string
     {
         return EEH_Inflector::pluralize_and_lower($model->get_this_model_name());
     }
@@ -601,11 +613,11 @@ class EED_Core_Rest_Api extends \EED_Module
      * excluding the preceding slash.
      * Eg you pass get_plural_route_to('Event', 12) = 'events/12'
      *
-     * @param EEM_Base $model eg Event or Venue
-     * @param string   $id
+     * @param EEM_Base   $model eg Event or Venue
+     * @param int|string $id
      * @return string
      */
-    public static function get_entity_route($model, $id)
+    public static function get_entity_route(EEM_Base $model, $id): string
     {
         return EED_Core_Rest_Api::get_collection_route($model) . '/' . $id;
     }
@@ -617,11 +629,11 @@ class EED_Core_Rest_Api extends \EED_Module
      * Eg you pass get_plural_route_to('Event', 12) = 'events/12'
      *
      * @param EEM_Base               $model eg Event or Venue
-     * @param string                 $id
+     * @param int|string             $id
      * @param EE_Model_Relation_Base $relation_obj
      * @return string
      */
-    public static function get_relation_route_via(EEM_Base $model, $id, EE_Model_Relation_Base $relation_obj)
+    public static function get_relation_route_via(EEM_Base $model, $id, EE_Model_Relation_Base $relation_obj): string
     {
         $related_model_name_endpoint_part = ModelRead::getRelatedEntityName(
             $relation_obj->get_other_model()->get_this_model_name(),
@@ -639,7 +651,7 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param string $version
      * @return string
      */
-    public static function get_versioned_route_to($relative_route, $version = '4.8.36')
+    public static function get_versioned_route_to(string $relative_route, string $version = '4.8.36'): string
     {
         return '/' . EED_Core_Rest_Api::ee_api_namespace . $version . '/' . $relative_route;
     }
@@ -651,9 +663,9 @@ class EED_Core_Rest_Api extends \EED_Module
      *
      * @deprecated since 4.9.1
      */
-    protected function _register_rpc_routes()
+    protected function _register_rpc_routes(): array
     {
-        $routes = array();
+        $routes = [];
         foreach (self::versions_served() as $version => $hidden_endpoint) {
             $routes[ self::ee_api_namespace . $version ] = $this->_get_rpc_route_data_for_version(
                 $version,
@@ -669,20 +681,20 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param boolean $hidden_endpoint
      * @return array
      */
-    protected function _get_rpc_route_data_for_version($version, $hidden_endpoint = false)
+    protected function _get_rpc_route_data_for_version(string $version, bool $hidden_endpoint = false): array
     {
-        $this_versions_routes = array();
+        $this_versions_routes = [];
         // checkin endpoint
-        $this_versions_routes['registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)'] = array(
-            array(
-                'callback'        => array(
+        $this_versions_routes['registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)'] = [
+            [
+                'callback'        => [
                     'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
                     'handleRequestToggleCheckin',
-                ),
+                ],
                 'methods'         => WP_REST_Server::CREATABLE,
                 'hidden_endpoint' => $hidden_endpoint,
-                'args'            => array(
-                    'force' => array(
+                'args'            => [
+                    'force' => [
                         'required'    => false,
                         'default'     => false,
                         'description' => esc_html__(
@@ -691,11 +703,11 @@ class EED_Core_Rest_Api extends \EED_Module
                             // @codingStandardsIgnoreEnd
                             'event_espresso'
                         ),
-                    ),
-                ),
-                'callback_args'   => array($version),
-            ),
-        );
+                    ],
+                ],
+                'callback_args'   => [$version],
+            ],
+        ];
         return apply_filters(
             'FHEE__EED_Core_Rest_Api___register_rpc_routes__this_versions_routes',
             $this_versions_routes,
@@ -712,30 +724,30 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param string   $version
      * @return array
      */
-    protected function _get_response_selection_query_params(\EEM_Base $model, $version, $single_only = false)
+    protected function _get_response_selection_query_params(EEM_Base $model, string $version): array
     {
-        $query_params = array(
-            'include'   => array(
+        $query_params = [
+            'include'   => [
                 'required' => false,
                 'default'  => '*',
                 'type'     => 'string',
-            ),
-            'calculate' => array(
+            ],
+            'calculate' => [
                 'required'          => false,
                 'default'           => '',
                 'enum'              => self::$_field_calculator->retrieveCalculatedFieldsForModel($model),
                 'type'              => 'string',
-                // because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                // because we accept a CSV list of the enumerated strings, WP core validation and sanitization
                 // freaks out. We'll just validate this argument while handling the request
                 'validate_callback' => null,
                 'sanitize_callback' => null,
-            ),
-            'password' => array(
+            ],
+            'password'  => [
                 'required' => false,
-                'default' => '',
-                'type' => 'string'
-            )
-        );
+                'default'  => '',
+                'type'     => 'string',
+            ],
+        ];
         return apply_filters(
             'FHEE__EED_Core_Rest_Api___get_response_selection_query_params',
             $query_params,
@@ -748,24 +760,24 @@ class EED_Core_Rest_Api extends \EED_Module
     /**
      * Gets the parameters acceptable for delete requests
      *
-     * @param \EEM_Base $model
-     * @param string    $version
+     * @param EEM_Base $model
+     * @param string   $version
      * @return array
      */
-    protected function _get_delete_query_params(\EEM_Base $model, $version)
+    protected function _get_delete_query_params(EEM_Base $model, string $version): array
     {
-        $params_for_delete = array(
-            'allow_blocking' => array(
+        $params_for_delete          = [
+            'allow_blocking' => [
                 'required' => false,
                 'default'  => true,
                 'type'     => 'boolean',
-            ),
-        );
-        $params_for_delete['force'] = array(
+            ],
+        ];
+        $params_for_delete['force'] = [
             'required' => false,
             'default'  => false,
             'type'     => 'boolean',
-        );
+        ];
         return apply_filters(
             'FHEE__EED_Core_Rest_Api___get_delete_query_params',
             $params_for_delete,
@@ -774,22 +786,37 @@ class EED_Core_Rest_Api extends \EED_Module
         );
     }
 
-    protected function _get_add_relation_query_params(\EEM_Base $source_model, \EEM_Base $related_model, $version)
-    {
+
+    /**
+     * @param EEM_Base $source_model
+     * @param EEM_Base $related_model
+     * @param string   $version
+     * @return array
+     * @throws EE_Error
+     */
+    protected function _get_add_relation_query_params(
+        EEM_Base $source_model,
+        EEM_Base $related_model,
+        string $version
+    ): array {
         // if they're related through a HABTM relation, check for any non-FKs
         $all_relation_settings = $source_model->relation_settings();
-        $relation_settings = $all_relation_settings[ $related_model->get_this_model_name() ];
-        $params = array();
+        $relation_settings     = $all_relation_settings[ $related_model->get_this_model_name() ];
+        $params                = [];
         if ($relation_settings instanceof EE_HABTM_Relation && $relation_settings->hasNonKeyFields()) {
             foreach ($relation_settings->getNonKeyFields() as $field) {
                 /* @var $field EE_Model_Field_Base */
-                $params[ $field->get_name() ] = array(
-                    'required' => ! $field->is_nullable(),
-                    'default' => ModelDataTranslator::prepareFieldValueForJson($field, $field->get_default_value(), $version),
-                    'type' => $field->getSchemaType(),
-                    'validate_callbaack' => null,
-                    'sanitize_callback' => null
-                );
+                $params[ $field->get_name() ] = [
+                    'required'          => ! $field->is_nullable(),
+                    'default'           => ModelDataTranslator::prepareFieldValueForJson(
+                        $field,
+                        $field->get_default_value(),
+                        $version
+                    ),
+                    'type'              => $field->getSchemaType(),
+                    'validate_callback' => null,
+                    'sanitize_callback' => null,
+                ];
             }
         }
         return $params;
@@ -799,68 +826,68 @@ class EED_Core_Rest_Api extends \EED_Module
     /**
      * Gets info about reading query params that are acceptable
      *
-     * @param \EEM_Base $model eg 'Event' or 'Venue'
-     * @param  string   $version
+     * @param EEM_Base $model eg 'Event' or 'Venue'
+     * @param string   $version
      * @return array    describing the args acceptable when querying this model
      * @throws EE_Error
      */
-    protected function _get_read_query_params(\EEM_Base $model, $version)
+    protected function _get_read_query_params(EEM_Base $model, string $version): array
     {
-        $default_orderby = array();
+        $default_orderby = [];
         foreach ($model->get_combined_primary_key_fields() as $key_field) {
             $default_orderby[ $key_field->get_name() ] = 'ASC';
         }
         return array_merge(
             $this->_get_response_selection_query_params($model, $version),
-            array(
-                'where'    => array(
+            [
+                'where'    => [
                     'required'          => false,
-                    'default'           => array(),
+                    'default'           => [],
                     'type'              => 'object',
                     // because we accept an almost infinite list of possible where conditions, WP
                     // core validation and sanitization freaks out. We'll just validate this argument
                     // while handling the request
                     'validate_callback' => null,
                     'sanitize_callback' => null,
-                ),
-                'limit'    => array(
+                ],
+                'limit'    => [
                     'required'          => false,
                     'default'           => EED_Core_Rest_Api::get_default_query_limit(),
-                    'type'              => array(
+                    'type'              => [
                         'array',
                         'string',
                         'integer',
-                    ),
+                    ],
                     // because we accept a variety of types, WP core validation and sanitization
                     // freaks out. We'll just validate this argument while handling the request
                     'validate_callback' => null,
                     'sanitize_callback' => null,
-                ),
-                'order_by' => array(
+                ],
+                'order_by' => [
                     'required'          => false,
                     'default'           => $default_orderby,
-                    'type'              => array(
+                    'type'              => [
                         'object',
                         'string',
-                    ),// because we accept a variety of types, WP core validation and sanitization
+                    ],// because we accept a variety of types, WP core validation and sanitization
                     // freaks out. We'll just validate this argument while handling the request
                     'validate_callback' => null,
                     'sanitize_callback' => null,
-                ),
-                'group_by' => array(
+                ],
+                'group_by' => [
                     'required'          => false,
                     'default'           => null,
-                    'type'              => array(
+                    'type'              => [
                         'object',
                         'string',
-                    ),
+                    ],
                     // because we accept  an almost infinite list of possible groupings,
                     // WP core validation and sanitization
                     // freaks out. We'll just validate this argument while handling the request
                     'validate_callback' => null,
                     'sanitize_callback' => null,
-                ),
-                'having'   => array(
+                ],
+                'having'   => [
                     'required'          => false,
                     'default'           => null,
                     'type'              => 'object',
@@ -869,19 +896,19 @@ class EED_Core_Rest_Api extends \EED_Module
                     // while handling the request
                     'validate_callback' => null,
                     'sanitize_callback' => null,
-                ),
-                'caps'     => array(
+                ],
+                'caps'     => [
                     'required' => false,
                     'default'  => EEM_Base::caps_read,
                     'type'     => 'string',
-                    'enum'     => array(
+                    'enum'     => [
                         EEM_Base::caps_read,
                         EEM_Base::caps_read_admin,
                         EEM_Base::caps_edit,
                         EEM_Base::caps_delete,
-                    ),
-                ),
-            )
+                    ],
+                ],
+            ]
         );
     }
 
@@ -896,22 +923,24 @@ class EED_Core_Rest_Api extends \EED_Module
      *                                                                       just to update (in which case we don't
      *                                                                       need those on every request)
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_write_params(
-        $model_name,
+        string $model_name,
         ModelVersionInfo $model_version_info,
-        $create = false
-    ) {
-        $model = EE_Registry::instance()->load_model($model_name);
-        $fields = $model_version_info->fieldsOnModelInThisVersion($model);
-        $args_info = array();
+        bool $create = false
+    ): array {
+        $model     = EE_Registry::instance()->load_model($model_name);
+        $fields    = $model_version_info->fieldsOnModelInThisVersion($model);
+        $args_info = [];
         foreach ($fields as $field_name => $field_obj) {
             if ($field_obj->is_auto_increment()) {
                 // totally ignore auto increment IDs
                 continue;
             }
-            $arg_info = $field_obj->getSchema();
-            $required = $create && ! $field_obj->is_nullable() && $field_obj->get_default_value() === null;
+            $arg_info             = $field_obj->getSchema();
+            $required             = $create && ! $field_obj->is_nullable() && $field_obj->get_default_value() === null;
             $arg_info['required'] = $required;
             // remove the read-only flag. If it were read-only we wouldn't list it as an argument while writing, right?
             unset($arg_info['readonly']);
@@ -933,18 +962,18 @@ class EED_Core_Rest_Api extends \EED_Module
             );
             // we do our own validation and sanitization within the controller
             if (function_exists('rest_validate_value_from_schema')) {
-                $sanitize_callback = array(
+                $sanitize_callback = [
                     'EED_Core_Rest_Api',
                     'default_sanitize_callback',
-                );
+                ];
             } else {
                 $sanitize_callback = null;
             }
             $arg_info['sanitize_callback'] = $sanitize_callback;
-            $args_info[ $field_name ] = $arg_info;
+            $args_info[ $field_name ]      = $arg_info;
             if ($field_obj instanceof EE_Datetime_Field) {
-                $gmt_arg_info = $arg_info;
-                $gmt_arg_info['description'] = sprintf(
+                $gmt_arg_info                      = $arg_info;
+                $gmt_arg_info['description']       = sprintf(
                     esc_html__(
                         '%1$s - the value for this field in UTC. Ignored if %2$s is provided.',
                         'event_espresso'
@@ -995,7 +1024,7 @@ class EED_Core_Rest_Api extends \EED_Module
                 $validation_result = true;
             } elseif (
                 isset($args['format'])
-                      && $args['format'] === 'email'
+                && $args['format'] === 'email'
             ) {
                 $validation_result = true;
                 if (! self::_validate_email($value)) {
@@ -1027,7 +1056,7 @@ class EED_Core_Rest_Api extends \EED_Module
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      */
-    protected static function _validate_email($email)
+    protected static function _validate_email($email): bool
     {
         try {
             EmailAddressFactory::create($email);
@@ -1044,9 +1073,9 @@ class EED_Core_Rest_Api extends \EED_Module
      * @return array @see _register_model_routes
      * @deprecated since version 4.9.1
      */
-    protected function _register_config_routes()
+    protected function _register_config_routes(): array
     {
-        $config_routes = array();
+        $config_routes = [];
         foreach (self::versions_served() as $version => $hidden_endpoint) {
             $config_routes[ self::ee_api_namespace . $version ] = $this->_get_config_route_data_for_version(
                 $version,
@@ -1064,32 +1093,32 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param boolean $hidden_endpoint
      * @return array
      */
-    protected function _get_config_route_data_for_version($version, $hidden_endpoint)
+    protected function _get_config_route_data_for_version(string $version, bool $hidden_endpoint): array
     {
-        return array(
-            'config'    => array(
-                array(
-                    'callback'        => array(
+        return [
+            'config'    => [
+                [
+                    'callback'        => [
                         'EventEspresso\core\libraries\rest_api\controllers\config\Read',
                         'handleRequest',
-                    ),
+                    ],
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'callback_args'   => array($version),
-                ),
-            ),
-            'site_info' => array(
-                array(
-                    'callback'        => array(
+                    'callback_args'   => [$version],
+                ],
+            ],
+            'site_info' => [
+                [
+                    'callback'        => [
                         'EventEspresso\core\libraries\rest_api\controllers\config\Read',
                         'handleRequestSiteInfo',
-                    ),
+                    ],
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'callback_args'   => array($version),
-                ),
-            ),
-        );
+                    'callback_args'   => [$version],
+                ],
+            ],
+        ];
     }
 
 
@@ -1099,9 +1128,9 @@ class EED_Core_Rest_Api extends \EED_Module
      * @return array @see _register_model_routes
      * @deprecated since version 4.9.1
      */
-    protected function _register_meta_routes()
+    protected function _register_meta_routes(): array
     {
-        $meta_routes = array();
+        $meta_routes = [];
         foreach (self::versions_served() as $version => $hidden_endpoint) {
             $meta_routes[ self::ee_api_namespace . $version ] = $this->_get_meta_route_data_for_version(
                 $version,
@@ -1117,21 +1146,21 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param boolean $hidden_endpoint
      * @return array
      */
-    protected function _get_meta_route_data_for_version($version, $hidden_endpoint = false)
+    protected function _get_meta_route_data_for_version(string $version, bool $hidden_endpoint = false): array
     {
-        return array(
-            'resources' => array(
-                array(
-                    'callback'        => array(
+        return [
+            'resources' => [
+                [
+                    'callback'        => [
                         'EventEspresso\core\libraries\rest_api\controllers\model\Meta',
                         'handleRequestModelsMeta',
-                    ),
+                    ],
                     'methods'         => WP_REST_Server::READABLE,
                     'hidden_endpoint' => $hidden_endpoint,
-                    'callback_args'   => array($version),
-                ),
-            ),
-        );
+                    'callback_args'   => [$version],
+                ],
+            ],
+        ];
     }
 
 
@@ -1140,13 +1169,14 @@ class EED_Core_Rest_Api extends \EED_Module
      *
      * @param array $route_data
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function hide_old_endpoints($route_data)
+    public static function hide_old_endpoints(array $route_data): array
     {
         // allow API clients to override which endpoints get hidden, in case
         // they want to discover particular endpoints
-        // also, we don't have access to the request so we have to just grab it from the superglobal
+        // also, we don't have access to the request so we have to just grab it from the super global
         $force_show_ee_namespace = ltrim(
             EED_Core_Rest_Api::getRequest()->getRequestParam('force_show_ee_namespace'),
             '/'
@@ -1188,16 +1218,16 @@ class EED_Core_Rest_Api extends \EED_Module
      *
      * @return array
      */
-    public static function version_compatibilities()
+    public static function version_compatibilities(): array
     {
         return apply_filters(
             'FHEE__EED_Core_REST_API__version_compatibilities',
-            array(
+            [
                 '4.8.29' => '4.8.29',
                 '4.8.33' => '4.8.29',
                 '4.8.34' => '4.8.29',
                 '4.8.36' => '4.8.29',
-            )
+            ]
         );
     }
 
@@ -1209,9 +1239,9 @@ class EED_Core_Rest_Api extends \EED_Module
      *
      * @return string
      */
-    public static function latest_rest_api_version()
+    public static function latest_rest_api_version(): string
     {
-        $versions_served = \EED_Core_Rest_Api::versions_served();
+        $versions_served      = EED_Core_Rest_Api::versions_served();
         $versions_served_keys = array_keys($versions_served);
         return end($versions_served_keys);
     }
@@ -1226,14 +1256,14 @@ class EED_Core_Rest_Api extends \EED_Module
      * @return array keys are API version numbers (just major and minor numbers), and values
      * are whether or not they should be hidden
      */
-    public static function versions_served()
+    public static function versions_served(): array
     {
-        $versions_served = array();
-        $possibly_served_versions = EED_Core_Rest_Api::version_compatibilities();
+        $versions_served           = [];
+        $possibly_served_versions  = EED_Core_Rest_Api::version_compatibilities();
         $lowest_compatible_version = end($possibly_served_versions);
         reset($possibly_served_versions);
         $versions_served_historically = array_keys($possibly_served_versions);
-        $latest_version = end($versions_served_historically);
+        $latest_version               = end($versions_served_historically);
         reset($versions_served_historically);
         // for each version of core we have ever served:
         foreach ($versions_served_historically as $key_versioned_endpoint) {
@@ -1268,7 +1298,7 @@ class EED_Core_Rest_Api extends \EED_Module
      *
      * @return string
      */
-    public static function core_version()
+    public static function core_version(): string
     {
         return apply_filters(
             'FHEE__EED_Core_REST_API__core_version',
@@ -1292,7 +1322,7 @@ class EED_Core_Rest_Api extends \EED_Module
      *
      * @return int
      */
-    public static function get_default_query_limit()
+    public static function get_default_query_limit(): int
     {
         // we actually don't use a const because we want folks to always use
         // this method, not the const directly
@@ -1308,11 +1338,11 @@ class EED_Core_Rest_Api extends \EED_Module
      * @param string $version api version string (i.e. '4.8.36')
      * @return array
      */
-    public static function getCollectionRoutesIndexedByModelName($version = '')
+    public static function getCollectionRoutesIndexedByModelName(string $version = ''): array
     {
-        $version = empty($version) ? self::latest_rest_api_version() : $version;
-        $model_names = self::model_names_with_plural_routes($version);
-        $collection_routes = array();
+        $version           = empty($version) ? self::latest_rest_api_version() : $version;
+        $model_names       = self::model_names_with_plural_routes($version);
+        $collection_routes = [];
         foreach ($model_names as $model_name => $model_class_name) {
             $collection_routes[ strtolower($model_name) ] = '/' . self::ee_api_namespace . $version . '/'
                                                             . EEH_Inflector::pluralize_and_lower($model_name);
@@ -1323,14 +1353,15 @@ class EED_Core_Rest_Api extends \EED_Module
 
     /**
      * Returns an array of primary key names indexed by model names.
+     *
      * @param string $version
      * @return array
      */
-    public static function getPrimaryKeyNamesIndexedByModelName($version = '')
+    public static function getPrimaryKeyNamesIndexedByModelName(string $version = ''): array
     {
-        $version = empty($version) ? self::latest_rest_api_version() : $version;
-        $model_names = self::model_names_with_plural_routes($version);
-        $primary_key_items = array();
+        $version           = empty($version) ? self::latest_rest_api_version() : $version;
+        $model_names       = self::model_names_with_plural_routes($version);
+        $primary_key_items = [];
         foreach ($model_names as $model_name => $model_class_name) {
             $primary_keys = $model_class_name::instance()->get_combined_primary_key_fields();
             foreach ($primary_keys as $primary_key_name => $primary_key_field) {
@@ -1344,12 +1375,14 @@ class EED_Core_Rest_Api extends \EED_Module
         return $primary_key_items;
     }
 
+
     /**
      * Determines the EE REST API debug mode is activated, or not.
-     * @since 4.9.76.p
+     *
      * @return bool
+     * @since 4.9.76.p
      */
-    public static function debugMode()
+    public static function debugMode(): ?bool
     {
         static $debug_mode = null; // could be class prop
         if ($debug_mode === null) {
@@ -1359,12 +1392,11 @@ class EED_Core_Rest_Api extends \EED_Module
     }
 
 
-
     /**
      *    run - initial module setup
      *
      * @access    public
-     * @param  WP $WP
+     * @param WP $WP
      * @return    void
      */
     public function run($WP)

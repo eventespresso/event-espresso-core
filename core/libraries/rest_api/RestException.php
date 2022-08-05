@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\libraries\rest_api;
 
+use EE_Error;
+use Exception;
+
 /**
  * Class Exception
  * similar to EE's EE_Error, except has space to hold the "data" we
@@ -12,19 +15,31 @@ namespace EventEspresso\core\libraries\rest_api;
  * @author                Mike Nelson
  *
  */
-class RestException extends \EE_Error
+class RestException extends EE_Error
 {
     /**
      * @var array
      */
-    protected $wp_error_data = array();
+    protected $wp_error_data = [];
 
+    /**
+     * @var string
+     */
     protected $wp_error_code = '';
 
 
-
-    public function __construct($string_code, $message, $wp_error_data = array(), $previous = null)
-    {
+    /**
+     * @param string         $string_code
+     * @param string         $message
+     * @param array          $wp_error_data
+     * @param Exception|null $previous
+     */
+    public function __construct(
+        string $string_code,
+        string $message,
+        array $wp_error_data = [],
+        Exception $previous = null
+    ) {
         if (
             is_array($wp_error_data)
             && isset($wp_error_data['status'])
@@ -43,17 +58,15 @@ class RestException extends \EE_Error
     }
 
 
-
     /**
      * Array of data that may have been set during the constructor, intended for WP_Error's data
      *
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->wp_error_data;
     }
-
 
 
     /**
@@ -61,7 +74,7 @@ class RestException extends \EE_Error
      *
      * @return string
      */
-    public function getStringCode()
+    public function getStringCode(): string
     {
         return $this->wp_error_code;
     }

@@ -11,9 +11,9 @@ use EEM_Base;
  * interpreted. This is info that can be determined before even looking at what the query parameters are.
  * This is convenient when interpreting REST API query params and generating model query params.
  *
- * @package     Event Espresso
+ * @package        Event Espresso
  * @author         Mike Nelson
- * @since         4.9.72.p
+ * @since          4.9.72.p
  *
  */
 class RestIncomingQueryParamContext
@@ -22,54 +22,64 @@ class RestIncomingQueryParamContext
      * @var EEM_Base
      */
     private $model;
+
     /**
      * @var string
      */
     private $requested_version;
+
     /**
      * @var boolean
      */
     private $writing;
 
+
     /**
      * RestIncomingQueryParamContext constructor.
-     * @param EEM_Base $model
-     * @param string $requested_version
-     * @param boolean $writing
+     *
+     * @param EEM_Base        $model
+     * @param string          $requested_version
+     * @param bool|int|string $writing
      */
-    public function __construct(EEM_Base $model, $requested_version, $writing)
+    public function __construct(EEM_Base $model, string $requested_version, $writing)
     {
-        $this->model = $model;
-        $this->requested_version = (string) $requested_version;
-        $this->writing = filter_var($writing, FILTER_VALIDATE_BOOLEAN);
+        $this->model             = $model;
+        $this->requested_version = $requested_version;
+        $this->writing           = filter_var($writing, FILTER_VALIDATE_BOOLEAN);
     }
+
 
     /**
      * Gets the model currently being requested, eg class EEM_Event
-     * @since 4.9.72.p
+     *
      * @return EEM_Base
+     * @since 4.9.72.p
      */
-    public function getModel()
+    public function getModel(): EEM_Base
     {
         return $this->model;
     }
 
+
     /**
      * Gets the version being requested, eg 4.8.36
-     * @since 4.9.72.p
+     *
      * @return string
+     * @since 4.9.72.p
      */
-    public function getRequestedVersion()
+    public function getRequestedVersion(): string
     {
         return $this->requested_version;
     }
 
+
     /**
      * Gets if the current request is for a writing request or just simple read
-     * @since 4.9.72.p
+     *
      * @return bool
+     * @since 4.9.72.p
      */
-    public function isWriting()
+    public function isWriting(): bool
     {
         return $this->writing;
     }

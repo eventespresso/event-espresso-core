@@ -57,10 +57,10 @@ class ModelDataTranslator
      * @throws EE_Error
      */
     public static function prepareFieldValuesFromJson(
-        $field_obj,
+        EE_Model_Field_Base $field_obj,
         $original_value_maybe_array,
-        $requested_version,
-        $timezone_string = 'UTC'
+        string $requested_version,
+        string $timezone_string = 'UTC'
     ) {
         if (
             is_array($original_value_maybe_array)
@@ -93,12 +93,15 @@ class ModelDataTranslator
      * @param EE_Model_Field_Base $field_obj
      * @param mixed               $original_value_maybe_array
      * @param string              $request_version (eg 4.8.36)
-     * @return array
+     * @return mixed
      * @throws EE_Error
      * @throws EE_Error
      */
-    public static function prepareFieldValuesForJson($field_obj, $original_value_maybe_array, $request_version)
-    {
+    public static function prepareFieldValuesForJson(
+        EE_Model_Field_Base $field_obj,
+        $original_value_maybe_array,
+        string $request_version
+    ) {
         if (is_array($original_value_maybe_array)) {
             $new_value = [];
             foreach ($original_value_maybe_array as $key => $value) {
@@ -133,10 +136,10 @@ class ModelDataTranslator
      * @throws EE_Error
      */
     public static function prepareFieldValueFromJson(
-        $field_obj,
+        EE_Model_Field_Base $field_obj,
         $original_value,
-        $requested_version,
-        $timezone_string = 'UTC'
+        string $requested_version,
+        string $timezone_string = 'UTC'
     ) {
         // check if they accidentally submitted an error value. If so throw an exception
         if (
@@ -213,17 +216,17 @@ class ModelDataTranslator
      * @throws DomainException
      */
     private static function getTimestampWithTimezoneOffset(
-        $original_timestamp,
+        string $original_timestamp,
         EE_Datetime_Field $datetime_field,
         $timezone_string
-    ) {
+    ): string {
         // already have timezone information?
         if (preg_match('/Z|([+-])(\d{2}:\d{2})/', $original_timestamp)) {
             // yes, we're ignoring the timezone.
             return $original_timestamp;
         }
         // need to append timezone
-        list($offset_sign, $offset_secs) = self::parseTimezoneOffset(
+        [$offset_sign, $offset_secs] = self::parseTimezoneOffset(
             $datetime_field->get_timezone_offset(
                 new DateTimeZone($timezone_string),
                 $original_timestamp
@@ -249,7 +252,7 @@ class ModelDataTranslator
 
     /**
      * Throws an exception if $data is a serialized PHP string (or somehow an actually PHP object, although I don't
-     * think that can happen). If $data is an array, recurses into its keys and values
+     * think that can happen). If $data is an array, will recurse into its keys and values
      *
      * @param mixed $data
      * @return void
@@ -281,10 +284,10 @@ class ModelDataTranslator
     /**
      * determines what's going on with them timezone strings
      *
-     * @param int $timezone_offset
+     * @param int|string $timezone_offset
      * @return array
      */
-    private static function parseTimezoneOffset($timezone_offset)
+    private static function parseTimezoneOffset($timezone_offset): array
     {
         $first_char = substr((string) $timezone_offset, 0, 1);
         if ($first_char === '+' || $first_char === '-') {
@@ -308,8 +311,11 @@ class ModelDataTranslator
      * @throws EE_Error
      * @throws EE_Error
      */
-    public static function prepareFieldValueForJson($field_obj, $original_value, $requested_version)
-    {
+    public static function prepareFieldValueForJson(
+        EE_Model_Field_Base $field_obj,
+        $original_value,
+        string $requested_version
+    ) {
         if ($original_value === EE_INF) {
             $new_value = ModelDataTranslator::EE_INF_IN_REST;
         } elseif ($field_obj instanceof EE_Datetime_Field) {
@@ -401,11 +407,11 @@ class ModelDataTranslator
      * @throws InvalidArgumentException
      */
     public static function prepareConditionsQueryParamsForModels(
-        $inputted_query_params_of_this_type,
+        array $inputted_query_params_of_this_type,
         EEM_Base $model,
-        $requested_version,
-        $writing = false
-    ) {
+        string $requested_version,
+        bool $writing = false
+    ): array {
         $query_param_for_models = [];
         $context                = new RestIncomingQueryParamContext($model, $requested_version, $writing);
         foreach ($inputted_query_params_of_this_type as $query_param_key => $query_param_value) {
@@ -441,7 +447,7 @@ class ModelDataTranslator
      * @param string $field_name
      * @return boolean
      */
-    public static function isGmtDateFieldName($field_name)
+    public static function isGmtDateFieldName(string $field_name): bool
     {
         $field_name = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($field_name);
         return substr($field_name, -4, 4) === '_gmt';
@@ -454,14 +460,15 @@ class ModelDataTranslator
      * @param string $field_name
      * @return string
      */
-    public static function removeGmtFromFieldName($field_name)
+    public static function removeGmtFromFieldName(string $field_name): string
     {
         if (! ModelDataTranslator::isGmtDateFieldName($field_name)) {
             return $field_name;
         }
-        $query_param_sans_stars = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey(
-            $field_name
-        );
+        $query_param_sans_stars              =
+            ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey(
+                $field_name
+            );
         $query_param_sans_gmt_and_sans_stars = substr(
             $query_param_sans_stars,
             0,
@@ -480,7 +487,7 @@ class ModelDataTranslator
      * @param string $field_name
      * @return string
      */
-    public static function prepareFieldNameFromJson($field_name)
+    public static function prepareFieldNameFromJson(string $field_name): string
     {
         if (ModelDataTranslator::isGmtDateFieldName($field_name)) {
             return ModelDataTranslator::removeGmtFromFieldName($field_name);
@@ -495,7 +502,7 @@ class ModelDataTranslator
      * @param array $field_names
      * @return array of field names (possibly include model prefixes)
      */
-    public static function prepareFieldNamesFromJson(array $field_names)
+    public static function prepareFieldNamesFromJson(array $field_names): array
     {
         $new_array = [];
         foreach ($field_names as $key => $field_name) {
@@ -512,7 +519,7 @@ class ModelDataTranslator
      * @param array $field_names_as_keys
      * @return array
      */
-    public static function prepareFieldNamesInArrayKeysFromJson(array $field_names_as_keys)
+    public static function prepareFieldNamesInArrayKeysFromJson(array $field_names_as_keys): array
     {
         $new_array = [];
         foreach ($field_names_as_keys as $field_name => $value) {
@@ -525,10 +532,10 @@ class ModelDataTranslator
     /**
      * Prepares an array of model query params for use in the REST API
      *
-     * @param array    $model_query_params
-     * @param EEM_Base $model
-     * @param string   $requested_version  eg "4.8.36". If null is provided, defaults to the latest release of the EE4
-     *                                     REST API
+     * @param array       $model_query_params
+     * @param EEM_Base    $model
+     * @param string|null $requested_version eg "4.8.36". If null is provided, defaults to the latest release of the EE4
+     *                                       REST API
      * @return array which can be passed into the EE4 REST API when querying a model resource
      * @throws EE_Error
      * @throws ReflectionException
@@ -536,8 +543,8 @@ class ModelDataTranslator
     public static function prepareQueryParamsForRestApi(
         array $model_query_params,
         EEM_Base $model,
-        $requested_version = null
-    ) {
+        ?string $requested_version = null
+    ): array {
         if ($requested_version === null) {
             $requested_version = EED_Core_Rest_Api::latest_rest_api_version();
         }
@@ -582,10 +589,10 @@ class ModelDataTranslator
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
     public static function prepareConditionsQueryParamsForRestApi(
-        $inputted_query_params_of_this_type,
+        array $inputted_query_params_of_this_type,
         EEM_Base $model,
-        $requested_version
-    ) {
+        string $requested_version
+    ): array {
         $query_param_for_models = [];
         foreach ($inputted_query_params_of_this_type as $query_param_key => $query_param_value) {
             $field = ModelDataTranslator::deduceFieldFromQueryParam(
@@ -631,7 +638,7 @@ class ModelDataTranslator
      * @param $condition_query_param_key
      * @return string
      */
-    public static function removeStarsAndAnythingAfterFromConditionQueryParamKey($condition_query_param_key)
+    public static function removeStarsAndAnythingAfterFromConditionQueryParamKey($condition_query_param_key): string
     {
         $pos_of_star = strpos($condition_query_param_key, '*');
         if ($pos_of_star === false) {
@@ -650,7 +657,7 @@ class ModelDataTranslator
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function deduceFieldFromQueryParam($query_param_name, EEM_Base $model)
+    public static function deduceFieldFromQueryParam(string $query_param_name, EEM_Base $model): ?EE_Model_Field_Base
     {
         // ok, now proceed with deducing which part is the model's name, and which is the field's name
         // which will help us find the database table and column
@@ -688,7 +695,7 @@ class ModelDataTranslator
      * @param mixed $data
      * @return bool
      */
-    protected static function isRepresentableInJson($data)
+    protected static function isRepresentableInJson($data): bool
     {
         return is_scalar($data)
                || is_array($data)

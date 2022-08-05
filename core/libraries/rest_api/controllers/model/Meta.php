@@ -2,14 +2,18 @@
 
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
-use Exception;
+use EE_Belongs_To_Relation;
 use EE_Boolean_Field;
+use EE_Error;
 use EE_Maintenance_Mode;
 use EE_Registry;
 use EE_Serialized_Text_Field;
 use EED_Core_Rest_Api;
 use EEM_System_Status;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use Exception;
+use WP_REST_Request;
+use WP_REST_Response;
 
 /**
  * Controller for handling requests regarding meta info about the models
@@ -22,11 +26,11 @@ use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 class Meta extends Base
 {
     /**
-     * @param \WP_REST_Request $request
-     * @param string           $version
-     * @return array|\WP_REST_Response
+     * @param WP_REST_Request $request
+     * @param string          $version
+     * @return WP_REST_Response
      */
-    public static function handleRequestModelsMeta(\WP_REST_Request $request, $version)
+    public static function handleRequestModelsMeta(WP_REST_Request $request, string $version): WP_REST_Response
     {
         $controller = new Meta();
         try {
@@ -38,16 +42,18 @@ class Meta extends Base
     }
 
 
-    /*
+    /**
      * Gets the model metadata resource entity
+     *
      * @return array for JSON response, describing all the models available in teh requested version
+     * @throws EE_Error
      */
-    protected function getModelsMetadataEntity()
+    protected function getModelsMetadataEntity(): array
     {
-        $response = array();
+        $response = [];
         foreach ($this->getModelVersionInfo()->modelsForRequestedVersion() as $model_name => $model_classname) {
-            $model = $this->getModelVersionInfo()->loadModel($model_name);
-            $fields_json = array();
+            $model       = $this->getModelVersionInfo()->loadModel($model_name);
+            $fields_json = [];
             foreach ($this->getModelVersionInfo()->fieldsOnModelInThisVersion($model) as $field_name => $field_obj) {
                 if ($this->getModelVersionInfo()->fieldIsIgnored($field_obj)) {
                     continue;
@@ -61,12 +67,12 @@ class Meta extends Base
                 } else {
                     $datatype = 'String';
                 }
-                $default_value = ModelDataTranslator::prepareFieldValueForJson(
+                $default_value                      = ModelDataTranslator::prepareFieldValueForJson(
                     $field_obj,
                     $field_obj->get_default_value(),
                     $this->getModelVersionInfo()->requestedVersion()
                 );
-                $field_json = array(
+                $field_json                         = [
                     'name'                => $field_name,
                     'nicename'            => wp_specialchars_decode($field_obj->get_nicename(), ENT_QUOTES),
                     'has_rendered_format' => $this->getModelVersionInfo()->fieldHasRenderedFormat($field_obj),
@@ -77,10 +83,10 @@ class Meta extends Base
                     'default'             => $default_value,
                     'table_alias'         => $field_obj->get_table_alias(),
                     'table_column'        => $field_obj->get_table_column(),
-                );
+                ];
                 $fields_json[ $field_json['name'] ] = $field_json;
             }
-            $fields_json = array_merge(
+            $fields_json                       = array_merge(
                 $fields_json,
                 $this->getModelVersionInfo()->extraResourcePropertiesForModel($model)
             );
@@ -89,13 +95,13 @@ class Meta extends Base
                 $fields_json,
                 $model
             );
-            $relations_json = array();
+            $relations_json                    = [];
             foreach ($model->relation_settings() as $relation_name => $relation_obj) {
-                $relation_json = array(
+                $relation_json                    = [
                     'name'   => $relation_name,
                     'type'   => str_replace('EE_', '', get_class($relation_obj)),
-                    'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false,
-                );
+                    'single' => $relation_obj instanceof EE_Belongs_To_Relation,
+                ];
                 $relations_json[ $relation_name ] = $relation_json;
             }
             $response[ $model_name ]['relations'] = apply_filters(
@@ -111,21 +117,21 @@ class Meta extends Base
     /**
      * Adds EE metadata to the index
      *
-     * @param \WP_REST_Response $rest_response_obj
-     * @return \WP_REST_Response
+     * @param WP_REST_Response $rest_response_obj
+     * @return WP_REST_Response
      */
-    public static function filterEeMetadataIntoIndex(\WP_REST_Response $rest_response_obj)
+    public static function filterEeMetadataIntoIndex(WP_REST_Response $rest_response_obj): WP_REST_Response
     {
         $response_data = $rest_response_obj->get_data();
-        $addons = array();
+        $addons        = [];
         foreach (EE_Registry::instance()->addons as $addon) {
-            $addon_json = array(
+            $addon_json                    = [
                 'name'    => $addon->name(),
                 'version' => $addon->version(),
-            );
+            ];
             $addons[ $addon_json['name'] ] = $addon_json;
         }
-        $response_data['ee'] = array(
+        $response_data['ee'] = [
             'version'              => EEM_System_Status::instance()->get_ee_version(),
             // @codingStandardsIgnoreStart
             'documentation_url'    => 'https://github.com/eventespresso/event-espresso-core/tree/master/docs/C--REST-API',
@@ -133,7 +139,7 @@ class Meta extends Base
             'addons'               => $addons,
             'maintenance_mode'     => EE_Maintenance_Mode::instance()->real_level(),
             'served_core_versions' => array_keys(EED_Core_Rest_Api::versions_served()),
-        );
+        ];
         $rest_response_obj->set_data($response_data);
         return $rest_response_obj;
     }
