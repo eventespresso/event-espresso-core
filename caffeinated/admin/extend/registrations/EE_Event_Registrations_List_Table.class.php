@@ -27,18 +27,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     protected $_admin_page;
 
     /**
-     * The event ID if one is specified in the request
-     *
-     * @var int
-     */
-    protected $event_id = 0;
-
-    /**
      * This property will hold the related Datetimes on an event IF the event id is included in the request.
      *
      * @var DatetimesForEventCheckIn
      */
-    protected $datetimes_for_event = [];
+    protected $datetimes_for_event;
 
     /**
      * The DTT_ID if the current view has a specified datetime.
@@ -51,6 +44,13 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @var EE_Datetime
      */
     protected $datetime;
+
+    /**
+     * The event ID if one is specified in the request
+     *
+     * @var int
+     */
+    protected $event_id = 0;
 
     /**
      * @var EE_Event
@@ -138,9 +138,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     {
         $return_url = $this->getReturnUrl();
 
-        $EVT_ID = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : 0;
-        $DTT_ID = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : 0;
-
         $this->_wp_list_args = [
             'singular' => esc_html__('registrant', 'event_espresso'),
             'plural'   => esc_html__('registrants', 'event_espresso'),
@@ -160,7 +157,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'TXN_total'           => esc_html__('Total', 'event_espresso'),
         ];
         // Add/remove columns when an event has been selected
-        if (! empty($EVT_ID)) {
+        if (! empty($this->event_id)) {
             // Render a checkbox column
             $columns['cb']              = '<input type="checkbox" />';
             $this->_has_checkbox_column = true;
@@ -171,7 +168,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $this->_columns        = array_merge($columns, $this->_columns);
         $this->_primary_column = '_REG_att_checked_in';
 
-        $csv_report = RegistrationsCsvReportParams::getRequestParams($return_url, $this->_req_data, $EVT_ID, $DTT_ID);
+        $csv_report = RegistrationsCsvReportParams::getRequestParams(
+            $return_url,
+            $this->_req_data,
+            $this->event_id,
+            $this->datetime_id
+        );
         if (! empty($csv_report)) {
             $this->_bottom_buttons['csv_reg_report'] = $csv_report;
         }
@@ -195,8 +197,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'Event'    => ['Event.EVT_name' => false],
         ];
         $this->_hidden_columns   = [];
-        $this->_evt              = EEM_Event::instance()->get_one_by_ID($EVT_ID);
-        $this->datetimes_for_event   = $this->_evt instanceof EE_Event ? $this->_evt->datetimes_ordered() : [];
+        $this->event              = EEM_Event::instance()->get_one_by_ID($this->event_id);
+        if ($this->event instanceof EE_Event) {
+            $this->datetimes_for_event = $this->event->datetimes_ordered();
+        }
     }
 
 
@@ -232,7 +236,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             'id'   => 0,
             'text' => esc_html__(' - select an event - ', 'event_espresso'),
         ];
-        /** @var EE_Event $event */
         foreach ($events as $event) {
             // any registrations for this event?
             if (! $event instanceof EE_Event/* || ! $event->get_count_of_all_registrations()*/) {
