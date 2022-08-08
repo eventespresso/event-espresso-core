@@ -10,6 +10,7 @@ use EE_Transaction;
 use EEM_Registration;
 use EventEspresso\core\domain\services\capabilities\CapCheck;
 use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
+use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\Command;
@@ -109,7 +110,10 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
     public function getCapCheck()
     {
         if (! $this->cap_check instanceof CapCheckInterface) {
-            return new CapCheck('ee_edit_registrations', 'create_new_registration');
+            // need cap for non-AJAX admin requests
+            $this->cap_check = ! (defined('DOING_AJAX') && DOING_AJAX) && is_admin()
+                ? new CapCheck('ee_edit_registrations', 'create_new_registration')
+                : new PublicCapabilities('', 'create_new_registration');
         }
         return $this->cap_check;
     }

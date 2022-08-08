@@ -38,7 +38,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             );
 
             $actions['check_in'] = '
-            <a  class="ee-aria-tooltip ee-event-filter-link" 
+            <a  class="ee-aria-tooltip ee-event-filter-link"
                 href="' . $check_in_url . '"
                 aria-label="' . esc_attr__(
                     'The Check-In List allows you to easily toggle check-in status for this event',
@@ -85,7 +85,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
                 );
                 // open "a" tag and "href"
                 $datetime_string .= '
-                    <a class="ee-aria-tooltip ee-status-color--' . $datetime->get_active_status() . '" 
+                    <a class="ee-aria-tooltip ee-status-color--' . $datetime->get_active_status() . '"
                         href="' . $checkins_url . '"
                         aria-label="' . esc_attr__('View Checkins for this Event', 'event_espresso') . '"
                     >
@@ -102,8 +102,8 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             $datetime_string .= $this->row_actions(
                 array(
                     'event_datetime_filter' => '
-                    <a class="ee-aria-tooltip ee-event-filter-link" 
-                        href="' . $filter_list_url . '" 
+                    <a class="ee-aria-tooltip ee-event-filter-link"
+                        href="' . $filter_list_url . '"
                         aria-label="' . sprintf(
                             esc_attr__(
                                 'Filter this list to only show registrations for this datetime %s',

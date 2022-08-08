@@ -245,9 +245,9 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
 
                                 echo '
                                     <a href="' . esc_url_raw($edit_link) . '"
-                                         class="button button--small button--icon-only"
+                                         class="ee-aria-tooltip button button--small button--icon-only"
                                          target="_blank"
-                                         title="' .
+                                         aria-label="' .
                                     sprintf(
                                         esc_attr__('Edit %s', 'event_espresso'),
                                         $question->admin_label()

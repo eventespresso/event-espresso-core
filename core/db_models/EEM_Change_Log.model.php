@@ -3,10 +3,9 @@
 /**
  * EEM_Change_Log
  *
- * @package               Event Espresso
- * @subpackage
- * @author                Mike Nelson
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  core/db_models
+ * @author      Mike Nelson
  */
 class EEM_Change_Log extends EEM_Base
 {
@@ -14,23 +13,28 @@ class EEM_Change_Log extends EEM_Base
      * the related object was created log type
      */
     const type_create = 'create';
+
     /**
      * the related object was updated (changed, or soft-deleted)
      */
     const type_update = 'update';
+
     /**
-     * the related object was deleted permanently
+     * the related object was trashed/restored/deleted
      */
     const type_delete = 'delete';
+
     /**
      * the related item had something worth noting happen on it, but
      * only for the purposes of debugging problems
      */
     const type_debug = 'debug';
+
     /**
      * the related item had an error occur on it
      */
     const type_error = 'error';
+
     /**
      * the related item is regarding some gateway interaction, like an IPN
      * or request to process a payment
@@ -55,15 +59,14 @@ class EEM_Change_Log extends EEM_Base
      */
     protected function __construct($timezone = null)
     {
-        global $current_user;
         $this->singular_item       = esc_html__('Log', 'event_espresso');
         $this->plural_item         = esc_html__('Logs', 'event_espresso');
-        $this->_tables             = array(
+        $this->_tables             = [
             'Log' => new EE_Primary_Table('esp_log', 'LOG_ID'),
-        );
+        ];
         $models_this_can_attach_to = array_keys(EE_Registry::instance()->non_abstract_db_models);
-        $this->_fields             = array(
-            'Log' => array(
+        $this->_fields             = [
+            'Log' => [
                 'LOG_ID'      => new EE_Primary_Key_Int_Field('LOG_ID', esc_html__('Log ID', 'event_espresso')),
                 'LOG_time'    => new EE_Datetime_Field(
                     'LOG_time',
@@ -110,9 +113,9 @@ class EEM_Change_Log extends EEM_Base
                     esc_html__("User who was logged in while this occurred", 'event_espresso'),
                     true
                 ),
-            ),
-        );
-        $this->_model_relations    = array();
+            ],
+        ];
+        $this->_model_relations    = [];
         foreach ($models_this_can_attach_to as $model) {
             if ($model != 'Change_Log') {
                 $this->_model_relations[ $model ] = new EE_Belongs_To_Any_Relation();
@@ -128,12 +131,14 @@ class EEM_Change_Log extends EEM_Base
         parent::__construct($timezone);
     }
 
+
     /**
      * @param string        $log_type !see the acceptable values of LOG_type in EEM__Change_Log::__construct
      * @param mixed         $message  array|string of the message you want to record
      * @param EE_Base_Class $related_model_obj
      * @return EE_Change_Log
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function log($log_type, $message, $related_model_obj)
     {
@@ -144,13 +149,14 @@ class EEM_Change_Log extends EEM_Base
             $obj_id   = null;
             $obj_type = null;
         }
-        /** @var EE_Change_Log $log */
-        $log = EE_Change_Log::new_instance(array(
-            'LOG_type'    => $log_type,
-            'LOG_message' => $message,
-            'OBJ_ID'      => $obj_id,
-            'OBJ_type'    => $obj_type,
-        ));
+        $log = EE_Change_Log::new_instance(
+            [
+                'LOG_type'    => $log_type,
+                'LOG_message' => $message,
+                'OBJ_ID'      => $obj_id,
+                'OBJ_type'    => $obj_type,
+            ]
+        );
         $log->save();
         return $log;
     }
@@ -162,8 +168,9 @@ class EEM_Change_Log extends EEM_Base
      * @param string $message
      * @param mixed  $related_obj_id
      * @param string $related_obj_type
-     * @throws EE_Error
      * @return EE_Change_Log
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     public function gateway_log($message, $related_obj_id, $related_obj_type)
     {
@@ -178,13 +185,14 @@ class EEM_Change_Log extends EEM_Base
                 )
             );
         }
-        /** @var EE_Change_Log $log */
-        $log = EE_Change_Log::new_instance(array(
-            'LOG_type'    => EEM_Change_Log::type_gateway,
-            'LOG_message' => $message,
-            'OBJ_ID'      => $related_obj_id,
-            'OBJ_type'    => $related_obj_type,
-        ));
+        $log = EE_Change_Log::new_instance(
+            [
+                'LOG_type'    => EEM_Change_Log::type_gateway,
+                'LOG_message' => $message,
+                'OBJ_ID'      => $related_obj_id,
+                'OBJ_type'    => $related_obj_type,
+            ]
+        );
         $log->save();
         return $log;
     }
@@ -193,9 +201,10 @@ class EEM_Change_Log extends EEM_Base
     /**
      * Just gets the bare-bones wpdb results as an array in cases where efficiency is essential
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
      * @return array of arrays
      * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function get_all_efficiently($query_params)
     {
@@ -234,20 +243,21 @@ class EEM_Change_Log extends EEM_Base
     {
         return apply_filters(
             'FHEE__EEM_Change_Log__get_pretty_label_map_for_registered_types',
-            array(
-                self::type_create =>  esc_html__("Create", "event_espresso"),
-                self::type_update =>  esc_html__("Update", "event_espresso"),
-                self::type_delete => esc_html__("Delete", "event_espresso"),
-                self::type_debug =>  esc_html__("Debug", "event_espresso"),
-                self::type_error =>  esc_html__("Error", "event_espresso"),
-                self::type_gateway => esc_html__("Gateway Interaction (IPN or Direct Payment)", 'event_espresso')
-            )
+            [
+                self::type_create  => esc_html__("Create", "event_espresso"),
+                self::type_update  => esc_html__("Update", "event_espresso"),
+                self::type_delete  => esc_html__("Delete", "event_espresso"),
+                self::type_debug   => esc_html__("Debug", "event_espresso"),
+                self::type_error   => esc_html__("Error", "event_espresso"),
+                self::type_gateway => esc_html__("Gateway Interaction (IPN or Direct Payment)", 'event_espresso'),
+            ]
         );
     }
 
 
     /**
      * Return the pretty (localized) label for the given log type identifier.
+     *
      * @param string $type_identifier
      * @return string
      */

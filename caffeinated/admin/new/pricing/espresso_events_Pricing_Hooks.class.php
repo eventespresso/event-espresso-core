@@ -298,9 +298,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      */
     protected function _update_datetimes(EE_Event $event, array $data): array
     {
-        $timezone            = $data['timezone_string'] ?? null;
         $saved_datetime_ids  = [];
         $saved_datetime_objs = [];
+        $timezone       = $data['timezone_string'] ?? null;
+        $datetime_model = EEM_Datetime::instance($timezone);
+
         if (empty($data['edit_event_datetimes']) || ! is_array($data['edit_event_datetimes'])) {
             throw new InvalidArgumentException(
                 esc_html__(
@@ -311,7 +313,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         }
         foreach ($data['edit_event_datetimes'] as $row => $datetime_data) {
             // trim all values to ensure any excess whitespace is removed.
-            $datetime_data                = array_map(
+            $datetime_data = array_map(
                 function ($datetime_data) {
                     return is_array($datetime_data) ? $datetime_data : trim($datetime_data);
                 },
@@ -322,7 +324,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                                             && ! empty($datetime_data['DTT_EVT_end'])
                 ? $datetime_data['DTT_EVT_end']
                 : $datetime_data['DTT_EVT_start'];
-
             $datetime_values              = [
                 'DTT_ID'          => ! empty($datetime_data['DTT_ID'])
                     ? $datetime_data['DTT_ID']
@@ -346,7 +347,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             // if we have an id then let's get existing object first and then set the new values.
             // Otherwise we instantiate a new object for save.
             if (! empty($datetime_data['DTT_ID'])) {
-                $datetime = EEM_Datetime::instance($timezone)->get_one_by_ID($datetime_data['DTT_ID']);
+                $datetime = EE_Registry::instance()
+                                       ->load_model('Datetime', [$timezone])
+                                       ->get_one_by_ID($datetime_data['DTT_ID']);
                 // set date and time format according to what is set in this class.
                 $datetime->set_date_format($this->_date_format_strings['date']);
                 $datetime->set_time_format($this->_date_format_strings['time']);
@@ -406,14 +409,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 if (empty($id)) {
                     continue;
                 }
-                $datetime_to_remove = EE_Registry::instance()->load_model('Datetime')->get_one_by_ID($id);
-                // remove ticket relationships.
-                $related_tickets = $datetime_to_remove->get_many_related('Ticket');
+                $dtt_to_remove = $datetime_model->get_one_by_ID($id);
+                // remove tkt relationships.
+                $related_tickets = $dtt_to_remove->get_many_related('Ticket');
                 foreach ($related_tickets as $ticket) {
-                    $datetime_to_remove->_remove_relation_to($ticket, 'Ticket');
+                    $dtt_to_remove->_remove_relation_to($ticket, 'Ticket');
                 }
                 $event->_remove_relation_to($id, 'Datetime');
-                $datetime_to_remove->refresh_cache_of_related_objects();
+                $dtt_to_remove->refresh_cache_of_related_objects();
             }
         }
         return $saved_datetime_objs;
@@ -440,6 +443,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         // stripslashes because WP filtered the $_POST ($data) array to add slashes
         $data          = stripslashes_deep($data);
         $timezone      = $data['timezone_string'] ?? null;
+        $ticket_model = EEM_Ticket::instance($timezone);
+
         $saved_tickets = [];
         $old_tickets   = isset($data['ticket_IDs']) ? explode(',', $data['ticket_IDs']) : [];
         if (empty($data['edit_tickets']) || ! is_array($data['edit_tickets'])) {
@@ -502,9 +507,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 'TKT_name'        => ! empty($ticket_data['TKT_name']) ? $ticket_data['TKT_name'] : '',
                 'TKT_description' => ! empty($ticket_data['TKT_description'])
                                      && $ticket_data['TKT_description'] !== esc_html__(
-                                         'You can modify this description',
-                                         'event_espresso'
-                                     )
+                    'You can modify this description',
+                    'event_espresso'
+                )
                     ? $ticket_data['TKT_description']
                     : '',
                 'TKT_start_date'  => $ticket_data['TKT_start_date'],
@@ -537,7 +542,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             // keep in mind that if the TKT has been sold (and we have changed pricing information),
             // then we won't be updating the ticket but instead a new ticket will be created and the old one archived.
             if (absint($TKT_values['TKT_ID'])) {
-                $ticket = EEM_Ticket::instance($timezone)->get_one_by_ID($ticket_data['TKT_ID']);
+                $ticket = EE_Registry::instance()
+                                     ->load_model('Ticket', [$timezone])
+                                     ->get_one_by_ID($TKT_values['TKT_ID']);
                 if ($ticket instanceof EE_Ticket) {
                     $ticket = $this->_update_ticket_datetimes(
                         $ticket,
@@ -700,8 +707,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         foreach ($tickets_removed as $id) {
             $id = absint($id);
             // get the ticket for this id
-            $ticket_to_remove = EE_Registry::instance()->load_model('Ticket')->get_one_by_ID($id);
-            // if this ticket is a default ticket we leave it alone cause it won't be attached to the datetime
+            $ticket_to_remove = $ticket_model->get_one_by_ID($id);
+            // if this tkt is a default tkt we leave it alone cause it won't be attached to the datetime
             if ($ticket_to_remove->get('TKT_is_default')) {
                 continue;
             }
@@ -719,11 +726,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             }
             // need to do the same for prices (except these prices can also be deleted because again,
             // tickets can only be trashed if they don't have any TKTs sold (otherwise they are just archived))
-            $ticket_to_remove->delete_related_permanently('Price');
+            $ticket_to_remove->delete_related('Price');
             do_action('AHEE__espresso_events_Pricing_Hooks___update_tkts_delete_ticket', $ticket_to_remove);
             // finally let's delete this ticket
             // (which should not be blocked at this point b/c we've removed all our relationships)
-            $ticket_to_remove->delete_permanently();
+            $ticket_to_remove->delete_or_restore();
         }
         return $saved_tickets;
     }
@@ -860,6 +867,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $base_price = false,
         $base_price_id = false
     ): EE_Ticket {
+        $price_model = EEM_Price::instance();
         // let's just get any current prices that may exist on the given ticket
         // so we can remove any prices that got trashed in this session.
         $current_prices_on_ticket = $base_price !== false
@@ -904,7 +912,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     false
                 );
             } else {
-                $price = EE_Registry::instance()->load_model('Price')->get_one_by_ID($prc['PRC_ID']);
+                $price = $price_model->get_one_by_ID($prc['PRC_ID']);
                 // update this price with new values
                 foreach ($PRC_values as $field => $value) {
                     $price->set($field, $value);
@@ -924,7 +932,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     $p = $current_prices_on_ticket[ $prc_id ];
                     $ticket->_remove_relation_to($p, 'Price');
                     // delete permanently the price
-                    $p->delete_permanently();
+                    $p->delete_or_restore();
                 }
             }
         }
@@ -942,12 +950,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      */
     public function pricing_metabox()
     {
-        $existing_datetime_ids = $existing_ticket_ids = $datetime_tickets = $ticket_datetimes = [];
         $event                 = $this->_adminpage_obj->get_cpt_model_obj();
+        $timezone = $event instanceof EE_Event ? $event->timezone_string() : null;
+        $price_model = EEM_Price::instance($timezone);
+        $ticket_model = EEM_Ticket::instance($timezone);
+        $datetime_model = EEM_Datetime::instance($timezone);
 
         // set is_creating_event property.
         $EVT_ID                   = $event->ID();
         $this->_is_creating_event = empty($this->_req_data['post']);
+        $existing_datetime_ids = $existing_ticket_ids = $datetime_tickets = $ticket_datetimes = [];
 
         // default main template args
         $main_template_args = [
@@ -968,9 +980,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'datetime_rows'            => '',
             'show_tickets_container'   => '',
             'ticket_rows'              => '',
-            'ee_collapsible_status'    => ' ee-collapsible-open',
+            'ee_collapsible_status'    => ' ee-collapsible-open'
+            // $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? ' ee-collapsible-closed' : ' ee-collapsible-open'
         ];
-        $timezone           = $event instanceof EE_Event ? $event->timezone_string() : null;
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
         /**
@@ -978,8 +990,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
          * 2. For each datetime get related tickets
          * 3. For each ticket get related prices
          */
-        /** @var EEM_Datetime $datetime_model */
-        $datetime_model                       = EE_Registry::instance()->load_model('Datetime', [$timezone]);
         $datetimes                            = $datetime_model->get_all_event_dates($EVT_ID);
         $main_template_args['total_dtt_rows'] = count($datetimes);
 
@@ -1010,12 +1020,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             // ALWAYS have at least one related ticket!!.  EXCEPT, we dont' do this if there is already more than one
             // datetime on the event.
             if (empty($related_tickets) && count($datetimes) < 2) {
-                /** @var EEM_Ticket $ticket_model */
-                $ticket_model    = EE_Registry::instance()->load_model('Ticket');
                 $related_tickets = $ticket_model->get_all_default_tickets();
                 // this should be ordered by TKT_ID, so let's grab the first default ticket
                 // (which will be the main default) and ensure it has any default prices added to it (but do NOT save).
-                $default_prices      = EEM_Price::instance()->get_all_default_prices();
+                $default_prices      = $price_model->get_all_default_prices();
                 $main_default_ticket = reset($related_tickets);
                 if ($main_default_ticket instanceof EE_Ticket) {
                     foreach ($default_prices as $default_price) {
@@ -1202,9 +1210,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 ? ''
                 : EE_Admin_Page::add_query_args_and_nonce(
                     [
-                        'event_id' => $datetime->event()->ID(),
+                        'event_id'    => $datetime->event()->ID(),
                         'datetime_id' => $datetime->ID(),
-                        'use_filters' => true
+                        'use_filters' => true,
                     ],
                     REG_ADMIN_URL
                 ),
@@ -1249,7 +1257,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         array $all_tickets = [],
         bool $default = false
     ): string {
-        $default = $default || ! $datetime instanceof EE_Datetime;
         $template_args = [
             'dtt_row'                           => $default ? 'DTTNUM' : $datetime_row,
             'event_datetimes_name'              => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
@@ -1273,8 +1280,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     $ticket_row,
                     $datetime,
                     $ticket,
-                    $datetime_tickets,
-                    $default
+                    $datetime_tickets
                 );
                 $ticket_row++;
             }
@@ -1501,7 +1507,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     ]
                 ),
             'TKT_ID'                        => $default ? 0 : $ticket->ID(),
-            'TKT_description'               => $default ? '' : $ticket->get_f('TKT_description'),
+            'TKT_description'               => $default ? '' : $ticket->get_raw('TKT_description'),
             'TKT_is_default'                => $default ? 0 : $ticket->is_default(),
             'TKT_required'                  => $default ? 0 : $ticket->required(),
             'TKT_is_default_selector'       => '',
@@ -1915,8 +1921,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $select_name = $default && ! $price instanceof EE_Price
             ? 'edit_prices[TICKETNUM][PRICENUM][PRT_ID]'
             : 'edit_prices[' . esc_attr($ticket_row) . '][' . esc_attr($price_row) . '][PRT_ID]';
-        /** @var EEM_Price_Type $price_type_model */
-        $price_type_model       = EE_Registry::instance()->load_model('Price_Type');
+
+        $price_type_model       = EEM_Price_Type::instance();
         $price_types            = $price_type_model->get_all(
             [
                 [
@@ -2153,8 +2159,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             );
             $datetime_row++;
         }
-        /** @var EEM_Price $price_model */
-        $price_model    = EE_Registry::instance()->load_model('Price');
+        $price_model    = EEM_Price::instance();
         $default_prices = $price_model->get_all_default_prices();
         $price_row      = 1;
         foreach ($default_prices as $price) {

@@ -16,6 +16,11 @@ use EventEspresso\core\domain\services\capabilities\user_caps\RegFormListTableUs
 class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
 {
     /**
+     * @var Registration_Form_Admin_Page $_admin_page
+     */
+    protected $_admin_page;
+
+    /**
      * @var RegFormListTableUserCapabilities
      */
     protected $caps_handler;
@@ -32,12 +37,15 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _setup_data()
     {
         if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'trash') {
-            $this->_data = $this->_admin_page->get_trashed_questions($this->_per_page, $this->_current_page, false);
+            $this->_data = $this->_admin_page->get_trashed_questions($this->_per_page, $this->_current_page);
         } else {
-            $this->_data = $this->_admin_page->get_questions($this->_per_page, $this->_current_page, false);
+            $this->_data = $this->_admin_page->get_questions($this->_per_page, $this->_current_page);
         }
         $this->_all_data_count = $this->_admin_page->get_questions($this->_per_page, $this->_current_page, true);
     }
@@ -45,14 +53,14 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
 
     protected function _set_properties()
     {
-        $this->_wp_list_args = array(
+        $this->_wp_list_args = [
             'singular' => esc_html__('question', 'event_espresso'),
             'plural'   => esc_html__('questions', 'event_espresso'),
             'ajax'     => true, // for now,
             'screen'   => $this->_admin_page->get_current_screen()->id,
-        );
+        ];
 
-        $this->_columns = array(
+        $this->_columns = [
             'cb'           => '<input type="checkbox" />',
             'id'           => esc_html__('ID', 'event_espresso'),
             'display_text' => esc_html__('Question', 'event_espresso'),
@@ -60,26 +68,29 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
             'type'         => esc_html__('Type', 'event_espresso'),
             'values'       => esc_html__('Values', 'event_espresso'),
             'required'     => esc_html__('Req', 'event_espresso'),
-        );
+        ];
 
         $this->_primary_column = 'id';
 
-        $this->_sortable_columns = array(
-            'id'           => array('QST_ID' => false),
-            'display_text' => array('QST_display_text' => false),
-        );
+        $this->_sortable_columns = [
+            'id'           => ['QST_ID' => false],
+            'display_text' => ['QST_display_text' => false],
+        ];
 
-        $this->_hidden_columns = array();
+        $this->_hidden_columns = [];
     }
 
 
     // not needed
-    protected function _get_table_filters()
+    protected function _get_table_filters(): array
     {
-        return array();
+        return [];
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     protected function _add_view_counts()
     {
         $this->_views['all']['count'] = $this->_admin_page->get_questions($this->_per_page, $this->_current_page, true);
@@ -95,12 +106,12 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_cb($item)
+    public function column_cb($item): string
     {
-        $system_question = $item->is_system_question();
+        $system_question      = $item->is_system_question();
         $related_answer_count = $item->count_related('Answer');
-        $has_answers = ! $system_question && $related_answer_count > 0 && $this->_view == 'trash';
-        $notice = $has_answers
+        $has_answers          = ! $system_question && $related_answer_count > 0 && $this->_view == 'trash';
+        $notice               = $has_answers
             ? esc_html__(
                 'This question has answers attached to it from registrations that have the question.  It cannot be permanently deleted.',
                 'event_espresso'
@@ -122,7 +133,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_id($item)
+    public function column_id(EE_Question $item): string
     {
         $content = '
             <span class="ee-entity-id">' . $item->ID() . '</span>
@@ -155,7 +166,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
                         $this->getActionUrl($question, self::ACTION_EDIT),
                         esc_html__('Edit', 'event_espresso'),
                         esc_attr__('Edit Question', 'event_espresso')
-                    )
+                    ),
                 ]
             );
         } else {
@@ -198,8 +209,8 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
 
     public function column_values(EE_Question $item): string
     {
-        $optionNames = array();
-        $options = $item->options();
+        $optionNames = [];
+        $options     = $item->options();
         if (empty($options)) {
             $content = "N/A";
         } else {

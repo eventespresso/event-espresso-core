@@ -171,7 +171,7 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config
                        'Clicking the taxable ticket toggle checkbox has enabled taxes for this ticket. What this means is that when a person purchases this ticket, the tax will be applied to all prices on this ticket. You can edit the existing tax price modifier that was setup in Event Espresso by going to  %sDefault Pricing Admin Page%s (labelled "Pricing" in the Event Espresso Menu)',
                        'event_espresso'
                    ),
-                   '<a href="' . $price_admin_link . '" title="' . esc_attr__(
+                   '<a href="' . $price_admin_link . '" aria-label="' . esc_attr__(
                        'Pricing Admin Page',
                        'event_espresso'
                    ) . '">',

@@ -4,7 +4,7 @@ namespace EventEspresso\core\services\request\middleware;
 
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
-use EventEspressoVendor\Jaybizzle\CrawlerDetect\CrawlerDetect;
+use EventEspressoVendor\CrawlerDetect\CrawlerDetect;
 
 /**
  * Class BotDetector
@@ -28,10 +28,12 @@ class BotDetector extends Middleware
         $this->request = $request;
         $this->response = $response;
         /** @var CrawlerDetect $CrawlerDetect */
-        $CrawlerDetect = $this->loader->getShared('EventEspressoVendor\Jaybizzle\CrawlerDetect\CrawlerDetect');
-        // Check and record the user agent of the current 'visitor'
-        $this->request->setIsBot($CrawlerDetect->isCrawler());
-        $this->request->setUserAgent($CrawlerDetect->userAgent());
+        $CrawlerDetect = $this->loader->getShared('EventEspressoVendor\CrawlerDetect\CrawlerDetect');
+        if ($CrawlerDetect instanceof CrawlerDetect) {
+            // Check and record the user agent of the current 'visitor'
+            $this->request->setIsBot($CrawlerDetect->isCrawler());
+            $this->request->setUserAgent($CrawlerDetect->userAgent());
+        }
         $this->response = $this->processRequestStack($this->request, $this->response);
         return $this->response;
     }

@@ -75,18 +75,8 @@ class Events_Admin_Page_Test extends EE_UnitTestCase
         $this->_load_requirements();
         $EVT_ID = $this->_event->ID();
 
-        // creates and saves an array of integers including EVT_ID plus 2 sequential entries before and after
-        update_option('ee_no_ticket_prices', range($EVT_ID - 2, $EVT_ID + 2));
-        $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', []);
-        // verify that EVT_ID is now in the array
-        $this->assertArrayContains($EVT_ID, $espresso_no_ticket_prices);
-
         $this->_admin_page->delete_event($EVT_ID);
         $this->assertEmpty(EEM_Event::instance()->get_one_by_ID($EVT_ID));
-
-        // verify that EVT_ID is no longer in the 'ee_no_ticket_prices' array
-        $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', []);
-        $this->assertArrayDoesNotContain($EVT_ID, $espresso_no_ticket_prices);
     }
 }
 // tests/testcases/admin_pages/events/Events_Admin_Page_Test.php

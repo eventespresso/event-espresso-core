@@ -813,19 +813,17 @@ class EEH_MSG_Template
             return '';
         }
 
-        $icon_css['css_class'] .= esc_attr(
-            apply_filters(
-                'FHEE__EEH_MSG_Template__get_message_action_link__icon_css_class',
-                ' js-ee-message-action-link ee-message-action-link-' . $type,
-                $type,
-                $message,
-                $query_params
-            )
+        $icon_css_class = $icon_css['css_class'] . apply_filters(
+            'FHEE__EEH_MSG_Template__get_message_action_link__icon_css_class',
+            ' js-ee-message-action-link ee-message-action-link-' . $type,
+            $type,
+            $message,
+            $query_params
         );
 
         return '
             <a href="' . $url . '" ' . $label . ' class="button button--icon-only' . $class . '">
-                <span class="' . esc_attr($icon_css['css_class']) . '"></span>
+                <span class="' .  esc_attr($icon_css_class) . '"></span>
             </a>';
     }
 

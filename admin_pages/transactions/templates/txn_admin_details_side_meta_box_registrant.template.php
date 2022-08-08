@@ -72,8 +72,8 @@ if (
     )
 ) : ?>
     <div class='ee-admin-button-row'>
-        <a class="button button--small button--secondary" href="<?php echo esc_url_raw($edit_attendee_url); ?>"
-           title="<?php esc_attr_e('View details for this contact.', 'event_espresso'); ?>"
+        <a class="ee-aria-tooltip button button--small button--secondary" href="<?php echo esc_url_raw($edit_attendee_url); ?>"
+           aria-label="<?php esc_attr_e('View details for this contact.', 'event_espresso'); ?>"
         >
             <span class="dashicons dashicons-groups"></span>
             <?php esc_html_e('View/Edit Contact', 'event_espresso'); ?>

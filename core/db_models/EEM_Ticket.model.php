@@ -3,9 +3,13 @@
 /**
  * Ticket Model
  *
- * @package            Event Espresso
- * @subpackage         includes/models/EEM_Ticket.model.php
- * @author             Darren Ethier
+ * @package     Event Espresso
+ * @subpackage  core/db_models
+ * @author      Darren Ethier
+ * @method EE_Ticket    create_default_object()
+ * @method EE_Ticket[]  get_all($query_params = [])
+ * @method EE_Ticket    get_one($query_params = [])
+ * @method EE_Ticket    get_one_by_ID($query_params = [])
  */
 class EEM_Ticket extends EEM_Soft_Delete_Base
 {
@@ -247,11 +251,12 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
             'WP_User'         => new EE_Belongs_To_Relation(),
         ];
         // this model is generally available for reading
-        $path_to_event                                            = 'Datetime.Event';
+        $path_to_event                                                                                       = 'Datetime.Event';
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public(
             'TKT_is_default',
             $path_to_event
         );
+
         // account for default tickets in the caps
         $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ]
             = new EE_Restriction_Generator_Default_Protected(

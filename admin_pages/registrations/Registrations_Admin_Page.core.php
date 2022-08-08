@@ -7,6 +7,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\domain\services\attendee\forms\AttendeeContactDetailsMetaboxFormHandler;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\request\CurrentPage;
 use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -2214,7 +2215,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 			<tr class="hide-if-no-js">
 				<th> </th>
 				<td class="reg-admin-edit-attendee-question-td">
-					<a class="reg-admin-edit-attendee-question-lnk" href="#" title="'
+					<a class="reg-admin-edit-attendee-question-lnk" href="#" aria-label="'
                . esc_attr__('click to edit question', 'event_espresso')
                . '">
 						<span class="reg-admin-edit-question-group-spn lt-grey-txt">'
@@ -2538,11 +2539,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param boolean $trash whether to archive or restore
      * @return void
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      */
     protected function _trash_or_restore_registrations($trash = true)
     {
@@ -2801,7 +2806,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             );
             $edit_event_lnk                     = '<a href="'
                                                   . $edit_event_url
-                                                  . '" title="'
+                                                  . '" aria-label="'
                                                   . esc_attr__('Edit ', 'event_espresso')
                                                   . $this->_reg_event->name()
                                                   . '">'

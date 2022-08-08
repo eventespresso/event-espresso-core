@@ -39,7 +39,7 @@
         <div class="review-body">
             <p class="review-user-nicename">
                 <a href="https://wordpress.org/support/users/wooninjas/"
-                   title="View Wooninjas's profile"
+                   aria-label="View Wooninjas's profile"
                    class="bbp-author-avatar"
                    rel="nofollow"
                 >
@@ -54,7 +54,7 @@
                 <br>
                 <a
                     href="https://wordpress.org/support/users/wooninjas/"
-                    title="View Wooninjas's profile"
+                    aria-label="View Wooninjas's profile"
                     class="bbp-author-name"
                     rel="nofollow"
                 >
@@ -80,7 +80,7 @@
         <div class="review-body">
             <p class="review-user-nicename">
                 <a href="https://wordpress.org/support/users/johnmacek/"
-                   title="View johnmacek's profile"
+                   aria-label="View johnmacek's profile"
                    class="bbp-author-avatar"
                    rel="nofollow"
                 >
@@ -95,7 +95,7 @@
                 <br>
                 <a
                     href="https://wordpress.org/support/users/johnmacek/"
-                    title="View johnmacek's profile"
+                    aria-label="View johnmacek's profile"
                     class="bbp-author-name"
                     rel="nofollow"
                 >
@@ -104,7 +104,7 @@
             </p>
             <p>
                 I researched a number of Event Ticketing plugins and Event Espresso was the only one that
-                satisfied all my needs. You’ll especially appreciate the wide choice of payment
+                satisfied all my needs. You''ll especially appreciate the wide choice of payment
                 processors you can use. Getting started, support quickly answered all my questions and
                 now I use the forums when I need help.
             </p>
@@ -121,7 +121,7 @@
         <div class="review-body">
             <p class="review-user-nicename">
                 <a href="https://wordpress.org/support/users/10bradders10/"
-                   title="View 10bradders10's profile"
+                   aria-label="View 10bradders10's profile"
                    class="bbp-author-avatar"
                    rel="nofollow"
                 >
@@ -135,7 +135,7 @@
                 </a>
                 <br>
                 <a href="https://wordpress.org/support/users/10bradders10/"
-                   title="View 10bradders10's profile"
+                   aria-label="View 10bradders10's profile"
                    class="bbp-author-name"
                    rel="nofollow"
                 >
@@ -155,14 +155,14 @@
         <h3>
             <a href="https://wordpress.org/support/topic/amazing-plugin-has-been-running-our-school-for-over-5-years-now/">
                 Amazing
-                Plugin – has been running our school for over 5 years now!
+                Plugin - has been running our school for over 5 years now!
             </a>
         </h3>
         <?php echo espressoFiveStars(); ?>
         <div class="review-body">
             <p class="review-user-nicename">
                 <a href="https://wordpress.org/support/users/sock2me/"
-                   title="View sock2me's profile"
+                   aria-label="View sock2me's profile"
                    class="bbp-author-avatar"
                    rel="nofollow"
                 >
@@ -176,7 +176,7 @@
                 </a>
                 <br>
                 <a href="https://wordpress.org/support/users/sock2me/"
-                   title="View sock2me's profile"
+                   aria-label="View sock2me's profile"
                    class="bbp-author-name"
                    rel="nofollow"
                 >
@@ -191,13 +191,13 @@
                 </a>
                 .
                 For the cost, there is no other program out there that can do what this does. Their
-                support people are awesome – as is their forum. And they continue to improve the
-                application – you can vote for what features you’d like to add and they reach out to
+                support people are awesome - as is their forum. And they continue to improve the
+                application - you can vote for what features you'd like to add and they reach out to
                 the community for feedback.
             </p>
             <p>
                 I highly recommend Event Espresso if you are looking to offer events, classes or really
-                anything that you need to sell seats for. It’s not perfect, but what plugin is? The fact
+                anything that you need to sell seats for. It's not perfect, but what plugin is? The fact
                 that we can get so much accomplished using this tool is amazing.
             </p>
             <p>Thank you team EE (Josh, Garth, Tony &amp; Lorenzo!)</p>
@@ -215,7 +215,7 @@
         <div class="review-body">
             <p class="review-user-nicename">
                 <a href="https://wordpress.org/support/users/ivycat/"
-                   title="View ivycat's profile"
+                   aria-label="View ivycat's profile"
                    class="bbp-author-avatar"
                    rel="nofollow"
                 >
@@ -229,7 +229,7 @@
                 </a>
                 <br>
                 <a href="https://wordpress.org/support/users/ivycat/"
-                   title="View ivycat's profile"
+                   aria-label="View ivycat's profile"
                    class="bbp-author-name"
                    rel="nofollow"
                 >
@@ -265,7 +265,7 @@
         <div class="review-body">
             <p class="review-user-nicename">
                 <a href="https://wordpress.org/support/users/elainewildash/"
-                   title="View elaine.wildash's profile"
+                   aria-label="View elaine.wildash's profile"
                    class="bbp-author-avatar"
                    rel="nofollow"
                 >
@@ -279,7 +279,7 @@
                 </a>
                 <br>
                 <a href="https://wordpress.org/support/users/elainewildash/"
-                   title="View elaine.wildash's profile"
+                   aria-label="View elaine.wildash's profile"
                    class="bbp-author-name"
                    rel="nofollow"
                 >
@@ -287,10 +287,10 @@
                 </a>
             </p>
             <p>
-                Event Espresso was easy to setup and is easy to use. It’s also easy to style for
-                individual websites. It has some really great features – events are simple to setup,
+                Event Espresso was easy to setup and is easy to use. It's also easy to style for
+                individual websites. It has some really great features - events are simple to setup,
                 events table(s) and calendar which can show colour coded events and simple payment
-                integration. When we started, the plugin was in version 3 (EE3) and we’ve stuck with
+                integration. When we started, the plugin was in version 3 (EE3) and we've stuck with
                 that however the latest version 4 (EE4) has been completely revamped and comes with
                 added functionality.
             </p>
@@ -315,7 +315,7 @@
         <div class="review-body">
             <p class="review-user-nicename">
                 <a href="https://wordpress.org/support/users/amandaleigh/"
-                   title="View amandaleigh's profile"
+                   aria-label="View amandaleigh's profile"
                    class="bbp-author-avatar"
                    rel="nofollow"
                 >
@@ -330,7 +330,7 @@
                 <br>
                 <a
                     href="https://wordpress.org/support/users/amandaleigh/"
-                    title="View amandaleigh's profile"
+                    aria-label="View amandaleigh's profile"
                     class="bbp-author-name"
                     rel="nofollow"
                 >
@@ -358,7 +358,7 @@
         <div class="review-body">
             <p class="review-user-nicename">
                 <a href="https://wordpress.org/support/users/birchfinch/"
-                   title="View Bryan's profile"
+                   aria-label="View Bryan's profile"
                    class="bbp-author-avatar"
                    rel="nofollow"
                 >
@@ -372,7 +372,7 @@
                 </a>
                 <br>
                 <a href="https://wordpress.org/support/users/birchfinch/"
-                   title="View Bryan's profile"
+                   aria-label="View Bryan's profile"
                    class="bbp-author-name"
                    rel="nofollow"
                 >
@@ -411,7 +411,7 @@
         <div class="review-body">
             <p class="review-user-nicename">
                 <a href="https://wordpress.org/support/users/rhj4/"
-                   title="View rhj4's profile"
+                   aria-label="View rhj4's profile"
                    class="bbp-author-avatar"
                    rel="nofollow"
                 >
@@ -425,7 +425,7 @@
                 </a>
                 <br>
                 <a href="https://wordpress.org/support/users/rhj4/"
-                   title="View rhj4's profile"
+                   aria-label="View rhj4's profile"
                    class="bbp-author-name"
                    rel="nofollow"
                 >
@@ -469,7 +469,7 @@ function espressoUpgradeNow()
 function espressoFiveStars()
 {
     return '
-        <div class="wporg-ratings" title="5 out of 5 stars">
+        <div class="wporg-ratings" aria-label="5 out of 5 stars">
             <span class="dashicons dashicons-star-filled"></span>
             <span class="dashicons dashicons-star-filled"></span>
             <span class="dashicons dashicons-star-filled"></span>

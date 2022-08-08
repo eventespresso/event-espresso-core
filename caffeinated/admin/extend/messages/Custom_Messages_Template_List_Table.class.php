@@ -198,13 +198,12 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
                 $item->ID()
             )
         ) {
-            $actions['trash'] = '<a href="'
-                                . $trash_lnk_url
-                                . '" title="'
-                                . esc_attr__('Move Template Group to Trash', 'event_espresso')
-                                . '">'
-                                . esc_html__('Move to Trash', 'event_espresso')
-                                . '</a>';
+            $actions['trash'] = '
+                <a href="' . $trash_lnk_url . '" 
+                   aria-label="' . esc_attr__('Move Template Group to Trash', 'event_espresso') . '"
+                >
+                    ' . esc_html__('Move to Trash', 'event_espresso') . '
+                </a>';
         } else {
             if (
                 EE_Registry::instance()->CAP->current_user_can(
@@ -213,12 +212,12 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
                     $item->ID()
                 )
             ) {
-                $actions['restore'] = '<a href="'
-                                      . $restore_lnk_url
-                                      . '" title="'
-                                      . esc_attr__('Restore Message Template', 'event_espresso')
-                                      . '">'
-                                      . esc_html__('Restore', 'event_espresso') . '</a>';
+                $actions['restore'] = '
+                    <a href="' . $restore_lnk_url . '" 
+                       aria-label="' . esc_attr__('Restore Message Template', 'event_espresso') . '"
+                    >
+                        ' . esc_html__('Restore', 'event_espresso') . '
+                    </a>';
             }
 
             if (
@@ -229,13 +228,12 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
                     $item->ID()
                 )
             ) {
-                $actions['delete'] = '<a href="'
-                                     . $delete_lnk_url
-                                     . '" title="'
-                                     . esc_attr__('Delete Template Group Permanently', 'event_espresso')
-                                     . '">'
-                                     . esc_html__('Delete Permanently', 'event_espresso')
-                                     . '</a>';
+                $actions['delete'] = '
+                    <a href="' . $delete_lnk_url . '" 
+                       aria-label="' . esc_attr__('Delete Template Group Permanently', 'event_espresso') . '"
+                    >
+                        ' . esc_html__('Delete Permanently', 'event_espresso') . '
+                    </a>';
             }
         }
         return $actions;

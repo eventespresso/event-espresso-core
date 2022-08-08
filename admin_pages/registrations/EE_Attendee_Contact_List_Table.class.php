@@ -205,7 +205,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
             'espresso_registrations_edit_attendee'
         )
             ? '
-            <a  href="' . $edit_lnk_url . '" 
+            <a  href="' . $edit_lnk_url . '"
                 class="ee-aria-tooltip"
                 aria-label="' . esc_attr__('Edit Contact', 'event_espresso') . '"
             >
@@ -262,7 +262,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                     REG_ADMIN_URL
                 );
                 $actions['trash'] = '
-                    <a  href="' . $trash_lnk_url . '" 
+                    <a  href="' . $trash_lnk_url . '"
                         class="ee-aria-tooltip"
                         aria-label="' . esc_attr__('Move Contact to Trash', 'event_espresso') . '"
                     >
@@ -285,7 +285,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                     REG_ADMIN_URL
                 );
                 $actions['restore'] = '
-                    <a  href="' . $restore_lnk_url . '" 
+                    <a  href="' . $restore_lnk_url . '"
                         class="ee-aria-tooltip"
                         aria-label="' . esc_attr__('Restore Contact', 'event_espresso') . '"
                     >

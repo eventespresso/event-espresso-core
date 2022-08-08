@@ -475,7 +475,7 @@ class EE_Registry implements ResettableInterface
      *                           set this to FALSE (ie. when instantiating model objects from client in a loop)
      * @param bool   $load_only  whether or not to just load the file and NOT instantiate, or load AND instantiate
      *                           (default)
-     * @return bool|null|object
+     * @return EE_Base_Class|object|bool|null
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error

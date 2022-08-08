@@ -30,7 +30,7 @@
                    id="delete-state-<?php echo absint($STA_ID); ?>-lnk"
                    href="<?php echo esc_url_raw($state['delete_state_url']); ?>"
                    rel="<?php echo esc_attr($STA_ID); ?>"
-                   title="<?php echo sprintf(esc_attr__('Delete State #%d?', 'event_espresso'), $STA_ID); ?>"
+                   aria-label="<?php echo sprintf(esc_attr__('Delete State #%d?', 'event_espresso'), $STA_ID); ?>"
                 >
                     <span class="dashicons dashicons-post-trash"></span>
                 </a>
@@ -67,7 +67,6 @@
             <input class="STA_abbrev ee-input-width--small"
                    id='STA_abbrev-XXX'
                    name="STA_abbrev_XXX"
-                   title=""
                    type="text"
                    value=""
             />
