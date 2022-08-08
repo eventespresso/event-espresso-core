@@ -37,7 +37,7 @@ jobs:
               uses: eventespresso/actions/packages/makepot@main
               with:
                   save-path: languages
-                  slug: event-espresso-decaf
+                  slug: event-espresso-core
                   text-domain: event_espresso
 
             - name: Create Tag
