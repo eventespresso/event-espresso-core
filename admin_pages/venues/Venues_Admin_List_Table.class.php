@@ -165,9 +165,9 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
             ];
             $edit_link       = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_VENUES_ADMIN_URL);
             $actions['edit'] = '<a href="' . $edit_link . '" title="' . esc_attr__(
-                    'Edit Venue',
-                    'event_espresso'
-                ) . '">' . esc_html__('Edit', 'event_espresso') . '</a>';
+                'Edit Venue',
+                'event_espresso'
+            ) . '">' . esc_html__('Edit', 'event_espresso') . '</a>';
         }
 
 
@@ -189,9 +189,9 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                     );
 
                     $actions['restore_from_trash'] = '<a href="' . $restore_venue_link . '" title="' . esc_attr__(
-                            'Restore from Trash',
-                            'event_espresso'
-                        ) . '">' . esc_html__('Restore from Trash', 'event_espresso') . '</a>';
+                        'Restore from Trash',
+                        'event_espresso'
+                    ) . '">' . esc_html__('Restore from Trash', 'event_espresso') . '</a>';
                 }
                 if (
                     $venue->count_related('Event') === 0
@@ -210,9 +210,9 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                     );
 
                     $actions['delete permanently'] = '<a href="' . $delete_venue_link . '" title="' . esc_attr__(
-                            'Delete Permanently',
-                            'event_espresso'
-                        ) . '">' . esc_html__('Delete Permanently', 'event_espresso') . '</a>';
+                        'Delete Permanently',
+                        'event_espresso'
+                    ) . '">' . esc_html__('Delete Permanently', 'event_espresso') . '</a>';
                 }
                 break;
             default:
@@ -238,9 +238,9 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
                     );
 
                     $actions['move to trash'] = '<a href="' . $trash_venue_link . '" title="' . esc_attr__(
-                            'Trash Event',
-                            'event_espresso'
-                        ) . '">' . esc_html__('Trash', 'event_espresso') . '</a>';
+                        'Trash Event',
+                        'event_espresso'
+                    ) . '">' . esc_html__('Trash', 'event_espresso') . '</a>';
                 }
         }
         return $actions;

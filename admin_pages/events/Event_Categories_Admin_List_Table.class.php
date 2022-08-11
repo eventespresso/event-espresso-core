@@ -132,9 +132,9 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
             </a>';
 
         $actions['delete'] = '<a href="' . $delete_link . '" aria-label="' . esc_attr__(
-                'Delete Category',
-                'event_espresso'
-            ) . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
+            'Delete Category',
+            'event_espresso'
+        ) . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
 
         $view_category_label = sprintf(
         /* translators: %s: event category name */

@@ -1429,7 +1429,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 }
                 EE_Error::add_error(
                     esc_html__('There was an error with the query.', 'event_espresso'),
-                    __FILE__, __FUNCTION__, __LINE__
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
                 );
                 return [];
             }
@@ -1806,7 +1808,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                             . " SET "
                             . $this->_construct_update_sql($fields_n_values)
                             . $model_query_info->get_where_sql(
-            );// note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
+                            );// note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
         $rows_affected    = $this->_do_wpdb_query('query', [$SQL]);
         /**
          * Action called after a model update call has been made.
@@ -4324,27 +4326,27 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     case 'NOT':
                         $where_clauses[] = "! ("
                                            . $this->_construct_condition_clause_recursive(
-                                $op_and_value_or_sub_condition,
-                                $glue
-                            )
+                                               $op_and_value_or_sub_condition,
+                                               $glue
+                                           )
                                            . ")";
                         break;
                     case 'and':
                     case 'AND':
                         $where_clauses[] = " ("
                                            . $this->_construct_condition_clause_recursive(
-                                $op_and_value_or_sub_condition,
-                                ' AND '
-                            )
+                                               $op_and_value_or_sub_condition,
+                                               ' AND '
+                                           )
                                            . ")";
                         break;
                     case 'or':
                     case 'OR':
                         $where_clauses[] = " ("
                                            . $this->_construct_condition_clause_recursive(
-                                $op_and_value_or_sub_condition,
-                                ' OR '
-                            )
+                                               $op_and_value_or_sub_condition,
+                                               ' OR '
+                                           )
                                            . ")";
                         break;
                 }

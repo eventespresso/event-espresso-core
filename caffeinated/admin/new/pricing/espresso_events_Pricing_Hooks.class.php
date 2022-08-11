@@ -507,9 +507,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 'TKT_name'        => ! empty($ticket_data['TKT_name']) ? $ticket_data['TKT_name'] : '',
                 'TKT_description' => ! empty($ticket_data['TKT_description'])
                                      && $ticket_data['TKT_description'] !== esc_html__(
-                    'You can modify this description',
-                    'event_espresso'
-                )
+                                         'You can modify this description',
+                                         'event_espresso'
+                                     )
                     ? $ticket_data['TKT_description']
                     : '',
                 'TKT_start_date'  => $ticket_data['TKT_start_date'],
