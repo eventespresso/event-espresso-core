@@ -622,6 +622,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         add_action('admin_init', [$this, 'admin_init_global'], 5);
         // next verify if we need to load anything...
         $this->_current_page = $this->request->getRequestParam('page', '', 'key');
+        $this->_current_page = $this->request->getRequestParam('current_page', $this->_current_page, 'key');
         $this->page_folder   = strtolower(
             str_replace(['_Admin_Page', 'Extend_'], '', $this->class_name)
         );
