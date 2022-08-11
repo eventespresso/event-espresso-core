@@ -4,6 +4,7 @@ use EventEspresso\core\domain\services\admin\notices\status_change\StatusChangeN
 use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\capabilities\FeatureFlags;
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -1138,32 +1139,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $class  = $this;
                 $method = $func;
             }
-            if (! (is_object($class) && $class === $this)) {
-                // send along this admin page object for access by addons.
-                $args['admin_page_object'] = $this;
-            }
-            if (
-                // is it a method on a class that doesn't work?
-                (
-                    (
-                        method_exists($class, $method)
-                        && call_user_func_array([$class, $method], $args) === false
-                    )
-                    && (
-                        // is it a standalone function that doesn't work?
-                        function_exists($method)
-                        && call_user_func_array(
-                            $func,
-                            array_merge(['admin_page_object' => $this], $args)
-                        ) === false
-                    )
-                )
-                || (
-                    // is it neither a class method NOR a standalone function?
-                    ! method_exists($class, $method)
-                    && ! function_exists($method)
-                )
-            ) {
+            // is it neither a class method NOR a standalone function?
+            if (! method_exists($class, $method) && ! function_exists($method)) {
                 // user error msg
                 $error_msg = esc_html__(
                     'An error occurred. The  requested page route could not be found.',
@@ -1178,9 +1155,30 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     ),
                     $method
                 );
-            }
-            if (! empty($error_msg)) {
                 throw new EE_Error($error_msg);
+            }
+            if ($class !== $this && ! in_array($this, $args)) {
+                $args = array_merge(['admin_page' => $this], $args);
+            }
+            try {
+                $success = method_exists($class, $method) && call_user_func_array([$class, $method], $args);
+                if (! $success && function_exists($method)) {
+                    call_user_func_array($method, $args);
+                }
+            } catch (Throwable $throwable) {
+                $class_name = is_object($class) ? get_class($class) : $class;
+                new ExceptionStackTraceDisplay(
+                    new RuntimeException(
+                        sprintf(
+                            esc_html__(
+                                'The following error occurred while trying to route the %1$s admin request: %2$s',
+                                'event_espresso'
+                            ),
+                            "$class_name::$method()",
+                            $throwable->getMessage()
+                        )
+                    )
+                );
             }
         }
         // if we've routed and this route has a no headers route AND a sent_headers_route,
