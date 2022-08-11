@@ -221,8 +221,8 @@ abstract class EE_Admin_Hooks extends EE_Base
         $this->_adminpage_obj = $admin_page;
         $this->request        = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $this->_req_data      = $this->request->requestParams();
-        $page = $this->request->getRequestParam('page');
-        $current_page = $this->request->getRequestParam('current_page', $page);
+        $current_page = $this->request->getRequestParam('page');
+        $current_page = $this->request->getRequestParam('current_page', $current_page);
         // first let's verify we're on the right page
         if ($current_page !== $this->_adminpage_obj->page_slug) {
             return;
