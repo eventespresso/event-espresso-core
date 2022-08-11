@@ -1,3 +1,0 @@
-service_name: github
-coverage_clover: tests/codeception/_output/*.xml
-json_path: tests/codeception/_output/coverage.json

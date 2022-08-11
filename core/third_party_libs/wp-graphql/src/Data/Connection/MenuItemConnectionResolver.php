@@ -33,13 +33,16 @@ class MenuItemConnectionResolver extends PostObjectConnectionResolver {
 	 * @return array
 	 */
 	public function get_query_args() {
+		/**
+		 * Prepare for later use
+		 */
+		$last = ! empty( $this->args['last'] ) ? $this->args['last'] : null;
 
 		$menu_locations = get_theme_mod( 'nav_menu_locations' );
 
-		$query_args = [
-			'orderby' => 'menu_order',
-			'order'   => 'ASC',
-		];
+		$query_args            = parent::get_query_args();
+		$query_args['orderby'] = 'menu_order';
+		$query_args['order']   = isset( $last ) ? 'DESC' : 'ASC';
 
 		if ( isset( $this->args['where']['parentDatabaseId'] ) ) {
 			$query_args['meta_key']   = '_menu_item_menu_item_parent';
@@ -61,7 +64,7 @@ class MenuItemConnectionResolver extends PostObjectConnectionResolver {
 		$locations = is_array( $menu_locations ) && ! empty( $menu_locations ) ? array_unique( array_values( $menu_locations ) ) : [];
 
 		// If the location argument is set, set the argument to the input argument
-		if ( isset( $this->args['where']['location'] ) && isset( $menu_locations[ $this->args['where']['location'] ] ) ) {
+		if ( isset( $this->args['where']['location'], $menu_locations[ $this->args['where']['location'] ] ) ) {
 
 			$locations = [ $menu_locations[ $this->args['where']['location'] ] ];
 
@@ -73,21 +76,21 @@ class MenuItemConnectionResolver extends PostObjectConnectionResolver {
 
 		// Only query for menu items in assigned locations.
 		if ( ! empty( $locations ) && is_array( $locations ) ) {
-			$query_args['tax_query'] = [
-				[
-					'taxonomy'         => 'nav_menu',
-					'field'            => 'term_id',
-					'terms'            => $locations,
-					'include_children' => false,
-					'operator'         => 'IN',
-				],
+
+			// unset the location arg
+			// we don't need this passed as a taxonomy parameter to wp_query
+			unset( $query_args['location'] );
+
+			$query_args['tax_query'][] = [
+				'taxonomy'         => 'nav_menu',
+				'field'            => 'term_id',
+				'terms'            => $locations,
+				'include_children' => false,
+				'operator'         => 'IN',
 			];
 		}
 
-		$default = parent::get_query_args();
-		$args    = array_merge( $default, $query_args );
-
-		return $args;
+		return $query_args;
 	}
 
 }

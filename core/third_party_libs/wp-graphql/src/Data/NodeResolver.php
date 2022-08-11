@@ -81,7 +81,7 @@ class NodeResolver {
 		 * This is to be used in extensions to resolve their own nodes which might not use
 		 * WordPress permalink structure.
 		 *
-		 * @param null $node The node, defaults to nothing.
+		 * @param mixed|null $node The node, defaults to nothing.
 		 * @param string $uri The uri being searched.
 		 * @param AppContext $content The app context.
 		 * @param WP $wp WP object.
@@ -139,7 +139,7 @@ class NodeResolver {
 			$error                   = null;
 			$this->wp->did_permalink = true;
 
-			$pathinfo         = isset( $uri ) ? $uri : '';
+			$pathinfo         = ! empty( $uri ) ? $uri : '';
 			list( $pathinfo ) = explode( '?', $pathinfo );
 			$pathinfo         = str_replace( '%', '%25', $pathinfo );
 
@@ -230,7 +230,7 @@ class NodeResolver {
 				}
 			}
 
-			if ( isset( $this->wp->matched_rule ) ) {
+			if ( ! empty( $this->wp->matched_rule ) ) {
 
 				// Trim the query of everything up to the '?'.
 				$query = preg_replace( '!^.+\?!', '', $query );
@@ -312,7 +312,7 @@ class NodeResolver {
 
 		// Limit publicly queried post_types to those that are publicly_queryable
 		if ( isset( $this->wp->query_vars['post_type'] ) ) {
-			$queryable_post_types = get_post_types( [ 'show_in_graphql' => true ] );
+			$queryable_post_types = \WPGraphQL::get_allowed_post_types();
 
 			if ( ! is_array( $this->wp->query_vars['post_type'] ) ) {
 				if ( ! in_array( $this->wp->query_vars['post_type'], $queryable_post_types, true ) ) {
@@ -347,7 +347,7 @@ class NodeResolver {
 
 		unset( $this->wp->query_vars['graphql'] );
 
-		do_action_ref_array( 'parse_request', [ $this->wp ] );
+		do_action_ref_array( 'parse_request', [ &$this->wp ] );
 
 		// If the request is for the homepage, determine
 		if ( '/' === $uri ) {
@@ -357,9 +357,6 @@ class NodeResolver {
 
 			if ( 'page' === $show_on_front && ! empty( $page_id ) ) {
 
-				if ( empty( $page_id ) ) {
-					return null;
-				}
 				$page = get_post( $page_id );
 
 				if ( empty( $page ) ) {
@@ -385,16 +382,13 @@ class NodeResolver {
 		} elseif ( isset( $this->wp->query_vars['name'] ) ) {
 
 			// Target post types with a public URI.
-			$allowed_post_types = get_post_types( [
-				'show_in_graphql' => true,
-			] );
+			$allowed_post_types = \WPGraphQL::get_allowed_post_types();
 
 			$post_type = 'post';
 			if ( isset( $this->wp->query_vars['post_type'] ) && in_array( $this->wp->query_vars['post_type'], $allowed_post_types, true ) ) {
 				$post_type = $this->wp->query_vars['post_type'];
 			}
 
-			// @phpstan-ignore-next-line
 			$post = get_page_by_path( $this->wp->query_vars['name'], 'OBJECT', $post_type );
 
 			unset( $this->wp->query_vars['uri'] );
@@ -415,7 +409,7 @@ class NodeResolver {
 
 			unset( $this->wp->query_vars['uri'] );
 
-			$post_type = isset( $this->wp->query_vars['post_type'] ) ? $this->wp->query_vars['post_type'] : get_post_types( [ 'show_in_graphql' => true ] );
+			$post_type = isset( $this->wp->query_vars['post_type'] ) ? $this->wp->query_vars['post_type'] : \WPGraphQL::get_allowed_post_types();
 
 			$post = get_page_by_path( $this->wp->query_vars['pagename'], 'OBJECT', $post_type );
 
@@ -429,8 +423,8 @@ class NodeResolver {
 				return null;
 			}
 
-			if ( get_option( 'page_for_posts', 0 ) === $post->ID ) {
-				return $this->context->get_loader( 'post' )->load_deferred( $post->ID );
+			if ( (int) get_option( 'page_for_posts', 0 ) === $post->ID ) {
+				return $this->context->get_loader( 'post_type' )->load_deferred( 'post' );
 			}
 
 			return $this->context->get_loader( 'post' )->load_deferred( $post->ID );
@@ -476,9 +470,9 @@ class NodeResolver {
 			return ! empty( $post_type_object ) ? $this->context->get_loader( 'post_type' )->load_deferred( $post_type_object->name ) : null;
 		} else {
 			$taxonomies = get_taxonomies( [ 'show_in_graphql' => true ], 'objects' );
-			foreach ( $taxonomies as $taxonomy ) {
-				if ( isset( $this->wp->query_vars[ $taxonomy->query_var ] ) ) {
-					$node = get_term_by( 'slug', $this->wp->query_vars[ $taxonomy->query_var ], $taxonomy->name );
+			foreach ( $taxonomies as $tax_object ) {
+				if ( isset( $this->wp->query_vars[ $tax_object->query_var ] ) ) {
+					$node = get_term_by( 'slug', $this->wp->query_vars[ $tax_object->query_var ], $tax_object->name );
 
 					return isset( $node->term_id ) ? $this->context->get_loader( 'term' )->load_deferred( $node->term_id ) : null;
 				}

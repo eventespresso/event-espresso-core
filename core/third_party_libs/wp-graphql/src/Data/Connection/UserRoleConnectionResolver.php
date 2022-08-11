@@ -14,6 +14,12 @@ use WPGraphQL\Model\User;
  * @since   0.0.5
  */
 class UserRoleConnectionResolver extends AbstractConnectionResolver {
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @var array
+	 */
+	protected $query;
 
 	/**
 	 * UserRoleConnectionResolver constructor.
@@ -30,23 +36,9 @@ class UserRoleConnectionResolver extends AbstractConnectionResolver {
 	}
 
 	/**
-	 * @return mixed
+	 * {@inheritDoc}
 	 */
-	public function get_offset() {
-		$offset = null;
-		if ( ! empty( $this->args['after'] ) ) {
-			$offset = substr( base64_decode( $this->args['after'] ), strlen( 'arrayconnection:' ) );
-		} elseif ( ! empty( $this->args['before'] ) ) {
-			$offset = substr( base64_decode( $this->args['before'] ), strlen( 'arrayconnection:' ) );
-		}
-
-		return $offset;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_ids() {
+	public function get_ids_from_query() {
 
 		// Given a list of role slugs
 		if ( isset( $this->query_args['slugIn'] ) ) {
@@ -68,14 +60,17 @@ class UserRoleConnectionResolver extends AbstractConnectionResolver {
 	}
 
 	/**
-	 * @return array
+	 * {@inheritDoc}
 	 */
 	public function get_query_args() {
-		return is_array( $this->query_args ) && ! empty( $this->query_args ) ? $this->query_args : [];
+		// If any args are added to filter/sort the connection
+		return [];
 	}
 
 	/**
-	 * @return array|mixed
+	 * {@inheritDoc}
+	 *
+	 * @return array
 	 */
 	public function get_query() {
 		$wp_roles = wp_roles();
@@ -85,31 +80,7 @@ class UserRoleConnectionResolver extends AbstractConnectionResolver {
 	}
 
 	/**
-	 * @return array
-	 * @throws Exception
-	 */
-	public function get_nodes() {
-		$nodes = parent::get_nodes();
-
-		if ( isset( $this->args['after'] ) ) {
-			$key   = array_search( $this->get_offset(), array_keys( $nodes ), true );
-			$nodes = array_slice( $nodes, $key + 1, null, true );
-		}
-
-		if ( isset( $this->args['before'] ) ) {
-			$nodes = array_reverse( $nodes );
-			$key   = array_search( $this->get_offset(), array_keys( $nodes ), true );
-			$nodes = array_slice( $nodes, $key + 1, null, true );
-			$nodes = array_reverse( $nodes );
-		}
-
-		$nodes = array_slice( $nodes, 0, $this->query_amount, true );
-
-		return ! empty( $this->args['last'] ) ? array_filter( array_reverse( $nodes, true ) ) : $nodes;
-	}
-
-	/**
-	 * @return string
+	 * {@inheritDoc}
 	 */
 	public function get_loader_name() {
 		return 'user_role';
@@ -121,7 +92,7 @@ class UserRoleConnectionResolver extends AbstractConnectionResolver {
 	 * @return bool
 	 */
 	public function is_valid_offset( $offset ) {
-		return true;
+		return (bool) get_role( $offset );
 	}
 
 	/**

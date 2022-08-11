@@ -4,6 +4,7 @@ namespace WPGraphQL\Model;
 
 use Exception;
 use GraphQLRelay\Relay;
+use WP_Comment;
 
 /**
  * Class Comment - Models data for Comments
@@ -35,18 +36,18 @@ class Comment extends Model {
 	/**
 	 * Stores the incoming WP_Comment object to be modeled
 	 *
-	 * @var \WP_Comment $data
+	 * @var WP_Comment $data
 	 */
 	protected $data;
 
 	/**
 	 * Comment constructor.
 	 *
-	 * @param \WP_Comment $comment The incoming WP_Comment to be modeled
+	 * @param WP_Comment $comment The incoming WP_Comment to be modeled
 	 *
 	 * @throws Exception
 	 */
-	public function __construct( \WP_Comment $comment ) {
+	public function __construct( WP_Comment $comment ) {
 
 		$allowed_restricted_fields = [
 			'id',
@@ -86,20 +87,23 @@ class Comment extends Model {
 			return true;
 		}
 
+		// if the current user is the author of the comment, the comment should not be private
+		if ( 0 !== wp_get_current_user()->ID && absint( $this->data->user_id ) === absint( wp_get_current_user()->ID ) ) {
+			return false;
+		}
+
 		$commented_on = get_post( (int) $this->data->comment_post_ID );
 
-		if ( empty( $commented_on ) ) {
+		if ( ! $commented_on instanceof \WP_Post ) {
 			return true;
 		}
 
 		// A comment is considered private if it is attached to a private post.
-		if ( empty( $commented_on ) || true === ( new Post( $commented_on ) )->is_private() ) {
+		if ( true === ( new Post( $commented_on ) )->is_private() ) {
 			return true;
 		}
 
-		// NOTE: Do a non-strict check here, as the return is a `1` or `0`.
-		// phpcs:disable WordPress.PHP.StrictComparisons.LooseComparison
-		if ( true != $this->data->comment_approved && ! current_user_can( 'moderate_comments' ) ) {
+		if ( 0 === absint( $this->data->comment_approved ) && ! current_user_can( 'moderate_comments' ) ) {
 			return true;
 		}
 
@@ -165,7 +169,7 @@ class Comment extends Model {
 				'contentRendered'    => function () {
 					$content = ! empty( $this->data->comment_content ) ? $this->data->comment_content : null;
 
-					return $this->html_entity_decode( apply_filters( 'comment_text', $content ), 'contentRendered', false );
+					return $this->html_entity_decode( apply_filters( 'comment_text', $content, $this->data ), 'contentRendered', false );
 				},
 				'karma'              => function () {
 					return ! empty( $this->data->comment_karma ) ? $this->data->comment_karma : null;
@@ -180,7 +184,7 @@ class Comment extends Model {
 					return ! empty( $this->data->comment_type ) ? $this->data->comment_type : null;
 				},
 				'userId'             => function () {
-					return isset( $this->data->user_id ) ? absint( $this->data->user_id ) : null;
+					return ! empty( $this->data->user_id ) ? absint( $this->data->user_id ) : null;
 				},
 			];
 

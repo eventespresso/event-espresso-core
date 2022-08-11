@@ -31,13 +31,16 @@ class Comment {
 						'oneToOne'             => true,
 						'resolve'              => function ( $comment, $args, AppContext $context, ResolveInfo $info ) {
 
-							/**
-							 * If the comment has a user associated, use it to populate the author, otherwise return
-							 * the $comment and the Union will use that to hydrate the CommentAuthor Type
-							 */
+							$node = null;
+
+							// try and load the user node
 							if ( ! empty( $comment->userId ) ) {
 								$node = $context->get_loader( 'user' )->load( absint( $comment->userId ) );
-							} else {
+							}
+
+							// If no node is loaded, fallback to the
+							// public comment author data
+							if ( ! $node || ( true === $node->isPrivate ) ) {
 								$node = ! empty( $comment->commentId ) ? $context->get_loader( 'comment_author' )->load( $comment->commentId ) : null;
 							}
 
