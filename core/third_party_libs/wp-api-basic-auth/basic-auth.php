@@ -35,22 +35,22 @@ function json_basic_auth_handler($user)
     //probably in .htaccess
     //and, as a last resort, look in the querystring
     if (isset($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'])) {
-        $username = $_SERVER['PHP_AUTH_USER'];
-        $password = $_SERVER['PHP_AUTH_PW'];
+        $username = sanitize_text_field($_SERVER['PHP_AUTH_USER']);
+        $password = sanitize_text_field($_SERVER['PHP_AUTH_PW']);
     } else {
         //ok so no normal HTTP basic auth data. Let's search for it elsewhere...
         $header = null;
         //did it somehow not get into PHP?
         if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $header = $_SERVER['HTTP_AUTHORIZATION'];
+            $header = sanitize_text_field($_SERVER['HTTP_AUTHORIZATION']);
         }
         //did CGI or Fast CGI somehow remove the Authorization header, so the site owner used the .htaccess workaround?
         if (empty($header) && isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
-            $header = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+            $header = sanitize_text_field($_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
         }
         //did they pass it in the query string?
         if (empty($header) && isset($_GET['_authorization'])) {
-            $header = $_GET['_authorization'];
+            $header = sanitize_text_field($_GET['_authorization']);
             //and now remove this special header so it doesn't interfere with other parts of the request
             unset($_GET['authorization']);
         }
