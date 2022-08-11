@@ -6,6 +6,14 @@
 			"homepage": "https://developer.eventespresso.com"
 		}
 	],
+	"config": {
+		"allow-plugins": {
+			"eventespresso/*": true,
+			"composer/installers": true,
+			"roave/security-advisories": true,
+			"yoast/phpunit-polyfills": true
+		}
+	},
 	"description": "Event Espresso 4 Core for WordPress: Build an Event Ticketing Website Today!",
 	"homepage": "https://eventespresso.com",
 	"keywords": [
@@ -34,12 +42,6 @@
 		"composer/installers": "~2.0",
 		"php": ">=7.2",
 		"ext-json": "*"
-	},
-	"allow-plugins": {
-		"eventespresso/*": true,
-		"composer/installers": true,
-		"roave/security-advisories": true,
-		"yoast/phpunit-polyfills": true
 	},
 	"scripts": {
 		"config-eventespressocs": [
