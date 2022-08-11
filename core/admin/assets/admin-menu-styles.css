@@ -8,6 +8,8 @@
     --ee-color-white: hsl(207, 0%, 100%);
     --ee-color-may-as-well-be-white: hsl(207, 0%, 97.5%);
     --ee-color-almost-white: hsl(207, 0%, 95%);
+    --ee-color-white-cloud: hsl(207, 5%, 87.5%);
+    --ee-color-grey-cloud: hsl(207, 5%, 75%);
     --ee-color-off-white: hsl(207, 0%, 90%);
     --ee-status-color-pink: hsl(340, 100%, 70%);
     --ee-status-color-red: hsl(350, 90%, 60%);
@@ -64,6 +66,7 @@
     --ee-btn-primary-lit: 45;
     --ee-btn-primary-alpha: 1;
 
+    /*--ee-btn-primary: hsla(207, 65%, 45%, 1);*/
     --ee-btn-primary: hsla(
         var(--ee-btn-primary-hue),
         calc(var(--ee-btn-primary-sat) * 1%),
@@ -99,6 +102,7 @@
     --ee-btn-primary-alt-lit: 35;
     --ee-btn-primary-alt-alpha: 1;
 
+    /*--ee-btn-primary-alt: hsla(140, 70%, 35%, 1);*/
     --ee-btn-primary-alt: hsla(
         var(--ee-btn-primary-alt-hue),
         calc(var(--ee-btn-primary-alt-sat) * 1%),
@@ -126,6 +130,7 @@
     --ee-btn-secondary-lit: 90;
     --ee-btn-secondary-alpha: 1;
 
+    /*--ee-btn-secondary: hsla(203, 2%, 90%, 1); */
     --ee-btn-secondary: hsla(
         var(--ee-btn-secondary-hue),
         calc(var(--ee-btn-secondary-sat) * 1%),
@@ -145,13 +150,14 @@
         var(--ee-btn-secondary-alpha)
     );
 
-	/* CAUTION */
+    /* CAUTION */
 
     --ee-btn-caution-hue: 340;
     --ee-btn-caution-sat: 55;
     --ee-btn-caution-lit: 50;
     --ee-btn-caution-alpha: 1;
 
+    /*--ee-btn-caution: hsla(340, 55%, 50%, 1);*/
     --ee-btn-caution: hsla(
         var(--ee-btn-caution-hue),
         calc(var(--ee-btn-caution-sat) * 1%),
@@ -180,6 +186,10 @@
     --ee-button-height-sixth: calc(var(--ee-button-height) / 6);
     --ee-button-height-shim: calc(var(--ee-button-height) / 12);
 
+    --ee-link-color: hsl(207 70% 50%);
+    --ee-link-color-hover: hsl(207 90% 60%);
+    --ee-link-color-focus: hsl(207 90% 40%);
+
     --ee-box-shadow: 0 2px 3px -2px hsla(0, 0%, 0%, .5);
     --ee-box-shadow-big: 0 3px 6px hsla(0, 0%, 0%, .5);
     --ee-button-box-shadow: 0 1px 1px hsla(0, 0%, 0%, 0.4), 1px 1px 3px hsla(0, 0%, 0%, 0.15), -1px -1px 1px hsla(0, 0%, 100%, 0.75);
@@ -206,9 +216,9 @@
     --ee-checkbox-height: 1.5rem;
 
     --ee-switch-width: 3.6rem;
-	--ee-switch-height: 1.8rem;
-	--ee-switch-padding: .3rem;
-	--ee-switch-button: calc(var(--ee-switch-height) - (var(--ee-switch-padding) * 2));
+    --ee-switch-height: 1.8rem;
+    --ee-switch-padding: .3rem;
+    --ee-switch-button: calc(var(--ee-switch-height) - (var(--ee-switch-padding) * 2));
 
 }
 
@@ -225,108 +235,117 @@
 }
 
 .ee_menu_group {
-	display: block;
-	background-color: hsla(207deg 0% 50% / 75%);
-	margin: -2px -5px 0px -12px;
-	padding: 2px 0 3px 10px;
-	font-size:.95em;
-	font-weight: bold;
-	letter-spacing: 1px;
-	color: var(--ee-color-white);
-	cursor: default;
+    display: block;
+    background-color: hsla(207deg 0% 50% / 75%);
+    margin: -2px -5px 0 -12px;
+    padding: 2px 0 3px 10px;
+    font-size: .95em;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: var(--ee-color-white);
+    cursor: default;
 }
+
 .version-3-8.admin-color-fresh .ee_menu_group {
-	padding-left: 8px;
-	margin: 3px -12px -3px -12px;
-	border-left: 3px solid var(--ee-status-color-blue);
-	background-color: var(--ee-status-color-charcoal);
-	color: var(--ee-color-white);
-	font-weight: normal;
+    padding-left: 8px;
+    margin: 3px -12px -3px -12px;
+    border-left: 3px solid var(--ee-status-color-blue);
+    background-color: var(--ee-status-color-charcoal);
+    color: var(--ee-color-white);
+    font-weight: normal;
 }
+
 .version-3-8.admin-color-blue .ee_menu_group {
-	padding-left: 8px;
-	margin: 3px -12px -3px -12px;
-	border-left: 3px solid var(--ee-status-color-light-blue);
-	background-color: var(--ee-status-color-blue);
-	color: var(--ee-color-white);
-	font-weight: normal;
+    padding-left: 8px;
+    margin: 3px -12px -3px -12px;
+    border-left: 3px solid var(--ee-status-color-light-blue);
+    background-color: var(--ee-status-color-blue);
+    color: var(--ee-color-white);
+    font-weight: normal;
 }
+
 .version-3-8.admin-color-light .ee_menu_group {
-	padding-left: 8px;
-	margin: 3px -12px -3px -12px;
-	border-left: 3px solid var(--ee-status-color-orange);
-	background-color: var(--ee-status-color-light-grey);
-	color: var(--ee-status-color-orange);
-	font-weight: normal;
+    padding-left: 8px;
+    margin: 3px -12px -3px -12px;
+    border-left: 3px solid var(--ee-status-color-orange);
+    background-color: var(--ee-status-color-light-grey);
+    color: var(--ee-status-color-orange);
+    font-weight: normal;
 }
+
 .version-3-8.admin-color-midnight .ee_menu_group {
-	padding-left: 8px;
-	margin: 3px -12px -3px -12px;
-	background-color: var(--ee-status-color-charcoal);
-	border-left: 3px solid var(--ee-status-color-orange);
-	color: var(--ee-color-white);
-	font-weight: normal;
+    padding-left: 8px;
+    margin: 3px -12px -3px -12px;
+    background-color: var(--ee-status-color-charcoal);
+    border-left: 3px solid var(--ee-status-color-orange);
+    color: var(--ee-color-white);
+    font-weight: normal;
 }
 
 div.TB-ee-frame a {
-	border-bottom: none;
-	padding: 0;
-	margin: 0;
+    border-bottom: none;
+    padding: 0;
+    margin: 0;
 }
 
 .display-ee-error-trace-lnk {
-	cursor: pointer;
+    cursor: pointer;
 }
+
 .smaller-text {
-	font-size: .8em;
-	line-height: 1em;
+    font-size: .8em;
+    line-height: 1em;
     letter-spacing: 0.75px;
 }
+
 .small-text {
-	font-size: .85em;
-	line-height: 1.2em;
+    font-size: .85em;
+    line-height: 1.2em;
 }
+
 .big-text {
-	font-size: 1.2em;
-	line-height: 1.6em;
+    font-size: 1.2em;
+    line-height: 1.6em;
 }
+
 .bigger-text {
-	font-size: 1.5em;
-	line-height: 2em;
+    font-size: 1.5em;
+    line-height: 2em;
 }
 
 /**** ee about page *****/
 .ee-badge {
-	background-size: 200px 60px;
-	background-color: var(--ee-status-color-charcoal);
-	font-size: 14px;
-	text-align: center;
-	font-weight: 600;
-	margin: 5px 0 0;
-	height: 160px;
-	display: inline-block;
-	width: 125px;
-	color: #FFF;
-	text-rendering: optimizeLegibility;
+    background-size: 200px 60px;
+    background-color: var(--ee-status-color-charcoal);
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
+    margin: 5px 0 0;
+    height: 160px;
+    display: inline-block;
+    width: 125px;
+    color: var(--ee-color-white);
+    text-rendering: optimizeLegibility;
 }
 
 .ee-badge .ee-icon-ee-cup-thick:before {
-	font-size: 80px;
-	margin-left: 20px;
+    font-size: 80px;
+    margin-left: 20px;
 }
 
 .about-wrap .ee-badge {
-	position: absolute;
-	top: 0;
-	right: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
+
 @media only screen and (max-width: 500px) {
-	.about-wrap .ee-badge {
-		position: relative;
-		left: 50%;
-		transform: translateX(-50%);
-		margin-bottom: 1.5em;
-	}
+    .about-wrap .ee-badge {
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 1.5em;
+    }
 }
 
 /**** ee decaf reviews *****/
@@ -336,10 +355,10 @@ div.TB-ee-frame a {
     text-align: center;
 }
 
-@media screen and (max-width : 1260px) {
-	.col-3 {
-	    clear: left;
-	}
+@media screen and (max-width: 1260px) {
+    .col-3 {
+        clear: left;
+    }
 }
 
 /**** ee decaf vs regular *****/
@@ -351,11 +370,11 @@ div.TB-ee-frame a {
 }
 
 .featured-section.features .row .dashicons-yes {
-    color:  var(--ee-status-color-dark-green);
+    color: var(--ee-status-color-dark-green);
 }
 
 .featured-section.features .row .dashicons-no-alt {
-    color:  var(--ee-status-color-red);
+    color: var(--ee-status-color-red);
 }
 
 .featured-section.features .row > div {
@@ -373,7 +392,7 @@ div.TB-ee-frame a {
 .featured-section .decaf-regular-table {
     border-spacing: 0;
     width: 100%;
-    margin-top:40px;
+    margin-top: 40px;
 }
 
 .featured-section .decaf-regular-table th {
@@ -382,7 +401,7 @@ div.TB-ee-frame a {
 
 .featured-section .decaf-regular-table td {
     border-top: 1px solid var(--ee-status-color-light-grey);
-    padding: 20px 0px 25px 10px;
+    padding: 20px 0 25px 10px;
 }
 
 .featured-section .decaf-regular-table h3 {
@@ -394,7 +413,7 @@ div.TB-ee-frame a {
 }
 
 .featured-section .decaf-regular-table .decaf-feature,
-.featured-section .decaf-regular-table .regular-feature{
+.featured-section .decaf-regular-table .regular-feature {
     text-align: center;
     width: 15%;
 }
@@ -416,9 +435,9 @@ div.TB-ee-frame a {
     width: 35px;
 }
 
-.featured-section .button-hero .dashicons{
+.featured-section .button-hero .dashicons {
     font-size: 1rem;
-    vertical-align:middle;
+    vertical-align: middle;
 }
 
 .featured-section .ti-about-page-text-center {
@@ -432,14 +451,14 @@ div.TB-ee-frame a {
 /******************* DASHICONS ****************** */
 
 @font-face {
-	font-family: "ee-dashicons";
-	src:url("../../templates/global_assets/fonts/ee-dashicons.eot");
-	src:url("../../templates/global_assets/fonts/ee-dashicons.eot?#iefix") format("embedded-opentype"),
-		url("../../templates/global_assets/fonts/ee-dashicons.ttf") format("truetype"),
-		url("../../templates/global_assets/fonts/ee-dashicons.woff") format("woff"),
-		url("../../templates/global_assets/fonts/ee-dashicons.svg#ee-dashicons") format("svg");
-	font-weight: normal;
-	font-style: normal;
+    font-family: "ee-dashicons";
+    src: url("../../templates/global_assets/fonts/ee-dashicons.eot");
+    src: url("../../templates/global_assets/fonts/ee-dashicons.eot?#iefix") format("embedded-opentype"),
+    url("../../templates/global_assets/fonts/ee-dashicons.ttf") format("truetype"),
+    url("../../templates/global_assets/fonts/ee-dashicons.woff") format("woff"),
+    url("../../templates/global_assets/fonts/ee-dashicons.svg#ee-dashicons") format("svg");
+    font-weight: normal;
+    font-style: normal;
 }
 
 /* .dashicons, */
@@ -448,13 +467,13 @@ div.TB-ee-frame a {
 #wpadminbar .ee-icon:before,
 #toplevel_page_espresso_events div.wp-menu-image:before,
 #toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
-	position: relative;
-	top: -2px;
-	font-size: inherit;
-	height: auto;
-	margin-right: .5em;
-	vertical-align: middle;
-	width: auto;
+    position: relative;
+    top: -2px;
+    font-size: inherit;
+    height: auto;
+    margin-right: .5em;
+    vertical-align: middle;
+    width: auto;
 }
 
 .ee-icon:before,
@@ -479,15 +498,15 @@ div.TB-ee-frame a {
 
 @media screen and (max-width: 782px) {
     #wpadminbar li#wp-admin-bar-espresso-toolbar {
-		display: block;
-		position: static;
+        display: block;
+        position: static;
     }
 
     #wpadminbar li#wp-admin-bar-espresso-toolbar .ee-icon-ee-cup-thick:before {
         font-size: 40px !important;
         color: var(--ee-status-color-grey);
-        color: rgba(155, 155, 155, .6);
     }
+
     #wpadminbar li#wp-admin-bar-espresso-toolbar:hover .ee-icon-ee-cup-thick:before {
         color: var(--ee-status-color-blue);
     }
@@ -497,12 +516,12 @@ div.TB-ee-frame a {
  * used for those times when want to use the default dashicons font but not inherit any styles that may be assigned in in a particular location
  */
 .ee-dashicons {
-	font-family: "dashicons" !important;
+    font-family: "dashicons" !important;
 }
 
 #toplevel_page_espresso_events div.wp-menu-image:before,
 #toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
-	font-size: 28px;
+    font-size: 28px;
     top: -5px;
     left: 4px;
 }
@@ -521,236 +540,339 @@ div.TB-ee-frame a {
 }
 
 .ee-icon-venue:before {
-	/*content: "\e600";*/
-	content: "\79";
+    /*content: "\e600";*/
+    content: "\79";
 }
+
 .ee-icon-user-edit:before {
-	/*content: "\e601";*/
-	content: "\62";
+    /*content: "\e601";*/
+    content: "\62";
 }
+
 .ee-icon-user-delete:before {
-	/*content: "\e602";*/
-	content: "\64";
+    /*content: "\e602";*/
+    content: "\64";
 }
+
 .ee-icon-user-add-new:before {
-	/*content: "\e603";*/
-	content: "\65";
+    /*content: "\e603";*/
+    content: "\65";
 }
+
 .ee-icon-tickets:before {
-	/*content: "\e604";*/
-	content: "\66";
+    /*content: "\e604";*/
+    content: "\66";
 }
+
 .ee-icon-tickets-download:before {
-	/*content: "\e605";*/
-	content: "\67";
+    /*content: "\e605";*/
+    content: "\67";
 }
+
 .ee-icon-pdf-file-type:before,
 .ee-icon-PDF-file-type:before {
-	/*content: "\e606";*/
-	content: "\68";
+    /*content: "\e606";*/
+    content: "\68";
 }
+
 .ee-icon-payment-reminder:before {
-	/*content: "\e607";*/
-	content: "\69";
+    /*content: "\e607";*/
+    content: "\69";
 }
+
 .ee-icon-external-link:before {
-	/*content: "\e608";*/
-	content: "\6a";
+    /*content: "\e608";*/
+    content: "\6a";
 }
+
 .ee-icon-event:before {
-	/*content: "\e609";*/
-	content: "\6b";
+    /*content: "\e609";*/
+    content: "\6b";
 }
+
 .ee-icon-event-list-grid:before {
-	/*content: "\e60a";*/
-	content: "\6c";
+    /*content: "\e60a";*/
+    content: "\6c";
 }
+
 .ee-icon-event-list-dates:before {
-	/*content: "\e60b";*/
-	content: "\6d";
+    /*content: "\e60b";*/
+    content: "\6d";
 }
+
 .ee-icon-email:before {
-	/*content: "\e60c";*/
-	content: "\6e";
+    /*content: "\e60c";*/
+    content: "\6e";
 }
+
 .ee-icon-email-send:before {
-	/*content: "\e60d";*/
-	content: "\63";
+    /*content: "\e60d";*/
+    content: "\63";
 }
 
 .ee-icon-ee-cup:before {
     content: "\e60e";
     /*content: "\61";*/
 }
+
 .ee-icon-clone:before {
-	/*content: "\e610";*/
-	content: "\77";
+    /*content: "\e610";*/
+    content: "\77";
 }
+
 .ee-icon-clock:before {
-	/*content: "\e611";*/
-	content: "\78";
+    /*content: "\e611";*/
+    content: "\78";
 }
+
 .ee-icon-arrow-move:before {
-	/*content: "\e612";*/
-	content: "\76";
+    /*content: "\e612";*/
+    content: "\76";
 }
+
 .ee-icon-check-out:before {
-	/*content: "\e613";*/
-	content: "\75";
+    /*content: "\e613";*/
+    content: "\75";
 }
+
 .ee-icon-check-in:before {
-	/*content: "\e614";*/
-	content: "\74";
+    /*content: "\e614";*/
+    content: "\74";
 }
+
 .checkedin-status-2:before {
-	font-family: "dashicons" !important;
-	/* ! **using important b / c wp has dashicons setup with important and I had to override **!*/
-	content: "\f158";
+    font-family: "dashicons" !important;
+    /* ! **using important b / c wp has dashicons setup with important and I had to override **!*/
+    content: "\f158";
 }
+
 .ee-icon-cash:before {
-	/*content: "\e615";*/
-	content: "\73";
+    /*content: "\e615";*/
+    content: "\73";
 }
+
 .ee-icon-cash-remove:before {
-	/*content: "\e616";*/
-	content: "\72";
+    /*content: "\e616";*/
+    content: "\72";
 }
+
 .ee-icon-cash-edit:before {
-	/*content: "\e617";*/
-	content: "\71";
+    /*content: "\e617";*/
+    content: "\71";
 }
+
 .ee-icon-cash-add:before {
-	/*content: "\e618";*/
-	content: "\70";
+    /*content: "\e618";*/
+    content: "\70";
 }
+
 .ee-icon-calendar-edit:before {
-	/*content: "\e619";*/
+    /*content: "\e619";*/
     content: "\6f";
 }
 
 
-.pink-icon:before, .pink, .pink a { color: var(--ee-status-color-pink); }
-.green-icon:before, .green, .green a { color: var(--ee-status-color-green); }
-.drk-green-icon:before, .drk-green, .drk-green a { color: var(--ee-status-color-dark-green); }
-.red-icon:before, .red, .red a { color: var(--ee-status-color-red); }
-.orange-icon:before, .orange, .orange a { color: var(--ee-status-color-orange); }
-.lt-blue-icon:before, .lt-blue, .lt-blue a { color: var(--ee-status-color-light-blue); }
-.blue-icon:before, .blue, .blue a { color: var(--ee-status-color-blue); }
-.yellow-icon:before, .yellow, .yellow a { color: var(--ee-status-color-yellow); }
-.lt-grey-icon:before, .lt-grey, .lt-grey a { color: var(--ee-status-color-light-grey); }
-.grey-icon:before, .grey, .grey a { color: var(--ee-status-color-grey); }
-.drk-grey-icon:before, .drk-grey, .drk-grey a { color: var(--ee-status-color-dark-grey); }
-.black-icon:before, .black, .black a { color: var(--ee-status-color-charcoal); }
-.white-icon:before, .white, .white a { color: var(--ee-color-white); }
+.pink-icon:before, .pink, .pink a {
+    color: var(--ee-status-color-pink);
+}
+
+.green-icon:before, .green, .green a {
+    color: var(--ee-status-color-green);
+}
+
+.drk-green-icon:before, .drk-green, .drk-green a {
+    color: var(--ee-status-color-dark-green);
+}
+
+.red-icon:before, .red, .red a {
+    color: var(--ee-status-color-red);
+}
+
+.orange-icon:before, .orange, .orange a {
+    color: var(--ee-status-color-orange);
+}
+
+.lt-blue-icon:before, .lt-blue, .lt-blue a {
+    color: var(--ee-status-color-light-blue);
+}
+
+.blue-icon:before, .blue, .blue a {
+    color: var(--ee-status-color-blue);
+}
+
+.yellow-icon:before, .yellow, .yellow a {
+    color: var(--ee-status-color-yellow);
+}
+
+.lt-grey-icon:before, .lt-grey, .lt-grey a {
+    color: var(--ee-status-color-light-grey);
+}
+
+.grey-icon:before, .grey, .grey a {
+    color: var(--ee-status-color-grey);
+}
+
+.drk-grey-icon:before, .drk-grey, .drk-grey a {
+    color: var(--ee-status-color-dark-grey);
+}
+
+.black-icon:before, .black, .black a {
+    color: var(--ee-status-color-charcoal);
+}
+
+.white-icon:before, .white, .white a {
+    color: var(--ee-color-white);
+}
 
 /** corresponding background colors **/
-.pink-bg, .reg-status-bg-RDC, .txn-status-bg-TFL, .pymt-status-bg-PDC { background-color: var(--ee-status-color-pink); }
-.green-bg, .reg-status-bg-RAP, .txn-status-bg-TCM, .pymt-status-bg-PAP { background-color: var(--ee-status-color-green); }
-.drk-green-bg { background-color: var(--ee-status-color-dark-green); }
-.red-bg { background-color: var(--ee-status-color-red); }
-.orange-bg, .reg-status-bg-RNA, .txn-status-bg-TOP, .pymt-status-bg-PFL { background-color: var(--ee-status-color-orange); }
-.lt-blue-bg, .reg-status-bg-RPP, .txn-status-bg-TIN, .pymt-status-bg-PPN { background-color: var(--ee-status-color-light-blue); }
-.blue-bg { background-color: var(--ee-status-color-blue); }
-.yellow-bg { background-color: var(--ee-status-color-yellow); }
-.lt-grey-bg, .reg-status-bg-RCN, .pymt-status-bg-PCN { background-color: var(--ee-status-color-light-grey); }
-.grey-bg { background-color: var(--ee-status-color-grey); }
-.drk-grey-bg { background-color: var(--ee-status-color-dark-grey); }
-.black-bg { background-color: var(--ee-status-color-charcoal); }
+.pink-bg, .reg-status-bg-RDC, .txn-status-bg-TFL, .pymt-status-bg-PDC {
+    background-color: var(--ee-status-color-pink);
+}
 
+.green-bg, .reg-status-bg-RAP, .txn-status-bg-TCM, .pymt-status-bg-PAP {
+    background-color: var(--ee-status-color-green);
+}
+
+.drk-green-bg {
+    background-color: var(--ee-status-color-dark-green);
+}
+
+.red-bg {
+    background-color: var(--ee-status-color-red);
+}
+
+.orange-bg, .reg-status-bg-RNA, .txn-status-bg-TOP, .pymt-status-bg-PFL {
+    background-color: var(--ee-status-color-orange);
+}
+
+.lt-blue-bg, .reg-status-bg-RPP, .txn-status-bg-TIN, .pymt-status-bg-PPN {
+    background-color: var(--ee-status-color-light-blue);
+}
+
+.blue-bg {
+    background-color: var(--ee-status-color-blue);
+}
+
+.yellow-bg {
+    background-color: var(--ee-status-color-yellow);
+}
+
+.lt-grey-bg, .reg-status-bg-RCN, .pymt-status-bg-PCN {
+    background-color: var(--ee-status-color-light-grey);
+}
+
+.grey-bg {
+    background-color: var(--ee-status-color-grey);
+}
+
+.drk-grey-bg {
+    background-color: var(--ee-status-color-dark-grey);
+}
+
+.black-bg {
+    background-color: var(--ee-status-color-charcoal);
+}
 
 
 .tags-links a {
-	white-space: nowrap;
+    white-space: nowrap;
 }
+
 .tags-links a:before {
-	content: "\f323";
-	display: inline-block;
-	font-family: dashicons;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 1;
-	text-align: center;
-	text-decoration: none;
-	vertical-align: middle;
-	margin-right: .25em;
+    content: "\f323";
+    display: inline-block;
+    font-family: dashicons;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    margin-right: .25em;
 }
 
 
 /** icon adjustments **/
 .ee-icon-color-grey:before {
-	color: var(--ee-status-color-grey);
+    color: var(--ee-status-color-grey);
 }
 
 .ee-icon-color-ee-grey:before {
-	color: var(--ee-status-color-grey);
+    color: var(--ee-status-color-grey);
 }
 
 .ee-icon-color-ee-orange:before {
-	color: var(--ee-status-color-orange);
+    color: var(--ee-status-color-orange);
 }
 
 .ee-icon-color-ee-blue:before {
-	color: var(--ee-status-color-blue);
+    color: var(--ee-status-color-blue);
 }
 
 .ee-icon-color-ee-green:before {
-	color: var(--ee-status-color-green);
+    color: var(--ee-status-color-green);
 }
 
 .ee-icon-color-ee-red:before {
-	color: var(--ee-status-color-red);
+    color: var(--ee-status-color-red);
 }
 
 .ee-icon-color-ee-purple:before {
     color: var(--ee-status-color-purple);
 }
 
-.ee-icon-size-8:before { font-size: 8px !important; }
+.ee-icon-size-8:before {
+    font-size: 8px !important;
+}
 
-.ee-icon-size-12:before { font-size: 12px !important; }
+.ee-icon-size-12:before {
+    font-size: 12px !important;
+}
 
-.ee-icon-size-14:before { font-size: 14px !important; }
+.ee-icon-size-14:before {
+    font-size: 14px !important;
+}
 
 .ee-icon-size-16:before {
-	font-size: 16px !important;
-	margin-right: -.002em;
+    font-size: 16px !important;
+    margin-right: -.002em;
 }
 
 .ee-icon-size-18:before {
-	font-size: 18px !important;
-	margin-right:-0.05em;
+    font-size: 18px !important;
+    margin-right: -0.05em;
 }
 
 .ee-icon-size-20:before {
-        font-size: 20px !important;
-	margin-right: -0.1em;
+    font-size: 20px !important;
+    margin-right: -0.1em;
 }
 
 .ee-icon-size-22:before {
-	font-size: 22px !important;
-	margin-right: -0.15em;
+    font-size: 22px !important;
+    margin-right: -0.15em;
 }
 
 .ee-icon-size-24:before {
-	font-size: 24px !important;
-	margin-right: -0.2em;
+    font-size: 24px !important;
+    margin-right: -0.2em;
 }
 
 .ee-lock-icon:before, .ee-collapsible:before {
-	display: inline-block;
-	-webkit-font-smoothing: antialiased;
-	font: normal 16px/1 "dashicons";
-	vertical-align: top;
-	margin-top: 3px;
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    font: normal 16px/1 "dashicons";
+    vertical-align: top;
+    margin-top: 3px;
 }
 
 .ee-lock-icon:before {
-	content: "\f160";
+    content: "\f160";
 }
 
 
 .espresso-admin .wp-list-table .ee-lock-icon:before {
-	margin-left: 8px;
+    margin-left: 8px;
 }
 
 
@@ -758,12 +880,12 @@ div.TB-ee-frame a {
  * Fixes for some weird WP styling issues encountered on ee menu items
  */
 #toplevel_page_espresso_events .wp-submenu li.toplevel_page_espresso_events {
-	min-height: inherit;
+    min-height: inherit;
 }
 
 #toplevel_page_espresso_events .wp-submenu li.current a.toplevel_page_espresso_events {
-	background-color: transparent;
-	font-size: 13px;
+    background-color: transparent;
+    font-size: 13px;
 
 }
 
@@ -772,115 +894,116 @@ div.TB-ee-frame a {
  * fancy toggles
  */
 .ee-switch {
-	align-items: center;
-	display: flex;
-	height: var(--ee-switch-height);
-	justify-content: flex-start;
-	width: 100%;
+    align-items: center;
+    display: flex;
+    height: var(--ee-switch-height);
+    justify-content: flex-start;
+    width: 100%;
 }
 
 .ee-switch .ee-switch__input,
 .ee-on-off-toggle {
-	position: absolute;
-	margin-left: -9999px;
-	visibility: hidden;
+    position: absolute;
+    margin-left: -9999px;
+    visibility: hidden;
 }
 
 .ee-switch .ee-switch__input:before {
-	background: none !important;
-	background-size: 0 !important;
-	display: none !important;
-	margin: 0 !important;
-	height: 0 !important;
-	width: 0 !important;
+    background: none !important;
+    background-size: 0 !important;
+    display: none !important;
+    margin: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
 }
 
 .ee-switch .ee-switch__toggle {
-	margin: 0 !important;
+    margin: 0 !important;
 }
 
 .ee-switch .ee-switch__input + .ee-switch__toggle,
 .ee-on-off-toggle + label {
-	display: block;
-	position: relative;
-	cursor: pointer;
-	outline: none;
-	user-select: none;
+    display: block;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
 }
 
 .ee-switch .ee-switch__input + .ee-switch__toggle,
 input.ee-toggle-round-flat + label {
-	width: var(--ee-switch-width);
-	height: var(--ee-switch-height);
-	background-color: var(--ee-status-color-light-grey);
-	border-radius: var(--ee-switch-height);
-	transition: background 0.4s;
+    width: var(--ee-switch-width);
+    height: var(--ee-switch-height);
+    background-color: var(--ee-status-color-light-grey);
+    border-radius: var(--ee-switch-height);
+    transition: background 0.4s;
 }
 
 .ee-switch .ee-switch__input + .ee-switch__toggle:after,
 input.ee-toggle-round-flat + label:after {
-	background-color: #FFF;
-	border-radius: var(--ee-switch-button);
-	bottom: var(--ee-switch-padding);
-	content: "";
-	display: block;
-	height: var(--ee-switch-button);
-	left: var(--ee-switch-padding);
-	position: absolute;
-	top: var(--ee-switch-padding);
-	transition: margin 0.4s, background 0.4s;
-	width: var(--ee-switch-button);
+    background-color: var(--ee-color-white);
+    border-radius: var(--ee-switch-button);
+    bottom: var(--ee-switch-padding);
+    content: "";
+    display: block;
+    height: var(--ee-switch-button);
+    left: var(--ee-switch-padding);
+    position: absolute;
+    top: var(--ee-switch-padding);
+    transition: margin 0.4s, background 0.4s;
+    width: var(--ee-switch-button);
 }
 
 .ee-switch .ee-switch__input:checked + .ee-switch__toggle,
 input.ee-toggle-round-flat:checked + label {
-	background-color: var(--ee-status-color-blue);
-	margin-block: 0;
+    background-color: var(--ee-status-color-blue);
+    margin-block: 0;
 }
 
 .ee-switch .ee-switch__input:checked + .ee-switch__toggle:after,
 input.ee-toggle-round-flat:checked + label:after {
-	margin-left: var(--ee-switch-height);
+    margin-left: var(--ee-switch-height);
 }
 
 
 .ee-switch .ee-switch__label {
-	margin-inline-end: 1rem;
-	position: relative;
-	width: calc( 100% - var(--ee-switch-width) - 1rem );
+    margin-inline-end: 1rem;
+    position: relative;
+    width: calc(100% - var(--ee-switch-width) - 1rem);
 }
+
 .ee-switch .ee-switch__label > span {
-	font-weight: 600;
-	position: absolute;
-	inset-inline-start: 1rem;
-	inset-block-start: -.75rem;
-	transition: opacity 100ms ease-in-out;
+    font-weight: 600;
+    position: absolute;
+    inset-inline-start: 1rem;
+    inset-block-start: -.75rem;
+    transition: opacity 100ms ease-in-out;
 }
 
 .ee-switch .ee-switch__input:checked ~ .ee-switch__label .ee-switch--ON {
-	opacity: 1;
+    opacity: 1;
 }
 
 .ee-switch .ee-switch__input:checked ~ .ee-switch__label .ee-switch--OFF {
-	opacity: 0;
+    opacity: 0;
 }
 
 .ee-switch .ee-switch__input:not(:checked) ~ .ee-switch__label .ee-switch--ON {
-	opacity: 0;
+    opacity: 0;
 }
 
 .ee-switch .ee-switch__input:not(:checked) ~ .ee-switch__label .ee-switch--OFF {
-	opacity: 1;
+    opacity: 1;
 }
 
 
 /** dashboard at a glance icons **/
 #dashboard_right_now li a.ee-dashboard-link-events:before {
-	content: "\f508"
+    content: "\f508"
 }
 
 #dashboard_right_now li a.ee-dashboard-link-registrations:before {
-	content: "\f307"
+    content: "\f307"
 }
 
 /** persistent admin (nag) notices **/
@@ -916,18 +1039,15 @@ input.ee-toggle-round-flat:checked + label:after {
     display: inline-block;
     position: relative;
     top: -1px;
-    padding:.5em 1em;
+    padding: .5em 1em;
     margin: 0;
-    background: #00B1CA -webkit-linear-gradient( #4EBFDE, #00B1CA ); /* For Safari 5.1 to 6.0 */
-    background: #00B1CA -o-linear-gradient( #4EBFDE, #00B1CA ); /* For Opera 11.1 to 12.0 */
-    background: #00B1CA -moz-linear-gradient( #4EBFDE, #00B1CA ); /* For Firefox 3.6 to 15 */
-    background: #00B1CA linear-gradient( #4EBFDE, #00B1CA ); /* Standard syntax */
-    border: 1px solid rgba(0,0,0,0.1) !important;
-    border-top: 1px solid rgba(255,255,255,0.5) !important;
-    border-bottom: 2px solid rgba(0,0,0,0.25) !important;
+    background: hsl(195, 100%, 45%) linear-gradient(hsl(195, 100%, 35%), hsl(195, 100%, 55%));
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.5) !important;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.25) !important;
     font-weight: normal;
     cursor: pointer;
-    color: #fff !important;
+    color: var(--ee-color-white) !important;
     text-decoration: none !important;
     text-align: center;
     line-height: 1em;
@@ -938,10 +1058,12 @@ input.ee-toggle-round-flat:checked + label:after {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+
 .ee-addon-upsell-info-dv .ee-button:hover {
-    color: #fff !important;
-    background: #4EBFDE;
+    color: var(--ee-color-white) !important;
+    background: hsl(195, 100%, 55%);
 }
+
 .ee-addon-upsell-info-dv .ee-button:active {
-    top:0;
+    top: 0;
 }
