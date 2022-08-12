@@ -41,11 +41,8 @@ class MenuItem {
 							switch ( $object_type ) {
 								// Post object
 								case 'post_type':
-									$resolver = new PostObjectConnectionResolver( $menu_item, $args, $context, $info, 'any' );
+									$resolver = new PostObjectConnectionResolver( $menu_item, $args, $context, $info );
 									$resolver->set_query_arg( 'p', $object_id );
-
-									// connected objects to menu items can be any post status
-									$resolver->set_query_arg( 'post_status', 'any' );
 									break;
 
 								// Taxonomy term
@@ -54,6 +51,7 @@ class MenuItem {
 									$resolver->set_query_arg( 'include', $object_id );
 									break;
 								default:
+									$resolved_object = null;
 									break;
 							}
 

@@ -5,6 +5,8 @@ namespace WPGraphQL\Data\Connection;
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
+use WPGraphQL\Model\Post;
+use WPGraphQL\Model\Term;
 use WPGraphQL\Types;
 
 /**
@@ -13,13 +15,6 @@ use WPGraphQL\Types;
  * @package WPGraphQL\Data\Connection
  */
 class TermObjectConnectionResolver extends AbstractConnectionResolver {
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @var \WP_Term_Query
-	 */
-	protected $query;
 
 	/**
 	 * The name of the Taxonomy the resolver is intended to be used for
@@ -45,7 +40,8 @@ class TermObjectConnectionResolver extends AbstractConnectionResolver {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @return array
+	 * @throws Exception
 	 */
 	public function get_query_args() {
 
@@ -105,9 +101,14 @@ class TermObjectConnectionResolver extends AbstractConnectionResolver {
 			$query_args = array_merge( $query_args, $input_fields );
 		}
 
+		/**
+		 * Set the graphql_cursor_offset
+		 */
+		$query_args['graphql_cursor_offset']  = $this->get_offset();
 		$query_args['graphql_cursor_compare'] = ( ! empty( $last ) ) ? '>' : '<';
-		$query_args['graphql_after_cursor']   = $this->get_after_offset();
-		$query_args['graphql_before_cursor']  = $this->get_before_offset();
+
+		$query_args['graphql_after_cursor']  = ! empty( $this->get_after_offset() ) ? $this->get_after_offset() : null;
+		$query_args['graphql_before_cursor'] = ! empty( $this->get_before_offset() ) ? $this->get_before_offset() : null;
 
 		/**
 		 * Pass the graphql $args to the WP_Query
@@ -154,30 +155,27 @@ class TermObjectConnectionResolver extends AbstractConnectionResolver {
 	/**
 	 * Return an instance of WP_Term_Query with the args mapped to the query
 	 *
-	 * @return \WP_Term_Query
+	 * @return mixed|\WP_Term_Query
 	 * @throws Exception
 	 */
 	public function get_query() {
-		return new \WP_Term_Query( $this->query_args );
+		$query = new \WP_Term_Query( $this->query_args );
+
+		return $query;
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * This gets the items from the query. Different queries return items in different ways, so this
+	 * helps normalize the items into an array for use by the get_nodes() function.
+	 *
+	 * @return array
 	 */
-	public function get_ids_from_query() {
-		/** @var string[] $ids **/
-		$ids = ! empty( $this->query->get_terms() ) ? $this->query->get_terms() : [];
-
-		// If we're going backwards, we need to reverse the array.
-		if ( ! empty( $this->args['last'] ) ) {
-			$ids = array_reverse( $ids );
-		}
-
-		return $ids;
+	public function get_ids() {
+		return ! empty( $this->query->get_terms() ) ? $this->query->get_terms() : [];
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @return string
 	 */
 	public function get_loader_name() {
 		return 'term';
@@ -257,7 +255,7 @@ class TermObjectConnectionResolver extends AbstractConnectionResolver {
 	 * @return bool
 	 */
 	public function is_valid_offset( $offset ) {
-		return get_term( absint( $offset ) ) instanceof \WP_Term;
+		return ! empty( get_term( absint( $offset ) ) );
 	}
 
 }

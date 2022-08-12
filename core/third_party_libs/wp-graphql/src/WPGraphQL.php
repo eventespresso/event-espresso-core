@@ -130,7 +130,7 @@ final class WPGraphQL {
 
 		// Plugin version.
 		if ( ! defined( 'WPGRAPHQL_VERSION' ) ) {
-			define( 'WPGRAPHQL_VERSION', '1.9.0' );
+			define( 'WPGRAPHQL_VERSION', '1.8.7' );
 		}
 
 		// Plugin Folder Path.
@@ -478,7 +478,7 @@ final class WPGraphQL {
 	 *
 	 * @return array
 	 * @since  0.0.4
-	 * @since  1.8.1 adds $output as first param, and stores post type objects in class property.
+	 * @since  @todo adds $output as first param, and stores post type objects in class property.
 	 */
 	public static function get_allowed_post_types( $output = 'names', $args = [] ) {
 		// Support deprecated param order.
@@ -526,7 +526,7 @@ final class WPGraphQL {
 			 * For example if a certain post_type should not be exposed to the GraphQL API.
 			 *
 			 * @since 0.0.2
-			 * @since 1.8.1 add $post_type_objects parameter.
+			 * @since @todo add $post_type_objects parameter.
 			 *
 			 * @param array $post_type_names Array of post type names.
 			 * @param array $post_type_objects Array of post type objects.
@@ -615,7 +615,7 @@ final class WPGraphQL {
 			 * For example if a certain taxonomy should not be exposed to the GraphQL API.
 			 *
 			 * @since 0.0.2
-			 * @since 1.8.1 add $tax_names and $tax_objects parameters.
+			 * @since @todo add $tax_names and $tax_objects parameters.
 			 *
 			 * @param array $tax_names Array of taxonomy names
 			 * @param array $tax_objects Array of taxonomy objects.

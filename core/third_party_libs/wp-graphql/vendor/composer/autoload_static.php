@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitcbddaab4c0f40b1346f340a80e4e9db9
+class ComposerStaticInit526aff7f5b33e6ebbeb20637b7fecaa4
 {
     public static $files = array (
         'a3ed03db03d57650e139da3e8903943c' => __DIR__ . '/../..' . '/access-functions.php',
@@ -276,8 +276,6 @@ class ComposerStaticInitcbddaab4c0f40b1346f340a80e4e9db9
         'WPGraphQL\\Data\\Connection\\ThemeConnectionResolver' => __DIR__ . '/../..' . '/src/Data/Connection/ThemeConnectionResolver.php',
         'WPGraphQL\\Data\\Connection\\UserConnectionResolver' => __DIR__ . '/../..' . '/src/Data/Connection/UserConnectionResolver.php',
         'WPGraphQL\\Data\\Connection\\UserRoleConnectionResolver' => __DIR__ . '/../..' . '/src/Data/Connection/UserRoleConnectionResolver.php',
-        'WPGraphQL\\Data\\Cursor\\AbstractCursor' => __DIR__ . '/../..' . '/src/Data/Cursor/AbstractCursor.php',
-        'WPGraphQL\\Data\\Cursor\\CommentObjectCursor' => __DIR__ . '/../..' . '/src/Data/Cursor/CommentObjectCursor.php',
         'WPGraphQL\\Data\\Cursor\\CursorBuilder' => __DIR__ . '/../..' . '/src/Data/Cursor/CursorBuilder.php',
         'WPGraphQL\\Data\\Cursor\\PostObjectCursor' => __DIR__ . '/../..' . '/src/Data/Cursor/PostObjectCursor.php',
         'WPGraphQL\\Data\\Cursor\\TermObjectCursor' => __DIR__ . '/../..' . '/src/Data/Cursor/TermObjectCursor.php',
@@ -444,9 +442,9 @@ class ComposerStaticInitcbddaab4c0f40b1346f340a80e4e9db9
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitcbddaab4c0f40b1346f340a80e4e9db9::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitcbddaab4c0f40b1346f340a80e4e9db9::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitcbddaab4c0f40b1346f340a80e4e9db9::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit526aff7f5b33e6ebbeb20637b7fecaa4::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit526aff7f5b33e6ebbeb20637b7fecaa4::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit526aff7f5b33e6ebbeb20637b7fecaa4::$classMap;
 
         }, null, ClassLoader::class);
     }

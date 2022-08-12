@@ -12,12 +12,6 @@ use WPGraphQL\AppContext;
  * @since 0.0.5
  */
 class PluginConnectionResolver extends AbstractConnectionResolver {
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @var array
-	 */
-	protected $query;
 
 	/**
 	 * PluginConnectionResolver constructor.
@@ -34,9 +28,22 @@ class PluginConnectionResolver extends AbstractConnectionResolver {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @return bool|int|mixed|null|string
 	 */
-	public function get_ids_from_query() {
+	public function get_offset() {
+		$offset = null;
+		if ( ! empty( $this->args['after'] ) ) {
+			$offset = substr( base64_decode( $this->args['after'] ), strlen( 'arrayconnection:' ) );
+		} elseif ( ! empty( $this->args['before'] ) ) {
+			$offset = substr( base64_decode( $this->args['before'] ), strlen( 'arrayconnection:' ) );
+		}
+		return $offset;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_ids() {
 		$ids     = [];
 		$queried = ! empty( $this->query ) ? $this->query : [];
 
@@ -52,7 +59,7 @@ class PluginConnectionResolver extends AbstractConnectionResolver {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @return array|void
 	 */
 	public function get_query_args() {
 		if ( ! empty( $this->args['where']['status'] ) ) {
@@ -65,9 +72,7 @@ class PluginConnectionResolver extends AbstractConnectionResolver {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 *
-	 * @return array
+	 * @return array|mixed
 	 */
 	public function get_query() {
 		// File has not loaded.
@@ -222,7 +227,7 @@ class PluginConnectionResolver extends AbstractConnectionResolver {
 						}
 
 						return false;
-					}
+					},
 				)
 			);
 			if ( ! empty( $matches ) ) {
@@ -237,24 +242,51 @@ class PluginConnectionResolver extends AbstractConnectionResolver {
 	/**
 	 * {@inheritDoc}
 	 */
+	public function get_ids_for_nodes() {
+		if ( empty( $this->ids ) ) {
+			return [];
+		}
+
+		$ids = $this->ids;
+
+		// If pagination is going backwards, revers the array of IDs
+		$ids = ! empty( $this->args['last'] ) ? array_reverse( $ids ) : $ids;
+
+		if ( ! empty( $this->get_offset() ) ) {
+			// Determine if the offset is in the array
+			$key = array_search( $this->get_offset(), $ids, true );
+			if ( false !== $key ) {
+				$key = absint( $key );
+				if ( ! empty( $this->args['before'] ) ) {
+					// Slice the array from the back.
+					$ids = array_slice( $ids, 0, $key, true );
+				} else {
+					// Slice the array from the front.
+					$key ++;
+					$ids = array_slice( $ids, $key, null, true );
+				}
+			}
+		}
+
+		$ids = array_slice( $ids, 0, $this->query_amount, true );
+
+		return $ids;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function get_loader_name() {
 		return 'plugin';
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * @param mixed $offset
+	 *
+	 * @return bool
 	 */
 	public function is_valid_offset( $offset ) {
-		// File has not loaded.
-		require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		// This is missing must use and drop in plugins, so we need to fetch and merge them separately.
-		$site_plugins   = apply_filters( 'all_plugins', get_plugins() );
-		$mu_plugins     = apply_filters( 'show_advanced_plugins', true, 'mustuse' ) ? get_mu_plugins() : [];
-		$dropin_plugins = apply_filters( 'show_advanced_plugins', true, 'dropins' ) ? get_dropins() : [];
-
-		$all_plugins = array_merge( $site_plugins, $mu_plugins, $dropin_plugins );
-
-		return array_key_exists( $offset, $all_plugins );
+		return true;
 	}
 
 	/**

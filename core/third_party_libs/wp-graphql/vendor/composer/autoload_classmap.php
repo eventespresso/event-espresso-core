@@ -239,8 +239,6 @@ return array(
     'WPGraphQL\\Data\\Connection\\ThemeConnectionResolver' => $baseDir . '/src/Data/Connection/ThemeConnectionResolver.php',
     'WPGraphQL\\Data\\Connection\\UserConnectionResolver' => $baseDir . '/src/Data/Connection/UserConnectionResolver.php',
     'WPGraphQL\\Data\\Connection\\UserRoleConnectionResolver' => $baseDir . '/src/Data/Connection/UserRoleConnectionResolver.php',
-    'WPGraphQL\\Data\\Cursor\\AbstractCursor' => $baseDir . '/src/Data/Cursor/AbstractCursor.php',
-    'WPGraphQL\\Data\\Cursor\\CommentObjectCursor' => $baseDir . '/src/Data/Cursor/CommentObjectCursor.php',
     'WPGraphQL\\Data\\Cursor\\CursorBuilder' => $baseDir . '/src/Data/Cursor/CursorBuilder.php',
     'WPGraphQL\\Data\\Cursor\\PostObjectCursor' => $baseDir . '/src/Data/Cursor/PostObjectCursor.php',
     'WPGraphQL\\Data\\Cursor\\TermObjectCursor' => $baseDir . '/src/Data/Cursor/TermObjectCursor.php',

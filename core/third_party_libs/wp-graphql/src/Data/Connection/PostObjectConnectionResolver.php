@@ -24,12 +24,6 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 	protected $post_type;
 
 	/**
-	 * {@inheritDoc}
-	 *
-	 * @var \WP_Query|object
-	 */
-	protected $query;
-	/**
 	 * PostObjectConnectionResolver constructor.
 	 *
 	 * @param mixed              $source    source passed down from the resolve tree
@@ -107,17 +101,12 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Return an array of items from the query
+	 *
+	 * @return array
 	 */
-	public function get_ids_from_query() {
-		$ids = ! empty( $this->query->posts ) ? $this->query->posts : [];
-
-		// If we're going backwards, we need to reverse the array.
-		if ( ! empty( $this->args['last'] ) ) {
-			$ids = array_reverse( $ids );
-		}
-
-		return $ids;
+	public function get_ids() {
+		return ! empty( $this->query->posts ) ? $this->query->posts : [];
 	}
 
 	/**
@@ -201,18 +190,25 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 		/**
 		 * Set posts_per_page the highest value of $first and $last, with a (filterable) max of 100
 		 */
-		$query_args['posts_per_page'] = $this->one_to_one ? 1 : min( max( absint( $first ), absint( $last ), 10 ), $this->query_amount ) + 1;
-
-		// set the graphql cursor args
-		$query_args['graphql_cursor_compare'] = ( ! empty( $last ) ) ? '>' : '<';
-		$query_args['graphql_after_cursor']   = $this->get_after_offset();
-		$query_args['graphql_before_cursor']  = $this->get_before_offset();
+		$query_args['posts_per_page'] = min( max( absint( $first ), absint( $last ), 10 ), $this->query_amount ) + 1;
 
 		/**
-		 * If the cursor offsets not empty,
-		 * ignore sticky posts on the query
+		 * Set the graphql_cursor_offset which is used by Config::graphql_wp_query_cursor_pagination_support
+		 * to filter the WP_Query to support cursor pagination
 		 */
-		if ( ! empty( $this->get_after_offset() ) || ! empty( $this->get_after_offset() ) ) {
+		$cursor_offset = $this->get_offset();
+
+		$query_args['graphql_cursor_offset']  = $cursor_offset;
+		$query_args['graphql_cursor_compare'] = ( ! empty( $last ) ) ? '>' : '<';
+
+		$query_args['graphql_after_cursor']  = ! empty( $this->get_after_offset() ) ? $this->get_after_offset() : null;
+		$query_args['graphql_before_cursor'] = ! empty( $this->get_before_offset() ) ? $this->get_before_offset() : null;
+
+		/**
+		 * If the starting offset is not 0 sticky posts will not be queried as the automatic checks in wp-query don't
+		 * trigger due to the page parameter not being set in the query_vars, fixes #732
+		 */
+		if ( 0 !== $cursor_offset ) {
 			$query_args['ignore_sticky_posts'] = true;
 		}
 
@@ -272,35 +268,35 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 			$query_args['order']                = isset( $last ) ? 'ASC' : 'DESC';
 		}
 
-		if ( empty( $this->args['where']['orderby'] ) && ! empty( $query_args['post__in'] ) ) {
+		if ( empty( $this->args['where']['orderby'] ) ) {
+			if ( ! empty( $query_args['post__in'] ) ) {
 
-			$post_in = $query_args['post__in'];
-			// Make sure the IDs are integers
-			$post_in = array_map( static function ( $id ) {
-				return absint( $id );
-			}, $post_in );
+				$post_in = $query_args['post__in'];
+				// Make sure the IDs are integers
+				$post_in = array_map( function ( $id ) {
+					return absint( $id );
+				}, $post_in );
 
-			// If we're coming backwards, let's reverse the IDs
-			if ( ! empty( $this->args['last'] ) || ! empty( $this->args['before'] ) ) {
-				$post_in = array_reverse( $post_in );
-			}
-
-			$cursor_offset = $this->get_offset_for_cursor( $this->args['after'] ?? ( $this->args['before'] ?? 0 ) );
-
-			if ( ! empty( $cursor_offset ) ) {
-				// Determine if the offset is in the array
-				$key = array_search( $cursor_offset, $post_in, true );
-
-				// If the offset is in the array
-				if ( false !== $key ) {
-					$key     = absint( $key );
-					$post_in = array_slice( $post_in, $key + 1, null, true );
+				// If we're coming backwards, let's reverse the IDs
+				if ( ! empty( $this->args['last'] ) || ! empty( $this->args['before'] ) ) {
+					$post_in = array_reverse( $post_in );
 				}
-			}
 
-			$query_args['post__in'] = $post_in;
-			$query_args['orderby']  = 'post__in';
-			$query_args['order']    = isset( $last ) ? 'ASC' : 'DESC';
+				if ( ! empty( $this->get_offset() ) ) {
+					// Determine if the offset is in the array
+					$key = array_search( $this->get_offset(), $post_in, true );
+
+					// If the offset is in the array
+					if ( false !== $key ) {
+						$key     = absint( $key );
+						$post_in = array_slice( $post_in, $key + 1, null, true );
+					}
+				}
+
+				$query_args['post__in'] = $post_in;
+				$query_args['orderby']  = 'post__in';
+				$query_args['order']    = isset( $last ) ? 'ASC' : 'DESC';
+			}
 		}
 
 		/**
@@ -373,8 +369,12 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 		 * @param AppContext  $context    The AppContext passed down the GraphQL tree
 		 * @param ResolveInfo $info       The ResolveInfo passed down the GraphQL tree
 		 */
-		return apply_filters( 'graphql_post_object_connection_query_args', $query_args, $this->source, $this->args, $this->context, $this->info );
+		$query_args = apply_filters( 'graphql_post_object_connection_query_args', $query_args, $this->source, $this->args, $this->context, $this->info );
 
+		/**
+		 * Return the $query_args
+		 */
+		return $query_args;
 	}
 
 	/**
@@ -557,7 +557,7 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 	 * @return bool
 	 */
 	public function is_valid_offset( $offset ) {
-		return (bool) get_post( absint( $offset ) );
+		return ! empty( get_post( absint( $offset ) ) );
 	}
 
 }
