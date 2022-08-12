@@ -53,7 +53,7 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 		if ( 'revision' === $post_type || 'attachment' === $post_type ) {
 			$this->post_type = $post_type;
 		} elseif ( 'any' === $post_type ) {
-			$post_types      = get_post_types( [ 'show_in_graphql' => true ] );
+			$post_types      = \WPGraphQL::get_allowed_post_types();
 			$this->post_type = ! empty( $post_types ) ? array_values( $post_types ) : [];
 		} else {
 			$post_type = is_array( $post_type ) ? $post_type : [ $post_type ];
@@ -81,7 +81,7 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 	/**
 	 * Returns the query being executed
 	 *
-	 * @return \WP_Query
+	 * @return \WP_Query|object
 	 *
 	 * @throws Exception
 	 */
@@ -230,16 +230,14 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 		 */
 		if ( 'attachment' === $this->post_type || 'revision' === $this->post_type ) {
 			$query_args['post_status'] = 'inherit';
+		}
 
-			if ( isset( $query_args['post_parent'] ) ) {
-
-				/**
-				 * Unset the "post_parent" for attachments, as we don't really care if they
-				 * have a post_parent set by default
-				 */
-				unset( $query_args['post_parent'] );
-
-			}
+		/**
+		 * Unset the "post_parent" for attachments, as we don't really care if they
+		 * have a post_parent set by default
+		 */
+		if ( 'attachment' === $this->post_type && isset( $input_fields['parent'] ) ) {
+			unset( $input_fields['parent'] );
 		}
 
 		/**

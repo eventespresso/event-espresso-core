@@ -8,6 +8,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use GraphQLRelay\Relay;
 use WPGraphQL\AppContext;
 use WPGraphQL\Data\MediaItemMutation;
+use WPGraphQL\Utils\Utils;
 
 class MediaItemUpdate {
 	/**
@@ -71,18 +72,21 @@ class MediaItemUpdate {
 				return null;
 			}
 
-			$mutation_name = 'updateMediaItem';
+			// Get the database ID for the comment.
+			$media_item_id = Utils::get_database_id_from_id( $input['id'] );
 
-			$id_parts            = ! empty( $input['id'] ) ? Relay::fromGlobalId( $input['id'] ) : null;
-			$existing_media_item = isset( $id_parts['id'] ) && absint( $id_parts['id'] ) ? get_post( absint( $id_parts['id'] ) ) : null;
+			/**
+			 * Get the mediaItem object before deleting it
+			 */
+			$existing_media_item = ! empty( $media_item_id ) ? get_post( $media_item_id ) : null;
+
+			$mutation_name = 'updateMediaItem';
 
 			/**
 			 * If there's no existing mediaItem, throw an exception
 			 */
 			if ( null === $existing_media_item ) {
 				throw new UserError( __( 'No mediaItem with that ID could be found to update', 'wp-graphql' ) );
-			} else {
-				$author_id = $existing_media_item->post_author;
 			}
 
 			/**
@@ -100,13 +104,17 @@ class MediaItemUpdate {
 				throw new UserError( __( 'Sorry, you are not allowed to update mediaItems', 'wp-graphql' ) );
 			}
 
+			$author_id = absint( $existing_media_item->post_author );
+
 			/**
 			 * If the mutation is setting the author to be someone other than the user making the request
 			 * make sure they have permission to edit others posts
 			 */
 			if ( ! empty( $input['authorId'] ) ) {
-				$author_id_parts = Relay::fromGlobalId( $input['authorId'] );
-				$author_id       = $author_id_parts['id'];
+				// Ensure authorId is a valid databaseId.
+				$input['authorId'] = Utils::get_database_id_from_id( $input['authorId'] );
+				// Use the new author for checks.
+				$author_id = $input['authorId'];
 			}
 
 			/**
@@ -120,9 +128,8 @@ class MediaItemUpdate {
 			/**
 			 * Insert the post object and get the ID
 			 */
-			$post_args                = MediaItemMutation::prepare_media_item( $input, $post_type_object, $mutation_name, false );
-			$post_args['ID']          = isset( $id_parts['id'] ) ? absint( $id_parts['id'] ) : null;
-			$post_args['post_author'] = $author_id;
+			$post_args       = MediaItemMutation::prepare_media_item( $input, $post_type_object, $mutation_name, false );
+			$post_args['ID'] = $media_item_id;
 
 			$clean_args = wp_slash( (array) $post_args );
 
@@ -139,7 +146,12 @@ class MediaItemUpdate {
 			$post_id = wp_update_post( $clean_args, true );
 
 			if ( is_wp_error( $post_id ) ) {
-				throw new UserError( __( 'The media item failed to update', 'wp-graphql' ) );
+				$error_message = $post_id->get_error_message();
+				if ( ! empty( $error_message ) ) {
+					throw new UserError( esc_html( $error_message ) );
+				}
+
+				throw new UserError( __( 'The media item failed to update but no error was provided', 'wp-graphql' ) );
 			}
 
 			/**

@@ -390,12 +390,12 @@ abstract class AbstractConnectionResolver {
 	public function get_query_amount() {
 
 		/**
-         * Filter the maximum number of posts per page that should be quried. The default is 100 to prevent queries from
-         * being exceedingly resource intensive, however individual systems can override this for their specific needs.
-         *
+		 * Filter the maximum number of posts per page that should be quried. The default is 100 to prevent queries from
+		 * being exceedingly resource intensive, however individual systems can override this for their specific needs.
+		 *
 		 * This filter is intentionally applied AFTER the query_args filter, as
 		 *
-		 * @param array       $query_args array of query_args being passed to the
+		 * @param int         $max_posts  the maximum number of posts per page.
 		 * @param mixed       $source     source passed down from the resolve tree
 		 * @param array       $args       array of arguments input in the field as part of the GraphQL query
 		 * @param AppContext  $context    Object containing app context that gets passed down the resolve tree
@@ -403,17 +403,9 @@ abstract class AbstractConnectionResolver {
 		 *
 		 * @since 0.0.6
 		 */
-        $max_query_amount = apply_filters(
-            'graphql_connection_max_query_amount',
-            100,
-            $this->source,
-            $this->args,
-            $this->context,
-            $this->info
-        );
+		$max_query_amount = apply_filters( 'graphql_connection_max_query_amount', 100, $this->source, $this->args, $this->context, $this->info );
 
-
-        return min( $max_query_amount, absint( $this->get_amount_requested() ) );
+		return min( $max_query_amount, absint( $this->get_amount_requested() ) );
 
 	}
 
@@ -467,8 +459,8 @@ abstract class AbstractConnectionResolver {
 		/**
 		 * This filter allows to modify the requested connection page size
 		 *
-		 * @param int                        $amount the requested amount
-		 * @param AbstractConnectionResolver $this   Instance of the connection resolver class
+		 * @param int                        $amount   the requested amount
+		 * @param AbstractConnectionResolver $resolver Instance of the connection resolver class
 		 */
 		return max( 0, apply_filters( 'graphql_connection_amount_requested', $amount_requested, $this ) );
 
@@ -478,7 +470,7 @@ abstract class AbstractConnectionResolver {
 	 * @return int|null
 	 */
 	public function get_after_offset(): ?int {
-		if ( isset( $this->args['after'] ) && ! empty( $this->args['after'] ) ) {
+		if ( ! empty( $this->args['after'] ) ) {
 			return ArrayConnection::cursorToOffset( $this->args['after'] );
 		}
 
@@ -489,7 +481,7 @@ abstract class AbstractConnectionResolver {
 	 * @return int|null
 	 */
 	public function get_before_offset(): ?int {
-		if ( isset( $this->args['before'] ) && ! empty( $this->args['before'] ) ) {
+		if ( ! empty( $this->args['before'] ) ) {
 			return ArrayConnection::cursorToOffset( $this->args['before'] );
 		}
 
@@ -540,7 +532,7 @@ abstract class AbstractConnectionResolver {
 	 */
 	public function has_next_page() {
 		if ( ! empty( $this->args['first'] ) ) {
-			return ! empty( $this->ids ) ? count( $this->ids ) > $this->query_amount : false;
+			return ! empty( $this->ids ) && count( $this->ids ) > $this->query_amount;
 		}
 
 		if ( ! empty( $this->args['before'] ) ) {
@@ -563,7 +555,7 @@ abstract class AbstractConnectionResolver {
 	 */
 	public function has_previous_page() {
 		if ( ! empty( $this->args['last'] ) ) {
-			return ! empty( $this->ids ) ? count( $this->ids ) > $this->query_amount : false;
+			return ! empty( $this->ids ) && count( $this->ids ) > $this->query_amount;
 		}
 
 		if ( ! empty( $this->args['after'] ) ) {
@@ -600,27 +592,25 @@ abstract class AbstractConnectionResolver {
 	}
 
 	/**
-	 * Get_nodes
+	 * Get_ids_for_nodes
 	 *
-	 * Get the nodes from the query.
+	 * Gets the IDs from the query.
 	 *
 	 * We slice the array to match the amount of items that was asked for, as we over-fetched
 	 * by 1 item to calculate pageInfo.
 	 *
 	 * For backward pagination, we reverse the order of nodes.
 	 *
+	 * @used-by AbstractConnectionResolver::get_nodes()
+	 *
 	 * @return array
-	 * @throws Exception
 	 */
-	public function get_nodes() {
+	public function get_ids_for_nodes() {
 		if ( empty( $this->ids ) ) {
 			return [];
 		}
 
-		$nodes = [];
-
-		$ids = $this->ids;
-		$ids = array_slice( $ids, 0, $this->query_amount, true );
+		$ids = array_slice( $this->ids, 0, $this->query_amount, true );
 
 		// If pagination is going backwards, revers the array of IDs
 		$ids = ! empty( $this->args['last'] ) ? array_reverse( $ids ) : $ids;
@@ -631,16 +621,34 @@ abstract class AbstractConnectionResolver {
 			// If the offset is in the array
 			if ( false !== $key ) {
 				$key = absint( $key );
-				// Slice the array from the back
 				if ( ! empty( $this->args['before'] ) ) {
+					// Slice the array from the back
 					$ids = array_slice( $ids, 0, $key, true );
-					// Slice the array from the front
 				} else {
+					// Slice the array from the front
 					$key ++;
 					$ids = array_slice( $ids, $key, null, true );
 				}
 			}
 		}
+
+		return $ids;
+	}
+
+	/**
+	 * Get_nodes
+	 *
+	 * Get the nodes from the query.
+	 *
+	 * @uses AbstractConnectionResolver::get_ids_for_nodes()
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	public function get_nodes() {
+		$nodes = [];
+
+		$ids = $this->get_ids_for_nodes();
 
 		foreach ( $ids as $id ) {
 			$model = $this->get_node_by_id( $id );
@@ -899,9 +907,7 @@ abstract class AbstractConnectionResolver {
 
 				if ( true === $this->one_to_one ) {
 					// For one to one connections, return the first edge.
-					$connection = ! empty( $this->edges[ array_key_first( $this->edges ) ] )
-                        ? $this->edges[ array_key_first( $this->edges ) ]
-                        : null;
+					$connection = ! empty( $this->edges[ array_key_first( $this->edges ) ] ) ? $this->edges[ array_key_first( $this->edges ) ] : null;
 				} else {
 					// For plural connections (default) return edges/nodes/pageInfo
 					$connection = [

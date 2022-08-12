@@ -29,6 +29,30 @@ class TaxonomyConnectionResolver extends AbstractConnectionResolver {
 		parent::__construct( $source, $args, $context, $info );
 	}
 
+	public function has_next_page() {
+
+		$last_key = array_key_last( $this->get_ids_for_nodes() );
+		$index    = array_search( $last_key, array_keys( $this->get_ids() ), true );
+		$count    = count( $this->get_ids() );
+
+		if ( ! empty( $this->args['first'] ) ) {
+			return $index + 1 < $count;
+		}
+
+		return false;
+	}
+
+	public function has_previous_page() {
+		$first_key = array_key_first( $this->get_ids_for_nodes() );
+		$index     = array_search( $first_key, array_keys( $this->get_ids() ), true );
+
+		if ( ! empty( $this->args['last'] ) ) {
+			return $index > 0;
+		}
+
+		return false;
+	}
+
 	/**
 	 * @return bool|int|mixed|null|string
 	 */
@@ -77,11 +101,9 @@ class TaxonomyConnectionResolver extends AbstractConnectionResolver {
 	 */
 	public function get_query_args() {
 
-		$query_args = [
+		return [
 			'show_in_graphql' => true,
 		];
-
-		return $query_args;
 
 	}
 
@@ -97,35 +119,39 @@ class TaxonomyConnectionResolver extends AbstractConnectionResolver {
 	}
 
 	/**
-	 * Get the nodes from the query.
-	 *
-	 * We slice the array to match the amount of items that was asked for, as we over-fetched
-	 * by 1 item to calculate pageInfo.
-	 *
-	 * For backward pagination, we reverse the order of nodes.
-	 *
-	 * @return array
-	 * @throws Exception
+	 * {@inheritDoc}
 	 */
-	public function get_nodes() {
-
-		$nodes = parent::get_nodes();
-
-		if ( isset( $this->args['after'] ) ) {
-			$key   = array_search( $this->get_offset(), array_keys( $nodes ), true );
-			$nodes = array_slice( $nodes, $key + 1, null, true );
+	public function get_ids_for_nodes() {
+		if ( empty( $this->ids ) ) {
+			return [];
 		}
 
-		if ( isset( $this->args['before'] ) ) {
-			$nodes = array_reverse( $nodes );
-			$key   = array_search( $this->get_offset(), array_keys( $nodes ), true );
-			$nodes = array_slice( $nodes, $key + 1, null, true );
-			$nodes = array_reverse( $nodes );
+		$ids = $this->ids;
+
+		// If pagination is going backwards, revers the array of IDs
+		$ids = ! empty( $this->args['last'] ) ? array_reverse( $ids ) : $ids;
+
+		if ( ! empty( $this->get_offset() ) ) {
+			// Determine if the offset is in the array
+			$keys = array_keys( $ids );
+			$key  = array_search( $this->get_offset(), $keys, true );
+
+			if ( false !== $key ) {
+				$key = absint( $key );
+				if ( ! empty( $this->args['before'] ) ) {
+					// Slice the array from the back.
+					$ids = array_slice( $ids, $key + 1, $this->get_query_amount(), true );
+				} else {
+					// Slice the array from the front.
+					$key ++;
+					$ids = array_slice( $ids, $key, null, true );
+				}
+			}
 		}
 
-		$nodes = array_slice( $nodes, 0, $this->query_amount, true );
+		$ids = array_slice( $ids, 0, $this->query_amount, true );
+		return ! empty( $this->args['last'] ) ? array_reverse( $ids ) : $ids;
 
-		return ! empty( $this->args['last'] ) ? array_filter( array_reverse( $nodes, true ) ) : $nodes;
 	}
 
 	/**
@@ -145,7 +171,7 @@ class TaxonomyConnectionResolver extends AbstractConnectionResolver {
 	 * @return bool
 	 */
 	public function is_valid_offset( $offset ) {
-		return true;
+		return (bool) get_taxonomy( $offset );
 	}
 
 	/**
