@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanForm;
+use EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanFormHandler;
+use EventEspresso\core\domain\values\session\SessionLifespanOption;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -1108,6 +1111,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             array($this, 'copy_attendee_info_settings_form'),
             4
         );
+        add_action(
+            'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
+            array($this, 'setSessionLifespan'),
+            4.9
+        );
         $this->_template_args = (array) apply_filters(
             'FHEE__Extend_Registration_Form_Admin_Page___reg_form_settings___template_args',
             $this->_template_args
@@ -1139,6 +1147,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         EE_Registry::instance()->CFG->registration = $this->update_copy_attendee_info_settings_form(
             EE_Registry::instance()->CFG->registration
         );
+        $this->updateSessionLifespan();
         EE_Registry::instance()->CFG->registration = apply_filters(
             'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration',
             EE_Registry::instance()->CFG->registration
@@ -1247,15 +1256,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                             __LINE__
                         );
                     }
-                } else {
-                    if ($copy_attendee_info_settings_form->submission_error_message() !== '') {
-                        EE_Error::add_error(
-                            $copy_attendee_info_settings_form->submission_error_message(),
-                            __FILE__,
-                            __FUNCTION__,
-                            __LINE__
-                        );
-                    }
+                } elseif ($copy_attendee_info_settings_form->submission_error_message() !== '') {
+                    EE_Error::add_error(
+                        $copy_attendee_info_settings_form->submission_error_message(),
+                        __FILE__,
+                        __FUNCTION__,
+                        __LINE__
+                    );
                 }
             }
         } catch (EE_Error $e) {
@@ -1378,15 +1385,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                             __LINE__
                         );
                     }
-                } else {
-                    if ($email_validation_settings_form->submission_error_message() !== '') {
-                        EE_Error::add_error(
-                            $email_validation_settings_form->submission_error_message(),
-                            __FILE__,
-                            __FUNCTION__,
-                            __LINE__
-                        );
-                    }
+                } elseif ($email_validation_settings_form->submission_error_message() !== '') {
+                    EE_Error::add_error(
+                        $email_validation_settings_form->submission_error_message(),
+                        __FILE__,
+                        __FUNCTION__,
+                        __LINE__
+                    );
                 }
             }
         } catch (EE_Error $e) {
@@ -1453,5 +1458,19 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             }
         }
         return true;
+    }
+
+
+    public function setSessionLifespan()
+    {
+        $session_lifespan_form = $this->loader->getNew(SessionLifespanForm::class);
+        echo wp_kses($session_lifespan_form->get_html(), AllowedTags::getWithFormTags());
+    }
+
+
+    public function updateSessionLifespan()
+    {
+        $handler = $this->loader->getNew(SessionLifespanFormHandler::class);
+        $handler->process($this->loader->getNew(SessionLifespanForm::class));
     }
 }
