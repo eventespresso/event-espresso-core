@@ -322,33 +322,36 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:34
 	__( 'assign tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:25
-	__( 'Permanently delete Datetime?', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:25
-	__( 'Move Datetime to Trash?', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:27
-	__( 'Are you sure you want to permanently delete this datetime? This action is permanent and can not be undone.', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:30
-	__( 'Are you sure you want to move this datetime to the trash? You can "untrash" this datetime later if you need to.', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:39
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:44
-	__( 'delete permanently', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:39
-	__( 'trash datetime', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:45
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:21
 	__( 'event date main menu', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:59
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:33
 	__( 'edit datetime', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:60
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:34
 	__( 'copy datetime', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:15
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:48
+	__( 'delete permanently', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:15
+	__( 'trash datetime', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:18
+	__( 'Permanently Delete Datetime?', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:18
+	__( 'Move Datetime to Trash?', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:20
+	__( 'Are you sure you want to permanently delete this datetime? This action is permanent and can not be undone.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:23
+	__( 'Are you sure you want to move this datetime to the trash? You can "untrash" this datetime later if you need to.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:33
+	__( 'delete', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:36
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:40
@@ -683,7 +686,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:29
 	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:74
-	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:21
 	__( 'Alert!', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:42
@@ -892,19 +894,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:37
 	__( 'assign dates', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:18
-	__( 'Permanently delete Ticket?', 'event_espresso' ),
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:19
+	__( 'Permanently Delete Ticket?', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:18
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:19
 	__( 'Move Ticket to Trash?', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:21
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:22
 	__( 'Are you sure you want to permanently delete this ticket? This action is permanent and can not be undone.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:22
-	__( 'Are you sure you want to move this ticket to the trash? You can "untrash" this ticket later if you need to.', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:44
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:48
 	// Reference: packages/ee-components/src/SimpleTicketCard/actions/Trash.tsx:6
 	__( 'trash ticket', 'event_espresso' ),
 
@@ -2098,7 +2097,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Black', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Confirm/ConfirmClose.tsx:7
-	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:22
+	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:23
 	__( 'Are you sure you want to close this?', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Confirm/ConfirmDelete.tsx:7
@@ -2107,11 +2106,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/Confirm/useConfirmWithButton.tsx:10
 	__( 'Please confirm this action.', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/Confirm/useConfirmationDialog.tsx:32
-	__( 'No', 'event_espresso' ),
+	// Reference: packages/ui-components/src/Confirm/useConfirmationDialog.tsx:39
+	__( 'cancel', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/Confirm/useConfirmationDialog.tsx:33
-	__( 'Yes', 'event_espresso' ),
+	// Reference: packages/ui-components/src/Confirm/useConfirmationDialog.tsx:40
+	__( 'confirm', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/CurrencyDisplay/CurrencyDisplay.tsx:34
 	__( 'free', 'event_espresso' ),
@@ -2129,13 +2128,13 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/EditDateRangeButton/EditDateRangeButton.tsx:49
 	__( 'Edit Start and End Dates and Times', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Copy.tsx:8
+	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/CopyEntity.tsx:8
 	__( 'copy', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Edit.tsx:8
+	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/EditEntity.tsx:8
 	__( 'edit', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Trash.tsx:8
+	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/TrashEntity.tsx:8
 	__( 'trash', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Untrash.tsx:8
