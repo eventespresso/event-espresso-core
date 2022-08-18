@@ -224,8 +224,9 @@ $version = implode('.', $version);
                 <img style="width: 380px; height: 250px; padding: 5px;"
                      alt="Wait List Manager Add-on"
                      class="alignright"
-                     src="https://s3.amazonaws.com/ee-screenshots/ee4/ee4-wait-list-manager.jpg"
-                     alt="Wait List Manager Add-on"
+                     src="<?php echo esc_url_raw(
+                         EE_GLOBAL_ASSETS_URL . 'images/banners/ee4-wait-list-manager-380x250.jpeg'
+                     ); ?>"
                      width="380"
                      height="250"
                 />
@@ -277,7 +278,9 @@ $version = implode('.', $version);
             <img style="width: 380px; height: 250px; padding: 5px;"
                  class="alignright "
                  alt="PayPal Express Checkout Smart Payment Buttons (with Venmo) Payment Gateway"
-                 src="https://s3.amazonaws.com/ee-screenshots/ee4/event-registrations-with-paypal-express-checkout-smart-payment-buttons.jpg"
+                 src="<?php echo esc_url_raw(
+                     EE_GLOBAL_ASSETS_URL . 'images/banners/event-registrations-with-paypal-express-checkout-smart-payment-buttons-380x250.jpeg'
+                 ); ?>"
                  width="260"
                  height="202"
             />

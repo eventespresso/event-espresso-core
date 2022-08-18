@@ -91,7 +91,9 @@ $version = implode('.', $version);
     </ul>
 
     <p>
-        <a href="https://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png">
+        <a href="<?php echo esc_url_raw(
+            EE_GLOBAL_ASSETS_URL . 'images/banners/ticket-bundles-533x562.png'
+        ); ?>">
             <strong>Support for “Ticket Bundles” &amp; “Graduated Pricing”</strong>
         </a>
         <br>
