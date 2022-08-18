@@ -123,7 +123,6 @@
 <p class="wp-credits-list">
     <a href="https://openexchangerates.github.io/accounting.js/" target='_blank'>accounting.js</a>,
     <a href="https://dompdf.github.io/" target='_blank'>dompdf</a>,
-    <a href="https://zurb.com/playground/jquery-joyride-feature-tour-plugin" target='_blank'>joyride2</a>,
     <a href="https://kint-php.github.io/kint/" target='_blank'>Kint</a>,
     <a href="https://momentjs.com/" target='_blank'>Moment.js</a>,
     <a href="https://github.com/qTip2/qTip2" target='_blank'>qTip2</a>,
