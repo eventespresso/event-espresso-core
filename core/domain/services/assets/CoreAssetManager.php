@@ -433,7 +433,7 @@ class CoreAssetManager extends AssetManager
         // @link http://josscrowcroft.github.io/accounting.js/
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_ACCOUNTING_CORE,
-            EE_THIRD_PARTY_URL . 'accounting/accounting.js',
+            EE_GLOBAL_ASSETS_URL . 'accounting/accounting.js',
             array(CoreAssetManager::JS_HANDLE_UNDERSCORE),
             true,
             '0.3.2'
