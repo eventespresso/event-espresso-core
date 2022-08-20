@@ -1485,7 +1485,7 @@ class EED_Single_Page_Checkout extends EED_Module
         // load JS
         wp_register_script(
             'jquery_plugin',
-            EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js',
+            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.plugin.min.js',
             array('jquery'),
             '1.0.1',
             true
