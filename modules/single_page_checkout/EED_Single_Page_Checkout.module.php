@@ -1492,7 +1492,7 @@ class EED_Single_Page_Checkout extends EED_Module
         );
         wp_register_script(
             'jquery_countdown',
-            EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js',
+            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.countdown.min.js',
             array('jquery_plugin'),
             '2.1.0',
             true
