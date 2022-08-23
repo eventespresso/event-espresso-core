@@ -15,4 +15,5 @@ languages/
 *.DS_Store
 *.idea
 *.vscode
+*Zone.Identifier
 tests/.phpunit.result.cache
