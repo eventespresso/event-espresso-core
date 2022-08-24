@@ -1118,7 +1118,6 @@ class EE_Register_Addon implements EEI_Plugin_API
         if (! is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) {
             return;
         }
-
         // load PUE client
         require_once EE_THIRD_PARTY . 'pue/pue-client.php';
         $license_server = defined('PUE_UPDATES_ENDPOINT') ? PUE_UPDATES_ENDPOINT : 'https://eventespresso.com';
@@ -1127,7 +1126,6 @@ class EE_Register_Addon implements EEI_Plugin_API
             if (empty($settings['pue_options'])) {
                 continue;
             }
-
             // initiate the class and start the plugin update engine!
             new PluginUpdateEngineChecker(
                 // host file URL
