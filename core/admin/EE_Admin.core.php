@@ -661,14 +661,6 @@ final class EE_Admin implements InterminableInterface
             EVENT_ESPRESSO_VERSION,
             true
         );
-        // register cookie script for future dependencies
-        wp_register_script(
-            'jquery-cookie',
-            EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js',
-            ['jquery'],
-            '2.1',
-            true
-        );
     }
 
 

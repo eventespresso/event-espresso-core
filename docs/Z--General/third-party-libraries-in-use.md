@@ -14,12 +14,6 @@ This is just to document the third party libraries in use for EE4 and where to f
 * version in use: ?
 * last updated: EE4.1
 
-### Zurb Joyride
-
-* link: https://github.com/zurb/joyride
-* version in use: 2.1
-* last updated: EE4.1
-
 ### moment.js
 
 * link: https://github.com/moment/moment
