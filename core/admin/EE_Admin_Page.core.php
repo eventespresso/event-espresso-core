@@ -1796,14 +1796,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         );
         wp_register_script(
             'ee-moment-core',
-            EE_THIRD_PARTY_URL . 'moment/moment-with-locales.min.js',
+            EE_GLOBAL_ASSETS_URL . 'moment/moment-with-locales.min.js',
             [],
             EVENT_ESPRESSO_VERSION,
             true
         );
         wp_register_script(
             'ee-moment',
-            EE_THIRD_PARTY_URL . 'moment/moment-timezone-with-data.min.js',
+            EE_GLOBAL_ASSETS_URL . 'moment/moment-timezone-with-data.min.js',
             ['ee-moment-core'],
             EVENT_ESPRESSO_VERSION,
             true
