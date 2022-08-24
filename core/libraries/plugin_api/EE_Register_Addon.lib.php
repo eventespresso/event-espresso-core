@@ -1114,34 +1114,37 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     public static function load_pue_update()
     {
+        // PUE client existence
+        if (! is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) return;
+
         // load PUE client
         require_once EE_THIRD_PARTY . 'pue/pue-client.php';
         $license_server = defined('PUE_UPDATES_ENDPOINT') ? PUE_UPDATES_ENDPOINT : 'https://eventespresso.com';
         // cycle thru settings
         foreach (self::$_settings as $settings) {
-            if (! empty($settings['pue_options'])) {
-                // initiate the class and start the plugin update engine!
-                new PluginUpdateEngineChecker(
-                    // host file URL
-                    $license_server,
-                    // plugin slug(s)
-                    array(
-                        'premium'    => array('p' => $settings['pue_options']['pue_plugin_slug']),
-                        'prerelease' => array('beta' => $settings['pue_options']['pue_plugin_slug'] . '-pr'),
-                    ),
-                    // options
-                    array(
-                        'apikey'            => EE_Registry::instance()->NET_CFG->core->site_license_key,
-                        'lang_domain'       => 'event_espresso',
-                        'checkPeriod'       => $settings['pue_options']['checkPeriod'],
-                        'option_key'        => 'ee_site_license_key',
-                        'options_page_slug' => 'event_espresso',
-                        'plugin_basename'   => $settings['pue_options']['plugin_basename'],
-                        // if use_wp_update is TRUE it means you want FREE versions of the plugin to be updated from WP
-                        'use_wp_update'     => $settings['pue_options']['use_wp_update'],
-                    )
-                );
-            }
+            if (empty($settings['pue_options'])) continue;
+
+            // initiate the class and start the plugin update engine!
+            new PluginUpdateEngineChecker(
+                // host file URL
+                $license_server,
+                // plugin slug(s)
+                array(
+                    'premium'    => array('p' => $settings['pue_options']['pue_plugin_slug']),
+                    'prerelease' => array('beta' => $settings['pue_options']['pue_plugin_slug'] . '-pr'),
+                ),
+                // options
+                array(
+                    'apikey'            => EE_Registry::instance()->NET_CFG->core->site_license_key,
+                    'lang_domain'       => 'event_espresso',
+                    'checkPeriod'       => $settings['pue_options']['checkPeriod'],
+                    'option_key'        => 'ee_site_license_key',
+                    'options_page_slug' => 'event_espresso',
+                    'plugin_basename'   => $settings['pue_options']['plugin_basename'],
+                    // if use_wp_update is TRUE it means you want FREE versions of the plugin to be updated from WP
+                    'use_wp_update'     => $settings['pue_options']['use_wp_update'],
+                )
+            );
         }
     }
 

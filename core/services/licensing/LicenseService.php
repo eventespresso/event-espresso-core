@@ -4,7 +4,6 @@ namespace EventEspresso\core\services\licensing;
 
 use EventEspresso\core\domain\services\pue\Stats;
 use EventEspresso\core\domain\services\pue\Config;
-use PluginUpdateEngineChecker;
 
 /**
  * LicenseService
@@ -64,7 +63,7 @@ class LicenseService
                 'turn_on_notices_saved' => true,
             );
             // initiate the class and start the plugin update engine!
-            new PluginUpdateEngineChecker(
+            new \PluginUpdateEngineChecker(
                 $this->config->hostServerUrl(),
                 $this->config->pluginSlug(),
                 $options
