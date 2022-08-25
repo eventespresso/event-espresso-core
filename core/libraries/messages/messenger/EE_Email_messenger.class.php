@@ -609,7 +609,7 @@ class EE_Email_messenger extends EE_messenger
          */
         if (apply_filters('FHEE__EE_Email_messenger__apply_CSSInliner ', true, $preview)) {
             // require CssToInlineStyles library and its dependencies via composer autoloader
-            require_once EE_THIRD_PARTY . 'cssinliner/vendor/autoload.php';
+            require_once EE_LIBRARIES . 'messages/cssinliner/vendor/autoload.php';
 
             // now if this isn't a preview, let's setup the body so it has inline styles
             if (! $preview || ($preview && defined('DOING_AJAX'))) {
