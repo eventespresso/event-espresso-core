@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * EEH_Tabbed_Content
  *
@@ -94,10 +96,9 @@ class EEH_Tabbed_Content
         foreach ($nav_tabs as $slug => $tab) {
             $tab_content .= self::tab($slug, false, $tab['link_text'], $tab['url'], $tab['css_class']);
         }
-        $aria_label = esc_attr__('Secondary menu', 'event_espresso');
         return "
-        <nav class='nav-tab-wrapper wp-clearfix' aria-label='{$aria_label}'>
-            {$tab_content}
+        <nav class='nav-tab-wrapper wp-clearfix' aria-label='".esc_attr__('Secondary menu', 'event_espresso')."'>
+            ".wp_kses($tab_content, AllowedTags::getWithFormTags())."
         </nav>
         ";
     }
@@ -115,14 +116,14 @@ class EEH_Tabbed_Content
      */
     private static function tab($name, $active = false, $nice_name = false, $url = false, $css = false)
     {
-        $nice_name = $nice_name ?: esc_html(ucwords(str_replace(['_', '-'], ' ', $name)));
+        $nice_name = $nice_name ?: ucwords(str_replace(['_', '-'], ' ', $name));
         $name      = self::generateTadID($name);
         $class     = $css ? ' ' . esc_attr($css) : '';
-        $class     .= $active ? ' nav-tab-active' : '';
+        $class    .= $active ? ' nav-tab-active' : '';
         $url       = $url ?: '#' . esc_attr($name);
         return "
-        <a class='nav-tab{$class}' rel='{$name}' href='{$url}'>
-            $nice_name
+        <a class='nav-tab ".esc_attr($class)."' rel='".esc_attr($name)."' href='".esc_attr($url)."'>
+            ".esc_html($nice_name)."
         </a>
         ";
     }
@@ -152,7 +153,7 @@ class EEH_Tabbed_Content
         $class = $active ? '' : ' hidden';
         $name  = self::generateTadID($name);
         return "
-    <div class='nav-tab-content{$class}' id='{$name}'>
+    <div class='nav-tab-content ".esc_attr($class)."' id='".esc_attr($name)."'>
         {$tab_content}
         <div style='clear:both'></div>
     </div>";
@@ -224,21 +225,20 @@ class EEH_Tabbed_Content
      */
     private static function textLinkItem(array $item)
     {
-        $class = $item['class'] ? esc_attr($item['class']) : '';
-        $label = esc_html($item['label']);
-        $href  = $item['href'] ? esc_attr($item['href']) : '';
-        $title = esc_attr($item['title']);
-
+        $class = $item['class'] ? $item['class'] : '';
+        $label = $item['label'];
+        $href  = $item['href'] ? $item['href'] : '';
+        $title = $item['title'];
 
         $link = ! empty($href)
             ? "
-            <a class='ee-text-link' href='#{$href}' title='{$title}'>
-                {$label}
+            <a class='ee-text-link' href='#".esc_attr($href)."' title='".esc_attr($title)."'>
+                ".esc_html($label)."
             </a>
             "
-            : $label;
+            : esc_html($label);
         return "
-        <li class='ee-text-link-li {$class}'>{$link}</li>
+        <li class='ee-text-link-li ".esc_attr($class)."'>".wp_kses($link, AllowedTags::getAllowedTags())."</li>
         ";
     }
 

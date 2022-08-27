@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Template: includes/core/admin/registration_form/templates/question_groups_main_meta_box.template.php
@@ -185,7 +186,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                            id="question-<?php echo absint($question_ID); ?>"
                                            value="<?php echo absint($question_ID); ?>" <?php echo esc_attr($disabled); ?> <?php echo esc_attr($checked); ?>>
                                     <span class="question-text"><?php
-                                        echo trim($question->display_text())
+                                        echo wp_kses(trim($question->display_text()), AllowedTags::getAllowedTags())
                                              . (95 <= strlen(trim($question->display_text()))
                                                 ? "&hellip;"
                                                 : '');
