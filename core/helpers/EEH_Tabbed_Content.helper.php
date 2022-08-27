@@ -97,8 +97,8 @@ class EEH_Tabbed_Content
             $tab_content .= self::tab($slug, false, $tab['link_text'], $tab['url'], $tab['css_class']);
         }
         return "
-        <nav class='nav-tab-wrapper wp-clearfix' aria-label='".esc_attr__('Secondary menu', 'event_espresso')."'>
-            ".wp_kses($tab_content, AllowedTags::getWithFormTags())."
+        <nav class='nav-tab-wrapper wp-clearfix' aria-label='" . esc_attr__('Secondary menu', 'event_espresso') . "'>
+            " . wp_kses($tab_content, AllowedTags::getWithFormTags()) . "
         </nav>
         ";
     }
@@ -122,8 +122,8 @@ class EEH_Tabbed_Content
         $class    .= $active ? ' nav-tab-active' : '';
         $url       = $url ?: '#' . esc_attr($name);
         return "
-        <a class='nav-tab ".esc_attr($class)."' rel='".esc_attr($name)."' href='".esc_attr($url)."'>
-            ".esc_html($nice_name)."
+        <a class='nav-tab " . esc_attr($class) . "' rel='" . esc_attr($name) . "' href='" . esc_attr($url) . "'>
+            " . esc_html($nice_name) . "
         </a>
         ";
     }
@@ -153,7 +153,7 @@ class EEH_Tabbed_Content
         $class = $active ? '' : ' hidden';
         $name  = self::generateTadID($name);
         return "
-    <div class='nav-tab-content ".esc_attr($class)."' id='".esc_attr($name)."'>
+    <div class='nav-tab-content " . esc_attr($class) . "' id='" . esc_attr($name) . "'>
         {$tab_content}
         <div style='clear:both'></div>
     </div>";
@@ -232,13 +232,13 @@ class EEH_Tabbed_Content
 
         $link = ! empty($href)
             ? "
-            <a class='ee-text-link' href='#".esc_attr($href)."' title='".esc_attr($title)."'>
-                ".esc_html($label)."
+            <a class='ee-text-link' href='#" . esc_attr($href) . "' title='" . esc_attr($title) . "'>
+                " . esc_html($label) . "
             </a>
             "
             : esc_html($label);
         return "
-        <li class='ee-text-link-li ".esc_attr($class)."'>".wp_kses($link, AllowedTags::getAllowedTags())."</li>
+        <li class='ee-text-link-li " . esc_attr($class) . "'>" . wp_kses($link, AllowedTags::getAllowedTags()) . "</li>
         ";
     }
 

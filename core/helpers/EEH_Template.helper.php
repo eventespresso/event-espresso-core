@@ -569,8 +569,7 @@ class EEH_Template
         // sanitize & escape
         $id    = sanitize_title_with_dashes($label);
         $label = esc_html($label);
-        return "<a id='".esc_attr($id)."' href='".esc_url_raw($url)."' class='".esc_attr($class)."' title='".esc_attr
-        ($title)."'>".wp_kses($icon_html, AllowedTags::getAllowedTags()).esc_html($label)."</a>";
+        return "<a id='" . esc_attr($id) . "' href='" . esc_url_raw($url) . "' class='" . esc_attr($class) . "' title='" . esc_attr($title) . "'>" . wp_kses($icon_html, AllowedTags::getAllowedTags()) . esc_html($label) . "</a>";
     }
 
 

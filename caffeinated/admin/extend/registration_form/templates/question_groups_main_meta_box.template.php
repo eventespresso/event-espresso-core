@@ -1,10 +1,11 @@
 <?php
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Template: includes/core/admin/registration_form/templates/question_groups_main_meta_box.template.php
  * For displaying a question group for editing/creating within the EE Admin page
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /* @var int $QSG_ID the main question group's ID */
 assert($QSG_ID);

@@ -325,10 +325,10 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $id    = "{$class}-{$this->EVT_ID}-{$this->row}";
         $checked = $this->total_tickets === 1 ? ' checked' : '';
 
-        $html = "<label class='ee-a11y-screen-reader-text' for='".esc_attr($id)."'>"
-                .esc_html__('Select this ticket', 'event_espresso')."</label>";
-        $html .= "<input type='radio' {$checked} name='".esc_attr($name)."' id='".esc_attr($id)."'
-        class='".esc_attr($class)."' value='".esc_attr($TKT)."-1' title='' />";
+        $html = "<label class='ee-a11y-screen-reader-text' for='" . esc_attr($id) . "'>"
+                . esc_html__('Select this ticket', 'event_espresso') . "</label>";
+        $html .= "<input type='radio' {$checked} name='" . esc_attr($name) . "' id='" . esc_attr($id) . "'
+        class='" . esc_attr($class) . "' value='" . esc_attr($TKT) . "-1' title='' />";
         return $html;
     }
 
@@ -351,15 +351,15 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $class = 'ticket-selector-tbl-qty-slct';
         $id = "{$class}-{$this->EVT_ID}-{$this->row}";
 
-        $html = "<label class='ee-a11y-screen-reader-text' for='".esc_attr($id)."'>".esc_html($label)."</label>";
-        $html .= "<select name='tkt-slctr-qty-".esc_attr($this->EVT_ID)."[".esc_attr($TKT)."]' id='".esc_attr($id)."' class='".esc_attr($class)."'>";
+        $html = "<label class='ee-a11y-screen-reader-text' for='" . esc_attr($id) . "'>" . esc_html($label) . "</label>";
+        $html .= "<select name='tkt-slctr-qty-" . esc_attr($this->EVT_ID) . "[" . esc_attr($TKT) . "]' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "'>";
         // this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
         if ($this->min !== 0 && ! $this->ticket->required()) {
             $html .= "<option value='0'>&nbsp;0&nbsp;</option>";
         }
         // offer ticket quantities from the min to the max
         for ($i = $this->min; $i <= $this->max; $i++) {
-            $html .= "<option value='".esc_attr($i)."'>&nbsp;".esc_html($i)."&nbsp;</option>";
+            $html .= "<option value='" . esc_attr($i) . "'>&nbsp;" . esc_html($i) . "&nbsp;</option>";
         }
         $html .= "</select>";
         return $html;
@@ -380,9 +380,9 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $TKT = $this->ticket->ID();
         // depending on group reg we need to change the format for qty
         if ($this->hidden_input_qty) {
-            $html .= "<input type='hidden' name='tkt-slctr-qty-".esc_attr($EVT)."[]' value='0' />";
+            $html .= "<input type='hidden' name='tkt-slctr-qty-" . esc_attr($EVT) . "[]' value='0' />";
         }
-        $html .= "<input type='hidden' name='tkt-slctr-ticket-id-".esc_attr($EVT)."[]' value='".esc_attr($TKT)."' />";
+        $html .= "<input type='hidden' name='tkt-slctr-ticket-id-" . esc_attr($EVT) . "[]' value='" . esc_attr($TKT) . "' />";
         return $html;
     }
 }

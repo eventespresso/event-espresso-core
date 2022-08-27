@@ -344,8 +344,8 @@ class EEH_Form_Fields
     private static function adminHidden($class, $id, $name, $value)
     {
         return "
-        <input name='".esc_attr($name)."' type='hidden' id='".esc_attr($id)."' class='".esc_attr($class)."' 
-        value='".esc_attr($value)."' />";
+        <input name='" . esc_attr($name) . "' type='hidden' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' 
+        value='" . esc_attr($value) . "' />";
     }
 
 
@@ -359,7 +359,7 @@ class EEH_Form_Fields
     private static function adminLabel($id, $label, $required)
     {
         $required = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? " <span>*</span>" : '';
-        return "<label for='".esc_attr($id)."'>".esc_html($label).$required."</label>";
+        return "<label for='" . esc_attr($id) . "'>" . esc_html($label) . $required . "</label>";
     }
 
 
@@ -381,8 +381,7 @@ class EEH_Form_Fields
         $checked   = ! empty($default) && $default == $value ? 'checked ' : '';
         $required  = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
         $input     = "
-        <input name='".esc_attr($name)."[]' type='".esc_attr($type)."' id='".esc_attr($id)."' class='".esc_attr
-            ($class)."' value='".esc_attr($value)."' {$checked} {$required} tabindex='".absint($tab_index)."'/>";
+        <input name='" . esc_attr($name) . "[]' type='" . esc_attr($type) . "' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' value='" . esc_attr($value) . "' {$checked} {$required} tabindex='" . absint($tab_index) . "'/>";
         if ($label === '') {
             return $input;
         }
@@ -412,13 +411,13 @@ class EEH_Form_Fields
         foreach ($options as $value => $label) {
             $selected        = ! empty($default) && $default == $value ? 'selected' : '';
             $label           = wp_strip_all_tags($label);
-            $options_array[] = "<option value='".esc_attr($value)."' {$selected}>{$label}</option>";
+            $options_array[] = "<option value='" . esc_attr($value) . "' {$selected}>{$label}</option>";
         }
         $options_html = implode($options_array, "\n");
         $required     = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
         return "
-        <select name='".esc_attr($name)."' id='".esc_attr($id)."' class='".esc_attr($class)."' {$required} 
-        tabindex='".absint($tab_index)."'>
+        <select name='" . esc_attr($name) . "' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' {$required} 
+        tabindex='" . absint($tab_index) . "'>
             {$options_html}
         </select>";
     }
@@ -438,8 +437,8 @@ class EEH_Form_Fields
     {
         $required  = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
         return "
-        <input name='".esc_attr($name)."' type='text' id='".esc_attr($id)."' class='".esc_attr($class)."' 
-        value='".esc_attr($value)."' {$required} tabindex='".absint($tab_index)."'/>";
+        <input name='" . esc_attr($name) . "' type='text' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' 
+        value='" . esc_attr($value) . "' {$required} tabindex='" . absint($tab_index) . "'/>";
     }
 
 
@@ -459,8 +458,7 @@ class EEH_Form_Fields
     {
         $required  = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
         return "
-        <textarea name='".esc_attr($name)."' id='".esc_attr($id)."' class='".esc_attr($class)."' rows='".absint
-            ($rows)."' cols='".absint($cols)."' {$required} tabindex='".absint($tab_index)."'>".esc_textarea($value)."</textarea>";
+        <textarea name='" . esc_attr($name) . "' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' rows='" . absint($rows) . "' cols='" . absint($cols) . "' {$required} tabindex='" . absint($tab_index) . "'>" . esc_textarea($value) . "</textarea>";
     }
 
 

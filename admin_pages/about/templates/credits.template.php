@@ -141,5 +141,5 @@ function esp_gravatar_image($email, $name)
 {
     $email = md5($email);
     $url = "https://0.gravatar.com/avatar/{$email}?s=60";
-    echo "<img src='".esc_url_raw($url)."' class='gravatar' alt='".esc_attr($name)."'/>";
+    echo "<img src='" . esc_url_raw($url) . "' class='gravatar' alt='" . esc_attr($name) . "'/>";
 }

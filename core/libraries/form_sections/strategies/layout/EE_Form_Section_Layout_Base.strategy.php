@@ -237,7 +237,7 @@ abstract class EE_Form_Section_Layout_Base
         if ($input->get_validation_errors()) {
             return "<label id='"
                    . esc_attr($input->html_id())
-                   . "-error' class='error' for='".esc_attr($input->html_name())."'>"
+                   . "-error' class='error' for='" . esc_attr($input->html_name()) . "'>"
                    . wp_kses($input->get_validation_error_string(), AllowedTags::getAllowedTags())
                    . '</label>';
         }
