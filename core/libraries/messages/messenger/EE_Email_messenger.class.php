@@ -609,8 +609,7 @@ class EE_Email_messenger extends EE_messenger
          */
         if (apply_filters('FHEE__EE_Email_messenger__apply_CSSInliner ', true, $preview)) {
             // require CssToInlineStyles library and its dependencies via composer autoloader
-            require_once EE_LIBRARIES . 'messages/cssinliner/vendor/autoload.php';
-
+            require_once EE_VENDOR . 'autoload.php';
             // now if this isn't a preview, let's setup the body so it has inline styles
             if (! $preview || ($preview && defined('DOING_AJAX'))) {
                 $style = file_get_contents(
@@ -623,11 +622,8 @@ class EE_Email_messenger extends EE_messenger
                     ),
                     true
                 );
-                $CSS   = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles($body, $style);
-                // for some reason the library has a bracket and new line at the beginning.  This takes care of that.
-                $body  = ltrim($CSS->convert(true), ">\n");
-                // see https://events.codebasehq.com/projects/event-espresso/tickets/8609
-                $body  = ltrim($body, "<?");
+                $CSS  = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles();
+                $body = $CSS->convert($body, $style);
             }
         }
         return $body;
