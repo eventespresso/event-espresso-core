@@ -287,7 +287,7 @@ class Invoice
         $invoice_name .= esc_html__(' for ', 'event_espresso') . $template_args['name'];
         $invoice_name = str_replace(' ', '_', $invoice_name);
         // Create the PDF
-        if ($request->requestParamIsSet('html')) {
+        if ($request->requestParamIsSet('html') || ! is_readable(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php')) {
             echo wp_kses($content, AllowedTags::getWithFormTags());
         } else {
             // only load dompdf if nobody else has yet...
