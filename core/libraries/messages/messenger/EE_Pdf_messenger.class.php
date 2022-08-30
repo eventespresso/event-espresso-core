@@ -319,7 +319,14 @@ class EE_Pdf_messenger extends EE_messenger
     protected function _do_pdf($content = '')
     {
         $invoice_name = $this->_subject;
-
+        // display error if dompdf is not available
+        if (! is_readable(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php')) {
+            wp_die(esc_html__(
+                'DomPDF package appears to be missing, so cannot generate the PDF file.',
+                'event_espresso'
+            ));
+            exit;
+        }
         // only load dompdf if nobody else has yet...
         if (! class_exists('Dompdf\Dompdf')) {
             require_once(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php');
