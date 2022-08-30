@@ -41,7 +41,8 @@
 		"php": ">=7.1",
 		"ext-json": "*",
 		"ext-mbstring": "*",
-		"ext-openssl": "*"
+		"ext-openssl": "*",
+		"tijsverkoyen/css-to-inline-styles": "^2.2"
 	},
 	"config": {
 		"allow-plugins": {

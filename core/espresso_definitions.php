@@ -32,6 +32,7 @@ define('EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes/');
 define('EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets/');
 define('EE_PAYMENT_METHODS', EE_PLUGIN_DIR_PATH . 'payment_methods/');
 define('EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated/');
+define('EE_VENDOR', EE_PLUGIN_DIR_PATH . 'vendor/');
 // core system paths
 define('EE_ADMIN', EE_CORE . 'admin/');
 define('EE_CPTS', EE_CORE . 'CPTs/');
