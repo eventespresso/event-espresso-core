@@ -114,16 +114,20 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes
      * This method takes the incoming data and figures out from it what the message type is and evt_id/grp_id and uses
      * that to generate the html for a button in the template.
      *
-     * @since 4.5.0
-     *
      * @param EE_Messages_Addressee $recipient
      * @param string                $sending_messenger 'html' or 'pdf'
      *
      * @return string                Generated html
+     * @throws EE_Error
+     * @since 4.5.0
+     *
      */
     private function _get_button(EE_Messages_Addressee $recipient, $sending_messenger)
     {
-        $download_text = $sending_messenger == 'pdf'
+        if ($sending_messenger === 'pdf' && ! is_readable(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php')) {
+            return '';
+        }
+        $download_text = $sending_messenger === 'pdf'
             ? esc_html__('Download PDF', 'event_espresso')
             : esc_html__(
                 'Show HTML',

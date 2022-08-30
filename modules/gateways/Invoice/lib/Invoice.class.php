@@ -287,26 +287,33 @@ class Invoice
         $invoice_name .= esc_html__(' for ', 'event_espresso') . $template_args['name'];
         $invoice_name = str_replace(' ', '_', $invoice_name);
         // Create the PDF
-        if ($request->requestParamIsSet('html') || ! is_readable(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php')) {
+        if ($request->requestParamIsSet('html')) {
             echo wp_kses($content, AllowedTags::getWithFormTags());
-        } else {
-            // only load dompdf if nobody else has yet...
-            if (! class_exists('Dompdf\Dompdf')) {
-                require_once(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php');
-                Dompdf\Autoloader::register();
-            }
-            $options = new Dompdf\Options();
-            $options->set('isRemoteEnabled', true);
-            $options->set('isJavascriptEnabled', false);
-            if (defined('DOMPDF_FONT_DIR')) {
-                $options->setFontDir(DOMPDF_FONT_DIR);
-                $options->setFontCache(DOMPDF_FONT_DIR);
-            }
-            $dompdf = new Dompdf\Dompdf($options);
-            $dompdf->loadHtml($content);
-            $dompdf->render();
-            $dompdf->stream($invoice_name . ".pdf", ['Attachment' => $download]);
+            exit(0);
         }
+        if (! is_readable(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php')) {
+            wp_die(esc_html__(
+                'DomPDF package appears to be missing, so cannot generate the PDF file.',
+                'event_espresso'
+            ));
+            exit(0);
+        }
+        // only load dompdf if nobody else has yet...
+        if (! class_exists('Dompdf\Dompdf')) {
+            require_once(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php');
+            Dompdf\Autoloader::register();
+        }
+        $options = new Dompdf\Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isJavascriptEnabled', false);
+        if (defined('DOMPDF_FONT_DIR')) {
+            $options->setFontDir(DOMPDF_FONT_DIR);
+            $options->setFontCache(DOMPDF_FONT_DIR);
+        }
+        $dompdf = new Dompdf\Dompdf($options);
+        $dompdf->loadHtml($content);
+        $dompdf->render();
+        $dompdf->stream($invoice_name . ".pdf", ['Attachment' => $download]);
         exit(0);
     }
 
