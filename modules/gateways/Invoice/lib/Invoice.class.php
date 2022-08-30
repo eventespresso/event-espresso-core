@@ -291,29 +291,20 @@ class Invoice
             echo wp_kses($content, AllowedTags::getWithFormTags());
             exit(0);
         }
-        if (! is_readable(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php')) {
-            wp_die(esc_html__(
-                'DomPDF package appears to be missing, so cannot generate the PDF file.',
-                'event_espresso'
-            ));
+        $pdf_messanger = new EE_Pdf_messenger();
+        // dompdf options
+        $options = $pdf_messanger->get_dompdf_options();
+        if ($options instanceof Dompdf\Options) {
+            $dompdf = new Dompdf\Dompdf($options);
+            $dompdf->loadHtml($content);
+            $dompdf->render();
+            $dompdf->stream($invoice_name . ".pdf", ['Attachment' => $download]);
             exit(0);
         }
-        // only load dompdf if nobody else has yet...
-        if (! class_exists('Dompdf\Dompdf')) {
-            require_once(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php');
-            Dompdf\Autoloader::register();
-        }
-        $options = new Dompdf\Options();
-        $options->set('isRemoteEnabled', true);
-        $options->set('isJavascriptEnabled', false);
-        if (defined('DOMPDF_FONT_DIR')) {
-            $options->setFontDir(DOMPDF_FONT_DIR);
-            $options->setFontCache(DOMPDF_FONT_DIR);
-        }
-        $dompdf = new Dompdf\Dompdf($options);
-        $dompdf->loadHtml($content);
-        $dompdf->render();
-        $dompdf->stream($invoice_name . ".pdf", ['Attachment' => $download]);
+        wp_die(esc_html__(
+            'DomPDF package appears to be missing, so cannot generate the PDF file.',
+            'event_espresso'
+        ));
         exit(0);
     }
 
