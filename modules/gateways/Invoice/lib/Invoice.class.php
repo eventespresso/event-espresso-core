@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\services\adapters\PdfAdapter;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -291,14 +292,14 @@ class Invoice
             echo wp_kses($content, AllowedTags::getWithFormTags());
             exit(0);
         }
-        $pdf_messanger = new EE_Pdf_messenger();
+        $pdf_adapter = new PdfAdapter();
         // dompdf options
-        $options = $pdf_messanger->get_dompdf_options();
+        $options = $pdf_adapter->get_options();
         if ($options instanceof Dompdf\Options) {
-            $dompdf = new Dompdf\Dompdf($options);
-            $dompdf->loadHtml($content);
-            $dompdf->render();
-            $dompdf->stream($invoice_name . ".pdf", ['Attachment' => $download]);
+            $pdf_adapter
+                ->set_options($options)
+                ->set_content($content)
+                ->generate($invoice_name . ".pdf", (bool) $download);
             exit(0);
         }
         wp_die(esc_html__(

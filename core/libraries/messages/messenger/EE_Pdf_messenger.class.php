@@ -1,6 +1,7 @@
 <?php
 
 use Dompdf\Options;
+use EventEspresso\core\services\adapters\PdfAdapter;
 
 /**
  *
@@ -34,8 +35,14 @@ class EE_Pdf_messenger extends EE_messenger
      */
     protected $_subject;
 
+    /**
+     * @var PdfAdapter
+     */
+    protected PdfAdapter $pdf_adapter;
+
 
     /**
+     * EE_Pdf_messenger constructor.
      */
     public function __construct()
     {
@@ -47,6 +54,7 @@ class EE_Pdf_messenger extends EE_messenger
             'plural' => esc_html__('PDFs', 'event_espresso')
         );
         $this->activate_on_install = true;
+        $this->pdf_adapter = new PdfAdapter();
 
         parent::__construct();
     }
@@ -320,16 +328,16 @@ class EE_Pdf_messenger extends EE_messenger
     protected function _do_pdf($content = '')
     {
         // dompdf options
-        $options = $this->get_dompdf_options();
+        $options = $this->pdf_adapter->get_options();
         if ($options instanceof Options) {
-            $dompdf = new Dompdf\Dompdf($options);
             // Remove all spaces between HTML tags
             $content = preg_replace('/>\s+</', '><', $content);
             if ($content) {
-                $dompdf->loadHtml($content);
-                $dompdf->render();
-                // forcing the browser to open a download dialog.
-                $dompdf->stream($this->_subject . ".pdf", array('Attachment' => true));
+                $this->pdf_adapter
+                    ->set_options($options)
+                    ->set_content($content)
+                    // forcing the browser to open a download dialog.
+                    ->generate($this->_subject . ".pdf", true);
                 exit;
             }
         }
@@ -353,33 +361,5 @@ class EE_Pdf_messenger extends EE_messenger
 
     protected function _set_admin_settings_fields()
     {
-    }
-
-
-    /**
-     * @return Options|null
-     */
-    public function get_dompdf_options()
-    {
-        // only load dompdf if nobody else has yet...
-        if (! class_exists('Dompdf\Autoloader') and is_readable(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php')) {
-            require_once(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php');
-            Dompdf\Autoloader::register();
-        }
-        if (! class_exists('Dompdf\Options')) {
-            return null;
-        }
-        $options = new Dompdf\Options();
-        $options->set('isRemoteEnabled', true);
-        $options->set('isJavascriptEnabled', false);
-        if (defined('DOMPDF_FONT_DIR')) {
-            $options->setFontDir(DOMPDF_FONT_DIR);
-            $options->setFontCache(DOMPDF_FONT_DIR);
-        }
-        // Allow changing the paper size.
-        if (defined('DOMPDF_DEFAULT_PAPER_SIZE')) {
-            $options->set('defaultPaperSize', DOMPDF_DEFAULT_PAPER_SIZE);
-        }
-        return $options;
     }
 }
