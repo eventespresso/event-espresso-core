@@ -65,7 +65,7 @@
 		"querystringify": "^2.2.0",
 		"react-modal": "^3.15.1",
 		"react-select": "^5.3.2",
-		"rememo": "^4.0.0",
+		"rememo": "^4.0.1",
 		"warning": "^4.0.3"
 	},
 	"devDependencies": {
