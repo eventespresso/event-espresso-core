@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\adapters;
 
 use Dompdf\Autoloader;
@@ -36,7 +37,7 @@ class PdfAdapter
     /**
      * @return Options|null
      */
-    public function get_options()
+    public function getOptions()
     {
         // only load dompdf if nobody else has yet...
         if (! class_exists('Dompdf\Autoloader') and is_readable(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php')) {
@@ -65,7 +66,7 @@ class PdfAdapter
      * @param Options $options
      * @return $this
      */
-    public function set_options(Options $options): self
+    public function setOptions(Options $options): self
     {
         $this->options = $options;
         return $this;
@@ -76,7 +77,7 @@ class PdfAdapter
      * @param string $content
      * @return $this
      */
-    public function set_content(string $content): self
+    public function setContent(string $content): self
     {
         $this->content = $content;
         return $this;
