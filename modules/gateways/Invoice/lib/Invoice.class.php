@@ -294,11 +294,11 @@ class Invoice
         }
         $pdf_adapter = new PdfAdapter();
         // dompdf options
-        $options = $pdf_adapter->get_options();
+        $options = $pdf_adapter->getOptions();
         if ($options instanceof Dompdf\Options) {
             $pdf_adapter
-                ->set_options($options)
-                ->set_content($content)
+                ->setOptions($options)
+                ->setContent($content)
                 ->generate($invoice_name . ".pdf", (bool) $download);
             exit(0);
         }

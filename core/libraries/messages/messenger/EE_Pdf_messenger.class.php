@@ -38,7 +38,7 @@ class EE_Pdf_messenger extends EE_messenger
     /**
      * @var PdfAdapter
      */
-    protected PdfAdapter $pdf_adapter;
+    protected $pdf_adapter;
 
 
     /**
@@ -328,14 +328,14 @@ class EE_Pdf_messenger extends EE_messenger
     protected function _do_pdf($content = '')
     {
         // dompdf options
-        $options = $this->pdf_adapter->get_options();
+        $options = $this->pdf_adapter->getOptions();
         if ($options instanceof Options) {
             // Remove all spaces between HTML tags
             $content = preg_replace('/>\s+</', '><', $content);
             if ($content) {
                 $this->pdf_adapter
-                    ->set_options($options)
-                    ->set_content($content)
+                    ->setOptions($options)
+                    ->setContent($content)
                     // forcing the browser to open a download dialog.
                     ->generate($this->_subject . ".pdf", true);
                 exit;
