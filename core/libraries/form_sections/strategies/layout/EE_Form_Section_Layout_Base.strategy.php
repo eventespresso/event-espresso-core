@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * Abstract parent class for all form layouts. Mostly just contains a reference to the form
  * we are to lay out.
@@ -233,10 +235,10 @@ abstract class EE_Form_Section_Layout_Base
     public function display_errors($input)
     {
         if ($input->get_validation_errors()) {
-            return "<label  id='"
-                   . $input->html_id()
-                   . "-error' class='error' for='{$input->html_name()}'>"
-                   . $input->get_validation_error_string()
+            return "<label id='"
+                   . esc_attr($input->html_id())
+                   . "-error' class='error' for='" . esc_attr($input->html_name()) . "'>"
+                   . wp_kses($input->get_validation_error_string(), AllowedTags::getAllowedTags())
                    . '</label>';
         }
         return '';

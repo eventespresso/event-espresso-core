@@ -343,11 +343,9 @@ class EEH_Form_Fields
      */
     private static function adminHidden($class, $id, $name, $value)
     {
-        $id    = esc_attr($id);
-        $name  = esc_attr($name);
-        $class = esc_attr($class);
         return "
-        <input name='{$name}' type='hidden' id='{$id}' class='{$class}' value='{$value}' />";
+        <input name='" . esc_attr($name) . "' type='hidden' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' 
+        value='" . esc_attr($value) . "' />";
     }
 
 
@@ -360,10 +358,8 @@ class EEH_Form_Fields
      */
     private static function adminLabel($id, $label, $required)
     {
-        $id       = esc_attr($id);
-        $label    = esc_html($label);
         $required = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? " <span>*</span>" : '';
-        return "<label for='{$id}'>{$label}{$required}</label>";
+        return "<label for='" . esc_attr($id) . "'>" . esc_html($label) . $required . "</label>";
     }
 
 
@@ -382,14 +378,10 @@ class EEH_Form_Fields
      */
     private static function adminMulti($default, $class, $id, $name, $required, $tab_index, $type, $value, $label = '')
     {
-        $id        = esc_attr($id);
-        $name      = esc_attr($name);
-        $class     = esc_attr($class);
-        $tab_index = absint($tab_index);
         $checked   = ! empty($default) && $default == $value ? 'checked ' : '';
         $required  = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
         $input     = "
-        <input name='{$name}[]' type='{$type}' id='{$id}' class='{$class}' value='{$value}' {$checked} {$required} tabindex='{$tab_index}'/>";
+        <input name='" . esc_attr($name) . "[]' type='" . esc_attr($type) . "' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' value='" . esc_attr($value) . "' {$checked} {$required} tabindex='" . absint($tab_index) . "'/>";
         if ($label === '') {
             return $input;
         }
@@ -418,18 +410,14 @@ class EEH_Form_Fields
         $options_array = [];
         foreach ($options as $value => $label) {
             $selected        = ! empty($default) && $default == $value ? 'selected' : '';
-            $value           = esc_attr($value);
             $label           = wp_strip_all_tags($label);
-            $options_array[] = "<option value='{$value}' {$selected}>{$label}</option>";
+            $options_array[] = "<option value='" . esc_attr($value) . "' {$selected}>{$label}</option>";
         }
         $options_html = implode($options_array, "\n");
-        $id           = esc_attr($id);
-        $name         = esc_attr($name);
-        $class        = esc_attr($class);
-        $tab_index    = absint($tab_index);
         $required     = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
         return "
-        <select name='{$name}' id='{$id}' class='{$class}' {$required} tabindex='{$tab_index}'>
+        <select name='" . esc_attr($name) . "' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' {$required} 
+        tabindex='" . absint($tab_index) . "'>
             {$options_html}
         </select>";
     }
@@ -447,13 +435,10 @@ class EEH_Form_Fields
      */
     private static function adminText($class, $id, $name, $required, $tab_index, $value)
     {
-        $id        = esc_attr($id);
-        $name      = esc_attr($name);
-        $class     = esc_attr($class);
-        $tab_index = absint($tab_index);
         $required  = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
         return "
-        <input name='{$name}' type='text' id='{$id}' class='{$class}' value='{$value}' {$required} tabindex='{$tab_index}'/>";
+        <input name='" . esc_attr($name) . "' type='text' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' 
+        value='" . esc_attr($value) . "' {$required} tabindex='" . absint($tab_index) . "'/>";
     }
 
 
@@ -471,18 +456,9 @@ class EEH_Form_Fields
      */
     private static function adminTextarea($class, $cols, $id, $name, $required, $rows, $tab_index, $value)
     {
-        $id        = esc_attr($id);
-        $name      = esc_attr($name);
-        $class     = esc_attr($class);
-        $cols      = absint($cols);
-        $rows      = absint($rows);
-        $value     = esc_textarea($value);
-        $tab_index = absint($tab_index);
         $required  = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
         return "
-        <textarea name='{$name}' id='{$id}' class='{$class}' rows='{$rows}' cols='{$cols}' {$required} tabindex='{$tab_index}'>
-            {$value}
-        </textarea>";
+        <textarea name='" . esc_attr($name) . "' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' rows='" . absint($rows) . "' cols='" . absint($cols) . "' {$required} tabindex='" . absint($tab_index) . "'>" . esc_textarea($value) . "</textarea>";
     }
 
 

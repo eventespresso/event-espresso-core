@@ -5,6 +5,8 @@
  * For displaying a question group for editing/creating within the EE Admin page
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /* @var int $QSG_ID the main question group's ID */
 assert($QSG_ID);
 /* @var EE_Question_Group $question_group the main question group we're displaying */
@@ -185,7 +187,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                            id="question-<?php echo absint($question_ID); ?>"
                                            value="<?php echo absint($question_ID); ?>" <?php echo esc_attr($disabled); ?> <?php echo esc_attr($checked); ?>>
                                     <span class="question-text"><?php
-                                        echo trim($question->display_text())
+                                        echo wp_kses(trim($question->display_text()), AllowedTags::getAllowedTags())
                                              . (95 <= strlen(trim($question->display_text()))
                                                 ? "&hellip;"
                                                 : '');

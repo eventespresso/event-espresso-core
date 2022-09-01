@@ -40,7 +40,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     </div>
     <div class="messenger-settings<?php echo esc_attr($show_hide_edit_form); ?>">
         <span id="has_form_class" class="hidden">
-            <?php echo trim($show_hide_edit_form); // already escaped ?>
+            <?php echo wp_kses(trim($show_hide_edit_form), AllowedTags::getWithFormTags()); ?>
         </span>
         <form method="POST" action="" class="mt-settings-form">
             <?php echo wp_kses($template_form_fields, AllowedTags::getWithFormTags()); ?>

@@ -2533,7 +2533,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function _display_espresso_notices()
     {
         $notices = $this->_get_transient(true);
-        echo stripslashes($notices);
+        echo wp_kses(stripslashes($notices), AllowedTags::getWithFormTags());
     }
 
 

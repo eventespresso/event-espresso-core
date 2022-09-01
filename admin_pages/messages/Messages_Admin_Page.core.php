@@ -2259,7 +2259,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         EE_Error::add_attention(
             sprintf(
                 $message,
-                "<a href='{$events_url}'>",
+                "<a href='" . esc_url_raw($events_url) . "'>",
                 '</a>'
             )
         );
