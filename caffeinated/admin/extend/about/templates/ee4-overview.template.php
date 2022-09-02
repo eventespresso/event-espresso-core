@@ -29,7 +29,7 @@
 </div>
 <div class="feature-section has-3-columns is-fullwidth three-col">
     <div class="column col">
-        <img src="<?php echo EEH_Template::getScreenshotUrl('publish_meta_box'); ?>">
+        <img src="<?php echo esc_url_raw(EEH_Template::getScreenshotUrl('publish_meta_box')); ?>">
         <h3><?php esc_html_e('Optimized aesthetic', 'event_espresso'); ?></h3>
         <p>
             <?php
@@ -40,7 +40,7 @@
         </p>
     </div>
     <div class="column col">
-        <img src="<?php echo EEH_Template::getScreenshotUrl('registrations-overview'); ?>">
+        <img src="<?php echo esc_url_raw(EEH_Template::getScreenshotUrl('registrations-overview')); ?>">
         <h3><?php esc_html_e('Integrated management', 'event_espresso'); ?></h3>
         <p>
             <?php esc_html_e(
@@ -50,7 +50,7 @@
         </p>
     </div>
     <div class="column col last-feature">
-        <img src="<?php echo EEH_Template::getScreenshotUrl('refined-bookkeeping'); ?>">
+        <img src="<?php echo esc_url_raw(EEH_Template::getScreenshotUrl('refined-bookkeeping')); ?>">
         <h3><?php esc_html_e('Easy bookkeeping', 'event_espresso'); ?></h3>
         <p>
             <?php esc_html_e(
@@ -81,7 +81,7 @@
         </p>
     </div>
     <div class="column col last-feature about-colors-img">
-        <img src="<?php echo EEH_Template::getScreenshotUrl('registration-page-large'); ?>">
+        <img src="<?php echo esc_url_raw(EEH_Template::getScreenshotUrl('registration-page-large')); ?>">
     </div>
 </div>
 
@@ -109,7 +109,7 @@
         </p>
     </div>
     <div class="column col last-feature about-themes-img">
-        <img src="<?php echo EEH_Template::getScreenshotUrl('event-management'); ?>">
+        <img src="<?php echo esc_url_raw(EEH_Template::getScreenshotUrl('event-management')); ?>">
     </div>
 </div>
 
@@ -190,7 +190,7 @@
         </p>
     </div>
     <div class="column col">
-        <img src="<?php echo EEH_Template::getScreenshotUrl('single-event-page'); ?>">
+        <img src="<?php echo esc_url_raw(EEH_Template::getScreenshotUrl('single-event-page')); ?>">
     </div>
 </div>
 
@@ -208,7 +208,7 @@
             ); ?></p>
         <p>
             <img class="about-overview-img"
-                 src="<?php echo EEH_Template::getScreenshotUrl('multiple-themes'); ?>"
+                 src="<?php echo esc_url_raw(EEH_Template::getScreenshotUrl('multiple-themes')); ?>"
             />
         </p>
     </div>

@@ -15,7 +15,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     <h2 class="ee-admin-settings-hdr">
         <?php
         echo esc_html__('Countries and States/Provinces', 'event_espresso');
-        echo EEH_Template::get_help_tab_link('country_select_info'); // already escaped
+        echo wp_kses(EEH_Template::get_help_tab_link('country_select_info'), AllowedTags::getAllowedTags());
         ?>
     </h2>
     <table class="form-table">
@@ -45,7 +45,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <h2 class="ee-admin-settings-hdr">
             <?php
             echo esc_html__('Country Details', 'event_espresso');
-            echo EEH_Template::get_help_tab_link('country_details_info'); // already escaped
+            echo wp_kses(EEH_Template::get_help_tab_link('country_details_info'), AllowedTags::getAllowedTags());
             ?>
         </h2>
         <div id="country-details-dv"><?php echo wp_kses($country_details_settings, AllowedTags::getAllowedTags()); ?></div>
@@ -55,7 +55,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <h2 class="ee-admin-settings-hdr">
             <?php
             echo esc_html__('States/Provinces', 'event_espresso');
-            echo EEH_Template::get_help_tab_link('country_states_info'); // already escaped
+            echo wp_kses(EEH_Template::get_help_tab_link('country_states_info'), AllowedTags::getAllowedTags());
             ?>
         </h2>
         <div id="country-states-dv"><?php echo wp_kses($country_states_settings, AllowedTags::getAllowedTags()); ?></div>

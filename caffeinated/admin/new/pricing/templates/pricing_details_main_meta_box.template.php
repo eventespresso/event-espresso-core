@@ -4,10 +4,13 @@
         <tbody>
         <tr valign="top">
             <th><label for="PRT_ID"><?php
+
+                    use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
                     esc_html_e(
                         'Type',
                         'event_espresso'
-                    ); ?></label> <?php echo EEH_Template::get_help_tab_link('type_field_info'); ?></th>
+                    ); ?></label> <?php echo wp_kses(EEH_Template::get_help_tab_link('type_field_info'), AllowedTags::getAllowedTags()); ?></th>
             <td>
                 <?php if ($price->type_obj() && $price->type_obj()->base_type() === 1) : ?>
                     <input type="hidden" name="PRT_ID" id="PRT_ID" value="<?php echo esc_attr($price->type()); ?>"/>
@@ -37,7 +40,7 @@
                     esc_html_e(
                         'Name',
                         'event_espresso'
-                    ); ?></label> <?php echo EEH_Template::get_help_tab_link('name_field_info'); ?></th>
+                    ); ?></label> <?php echo wp_kses(EEH_Template::get_help_tab_link('name_field_info'), AllowedTags::getAllowedTags()); ?></th>
             <td>
                 <input class="regular-text" type="text" id="PRC_name" name="PRC_name"
                        value="<?php $price->f('PRC_name'); ?>"/>
@@ -48,7 +51,7 @@
                     esc_html_e(
                         'Description',
                         'event_espresso'
-                    ); ?></label> <?php echo EEH_Template::get_help_tab_link('description_field_info'); ?></th>
+                    ); ?></label> <?php echo wp_kses(EEH_Template::get_help_tab_link('description_field_info'), AllowedTags::getAllowedTags()); ?></th>
             <td>
                     <textarea class="regular-text" id="PRC_desc" name="PRC_desc" rows="5"><?php
                         echo esc_textarea($price->get_f('PRC_desc'));
@@ -60,7 +63,7 @@
                     esc_html_e(
                         'Amount',
                         'event_espresso'
-                    ); ?><?php echo EEH_Template::get_help_tab_link('amount_field_info'); ?></label></th>
+                    ); ?><?php echo wp_kses(EEH_Template::get_help_tab_link('amount_field_info'), AllowedTags::getAllowedTags()); ?></label></th>
             <td>
                 <input class="small-text ee-numeric" type="text" id="PRC_amount" name="PRC_amount"
                        value="<?php echo esc_attr($price->amount()); ?>"/>
