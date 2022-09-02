@@ -1,4 +1,5 @@
 <?php
+
 /** @var string $use_remote_logging */
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;

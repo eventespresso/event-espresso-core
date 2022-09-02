@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string   $default_reg_status
  * @var string[] $reg_status_array

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string[][] $values
  * @var stdClass   $map_settings
