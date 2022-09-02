@@ -119,7 +119,7 @@ if ($QST_system === 'country') {
                         <label for="QST_admin_only">
                             <?php echo esc_html($fields['QST_admin_only']->get_nicename()); ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('question_admin_only_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('question_admin_only_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <?php
@@ -158,7 +158,7 @@ if ($QST_system === 'country') {
                         <label for="QST_type">
                             <?php echo esc_html($fields['QST_type']->get_nicename()); ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('question_type_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('question_type_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <?php
@@ -424,7 +424,7 @@ if ($QST_system === 'country') {
                         <label for="QST_required">
                             <?php echo esc_html($fields['QST_required']->get_nicename()); ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('required_question_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('required_question_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <?php
@@ -480,7 +480,7 @@ if ($QST_system === 'country') {
                         <label for="QST_required_text">
                             <?php esc_html_e('Required Text', 'event_espresso'); ?>
                         </label>
-                        <?php echo EEH_Template::get_help_tab_link('required_text_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('required_text_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <input type="text"

@@ -34,9 +34,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label for="QSG_name">
-                    <?php esc_html_e('Group Name', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
-                        'group_name_info'
-                    ); ?>
+                    <?php esc_html_e('Group Name', 'event_espresso'); ?>
+                    <?php echo wp_kses(EEH_Template::get_help_tab_link('group_name_info'), AllowedTags::getAllowedTags()); ?>
                 </label>
             </th>
             <td>
@@ -49,9 +48,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label for="QSG_identifier">
-                    <?php esc_html_e('Group Identifier', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
-                        'group_identifier_info'
-                    ); ?>
+                    <?php esc_html_e('Group Identifier', 'event_espresso'); ?>
+                    <?php echo wp_kses(EEH_Template::get_help_tab_link('group_identifier_info'), AllowedTags::getAllowedTags()); ?>
                 </label>
             </th>
             <td>
@@ -69,9 +67,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label for="QSG_desc">
-                    <?php esc_html_e('Description', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
-                        'group_description_info'
-                    ); ?>
+                    <?php esc_html_e('Description', 'event_espresso'); ?>
+                    <?php echo wp_kses(EEH_Template::get_help_tab_link('group_description_info'), AllowedTags::getAllowedTags()); ?>
                 </label>
             </th>
             <td>
@@ -83,9 +80,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label for="QSG_order">
-                    <?php esc_html_e('Question Group Order', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
-                        'group_order_info'
-                    ); ?>
+                    <?php esc_html_e('Question Group Order', 'event_espresso'); ?>
+                    <?php echo wp_kses(EEH_Template::get_help_tab_link('group_order_info'), AllowedTags::getAllowedTags()); ?>
                 </label>
             </th>
             <td>
@@ -97,9 +93,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label>
-                    <?php esc_html_e('Show Name', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
-                        'show_group_name_info'
-                    ); ?>
+                    <?php esc_html_e('Show Name', 'event_espresso'); ?>
+                    <?php echo wp_kses(EEH_Template::get_help_tab_link('show_group_name_info'), AllowedTags::getAllowedTags()); ?>
                 </label>
             </th>
             <td>
@@ -117,9 +112,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label>
-                    <?php esc_html_e(' Show Description', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
-                        'show_group_description_info'
-                    ); ?>
+                    <?php esc_html_e(' Show Description', 'event_espresso'); ?>
+                    <?php echo wp_kses(EEH_Template::get_help_tab_link('show_group_description_info'), AllowedTags::getAllowedTags()); ?>
                 </label>
             </th>
             <td>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int     $reg_page_id
  * @var WP_Post $reg_page_obj
@@ -9,6 +10,9 @@
  * @var int     $cancel_page_id
  * @var WP_Post $cancel_page_obj
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div class="padding">
@@ -36,7 +40,7 @@
                         <strong>
                             <?php esc_html_e('Registration Checkout Page', 'event_espresso'); ?>
                         </strong>
-                        <?php echo EEH_Template::get_help_tab_link('registration_page_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('registration_page_info'), AllowedTags::getAllowedTags()); ?>
                         <br />
                         <?php echo General_Settings_Admin_Page::edit_view_links($reg_page_id); // already escaped ?>
                     </label>
@@ -75,7 +79,7 @@
                         <strong>
                             <?php esc_html_e('Transactions Page', 'event_espresso'); ?>
                         </strong>
-                        <?php echo EEH_Template::get_help_tab_link('notify_url_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('notify_url_info'), AllowedTags::getAllowedTags()); ?>
                         <br />
                         <span class="lt-grey-text">
                         <?php esc_html_e('Notify URL (processes payments)', 'event_espresso'); ?>
@@ -118,7 +122,7 @@
                         <strong>
                             <?php esc_html_e('Thank You Page', 'event_espresso'); ?>
                         </strong>
-                        <?php echo EEH_Template::get_help_tab_link('return_url_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('return_url_info'), AllowedTags::getAllowedTags()); ?>
                         <br />
                         <?php echo General_Settings_Admin_Page::edit_view_links($thank_you_page_id); // already escaped ?>
                     </label>
@@ -157,7 +161,7 @@
                         <strong>
                             <?php esc_html_e('Cancel/Return Page', 'event_espresso'); ?>
                         </strong>
-                        <?php echo EEH_Template::get_help_tab_link('cancel_return_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('cancel_return_info'), AllowedTags::getAllowedTags()); ?>
                         <br />
                         <?php echo General_Settings_Admin_Page::edit_view_links($cancel_page_id); // already escaped ?>
                     </label>
@@ -196,7 +200,7 @@
                         <strong>
                             <?php esc_html_e('Event List', 'event_espresso'); ?>
                         </strong>
-                        <?php echo EEH_Template::get_help_tab_link('event_list_cpt_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('event_list_cpt_info'), AllowedTags::getAllowedTags()); ?>
                         <br />
                         <a href='<?php echo esc_url_raw(get_post_type_archive_link('espresso_events')); ?>'>
                             <?php esc_html_e('View', 'event_espresso'); ?>
@@ -230,7 +234,7 @@
                         <strong>
                             <?php esc_html_e('Venue List', 'event_espresso'); ?>
                         </strong>
-                        <?php echo EEH_Template::get_help_tab_link('venue_list_cpt_info'); // already escaped ?>
+                        <?php echo wp_kses(EEH_Template::get_help_tab_link('venue_list_cpt_info'), AllowedTags::getAllowedTags()); ?>
                         <br />
                         <a href='<?php echo esc_url_raw(get_post_type_archive_link('espresso_venues')); ?>'>
                             <?php esc_html_e('View', 'event_espresso'); ?>

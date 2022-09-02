@@ -1,8 +1,12 @@
 <?php
+
 /**
  * @var string[][] $values
  * @var stdClass   $map_settings
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div class="padding">
@@ -63,7 +67,7 @@
 
     <h2 class="ee-admin-settings-hdr">
         <?php esc_html_e('Reg Page Map Settings', 'event_espresso'); ?>
-        <?php echo EEH_Template::get_help_tab_link('gmaps_info'); // already escaped ?>
+        <?php echo wp_kses(EEH_Template::get_help_tab_link('gmaps_info'), AllowedTags::getAllowedTags()); ?>
     </h2>
 
     <table class="form-table">

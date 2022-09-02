@@ -1,9 +1,13 @@
 <?php
+
 /**
  * @var string   $default_reg_status
  * @var string[] $reg_status_array
  * @var array    $template_args
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 <div class="padding">
     <table class="form-table">
@@ -12,7 +16,7 @@
             <th>
                 <label for="default_reg_status">
                     <?php esc_html_e('Default Registration Status', 'event_espresso'); ?>
-                    <?php echo EEH_Template::get_help_tab_link('default_settings_status_help_tab'); // already escaped ?>
+                    <?php echo wp_kses(EEH_Template::get_help_tab_link('default_settings_status_help_tab'), AllowedTags::getAllowedTags()); ?>
                 </label>
             </th>
             <td>
