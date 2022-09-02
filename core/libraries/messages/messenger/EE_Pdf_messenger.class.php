@@ -328,18 +328,12 @@ class EE_Pdf_messenger extends EE_messenger
     {
         // Remove all spaces between HTML tags
         $content = preg_replace('/>\s+</', '><', $content);
-        if ($content) {
+        if (! empty($content)) {
             $this->pdf_adapter
                 ->initializeOptions()
                 // forcing the browser to open a download dialog.
                 ->generate($content, $this->_subject . ".pdf", true);
-            return;
         }
-        // display error if dompdf is not available
-        wp_die(esc_html__(
-            'DomPDF package appears to be missing, so cannot generate the PDF file.',
-            'event_espresso'
-        ));
     }
 
 

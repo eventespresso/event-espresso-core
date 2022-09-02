@@ -58,17 +58,13 @@ class PdfAdapter
      * @param string $content
      * @param string $filename
      * @param bool $download
-     * @return bool
+     * @return void
      */
-    public function generate(string $content, string $filename, bool $download): bool
+    public function generate(string $content, string $filename, bool $download): void
     {
-        if ($this->options instanceof Options && ! empty($content)) {
-            $dompdf = new Dompdf($this->options);
-            $dompdf->loadHtml($content);
-            $dompdf->render();
-            $dompdf->stream($filename, ['Attachment' => $download]);
-            return true;
-        }
-        return false;
+        $dompdf = new Dompdf($this->options);
+        $dompdf->loadHtml($content);
+        $dompdf->render();
+        $dompdf->stream($filename, ['Attachment' => $download]);
     }
 }
