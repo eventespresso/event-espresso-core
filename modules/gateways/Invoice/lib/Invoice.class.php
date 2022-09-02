@@ -293,20 +293,15 @@ class Invoice
             exit(0);
         }
         $pdf_adapter = new PdfAdapter();
-        // dompdf options
-        $options = $pdf_adapter->getOptions();
-        if ($options instanceof Dompdf\Options) {
-            $pdf_adapter
-                ->setOptions($options)
-                ->setContent($content)
-                ->generate($invoice_name . ".pdf", (bool) $download);
-            exit(0);
+        $results = $pdf_adapter
+            ->initializeOptions()
+            ->generate($content, $invoice_name . ".pdf", (bool) $download);
+        if (! $results) {
+            wp_die(esc_html__(
+                'DomPDF package appears to be missing, so cannot generate the PDF file.',
+                'event_espresso'
+            ));
         }
-        wp_die(esc_html__(
-            'DomPDF package appears to be missing, so cannot generate the PDF file.',
-            'event_espresso'
-        ));
-        exit(0);
     }
 
 

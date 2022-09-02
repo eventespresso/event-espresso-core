@@ -1,6 +1,5 @@
 <?php
 
-use Dompdf\Options;
 use EventEspresso\core\services\adapters\PdfAdapter;
 
 /**
@@ -327,26 +326,20 @@ class EE_Pdf_messenger extends EE_messenger
      */
     protected function _do_pdf($content = '')
     {
-        // dompdf options
-        $options = $this->pdf_adapter->getOptions();
-        if ($options instanceof Options) {
-            // Remove all spaces between HTML tags
-            $content = preg_replace('/>\s+</', '><', $content);
-            if ($content) {
-                $this->pdf_adapter
-                    ->setOptions($options)
-                    ->setContent($content)
-                    // forcing the browser to open a download dialog.
-                    ->generate($this->_subject . ".pdf", true);
-                exit;
-            }
+        // Remove all spaces between HTML tags
+        $content = preg_replace('/>\s+</', '><', $content);
+        if ($content) {
+            $this->pdf_adapter
+                ->initializeOptions()
+                // forcing the browser to open a download dialog.
+                ->generate($content, $this->_subject . ".pdf", true);
+            return;
         }
         // display error if dompdf is not available
         wp_die(esc_html__(
             'DomPDF package appears to be missing, so cannot generate the PDF file.',
             'event_espresso'
         ));
-        exit;
     }
 
 
