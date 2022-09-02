@@ -1,16 +1,24 @@
+<?php
+
+/**
+ * template vars in use
+ *
+ * @var EE_Price $price
+ */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
+?>
 <div style="padding:1em;">
 
     <table class="form-table">
         <tbody>
         <tr valign="top">
             <th><label for="PRT_ID"><?php
-
-                    use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
-                    esc_html_e(
-                        'Type',
-                        'event_espresso'
-                    ); ?></label> <?php echo wp_kses(EEH_Template::get_help_tab_link('type_field_info'), AllowedTags::getAllowedTags()); ?></th>
+                esc_html_e(
+                    'Type',
+                    'event_espresso'
+                ); ?></label> <?php echo wp_kses(EEH_Template::get_help_tab_link('type_field_info'), AllowedTags::getAllowedTags()); ?></th>
             <td>
                 <?php if ($price->type_obj() && $price->type_obj()->base_type() === 1) : ?>
                     <input type="hidden" name="PRT_ID" id="PRT_ID" value="<?php echo esc_attr($price->type()); ?>"/>
