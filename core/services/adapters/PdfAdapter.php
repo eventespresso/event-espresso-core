@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\adapters;
 
-use Dompdf\Autoloader;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -24,10 +23,8 @@ class PdfAdapter
      */
     public function __construct()
     {
-        // only load dompdf if nobody else has yet...
-        if (! class_exists('Dompdf\Autoloader') and is_readable(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php')) {
-            require_once(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php');
-            Autoloader::register();
+        if (! class_exists('Dompdf/Dompdf')) {
+            require_once EE_VENDOR . 'autoload.php';
         }
     }
 
@@ -38,9 +35,6 @@ class PdfAdapter
      */
     public function initializeOptions(array $extra_options = []): PdfAdapter
     {
-        if (! class_exists('Dompdf\Options')) {
-            return $this;
-        }
         $this->options = new Options();
         $this->options->set('isRemoteEnabled', true);
         $this->options->set('isJavascriptEnabled', false);
