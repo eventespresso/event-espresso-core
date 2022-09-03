@@ -21,11 +21,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             </th>
             <td>
                 <p>
-                    <?php echo EEH_Form_Fields::select_input(
-                        'default_reg_status',
-                        $reg_status_array,
-                        $default_reg_status
-                    ); // already escaped ?>
+                    <?php echo wp_kses(
+                        EEH_Form_Fields::select_input(
+                            'default_reg_status',
+                            $reg_status_array,
+                            $default_reg_status
+                        ),
+                        AllowedTags::getWithFormTags()
+                    ); ?>
                 </p>
                 <p class="description">
                     <?php esc_html_e(

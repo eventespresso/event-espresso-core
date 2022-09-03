@@ -1,4 +1,6 @@
-<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit(); }
+<?php use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION' )) { exit(); }
 /*
  * EEW_New_Addon
  * Displays a List of New_Addon in the Sidebar
@@ -70,13 +72,16 @@ class EEW_New_Addon extends WP_Widget {
 				<?php esc_html_e('Yes or No?', 'event_espresso'); ?>
 			</label>
 			<?php
-				echo EEH_Form_Fields::select(
-					 esc_html__('Yes or No?', 'event_espresso'),
-					$instance['yes_or_no_question'],
-					$yes_no_values,
-					$this->get_field_name('yes_or_no_question'),
-					$this->get_field_id('yes_or_no_question')
-				);
+				echo wp_kses(
+				    EEH_Form_Fields::select(
+                        esc_html__('Yes or No?', 'event_espresso'),
+                        $instance['yes_or_no_question'],
+                        $yes_no_values,
+                        $this->get_field_name('yes_or_no_question'),
+                        $this->get_field_id('yes_or_no_question')
+                    ),
+                    AllowedTags::getWithFormTags()
+                );
 			?>
 		</p>
 <?php

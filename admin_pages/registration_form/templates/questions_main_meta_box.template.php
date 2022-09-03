@@ -16,9 +16,27 @@ assert($question instanceof EE_Question);
 assert($question_types);
 
 // the following are already escaped
-echo EEH_Form_Fields::hidden_input('QST_system', $question->system_ID());
-echo EEH_Form_Fields::hidden_input('QST_wp_user', $question->wp_user());
-echo EEH_Form_Fields::hidden_input('QST_deleted', $question->deleted());
+echo wp_kses(
+    EEH_Form_Fields::hidden_input(
+        'QST_system',
+        $question->system_ID()
+    ),
+    AllowedTags::getWithFormTags()
+);
+echo wp_kses(
+    EEH_Form_Fields::hidden_input(
+        'QST_wp_user',
+        $question->wp_user()
+    ),
+    AllowedTags::getWithFormTags()
+);
+echo wp_kses(
+    EEH_Form_Fields::hidden_input(
+        'QST_deleted',
+        $question->deleted()
+    ),
+    AllowedTags::getWithFormTags()
+);
 
 $QST_system = $question->system_ID();
 $fields     = $question->get_model()->field_settings();
@@ -176,12 +194,15 @@ if ($QST_system === 'country') {
                             unset($question_types[ EEM_Question::QST_type_email_confirm ]);
                         }
 
-                        echo EEH_Form_Fields::select_input(
-                            'QST_type' . $id,
-                            $question_types,
-                            $question->type(),
-                            'id="QST_type' . $id . '"' . $disabled_attr
-                        ); // already escaped
+                        echo wp_kses(
+                            EEH_Form_Fields::select_input(
+                                'QST_type' . $id,
+                                $question_types,
+                                $question->type(),
+                                'id="QST_type' . $id . '"' . $disabled_attr
+                            ),
+                            AllowedTags::getWithFormTags()
+                        );
                         if ($disabled) { ?>
                             <input id='QST_type'
                                    name="QST_type"
@@ -345,14 +366,20 @@ if ($QST_system === 'country') {
                                     </span>
                                             </td>
                                             <?php
-                                            echo EEH_Form_Fields::hidden_input(
-                                                "question_options[{$count}][QST_ID])",
-                                                $option->question_ID()
-                                            ); // already escaped
-                                            echo EEH_Form_Fields::hidden_input(
-                                                "question_options[{$count}][QSO_ID])",
-                                                $option->ID()
-                                            ); // already escaped
+                                            echo wp_kses(
+                                                EEH_Form_Fields::hidden_input(
+                                                    "question_options[{$count}][QST_ID])",
+                                                    $option->question_ID()
+                                                ),
+                                                AllowedTags::getWithFormTags()
+                                            );
+                                            echo wp_kses(
+                                                EEH_Form_Fields::hidden_input(
+                                                    "question_options[{$count}][QSO_ID])",
+                                                    $option->ID()
+                                                ),
+                                                AllowedTags::getWithFormTags()
+                                            );
                                             $count++;
                                             ?>
                                         </tr>
@@ -379,7 +406,13 @@ if ($QST_system === 'country') {
                                             />
                                         </td>
                                         <td>
-                                            <?php echo EEH_Form_Fields::hidden_input("question_options_count", $count); // already escaped ?>
+                                            <?php echo wp_kses(
+                                                EEH_Form_Fields::hidden_input(
+                                                    "question_options_count",
+                                                    $count
+                                                ),
+                                                AllowedTags::getWithFormTags()
+                                            ); ?>
                                         </td>
                                     </tr>
                                     <?php
@@ -387,7 +420,13 @@ if ($QST_system === 'country') {
                                 ?>
                                 <tr style="display:none">
                                     <td colspan="3">
-                                        <?php echo EEH_Form_Fields::hidden_input("question_options_count", $count); // already escaped ?>
+                                        <?php echo wp_kses(
+                                            EEH_Form_Fields::hidden_input(
+                                                "question_options_count",
+                                                $count
+                                            ),
+                                            AllowedTags::getWithFormTags()
+                                        ); ?>
                                     </td>
                                 </tr>
                                 <tr>
@@ -439,12 +478,15 @@ if ($QST_system === 'country') {
                             ['text' => esc_html__('Optional', 'event_espresso'), 'id' => 0],
                             ['text' => esc_html__('Required', 'event_espresso'), 'id' => 1],
                         ];
-                        echo EEH_Form_Fields::select_input(
-                            'QST_required' . $id,
-                            $requiredOptions,
-                            $question->required(),
-                            'id="QST_required' . $id . '"' . $disabled_attr
-                        ); // already escaped
+                        echo wp_kses(
+                            EEH_Form_Fields::select_input(
+                                'QST_required' . $id,
+                                $requiredOptions,
+                                $question->required(),
+                                'id="QST_required' . $id . '"' . $disabled_attr
+                            ),
+                            AllowedTags::getWithFormTags()
+                        );
                         ?>
                         <p>
                             <span id="required_toggled_on" class="description"

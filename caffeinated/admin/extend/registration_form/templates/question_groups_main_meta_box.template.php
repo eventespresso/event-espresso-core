@@ -99,10 +99,13 @@ $id = ! empty($QST_system) ? '_disabled' : '';
             </th>
             <td>
                 <label for="QSG_show_group_name">
-                    <?php echo EEH_Form_Fields::select_input(
-                        'QSG_show_group_name',
-                        $values,
-                        $question_group->show_group_name()
+                    <?php echo wp_kses(
+                        EEH_Form_Fields::select_input(
+                            'QSG_show_group_name',
+                            $values,
+                            $question_group->show_group_name()
+                        ),
+                        AllowedTags::getWithFormTags()
                     ); ?>
                     <p class="description"><?php esc_html_e('Show Group Name on Registration Page?', 'event_espresso'); ?></p>
                 </label>
@@ -118,10 +121,13 @@ $id = ! empty($QST_system) ? '_disabled' : '';
             </th>
             <td>
                 <label for="QSG_show_group_order">
-                    <?php echo EEH_Form_Fields::select_input(
-                        'QSG_show_group_desc',
-                        $values,
-                        $question_group->show_group_desc()
+                    <?php echo wp_kses(
+                        EEH_Form_Fields::select_input(
+                            'QSG_show_group_desc',
+                            $values,
+                            $question_group->show_group_desc()
+                        ),
+                        AllowedTags::getWithFormTags()
                     ); ?>
                     <p class="description"><?php
                         esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
