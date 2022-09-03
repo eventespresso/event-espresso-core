@@ -155,12 +155,15 @@ class EEW_Upcoming_Events extends EspressoWidget
             $show_expired_options[] = EE_Question_Option::new_instance(
                 ['QSO_value' => 2, 'QSO_desc' => esc_html__('Show Only Expired', 'event_espresso')]
             );
-            echo EEH_Form_Fields::select(
-                esc_html__('Show Expired Events:', 'event_espresso'),
-                $instance['show_expired'],
-                $show_expired_options,
-                $this->fieldName('show_expired'),
-                $this->fieldID('show_expired')
+            echo wp_kses(
+                EEH_Form_Fields::select(
+                    esc_html__('Show Expired Events:', 'event_espresso'),
+                    $instance['show_expired'],
+                    $show_expired_options,
+                    $this->fieldName('show_expired'),
+                    $this->fieldID('show_expired')
+                ),
+                AllowedTags::getWithFormTags()
             );
             ?>
         </p>
@@ -169,12 +172,15 @@ class EEW_Upcoming_Events extends EspressoWidget
                 <?php esc_html_e('Sort Events:', 'event_espresso'); ?>
             </label>
             <?php
-            echo EEH_Form_Fields::select(
-                esc_html__('Sort Events:', 'event_espresso'),
-                $instance['sort'],
-                $sort_values,
-                $this->fieldName('sort'),
-                $this->fieldID('sort')
+            echo wp_kses(
+                EEH_Form_Fields::select(
+                    esc_html__('Sort Events:', 'event_espresso'),
+                    $instance['sort'],
+                    $sort_values,
+                    $this->fieldName('sort'),
+                    $this->fieldID('sort')
+                ),
+                AllowedTags::getWithFormTags()
             );
             ?>
         </p>
@@ -190,12 +196,15 @@ class EEW_Upcoming_Events extends EspressoWidget
                 <?php esc_html_e('Show Description:', 'event_espresso'); ?>
             </label>
             <?php
-            echo EEH_Form_Fields::select(
-                esc_html__('Show Description:', 'event_espresso'),
-                $instance['show_desc'],
-                $yes_no_values,
-                $this->fieldName('show_desc'),
-                $this->fieldID('show_desc')
+            echo wp_kses(
+                EEH_Form_Fields::select(
+                    esc_html__('Show Description:', 'event_espresso'),
+                    $instance['show_desc'],
+                    $yes_no_values,
+                    $this->fieldName('show_desc'),
+                    $this->fieldID('show_desc')
+                ),
+                AllowedTags::getWithFormTags()
             );
             ?>
         </p>
@@ -204,12 +213,15 @@ class EEW_Upcoming_Events extends EspressoWidget
                 <?php esc_html_e('Show Dates:', 'event_espresso'); ?>
             </label>
             <?php
-            echo EEH_Form_Fields::select(
-                esc_html__('Show Dates:', 'event_espresso'),
-                $instance['show_dates'],
-                $yes_no_values,
-                $this->fieldName('show_dates'),
-                $this->fieldID('show_dates')
+            echo wp_kses(
+                EEH_Form_Fields::select(
+                    esc_html__('Show Dates:', 'event_espresso'),
+                    $instance['show_dates'],
+                    $yes_no_values,
+                    $this->fieldName('show_dates'),
+                    $this->fieldID('show_dates')
+                ),
+                AllowedTags::getWithFormTags()
             );
             ?>
         </p>
@@ -218,12 +230,15 @@ class EEW_Upcoming_Events extends EspressoWidget
                 <?php esc_html_e('Show on all Pages:', 'event_espresso'); ?>
             </label>
             <?php
-            echo EEH_Form_Fields::select(
-                esc_html__('Show on all Pages:', 'event_espresso'),
-                $instance['show_everywhere'],
-                $yes_no_values,
-                $this->fieldName('show_everywhere'),
-                $this->fieldID('show_everywhere')
+            echo wp_kses(
+                EEH_Form_Fields::select(
+                    esc_html__('Show on all Pages:', 'event_espresso'),
+                    $instance['show_everywhere'],
+                    $yes_no_values,
+                    $this->fieldName('show_everywhere'),
+                    $this->fieldID('show_everywhere')
+                ),
+                AllowedTags::getWithFormTags()
             );
             ?>
         </p>
@@ -243,12 +258,15 @@ class EEW_Upcoming_Events extends EspressoWidget
                 <?php esc_html_e('Show Date Range:', 'event_espresso'); ?>
             </label>
             <?php
-            echo EEH_Form_Fields::select(
-                esc_html__('Show Date Range:', 'event_espresso'),
-                $instance['date_range'],
-                $yes_no_values,
-                $this->fieldName('date_range'),
-                $this->fieldID('date_range')
+            echo wp_kses(
+                EEH_Form_Fields::select(
+                    esc_html__('Show Date Range:', 'event_espresso'),
+                    $instance['date_range'],
+                    $yes_no_values,
+                    $this->fieldName('date_range'),
+                    $this->fieldID('date_range')
+                ),
+                AllowedTags::getWithFormTags()
             );
             ?>
             <span class="description">
@@ -404,12 +422,15 @@ class EEW_Upcoming_Events extends EspressoWidget
                 ]
             )
         );
-        echo EEH_Form_Fields::select(
-            esc_html__('Event Category:', 'event_espresso'),
-            $instance['category_name'],
-            $event_categories,
-            $this->fieldName('category_name'),
-            $this->fieldID('category_name')
+        echo wp_kses(
+            EEH_Form_Fields::select(
+                esc_html__('Event Category:', 'event_espresso'),
+                $instance['category_name'],
+                $event_categories,
+                $this->fieldName('category_name'),
+                $this->fieldID('category_name')
+            ),
+            AllowedTags::getWithFormTags()
         );
     }
 
@@ -437,12 +458,15 @@ class EEW_Upcoming_Events extends EspressoWidget
                     ['QSO_value' => 'none', 'QSO_desc' => esc_html__('don\'t show images', 'event_espresso')]
                 );
         }
-        echo EEH_Form_Fields::select(
-            esc_html__('Image Size:', 'event_espresso'),
-            $instance['image_size'],
-            $image_sizes,
-            $this->fieldName('image_size'),
-            $this->fieldID('image_size')
+        echo wp_kses(
+            EEH_Form_Fields::select(
+                esc_html__('Image Size:', 'event_espresso'),
+                $instance['image_size'],
+                $image_sizes,
+                $this->fieldName('image_size'),
+                $this->fieldID('image_size')
+            ),
+            AllowedTags::getWithFormTags()
         );
     }
 

@@ -89,12 +89,15 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select(
-                'display_status_banner',
-                $display_status_banner,
-                $values,
-                'EED_Events_Archive_display_status_banner',
-                'EED_Events_Archive_display_status_banner'
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'display_status_banner',
+                    $display_status_banner,
+                    $values,
+                    'EED_Events_Archive_display_status_banner',
+                    'EED_Events_Archive_display_status_banner'
+                ),
+                AllowedTags::getWithFormTags()
             ); ?>
             <p class="description"><?php
                 esc_html_e(
@@ -112,12 +115,15 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select(
-                'description',
-                $display_description,
-                $description,
-                'EED_Events_Archive_display_description',
-                'EED_Events_Archive_display_description'
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'description',
+                    $display_description,
+                    $description,
+                    'EED_Events_Archive_display_description',
+                    'EED_Events_Archive_display_description'
+                ),
+                AllowedTags::getWithFormTags()
             ); ?>
         </td>
     </tr>
@@ -130,12 +136,15 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select(
-                'ticket_selector',
-                $display_ticket_selector,
-                $values,
-                'EED_Events_Archive_display_ticket_selector',
-                'EED_Events_Archive_display_ticket_selector'
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'ticket_selector',
+                    $display_ticket_selector,
+                    $values,
+                    'EED_Events_Archive_display_ticket_selector',
+                    'EED_Events_Archive_display_ticket_selector'
+                ),
+                AllowedTags::getWithFormTags()
             ); ?>
         </td>
     </tr>
@@ -148,12 +157,15 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select(
-                'venue_details',
-                $display_datetimes,
-                $values,
-                'EED_Events_Archive_display_datetimes',
-                'EED_Events_Archive_display_datetimes'
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'venue_details',
+                    $display_datetimes,
+                    $values,
+                    'EED_Events_Archive_display_datetimes',
+                    'EED_Events_Archive_display_datetimes'
+                ),
+                AllowedTags::getWithFormTags()
             ); ?>
         </td>
     </tr>
@@ -166,12 +178,15 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select(
-                'display_venue',
-                $display_venue,
-                $values,
-                'EED_Events_Archive_display_venue',
-                'EED_Events_Archive_display_venue'
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'display_venue',
+                    $display_venue,
+                    $values,
+                    'EED_Events_Archive_display_venue',
+                    'EED_Events_Archive_display_venue'
+                ),
+                AllowedTags::getWithFormTags()
             ); ?>
         </td>
     </tr>
@@ -184,12 +199,15 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select(
-                'expired_events',
-                $display_expired_events,
-                $values,
-                'EED_Events_Archive_display_expired_events',
-                'EED_Events_Archive_display_expired_events'
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'expired_events',
+                    $display_expired_events,
+                    $values,
+                    'EED_Events_Archive_display_expired_events',
+                    'EED_Events_Archive_display_expired_events'
+                ),
+                AllowedTags::getWithFormTags()
             ); ?>
         </td>
     </tr>
@@ -204,12 +222,15 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select(
-                'use_sortable_display_order',
-                $use_sortable_display_order,
-                $values,
-                'EED_Events_Archive_use_sortable_display_order',
-                'EED_Events_Archive_use_sortable_display_order'
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'use_sortable_display_order',
+                    $use_sortable_display_order,
+                    $values,
+                    'EED_Events_Archive_use_sortable_display_order',
+                    'EED_Events_Archive_use_sortable_display_order'
+                ),
+                AllowedTags::getWithFormTags()
             ); ?>
         </td>
     </tr>
@@ -246,12 +267,15 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select(
-                'reset_event_list_settings',
-                0,
-                $values,
-                'EED_Events_Archive_reset_event_list_settings',
-                'EED_Events_Archive_reset_event_list_settings'
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'reset_event_list_settings',
+                    0,
+                    $values,
+                    'EED_Events_Archive_reset_event_list_settings',
+                    'EED_Events_Archive_reset_event_list_settings'
+                ),
+                AllowedTags::getWithFormTags()
             ); ?>
         </td>
     </tr>
