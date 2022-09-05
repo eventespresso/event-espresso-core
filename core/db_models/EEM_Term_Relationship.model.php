@@ -13,11 +13,11 @@ class EEM_Term_Relationship extends EEM_Base
     protected static $_instance = null;
 
 
-
     /**
      * EEM_Term_Relationship constructor.
      *
      * @param string $timezone
+     * @throws EE_Error
      */
     protected function __construct($timezone = null)
     {
@@ -147,23 +147,23 @@ class EEM_Term_Relationship extends EEM_Base
                 $term_taxonomy_id
             );
         }
-        $rows_affected = $this->_do_wpdb_query(
+        return $this->_do_wpdb_query(
             'query',
             array(
                 $query,
             )
         );
-        return $rows_affected;
     }
-
 
 
     /**
      * Overrides the parent to also make sure term-taxonomy counts are up-to-date after
      * inserting
      *
-     * @param array $field_n_values @see EEM_Base::insert
-     * @return boolean
+     * @param array $field_n_values
+     * @see EEM_Base::insert
+     * @return bool
+     * @throws EE_Error
      */
     public function insert($field_n_values)
     {
@@ -175,19 +175,20 @@ class EEM_Term_Relationship extends EEM_Base
     }
 
 
-
     /**
      * Overrides parent so that after an update, we also check the term_taxonomy_counts are
      * all ok
      *
-     * @param array   $fields_n_values         see EEM_Base::update
-     * @param array   $query_params            @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
+     * @param array $fields_n_values           see EEM_Base::update
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param bool  $keep_model_objs_in_sync   if TRUE, makes sure we ALSO update model objects
      *                                         in this model's entity map according to $fields_n_values that match
      *                                         $query_params. This obviously has some overhead, so you can disable it
      *                                         by setting this to FALSE, but be aware that model objects being used
      *                                         could get out-of-sync with the database
      * @return int
+     * @throws EE_Error
      */
     public function update($fields_n_values, $query_params, $keep_model_objs_in_sync = true)
     {
@@ -199,14 +200,16 @@ class EEM_Term_Relationship extends EEM_Base
     }
 
 
-
     /**
      * Overrides parent so that after running this, we also double-check
      * the term taxonomy counts are up-to-date
      *
-     * @param array   $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @param boolean $allow_blocking
-     * @return int @see EEM_Base::delete
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param bool  $allow_blocking
+     * @see EEM_Base::delete
+     * @return int
+     * @throws EE_Error
      */
     public function delete($query_params, $allow_blocking = true)
     {
@@ -217,6 +220,17 @@ class EEM_Term_Relationship extends EEM_Base
         return $count;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function delete_permanently($query_params, $allow_blocking = true)
+    {
+        $count = parent::delete_permanently($query_params, $allow_blocking);
+        if ($count) {
+            $this->update_term_taxonomy_counts();
+        }
+        return $count;
+    }
 
 
     /**
@@ -227,6 +241,7 @@ class EEM_Term_Relationship extends EEM_Base
      * @param array    $querystring_query_params
      * @param EEM_Base $model
      * @return array
+     * @throws EE_Error
      */
     public static function rest_api_query_params($model_query_params, $querystring_query_params, $model)
     {
