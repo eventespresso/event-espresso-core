@@ -115,7 +115,7 @@
 		"equivalent-key-map": "^0.2.2",
 		"eslint": "^8.0.0",
 		"eslint-plugin-jest": "^25.2.0",
-		"eslint-plugin-react-hooks": "^4.5.0",
+		"eslint-plugin-react-hooks": "^4.6.0",
 		"handlebars": "^4.7.7",
 		"jest": "^28.1.0",
 		"license-checker": "^25.0.1",
