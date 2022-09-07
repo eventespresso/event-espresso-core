@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\adapters\PdfAdapter;
+
 /**
  *
  * EE_Pdf_messenger class
@@ -32,9 +34,14 @@ class EE_Pdf_messenger extends EE_messenger
      */
     protected $_subject;
 
+    /**
+     * @var PdfAdapter
+     */
+    protected $pdf_adapter;
+
 
     /**
-     * @return EE_Pdf_messenger
+     * EE_Pdf_messenger constructor.
      */
     public function __construct()
     {
@@ -46,6 +53,7 @@ class EE_Pdf_messenger extends EE_messenger
             'plural' => esc_html__('PDFs', 'event_espresso')
         );
         $this->activate_on_install = true;
+        $this->pdf_adapter = new PdfAdapter();
 
         parent::__construct();
     }
@@ -318,31 +326,14 @@ class EE_Pdf_messenger extends EE_messenger
      */
     protected function _do_pdf($content = '')
     {
-        $invoice_name = $this->_subject;
-
-        // only load dompdf if nobody else has yet...
-        if (! class_exists('Dompdf\Dompdf')) {
-            require_once(EE_THIRD_PARTY . 'dompdf/src/Autoloader.php');
-            Dompdf\Autoloader::register();
-        }
-        $options = new Dompdf\Options();
-        $options->set('isRemoteEnabled', true);
-        $options->set('isJavascriptEnabled', false);
-        if (defined('DOMPDF_FONT_DIR')) {
-            $options->setFontDir(DOMPDF_FONT_DIR);
-            $options->setFontCache(DOMPDF_FONT_DIR);
-        }
-        // Allow changing the paper size.
-        if (defined('DOMPDF_DEFAULT_PAPER_SIZE')) {
-            $options->set('defaultPaperSize', DOMPDF_DEFAULT_PAPER_SIZE);
-        }
-        $dompdf = new Dompdf\Dompdf($options);
         // Remove all spaces between HTML tags
         $content = preg_replace('/>\s+</', '><', $content);
-        $dompdf->loadHtml($content);
-        $dompdf->render();
-        // forcing the browser to open a download dialog.
-        $dompdf->stream($invoice_name . ".pdf", array('Attachment' => true));
+        if (! empty($content)) {
+            $this->pdf_adapter
+                ->initializeOptions()
+                // forcing the browser to open a download dialog.
+                ->generate($content, $this->_subject . ".pdf", true);
+        }
     }
 
 
