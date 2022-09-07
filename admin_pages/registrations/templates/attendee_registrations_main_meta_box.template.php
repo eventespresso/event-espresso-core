@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Registration[] $registrations
  */

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var EE_Transaction $transaction
  * @var boolean        $show_try_pay_again_link
