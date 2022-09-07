@@ -438,13 +438,21 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 <td colspan="4">&nbsp;</td>
                 <td class="item_r"><?php esc_html_e('Total Paid', 'event_espresso') ?></td>
                 <td class="item_r">
-                    <?php echo EEH_Template::format_currency($amount_pd, false, false) ?>
+                    <?php echo wp_kses(
+                        EEH_Template::format_currency($amount_pd, false, false),
+                        AllowedTags::getAllowedTags()
+                    ); ?>
                 </td>
             </tr>
             <tr class="total_tr odd">
                 <td colspan="4">&nbsp;</td>
                 <td class="total" id="total_currency"><?php esc_html_e('Amount Owed:', 'event_espresso'); ?></td>
-                <td class="total"><?php echo EEH_Template::format_currency($amount_owed) ?></td>
+                <td class="total">
+                    <?php echo wp_kses(
+                        EEH_Template::format_currency($amount_owed),
+                        AllowedTags::getAllowedTags()
+                    ); ?>
+                </td>
             </tr>
             </tfoot>
         </table>

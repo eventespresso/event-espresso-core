@@ -227,11 +227,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                     ?>
                                     <span class="<?php echo esc_attr($payment_class); ?>">
                                         <span id="payment-amount-<?php echo absint($PAY_ID); ?>" style="display:inline;">
-                                        <?php echo EEH_Template::format_currency(
-                                            $payment->amount(),
-                                            false,
-                                            false
-                                        ); // already escaped
+                                        <?php echo wp_kses(
+                                            EEH_Template::format_currency(
+                                                $payment->amount(),
+                                                false,
+                                                false
+                                            ),
+                                            AllowedTags::getAllowedTags()
+                                        );
                                         ?>
                                         </span>
                                     </span>
@@ -272,11 +275,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             <th class=" jst-rght">
                         <span id="txn-admin-payment-total">
                         <?php
-                        echo EEH_Template::format_currency(
-                            $payment_total,
-                            false,
-                            false
-                        ); // already escaped ?>
+                        echo wp_kses(
+                            EEH_Template::format_currency(
+                                $payment_total,
+                                false,
+                                false
+                            ),
+                            AllowedTags::getAllowedTags()
+                        ); ?>
                         </span>
                             </th>
                         </tr>

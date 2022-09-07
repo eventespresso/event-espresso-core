@@ -7,6 +7,8 @@
  * @type string $SPCO_payment_options_url
  */
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <h3><?php esc_html_e('Transaction Details', 'event_espresso'); ?></h3>
@@ -20,7 +22,7 @@
                 <label><?php esc_html_e('Total Cost: ', 'event_espresso'); ?></label>
             </td>
             <td>
-                <?php echo EEH_Template::format_currency($transaction->total()); // already escaped ?>
+                <?php echo wp_kses(EEH_Template::format_currency($transaction->total()), AllowedTags::getAllowedTags()); ?>
             </td>
         </tr>
         <tr>
@@ -30,7 +32,7 @@
             <td class="<?php echo ($transaction->paid() == $transaction->total())
                 ? 'ee-transaction-paid'
                 : 'ee-transaction-unpaid' ?>">
-                <?php echo EEH_Template::format_currency($transaction->remaining()); // already escaped ?>
+                <?php echo wp_kses(EEH_Template::format_currency($transaction->remaining()), AllowedTags::getAllowedTags()); ?>
             </td>
         </tr>
         <tr>

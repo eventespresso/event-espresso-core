@@ -249,7 +249,12 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     <td><?php $payment->e('PAY_txn_id_chq_nmbr') ?></td>
                     <td><?php $payment->e('PAY_po_number') ?></td>
                     <td><?php $payment->e_pretty_status() ?></td>
-                    <td class='item_r'><?php echo EEH_Template::format_currency($payment->amount()); ?></td>
+                    <td class='item_r'>
+                        <?php echo wp_kses(
+                            EEH_Template::format_currency($payment->amount()),
+                            AllowedTags::getAllowedTags()
+                        ); ?>
+                    </td>
                 </tr>
             <?php }
         } else {
@@ -268,12 +273,22 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <tr class='total_tr'>
             <td colspan="4"></td>
             <td class="item_r"><?php esc_html_e('Total Paid', 'event_espresso') ?></td>
-            <td class="item_r"><?php echo EEH_Template::format_currency($amount_pd) ?> </td>
+            <td class="item_r">
+                <?php echo wp_kses(
+                    EEH_Template::format_currency($amount_pd),
+                    AllowedTags::getAllowedTags()
+                ); ?>
+            </td>
         </tr>
         <tr class="total_tr">
             <td colspan="4"></td>
             <td class="total" id="total_currency"><?php esc_html_e('Amount Owed', 'event_espresso'); ?></td>
-            <td class="total"><?php echo EEH_Template::format_currency($total_cost - $amount_pd) ?></td>
+            <td class="total">
+                <?php echo wp_kses(
+                    EEH_Template::format_currency($total_cost - $amount_pd),
+                    AllowedTags::getAllowedTags()
+                ); ?>
+            </td>
         </tr>
         </tfoot>
     </table>
