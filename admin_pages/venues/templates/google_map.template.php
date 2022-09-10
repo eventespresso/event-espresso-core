@@ -19,11 +19,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <?php echo EEH_Form_Fields::select_input(
-                        'use_google_maps',
-                        $values,
-                        $map_settings->use_google_maps,
-                        'id="ee-display-map-no-shortcodes"'
+                    <?php echo wp_kses(
+                        EEH_Form_Fields::select_input(
+                            'use_google_maps',
+                            $values,
+                            $map_settings->use_google_maps,
+                            'id="ee-display-map-no-shortcodes"'
+                        ),
+                        AllowedTags::getWithFormTags()
                     ); ?>
                     <p class="description">
                         <?php esc_html_e(
@@ -128,11 +131,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <?php echo EEH_Form_Fields::select_input(
-                        'event_details_display_nav',
-                        $values,
-                        $map_settings->event_details_display_nav,
-                        'id="event_details_display_nav" '
+                    <?php echo wp_kses(
+                        EEH_Form_Fields::select_input(
+                            'event_details_display_nav',
+                            $values,
+                            $map_settings->event_details_display_nav,
+                            'id="event_details_display_nav" '
+                        ),
+                        AllowedTags::getWithFormTags()
                     ); ?>
                 </td>
             </tr>
@@ -144,11 +150,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <?php echo EEH_Form_Fields::select_input(
-                        'event_details_nav_size',
-                        $values,
-                        $map_settings->event_details_nav_size,
-                        'id="event_details_nav_size"'
+                    <?php echo wp_kses(
+                        EEH_Form_Fields::select_input(
+                            'event_details_nav_size',
+                            $values,
+                            $map_settings->event_details_nav_size,
+                            'id="event_details_nav_size"'
+                        ),
+                        AllowedTags::getWithFormTags()
                     ); ?>
                 </td>
             </tr>
@@ -320,11 +329,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <?php echo EEH_Form_Fields::select_input(
-                        'event_list_display_nav',
-                        $values,
-                        $map_settings->event_list_display_nav,
-                        'id="event_list_display_nav"'
+                    <?php echo wp_kses(
+                        EEH_Form_Fields::select_input(
+                            'event_list_display_nav',
+                            $values,
+                            $map_settings->event_list_display_nav,
+                            'id="event_list_display_nav"'
+                        ),
+                        AllowedTags::getWithFormTags()
                     ); ?>
                 </td>
             </tr>
@@ -336,11 +348,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <?php echo EEH_Form_Fields::select_input(
-                        'event_list_nav_size',
-                        $values,
-                        $map_settings->event_list_nav_size,
-                        'id="event_list_nav_size"'
+                    <?php echo wp_kses(
+                        EEH_Form_Fields::select_input(
+                            'event_list_nav_size',
+                            $values,
+                            $map_settings->event_list_nav_size,
+                            'id="event_list_nav_size"'
+                        ),
+                        AllowedTags::getWithFormTags()
                     ); ?>
                 </td>
             </tr>

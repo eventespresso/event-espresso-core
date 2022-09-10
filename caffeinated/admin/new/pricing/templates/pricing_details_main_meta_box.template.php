@@ -32,7 +32,15 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         ?>
                     </p>
                 <?php else : ?>
-                    <?php echo EEH_Form_Fields::select_input('PRT_ID', $price_types, $price->type(), 'id="PRT_ID"'); ?>
+                    <?php echo wp_kses(
+                        EEH_Form_Fields::select_input(
+                            'PRT_ID',
+                            $price_types,
+                            $price->type(),
+                            'id="PRT_ID"'
+                        ),
+                        AllowedTags::getWithFormTags()
+                    ); ?>
                     <p class="description">
                         <?php
                             esc_html_e(

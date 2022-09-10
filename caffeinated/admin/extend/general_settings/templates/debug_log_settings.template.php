@@ -20,7 +20,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select_input('use_remote_logging', $values, $use_remote_logging); ?>
+            <?php echo wp_kses(
+                EEH_Form_Fields::select_input(
+                    'use_remote_logging',
+                    $values,
+                    $use_remote_logging
+                ),
+                AllowedTags::getWithFormTags()
+            ); ?>
             <p class="description">
                 <?php esc_html_e('Send debugging data to the remote URL below.', 'event_espresso'); ?>
             </p>

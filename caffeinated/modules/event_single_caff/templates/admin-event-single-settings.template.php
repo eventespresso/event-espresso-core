@@ -28,12 +28,15 @@ $values = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select(
-                'display_status_banner_single',
-                $display_status_banner_single,
-                $values,
-                'display_status_banner_single',
-                'display_status_banner_single'
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'display_status_banner_single',
+                    $display_status_banner_single,
+                    $values,
+                    'display_status_banner_single',
+                    'display_status_banner_single'
+                ),
+                AllowedTags::getWithFormTags()
             ); ?>
             <p class="description"><?php
                 esc_html_e(
@@ -51,12 +54,15 @@ $values = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <?php echo EEH_Form_Fields::select(
-                'display_venue',
-                $display_venue,
-                $values,
-                'display_venue',
-                'display_venue'
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'display_venue',
+                    $display_venue,
+                    $values,
+                    'display_venue',
+                    'display_venue'
+                ),
+                AllowedTags::getWithFormTags()
             ); ?>
             <p class="description"><?php
                 esc_html_e(
@@ -74,12 +80,15 @@ $values = EEH_Form_Fields::prep_answer_options(
         </th>
         <td>
             <?php
-            echo EEH_Form_Fields::select(
-                'use_sortable_display_order',
-                $use_sortable_display_order,
-                $values,
-                'EED_Events_Single_use_sortable_display_order',
-                'EED_Events_Single_use_sortable_display_order'
+            echo wp_kses(
+                EEH_Form_Fields::select(
+                    'use_sortable_display_order',
+                    $use_sortable_display_order,
+                    $values,
+                    'EED_Events_Single_use_sortable_display_order',
+                    'EED_Events_Single_use_sortable_display_order'
+                ),
+                AllowedTags::getWithFormTags()
             );
             ?>
         </td>
