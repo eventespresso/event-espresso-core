@@ -79,8 +79,11 @@ if ($display_ticket_price) { ?>
                         <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
                             class="jst-rght small-text">
                             <?php
-                            echo EEH_Template::format_currency(
-                                $new_sub_total
+                            echo wp_kses(
+                                EEH_Template::format_currency(
+                                    $new_sub_total
+                                ),
+                                AllowedTags::getAllowedTags()
                             ); ?></td>
                         <?php $running_total += $new_sub_total; ?>
                     </tr>
@@ -95,7 +98,7 @@ if ($display_ticket_price) { ?>
                                     'event_espresso'
                                 ); ?></b></td>
                         <td data-th="<?php esc_html_e('subtotal', 'event_espresso'); ?>" class="jst-rght small-text">
-                            <b><?php echo EEH_Template::format_currency($running_total); ?></b></td>
+                            <b><?php echo wp_kses(EEH_Template::format_currency($running_total), AllowedTags::getAllowedTags()); ?></b></td>
                     </tr>
 
                     <?php foreach ($ticket->get_ticket_taxes_for_admin() as $tax) { ?>
@@ -109,8 +112,11 @@ if ($display_ticket_price) { ?>
                             <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
                                 class="jst-rght small-text">
                                 <?php
-                                echo EEH_Template::format_currency(
-                                    $tax_amount
+                                echo wp_kses(
+                                    EEH_Template::format_currency(
+                                        $tax_amount
+                                    ),
+                                    AllowedTags::getAllowedTags()
                                 ); ?></td>
                             <?php $running_total += $tax_amount; ?>
                         </tr>
@@ -128,7 +134,7 @@ if ($display_ticket_price) { ?>
                                         'FHEE__ticket_selector_chart_template__ticket_details_total_price',
                                         esc_html__('Total', 'event_espresso')
                                     ); ?>" class="jst-rght small-text">
-                        <b><?php echo EEH_Template::format_currency($running_total); ?></b></td>
+                        <b><?php echo wp_kses(EEH_Template::format_currency($running_total), AllowedTags::getAllowedTags()); ?></b></td>
                 </tr>
                 </tbody>
             </table>
