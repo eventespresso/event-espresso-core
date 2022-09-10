@@ -1,7 +1,11 @@
 <?php
+
 /**
  * @var EE_Registration[] $registrations
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div class="admin-primary-mbox-dv">
@@ -79,7 +83,10 @@
                         </td>
                         <td class="jst-left"><?php echo esc_html($registration->reg_code()); ?></td>
                         <td class="jst-rght">
-                            <?php echo EEH_Template::format_currency($registration->final_price()); // already escaped ?>
+                            <?php echo wp_kses(
+                                EEH_Template::format_currency($registration->final_price()),
+                                AllowedTags::getAllowedTags()
+                            ); ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

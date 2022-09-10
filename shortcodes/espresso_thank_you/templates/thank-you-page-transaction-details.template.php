@@ -1,10 +1,14 @@
 <?php
+
 /**
  * @var EE_Transaction $transaction
  * @var boolean        $show_try_pay_again_link
  * @var string         $SPCO_payment_options_url
  * @var string         $primary_registrant_name
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <h3><?php esc_html_e('Transaction Details', 'event_espresso'); ?></h3>
@@ -18,7 +22,7 @@
                     <label><?php esc_html_e('Total Cost: ', 'event_espresso'); ?></label>
                 </td>
                 <td>
-                    <?php echo EEH_Template::format_currency($transaction->total()); ?>
+                    <?php echo wp_kses(EEH_Template::format_currency($transaction->total()), AllowedTags::getAllowedTags()); ?>
                 </td>
             </tr>
             <tr>
@@ -31,7 +35,7 @@
                     : 'ee-transaction-unpaid'
                 ?>"
                 >
-                    <?php echo EEH_Template::format_currency($transaction->remaining()); ?>
+                    <?php echo wp_kses(EEH_Template::format_currency($transaction->remaining()), AllowedTags::getAllowedTags()); ?>
                 </td>
             </tr>
             <tr>
