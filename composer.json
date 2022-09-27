@@ -43,7 +43,7 @@
 		"ext-mbstring": "*",
 		"ext-openssl": "*",
 		"tijsverkoyen/css-to-inline-styles": "^2.2",
-		"dompdf/dompdf": "^2.0"
+		"dompdf/dompdf": "^2.0.1"
 	},
 	"config": {
 		"allow-plugins": {
