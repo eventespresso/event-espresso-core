@@ -5,7 +5,7 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '2891f14512e162fd1e04baef1c50ad8dae5c36ac',
+        'reference' => '2c04ef85db66979b0b52988a2f0427d280be3398',
         'name' => 'eventespresso/event-espresso-core',
         'dev' => true,
     ),
@@ -45,7 +45,7 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '2891f14512e162fd1e04baef1c50ad8dae5c36ac',
+            'reference' => '2c04ef85db66979b0b52988a2f0427d280be3398',
             'dev_requirement' => false,
         ),
         'masterminds/html5' => array(
