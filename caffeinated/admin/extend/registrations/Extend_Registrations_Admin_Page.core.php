@@ -957,7 +957,8 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         // bulk action check in toggle
         if (! empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
             // cycle thru checkboxes
-            while (list($REG_ID, $value) = each($this->_req_data['checkbox'])) {
+            $checkboxes = $this->_req_data['checkbox'];
+            foreach (array_keys($checkboxes) as $REG_ID) {
                 $DTT_ID = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : null;
                 $new_status = $this->_toggle_checkin($REG_ID, $DTT_ID);
             }
@@ -1026,7 +1027,8 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         );
         $errors = 0;
         if (! empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
-            while (list($CHK_ID, $value) = each($this->_req_data['checkbox'])) {
+            $checkboxes = $this->_req_data['checkbox'];
+            foreach (array_keys($checkboxes) as $CHK_ID) {
                 if (! EEM_Checkin::instance()->delete_by_ID($CHK_ID)) {
                     $errors++;
                 }

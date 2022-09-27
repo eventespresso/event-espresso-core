@@ -1660,7 +1660,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
          * @param int|array                $registration_ids The registration ids that have had their status changed successfully.
          * @param bool                     $status           The status registrations were changed to.
          * @param bool                     $success          If the status was changed successfully for all registrations.
-         * @param Registrations_Admin_Page $admin_page_object
+         * @param Registrations_Admin_Page $admin_page
          */
         $REG_ID = apply_filters(
             'FHEE__Registrations_Admin_Page___set_registration_status_from_request__REG_IDs',

@@ -413,7 +413,7 @@ class EEH_Form_Fields
             $label           = wp_strip_all_tags($label);
             $options_array[] = "<option value='" . esc_attr($value) . "' {$selected}>{$label}</option>";
         }
-        $options_html = implode($options_array, "\n");
+        $options_html = implode("\n", $options_array);
         $required     = filter_var($required, FILTER_VALIDATE_BOOLEAN) ? 'required' : '';
         return "
         <select name='" . esc_attr($name) . "' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "' {$required} 

@@ -532,7 +532,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             // if array has more than one element than success message should be plural
             $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
             // cycle thru bulk action checkboxes
-            while (list($ID, $value) = each($this->_req_data['checkbox'])) {
+            $checkboxes = $this->_req_data['checkbox'];
+            foreach (array_keys($checkboxes) as $ID) {
                 if (! $this->_delete_item($ID, $model)) {
                     $success = 0;
                 }
@@ -911,7 +912,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 // if array has more than one element than success message should be plural
                 $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
                 // cycle thru bulk action checkboxes
-                while (list($ID, $value) = each($this->_req_data['checkbox'])) {
+                $checkboxes = $this->_req_data['checkbox'];
+                foreach (array_keys($checkboxes) as $ID) {
                     if (! $model->delete_or_restore_by_ID($trash, absint($ID))) {
                         $success = 0;
                     }
