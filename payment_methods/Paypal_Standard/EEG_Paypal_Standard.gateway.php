@@ -430,11 +430,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
         }
         // read the IPN message sent from PayPal and prepend 'cmd=_notify-validate'
         $req = 'cmd=_notify-validate';
-        $uses_get_magic_quotes = function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() === 1
-            ? true
-            : false;
         foreach ($update_info as $key => $value) {
-            $value = $uses_get_magic_quotes ? urlencode(stripslashes($value)) : urlencode($value);
+            $value = urlencode($value);
             $req .= "&$key=$value";
         }
         // HTTP POST the complete, unaltered IPN back to PayPal

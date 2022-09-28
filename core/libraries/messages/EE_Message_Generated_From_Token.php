@@ -35,7 +35,7 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
      *                                                This is then used to populate the properties in here.
      * @param   EE_Message_Resource_Manager $message_resource_manager
      */
-    public function __construct($token, $sending_messenger_slug = 'html', EE_Message_Resource_Manager $message_resource_manager)
+    public function __construct($token, $sending_messenger_slug, EE_Message_Resource_Manager $message_resource_manager)
     {
         $this->token = $token;
         $this->_sending_messenger = $this->_set_sending_messenger($sending_messenger_slug, $message_resource_manager);

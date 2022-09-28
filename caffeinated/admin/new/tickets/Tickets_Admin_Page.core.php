@@ -249,15 +249,16 @@ class Tickets_Admin_Page extends EE_Admin_Page
             $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
 
             // cycle thru the boxes
-            while (list($TKT_ID, $value) = each($this->_req_data['checkbox'])) {
+            $checkboxes = $this->_req_data['checkbox'];
+            foreach (array_keys($checkboxes) as $TKT_ID) {
                 if ($trash) {
                     if (! $TKT->delete_by_ID($TKT_ID)) {
                         $success = 0;
                     }
-                } else {
-                    if (! $TKT->restore_by_ID($TKT_ID)) {
-                        $success = 0;
-                    }
+                    continue;
+                }
+                if (! $TKT->restore_by_ID($TKT_ID)) {
+                    $success = 0;
                 }
             }
         } else {
@@ -292,7 +293,8 @@ class Tickets_Admin_Page extends EE_Admin_Page
             $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
 
             // cycle thru the boxes
-            while (list($TKT_ID, $value) = each($this->_req_data['checkbox'])) {
+            $checkboxes = $this->_req_data['checkbox'];
+            foreach (array_keys($checkboxes) as $TKT_ID) {
                 // delete
                 if (! $this->_delete_the_ticket($TKT_ID)) {
                     $success = 0;

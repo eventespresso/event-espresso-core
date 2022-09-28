@@ -593,6 +593,11 @@ class EE_Register_Addon implements EEI_Plugin_API
                 // show an error message indicating the plugin didn't activate properly
                 EE_Error::add_error($incompatibility_message, __FILE__, __FUNCTION__, __LINE__);
             }
+            unset($_GET['activate'], $_REQUEST['activate']);
+            if (! function_exists('deactivate_plugins')) {
+                require_once ABSPATH . 'wp-admin/includes/plugin.php';
+            }
+            deactivate_plugins(plugin_basename($addon_settings['main_file_path']));
             // BAIL FROM THE ADDON REGISTRATION PROCESS
             return false;
         }

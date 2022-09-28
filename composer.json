@@ -42,7 +42,7 @@
 		"ext-json": "*",
 		"ext-mbstring": "*",
 		"ext-openssl": "*",
-		"tijsverkoyen/css-to-inline-styles": "^2.2",
+		"tijsverkoyen/css-to-inline-styles": "2.2.4",
 		"dompdf/dompdf": "^2.0.1"
 	},
 	"config": {

@@ -532,7 +532,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             // if array has more than one element than success message should be plural
             $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
             // cycle thru bulk action checkboxes
-            while (list($ID, $value) = each($this->_req_data['checkbox'])) {
+            $checkboxes = $this->_req_data['checkbox'];
+            foreach (array_keys($checkboxes) as $ID) {
                 if (! $this->_delete_item($ID, $model)) {
                     $success = 0;
                 }
@@ -670,14 +671,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         $set_column_values = $this->_set_column_values_for($this->_question_group_model);
 
         // make sure identifier is unique
-        $identifier_value = isset($set_column_values['QSG_identifier']) ? $set_column_values['QSG_identifier'] : '';
-        $where_values = ['QSG_identifier' => $set_column_values['QSG_identifier']];
+        $identifier_value = $set_column_values['QSG_identifier'] ?? '';
+        $where_values = ['QSG_identifier' => $identifier_value ];
         if (! $new_question_group && isset($set_column_values['QSG_ID'])) {
             $where_values['QSG_ID'] = ['!=', $set_column_values['QSG_ID']];
         }
-        $identifier_exists = ! empty($identifier_value)
-            ? $this->_question_group_model->count([$where_values]) > 0
-            : false;
+        $identifier_exists = ! empty($identifier_value) && $this->_question_group_model->count([$where_values]) > 0;
         if ($identifier_exists) {
             $set_column_values['QSG_identifier'] .= uniqid('id', true);
         }
@@ -911,7 +910,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 // if array has more than one element than success message should be plural
                 $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
                 // cycle thru bulk action checkboxes
-                while (list($ID, $value) = each($this->_req_data['checkbox'])) {
+                $checkboxes = $this->_req_data['checkbox'];
+                foreach (array_keys($checkboxes) as $ID) {
                     if (! $model->delete_or_restore_by_ID($trash, absint($ID))) {
                         $success = 0;
                     }

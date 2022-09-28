@@ -385,7 +385,12 @@ function ee_deprecated_update_attendee_registration_form_old($admin_page)
     foreach ($qstns as $QST_ID => $qstn) {
         // if $qstn isn't an array then it doesn't already have an answer, so let's create the answer
         if (! is_array($qstn)) {
-            $success = $this->_save_new_answer($REG_ID, $QST_ID, $qstn);
+            $set_values = [
+                'QST_ID'    => $QST_ID,
+                'REG_ID'    => $REG_ID,
+                'ANS_value' => $qstn,
+            ];
+            $success    = EEM_Answer::instance()->insert($set_values);
             continue;
         }
 

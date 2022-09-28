@@ -31,7 +31,7 @@ class NodeExtension extends AbstractExtension
     public const ATTRIBUTE_NAME_IN_LOWER_CASE = 2;
     public const ATTRIBUTE_VALUE_IN_LOWER_CASE = 4;
 
-    private int $flags;
+    private $flags;
 
     public function __construct(int $flags = 0)
     {
@@ -41,7 +41,7 @@ class NodeExtension extends AbstractExtension
     /**
      * @return $this
      */
-    public function setFlag(int $flag, bool $on): static
+    public function setFlag(int $flag, bool $on): self
     {
         if ($on && !$this->hasFlag($flag)) {
             $this->flags += $flag;

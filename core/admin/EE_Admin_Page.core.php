@@ -1014,9 +1014,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $class  = $this;
                 $method = $func;
             }
-            if (! (is_object($class) && $class === $this)) {
+            if (! (is_object($class) && $class === $this) && ! in_array($this, $args)) {
                 // send along this admin page object for access by addons.
-                $args['admin_page_object'] = $this;
+                $args['admin_page'] = $this;
             }
             if (
                 // is it a method on a class that doesn't work?
@@ -1030,7 +1030,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                         function_exists($method)
                         && call_user_func_array(
                             $func,
-                            array_merge(['admin_page_object' => $this], $args)
+                            array_merge(['admin_page' => $this], $args)
                         ) === false
                     )
                 )

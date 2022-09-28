@@ -307,8 +307,7 @@ class EE_Registry implements ResettableInterface
         $i18n_js_strings = (array) self::$i18n_js_strings;
         foreach ($i18n_js_strings as $key => $value) {
             if (is_scalar($value)) {
-                $decoded_value           = html_entity_decode((string) $value, ENT_QUOTES, 'UTF-8');
-                $i18n_js_strings[ $key ] = wp_strip_all_tags($decoded_value);
+                $i18n_js_strings[ $key ] = html_entity_decode((string) $value, ENT_QUOTES, 'UTF-8');
             }
         }
         return $i18n_js_strings;
