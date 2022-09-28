@@ -1222,7 +1222,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             // if array has more than one element then success message should be plural
             $success = count($checkboxes) > 1 ? 2 : 1;
             // cycle thru the boxes
-            while (list($TKT_ID, $value) = each($checkboxes)) {
+            $checkboxes = $this->_req_data['checkbox'];
+            foreach (array_keys($checkboxes) as $TKT_ID) {
                 if ($trash) {
                     if (! $TKT->delete_by_ID($TKT_ID)) {
                         $success = 0;
@@ -1270,7 +1271,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             // if array has more than one element then success message should be plural
             $success = count($checkboxes) > 1 ? 2 : 1;
             // cycle thru the boxes
-            while (list($TKT_ID, $value) = each($checkboxes)) {
+            $checkboxes = $this->_req_data['checkbox'];
+            foreach (array_keys($checkboxes) as $TKT_ID) {
                 // delete
                 if (! $this->_delete_the_ticket($TKT_ID)) {
                     $success = 0;

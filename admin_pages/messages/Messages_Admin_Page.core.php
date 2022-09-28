@@ -2721,7 +2721,7 @@ class Messages_Admin_Page extends EE_Admin_Page
 
         // if this is "new" then we need to generate the default contexts
         // for the selected messenger/message_type for user to edit.
-        list($success, $query_args) = $new
+        [$success, $query_args] = $new
             ? $this->generateNewTemplates($GRP_ID, $messenger, $message_type)
             : $this->updateExistingTemplates($GRP_ID, $messenger, $message_type, $context, $form_data);
 
@@ -3272,7 +3272,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 $success = count($checkboxes) > 1 ? 2 : 1;
 
                 // cycle through checkboxes
-                while (list($GRP_ID, $value) = each($checkboxes)) {
+                foreach (array_keys($checkboxes) as $GRP_ID) {
                     $trashed_or_restored = $trash
                         ? $this->getMtgModel()->delete_by_ID($GRP_ID)
                         : $this->getMtgModel()->restore_by_ID($GRP_ID);
@@ -3340,7 +3340,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             $success = count($checkboxes) > 1 ? 2 : 1;
 
             // cycle through bulk action checkboxes
-            while (list($GRP_ID, $value) = each($checkboxes)) {
+            foreach (array_keys($checkboxes) as $GRP_ID) {
                 $success = $this->_delete_mtp_permanently($GRP_ID) ? $success : false;
             }
         } else {
