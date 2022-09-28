@@ -2,8 +2,9 @@
 
 [![Latest Tag](https://img.shields.io/github/tag/eventespresso/event-espresso-core.svg?style=flat&label=Latest%20Tag)](https://github.com/eventespresso/event-espresso-core/releases)
 [![Travis](https://travis-ci.com/eventespresso/event-espresso-core.svg?branch=master)](https://travis-ci.com/eventespresso/event-espresso-core)
-[![PHP](https://img.shields.io/badge/PHP-8%20Ready-brightgreen.svg?style=flat)](https://eventespresso.com/)
-[![WordPress](https://img.shields.io/badge/WordPress-v6.0.x+%20Tested-brightgreen.svg?style=flat)](https://eventespresso.com/)
+[![PHP](https://img.shields.io/badge/PHP-7%20Ready-brightgreen.svg?style=flat)](https://eventespresso.com/)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=eventespresso/event-espresso-core)](https://dependabot.com)
+[![WordPress](https://img.shields.io/badge/WordPress-v4.7.x+%20Tested-brightgreen.svg?style=flat)](https://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![Join Chat](https://img.shields.io/badge/Slack-Join%20Chat-aa30ff.svg?style=flat)](https://eventespresso.com/contact/community-chat/)
 
@@ -97,3 +98,4 @@ Here's how we deal with pull requests for our repo:
 
 
 You may find [our post on contributing to open source software](https://eventespresso.com/2017/02/5-tips-for-contributing-to-open-source-software-like-event-espresso/) helpful.
+
