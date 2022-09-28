@@ -671,14 +671,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         $set_column_values = $this->_set_column_values_for($this->_question_group_model);
 
         // make sure identifier is unique
-        $identifier_value = isset($set_column_values['QSG_identifier']) ? $set_column_values['QSG_identifier'] : '';
-        $where_values = ['QSG_identifier' => $set_column_values['QSG_identifier']];
+        $identifier_value = $set_column_values['QSG_identifier'] ?? '';
+        $where_values = ['QSG_identifier' => $identifier_value ];
         if (! $new_question_group && isset($set_column_values['QSG_ID'])) {
             $where_values['QSG_ID'] = ['!=', $set_column_values['QSG_ID']];
         }
-        $identifier_exists = ! empty($identifier_value)
-            ? $this->_question_group_model->count([$where_values]) > 0
-            : false;
+        $identifier_exists = ! empty($identifier_value) && $this->_question_group_model->count([$where_values]) > 0;
         if ($identifier_exists) {
             $set_column_values['QSG_identifier'] .= uniqid('id', true);
         }

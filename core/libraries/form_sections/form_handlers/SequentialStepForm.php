@@ -83,7 +83,7 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
         $slug,
         $form_action = '',
         $form_config = 'add_form_tags_and_submit',
-        EE_Registry $registry = null
+        ?EE_Registry $registry = null
     ) {
         $this->setOrder($order);
         parent::__construct($form_name, $admin_name, $slug, $form_action, $form_config, $registry);
