@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [ '7.3' ]
+        php-version: [ '7.2' ]
     name: Lint with PHP ${{ matrix.php-version }}
     steps:
       - name: Checkout and set up LAMP
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1' ]
+        php-version: [ '7.2', '7.3', '7.4', '8.0', '8.1' ]
     name: Unit Tests with PHP ${{ matrix.php-version }}
     steps:
 
@@ -44,13 +44,7 @@ jobs:
         run: |
           echo "WP_VERSION=latest" >> $GITHUB_ENV
 
-      - name: Set Composer version for PHP 7.1
-        if: ${{ matrix.php-version == '7.1' }}
-        run: |
-          echo "COMPOSER_VERSION=v1" >> $GITHUB_ENV
-
-      - name: Set Composer version for PHP > 7.1
-        if: ${{ matrix.php-version != '7.1' }}
+      - name: Set Composer version for PHP
         run: |
           echo "COMPOSER_VERSION=v2" >> $GITHUB_ENV
 
