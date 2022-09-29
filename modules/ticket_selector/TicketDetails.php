@@ -22,12 +22,12 @@ class TicketDetails
     /**
      * @var EE_Ticket $ticket
      */
-    protected EE_Ticket $ticket;
+    protected $ticket;
 
     /**
      * @var EE_Ticket_Selector_Config $template_settings
      */
-    protected EE_Ticket_Selector_Config $template_settings;
+    protected $template_settings;
 
     /**
      * @var string $date_format

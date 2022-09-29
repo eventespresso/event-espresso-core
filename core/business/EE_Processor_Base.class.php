@@ -16,14 +16,14 @@ class EE_Processor_Base
      *
      * @var bool
      */
-    protected static bool $IPN = false;
+    protected static $IPN = false;
 
     /**
      * Used to indicate whether SPCO is being revisited by registrant or not.
      *
      * @var bool
      */
-    protected bool $_revisit = false;
+    protected $_revisit = false;
 
 
     /**
