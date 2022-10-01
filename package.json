@@ -109,7 +109,7 @@
 		"core-js": "3.22.5",
 		"cross-env": "7.0.3",
 		"css-loader": "^6.7.1",
-		"cssnano": "^5.1.7",
+		"cssnano": "^5.1.13",
 		"deep-freeze": "0.0.1",
 		"del": "git+https://github.com/sindresorhus/del.git",
 		"equivalent-key-map": "^0.2.2",
