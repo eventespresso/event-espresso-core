@@ -415,7 +415,13 @@ class DisplayTicketSelector
                 : current_time('timestamp');
             $ticket_query_args[0]['TKT_end_date'] = ['>', $current_time];
         }
-        return EEM_Ticket::instance()->get_all($ticket_query_args);
+
+        return apply_filters(
+            'FHEE__EE_Ticket_Selector__getTickets_tickets',
+            EEM_Ticket::instance()->get_all($ticket_query_args),
+            $ticket_query_args,
+            $this
+        );
     }
 
 
