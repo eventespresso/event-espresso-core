@@ -670,31 +670,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                         => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\services\licensing\LicenseService'                                                        => [
-                'EventEspresso\core\domain\services\pue\Stats'  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache,
-            ],
-            'EE_Admin_Transactions_List_Table'                                                                            => [
+            'EE_Admin_Transactions_List_Table' => [
                 null,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
-            ],
-            'EventEspresso\core\domain\services\pue\Stats'                                                                => [
-                'EventEspresso\core\domain\services\pue\Config'        => EE_Dependency_Map::load_from_cache,
-                'EE_Maintenance_Mode'                                  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\pue\StatsGatherer' => EE_Dependency_Map::load_from_cache,
-            ],
-            'EventEspresso\core\domain\services\pue\Config'                                                               => [
-                'EE_Network_Config' => EE_Dependency_Map::load_from_cache,
-                'EE_Config'         => EE_Dependency_Map::load_from_cache,
-            ],
-            'EventEspresso\core\domain\services\pue\StatsGatherer'                                                        => [
-                'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache,
-                'EEM_Event'          => EE_Dependency_Map::load_from_cache,
-                'EEM_Datetime'       => EE_Dependency_Map::load_from_cache,
-                'EEM_Ticket'         => EE_Dependency_Map::load_from_cache,
-                'EEM_Registration'   => EE_Dependency_Map::load_from_cache,
-                'EEM_Transaction'    => EE_Dependency_Map::load_from_cache,
-                'EE_Config'          => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\ExitModal'                                                          => [
                 'EventEspresso\core\services\assets\Registry' => EE_Dependency_Map::load_from_cache,
@@ -919,6 +897,11 @@ class EE_Dependency_Map
             'EventEspresso\core\services\shortcodes\ShortcodesManager'                                                    => [
                 'EventEspresso\core\services\shortcodes\LegacyShortcodesManager' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\CurrentPage'                => EE_Dependency_Map::load_from_cache,
+            ],
+            'EE_Brewing_Regular'                                                    => [
+                'EE_Dependency_Map'                                   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'          => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableAnalysis'  => EE_Dependency_Map::load_from_cache,
             ],
         ];
     }

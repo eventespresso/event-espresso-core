@@ -3,9 +3,9 @@ Contributors: eventespresso, sethshoultes, garthkoyle, pebblo, mnelson4, lorenzo
 Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
 Tags: event registration, ticketing, online registration, ticket sales, event booking, class registration, conference registration, event ticketing, registration, event, events, online event registration
 Requires at least: 4.5
-Requires PHP: 7.4
+Requires PHP: 7.2
 Tested up to: 6.0.2
-Stable tag: 4.10.4.decaf
+Stable tag: 4.10.41.decaf
 License: GPL2
 
 Manage online event registration and ticketing. Create event registration forms, sell tickets, collect money, send email, and SEO for events.

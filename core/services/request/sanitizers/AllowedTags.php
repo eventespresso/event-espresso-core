@@ -230,6 +230,9 @@ class AllowedTags
             'fieldset'  => AllowedTags::$attributes,
             'output'    => AllowedTags::$attributes,
             'noscript'  => AllowedTags::$attributes,
+            'html'      => AllowedTags::$attributes,
+            'body'      => AllowedTags::$attributes,
+            'head'      => AllowedTags::$attributes,
         ];
         AllowedTags::$allowed_with_full_tags = array_merge_recursive($all_tags, $full_tags);
     }

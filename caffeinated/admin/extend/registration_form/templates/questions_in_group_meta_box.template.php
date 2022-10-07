@@ -1,20 +1,16 @@
 <?php
 
-// required variables for template:
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
-assert($question_group instanceof EE_Question_Group);
-assert(isset($all_questions) && (empty($all_questions) || is_array($all_questions)));// list of unused questions
-foreach ($all_questions as $question_option) {
-    assert($question_option);
-    assert($question_option instanceof EE_Question);
-}
+/**
+ * @var EE_Question_Group $question_group
+ * @var EE_Question[] $all_questions
+*/
 ?>
 <h4><?php esc_html_e('Check off all questions that you wish to appear in this group.', 'event_espresso'); ?></h4>
 <ul>
     <?php
     foreach ($all_questions as $question_ID => $question) {
-        /*@var $question EE_Question*/
         $checked = array_key_exists($question_ID, $question_group->questions()) ? 'checked' : '';
         ?>
         <li>

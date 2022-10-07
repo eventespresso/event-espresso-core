@@ -280,7 +280,7 @@ class Iframe
             ! empty($utm_content) ? array('utm_content' => $utm_content) : array()
         );
         EE_System::do_not_cache();
-        echo ($this->getTemplate());
+        echo wp_kses($this->getTemplate(), AllowedTags::getWithFullTags());
         exit;
     }
 

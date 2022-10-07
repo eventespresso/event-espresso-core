@@ -57,7 +57,6 @@ class ServerParams
     private function cleanServerParams(array $server)
     {
         $cleaned = [];
-        $server  = ! empty($server) ? $server : $_SERVER;
         foreach ($server as $key => $value) {
             $cleaned[ $key ] = $this->sanitizer->clean($key, $value);
         }

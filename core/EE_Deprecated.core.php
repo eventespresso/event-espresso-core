@@ -1,10 +1,10 @@
 <?php
 
-use EventEspresso\core\domain\services\pue\Stats;
+use EventEspresso\caffeinated\core\domain\services\pue\Stats;
+use EventEspresso\caffeinated\core\services\licensing\LicenseService;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
-use EventEspresso\core\services\licensing\LicenseService;
 
 /**
  * ************************************************************************
@@ -1382,7 +1382,7 @@ class EE_PUE implements InterminableInterface
             sprintf(
                 esc_html__('%1$s has been replaced by %2$s.', 'event_espresso'),
                 __METHOD__,
-                'EventEspresso\core\services\licensing\LicenseService::isUpdateAvailable'
+                'EventEspresso\caffeinated\core\services\licensing\LicenseService::isUpdateAvailable'
             ),
             '4.9.59.p'
         );

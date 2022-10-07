@@ -124,9 +124,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if ($payments) : ?>
-                        <?php $payment_total = 0; ?>
-                        <?php foreach ($payments as $PAY_ID => $payment) :
+                    <?php if ($payments) :
+                        $payment_total = 0;
+                        foreach ($payments as $PAY_ID => $payment) :
                             if (! $payment instanceof EE_Payment) {
                                 continue;
                             }
@@ -134,174 +134,170 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             $existing_reg_payment_json = isset($existing_reg_payments[ $PAY_ID ])
                                 ? wp_json_encode($existing_reg_payments[ $PAY_ID ])
                                 : '{}';
+                    ?>
+                    <tr id="txn-admin-payment-tr-<?php echo absint($PAY_ID); ?>">
+                        <td>
+                            <span id="payment-status-<?php echo absint($PAY_ID); ?>"
+                                  class="ee-status-strip-td ee-status-strip pymt-status-<?php
+                                  echo esc_attr($payment->STS_ID()); ?>"
+                            >
+                            </span>
+                            <div id="payment-STS_ID-<?php echo absint($PAY_ID); ?>" class="hidden"><?php
+                                echo esc_html($payment->STS_ID());
+                                ?></div>
+                            <div id="reg-payments-<?php echo absint($PAY_ID); ?>" class="hidden"><?php
+                                echo esc_html($existing_reg_payment_json);
+                                ?></div>
+                        </td>
+                        <td class=" jst-cntr">
+                            <ul class="txn-overview-actions-ul">
+                                <li>
+                                    <?php if ($can_edit_payments) : ?>
+                                        <a class="txn-admin-payment-action-edit-lnk"
+                                           aria-label="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
+                                           data-payment-id="<?php echo absint($PAY_ID); ?>"
+                                        >
+                                            <div class="dashicons dashicons-edit" style="margin: 0;"></div>
+                                        </a>
+                                    <?php endif; ?>
+                                </li>
+                                <li>
+                                    <?php if ($can_delete_payments) : ?>
+                                        <a class="txn-admin-payment-action-delete-lnk"
+                                           aria-label="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
+                                           data-payment-id="<?php echo absint($PAY_ID); ?>"
+                                        >
+                                            <div class="dashicons dashicons-trash" style="margin: 0;"></div>
+                                        </a>
+                                    <?php endif; ?>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class=" jst-rght">
+                            <div id="payment-id-<?php echo absint($PAY_ID); ?>"><?php echo esc_html($PAY_ID); ?></div>
+                        </td>
+                        <td class=" jst-left">
+                            <div id="payment-date-<?php echo absint($PAY_ID); ?>" class="payment-date-dv"><?php
+                                echo esc_html($payment->timestamp('Y-m-d', 'g:i a'));
+                                ?></div>
+                        </td>
+                        <td class=" jst-left">
+                            <div id="payment-method-<?php echo absint($PAY_ID); ?>"><?php
+                                echo esc_html($payment->source());
+                                ?></div>
+                            <div id="payment-gateway-<?php echo absint($PAY_ID); ?>"><?php
+                                echo ($payment->payment_method() instanceof EE_Payment_Method
+                                    ? esc_html($payment->payment_method()->admin_name())
+                                    : esc_html__("Unknown", 'event_espresso'));
+                                ?></div>
+                            <div id="payment-gateway-id-<?php echo absint($PAY_ID); ?>" class="hidden"><?php
+                                echo ($payment->payment_method() instanceof EE_Payment_Method
+                                    ? esc_html($payment->payment_method()->ID())
+                                    : 0);
+                                ?></div>
+                        </td>
+                        <td class=" jst-left">
+                            <div id="payment-response-<?php echo absint($PAY_ID); ?>"><?php
+                                echo esc_html($payment->gateway_response());
+                                ?></div>
+                        </td>
+                        <td class=" jst-left payment-txn-id-chq-nmbr">
+                            <div id="payment-txn-id-chq-nmbr-<?php echo absint($PAY_ID); ?>"><?php
+                                echo esc_html($payment->txn_id_chq_nmbr());
+                                ?></div>
+                        </td>
+                        <td class=" jst-left">
+                            <div id="payment-po-nmbr-<?php echo absint($PAY_ID); ?>"><?php
+                                echo esc_html($payment->po_number());
+                                ?></div>
+                        </td>
+                        <td class=" jst-left">
+                            <div id="payment-accntng-<?php echo absint($PAY_ID); ?>"><?php
+                                echo esc_html($payment->extra_accntng());
+                                ?></div>
+                        </td>
+                        <td class=" jst-rght">
+                            <?php
+                            $payment_class = $payment->amount() > 0
+                                ? 'txn-admin-payment-status-' . $payment->STS_ID()
+                                : 'txn-admin-payment-status-PDC';
                             ?>
-                            <tr id="txn-admin-payment-tr-<?php echo absint($PAY_ID); ?>">
-                                <td>
-                <span id="payment-status-<?php echo absint($PAY_ID); ?>"
-                      class="ee-status-strip-td ee-status-strip pymt-status-<?php echo esc_attr($payment->STS_ID()); ?>"
-                >
-                </span>
-                                    <div id="payment-STS_ID-<?php echo absint($PAY_ID); ?>" class="hidden">
-                                        <?php echo esc_html($payment->STS_ID()); ?>
-                                    </div>
-                                    <div id="reg-payments-<?php echo absint($PAY_ID); ?>" class="hidden">
-                                        <?php echo esc_html($existing_reg_payment_json); ?>
-                                    </div>
-                                </td>
-                                <td class=" jst-cntr">
-                                    <ul class="txn-overview-actions-ul">
-                                        <li>
-                                            <?php if ($can_edit_payments) : ?>
-                                                <a class="txn-admin-payment-action-edit-lnk"
-                                                   aria-label="<?php esc_attr_e('Edit Payment', 'event_espresso'); ?>"
-                                                   data-payment-id="<?php echo absint($PAY_ID); ?>"
-                                                >
-                                                    <div class="dashicons dashicons-edit" style="margin: 0;"></div>
-                                                </a>
-                                            <?php endif; ?>
-                                        </li>
-                                        <li>
-                                            <?php if ($can_delete_payments) : ?>
-                                                <a class="txn-admin-payment-action-delete-lnk"
-                                                   aria-label="<?php esc_attr_e('Delete Payment', 'event_espresso'); ?>"
-                                                   data-payment-id="<?php echo absint($PAY_ID); ?>"
-                                                >
-                                                    <div class="dashicons dashicons-trash" style="margin: 0;"></div>
-                                                </a>
-                                            <?php endif; ?>
-                                        </li>
-                                    </ul>
-                                </td>
-                                <td class=" jst-rght">
-                                    <div id="payment-id-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo esc_html($PAY_ID); ?>
-                                    </div>
-                                </td>
-                                <td class=" jst-left">
-                                    <div id="payment-date-<?php echo absint($PAY_ID); ?>" class="payment-date-dv">
-                                        <?php echo esc_html($payment->timestamp('Y-m-d', 'g:i a')); ?>
-                                    </div>
-                                </td>
-                                <td class=" jst-left">
-                                    <div id="payment-method-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo esc_html($payment->source()); ?>
-                                    </div>
-                                    <div id="payment-gateway-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo ($payment->payment_method() instanceof EE_Payment_Method
-                                            ? esc_html($payment->payment_method()->admin_name())
-                                            : esc_html__("Unknown", 'event_espresso')); ?>
-                                    </div>
-                                    <div id="payment-gateway-id-<?php echo absint($PAY_ID); ?>"
-                                         class="hidden"
-                                    >
-                                        <?php echo ($payment->payment_method() instanceof EE_Payment_Method
-                                            ? esc_html($payment->payment_method()->ID())
-                                            : 0); ?>
-                                    </div>
-                                </td>
-                                <td class=" jst-left">
-                                    <div id="payment-response-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo esc_html($payment->gateway_response()); ?>
-                                    </div>
-                                </td>
-                                <td class=" jst-left payment-txn-id-chq-nmbr">
-                                    <div id="payment-txn-id-chq-nmbr-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo esc_html($payment->txn_id_chq_nmbr()); ?>
-                                    </div>
-                                </td>
-                                <td class=" jst-left">
-                                    <div id="payment-po-nmbr-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo esc_html($payment->po_number()); ?>
-                                    </div>
-                                </td>
-                                <td class=" jst-left">
-                                    <div id="payment-accntng-<?php echo absint($PAY_ID); ?>">
-                                        <?php echo esc_html($payment->extra_accntng()); ?>
-                                    </div>
-                                </td>
-                                <td class=" jst-rght">
-                                    <?php
-                                    $payment_class = $payment->amount() > 0
-                                        ? 'txn-admin-payment-status-' . $payment->STS_ID()
-                                        : 'txn-admin-payment-status-PDC';
-                                    ?>
-                                    <span class="<?php echo esc_attr($payment_class); ?>">
-                                        <span id="payment-amount-<?php echo absint($PAY_ID); ?>" style="display:inline;">
-                                        <?php echo wp_kses(
-                                            EEH_Template::format_currency(
-                                                $payment->amount(),
-                                                false,
-                                                false
-                                            ),
-                                            AllowedTags::getAllowedTags()
-                                        );
-                                        ?>
-                                        </span>
-                                    </span>
-                                </td>
-                            </tr>
+                            <span class="<?php echo esc_attr($payment_class); ?>">
+                                <span id="payment-amount-<?php echo absint($PAY_ID); ?>" style="display:inline;"><?php
+                                    echo wp_kses(
+                                    EEH_Template::format_currency(
+                                        $payment->amount(),
+                                        false,
+                                        false
+                                    ),
+                                    AllowedTags::getAllowedTags()
+                                );
+                                ?></span>
+                            </span>
+                        </td>
+                    </tr>
                             <?php $payment_total += $payment->STS_ID() == 'PAP' ? $payment->amount() : 0; ?>
                         <?php endforeach; ?>
                         <?php $pay_totals_class = $payment_total > $grand_raw_total
                             ? ' important-notice'
                             : '';
                         ?>
-                        <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
-                            <td class=" jst-rght" colspan="10">
-                                <span class="important-notice"><?php echo wp_kses($no_payment_text, AllowedTags::getAllowedTags()); ?></span>
-                            </td>
-                        </tr>
-                        <tr id="txn-admin-payments-total-tr"
-                            class="admin-primary-mbox-total-tr<?php echo esc_attr($pay_totals_class); ?>"
-                        >
-                            <th class=" jst-rght" colspan="9">
-                        <span id="payments-total-spn">
-                        <?php
-                        $overpaid = $payment_total > $grand_raw_total
-                            ? '<span id="overpaid">'
-                              . __('This transaction has been overpaid ! ', 'event_espresso')
-                              . '</span>'
-                            : '';
-                        echo wp_kses(
-                            $overpaid
-                            . sprintf(
-                                __('Payments Total %s', 'event_espresso'),
-                                '(' . EE_Registry::instance()->CFG->currency->code . ')'
-                            ),
-                            AllowedTags::getAllowedTags()
-                        ); ?>
-                        </span>
-                            </th>
-                            <th class=" jst-rght">
-                        <span id="txn-admin-payment-total">
-                        <?php
-                        echo wp_kses(
-                            EEH_Template::format_currency(
-                                $payment_total,
-                                false,
-                                false
-                            ),
-                            AllowedTags::getAllowedTags()
-                        ); ?>
-                        </span>
-                            </th>
-                        </tr>
+                    <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
+                        <td class=" jst-rght" colspan="10">
+                            <span class="important-notice"><?php
+                                echo wp_kses($no_payment_text, AllowedTags::getAllowedTags());
+                            ?></span>
+                        </td>
+                    </tr>
+                    <tr id="txn-admin-payments-total-tr"
+                        class="admin-primary-mbox-total-tr<?php echo esc_attr($pay_totals_class); ?>"
+                    >
+                        <th class=" jst-rght" colspan="9">
+                            <span id="payments-total-spn"><?php
+                            $overpaid = $payment_total > $grand_raw_total
+                                ? '<span id="overpaid">'
+                                  . __('This transaction has been overpaid ! ', 'event_espresso')
+                                  . '</span>'
+                                : '';
+                            echo wp_kses(
+                                $overpaid
+                                . sprintf(
+                                    __('Payments Total %s', 'event_espresso'),
+                                    '(' . EE_Registry::instance()->CFG->currency->code . ')'
+                                ),
+                                AllowedTags::getAllowedTags()
+                            ); ?></span>
+                        </th>
+                        <th class=" jst-rght">
+                            <span id="txn-admin-payment-total"><?php
+                            echo wp_kses(
+                                EEH_Template::format_currency(
+                                    $payment_total,
+                                    false,
+                                    false
+                                ),
+                                AllowedTags::getAllowedTags()
+                            ); ?></span>
+                        </th>
+                    </tr>
                     <?php else : ?>
-                        <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
-                            <td class=" jst-rght" colspan="10">
-                                <span class="important-notice"><?php echo wp_kses($no_payment_text, AllowedTags::getAllowedTags()); ?></span>
-                            </td>
-                        </tr>
-                        <tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
-                            <th class=" jst-rght" colspan="9">
-                        <span id="payments-total-spn">
-                        <?php echo esc_html__('Payments Total', 'event_espresso'); ?>
-                        </span>
-                            </th>
-                            <th class=" jst-rght">
-                                <span id="txn-admin-payment-total"></span>
-                            </th>
-                        </tr>
+                    <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
+                        <td class=" jst-rght" colspan="10">
+                            <span class="important-notice"><?php
+                                echo wp_kses($no_payment_text, AllowedTags::getAllowedTags());
+                            ?></span>
+                        </td>
+                    </tr>
+                    <tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
+                        <th class=" jst-rght" colspan="9">
+                            <span id="payments-total-spn"><?php
+                            echo esc_html__('Payments Total', 'event_espresso');
+                            ?></span>
+                        </th>
+                        <th class=" jst-rght">
+                            <span id="txn-admin-payment-total"></span>
+                        </th>
+                    </tr>
                     <?php endif; ?>
 
                     <tr id="txn-admin-payment-empty-row-tr" class="hidden">
@@ -337,8 +333,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         </td>
                         <td class=" jst-left">
                             <div id="payment-method-PAY_ID"></div>
-                            <div id="payment-gateway-PAY_ID">
-                            </div>
+                            <div id="payment-gateway-PAY_ID"></div>
                             <div id="payment-gateway-id-PAY_ID" class="hidden"></div>
                         </td>
                         <td class=" jst-left">
@@ -354,8 +349,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             <div id="payment-accntng-PAY_ID"></div>
                         </td>
                         <td class=" jst-rght">
-                            <div id="payment-amount-PAY_ID" style="display:inline;">
-                            </div>
+                            <div id="payment-amount-PAY_ID" style="display:inline;"></div>
                         </td>
                     </tr>
 

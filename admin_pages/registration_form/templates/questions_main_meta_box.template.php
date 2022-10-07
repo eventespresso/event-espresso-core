@@ -10,11 +10,6 @@
 // PARAMS THAT MUST BE PASSED ARE:
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
-assert(isset($QST_ID));
-assert($question);
-assert($question instanceof EE_Question);
-assert($question_types);
-
 // the following are already escaped
 echo wp_kses(
     EEH_Form_Fields::hidden_input(

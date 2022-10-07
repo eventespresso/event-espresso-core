@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
+use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
 
 defined('EVENT_ESPRESSO_VERSION') || exit();
 
@@ -328,9 +329,8 @@ if (! function_exists('espresso_event_reg_button')) {
         }
         ?>
         <a class="ee-button ee-register-button <?php echo esc_attr($class); ?>"
-           href="<?php espresso_event_link_url($EVT_ID); ?>"
-            <?php echo EED_Events_Archive::link_target(); // already escaped
-            ?>
+            href="<?php espresso_event_link_url($EVT_ID); ?>"
+            <?php echo AttributesSanitizer::clean(EED_Events_Archive::link_target(), AllowedTags::getAllowedTags(), 'a'); ?>
         >
             <?php echo esc_html($btn_text); ?>
         </a>
@@ -406,7 +406,7 @@ if (! function_exists('espresso_event_categories')) {
     function espresso_event_categories($EVT_ID = 0, $hide_uncategorized = true, $echo = true)
     {
         if ($echo) {
-            echo EEH_Event_View::event_categories($EVT_ID, $hide_uncategorized); // already escaped
+            echo wp_kses(EEH_Event_View::event_categories($EVT_ID, $hide_uncategorized), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Event_View::event_categories($EVT_ID, $hide_uncategorized);
@@ -499,7 +499,7 @@ if (! function_exists('espresso_event_date')) {
         $date_format = apply_filters('FHEE__espresso_event_date__date_format', $date_format);
         $time_format = apply_filters('FHEE__espresso_event_date__time_format', $time_format);
         if ($echo) {
-            echo EEH_Event_View::the_event_date($date_format, $time_format, $EVT_ID); // already escaped
+            echo wp_kses(EEH_Event_View::the_event_date($date_format, $time_format, $EVT_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Event_View::the_event_date($date_format, $time_format, $EVT_ID);
@@ -633,7 +633,7 @@ if (! function_exists('espresso_event_end_date')) {
         $date_format = apply_filters('FHEE__espresso_event_end_date__date_format', $date_format);
         $time_format = apply_filters('FHEE__espresso_event_end_date__time_format', $time_format);
         if ($echo) {
-            echo EEH_Event_View::the_event_end_date($date_format, $time_format, $EVT_ID); // already escaped
+            echo wp_kses(EEH_Event_View::the_event_end_date($date_format, $time_format, $EVT_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Event_View::the_event_end_date($date_format, $time_format, $EVT_ID);
@@ -780,7 +780,7 @@ if (! function_exists('espresso_event_link_url')) {
     function espresso_event_link_url($EVT_ID = 0, $echo = true)
     {
         if ($echo) {
-            echo EEH_Event_View::event_link_url($EVT_ID); // already escaped
+            echo wp_kses(EEH_Event_View::event_link_url($EVT_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Event_View::event_link_url($EVT_ID);
@@ -817,7 +817,7 @@ if (! function_exists('espresso_event_content_or_excerpt')) {
     function espresso_event_content_or_excerpt($num_words = 55, $more = null, $echo = true)
     {
         if ($echo) {
-            echo EEH_Event_View::event_content_or_excerpt($num_words, $more); // already escaped
+            echo wp_kses(EEH_Event_View::event_content_or_excerpt($num_words, $more), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Event_View::event_content_or_excerpt($num_words, $more);
@@ -838,7 +838,7 @@ if (! function_exists('espresso_event_phone')) {
     function espresso_event_phone($EVT_ID = 0, $echo = true)
     {
         if ($echo) {
-            echo EEH_Event_View::event_phone($EVT_ID); // already escaped
+            echo wp_kses(EEH_Event_View::event_phone($EVT_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Event_View::event_phone($EVT_ID);
@@ -860,7 +860,7 @@ if (! function_exists('espresso_edit_event_link')) {
     function espresso_edit_event_link($EVT_ID = 0, $echo = true)
     {
         if ($echo) {
-            echo EEH_Event_View::edit_event_link($EVT_ID); // already escaped
+            echo wp_kses(EEH_Event_View::edit_event_link($EVT_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Event_View::edit_event_link($EVT_ID);
@@ -879,7 +879,7 @@ if (! function_exists('espresso_organization_name')) {
     function espresso_organization_name($echo = true)
     {
         if ($echo) {
-            echo EE_Registry::instance()->CFG->organization->get_pretty('name'); // already escaped
+            echo esc_html(EE_Registry::instance()->CFG->organization->get_pretty('name'));
             return '';
         }
         return EE_Registry::instance()->CFG->organization->get_pretty('name');
@@ -921,7 +921,7 @@ if (! function_exists('espresso_organization_email')) {
     function espresso_organization_email($echo = true)
     {
         if ($echo) {
-            echo EE_Registry::instance()->CFG->organization->get_pretty('email'); // already escaped
+            echo esc_html(EE_Registry::instance()->CFG->organization->get_pretty('email'));
             return '';
         }
         return EE_Registry::instance()->CFG->organization->get_pretty('email');
@@ -939,7 +939,7 @@ if (! function_exists('espresso_organization_logo_url')) {
     function espresso_organization_logo_url($echo = true)
     {
         if ($echo) {
-            echo EE_Registry::instance()->CFG->organization->get_pretty('logo_url'); // already escaped
+            echo esc_html(EE_Registry::instance()->CFG->organization->get_pretty('logo_url'));
             return '';
         }
         return EE_Registry::instance()->CFG->organization->get_pretty('logo_url');
@@ -957,7 +957,7 @@ if (! function_exists('espresso_organization_facebook')) {
     function espresso_organization_facebook($echo = true)
     {
         if ($echo) {
-            echo EE_Registry::instance()->CFG->organization->get_pretty('facebook'); // already escaped
+            echo esc_html(EE_Registry::instance()->CFG->organization->get_pretty('facebook'));
             return '';
         }
         return EE_Registry::instance()->CFG->organization->get_pretty('facebook');
@@ -975,7 +975,7 @@ if (! function_exists('espresso_organization_twitter')) {
     function espresso_organization_twitter($echo = true)
     {
         if ($echo) {
-            echo EE_Registry::instance()->CFG->organization->get_pretty('twitter'); // already escaped
+            echo esc_html(EE_Registry::instance()->CFG->organization->get_pretty('twitter'));
             return '';
         }
         return EE_Registry::instance()->CFG->organization->get_pretty('twitter');
@@ -993,7 +993,7 @@ if (! function_exists('espresso_organization_linkedin')) {
     function espresso_organization_linkedin($echo = true)
     {
         if ($echo) {
-            echo EE_Registry::instance()->CFG->organization->get_pretty('linkedin'); // already escaped
+            echo esc_html(EE_Registry::instance()->CFG->organization->get_pretty('linkedin'));
             return '';
         }
         return EE_Registry::instance()->CFG->organization->get_pretty('linkedin');
@@ -1011,7 +1011,7 @@ if (! function_exists('espresso_organization_pinterest')) {
     function espresso_organization_pinterest($echo = true)
     {
         if ($echo) {
-            echo EE_Registry::instance()->CFG->organization->get_pretty('pinterest'); // already escaped
+            echo esc_html(EE_Registry::instance()->CFG->organization->get_pretty('pinterest'));
             return '';
         }
         return EE_Registry::instance()->CFG->organization->get_pretty('pinterest');
@@ -1029,7 +1029,7 @@ if (! function_exists('espresso_organization_google')) {
     function espresso_organization_google($echo = true)
     {
         if ($echo) {
-            echo EE_Registry::instance()->CFG->organization->get_pretty('google'); // already escaped
+            echo esc_html(EE_Registry::instance()->CFG->organization->get_pretty('google'));
             return '';
         }
         return EE_Registry::instance()->CFG->organization->get_pretty('google');
@@ -1047,7 +1047,7 @@ if (! function_exists('espresso_organization_instagram')) {
     function espresso_organization_instagram($echo = true)
     {
         if ($echo) {
-            echo EE_Registry::instance()->CFG->organization->get_pretty('instagram'); // already escaped
+            echo esc_html(EE_Registry::instance()->CFG->organization->get_pretty('instagram'));
             return '';
         }
         return EE_Registry::instance()->CFG->organization->get_pretty('instagram');
@@ -1158,7 +1158,7 @@ if (! function_exists('espresso_venue_name')) {
     function espresso_venue_name($VNU_ID = 0, $link_to = 'details', $echo = true)
     {
         if ($echo) {
-            echo EEH_Venue_View::venue_name($link_to, $VNU_ID); // already escaped
+            echo wp_kses(EEH_Venue_View::venue_name($link_to, $VNU_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Venue_View::venue_name($link_to, $VNU_ID);
@@ -1198,7 +1198,7 @@ if (! function_exists('espresso_venue_description')) {
     function espresso_venue_description($VNU_ID = false, $echo = true)
     {
         if ($echo) {
-            echo EEH_Venue_View::venue_description($VNU_ID); // already escaped
+            echo wp_kses(EEH_Venue_View::venue_description($VNU_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Venue_View::venue_description($VNU_ID);
@@ -1220,7 +1220,7 @@ if (! function_exists('espresso_venue_excerpt')) {
     function espresso_venue_excerpt($VNU_ID = 0, $echo = true)
     {
         if ($echo) {
-            echo EEH_Venue_View::venue_excerpt($VNU_ID); // already escaped
+            echo wp_kses(EEH_Venue_View::venue_excerpt($VNU_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Venue_View::venue_excerpt($VNU_ID);
@@ -1243,7 +1243,7 @@ if (! function_exists('espresso_venue_categories')) {
     function espresso_venue_categories($VNU_ID = 0, $hide_uncategorized = true, $echo = true)
     {
         if ($echo) {
-            echo EEH_Venue_View::venue_categories($VNU_ID, $hide_uncategorized); // already escaped
+            echo wp_kses(EEH_Venue_View::venue_categories($VNU_ID, $hide_uncategorized), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Venue_View::venue_categories($VNU_ID, $hide_uncategorized);
@@ -1266,7 +1266,7 @@ if (! function_exists('espresso_venue_address')) {
     function espresso_venue_address($type = 'multiline', $VNU_ID = 0, $echo = true)
     {
         if ($echo) {
-            echo EEH_Venue_View::venue_address($type, $VNU_ID); // already escaped
+            echo wp_kses(EEH_Venue_View::venue_address($type, $VNU_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Venue_View::venue_address($type, $VNU_ID);
@@ -1289,7 +1289,7 @@ if (! function_exists('espresso_venue_raw_address')) {
     function espresso_venue_raw_address($type = 'multiline', $VNU_ID = 0, $echo = true)
     {
         if ($echo) {
-            echo EEH_Venue_View::venue_address($type, $VNU_ID, false, false); // already escaped
+            echo wp_kses(EEH_Venue_View::venue_address($type, $VNU_ID, false, false), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Venue_View::venue_address($type, $VNU_ID, false, false);
@@ -1351,7 +1351,7 @@ if (! function_exists('espresso_venue_phone')) {
     function espresso_venue_phone($VNU_ID = 0, $echo = true)
     {
         if ($echo) {
-            echo EEH_Venue_View::venue_phone($VNU_ID); // already escaped
+            echo wp_kses(EEH_Venue_View::venue_phone($VNU_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Venue_View::venue_phone($VNU_ID);
@@ -1372,7 +1372,7 @@ if (! function_exists('espresso_venue_website')) {
     function espresso_venue_website($VNU_ID = 0, $echo = true)
     {
         if ($echo) {
-            echo EEH_Venue_View::venue_website_link($VNU_ID); // already escaped
+            echo wp_kses(EEH_Venue_View::venue_website_link($VNU_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Venue_View::venue_website_link($VNU_ID);
@@ -1393,7 +1393,7 @@ if (! function_exists('espresso_edit_venue_link')) {
     function espresso_edit_venue_link($VNU_ID = 0, $echo = true)
     {
         if ($echo) {
-            echo EEH_Venue_View::edit_venue_link($VNU_ID); // already escaped
+            echo wp_kses(EEH_Venue_View::edit_venue_link($VNU_ID), AllowedTags::getWithFormTags());
             return '';
         }
         return EEH_Venue_View::edit_venue_link($VNU_ID);

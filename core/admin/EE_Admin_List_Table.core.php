@@ -531,18 +531,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function prepare_items()
     {
-
         $this->_set_column_info();
-        // $this->_column_headers = $this->get_column_info();
-        $total_items = $this->_all_data_count;
         $this->process_bulk_action();
 
         $this->items = $this->_data;
         $this->set_pagination_args(
             [
-                'total_items' => $total_items,
+                'total_items' => $this->_all_data_count,
                 'per_page'    => $this->_per_page,
-                'total_pages' => ceil($total_items / $this->_per_page),
+                'total_pages' => (int) ceil($this->_all_data_count / $this->_per_page),
             ]
         );
     }
@@ -739,7 +736,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function single_row_columns($item)
     {
-        list($columns, $hidden, $sortable, $primary) = $this->get_column_info();
+        [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
 
         foreach ($columns as $column_name => $column_display_name) {
 

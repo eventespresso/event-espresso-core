@@ -6,16 +6,12 @@
  * define and use the hook in a specific caffeinated/whatever class or file.
  */
 
+use EventEspresso\caffeinated\core\domain\services\pue\PueLicensingManager;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\database\TableAnalysis;
-
-// defined some new constants related to caffeinated folder
-define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/');
-define('EE_CAF_CORE', EE_CAFF_PATH . 'core/');
-define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries/');
-define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods/');
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 
 /**
@@ -27,8 +23,19 @@ define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods/');
  */
 class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 {
+
     /**
-     * @var TableAnalysis $table_analysis
+     * @var EE_Dependency_Map
+     */
+    protected $dependency_map;
+
+    /**
+     * @var LoaderInterface
+     */
+    protected $loader;
+
+    /**
+     * @var TableAnalysis
      */
     protected $_table_analysis;
 
@@ -36,24 +43,62 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
     /**
      * EE_Brewing_Regular constructor.
      *
-     * @param TableAnalysis $table_analysis
+     * @param EE_Dependency_Map $dependency_map
+     * @param LoaderInterface   $loader
+     * @param TableAnalysis     $table_analysis
      */
-    public function __construct(TableAnalysis $table_analysis)
-    {
+    public function __construct(
+        EE_Dependency_Map $dependency_map,
+        LoaderInterface $loader,
+        TableAnalysis $table_analysis
+    ) {
+        $this->dependency_map = $dependency_map;
+        $this->loader         = $loader;
         $this->_table_analysis = $table_analysis;
         if (defined('EE_CAFF_PATH')) {
-            $this->setInitializationHooks();
-            $this->setApiRegistrationHooks();
-            $this->setSwitchHooks();
-            $this->setDefaultFilterHooks();
-            // caffeinated constructed
-            do_action('AHEE__EE_Brewing_Regular__construct__complete');
+            // defined some new constants related to caffeinated folder
+            define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/');
+            define('EE_CAF_CORE', EE_CAFF_PATH . 'core/');
+            define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries/');
+            define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods/');
         }
     }
 
 
     /**
+     * @throws EE_Error
+     */
+    public function caffeinated()
+    {
+        $this->setInitializationHooks();
+        $this->setApiRegistrationHooks();
+        $this->setSwitchHooks();
+        $this->setDefaultFilterHooks();
+        // caffeinated constructed
+        do_action('AHEE__EE_Brewing_Regular__construct__complete');
+    }
+
+
+    public function initializePUE()
+    {
+        $this->dependency_map->registerDependencies(
+            PueLicensingManager::class,
+            [
+                'EE_Dependency_Map'                          => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
+        /** @var PueLicensingManager $pue_manager */
+        $pue_manager = $this->loader->getShared(PueLicensingManager::class);
+        $pue_manager->registerDependencies();
+        $pue_manager->registerHooks();
+    }
+
+
+    /**
      * Various hooks used for extending features via registration of modules or extensions.
+     *
+     * @throws EE_Error
      */
     private function setApiRegistrationHooks()
     {
@@ -121,7 +166,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      * @param array $paths original helper paths array
      * @return array             new array of paths
      */
-    public function caf_helper_paths($paths)
+    public function caf_helper_paths(array $paths): array
     {
         $paths[] = EE_CAF_CORE . 'helpers/';
         return $paths;
@@ -231,7 +276,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      * @param array $modules_to_register
      * @return array
      */
-    public function caffeinated_modules_to_register($modules_to_register = [])
+    public function caffeinated_modules_to_register(array $modules_to_register = []): array
     {
         if (is_readable(EE_CAFF_PATH . 'modules')) {
             $caffeinated_modules_to_register = glob(EE_CAFF_PATH . 'modules/*', GLOB_ONLYDIR);
@@ -289,7 +334,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      * @param array $taxonomy_array
      * @return array
      */
-    public function filter_taxonomies(array $taxonomy_array)
+    public function filter_taxonomies(array $taxonomy_array): array
     {
         $taxonomy_array['espresso_venue_categories']['args']['show_in_nav_menus'] = true;
         return $taxonomy_array;
@@ -298,9 +343,9 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 
     /**
      * @param array $cpt_array
-     * @return mixed
+     * @return array
      */
-    public function filter_cpts(array $cpt_array)
+    public function filter_cpts(array $cpt_array): array
     {
         $cpt_array['espresso_venues']['args']['show_in_nav_menus'] = true;
         return $cpt_array;
@@ -308,17 +353,17 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 
 
     /**
-     * @param array $menuitems
+     * @param array $menu_items
      * @return array
      */
-    public function nav_metabox_items(array $menuitems)
+    public function nav_metabox_items(array $menu_items): array
     {
-        $menuitems[] = [
+        $menu_items[] = [
             'title'       => esc_html__('Venue List', 'event_espresso'),
             'url'         => get_post_type_archive_link('espresso_venues'),
             'description' => esc_html__('Archive page for all venues.', 'event_espresso'),
         ];
-        return $menuitems;
+        return $menu_items;
     }
 
 
@@ -326,24 +371,11 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      * Gets the injected table analyzer, or throws an exception
      *
      * @return TableAnalysis
-     * @throws \EE_Error
      */
-    protected function _get_table_analysis()
+    protected function _get_table_analysis(): TableAnalysis
     {
-        if ($this->_table_analysis instanceof TableAnalysis) {
-            return $this->_table_analysis;
-        } else {
-            throw new \EE_Error(
-                sprintf(
-                    esc_html__('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
-                    get_class($this)
-                )
-            );
-        }
+        return $this->_table_analysis;
     }
 }
 
 
-$brewing = new EE_Brewing_Regular(
-    EE_Registry::instance()->create('TableAnalysis', [], true)
-);
