@@ -5,7 +5,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 /**
  * This scenario creates an event that has:
  * - Four Datetimes
- *      - D1 - reg limit 55  ( TA, TB, TC, TD ) << can only sell 5 max : TA, TB, & TC sold out after 5 sales
+ *      - D1 - reg limit 42  ( TA, TB, TC, TD ) << can only sell 5 max : TA, TB, & TC sold out after 5 sales
  *      - D2 - reg limit 20  ( TA, TB )         << can only sell 8 max : TA, TB, & TC sold out after 5 sales
  *      - D3 - reg limit 12  ( TA, TD )         << can only sell 12 max : TA & TD sold out after 12 sales
  *      - D4 - reg limit 30  ( TB, TC, TD, TE ) << can only sell 5 max : TA, TB, & TC sold out after 5 sales
@@ -53,7 +53,7 @@ class EE_Event_Scenario_E extends EE_Test_Scenario {
 				0 => array(
 					'fields' => array(
 						'DTT_name' => 'Datetime 1',
-						'DTT_reg_limit' => 55
+						'DTT_reg_limit' => 42
 					),
 					'relations' => array(
 						'Event' => array( 0 )

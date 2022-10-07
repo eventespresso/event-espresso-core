@@ -503,7 +503,9 @@ class EE_Line_Item_Test extends EE_UnitTestCase
         );
         $tax->save();
         $total_li->recalculate_total_including_taxes();
-        $this->assertEquals($line_item->total() + $percent_discount->total(), $event_subtotal->total());
+        $new_total = $line_item->total() + $percent_discount->total();
+        $new_total = round($new_total, 2);
+        $this->assertEquals($new_total, $event_subtotal->total());
         $this->assertEquals(12.50, $total_li->total());
         $this->assertEquals($pretax_subtotal->total(), $total_li->get_items_total());
     }
