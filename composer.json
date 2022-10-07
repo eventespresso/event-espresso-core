@@ -33,5 +33,33 @@
 		"ext-openssl": "*",
 		"tijsverkoyen/css-to-inline-styles": "2.2.4",
 		"dompdf/dompdf": "^2.0.1"
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/eventespresso/ee-coding-standards"
+		}
+	],
+	"require-dev": {
+		"eventespresso/ee-coding-standards": "dev-master",
+		"roave/security-advisories": "dev-master",
+		"yoast/phpunit-polyfills": "^1.0"
+	},
+	"config": {
+		"allow-plugins": {
+			"eventespresso/*": true,
+			"phpunit/phpunit": true,
+			"roave/security-advisories": true,
+			"yoast/phpunit-polyfills": true
+		}
+	},
+	"scripts": {
+		"config-eventespressocs": [
+			"\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
+			"\"vendor/bin/phpcs\" --config-set default_standard EventEspresso"
+		],
+		"lint": "\"vendor/bin/phpcs\" --runtime-set testVersion 7.1-",
+		"lint:skip-warnings": "\"vendor/bin/phpcs\" -n --runtime-set testVersion 7.1-",
+		"lint:fix": "\"vendor/bin/phpcbf\" --standard=phpcs.xml --ignore=assets/*,languages/*,*/index.php"
 	}
 }
