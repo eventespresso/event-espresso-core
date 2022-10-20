@@ -11,7 +11,7 @@ namespace EventEspresso\core\services\address\formatters;
  * @author        Brent Christensen
  * @since         4.8
  */
-class MultiLineAddressFormatter extends AddressFormatter implements \EEI_Address_Formatter
+class MultiLineAddressFormatter extends AddressFormatter implements AddressFormatterInterface
 {
     /**
      * @param string $address
@@ -23,8 +23,15 @@ class MultiLineAddressFormatter extends AddressFormatter implements \EEI_Address
      * @param string $CNT_ISO
      * @return string
      */
-    public function format($address, $address2, $city, $state, $zip, $country, $CNT_ISO)
-    {
+    public function format(
+        string $address,
+        string $address2,
+        string $city,
+        string $state,
+        string $zip,
+        string $country,
+        string $CNT_ISO
+    ): ?string {
         $address_formats = apply_filters(
             'FHEE__EE_MultiLine_Address_Formatter__address_formats',
             array(
@@ -35,8 +42,7 @@ class MultiLineAddressFormatter extends AddressFormatter implements \EEI_Address
             )
         );
         // if the incoming country has a set format, use that, else use the default
-        $formatted_address = isset($address_formats[ $CNT_ISO ]) ? $address_formats[ $CNT_ISO ]
-            : $address_formats['ZZ'];
+        $formatted_address = $address_formats[ $CNT_ISO ] ?? $address_formats['ZZ'];
         return $this->parse_formatted_address(
             $address,
             $address2,

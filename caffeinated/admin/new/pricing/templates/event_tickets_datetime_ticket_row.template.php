@@ -407,8 +407,8 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                                id="edit-ticket-TKT_required-<?php echo esc_attr($tkt_row); ?>"
                                value="1"
                             <?php
-                                echo ($TKT_required ? ' checked' : '');
-                                echo ($disabled ? ' disabled' : '');
+                                echo esc_attr($TKT_required ? ' checked' : '');
+                                echo esc_attr($disabled ? ' disabled' : '');
                             ?>
                         />
                         <?php esc_html_e(
@@ -532,10 +532,14 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
             ); ?>
             <div class="ee-editor-footer-container">
                 <div class="ee-editor-id-container">
-                    <span class="ee-item-id"><?php
-                        echo ($TKT_ID
-                            ? sprintf(esc_html__('Ticket ID: %d', 'event_espresso'), $TKT_ID)
-                            : ''); ?></span>
+                    <span class="ee-item-id">
+                        <?php
+                        echo esc_html(
+                            $TKT_ID
+                                ? sprintf(__('Ticket ID: %d', 'event_espresso'), $TKT_ID)
+                                : ''
+                        ); ?>
+                    </span>
                 </div>
                 <div class="save-cancel-button-container">
                     <label for="edit-ticket-TKT_is_default_selector-<?php echo esc_attr($tkt_row); ?>">
@@ -548,7 +552,7 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                                class="edit-ticket-TKT_is_default_selector"
                                id="edit-ticket-TKT_is_default_selector-<?php echo esc_attr($tkt_row); ?>"
                                value="1"
-                               <?php echo ($disabled ? ' disabled' : ''); ?>
+                               <?php echo esc_attr($disabled ? ' disabled' : ''); ?>
                         />
                     </label>
                     <input type="hidden"

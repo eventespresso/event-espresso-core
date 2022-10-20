@@ -235,11 +235,14 @@ if ($QST_system === 'country') {
                     </th>
                     <td>
                         <input id="QST_max"
-                            <?php echo ($max_max === EE_INF ? '' : 'max="' . esc_attr($max_max) . '"'); ?>
-                               min="1"
-                               name="QST_max"
-                               type="number"
-                               value="<?php echo esc_attr($question->get_f('QST_max')); ?>"
+                            class="ee-input-width--small"
+                        <?php if($max_max !== EE_INF) :?>
+                            max="<?php echo esc_attr($max_max);?>"
+                        <?php  endif; ?>
+                            min="1"
+                            name="QST_max"
+                            type="number"
+                            value="<?php echo esc_attr($question->get_f('QST_max')); ?>"
                         />
                         <p>
                             <span class="description">
@@ -541,4 +544,3 @@ if ($QST_system === 'country') {
 
 <?php
 do_action('AHEE__questions_main_meta_box__template__after_admin_page_content', $question);
-

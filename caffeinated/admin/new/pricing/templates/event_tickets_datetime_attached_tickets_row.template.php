@@ -108,13 +108,18 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 </table>
                 <div class="ee-editor-footer-container">
                     <div class="ee-editor-id-container">
-                        <span class="ee-item-id"><?php
-                            echo ($DTT_ID
-                                ? sprintf(
-                                    esc_html__('Datetime ID: %d', 'event_espresso'),
-                                    $DTT_ID
-                                )
-                                : ''); ?></span>
+                        <span class="ee-item-id">
+                            <?php
+                            echo esc_html(
+                                $DTT_ID
+                                    ? sprintf(
+                                        __('Datetime ID: %d', 'event_espresso'),
+                                        $DTT_ID
+                                    )
+                                    : ''
+                            );
+                            ?>
+                        </span>
                     </div>
                     <div class="save-cancel-button-container">
                         <button data-context="short-ticket" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"

@@ -58,6 +58,7 @@ class AllowedTags
         'multiple'          => 1,
         'name'              => 1,
         'novalidate'        => 1,
+        'onclick'           => 1,
         'placeholder'       => 1,
         'property'          => 1,
         'readonly'          => 1,
@@ -76,6 +77,7 @@ class AllowedTags
         'type'              => 1,
         'value'             => 1,
         'width'             => 1,
+        'http-equiv'        => 1,
     ];
 
 

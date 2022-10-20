@@ -30,9 +30,11 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     <label><?php esc_html_e('Amount Owing: ', 'event_espresso'); ?></label>
                 </td>
                 <td class="<?php
-                echo ($transaction->paid() == $transaction->total())
-                    ? 'ee-transaction-paid'
-                    : 'ee-transaction-unpaid'
+                echo sanitize_html_class(
+                    $transaction->paid() == $transaction->total()
+                        ? 'ee-transaction-paid'
+                        : 'ee-transaction-unpaid'
+                );
                 ?>"
                 >
                     <?php echo wp_kses(EEH_Template::format_currency($transaction->remaining()), AllowedTags::getAllowedTags()); ?>

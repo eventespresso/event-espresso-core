@@ -48,21 +48,27 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                     EEH_Template::format_currency($item['ticket']->price(), false, false)
                                 );
                                 $qty_price = $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ];
-                                echo ($item['ticket']->qty()
-                                    ? ' &nbsp; x &nbsp; '
-                                      . sprintf(
-                                          /* translators: %s: ticket count */
-                                          esc_html__('%1$s tickets', 'event_espresso'),
-                                          absint($ticket_count[ $item['ticket']->ID() ])
-                                      )
-                                      . ' &nbsp; = &nbsp; '
-                                      . EEH_Template::format_currency($qty_price)
-                                    : '');
-                                echo ($item['ticket']->description()
-                                    ? '<br/>'
-                                      . esc_html__('Ticket Details: ', 'event_espresso')
-                                      . wp_kses($item['ticket']->description(), AllowedTags::getAllowedTags())
-                                    : '');
+                                echo wp_kses(
+                                    $item['ticket']->qty()
+                                        ? ' &nbsp; x &nbsp; '
+                                            . sprintf(
+                                                /* translators: %s: ticket count */
+                                                __('%1$s tickets', 'event_espresso'),
+                                                absint($ticket_count[ $item['ticket']->ID() ])
+                                            )
+                                            . ' &nbsp; = &nbsp; '
+                                            . EEH_Template::format_currency($qty_price)
+                                        : '',
+                                    AllowedTags::getAllowedTags()
+                                );
+                                echo wp_kses(
+                                    $item['ticket']->description()
+                                        ? '<br/>'
+                                            . __('Ticket Details: ', 'event_espresso')
+                                            . $item['ticket']->description()
+                                        : '',
+                                    AllowedTags::getAllowedTags()
+                                );
                                 ?>
                             </p>
                         <?php } ?>

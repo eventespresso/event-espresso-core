@@ -126,9 +126,12 @@ class Benchmark
         $memory_used = Benchmark::convert(memory_get_usage(true));
         Benchmark::$memory_usage[ $label ] = $memory_used;
         if ($output_now) {
-            echo ($formatted
-                ? "<br>{$label} : {$memory_used}"
-                : "\n {$label} : {$memory_used}");
+            echo wp_kses(
+                $formatted
+                    ? "<br>{$label} : {$memory_used}"
+                    : "\n {$label} : {$memory_used}",
+                AllowedTags::getAllowedTags()
+            );
         }
     }
 

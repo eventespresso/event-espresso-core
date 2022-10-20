@@ -115,10 +115,10 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
             ee_recurse_into_array_for_display(reset($data), $depth, false);
         }
     } else {
-        echo ($td ? '<td class="ee-system-stati-value">' : '');
+        echo wp_kses($td ? '<td class="ee-system-stati-value">' : '', AllowedTags::getAllowedTags());
         // simple value
         echo wp_kses($data, AllowedTags::getAllowedTags());
-        echo ($td ? '</td>' : '');
+        echo wp_kses($td ? '</td>' : '', AllowedTags::getAllowedTags());
     }
 }
 

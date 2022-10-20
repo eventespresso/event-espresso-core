@@ -21,12 +21,12 @@
                 name="save"
                 id="country_settings_save_2"
                 class="button-primary save"
-                value="<?php esc_html_e('Save Country Details', 'event_espresso'); ?>"
+                value="<?php esc_attr_e('Save Country Details', 'event_espresso'); ?>"
             />
             <input
                 type="hidden"
                 id="country-currency-setting-disabled-input"
-                value="<?php echo ($CNT_cur_disabled ? 'true' : 'false'); ?>"
+                value="<?php echo esc_attr($CNT_cur_disabled ? 'true' : 'false'); ?>"
             />
         </td>
     </tr>

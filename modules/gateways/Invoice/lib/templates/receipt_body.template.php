@@ -165,12 +165,20 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                             </td>
                                             <td class="item_c">
                                             </td>
-                                            <td class="item_c"><?php
-                                                echo ($is_percent
-                                                    ? $sub_line_item->percent() . "%"
-                                                    : $sub_line_item->unit_price_no_code()); ?>
+                                            <td class="item_c">
+                                                <?php echo wp_kses(
+                                                    $is_percent
+                                                        ? $sub_line_item->percent() . "%"
+                                                        : $sub_line_item->unit_price_no_code(),
+                                                    AllowedTags::getAllowedTags()
+                                                ); ?>
                                             </td>
-                                            <td class="item_r"><?php echo wp_kses($sub_line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
+                                            <td class="item_r">
+                                                <?php echo wp_kses(
+                                                    $sub_line_item->total_no_code(),
+                                                    AllowedTags::getAllowedTags()
+                                                ); ?>
+                                            </td>
                                         </tr>
                                         <?php
                                     } ?>
@@ -206,18 +214,25 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                         foreach ($ticket->datetimes_ordered() as $datetime) {
                                             /* @var $datetime EE_Datetime */ ?>
                                             <li><?php
-                                                echo ($datetime->name()
-                                                    ? '<b>' . esc_html($datetime->name()) . ' </b>'
-                                                    : '');
+                                                echo wp_kses(
+                                                    $datetime->name()
+                                                        ? '<b>' . esc_html($datetime->name()) . ' </b>'
+                                                        : '',
+                                                    AllowedTags::getAllowedTags()
+                                                );
                                                 echo sprintf(
                                                     esc_html__("%s - %s (%s)", "event_espresso"),
                                                     $datetime->start_date_and_time(),
                                                     $datetime->end_date_and_time(),
                                                     $datetime->get_timezone()
                                                 );
-                                                echo ($datetime->description()
-                                                    ? '<p class="ticket-note">' . wp_kses($datetime->description(), AllowedTags::getAllowedTags()) . '</p>'
-                                                    : ''); ?></li>
+                                                echo wp_kses(
+                                                    $datetime->description()
+                                                        ? '<p class="ticket-note">' . $datetime->description() . '</p>'
+                                                        : '',
+                                                    AllowedTags::getAllowedTags()
+                                                ); ?>
+                                            </li>
                                             <?php
                                         } ?>
                                     </ul>

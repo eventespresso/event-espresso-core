@@ -186,15 +186,19 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                 echo esc_html($payment->source());
                                 ?></div>
                             <div id="payment-gateway-<?php echo absint($PAY_ID); ?>"><?php
-                                echo ($payment->payment_method() instanceof EE_Payment_Method
-                                    ? esc_html($payment->payment_method()->admin_name())
-                                    : esc_html__("Unknown", 'event_espresso'));
-                                ?></div>
+                                echo esc_html(
+                                    $payment->payment_method() instanceof EE_Payment_Method
+                                        ? $payment->payment_method()->admin_name()
+                                        : __("Unknown", 'event_espresso')
+                                );
+                            ?></div>
                             <div id="payment-gateway-id-<?php echo absint($PAY_ID); ?>" class="hidden"><?php
-                                echo ($payment->payment_method() instanceof EE_Payment_Method
-                                    ? esc_html($payment->payment_method()->ID())
-                                    : 0);
-                                ?></div>
+                                echo esc_html(
+                                    $payment->payment_method() instanceof EE_Payment_Method
+                                        ? $payment->payment_method()->ID()
+                                        : 0
+                                );
+                            ?></div>
                         </td>
                         <td class=" jst-left">
                             <div id="payment-response-<?php echo absint($PAY_ID); ?>"><?php

@@ -22,18 +22,18 @@ class AddressFormatter
      * @param string $country
      * @param string $formatted_address
      * @param string $sub
-     * @return mixed
+     * @return string
      */
     protected function parse_formatted_address(
-        $address,
-        $address2,
-        $city,
-        $state,
-        $zip,
-        $country,
-        $formatted_address,
-        $sub
-    ) {
+        string $address,
+        string $address2,
+        string $city,
+        string $state,
+        string $zip,
+        string $country,
+        string $formatted_address,
+        string $sub
+    ): string {
         // swap address part placeholders for the real text
         $formatted_address = str_replace(
             // find
