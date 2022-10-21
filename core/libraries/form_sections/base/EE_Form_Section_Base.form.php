@@ -19,45 +19,45 @@ abstract class EE_Form_Section_Base
      *
      * @var string
      */
-    protected $_action;
+    protected $_action = '';
 
     /**
      * POST (default) or GET
      *
      * @var string
      */
-    protected $_method;
+    protected $_method = '';
 
     /**
      * html_id and html_name are derived from this by default
      *
      * @var string
      */
-    protected $_name;
+    protected $_name = '';
 
     /**
      * $_html_id
      * @var string
      */
-    protected $_html_id;
+    protected $_html_id = '';
 
     /**
      * $_html_class
      * @var string
      */
-    protected $_html_class;
+    protected $_html_class = '';
 
     /**
      * $_html_style
      * @var string
      */
-    protected $_html_style;
+    protected $_html_style = '';
 
     /**
      * $_other_html_attributes
      * @var string
      */
-    protected $_other_html_attributes;
+    protected $_other_html_attributes = '';
 
     /**
      * The form section of which this form section is a part
@@ -71,9 +71,9 @@ abstract class EE_Form_Section_Base
      * If it has not been called and we try to use functions which require it, we call it
      * with no parameters. But normally, _construct_finalize should be called by the instantiating class
      *
-     * @var boolean
+     * @var bool
      */
-    protected $_construction_finalized;
+    protected $_construction_finalized = false;
 
     /**
      * Strategy for parsing the form HTML upon display
@@ -113,7 +113,6 @@ abstract class EE_Form_Section_Base
     /**
      * @param $parent_form_section
      * @param $name
-     * @throws \EE_Error
      */
     protected function _construct_finalize($parent_form_section, $name)
     {
@@ -130,7 +129,6 @@ abstract class EE_Form_Section_Base
      * make sure construction finalized was called, otherwise children might not be ready
      *
      * @return void
-     * @throws \EE_Error
      */
     public function ensure_construct_finalized_called()
     {
@@ -316,7 +314,7 @@ abstract class EE_Form_Section_Base
      */
     public function set_other_html_attributes($other_html_attributes)
     {
-        $this->_other_html_attributes = $other_html_attributes;
+        $this->_other_html_attributes = $other_html_attributes ?? '';
     }
 
 
@@ -380,7 +378,7 @@ abstract class EE_Form_Section_Base
         }
         $html = EEH_HTML::nl(1, 'form') . '<form';
         $html .= $this->html_id() !== '' ? ' id="' . $this->get_html_id_for_form($this->html_id()) . '"' : '';
-        $html .= ' action="' . $this->action() . '"';
+        $html .= ' action="' . esc_url_raw($this->action()) . '"';
         $html .= ' method="' . $this->method() . '"';
         $html .= ' name="' . $this->name() . '"';
         $html .= ' ' . $other_attributes . '>';
