@@ -217,9 +217,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         // ensure that "required" is set correctly
         $this->set_required(
             $this->_required,
-            isset($input_args['required_validation_error_message'])
-            ? $input_args['required_validation_error_message']
-            : null
+            $input_args['required_validation_error_message'] ?? null
         );
         // $this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
         $this->_display_strategy->_construct_finalize($this);
@@ -692,7 +690,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function html_name()
     {
         $this->_set_default_html_name_if_empty();
-        return $this->_html_name;
+        return $this->_html_name ?? '';
     }
 
 
@@ -712,7 +710,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_label_class()
     {
-        return $this->_html_label_class;
+        return $this->_html_label_class ?? '';
     }
 
 
@@ -722,7 +720,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_label_style()
     {
-        return $this->_html_label_style;
+        return $this->_html_label_style ?? '';
     }
 
 
@@ -732,7 +730,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_label_text()
     {
-        return $this->_html_label_text;
+        return $this->_html_label_text ?? '';
     }
 
 
@@ -742,7 +740,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_help_text()
     {
-        return $this->_html_help_text;
+        return $this->_html_help_text ?? '';
     }
 
 
@@ -752,7 +750,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_help_class()
     {
-        return $this->_html_help_class;
+        return $this->_html_help_class ?? '';
     }
 
 
@@ -762,7 +760,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_help_style()
     {
-        return $this->_html_style;
+        return $this->_html_style ?? '';
     }
 
 
