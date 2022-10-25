@@ -236,7 +236,7 @@ if ($QST_system === 'country') {
                     <td>
                         <input id="QST_max"
                             class="ee-input-width--small"
-                        <?php if($max_max !== EE_INF) :?>
+                        <?php if ($max_max !== EE_INF) :?>
                             max="<?php echo esc_attr($max_max);?>"
                         <?php  endif; ?>
                             min="1"

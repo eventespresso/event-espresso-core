@@ -9,7 +9,6 @@ use EEH_URL;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 
-
 /**
  * Stats
  * This service exposes various stat collection logic retrieval and storage. Used for prepping the stats package sent

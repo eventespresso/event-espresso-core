@@ -218,7 +218,7 @@ final class EE_System implements ResettableInterface
         // give caff stuff a chance to play during the activation process too.
         add_action(
             'AHEE__EE_Bootstrap__load_espresso_addons',
-           [$this, 'brewCaffeinated'],
+            [$this, 'brewCaffeinated'],
             9
         );
         // allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc

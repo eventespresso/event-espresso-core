@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $nav_menu_selected_id
  * @var string $nav_tab_link

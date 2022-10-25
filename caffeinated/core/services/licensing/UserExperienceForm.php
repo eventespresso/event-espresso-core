@@ -41,7 +41,7 @@ class UserExperienceForm
     /**
      * @throws EE_Error
      */
-    public function uxipFormSections(EE_Form_Section_Proper $org_settings_form ): EE_Form_Section_Proper
+    public function uxipFormSections(EE_Form_Section_Proper $org_settings_form): EE_Form_Section_Proper
     {
         if (is_main_site()) {
             $org_settings_form->add_subsections(

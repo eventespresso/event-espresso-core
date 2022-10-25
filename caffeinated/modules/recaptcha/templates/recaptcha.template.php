@@ -1,5 +1,7 @@
 <?php
+
 /** @type string $recaptcha_language */
+
 /** @type string $recaptcha_publickey */
 /** @type string $recaptcha_theme */
 /** @type string $recaptcha_type */

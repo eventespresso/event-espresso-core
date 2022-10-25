@@ -23,7 +23,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 {
-
     /**
      * @var EE_Dependency_Map
      */
@@ -377,5 +376,3 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
         return $this->_table_analysis;
     }
 }
-
-
