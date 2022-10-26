@@ -3,7 +3,7 @@
         'name' => 'eventespresso/event-espresso-core',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '3ec566b171dd5758337b168ad49cc26a64776d61',
+        'reference' => '4df7af44fa9a7448f42bd7d57ba7331e0e727d9a',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -42,7 +42,7 @@
         'eventespresso/event-espresso-core' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '3ec566b171dd5758337b168ad49cc26a64776d61',
+            'reference' => '4df7af44fa9a7448f42bd7d57ba7331e0e727d9a',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
