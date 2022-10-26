@@ -19,7 +19,7 @@ interface AddressInterface
     public function city(): string;
 
 
-    public function state_obj(): EE_State;
+    public function state_obj(): ?EE_State;
 
 
     public function state_ID(): int;
@@ -34,7 +34,7 @@ interface AddressInterface
     public function state(): string;
 
 
-    public function country_obj(): EE_Country;
+    public function country_obj(): ?EE_Country;
 
 
     public function country_ID(): string;
