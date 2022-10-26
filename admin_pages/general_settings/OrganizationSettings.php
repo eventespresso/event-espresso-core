@@ -40,13 +40,25 @@ use ReflectionException;
  */
 class OrganizationSettings extends FormHandler
 {
-    protected EE_Organization_Config $organization_config;
+    /**
+     * @var EE_Organization_Config
+     */
+    protected $organization_config;
 
-    protected EE_Core_Config $core_config;
+    /**
+     * @var EE_Core_Config
+     */
+    protected $core_config;
 
-    protected EE_Network_Core_Config $network_core_config;
+    /**
+     * @var EE_Network_Core_Config
+     */
+    protected $network_core_config;
 
-    protected CountrySubRegionDao $countrySubRegionDao;
+    /**
+     * @var CountrySubRegionDao
+     */
+    protected $countrySubRegionDao;
 
     /**
      * Form constructor.
