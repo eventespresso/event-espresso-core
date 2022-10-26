@@ -6,7 +6,7 @@ use EE_Country;
 use EE_State;
 
 /**
- * Interface EEI_Address
+ * Interface AddressInterface
  */
 interface AddressInterface
 {

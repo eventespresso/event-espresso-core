@@ -22,7 +22,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @subpackage            includes/classes/EE_Transaction.class.php
  * @author                Mike Nelson
  */
-class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_Admin_Links, EEI_Attendee
+class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, EEI_Admin_Links, EEI_Attendee
 {
     /**
      * Sets some dynamic defaults

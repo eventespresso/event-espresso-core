@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\address\AddressInterface;
+
 /**
  * Class EEH_Schema
  * This class is a collection of static methods for applying schema.org formatting to passed items
@@ -152,10 +154,10 @@ class EEH_Schema
      *    The street address. For example, 1600 Amphitheatre Pkwy.
      *
      * @access public
-     * @param EEI_Address $obj_with_address
+     * @param AddressInterface $obj_with_address
      * @return string
      */
-    public static function streetAddress(EEI_Address $obj_with_address = null)
+    public static function streetAddress(AddressInterface $obj_with_address = null)
     {
         return $obj_with_address->address() !== null && $obj_with_address->address() !== ''
             ? '<span itemprop="streetAddress">' . $obj_with_address->address() . '</span>' : '';
@@ -168,10 +170,10 @@ class EEH_Schema
      *    The post office box number for PO box addresses.
      *
      * @access public
-     * @param EEI_Address $obj_with_address
+     * @param AddressInterface $obj_with_address
      * @return string
      */
-    public static function postOfficeBoxNumber(EEI_Address $obj_with_address = null)
+    public static function postOfficeBoxNumber(AddressInterface $obj_with_address = null)
     {
         // regex check for some form of PO Box or P.O. Box, etc, etc, etc
         if (
@@ -194,10 +196,10 @@ class EEH_Schema
      *    The locality (city, town, etc). For example, Mountain View.
      *
      * @access public
-     * @param EEI_Address $obj_with_address
+     * @param AddressInterface $obj_with_address
      * @return string
      */
-    public static function addressLocality(EEI_Address $obj_with_address = null)
+    public static function addressLocality(AddressInterface $obj_with_address = null)
     {
         return $obj_with_address->city() !== null && $obj_with_address->city() !== ''
             ? '<span itemprop="addressLocality">' . $obj_with_address->city() . '</span>' : '';
@@ -210,10 +212,10 @@ class EEH_Schema
      *    The region (state, province, etc). For example, CA.
      *
      * @access public
-     * @param EEI_Address $obj_with_address
+     * @param AddressInterface $obj_with_address
      * @return string
      */
-    public static function addressRegion(EEI_Address $obj_with_address = null)
+    public static function addressRegion(AddressInterface $obj_with_address = null)
     {
         $state = $obj_with_address->state_name();
         if (! empty($state)) {
@@ -230,10 +232,10 @@ class EEH_Schema
      *    The country. For example, USA. You can also provide the two-letter ISO 3166-1 alpha-2 country code.
      *
      * @access public
-     * @param EEI_Address $obj_with_address
+     * @param AddressInterface $obj_with_address
      * @return string
      */
-    public static function addressCountry(EEI_Address $obj_with_address = null)
+    public static function addressCountry(AddressInterface $obj_with_address = null)
     {
         $country = $obj_with_address->country_name();
         if (! empty($country)) {
@@ -250,10 +252,10 @@ class EEH_Schema
      *    The postal code. For example, 94043.
      *
      * @access public
-     * @param EEI_Address $obj_with_address
+     * @param AddressInterface $obj_with_address
      * @return string
      */
-    public static function postalCode(EEI_Address $obj_with_address = null)
+    public static function postalCode(AddressInterface $obj_with_address = null)
     {
         return $obj_with_address->zip() !== null && $obj_with_address->zip() !== '' ? '<span itemprop="postalCode">'
                                                                                       . $obj_with_address->zip()

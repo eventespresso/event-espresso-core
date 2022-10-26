@@ -7,7 +7,7 @@
  * @subpackage            includes/classes/EE_Venue.class.php
  * @author                Mike Nelson
  */
-class EE_Venue extends EE_CPT_Base implements EEI_Address
+class EE_Venue extends EE_CPT_Base implements AddressInterface
 {
     /**
      *
