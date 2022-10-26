@@ -2,7 +2,7 @@
   "name" : "phpcompatibility/phpcompatibility-paragonie",
   "description" : "A set of rulesets for PHP_CodeSniffer to check for PHP cross-version compatibility issues in projects, while accounting for polyfills provided by the Paragonie polyfill libraries.",
   "type" : "phpcodesniffer-standard",
-  "keywords" : [ "compatibility", "phpcs", "standards", "paragonie", "polyfill" ],
+  "keywords" : [ "compatibility", "phpcs", "standards", "static analysis", "paragonie", "polyfill" ],
   "homepage" : "http://phpcompatibility.com/",
   "license" : "LGPL-3.0-or-later",
   "authors" : [ {
@@ -16,6 +16,11 @@
   "support" : {
     "issues" : "https://github.com/PHPCompatibility/PHPCompatibilityParagonie/issues",
     "source" : "https://github.com/PHPCompatibility/PHPCompatibilityParagonie"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   },
   "require" : {
     "phpcompatibility/php-compatibility" : "^9.0"
