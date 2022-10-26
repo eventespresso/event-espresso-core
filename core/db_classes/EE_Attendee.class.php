@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\address\AddressInterface;
 
 /**
  * Event Espresso

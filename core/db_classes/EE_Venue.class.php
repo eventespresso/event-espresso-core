@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\address\AddressInterface;
+
 /**
  * EE_Venue class
  *
