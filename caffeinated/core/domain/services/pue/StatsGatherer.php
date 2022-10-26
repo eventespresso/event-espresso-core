@@ -55,7 +55,7 @@ class StatsGatherer
     /**
      * @var EEM_Payment_Method
      */
-    private EEM_Payment_Method $payment_method_model;
+    private $payment_method_model;
 
 
     /**
