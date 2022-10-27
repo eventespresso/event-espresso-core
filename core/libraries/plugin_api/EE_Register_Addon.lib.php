@@ -28,14 +28,14 @@ class EE_Register_Addon implements EEI_Plugin_API
      *
      * @var string
      */
-    protected static string $_core_version = '';
+    protected static $_core_version = '';
 
     /**
      * Holds values for registered addons
      *
      * @var array
      */
-    protected static array $_settings = [];
+    protected static $_settings = [];
 
     /**
      * @var  array $_incompatible_addons keys are addon SLUGS
@@ -49,7 +49,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                   high value for its minimum plugin version.
      * @access    protected
      */
-    protected static array $_incompatible_addons = [
+    protected static $_incompatible_addons = [
         'Multi_Event_Registration' => '2.0.11.rc.002',
         'Promotions'               => '1.0.0.rc.084',
     ];
