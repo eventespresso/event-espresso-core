@@ -43,6 +43,12 @@
     padding-inline: 0;
     width: 100%;
 }
+
+.espresso-admin .tablenav .no-pages,
+.espresso-admin .tablenav .one-page .pagination-links {
+    display: none;
+}
+
 .espresso-admin .tablenav .actions {
     padding-block: .25rem;
     padding-inline: 0;

@@ -121,7 +121,7 @@ class BootstrapDependencyInjectionContainer
     /**
      * @return EE_Dependency_Map
      */
-    public function getDependencyMap()
+    public function getDependencyMap(): EE_Dependency_Map
     {
         return $this->dependency_map;
     }
@@ -130,7 +130,7 @@ class BootstrapDependencyInjectionContainer
     /**
      * @return EE_Registry
      */
-    public function getRegistry()
+    public function getRegistry(): EE_Registry
     {
         return $this->registry;
     }
@@ -139,7 +139,7 @@ class BootstrapDependencyInjectionContainer
     /**
      * @return LoaderInterface
      */
-    public function getLoader()
+    public function getLoader(): LoaderInterface
     {
         return $this->loader;
     }

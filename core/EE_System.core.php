@@ -215,6 +215,12 @@ final class EE_System implements ResettableInterface
             array($this, 'loadPluginApi'),
             9
         );
+        // give caff stuff a chance to play during the activation process too.
+        add_action(
+            'AHEE__EE_Bootstrap__load_espresso_addons',
+            [$this, 'brewCaffeinated'],
+            9
+        );
         // allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
         add_action(
             'AHEE__EE_Bootstrap__load_espresso_addons',
@@ -326,6 +332,45 @@ final class EE_System implements ResettableInterface
         // set autoloaders for all of the classes implementing EEI_Plugin_API
         // which provide helpers for EE plugin authors to more easily register certain components with EE.
         EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
+    }
+
+
+    /**
+     * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
+     * that need to be setup before our EE_System launches.
+     *
+     * @return void
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidClassException
+     * @throws InvalidFilePathException
+     * @throws EE_Error
+     */
+    public function brewCaffeinated()
+    {
+        /** @var Domain $domain */
+        $domain = DomainFactory::getShared(
+            new FullyQualifiedName(
+                'EventEspresso\core\domain\Domain'
+            ),
+            [
+                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
+                Version::fromString(espresso_version()),
+            ]
+        );
+        static $brew;
+        if ($domain->isCaffeinated() && ! $brew instanceof EE_Brewing_Regular) {
+            require_once EE_CAFF_PATH . 'brewing_regular.php';
+            /** @var EE_Brewing_Regular $brew */
+            $brew = LoaderFactory::getLoader()->getShared(EE_Brewing_Regular::class);
+            $brew->initializePUE();
+            add_action(
+                'AHEE__EE_System__load_core_configuration__begin',
+                [$brew, 'caffeinated']
+            );
+        }
     }
 
 
@@ -874,8 +919,6 @@ final class EE_System implements ResettableInterface
         $this->loader->getShared('EE_Load_Textdomain');
         // load textdomain
         EE_Load_Textdomain::load_textdomain();
-        // load caf stuff a chance to play during the activation process too.
-        $this->_maybe_brew_regular();
         // load and setup EE_Config and EE_Network_Config
         $config = $this->loader->getShared('EE_Config');
         $this->loader->getShared('EE_Network_Config');
@@ -927,36 +970,6 @@ final class EE_System implements ResettableInterface
             'FHEE__EE_System__parse_implemented_model_names',
             $non_abstract_db_models
         );
-    }
-
-
-    /**
-     * The purpose of this method is to simply check for a file named "caffeinated/brewing_regular.php" for any hooks
-     * that need to be setup before our EE_System launches.
-     *
-     * @return void
-     * @throws DomainException
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidClassException
-     * @throws InvalidFilePathException
-     */
-    private function _maybe_brew_regular()
-    {
-        /** @var Domain $domain */
-        $domain = DomainFactory::getShared(
-            new FullyQualifiedName(
-                'EventEspresso\core\domain\Domain'
-            ),
-            array(
-                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
-                Version::fromString(espresso_version()),
-            )
-        );
-        if ($domain->isCaffeinated()) {
-            require_once EE_CAFF_PATH . 'brewing_regular.php';
-        }
     }
 
 
@@ -1084,11 +1097,6 @@ final class EE_System implements ResettableInterface
         add_action('init', array($this, 'core_loaded_and_ready'), 9);
         add_action('init', array($this, 'initialize'), 10);
         add_action('init', array($this, 'initialize_last'), 100);
-        if (is_admin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true)) {
-            // pew pew pew
-            $this->loader->getShared('EventEspresso\core\services\licensing\LicenseService');
-            do_action('AHEE__EE_System__brew_espresso__after_pue_init');
-        }
         do_action('AHEE__EE_System__brew_espresso__complete', $this);
     }
 

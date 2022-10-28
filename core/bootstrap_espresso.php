@@ -48,11 +48,11 @@ function espresso_load_error_handling()
  *    espresso_load_required
  *    given a class name and path, this function will load that file or throw an exception
  *
- * @param    string $classname
- * @param    string $full_path_to_file
- * @throws    EE_Error
+ * @param string $classname
+ * @param string $full_path_to_file
+ * @throws EE_Error
  */
-function espresso_load_required($classname, $full_path_to_file)
+function espresso_load_required(string $classname, string $full_path_to_file)
 {
     if (is_readable($full_path_to_file)) {
         require_once $full_path_to_file;
@@ -60,10 +60,12 @@ function espresso_load_required($classname, $full_path_to_file)
         throw new EE_Error(
             sprintf(
                 esc_html__(
-                    'The %s class file could not be located or is not readable due to file permissions.',
+                    'The %1$s class file could not be located or is not readable due to file permissions. %3$s supplied path: %2$s',
                     'event_espresso'
                 ),
-                $classname
+                $classname,
+                $full_path_to_file,
+                '<br>'
             )
         );
     }
@@ -71,7 +73,6 @@ function espresso_load_required($classname, $full_path_to_file)
 
 
 /**
- * @since 4.9.27
  * @throws InvalidInterfaceException
  * @throws InvalidEntityException
  * @throws InvalidIdentifierException
@@ -81,6 +82,7 @@ function espresso_load_required($classname, $full_path_to_file)
  * @throws ServiceNotFoundException
  * @throws OutOfBoundsException
  * @throws Exception
+ * @since 4.9.27
  */
 function bootstrap_espresso()
 {

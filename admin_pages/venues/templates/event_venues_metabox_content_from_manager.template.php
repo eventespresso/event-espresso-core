@@ -36,7 +36,10 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     <p class='address-view'>
                         <span><?php esc_html_e('Address:', 'event_espresso'); ?>&nbsp;</span>
                         <?php echo esc_html($venue->address()); ?>
-                        <?php echo ($venue->address2() ? '<br />' . esc_html($venue->address2()) : ''); ?>
+                        <?php echo wp_kses(
+                            $venue->address2() ? '<br />' . $venue->address2() : '',
+                            AllowedTags::getAllowedTags()
+                        ); ?>
                         <br />
                         <span><?php esc_html_e('City:', 'event_espresso'); ?>&nbsp;</span>
                         <?php echo esc_html($venue->city()); ?>

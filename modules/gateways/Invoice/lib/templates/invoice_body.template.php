@@ -91,12 +91,12 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         ee_invoice_display_line_item($child_line_item, $show_line_item_description);
                     } ?>
                     <tr>
-                        <td colspan="<?php echo ($show_line_item_description ? 5 : 4) ?>">
+                        <td colspan="<?php echo esc_attr($show_line_item_description ? 5 : 4); ?>">
                             <hr>
                         </td>
                     </tr>
                     <tr class="total_tr odd">
-                        <td colspan="<?php echo ($show_line_item_description ? 2 : 1) ?>">&nbsp;</td>
+                        <td colspan="<?php echo esc_attr($show_line_item_description ? 2 : 1); ?>">&nbsp;</td>
                         <td colspan="2" class="total" id="total_currency"><?php esc_html_e('Total', 'event_espresso'); ?></td>
                         <td class="total"><?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
                     </tr>
@@ -110,7 +110,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         ee_invoice_display_line_item($child_line_item, $show_line_item_description, $odd);
                     } ?>
                     <tr class="total_tr odd">
-                        <td colspan="<?php echo ($show_line_item_description ? 2 : 1) ?>">&nbsp;</td>
+                        <td colspan="<?php echo esc_attr($show_line_item_description ? 2 : 1); ?>">&nbsp;</td>
                         <td colspan="2" class="total" id="total_currency">
                             <?php esc_html_e(
                                 'Sub-Total',
@@ -128,7 +128,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         ee_invoice_display_line_item($child_line_item, $show_line_item_description, $odd);
                     } ?>
                     <tr class="total_tr odd">
-                        <td colspan="<?php echo ($show_line_item_description ? 2 : 1) ?>">&nbsp;</td>
+                        <td colspan="<?php echo esc_attr($show_line_item_description ? 2 : 1); ?>">&nbsp;</td>
                         <td colspan="2" class="total" id="total_currency">
                             <?php esc_html_e(
                                 'Tax Total',
@@ -145,7 +145,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     $has_subitems = count($subitems) > 1;
                     if ($has_subitems) {
                         ?>
-                        <tr class="item <?php echo ($odd ? 'odd' : ''); ?>">
+                        <tr class="item <?php echo sanitize_html_class($odd ? 'odd' : ''); ?>">
                             <td class="item_l"><?php echo esc_html($line_item->name()) ?></td>
                             <?php if ($show_line_item_description) { ?>
                                 <td class="item_l"><?php echo esc_html($line_item->desc()) ?></td>
@@ -155,7 +155,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             <td class="item_c"><?php echo esc_html($line_item->unit_price_no_code()) ?></td>
 
                             <td class="item_r"> <?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags());
-                                echo ($line_item->is_taxable() ? '*' : ''); ?> </td>
+                                echo esc_html($line_item->is_taxable() ? '*' : ''); ?> </td>
                             <?php // <td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings);
                             ?>
                         </tr>
@@ -167,7 +167,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         }
                     } else {// no subitems - just show this line item
                         ?>
-                        <tr class="item <?php echo ($odd ? 'odd' : ''); ?>">
+                        <tr class="item <?php echo sanitize_html_class($odd ? 'odd' : ''); ?>">
                             <td class="item_l"><?php echo esc_html($line_item->name()); ?></td>
                             <?php if ($show_line_item_description) { ?>
                                 <td class="item_l"><?php echo esc_html($line_item->desc()); ?></td>
@@ -175,7 +175,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             <td class="item_l"><?php echo esc_html($line_item->quantity()); ?></td>
                             <td class="item_c"><?php echo wp_kses($line_item->unit_price_no_code(), AllowedTags::getAllowedTags()); ?></td>
                             <td class="item_r"> <?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags());
-                                echo ($line_item->is_taxable() ? '*' : ''); ?> </td>
+                                echo esc_html($line_item->is_taxable() ? '*' : ''); ?> </td>
                             <?php // <td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings);
                             ?>
                         </tr>

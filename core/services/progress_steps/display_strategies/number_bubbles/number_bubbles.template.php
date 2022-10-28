@@ -2,9 +2,6 @@
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
 /**
  * This is the template for the "Number Bubbles" Progress Steps
  * Template args available for this template are listed below

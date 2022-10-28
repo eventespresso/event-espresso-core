@@ -4,12 +4,12 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit6123c47c90042b2e0bad3774215cb7d4
+class ComposerStaticInit26d66831fb8dc3cdcaf1413625b832dc
 {
     public static $files = array (
-        'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
+        'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '7d3b315c4f303f2fc14aca642a738e50' => __DIR__ . '/..' . '/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php',
     );
 
@@ -731,9 +731,9 @@ class ComposerStaticInit6123c47c90042b2e0bad3774215cb7d4
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit6123c47c90042b2e0bad3774215cb7d4::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit6123c47c90042b2e0bad3774215cb7d4::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit6123c47c90042b2e0bad3774215cb7d4::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit26d66831fb8dc3cdcaf1413625b832dc::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit26d66831fb8dc3cdcaf1413625b832dc::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit26d66831fb8dc3cdcaf1413625b832dc::$classMap;
 
         }, null, ClassLoader::class);
     }

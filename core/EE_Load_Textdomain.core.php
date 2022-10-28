@@ -78,6 +78,11 @@ class EE_Load_Textdomain extends EE_Base
 
         $repo_base_URL = 'https://github.com/eventespresso/languages-ee4/blob/master/event_espresso';
 
+        // Create directory if not exists
+        if (! is_dir(EE_PLUGIN_DIR_PATH . 'languages/')) {
+            wp_mkdir_p(EE_PLUGIN_DIR_PATH . 'languages/');
+        }
+
         // load sideloader and sideload the .POT file as this should always be included.
         $sideloader_args = array(
             '_upload_to'     => EE_PLUGIN_DIR_PATH . 'languages/',

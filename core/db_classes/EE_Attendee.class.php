@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\address\AddressInterface;
 
 /**
  * Event Espresso
@@ -22,7 +23,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @subpackage            includes/classes/EE_Transaction.class.php
  * @author                Mike Nelson
  */
-class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_Admin_Links, EEI_Attendee
+class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, EEI_Admin_Links, EEI_Attendee
 {
     /**
      * Sets some dynamic defaults
@@ -352,7 +353,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @return string
      * @throws EE_Error
      */
-    public function address()
+    public function address(): string
     {
         return $this->get('ATT_address');
     }
@@ -364,7 +365,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @return string
      * @throws EE_Error
      */
-    public function address2()
+    public function address2(): string
     {
         return $this->get('ATT_address2');
     }
@@ -376,19 +377,19 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @return string
      * @throws EE_Error
      */
-    public function city()
+    public function city(): string
     {
         return $this->get('ATT_city');
     }
 
 
     /**
-     *        get Attendee State ID
+     * get Attendee State ID
      *
-     * @return string
+     * @return int
      * @throws EE_Error
      */
-    public function state_ID()
+    public function state_ID(): int
     {
         return $this->get('STA_ID');
     }
@@ -398,7 +399,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @return string
      * @throws EE_Error
      */
-    public function state_abbrev()
+    public function state_abbrev(): string
     {
         return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : '';
     }
@@ -407,10 +408,10 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     /**
      * Gets the state set to this attendee
      *
-     * @return EE_State
+     * @return EE_State|null
      * @throws EE_Error
      */
-    public function state_obj()
+    public function state_obj(): ?EE_State
     {
         return $this->get_first_related('State');
     }
@@ -422,7 +423,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @return string
      * @throws EE_Error
      */
-    public function state_name()
+    public function state_name(): string
     {
         if ($this->state_obj()) {
             return $this->state_obj()->name();
@@ -440,7 +441,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @return string
      * @throws EE_Error
      */
-    public function state()
+    public function state(): string
     {
         if (apply_filters('FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj())) {
             return $this->state_abbrev();
@@ -455,7 +456,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @return string
      * @throws EE_Error
      */
-    public function country_ID()
+    public function country_ID(): string
     {
         return $this->get('CNT_ISO');
     }
@@ -464,10 +465,10 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     /**
      * Gets country set for this attendee
      *
-     * @return EE_Country
+     * @return EE_Country|null
      * @throws EE_Error
      */
-    public function country_obj()
+    public function country_obj(): ?EE_Country
     {
         return $this->get_first_related('Country');
     }
@@ -479,7 +480,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @return string
      * @throws EE_Error
      */
-    public function country_name()
+    public function country_name(): string
     {
         if ($this->country_obj()) {
             return $this->country_obj()->name();
@@ -496,7 +497,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @return string
      * @throws EE_Error
      */
-    public function country()
+    public function country(): string
     {
         if (apply_filters('FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj())) {
             return $this->country_ID();
@@ -511,7 +512,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @return string
      * @throws EE_Error
      */
-    public function zip()
+    public function zip(): string
     {
         return $this->get('ATT_zip');
     }
@@ -677,7 +678,12 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     public function save_and_clean_billing_info_for_payment_method($billing_form, $payment_method)
     {
         if (! $billing_form instanceof EE_Billing_Attendee_Info_Form) {
-            EE_Error::add_error(esc_html__('Cannot save billing info because there is none.', 'event_espresso'));
+            EE_Error::add_error(
+                esc_html__('Cannot save billing info because there is none.', 'event_espresso'),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+        );
             return false;
         }
         $billing_form->clean_sensitive_data();

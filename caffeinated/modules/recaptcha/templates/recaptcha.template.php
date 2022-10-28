@@ -1,8 +1,7 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+
 /** @type string $recaptcha_language */
+
 /** @type string $recaptcha_publickey */
 /** @type string $recaptcha_theme */
 /** @type string $recaptcha_type */

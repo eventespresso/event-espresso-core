@@ -178,4 +178,4 @@ use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
     </div>
 </div> <!-- end #event-and-ticket-form-content -->
 
-<?php echo ($ticket_js_structure); ?>
+<?php echo wp_kses($ticket_js_structure, AllowedTags::getWithFullTags()); ?>

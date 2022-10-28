@@ -58,6 +58,7 @@ class AllowedTags
         'multiple'          => 1,
         'name'              => 1,
         'novalidate'        => 1,
+        'onclick'           => 1,
         'placeholder'       => 1,
         'property'          => 1,
         'readonly'          => 1,
@@ -76,6 +77,7 @@ class AllowedTags
         'type'              => 1,
         'value'             => 1,
         'width'             => 1,
+        'http-equiv'        => 1,
     ];
 
 
@@ -230,6 +232,9 @@ class AllowedTags
             'fieldset'  => AllowedTags::$attributes,
             'output'    => AllowedTags::$attributes,
             'noscript'  => AllowedTags::$attributes,
+            'html'      => AllowedTags::$attributes,
+            'body'      => AllowedTags::$attributes,
+            'head'      => AllowedTags::$attributes,
         ];
         AllowedTags::$allowed_with_full_tags = array_merge_recursive($all_tags, $full_tags);
     }

@@ -26,6 +26,14 @@
 		"source": "https://github.com/eventespresso/event-espresso-core",
 		"docs": "https://github.com/eventespresso/event-espresso-core/tree/master/docs"
 	},
+	"require": {
+		"php": ">=7.2",
+		"ext-json": "*",
+		"ext-mbstring": "*",
+		"ext-openssl": "*",
+		"tijsverkoyen/css-to-inline-styles": "2.2.3",
+		"dompdf/dompdf": "^2.0.1"
+	},
 	"repositories": [
 		{
 			"type": "vcs",
@@ -36,14 +44,6 @@
 		"eventespresso/ee-coding-standards": "dev-master",
 		"roave/security-advisories": "dev-master",
 		"yoast/phpunit-polyfills": "^1.0"
-	},
-	"require": {
-		"php": ">=7.1",
-		"ext-json": "*",
-		"ext-mbstring": "*",
-		"ext-openssl": "*",
-		"tijsverkoyen/css-to-inline-styles": "2.2.4",
-		"dompdf/dompdf": "^2.0.1"
 	},
 	"config": {
 		"allow-plugins": {
@@ -58,8 +58,8 @@
 			"\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
 			"\"vendor/bin/phpcs\" --config-set default_standard EventEspresso"
 		],
-		"lint": "\"vendor/bin/phpcs\" --runtime-set testVersion 7.1-",
-		"lint:skip-warnings": "\"vendor/bin/phpcs\" -n --runtime-set testVersion 7.1-",
+		"lint": "\"vendor/bin/phpcs\" --runtime-set testVersion 7.2-",
+		"lint:skip-warnings": "\"vendor/bin/phpcs\" -n --runtime-set testVersion 7.2-",
 		"lint:fix": "\"vendor/bin/phpcbf\" --standard=phpcs.xml --ignore=assets/*,languages/*,*/index.php"
 	}
 }

@@ -129,7 +129,7 @@ $spaces_left_label = apply_filters(
                                 ); ?>
                             </span>
                             <?php
-                            echo ($ticket->min() > 0 ? $ticket->min() : 0);
+                            echo esc_html($ticket->min() > 0 ? $ticket->min() : 0);
 
                             if ($ticket->min() > $remaining) {
                                 ?> &nbsp;
@@ -151,9 +151,11 @@ $spaces_left_label = apply_filters(
                                     esc_html__('Maximum Qty:', 'event_espresso')
                                 ); ?>
                             </span>
-                            <?php echo ($ticket->max() === EE_INF
-                                ? esc_html__('no limit', 'event_espresso')
-                                : max($ticket->max(), 1));
+                            <?php echo esc_html(
+                                $ticket->max() === EE_INF
+                                    ? __('no limit', 'event_espresso')
+                                    : max($ticket->max(), 1)
+                            );
                             ?>
                             <br />
                         </section>
@@ -297,11 +299,14 @@ $spaces_left_label = apply_filters(
                                             <?php echo esc_html($ticket->sold()); ?>
                                         </td>
                                         <td data-th="<?php echo esc_attr($remaining_label); ?>" class="cntr small-text">
-                                            <?php echo ($remaining === EE_INF
-                                                ? '<span class="smaller-text">'
-                                                  . esc_html__('unlimited ', 'event_espresso')
-                                                  . '</span>'
-                                                : $remaining); ?>
+                                            <?php echo wp_kses(
+                                                $remaining === EE_INF
+                                                    ? '<span class="smaller-text">'
+                                                      . esc_html__('unlimited ', 'event_espresso')
+                                                      . '</span>'
+                                                    : $remaining,
+                                                AllowedTags::getAllowedTags()
+                                            ); ?>
                                         </td>
                                         <td data-th="<?php echo esc_attr($total_sold_label); ?>" class="cntr small-text">
                                             <?php echo esc_html($datetime->sold()); ?>
@@ -312,11 +317,14 @@ $spaces_left_label = apply_filters(
                                                   . '</span>'
                                                 : $datetime->spaces_remaining(); ?>
                                         <td data-th="<?php echo esc_attr($spaces_left_label); ?>" class="cntr small-text">
-                                            <?php echo ($tkts_left === EE_INF
-                                                ? '<span class="smaller-text">'
-                                                  . esc_html__('unlimited ', 'event_espresso')
-                                                  . '</span>'
-                                                : $tkts_left); ?>
+                                            <?php echo wp_kses(
+                                                $tkts_left === EE_INF
+                                                    ? '<span class="smaller-text">'
+                                                      . esc_html__('unlimited ', 'event_espresso')
+                                                      . '</span>'
+                                                    : $tkts_left,
+                                                AllowedTags::getAllowedTags()
+                                            ); ?>
                                         </td>
                                         <?php endif; // end $show_ticket_sale_columns conditional ?>
                                     </tr>

@@ -21,6 +21,7 @@
  */
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
+use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
 
 $mMode_level = EE_Maintenance_Mode::instance()->level();
 
@@ -169,7 +170,7 @@ if ($show_backup_db_text) { ?>
 
     <?php
     if ($show_migration_progress) { ?>
-        <div id='migration-monitor' <?php echo ($show_backup_db_text ? "style='display:none'" : ''); ?>>
+        <div id='migration-monitor' <?php if ($show_backup_db_text) : ?>style="display:none"<?php endif; ?>>
             <?php
             if ($show_backup_db_text) { ?>
                 <p>
@@ -244,9 +245,11 @@ if ($show_backup_db_text) { ?>
                 <!-- #progress-responsive -->
 
                 <button id='start-migration' class='button-primary'>
-                    <?php echo ($show_continue_current_migration_script
-                        ? esc_html__("Continue Database Update", "event_espresso")
-                        : esc_html__("Begin Database Update", "event_espresso")); ?>
+                <?php echo esc_html(
+                    $show_continue_current_migration_script
+                        ? __("Continue Database Update", "event_espresso")
+                        : __("Begin Database Update", "event_espresso")
+                ); ?>
                 </button>
                 <br class="clear" />
 
@@ -275,12 +278,14 @@ if ($show_backup_db_text) { ?>
                     <tr>
                         <td width="40px" align="center">
                             <input id="maintenance_mode_level_off"
-                                   name="maintenance_mode_level"
-                                   type='radio'
-                                   value="0"
-                                <?php echo ($mMode_level === EE_Maintenance_Mode::level_0_not_in_maintenance
-                                    ? 'checked'
-                                    : '');
+                                name="maintenance_mode_level"
+                                type='radio'
+                                value="0"
+                                <?php echo esc_attr(
+                                    $mMode_level === EE_Maintenance_Mode::level_0_not_in_maintenance
+                                        ? 'checked'
+                                        : ''
+                                );
                                 ?>
                             />
                         </td>
@@ -299,12 +304,14 @@ if ($show_backup_db_text) { ?>
                     <tr>
                         <td width="40px" align="center">
                             <input id="maintenance_mode_level_on"
-                                   name="maintenance_mode_level"
-                                   type='radio'
-                                   value="1"
-                                <?php echo ($mMode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance
-                                    ? 'checked'
-                                    : '');
+                                name="maintenance_mode_level"
+                                type='radio'
+                                value="1"
+                                <?php echo esc_attr(
+                                    $mMode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance
+                                        ? 'checked'
+                                        : ''
+                                );
                                 ?>
                             />
                         </td>

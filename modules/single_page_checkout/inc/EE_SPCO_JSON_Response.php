@@ -408,7 +408,6 @@ class EE_SPCO_JSON_Response
 
     public function echoAndExit()
     {
-        echo ($this);
-        exit();
+        exit($this->__toString());
     }
 }

@@ -65,8 +65,8 @@ class BootstrapRequestResponseObjects
      */
     public function buildRequestResponse()
     {
-        $request_params = new RequestParams(new RequestSanitizer());
-        $server_params = new ServerParams(new ServerSanitizer());
+        $request_params = new RequestParams(new RequestSanitizer(), $_GET, $_POST);
+        $server_params = new ServerParams(new ServerSanitizer(), $_SERVER);
         // load our Request and Response objects
         $this->request = new Request($request_params, $server_params);
         $this->response = new Response();

@@ -7,19 +7,14 @@
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
-/* @var int $QSG_ID the main question group's ID */
-assert($QSG_ID);
-/* @var EE_Question_Group $question_group the main question group we're displaying */
-assert($question_group);
-assert($question_group instanceof EE_Question_Group);
-/* @var EE_Question[] $all_questions */
-assert(isset($all_questions) && (empty($all_questions) || is_array($all_questions)));// list of unused questions
-foreach ($all_questions as $unused_question) {
-    assert($unused_question);
-    assert($unused_question instanceof EE_Question);
-}
-/* @var array $values . Array of arrays, where each sub-array contains 2 keys: 'id' (internal value) and 'name' (label for displaying) */
-assert(is_array($values));
+/**
+ * @var int               $QSG_ID         the main question group's ID
+ * @var EE_Question_Group $question_group the main question group we're displaying
+ * @var EE_Question[]     $all_questions
+ * @var array             $values         Array of arrays, where each sub-array contains 2 keys:
+ *                                        'id' (internal value)
+ *                                        'name' (label for displaying)
+ */
 
 $QSG_system = $question_group->system_group();
 

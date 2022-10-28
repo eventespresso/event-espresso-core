@@ -1221,7 +1221,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'edit_dtt_expanded'    => '',
             'DTT_ID'               => $default ? '' : $datetime->ID(),
             'DTT_name'             => $default ? '' : $datetime->get_f('DTT_name'),
-            'DTT_description'      => $default ? '' : $datetime->get_f('DTT_description'),
+            'DTT_description'      => $default ? '' : $datetime->get_raw('DTT_description'),
             'DTT_EVT_start'        => $default ? '' : $datetime->start_date($this->_date_time_format),
             'DTT_EVT_end'          => $default ? '' : $datetime->end_date($this->_date_time_format),
             'DTT_reg_limit'        => $default
@@ -1291,7 +1291,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $template_args = array(
             'dtt_row'                           => $default ? 'DTTNUM' : $datetime_row,
             'event_datetimes_name'              => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
-            'DTT_description'                   => $default ? '' : $datetime->get_f('DTT_description'),
+            'DTT_description'                   => $default ? '' : $datetime->get_raw('DTT_description'),
             'datetime_tickets_list'             => $default ? '<li class="hidden"></li>' : '',
             'show_tickets_row'                  => 'display:none;',
             'add_new_datetime_ticket_help_link' => EEH_Template::get_help_tab_link(

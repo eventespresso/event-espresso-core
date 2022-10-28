@@ -23,9 +23,8 @@ use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 
-if (!defined('EVENT_ESPRESSO_VERSION')) {
-	exit('No direct script access allowed');
-}
+
+
 
 
 class AttendeesReport extends JobHandlerFile {

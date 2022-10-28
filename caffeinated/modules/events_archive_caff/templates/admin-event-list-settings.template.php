@@ -40,8 +40,9 @@ $description = EEH_Form_Fields::prep_answer_options(
         </th>
         <td>
             <a id="event_listings_url" class="ee-admin-settings-hdr-lnk small-text"
-               href="<?php echo EEH_Event_View::event_archive_url(); ?>"><?php
-                echo EEH_Event_View::event_archive_url(); ?></a>
+                href="<?php echo esc_url_raw(EEH_Event_View::event_archive_url()); ?>">
+                <?php echo esc_html(EEH_Event_View::event_archive_url()); ?>
+            </a>
         </td>
     </tr>
 

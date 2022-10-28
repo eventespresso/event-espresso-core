@@ -415,7 +415,15 @@ class DisplayTicketSelector
                 : current_time('timestamp');
             $ticket_query_args[0]['TKT_end_date'] = ['>', $current_time];
         }
-        return EEM_Ticket::instance()->get_all($ticket_query_args);
+        /** @var EE_Ticket[] $tickets */
+        $tickets = EEM_Ticket::instance()->get_all($ticket_query_args);
+
+        return (array) apply_filters(
+            'FHEE__EventEspresso_modules_ticketSelector_DisplayTicketSelector__getTickets',
+            $tickets,
+            $ticket_query_args,
+            $this
+        );
     }
 
 

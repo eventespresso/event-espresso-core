@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\address\AddressInterface;
+use EventEspresso\core\services\address\formatters\AddressFormatterInterface;
+
 /**
  * Class EEH_Address
  * This class takes EE objects that possess address information and apply formatting to those address for display purposes
@@ -14,7 +17,7 @@ class EEH_Address
      *    format - output formatted EE object address information
      *
      * @access public
-     * @param         object      EEI_Address $obj_with_address
+     * @param         object      AddressInterface $obj_with_address
      * @param string  $type       how the address is formatted. for example: 'multiline' or 'inline'
      * @param boolean $use_schema whether to apply schema.org formatting to the address
      * @param bool    $add_wrapper
@@ -26,11 +29,11 @@ class EEH_Address
         $use_schema = true,
         $add_wrapper = true
     ) {
-        // check that incoming object implements the EEI_Address interface
-        if (! $obj_with_address instanceof EEI_Address) {
+        // check that incoming object implements the AddressInterface interface
+        if (! $obj_with_address instanceof AddressInterface) {
             $msg = esc_html__('The address could not be formatted.', 'event_espresso');
             $dev_msg = esc_html__(
-                'The Address Formatter requires passed objects to implement the EEI_Address interface.',
+                'The Address Formatter requires passed objects to implement the AddressInterface interface.',
                 'event_espresso'
             );
             EE_Error::add_error($msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__);
@@ -57,7 +60,7 @@ class EEH_Address
      *
      * @access private
      * @param string $type how the address is formatted. for example: 'multiline' or 'inline'
-     * @return EEI_Address_Formatter
+     * @return AddressFormatterInterface
      */
     private static function _get_formatter($type)
     {
@@ -78,14 +81,14 @@ class EEH_Address
      *    adds formatting to an address
      *
      * @access private
-     * @param      object EEI_Address_Formatter $formatter
-     * @param      object EEI_Address $obj_with_address
+     * @param      object AddressInterface_Formatter $formatter
+     * @param      object AddressInterface $obj_with_address
      * @param bool $add_wrapper
      * @return string
      */
     private static function _regular_formatting(
-        EEI_Address_Formatter $formatter,
-        EEI_Address $obj_with_address,
+        AddressFormatterInterface $formatter,
+        AddressInterface $obj_with_address,
         $add_wrapper = true
     ) {
         $formatted_address = $add_wrapper ? '<div>' : '';
@@ -110,11 +113,11 @@ class EEH_Address
      *    adds schema.org formatting to an address
      *
      * @access private
-     * @param object EEI_Address_Formatter $formatter
-     * @param object EEI_Address $obj_with_address
+     * @param object AddressFormatterInterface $formatter
+     * @param object AddressInterface $obj_with_address
      * @return string
      */
-    private static function _schema_formatting(EEI_Address_Formatter $formatter, EEI_Address $obj_with_address)
+    private static function _schema_formatting(AddressFormatterInterface $formatter, AddressInterface $obj_with_address)
     {
         $formatted_address = '<div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">';
         $formatted_address .= $formatter->format(

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\address\AddressInterface;
+
 /**
  * EE_Venue class
  *
@@ -7,7 +9,7 @@
  * @subpackage            includes/classes/EE_Venue.class.php
  * @author                Mike Nelson
  */
-class EE_Venue extends EE_CPT_Base implements EEI_Address
+class EE_Venue extends EE_CPT_Base implements AddressInterface
 {
     /**
      *
@@ -108,7 +110,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
      *
      * @return string
      */
-    public function address()
+    public function address(): string
     {
         return $this->get('VNU_address');
     }
@@ -119,7 +121,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
      *
      * @return string
      */
-    public function address2()
+    public function address2(): string
     {
         return $this->get('VNU_address2');
     }
@@ -130,7 +132,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
      *
      * @return string
      */
-    public function city()
+    public function city(): string
     {
         return $this->get('VNU_city');
     }
@@ -140,7 +142,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
      *
      * @return int
      */
-    public function state_ID()
+    public function state_ID(): int
     {
         return $this->get('STA_ID');
     }
@@ -149,7 +151,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
     /**
      * @return string
      */
-    public function state_abbrev()
+    public function state_abbrev(): string
     {
         return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : '';
     }
@@ -158,7 +160,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
     /**
      * @return string
      */
-    public function state_name()
+    public function state_name(): string
     {
         return $this->state_obj() instanceof EE_State ? $this->state_obj()->name() : '';
     }
@@ -167,9 +169,9 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
     /**
      * Gets the state for this venue
      *
-     * @return EE_State
+     * @return EE_State|null
      */
-    public function state_obj()
+    public function state_obj(): ?EE_State
     {
         return $this->get_first_related('State');
     }
@@ -182,7 +184,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
      *
      * @return string
      */
-    public function state()
+    public function state(): string
     {
         if (apply_filters('FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj())) {
             return $this->state_abbrev();
@@ -197,7 +199,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
      *
      * @return string
      */
-    public function country_ID()
+    public function country_ID(): string
     {
         return $this->get('CNT_ISO');
     }
@@ -206,7 +208,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
     /**
      * @return string
      */
-    public function country_name()
+    public function country_name(): string
     {
         return $this->country_obj() instanceof EE_Country ? $this->country_obj()->name() : '';
     }
@@ -215,9 +217,9 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
     /**
      * Gets the country of this venue
      *
-     * @return EE_Country
+     * @return EE_Country|null
      */
-    public function country_obj()
+    public function country_obj(): ?EE_Country
     {
         return $this->get_first_related('Country');
     }
@@ -230,7 +232,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
      *
      * @return string
      */
-    public function country()
+    public function country(): string
     {
         if (apply_filters('FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj())) {
             return $this->country_ID();
@@ -245,7 +247,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address
      *
      * @return string
      */
-    public function zip()
+    public function zip(): string
     {
         return $this->get('VNU_zip');
     }
