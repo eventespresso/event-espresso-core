@@ -1998,10 +1998,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:29
 	__( 'OK', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:32
+	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:34
 	__( 'amount', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:44
+	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:46
 	__( 'amount…', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:14
