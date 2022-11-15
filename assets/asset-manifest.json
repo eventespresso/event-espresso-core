@@ -93,9 +93,9 @@
     "toaster.js.map": "/static/js/toaster.b324fcfe.js.map",
     "toaster.php": "/static/js/toaster.063090b8.asset.php",
     "tpc.css": "/static/css/tpc.c9498c4a.css",
-    "tpc.js": "/static/js/tpc.73f18d03.js",
-    "tpc.js.map": "/static/js/tpc.73f18d03.js.map",
-    "tpc.php": "/static/js/tpc.ad4ee72c.asset.php",
+    "tpc.js": "/static/js/tpc.2844d970.js",
+    "tpc.js.map": "/static/js/tpc.2844d970.js.map",
+    "tpc.php": "/static/js/tpc.f28a9f45.asset.php",
     "uiComponents.css": "/static/css/uiComponents.da60669d.css",
     "uiComponents.js": "/static/js/uiComponents.d5d198d1.js",
     "uiComponents.js.map": "/static/js/uiComponents.d5d198d1.js.map",
@@ -137,7 +137,7 @@
     "static/js/services.a1b0d647.js.LICENSE.txt": "/static/js/services.a1b0d647.js.LICENSE.txt",
     "static/js/slotFill.2a055026.js.LICENSE.txt": "/static/js/slotFill.2a055026.js.LICENSE.txt",
     "static/js/toaster.b324fcfe.js.LICENSE.txt": "/static/js/toaster.b324fcfe.js.LICENSE.txt",
-    "static/js/tpc.73f18d03.js.LICENSE.txt": "/static/js/tpc.73f18d03.js.LICENSE.txt",
+    "static/js/tpc.2844d970.js.LICENSE.txt": "/static/js/tpc.2844d970.js.LICENSE.txt",
     "static/js/uiComponents.d5d198d1.js.LICENSE.txt": "/static/js/uiComponents.d5d198d1.js.LICENSE.txt",
     "static/js/wpPluginsPage.a4e58c52.js.LICENSE.txt": "/static/js/wpPluginsPage.a4e58c52.js.LICENSE.txt"
   },
@@ -239,8 +239,8 @@
     ],
     "tpc": [
       "static/css/tpc.c9498c4a.css",
-      "static/js/tpc.73f18d03.js",
-      "static/js/tpc.ad4ee72c.asset.php"
+      "static/js/tpc.2844d970.js",
+      "static/js/tpc.f28a9f45.asset.php"
     ],
     "uiComponents": [
       "static/css/uiComponents.da60669d.css",
