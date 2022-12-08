@@ -96,10 +96,10 @@
     "tpc.js": "/static/js/tpc.b69b2296.js",
     "tpc.js.map": "/static/js/tpc.b69b2296.js.map",
     "tpc.php": "/static/js/tpc.f8c08f3b.asset.php",
-    "uiComponents.css": "/static/css/uiComponents.a997ab22.css",
+    "uiComponents.css": "/static/css/uiComponents.5cc102fa.css",
     "uiComponents.js": "/static/js/uiComponents.c726264d.js",
     "uiComponents.js.map": "/static/js/uiComponents.c726264d.js.map",
-    "uiComponents.php": "/static/js/uiComponents.96d42ca3.asset.php",
+    "uiComponents.php": "/static/js/uiComponents.de1b2c05.asset.php",
     "utils.js": "/static/js/utils.8284c374.js",
     "utils.js.map": "/static/js/utils.8284c374.js.map",
     "utils.php": "/static/js/utils.eee14cbd.asset.php",
@@ -120,7 +120,7 @@
     "static/css/tickets-table-view.7d56f661.chunk.css.map": "/static/css/tickets-table-view.7d56f661.chunk.css.map",
     "static/css/toaster.01d916f8.css.map": "/static/css/toaster.01d916f8.css.map",
     "static/css/tpc.b64d2ad5.css.map": "/static/css/tpc.b64d2ad5.css.map",
-    "static/css/uiComponents.a997ab22.css.map": "/static/css/uiComponents.a997ab22.css.map",
+    "static/css/uiComponents.5cc102fa.css.map": "/static/css/uiComponents.5cc102fa.css.map",
     "static/css/wpPluginsPage.b279b3dc.css.map": "/static/css/wpPluginsPage.b279b3dc.css.map",
     "static/js/adapters.bf151ffd.js.LICENSE.txt": "/static/js/adapters.bf151ffd.js.LICENSE.txt",
     "static/js/blocks.f998b27f.js.LICENSE.txt": "/static/js/blocks.f998b27f.js.LICENSE.txt",
@@ -243,9 +243,9 @@
       "static/js/tpc.f8c08f3b.asset.php"
     ],
     "uiComponents": [
-      "static/css/uiComponents.a997ab22.css",
+      "static/css/uiComponents.5cc102fa.css",
       "static/js/uiComponents.c726264d.js",
-      "static/js/uiComponents.96d42ca3.asset.php"
+      "static/js/uiComponents.de1b2c05.asset.php"
     ],
     "utils": [
       "static/js/utils.8284c374.js",
