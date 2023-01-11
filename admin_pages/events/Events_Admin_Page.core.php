@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * Events_Admin_Page
@@ -2714,7 +2715,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $category_ID         = $update ? $this->request->getRequestParam('EVT_CAT_ID', 0, 'int') : 0;
         $category_name       = $this->request->getRequestParam('category_name', '');
-        $category_desc       = $this->request->getRequestParam('category_desc', '');
+        $category_desc       = $this->request->getRequestParam('category_desc', '', DataType::HTML);
         $category_parent     = $this->request->getRequestParam('category_parent', 0, 'int');
         $category_identifier = $this->request->getRequestParam('category_identifier', '');
 
