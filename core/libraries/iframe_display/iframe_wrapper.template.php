@@ -33,7 +33,7 @@ use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
     <link rel="stylesheet" type="text/css" href="<?php echo esc_url_raw($url); ?>">
         <?php endforeach; ?>
             <script type="text/javascript">
-                <?php echo esc_js($eei18n); ?>
+                <?php echo $eei18n; ?>
             </script>
         <?php foreach ($header_js as $key => $url) :?>
             <?php $header_attributes = isset($header_js_attributes[ $key ]) ? $header_js_attributes[ $key ] : ''; ?>
