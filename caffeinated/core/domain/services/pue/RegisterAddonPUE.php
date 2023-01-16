@@ -52,8 +52,8 @@ class RegisterAddonPUE
     public static function setAddonPueSlug(EE_Addon $addon, string $addon_name)
     {
         // setup the add-on's pue_slug if we have one.
-        if (! empty($addon_api_settings[ $addon_name ]['pue_options']['pue_plugin_slug'])) {
-            $addon->setPueSlug($addon_api_settings[ $addon_name ]['pue_options']['pue_plugin_slug']);
+        if (! empty(RegisterAddonPUE::$addon_api_settings[ $addon_name ]['pue_options']['pue_plugin_slug'])) {
+            $addon->setPueSlug(RegisterAddonPUE::$addon_api_settings[ $addon_name ]['pue_options']['pue_plugin_slug']);
         }
     }
 
