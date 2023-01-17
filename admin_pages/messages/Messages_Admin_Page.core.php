@@ -1428,7 +1428,8 @@ class Messages_Admin_Page extends EE_Admin_Page
         // let's get EEH_MSG_Template so we can get template form fields
         $template_field_structure = EEH_MSG_Template::get_fields(
             $message_template_group->messenger(),
-            $message_template_group->message_type()
+            $message_template_group->message_type(),
+            $context
         );
 
         if (! $template_field_structure) {
@@ -1484,9 +1485,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                                                                          . $reference_field
                                                                          . '][content]['
                                                                          . $extra_field . ']';
-                            $css_class                                 = isset($extra_array['css_class'])
-                                ? $extra_array['css_class']
-                                : '';
+                            $css_class                                 = $extra_array['css_class'] ?? '';
 
                             $template_form_fields[ $field_id ]['css_class'] = ! empty($v_fields)
                                                                               && in_array($extra_field, $v_fields, true)
@@ -1554,10 +1553,8 @@ class Messages_Admin_Page extends EE_Admin_Page
                     $template_form_fields[ $field_id ]          = $field_setup_array;
                     $template_form_fields[ $field_id ]['name']  =
                         'MTP_template_fields[' . $template_field . '][content]';
-                    $message_template                           =
-                        isset($message_templates[ $context ][ $template_field ])
-                            ? $message_templates[ $context ][ $template_field ]
-                            : null;
+                    $message_template                           = $message_templates[ $context ][ $template_field ]
+                                                                  ?? null;
                     $template_form_fields[ $field_id ]['value'] = ! empty($message_templates)
                                                                   && is_array($message_templates[ $context ])
                                                                   && $message_template instanceof EE_Message_Template
@@ -1571,9 +1568,7 @@ class Messages_Admin_Page extends EE_Admin_Page
 
 
                     $template_form_fields[ $field_id ]['db-col']    = 'MTP_content';
-                    $css_class                                      = isset($field_setup_array['css_class'])
-                        ? $field_setup_array['css_class']
-                        : '';
+                    $css_class                                      = $field_setup_array['css_class'] ?? '';
                     $template_form_fields[ $field_id ]['css_class'] = ! empty($v_fields)
                                                                       && in_array($template_field, $v_fields, true)
                                                                       && isset($validators[ $template_field ]['msg'])
