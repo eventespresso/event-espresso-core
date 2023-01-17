@@ -45,9 +45,9 @@
     "formBuilder.js": "/static/js/formBuilder.e369eae4.js",
     "formBuilder.js.map": "/static/js/formBuilder.e369eae4.js.map",
     "formBuilder.php": "/static/js/formBuilder.f5a2277a.asset.php",
-    "helpers.js": "/static/js/helpers.190c5ca9.js",
-    "helpers.js.map": "/static/js/helpers.190c5ca9.js.map",
-    "helpers.php": "/static/js/helpers.dc6365e3.asset.php",
+    "helpers.js": "/static/js/helpers.1de9d824.js",
+    "helpers.js.map": "/static/js/helpers.1de9d824.js.map",
+    "helpers.php": "/static/js/helpers.c0b38e6e.asset.php",
     "hooks.js": "/static/js/hooks.f2977e63.js",
     "hooks.js.map": "/static/js/hooks.f2977e63.js.map",
     "hooks.php": "/static/js/hooks.1db16f4e.asset.php",
@@ -184,8 +184,8 @@
       "static/js/form.b1d2eb45.asset.php"
     ],
     "helpers": [
-      "static/js/helpers.190c5ca9.js",
-      "static/js/helpers.dc6365e3.asset.php"
+      "static/js/helpers.1de9d824.js",
+      "static/js/helpers.c0b38e6e.asset.php"
     ],
     "hooks": [
       "static/js/hooks.f2977e63.js",
