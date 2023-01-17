@@ -53,7 +53,7 @@ jQuery(document).ready(function($) {
                 switchLabel = status === 'on'
                     ? $('.js-data .ee-active-message').html()
                     : $('.js-data .ee-inactive-message').html();
-            $( '.context-active-control-container .spinner' ).addClass( 'is-active' );
+            $( '.activate_context_on_off_toggle_container .spinner' ).addClass( 'is-active' );
 
             $.ajax({
                 type: "POST",
@@ -65,7 +65,7 @@ jQuery(document).ready(function($) {
                             where: '#ajax-notices-container',
                             what: 'clear'
                         };
-                    $( '.context-active-control-container .spinner' ).removeClass( 'is-active' );
+                    $( '.activate_context_on_off_toggle_container .spinner' ).removeClass( 'is-active' );
                     if (ct.indexOf('html') > -1) {
                         event.preventDefault();
                         MessageEditorHelper.display_content(response, setup.where, setup.what);
@@ -84,7 +84,7 @@ jQuery(document).ready(function($) {
                 },
                 error: function()
                 {
-                    $( '.context-active-control-container .spinner' ).removeClass( 'is-active' );
+                    $( '.activate_context_on_off_toggle_container .spinner' ).removeClass( 'is-active' );
                     event.preventDefault();
                     MessageEditorHelper.handle_ajax_errors(eei18n.server_error, setup.where);
                 }
@@ -146,7 +146,7 @@ jQuery(document).ready(function($) {
     /**
      * Context Template Activation/Deactivation
      */
-    $('.activate_context_on_off_toggle_container').on('click', '.ee-on-off-toggle', function(e){
+    $('.activate_context_on_off_toggle_container').on('click', '.ee-switch__input', function(e){
         var context = $(this).attr('id').replace('ee-on-off-toggle-', ''),
             status = $(this).prop('checked') ? 'on' : 'off',
             message_template_group_id = $(this).data('grpid');

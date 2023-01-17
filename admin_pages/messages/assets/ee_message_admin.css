@@ -59,14 +59,68 @@
     padding-block: 1rem;
 }
 
+#ee-msg-context-switcher-frm {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    --ee-active-control-container-width: 42rem;
+}
+
+/** context toggle **/
+/*.context-active-control-container {*/
+.activate_context_on_off_toggle_container {
+    align-items: center;
+    background: white;
+    box-sizing: border-box;
+    display: flex;
+    flex-flow: row wrap;
+    padding: 1rem;
+    width: 100%;
+    --ee-switch-size: 1.5rem;
+    --ee-switch-size-btn: calc(var(--ee-switch-size) * .75);
+    --ee-switch-size-width: calc(var(--ee-switch-size) * 2);
+}
+
+.activate_context_on_off_toggle_container .ee-switch {
+    width: calc(100% - 36px);
+}
+
+
+.activate_context_on_off_toggle_container .spinner {
+    margin: 0;
+}
+
+
+.activate_context_on_off_toggle_container .ee-on-off-toggle-label {
+    margin-inline-end: 1rem;
+}
+
+.activate_context_on_off_toggle_container #ee-on-off-toggle-primary_attendee {
+    display: none;
+}
+
+
 .ee-msg-switcher-container {
     align-items: center;
+    box-sizing: border-box;
     display: flex;
     flex-flow: row wrap;
     margin: 0;
+    width: 100%;
 }
+
 .ee-msg-switcher-container select {
     width: 16rem;
+}
+
+
+@media screen and (min-width: 1367px) {
+    .activate_context_on_off_toggle_container {
+        width: clamp(300px, var(--ee-active-control-container-width), 100%);
+    }
+    .ee-msg-switcher-container {
+        width: clamp(300px, calc(100% - var(--ee-active-control-container-width)), 100%);
+    }
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {
@@ -78,10 +132,6 @@
     overflow: auto;
 }
 
-#ee-msg-context-switcher-frm {
-    display: flex;
-    flex-flow: row wrap;
-}
 #ee-recipient-select {
     width: 15rem;
 }
@@ -426,34 +476,6 @@ h4 + .ee-messages-shortcodes-chooser-wrap {
     width: calc(100% - (5rem - 4px) - var(--ee-button-height));
 }
 
-/** context toggle **/
- .context-active-control-container {
-     align-items: center;
-     background: white;
-     display: flex;
-     /* grid-area: msg-header-1; */
-     padding: 1rem 0 1rem 1rem;
-     width: 40rem;
-     --ee-switch-size: 1.5rem;
-     --ee-switch-size-btn: calc(var(--ee-switch-size) * .75);
-     --ee-switch-size-width: calc(var(--ee-switch-size) * 2);
-}
- .context-active-control-container .spinner {
-     margin: 0;
-     margin-inline: 1rem;
-}
-.activate_context_on_off_toggle_container {
-    align-items: center;
-    display: flex;
-    width: 100%;
-}
-.activate_context_on_off_toggle_container .ee-on-off-toggle-label {
-    /* width: 24rem; */
-    margin-inline-end: 1rem;
-}
-.activate_context_on_off_toggle_container #ee-on-off-toggle-primary_attendee {
-    display: none;
-}
 
  .espresso-admin.wp-core-ui .messages .mce-statusbar.mce-container.mce-panel.mce-stack-layout-item {
     border-block-end-width: 2px !important;

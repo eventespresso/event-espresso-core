@@ -58,8 +58,6 @@ class Messages_Admin_Page extends EE_Admin_Page
 
     protected $_current_message_meta_box_object;
 
-    protected $_context_switcher;
-
     protected $_shortcodes           = [];
 
     protected $_active_messengers    = [];
@@ -1800,18 +1798,6 @@ class Messages_Admin_Page extends EE_Admin_Page
                           . '</a>';
 
 
-        // setup context switcher
-        $this->_set_context_switcher(
-            $message_template_group,
-            [
-                'page'    => 'espresso_messages',
-                'action'  => 'edit_message_template',
-                'id'      => $GRP_ID,
-                'evt_id'  => $EVT_ID,
-                'context' => $context,
-                'extra'   => $preview_button,
-            ]
-        );
 
 
         // main box
@@ -1825,15 +1811,27 @@ class Messages_Admin_Page extends EE_Admin_Page
 
 
         $this->_template_args['before_admin_page_content'] = '<div class="ee-msg-admin-header">';
+        $this->_template_args['before_admin_page_content'] .= $this->headerFormStart();
         $this->_template_args['before_admin_page_content'] .= $this->add_active_context_element(
             $message_template_group,
             $context,
             $context_label
         );
-        $this->_template_args['before_admin_page_content'] .= $this->add_context_switcher();
+        $this->_template_args['before_admin_page_content'] .= $this->add_context_switcher(
+            $message_template_group,
+            [
+                'page'    => 'espresso_messages',
+                'action'  => 'edit_message_template',
+                'id'      => $GRP_ID,
+                'evt_id'  => $EVT_ID,
+                'context' => $context,
+                'extra'   => $preview_button,
+            ]
+        );
+        $this->_template_args['before_admin_page_content'] .= $this->formEnd();
         $this->_template_args['before_admin_page_content'] .= '</div>';
-        $this->_template_args['before_admin_page_content'] .= $this->_add_form_element_before();
-        $this->_template_args['after_admin_page_content']  = $this->_add_form_element_after();
+        $this->_template_args['before_admin_page_content'] .= $this->editMessageFormStart();
+        $this->_template_args['after_admin_page_content']  = $this->formEnd();
 
         $this->_template_path = $this->_template_args['GRP_ID']
             ? EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php'
@@ -1868,12 +1866,6 @@ class Messages_Admin_Page extends EE_Admin_Page
     }
 
 
-    public function add_context_switcher()
-    {
-        return $this->_context_switcher;
-    }
-
-
     /**
      * Adds the activation/deactivation toggle for the message template context.
      *
@@ -1890,20 +1882,42 @@ class Messages_Admin_Page extends EE_Admin_Page
         EE_Message_Template_Group $message_template_group,
         $context,
         $context_label
-    ) {
-        $template_args = [
-            'context'                   => $context,
-            'nonce'                     => wp_create_nonce('activate_' . $context . '_toggle_nonce'),
-            'is_active'                 => $message_template_group->is_context_active($context),
-            'on_off_action'             => $message_template_group->is_context_active($context)
-                ? 'context-off'
-                : 'context-on',
-            'context_label'             => str_replace(['(', ')'], '', $context_label),
-            'message_template_group_id' => $message_template_group->ID(),
-        ];
+    ): string {
         return EEH_Template::display_template(
             EE_MSG_TEMPLATE_PATH . 'ee_msg_editor_active_context_element.template.php',
-            $template_args,
+            [
+                'context'                   => $context,
+                'nonce'                     => wp_create_nonce('activate_' . $context . '_toggle_nonce'),
+                'is_active'                 => $message_template_group->is_context_active($context),
+                'on_off_action'             => $message_template_group->is_context_active($context)
+                    ? 'context-off'
+                    : 'context-on',
+                'context_label'             => str_replace(['(', ')'], '', $context_label),
+                'message_template_group_id' => $message_template_group->ID(),
+            ],
+            true
+        );
+    }
+
+
+    /**
+     * sets up a context switcher for edit forms
+     *
+     * @access  protected
+     * @param EE_Message_Template_Group $template_group_object the template group object being displayed on the form
+     * @param array                     $args                  various things the context switcher needs.
+     * @throws EE_Error
+     */
+    protected function add_context_switcher(EE_Message_Template_Group $template_group_object, array $args): string
+    {
+        return EEH_Template::display_template(
+            EE_MSG_TEMPLATE_PATH . 'ee_msg_editor_context_switcher.template.php',
+            [
+                'args'              => $args,
+                'context_details'   => $template_group_object->contexts_config(),
+                'context_label'     => $template_group_object->context_label(),
+                'context_templates' => $template_group_object->context_templates(),
+            ],
             true
         );
     }
@@ -1985,15 +1999,21 @@ class Messages_Admin_Page extends EE_Admin_Page
     }
 
 
-    public function _add_form_element_before()
+    public function headerFormStart(): string
     {
-        return '<form method="post" action="'
-               . $this->_template_args['edit_message_template_form_url']
-               . '" id="ee-msg-edit-frm">';
+        $action = esc_url_raw(EE_MSG_ADMIN_URL);
+        return "<form method='get' action='$action' id='ee-msg-context-switcher-frm'>";
     }
 
 
-    public function _add_form_element_after()
+    public function editMessageFormStart(): string
+    {
+        $action = $this->_template_args['edit_message_template_form_url'];
+        return "<form method ='post' action='$action' id='ee-msg-edit-frm'>";
+    }
+
+
+    public function formEnd(): string
     {
         return '</form>';
     }
@@ -2645,71 +2665,6 @@ class Messages_Admin_Page extends EE_Admin_Page
         $this->_template_pack = $this->_message_template_group->get_template_pack();
         $this->_variation     = $this->_message_template_group->get_template_pack_variation();
     }
-
-
-    /**
-     * sets up a context switcher for edit forms
-     *
-     * @access  protected
-     * @param EE_Message_Template_Group $template_group_object the template group object being displayed on the form
-     * @param array                     $args                  various things the context switcher needs.
-     * @throws EE_Error
-     */
-    protected function _set_context_switcher(EE_Message_Template_Group $template_group_object, $args)
-    {
-        $context_details = $template_group_object->contexts_config();
-        $context_label   = $template_group_object->context_label();
-        ob_start();
-        ?>
-        <div class="ee-msg-switcher-container">
-            <form method="get" action="<?php echo esc_url_raw(EE_MSG_ADMIN_URL); ?>" id="ee-msg-context-switcher-frm">
-                <?php
-                foreach ($args as $name => $value) {
-                    if ($name === 'context' || empty($value) || $name === 'extra') {
-                        continue;
-                    }
-                    ?>
-                    <input type="hidden"
-                           name="<?php echo esc_attr($name); ?>"
-                           value="<?php echo esc_attr($value); ?>"
-                    />
-                    <?php
-                }
-                // setup nonce_url
-                wp_nonce_field($args['action'] . '_nonce', $args['action'] . '_nonce', false);
-                $id = 'ee-' . sanitize_key($context_label['label']) . '-select';
-                ?>
-                <label for='<?php echo esc_attr($id); ?>' class='screen-reader-text'>
-                    <?php esc_html_e('message context options', 'event_espresso'); ?>
-                </label>
-                <select id="<?php echo esc_attr($id); ?>" name="context">
-                    <?php
-                    $context_templates = $template_group_object->context_templates();
-                    if (is_array($context_templates)) :
-                        foreach ($context_templates as $context => $template_fields) :
-                            $checked = ($context === $args['context']) ? 'selected' : '';
-                            ?>
-                            <option value="<?php echo esc_attr($context); ?>" <?php echo esc_attr($checked); ?>>
-                                <?php echo esc_html($context_details[ $context ]['label']); ?>
-                            </option>
-                        <?php endforeach;
-                    endif; ?>
-                </select>
-                <?php $button_text = sprintf(
-                    esc_html__('Switch %s', 'event_espresso'),
-                    ucwords($context_label['label'])
-                ); ?>
-                <input class='button--secondary'
-                       id="submit-msg-context-switcher-sbmt"
-                       type="submit"
-                       value="<?php echo esc_attr($button_text); ?>"
-                />
-            </form>
-            <?php echo wp_kses($args['extra'], AllowedTags::getWithFormTags()); ?>
-        </div> <!-- end .ee-msg-switcher-container -->
-        <?php $this->_context_switcher = ob_get_clean();
-    }
-
 
     /**
      * @param bool $new

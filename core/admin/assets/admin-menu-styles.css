@@ -896,7 +896,7 @@ div.TB-ee-frame a {
 .ee-switch {
     align-items: center;
     display: flex;
-    height: var(--ee-switch-height);
+    min-height: var(--ee-switch-height);
     justify-content: flex-start;
     width: 100%;
 }
@@ -973,6 +973,7 @@ input.ee-toggle-round-flat:checked + label:after {
 }
 
 .ee-switch .ee-switch__label > span {
+    display: inline-block;
     font-weight: 600;
     position: absolute;
     inset-inline-start: 1rem;
