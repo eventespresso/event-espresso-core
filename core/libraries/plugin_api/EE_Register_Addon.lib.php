@@ -8,6 +8,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use PluginUpdateEngine\PluginUpdateEngine;
 
 /**
  * Class EE_Register_Addon
@@ -1132,7 +1133,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         foreach (self::$_settings as $settings) {
             if (! empty($settings['pue_options'])) {
                 // initiate the class and start the plugin update engine!
-                new PluginUpdateEngineChecker(
+                new PluginUpdateEngine(
                 // host file URL
                     $license_server,
                     // plugin slug(s)

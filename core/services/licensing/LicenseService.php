@@ -2,9 +2,9 @@
 
 namespace EventEspresso\core\services\licensing;
 
-use EventEspresso\core\domain\services\pue\Stats;
 use EventEspresso\core\domain\services\pue\Config;
-use PluginUpdateEngineChecker;
+use EventEspresso\core\domain\services\pue\Stats;
+use PluginUpdateEngine\PluginUpdateEngine;
 
 /**
  * LicenseService
@@ -26,21 +26,23 @@ class LicenseService
      */
     private $stats_collection;
 
+
     public function __construct(Stats $stats_collection, Config $config)
     {
-        $this->config = $config;
+        $this->config           = $config;
         $this->stats_collection = $stats_collection;
         $this->loadPueClient();
     }
 
+
     private function loadPueClient()
     {
-        // PUE Auto Upgrades stuff
-        if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { // include the file
-            require_once(EE_THIRD_PARTY . 'pue/pue-client.php');
-
+        // initiate the class and start the plugin update engine!
+        new PluginUpdateEngine(
+            $this->config->hostServerUrl(),
+            $this->config->pluginSlug(),
             // $options needs to be an array with the included keys as listed.
-            $options = array(
+            [
                 // 'optionName' => '', //(optional) - used as the reference for saving update information in the
                 // clients options table.  Will be automatically set if left blank.
                 'apikey'                => $this->config->siteLicenseKey(),
@@ -62,47 +64,32 @@ class LicenseService
                 // if TRUE then you want FREE versions of the plugin to be updated from WP
                 'extra_stats'           => $this->stats_collection->statsCallback(),
                 'turn_on_notices_saved' => true,
-            );
-            // initiate the class and start the plugin update engine!
-            new PluginUpdateEngineChecker(
-                $this->config->hostServerUrl(),
-                $this->config->pluginSlug(),
-                $options
-            );
-        }
+            ]
+        );
     }
 
 
     /**
      * This is a handy helper method for retrieving whether there is an update available for the given plugin.
      *
-     * @param  string $basename Use the equivalent result from plugin_basename() for this param as WP uses that to
+     * @param string $basename  Use the equivalent result from plugin_basename() for this param as WP uses that to
      *                          identify plugins. Defaults to core update
      * @return boolean           True if update available, false if not.
      */
-    public static function isUpdateAvailable($basename = '')
+    public static function isUpdateAvailable(string $basename = ''): bool
     {
+        $update   = false;
         $basename = ! empty($basename) ? $basename : EE_PLUGIN_BASENAME;
-
-        $update = false;
-
-        // should take "event-espresso-core/espresso.php" and change to "/event-espresso-core"
-        $folder = '/' . dirname($basename);
-
-        $plugins = get_plugins($folder);
-        $current = get_site_transient('update_plugins');
-
-        foreach ((array) $plugins as $plugin_file => $plugin_data) {
-            if (isset($current->response['plugin_file'])) {
-                $update = true;
+        $current  = get_site_transient('update_plugins');
+        if (isset($current->response['plugin_file'])) {
+            // convert "event-espresso-core/espresso.php" to "/event-espresso-core" and get plugins
+            $plugins = get_plugins('/' . dirname($basename));
+            foreach ($plugins as $plugin_file => $plugin_data) {
+                // toggle update to true if a match is found
+                $update = $current->response['plugin_file'] === $plugin_file ? true : $update;
             }
         }
-
-        // it's possible that there is an update but an invalid site-license-key is in use
-        if (get_site_option('pue_json_error_' . $basename)) {
-            $update = true;
-        }
-
-        return $update;
+        // it's also possible that there's an update but an invalid site-license-key is in use
+        return get_site_option('pue_json_error_' . $basename) ? true : $update;
     }
 }
