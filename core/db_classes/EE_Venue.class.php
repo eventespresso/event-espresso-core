@@ -8,32 +8,41 @@ use EventEspresso\core\services\address\AddressInterface;
  * @package               Event Espresso
  * @subpackage            includes/classes/EE_Venue.class.php
  * @author                Mike Nelson
+ * @method EE_Country|EE_State get_first_related($relationName, $query_params = [])
+ * @method EE_Country|EE_State _add_relation_to($otherObjectModelObjectOrID, $relationName)
  */
 class EE_Venue extends EE_CPT_Base implements AddressInterface
 {
     /**
-     *
      * @param array  $props_n_values          incoming values
-     * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
+     * @param string|null $timezone           incoming timezone (if not set the timezone set for the website
+     *                                        will be
      *                                        used.)
      * @param array  $date_formats            incoming date_formats in an array where the first value is the
      *                                        date_format and the second value is the time format
-     * @return EE_Attendee
+     * @return EE_Venue
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
-    {
+    public static function new_instance(
+        array $props_n_values = [],
+        ?string $timezone = '',
+        array $date_formats = []
+    ): EE_Venue {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        return $has_object ?: new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
     /**
      * @param array  $props_n_values  incoming values from the database
-     * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
-     *                                the website will be used.
-     * @return EE_Attendee
+     * @param string|null $timezone   incoming timezone as set by the model.
+     *                                If not set the timezone for the website will be used.
+     * @return EE_Venue
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db(array $props_n_values = [], ?string $timezone = ''): EE_Venue
     {
         return new self($props_n_values, true, $timezone);
     }
@@ -43,10 +52,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets name
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function name()
+    public function name(): string
     {
-        return $this->get('VNU_name');
+        return (string) $this->get('VNU_name');
     }
 
 
@@ -54,10 +65,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets phone
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function phone()
+    public function phone(): string
     {
-        return $this->get('VNU_phone');
+        return (string) $this->get('VNU_phone');
     }
 
 
@@ -65,10 +78,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * venue_url
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function venue_url()
+    public function venue_url(): string
     {
-        return $this->get('VNU_url');
+        return (string) $this->get('VNU_url');
     }
 
 
@@ -76,10 +91,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets desc
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function description()
+    public function description(): string
     {
-        return $this->get('VNU_desc');
+        return (string) $this->get('VNU_desc');
     }
 
 
@@ -87,10 +104,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets short description (AKA: the excerpt)
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function excerpt()
+    public function excerpt(): string
     {
-        return $this->get('VNU_short_desc');
+        return (string) $this->get('VNU_short_desc');
     }
 
 
@@ -98,10 +117,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets identifier
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function identifier()
+    public function identifier(): string
     {
-        return $this->get('VNU_identifier');
+        return (string) $this->get('VNU_identifier');
     }
 
 
@@ -109,10 +130,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets address
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function address(): string
     {
-        return $this->get('VNU_address');
+        return (string) $this->get('VNU_address');
     }
 
 
@@ -120,10 +143,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets address2
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function address2(): string
     {
-        return $this->get('VNU_address2');
+        return (string) $this->get('VNU_address2');
     }
 
 
@@ -131,25 +156,32 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets city
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function city(): string
     {
-        return $this->get('VNU_city');
+        return (string) $this->get('VNU_city');
     }
+
 
     /**
      * Gets state
      *
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function state_ID(): int
     {
-        return $this->get('STA_ID');
+        return (int) $this->get('STA_ID');
     }
 
 
     /**
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function state_abbrev(): string
     {
@@ -159,10 +191,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function state_name(): string
     {
-        return $this->state_obj() instanceof EE_State ? $this->state_obj()->name() : '';
+        return (string) $this->state_obj() instanceof EE_State ? $this->state_obj()->name() : '';
     }
 
 
@@ -170,6 +204,8 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets the state for this venue
      *
      * @return EE_State|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function state_obj(): ?EE_State
     {
@@ -183,14 +219,14 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * defaults to abbreviation
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function state(): string
     {
-        if (apply_filters('FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj())) {
-            return $this->state_abbrev();
-        } else {
-            return $this->state_name();
-        }
+        return apply_filters('FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj())
+            ? $this->state_abbrev()
+            : $this->state_name();
     }
 
 
@@ -198,15 +234,19 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * country_ID
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function country_ID(): string
     {
-        return $this->get('CNT_ISO');
+        return (string) $this->get('CNT_ISO');
     }
 
 
     /**
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function country_name(): string
     {
@@ -218,6 +258,8 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets the country of this venue
      *
      * @return EE_Country|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function country_obj(): ?EE_Country
     {
@@ -231,14 +273,14 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * defaults to abbreviation
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function country(): string
     {
-        if (apply_filters('FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj())) {
-            return $this->country_ID();
-        } else {
-            return $this->country_name();
-        }
+        return apply_filters('FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj())
+            ? $this->country_ID()
+            : $this->country_name();
     }
 
 
@@ -246,6 +288,8 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets zip
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function zip(): string
     {
@@ -270,10 +314,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets created
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function created()
+    public function created(): string
     {
-        return $this->get('VNU_created');
+        return (string) $this->get('VNU_created');
     }
 
 
@@ -281,10 +327,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets modified
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function modified()
+    public function modified(): string
     {
-        return $this->get('VNU_modified');
+        return (string) $this->get('VNU_modified');
     }
 
 
@@ -292,10 +340,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets order
      *
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function order()
+    public function order(): int
     {
-        return $this->get('VNU_order');
+        return (int) $this->get('VNU_order');
     }
 
 
@@ -303,46 +353,56 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * Gets wp_user
      *
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function wp_user()
+    public function wp_user(): int
     {
-        return $this->get('VNU_wp_user');
+        return (int) $this->get('VNU_wp_user');
     }
 
 
     /**
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function virtual_phone()
+    public function virtual_phone(): string
     {
-        return $this->get('VNU_virtual_phone');
+        return (string) $this->get('VNU_virtual_phone');
     }
 
 
     /**
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function virtual_url()
+    public function virtual_url(): string
     {
-        return $this->get('VNU_virtual_url');
+        return (string) $this->get('VNU_virtual_url');
     }
 
 
     /**
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function enable_for_gmap()
+    public function enable_for_gmap(): bool
     {
-        return $this->get('VNU_enable_for_gmap');
+        return (bool) $this->get('VNU_enable_for_gmap');
     }
 
 
     /**
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function google_map_link()
+    public function google_map_link(): string
     {
-        return $this->get('VNU_google_map_link');
+        return (string) $this->get('VNU_google_map_link');
     }
 
 
@@ -353,8 +413,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param bool  $upcoming
      * @return EE_Event[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function events($query_params = array(), $upcoming = false)
+    public function events(array $query_params = array(), bool $upcoming = false): array
     {
         if ($upcoming) {
             $query_params = array(
@@ -373,8 +435,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * Sets address
+     *
+     * @param string $address
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_address($address = '')
+    public function set_address(string $address = '')
     {
         $this->set('VNU_address', $address);
     }
@@ -382,8 +448,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $address2
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_address2($address2 = '')
+    public function set_address2(string $address2 = '')
     {
         $this->set('VNU_address2', $address2);
     }
@@ -391,8 +459,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $city
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_city($city = '')
+    public function set_city(string $city = '')
     {
         $this->set('VNU_city', $city);
     }
@@ -400,8 +470,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param int $state
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_state_ID($state = 0)
+    public function set_state_ID(int $state = 0)
     {
         $this->set('STA_ID', $state);
     }
@@ -410,19 +482,23 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
     /**
      * Sets the state, given either a state id or state object
      *
-     * @param EE_State /int $state_id_or_obj
+     * @param EE_State|int $state_id_or_obj
      * @return EE_State
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_state_obj($state_id_or_obj)
+    public function set_state_obj($state_id_or_obj): EE_State
     {
         return $this->_add_relation_to($state_id_or_obj, 'State');
     }
 
 
     /**
-     * @param int $country_ID
+     * @param string $country_ID
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_country_ID($country_ID = 0)
+    public function set_country_ID(string $country_ID = '')
     {
         $this->set('CNT_ISO', $country_ID);
     }
@@ -431,10 +507,12 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
     /**
      * Sets the country on the venue
      *
-     * @param EE_Country /string $country_id_or_obj
+     * @param EE_Country|string $country_id_or_obj
      * @return EE_Country
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_country_obj($country_id_or_obj)
+    public function set_country_obj($country_id_or_obj): EE_Country
     {
         return $this->_add_relation_to($country_id_or_obj, 'Country');
     }
@@ -442,8 +520,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $zip
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_zip($zip = '')
+    public function set_zip(string $zip = '')
     {
         $this->set('VNU_zip', $zip);
     }
@@ -451,8 +531,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param int $capacity
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_capacity($capacity = 0)
+    public function set_capacity(int $capacity = 0)
     {
         $this->set('VNU_capacity', $capacity);
     }
@@ -460,8 +542,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $created
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_created($created = '')
+    public function set_created(string $created = '')
     {
         $this->set('VNU_created', $created);
     }
@@ -469,8 +553,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $desc
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_description($desc = '')
+    public function set_description(string $desc = '')
     {
         $this->set('VNU_desc', $desc);
     }
@@ -478,8 +564,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $identifier
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_identifier($identifier = '')
+    public function set_identifier(string $identifier = '')
     {
         $this->set('VNU_identifier', $identifier);
     }
@@ -487,8 +575,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $modified
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_modified($modified = '')
+    public function set_modified(string $modified = '')
     {
         $this->set('VNU_modified', $modified);
     }
@@ -496,8 +586,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $name
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_name($name = '')
+    public function set_name(string $name = '')
     {
         $this->set('VNU_name', $name);
     }
@@ -505,8 +597,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param int $order
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_order($order = 0)
+    public function set_order(int $order = 0)
     {
         $this->set('VNU_order', $order);
     }
@@ -514,8 +608,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $phone
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_phone($phone = '')
+    public function set_phone(string $phone = '')
     {
         $this->set('VNU_phone', $phone);
     }
@@ -523,8 +619,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param int $wp_user
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_wp_user($wp_user = 1)
+    public function set_wp_user(int $wp_user = 1)
     {
         $this->set('VNU_wp_user', $wp_user);
     }
@@ -532,8 +630,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $url
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_venue_url($url = '')
+    public function set_venue_url(string $url = '')
     {
         $this->set('VNU_url', $url);
     }
@@ -541,8 +641,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $phone
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_virtual_phone($phone = '')
+    public function set_virtual_phone(string $phone = '')
     {
         $this->set('VNU_virtual_phone', $phone);
     }
@@ -550,17 +652,21 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $url
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_virtual_url($url = '')
+    public function set_virtual_url(string $url = '')
     {
         $this->set('VNU_virtual_url', $url);
     }
 
 
     /**
-     * @param string $enable
+     * @param bool|int|string $enable
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_enable_for_gmap($enable = '')
+    public function set_enable_for_gmap($enable = false)
     {
         $this->set('VNU_enable_for_gmap', $enable);
     }
@@ -568,8 +674,10 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
 
     /**
      * @param string $google_map_link
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_google_map_link($google_map_link = '')
+    public function set_google_map_link(string $google_map_link = '')
     {
         $this->set('VNU_google_map_link', $google_map_link);
     }
