@@ -199,7 +199,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $this->_hidden_columns   = [];
         $this->event              = EEM_Event::instance()->get_one_by_ID($this->event_id);
         if ($this->event instanceof EE_Event) {
-            $this->datetimes_for_event = $this->event->datetimes_ordered();
+            $this->datetimes_for_event = DatetimesForEventCheckIn::fromEvent($this->event);
         }
     }
 
