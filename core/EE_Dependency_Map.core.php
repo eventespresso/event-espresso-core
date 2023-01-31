@@ -698,6 +698,10 @@ class EE_Dependency_Map
                 'EEM_Ticket'                                                              => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\modules\ticket_selector\ProcessTicketSelectorPostData'                                                 => [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EEM_Event'                                   => EE_Dependency_Map::load_from_cache,
+            ],
             'EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker'                                     => [
                 'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
             ],
