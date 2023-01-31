@@ -201,8 +201,9 @@ class ProcessTicketSelector
         $id = null;
         $valid = [];
         try {
-            $post_data_validator = new ProcessTicketSelectorPostData($this->request);
-            $id = $post_data_validator->getEventId();
+            /** @var ProcessTicketSelectorPostData $post_data_validator */
+            $post_data_validator = LoaderFactory::getNew(ProcessTicketSelectorPostData::class);
+            $id                  = $post_data_validator->getEventId();
             $valid               = apply_filters(
                 'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data',
                 $post_data_validator->validatePostData()

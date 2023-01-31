@@ -3,8 +3,12 @@
 namespace EventEspresso\modules\ticket_selector;
 
 use DomainException;
+use EE_Error;
+use EE_Event;
 use EEH_Event_View;
+use EEM_Event;
 use EventEspresso\core\services\request\RequestInterface;
+use ReflectionException;
 
 /**
  * Class ProcessTicketSelectorPostData
@@ -48,6 +52,11 @@ class ProcessTicketSelectorPostData
     protected $event_id;
 
     /**
+     * @var EEM_Event
+     */
+    protected $event_model;
+
+    /**
      * @var array
      */
     protected $inputs_to_clean = [];
@@ -65,10 +74,12 @@ class ProcessTicketSelectorPostData
 
     /**
      * @param RequestInterface $request
+     * @param EEM_Event $event_model
      */
-    public function __construct(RequestInterface $request)
+    public function __construct(RequestInterface $request, EEM_Event $event_model)
     {
         $this->request         = $request;
+        $this->event_model     = $event_model;
         $this->inputs_to_clean = [
             self::DATA_KEY_MAX_ATNDZ     => self::INPUT_KEY_MAX_ATNDZ,
             self::DATA_KEY_RETURN_URL    => self::INPUT_KEY_RETURN_URL,
@@ -82,8 +93,10 @@ class ProcessTicketSelectorPostData
     /**
      * @return int
      * @throws DomainException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function getEventId()
+    public function getEventId(): int
     {
         // do we have an event id?
         if ($this->event_id === null) {
@@ -101,6 +114,22 @@ class ProcessTicketSelectorPostData
                 );
             }
         }
+        // let's pull the event so we can get the REAL max attendees per order value
+        /** @var EE_Event $event */
+        $event = $this->event_model->get_one_by_ID($this->event_id);
+        if (! $event instanceof EE_Event) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'A valid event could not be retrieved for the supplied event id (%1$s).%2$sPlease click the back button on your browser and try again.',
+                        'event_espresso'
+                    ),
+                    $this->event_id,
+                    '<br/>'
+                )
+            );
+        }
+        $this->valid_data[ self::DATA_KEY_MAX_ATNDZ ] = $event->additional_limit();
         // event id is valid
         return $this->event_id;
     }
@@ -108,9 +137,10 @@ class ProcessTicketSelectorPostData
 
     /**
      * @return array
-     * @throws DomainException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function validatePostData()
+    public function validatePostData(): array
     {
         // grab valid id
         $this->valid_data[ self::DATA_KEY_EVENT_ID ] = $this->getEventId();
@@ -118,7 +148,7 @@ class ProcessTicketSelectorPostData
         $this->valid_data[ self:: DATA_KEY_TOTAL_TICKETS ] = 0;
         // cycle through $inputs_to_clean array
         foreach ($this->inputs_to_clean as $what => $input_to_clean) {
-            $input_key = "{$input_to_clean}{$this->event_id}";
+            $input_key = "$input_to_clean$this->event_id";
             // check for POST data
             if ($this->request->requestParamIsSet($input_key)) {
                 switch ($what) {
@@ -149,9 +179,9 @@ class ProcessTicketSelectorPostData
      * @param string $what
      * @param string $input_key
      */
-    protected function processInteger($what, $input_key)
+    protected function processInteger(string $what, string $input_key)
     {
-        $this->valid_data[ $what ] = $this->request->getRequestParam($input_key, 0, 'int');
+        $this->valid_data[ $what ] = $this->valid_data[ $what ] ?? $this->request->getRequestParam($input_key, 0, 'int');
     }
 
 
@@ -159,7 +189,7 @@ class ProcessTicketSelectorPostData
      * @param string $input_key
      * @throws DomainException
      */
-    protected function processQuantity($input_key)
+    protected function processQuantity(string $input_key)
     {
         /** @var array $row_qty */
         $row_qty = $this->request->getRequestParam($input_key, [], 'int', true);
@@ -187,13 +217,13 @@ class ProcessTicketSelectorPostData
                 $row_qty = explode($delimiter, $raw_qty);
             }
             // grab that ticket ID regardless of where it is
-            $ticket_id = isset($row_qty[0]) ? $row_qty[0] : key($row_qty);
+            $ticket_id = $row_qty[0] ?? key($row_qty);
             // use it as the key, and set the value to 1
             // ex: row qty = [ TKT_ID => 1 ]
             $row_qty = [$ticket_id => 1];
         }
         foreach ($this->valid_data[ self::DATA_KEY_TICKET_ID ] as $ticket_id) {
-            $qty = isset($row_qty[ $ticket_id ]) ? $row_qty[ $ticket_id ] : 0;
+            $qty = $row_qty[ $ticket_id ] ?? 0;
             $this->valid_data[ self::DATA_KEY_QUANTITY ][ $ticket_id ]     = $qty;
             $this->valid_data[ self:: DATA_KEY_TOTAL_TICKETS ] += $qty;
         }
@@ -203,7 +233,7 @@ class ProcessTicketSelectorPostData
     /**
      * @param string $input_key
      */
-    protected function processReturnURL($input_key)
+    protected function processReturnURL(string $input_key)
     {
         // grab and sanitize return-url
         $input_value = $this->request->getRequestParam($input_key, '', 'url');
@@ -223,7 +253,7 @@ class ProcessTicketSelectorPostData
      * @param string $input_key
      * @throws DomainException
      */
-    protected function processTicketIDs($input_key)
+    protected function processTicketIDs(string $input_key)
     {
         $ticket_ids          = (array) $this->request->getRequestParam($input_key, [], 'int', true);
         $filtered_ticket_ids = array_filter($ticket_ids);
