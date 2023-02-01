@@ -52,7 +52,7 @@
 		"@wordpress/i18n": "^4.8.0",
 		"accounting-js": "^1.1.1",
 		"classnames": "^2.3.1",
-		"cuid": "^2.1.8",
+		"cuid": "^3.0.0",
 		"decimal.js-light": "^2.5.1",
 		"immutable": "^4.0.0",
 		"js-green-licenses": "^3.0.1",
