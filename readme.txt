@@ -1,12 +1,12 @@
-=== Event Espresso 4 Decaf - Event Registration Event Ticketing ===
+=== Event Espresso 5 Decaf - Event Registration Event Ticketing ===
 Contributors: eventespresso, sethshoultes, garthkoyle, pebblo, mnelson4, lorenzocaum, charliespider, builtbynorthby
 Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
 Tags: event registration, ticketing, online registration, ticket sales, event booking, class registration, conference registration, event ticketing, registration, event, events, online event registration
 Requires at least: 4.5
-Requires PHP: 5.4
-Tested up to: 5.7.1
-Stable tag: 4.10.4.decaf
-License: GPL2
+Requires PHP: 5.6
+Tested up to: 6.1.1
+Stable tag: 5.0.0.decaf
+License: GPLv3
 
 Manage online event registration and ticketing. Create event registration forms, sell tickets, collect money, send email, and SEO for events.
 
@@ -124,7 +124,7 @@ If your support issue is urgent, we also offer [priority event management suppor
 Check out the advanced [installation](https://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=ee4_decaf_plugin_description_tab) and [setup instructions](https://eventespresso.com/wiki/how-to-setup-event-espresso-and-publish-your-first-event/?utm_source=wordpress_org&utm_medium=link&utm_content=setup+instructions&utm_campaign=ee4_decaf_plugin_description_tab) on our website.
 
 = Developer Resources =
-* [Event Espresso 4 on Github](http://evts.io/EE4_WP_Readme)
+* [Event Espresso 5 on Github](http://evts.io/EE4_WP_Readme)
 * [Developer Targeted Documentation](http://evts.io/EE4_Dev_Docs)
 
 == Screenshots ==
@@ -141,9 +141,9 @@ Check out the advanced [installation](https://eventespresso.com/wiki/installing-
 == Installation ==
 
 = Quick Install =
-1. Event Espresso can be installed and activated by searching for the plugin through WordPress admin &rarr; Plugins &rarr; Add New. 
+1. Event Espresso can be installed and activated by searching for the plugin through WordPress admin &rarr; Plugins &rarr; Add New.
 
-=  Installing via FTP =  
+=  Installing via FTP =
 Alternatively, you can download Event Espresso to your computer from the WordPress Plugin Directory.
 
 1. Then locate the `event-espresso-core-decaf` folder on your computer and unzip it.
@@ -154,12 +154,12 @@ Alternatively, you can download Event Espresso to your computer from the WordPre
 Check out the advanced [installation](https://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=ee4_decaf_plugin_installation_tab) and [setup instructions](https://eventespresso.com/wiki/the-basic-settings/?utm_source=wordpress_org&utm_medium=link&utm_content=setup+instructions&utm_campaign=ee4_decaf_plugin_installation_tab) on our website.
 
 = Documentation =
-Find resources on Event Espresso 4 for a beginner to advanced users.
+Find resources on Event Espresso 5 for a beginner to advanced users.
 
-[View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=view+ee4+documentation)
+[View Event Espresso 5 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=view+ee4+documentation)
 
 = Mobile Event Apps =
-The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab)
+The Event Espresso 5 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab)
 
 = Developers =
 **The full version can be [found on Github](http://evts.io/EE4_WP_Readme)** and provides everything that you need to [sell tickets](https://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=sell+tickets), [collect payments](https://eventespresso.com/features/payment-options/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=collect+payments), and [manage events](https://eventespresso.com/features/event-management/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=manage+events) all from within your WordPress dashboard.
@@ -201,9 +201,9 @@ We DO NOT regularly monitor the support forums on WordPress.org. You'll find a f
 
 If you want to organize your event fast without the hassle of managing a server, plugins, and security, then build your event website on our event cloud [Event Smart - free online event registration and ticketing management](https://eventsmart.com/?utm_source=wordpress_org&utm_medium=EE4_faq&utm_campaign=EE4&utm_content=link).
 
-= Is Event Espresso 4 available on Github? =
+= Is Event Espresso 5 available on Github? =
 
-Yes, you can get access to the core files via the [Event Espresso 4 Github page](http://evts.io/EE4_WP_Readme).
+Yes, you can get access to the core files via the [Event Espresso 5 Github page](http://evts.io/EE4_WP_Readme).
 
 == Changelog ==
 
@@ -211,7 +211,7 @@ Yes, you can get access to the core files via the [Event Espresso 4 Github page]
 
 Backup your database before installing any updates. Please see our article on [Backing Up your WordPress Site](https://eventespresso.com/wiki/how-to-back-up-your-site/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
 
-**Please Note:** Due to the fact that the Event Espresso 4 Decaf and Caffeinated (paid) versions share the same codebase, the changelog presented here is based on the Caffeinated (paid) version of Event Espresso 4. Up to date changelog for the current premium version [can be found here](https://eventespresso.com/wiki/ee4-changelog/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
+**Please Note:** Due to the fact that the Event Espresso 5 Decaf and Caffeinated (paid) versions share the same codebase, the changelog presented here is based on the Caffeinated (paid) version of Event Espresso 5. Up to date changelog for the current premium version [can be found here](https://eventespresso.com/wiki/ee4-changelog/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
 
 **Developers, [find us on Github](http://evts.io/EE4_WP_Readme)**
 
@@ -252,7 +252,7 @@ Backup your WordPress website before installing any updates.
 * House Cleaning Services
 * [Model Agency Booking/Scheduling](https://eventespresso.com/use-cases/modeling-talent-agency-scheduling/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Room Booking/Scheduling
-* Workshop Registrations 
+* Workshop Registrations
 
 = Classes =
 
@@ -298,7 +298,7 @@ Backup your WordPress website before installing any updates.
 * School Lunch Reservations
 * Parent Teacher Conferences
 * Parent Teacher Association Meetings
-* Wildlife Education and Tours 
+* Wildlife Education and Tours
 
 = Fundraisers & Non-Profit Organizations =
 
@@ -380,4 +380,3 @@ If you aren't quite sure if Event Espresso will work for you and it's not listed
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
