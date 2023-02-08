@@ -3,12 +3,11 @@
 [![Latest Tag](https://img.shields.io/github/tag/eventespresso/event-espresso-core.svg?style=flat&label=Latest%20Tag)](https://github.com/eventespresso/event-espresso-core/releases)
 [![Travis](https://travis-ci.com/eventespresso/event-espresso-core.svg?branch=master)](https://travis-ci.com/eventespresso/event-espresso-core)
 [![PHP](https://img.shields.io/badge/PHP-7%20Ready-brightgreen.svg?style=flat)](https://eventespresso.com/)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=eventespresso/event-espresso-core)](https://dependabot.com)
-[![WordPress](https://img.shields.io/badge/WordPress-v4.7.x+%20Tested-brightgreen.svg?style=flat)](https://eventespresso.com/)
-[![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![WordPress](https://img.shields.io/badge/WordPress-v6.1.x+%20Tested-brightgreen.svg?style=flat)](https://eventespresso.com/)
+[![License](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![Join Chat](https://img.shields.io/badge/Slack-Join%20Chat-aa30ff.svg?style=flat)](https://eventespresso.com/contact/community-chat/)
 
-## Event Espresso 4 - Event Ticketing and Registration System
+## Event Espresso 5 - Event Ticketing and Registration System
 
 [Event Espresso](https://eventespresso.com/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=event+espresso+link) is an event ticketing and registration platform for [WordPress](http://wordpress.org/). Event Espresso makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports.
 
@@ -18,17 +17,17 @@ Purchase a [Premium Support License](https://eventespresso.com/pricing/?ee_ver=e
 ## Installing Event Espresso
 Event Espresso can be installed via the WordPress Dashboard or through FTP or SFTP.
 
-[View Event Espresso 4 Install Documentation →](https://eventespresso.com/wiki/installing-event-espresso/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+install+documentation)
+[View Event Espresso 5 Install Documentation →](https://eventespresso.com/wiki/installing-event-espresso/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+install+documentation)
 
 ## Documentation
-Resources on Event Espresso 4 for a beginner to advanced users.
+Resources on Event Espresso 5 for a beginner to advanced users.
 
-[View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
+[View Event Espresso 5 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
 
 Notable changes for each released version of the project can be found in our [changelog](https://eventespresso.com/wiki/ee4-changelog/)
 
 ## Mobile Event Apps
-The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+apple) devices.
+The Event Espresso 5 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+apple) devices.
 
 [View Mobile Event App Documentation →](https://eventespresso.com/wiki/ee4-event-apps/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=mobile+event+apps+documentation)
 
@@ -51,7 +50,7 @@ Buy a **[Premium Support License](https://eventespresso.com/pricing/?ee_ver=ee4&
 **Note:** for non stable versions. We currently use minor versioning numbers such as (4.1.rc.125) for rapid development occurring.  On master, minor versions represent minor releases i.e. (4.1.1.p) that typically only include bug fixes and minor features.  Releases including bigger features bump the second number (i.e. 4.1.1 -> 4.2.0 ).  "rc" in the version number indicates that it is a non-stable release candidate version.  "p" in the version number indicates a released version (usually only tags will have .p) In the list below we **do not** include minor version numbers.
 
 
-This is the Core for Event Espresso 4. This README.md file is targeted for display with our GitHub repo.  For detailed information via traditional readme, see the readme.txt file.
+This is the Core for Event Espresso 5. This README.md file is targeted for display with our GitHub repo.  For detailed information via traditional readme, see the readme.txt file.
 
 > Extra:  The code structure and phpdoc parsed documentation can be found at http://code.eventespresso.com
 >
@@ -98,4 +97,3 @@ Here's how we deal with pull requests for our repo:
 
 
 You may find [our post on contributing to open source software](https://eventespresso.com/2017/02/5-tips-for-contributing-to-open-source-software-like-event-espresso/) helpful.
-
