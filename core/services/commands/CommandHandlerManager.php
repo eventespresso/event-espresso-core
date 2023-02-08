@@ -71,7 +71,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
      * @return void
      * @throws InvalidCommandHandlerException
      */
-    public function addCommandHandler(CommandHandlerInterface $command_handler, $fqcn_for_command = '')
+    public function addCommandHandler($command_handler, $fqcn_for_command = '')
     {
         $command = ! empty($fqcn_for_command)
             ? $fqcn_for_command
@@ -90,7 +90,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
      * @throws DomainException
      * @throws CommandHandlerNotFoundException
      */
-    public function getCommandHandler(CommandInterface $command, CommandBusInterface $command_bus = null)
+    public function getCommandHandler($command, $command_bus = null)
     {
         $command_name = get_class($command);
         /*

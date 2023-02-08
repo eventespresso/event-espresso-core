@@ -259,7 +259,7 @@ class Version
      * @param Version $other_version
      * @return int
      */
-    public function compare(Version $other_version)
+    public function compare($other_version)
     {
         return version_compare((string) $this, (string) $other_version);
     }
@@ -269,7 +269,7 @@ class Version
      * @param Version $other_version
      * @return bool
      */
-    public function equals(Version $other_version)
+    public function equals($other_version)
     {
         return version_compare((string) $this, (string) $other_version, '==');
     }
@@ -279,7 +279,7 @@ class Version
      * @param Version $other_version
      * @return bool
      */
-    public function newerThan(Version $other_version)
+    public function newerThan($other_version)
     {
         return version_compare((string) $this, (string) $other_version, '>');
     }
@@ -289,7 +289,7 @@ class Version
      * @param Version $other_version
      * @return bool
      */
-    public function olderThan(Version $other_version)
+    public function olderThan($other_version)
     {
         return version_compare((string) $this, (string) $other_version, '<');
     }

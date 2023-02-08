@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\container\exceptions;
 
+use RuntimeException;
+use Exception;
 /**
  * Class ServiceNotFoundException
  * thrown when no entry was found in the container
@@ -9,7 +11,7 @@ namespace EventEspresso\core\services\container\exceptions;
  * @package       Event Espresso
  * @author        Brent Christensen
  */
-class ServiceNotFoundException extends \RuntimeException
+class ServiceNotFoundException extends RuntimeException
 {
     /**
      * ServiceNotFoundException constructor
@@ -17,13 +19,13 @@ class ServiceNotFoundException extends \RuntimeException
      * @param string     $service_name the name of the requested service
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
     public function __construct(
         $service_name,
         $message = '',
         $code = 0,
-        \Exception $previous = null
+        Exception $previous = null
     ) {
         if (empty($message)) {
             $message = sprintf(

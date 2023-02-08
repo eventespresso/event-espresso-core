@@ -23,7 +23,7 @@ class EE_Messages_Data_Handler_Collection extends EE_Object_Collection
      *                                                   classname to create an alternative index for retrieving data_handlers.
      * @return bool
      */
-    public function add($data_handler, $data = ''): bool
+    public function add($data_handler, $data = '')
     {
         $data = $data === null ? array() : (array) $data;
         $info['key'] = $this->get_key(get_class($data_handler), $data);

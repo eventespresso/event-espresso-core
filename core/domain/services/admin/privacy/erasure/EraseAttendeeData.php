@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\admin\privacy\erasure;
 
+use EE_Error;
 use EEM_Attendee;
 use EventEspresso\core\services\privacy\erasure\PersonalDataEraserInterface;
 
@@ -52,7 +53,7 @@ class EraseAttendeeData implements PersonalDataEraserInterface
      * @type array   $messages       values are messages to show
      * @type boolean $done           whether this eraser is done or has more pages
      *               }
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function erase($email_address, $page = 1)
     {

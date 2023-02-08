@@ -73,7 +73,10 @@ class EE_Receipt_message_type extends EE_message_type
 
 
 
-    protected function _get_data_for_context($context, EE_Registration $registration, $id)
+    /**
+     * @param EE_Registration $registration
+     */
+    protected function _get_data_for_context($context, $registration, $id)
     {
         // receipt message type data handler is 'Gateways' and it expects a transaction object.
         $transaction = $registration->transaction();

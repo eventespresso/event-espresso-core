@@ -24,14 +24,14 @@ class MultiLineAddressFormatter extends AddressFormatter implements AddressForma
      * @return string
      */
     public function format(
-        string $address,
-        string $address2,
-        string $city,
-        string $state,
-        string $zip,
-        string $country,
-        string $CNT_ISO
-    ): ?string {
+        $address,
+        $address2,
+        $city,
+        $state,
+        $zip,
+        $country,
+        $CNT_ISO
+    ) {
         $address_formats = apply_filters(
             'FHEE__EE_MultiLine_Address_Formatter__address_formats',
             array(
@@ -42,7 +42,7 @@ class MultiLineAddressFormatter extends AddressFormatter implements AddressForma
             )
         );
         // if the incoming country has a set format, use that, else use the default
-        $formatted_address = $address_formats[ $CNT_ISO ] ?? $address_formats['ZZ'];
+        $formatted_address = isset($address_formats[ $CNT_ISO ]) ? $address_formats[ $CNT_ISO ] : $address_formats['ZZ'];
         return $this->parse_formatted_address(
             $address,
             $address2,

@@ -12,8 +12,6 @@ use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
  * @package            Event Espresso
  * @subpackage         includes/core/admin/registrations/EE_Registration_CheckIn_List_Table
  * @author             Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
 {
@@ -121,14 +119,12 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function column_CHK_in(EE_Checkin $item)
+    public function column_CHK_in($item)
     {
         $checkin_status_dashicon = CheckinStatusDashicon::fromCheckin($item);
-        return '<span class="'
-               . $checkin_status_dashicon->cssClasses()
-               . '"></span><span class="show-on-mobile-view-only">'
-               . $item->get_datetime('CHK_timestamp')
-               . '</span>';
+        return '
+        <span class="ee-entity-id ' . $checkin_status_dashicon->cssClasses() . '"></span>
+        <span class="show-on-mobile-view-only">' . $item->get_datetime('CHK_timestamp') . '</span>';
     }
 
 
@@ -141,7 +137,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function column_CHK_timestamp(EE_Checkin $item)
+    public function column_CHK_timestamp($item)
     {
         $actions = array();
         $delete_url = EE_Admin_Page::add_query_args_and_nonce(

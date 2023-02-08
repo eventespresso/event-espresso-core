@@ -73,8 +73,12 @@ class GenericAddress implements AddressInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function __construct(string $address, string $address2, string $city, $state, string $zip, $country)
+    public function __construct($address, $address2, $city, $state, $zip, $country)
     {
+        $address = (string) $address;
+        $address2 = (string) $address2;
+        $city = (string) $city;
+        $zip = (string) $zip;
         $this->_address  = $address;
         $this->_address2 = $address2;
         $this->_city     = $city;
@@ -97,7 +101,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return string
      */
-    public function address(): string
+    public function address()
     {
         return $this->_address;
     }
@@ -106,7 +110,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return string
      */
-    public function address2(): string
+    public function address2()
     {
         return $this->_address2;
     }
@@ -115,7 +119,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return string
      */
-    public function city(): string
+    public function city()
     {
         return $this->_city;
     }
@@ -128,7 +132,7 @@ class GenericAddress implements AddressInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function _get_state_obj(): EE_State
+    private function _get_state_obj()
     {
         return $this->_state_obj instanceof EE_State
             ? $this->_state_obj
@@ -139,7 +143,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return int
      */
-    public function state_ID(): int
+    public function state_ID()
     {
         return $this->_state_ID;
     }
@@ -148,7 +152,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return string
      */
-    public function state_abbrev(): string
+    public function state_abbrev()
     {
         return $this->state_obj() instanceof EE_State
             ? $this->state_obj()->abbrev()
@@ -159,7 +163,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return string
      */
-    public function state_name(): string
+    public function state_name()
     {
         return $this->state_obj() instanceof EE_State
             ? $this->state_obj()->name()
@@ -170,7 +174,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return EE_State
      */
-    public function state_obj(): EE_State
+    public function state_obj()
     {
         return $this->_state_obj;
     }
@@ -179,7 +183,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return string
      */
-    public function state(): string
+    public function state()
     {
         if (apply_filters('FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj())) {
             return $this->state_obj()->abbrev();
@@ -194,7 +198,7 @@ class GenericAddress implements AddressInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function _get_country_obj(): EE_Country
+    private function _get_country_obj()
     {
         return $this->_country_obj instanceof EE_Country
             ? $this->_country_obj
@@ -205,7 +209,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return string
      */
-    public function country_ID(): string
+    public function country_ID()
     {
         return $this->_country_ID;
     }
@@ -216,7 +220,7 @@ class GenericAddress implements AddressInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function country_name(): string
+    public function country_name()
     {
         return $this->country_obj() instanceof EE_Country
             ? $this->country_obj()->name()
@@ -227,7 +231,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return EE_Country
      */
-    public function country_obj(): EE_Country
+    public function country_obj()
     {
         return $this->_country_obj;
     }
@@ -238,7 +242,7 @@ class GenericAddress implements AddressInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function country(): string
+    public function country()
     {
         if (apply_filters('FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj())) {
             return $this->country_ID();
@@ -251,7 +255,7 @@ class GenericAddress implements AddressInterface
     /**
      * @return string
      */
-    public function zip(): string
+    public function zip()
     {
         return $this->_zip;
     }

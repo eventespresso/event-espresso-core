@@ -22,7 +22,7 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base
     /**
      * @param string $value_to_normalize
      * @return float
-     * @throws \EE_Validation_Error
+     * @throws EE_Validation_Error
      */
     public function normalize($value_to_normalize)
     {

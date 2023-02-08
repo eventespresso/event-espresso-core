@@ -157,7 +157,7 @@ class EE_Cron_Tasks extends EE_Base
      * @return bool
      * @throws DomainException
      */
-    public static function reschedule_cron_for_transactions_if_maintenance_mode($cron_task, array $TXN_IDs)
+    public static function reschedule_cron_for_transactions_if_maintenance_mode($cron_task, $TXN_IDs)
     {
         if (! method_exists('EE_Cron_Tasks', $cron_task)) {
             throw new DomainException(

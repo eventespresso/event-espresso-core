@@ -87,7 +87,7 @@ class EE_Messages_Queue
      *                                 use the messenger send method but typically is based on preview data.
      * @return bool          Whether the message was successfully added to the repository or not.
      */
-    public function add(EE_Message $message, $data = [], $preview = false, $test_send = false)
+    public function add($message, $data = [], $preview = false, $test_send = false)
     {
         $data['preview']   = $preview;
         $data['test_send'] = $test_send;
@@ -102,7 +102,7 @@ class EE_Messages_Queue
      * @param bool       $persist This flag indicates whether to attempt to delete the object from the db as well.
      * @return bool
      */
-    public function remove(EE_Message $message, $persist = false)
+    public function remove($message, $persist = false)
     {
         if ($persist && $this->_message_repository->current() !== $message) {
             // get pointer on right message
@@ -578,7 +578,7 @@ class EE_Messages_Queue
      * @param mixed      $sending_messenger (optional)
      * @return bool
      */
-    protected function _process_message(EE_Message $message, $sending_messenger = null)
+    protected function _process_message($message, $sending_messenger = null)
     {
         // these *should* have been validated in the execute() method above
         $messenger    = $message->messenger_object();
@@ -642,9 +642,9 @@ class EE_Messages_Queue
      * @return bool   true means all went well, false means, not so much.
      */
     protected function _do_preview(
-        EE_Message $message,
-        EE_messenger $messenger,
-        EE_message_type $message_type,
+        $message,
+        $messenger,
+        $message_type,
         $test_send
     ) {
         if ($preview = $messenger->get_preview($message, $message_type, $test_send)) {
@@ -672,7 +672,7 @@ class EE_Messages_Queue
      * @param EE_message_type $message_type
      * @return bool true means all went well, false means, not so much.
      */
-    protected function _do_send(EE_Message $message, EE_messenger $messenger, EE_message_type $message_type)
+    protected function _do_send($message, $messenger, $message_type)
     {
         try {
             if ($messenger->send_message($message, $message_type)) {
@@ -697,7 +697,7 @@ class EE_Messages_Queue
      * @param array      $error_messages the response from the messenger.
      * @throws EE_Error
      */
-    protected function _set_error_message(EE_Message $message, $error_messages)
+    protected function _set_error_message($message, $error_messages)
     {
         $error_messages = (array) $error_messages;
         if (in_array($message->STS_ID(), EEM_Message::instance()->stati_indicating_failed_sending())) {

@@ -96,7 +96,7 @@ class EE_Country extends EE_Base_Class
     public function currency_sign()
     {
         $CNT_cur_sign = $this->get('CNT_cur_sign');
-        return $CNT_cur_sign ? $CNT_cur_sign : '';
+        return $CNT_cur_sign ?: '';
     }
 
 
@@ -205,8 +205,8 @@ class EE_Country extends EE_Base_Class
 
 
     /**
-     * @deprecated 4.10.30.p
      * @return bool
+     * @deprecated 4.10.30.p
      */
     public function is_active()
     {

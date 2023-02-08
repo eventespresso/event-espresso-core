@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\exceptions;
 
+use Exception;
 /**
  * Class ExceptionLogger
  * writes exception details to log file
@@ -15,9 +16,9 @@ class ExceptionLogger
     /**
      * ExceptionLogger constructor.
      *
-     * @param \Exception $exception
+     * @param Exception $exception
      */
-    public function __construct(\Exception $exception)
+    public function __construct(Exception $exception)
     {
         $this->log($exception);
     }
@@ -26,10 +27,10 @@ class ExceptionLogger
     /**
      * write exception details to log file
      *
-     * @param \Exception $exception
+     * @param Exception $exception
      * @param int        $time
      */
-    public function log(\Exception $exception, $time = 0)
+    public function log($exception, $time = 0)
     {
         if (! $time) {
             $time = time();

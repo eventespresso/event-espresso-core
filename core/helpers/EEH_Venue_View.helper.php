@@ -74,7 +74,7 @@ class EEH_Venue_View extends EEH_Base
                         // grab the events related venues
                         $venues = EEH_Venue_View::get_event_venues();
                         // make sure the result is an array
-                        $venues = is_array($venues) ? $venues : [];
+                        $venues = is_array($venues) ? $venues : [$venues];
                         // do we have an ID for a specific venue?
                         if ($VNU_ID) {
                             // loop thru the related venues
@@ -152,7 +152,7 @@ class EEH_Venue_View extends EEH_Base
         global $post;
         if ($post->post_type == 'espresso_events') {
             if (isset($post->EE_Event) && $post->EE_Event instanceof EE_Event) {
-                return $post->EE_Event->venues();
+                return $post->EE_Event->venue();
             }
         }
         return [];
@@ -563,7 +563,7 @@ class EEH_Venue_View extends EEH_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function espresso_google_static_map(EE_Venue $venue, $attributes = [])
+    public static function espresso_google_static_map($venue, $attributes = [])
     {
         $state      = $venue->state_obj();
         $country    = $venue->country_obj();

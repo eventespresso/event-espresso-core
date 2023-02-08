@@ -25,7 +25,7 @@ class PreProductionVersionWarning extends Middleware
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function handleRequest(RequestInterface $request, ResponseInterface $response)
+    public function handleRequest($request, $response)
     {
         $this->request = $request;
         $this->response = $response;
@@ -58,7 +58,7 @@ class PreProductionVersionWarning extends Middleware
         if ($this->request->isAdmin()) {
             add_action('admin_notices', array($this, 'preProductionVersionAdminNotice'), -999);
         } else {
-            add_action('shutdown', array($this, 'preProductionVersionWarningNotice'), 10);
+            add_action('shutdown', array($this, 'preProductionVersionWarningNotice'));
         }
     }
 

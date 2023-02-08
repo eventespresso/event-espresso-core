@@ -5,7 +5,7 @@
  * @var string $CNT_name_for_site
  */
 ?>
-<table id="general-setting-country-details-tbl" class="form-table">
+<table id="general-setting-country-details-tbl" class="ee-admin-two-column-layout form-table">
     <tbody>
     <?php
     foreach ($inputs as $ID => $input) {
@@ -20,7 +20,7 @@
                 type="submit"
                 name="save"
                 id="country_settings_save_2"
-                class="button-primary save"
+                class="button button--primary save"
                 value="<?php esc_attr_e('Save Country Details', 'event_espresso'); ?>"
             />
             <input

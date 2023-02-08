@@ -112,7 +112,7 @@ class EE_Import implements ResettableInterface
                 <input type="hidden" name="csv_submitted" value="TRUE" id="<?php echo esc_attr(time()); ?>">
                 <input name="import" type="hidden" value="<?php echo esc_attr($type); ?>"/>
                 <input type="file" name="file[]" size="90">
-                <input class="button-primary" type="submit" value="<?php esc_html_e('Upload File', 'event_espresso'); ?>">
+                <input class="button--primary" type="submit" value="<?php esc_html_e('Upload File', 'event_espresso'); ?>">
             </form>
 
             <p class="ee-attention">
@@ -316,7 +316,7 @@ class EE_Import implements ResettableInterface
      * @param array $fields_to_save - an array containing the csv column names as keys with the corresponding db table
      *                              fields they will be saved to
      * @return TRUE on success, FALSE on fail
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function save_csv_data_array_to_db($csv_data_array, $model_name = false)
     {

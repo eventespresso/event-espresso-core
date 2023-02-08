@@ -20,11 +20,14 @@ use WP_Post;
 abstract class EspressoShortcode implements ShortcodeInterface
 {
     /**
-     * transient prefix
-     *
      * @type string
      */
-    const CACHE_TRANSIENT_PREFIX = 'ee_sc_';
+    const CACHE_TRANSIENT_PREFIX = 'SC_';
+
+    /**
+     * @type string
+     */
+    const SHORTCODE_PREFIX = 'ESPRESSO_';
 
     /**
      * @var PostRelatedCacheManager $cache_manager
@@ -35,7 +38,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
      * true if ShortcodeInterface::initializeShortcode() has been called
      * if false, then that will get called before processing
      *
-     * @var boolean $initialized
+     * @var bool $initialized
      */
     private $initialized = false;
 
@@ -63,7 +66,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
     /**
      * enqueues scripts then processes the shortcode
      *
-     * @param array $attributes
+     * @param array|string $attributes
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
@@ -77,8 +80,9 @@ abstract class EspressoShortcode implements ShortcodeInterface
                 $this->enqueueScripts();
             }
         }
+        $attributes = is_array($attributes) ? $attributes : [];
         return $this->shortcodeContent(
-            $this->sanitizeAttributes((array) $attributes)
+            $this->sanitizeAttributes($attributes)
         );
     }
 
@@ -150,8 +154,9 @@ abstract class EspressoShortcode implements ShortcodeInterface
      */
     private function shortcodeCacheID($post_ID)
     {
-        $tag = str_replace('ESPRESSO_', '', $this->getTag());
-        return "SC_{$tag}-{$post_ID}";
+        $post_ID = (int) $post_ID;
+        $tag = str_replace(EspressoShortcode::SHORTCODE_PREFIX, '', $this->getTag());
+        return EspressoShortcode::CACHE_TRANSIENT_PREFIX . "$tag-$post_ID";
     }
 
 
@@ -232,7 +237,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
     /**
      * Returns whether or not this shortcode has been initialized
      *
-     * @return boolean
+     * @return bool
      */
     public function initialized()
     {

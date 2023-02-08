@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\entities;
 
+use ReturnTypeWillChange;
 use DateTime;
 use DateTimeZone;
 use DomainException;
@@ -41,12 +42,11 @@ class DbSafeDateTime extends DateTime
      */
     protected $_error_log_dir = '';
     // phpcs:enable
-
-
     /**
      * @param string $error_log_dir
+     * @return void
      */
-    public function setErrorLogDir(string $error_log_dir): void
+    public function setErrorLogDir($error_log_dir)
     {
         // if the folder path is writable, then except the path + filename, else keep empty
         $this->_error_log_dir = is_writable(str_replace(basename($error_log_dir), '', $error_log_dir))
@@ -58,7 +58,7 @@ class DbSafeDateTime extends DateTime
     /**
      * @return string
      */
-    public function __toString(): string
+    public function __toString()
     {
         return $this->format(DbSafeDateTime::db_safe_timestamp_format);
     }
@@ -67,7 +67,7 @@ class DbSafeDateTime extends DateTime
     /**
      * @return array
      */
-    public function __sleep(): array
+    public function __sleep()
     {
         $this->_datetime_string = $this->format(DbSafeDateTime::db_safe_timestamp_format);
         $date                   = DateTime::createFromFormat(
@@ -111,8 +111,9 @@ class DbSafeDateTime extends DateTime
      * so we're no better off, but at least things won't go fatal on us.
      *
      * @throws Exception
+     * @return void
      */
-    public function __wakeup(): void
+    public function __wakeup()
     {
         $date = self::createFromFormat(
             DbSafeDateTime::db_safe_timestamp_format,
@@ -146,7 +147,7 @@ class DbSafeDateTime extends DateTime
      * @param string $date_string
      * @return string
      */
-    public static function normalizeInvalidDate(string $date_string): string
+    public static function normalizeInvalidDate($date_string)
     {
         return str_replace(
             ['-0001-11-29', '-0001-11-30', '0000-00-00'],
@@ -163,7 +164,7 @@ class DbSafeDateTime extends DateTime
      * @return DbSafeDateTime
      * @throws Exception
      */
-    public static function createFromDateTime(DateTime $datetime): DbSafeDateTime
+    public static function createFromDateTime($datetime)
     {
         return new DbSafeDateTime(
             $datetime->format(EE_Datetime_Field::mysql_timestamp_format),
@@ -182,7 +183,8 @@ class DbSafeDateTime extends DateTime
      * @throws Exception
      * @link https://php.net/manual/en/datetime.createfromformat.php
      */
-    public static function createFromFormat($format, $time, ?DateTimeZone $timezone = null)
+    #[ReturnTypeWillChange]
+    public static function createFromFormat($format, $time, $timezone = null)
     {
         $time = self::normalizeInvalidDate($time);
         // Various php versions handle the third argument differently.  This conditional accounts for that.
@@ -198,8 +200,9 @@ class DbSafeDateTime extends DateTime
     /**
      * @param string $message
      */
-    private function writeToErrorLog(string $message)
+    private function writeToErrorLog($message)
     {
+        $message = (string) $message;
         if (! empty($this->_error_log_dir)) {
             /** @noinspection ForgottenDebugOutputInspection */
             error_log($message, 3, $this->_error_log_dir);

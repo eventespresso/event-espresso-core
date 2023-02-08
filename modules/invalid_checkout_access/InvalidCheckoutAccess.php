@@ -43,7 +43,7 @@ class InvalidCheckoutAccess
      * @param EE_Checkout $checkout
      * @return bool true if access to registration checkout appears to be invalid
      */
-    public function checkoutAccessIsInvalid(EE_Checkout $checkout)
+    public function checkoutAccessIsInvalid($checkout)
     {
         if (
             ! ($checkout->uts || $checkout->reg_url_link)
@@ -150,7 +150,7 @@ class InvalidCheckoutAccess
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function processForm(EE_Registration_Config $EE_Registration_Config)
+    public function processForm($EE_Registration_Config)
     {
         try {
             $invalid_checkout_access_form = $this->getForm();

@@ -44,6 +44,7 @@ class RegistrationsCsvReportParams
         $route_details = [
             'route'         => 'registrations_report',
             'extra_request' => [ 'return_url' => $return_url ],
+            'btn_class'     => 'button button--primary',
         ];
         if (! empty($EVT_ID)) {
             $route_details['extra_request']['EVT_ID'] = $EVT_ID;
@@ -52,8 +53,15 @@ class RegistrationsCsvReportParams
             $route_details['extra_request']['DTT_ID'] = $DTT_ID;
         }
         // detect views (status) or searches (s) and set "use_filters" to true
-        if (isset($request_params['status']) || isset($request_params['s'])) {
+        if (
+            isset($request_params['status'])
+            || isset($request_params['s'])
+            || isset($request_params['ticket_id'])
+            || isset($request_params['datetime_id'])
+            || isset($request_params['_reg_status'])
+        ) {
             $request_params['use_filters'] = true;
+            $route_details['extra_request']['use_filters'] = true;
         }
         if (
             isset($request_params['use_filters'])

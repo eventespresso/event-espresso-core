@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\modules\ticket_selector\ProcessTicketSelector;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -108,7 +109,7 @@ class EED_Ticket_Selector extends EED_Module
         // hook into the end of the \EE_Admin_Page::_load_page_dependencies()
         // to load assets for "espresso_events" page on the "edit" route (action)
         add_action(
-            'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__edit',
+            'admin_init',
             ['EED_Ticket_Selector', 'ticket_selector_iframe_embed_button'],
             10
         );
@@ -163,10 +164,14 @@ class EED_Ticket_Selector extends EED_Module
     public static function ticketSelector()
     {
         if (! EED_Ticket_Selector::$ticket_selector instanceof DisplayTicketSelector) {
-            EED_Ticket_Selector::$ticket_selector = new DisplayTicketSelector(
-                EED_Ticket_Selector::getRequest(),
-                EED_Ticket_Selector::ticketConfig(),
-                EED_Events_Archive::is_iframe()
+            EED_Ticket_Selector::$ticket_selector = LoaderFactory::getLoader()->getShared(
+                DisplayTicketSelector::class,
+                [
+                    null,
+                    EED_Ticket_Selector::getRequest(),
+                    EED_Ticket_Selector::ticketConfig(),
+                    EED_Events_Archive::is_iframe(),
+                ]
             );
         }
         return EED_Ticket_Selector::$ticket_selector;
@@ -254,7 +259,7 @@ class EED_Ticket_Selector extends EED_Module
      */
     public function process_ticket_selections()
     {
-        /** @var EventEspresso\modules\ticket_selector\ProcessTicketSelector $form */
+        /** @var ProcessTicketSelector $form */
         $form = LoaderFactory::getLoader()->getShared('EventEspresso\modules\ticket_selector\ProcessTicketSelector');
         return $form->processTicketSelections();
     }
@@ -270,7 +275,7 @@ class EED_Ticket_Selector extends EED_Module
      */
     public static function cancel_ticket_selections()
     {
-        /** @var EventEspresso\modules\ticket_selector\ProcessTicketSelector $form */
+        /** @var ProcessTicketSelector $form */
         $form = LoaderFactory::getLoader()->getShared('EventEspresso\modules\ticket_selector\ProcessTicketSelector');
         return $form->cancelTicketSelections();
     }
@@ -350,7 +355,7 @@ class EED_Ticket_Selector extends EED_Module
      * @param array $iframe_css
      * @return array
      */
-    public static function iframeCss(array $iframe_css)
+    public static function iframeCss($iframe_css)
     {
         $iframe_css['ticket_selector'] = TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css';
         return $iframe_css;
@@ -363,7 +368,7 @@ class EED_Ticket_Selector extends EED_Module
      * @param array $iframe_js
      * @return array
      */
-    public static function iframeJs(array $iframe_js)
+    public static function iframeJs($iframe_js)
     {
         $iframe_js['ticket_selector'] = TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js';
         return $iframe_js;

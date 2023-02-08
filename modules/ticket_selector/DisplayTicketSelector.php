@@ -17,6 +17,7 @@ use EEH_Template;
 use EEH_URL;
 use EEM_Event;
 use EEM_Ticket;
+use EventEspresso\core\domain\entities\users\CurrentUser;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
@@ -86,24 +87,36 @@ class DisplayTicketSelector
      */
     private $display_full_ui;
 
+    /**
+     * @var CurrentUser
+     */
+    private $current_user;
+
 
     /**
      * DisplayTicketSelector constructor.
      *
+     * @param CurrentUser $current_user
      * @param RequestInterface          $request
      * @param EE_Ticket_Selector_Config $config
      * @param bool                      $iframe
      */
-    public function __construct(RequestInterface $request, EE_Ticket_Selector_Config $config, $iframe = false)
-    {
+    public function __construct(
+        CurrentUser $current_user,
+        RequestInterface $request,
+        EE_Ticket_Selector_Config $config,
+        $iframe = false
+    ) {
+        $iframe = (bool) $iframe;
+        $this->current_user = $current_user;
         $this->request     = $request;
         $this->config      = $config;
-        $this->iframe      = $iframe;
+        $this->setIframe($iframe);
         $this->date_format = apply_filters(
             'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format',
             get_option('date_format')
         );
-        $this->time_format = apply_filters(
+        $this->time_format  = apply_filters(
             'FHEE__EED_Ticket_Selector__display_ticket_selector__time_format',
             get_option('time_format')
         );
@@ -230,8 +243,7 @@ class DisplayTicketSelector
         if ($template_args['event_is_expired']) {
             return is_single()
                 ? $this->expiredEventMessage()
-                : $this->expiredEventMessage()
-                  . $this->displayViewDetailsButton();
+                : $this->expiredEventMessage() . $this->displayViewDetailsButton();
         }
         // begin gathering template arguments by getting event status
         $template_args = ['event_status' => $this->event->get_active_status()];
@@ -313,10 +325,12 @@ class DisplayTicketSelector
      */
     protected function expiredEventMessage()
     {
-        return '<div class="ee-event-expired-notice"><span class="important-notice">' . esc_html__(
-            'We\'re sorry, but all tickets sales have ended because the event is expired.',
-            'event_espresso'
-        ) . '</span></div><!-- .ee-event-expired-notice -->';
+        return '<div class="ee-event-expired-notice"><span class="important-notice">'
+           . esc_html__(
+               'We\'re sorry, but all tickets sales have ended because the event is expired.',
+               'event_espresso'
+           )
+           . '</span></div><!-- .ee-event-expired-notice -->';
     }
 
 
@@ -399,7 +413,10 @@ class DisplayTicketSelector
         $show_expired_tickets = is_admin() || $this->config->show_expired_tickets;
 
         $ticket_query_args = [
-            ['Datetime.EVT_ID' => $this->event->ID()],
+            [
+                'Datetime.EVT_ID' => $this->event->ID(),
+                'TKT_visibility'  => ['>', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
+            ],
             'order_by' => [
                 'TKT_order'              => 'ASC',
                 'TKT_required'           => 'DESC',
@@ -408,6 +425,12 @@ class DisplayTicketSelector
                 'Datetime.DTT_EVT_start' => 'DESC',
             ],
         ];
+
+        $datetime_id = $this->request->getRequestParam('datetime', 0, 'int');
+        if ($datetime_id) {
+            $ticket_query_args[0]['Datetime.DTT_ID'] = $datetime_id;
+        }
+
         if (! $show_expired_tickets) {
             // use the correct applicable time query depending on what version of core is being run.
             $current_time                         = method_exists('EEM_Datetime', 'current_time_for_query')
@@ -417,13 +440,37 @@ class DisplayTicketSelector
         }
         /** @var EE_Ticket[] $tickets */
         $tickets = EEM_Ticket::instance()->get_all($ticket_query_args);
-
+        // remove tickets based on their visibility and the current user's allowed access (crudely based on roles)
+        // and filter the returned results
+         $tickets = array_filter($tickets, [$this, 'ticketVisibilityFilter']);
         return (array) apply_filters(
             'FHEE__EventEspresso_modules_ticketSelector_DisplayTicketSelector__getTickets',
             $tickets,
             $ticket_query_args,
             $this
         );
+    }
+
+
+    /**
+     * returns true if any of the following is true:
+     *  - ticket visibility is PUBLIC
+     *  - ticket visibility is MEMBERS_ONLY and user is logged in
+     *  - ticket visibility is ADMINS_ONLY when user IS logged in as an admin
+     *  - ticket visibility is ADMIN_UI_ONLY when ticket selector is being viewed via an admin page UI
+     *
+     * @param EE_Ticket $ticket
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function ticketVisibilityFilter($ticket)
+    {
+        return $ticket->isPublicOnly()
+               || ($ticket->isMembersOnly() && $this->current_user->isLoggedIn())
+               || ($ticket->isAdminsOnly() && $this->current_user->isEventManager())
+               || ($ticket->isAdminUiOnly() && is_admin());
     }
 
 
@@ -438,7 +485,7 @@ class DisplayTicketSelector
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function loadTicketSelector(array $tickets, array $template_args)
+    protected function loadTicketSelector($tickets, $template_args)
     {
         $template_args['event']            = $this->event;
         $template_args['EVT_ID']           = $this->event->ID();
@@ -489,7 +536,7 @@ class DisplayTicketSelector
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function simpleTicketSelector($tickets, array $template_args)
+    protected function simpleTicketSelector($tickets, $template_args)
     {
         // if there is only ONE ticket with a max qty of ONE
         if (count($tickets) > 1 || $this->getMaxAttendees() !== 1) {
@@ -640,7 +687,7 @@ class DisplayTicketSelector
                     $html .= $this->ticketSelectorEndDiv();
                 } elseif (
                     apply_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector', false)
-                          && ! is_single()
+                    && ! is_single()
                 ) {
                     // this is a "Dude Where's my Ticket Selector?" (DWMTS) type event,
                     // but no tickets are available, so display event's "View Details" button.

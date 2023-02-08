@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\container\exceptions;
 
+use Exception;
 use BadMethodCallException;
 
 /**
@@ -20,9 +21,9 @@ class InstantiationException extends BadMethodCallException
      * @param string     $identifier the name of the requested entity or service
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($identifier, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($identifier, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(

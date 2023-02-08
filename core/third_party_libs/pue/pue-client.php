@@ -1176,6 +1176,13 @@ if (! class_exists('PluginUpdateEngineChecker')):
                             if (! $noteref['active'] || empty($noteref['msg'])) {
                                 continue;
                             }
+                            // remove the Event Espresso once a year sales notice
+                            if (
+                                is_multisite()
+                                && strpos($noteref['msg'], 'is having their ONLY sale of the year') !== false
+                            ) {
+                                continue;
+                            }
                             $errors .= '<p>' . trim(stripslashes($noteref['msg'])) . '</p>';
                         }
                         break;
@@ -1209,7 +1216,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ?>
                 <div class="error" id="pue_error_notices">
                     <?php echo wp_kses($errors, AllowedTags::getAllowedTags()); ?>
-                    <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );"
+                    <a class="button button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );"
                        style="float:right; margin-bottom: 10px;">
                         <?php esc_html_e('Dismiss'); ?>
                     </a>
@@ -1225,7 +1232,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ?>
                 <div class="notice notice-info" id="pue_attention_notices">
                     <?php echo wp_kses($attentions, AllowedTags::getAllowedTags()); ?>
-                    <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );"
+                    <a class="button button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );"
                        style="float:right; margin-bottom: 10px;">
                         <?php esc_html_e('Dismiss'); ?>
                     </a>
@@ -1241,7 +1248,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ?>
                 <div class="success" id="pue_success_notices">
                     <?php echo wp_kses($successes, AllowedTags::getAllowedTags()); ?>
-                    <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );"
+                    <a class="button button--secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );"
                        style="float:right; margin-bottom: 10px;">
                         <?php esc_html_e('Dismiss'); ?>
                     </a>
@@ -1348,8 +1355,8 @@ if (! class_exists('PluginUpdateEngineChecker')):
             //need to correct the download url so it contains the custom user data (i.e. api and any other parameters)
             //oh let's generate the download_url otherwise it will be old news...
 
-            if (! empty($this->download_query)) {
-                $d_install_key = isset($this->install_key_arr['key']) ? $this->install_key_arr['key'] : NULL;
+            if (! empty($this->download_query && isset($this->install_key_arr['key']))) {
+                $d_install_key = $this->install_key_arr['key'];
                 $this->download_query['pue_install_key'] = $d_install_key;
                 $this->download_query['new_pue_check'] = 1;
                 $pluginInfo->download_url = add_query_arg($this->download_query, $pluginInfo->download_url);
@@ -1452,7 +1459,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 ?>
                 <div class="updated" style="padding:15px; position:relative;"
                      id="pu_dashboard_message"><?php echo wp_kses($msg, AllowedTags::getAllowedTags()); ?>
-                    <a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();"
+                    <a class="button button--secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();"
                        style='float:right;'><?php esc_html_e("Dismiss") ?></a>
                     <div style="clear:both;"></div>
                 </div>
@@ -1584,7 +1591,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 . $this->pluginFile,
                 'upgrade-plugin_' . $this->pluginFile
             );
-            $button = '<a href="' . $button_link . '" class="button-secondary pue-upgrade-now-button" value="no">'
+            $button = '<a href="' . $button_link . '" class="button--secondary pue-upgrade-now-button" value="no">'
                       . esc_html__('Upgrade Now', $this->lang_domain)
                       . '</a>';
 
@@ -1592,7 +1599,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                        . $msg . '</p>';
             $content .= empty($this->json_error) ? $button : '';
             $content .= $show_dismissal_button
-                ? '<a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();" '
+                ? '<a class="button--secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();" '
                     .'style="float:right;">' . esc_html__("Dismiss") . '</a>'
                 : '';
             $content .= '<div style="clear:both;"></div></div>';

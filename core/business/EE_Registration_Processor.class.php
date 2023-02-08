@@ -77,7 +77,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      */
-    public static function instance(RequestInterface $request = null)
+    public static function instance($request = null)
     {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_Registration_Processor) {
@@ -166,7 +166,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws ReflectionException
      * @throws RuntimeException
      */
-    public function update_registration_status_and_trigger_notifications(EE_Registration $registration)
+    public function update_registration_status_and_trigger_notifications($registration)
     {
         $this->toggle_incomplete_registration_status_to_default($registration, false);
         $this->toggle_registration_status_for_default_approved_events($registration, false);
@@ -195,7 +195,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws RuntimeException
      */
     public function manually_update_registration_status(
-        EE_Registration $registration,
+        $registration,
         $new_reg_status = '',
         $save = true
     ) {
@@ -245,9 +245,9 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws InvalidInterfaceException
      */
     public function toggle_incomplete_registration_status_to_default(
-        EE_Registration $registration,
+        $registration,
         $save = true,
-        ContextInterface $context = null
+        $context = null
     ) {
         $existing_reg_status = $registration->status_ID();
         // set initial REG_Status
@@ -307,7 +307,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws ReflectionException
      * @throws RuntimeException
      */
-    public function toggle_registration_status_for_default_approved_events(EE_Registration $registration, $save = true)
+    public function toggle_registration_status_for_default_approved_events($registration, $save = true)
     {
         $reg_status = $registration->status_ID();
         // set initial REG_Status
@@ -370,9 +370,9 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws RuntimeException
      */
     public function toggle_registration_status_if_no_monies_owing(
-        EE_Registration $registration,
+        $registration,
         $save = true,
-        array $additional_details = []
+        $additional_details = []
     ) {
         // set initial REG_Status
         $this->set_old_reg_status($registration->ID(), $registration->status_ID());
@@ -449,7 +449,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @param array           $additional_details
      * @return void
      */
-    public function trigger_registration_update_notifications($registration, array $additional_details = [])
+    public function trigger_registration_update_notifications($registration, $additional_details = [])
     {
         try {
             if (! $registration instanceof EE_Registration) {
@@ -498,8 +498,8 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws RuntimeException
      */
     public function update_registration_after_checkout_or_payment(
-        EE_Registration $registration,
-        array $additional_details = []
+        $registration,
+        $additional_details = []
     ) {
         // set initial REG_Status
         $this->set_old_reg_status($registration->ID(), $registration->status_ID());
@@ -613,8 +613,8 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws ReflectionException
      */
     public function update_registration_after_being_canceled_or_declined(
-        EE_Registration $registration,
-        array $closed_reg_statuses = [],
+        $registration,
+        $closed_reg_statuses = [],
         $update_reg = true
     ) {
         // these reg statuses should not be considered in any calculations involving monies owing
@@ -646,8 +646,8 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @throws ReflectionException
      */
     public function update_canceled_or_declined_registration_after_being_reinstated(
-        EE_Registration $registration,
-        array $closed_reg_statuses = [],
+        $registration,
+        $closed_reg_statuses = [],
         $update_reg = true
     ) {
         // these reg statuses should not be considered in any calculations involving monies owing
@@ -701,8 +701,8 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @since 4.9.1
      */
     public function generate_ONE_registration_from_line_item(
-        EE_Line_Item $line_item,
-        EE_Transaction $transaction,
+        $line_item,
+        $transaction,
         $att_nmbr = 1,
         $total_ticket_count = 1
     ) {
@@ -778,7 +778,7 @@ class EE_Registration_Processor extends EE_Processor_Base
      * @since 4.9.1
      * @deprecated
      */
-    public function generate_reg_code(EE_Registration $registration)
+    public function generate_reg_code($registration)
     {
         EE_Error::doing_it_wrong(
             __CLASS__ . '::' . __FUNCTION__,

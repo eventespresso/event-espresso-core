@@ -182,7 +182,7 @@ class EEH_DTT_Helper
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function get_timezone_transitions(DateTimeZone $date_time_zone, $time = null, $first_only = true)
+    public static function get_timezone_transitions($date_time_zone, $time = null, $first_only = true)
     {
         return self::getHelperAdapter()->getTimezoneTransitions($date_time_zone, $time, $first_only);
     }
@@ -198,7 +198,7 @@ class EEH_DTT_Helper
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function get_timezone_offset(DateTimeZone $date_time_zone, $time = null)
+    public static function get_timezone_offset($date_time_zone, $time = null)
     {
         return self::getHelperAdapter()->getTimezoneOffset($date_time_zone, $time);
     }
@@ -249,7 +249,7 @@ class EEH_DTT_Helper
      * @return EE_Base_Class
      * @throws EE_Error
      */
-    protected static function _set_date_time_field(EE_Base_Class $obj, DateTime $DateTime, $datetime_field_name)
+    protected static function _set_date_time_field($obj, $DateTime, $datetime_field_name)
     {
         // grab current datetime format
         $current_format = $obj->get_format();
@@ -280,7 +280,7 @@ class EEH_DTT_Helper
      * @throws EE_Error
      * @throws Exception
      */
-    public static function date_time_add(EE_Base_Class $obj, $datetime_field_name, $period = 'years', $value = 1)
+    public static function date_time_add($obj, $datetime_field_name, $period = 'years', $value = 1)
     {
         // get the raw UTC date.
         $DateTime = $obj->get_DateTime_object($datetime_field_name);
@@ -301,7 +301,7 @@ class EEH_DTT_Helper
      * @throws EE_Error
      * @throws Exception
      */
-    public static function date_time_subtract(EE_Base_Class $obj, $datetime_field_name, $period = 'years', $value = 1)
+    public static function date_time_subtract($obj, $datetime_field_name, $period = 'years', $value = 1)
     {
         // get the raw UTC date
         $DateTime = $obj->get_DateTime_object($datetime_field_name);
@@ -322,7 +322,7 @@ class EEH_DTT_Helper
      * @throws Exception
      * @throws EE_Error
      */
-    protected static function _modify_datetime_object(DateTime $DateTime, $period = 'years', $value = 1, $operand = '+')
+    protected static function _modify_datetime_object($DateTime, $period = 'years', $value = 1, $operand = '+')
     {
         if (! $DateTime instanceof DateTime) {
             throw new EE_Error(
@@ -1051,7 +1051,7 @@ class EEH_DTT_Helper
      * @param DateTime     $datetime
      * @param DateTimeZone $timezone
      */
-    public static function setTimezone(DateTime $datetime, DateTimeZone $timezone)
+    public static function setTimezone($datetime, $timezone)
     {
         $datetime->setTimezone($timezone);
         $datetime->getTimestamp();

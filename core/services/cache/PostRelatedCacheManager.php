@@ -69,7 +69,7 @@ class PostRelatedCacheManager extends BasicCacheManager
     /**
      * @param array $post_related_cache
      */
-    protected function updatePostRelatedCache(array $post_related_cache = array())
+    protected function updatePostRelatedCache($post_related_cache = array())
     {
         update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
     }

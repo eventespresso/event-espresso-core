@@ -34,7 +34,7 @@ abstract class Command implements CommandInterface
     /**
      * @param CapCheckInterface $cap_check
      */
-    public function setCapCheck(CapCheckInterface $cap_check)
+    public function setCapCheck($cap_check)
     {
         $this->cap_check = $cap_check;
     }

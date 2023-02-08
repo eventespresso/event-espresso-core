@@ -32,7 +32,7 @@ class EE_Messenger_Collection extends EE_Object_Collection
      * @param mixed  $info
      * @return bool
      */
-    public function add($object, $info = ''): bool
+    public function add($object, $info = '')
     {
         $info = empty($info) && $object instanceof $this->interface ? $object->name : $info;
         return parent::add($object, $info);
@@ -48,7 +48,7 @@ class EE_Messenger_Collection extends EE_Object_Collection
      * @param array|int|string $info
      * @return bool
      */
-    public function set_info($object, $info = ''): bool
+    public function set_info($object, $info = '')
     {
         $info = empty($info) && $object instanceof $this->interface ? $object->name : $info;
         return parent::set_info($object, $info);
@@ -60,12 +60,12 @@ class EE_Messenger_Collection extends EE_Object_Collection
      * finds and returns an object in the Collection based on the info that was set using addObject()
      * PLZ NOTE: the pointer is reset to the beginning of the collection before returning
      *
-     * @param mixed
+     * @param string|null $info
      * @return null | object
      */
     public function get_by_info($info = '')
     {
-        return parent::get_by_info(str_replace(' ', '_', strtolower($info)));
+        return parent::get_by_info(str_replace(' ', '_', strtolower((string)$info)));
     }
 
 
@@ -76,7 +76,7 @@ class EE_Messenger_Collection extends EE_Object_Collection
      * @param object $object
      * @return bool
      */
-    public function has($object): bool
+    public function has($object)
     {
         return parent::has($object);
     }
@@ -89,7 +89,7 @@ class EE_Messenger_Collection extends EE_Object_Collection
      * @param string $messenger_name
      * @return bool
      */
-    public function has_by_name(string $messenger_name): bool
+    public function has_by_name($messenger_name)
     {
         return $this->get_by_info($messenger_name) instanceof $this->interface;
     }
@@ -102,7 +102,7 @@ class EE_Messenger_Collection extends EE_Object_Collection
      * @param $object
      * @return bool
      */
-    public function remove($object): bool
+    public function remove($object)
     {
         return parent::remove($object);
     }
@@ -114,7 +114,7 @@ class EE_Messenger_Collection extends EE_Object_Collection
      *
      * @return EE_messenger
      */
-    public function current(): EE_messenger
+    public function current()
     {
         return parent::current();
     }

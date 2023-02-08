@@ -17,31 +17,33 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
      *
      * @var array keys are plugin_ids, and values are an array of FQCNs or FQCNs
      */
-    protected static $privacy_policies = array();
+    protected static $privacy_policies = [];
 
 
     /**
-     * @param string $identifier
-     * @param array $setup_args can be the fully qualified namespaces each containing only privacy policies,
-     *              OR fully qualified class names of privacy policies
+     * @param string $addon_name
+     * @param array  $setup_args can be the fully qualified namespaces each containing only privacy policies,
+     *                           OR fully qualified class names of privacy policies
+     * @return bool
      */
-    public static function register($identifier = '', array $setup_args = [])
+    public static function register($addon_name = '', $setup_args = [])
     {
-        self::$privacy_policies[ $identifier ] = $setup_args;
+        self::$privacy_policies[ $addon_name ] = $setup_args;
         // add to list of modules to be registered
         add_filter(
             'FHEE__EventEspresso_core_services_privacy_policy_PrivacyPolicyManager__privacy_policies',
-            array('EE_Register_Privacy_Policy', 'addPrivacyPolicies')
+            ['EE_Register_Privacy_Policy', 'addPrivacyPolicies']
         );
+        return true;
     }
 
 
     /**
-     * @param string $identifier
+     * @param string $addon_name
      */
-    public static function deregister($identifier = '')
+    public static function deregister($addon_name = '')
     {
-        unset(self::$privacy_policies[ $identifier ]);
+        unset(self::$privacy_policies[ $addon_name ]);
     }
 
 
@@ -51,15 +53,9 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
      * @param string[] $privacy_policies
      * @return string[]
      */
-    public static function addPrivacyPolicies(array $privacy_policies)
+    public static function addPrivacyPolicies($privacy_policies)
     {
-        foreach (self::$privacy_policies as $privacy_policies_per_addon) {
-            $privacy_policies = array_merge(
-                $privacy_policies,
-                $privacy_policies_per_addon
-            );
-        }
-        return $privacy_policies;
+        return array_merge($privacy_policies, ...self::$privacy_policies);
     }
 }
 // End of file EE_Register_Privacy_Policy.lib.php

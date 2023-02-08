@@ -96,11 +96,9 @@
     </li>
     <li>
         <strong><?php esc_html_e('Note About Special Characters', 'event_espresso'); ?></strong>
-        <?php
-        esc_html_e(
+        <?php esc_html_e(
             'If your event name, ticket name or ticket description contain special characters (eg emojis, foreign language characters, or curly quotes) they will be removed when sent to Authorize.net. This is because Authorize.net doesn\'t support them.',
             'event_espresso'
-        );
-        ?>
+        ); ?>
     </li>
 </ul>

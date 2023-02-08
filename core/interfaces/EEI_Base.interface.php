@@ -12,14 +12,12 @@ interface EEI_Base
     public function ID();
 
 
-
     /**
      * Returns an array where keys are field names and values are their values
      *
      * @return array
      */
     public function model_field_array();
-
 
 
     /**
@@ -30,19 +28,17 @@ interface EEI_Base
     public function save();
 
 
-
     /**
      * Similar to insert_post_meta, adds a record in the Extra_Meta model's table with the given key and value.
      * A $previous_value can be specified in case there are many meta rows with the same key
      *
      * @param string $meta_key
-     * @param string $meta_value
-     * @param string $previous_value
-     * @return int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+     * @param mixed  $meta_value
+     * @param mixed  $previous_value
+     * @return bool|int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
      * NOTE: if the values haven't changed, returns 0
      */
     public function update_extra_meta($meta_key, $meta_value, $previous_value = null);
-
 
 
     /**
@@ -50,13 +46,12 @@ interface EEI_Base
      * no other extra meta for this model object have the same key. Returns TRUE if the
      * extra meta row was entered, false if not
      *
-     * @param string  $meta_key
-     * @param string  $meta_value
-     * @param boolean $unique
-     * @return boolean
+     * @param string $meta_key
+     * @param mixed  $meta_value
+     * @param bool   $unique
+     * @return bool
      */
     public function add_extra_meta($meta_key, $meta_value, $unique = false);
-
 
 
     /**
@@ -64,7 +59,7 @@ interface EEI_Base
      * is specified, only deletes extra meta records with that value.
      *
      * @param string $meta_key
-     * @param string $meta_value
+     * @param mixed  $meta_value
      * @return int number of extra meta rows deleted
      */
     public function delete_extra_meta($meta_key, $meta_value = null);
@@ -76,12 +71,13 @@ interface EEI_Base
      * an array of everything found. Requires that this model actually have a relation of type EE_Has_Many_Any_Relation.
      * You can specify $default is case you haven't found the extra meta
      *
-     * @param string  $meta_key
-     * @param boolean $single
-     * @param mixed   $default if we don't find anything, what should we return?
+     * @param string     $meta_key
+     * @param boolean    $single
+     * @param mixed      $default if we don't find anything, what should we return?
+     * @param array|null $extra_where
      * @return mixed single value if $single; array if ! $single
      */
-    public function get_extra_meta($meta_key, $single = false, $default = null);
+    public function get_extra_meta($meta_key, $single = false, $default = null, $extra_where = []);
 
 
 
@@ -95,7 +91,7 @@ interface EEI_Base
      *                                (in cases where the same property may be used for different outputs
      *                                - i.e. datetime, money etc.)
      * @return mixed
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_pretty($field_name, $extra_cache_ref);
 }

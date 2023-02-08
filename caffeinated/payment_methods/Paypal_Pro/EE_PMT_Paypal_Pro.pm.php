@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\caffeinated\payment_methods\Paypal_Pro\forms\PayPalProSettingsForm;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 
 /**
  * EEPMT_Paypal_Pro
@@ -14,14 +16,15 @@ use EventEspresso\caffeinated\payment_methods\Paypal_Pro\forms\PayPalProSettings
 class EE_PMT_Paypal_Pro extends EE_PMT_Base
 {
     /**
-     * @param EE_Payment_Method $pm_instance
-     * @return EE_PMT_Paypal_Pro
+     * @param EE_Payment_Method|null $pm_instance
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     public function __construct($pm_instance = null)
     {
         require_once($this->file_folder() . 'EEG_Paypal_Pro.gateway.php');
         $this->_gateway = new EEG_Paypal_Pro();
-        $this->_pretty_name = esc_html__("Paypal Pro", 'event_espresso');
+        $this->_pretty_name = esc_html__("PayPal Pro", 'event_espresso');
         $this->_default_description = esc_html__('Please provide the following billing information.', 'event_espresso');
         $this->_requires_https = true;
         parent::__construct($pm_instance);
@@ -30,10 +33,10 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
 
     /**
      * Gets the form for all the settings related to this payment method type
+     *
      * @return EE_Payment_Method_Form
-     * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_new_settings_form()
     {
@@ -43,12 +46,16 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
 
     /**
      * Creates the billing form for this payment method type
-     * @param \EE_Transaction $transaction
-     * @throws \EE_Error
-     * @return EE_Billing_Info_Form
+     * @param EE_Transaction|null $transaction
+     * @param array|null          $extra_args
+     * @return EE_Billing_Info_Form|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function generate_new_billing_form(EE_Transaction $transaction = null)
-    {
+    public function generate_new_billing_form(
+        $transaction = null,
+        $extra_args = []
+    ) {
         $allowed_types = $this->_pm_instance->get_extra_meta('credit_card_types', true);
         // if allowed types is a string or empty array or null...
         if (empty($allowed_types)) {
@@ -91,10 +98,11 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
      * apply_billing_form_debug_settings
      * applies debug data to the form
      *
-     * @param \EE_Billing_Info_Form $billing_form
-     * @return \EE_Billing_Info_Form
+     * @param EE_Billing_Info_Form $billing_form
+     * @return EE_Billing_Info_Form|null
+     * @throws EE_Error
      */
-    public function apply_billing_form_debug_settings(EE_Billing_Info_Form $billing_form)
+    public function apply_billing_form_debug_settings($billing_form)
     {
         if ($this->_pm_instance->debug_mode()) {
             $billing_form->add_subsections(
@@ -133,8 +141,9 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
 
     /**
      * Adds the help tab
-     * @see EE_PMT_Base::help_tabs_config()
+     *
      * @return array
+     * @see EE_PMT_Base::help_tabs_config()
      */
     public function help_tabs_config()
     {
@@ -146,11 +155,14 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
         );
     }
 
+
     /**
      * Overrides parent's _get_billing_values_from_form because we want to
      * get the country's 2-character ISO code, not the name like most gateways
-     * @param EE_Billing_Info_Form $billing_form
+     *
+     * @param EE_Billing_Info_Form|null $billing_form
      * @return array
+     * @throws EE_Error
      */
     protected function _get_billing_values_from_form($billing_form)
     {
@@ -162,13 +174,14 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
 
     /**
      * Override parent to account for a change in extra meta inputs in 4.9.75.p
-     * @since 4.9.79.p
+     *
      * @param EE_Payment_Method $payment_method_instance
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     *@since 4.9.79.p
      */
     public function set_instance($payment_method_instance)
     {
@@ -189,6 +202,6 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
                 $old_extra_meta->save();
             }
         }
-        return parent::set_instance($payment_method_instance);
+        parent::set_instance($payment_method_instance);
     }
 }

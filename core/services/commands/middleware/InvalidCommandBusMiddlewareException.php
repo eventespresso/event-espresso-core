@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\commands\middleware;
 
+use Exception;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
 /**
@@ -19,9 +20,9 @@ class InvalidCommandBusMiddlewareException extends InvalidDataTypeException
      * @param  mixed     $command_bus_middleware_object
      * @param  string    $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($command_bus_middleware_object, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($command_bus_middleware_object, $message = '', $code = 0, Exception $previous = null)
     {
         $command_bus_middleware = is_object($command_bus_middleware_object)
             ? get_class($command_bus_middleware_object)

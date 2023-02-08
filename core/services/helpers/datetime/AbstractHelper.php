@@ -96,7 +96,7 @@ abstract class AbstractHelper implements HelperInterface
      * @return int
      * @throws DomainException
      */
-    public function getTimezoneOffset(DateTimeZone $date_time_zone, $time = null)
+    public function getTimezoneOffset($date_time_zone, $time = null)
     {
         $transition = $this->getTimezoneTransitions($date_time_zone, $time);
         if (! isset($transition['offset'])) {
@@ -162,7 +162,10 @@ abstract class AbstractHelper implements HelperInterface
             ?></span>
         <?php
         if (! empty($timezone_string) || ! empty($gmt_offset)) : ?>
-        <br/><span><?php printf(esc_html__('Local time is %1$s', 'event_espresso'), '<code>' . date_i18n($datetime_format) . '</code>'); ?></span>
+        <br/>
+        <span><?php
+        printf(esc_html__('Local time is %1$s', 'event_espresso'), '<code>' . date_i18n($datetime_format) . '</code>');
+        ?></span>
             <?php
         endif; ?>
 
@@ -249,7 +252,7 @@ abstract class AbstractHelper implements HelperInterface
      * @param bool         $first_only
      * @return array|mixed
      */
-    public function getTimezoneTransitions(DateTimeZone $date_time_zone, $time = null, $first_only = true)
+    public function getTimezoneTransitions($date_time_zone, $time = null, $first_only = true)
     {
         $time        = is_int($time) || $time === null ? $time : (int) strtotime($time);
         $time        = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();

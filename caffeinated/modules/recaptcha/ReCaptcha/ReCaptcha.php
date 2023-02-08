@@ -27,6 +27,8 @@
 
 namespace ReCaptcha;
 
+use RuntimeException;
+use ReCaptcha\RequestMethod\Post;
 /**
  * reCAPTCHA client.
  */
@@ -59,11 +61,11 @@ class ReCaptcha
     public function __construct($secret, RequestMethod $requestMethod = null)
     {
         if (empty($secret)) {
-            throw new \RuntimeException('No secret provided');
+            throw new RuntimeException('No secret provided');
         }
 
         if (!is_string($secret)) {
-            throw new \RuntimeException('The provided secret must be a string');
+            throw new RuntimeException('The provided secret must be a string');
         }
 
         $this->secret = $secret;
@@ -71,7 +73,7 @@ class ReCaptcha
         if (!is_null($requestMethod)) {
             $this->requestMethod = $requestMethod;
         } else {
-            $this->requestMethod = new RequestMethod\Post();
+            $this->requestMethod = new Post();
         }
     }
 

@@ -33,7 +33,7 @@ interface NoticeConverterInterface
      * @param NoticesContainerInterface $notices
      * @return
      */
-    public function process(NoticesContainerInterface $notices);
+    public function process($notices);
 
     /**
      * @return void;

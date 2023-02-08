@@ -52,7 +52,7 @@ class InvisibleRecaptcha
      * @param EE_Registration_Config $registration_config
      * @param EE_Session             $session
      */
-    public function __construct(EE_Registration_Config $registration_config, EE_Session $session)
+    public function __construct(EE_Registration_Config $registration_config, EE_Session $session = null)
     {
         $this->config = $registration_config;
         $this->session = $session;
@@ -64,7 +64,9 @@ class InvisibleRecaptcha
      */
     public function useInvisibleRecaptcha()
     {
-        return $this->config->use_captcha && $this->config->recaptcha_theme === 'invisible';
+        return $this->session instanceof EE_Session
+               && $this->config->use_captcha
+               && $this->config->recaptcha_theme === 'invisible';
     }
 
 
@@ -76,7 +78,7 @@ class InvisibleRecaptcha
      * @throws InvalidArgumentException
      * @throws DomainException
      */
-    public function getInput(array $input_settings = array())
+    public function getInput($input_settings = array())
     {
         return new EE_Invisible_Recaptcha_Input(
             $input_settings,
@@ -94,7 +96,7 @@ class InvisibleRecaptcha
      * @throws InvalidArgumentException
      * @throws DomainException
      */
-    public function getInputHtml(array $input_settings = array())
+    public function getInputHtml($input_settings = array())
     {
         return $this->getInput($input_settings)->get_html_for_input();
     }
@@ -109,7 +111,7 @@ class InvisibleRecaptcha
      * @throws InvalidInterfaceException
      * @throws DomainException
      */
-    public function addToFormSection(EE_Form_Section_Proper $form, array $input_settings = array())
+    public function addToFormSection($form, $input_settings = array())
     {
         $form->add_subsections(
             array(
@@ -129,7 +131,7 @@ class InvisibleRecaptcha
      * @throws InvalidInterfaceException
      * @throws RuntimeException
      */
-    public function verifyToken(RequestInterface $request)
+    public function verifyToken($request)
     {
         static $previous_recaptcha_response = array();
         $grecaptcha_response = $request->getRequestParam('g-recaptcha-response');
@@ -288,8 +290,8 @@ class InvisibleRecaptcha
      */
     public function setSessionData()
     {
-        $this->session->set_session_data(
-            array(InvisibleRecaptcha::SESSION_DATA_KEY_RECAPTCHA_PASSED => true)
-        );
+        if ($this->session instanceof EE_Session) {
+            $this->session->set_session_data([InvisibleRecaptcha::SESSION_DATA_KEY_RECAPTCHA_PASSED => true]);
+        }
     }
 }

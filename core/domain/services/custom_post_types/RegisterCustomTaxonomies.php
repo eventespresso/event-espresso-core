@@ -61,7 +61,7 @@ class RegisterCustomTaxonomies
      * @param array  $override_arguments like $args on http://codex.wordpress.org/Function_Reference/register_taxonomy
      * @throws DomainException
      */
-    public function registerCustomTaxonomy($taxonomy_name, $singular_name, $plural_name, array $override_arguments)
+    public function registerCustomTaxonomy($taxonomy_name, $singular_name, $plural_name, $override_arguments)
     {
         $result = register_taxonomy(
             $taxonomy_name,
@@ -85,7 +85,7 @@ class RegisterCustomTaxonomies
      * @since 4.9.62.p
      * @return array
      */
-    protected function prepareArguments($singular_name, $plural_name, array $override_arguments)
+    protected function prepareArguments($singular_name, $plural_name, $override_arguments)
     {
         $arguments = array(
             'hierarchical'      => true,

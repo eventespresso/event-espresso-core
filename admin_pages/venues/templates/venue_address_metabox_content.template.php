@@ -14,7 +14,7 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
     <p>
         <label for="phys-addr">
             <?php esc_html_e('Address:', 'event_espresso'); ?>
-        </label><br />
+        </label>
         <input class="all-options"
                id="phys-addr"
                type="text"
@@ -25,7 +25,7 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
     <p>
         <label for="phys-addr-2">
             <?php esc_html_e('Address 2:', 'event_espresso'); ?>
-        </label><br />
+        </label>
         <input class="all-options"
                id="phys-addr-2"
                type="text"
@@ -36,7 +36,7 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
     <p>
         <label for="phys-city">
             <?php esc_html_e('City:', 'event_espresso'); ?>
-        </label><br />
+        </label>
         <input class="all-options"
                id="phys-city"
                type="text"
@@ -50,7 +50,7 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
     <p>
         <label for="zip-postal">
             <?php esc_html_e('Zip/Postal Code:', 'event_espresso'); ?>
-        </label><br />
+        </label>
         <input class="all-options"
                id="zip-postal"
                type="text"

@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\entities\editor;
 
+use DomainException;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\services\assets\BlockAssetManager;
 
 /**
@@ -14,10 +16,23 @@ use EventEspresso\core\services\assets\BlockAssetManager;
  */
 class CoreBlocksAssetManager extends BlockAssetManager
 {
-    const JS_HANDLE_CORE_BLOCKS_EDITOR = 'eventespresso-core-blocks';
-    const CSS_HANDLE_CORE_BLOCKS_EDITOR = 'eventespresso-core-blocks';
-    const JS_HANDLE_CORE_BLOCKS = 'eventespresso-core-blocks-frontend';
-    const CSS_HANDLE_CORE_BLOCKS = 'eventespresso-core-blocks-frontend';
+    const DOMAIN = 'blocks';
+
+    const ASSET_HANDLE_EDITOR_BLOCKS = Domain::ASSET_NAMESPACE . '-' . CoreBlocksAssetManager::DOMAIN;
+    const ASSET_HANDLE_CORE_BLOCKS = '';
+
+
+    /**
+     * @since  $VID:$
+     * @throws DomainException
+     */
+    public function enqueueEventEditor()
+    {
+        if ($this->verifyAssetIsRegistered(CoreBlocksAssetManager::ASSET_HANDLE_EDITOR_BLOCKS)) {
+            wp_enqueue_script(CoreBlocksAssetManager::ASSET_HANDLE_EDITOR_BLOCKS);
+            wp_enqueue_style(CoreBlocksAssetManager::ASSET_HANDLE_EDITOR_BLOCKS);
+        }
+    }
 
 
     /**
@@ -25,9 +40,7 @@ class CoreBlocksAssetManager extends BlockAssetManager
      */
     public function setAssetHandles()
     {
-        $this->setEditorScriptHandle(self::JS_HANDLE_CORE_BLOCKS_EDITOR);
-        $this->setEditorStyleHandle(self::CSS_HANDLE_CORE_BLOCKS_EDITOR);
-        $this->setScriptHandle(self::JS_HANDLE_CORE_BLOCKS);
-        $this->setStyleHandle(self::CSS_HANDLE_CORE_BLOCKS);
+        $this->setEditorScriptHandle(CoreBlocksAssetManager::ASSET_HANDLE_EDITOR_BLOCKS);
+        $this->setScriptHandle(CoreBlocksAssetManager::ASSET_HANDLE_CORE_BLOCKS);
     }
 }

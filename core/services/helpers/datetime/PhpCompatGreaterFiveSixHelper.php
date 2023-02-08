@@ -90,7 +90,7 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
      * @param null|int     $time
      * @return int
      */
-    public function getTimezoneOffset(DateTimezone $date_time_zone, $time = null)
+    public function getTimezoneOffset($date_time_zone, $time = null)
     {
         $time = is_int($time) || $time === null ? $time : (int) strtotime($time);
         $time = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();

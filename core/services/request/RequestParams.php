@@ -125,7 +125,7 @@ class RequestParams
      * @return void
      * @since   4.10.24.p
      */
-    public function mergeRequestParams(array $request_params)
+    public function mergeRequestParams($request_params)
     {
         $this->request = array_merge($this->request, $request_params);
     }
@@ -136,20 +136,28 @@ class RequestParams
      *
      * @param string     $key
      * @param mixed|null $default
-     * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
+     * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc.
+     *                              DataType::ARRAY should only be used to indicate an array containing mixed types,
+     *                              ideally another data type should be selected to indicate the contents of the array,
+     *                              and then $is_array should be set to true. ie: an array of integers would be:
+     *                                  $type = DataType::INT
+     *                                  $is_array = true
      * @param bool       $is_array  if true, then parameter value will be treated as an array of $type
      * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return array|bool|float|int|string
      */
     public function getRequestParam($key, $default = null, $type = DataType::STRING, $is_array = false, $delimiter = '')
     {
+        // ensure $is_array is true if the data type is set as such
+        $is_array = $type === DataType::ARRAY ? true : $is_array;
         $param = $this->sanitizer->clean(
             $this->parameterDrillDown($key, $default, 'get'),
             $type,
             $is_array,
             $delimiter
         );
-        $type = $is_array ? 'array' : $type;
+        // don't convert final return value to something else if an array is expected
+        $type = $is_array ? DataType::ARRAY : $type;
         return DataType::setDataType($param, $type);
     }
 
@@ -352,7 +360,7 @@ class RequestParams
      * @param array $keys
      * @param bool  $unset_from_global_too
      */
-    public function unSetRequestParams(array $keys, $unset_from_global_too = false)
+    public function unSetRequestParams($keys, $unset_from_global_too = false)
     {
         foreach ($keys as $key) {
             $this->unSetRequestParam($key, $unset_from_global_too);

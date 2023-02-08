@@ -40,8 +40,10 @@ class UserExperienceForm
 
     /**
      * @throws EE_Error
+     * @param \EE_Form_Section_Proper $org_settings_form
+     * @return \EE_Form_Section_Proper
      */
-    public function uxipFormSections(EE_Form_Section_Proper $org_settings_form): EE_Form_Section_Proper
+    public function uxipFormSections($org_settings_form)
     {
         if (is_main_site()) {
             $org_settings_form->add_subsections(
@@ -72,11 +74,11 @@ class UserExperienceForm
                                 '</strong>'
                             ),
                             /** phpcs:enable */
-                            'default'          => $this->network_core_config->site_license_key ?? '',
+                            'default'          => isset($this->network_core_config->site_license_key) ? $this->network_core_config->site_license_key : '',
                             'required'         => false,
                             'form_html_filter' => new VsprintfFilter(
-                                '%2$s %1$s',
-                                [$this->getValidationIndicator()]
+                                '%1$s %4$s %2$s %3$s',
+                                ['<div class="ee-layout-row--fixed">', $this->getValidationIndicator(), '</div>']
                             )
                         ]
                     )
@@ -116,7 +118,7 @@ class UserExperienceForm
      *
      * @return bool
      */
-    private function licenseKeyVerified(): bool
+    private function licenseKeyVerified()
     {
         if (empty($this->network_core_config->site_license_key)) {
             return false;
@@ -136,9 +138,9 @@ class UserExperienceForm
     /**
      * @return string
      */
-    private function getValidationIndicator(): string
+    private function getValidationIndicator()
     {
-        $verified_class = $this->licenseKeyVerified() ? 'ee-icon-color-ee-green' : 'ee-icon-color-ee-red';
-        return '<span class="dashicons dashicons-admin-network ' . $verified_class . ' ee-icon-size-20"></span>';
+        $verified_class = $this->licenseKeyVerified() ? 'ee-status--success' : 'ee-status--error';
+        return '<span class="dashicons dashicons-admin-network ' . $verified_class . '"></span>';
     }
 }

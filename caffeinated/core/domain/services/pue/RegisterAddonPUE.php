@@ -18,12 +18,19 @@ class RegisterAddonPUE
     private static $addon_api_settings;
 
 
+    /**
+     * @param mixed[] $addon_api_settings
+     * @param string $addon_name
+     * @param string $class_name
+     * @param mixed[] $addon_args
+     * @return mixed[]
+     */
     public static function registerPUE(
-        array $addon_api_settings,
-        string $addon_name,
-        string $class_name,
-        array $addon_args
-    ): array {
+        $addon_api_settings,
+        $addon_name,
+        $class_name,
+        $addon_args
+    ) {
         if (! empty($addon_args['pue_options'])) {
             $addon_api_settings[ $addon_name ]['pue_options'] = [
                 'pue_plugin_slug' => isset($addon_args['pue_options']['pue_plugin_slug'])
@@ -49,11 +56,15 @@ class RegisterAddonPUE
     }
 
 
-    public static function setAddonPueSlug(EE_Addon $addon, string $addon_name)
+    /**
+     * @param \EE_Addon $addon
+     * @param string $addon_name
+     */
+    public static function setAddonPueSlug($addon, $addon_name)
     {
         // setup the add-on's pue_slug if we have one.
-        if (! empty(RegisterAddonPUE::$addon_api_settings[ $addon_name ]['pue_options']['pue_plugin_slug'])) {
-            $addon->setPueSlug(RegisterAddonPUE::$addon_api_settings[ $addon_name ]['pue_options']['pue_plugin_slug']);
+        if (! empty($addon_api_settings[ $addon_name ]['pue_options']['pue_plugin_slug'])) {
+            $addon->setPueSlug($addon_api_settings[ $addon_name ]['pue_options']['pue_plugin_slug']);
         }
     }
 

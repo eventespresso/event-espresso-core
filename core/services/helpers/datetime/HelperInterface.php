@@ -60,7 +60,7 @@ interface HelperInterface
      * @param bool         $first_only
      * @return array
      */
-    public function getTimezoneTransitions(DateTimeZone $date_time_zone, $time = null, $first_only = true);
+    public function getTimezoneTransitions($date_time_zone, $time = null, $first_only = true);
 
 
     /**
@@ -69,7 +69,7 @@ interface HelperInterface
      * @param null|int         $time
      * @return int
      */
-    public function getTimezoneOffset(DateTimeZone $date_time_zone, $time = null);
+    public function getTimezoneOffset($date_time_zone, $time = null);
 
 
     /**

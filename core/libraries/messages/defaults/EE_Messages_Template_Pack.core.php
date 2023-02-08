@@ -232,7 +232,7 @@ abstract class EE_Messages_Template_Pack
      *
      * @return array
      */
-    public function get_templates(EE_messenger $messenger, EE_message_type $message_type)
+    public function get_templates($messenger, $message_type)
     {
         return isset($this->_templates[ $messenger->name ][ $message_type->name ]) ? $this->_templates[ $messenger->name ][ $message_type->name ] : $this->_get_templates($messenger, $message_type);
     }
@@ -251,7 +251,7 @@ abstract class EE_Messages_Template_Pack
      * @return array          Returns an multi-level associative array indexed by template context and field in the format:
      *                                array( 'context' => array( 'field' => 'value', 'another-field', 'value' ) );
      */
-    protected function _get_templates(EE_messenger $messenger, EE_message_type $message_type)
+    protected function _get_templates($messenger, $message_type)
     {
         $templates = array();
 
@@ -311,7 +311,7 @@ abstract class EE_Messages_Template_Pack
      *
      * @return string          The template contents.
      */
-    protected function _get_specific_template($default_pack, EE_messenger $messenger, EE_message_type $message_type, $field, $context)
+    protected function _get_specific_template($default_pack, $messenger, $message_type, $field, $context)
     {
 
         // default templates

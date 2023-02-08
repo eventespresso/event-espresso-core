@@ -345,11 +345,15 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     protected function store_submitted_form_data_in_session()
     {
-        return EE_Registry::instance()->SSN->set_session_data(
-            array(
-                EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => $this->submitted_values(true),
-            )
-        );
+        $session = EE_Registry::instance()->SSN;
+        if ($session instanceof EE_Session) {
+            return EE_Registry::instance()->SSN->set_session_data(
+                [
+                    EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => $this->submitted_values(true),
+                ]
+            );
+        }
+        return false;
     }
 
 
@@ -1203,7 +1207,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param array $inputs_to_exclude values are the input names
      * @return void
      */
-    public function exclude(array $inputs_to_exclude = array())
+    public function exclude($inputs_to_exclude = array())
     {
         foreach ($inputs_to_exclude as $input_to_exclude_name) {
             unset($this->_subsections[ $input_to_exclude_name ]);
@@ -1216,7 +1220,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param array $inputs_to_hide
      * @throws EE_Error
      */
-    public function hide(array $inputs_to_hide = array())
+    public function hide($inputs_to_hide = array())
     {
         foreach ($inputs_to_hide as $input_to_hide) {
             $input = $this->get_input($input_to_hide);

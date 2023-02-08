@@ -41,7 +41,7 @@ class LocateMovedCommands implements CommandBusMiddlewareInterface
      * @return mixed
      * @throws EE_Error
      */
-    public function handle(CommandInterface $command, Closure $next)
+    public function handle($command, $next)
     {
         $command_class = get_class($command);
         switch ($command_class) {

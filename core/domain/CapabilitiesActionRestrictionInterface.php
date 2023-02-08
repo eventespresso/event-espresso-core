@@ -20,7 +20,7 @@ interface CapabilitiesActionRestrictionInterface
      * @param Context $context
      * @return bool
      */
-    public function canEdit(Context $context);
+    public function canEdit($context);
 
 
     /**
@@ -28,7 +28,7 @@ interface CapabilitiesActionRestrictionInterface
      * @param Context $context
      * @return bool
      */
-    public function canRead(Context $context);
+    public function canRead($context);
 
 
     /**
@@ -36,7 +36,7 @@ interface CapabilitiesActionRestrictionInterface
      * @param Context $context
      * @return bool
      */
-    public function canDelete(Context $context);
+    public function canDelete($context);
 
 
     /**
@@ -44,5 +44,5 @@ interface CapabilitiesActionRestrictionInterface
      * @param Context $context
      * @return bool
      */
-    public function canCreate(Context $context);
+    public function canCreate($context);
 }

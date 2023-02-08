@@ -42,7 +42,7 @@ class CreateAttendeeCommandHandler extends CommandHandler
      * @throws EE_Error
      * @throws InvalidEntityException
      */
-    public function handle(CommandInterface $command)
+    public function handle($command)
     {
         /** @var CreateAttendeeCommand $command */
         if (! $command instanceof CreateAttendeeCommand) {

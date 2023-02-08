@@ -15,26 +15,30 @@ use EventEspresso\core\interfaces\ReservedInstanceInterface;
 class Response implements ResponseInterface, ReservedInstanceInterface
 {
     /**
-     * @var array $notice
+     * @var bool
      */
-    protected $notice = [];
+    protected $deactivate_plugin = false;
+
+    /**
+     * @var mixed[]
+     */
+    protected $notice            = [];
 
     /**
      * rendered output to be returned to WP
-     *
-     * @var array
+     * @var mixed[]
      */
-    protected $output = [];
+    protected $output             = [];
+
+    /**
+     * @var mixed[]
+     */
+    protected $request_headers    = [];
 
     /**
      * @var bool
      */
     protected $request_terminated = false;
-
-    /**
-     * @var bool $deactivate_plugin
-     */
-    protected $deactivate_plugin = false;
 
 
     /**
@@ -97,7 +101,9 @@ class Response implements ResponseInterface, ReservedInstanceInterface
      */
     public function getOutput($as_string = true, $separator = PHP_EOL)
     {
-        return $as_string ? implode($separator, $this->output) : $this->output ;
+        return $as_string
+            ? implode($separator, $this->output)
+            : $this->output;
     }
 
 
@@ -111,7 +117,7 @@ class Response implements ResponseInterface, ReservedInstanceInterface
 
 
     /**
-     * @param boolean $request_terminated
+     * @param bool|int|string|null $request_terminated
      */
     public function terminateRequest($request_terminated = true)
     {
@@ -134,5 +140,26 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     public function deactivatePlugin()
     {
         $this->deactivate_plugin = true;
+    }
+
+
+    /**
+     * @return array
+     * @since $VID:$
+     */
+    public function requestHeaders()
+    {
+        return $this->request_headers;
+    }
+
+
+    /**
+     * @param string $request_header
+     * @return void
+     * @since $VID:$
+     */
+    public function setRequestHeader($request_header)
+    {
+        $this->request_headers[] = $request_header;
     }
 }

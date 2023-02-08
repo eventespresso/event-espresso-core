@@ -123,4 +123,22 @@ class EEM_Event_Message_Template extends EEM_Base
 
         return $this->delete([$where], false);
     }
+
+
+    /**
+     * returns a numerically indexed array
+     * with values that correspond to the 'GRP_ID' column
+     * where the 'EVT_ID' column matches that of the supplied event
+     *
+     * @param EE_Event $event
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function messageTemplateGroupIDsForEvent($event)
+    {
+        $results = $this->get_col([['EVT_ID' => $event->ID()]], 'GRP_ID');
+        return $results !== false ? $results : [];
+    }
 }

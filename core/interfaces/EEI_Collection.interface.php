@@ -22,7 +22,7 @@ interface EEI_Collection
      * @param array|int|string $info
      * @return bool
      */
-    public function add($object, $info = ''): bool;
+    public function add($object, $info = '');
 
 
 
@@ -33,7 +33,7 @@ interface EEI_Collection
      * @param array|int|string $info
      * @return bool
      */
-    public function set_info($object, $info = ''): bool;
+    public function set_info($object, $info = '');
 
 
 
@@ -53,7 +53,7 @@ interface EEI_Collection
      * @param object $object
      * @return bool
      */
-    public function has($object): bool;
+    public function has($object);
 
 
 

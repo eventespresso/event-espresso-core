@@ -34,7 +34,7 @@ class EE_Select_Reveal_Input extends EE_Select_Input
 
     /**
      * Gets all the sibling sections controlled by this reveal select input
-     * @return \EE_Form_Section_Base[] keys are their form section paths
+     * @return EE_Form_Section_Base[] keys are their form section paths
      */
     public function sibling_sections_controlled()
     {

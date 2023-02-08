@@ -1,28 +1,28 @@
 <?php
 
 /**
- *
  * Class EE_Select_Display_Strategy
- *
  * displays either simple arrays as selected, or if a 2d array is provided, separates them into optgroups
  *
  * @package             Event Espresso
- * @subpackage  core
+ * @subpackage          core
  * @author              Mike Nelson
- *
- *
  */
 class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
 {
     /**
-     *
-     * @throws EE_Error
      * @return string of html to display the field
+     * @throws EE_Error
      */
     public function display()
     {
         if (! $this->_input instanceof EE_Form_Input_With_Options_Base) {
-            throw new EE_Error(sprintf(esc_html__('Cannot use Select Display Strategy with an input that doesn\'t have options', 'event_espresso')));
+            throw new EE_Error(
+                esc_html__(
+                    'Cannot use Select Display Strategy with an input that doesn\'t have options',
+                    'event_espresso'
+                )
+            );
         }
 
         $html = EEH_HTML::nl(0, 'select');
@@ -55,9 +55,9 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
     }
 
 
-
     /**
      * Displays a flat list of options as option tags
+     *
      * @param array $options
      * @return string
      */
@@ -68,21 +68,22 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
         foreach ($options as $value => $display_text) {
             // even if this input uses EE_Text_Normalization if one of the array keys is a numeric string, like "123",
             // PHP will have converted it to a PHP integer (eg 123). So we need to make sure it's a string
-            $unnormalized_value = $this->_input->get_normalization_strategy()->unnormalize_one($value);
-            $selected = $this->_check_if_option_selected($unnormalized_value) ? ' selected' : '';
-            $html .= EEH_HTML::nl(0, 'option') . '<option value="' . esc_attr($unnormalized_value) . '"' . $selected . '>' . $display_text . '</option>';
+            $value    = $this->_input->get_normalization_strategy()->unnormalize_one($value);
+            $selected = $this->_check_if_option_selected($value) ? ' selected' : '';
+            $value    = esc_attr($value);
+            $html     .= EEH_HTML::nl(0, 'option');
+            $html     .= "<option value='$value'$selected>$display_text</option>";
         }
         EEH_HTML::indent(-1, 'option');
         return $html;
     }
 
 
-
     /**
      * Checks if that value is the one selected
      *
      * @param string|int $option_value unnormalized value option (string). How it will appear in the HTML.
-     * @return string
+     * @return bool
      */
     protected function _check_if_option_selected($option_value)
     {

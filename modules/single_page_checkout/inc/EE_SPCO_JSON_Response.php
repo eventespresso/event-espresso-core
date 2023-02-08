@@ -389,7 +389,7 @@ class EE_SPCO_JSON_Response
     /**
      * @param array $validation_rules
      */
-    public function add_validation_rules(array $validation_rules = array())
+    public function add_validation_rules($validation_rules = array())
     {
         if (is_array($validation_rules) && ! empty($validation_rules)) {
             $this->_validation_rules = array_merge($this->_validation_rules, $validation_rules);

@@ -161,7 +161,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     }
 
     /**
-     * @throws \EE_Error
+     * @throws EE_Error
      * @return string
      */
     public function get_name()

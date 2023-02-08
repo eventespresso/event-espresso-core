@@ -525,7 +525,7 @@ abstract class EE_Messages_incoming_data
      * @return bool  returning true means we DO want to skip processing.  returning false means we DON'T want to skip
      *               processing
      */
-    protected function _skip_registration_for_processing(EE_Registration $registration)
+    protected function _skip_registration_for_processing($registration)
     {
         if (empty($this->filtered_reg_status)) {
             return false;

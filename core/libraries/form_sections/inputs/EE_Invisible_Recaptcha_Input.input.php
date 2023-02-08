@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\modules\ticket_selector\TicketSelectorIframe;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -168,7 +169,7 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
         );
         add_action(
             'AHEE__EventEspresso_modules_ticket_selector_TicketSelectorIframe__construct__complete',
-            function (EventEspresso\modules\ticket_selector\TicketSelectorIframe $ticket_selector_iframe) use ($localized_vars) {
+            function (TicketSelectorIframe $ticket_selector_iframe) use ($localized_vars) {
                 $ticket_selector_iframe->addLocalizedVars($localized_vars, 'eeRecaptcha');
             }
         );

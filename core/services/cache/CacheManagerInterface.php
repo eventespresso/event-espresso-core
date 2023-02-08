@@ -41,7 +41,7 @@ interface CacheManagerInterface
      * @param int     $expiration
      * @return Closure|mixed
      */
-    public function get($id_prefix, $cache_id, Closure $callback, $expiration = HOUR_IN_SECONDS);
+    public function get($id_prefix, $cache_id, $callback, $expiration = HOUR_IN_SECONDS);
 
 
 

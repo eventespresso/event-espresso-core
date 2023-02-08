@@ -52,7 +52,7 @@ interface CoffeePotInterface extends ContainerInterface
      * @param RecipeInterface $recipe
      * @return mixed
      */
-    public function addRecipe(RecipeInterface $recipe);
+    public function addRecipe($recipe);
 
 
 

@@ -35,7 +35,7 @@ class LoadOnlyCoffeeMaker extends CoffeeMaker
      * @return mixed
      * @throws InvalidClassException
      */
-    public function brew(RecipeInterface $recipe, $arguments = array())
+    public function brew($recipe, $arguments = array())
     {
         return $this->resolveClassAndFilepath($recipe);
     }

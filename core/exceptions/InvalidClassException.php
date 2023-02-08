@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\exceptions;
 
+use Exception;
 use DomainException;
 
 /**
@@ -20,9 +21,9 @@ class InvalidClassException extends DomainException
      * @param string     $class_name
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($class_name, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($class_name, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(

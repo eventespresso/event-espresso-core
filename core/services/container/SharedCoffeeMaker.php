@@ -30,7 +30,7 @@ class SharedCoffeeMaker extends CoffeeMaker
      * @param array           $arguments
      * @return mixed
      */
-    public function brew(RecipeInterface $recipe, $arguments = array())
+    public function brew($recipe, $arguments = array())
     {
         $this->resolveClassAndFilepath($recipe);
         $reflector = $this->injector()->getReflectionClass($recipe->fqcn());

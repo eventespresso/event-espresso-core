@@ -469,8 +469,8 @@ class EEH_MSG_Template
      * @throws EE_Error
      */
     public static function get_url_trigger(
-        EE_message_type $message_type,
-        EE_Message $message,
+        $message_type,
+        $message,
         $registration = null,
         $sending_messenger = ''
     ) {
@@ -535,7 +535,7 @@ class EEH_MSG_Template
      * @param EE_Message $message
      * @return string.
      */
-    public static function generate_browser_trigger(EE_Message $message)
+    public static function generate_browser_trigger($message)
     {
         $query_args = array(
             'ee' => 'msg_browser_trigger',
@@ -558,7 +558,7 @@ class EEH_MSG_Template
      * @param EE_Message $message
      * @return string
      */
-    public static function generate_error_display_trigger(EE_Message $message)
+    public static function generate_error_display_trigger($message)
     {
         return apply_filters(
             'FHEE__EEH_MSG_Template__generate_error_display_trigger',
@@ -593,7 +593,7 @@ class EEH_MSG_Template
         $generating_messenger,
         $context,
         $message_type,
-        EE_Registration $registration,
+        $registration,
         $message_template_group,
         $data_id = 0
     ) {
@@ -654,7 +654,7 @@ class EEH_MSG_Template
             array(
                 'view' => array(
                     'label' => esc_html__('View Message', 'event_espresso'),
-                    'css_class' => 'dashicons dashicons-welcome-view-site',
+                    'css_class' => 'dashicons dashicons-visibility',
                 ),
                 'error' => array(
                     'label' => esc_html__('View Error Message', 'event_espresso'),
@@ -698,7 +698,7 @@ class EEH_MSG_Template
      * @since 4.9.0
      *
      */
-    public static function get_message_action_url($type, EE_Message $message = null, $query_params = array())
+    public static function get_message_action_url($type, $message = null, $query_params = array())
     {
         $action_urls = self::get_message_action_urls($message, $query_params);
         return isset($action_urls[ $type ])  ? $action_urls[ $type ] : '';
@@ -717,7 +717,7 @@ class EEH_MSG_Template
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function get_message_action_urls(EE_Message $message = null, $query_params = array())
+    public static function get_message_action_urls($message = null, $query_params = array())
     {
         EE_Registry::instance()->load_helper('URL');
         // if $message is not an instance of EE_Message then let's just do a dummy.
@@ -801,27 +801,30 @@ class EEH_MSG_Template
      * @since 4.9.0
      *
      */
-    public static function get_message_action_link($type, EE_Message $message = null, $query_params = array())
+    public static function get_message_action_link($type, $message = null, $query_params = array())
     {
         $url = EEH_MSG_Template::get_message_action_url($type, $message, $query_params);
         $icon_css = EEH_MSG_Template::get_message_action_icon($type);
-        $label = isset($icon_css['label']) ? 'aria-label="' . $icon_css['label'] . '"' : '';
+        $label = isset($icon_css['label']) ? $icon_css['label'] : null;
+        $label = $label ? 'aria-label="' . $label . '"' : '';
+        $class = $label ? ' ee-aria-tooltip' : '';
 
         if (empty($url) || empty($icon_css) || ! isset($icon_css['css_class'])) {
             return '';
         }
 
-        $icon_css['css_class'] .= esc_attr(
-            apply_filters(
-                'FHEE__EEH_MSG_Template__get_message_action_link__icon_css_class',
-                ' js-ee-message-action-link ee-message-action-link-' . $type,
-                $type,
-                $message,
-                $query_params
-            )
+        $icon_css_class = $icon_css['css_class'] . apply_filters(
+            'FHEE__EEH_MSG_Template__get_message_action_link__icon_css_class',
+            ' js-ee-message-action-link ee-message-action-link-' . $type,
+            $type,
+            $message,
+            $query_params
         );
 
-        return '<a href="' . $url . '" ' . $label . '><span class="' . esc_attr($icon_css['css_class']) . '"></span></a>';
+        return '
+            <a href="' . $url . '" ' . $label . ' class="button button--icon-only' . $class . '">
+                <span class="' .  esc_attr($icon_css_class) . '"></span>
+            </a>';
     }
 
 
@@ -1045,7 +1048,7 @@ class EEH_MSG_Template
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected static function _create_new_templates(EE_messenger $messenger, EE_message_type $message_type, $GRP_ID, $global)
+    protected static function _create_new_templates($messenger, $message_type, $GRP_ID, $global)
     {
         // if we're creating a custom template then we don't need to use the defaults class
         if (! $global) {
@@ -1182,8 +1185,8 @@ class EEH_MSG_Template
      * @throws EE_Error
      */
     public static function message_type_has_active_templates_for_messenger(
-        EE_messenger $messenger,
-        EE_message_type $message_type,
+        $messenger,
+        $message_type,
         $global = false
     ) {
         // is given message_type valid for given messenger (if this is not a global save)

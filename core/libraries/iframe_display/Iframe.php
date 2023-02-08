@@ -172,7 +172,7 @@ class Iframe
      * @param array $stylesheets
      * @throws DomainException
      */
-    public function addStylesheets(array $stylesheets)
+    public function addStylesheets($stylesheets)
     {
         if (empty($stylesheets)) {
             throw new DomainException(
@@ -193,7 +193,7 @@ class Iframe
      * @param bool  $add_to_header
      * @throws DomainException
      */
-    public function addScripts(array $scripts, $add_to_header = false)
+    public function addScripts($scripts, $add_to_header = false)
     {
         if (empty($scripts)) {
             throw new DomainException(
@@ -218,7 +218,7 @@ class Iframe
      * @param bool  $add_to_header
      * @throws DomainException
      */
-    public function addScriptAttributes(array $script_attributes, $add_to_header = false)
+    public function addScriptAttributes($script_attributes, $add_to_header = false)
     {
         if (empty($script_attributes)) {
             throw new DomainException(
@@ -243,7 +243,7 @@ class Iframe
      * @param string $var_name
      * @throws DomainException
      */
-    public function addLocalizedVars(array $vars, $var_name = 'eei18n')
+    public function addLocalizedVars($vars, $var_name = 'eei18n')
     {
         if (empty($vars)) {
             throw new DomainException(

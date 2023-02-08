@@ -3,24 +3,26 @@
 /**
  * EE_Hidden_Display_Strategy
  *
- * @package         Event Espresso
- * @subpackage
- * @author              Mike Nelson
- *
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  /core/libraries/form_sections
+ * @author      Mike Nelson
  */
 class EE_Hidden_Display_Strategy extends EE_Display_Strategy_Base
 {
     /**
-     *
      * @return string of html to display the HIDDEN field
      * @throws EE_Error
      */
     public function display()
     {
-        $input = $this->_input;
-        return "<input type='hidden' id='" . esc_attr($input->html_id()) . "' name='" . esc_attr($input->html_name()) . "' 
-        class='" . esc_attr($input->html_class()) . "' style='" . esc_attr($input->html_style()) . "' 
-        value='" . esc_attr($input->raw_value_in_form()) . "' {$input->other_html_attributes()}/>";
+        return "
+        <input type='hidden' 
+               class='{$this->_input->html_class()}' 
+               id='{$this->_input->html_id()}' 
+               name='{$this->_input->html_name()}' 
+               style='{$this->_input->html_style()}' 
+               value='{$this->_input->raw_value_in_form()}'
+               {$this->_input->other_html_attributes()}
+        />";
     }
 }

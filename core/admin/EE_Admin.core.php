@@ -7,8 +7,8 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -31,7 +31,7 @@ final class EE_Admin implements InterminableInterface
     private $persistent_admin_notice_manager;
 
     /**
-     * @var LoaderInterface
+     * @var LoaderInterface $loader
      */
     protected $loader;
 
@@ -42,18 +42,19 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * @param RequestInterface $request
      * @singleton method used to instantiate class object
+     * @param LoaderInterface|null $loader
+     * @param RequestInterface|null $request
      * @return EE_Admin
      * @throws EE_Error
      */
-    public static function instance(RequestInterface $request = null)
+    public static function instance($loader = null, $request = null)
     {
         // check if class object is instantiated
-        if (! self::$_instance instanceof EE_Admin) {
-            self::$_instance = new self($request);
+        if (! EE_Admin::$_instance instanceof EE_Admin) {
+            EE_Admin::$_instance = new EE_Admin($loader, $request);
         }
-        return self::$_instance;
+        return EE_Admin::$_instance;
     }
 
 
@@ -63,43 +64,44 @@ final class EE_Admin implements InterminableInterface
      */
     public static function reset()
     {
-        self::$_instance = null;
-        $request         = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-        return self::instance($request);
+        EE_Admin::$_instance = null;
+        $loader = LoaderFactory::getLoader();
+        $request = $loader->getShared('EventEspresso\core\services\request\Request');
+        return EE_Admin::instance($loader, $request);
     }
 
 
     /**
+     * @param LoaderInterface  $loader
      * @param RequestInterface $request
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    protected function __construct(RequestInterface $request)
+    protected function __construct(LoaderInterface $loader, RequestInterface $request)
     {
+        $this->loader = $loader;
         $this->request = $request;
-        $this->loader = LoaderFactory::getLoader();
         // define global EE_Admin constants
         $this->_define_all_constants();
         // set autoloaders for our admin page classes based on included path information
-        EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_ADMIN);
-        // admin hooks
-        add_filter('plugin_action_links', [$this, 'filter_plugin_actions'], 10, 2);
-        add_action('AHEE__EE_System__initialize_last', [$this, 'init']);
-        add_action('AHEE__EE_Admin_Page__route_admin_request', [$this, 'route_admin_request'], 100, 2);
-        add_action('wp_loaded', [$this, 'wp_loaded'], 100);
-        add_action('admin_init', [$this, 'admin_init'], 100);
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
-        add_action('admin_notices', [$this, 'display_admin_notices'], 10);
-        add_action('network_admin_notices', [$this, 'display_admin_notices'], 10);
-        add_filter('pre_update_option', [$this, 'check_for_invalid_datetime_formats'], 100, 2);
-        add_filter('admin_footer_text', [$this, 'espresso_admin_footer']);
-        add_action('load-plugins.php', [$this, 'hookIntoWpPluginsPage']);
-        add_action('display_post_states', [$this, 'displayStateForCriticalPages'], 10, 2);
-        add_filter('plugin_row_meta', [$this, 'addLinksToPluginRowMeta'], 10, 2);
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_ADMIN);
         // reset Environment config (we only do this on admin page loads);
         EE_Registry::instance()->CFG->environment->recheck_values();
+        // load EE_Request_Handler early
+        add_action('AHEE__EE_System__initialize_last', [$this, 'init']);
+        add_action('admin_init', [$this, 'admin_init'], 100);
+        if (! $this->request->isAjax()) {
+            // admin hooks
+            add_action('admin_notices', [$this, 'display_admin_notices'], 10);
+            add_action('network_admin_notices', [$this, 'display_admin_notices'], 10);
+            add_filter('pre_update_option', [$this, 'check_for_invalid_datetime_formats'], 100, 2);
+            add_filter('plugin_action_links', [$this, 'filter_plugin_actions'], 10, 2);
+            add_filter('admin_footer_text', [$this, 'espresso_admin_footer']);
+            add_action('display_post_states', [$this, 'displayStateForCriticalPages'], 10, 2);
+            add_filter('plugin_row_meta', [$this, 'addLinksToPluginRowMeta'], 10, 2);
+        }
         do_action('AHEE__EE_Admin__loaded');
     }
 
@@ -161,14 +163,6 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * @deprecated 4.10.14.p
-     */
-    public function get_request()
-    {
-    }
-
-
-    /**
      * hide_admin_pages_except_maintenance_mode
      *
      * @param array $admin_page_folder_names
@@ -205,11 +199,17 @@ final class EE_Admin implements InterminableInterface
         // run the admin page factory but ONLY if:
         // - it is a regular non ajax admin request
         // - we are doing an ee admin ajax request
-        if ($this->request->isAdmin() || $this->request->isAdminAjax()) {
-            // this loads the controller for the admin pages which will setup routing etc
-            $this->loader->getShared('EE_Admin_Page_Loader', [$this->loader]);
+        if ($this->request->isAdmin() || $this->request->isAdminAjax() || $this->request->isActivation()) {
+            try {
+                // this loads the controller for the admin pages which will setup routing etc
+                $admin_page_loader = $this->loader->getShared('EE_Admin_Page_Loader', [$this->loader]);
+                /** @var EE_Admin_Page_Loader $admin_page_loader */
+                $admin_page_loader->init();
+            } catch (EE_Error $e) {
+                $e->get_error();
+            }
         }
-        if ($this->request->isAdminAjax()) {
+        if ($this->request->isAjax()) {
             return;
         }
         add_filter('content_save_pre', [$this, 'its_eSpresso'], 10, 1);
@@ -252,8 +252,8 @@ final class EE_Admin implements InterminableInterface
         $this->persistent_admin_notice_manager->setReturnUrl(
             EE_Admin_Page::add_query_args_and_nonce(
                 [
-                    'page'   => $this->request->getRequestParam('page'),
-                    'action' => $this->request->getRequestParam('action'),
+                    'page'   => $this->request->getRequestParam('page', ''),
+                    'action' => $this->request->getRequestParam('action', ''),
                 ],
                 EE_ADMIN_URL
             )
@@ -342,8 +342,8 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * WP by default only shows three metaboxes in "nav-menus.php" for first times users.  We want to make sure our
-     * metaboxes get shown as well
+     * WP by default only shows three metaboxes in "nav-menus.php" for first times users.
+     * We want to make sure our metaboxes get shown as well
      *
      * @return void
      */
@@ -405,6 +405,13 @@ final class EE_Admin implements InterminableInterface
             'nav-menus',
             'side',
             'core'
+        );
+        add_filter(
+            "postbox_classes_nav-menus_add-extra-nav-menu-pages",
+            function ($classes) {
+                array_push($classes, 'ee-admin-container');
+                return $classes;
+            }
         );
     }
 
@@ -476,13 +483,13 @@ final class EE_Admin implements InterminableInterface
             0,
             (object) $args
         );
-
         EEH_Template::display_template(
             EE_ADMIN_TEMPLATE . 'cpt_archive_page.template.php',
             [
-                $nav_menu_pages_items,
-                $nav_tab_link,
-                $select_all_link,
+                'nav_menu_selected_id' => $nav_menu_selected_id,
+                'nav_menu_pages_items' => $nav_menu_pages_items,
+                'nav_tab_link'         => $nav_tab_link,
+                'select_all_link'      => $select_all_link,
             ]
         );
     }
@@ -534,32 +541,10 @@ final class EE_Admin implements InterminableInterface
             'classes'          => [],
             'xfn'              => '',
         ];
-
         foreach ($keys as $key => $value) {
             $menu_item->{$key} = isset($menu_item_values[ $key ]) ? $menu_item_values[ $key ] : $value;
         }
         return $menu_item;
-    }
-
-
-    /**
-     * This is the action hook for the AHEE__EE_Admin_Page__route_admin_request hook that fires off right before an
-     * EE_Admin_Page route is called.
-     *
-     * @return void
-     */
-    public function route_admin_request()
-    {
-    }
-
-
-    /**
-     * wp_loaded should fire on the WordPress wp_loaded hook.  This fires on a VERY late priority.
-     *
-     * @return void
-     */
-    public function wp_loaded()
-    {
     }
 
 
@@ -589,15 +574,17 @@ final class EE_Admin implements InterminableInterface
         }
 
 
-        /**
-         * This code excludes EE critical pages anywhere `wp_dropdown_pages` is used to create a dropdown for selecting
-         * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical
-         * Pages" tab in the EE General Settings Admin page.
-         * This is for user-proofing.
-         */
-        add_filter('wp_dropdown_pages', [$this, 'modify_dropdown_pages']);
-        if (EE_Maintenance_Mode::instance()->models_can_query()) {
-            $this->adminInitModelsReady();
+        if (! $this->request->isAjax()) {
+            /**
+             * This code excludes EE critical pages anywhere `wp_dropdown_pages` is used to create a dropdown for selecting
+             * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical
+             * Pages" tab in the EE General Settings Admin page.
+             * This is for user-proofing.
+             */
+            add_filter('wp_dropdown_pages', [$this, 'modify_dropdown_pages']);
+            if (EE_Maintenance_Mode::instance()->models_can_query()) {
+                $this->adminInitModelsReady();
+            }
         }
     }
 
@@ -641,26 +628,6 @@ final class EE_Admin implements InterminableInterface
         }
         // replace output with the new contents
         return implode("\n", $split_output);
-    }
-
-
-    /**
-     * enqueue all admin scripts that need loaded for admin pages
-     *
-     * @return void
-     */
-    public function enqueue_admin_scripts()
-    {
-        // this javascript is loaded on every admin page to catch any injections ee needs to add to wp run js.
-        // Note: the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script
-        // calls.
-        wp_enqueue_script(
-            'ee-inject-wp',
-            EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js',
-            ['jquery'],
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
     }
 
 
@@ -831,6 +798,90 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
+     * Hooks into the "post states" filter in a wp post type list table.
+     *
+     * @param array   $post_states
+     * @param WP_Post $post
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function displayStateForCriticalPages($post_states, $post)
+    {
+        $post_states = (array) $post_states;
+        if (! $post instanceof WP_Post || $post->post_type !== 'page') {
+            return $post_states;
+        }
+        /** @var EE_Core_Config $config */
+        $config = $this->loader->getShared('EE_Config')->core;
+        if (in_array($post->ID, $config->get_critical_pages_array(), true)) {
+            $post_states[] = sprintf(
+            /* Translators: Using company name - Event Espresso Critical Page */
+                esc_html__('%s Critical Page', 'event_espresso'),
+                'Event Espresso'
+            );
+        }
+        return $post_states;
+    }
+
+
+    /**
+     * Show documentation links on the plugins page
+     *
+     * @param mixed $meta Plugin Row Meta
+     * @param mixed $file Plugin Base file
+     * @return array
+     */
+    public function addLinksToPluginRowMeta($meta, $file)
+    {
+        if (EE_PLUGIN_BASENAME === $file) {
+            $row_meta = [
+                'docs' => '<a href="https://eventespresso.com/support/documentation/versioned-docs/?doc_ver=ee4"'
+                          . ' aria-label="'
+                          . esc_attr__('View Event Espresso documentation', 'event_espresso')
+                          . '">'
+                          . esc_html__('Docs', 'event_espresso')
+                          . '</a>',
+                'api'  => '<a href="https://github.com/eventespresso/event-espresso-core/tree/master/docs/C--REST-API"'
+                          . ' aria-label="'
+                          . esc_attr__('View Event Espresso API docs', 'event_espresso')
+                          . '">'
+                          . esc_html__('API docs', 'event_espresso')
+                          . '</a>',
+            ];
+            return array_merge($meta, $row_meta);
+        }
+        return (array) $meta;
+    }
+
+     /**************************************************************************************/
+     /************************************* DEPRECATED *************************************/
+     /**************************************************************************************/
+
+
+    /**
+     * This is the action hook for the AHEE__EE_Admin_Page__route_admin_request hook that fires off right before an
+     * EE_Admin_Page route is called.
+     *
+     * @return void
+     */
+    public function route_admin_request()
+    {
+    }
+
+
+    /**
+     * wp_loaded should fire on the WordPress wp_loaded hook.  This fires on a VERY late priority.
+     *
+     * @return void
+     */
+    public function wp_loaded()
+    {
+    }
+
+
+    /**
      * static method for registering ee admin page.
      * This method is deprecated in favor of the new location in EE_Register_Admin_Page::register.
      *
@@ -864,8 +915,8 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * @param int     $post_ID
-     * @param WP_Post $post
+     * @param int      $post_ID
+     * @param \WP_Post $post
      * @return void
      * @deprecated 4.8.41
      */
@@ -934,76 +985,37 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * Callback on load-plugins.php hook for setting up anything hooking into the wp plugins page.
-     *
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @return void
+     * @deprecated $VID:$
+     */
+    public function enqueue_admin_scripts()
+    {
+    }
+
+
+
+    /**
+     * @return RequestInterface
+     * @deprecated $VID:$
+     */
+    public function get_request()
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                'EventEspresso\core\services\request\Request'
+            ),
+            '$VID:$'
+        );
+        return $this->request;
+    }
+
+
+    /**
+     * @deprecated $VID:$
      */
     public function hookIntoWpPluginsPage()
     {
-        $this->loader->getShared('EventEspresso\core\domain\services\admin\ExitModal');
-        $this->loader
-             ->getShared('EventEspresso\core\domain\services\admin\PluginUpsells')
-             ->decafUpsells();
-    }
-
-
-    /**
-     * Hooks into the "post states" filter in a wp post type list table.
-     *
-     * @param array   $post_states
-     * @param WP_Post $post
-     * @return array
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public function displayStateForCriticalPages($post_states, $post)
-    {
-        $post_states = (array) $post_states;
-        if (! $post instanceof WP_Post || $post->post_type !== 'page') {
-            return $post_states;
-        }
-        /** @var EE_Core_Config $config */
-        $config = $this->loader->getShared('EE_Config')->core;
-        if (in_array($post->ID, $config->get_critical_pages_array(), true)) {
-            $post_states[] = sprintf(
-            /* Translators: Using company name - Event Espresso Critical Page */
-                esc_html__('%s Critical Page', 'event_espresso'),
-                'Event Espresso'
-            );
-        }
-        return $post_states;
-    }
-
-
-    /**
-     * Show documentation links on the plugins page
-     *
-     * @param mixed $meta Plugin Row Meta
-     * @param mixed $file Plugin Base file
-     * @return array
-     */
-    public function addLinksToPluginRowMeta($meta, $file)
-    {
-        if (EE_PLUGIN_BASENAME === $file) {
-            $row_meta = [
-                'docs' => '<a href="https://eventespresso.com/support/documentation/versioned-docs/?doc_ver=ee4"'
-                          . ' aria-label="'
-                          . esc_attr__('View Event Espresso documentation', 'event_espresso')
-                          . '">'
-                          . esc_html__('Docs', 'event_espresso')
-                          . '</a>',
-                'api'  => '<a href="https://github.com/eventespresso/event-espresso-core/tree/master/docs/C--REST-API"'
-                          . ' aria-label="'
-                          . esc_attr__('View Event Espresso API docs', 'event_espresso')
-                          . '">'
-                          . esc_html__('API docs', 'event_espresso')
-                          . '</a>',
-            ];
-            return array_merge($meta, $row_meta);
-        }
-        return (array) $meta;
     }
 }

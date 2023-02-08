@@ -47,7 +47,7 @@ class Psr4Autoloader
     /**
      * namespace separator
      */
-    public const NS = '\\';
+    const NS = '\\';
 
     /**
      * An associative array where the key is a namespace prefix and the value
@@ -55,7 +55,7 @@ class Psr4Autoloader
      *
      * @var array
      */
-    protected $prefixes = array();
+    protected $prefixes = [];
 
 
     /**
@@ -64,11 +64,11 @@ class Psr4Autoloader
      * @param string $prefix
      * @return array
      */
-    public function prefixes(string $prefix = ''): array
+    public function prefixes($prefix = '')
     {
         if (! empty($prefix)) {
             // are there any base directories for this namespace prefix?
-            return $this->prefixes[ $prefix ] ?? [];
+            return isset($this->prefixes[ $prefix ]) ? $this->prefixes[ $prefix ] : [];
         }
         return $this->prefixes;
     }
@@ -81,22 +81,20 @@ class Psr4Autoloader
      */
     public function register()
     {
-        spl_autoload_register(array($this, 'loadClass'));
+        spl_autoload_register([$this, 'loadClass']);
     }
 
 
     /**
      * Adds a base directory for a namespace prefix.
      *
-     * @param string $prefix   The namespace prefix.
-     * @param string $base_dir A base directory for class files in the
-     *                         namespace.
-     * @param bool   $prepend  If true, prepend the base directory to the stack
-     *                         instead of appending it; this causes it to be searched first rather
-     *                         than last.
-     * @return void
+     * @param string $prefix    The namespace prefix.
+     * @param string $base_dir  A base directory for class files in the namespace.
+     * @param bool $prepend     If true, prepend the base directory to the stack instead of appending it;
+     *                          this causes it to be searched first rather than last.
+     * @return bool             returns TRUE if the namespace was successfully added
      */
-    public function addNamespace(string $prefix, string $base_dir, bool $prepend = false)
+    public function addNamespace($prefix, $base_dir, $prepend = false)
     {
         // normalize namespace prefix
         $prefix = trim($prefix, Psr4Autoloader::NS) . Psr4Autoloader::NS;
@@ -104,8 +102,8 @@ class Psr4Autoloader
         $base_dir = str_replace(['\\', '/'], '/', $base_dir);
         $base_dir = rtrim($base_dir, '/\\') . '/';
         // initialize the namespace prefix array
-        if (isset($this->prefixes[ $prefix ]) === false) {
-            $this->prefixes[ $prefix ] = array();
+        if (! isset($this->prefixes[ $prefix ])) {
+            $this->prefixes[ $prefix ] = [];
         }
         // retain the base directory for the namespace prefix
         if ($prepend) {
@@ -113,6 +111,7 @@ class Psr4Autoloader
         } else {
             $this->prefixes[ $prefix ][] = $base_dir;
         }
+        return isset($this->prefixes[ $prefix ]);
     }
 
 
@@ -122,7 +121,7 @@ class Psr4Autoloader
      * @param string $class The fully-qualified class name.
      * @return false|string The mapped file name on success or boolean false on failure.
      */
-    public function loadClass(string $class)
+    public function loadClass($class)
     {
         // the current namespace prefix
         $prefix = $class;
@@ -142,7 +141,7 @@ class Psr4Autoloader
             $prefix = rtrim($prefix, Psr4Autoloader::NS);
         }
         // never found a mapped file
-        return false;
+        return '';
     }
 
 
@@ -154,7 +153,7 @@ class Psr4Autoloader
      * @return string|null           null if no mapped file can be loaded,
      *                               or the name of the mapped file that was loaded.
      */
-    protected function loadMappedFile(string $prefix, string $relative_class): ?string
+    protected function loadMappedFile($prefix, $relative_class)
     {
         // look through base directories for this namespace prefix
         foreach ($this->prefixes($prefix) as $base_dir) {
@@ -178,10 +177,10 @@ class Psr4Autoloader
     /**
      * If a file exists, require it from the file system.
      *
-     * @param string $file The file to require.
-     * @return bool True if the file exists, false if not.
+     * @param string $file  The file to require.
+     * @return bool         True if the file exists, false if not.
      */
-    protected function requireFile(string $file): bool
+    protected function requireFile($file)
     {
         if (file_exists($file)) {
             require $file;

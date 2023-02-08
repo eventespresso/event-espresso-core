@@ -12,5 +12,5 @@ interface EEI_Request_Stack_Core_App
      * @param EE_Request $request
      * @param EE_Response   $response
      */
-    public function handle_response(EE_Request $request, EE_Response $response);
+    public function handle_response($request, $response);
 }

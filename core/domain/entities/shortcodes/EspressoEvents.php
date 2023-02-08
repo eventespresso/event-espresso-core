@@ -2,10 +2,12 @@
 
 namespace EventEspresso\core\domain\entities\shortcodes;
 
+use EE_Error;
 use EED_Events_Archive;
 use EEH_Template;
 use EventEspresso\core\domain\services\wp_queries\EventListQuery;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
+use ReflectionException;
 
 /**
  * Class EspressoEvents
@@ -57,6 +59,8 @@ class EspressoEvents extends EspressoShortcode
      * and need to enqueue assets for that module
      *
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initializeShortcode()
     {
@@ -70,13 +74,15 @@ class EspressoEvents extends EspressoShortcode
      * IMPORTANT !!!
      * remember that shortcode content should be RETURNED and NOT echoed out
      *
-     * @param array $attributes
+     * @param array|string $attributes
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function processShortcode($attributes = array())
     {
         // grab attributes and merge with defaults
-        $attributes = $this->getAttributes($attributes);
+        $attributes = $this->getAttributes((array) $attributes);
         // make sure we use the_excerpt()
         add_filter('FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true');
         // apply query filters
@@ -91,9 +97,7 @@ class EspressoEvents extends EspressoShortcode
         // load our template
         $event_list = EEH_Template::locate_template(
             'loop-espresso_events.php',
-            array(),
-            true,
-            true
+            array()
         );
         // now reset the query and post data
         wp_reset_query();

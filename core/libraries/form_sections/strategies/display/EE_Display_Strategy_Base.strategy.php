@@ -16,16 +16,12 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     protected $_tag = '';
 
 
-
-
-
     /**
      * returns HTML and javascript related to the displaying of this input
      *
      * @return string
      */
     abstract public function display();
-
 
 
     /**
@@ -40,9 +36,10 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     {
         $char_length = strlen($chars) * -1;
         // if last three characters of string is  " - ", then remove it
-        return substr($string, $char_length) === $chars ? substr($string, 0, $char_length) : $string;
+        return substr($string, $char_length) === $chars
+            ? substr($string, 0, $char_length)
+            : $string;
     }
-
 
 
     /**
@@ -59,18 +56,17 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     }
 
 
-
     /**
      * Gets the HTML IDs of all the inputs
      *
      * @param bool $add_pound_sign
      * @return array
+     * @throws EE_Error
      */
     public function get_html_input_ids($add_pound_sign = false)
     {
-        return array($this->get_input()->html_id($add_pound_sign));
+        return [$this->get_input()->html_id($add_pound_sign)];
     }
-
 
 
     /**
@@ -80,11 +76,10 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * @param array $other_js_data
      * @return array
      */
-    public function get_other_js_data($other_js_data = array())
+    public function get_other_js_data($other_js_data = [])
     {
         return $other_js_data;
     }
-
 
 
     /**
@@ -96,7 +91,6 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     }
 
 
-
     /**
      * returns string like: '<tag'
      *
@@ -106,9 +100,8 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     protected function _opening_tag($tag)
     {
         $this->_tag = $tag;
-        return "<{$this->_tag}";
+        return "<$this->_tag";
     }
-
 
 
     /**
@@ -118,9 +111,8 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _closing_tag()
     {
-        return "</{$this->_tag}>";
+        return "</$this->_tag>";
     }
-
 
 
     /**
@@ -134,7 +126,6 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     }
 
 
-
     /**
      * returns an array of standard HTML attributes that get added to nearly all inputs,
      * where string keys represent named attributes like id, class, etc
@@ -143,19 +134,19 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * it.
      *
      * @return array
+     * @throws EE_Error
      */
     protected function _standard_attributes_array()
     {
-        return array(
+        return [
             'name'  => $this->_input->html_name(),
             'id'    => $this->_input->html_id(),
             'class' => $this->_input->html_class(true),
-            0       => array('required', $this->_input->required()),
+            0       => ['required', $this->_input->required()],
             1       => $this->_input->other_html_attributes(),
             'style' => $this->_input->html_style(),
-        );
+        ];
     }
-
 
 
     /**
@@ -165,9 +156,9 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * @param array $attributes
      * @return string
      */
-    protected function _attributes_string($attributes = array())
+    protected function _attributes_string($attributes = [])
     {
-        $attributes = apply_filters(
+        $attributes        = apply_filters(
             'FHEE__EE_Display_Strategy_Base__attributes_string__attributes',
             $attributes,
             $this,
@@ -179,7 +170,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
                 $add = true;
                 if (is_array($value)) {
                     $attribute = isset($value[0]) ? $value[0] : '';
-                    $add = isset($value[1]) ? $value[1] : false;
+                    $add       = isset($value[1]) ? $value[1] : false;
                 } else {
                     $attribute = $value;
                 }
@@ -190,7 +181,6 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
         }
         return $attributes_string;
     }
-
 
 
     /**
@@ -207,9 +197,8 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
             return '';
         }
         $value = esc_attr($value);
-        return " {$attribute}=\"{$value}\"";
+        return " $attribute=\"$value\"";
     }
-
 
 
     /**
@@ -226,9 +215,8 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
             return '';
         }
         $value = esc_attr($value);
-        return " data-{$attribute}=\"{$value}\"";
+        return " data-$attribute=\"$value\"";
     }
-
 
 
     /**
@@ -240,6 +228,8 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _single_attribute($attribute, $add = true)
     {
-        return $add ? " {$attribute}" : '';
+        return $add
+            ? " $attribute"
+            : '';
     }
 }

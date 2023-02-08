@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\exceptions;
 
+use RuntimeException;
+use Exception;
 /**
  * Class InsufficientPermissionsException
  * Thrown when the current user does not have the required permissions to execute the requested action
@@ -10,16 +12,16 @@ namespace EventEspresso\core\exceptions;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InsufficientPermissionsException extends \RuntimeException
+class InsufficientPermissionsException extends RuntimeException
 {
     /**
      * @access public
      * @param  string     $action
      * @param  string     $message
      * @param  int        $code
-     * @param  \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($action, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($action, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(

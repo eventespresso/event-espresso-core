@@ -34,7 +34,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
      *
      * @param string $model_relation_chain
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_join_statement($model_relation_chain)
     {
@@ -67,8 +67,8 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
      * @param EE_Base_Class|int $this_obj_or_id
      * @param EE_Base_Class|int $other_obj_or_id
      * @param array             $extra_join_model_fields_n_values
-     * @return \EE_Base_Class
-     * @throws \EE_Error
+     * @return EE_Base_Class
+     * @throws EE_Error
      */
     public function add_relation_to($this_obj_or_id, $other_obj_or_id, $extra_join_model_fields_n_values = array())
     {
@@ -91,8 +91,8 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
      * @param EE_Base_Class|int $this_obj_or_id
      * @param EE_Base_Class|int $other_obj_or_id
      * @param array             $where_query
-     * @return \EE_Base_Class
-     * @throws \EE_Error
+     * @return EE_Base_Class
+     * @throws EE_Error
      */
     public function remove_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = array())
     {
@@ -114,7 +114,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
      * @param array         $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean       $values_already_prepared_by_model_object @deprecated since 4.8.1
      * @return EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_all_related(
         $model_obj_or_id,

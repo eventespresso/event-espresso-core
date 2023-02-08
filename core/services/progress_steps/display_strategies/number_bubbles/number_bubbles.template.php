@@ -1,15 +1,16 @@
 <?php
 
+use EventEspresso\core\services\progress_steps\ProgressStepInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
- * This is the template for the "Number Bubbles" Progress Steps
- * Template args available for this template are listed below
- *
- * @since 4.9.0
- * @var \EventEspresso\core\services\progress_steps\ProgressStepInterface[] $progress_steps array of progress step
- *      objects
- */
+* This is the template for the "Number Bubbles" Progress Steps
+* Template args available for this template are listed below
+*
+* @since 4.9.0
+* @var ProgressStepInterface[] $progress_steps array of progress step
+    objects
+*/
 ?>
 
     <!-- progress step display -->

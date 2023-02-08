@@ -7,7 +7,7 @@ $tag = is_single() ? 'h1' : 'h2';
 	<?php echo "<{$tag}  id=\"event-details-{$tag}-{$post->ID}\" class=\"entry-title\">"; ?>
 		<a class="ee-event-header-lnk"
            href="<?php the_permalink(); ?>"
-           <?php echo \EED_Events_Archive::link_target();?>
+           <?php echo EED_Events_Archive::link_target();?>
         >
             <?php the_title(); ?>
         </a>

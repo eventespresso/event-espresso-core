@@ -17,7 +17,7 @@ class AttributesSanitizer
      * @param string $tag
      * @return mixed|string
      */
-    public static function clean(string $attributes, array $allowed_tags, string $tag = 'div')
+    public static function clean($attributes, $allowed_tags, $tag = 'div')
     {
         if (trim($attributes) === '') {
             return '';

@@ -12,8 +12,7 @@ namespace EventEspresso\core\services\request;
  */
 class DataType
 {
-    // can't use ARRAY as name until we switch to PHP 7+
-    // const ARRAY   = 'array';
+    const ARRAY   = 'array';
 
     const BOOL    = 'bool';
     const BOOLEAN = 'bool';

@@ -87,7 +87,7 @@ class DependencyInjector implements InjectorInterface
      * @param ReflectionClass $reflector
      * @return ReflectionMethod
      */
-    protected function getConstructor(ReflectionClass $reflector)
+    protected function getConstructor($reflector)
     {
         if (
             ! isset($this->constructors[ $reflector->getName() ])
@@ -107,7 +107,7 @@ class DependencyInjector implements InjectorInterface
      * @param ReflectionMethod $constructor
      * @return ReflectionParameter[]
      */
-    protected function getParameters(ReflectionMethod $constructor)
+    protected function getParameters($constructor)
     {
         if (! isset($this->parameters[ $constructor->class ])) {
             $this->parameters[ $constructor->class ] = $constructor->getParameters();
@@ -135,7 +135,7 @@ class DependencyInjector implements InjectorInterface
      * @return array
      * @throws UnexpectedValueException
      */
-    public function resolveDependencies(RecipeInterface $recipe, ReflectionClass $reflector, $arguments = array())
+    public function resolveDependencies($recipe, $reflector, $arguments = array())
     {
         // if arguments array is numerically and sequentially indexed, then we want it to remain as is,
         // else wrap it in an additional array so that it doesn't get split into multiple parameters

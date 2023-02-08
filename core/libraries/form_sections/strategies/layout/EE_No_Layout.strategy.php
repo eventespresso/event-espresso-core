@@ -53,7 +53,7 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout
      *
      * @param EE_Form_Input_Base $input
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function layout_input($input)
     {

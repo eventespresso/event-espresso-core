@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\container\exceptions;
 
+use OutOfRangeException;
+use Exception;
 /**
  * Class ServiceExistsException
  * thrown when a service has already been added to the container
@@ -10,7 +12,7 @@ namespace EventEspresso\core\services\container\exceptions;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class ServiceExistsException extends \OutOfRangeException
+class ServiceExistsException extends OutOfRangeException
 {
     /**
      * ServiceExistsException constructor
@@ -18,13 +20,13 @@ class ServiceExistsException extends \OutOfRangeException
      * @param string     $service_name the name of the requested service
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
     public function __construct(
         $service_name,
         $message = '',
         $code = 0,
-        \Exception $previous = null
+        Exception $previous = null
     ) {
         if (empty($message)) {
             $message = sprintf(

@@ -14,9 +14,9 @@
 class EE_PMT_Admin_Only extends EE_PMT_Base
 {
     /**
-     *
-     * @param EE_Payment_Method $pm_instance
-     * @return EE_PMT_Admin_Only
+     * @param EE_Payment_Method|null $pm_instance
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     public function __construct($pm_instance = null)
     {
@@ -29,11 +29,16 @@ class EE_PMT_Admin_Only extends EE_PMT_Base
 
     /**
      * Creates the billing form for this payment method type
-     * @param \EE_Transaction $transaction
-     * @return NULL
+     * @param EE_Transaction|null $transaction
+     * @param array|null          $extra_args
+     * @return EE_Billing_Info_Form|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function generate_new_billing_form(EE_Transaction $transaction = null)
-    {
+    public function generate_new_billing_form(
+        $transaction = null,
+        $extra_args = []
+    ) {
         return null;
     }
 
@@ -41,7 +46,10 @@ class EE_PMT_Admin_Only extends EE_PMT_Base
 
     /**
      * Gets the form for all the settings related to this payment method type
+     *
      * @return EE_Payment_Method_Form
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_new_settings_form()
     {

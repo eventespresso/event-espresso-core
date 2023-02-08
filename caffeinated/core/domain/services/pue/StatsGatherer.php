@@ -15,41 +15,41 @@ use Exception;
 
 class StatsGatherer
 {
-    public const COUNT_ALL_EVENTS                 = 'event';
+    const COUNT_ALL_EVENTS                 = 'event';
 
-    public const COUNT_ACTIVE_EVENTS              = 'active_event';
+    const COUNT_ACTIVE_EVENTS              = 'active_event';
 
-    public const COUNT_DATETIMES                  = 'datetime';
+    const COUNT_DATETIMES                  = 'datetime';
 
-    public const COUNT_TICKETS                    = 'ticket';
+    const COUNT_TICKETS                    = 'ticket';
 
-    public const COUNT_DATETIMES_SOLD             = 'datetime_sold';
+    const COUNT_DATETIMES_SOLD             = 'datetime_sold';
 
-    public const COUNT_TICKETS_FREE               = 'free_ticket';
+    const COUNT_TICKETS_FREE               = 'free_ticket';
 
-    public const COUNT_TICKETS_PAID               = 'paid_ticket';
+    const COUNT_TICKETS_PAID               = 'paid_ticket';
 
-    public const COUNT_TICKETS_SOLD               = 'ticket_sold';
+    const COUNT_TICKETS_SOLD               = 'ticket_sold';
 
-    public const COUNT_REGISTRATIONS_APPROVED     = 'registrations_approved';
+    const COUNT_REGISTRATIONS_APPROVED     = 'registrations_approved';
 
-    public const COUNT_REGISTRATIONS_NOT_APPROVED = 'registrations_not_approved';
+    const COUNT_REGISTRATIONS_NOT_APPROVED = 'registrations_not_approved';
 
-    public const COUNT_REGISTRATIONS_PENDING      = 'registrations_pending';
+    const COUNT_REGISTRATIONS_PENDING      = 'registrations_pending';
 
-    public const COUNT_REGISTRATIONS_INCOMPLETE   = 'registrations_incomplete';
+    const COUNT_REGISTRATIONS_INCOMPLETE   = 'registrations_incomplete';
 
-    public const COUNT_REGISTRATIONS_ALL          = 'registrations_all';
+    const COUNT_REGISTRATIONS_ALL          = 'registrations_all';
 
-    public const COUNT_REGISTRATIONS_CANCELLED    = 'registrations_cancelled';
+    const COUNT_REGISTRATIONS_CANCELLED    = 'registrations_cancelled';
 
-    public const COUNT_REGISTRATIONS_DECLINED     = 'registrations_declined';
+    const COUNT_REGISTRATIONS_DECLINED     = 'registrations_declined';
 
-    public const SUM_TRANSACTIONS_COMPLETE_TOTAL  = 'transactions_complete_total_sum';
+    const SUM_TRANSACTIONS_COMPLETE_TOTAL  = 'transactions_complete_total_sum';
 
-    public const SUM_TRANSACTIONS_ALL_PAID        = 'transactions_all_paid';
+    const SUM_TRANSACTIONS_ALL_PAID        = 'transactions_all_paid';
 
-    public const INFO_SITE_CURRENCY               = 'site_currency';
+    const INFO_SITE_CURRENCY               = 'site_currency';
 
 
     /**
@@ -128,7 +128,7 @@ class StatsGatherer
      *
      * @return array
      */
-    public function stats(): array
+    public function stats()
     {
         global $wp_version;
         $stats = $this->paymentMethodStats();
@@ -177,8 +177,9 @@ class StatsGatherer
      * @param string $which enum (@see constants prefixed with COUNT)
      * @return int|null
      */
-    private function getCountFor(string $which): ?int
+    private function getCountFor($which)
     {
+        $which = (string) $which;
         try {
             switch ($which) {
                 case self::COUNT_ALL_EVENTS:
@@ -263,7 +264,7 @@ class StatsGatherer
     /**
      * @return array
      */
-    private function paymentMethodStats(): array
+    private function paymentMethodStats()
     {
         $payment_method_stats = [];
         try {
@@ -288,7 +289,7 @@ class StatsGatherer
      *
      * @return string
      */
-    private function getActiveAddons(): string
+    private function getActiveAddons()
     {
         $activeAddons = [];
         $addOns       = EE_Registry::instance()->addons;

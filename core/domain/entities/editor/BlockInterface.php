@@ -86,5 +86,5 @@ interface BlockInterface
      * @param array $attributes
      * @return string
      */
-    public function renderBlock(array $attributes = array());
+    public function renderBlock($attributes = array());
 }

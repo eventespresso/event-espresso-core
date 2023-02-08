@@ -25,7 +25,7 @@ abstract class EE_Middleware implements EEI_Request_Decorator
      * @param    EE_Response $response
      * @return    EE_Response
      */
-    protected function process_request_stack(EE_Request $request, EE_Response $response)
+    protected function process_request_stack($request, $response)
     {
         EE_Error::doing_it_wrong(
             __METHOD__,

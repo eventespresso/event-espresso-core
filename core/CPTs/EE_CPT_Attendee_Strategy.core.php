@@ -38,7 +38,7 @@ class EE_CPT_Attendee_Strategy
      *
      * @access    public
      * @param    array $arguments
-     * @return \EE_CPT_Attendee_Strategy
+     * @return EE_CPT_Attendee_Strategy
      */
     public function __construct($arguments = array())
     {
@@ -55,7 +55,7 @@ class EE_CPT_Attendee_Strategy
      * @param WP_Query $wp_query
      * @return    void
      */
-    public function the_posts($posts, WP_Query $wp_query)
+    public function the_posts($posts, $wp_query)
     {
         return $posts;
     }

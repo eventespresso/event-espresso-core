@@ -55,13 +55,14 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
         }
     }
 
+
     /**
      * For outputting this field's value. If you want to output it into an input or something,
      * use $schema=='input', as it will replace EE_INF with ''. If you want a readable version, use $schema=='text'
      * as it will replace EE_INF with i18n Infinite
      *
-     * @param type   $value_on_field_to_be_outputted
-     * @param string $schema input, symbol, text; or any string you want to show if the value equals EE_INF
+     * @param mixed       $value_on_field_to_be_outputted
+     * @param string|null $schema input, symbol, text; or any string you want to show if the value equals EE_INF
      * @return string
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)

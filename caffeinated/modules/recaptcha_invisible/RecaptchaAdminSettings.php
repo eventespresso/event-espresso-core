@@ -326,7 +326,7 @@ class RecaptchaAdminSettings
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function updateAdminSettings(EE_Registration_Config $EE_Registration_Config)
+    public function updateAdminSettings($EE_Registration_Config)
     {
         try {
             $recaptcha_settings_form = $this->settingsForm();

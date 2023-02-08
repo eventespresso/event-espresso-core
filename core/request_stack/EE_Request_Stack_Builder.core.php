@@ -50,8 +50,9 @@ class EE_Request_Stack_Builder
 
     /**
      * @deprecated  4.9.53
+     * @param EEI_Request_Decorator $application
      */
-    public function resolve(EEI_Request_Decorator $application)
+    public function resolve($application)
     {
     }
 }

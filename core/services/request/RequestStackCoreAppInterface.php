@@ -17,5 +17,5 @@ interface RequestStackCoreAppInterface
      * @param RequestInterface $request
      * @param ResponseInterface      $response
      */
-    public function handleResponse(RequestInterface $request, ResponseInterface $response);
+    public function handleResponse($request, $response);
 }

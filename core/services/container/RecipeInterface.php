@@ -65,7 +65,7 @@ interface RecipeInterface
      *                              example:
      *                              array( 'ClassInterface' => 'Fully\Qualified\ClassName' )
      */
-    public function setIngredients(array $ingredients);
+    public function setIngredients($ingredients);
 
     /**
      * @param string $type one of the class constants returned from CoffeeMaker::getTypes()
@@ -77,7 +77,7 @@ interface RecipeInterface
      *                          example:
      *                          array( 'ClassInterface' => 'Fully\Qualified\ClassName' )
      */
-    public function setFilters(array $filters);
+    public function setFilters($filters);
 
     /**
      * Ensures incoming paths is a valid filepath, or array of valid filepaths,

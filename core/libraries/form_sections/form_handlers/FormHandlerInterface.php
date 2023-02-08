@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
+use EE_Submit_Input;
 use EE_Form_Section_Proper;
 
 /**
@@ -31,7 +32,7 @@ interface FormHandlerInterface
     /**
      * @param \EE_Form_Section_Proper $form
      */
-    public function setForm(\EE_Form_Section_Proper $form);
+    public function setForm($form);
 
 
 
@@ -190,7 +191,7 @@ interface FormHandlerInterface
      * creates and returns an EE_Submit_Input labeled "Submit"
      *
      * @param string $text
-     * @return \EE_Submit_Input
+     * @return EE_Submit_Input
      */
     public function generateSubmitButton($text = '');
 
@@ -209,7 +210,7 @@ interface FormHandlerInterface
      * creates and returns an EE_Submit_Input labeled "Cancel"
      *
      * @param string $text
-     * @return \EE_Submit_Input
+     * @return EE_Submit_Input
      */
     public function generateCancelButton($text = '');
 

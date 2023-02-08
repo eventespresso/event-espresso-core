@@ -91,7 +91,7 @@ class RegisterCustomPostTypes
         $plural_name,
         $singular_slug = '',
         $plural_slug = '',
-        array $override_arguments = array()
+        $override_arguments = array()
     ) {
         $wp_post_type = register_post_type(
             $post_type,
@@ -127,7 +127,7 @@ class RegisterCustomPostTypes
         $plural_name,
         $singular_slug,
         $plural_slug,
-        array $override_arguments = array()
+        $override_arguments = array()
     ) {
         // verify plural slug and singular slug, if they aren't we'll use $singular_name and $plural_name
         $singular_slug = ! empty($singular_slug) ? $singular_slug : $singular_name;
@@ -168,7 +168,7 @@ class RegisterCustomPostTypes
             'plural_slug'              => $plural_slug,
             'add_new'                  => sprintf(
                 /* Translators: Post Type Label */
-                esc_html_x('Add %s', 'Add Event', 'event_espresso'),
+                esc_html_x('Add New %s', 'Add New Event', 'event_espresso'),
                 $singular_name
             ),
             'add_new_item'             => sprintf(

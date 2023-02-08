@@ -30,6 +30,7 @@ class FilePath
      */
     public function __construct($file_path)
     {
+        $file_path = (string) $file_path;
         if (! is_string($file_path)) {
             throw new InvalidDataTypeException(
                 '$file_path',

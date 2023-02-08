@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
+
 /**
  * Registration_Form_Admin_Page
  * This contains the logic for setting up the Custom Forms related pages.  Any methods without phpdoc
@@ -81,6 +83,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             'buttons' => [
                 'edit_question' => esc_html__('Edit Question', 'event_espresso'),
             ],
+            'publishbox' => [
+                'edit_question' => esc_html__('Edit Question', 'event_espresso'),
+            ],
         ];
     }
 
@@ -128,7 +133,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         $this->_page_config = [
             'default' => [
                 'nav'           => [
-                    'label' => esc_html__('Questions', 'event_espresso'),
+                    'label' =>  esc_html__('Questions', 'event_espresso'),
+                    'icon' => 'dashicons-editor-help',
                     'order' => 10,
                 ],
                 'list_table'    => 'Registration_Form_Questions_Admin_List_Table',
@@ -148,14 +154,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     ],
                 ],
                 'require_nonce' => false,
-                'qtips'         => [
-                    'EE_Registration_Form_Tips',
-                ]/**/
             ],
 
             'question_groups' => [
                 'nav'           => [
-                    'label' => esc_html__('Question Groups', 'event_espresso'),
+                    'label' =>  esc_html__('Question Groups', 'event_espresso'),
+                    'icon' => 'dashicons-forms',
                     'order' => 20,
                 ],
                 'metaboxes'     => $this->_default_espresso_metaboxes,
@@ -171,6 +175,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             'edit_question' => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Question', 'event_espresso'),
+                    'icon' => 'dashicons-edit-large',
                     'order'      => 15,
                     'persistent' => false,
                     'url'        => isset($this->_req_data['question_id'])
@@ -228,7 +233,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         wp_register_style(
             'espresso_registration',
             REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.css',
-            [],
+            [EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN],
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_style('espresso_registration');
@@ -373,9 +378,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      * @return array where each key is the name of a model's field/db column, and each value is its value.
      * @throws EE_Error
      */
-    protected function _set_column_values_for(EEM_Base $model)
+    protected function _set_column_values_for($model)
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+        $question_model = EEM_Question::instance();
         $set_column_values = [];
 
         // some initial checks for proper values.
@@ -391,7 +396,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             )
             || ! in_array(
                 $this->_req_data['QST_type'],
-                EEM_Question::instance()->questionTypesWithMaxLength(),
+                $question_model->questionTypesWithMaxLength(),
                 true
             )
         ) {
@@ -404,37 +409,28 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                 $fieldName === 'QSG_identifier'
                 && (isset($this->_req_data['QSG_identifier']) && empty($this->_req_data['QSG_identifier']))
             ) {
-                $QSG_name = isset($this->_req_data['QSG_name'])
-                    ? $this->_req_data['QSG_name']
-                    : '';
+                $QSG_name = isset($this->_req_data['QSG_name']) ? $this->_req_data['QSG_name'] : '';
                 $set_column_values[ $fieldName ] = sanitize_title($QSG_name) . '-' . uniqid('', true);
             } elseif (
                 $fieldName === 'QST_admin_label'
                 && (isset($this->_req_data['QST_admin_label']) && empty($this->_req_data['QST_admin_label']))
             ) {
                 // the admin label is blank, use a slug version of the question text
-                $QST_text                        =
-                    isset($this->_req_data['QST_display_text'])
-                        ? $this->_req_data['QST_display_text']
-                        : '';
+                $QST_text = isset($this->_req_data['QST_display_text']) ? $this->_req_data['QST_display_text'] : '';
                 $set_column_values[ $fieldName ] = sanitize_title(wp_trim_words($QST_text, 10));
             } elseif ($fieldName === 'QST_admin_only' && (! isset($this->_req_data['QST_admin_only']))) {
                 $set_column_values[ $fieldName ] = 0;
             } elseif ($fieldName === 'QST_max') {
-                $qst_system = EEM_Question::instance()->get_var(
+                $qst_system = $question_model->get_var(
                     [
                         [
-                            'QST_ID' => isset($this->_req_data['QST_ID'])
-                                ? $this->_req_data['QST_ID']
-                                : 0,
+                            'QST_ID' => isset($this->_req_data['QST_ID']) ? $this->_req_data['QST_ID'] : 0,
                         ],
                     ],
                     'QST_system'
                 );
-                $max_max    = EEM_Question::instance()->absolute_max_for_system_question($qst_system);
-                if (
-                    empty($this->_req_data['QST_max']) || $this->_req_data['QST_max'] > $max_max
-                ) {
+                $max_max    = $question_model->absolute_max_for_system_question((string) $qst_system);
+                if (empty($this->_req_data['QST_max']) || $this->_req_data['QST_max'] > $max_max) {
                     $set_column_values[ $fieldName ] = $max_max;
                 }
             }
@@ -447,7 +443,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                 $set_column_values[ $fieldName ] = $this->_req_data[ $fieldName ];
             }
         }
-        return $set_column_values;// validation fo this data to be performed by the model before insertion.
+        // validation fo this data to be performed by the model before insertion.
+        return $set_column_values;
     }
 
 
@@ -523,7 +520,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                 $question->system_ID()
             );
         $this->_template_args['question_type_descriptions'] = $this->_get_question_type_descriptions();
-        $this->_set_publish_post_box_vars('id', $ID);
+        $this->_set_publish_post_box_vars('id', $ID, '', '', true);
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php',
             $this->_template_args,

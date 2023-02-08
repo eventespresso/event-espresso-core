@@ -2,6 +2,13 @@
 
 namespace EventEspressoBatchRequest\JobHandlers;
 
+use EE_Capabilities;
+use EEH_Export;
+use EEH_File;
+use EEM_Attendee;
+use EEM_Base;
+use EEM_State;
+use EEM_Country;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
@@ -19,9 +26,13 @@ use EventEspressoBatchRequest\Helpers\JobStepResponse;
 class AttendeesReport extends JobHandlerFile
 {
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function create_job(JobParameters $job_parameters)
+    /**
+     * @param JobParameters $job_parameters
+     * @return JobStepResponse
+     */
+    public function create_job($job_parameters)
     {
-        if (! \EE_Capabilities::instance()->current_user_can('ee_read_contacts', 'generating_report')) {
+        if (! EE_Capabilities::instance()->current_user_can('ee_read_contacts', 'generating_report')) {
             throw new BatchRequestException(
                 esc_html__('You do not have permission to view contacts', 'event_espresso')
             );
@@ -34,7 +45,7 @@ class AttendeesReport extends JobHandlerFile
         $job_parameters->set_job_size($this->count_units_to_process());
         // we should also set the header columns
         $csv_data_for_row = $this->get_csv_data(0, 1);
-        \EEH_Export::write_data_array_to_csv($filepath, $csv_data_for_row, true);
+        EEH_Export::write_data_array_to_csv($filepath, $csv_data_for_row, true);
         // if we actually processed a row there, record it
         if ($job_parameters->job_size()) {
             $job_parameters->mark_processed(1);
@@ -46,10 +57,15 @@ class AttendeesReport extends JobHandlerFile
     }
 
 
-    public function continue_job(JobParameters $job_parameters, $batch_size = 50)
+    /**
+     * @param JobParameters $job_parameters
+     * @param int $batch_size
+     * @return JobStepResponse
+     */
+    public function continue_job($job_parameters, $batch_size = 50)
     {
         $csv_data = $this->get_csv_data($job_parameters->units_processed(), $batch_size);
-        \EEH_Export::write_data_array_to_csv(
+        EEH_Export::write_data_array_to_csv(
             $job_parameters->extra_datum('filepath'),
             $csv_data,
             false
@@ -74,10 +90,14 @@ class AttendeesReport extends JobHandlerFile
     }
 
 
-    public function cleanup_job(JobParameters $job_parameters)
+    /**
+     * @param JobParameters $job_parameters
+     * @return JobStepResponse
+     */
+    public function cleanup_job($job_parameters)
     {
         $this->_file_helper->delete(
-            \EEH_File::remove_filename_from_filepath($job_parameters->extra_datum('filepath')),
+            EEH_File::remove_filename_from_filepath($job_parameters->extra_datum('filepath')),
             true,
             'd'
         );
@@ -86,27 +106,27 @@ class AttendeesReport extends JobHandlerFile
 
     public function count_units_to_process()
     {
-        return \EEM_Attendee::instance()->count(array('caps' => \EEM_Base::caps_read_admin));
+        return EEM_Attendee::instance()->count(array('caps' => EEM_Base::caps_read_admin));
     }
 
     public function get_csv_data($offset, $limit)
     {
-        $attendee_rows = \EEM_Attendee::instance()->get_all_wpdb_results(
+        $attendee_rows = EEM_Attendee::instance()->get_all_wpdb_results(
             array(
                 'limit'      => array($offset, $limit),
                 'force_join' => array('State', 'Country'),
-                'caps'       => \EEM_Base::caps_read_admin,
+                'caps'       => EEM_Base::caps_read_admin,
             )
         );
         $csv_data = array();
         foreach ($attendee_rows as $attendee_row) {
             $csv_row = array();
-            foreach (\EEM_Attendee::instance()->field_settings() as $field_name => $field_obj) {
+            foreach (EEM_Attendee::instance()->field_settings() as $field_name => $field_obj) {
                 if ($field_name == 'STA_ID') {
-                    $state_name_field = \EEM_State::instance()->field_settings_for('STA_name');
+                    $state_name_field = EEM_State::instance()->field_settings_for('STA_name');
                     $csv_row[ esc_html__('State', 'event_espresso') ] = $attendee_row[ $state_name_field->get_qualified_column() ];
                 } elseif ($field_name == 'CNT_ISO') {
-                    $country_name_field = \EEM_Country::instance()->field_settings_for('CNT_name');
+                    $country_name_field = EEM_Country::instance()->field_settings_for('CNT_name');
                     $csv_row[ esc_html__('Country', 'event_espresso') ] = $attendee_row[ $country_name_field->get_qualified_column() ];
                 } else {
                     $csv_row[ wp_specialchars_decode($field_obj->get_nicename(), ENT_QUOTES) ] = $attendee_row[ $field_obj->get_qualified_column() ];

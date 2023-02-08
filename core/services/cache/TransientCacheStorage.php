@@ -236,7 +236,7 @@ class TransientCacheStorage implements CacheStorageInterface
      * @param bool  $force_delete   [optional] if true, then will not check incoming keys against those being tracked
      *                              and proceed directly to deleting those entries from the cache storage
      */
-    public function deleteMany(array $transient_keys, $force_delete = false)
+    public function deleteMany($transient_keys, $force_delete = false)
     {
         $full_transient_keys = $force_delete ? $transient_keys : array();
         if (empty($full_transient_keys)) {

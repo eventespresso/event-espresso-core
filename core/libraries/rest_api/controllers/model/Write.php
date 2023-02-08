@@ -52,7 +52,7 @@ class Write extends Base
      * @param string          $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handleRequestInsert(WP_REST_Request $request, $version, $model_name)
+    public static function handleRequestInsert($request, $version, $model_name)
     {
         $controller = new Write();
         try {
@@ -77,7 +77,7 @@ class Write extends Base
      * @param string          $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handleRequestUpdate(WP_REST_Request $request, $version, $model_name)
+    public static function handleRequestUpdate($request, $version, $model_name)
     {
         $controller = new Write();
         try {
@@ -102,7 +102,7 @@ class Write extends Base
      * @param string          $model_name
      * @return WP_REST_Response|\WP_Error
      */
-    public static function handleRequestDelete(WP_REST_Request $request, $version, $model_name)
+    public static function handleRequestDelete($request, $version, $model_name)
     {
         $controller = new Write();
         try {
@@ -128,7 +128,7 @@ class Write extends Base
      * @throws EE_Error
      * @throws RestException
      */
-    public function insert(EEM_Base $model, WP_REST_Request $request)
+    public function insert($model, $request)
     {
         Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_edit, 'create');
         $default_cap_to_check_for = EE_Restriction_Generator_Base::get_default_restrictions_cap();
@@ -180,7 +180,7 @@ class Write extends Base
      * @return array
      * @throws EE_Error
      */
-    public function update(EEM_Base $model, WP_REST_Request $request)
+    public function update($model, $request)
     {
         Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_edit, 'edit');
         $default_cap_to_check_for = EE_Restriction_Generator_Base::get_default_restrictions_cap();
@@ -234,7 +234,7 @@ class Write extends Base
      * @return array of either the soft-deleted item, or
      * @throws EE_Error
      */
-    public function delete(EEM_Base $model, WP_REST_Request $request)
+    public function delete($model, $request)
     {
         Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_delete, 'delete');
         $default_cap_to_check_for = EE_Restriction_Generator_Base::get_default_restrictions_cap();
@@ -298,7 +298,7 @@ class Write extends Base
      * @param WP_REST_Request $request
      * @return array ready for a response
      */
-    protected function returnModelObjAsJsonResponse(EE_Base_Class $model_obj, WP_REST_Request $request)
+    protected function returnModelObjAsJsonResponse($model_obj, $request)
     {
         $model = $model_obj->get_model();
         // create an array exactly like the wpdb results row,
@@ -349,7 +349,7 @@ class Write extends Base
      * @param  int|string     $obj_id
      * @return \WP_Error|array
      */
-    protected function getOneBasedOnRequest(EEM_Base $model, WP_REST_Request $request, $obj_id)
+    protected function getOneBasedOnRequest($model, $request, $obj_id)
     {
         $requested_version = $this->getRequestedVersion($request->get_route());
         $get_request = new WP_REST_Request(
@@ -378,7 +378,7 @@ class Write extends Base
      * @param WP_REST_Request $request
      * @return WP_REST_Response
      */
-    public static function handleRequestAddRelation(WP_REST_Request $request, $version, $model_name, $related_model_name)
+    public static function handleRequestAddRelation($request, $version, $model_name, $related_model_name)
     {
         $controller = new Write();
         try {
@@ -411,7 +411,7 @@ class Write extends Base
      * @throws RestException
      * @throws DomainException
      */
-    public function addRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
+    public function addRelation($model, $relation, $request)
     {
         list($model_obj, $other_obj) = $this->getBothModelObjects($model, $relation, $request);
         $extra_params = array();
@@ -457,7 +457,7 @@ class Write extends Base
      * @param WP_REST_Request $request
      * @return WP_REST_Response
      */
-    public static function handleRequestRemoveRelation(WP_REST_Request $request, $version, $model_name, $related_model_name)
+    public static function handleRequestRemoveRelation($request, $version, $model_name, $related_model_name)
     {
         $controller = new Write();
         try {
@@ -489,7 +489,7 @@ class Write extends Base
      * @throws InvalidInterfaceException
      * @throws RestException
      */
-    public function removeRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
+    public function removeRelation($model, $relation, $request)
     {
         // This endpoint doesn't accept body parameters (it's understandable to think it might, so let developers know
         // up-front that it doesn't.)
@@ -557,7 +557,7 @@ class Write extends Base
      * }
      * @throws RestException
      */
-    protected function getBothModelObjects(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
+    protected function getBothModelObjects($model, $relation, $request)
     {
         // Check generic caps. For now, we're only allowing access to this endpoint to full admins.
         Capabilities::verifyAtLeastPartialAccessTo($model, EEM_Base::caps_edit, 'edit');
@@ -592,7 +592,7 @@ class Write extends Base
      * @return EE_Base_Class
      * @throws RestException
      */
-    protected function getOneOrThrowException(EEM_Base $model, $id)
+    protected function getOneOrThrowException($model, $id)
     {
         $model_obj = $model->get_one_by_ID($id);
         // @todo: check they can permission for it. For now unnecessary because only full admins can use this endpoint.

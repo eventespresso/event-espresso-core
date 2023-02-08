@@ -18,7 +18,7 @@ class EE_Alpha_Banner_Warning extends EE_Middleware
      * @param    EE_Response $response
      * @return    EE_Response
      */
-    public function handle_request(EE_Request $request, EE_Response $response)
+    public function handle_request($request, $response)
     {
         $this->_request = $request;
         $this->_response = $response;

@@ -41,7 +41,7 @@ class UpdateRegistrationAndTransactionAfterChangeCommandHandler extends CommandH
      * @return boolean
      * @throws InvalidEntityException
      */
-    public function handle(CommandInterface $command)
+    public function handle($command)
     {
         /** @var UpdateRegistrationAndTransactionAfterChangeCommand $command */
         if (! $command instanceof UpdateRegistrationAndTransactionAfterChangeCommand) {

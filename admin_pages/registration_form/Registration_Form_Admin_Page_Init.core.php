@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+
 /**
  * Registration_Form_Admin_Page_Init
  *
@@ -12,26 +14,27 @@
  * @package         Registration_Form_Admin_Page_Init
  * @subpackage      includes/core/admin/Registration_Form_Admin_Page_Init.core.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init
 {
     public function __construct()
     {
         // define some constants
-        define('REGISTRATION_FORM_PG_SLUG', 'espresso_registration_form');
-        define('REGISTRATION_FORM_LABEL', esc_html__('Registration Form', 'event_espresso'));
-        define('REGISTRATION_FORM_PG_NAME', REGISTRATION_FORM_LABEL);
-        define('REGISTRATION_FORM_ADMIN', EE_ADMIN_PAGES . 'registration_form/');
-        define('REGISTRATION_FORM_ADMIN_URL', admin_url('admin.php?page=' . REGISTRATION_FORM_PG_SLUG));
-        define('EE_FORMS_ADMIN_URL', admin_url('admin.php?page=' . REGISTRATION_FORM_PG_SLUG));
-        define('REGISTRATION_FORM_ASSETS_PATH', REGISTRATION_FORM_ADMIN . 'assets/');
-        define('REGISTRATION_FORM_ASSETS_URL', EE_ADMIN_PAGES_URL . 'registration_form/assets/');
-        define('REGISTRATION_FORM_TEMPLATE_PATH', REGISTRATION_FORM_ADMIN . 'templates/');
-        define('REGISTRATION_FORM_TEMPLATE_URL', EE_ADMIN_PAGES_URL . 'registration_form/templates/');
+        if (! defined('REGISTRATION_FORM_PG_SLUG')) {
+            define('REGISTRATION_FORM_PG_SLUG', 'espresso_registration_form');
+            define('REGISTRATION_FORM_LABEL', esc_html__('Registration Form', 'event_espresso'));
+            define('REGISTRATION_FORM_PG_NAME', REGISTRATION_FORM_LABEL);
+            define('REGISTRATION_FORM_ADMIN', EE_ADMIN_PAGES . 'registration_form/');
+            define('REGISTRATION_FORM_ADMIN_URL', admin_url('admin.php?page=' . REGISTRATION_FORM_PG_SLUG));
+            define('EE_FORMS_ADMIN_URL', admin_url('admin.php?page=' . REGISTRATION_FORM_PG_SLUG));
+            define('REGISTRATION_FORM_ASSETS_PATH', REGISTRATION_FORM_ADMIN . 'assets/');
+            define('REGISTRATION_FORM_ASSETS_URL', EE_ADMIN_PAGES_URL . 'registration_form/assets/');
+            define('REGISTRATION_FORM_TEMPLATE_PATH', REGISTRATION_FORM_ADMIN . 'templates/');
+            define('REGISTRATION_FORM_TEMPLATE_URL', EE_ADMIN_PAGES_URL . 'registration_form/templates/');
+        }
         parent::__construct();
     }
+
 
     protected function _set_init_properties()
     {
@@ -39,19 +42,20 @@ class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init
     }
 
 
-    protected function _set_menu_map()
+    /**
+     * @return mixed[]
+     */
+    public function getMenuProperties()
     {
-        $this->_menu_map = new EE_Admin_Page_Sub_Menu(
-            array(
-                'menu_group'      => 'management',
-                'menu_order'      => 30,
-                'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
-                'parent_slug'     => 'espresso_events',
-                'menu_slug'       => REGISTRATION_FORM_PG_SLUG,
-                'menu_label'      => esc_html__('Registration Form', 'event_espresso'),
-                'capability'      => 'ee_read_questions',
-                'admin_init_page' => $this,
-            )
-        );
+        return [
+            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'      => 'management',
+            'menu_order'      => 30,
+            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'     => 'espresso_events',
+            'menu_slug'       => REGISTRATION_FORM_PG_SLUG,
+            'menu_label'      => esc_html__('Registration Form', 'event_espresso'),
+            'capability'      => 'ee_read_questions',
+        ];
     }
 }

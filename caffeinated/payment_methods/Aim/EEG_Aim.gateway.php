@@ -153,15 +153,11 @@ class EEG_Aim extends EE_Onsite_Gateway
      * whereas offsite gateways will usually just update the payment with the URL and query parameters to use
      * for sending the request via http_remote_request()
      *
-     * @param EEI_Payment $payment
-     * @param array $billing_info {
-     *  @type $credit_card string
-     *  @type $cvv string
-     *  @type $exp_month string
-     *  @type $exp_year string
-     *  @see parent::do_direct_payment
-     * }
-     * @return EEI_Payment updated
+     * @param EE_Payment|null $payment
+     * @param array|null $billing_info
+     * @return EE_Payment
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function do_direct_payment($payment, $billing_info = null)
     {
@@ -337,7 +333,7 @@ class EEG_Aim extends EE_Onsite_Gateway
      * Posts the request to AuthorizeNet & returns response.
      *
      * @param $payment
-     * @return \EE_AuthorizeNetAIM_Response
+     * @return EE_AuthorizeNetAIM_Response
      */
     private function _sendRequest($payment)
     {
@@ -383,7 +379,7 @@ class EEG_Aim extends EE_Onsite_Gateway
      * Logs the clean data only
      *
      * @param array $request_array
-     * @param EEI_Payment $payment
+     * @param EE_Payment $payment
      */
     protected function _log_clean_request($request_array, $payment)
     {
@@ -413,7 +409,7 @@ class EEG_Aim extends EE_Onsite_Gateway
      *
      * @param EE_AuthorizeNetAIM_Response $response_obj
      * @param EE_Payment                  $payment
-     * @return \EE_AuthorizeNetAIM_Response
+     * @return EE_AuthorizeNetAIM_Response
      */
     private function _log_and_clean_response($response_obj, $payment)
     {

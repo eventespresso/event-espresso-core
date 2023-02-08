@@ -47,7 +47,7 @@ $spaces_left_label = apply_filters(
 
 ?>
 <?php if ($show_ticket_details) : ?>
-    <tr class="tckt-slctr-tkt-details-tr <?php echo esc_attr($ticket_details_row_class); ?>">
+    <tr class="tckt-slctr-tkt-details-tr ee-hidden-ticket-tr <?php echo esc_attr($ticket_details_row_class); ?>">
         <td class="tckt-slctr-tkt-details-td" colspan="<?php echo esc_attr($cols); ?>">
             <div id="<?php echo esc_attr($ticket_details_css_id); ?>-dv" class="tckt-slctr-tkt-details-dv" style="display: none;">
 
@@ -160,7 +160,7 @@ $spaces_left_label = apply_filters(
                             <br />
                         </section>
                         <br />
-                    <?php } ?>
+<?php } ?>
 
                     <?php if ((! defined('EE_DECAF') || EE_DECAF !== true) && $ticket->uses() !== EE_INF) { ?>
                         <section class="tckt-slctr-tkt-uses-sctn">
@@ -328,14 +328,14 @@ $spaces_left_label = apply_filters(
                                         </td>
                                         <?php endif; // end $show_ticket_sale_columns conditional ?>
                                     </tr>
-                                    <?php } ?>
+<?php } ?>
                                 <?php } ?>
                                 </tbody>
                             </table>
                         </div>
                     </section>
                     <br />
-                    <?php } ?>
+<?php } ?>
 
                 </section>
 

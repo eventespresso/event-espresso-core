@@ -445,7 +445,7 @@ class EE_Messages_Generator
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _queue_shares_same_message_template_group_for_events(array $event_ids)
+    protected function _queue_shares_same_message_template_group_for_events($event_ids)
     {
         foreach ($this->_current_data_handler->events as $event) {
             $event_ids[ $event['ID'] ] = $event['ID'];
@@ -476,7 +476,7 @@ class EE_Messages_Generator
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _get_shared_message_template_for_events(array $event_ids)
+    protected function _get_shared_message_template_for_events($event_ids)
     {
         $message_template_group = null;
         if ($this->_queue_shares_same_message_template_group_for_events($event_ids)) {
@@ -579,7 +579,7 @@ class EE_Messages_Generator
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _get_templates(EE_Message_Template_Group $message_template_group)
+    protected function _get_templates($message_template_group)
     {
         $templates         = [];
         $context_templates = $message_template_group->context_templates();
@@ -615,7 +615,7 @@ class EE_Messages_Generator
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _assemble_messages($addressees, $templates, EE_Message_Template_Group $message_template_group)
+    protected function _assemble_messages($addressees, $templates, $message_template_group)
     {
 
         // if templates are empty then get out because we can't generate anything.
@@ -671,9 +671,9 @@ class EE_Messages_Generator
      */
     protected function _setup_message_object(
         $context,
-        EE_Messages_Addressee $recipient,
+        $recipient,
         $templates,
-        EE_Message_Template_Group $message_template_group
+        $message_template_group
     ) {
         // stuff we already know
         $transaction_id = $recipient->txn instanceof EE_Transaction ? $recipient->txn->ID() : 0;
@@ -948,7 +948,7 @@ class EE_Messages_Generator
      * @param bool                   $preview Indicate whether this is being used for a preview or not.
      * @return mixed Prepped data for persisting to the queue.  false is returned if unable to prep data.
      */
-    protected function _prepare_data_for_queue(EE_Message_To_Generate $message_to_generate, $preview)
+    protected function _prepare_data_for_queue($message_to_generate, $preview)
     {
         if (! $message_to_generate->valid()) {
             return false; // unable to get the data because the info in the EE_Message_To_Generate class is invalid.
@@ -969,7 +969,7 @@ class EE_Messages_Generator
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function create_and_add_message_to_queue(EE_Message_To_Generate $message_to_generate, $test_send = false)
+    public function create_and_add_message_to_queue($message_to_generate, $test_send = false)
     {
         // prep data
         $data    = $this->_prepare_data_for_queue($message_to_generate, $message_to_generate->preview());

@@ -42,7 +42,7 @@ class CreateTransactionCommandHandler extends CommandHandler
      * @throws ReflectionException
      * @throws RuntimeException
      */
-    public function handle(CommandInterface $command)
+    public function handle($command)
     {
         $transaction_details = $command->transactionDetails();
         $cart_total          = null;

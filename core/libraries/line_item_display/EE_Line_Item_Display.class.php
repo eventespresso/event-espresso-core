@@ -39,7 +39,7 @@ class EE_Line_Item_Display
                     ! empty($other_line_item_display_strategy) &&
                     class_exists($other_line_item_display_strategy)
                 ) {
-                    $this->strategy = new  $other_line_item_display_strategy();
+                    $this->strategy = new $other_line_item_display_strategy();
                 } else {
                     $this->strategy = new EE_Default_Line_Item_Display_Strategy();
                 }
@@ -51,7 +51,7 @@ class EE_Line_Item_Display
      * @param array        $options
      * @return mixed
      */
-    public function display_line_item(EE_Line_Item $line_item, $options = array())
+    public function display_line_item($line_item, $options = array())
     {
         return $this->strategy->display_line_item($line_item, $options);
     }

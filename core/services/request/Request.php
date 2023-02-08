@@ -59,7 +59,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
         array $cookies = [],
         array $files = []
     ) {
-        $this->cookies = ! empty($cookies)
+        $this->cookies        = ! empty($cookies)
             ? $cookies
             : filter_input_array(INPUT_COOKIE, FILTER_UNSAFE_RAW);
         $this->files          = ! empty($files) ? $files : $_FILES;
@@ -71,7 +71,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * @param RequestTypeContextCheckerInterface $type
      */
-    public function setRequestTypeContextChecker(RequestTypeContextCheckerInterface $type)
+    public function setRequestTypeContextChecker($type)
     {
         $this->request_type = $type;
     }
@@ -114,7 +114,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
-     * @param string $key
+     * @param string     $key
      * @param mixed|null $default
      * @return array|int|float|string
      */
@@ -127,11 +127,12 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * @param string                 $key
      * @param array|int|float|string $value
+     * @param bool                   $set_global_too
      * @return void
      */
-    public function setServerParam($key, $value)
+    public function setServerParam($key, $value, $set_global_too = false)
     {
-        $this->server_params->setServerParam($key, $value);
+        $this->server_params->setServerParam($key, $value, $set_global_too);
     }
 
 
@@ -184,7 +185,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @return void
      * @since   4.10.24.p
      */
-    public function mergeRequestParams(array $request_params)
+    public function mergeRequestParams($request_params)
     {
         $this->request_params->mergeRequestParams($request_params);
     }
@@ -267,26 +268,25 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
-     * remove param
-     *
-     * @param      $key
-     * @param bool $unset_from_global_too
-     */
-    public function unSetServerParam($key, $unset_from_global_too = false)
-    {
-        $this->server_params->unSetServerParam($key, $unset_from_global_too);
-    }
-
-
-    /**
      * remove params
      *
      * @param array $keys
      * @param bool  $unset_from_global_too
      */
-    public function unSetRequestParams(array $keys, $unset_from_global_too = false)
+    public function unSetRequestParams($keys, $unset_from_global_too = false)
     {
         $this->request_params->unSetRequestParams($keys, $unset_from_global_too);
+    }
+
+
+    /**
+     * @param string $key
+     * @param bool   $unset_from_global_too
+     * @return void
+     */
+    public function unSetServerParam($key, $unset_from_global_too = false)
+    {
+        $this->server_params->unSetServerParam($key, $unset_from_global_too);
     }
 
 
@@ -302,12 +302,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * Gets the request's literal URI. Related to `requestUriAfterSiteHomeUri`, see its description for a comparison.
      *
-     * @param boolean $relativeToWpRoot If home_url() is "http://mysite.com/wp/", and a request comes to
-     *                                  "http://mysite.com/wp/wp-json", setting $relativeToWpRoot=true will return
-     *                                  "/wp-json", whereas $relativeToWpRoot=false will return "/wp/wp-json/".
+     * @param boolean $relativeToWpRoot    If home_url() is "http://mysite.com/wp/", and a request comes to
+     *                                     "http://mysite.com/wp/wp-json", setting $relativeToWpRoot=true will return
+     *                                     "/wp-json", whereas $relativeToWpRoot=false will return "/wp/wp-json/".
+     * @param boolean $remove_query_params whether or not to return the uri with all query params removed.
      * @return string
      */
-    public function requestUri($relativeToWpRoot = false)
+    public function requestUri($relativeToWpRoot = false, $remove_query_params = false)
     {
         return $this->server_params->requestUri($relativeToWpRoot);
     }
@@ -470,9 +471,27 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * @return bool
      */
+    public function isGQL()
+    {
+        return $this->request_type->isGQL();
+    }
+
+
+    /**
+     * @return bool
+     */
     public function isIframe()
     {
         return $this->request_type->isIframe();
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isUnitTesting()
+    {
+        return $this->request_type->isUnitTesting();
     }
 
 
@@ -509,6 +528,33 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function slug()
     {
         return $this->request_type->slug();
+    }
+
+
+    /**
+     * returns the path portion of the current request URI with both the WP Root (home_url()) and query params removed
+     *
+     * @return string
+     * @since   $VID:$
+     */
+    public function requestPath()
+    {
+        return $this->requestUri(true, true);
+    }
+
+
+    /**
+     * returns true if the last segment of the current request path (without params) matches the provided string
+     *
+     * @param string $uri_segment
+     * @return bool
+     * @since   $VID:$
+     */
+    public function currentPageIs($uri_segment)
+    {
+        $request_path = $this->requestPath();
+        $current_page = explode('/', $request_path);
+        return end($current_page) === $uri_segment;
     }
 
 

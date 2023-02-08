@@ -66,7 +66,7 @@ abstract class EEME_Base
 
 
     /**
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function __construct()
     {

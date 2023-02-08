@@ -43,15 +43,14 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
      * @param array        $options
      * @return mixed
      */
-    protected function _item_row(EE_Line_Item $line_item, $options = array())
+    protected function _item_row($line_item, $options = array())
     {
         $line_item_related_object = $line_item->get_object();
         $parent_line_item_related_object = $line_item->parent() instanceof EE_Line_Item
             ? $line_item->parent()->get_object()
             : null;
         // start of row
-        $row_class = $options['odd'] ? 'item odd' : 'item';
-        $html = EEH_HTML::tr('', '', $row_class);
+        $html = EEH_HTML::tr('', '', 'item');
 
 
         // Name Column
@@ -141,7 +140,7 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
      * @param array        $options
      * @return mixed
      */
-    protected function _tax_row(EE_Line_Item $line_item, $options = array())
+    protected function _tax_row($line_item, $options = array())
     {
         // start of row
         $html = EEH_HTML::tr('', 'admin-primary-mbox-taxes-tr');
@@ -165,7 +164,7 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
      * @param array        $options
      * @return mixed
      */
-    protected function _total_row(EE_Line_Item $line_item, $options = array())
+    protected function _total_row($line_item, $options = array())
     {
 
         $registration = isset($options['EE_Registration']) ? $options['EE_Registration'] : null;

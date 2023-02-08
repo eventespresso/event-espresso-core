@@ -173,7 +173,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
      *
      * @param EE_messenger $messenger
      */
-    public function set_messenger_object(EE_messenger $messenger)
+    public function set_messenger_object($messenger)
     {
         $this->_messenger = $messenger;
     }
@@ -184,7 +184,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
      *
      * @param bool $throw_exceptions
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function valid_messenger($throw_exceptions = false)
     {
@@ -262,7 +262,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
      * @param bool            $set_priority   This indicates whether to set the priority to whatever the priority is on
      *                                        the message type or not.
      */
-    public function set_message_type_object(EE_message_type $message_type, $set_priority = false)
+    public function set_message_type_object($message_type, $set_priority = false)
     {
         $this->_message_type = $message_type;
         if ($set_priority) {
@@ -276,7 +276,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
      *
      * @param bool $throw_exceptions
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function valid_message_type($throw_exceptions = false)
     {
@@ -303,7 +303,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
      *
      * @param bool $throw_exceptions
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function is_valid($throw_exceptions = false)
     {
@@ -604,7 +604,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
 
     /**
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function send_now()
     {

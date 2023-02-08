@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\container;
 
+use ReflectionClass;
 /**
  * Interface InjectorInterface
  * for classes that recursively resolve and inject dependencies
@@ -18,7 +19,7 @@ interface InjectorInterface
      *
      * @access public
      * @param string $class_name
-     * @return \ReflectionClass
+     * @return ReflectionClass
      */
     public function getReflectionClass($class_name);
 
@@ -38,10 +39,10 @@ interface InjectorInterface
      *        and the correct classes can be loaded
      *
      * @access public
-     * @param \EventEspresso\core\services\container\RecipeInterface $recipe
-     * @param \ReflectionClass                                       $reflector
+     * @param RecipeInterface $recipe
+     * @param ReflectionClass $reflector
      * @param array                                                  $arguments
      * @return array
      */
-    public function resolveDependencies(RecipeInterface $recipe, \ReflectionClass $reflector, $arguments = array());
+    public function resolveDependencies($recipe, $reflector, $arguments = array());
 }

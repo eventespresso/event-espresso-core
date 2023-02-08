@@ -13,18 +13,27 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEH_URL
 {
+    const CONTEXT_NONE = 0;
+    const CONTEXT_OUTPUT = 1;
+    const CONTEXT_RAW = 2;
+
+
     /**
      * _add_query_arg
      * adds nonce to array of arguments then calls WP add_query_arg function
      *
-     * @access public
      * @param array  $args
      * @param string $url
      * @param bool   $exclude_nonce If true then the nonce will be excluded from the generated url.
+     * @param int    $context
      * @return string
      */
-    public static function add_query_args_and_nonce($args = [], $url = '', $exclude_nonce = false)
-    {
+    public static function add_query_args_and_nonce(
+        $args = [],
+        $url = '',
+        $exclude_nonce = false,
+        $context = EEH_URL::CONTEXT_NONE
+    ) {
         // check that an action exists and add nonce
         if (! $exclude_nonce) {
             if (isset($args['action']) && ! empty($args['action'])) {
@@ -51,7 +60,14 @@ class EEH_URL
             $args['return'] = $action;
         }
 
-        return add_query_arg($args, $url);
+        $url = add_query_arg($args, $url);
+        if ($context === EEH_URL::CONTEXT_OUTPUT) {
+            return esc_url($url);
+        }
+        if ($context === EEH_URL::CONTEXT_RAW) {
+            return esc_url_raw($url);
+        }
+        return $url;
     }
 
 
@@ -90,8 +106,11 @@ class EEH_URL
      * @param bool   $base_url_only - TRUE will only return the scheme and host with no other parameters
      * @return string
      */
-    public static function refactor_url($url = '', $remove_query = true, $base_url_only = false)
-    {
+    public static function refactor_url(
+        $url = '',
+        $remove_query = true,
+        $base_url_only = false
+    ) {
         // break apart incoming URL
         $url_bits = parse_url($url);
         // HTTP or HTTPS ?
@@ -239,7 +258,7 @@ class EEH_URL
      * @return string
      * @since 4.9.46.rc.029
      */
-    public static function current_url_without_query_paramaters(array $query_parameters)
+    public static function current_url_without_query_paramaters($query_parameters)
     {
         return remove_query_arg($query_parameters, EEH_URL::current_url());
     }

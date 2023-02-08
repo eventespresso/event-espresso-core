@@ -65,7 +65,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      * Adds a relationship to Term_Taxonomy for each CPT_Base
      *
      * @param string $timezone
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function __construct($timezone = null)
     {
@@ -306,7 +306,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      * @return EE_Term_Taxonomy
      */
     public function add_event_category(
-        EE_CPT_Base $cpt_model_object,
+        $cpt_model_object,
         $category_name,
         $category_description = '',
         $parent_term_taxonomy_id = null
@@ -373,7 +373,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      * @param string      $category_name name of the event category (term)
      * @return bool
      */
-    public function remove_event_category(EE_CPT_Base $cpt_model_object_event, $category_name)
+    public function remove_event_category($cpt_model_object_event, $category_name)
     {
         // find the term_taxonomy by that name
         $term_taxonomy = $this->get_first_related(

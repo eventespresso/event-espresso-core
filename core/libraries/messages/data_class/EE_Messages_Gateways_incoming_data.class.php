@@ -107,8 +107,8 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data
 
     /**
      * This sets up an empty EE_Payment object for the purpose of shortcode parsing.  Note that this doesn't actually get saved to the db.
-     * @param \EE_Transaction $txn
-     * @return \EE_Payment
+     * @param EE_Transaction $txn
+     * @return EE_Payment
      */
     private function _get_empty_payment_obj(EE_Transaction $txn)
     {

@@ -80,7 +80,7 @@ class LicenseService
      *                          identify plugins. Defaults to core update
      * @return bool           True if update available, false if not.
      */
-    public static function isUpdateAvailable(string $basename = ''): bool
+    public static function isUpdateAvailable($basename = '')
     {
         $basename = ! empty($basename) ? $basename : EE_PLUGIN_BASENAME;
 

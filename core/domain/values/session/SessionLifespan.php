@@ -31,14 +31,12 @@ class SessionLifespan
     /**
      * SessionLifespan constructor.
      *
-     * @param int $lifespan
+     * @param SessionLifespanOption $session_lifespan_option
      * @throws DomainException
      */
-    public function __construct($lifespan = 0)
+    public function __construct(SessionLifespanOption $session_lifespan_option)
     {
-        $lifespan = absint($lifespan);
-        $lifespan = $lifespan > 0 ? $lifespan : (int) HOUR_IN_SECONDS;
-        $this->setLifespan($lifespan);
+        $this->setLifespan($session_lifespan_option->getSessionLifespan());
     }
 
 
@@ -58,11 +56,7 @@ class SessionLifespan
         }
         $this->lifespan = apply_filters(
             'FHEE__EventEspresso_core_domain_values_session_SessionLifespan__setLifespan___lifespan',
-            // apply legacy filter for now but add doing it wrong notice in future
-            apply_filters(
-                'FHEE__EE_Session__construct___lifespan',
-                $lifespan
-            )
+            $lifespan
         ) + 1;
     }
 

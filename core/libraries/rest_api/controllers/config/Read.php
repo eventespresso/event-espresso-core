@@ -24,7 +24,7 @@ class Read
      * @param string          $version
      * @return EE_Config|WP_Error
      */
-    public static function handleRequest(WP_REST_Request $request, $version)
+    public static function handleRequest($request, $version)
     {
         $cap = EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if (EE_Capabilities::instance()->current_user_can($cap, 'read_over_api')) {
@@ -57,7 +57,7 @@ class Read
      * @param string           $version
      * @return array|WP_Error
      */
-    public static function handleRequestSiteInfo(WP_REST_Request $request, $version)
+    public static function handleRequestSiteInfo($request, $version)
     {
         global $wp_json_basic_auth_success, $wp_json_basic_auth_received_data;
         $insecure_usage_of_basic_auth = apply_filters(

@@ -96,7 +96,7 @@ abstract class EE_Configurable extends EE_Base
      * @param    EE_Config_Base $config_obj
      * @return    mixed    EE_Config_Base | NULL
      */
-    protected function _set_config(EE_Config_Base $config_obj = null)
+    protected function _set_config($config_obj = null)
     {
         return EE_Config::instance()->set_config(
             $this->config_section(),
@@ -113,10 +113,10 @@ abstract class EE_Configurable extends EE_Base
      *
      * @access    protected
      * @param    EE_Config_Base $config_obj
-     * @throws \EE_Error
+     * @throws EE_Error
      * @return    mixed    EE_Config_Base | NULL
      */
-    public function _update_config(EE_Config_Base $config_obj = null)
+    public function _update_config($config_obj = null)
     {
         $config_class = $this->config_class();
         if (! $config_obj instanceof $config_class) {

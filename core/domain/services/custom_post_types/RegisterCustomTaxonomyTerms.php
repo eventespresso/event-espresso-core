@@ -62,7 +62,7 @@ class RegisterCustomTaxonomyTerms
      * @param string $term_slug The slug of the term that will be the default.
      * @param array  $cpt_slugs An array of custom post types we want the default assigned to
      */
-    public function registerCustomTaxonomyTerm($taxonomy, $term_slug, array $cpt_slugs = array())
+    public function registerCustomTaxonomyTerm($taxonomy, $term_slug, $cpt_slugs = array())
     {
         $this->custom_taxonomy_terms[][ $term_slug ] = new CustomTaxonomyTerm(
             $taxonomy,
@@ -75,13 +75,13 @@ class RegisterCustomTaxonomyTerms
     /**
      * hooked into the wp 'save_post' action hook for setting our default terms found in the $_default_terms property
      *
-     * @param  int     $post_id ID of CPT being saved
-     * @param  WP_Post $post    Post object
+     * @param  int          $post_id ID of CPT being saved
+     * @param  WP_Post|null $post    Post object
      * @return void
      */
-    public function saveDefaultTerm($post_id, WP_Post $post)
+    public function saveDefaultTerm($post_id, $post)
     {
-        if (empty($this->custom_taxonomy_terms)) {
+        if (! $post || empty($this->custom_taxonomy_terms)) {
             return;
         }
         // no default terms set so lets just exit.

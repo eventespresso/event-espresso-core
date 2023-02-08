@@ -8,21 +8,18 @@ use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
 use EventEspresso\core\services\formatters\AsciiOnly;
 
 /**
- *
  * Class EE_PMT_Base
  *
- * Description
- *
- * @package               Event Espresso
- * @subpackage            core
- * @author                Mike Nelson
- *
- *
+ * @package     Event Espresso
+ * @subpackage  core
+ * @author      Mike Nelson
  */
 abstract class EE_PMT_Base
 {
-    const onsite = 'on-site';
+    const onsite  = 'on-site';
+
     const offsite = 'off-site';
+
     const offline = 'off-line';
 
     /**
@@ -64,7 +61,7 @@ abstract class EE_PMT_Base
      * String of the absolute path to the folder containing this file, with a trailing slash.
      * eg '/public_html/wp-site/wp-content/plugins/event-espresso/payment_methods/Invoice/'
      *
-     * @var string
+     * @var string|null
      */
     protected $_file_folder = null;
 
@@ -72,35 +69,36 @@ abstract class EE_PMT_Base
      * String to the absolute URL to this file (useful for getting its web-accessible resources
      * like images, js, or css)
      *
-     * @var string
+     * @var string|null
      */
     protected $_file_url = null;
 
     /**
      * Pretty name for the payment method
      *
-     * @var string
+     * @var string|null
      */
     protected $_pretty_name = null;
 
     /**
-     *
-     * @var string
+     * @var string|null
      */
     protected $_default_button_url = null;
 
     /**
-     *
-     * @var string
+     * @var string|null
      */
     protected $_default_description = null;
 
+    /**
+     *  @var string|null
+     */
+    protected $_template_path = null;
 
     /**
-     *
-     * @param EE_Payment_Method $pm_instance
+     * @param EE_Payment_Method|null $pm_instance
+     * @throws ReflectionException
      * @throws EE_Error
-     * @return EE_PMT_Base
      */
     public function __construct($pm_instance = null)
     {
@@ -128,11 +126,9 @@ abstract class EE_PMT_Base
 
         if (! $this->_pretty_name) {
             throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        "You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized",
-                        "event_espresso"
-                    )
+                esc_html__(
+                    'You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized',
+                    'event_espresso'
                 )
             );
         }
@@ -157,8 +153,8 @@ abstract class EE_PMT_Base
      */
     protected function _set_file_folder()
     {
-        $reflector = new ReflectionClass(get_class($this));
-        $fn = $reflector->getFileName();
+        $reflector          = new ReflectionClass(get_class($this));
+        $fn                 = $reflector->getFileName();
         $this->_file_folder = dirname($fn) . '/';
     }
 
@@ -170,9 +166,10 @@ abstract class EE_PMT_Base
     {
         $plugins_dir_fixed = str_replace('\\', '/', WP_PLUGIN_DIR);
         $file_folder_fixed = str_replace('\\', '/', $this->file_folder());
-        $file_path = str_replace($plugins_dir_fixed, WP_PLUGIN_URL, $file_folder_fixed);
-        $this->_file_url = set_url_scheme($file_path);
+        $file_path         = str_replace($plugins_dir_fixed, WP_PLUGIN_URL, $file_folder_fixed);
+        $this->_file_url   = set_url_scheme($file_path);
     }
+
 
     /**
      * Gets the default description on all payment methods of this type
@@ -216,6 +213,8 @@ abstract class EE_PMT_Base
      * Its important teh payment method instance is set before
      *
      * @param EE_Payment_Method $payment_method_instance
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_instance($payment_method_instance)
     {
@@ -225,16 +224,18 @@ abstract class EE_PMT_Base
         if ($this->_settings_form) {
             $this->settings_form()->populate_model_obj($payment_method_instance);
         }
-        if ($this->_gateway && $this->_gateway instanceof EE_Gateway) {
+        if ($this->_gateway instanceof EE_Gateway) {
             $this->_gateway->set_settings($payment_method_instance->settings_array());
         }
     }
 
 
     /**
-     * Gets teh form for displaying to admins where they setup the payment method
+     * Gets teh form for displaying to admins where they set up the payment method
      *
      * @return EE_Payment_Method_Form
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function settings_form()
     {
@@ -242,7 +243,7 @@ abstract class EE_PMT_Base
             $this->_settings_form = $this->generate_new_settings_form();
             $this->_settings_form->set_payment_method_type($this);
             // if we have already assigned a model object to this pmt, make
-            // sure its reflected in teh form we just generated
+            // sure it's reflected in the form we just generated
             if ($this->_pm_instance) {
                 $this->_settings_form->populate_model_obj($this->_pm_instance);
             }
@@ -285,11 +286,13 @@ abstract class EE_PMT_Base
      * Gets the form for displaying to attendees where they can enter their billing info
      * which will be sent to teh gateway (can be null)
      *
-     * @param \EE_Transaction $transaction
-     * @param array           $extra_args
-     * @return \EE_Billing_Attendee_Info_Form|\EE_Billing_Info_Form|null
+     * @param EE_Transaction|null $transaction
+     * @param array               $extra_args
+     * @return EE_Billing_Attendee_Info_Form|EE_Billing_Info_Form|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function billing_form(EE_Transaction $transaction = null, $extra_args = array())
+    public function billing_form($transaction = null, $extra_args = [])
     {
         // has billing form already been regenerated ? or overwrite cache?
         if (! $this->_billing_form instanceof EE_Billing_Info_Form || ! $this->_cache_billing_form) {
@@ -300,10 +303,11 @@ abstract class EE_PMT_Base
         if (
             apply_filters(
                 'FHEE__populate_billing_form_fields_from_attendee',
-                ($this->_billing_form instanceof EE_Billing_Attendee_Info_Form
-                && $transaction instanceof EE_Transaction
-                && $transaction->primary_registration() instanceof EE_Registration
-                && $transaction->primary_registration()->attendee() instanceof EE_Attendee
+                (
+                    $this->_billing_form instanceof EE_Billing_Attendee_Info_Form
+                    && $transaction instanceof EE_Transaction
+                    && $transaction->primary_registration() instanceof EE_Registration
+                    && $transaction->primary_registration()->attendee() instanceof EE_Attendee
                 ),
                 $this->_billing_form,
                 $transaction
@@ -318,20 +322,23 @@ abstract class EE_PMT_Base
     /**
      * Creates the billing form for this payment method type
      *
-     * @param \EE_Transaction $transaction
-     * @return \EE_Billing_Info_Form
+     * @param EE_Transaction|null $transaction
+     * @param array|null          $extra_args
+     * @return EE_Billing_Info_Form|null
      */
-    abstract public function generate_new_billing_form(EE_Transaction $transaction = null);
+    abstract public function generate_new_billing_form(
+        $transaction = null,
+        $extra_args = []
+    );
 
 
     /**
-     * apply_billing_form_debug_settings
      * applies debug data to the form
      *
-     * @param \EE_Billing_Info_Form $billing_form
-     * @return \EE_Billing_Info_Form
+     * @param EE_Billing_Info_Form $billing_form
+     * @return EE_Billing_Info_Form|null
      */
-    public function apply_billing_form_debug_settings(EE_Billing_Info_Form $billing_form)
+    public function apply_billing_form_debug_settings($billing_form)
     {
         return $billing_form;
     }
@@ -350,7 +357,7 @@ abstract class EE_PMT_Base
 
 
     /**
-     * Returns whether or not this payment method requires HTTPS to be used
+     * Returns whether this payment method requires HTTPS to be used
      *
      * @return boolean
      */
@@ -361,19 +368,19 @@ abstract class EE_PMT_Base
 
 
     /**
-     *
-     * @param EE_Transaction       $transaction
-     * @param float                $amount
-     * @param EE_Billing_Info_Form $billing_info
-     * @param string               $return_url
-     * @param string               $fail_url
-     * @param string               $method
-     * @param bool                 $by_admin
+     * @param EE_Transaction            $transaction
+     * @param float|null                $amount
+     * @param EE_Billing_Info_Form|null $billing_info
+     * @param string|null               $return_url
+     * @param string                    $fail_url
+     * @param string                    $method
+     * @param bool                      $by_admin
      * @return EE_Payment
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function process_payment(
-        EE_Transaction $transaction,
+        $transaction,
         $amount = null,
         $billing_info = null,
         $return_url = null,
@@ -385,28 +392,30 @@ abstract class EE_PMT_Base
         if ($this->_gateway) {
             // there is a gateway, so we're going to make a payment object
             // but wait! do they already have a payment in progress that we thought was failed?
-            $duplicate_properties = array(
+            $duplicate_properties = [
                 'STS_ID'               => EEM_Payment::status_id_failed,
                 'TXN_ID'               => $transaction->ID(),
                 'PMD_ID'               => $this->_pm_instance->ID(),
                 'PAY_source'           => $method,
-                'PAY_amount'           => $amount !== null ? $amount : $transaction->remaining(),
+                'PAY_amount'           => $amount !== null
+                    ? $amount
+                    : $transaction->remaining(),
                 'PAY_gateway_response' => null,
-            );
-            $payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
+            ];
+            $payment              = EEM_Payment::instance()->get_one([$duplicate_properties]);
             // if we didn't already have a payment in progress for the same thing,
             // then we actually want to make a new payment
             if (! $payment instanceof EE_Payment) {
                 $payment = EE_Payment::new_instance(
                     array_merge(
                         $duplicate_properties,
-                        array(
+                        [
                             'PAY_timestamp'       => time(),
                             'PAY_txn_id_chq_nmbr' => null,
                             'PAY_po_number'       => null,
                             'PAY_extra_accntng'   => null,
                             'PAY_details'         => null,
-                        )
+                        ]
                     )
                 );
             }
@@ -421,10 +430,10 @@ abstract class EE_PMT_Base
                     $billing_values,
                     $return_url,
                     EE_Config::instance()->core->txn_page_url(
-                        array(
+                        [
                             'e_reg_url_link'    => $transaction->primary_registration()->reg_url_link(),
                             'ee_payment_method' => $this->_pm_instance->slug(),
-                        )
+                        ]
                     ),
                     $fail_url
                 );
@@ -450,13 +459,13 @@ abstract class EE_PMT_Base
             // there is no payment. Must be an offline gateway
             // create a payment object anyways, but dont save it
             $payment = EE_Payment::new_instance(
-                array(
+                [
                     'STS_ID'        => EEM_Payment::status_id_pending,
                     'TXN_ID'        => $transaction->ID(),
                     'PMD_ID'        => $transaction->payment_method_ID(),
                     'PAY_amount'    => 0.00,
                     'PAY_timestamp' => time(),
-                )
+                ]
             );
         }
 
@@ -468,21 +477,21 @@ abstract class EE_PMT_Base
         return $payment;
     }
 
+
     /**
      * Gets the values we want to pass onto the gateway. Normally these
      * are just the 'pretty' values, but there may be times the data may need
      * a  little massaging. Proper subsections will become arrays of inputs
      *
-     * @param EE_Billing_Info_Form $billing_form
+     * @param EE_Billing_Info_Form|null $billing_form
      * @return array
+     * @throws EE_Error
      */
     protected function _get_billing_values_from_form($billing_form)
     {
-        if ($billing_form instanceof EE_Form_Section_Proper) {
-            return $billing_form->input_pretty_values(true);
-        } else {
-            return null;
-        }
+        return $billing_form instanceof EE_Form_Section_Proper
+            ? $billing_form->input_pretty_values(true)
+            : [];
     }
 
 
@@ -493,6 +502,7 @@ abstract class EE_PMT_Base
      * @param EE_Transaction $transaction
      * @return EE_Payment
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function handle_ipn($req_data, $transaction)
     {
@@ -505,8 +515,7 @@ abstract class EE_PMT_Base
                 )
             );
         }
-        $payment = $this->_gateway->handle_payment_update($req_data, $transaction);
-        return $payment;
+        return $this->_gateway->handle_payment_update($req_data, $transaction);
     }
 
 
@@ -515,12 +524,16 @@ abstract class EE_PMT_Base
      * cleans it first.
      *
      * @param EE_Billing_Attendee_Info_Form $billing_form
-     * @param EE_Transaction                $transaction
+     * @param EE_Transaction|null           $transaction
      * @return boolean success
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _save_billing_info_to_attendee($billing_form, $transaction)
-    {
-        if (! $transaction || ! $transaction instanceof EE_Transaction) {
+    protected function _save_billing_info_to_attendee(
+        $billing_form,
+        $transaction
+    ) {
+        if (! $transaction instanceof EE_Transaction) {
             EE_Error::add_error(
                 esc_html__("Cannot save billing info because no transaction was specified", "event_espresso"),
                 __FILE__,
@@ -532,7 +545,10 @@ abstract class EE_PMT_Base
         $primary_reg = $transaction->primary_registration();
         if (! $primary_reg) {
             EE_Error::add_error(
-                esc_html__("Cannot save billing info because the transaction has no primary registration", "event_espresso"),
+                esc_html__(
+                    "Cannot save billing info because the transaction has no primary registration",
+                    "event_espresso"
+                ),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -563,8 +579,10 @@ abstract class EE_PMT_Base
      * @param EE_Transaction $transaction
      * @param array          $req_data
      * @return EE_Payment
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function find_payment_for_ipn(EE_Transaction $transaction, $req_data = array())
+    protected function find_payment_for_ipn($transaction, $req_data = [])
     {
         return $transaction->last_payment();
     }
@@ -574,7 +592,7 @@ abstract class EE_PMT_Base
      * In case generic code cannot provide the payment processor with a specific payment method
      * and transaction, it will try calling this method on each activate payment method.
      * If the payment method is able to identify the request as being for it, it should fetch
-     * the payment its for and return it. If not, it should throw an EE_Error to indicate it cannot
+     * the payment it's for and return it. If not, it should throw an EE_Error to indicate it cannot
      * handle the IPN
      *
      * @param array $req_data
@@ -582,10 +600,13 @@ abstract class EE_PMT_Base
      * and identifies the IPN as being for this payment method (not just fo ra payment method of this type)
      * @throws EE_Error
      */
-    public function handle_unclaimed_ipn($req_data = array())
+    public function handle_unclaimed_ipn($req_data = [])
     {
         throw new EE_Error(
-            sprintf(esc_html__("Payment Method '%s' cannot handle unclaimed IPNs", "event_espresso"), get_class($this))
+            sprintf(
+                esc_html__("Payment Method '%s' cannot handle unclaimed IPNs", "event_espresso"),
+                get_class($this)
+            )
         );
     }
 
@@ -599,7 +620,9 @@ abstract class EE_PMT_Base
      * we're dealing with. Returns that last payment (if there is one)
      *
      * @param EE_Transaction $transaction
-     * @return EE_Payment
+     * @return EE_Payment|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function finalize_payment_for($transaction)
     {
@@ -608,30 +631,25 @@ abstract class EE_PMT_Base
 
 
     /**
-     * Whether or not this payment method's gateway supports sending refund requests
+     * Whether this payment method's gateway supports sending refund requests
      *
      * @return boolean
      */
     public function supports_sending_refunds()
     {
-        if ($this->_gateway && $this->_gateway instanceof EE_Gateway) {
-            return $this->_gateway->supports_sending_refunds();
-        } else {
-            return false;
-        }
+        return $this->_gateway instanceof EE_Gateway && $this->_gateway->supports_sending_refunds();
     }
 
 
     /**
-     *
      * @param EE_Payment $payment
      * @param array      $refund_info
-     * @throws EE_Error
      * @return EE_Payment
+     * @throws EE_Error
      */
-    public function process_refund(EE_Payment $payment, $refund_info = array())
+    public function process_refund($payment, $refund_info = [])
     {
-        if ($this->_gateway && $this->_gateway instanceof EE_Gateway) {
+        if ($this->_gateway instanceof EE_Gateway) {
             return $this->_gateway->do_direct_refund($payment, $refund_info);
         } else {
             throw new EE_Error(
@@ -655,21 +673,22 @@ abstract class EE_PMT_Base
     {
         if (! $this->_gateway) {
             return EE_PMT_Base::offline;
-        } elseif ($this->_gateway instanceof EE_Onsite_Gateway) {
-            return EE_PMT_Base::onsite;
-        } elseif ($this->_gateway instanceof EE_Offsite_Gateway) {
-            return EE_PMT_Base::offsite;
-        } else {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        "Payment method type '%s's gateway isn't an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those",
-                        "event_espresso"
-                    ),
-                    get_class($this)
-                )
-            );
         }
+        if ($this->_gateway instanceof EE_Onsite_Gateway) {
+            return EE_PMT_Base::onsite;
+        }
+        if ($this->_gateway instanceof EE_Offsite_Gateway) {
+            return EE_PMT_Base::offsite;
+        }
+        throw new EE_Error(
+            sprintf(
+                esc_html__(
+                    "Payment method type '%s's gateway isn't an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those",
+                    "event_espresso"
+                ),
+                get_class($this)
+            )
+        );
     }
 
 
@@ -681,11 +700,11 @@ abstract class EE_PMT_Base
      * @param EE_Payment $payment
      * @return string
      */
-    public function payment_overview_content(EE_Payment $payment)
+    public function payment_overview_content($payment)
     {
         return EEH_Template::display_template(
             EE_LIBRARIES . 'payment_methods/templates/payment_details_content.template.php',
-            array('payment_method' => $this->_pm_instance, 'payment' => $payment),
+            ['payment_method' => $this->_pm_instance, 'payment' => $payment],
             true
         );
     }
@@ -697,11 +716,11 @@ abstract class EE_PMT_Base
      * @type string $title         i18n name for the help tab
      * @type string $filename      name of the file located in ./help_tabs/ (ie, in a folder next to this file)
      * @type array  $template_args any arguments you want passed to the template file while rendering.
-     *                Keys will be variable names and values with be their values.
+     *                             Keys will be variable names and values with be their values.
      */
     public function help_tabs_config()
     {
-        return array();
+        return [];
     }
 
 
@@ -721,7 +740,8 @@ abstract class EE_PMT_Base
     /**
      * A pretty i18n version of the PMT name. Often the same as the "pretty_name", but you can change it by overriding
      * this method.
-     * @return string
+     *
+     * @return string|null
      */
     public function defaultFrontendName()
     {
@@ -732,7 +752,7 @@ abstract class EE_PMT_Base
     /**
      * A pretty i18n version of the PMT name
      *
-     * @return string
+     * @return string|null
      */
     public function pretty_name()
     {
@@ -743,7 +763,7 @@ abstract class EE_PMT_Base
     /**
      * Gets the default absolute URL to the payment method type's button
      *
-     * @return string
+     * @return string|null
      */
     public function default_button_url()
     {
@@ -785,6 +805,7 @@ abstract class EE_PMT_Base
         return 'ee_' . strtolower($this->system_name()) . '_help_tab';
     }
 
+
     /**
      * The name of the wp capability that should be associated with the usage of
      * this PMT by an admin
@@ -795,6 +816,7 @@ abstract class EE_PMT_Base
     {
         return 'ee_payment_method_' . strtolower($this->system_name());
     }
+
 
     /**
      * Called by client code to tell the gateway that if it wants to change
@@ -813,6 +835,7 @@ abstract class EE_PMT_Base
         }
     }
 
+
     /**
      * Returns a string of HTML describing this payment method type for an admin,
      * primarily intended for them to read before activating it.
@@ -828,7 +851,7 @@ abstract class EE_PMT_Base
     {
         return EEH_Template::locate_template(
             $this->file_folder() . 'templates/' . strtolower($this->system_name()) . '_intro.template.php',
-            array('pmt_obj' => $this, 'pm_instance' => $this->_pm_instance)
+            ['pmt_obj' => $this, 'pm_instance' => $this->_pm_instance]
         );
     }
 }

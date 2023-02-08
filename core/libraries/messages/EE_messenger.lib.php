@@ -390,7 +390,7 @@ abstract class EE_messenger extends EE_Messages_Base
      *
      * @return string                    path or url for the requested variation.
      */
-    public function get_variation(EE_Messages_Template_Pack $pack, $message_type_name, $url = false, $type = 'main', $variation = 'default', $skip_filters = false)
+    public function get_variation($pack, $message_type_name, $url = false, $type = 'main', $variation = 'default', $skip_filters = false)
     {
         $this->_tmp_pack = $pack;
         $variation_path = apply_filters('EE_messenger__get_variation__variation', false, $pack, $this->name, $message_type_name, $url, $type, $variation, $skip_filters);
@@ -528,6 +528,20 @@ abstract class EE_messenger extends EE_Messages_Base
         );
         $templates_for_event = !empty($templates_for_event) ? $templates_for_event : array();
 
+        $msg_type_status_map = [
+            'payment' => 'PAP',
+            'payment_refund' => 'PRF',
+            'payment_reminder' => 'PPN',
+            'registration' => 'RAP',
+            'not_approved_registration' => 'RNA',
+            'pending_approval' => 'RPP',
+            'payment_declined' => 'PDC',
+            'declined_registration' => 'RDC',
+            'cancelled_registration' => 'RCN',
+            'payment_failed' => 'PFL',
+            'payment_cancelled' => 'PCN',
+        ];
+
         // so we need to setup the rows for the selectors and we use the global mtpgs (cause those will the active message template groups)
         foreach ($global_templates as $mtpgID => $mtpg) {
             if ($mtpg instanceof EE_Message_Template_Group) {
@@ -571,15 +585,54 @@ abstract class EE_messenger extends EE_Messages_Base
                     'message_type' => $mtpg->message_type(),
                     'messenger' => $this->name
                 ];
+                $mt_slug = $mtpg->message_type();
                 $create_url = EEH_URL::add_query_args_and_nonce($create_url_query_args, admin_url('admin.php'));
+                $st_args['mtpgID'] = $mtpgID;
                 $st_args['mt_name'] = ucwords($mtp_obj->label['singular']);
-                $st_args['mt_slug'] = $mtpg->message_type();
+                $st_args['mt_slug'] = $mt_slug;
                 $st_args['messenger_slug'] = $this->name;
-                $st_args['selector'] = EEH_Form_Fields::select_input('event_message_templates_relation[' . $mtpgID . ']', $select_values, $default_value, 'data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '"', 'message-template-selector');
+                $st_args['status_code'] = isset($msg_type_status_map[ $mt_slug ]) ? $msg_type_status_map[ $mt_slug ] : '';
+                $st_args['selector'] = EEH_Form_Fields::select_input(
+                    'event_message_templates_relation[' . $mtpgID . ']',
+                    $select_values,
+                    $default_value,
+                    'data-messenger="' . $this->name . '" data-messagetype="' . $mt_slug . '"',
+                    'message-template-selector'
+                );
                 // note that  message template group that has override_all_custom set will remove the ability to set a custom message template based off of the global (and that also in turn overrides any other custom templates).
-                $st_args['create_button'] = $mtpg->get('MTP_is_override') ? '' : '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $create_url . '" class="button button-small create-mtpg-button">' . esc_html__('Create New Custom', 'event_espresso') . '</a>';
-                $st_args['create_button'] = EE_Registry::instance()->CAP->current_user_can('ee_edit_messages', 'espresso_messages_add_new_message_template') ? $st_args['create_button'] : '';
-                $st_args['edit_button'] = EE_Registry::instance()->CAP->current_user_can('ee_edit_message', 'espresso_messages_edit_message_template', $mtpgID) ? '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . esc_html__('Edit', 'event_espresso') . '</a>' : '';
+                $st_args['create_button'] = $mtpg->get('MTP_is_override')
+                    ? ''
+                    : '
+                    <a data-messenger="' . $this->name . '"
+                       data-messagetype="' . $mt_slug . '"
+                       data-grpid="' . $default_value . '"
+                       target="_blank"
+                       href="' . $create_url . '"
+                       class="button button--secondary button--tiny create-mtpg-button"
+                    >
+                        ' . esc_html__('Create New Custom', 'event_espresso') . '
+                    </a>';
+                $st_args['create_button'] = EE_Registry::instance()->CAP->current_user_can(
+                    'ee_edit_messages',
+                    'espresso_messages_add_new_message_template'
+                )
+                    ? $st_args['create_button']
+                    : '';
+                $st_args['edit_button']   = EE_Registry::instance()->CAP->current_user_can(
+                    'ee_edit_message',
+                    'espresso_messages_edit_message_template',
+                    $mtpgID
+                )
+                    ? '
+                    <a data-messagetype="' . $mt_slug . '"
+                       data-grpid="' . $default_value . '"
+                       target="_blank"
+                       href="' . $edit_url . '"
+                       class="button button--secondary button--tiny edit-mtpg-button"
+                    >
+                        ' . esc_html__('Edit', 'event_espresso') . '
+                    </a>'
+                    : '';
                 $selector_rows .= EEH_Template::display_template($template_row_path, $st_args, true);
             }
         }
@@ -642,7 +695,7 @@ abstract class EE_messenger extends EE_Messages_Base
      *
      * @throws SendMessageException
      */
-    final public function send_message($message, EE_message_type $message_type)
+    final public function send_message($message, $message_type)
     {
         try {
             $this->_validate_and_setup($message);
@@ -652,7 +705,7 @@ abstract class EE_messenger extends EE_Messages_Base
                 EE_Error::add_error($response->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
                 $response = false;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // convert to an instance of SendMessageException
             throw new SendMessageException($e->getMessage());
         }
@@ -668,7 +721,7 @@ abstract class EE_messenger extends EE_Messages_Base
      * @param  bool   $send    true we will actually use the _send method (for test sends). FALSE we just return preview
      * @return string          return the message html content
      */
-    public function get_preview(EE_Message $message, EE_message_type $message_type, $send = false)
+    public function get_preview($message, $message_type, $send = false)
     {
         $this->_validate_and_setup($message);
 
@@ -732,7 +785,7 @@ abstract class EE_messenger extends EE_Messages_Base
      * @param  EE_Message $message
      * @throws EE_Error
      */
-    protected function _validate_and_setup(EE_Message $message)
+    protected function _validate_and_setup($message)
     {
         $template_pack = $message->get_template_pack();
         $variation = $message->get_template_pack_variation();
@@ -765,7 +818,7 @@ abstract class EE_messenger extends EE_Messages_Base
      * We're assuming the child messenger class has already setup template args!
      * @param  bool $preview if true we use the preview wrapper otherwise we use main wrapper.
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _get_main_template($preview = false)
     {

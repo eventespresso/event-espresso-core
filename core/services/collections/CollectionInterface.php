@@ -177,5 +177,5 @@ interface CollectionInterface extends Countable, Iterator, Serializable, ArrayAc
      * @return string
      * @since 4.10.33.p
      */
-    public function collectionInterface(): string;
+    public function collectionInterface();
 }

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
+use EventEspresso\core\domain\services\event\FilterNextPreviousEventPostQuery;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -142,7 +144,7 @@ final class EE_Front_Controller
     {
         global $wpdb;
         if (strpos($clauses['join'], $wpdb->posts) !== false) {
-            /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
+            /** @var CustomPostTypeDefinitions $custom_post_types */
             $custom_post_types = LoaderFactory::getLoader()->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
             );
@@ -282,7 +284,11 @@ final class EE_Front_Controller
         $load_assets = $load_assets || $this->espresso_widgets_in_active_sidebars();
         if ($load_assets) {
             add_action('wp_enqueue_scripts', array($this, 'enqueueStyle'), 10);
-            add_action('wp_print_footer_scripts', array($this, 'enqueueScripts'), 10);
+            add_action('wp_enqueue_scripts', array($this, 'enqueueScripts'), 10);
+        }
+
+        if (is_singular('espresso_events')) {
+            new FilterNextPreviousEventPostQuery();
         }
     }
 

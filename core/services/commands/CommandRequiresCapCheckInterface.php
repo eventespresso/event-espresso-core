@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\services\commands;
 
-use EventEspresso\core\domain\services\capabilities\CapCheck;
+use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
 
 /**
  * Interface CommandRequiresCapCheckInterface
@@ -14,7 +14,7 @@ use EventEspresso\core\domain\services\capabilities\CapCheck;
 interface CommandRequiresCapCheckInterface
 {
     /**
-     * @return CapCheck
+     * @return CapCheckInterface
      */
     public function getCapCheck();
 }

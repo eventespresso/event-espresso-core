@@ -46,7 +46,7 @@ class CopyRegistrationPaymentsCommandHandler extends CommandHandler
      * @throws UnexpectedEntityException
      * @throws RuntimeException
      */
-    public function handle(CommandInterface $command)
+    public function handle($command)
     {
         return $this->copy_registration_service->copyPaymentDetails(
             $command->targetRegistration(),

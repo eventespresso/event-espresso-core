@@ -15,22 +15,22 @@ namespace EventEspresso\core\services\request;
 class RequestStack
 {
     /**
-     * @var RequestDecoratorInterface $request_stack_app
+     * @var RequestDecoratorInterface
      */
     protected $request_stack_app;
 
     /**
-     * @var RequestStackCoreAppInterface $core_app
-     */
-    protected $core_app;
-
-    /**
-     * @var RequestInterface $request
+     * @var RequestInterface
      */
     protected $request;
 
     /**
-     * @var ResponseInterface $response
+     * @var RequestStackCoreAppInterface
+     */
+    protected $core_app;
+
+    /**
+     * @var ResponseInterface
      */
     protected $response;
 
@@ -42,7 +42,7 @@ class RequestStack
     public function __construct(RequestDecoratorInterface $request_stack_app, RequestStackCoreAppInterface $core_app)
     {
         $this->request_stack_app = $request_stack_app;
-        $this->core_app      = $core_app;
+        $this->core_app          = $core_app;
     }
 
 
@@ -51,7 +51,7 @@ class RequestStack
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function handleRequest(RequestInterface $request, ResponseInterface $response)
+    public function handleRequest($request, $response)
     {
         $this->request  = $request;
         $this->response = $response;

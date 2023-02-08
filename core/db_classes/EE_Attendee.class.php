@@ -5,25 +5,15 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\address\AddressInterface;
 
 /**
- * Event Espresso
- * Event Registration and Management Plugin for WordPress
- * @ package            Event Espresso
- * @ author                Seth Shoultes
- * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @linkense            {@link https://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @link                    {@link http://www.eventespresso.com}
- * @ since                4.0
- */
-
-
-/**
  * EE_Attendee class
  *
  * @package               Event Espresso
  * @subpackage            includes/classes/EE_Transaction.class.php
  * @author                Mike Nelson
+ * @method EE_Country|EE_State|EE_Registration get_first_related($relationName, $query_params = [])
+ * @method EE_Event[]|EE_Registration[] get_many_related($relationName, $query_params = [])
  */
-class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, EEI_Admin_Links, EEI_Attendee
+class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, EEI_Admin_Links
 {
     /**
      * Sets some dynamic defaults
@@ -33,13 +23,14 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      * @param string $timezone
      * @param array  $date_formats
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function __construct($fieldValues = null, $bydb = false, $timezone = null, $date_formats = array())
+    protected function __construct($fieldValues = null, $bydb = false, $timezone = null, $date_formats = [])
     {
         if (! isset($fieldValues['ATT_full_name'])) {
-            $fname = isset($fieldValues['ATT_fname']) ? $fieldValues['ATT_fname'] . ' ' : '';
-            $lname = isset($fieldValues['ATT_lname']) ? $fieldValues['ATT_lname'] : '';
-            $fieldValues['ATT_full_name'] = $fname . $lname;
+            $fname                        = isset($fieldValues['ATT_fname']) ? $fieldValues['ATT_fname'] : '';
+            $lname                        = isset($fieldValues['ATT_lname']) ? $fieldValues['ATT_lname'] : '';
+            $fieldValues['ATT_full_name'] = "$fname $lname";
         }
         if (! isset($fieldValues['ATT_slug'])) {
             // $fieldValues['ATT_slug'] = sanitize_key(wp_generate_password(20));
@@ -53,91 +44,88 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
 
 
     /**
-     * @param array  $props_n_values          incoming values
-     * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
+     * @param array       $props_n_values     incoming values
+     * @param string|null $timezone           incoming timezone (if not set the timezone set for the website
+     *                                        will be
      *                                        used.)
-     * @param array  $date_formats            incoming date_formats in an array where the first value is the
+     * @param array       $date_formats       incoming date_formats in an array where the first value is the
      *                                        date_format and the second value is the time format
      * @return EE_Attendee
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
-    {
+    public static function new_instance(
+        $props_n_values = [],
+        $timezone = '',
+        $date_formats = []
+    ) {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        return $has_object ?: new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
     /**
-     * @param array  $props_n_values  incoming values from the database
-     * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
-     *                                the website will be used.
+     * @param array       $props_n_values incoming values from the database
+     * @param string|null $timezone       incoming timezone as set by the model.
+     *                                    If not set, the timezone for the website will be used.
      * @return EE_Attendee
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
 
 
     /**
-     *        Set Attendee First Name
-     *
-     * @access        public
-     * @param string $fname
+     * @param string|null $fname
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_fname($fname = '')
     {
-        $this->set('ATT_fname', $fname);
+        $this->set('ATT_fname', (string) $fname);
     }
 
 
     /**
-     *        Set Attendee Last Name
-     *
-     * @access        public
-     * @param string $lname
+     * @param string|null $lname
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_lname($lname = '')
     {
-        $this->set('ATT_lname', $lname);
+        $this->set('ATT_lname', (string) $lname);
     }
 
 
     /**
-     *        Set Attendee Address
-     *
-     * @access        public
-     * @param string $address
+     * @param string|null $address
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_address($address = '')
     {
-        $this->set('ATT_address', $address);
+        $this->set('ATT_address', (string) $address);
     }
 
 
     /**
-     *        Set Attendee Address2
-     *
-     * @access        public
-     * @param        string $address2
+     * @param string|null $address2
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_address2($address2 = '')
     {
-        $this->set('ATT_address2', $address2);
+        $this->set('ATT_address2', (string) $address2);
     }
 
 
     /**
-     *        Set Attendee City
-     *
-     * @access        public
-     * @param        string $city
+     * @param string|null $city
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_city($city = '')
     {
@@ -146,11 +134,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
 
 
     /**
-     *        Set Attendee State ID
-     *
-     * @access        public
-     * @param        int $STA_ID
+     * @param int|null $STA_ID
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_state($STA_ID = 0)
     {
@@ -159,11 +145,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
 
 
     /**
-     *        Set Attendee Country ISO Code
-     *
-     * @access        public
-     * @param        string $CNT_ISO
+     * @param string|null $CNT_ISO
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_country($CNT_ISO = '')
     {
@@ -172,11 +156,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
 
 
     /**
-     *        Set Attendee Zip/Postal Code
-     *
-     * @access        public
-     * @param        string $zip
+     * @param string|null $zip
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_zip($zip = '')
     {
@@ -185,11 +167,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
 
 
     /**
-     *        Set Attendee Email Address
-     *
-     * @access        public
-     * @param        string $email
+     * @param string|null $email
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_email($email = '')
     {
@@ -198,11 +178,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
 
 
     /**
-     *        Set Attendee Phone
-     *
-     * @access        public
-     * @param        string $phone
+     * @param string|null $phone
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_phone($phone = '')
     {
@@ -211,11 +189,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
 
 
     /**
-     *        set deleted
-     *
-     * @access        public
-     * @param        bool $ATT_deleted
+     * @param bool|int|string|null $ATT_deleted
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_deleted($ATT_deleted = false)
     {
@@ -226,26 +202,25 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
     /**
      * Returns the value for the post_author id saved with the cpt
      *
-     * @since 4.5.0
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
+     * @since 4.5.0
      */
     public function wp_user()
     {
-        return $this->get('ATT_author');
+        return (int) $this->get('ATT_author');
     }
 
 
     /**
-     *        get Attendee First Name
-     *
-     * @access        public
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function fname()
     {
-        return $this->get('ATT_fname');
+        return (string) $this->get('ATT_fname');
     }
 
 
@@ -254,6 +229,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function e_full_name()
     {
@@ -267,16 +243,16 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      * @param bool $apply_html_entities
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function full_name($apply_html_entities = false)
     {
-        $full_name = array(
-            $this->fname(),
-            $this->lname(),
-        );
+        $full_name = [$this->fname(), $this->lname()];
         $full_name = array_filter($full_name);
         $full_name = implode(' ', $full_name);
-        return $apply_html_entities ? htmlentities($full_name, ENT_QUOTES, 'UTF-8') : $full_name;
+        return $apply_html_entities
+            ? htmlentities($full_name, ENT_QUOTES, 'UTF-8')
+            : $full_name;
     }
 
 
@@ -288,25 +264,46 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      * @param bool $apply_html_entities
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function ATT_full_name($apply_html_entities = false)
     {
         return $apply_html_entities
-            ? htmlentities($this->get('ATT_full_name'), ENT_QUOTES, 'UTF-8')
-            : $this->get('ATT_full_name');
+            ? htmlentities((string) $this->get('ATT_full_name'), ENT_QUOTES, 'UTF-8')
+            : (string) $this->get('ATT_full_name');
     }
 
 
     /**
-     *        get Attendee Last Name
-     *
-     * @access        public
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function lname()
     {
-        return $this->get('ATT_lname');
+        return (string) $this->get('ATT_lname');
+    }
+
+
+    /**
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function bio()
+    {
+        return (string) $this->get('ATT_bio');
+    }
+
+
+    /**
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function short_bio()
+    {
+        return (string) $this->get('ATT_short_bio');
     }
 
 
@@ -318,11 +315,12 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      * it would be array(0=>'Alabama',1=>'USA')
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function full_address_as_array()
     {
-        $full_address_array = array();
-        $initial_address_fields = array('ATT_address', 'ATT_address2', 'ATT_city',);
+        $full_address_array     = [];
+        $initial_address_fields = ['ATT_address', 'ATT_address2', 'ATT_city',];
         foreach ($initial_address_fields as $address_field_name) {
             $address_fields_value = $this->get($address_field_name);
             if (! empty($address_fields_value)) {
@@ -348,88 +346,83 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
 
 
     /**
-     *        get Attendee Address
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function address(): string
+    public function address()
     {
-        return $this->get('ATT_address');
+        return (string) $this->get('ATT_address');
     }
 
 
     /**
-     *        get Attendee Address2
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function address2(): string
+    public function address2()
     {
-        return $this->get('ATT_address2');
+        return (string) $this->get('ATT_address2');
     }
 
 
     /**
-     *        get Attendee City
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function city(): string
+    public function city()
     {
-        return $this->get('ATT_city');
+        return (string) $this->get('ATT_city');
     }
 
 
     /**
-     * get Attendee State ID
-     *
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function state_ID(): int
+    public function state_ID()
     {
-        return $this->get('STA_ID');
+        return (int) $this->get('STA_ID');
     }
 
 
     /**
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function state_abbrev(): string
+    public function state_abbrev()
     {
-        return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : '';
+        return $this->state_obj() instanceof EE_State
+            ? $this->state_obj()->abbrev()
+            : '';
     }
 
 
     /**
-     * Gets the state set to this attendee
-     *
      * @return EE_State|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function state_obj(): ?EE_State
+    public function state_obj()
     {
         return $this->get_first_related('State');
     }
 
 
     /**
-     * Returns the state's name, otherwise 'Unknown'
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function state_name(): string
+    public function state_name()
     {
-        if ($this->state_obj()) {
-            return $this->state_obj()->name();
-        } else {
-            return '';
-        }
+        return $this->state_obj() instanceof EE_State
+            ? $this->state_obj()->name()
+            : '';
     }
 
 
@@ -440,52 +433,48 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function state(): string
+    public function state()
     {
-        if (apply_filters('FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj())) {
-            return $this->state_abbrev();
-        }
-        return $this->state_name();
+        return apply_filters('FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj())
+            ? $this->state_abbrev()
+            : $this->state_name();
     }
 
 
     /**
-     *    get Attendee Country ISO Code
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function country_ID(): string
+    public function country_ID()
     {
-        return $this->get('CNT_ISO');
+        return (string) $this->get('CNT_ISO');
     }
 
 
     /**
-     * Gets country set for this attendee
-     *
      * @return EE_Country|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function country_obj(): ?EE_Country
+    public function country_obj()
     {
         return $this->get_first_related('Country');
     }
 
 
     /**
-     * Returns the country's name if known, otherwise 'Unknown'
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function country_name(): string
+    public function country_name()
     {
-        if ($this->country_obj()) {
-            return $this->country_obj()->name();
-        }
-        return '';
+        return $this->country_obj() instanceof EE_Country
+            ? $this->country_obj()->name()
+            : '';
     }
 
 
@@ -496,72 +485,67 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function country(): string
+    public function country()
     {
-        if (apply_filters('FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj())) {
-            return $this->country_ID();
-        }
-        return $this->country_name();
+        return apply_filters('FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj())
+            ? $this->country_ID()
+            : $this->country_name();
     }
 
 
     /**
-     *        get Attendee Zip/Postal Code
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function zip(): string
+    public function zip()
     {
-        return $this->get('ATT_zip');
+        return (string) $this->get('ATT_zip');
     }
 
 
     /**
-     *        get Attendee Email Address
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function email()
     {
-        return $this->get('ATT_email');
+        return (string) $this->get('ATT_email');
     }
 
 
     /**
-     *        get Attendee Phone #
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function phone()
     {
-        return $this->get('ATT_phone');
+        return (string) $this->get('ATT_phone');
     }
 
 
     /**
-     *    get deleted
-     *
-     * @return        bool
+     * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function deleted()
     {
-        return $this->get('ATT_deleted');
+        return (bool) $this->get('ATT_deleted');
     }
 
 
     /**
-     * Gets registrations of this attendee
-     *
      * @param array $query_params
      * @return EE_Registration[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_registrations($query_params = array())
+    public function get_registrations($query_params = [])
     {
         return $this->get_many_related('Registration', $query_params);
     }
@@ -572,13 +556,11 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      *
      * @return EE_Registration
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_most_recent_registration()
     {
-        return $this->get_first_related(
-            'Registration',
-            array('order_by' => array('REG_date' => 'DESC'))
-        ); // null, 'REG_date', 'DESC', '=', 'OBJECT_K');
+        return $this->get_first_related('Registration', ['order_by' => ['REG_date' => 'DESC']]);
     }
 
 
@@ -588,12 +570,13 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      * @param int $event_id
      * @return EE_Registration
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_most_recent_registration_for_event($event_id)
     {
         return $this->get_first_related(
             'Registration',
-            array(array('EVT_ID' => $event_id), 'order_by' => array('REG_date' => 'DESC'))
+            [['EVT_ID' => $event_id], 'order_by' => ['REG_date' => 'DESC']]
         );
     }
 
@@ -601,8 +584,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
     /**
      * returns any events attached to this attendee ($_Event property);
      *
-     * @return array
+     * @return EE_Event[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function events()
     {
@@ -612,12 +596,14 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
 
     /**
      * Gets the billing info array where keys match espresso_reg_page_billing_inputs(),
-     * and keys are their cleaned values. @see EE_Attendee::save_and_clean_billing_info_for_payment_method() which was
-     * used to save the billing info
+     * and keys are their cleaned values. @param EE_Payment_Method $payment_method the _gateway_name property on the
+     * gateway class
      *
-     * @param EE_Payment_Method $payment_method the _gateway_name property on the gateway class
      * @return EE_Form_Section_Proper|null
      * @throws EE_Error
+     * @throws ReflectionException
+     * @see EE_Attendee::save_and_clean_billing_info_for_payment_method() which was used to save the billing info
+     * @param EE_Payment_Method $payment_method
      */
     public function billing_info_for_payment_method($payment_method)
     {
@@ -642,7 +628,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
             return null;
         }
         if ($billing_form instanceof EE_Form_Section_Proper) {
-            $billing_form->receive_form_submission(array($billing_form->name() => $billing_info), false);
+            $billing_form->receive_form_submission([$billing_form->name() => $billing_info], false);
         }
 
         return $billing_form;
@@ -659,31 +645,33 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      */
     public function get_billing_info_postmeta_name($payment_method)
     {
-        if ($payment_method->type_obj() instanceof EE_PMT_Base) {
-            return 'billing_info_' . $payment_method->type_obj()->system_name();
-        }
-        return null;
+        return $payment_method->type_obj() instanceof EE_PMT_Base
+            ? 'billing_info_' . $payment_method->type_obj()->system_name()
+            : '';
     }
 
 
     /**
-     * Saves the billing info to the attendee. @see EE_Attendee::billing_info_for_payment_method() which is used to
-     * retrieve it
+     * Saves the billing info to the attendee.
      *
-     * @param EE_Billing_Attendee_Info_Form $billing_form
-     * @param EE_Payment_Method             $payment_method
+     * @param EE_Billing_Attendee_Info_Form|null $billing_form
+     * @param EE_Payment_Method                  $payment_method
      * @return boolean
      * @throws EE_Error
+     * @throws ReflectionException
+     * @see EE_Attendee::billing_info_for_payment_method() which is used to retrieve it
      */
-    public function save_and_clean_billing_info_for_payment_method($billing_form, $payment_method)
-    {
+    public function save_and_clean_billing_info_for_payment_method(
+        $billing_form,
+        $payment_method
+    ) {
         if (! $billing_form instanceof EE_Billing_Attendee_Info_Form) {
             EE_Error::add_error(
                 esc_html__('Cannot save billing info because there is none.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
-        );
+            );
             return false;
         }
         $billing_form->clean_sensitive_data();
@@ -723,13 +711,12 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      */
     public function get_admin_edit_link()
     {
-        EE_Registry::instance()->load_helper('URL');
         return EEH_URL::add_query_args_and_nonce(
-            array(
+            [
                 'page'   => 'espresso_registrations',
                 'action' => 'edit_attendee',
                 'post'   => $this->ID(),
-            ),
+            ],
             admin_url('admin.php')
         );
     }
@@ -755,20 +742,14 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      * Returns the link to the "overview" for the object (typically the "list table" view).
      *
      * @return string
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public function get_admin_overview_link()
     {
-        EE_Registry::instance()->load_helper('URL');
         return EEH_URL::add_query_args_and_nonce(
-            array(
+            [
                 'page'   => 'espresso_registrations',
                 'action' => 'contact_list',
-            ),
+            ],
             admin_url('admin.php')
         );
     }

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+
 /**
  * General_Settings_Admin_Page_Init
  *
@@ -12,42 +14,44 @@
  * @package           General_Settings_Admin_Page_Init
  * @subpackage        includes/core/admin/General_Settings_Admin_Page_Init.core.php
  * @author            Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
 class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init
 {
     public function __construct()
     {
         // define some constants
-        define('GEN_SET_PG_SLUG', 'espresso_general_settings');
-        define('GEN_SET_LABEL', esc_html__('General Settings', 'event_espresso'));
-        define('GEN_SET_ADMIN', EE_ADMIN_PAGES . 'general_settings/');
-        define('GEN_SET_ADMIN_URL', admin_url('admin.php?page=' . GEN_SET_PG_SLUG));
-        define('GEN_SET_TEMPLATE_PATH', GEN_SET_ADMIN . 'templates/');
-        define('GEN_SET_ASSETS_URL', EE_ADMIN_PAGES_URL . 'general_settings/assets/');
-
+        if (! defined('GEN_SET_PG_SLUG')) {
+            define('GEN_SET_PG_SLUG', 'espresso_general_settings');
+            define('GEN_SET_LABEL', esc_html__('General Settings', 'event_espresso'));
+            define('GEN_SET_ADMIN', EE_ADMIN_PAGES . 'general_settings/');
+            define('GEN_SET_ADMIN_URL', admin_url('admin.php?page=' . GEN_SET_PG_SLUG));
+            define('GEN_SET_TEMPLATE_PATH', GEN_SET_ADMIN . 'templates/');
+            define('GEN_SET_ASSETS_URL', EE_ADMIN_PAGES_URL . 'general_settings/assets/');
+        }
         parent::__construct();
     }
+
 
     protected function _set_init_properties()
     {
         $this->label = GEN_SET_LABEL;
     }
 
-    protected function _set_menu_map()
+
+    /**
+     * @return mixed[]
+     */
+    public function getMenuProperties()
     {
-        $this->_menu_map = new EE_Admin_Page_Sub_Menu(
-            array(
-                'menu_group'      => 'settings',
-                'menu_order'      => 20,
-                'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
-                'parent_slug'     => 'espresso_events',
-                'menu_slug'       => GEN_SET_PG_SLUG,
-                'menu_label'      => GEN_SET_LABEL,
-                'capability'      => 'manage_options',
-                'admin_init_page' => $this,
-            )
-        );
+        return [
+            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'      => 'settings',
+            'menu_order'      => 20,
+            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'     => 'espresso_events',
+            'menu_slug'       => GEN_SET_PG_SLUG,
+            'menu_label'      => GEN_SET_LABEL,
+            'capability'      => 'manage_options',
+        ];
     }
 }

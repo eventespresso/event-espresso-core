@@ -56,7 +56,7 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes
      * @param  EE_messenger $messenger
      * @return  array                                             new validator config.
      */
-    public static function messenger_validator_config($validator_config, EE_messenger $messenger)
+    public static function messenger_validator_config($validator_config, $messenger)
     {
         if ($messenger->name !== 'email') {
             return $validator_config;
@@ -84,7 +84,7 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes
      * @param  EE_messenger $messenger
      * @return  array                                           new/modified template fields array.
      */
-    public static function messenger_template_fields($template_fields, EE_messenger $messenger)
+    public static function messenger_template_fields($template_fields, $messenger)
     {
         if ($messenger->name !== 'email') {
             return $template_fields;

@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
 use EventEspresso\core\services\database\TableAnalysis;
 
 /**
@@ -27,11 +28,13 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
     public function __construct()
     {
         // define some page related constants
-        define('EE_PAYMENTS_PG_SLUG', 'espresso_payment_settings');
-        define('EE_PAYMENTS_ADMIN_URL', admin_url('admin.php?page=' . EE_PAYMENTS_PG_SLUG));
-        define('EE_PAYMENTS_ADMIN', EE_ADMIN_PAGES . 'payments/');
-        define('EE_PAYMENTS_TEMPLATE_PATH', EE_PAYMENTS_ADMIN . 'templates/');
-        define('EE_PAYMENTS_ASSETS_URL', EE_ADMIN_PAGES_URL . 'payments/assets/');
+        if (! defined('EE_PAYMENTS_PG_SLUG')) {
+            define('EE_PAYMENTS_PG_SLUG', 'espresso_payment_settings');
+            define('EE_PAYMENTS_ADMIN_URL', admin_url('admin.php?page=' . EE_PAYMENTS_PG_SLUG));
+            define('EE_PAYMENTS_ADMIN', EE_ADMIN_PAGES . 'payments/');
+            define('EE_PAYMENTS_TEMPLATE_PATH', EE_PAYMENTS_ADMIN . 'templates/');
+            define('EE_PAYMENTS_ASSETS_URL', EE_ADMIN_PAGES_URL . 'payments/assets/');
+        }
         $this->_table_analysis = EE_Registry::instance()->create('TableAnalysis', [], true);
         // check that there are active gateways on all admin page loads. but don't do it just yet
         add_action('admin_notices', [$this, 'check_payment_gateway_setup']);
@@ -53,25 +56,20 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
 
 
     /**
-     * _set_menu_map
-     *
-     * @return void
-     * @throws EE_Error
+     * @return mixed[]
      */
-    protected function _set_menu_map()
+    public function getMenuProperties()
     {
-        $this->_menu_map = new EE_Admin_Page_Sub_Menu(
-            [
-                'menu_group'      => 'settings',
-                'menu_order'      => 30,
-                'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
-                'parent_slug'     => 'espresso_events',
-                'menu_slug'       => EE_PAYMENTS_PG_SLUG,
-                'menu_label'      => esc_html__('Payment Methods', 'event_espresso'),
-                'capability'      => 'ee_manage_gateways',
-                'admin_init_page' => $this,
-            ]
-        );
+        return [
+            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'      => 'settings',
+            'menu_order'      => 30,
+            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'     => 'espresso_events',
+            'menu_slug'       => EE_PAYMENTS_PG_SLUG,
+            'menu_label'      => esc_html__('Payment Methods', 'event_espresso'),
+            'capability'      => 'ee_manage_gateways',
+        ];
     }
 
 

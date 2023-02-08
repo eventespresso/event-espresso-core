@@ -3,9 +3,7 @@
 namespace EventEspresso\core\services\assets;
 
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
-use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
-use EventEspresso\core\domain\values\assets\VendorJavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
@@ -33,23 +31,6 @@ interface AssetManagerInterface
 
 
     /**
-     * @return ManifestFile
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @since 4.9.62.p
-     */
-    public function addManifestFile();
-
-
-    /**
-     * @return ManifestFile[]
-     * @since 4.9.62.p
-     */
-    public function getManifestFile();
-
-
-    /**
      * @param string $handle
      * @param string $source
      * @param array  $dependencies
@@ -63,7 +44,7 @@ interface AssetManagerInterface
     public function addJavascript(
         $handle,
         $source,
-        array $dependencies = array(),
+        $dependencies = array(),
         $load_in_footer = true
     );
 
@@ -77,7 +58,7 @@ interface AssetManagerInterface
      */
     public function addVendorJavascript(
         $handle,
-        array $dependencies = array(),
+        $dependencies = array(),
         $load_in_footer = true
     );
 
@@ -97,7 +78,7 @@ interface AssetManagerInterface
     public function addStylesheet(
         $handle,
         $source,
-        array $dependencies = array(),
+        $dependencies = array(),
         $media = 'all'
     );
 

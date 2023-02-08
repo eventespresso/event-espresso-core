@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\commands;
 
+use DomainException;
+use Exception;
 /**
  * Class InvalidCommandHandlerException
  * thrown when the Command Handler for a Command could not be resolved
@@ -10,16 +12,16 @@ namespace EventEspresso\core\services\commands;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidCommandHandlerException extends \DomainException
+class InvalidCommandHandlerException extends DomainException
 {
     /**
      * @access public
      * @param  string     $command_name
      * @param  string     $message
      * @param  int        $code
-     * @param  \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($command_name, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($command_name, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(

@@ -98,7 +98,7 @@ class EED_Event_Single_Caff extends EED_Event_Single
         wp_register_script(
             'eed-event-single-sortable',
             EVENT_SINGLE_CAFF_ASSETS_URL . 'eed_event_single_sortable.js',
-            array('jquery-ui-sortable'),
+            array('espresso_core', 'jquery-ui-sortable'),
             EVENT_ESPRESSO_VERSION,
             true
         );
@@ -162,7 +162,7 @@ class EED_Event_Single_Caff extends EED_Event_Single
      * @param array              $REQ
      * @return EE_Template_Config
      */
-    public static function update_template_settings(EE_Template_Config $CFG, $REQ)
+    public static function update_template_settings($CFG, $REQ)
     {
         if (! $CFG->EED_Event_Single instanceof EE_Event_Single_Config) {
             $CFG->EED_Event_Single = new EE_Event_Single_Config();

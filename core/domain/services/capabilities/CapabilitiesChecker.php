@@ -48,20 +48,25 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
      * If any of the individual capability checks fails, then the command will NOT be executed.
      *
      * @param CapCheckInterface|CapCheckInterface[] $cap_check
+     * @param bool                                  $suppress_exceptions
      * @return bool
      * @throws InvalidClassException
      * @throws InsufficientPermissionsException
      */
-    public function processCapCheck($cap_check)
+    public function processCapCheck($cap_check, $suppress_exceptions = false)
     {
         if (is_array($cap_check)) {
+            $passed = true;
             foreach ($cap_check as $check) {
-                $this->processCapCheck($check);
+                $passed = $this->processCapCheck($check) ? $passed : false;
             }
-            return true;
+            return $passed;
         }
         // at this point, $cap_check should be an individual instance of CapCheck
         if (! $cap_check instanceof CapCheckInterface) {
+            if ($suppress_exceptions) {
+                return false;
+            }
             throw new InvalidClassException(
                 '\EventEspresso\core\domain\services\capabilities\CapCheckInterface'
             );
@@ -79,6 +84,9 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
                     $cap_check->ID()
                 )
             ) {
+                if ($suppress_exceptions) {
+                    return false;
+                }
                 throw new InsufficientPermissionsException($cap_check->context());
             }
         }
@@ -87,9 +95,9 @@ class CapabilitiesChecker implements CapabilitiesCheckerInterface
 
 
     /**
-     * @param string $capability - the capability to be checked, like: 'ee_edit_registrations'
-     * @param string $context    - what the user is attempting to do, like: 'Edit Registration'
-     * @param int    $ID         - (optional) ID for item where current_user_can is being called from
+     * @param array|string $capability - the capability to be checked, like: 'ee_edit_registrations'
+     * @param string       $context    - what the user is attempting to do, like: 'Edit Registration'
+     * @param int|string   $ID         - (optional) ID for item where current_user_can is being called from
      * @return bool
      * @throws InvalidDataTypeException
      * @throws InsufficientPermissionsException

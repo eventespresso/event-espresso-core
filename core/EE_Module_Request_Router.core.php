@@ -53,7 +53,7 @@ final class EE_Module_Request_Router implements InterminableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_route(WP_Query $WP_Query)
+    public function get_route($WP_Query)
     {
         $this->WP_Query = $WP_Query;
         // assume this if first route being called

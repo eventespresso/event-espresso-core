@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\contexts\ContextInterface;
+use EventEspresso\core\domain\entities\RegCode;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -71,7 +72,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        return $has_object ?: new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
@@ -133,7 +134,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         switch ($field_name) {
             case 'REG_code':
-                if (! empty($field_value) && $this->reg_code() === null) {
+                if (! empty($field_value) && ! $this->reg_code()) {
                     $this->set_reg_code($field_value, $use_default);
                 }
                 break;
@@ -166,7 +167,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws RuntimeException
      * @throws UnexpectedEntityException
      */
-    public function set_status($new_STS_ID = null, $use_default = false, ContextInterface $context = null)
+    public function set_status($new_STS_ID = null, $use_default = false, $context = null)
     {
         // get current REG_Status
         $old_STS_ID = $this->status_ID();
@@ -434,7 +435,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function event()
     {
         $event = $this->get_first_related('Event');
-        if (! $event instanceof \EE_Event) {
+        if (! $event instanceof EE_Event) {
             throw new EntityNotFoundException('Event ID', $this->event_ID());
         }
         return $event;
@@ -967,33 +968,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param string $messenger 'pdf' or 'html'.  Default 'html'.
      * @return string
      * @throws DomainException
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
     public function receipt_url($messenger = 'html')
     {
-
-        /**
-         * The below will be deprecated one version after this.  We check first if there is a custom receipt template
-         * already in use on old system.  If there is then we just return the standard url for it.
-         *
-         * @since 4.5.0
-         */
-        $template_relative_path = 'modules/gateways/Invoice/lib/templates/receipt_body.template.php';
-        $has_custom = EEH_Template::locate_template(
-            $template_relative_path,
-            array(),
-            true,
-            true,
-            true
-        );
-
-        if ($has_custom) {
-            return add_query_arg(array('receipt' => 'true'), $this->invoice_url('launch'));
-        }
         return apply_filters('FHEE__EE_Registration__receipt_url__receipt_url', '', $this, $messenger, 'receipt');
     }
 
@@ -1004,41 +984,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param string $messenger 'pdf' or 'html'.  Default 'html'.
      * @return string
      * @throws DomainException
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
     public function invoice_url($messenger = 'html')
     {
-        /**
-         * The below will be deprecated one version after this.  We check first if there is a custom invoice template
-         * already in use on old system.  If there is then we just return the standard url for it.
-         *
-         * @since 4.5.0
-         */
-        $template_relative_path = 'modules/gateways/Invoice/lib/templates/invoice_body.template.php';
-        $has_custom = EEH_Template::locate_template(
-            $template_relative_path,
-            array(),
-            true,
-            true,
-            true
-        );
-
-        if ($has_custom) {
-            if ($messenger == 'html') {
-                return $this->invoice_url('launch');
-            }
-            $route = $messenger == 'download' || $messenger == 'pdf' ? 'download_invoice' : 'launch_invoice';
-
-            $query_args = array('ee' => $route, 'id' => $this->reg_url_link());
-            if ($messenger == 'html') {
-                $query_args['html'] = true;
-            }
-            return add_query_arg($query_args, get_permalink(EE_Registry::instance()->CFG->core->thank_you_page_id));
-        }
         return apply_filters('FHEE__EE_Registration__invoice_url__invoice_url', '', $this, $messenger, 'invoice');
     }
 
@@ -1932,53 +1883,44 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * If neither the datetime nor the checkin values are provided as arguments,
      * then this will return the LATEST check-in status for the registration across all datetimes it belongs to.
      *
-     * @param  int       $DTT_ID  The ID of the datetime we're checking against
-     *                            (if empty we'll get the primary datetime for
-     *                            this registration (via event) and use it's ID);
-     * @param EE_Checkin $checkin If present, we use the given checkin object rather than the dtt_id.
-     * @return int                Integer representing Check-in status.
+     * @param int|null        $DTT_ID  The ID of the datetime we're checking against
+     *                                 (if empty we'll get the primary datetime for
+     *                                 this registration (via event) and use it's ID);
+     * @param EE_Checkin|null $checkin If present, we use the given checkin object rather than the dtt_id.
+     * @return int                     Integer representing Check-in status.
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function check_in_status_for_datetime($DTT_ID = 0, $checkin = null)
     {
-        $checkin_query_params = array(
-            'order_by' => array('CHK_timestamp' => 'DESC'),
-        );
-
-        if ($DTT_ID > 0) {
-            $checkin_query_params[0] = array('DTT_ID' => $DTT_ID);
-        }
-
-        // get checkin object (if exists)
-        $checkin = $checkin instanceof EE_Checkin
-            ? $checkin
-            : $this->get_first_related('Checkin', $checkin_query_params);
         if ($checkin instanceof EE_Checkin) {
-            if ($checkin->get('CHK_in')) {
-                return EE_Checkin::status_checked_in; // checked in
-            }
-            return EE_Checkin::status_checked_out; // had checked in but is now checked out.
+            return $checkin->status();
         }
-        return EE_Checkin::status_checked_never; // never been checked in
+        // can't query checkin for a specific date if no ID was supplied
+        if (empty($DTT_ID)) {
+            return EE_Checkin::status_invalid;
+        }
+
+        $checkin = $this->get_first_related(
+            'Checkin',
+            [
+                ['DTT_ID' => $DTT_ID],
+                'order_by' => ['CHK_timestamp' => 'DESC'],
+            ]
+        );
+        return $checkin instanceof EE_Checkin ? $checkin->status() :  EE_Checkin::status_checked_never;
     }
 
 
     /**
      * This method returns a localized message for the toggled Check-in message.
      *
-     * @param  int $DTT_ID include specific datetime to get the correct Check-in message.  If not included or null,
-     *                     then it is assumed Check-in for primary datetime was toggled.
-     * @param bool $error  This just flags that you want an error message returned. This is put in so that the error
-     *                     message can be customized with the attendee name.
+     * @param int|null $DTT_ID include specific datetime to get the correct Check-in message.  If not included or null,
+     *                         then it is assumed Check-in for primary datetime was toggled.
+     * @param bool     $error  This just flags that you want an error message returned. This is put in so that the error
+     *                         message can be customized with the attendee name.
      * @return string internationalized message
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function get_checkin_msg($DTT_ID, $error = false)
@@ -2000,13 +1942,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                         esc_html__('%s has been removed from Check-in records', 'event_espresso'),
                         $attendee->full_name()
                     );
-                    break;
                 case EE_Checkin::status_checked_in:
                     return sprintf(esc_html__('%s has been checked in', 'event_espresso'), $attendee->full_name());
-                    break;
                 case EE_Checkin::status_checked_out:
                     return sprintf(esc_html__('%s has been checked out', 'event_espresso'), $attendee->full_name());
-                    break;
             }
         }
         return esc_html__('The check-in status could not be determined.', 'event_espresso');
@@ -2019,15 +1958,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @return EE_Transaction
      * @throws EE_Error
      * @throws EntityNotFoundException
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function transaction()
     {
         $transaction = $this->get_first_related('Transaction');
-        if (! $transaction instanceof \EE_Transaction) {
+        if (! $transaction instanceof EE_Transaction) {
             throw new EntityNotFoundException('Transaction ID', $this->transaction_ID());
         }
         return $transaction;
@@ -2037,7 +1973,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * get Registration Code
      *
-     * @return mixed
+     * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -2046,7 +1982,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function reg_code()
     {
-        return $this->get('REG_code');
+        return $this->get('REG_code') ?: '';
     }
 
 
@@ -2081,8 +2017,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Set Registration Code
      *
-     * @param    string  $REG_code Registration Code
-     * @param    boolean $use_default
+     * @param RegCode|string $REG_code Registration Code
+     * @param boolean        $use_default
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -2267,7 +2203,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * @return \EE_Line_Item
+     * @return EE_Line_Item
      * @throws EE_Error
      * @throws EntityNotFoundException
      * @throws InvalidArgumentException
@@ -2280,14 +2216,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         $ticket = $this->ticket();
         $transaction = $this->transaction();
         $line_item = null;
-        $ticket_line_items = \EEH_Line_Item::get_line_items_by_object_type_and_IDs(
+        $ticket_line_items = EEH_Line_Item::get_line_items_by_object_type_and_IDs(
             $transaction->total_line_item(),
             'Ticket',
             array($ticket->ID())
         );
         foreach ($ticket_line_items as $ticket_line_item) {
             if (
-                $ticket_line_item instanceof \EE_Line_Item
+                $ticket_line_item instanceof EE_Line_Item
                 && $ticket_line_item->OBJ_type() === 'Ticket'
                 && $ticket_line_item->OBJ_ID() === $ticket->ID()
             ) {
@@ -2295,7 +2231,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                 break;
             }
         }
-        if (! ($line_item instanceof \EE_Line_Item && $line_item->OBJ_type() === 'Ticket')) {
+        if (! ($line_item instanceof EE_Line_Item && $line_item->OBJ_type() === 'Ticket')) {
             throw new EntityNotFoundException('Line Item Ticket ID', $ticket->ID());
         }
         return $line_item;
@@ -2514,5 +2450,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function name()
     {
         return $this->attendeeName();
+    }
+
+
+    /**
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function wasMoved()
+    {
+        // only need to check 'registration-moved-to' because
+        // the existence of a new REG ID means the registration was moved
+        $reg_moved = $this->get_extra_meta('registration-moved-to', true, []);
+        return isset($reg_moved['NEW_REG_ID']) && $reg_moved['NEW_REG_ID'];
     }
 }

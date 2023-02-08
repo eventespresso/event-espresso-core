@@ -18,5 +18,5 @@ abstract class FormHtmlFilter
      * @param EE_Form_Section_Validatable $form_section
      * @return string
      */
-    abstract public function filterHtml($html, EE_Form_Section_Validatable $form_section);
+    abstract public function filterHtml($html, $form_section);
 }

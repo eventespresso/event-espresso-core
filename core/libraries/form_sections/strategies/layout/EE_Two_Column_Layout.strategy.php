@@ -3,10 +3,21 @@
 class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base
 {
     /**
+     * @param EE_Form_Section_Proper $form
+     */
+    public function _construct_finalize($form)
+    {
+        parent::_construct_finalize($form);
+        $this->_form_section->set_html_class('ee-two-column-layout');
+    }
+
+
+    /**
      * Should be used to start teh form section (Eg a table tag, or a div tag, etc.)
      *
      * @param array $additional_args
      * @return string
+     * @throws EE_Error
      */
     public function layout_form_begin($additional_args = array())
     {
@@ -72,10 +83,14 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base
     */
     public function layout_subsection($form_section)
     {
-        if (
-            $form_section instanceof EE_Form_Section_Proper
-            || $form_section instanceof EE_Form_Section_HTML
-        ) {
+        if ($form_section instanceof EE_Form_Section_Proper) {
+            $html = $form_section->get_html();
+            // \EEH_Debug_Tools::printr( $html, '$html', __FILE__, __LINE__ );
+
+            return ! empty($html) ? EEH_HTML::no_row($html) : '';
+        }
+        if ($form_section instanceof EE_Form_Section_HTML) {
+            // return $form_section->get_html();
             return EEH_HTML::no_row($form_section->get_html());
         }
         return '';

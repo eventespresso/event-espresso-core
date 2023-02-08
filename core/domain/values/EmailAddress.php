@@ -51,7 +51,7 @@ class EmailAddress
      * @param EmailAddress $address
      * @return bool
      */
-    public function equals(EmailAddress $address)
+    public function equals($address)
     {
         return strtolower((string) $this) === strtolower((string) $address);
     }

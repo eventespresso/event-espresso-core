@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\container;
 
+use ReflectionClass;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\services\container\exceptions\InstantiationException;
@@ -62,7 +63,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
 
     /**
      * @param $type
-     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
+     * @throws InvalidIdentifierException
      */
     public static function validateType($type)
     {
@@ -94,7 +95,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
 
 
     /**
-     * @return \EventEspresso\core\services\container\CoffeePotInterface
+     * @return CoffeePotInterface
      */
     protected function coffeePot()
     {
@@ -103,7 +104,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
 
 
     /**
-     * @return \EventEspresso\core\services\container\DependencyInjector
+     * @return DependencyInjector
      */
     protected function injector()
     {
@@ -114,11 +115,11 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
     /**
      * Examines the constructor to determine which method should be used for instantiation
      *
-     * @param \ReflectionClass $reflector
+     * @param ReflectionClass $reflector
      * @return mixed
      * @throws InstantiationException
      */
-    protected function resolveInstantiationMethod(\ReflectionClass $reflector)
+    protected function resolveInstantiationMethod($reflector)
     {
         if ($reflector->getConstructor() === null) {
             return 'NewInstance';
@@ -147,7 +148,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
      * @return bool
      * @throws InvalidClassException
      */
-    protected function resolveClassAndFilepath(RecipeInterface $recipe)
+    protected function resolveClassAndFilepath($recipe)
     {
         $paths = $recipe->paths();
         if (! empty($paths)) {

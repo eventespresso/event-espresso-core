@@ -172,7 +172,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * @param array             $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean           $values_already_prepared_by_model_object @deprecated since 4.8.1
      * @return EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_all_related(
         $model_object_or_id,
@@ -220,7 +220,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * @param EE_Base_Class|int|string $model_object_or_id
      * @param array                    $query_params
      * @return int of how many related models got deleted
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete_all_related($model_object_or_id, $query_params = array())
     {
@@ -253,7 +253,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * @param EE_Base_Class|int|string $model_object_or_id
      * @param array                    $query_params
      * @return int of how many related models got deleted
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete_related_permanently($model_object_or_id, $query_params = array())
     {
@@ -328,16 +328,16 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
 
 
     /**
-     * Adds a relationships between the two model objects provided. Each type of relationship handles this differently
-     * (EE_Belongs_To is a slight exception, it should more accurately be called set_relation_to(...), as this
-     * relationship only allows this model to be related to a single other model of this type)
-     *
-     * @param       $this_obj_or_id
-     * @param       $other_obj_or_id
-     * @param array $extra_join_model_fields_n_values
-     * @return \EE_Base_Class the EE_Base_Class which was added as a relation. (Convenient if you only pass an ID for
-     *                        $other_obj_or_id)
-     */
+    * Adds a relationships between the two model objects provided. Each type of relationship handles this differently
+    * (EE_Belongs_To is a slight exception, it should more accurately be called set_relation_to(...), as this
+    * relationship only allows this model to be related to a single other model of this type)
+    *
+    * @param       $this_obj_or_id
+    * @param       $other_obj_or_id
+    * @param array $extra_join_model_fields_n_values
+     * @return EE_Base_Class the EE_Base_Class which was added as a relation. (Convenient if you only pass an ID for
+                      $other_obj_or_id)
+    */
     abstract public function add_relation_to(
         $this_obj_or_id,
         $other_obj_or_id,
@@ -363,7 +363,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * @param EE_Base_Class|int $this_obj_or_id
      * @param array             $where_query_param @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function remove_relations($this_obj_or_id, $where_query_param = array())
     {

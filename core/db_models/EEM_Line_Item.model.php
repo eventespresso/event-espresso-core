@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\values\session\SessionLifespan;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -62,6 +63,13 @@ class EEM_Line_Item extends EEM_Base
      * = LIN_percent / 100 * sum of lower-priority sibling line items..
      */
     const type_sub_line_item = 'sub-item';
+
+    /**
+     * SubTax line items indicate a tax that is only applied to the pre-tax total of their parent line item.
+     * Should not have any children line items. Its LIN_unit_price = 0. Its LIN_percent is a percent, not a decimal
+     * (eg 10% tax = 10, not 0.1). Its LIN_total = LIN_unit_price * pre-tax-total. Quantity = 1.
+     */
+    const type_sub_tax = 'sub-tax';
 
     /**
      * Line item indicating a sub-total (eg total for an event, or pre-tax subtotal).
@@ -188,7 +196,13 @@ class EEM_Line_Item extends EEM_Base
                 ),
                 'LIN_total'      => new EE_Money_Field(
                     'LIN_total',
-                    esc_html__('Total (unit price x quantity)', 'event_espresso'),
+                    esc_html__('Total (unit price x quantity) after taxes', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'LIN_pretax'      => new EE_Money_Field(
+                    'LIN_pretax',
+                    esc_html__('Total (unit price x quantity) before taxes', 'event_espresso'),
                     false,
                     0
                 ),
@@ -212,6 +226,7 @@ class EEM_Line_Item extends EEM_Base
                     array(
                         self::type_line_item     => esc_html__('Line Item', 'event_espresso'),
                         self::type_sub_line_item => esc_html__('Sub-Item', 'event_espresso'),
+                        self::type_sub_tax       => esc_html__('Sub-Tax', 'event_espresso'),
                         self::type_sub_total     => esc_html__('Subtotal', 'event_espresso'),
                         self::type_tax_sub_total => esc_html__('Tax Subtotal', 'event_espresso'),
                         self::type_tax           => esc_html__('Tax', 'event_espresso'),
@@ -349,7 +364,7 @@ class EEM_Line_Item extends EEM_Base
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_line_item_for_transaction_object($TXN_ID, EE_Base_Class $object)
+    public function get_line_item_for_transaction_object($TXN_ID, $object)
     {
         return $this->get_all(array(
             array(
@@ -399,7 +414,7 @@ class EEM_Line_Item extends EEM_Base
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_all_ticket_line_items_for_transaction(EE_Transaction $transaction)
+    public function get_all_ticket_line_items_for_transaction($transaction)
     {
         return $this->get_all(array(
             array(
@@ -447,7 +462,7 @@ class EEM_Line_Item extends EEM_Base
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_existing_promotion_line_item(EE_Line_Item $parent_line_item, EE_Promotion $promotion)
+    public function get_existing_promotion_line_item($parent_line_item, $promotion)
     {
         return $this->get_one(array(
             array(
@@ -473,7 +488,7 @@ class EEM_Line_Item extends EEM_Base
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_all_promotion_line_items(EE_Line_Item $parent_line_item)
+    public function get_all_promotion_line_items($parent_line_item)
     {
         return $this->get_all(array(
             array(
@@ -495,7 +510,7 @@ class EEM_Line_Item extends EEM_Base
      * @return EE_Base_Class|EE_Line_ITem|EE_Soft_Delete_Base_Class|NULL
      * @throws EE_Error
      */
-    public function get_line_item_for_registration(EE_Registration $registration)
+    public function get_line_item_for_registration($registration)
     {
         return $this->get_one($this->line_item_for_registration_query_params($registration));
     }
@@ -511,7 +526,7 @@ class EEM_Line_Item extends EEM_Base
      * @throws EE_Error
      */
     public function line_item_for_registration_query_params(
-        EE_Registration $registration,
+        $registration,
         $original_query_params = array()
     ) {
         return array_replace_recursive($original_query_params, array(
@@ -582,7 +597,7 @@ class EEM_Line_Item extends EEM_Base
             'LIN_type' => 'total',
         );
         if ($expired !== null) {
-            /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+            /** @var SessionLifespan $session_lifespan */
             $session_lifespan = LoaderFactory::getLoader()->getShared(
                 'EventEspresso\core\domain\values\session\SessionLifespan'
             );
@@ -609,7 +624,7 @@ class EEM_Line_Item extends EEM_Base
     public function getTicketLineItemsForExpiredCarts($timestamp = 0)
     {
         if (! absint($timestamp)) {
-            /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+            /** @var SessionLifespan $session_lifespan */
             $session_lifespan = LoaderFactory::getLoader()->getShared(
                 'EventEspresso\core\domain\values\session\SessionLifespan'
             );

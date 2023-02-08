@@ -19,5 +19,5 @@ interface BlockRendererInterface
      * @param array $attributes
      * @return string Rendered Content
      */
-    public function render(array $attributes);
+    public function render($attributes);
 }

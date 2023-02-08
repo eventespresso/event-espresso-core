@@ -73,7 +73,7 @@ class DatetimeOffsetFix extends JobHandler
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function create_job(JobParameters $job_parameters)
+    public function create_job($job_parameters)
     {
         $models_with_datetime_fields = $this->getModelsWithDatetimeFields();
         // we'll be doing each model as a batch.
@@ -95,7 +95,7 @@ class DatetimeOffsetFix extends JobHandler
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function continue_job(JobParameters $job_parameters, $batch_size = 50)
+    public function continue_job($job_parameters, $batch_size = 50)
     {
         $models_to_process = $this->getModelsWithDatetimeFields();
         // let's pop off the a model and do the query to apply the offset.
@@ -126,7 +126,7 @@ class DatetimeOffsetFix extends JobHandler
      * @return JobStepResponse
      * @throws BatchRequestException
      */
-    public function cleanup_job(JobParameters $job_parameters)
+    public function cleanup_job($job_parameters)
     {
         // delete important saved options.
         delete_option(self::MODELS_TO_PROCESS_OPTION_KEY);
@@ -187,9 +187,9 @@ class DatetimeOffsetFix extends JobHandler
                 case $result === false:
                     // record error.
                     $error_message = $wpdb->last_error;
-                    // handle the edgecases where last_error might be empty.
+                    // handle the edge cases where last_error might be empty.
                     if (! $error_message) {
-                        $error_message = esc_html__('Unknown mysql error occured.', 'event_espresso');
+                        $error_message = esc_html__('Unknown mysql error occurred.', 'event_espresso');
                     }
                     $this->recordChangeLog($model, $original_offset, $table, $fields_affected, $error_message);
                     break;
@@ -429,7 +429,7 @@ class DatetimeOffsetFix extends JobHandler
      *
      * @param DbSafeDateTime|null $start_date
      */
-    public static function updateStartDateRange(DbSafeDateTime $start_date = null)
+    public static function updateStartDateRange($start_date = null)
     {
         $date_to_save = $start_date instanceof DbSafeDateTime
             ? $start_date->format('U')
@@ -463,7 +463,7 @@ class DatetimeOffsetFix extends JobHandler
      *
      * @param DbSafeDateTime|null $end_date
      */
-    public static function updateEndDateRange(DbSafeDateTime $end_date = null)
+    public static function updateEndDateRange($end_date = null)
     {
         $date_to_save = $end_date instanceof DbSafeDateTime
             ? $end_date->format('U')

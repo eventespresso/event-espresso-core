@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\libraries\rest_api;
 
+use EE_Error;
 /**
  * Class Exception
  * similar to EE's EE_Error, except has space to hold the "data" we
@@ -12,7 +13,7 @@ namespace EventEspresso\core\libraries\rest_api;
  * @author                Mike Nelson
  *
  */
-class RestException extends \EE_Error
+class RestException extends EE_Error
 {
     /**
      * @var array

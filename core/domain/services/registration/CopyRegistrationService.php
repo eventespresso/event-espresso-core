@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\registration;
 
+use EE_Question_Group;
 use EE_Answer;
 use EE_Error;
 use EE_Payment;
@@ -35,8 +36,8 @@ class CopyRegistrationService extends DomainService
      * @throws EE_Error
      */
     public function copyRegistrationDetails(
-        EE_Registration $target_registration,
-        EE_Registration $registration_to_copy
+        $target_registration,
+        $registration_to_copy
     ) {
         // copy attendee
         $target_registration->set_attendee_id($registration_to_copy->attendee_ID());
@@ -58,7 +59,7 @@ class CopyRegistrationService extends DomainService
                 'order_by' => ['QSG_order' => 'ASC'],
             ]);
         foreach ($question_groups as $question_group) {
-            if ($question_group instanceof \EE_Question_Group) {
+            if ($question_group instanceof EE_Question_Group) {
                 foreach ($question_group->questions() as $question) {
                     if ($question instanceof EE_Question) {
                         $this->generateNewAnswer(
@@ -79,7 +80,7 @@ class CopyRegistrationService extends DomainService
      * @return array
      * @throws EE_Error
      */
-    protected function reindexAnswersByQuestionId(array $answers)
+    protected function reindexAnswersByQuestionId($answers)
     {
         $reindexed_answers = array();
         foreach ($answers as $answer) {
@@ -100,8 +101,8 @@ class CopyRegistrationService extends DomainService
      * @throws EE_Error
      */
     protected function generateNewAnswer(
-        EE_Question $question,
-        EE_Registration $registration,
+        $question,
+        $registration,
         $previous_answers
     ) {
         $old_answer_value = isset($previous_answers[ $question->ID() ])
@@ -131,8 +132,8 @@ class CopyRegistrationService extends DomainService
      * @throws EE_Error
      */
     public function copyPaymentDetails(
-        EE_Registration $target_registration,
-        EE_Registration $registration_to_copy
+        $target_registration,
+        $registration_to_copy
     ) {
         $save = false;
         $previous_registration_payments = $registration_to_copy->registration_payments();

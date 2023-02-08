@@ -21,11 +21,11 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
     protected $_pm_instance;
 
 
-
     /**
      *
      * @param EE_Payment_Method $payment_method
-     * @param array $options_array @see EE_Form_Section_Proper::__construct()
+     * @param array             $options_array @see EE_Form_Section_Proper::__construct()
+     * @throws EE_Error
      */
     public function __construct(EE_Payment_Method $payment_method, $options_array = array())
     {
@@ -41,7 +41,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
      * @param EE_Payment_Method $payment_method
      * @return void
      */
-    public function set_payment_method(EE_Payment_Method $payment_method)
+    public function set_payment_method($payment_method)
     {
         $this->_pm_instance = $payment_method;
     }
@@ -61,7 +61,8 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
 
     /**
      * payment_fields_autofilled_notice_html
-     * @return string
+     *
+     * @return EE_Form_Section_HTML
      */
     public function payment_fields_autofilled_notice_html()
     {

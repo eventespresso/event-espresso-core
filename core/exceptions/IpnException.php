@@ -2,6 +2,10 @@
 
 namespace EventEspresso\core\exceptions;
 
+use LogicException;
+use EE_Payment;
+use Exception;
+use EE_Error;
 /**
  * Class IPNException
  * Exception for describing any problems relating to how an IPN was received.
@@ -12,7 +16,7 @@ namespace EventEspresso\core\exceptions;
  * @package       Event Espresso
  * @author        Michael Nelson
  */
-class IpnException extends \LogicException
+class IpnException extends LogicException
 {
     const DUPLICATE = 1;
 
@@ -21,7 +25,7 @@ class IpnException extends \LogicException
     const UNSUPPORTED = 3;
 
     /**
-     * @var \EE_Payment
+     * @var EE_Payment
      */
     protected $payment;
 
@@ -34,8 +38,8 @@ class IpnException extends \LogicException
     public function __construct(
         $message,
         $code = 0,
-        \Exception $previous = null,
-        \EE_Payment $payment = null,
+        Exception $previous = null,
+        EE_Payment $payment = null,
         $ipn_data = array()
     ) {
         parent::__construct($message, $code, $previous);
@@ -47,7 +51,7 @@ class IpnException extends \LogicException
     /**
      * Gets the payment associated with this IPN, if known
      *
-     * @return \EE_Payment
+     * @return EE_Payment
      */
     public function getPayment()
     {
@@ -59,11 +63,11 @@ class IpnException extends \LogicException
      * Returns the payment's properties as an array (even if there is no payment, in which case it's an empty array)
      *
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function getPaymentProperties()
     {
-        return $this->getPayment() instanceof \EE_Payment ? $this->getPayment()->model_field_array() : array();
+        return $this->getPayment() instanceof EE_Payment ? $this->getPayment()->model_field_array() : array();
     }
 
 

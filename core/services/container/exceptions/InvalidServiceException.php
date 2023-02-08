@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\container\exceptions;
 
+use UnexpectedValueException;
+use Exception;
 /**
  * Class InvalidServiceException
  * thrown when attempting to retrieve a service from the container, but none is returned
@@ -10,7 +12,7 @@ namespace EventEspresso\core\services\container\exceptions;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidServiceException extends \UnexpectedValueException
+class InvalidServiceException extends UnexpectedValueException
 {
     /**
      * InvalidServiceException constructor.
@@ -19,9 +21,9 @@ class InvalidServiceException extends \UnexpectedValueException
      * @param string     $actual       classname of what we got
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($service_name, $actual, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($service_name, $actual, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(

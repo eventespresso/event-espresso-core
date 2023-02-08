@@ -43,9 +43,9 @@ class EE_Messenger_Collection_Loader
 
 
     /**
-     * @param mixed $messengers
+     * @param EE_Messenger_Collection $messengers
      */
-    public function set_messenger_collection(EE_Messenger_Collection $messengers)
+    public function set_messenger_collection($messengers)
     {
         $this->_messenger_collection = $messengers;
     }
@@ -57,7 +57,7 @@ class EE_Messenger_Collection_Loader
      * globs the supplied filepath and adds any found
      *
      * @param  string $folder
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function load_messengers_from_folder($folder = '')
     {
@@ -123,10 +123,10 @@ class EE_Messenger_Collection_Loader
     /**
      * load_messenger
      *
-     * @param \EE_messenger $messenger
+     * @param EE_messenger $messenger
      * @return bool
      */
-    protected function _load_messenger(EE_messenger $messenger)
+    protected function _load_messenger($messenger)
     {
         if ($this->messenger_collection()->has_by_name($messenger->name)) {
             return true;

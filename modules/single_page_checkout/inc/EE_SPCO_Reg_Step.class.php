@@ -143,7 +143,7 @@ abstract class EE_SPCO_Reg_Step
 
 
     /**
-     * @return string
+     * @return EE_Form_Section_Proper
      */
     abstract public function generate_reg_form();
 
@@ -302,6 +302,16 @@ abstract class EE_SPCO_Reg_Step
     public function template()
     {
         return $this->_template;
+    }
+
+
+    /**
+     * @param string $template
+     * @return void
+     */
+    public function setTemplate($template)
+    {
+        $this->_template = $template;
     }
 
 
@@ -653,7 +663,7 @@ abstract class EE_SPCO_Reg_Step
     /**
      * @param RequestInterface $request
      */
-    public function setRequest(RequestInterface $request)
+    public function setRequest($request)
     {
         $this->request = $request;
     }

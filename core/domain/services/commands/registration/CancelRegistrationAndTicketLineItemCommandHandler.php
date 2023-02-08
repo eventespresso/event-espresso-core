@@ -57,7 +57,7 @@ class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
      * @throws ReflectionException
      * @throws RuntimeException
      */
-    public function handle(CommandInterface $command)
+    public function handle($command)
     {
         /** @var CancelRegistrationAndTicketLineItemCommand $command */
         if (! $command instanceof CancelRegistrationAndTicketLineItemCommand) {

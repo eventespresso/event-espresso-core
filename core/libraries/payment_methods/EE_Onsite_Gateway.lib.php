@@ -9,14 +9,9 @@
  * @package            Event Espresso
  * @subpackage         core/libraries/payment_methods
  * @author             Mike Nelson
- *
- * ------------------------------------------------------------------------
  */
 abstract class EE_Onsite_Gateway extends EE_Gateway
 {
-    /**
-     * @return EE_Onsite_Gateway
-     */
     public function __construct()
     {
         $this->_supports_sending_refunds = true;
@@ -30,19 +25,19 @@ abstract class EE_Onsite_Gateway extends EE_Gateway
      * for sending the request via http_remote_request(). Saving the payment from within this method is unnecessary,
      * as it is the responsibility of client code to save it.
      *
-     * @param EEI_Payment $payment
-     * @param array       $billing_info {
-     * @type              $first_name   string
-     * @type              $last_name    string
-     * @type              $email        string
-     * @type              $address      string
-     * @type              $address2     string
-     * @type              $city         string
-     * @type              $state        string name of the state (NOT int)
-     * @type              $country      string 2-character ISO code see http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-     * @type              $zip          string
-     * @type              $phone        string
-     *                                  } unless a child class specifies these array keys are NOT present
+     * @param EE_Payment|null $payment
+     * @param array|null      $billing_info {
+     *      @type $first_name   string
+     *      @type $last_name    string
+     *      @type $email        string
+     *      @type $address      string
+     *      @type $address2     string
+     *      @type $city         string
+     *      @type $state        string name of the state (NOT int)
+     *      @type $country      string 2-character ISO code see http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+     *      @type $zip          string
+     *      @type $phone        string
+     * } unless a child class specifies these array keys are NOT present
      * @return EE_Payment updated
      */
     abstract public function do_direct_payment($payment, $billing_info = null);

@@ -162,10 +162,10 @@ class EED_Events_Archive extends EED_Module
      * @return EE_Template_Part_Manager
      * @throws EE_Error
      */
-    public function initialize_template_parts(EE_Events_Archive_Config $config = null)
+    public function initialize_template_parts($config = null)
     {
         $config = $config instanceof EE_Events_Archive_Config ? $config : $this->config();
-        EEH_Autoloader::instance()->register_template_part_autoloaders();
+        EEH_Autoloader::register_template_part_autoloaders();
         $template_parts = new EE_Template_Part_Manager();
         $template_parts->add_template_part(
             'tickets',
@@ -933,8 +933,9 @@ class EED_Events_Archive extends EED_Module
      * @throws EE_Error
      * @since 4.4.0
      * @deprecated
+     * @param \WP_Query $wp_query
      */
-    public function posts_fields($SQL, WP_Query $wp_query)
+    public function posts_fields($SQL, $wp_query)
     {
         EED_Events_Archive::_doing_it_wrong_notice(__FUNCTION__);
         return EEH_Event_Query::posts_fields($SQL, $wp_query);
@@ -957,8 +958,9 @@ class EED_Events_Archive extends EED_Module
      * @throws EE_Error
      * @since 4.4.0
      * @deprecated
+     * @param \WP_Query $wp_query
      */
-    public function posts_join($SQL, WP_Query $wp_query)
+    public function posts_join($SQL, $wp_query)
     {
         EED_Events_Archive::_doing_it_wrong_notice(__FUNCTION__);
         return EEH_Event_Query::posts_join($SQL, $wp_query);
@@ -992,8 +994,9 @@ class EED_Events_Archive extends EED_Module
      * @throws EE_Error
      * @since 4.4.0
      * @deprecated
+     * @param \WP_Query $wp_query
      */
-    public function posts_where($SQL, WP_Query $wp_query)
+    public function posts_where($SQL, $wp_query)
     {
         EED_Events_Archive::_doing_it_wrong_notice(__FUNCTION__);
         return EEH_Event_Query::posts_where($SQL, $wp_query);
@@ -1039,8 +1042,9 @@ class EED_Events_Archive extends EED_Module
      * @throws EE_Error
      * @since 4.4.0
      * @deprecated
+     * @param \WP_Query $wp_query
      */
-    public function posts_orderby($SQL, WP_Query $wp_query)
+    public function posts_orderby($SQL, $wp_query)
     {
         EED_Events_Archive::_doing_it_wrong_notice(__FUNCTION__);
         return EEH_Event_Query::posts_orderby($SQL, $wp_query);

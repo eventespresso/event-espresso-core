@@ -27,8 +27,8 @@ class EE_CPT_Event_Strategy
             $WP_Query  = $wp_query;
             $this->CPT = $CPT;
         } else {
-            $WP_Query  = $wp_query['WP_Query'] ?? null;
-            $this->CPT = $wp_query['CPT'] ?? null;
+            $WP_Query  = isset($wp_query['WP_Query']) ? $wp_query['WP_Query'] : null;
+            $this->CPT = isset($wp_query['CPT']) ? $wp_query['CPT'] : null;
         }
         // !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
         // here's the list of available filters in the WP_Query object
@@ -103,7 +103,7 @@ class EE_CPT_Event_Strategy
      * @return    string
      * @throws EE_Error
      */
-    public function posts_fields(string $SQL, ?WP_Query $wp_query): string
+    public function posts_fields($SQL, $wp_query)
     {
         if (
             $wp_query instanceof WP_Query
@@ -133,7 +133,7 @@ class EE_CPT_Event_Strategy
      * @return string
      * @throws EE_Error
      */
-    public function posts_join(string $SQL, ?WP_Query $wp_query): string
+    public function posts_join($SQL, $wp_query)
     {
         if (
             $wp_query instanceof WP_Query
@@ -160,7 +160,7 @@ class EE_CPT_Event_Strategy
      * @return string
      * @throws EE_Error
      */
-    public function posts_where(string $SQL, ?WP_Query $wp_query): string
+    public function posts_where($SQL, $wp_query)
     {
         if (
             $wp_query instanceof WP_Query
@@ -187,7 +187,7 @@ class EE_CPT_Event_Strategy
      * @param WP_Query|null $wp_query
      * @return string
      */
-    public function posts_orderby(string $SQL, ?WP_Query $wp_query): string
+    public function posts_orderby($SQL, $wp_query)
     {
         if (
             $wp_query instanceof WP_Query
@@ -207,7 +207,7 @@ class EE_CPT_Event_Strategy
      * @param WP_Query|null $wp_query
      * @return string
      */
-    public function posts_groupby(string $SQL, ?WP_Query $wp_query): string
+    public function posts_groupby($SQL, $wp_query)
     {
         if (
             $wp_query instanceof WP_Query
@@ -232,7 +232,7 @@ class EE_CPT_Event_Strategy
      * @param WP_Query|null $wp_query
      * @return array
      */
-    public function the_posts(array $posts, ?WP_Query $wp_query): array
+    public function the_posts($posts, $wp_query)
     {
         return $posts;
     }

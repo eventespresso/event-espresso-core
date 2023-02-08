@@ -61,6 +61,4 @@ function ee_show_billing_info_cleaned(EE_Form_Section_Proper $form_section, $fou
         }
         do_action('AHEE__txn_admin_details_side_meta_box_billing_info__billing_form_footer', $billing_form);
     endif; ?>
-
 </div>
-

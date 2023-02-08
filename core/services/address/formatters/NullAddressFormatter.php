@@ -23,14 +23,14 @@ class NullAddressFormatter implements AddressFormatterInterface
      * @return string|null
      */
     public function format(
-        string $address,
-        string $address2,
-        string $city,
-        string $state,
-        string $zip,
-        string $country,
-        string $CNT_ISO
-    ): ?string {
+        $address,
+        $address2,
+        $city,
+        $state,
+        $zip,
+        $country,
+        $CNT_ISO
+    ) {
         return null;
     }
 }

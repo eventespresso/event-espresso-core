@@ -70,11 +70,11 @@ class ProcessTicketSelector
      * so that all dependencies get injected correctly (which will happen automatically)
      * Null values for parameters are only for backwards compatibility but will be removed later on.
      *
-     * @param EE_Core_Config                    $core_config
-     * @param RequestInterface                           $request
-     * @param EE_Session                        $session
-     * @param EEM_Ticket                        $ticket_model
-     * @param TicketDatetimeAvailabilityTracker $tracker
+     * @param EE_Core_Config|null                    $core_config
+     * @param RequestInterface|null                  $request
+     * @param EE_Session|null                        $session
+     * @param EEM_Ticket|null                        $ticket_model
+     * @param TicketDatetimeAvailabilityTracker|null $tracker
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -273,6 +273,7 @@ class ProcessTicketSelector
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function addTicketsToCart(array $valid)
     {
@@ -348,6 +349,7 @@ class ProcessTicketSelector
      */
     private function addTicketToCart(EE_Ticket $ticket, $qty = 1)
     {
+        $qty = (int) $qty;
         // get the number of spaces left for this datetime ticket
         $available_spaces = $this->tracker->ticketDatetimeAvailability($ticket);
         // compare available spaces against the number of tickets being purchased

@@ -439,22 +439,20 @@ class EED_Messages extends EED_Module
      */
     protected static function _set_messages_paths()
     {
-        $dir_ref = [
-            'messages/message_type',
-            'messages/messenger',
-            'messages/defaults',
-            'messages/defaults/email',
-            'messages/data_class',
-            'messages/validators',
-            'messages/validators/email',
-            'messages/validators/html',
-            'shortcodes',
-        ];
-        $paths   = [];
-        foreach ($dir_ref as $index => $dir) {
-            $paths[ $index ] = EE_LIBRARIES . $dir;
-        }
-        self::$_MSG_PATHS = apply_filters('FHEE__EED_Messages___set_messages_paths___MSG_PATHS', $paths);
+        self::$_MSG_PATHS = apply_filters(
+            'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
+            [
+                EE_LIBRARIES . 'messages/message_type',
+                EE_LIBRARIES . 'messages/messenger',
+                EE_LIBRARIES . 'messages/defaults',
+                EE_LIBRARIES . 'messages/defaults/email',
+                EE_LIBRARIES . 'messages/data_class',
+                EE_LIBRARIES . 'messages/validators',
+                EE_LIBRARIES . 'messages/validators/email',
+                EE_LIBRARIES . 'messages/validators/html',
+                EE_LIBRARIES . 'shortcodes',
+            ]
+        );
     }
 
 
@@ -489,7 +487,7 @@ class EED_Messages extends EED_Module
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function payment_reminder(EE_Transaction $transaction)
+    public static function payment_reminder($transaction)
     {
         self::_load_controller();
         $data = [$transaction, null];
@@ -509,7 +507,7 @@ class EED_Messages extends EED_Module
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function payment(EE_Transaction $transaction, EE_Payment $payment = null)
+    public static function payment($transaction, $payment = null)
     {
         // if there's no payment object, then we cannot do a payment type message!
         if (! $payment instanceof EE_Payment) {
@@ -533,7 +531,7 @@ class EED_Messages extends EED_Module
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function cancelled_registration(EE_Transaction $transaction)
+    public static function cancelled_registration($transaction)
     {
         self::_load_controller();
         $data = [$transaction, null];
@@ -556,7 +554,7 @@ class EED_Messages extends EED_Module
      * @throws ReflectionException
      * @throws EntityNotFoundException
      */
-    public static function maybe_registration(EE_Registration $registration, $extra_details = [])
+    public static function maybe_registration($registration, $extra_details = [])
     {
 
         if (! self::_verify_registration_notification_send($registration, $extra_details)) {
@@ -623,7 +621,7 @@ class EED_Messages extends EED_Module
      * @return bool          true = send away, false = nope halt the presses.
      */
     protected static function _verify_registration_notification_send(
-        EE_Registration $registration,
+        $registration,
         $extra_details = []
     ) {
         $request = self::getRequest();
@@ -731,7 +729,7 @@ class EED_Messages extends EED_Module
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function process_resend(array $req_data = [])
+    public static function process_resend($req_data = [])
     {
         self::_load_controller();
         $request = self::getRequest();
@@ -825,7 +823,7 @@ class EED_Messages extends EED_Module
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function process_admin_payment(EE_Payment $payment)
+    public static function process_admin_payment($payment)
     {
         EE_Registry::instance()->load_helper('MSG_Template');
         // we need to get the transaction object
@@ -934,7 +932,7 @@ class EED_Messages extends EED_Module
      */
     public static function registration_message_trigger_url(
         $registration_message_trigger_url,
-        EE_Registration $registration,
+        $registration,
         $messenger = 'html',
         $message_type = 'invoice'
     ) {
@@ -1066,7 +1064,7 @@ class EED_Messages extends EED_Module
     public static function send_message_with_messenger_only(
         $messenger,
         $message_type,
-        EE_Messages_Queue $queue,
+        $queue,
         $custom_subject = ''
     ) {
         self::_load_controller();
@@ -1213,7 +1211,7 @@ class EED_Messages extends EED_Module
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function generate_and_send_now(array $message_ids)
+    public static function generate_and_send_now($message_ids)
     {
         $generated_queue = self::generate_now($message_ids);
         // now let's just trigger sending immediately from this queue.
@@ -1338,8 +1336,8 @@ class EED_Messages extends EED_Module
         $class = '',
         $func = '',
         $line = '',
-        EE_Transaction $transaction = null,
-        $info = array(),
+        $transaction = null,
+        $info = [],
         $display_request = false
     ) {
         if (defined('EE_DEBUG') && EE_DEBUG) {

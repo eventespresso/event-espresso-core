@@ -20,7 +20,7 @@ abstract class EE_Admin_Page_CPT_Init extends EE_Admin_Page_Init
         // But note... we are ONLY doing this if the given page is NOT pages we WANT to load ;)
         // This is important because we have hooks that help redirect custom post type saves
         $page = $this->request->getRequestParam('page');
-        $this->_routing = $page === $this->_menu_map->menu_slug;
+        $this->_routing = $page === $this->_menu_map->menuSlug();
         $this->_initialize_admin_page();
         if ($this->_routing) {
             // added for 4.1 to completely disable autosave for our pages.

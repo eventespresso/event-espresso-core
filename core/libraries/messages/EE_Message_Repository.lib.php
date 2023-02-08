@@ -28,7 +28,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      * @param mixed      $info Any included data is saved in the attached object info array indexed by 'data'
      * @return bool
      */
-    public function add($message, $info = ''): bool
+    public function add($message, $info = '')
     {
         // ensure $info is an array if not already
         $info = (array) $info;
@@ -49,7 +49,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      * @param EE_Message $message
      * @return array
      */
-    protected function _init_data(array $info, bool $attached, EE_Message $message): array
+    protected function _init_data($info, $attached, $message)
     {
         $data = [
             'test_send'               => false,
@@ -72,7 +72,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
             unset($info['data_handler_class_name']);
         }
         if ($attached && $message->STS_ID() === EEM_Message::status_incomplete) {
-            $generation_data = $info['MSG_generation_data'] ?? [];
+            $generation_data = isset($info['MSG_generation_data']) ? $info['MSG_generation_data'] : [];
             // if data isn't in $info...let's see if its available via the message object
             $generation_data = ! $generation_data ? $message->get_generation_data() : $generation_data;
             // still empty then let's just use info
@@ -93,7 +93,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      *                  'errors'     => array( $token ), // message object tokens that had errors in saving
  *                  ]
      */
-    public function saveAll(bool $do_hooks_only = false): array
+    public function saveAll($do_hooks_only = false)
     {
         $save_tracking = ['updated' => 0, 'notupdated' => 0, 'errors' => []];
 
@@ -130,7 +130,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      * @param string $token Token.
      * @return EE_Message | null
      */
-    public function getMessageByToken(string $token): ?EE_Message
+    public function getMessageByToken($token)
     {
         $this->rewind();
         while ($this->valid()) {
@@ -150,14 +150,14 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      *
      * @return array();
      */
-    public function get_generation_data(): array
+    public function get_generation_data()
     {
         // first verify we're at a valid iterator point.
         if (! $this->valid()) {
             return [];
         }
         $info = $this->getInfo();
-        return $info['data']['MSG_generation_data'] ?? [];
+        return isset($info['data']['MSG_generation_data']) ? $info['data']['MSG_generation_data'] : [];
     }
 
 
@@ -166,13 +166,13 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      *
      * @return string
      */
-    public function get_data_handler(): string
+    public function get_data_handler()
     {
         if (! $this->valid()) {
             return '';
         }
         $info = $this->getInfo();
-        return $info['data_handler_class_name'] ?? '';
+        return isset($info['data_handler_class_name']) ? $info['data_handler_class_name'] : '';
     }
 
 
@@ -181,13 +181,13 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      *
      * @return bool
      */
-    public function is_preview(): bool
+    public function is_preview()
     {
         if (! $this->valid()) {
             return false;
         }
         $info = $this->getInfo();
-        return filter_var($info['preview'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        return filter_var(isset($info['preview']) ? $info['preview'] : false, FILTER_VALIDATE_BOOLEAN);
     }
 
 
@@ -196,13 +196,13 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      *
      * @return bool
      */
-    public function is_test_send(): bool
+    public function is_test_send()
     {
         if (! $this->valid()) {
             return false;
         }
         $info = $this->getInfo();
-        return filter_var($info['test_send'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        return filter_var(isset($info['test_send']) ? $info['test_send'] : false, FILTER_VALIDATE_BOOLEAN);
     }
 
 
@@ -217,8 +217,8 @@ class EE_Message_Repository extends EE_Base_Class_Repository
         }
 
         $info                    = $this->getInfo();
-        $data_handler_class_name = $info['data_handler_class_name'] ?? '';
-        $data                    = $info['data']['MSG_generation_data'] ?? [];
+        $data_handler_class_name = isset($info['data_handler_class_name']) ? $info['data_handler_class_name'] : '';
+        $data                    = isset($info['data']['MSG_generation_data']) ? $info['data']['MSG_generation_data'] : [];
         if ($data && $this->current()->STS_ID() === EEM_Message::status_incomplete) {
             $this->current()->set_generation_data($data);
             $this->current()->set_field_or_extra_meta('data_handler_class_name', $data_handler_class_name);
@@ -233,7 +233,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository
      * @param array|string|null $status   the optional status(es) that will also be filtered by when priority matches.
      * @return int  count of messages in the queue matching the conditions.
      */
-    public function count_by_priority_and_status(int $priority, $status = []): int
+    public function count_by_priority_and_status($priority, $status = [])
     {
         $count  = 0;
         $status = is_array($status) ? $status : [$status];

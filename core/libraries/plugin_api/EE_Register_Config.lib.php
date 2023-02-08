@@ -22,30 +22,32 @@ class EE_Register_Config implements EEI_Plugin_API
     /**
      * Handles registering the new config with the EE_Config::instance()->addons property
      *
-     * @param string $identifier                          The name of the Config class being registered.
-     *                                                    Note this class must extend EE_Config Base and must have
-     *                                                    already been registered with an autoloader.
-     * @param array  $setup_args                          {
+     * @param string $addon_name    The name of the Config class being registered.
+     *                              Note this class must extend EE_Config Base and must have
+     *                              already been registered with an autoloader.
+     * @param array  $setup_args    {
      *
-     * @type  string $config_name                         Optional.  by default the new config will be registered to
-     *        EE_Config::instance()->addons->{config_class}, but supplying a "config_name" will set the property name
-     *        that this variable is accessible by. ie: EE_Config::instance()->addons->{config_name}
-     *                            }
-     * @return void
+     * @type  string $config_name       Optional.  by default the new config will be registered to
+     *                                  EE_Config::instance()->addons->{config_class},
+     *                                  but supplying a "config_name" will set the property name
+     *                                  that this variable is accessible by.
+     *                                  ie: EE_Config::instance()->addons->{config_name}
+     *                              }
+     * @return bool
      * @throws EE_Error
      *
      * @since    4.3.0
      */
-    public static function register($identifier = '', array $setup_args = [])
+    public static function register($addon_name = '', $setup_args = [])
     {
 
         $setup_args['config_name']    = isset($setup_args['config_name']) && ! empty($setup_args['config_name'])
-            ? $setup_args['config_name'] : $identifier;
+            ? $setup_args['config_name'] : $addon_name;
         $setup_args['config_section'] = isset($setup_args['config_section']) && ! empty($setup_args['config_section'])
             ? $setup_args['config_section'] : 'addons';
 
         // required fields MUST be present, so let's make sure they are.
-        if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['config_name'])) {
+        if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['config_name'])) {
             throw new EE_Error(
                 esc_html__(
                     'In order to register a Config Class with EE_Register_Config::register(), you must include a "config_class" (the actual class name for this config class). As well, you can supply an array containing the following keys: "config_section" the main section of the config object the settings will be saved under (by default the new config will be registered under EE_Config::instance()->modules or EE_Config::instance()->addons depending on what type of class is calling this), "config_name" (by default the new config will be registered to EE_Config::instance()->{config_section}->{config_class}, but supplying a "config_name" will set the property name that this variable is accessible by. ie: EE_Config::instance()->{config_section}->{config_name})',
@@ -55,8 +57,8 @@ class EE_Register_Config implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_ee_config_registry[ $identifier ])) {
-            return;
+        if (isset(self::$_ee_config_registry[ $addon_name ])) {
+            return true;
         }
 
 
@@ -75,50 +77,53 @@ class EE_Register_Config implements EEI_Plugin_API
             );
         }
         // add incoming stuff to our registry property
-        self::$_ee_config_registry[ $identifier ] = [
+        self::$_ee_config_registry[ $addon_name ] = [
             'section' => $setup_args['config_section'],
             'name'    => $setup_args['config_name'],
         ];
 
         add_action('AHEE__EE_Config___load_core_config__end', ['EE_Register_Config', 'set_config'], 15, 1);
         add_action('AHEE__EE_Config__update_espresso_config__end', ['EE_Register_Config', 'set_config'], 15, 1);
+        return true;
     }
 
 
     /**
      * Callback for the AHEE__EE_Config___load_core_config__end hook.
-     * basically just calls EE_Config->get_config() which will take care of loading or creating our config object for us
+     * basically just calls EE_Config->get_config()
+     * which will take care of loading or creating our config object for us
      *
      * @param EE_Config $EE_Config
      * @return void
      * @throws EE_Error
      * @since    4.3.0
      */
-    public static function set_config(EE_Config $EE_Config)
+    public static function set_config($EE_Config)
     {
-        foreach (self::$_ee_config_registry as $identifier => $settings) {
-            // first some validation of our incoming class_name.  We'll throw an error early if its' not registered correctly
-            if (! class_exists($identifier)) {
+        foreach (self::$_ee_config_registry as $addon_name => $settings) {
+            // first some validation of our incoming class_name.
+            //  We'll throw an error early if its' not registered correctly
+            if (! class_exists($addon_name)) {
                 throw new EE_Error(
                     sprintf(
                         esc_html__(
                             'The "%s" config class can not be registered with EE_Config because it does not exist.  Verify that an autoloader has been set for this class',
                             'event_espresso'
                         ),
-                        $identifier
+                        $addon_name
                     )
                 );
             }
-            $EE_Config->get_config($settings['section'], $settings['name'], $identifier);
+            $EE_Config->get_config($settings['section'], $settings['name'], $addon_name);
         }
     }
 
 
     /**
-     * @param string $identifier
+     * @param string $addon_name
      */
-    public static function deregister($identifier = '')
+    public static function deregister($addon_name = '')
     {
-        unset(self::$_ee_config_registry[ $identifier ]);
+        unset(self::$_ee_config_registry[ $addon_name ]);
     }
 }

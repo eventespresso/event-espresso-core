@@ -291,7 +291,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      * @throws InvalidDataTypeException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function registerPersistentAdminNotice(Collection $persistent_admin_notice_collection)
+    public function registerPersistentAdminNotice($persistent_admin_notice_collection)
     {
         if ($this->registered) {
             return;

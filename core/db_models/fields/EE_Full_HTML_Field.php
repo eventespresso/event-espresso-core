@@ -29,8 +29,8 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
     /**
      * Does shortcodes and auto-paragraphs the content (unless schema is 'no_wpautop')
      *
-     * @param type $value_on_field_to_be_outputted
-     * @param type $schema
+     * @param mixed       $value_on_field_to_be_outputted
+     * @param string|null $schema
      * @return string
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)

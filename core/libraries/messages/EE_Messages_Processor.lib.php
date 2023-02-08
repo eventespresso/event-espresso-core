@@ -76,7 +76,7 @@ class EE_Messages_Processor
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function process_immediately_from_queue(EE_Messages_Queue $queue_to_process)
+    public function process_immediately_from_queue($queue_to_process)
     {
         $success              = false;
         $messages_to_send     = [];
@@ -279,7 +279,7 @@ class EE_Messages_Processor
      * @param bool                   $test_send Whether this item is for a test send or not.
      * @return void
      */
-    public function queue_for_generation(EE_Message_To_Generate $message_to_generate, $test_send = false)
+    public function queue_for_generation($message_to_generate, $test_send = false)
     {
         if ($message_to_generate->valid()) {
             if (! $this->_generator->create_and_add_message_to_queue($message_to_generate, $test_send)) {
@@ -366,7 +366,7 @@ class EE_Messages_Processor
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function generate_for_preview(EE_Message_To_Generate $message_to_generate, $test_send = false)
+    public function generate_for_preview($message_to_generate, $test_send = false)
     {
         if (! $message_to_generate->valid()) {
             EE_Error::add_error(
@@ -403,7 +403,7 @@ class EE_Messages_Processor
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function queue_for_sending(EE_Message_To_Generate $message_to_generate)
+    public function queue_for_sending($message_to_generate)
     {
         if (! $message_to_generate->valid()) {
             return false;
@@ -428,7 +428,7 @@ class EE_Messages_Processor
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function generate_and_send_now(EE_Message_To_Generate $message_to_generate)
+    public function generate_and_send_now($message_to_generate)
     {
         if (! $message_to_generate->valid()) {
             return null;

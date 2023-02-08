@@ -42,8 +42,8 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
      *
      * @param $normalized_value
      * @return bool
-     * @throws \EE_Error
-     * @throws \EE_Validation_Error
+     * @throws EE_Error
+     * @throws EE_Validation_Error
      */
     public function validate($normalized_value)
     {
@@ -65,7 +65,7 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
 
     /**
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_jquery_validation_rule_array()
     {
@@ -109,7 +109,7 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
      * if the input is required or not. That is not yet implemented, however.
      *
      * @return string see http://jqueryvalidation.org/required-method for format
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _get_jquery_requirement_value()
     {
@@ -181,7 +181,7 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
      * to decide)
      *
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _input_is_required_server_side()
     {
@@ -223,7 +223,7 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
      *
      * @param array $op_and_value
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _validate_op_and_value($op_and_value)
     {

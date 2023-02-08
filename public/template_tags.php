@@ -1,5 +1,9 @@
 <?php
 
+use EventEspresso\core\domain\services\wp_queries\EventListQuery;
+use EventEspresso\core\domain\entities\GenericAddress;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
 
@@ -195,7 +199,7 @@ if (! function_exists('espresso_get_events')) {
         // grab params and merge with defaults, then extract
         $params = array_merge($default_espresso_events_params, $params);
         // run the query
-        $events_query = new EventEspresso\core\domain\services\wp_queries\EventListQuery($params);
+        $events_query = new EventListQuery($params);
         // assign results to a variable so we can return it
         $events = $events_query->have_posts() ? $events_query->posts : [];
         // but first reset the query and postdata
@@ -536,19 +540,31 @@ if (! function_exists('espresso_list_of_event_dates')) {
         $limit = null
     ) {
         $allowedtags = AllowedTags::getAllowedTags();
+
+        $DTT_ID = LoaderFactory::getShared(RequestInterface::class)->getRequestParam('datetime', 0, 'int');
+        $arguments = apply_filters(
+            'FHEE__espresso_list_of_event_dates__arguments',
+            [ $EVT_ID, $date_format, $time_format, $echo, $show_expired, $format, $add_breaks, $limit, $DTT_ID ]
+        );
+        list($EVT_ID, $date_format, $time_format, $echo, $show_expired, $format, $add_breaks, $limit, $DTT_ID) = $arguments;
         $date_format = ! empty($date_format) ? $date_format : get_option('date_format');
         $time_format = ! empty($time_format) ? $time_format : get_option('time_format');
         $date_format = apply_filters('FHEE__espresso_list_of_event_dates__date_format', $date_format);
         $time_format = apply_filters('FHEE__espresso_list_of_event_dates__time_format', $time_format);
-        $datetimes   = EEH_Event_View::get_all_date_obj($EVT_ID, $show_expired, false, $limit);
+        $datetimes   = $DTT_ID
+            ? [EEH_Event_View::get_date_obj($DTT_ID)]
+            : EEH_Event_View::get_all_date_obj($EVT_ID, $show_expired, false, $limit);
         if (! $format) {
             return apply_filters('FHEE__espresso_list_of_event_dates__datetimes', $datetimes);
         }
         $newline = $add_breaks ? '<br />' : '';
         if (is_array($datetimes) && ! empty($datetimes)) {
             global $post;
-            $html =
-                '<ul id="ee-event-datetimes-ul-' . esc_attr($post->ID) . '" class="ee-event-datetimes-ul ee-clearfix">';
+			$cols = count($datetimes);
+			$cols = $cols >= 3 ? 'big' : 'small';
+			$ul_class = "ee-event-datetimes-ul ee-event-datetimes-ul--{$cols}";
+			$html = '<ul id="ee-event-datetimes-ul-' . esc_attr($post->ID) . '" class="'. $ul_class.'">';
+
             foreach ($datetimes as $datetime) {
                 if ($datetime instanceof EE_Datetime) {
 
@@ -560,6 +576,27 @@ if (! function_exists('espresso_list_of_event_dates')) {
                        </strong>' . $newline
                         : '';
 
+                    $datetime_html .= '
+                        <span class="ee-event-datetimes-li-daterange">
+							<span class="dashicons dashicons-calendar"></span>&nbsp;'
+							. $datetime->date_range($date_format). '
+						</span>
+                        <br/>
+                        <span class="ee-event-datetimes-li-timerange">
+							<span class="dashicons dashicons-clock"></span>&nbsp;'
+							. $datetime->time_range($time_format) . '
+						</span>
+                        ';
+
+                    $venue = $datetime->venue();
+                    if ($venue instanceof EE_Venue) {
+                    	$venue_name      = esc_html($venue->name());
+                        $datetime_html .= '<br /><span class="ee-event-datetimes-li-venue">';
+                        $datetime_html .= '<span class="dashicons dashicons-admin-home"></span>&nbsp;';
+                        $datetime_html .= '<a href="'. esc_url_raw($venue->get_permalink()) .'" target="_blank">';
+                        $datetime_html .= $venue_name . '</a></span>';
+                    }
+
                     $datetime_description = $datetime->description();
                     $datetime_html .= ! empty($datetime_description)
                         ? '
@@ -568,30 +605,24 @@ if (! function_exists('espresso_list_of_event_dates')) {
                         </span>' . $newline
                         : '';
 
-                    $datetime_html .= '
-                        <span class="dashicons dashicons-calendar"></span>
-                        <span class="ee-event-datetimes-li-daterange">' . $datetime->date_range($date_format) . '</span>
-                        <br/>
-                        <span class="dashicons dashicons-clock"></span>
-                        <span class="ee-event-datetimes-li-timerange">' . $datetime->time_range($time_format) . '</span>
-                        ';
-
                     $datetime_html = apply_filters(
                         'FHEE__espresso_list_of_event_dates__datetime_html',
                         $datetime_html,
-                        $datetime
+                        $datetime,
+                        $arguments
                     );
 
                     $DTD_ID        = esc_attr($datetime->ID());
-                    $active_status = esc_attr(' ee-event-datetimes-li-' . $datetime->get_active_status());
+                    $active_status = esc_attr('ee-event-datetimes-li-' . $datetime->get_active_status());
 
                     $html .= '
-                    <li id="ee-event-datetimes-li-' . $DTD_ID . '" class="ee-event-datetimes-li' . $active_status . '">
+                    <li id="ee-event-datetimes-li-' . $DTD_ID . '" class="ee-event-datetimes-li ' . $active_status . '">
                         ' . $datetime_html . '
                     </li>';
                 }
             }
             $html .= '</ul>';
+            $html = apply_filters('FHEE__espresso_list_of_event_dates__html', $html, $arguments, $datetime);
         } else {
             $html =
                 '
@@ -896,7 +927,7 @@ if (! function_exists('espresso_organization_address')) {
     function espresso_organization_address($type = 'inline')
     {
         if (EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config) {
-            $address = new EventEspresso\core\domain\entities\GenericAddress(
+            $address = new GenericAddress(
                 EE_Registry::instance()->CFG->organization->address_1,
                 EE_Registry::instance()->CFG->organization->address_2,
                 EE_Registry::instance()->CFG->organization->city,

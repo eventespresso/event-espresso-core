@@ -8,9 +8,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
 
-<table class="form-table">
+<table class="ee-admin-two-column-layout form-table">
     <tr>
-        <td valign="top" class="use-ven-manager">
+        <td class="use-ven-manager">
             <fieldset id="venue-manager">
                 <?php echo wp_kses($no_venues_info, AllowedTags::getWithFormTags()); ?>
                 <p>

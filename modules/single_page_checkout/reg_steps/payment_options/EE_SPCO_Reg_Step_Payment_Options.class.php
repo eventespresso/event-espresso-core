@@ -310,6 +310,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         );
         foreach ($registrations as $REG_ID => $registration) {
             /** @var $registration EE_Registration */
+            // Skip if the registration has been moved
+            if ($registration->wasMoved()) {
+                continue;
+            }
             // has this registration lost it's space ?
             if (isset($ejected_registrations[ $REG_ID ])) {
                 if ($registration->event()->is_sold_out() || $registration->event()->is_sold_out(true)) {
@@ -444,7 +448,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @throws InvalidInterfaceException
      * @throws InvalidStatusException
      */
-    public static function add_spco_line_item_filters(EE_Line_Item_Filter_Collection $line_item_filter_collection)
+    public static function add_spco_line_item_filters($line_item_filter_collection)
     {
         if (! EE_Registry::instance()->SSN instanceof EE_Session) {
             return $line_item_filter_collection;
@@ -484,7 +488,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @throws InvalidInterfaceException
      * @throws InvalidStatusException
      */
-    public static function remove_ejected_registrations(array $registrations)
+    public static function remove_ejected_registrations($registrations)
     {
         $ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::find_registrations_that_lost_their_space(
             $registrations,
@@ -519,7 +523,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @throws InvalidInterfaceException
      * @throws InvalidStatusException
      */
-    public static function find_registrations_that_lost_their_space(array $registrations, $revisit = false)
+    public static function find_registrations_that_lost_their_space($registrations, $revisit = false)
     {
         // registrations per event
         $event_reg_count = [];
@@ -897,7 +901,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @param array $registrations
      * @throws EE_Error
      */
-    protected function _apply_registration_payments_to_amount_owing(array $registrations)
+    protected function _apply_registration_payments_to_amount_owing($registrations)
     {
         $payments = [];
         foreach ($registrations as $registration) {
@@ -1274,7 +1278,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * _get_billing_form_for_payment_method
      *
      * @param EE_Payment_Method $payment_method
-     * @return EE_Billing_Info_Form|EE_Form_Section_HTML
+     * @return EE_Billing_Info_Form|EE_Billing_Attendee_Info_Form|EE_Form_Section_HTML
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1424,8 +1428,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             apply_filters(
                 'FHEE__populate_billing_form_fields_from_attendee',
                 (
-                $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
-                && $this->checkout->transaction_has_primary_registrant()
+                    $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
+                    && $this->checkout->transaction_has_primary_registrant()
                 ),
                 $this->checkout->billing_form,
                 $this->checkout->transaction
@@ -1779,7 +1783,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @return void
      * @throws EE_Error
      */
-    protected function _maybe_set_completed(EE_Payment $payment)
+    protected function _maybe_set_completed($payment)
     {
         // Do we need to redirect them? If so, there's more work to be done.
         if (! $payment->redirect_url()) {
@@ -2258,7 +2262,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 $payment_method,
                 $this->checkout->transaction,
                 $this->checkout->amount_owing,
-                $this->checkout->billing_form,
+                $this->checkout->billing_form instanceof EE_Billing_Info_Form
+                    ? $this->checkout->billing_form
+                    : null,
                 $this->_get_return_url($payment_method),
                 'CART',
                 $this->checkout->admin_request,
@@ -2282,7 +2288,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _handle_payment_processor_exception(Exception $e)
+    protected function _handle_payment_processor_exception($e)
     {
         EE_Error::add_error(
             sprintf(
@@ -2311,7 +2317,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_return_url(EE_Payment_Method $payment_method)
+    protected function _get_return_url($payment_method)
     {
         $return_url = '';
         switch ($payment_method->type_obj()->payment_occurs()) {

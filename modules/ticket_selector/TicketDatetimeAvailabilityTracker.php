@@ -58,7 +58,7 @@ class TicketDatetimeAvailabilityTracker
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function ticketDatetimeAvailability(EE_Ticket $ticket, $get_original_ticket_spaces = false)
+    public function ticketDatetimeAvailability($ticket, $get_original_ticket_spaces = false)
     {
         // if the $_available_spaces array has not been set up yet...
         if (! isset($this->available_spaces['tickets'][ $ticket->ID() ])) {
@@ -141,7 +141,7 @@ class TicketDatetimeAvailabilityTracker
      * @return    void
      * @throws EE_Error
      */
-    public function recalculateTicketDatetimeAvailability(EE_Ticket $ticket, $qty = 0)
+    public function recalculateTicketDatetimeAvailability($ticket, $qty = 0)
     {
         if (isset($this->available_spaces['tickets'][ $ticket->ID() ])) {
             // loop thru tickets, which will ALSO include individual ticket records AND a total
@@ -162,7 +162,7 @@ class TicketDatetimeAvailabilityTracker
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function processAvailabilityError(EE_Ticket $ticket, $qty, $total_ticket_count = 1)
+    public function processAvailabilityError($ticket, $qty, $total_ticket_count = 1)
     {
         // tickets can not be purchased but let's find the exact number left
         // for the last ticket selected PRIOR to subtracting tickets

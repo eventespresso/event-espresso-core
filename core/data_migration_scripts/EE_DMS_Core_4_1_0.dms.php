@@ -1,9 +1,5 @@
 <?php
 
-/**
- * meant to convert DBs between 3.1.26 and 4.0.0 to 4.1.0
- */
-
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -24,9 +20,8 @@ if (! empty($stages)) {
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_1_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
-
-
 /**
+ * meant to convert DBs between 3.1.26 and 4.0.0 to 4.1.0
  * Organizes all the various stages of the migration from 3.1 (but only versions above 3.1.26,
  * lower versions need to eb upgraded to 3.1.26 normally) to 4.1.0.P.
  * It adds the database tables on some of the first migration_steps, then migrates the data within
@@ -811,7 +806,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 				('TR', 'TUR', 0, 'Turkey', 'TRY', 'Lira', 'Liras', '$', 1, 2, '+90', 0, 0),
 				('TT', 'TTO', 0, 'Trinidad and Tobago', 'TTD', 'Dollar', 'Dollars', 'TT$', 1, 2, '+1-868', 0, 0),
 				('TV', 'TUV', 0, 'Tuvalu', 'AUD', 'Dollar', 'Dollars', '$', 1, 2, '+688', 0, 0),
-				('TW', 'TWN', 0, 'Taiwan, Province of China', 'TWD', 'Dollar', 'Dollars', 'NT$', 1, 2, '+886', 0, 0),
+				('TW', 'TWN', 0, 'Taiwan', 'TWD', 'Dollar', 'Dollars', 'NT$', 1, 2, '+886', 0, 0),
 				('TZ', 'TZA', 0, 'Tanzania, United Republic of', 'TZS', 'Shilling', 'Shillings', 'S', 1, 2, '+255', 0, 0),
 				('UA', 'UKR', 0, 'Ukraine', 'UAH', 'Hryvnia', 'Hryvnias', '₴', 1, 2, '+380', 0, 0),
 				('UG', 'UGA', 0, 'Uganda', 'UGX', 'Shilling', 'Shillings', 'S', 1, 2, '+256', 0, 0),
@@ -1437,7 +1432,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     public function convert_image_url_to_attachment_and_attach_to_post(
         $guid,
         $new_cpt_id,
-        EE_Data_Migration_Script_Stage $migration_stage
+        $migration_stage
     ) {
         $created_attachment_post = false;
         $guid = $this->_get_original_guid($guid);
@@ -1593,7 +1588,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      * Returns a mysql-formatted DATETIME in UTC time, given a $DATETIME_string
      * (and optionally a timezone; if none is given, the wp default is used)
      *
-     * @param EE_Data_Migration_Script_base $stage
+     * @param EE_Data_Migration_Script_Stage $stage
      * @param array                         $row_of_data , the row from the DB (as an array) we're trying to find the
      *                                                   UTC time for
      * @param string                        $DATETIME_string
@@ -1601,7 +1596,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
      * @return string
      */
     public function convert_date_string_to_utc(
-        EE_Data_Migration_Script_Stage $stage,
+        $stage,
         $row_of_data,
         $DATETIME_string,
         $timezone = null

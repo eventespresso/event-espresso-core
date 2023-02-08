@@ -67,8 +67,9 @@ class PersistentAdminNoticeManager
     public function __construct(
         CapabilitiesChecker $capabilities_checker,
         RequestInterface $request,
-        string $return_url = ''
+        $return_url = ''
     ) {
+        $return_url = (string) $return_url;
         $this->setReturnUrl($return_url);
         $this->capabilities_checker = $capabilities_checker;
         $this->request = $request;
@@ -284,7 +285,7 @@ class PersistentAdminNoticeManager
      *
      * @param  PersistentAdminNotice $persistent_admin_notice
      */
-    protected function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice)
+    protected function displayPersistentAdminNotice($persistent_admin_notice)
     {
         // used in template
         $persistent_admin_notice_name = $persistent_admin_notice->getName();

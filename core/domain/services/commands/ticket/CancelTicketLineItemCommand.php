@@ -47,7 +47,7 @@ class CancelTicketLineItemCommand extends Command
      * @throws EE_Error
      * @throws EntityNotFoundException
      */
-    public static function fromRegistration(EE_Registration $registration, $quantity = 1)
+    public static function fromRegistration($registration, $quantity = 1)
     {
         new self(
             $registration->transaction(),
@@ -64,7 +64,7 @@ class CancelTicketLineItemCommand extends Command
      * @throws EE_Error
      */
     public static function fromTicketLineItem(
-        EE_Line_Item $ticket_line_item,
+        $ticket_line_item,
         $quantity = 1
     ) {
         new self(

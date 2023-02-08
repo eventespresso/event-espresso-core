@@ -24,9 +24,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <thead>
         <tr>
             <th scope="col" width=""><?php esc_html_e('Name and Description', 'event_espresso'); ?></th>
-            <th scope="col" width="15%" class="jst-cntr"><?php esc_html_e('Price', 'event_espresso'); ?></th>
-            <th scope="col" width="5%" class="jst-cntr"><?php esc_html_e('Qty', 'event_espresso'); ?></th>
-            <th scope="col" width="15%" class="jst-cntr"><?php esc_html_e('Total', 'event_espresso'); ?></th>
+            <th scope="col" width="15%" class="jst-rght"><?php esc_html_e('Price', 'event_espresso'); ?></th>
+            <th scope="col" width="7.5%" class="spco-table-qty jst-rght"><?php esc_html_e('Qty', 'event_espresso'); ?></th>
+            <th scope="col" width="15%" class="jst-rght"><?php esc_html_e('Total', 'event_espresso'); ?></th>
             <?php do_action('AHEE__registration_page_payment_options__payment_info_table_thead_row_end'); ?>
         </tr>
         </thead>
@@ -46,4 +46,3 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 <!-- end #methods-of-payment -->
 
 <?php echo wp_kses($after_payment_options, AllowedTags::getWithFormTags()); ?>
-

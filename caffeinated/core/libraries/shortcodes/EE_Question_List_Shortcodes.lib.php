@@ -35,6 +35,8 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes
 
 
     /**
+     * @param string $shortcode
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -49,6 +51,7 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes
 
 
     /**
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -60,6 +63,7 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes
         if ($this->_data['data'] instanceof EE_Registration) {
             return $this->_get_question_answer_list_for_attendee();
         }
+
         // for when [QUESTION_LIST] is used in the main content field.
         if (
             $this->_data['data'] instanceof EE_Messages_Addressee

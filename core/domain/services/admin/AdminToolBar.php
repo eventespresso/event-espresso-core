@@ -64,7 +64,7 @@ class AdminToolBar
      * @param  WP_Admin_Bar $admin_bar
      * @return void
      */
-    public function espressoToolbarItems(WP_Admin_Bar $admin_bar)
+    public function espressoToolbarItems($admin_bar)
     {
         // if its an AJAX request, or user is NOT an admin, or in full M-Mode
         if (

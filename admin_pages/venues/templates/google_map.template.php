@@ -10,7 +10,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 ?>
 
 <div class="padding">
-    <table class="form-table">
+    <table class="ee-admin-two-column-layout form-table">
         <tbody>
             <tr>
                 <th>
@@ -47,7 +47,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     <td>
                         <input type="text"
                                id="ee-google-map-api-key"
-                               class="regular-text"
+                               class="ee-input-width--big regular-text"
                                name="google_map_api_key"
                                value="<?php echo esc_attr($map_settings->google_map_api_key); ?>"
                         />
@@ -69,11 +69,11 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     </table>
 
     <h2 class="ee-admin-settings-hdr">
-        <?php esc_html_e('Reg Page Map Settings', 'event_espresso'); ?>
-        <?php echo wp_kses(EEH_Template::get_help_tab_link('gmaps_info'), AllowedTags::getAllowedTags()); ?>
+        <?php esc_html_e('Registration Page Map Settings', 'event_espresso'); ?>
+        <?php echo EEH_Template::get_help_tab_link('gmaps_info'); // already escaped ?>
     </h2>
 
-    <table class="form-table">
+    <table class="ee-admin-two-column-layout form-table">
         <tbody>
             <tr>
                 <th>
@@ -82,11 +82,15 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <input type="text"
-                           id="event_details_map_width"
-                           name="event_details_map_width"
-                           value="<?php echo esc_attr($map_settings->event_details_map_width); ?>"
-                    />
+                    <span>
+                        <input type="text"
+                               class="ee-input-width--tiny ee-number-input"
+                               id="event_details_map_width"
+                               name="event_details_map_width"
+                               value="<?php echo esc_attr($map_settings->event_details_map_width); ?>"
+                        />
+                        px
+                    </span>
                 </td>
             </tr>
 
@@ -97,12 +101,16 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <input type="text"
-                           id="event_details_map_height"
-                           size=""
-                           name="event_details_map_height"
-                           value="<?php echo esc_attr($map_settings->event_details_map_height); ?>"
-                    />
+                    <span>
+                        <input type="text"
+                               class="ee-input-width--tiny ee-number-input"
+                               id="event_details_map_height"
+                               size=""
+                               name="event_details_map_height"
+                               value="<?php echo esc_attr($map_settings->event_details_map_height); ?>"
+                        />
+                        px
+                    </span>
                 </td>
             </tr>
             <tr>
@@ -113,6 +121,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 </th>
                 <td>
                     <input id="event_details_map_zoom"
+                           class="ee-input-width--tiny ee-number-input"
                            type="number"
                            size=""
                            name="event_details_map_zoom"
@@ -273,7 +282,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <?php esc_html_e('Events List Options', 'event_espresso'); ?>
     </h2>
 
-    <table class="form-table">
+    <table class="ee-admin-two-column-layout form-table">
         <tbody>
             <tr>
                 <th>
@@ -282,11 +291,15 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <input id="event_list_map_width"
-                           type="text"
-                           name="event_list_map_width"
-                           value="<?php echo esc_attr($map_settings->event_list_map_width); ?>"
-                    />
+                    <span>
+                        <input id="event_list_map_width"
+                               class="ee-input-width--tiny ee-number-input"
+                               type="text"
+                               name="event_list_map_width"
+                               value="<?php echo esc_attr($map_settings->event_list_map_width); ?>"
+                        />
+                        px
+                    </span>
                 </td>
             </tr>
             <tr>
@@ -296,12 +309,16 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <input id="event_list_map_height"
-                           type="text"
-                           size=""
-                           name="event_list_map_height"
-                           value="<?php echo esc_attr($map_settings->event_list_map_height); ?>"
-                    />
+                    <span>
+                        <input id="event_list_map_height"
+                               class="ee-input-width--tiny ee-number-input"
+                               type="text"
+                               size=""
+                               name="event_list_map_height"
+                               value="<?php echo esc_attr($map_settings->event_list_map_height); ?>"
+                        />
+                        px
+                    </span>
                 </td>
             </tr>
             <tr>
@@ -312,6 +329,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 </th>
                 <td>
                     <input id="event_list_map_zoom"
+                           class="ee-input-width--tiny ee-number-input"
                            type="number"
                            size=""
                            name="event_list_map_zoom"

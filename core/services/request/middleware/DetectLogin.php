@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\request\middleware;
 
+use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
 
@@ -22,18 +23,18 @@ class DetectLogin extends Middleware
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function handleRequest(RequestInterface $request, ResponseInterface $response)
+    public function handleRequest($request, $response)
     {
-        $this->request = $request;
+        $this->request  = $request;
         $this->response = $response;
         global $pagenow;
         if (
             in_array(
                 $pagenow,
-                array('wp-login.php', 'wp-register.php'),
+                ['wp-login.php', 'wp-register.php'],
                 true
             )
-            && ! filter_var($request->getRequestParam('ee_load_on_login'), FILTER_VALIDATE_BOOLEAN)
+            && ! $request->getRequestParam('ee_load_on_login', false, DataType::BOOL)
         ) {
             $this->response->terminateRequest();
         }

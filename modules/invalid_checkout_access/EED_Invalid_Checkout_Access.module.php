@@ -88,7 +88,7 @@ class EED_Invalid_Checkout_Access extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function process_invalid_checkout_access_form(EE_Registration_Config $EE_Registration_Config)
+    public static function process_invalid_checkout_access_form($EE_Registration_Config)
     {
         $invalid_checkout_access_form = EED_Invalid_Checkout_Access::getInvalidCheckoutAccess();
         return $invalid_checkout_access_form->processForm($EE_Registration_Config);

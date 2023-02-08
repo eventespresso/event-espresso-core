@@ -32,7 +32,7 @@ class FqcnLocator extends Locator
      * @param string|null $namespace
      * @param string|null $namespace_base_dir
      */
-    protected function setNamespace(?string $namespace, ?string $namespace_base_dir)
+    protected function setNamespace($namespace, $namespace_base_dir)
     {
         if (! is_string($namespace)) {
             throw new InvalidDataTypeException('$namespace', $namespace, 'string');
@@ -47,7 +47,7 @@ class FqcnLocator extends Locator
     /**
      * @return array
      */
-    public function getFQCNs(): array
+    public function getFQCNs()
     {
         return $this->FQCNs;
     }
@@ -56,7 +56,7 @@ class FqcnLocator extends Locator
     /**
      * @return int
      */
-    public function count(): int
+    public function count()
     {
         return count($this->FQCNs);
     }
@@ -70,7 +70,7 @@ class FqcnLocator extends Locator
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
      */
-    public function locate($namespaces): array
+    public function locate($namespaces)
     {
         if (! (is_string($namespaces) || is_array($namespaces))) {
             throw new InvalidDataTypeException('$namespaces', $namespaces, 'string or array');
@@ -94,7 +94,7 @@ class FqcnLocator extends Locator
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
      */
-    protected function findFQCNsByNamespace(string $partial_namespace): array
+    protected function findFQCNsByNamespace($partial_namespace)
     {
         $iterator = new FilesystemIterator(
             $this->getDirectoryFromPartialNamespace($partial_namespace)
@@ -131,7 +131,7 @@ class FqcnLocator extends Locator
      * @throws InvalidDataTypeException
      * @throws InvalidClassException
      */
-    protected function getDirectoryFromPartialNamespace(string $partial_namespace): string
+    protected function getDirectoryFromPartialNamespace($partial_namespace)
     {
         if (empty($partial_namespace)) {
             throw new InvalidClassException($partial_namespace);

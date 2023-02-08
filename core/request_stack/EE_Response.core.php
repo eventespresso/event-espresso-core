@@ -41,7 +41,7 @@ class EE_Response
 
     /**
      * @deprecated  4.9.53
-     * @return \EE_Response
+     * @return EE_Response
      */
     public function __construct()
     {

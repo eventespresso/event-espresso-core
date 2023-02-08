@@ -23,12 +23,12 @@ class JsonWpOptionManager
      * @param JsonWpOptionSerializableInterface $obj
      * @return bool
      */
-    public function populateFromDb(JsonWpOptionSerializableInterface $obj)
+    public function populateFromDb($obj)
     {
         $option = get_option($obj->getWpOptionName());
         if ($option) {
-            $json = json_decode($option);
-            if (is_array($json) || $json instanceof stdClass) {
+            $json = json_decode($option, false);
+            if ($json instanceof stdClass) {
                 return $obj->fromJsonSerializedData($json);
             }
         }
@@ -41,7 +41,7 @@ class JsonWpOptionManager
      * @param JsonWpOptionSerializableInterface $obj
      * @return bool
      */
-    public function saveToDb(JsonWpOptionSerializableInterface $obj)
+    public function saveToDb($obj)
     {
         return update_option(
             $obj->getWpOptionName(),

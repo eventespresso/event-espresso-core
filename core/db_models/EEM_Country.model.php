@@ -23,7 +23,7 @@ class EEM_Country extends EEM_Base
     /**
      * Resets the country
      *
-     * @param string $timezone
+     * @param string|null $timezone
      * @return EEM_Country|EEM_Base|null
      * @throws EE_Error
      * @throws ReflectionException

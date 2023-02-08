@@ -19,7 +19,7 @@ class ConvertNoticesToAdminNotices extends NoticeConverter
      * @param NoticesContainerInterface $notices
      * @throws DomainException
      */
-    public function process(NoticesContainerInterface $notices)
+    public function process($notices)
     {
         if ($notices->hasAttention()) {
             foreach ($notices->getAttention() as $notice) {

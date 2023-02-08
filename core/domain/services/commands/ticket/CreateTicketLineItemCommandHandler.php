@@ -45,7 +45,7 @@ class CreateTicketLineItemCommandHandler extends CommandHandler
      * @throws UnexpectedEntityException
      * @throws EE_Error
      */
-    public function handle(CommandInterface $command)
+    public function handle($command)
     {
         /** @var CreateTicketLineItemCommand $command */
         if (! $command instanceof CreateTicketLineItemCommand) {

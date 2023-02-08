@@ -9,7 +9,7 @@ abstract class EE_Form_Input_Strategy_Base
     /**
      * Form Input to display
      *
-     * @var EE_Form_Input_Base
+     * @var EE_Form_Input_Base|mixed
      */
     protected $_input;
 
@@ -26,7 +26,7 @@ abstract class EE_Form_Input_Strategy_Base
      *
      * @param EE_Form_Input_Base $form_input
      */
-    public function _construct_finalize(EE_Form_Input_Base $form_input)
+    public function _construct_finalize($form_input)
     {
         $this->_input = $form_input;
     }
@@ -36,7 +36,7 @@ abstract class EE_Form_Input_Strategy_Base
     /**
      * Gets this strategy's input
      *
-     * @return EE_Form_Input_Base
+     * @return EE_Form_Input_Base|mixed
      */
     public function get_input()
     {

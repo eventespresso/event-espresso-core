@@ -191,7 +191,7 @@ abstract class EE_Form_Section_Base
      * Calculation involves using the name and the parent's html id
      * return void
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _set_default_html_id_if_empty()
     {
@@ -314,7 +314,7 @@ abstract class EE_Form_Section_Base
      */
     public function set_other_html_attributes($other_html_attributes)
     {
-        $this->_other_html_attributes = $other_html_attributes ?? '';
+        $this->_other_html_attributes = isset($other_html_attributes) ? $other_html_attributes : '';
     }
 
 

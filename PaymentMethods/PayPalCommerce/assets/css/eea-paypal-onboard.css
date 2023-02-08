@@ -1,0 +1,64 @@
+/** PayPal Commerce onboard button **/
+#eea_paypal_onboard_btn_paypalcheckout.button--primary,
+#eea_paypal_offboard_btn_paypalcheckout.button--primary {
+    background-color: hsl(204deg 100% 36%);
+    border-color: hsl(204deg 100% 36%);
+    color: hsl(0deg 0% 100%);
+}
+#eea_paypal_onboard_btn_paypalcheckout.button--primary:focus,
+#eea_paypal_offboard_btn_paypalcheckout.button--primary:focus,
+#eea_paypal_onboard_btn_paypalcheckout.button--primary:hover,
+#eea_paypal_offboard_btn_paypalcheckout.button--primary:hover {
+    background-color: hsl(206deg 100% 33%);
+    border-color: hsl(206deg 100% 33%);
+    color: hsl(0deg 0% 100%);
+}
+
+.eea-paypal-onboard-btn span {
+    display: flex;
+    align-items: center;
+}
+
+.eea-paypal-onboard-btn span:before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin-inline-end: .5rem;
+    background-repeat: no-repeat;
+    background-size: 22px 22px;
+}
+
+
+
+/** PayPal Commerce images **/
+.eea-paypal-onboard-btn span:before {
+    background-image: url('https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-mark-color.svg');
+}
+
+
+
+/** Connection information text **/
+.eea-paypal-offboard-ico {
+    height: 25px;
+    margin: 0 10px -5px 0;
+}
+
+.eea-paypal-offboard-txt, .eea-paypal-seller-id {
+    color: #005486;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.eea-paypal-onboard-test-txt {
+    color: #F55622;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+/** Disconnect dialog **/
+.ee-admin-dialog-container .eea-paypal-dialog-cancel, .ee-admin-dialog-container .eea-paypal-dialog-ok {
+    margin: 20px 10px 0 10px;
+    float: right;
+}

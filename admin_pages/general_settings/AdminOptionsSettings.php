@@ -2,6 +2,7 @@
 
 namespace EventEspresso\admin_pages\general_settings;
 
+use EE_Registry;
 use EE_Admin_Two_Column_Layout;
 use EE_Error;
 use EE_Form_Section_HTML;
@@ -30,9 +31,9 @@ class AdminOptionsSettings extends FormHandler
     /**
      * Form constructor.
      *
-     * @param \EE_Registry $registry
+     * @param EE_Registry $registry
      */
-    public function __construct(\EE_Registry $registry)
+    public function __construct(EE_Registry $registry)
     {
         parent::__construct(
             esc_html__('Admin Options', 'event_espresso'),
@@ -48,7 +49,7 @@ class AdminOptionsSettings extends FormHandler
     /**
      * @param array $template_args
      */
-    public function setTemplateArgs(array $template_args)
+    public function setTemplateArgs($template_args)
     {
         $this->template_args = $template_args;
     }
@@ -149,6 +150,12 @@ class AdminOptionsSettings extends FormHandler
                 'compatibility_hdr'
             );
         }
+        do_action(
+            'AHEE__EventEspresso_admin_pages_general_settings_AdminOptionsSettings__generate__form',
+            $form,
+            $this->registry->CFG->admin,
+            $this
+        );
         return $form;
     }
 
@@ -201,15 +208,22 @@ class AdminOptionsSettings extends FormHandler
         if (empty($valid_data)) {
             return false;
         }
-        $this->registry->CFG->admin->show_reg_footer = isset($form_data['show_reg_footer'])
-            ? absint($form_data['show_reg_footer'])
+        $this->registry->CFG->admin->show_reg_footer = isset($valid_data['show_reg_footer'])
+            ? absint($valid_data['show_reg_footer'])
             : $this->registry->CFG->admin->show_reg_footer;
-        $this->registry->CFG->admin->affiliate_id = isset($form_data['affiliate_id'])
-            ? sanitize_text_field($form_data['affiliate_id'])
+        $this->registry->CFG->admin->affiliate_id = isset($valid_data['affiliate_id'])
+            ? sanitize_text_field($valid_data['affiliate_id'])
             : $this->registry->CFG->admin->affiliate_id;
-        if (isset($form_data['encode_session_data'])) {
-            $this->registry->CFG->admin->set_encode_session_data($form_data['encode_session_data']);
+        if (isset($valid_data['encode_session_data'])) {
+            $this->registry->CFG->admin->set_encode_session_data($valid_data['encode_session_data']);
         }
-        return false;
+
+        return apply_filters(
+            'FHEE__EventEspresso_admin_pages_general_settings_AdminOptionsSettings__process__form_processed',
+            true, // form processed successfully
+            $valid_data,
+            $this->registry->CFG->admin,
+            $this
+        );
     }
 }

@@ -25,24 +25,24 @@ use EventEspresso\core\services\request\ResponseInterface;
 abstract class Middleware implements RequestDecoratorInterface
 {
     /**
-     * @var RequestDecoratorInterface $request_stack_app
+     * @var LoaderInterface
+     */
+    protected $loader;
+
+    /**
+     * @var RequestDecoratorInterface
      */
     protected $request_stack_app;
 
     /**
-     * @var RequestInterface $request
+     * @var RequestInterface
      */
     protected $request;
 
     /**
-     * @var ResponseInterface $response
+     * @var ResponseInterface
      */
     protected $response;
-
-    /**
-     * @var LoaderInterface
-     */
-    protected $loader;
 
 
     /**
@@ -52,7 +52,7 @@ abstract class Middleware implements RequestDecoratorInterface
     public function __construct(RequestDecoratorInterface $request_stack_app, LoaderInterface $loader)
     {
         $this->request_stack_app = $request_stack_app;
-        $this->loader = $loader;
+        $this->loader            = $loader;
     }
 
 
@@ -63,9 +63,9 @@ abstract class Middleware implements RequestDecoratorInterface
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    protected function processRequestStack(RequestInterface $request, ResponseInterface $response)
+    protected function processRequestStack($request, $response)
     {
-        $this->request = $request;
+        $this->request  = $request;
         $this->response = $response;
         if (! $this->response->requestTerminated()) {
             $this->response = $this->request_stack_app->handleRequest($this->request, $this->response);

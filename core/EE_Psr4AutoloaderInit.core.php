@@ -33,6 +33,7 @@ class EE_Psr4AutoloaderInit
             EE_Psr4AutoloaderInit::psr4_loader()->addNamespace('EventEspresso', EE_PLUGIN_DIR_PATH);
             EE_Psr4AutoloaderInit::psr4_loader()->addNamespace('EventEspressoBatchRequest', EE_LIBRARIES . 'batch');
             EE_Psr4AutoloaderInit::psr4_loader()->addNamespace('EventEspressoVendor', EE_THIRD_PARTY);
+            EE_Psr4AutoloaderInit::psr4_loader()->addNamespace('EETests', EE_PLUGIN_DIR_PATH . 'tests');
             $initialized = true;
         }
     }
@@ -42,7 +43,7 @@ class EE_Psr4AutoloaderInit
      * @return Psr4Autoloader
      * @throws EE_Error
      */
-    public static function psr4_loader(): Psr4Autoloader
+    public static function psr4_loader()
     {
         if (! EE_Psr4AutoloaderInit::$psr4_loader instanceof Psr4Autoloader) {
             // instantiate PSR4 autoloader

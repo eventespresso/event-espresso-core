@@ -122,7 +122,7 @@ class CalculatedModelFields
      * @param EEM_Base $model
      * @return array allowable values for this field
      */
-    public function retrieveCalculatedFieldsForModel(EEM_Base $model)
+    public function retrieveCalculatedFieldsForModel($model)
     {
         $mapping = $this->mapping();
         if (isset($mapping[ $model->get_this_model_name() ])) {
@@ -137,7 +137,7 @@ class CalculatedModelFields
      * @param EEM_Base $model
      * @return array
      */
-    public function getJsonSchemaForModel(EEM_Base $model)
+    public function getJsonSchemaForModel($model)
     {
         if (! $this->mapping_schema) {
             $this->mapping_schema = $this->generateNewMappingSchema();
@@ -170,11 +170,11 @@ class CalculatedModelFields
      * @throws UnexpectedEntityException
      */
     public function retrieveCalculatedFieldValue(
-        EEM_Base $model,
+        $model,
         $field_name,
         $wpdb_row,
         $rest_request,
-        Base $controller
+        $controller
     ) {
         $mapping = $this->mapping();
         if (

@@ -179,7 +179,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             <?php // <td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings);
                             ?>
                         </tr>
-                    <?php }
+<?php }
 
                     break;
                 case EEM_Line_Item::type_sub_line_item:
@@ -195,7 +195,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         <?php } else {// flat discount/surcharge ?>
                             <td></td>
                             <td class="item_c"><?php echo wp_kses($line_item->unit_price_no_code(), AllowedTags::getAllowedTags()); ?></td>
-                        <?php } ?>
+<?php } ?>
                         <td class="item_r"><?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
                     </tr>
                     <?php
@@ -256,7 +256,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         ); ?>
                     </td>
                 </tr>
-            <?php }
+<?php }
         } else {
             ?>
             <tr class='item'>

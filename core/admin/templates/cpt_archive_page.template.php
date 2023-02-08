@@ -2,9 +2,13 @@
 
 /**
  * @var string $nav_menu_selected_id
+ * @var string $nav_menu_pages_items
  * @var string $nav_tab_link
  * @var string $select_all_link
  */
+
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 ?>
 
 <div id='posttype-extra-nav-menu-pages' class='posttypediv'>
@@ -24,6 +28,7 @@
          class="tabs-panel tabs-panel-active"
     >
         <ul id="extra-nav-menu-pageschecklist-event-archives" class="categorychecklist form-no-clear">
+            <?php echo wp_kses($nav_menu_pages_items, AllowedTags::getWithFormTags()); ?>
         </ul>
     </div><!-- /.tabs-panel -->
 
@@ -34,7 +39,7 @@
             </a>
         </span>
         <span class="add-to-menu">
-            <input class='button-secondary submit-add-to-menu right'
+            <input class='button--secondary submit-add-to-menu right'
                    id="<?php echo esc_attr('submit-posttype-extra-nav-menu-pages'); ?>"
                    name="add-post-type-menu-item"
                    type="submit"

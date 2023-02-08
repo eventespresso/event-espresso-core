@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\CoreLoader;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\validators\URLValidator;
@@ -30,8 +32,8 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
      * @param boolean $check_file_exists
      * @param URLValidator $url_validator
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function __construct(
         $validation_error_message = null,
@@ -56,7 +58,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
      *
      * @param $normalized_value
      * @return bool
-     * @throws \EE_Validation_Error
+     * @throws EE_Validation_Error
      */
     public function validate($normalized_value)
     {
@@ -73,7 +75,9 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base
                         )
                     )
                 ) {
-                    throw new EE_Validation_Error(sprintf(esc_html__("That URL seems to be broken. Please enter a valid URL", "event_espresso")));
+                    throw new EE_Validation_Error(
+                        esc_html__("That URL seems to be broken. Please enter a valid URL", "event_espresso")
+                    );
                 }
             }
         }

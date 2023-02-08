@@ -731,7 +731,7 @@ class EED_Thank_You_Page extends EED_Module
      * @return string
      * @throws EE_Error
      */
-    public function get_payment_row_html(EE_Payment $payment = null)
+    public function get_payment_row_html($payment = null)
     {
         $html = '';
         if (! $payment instanceof EE_Payment) {

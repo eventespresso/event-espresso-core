@@ -71,7 +71,7 @@ class Loader implements LoaderInterface
      * @param bool                      $shared
      * @return mixed
      */
-    public function load($fqcn, array $arguments = array(), $shared = true)
+    public function load($fqcn, $arguments = array(), $shared = true)
     {
         $fqcn = $this->class_cache->getFqn($fqcn);
         if ($this->class_cache->hasInterface($fqcn, 'EventEspresso\core\interfaces\ReservedInstanceInterface')) {
@@ -88,7 +88,7 @@ class Loader implements LoaderInterface
      * @param array                     $arguments
      * @return mixed
      */
-    public function getNew($fqcn, array $arguments = array())
+    public function getNew($fqcn, $arguments = array())
     {
         return $this->load($fqcn, $arguments, false);
     }
@@ -99,7 +99,7 @@ class Loader implements LoaderInterface
      * @param array                     $arguments
      * @return mixed
      */
-    public function getShared($fqcn, array $arguments = array())
+    public function getShared($fqcn, $arguments = array())
     {
         return $this->load($fqcn, $arguments);
     }
@@ -108,13 +108,14 @@ class Loader implements LoaderInterface
     /**
      * @param FullyQualifiedName|string $fqcn
      * @param mixed                     $object
+     * @param array                     $arguments
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function share($fqcn, $object)
+    public function share($fqcn, $object, $arguments = [])
     {
         $fqcn = $this->class_cache->getFqn($fqcn);
-        return $this->getSharedLoader()->share($fqcn, $object);
+        return $this->getSharedLoader()->share($fqcn, $object, $arguments);
     }
 
 
@@ -122,8 +123,9 @@ class Loader implements LoaderInterface
      * @param FullyQualifiedName|string $fqcn
      * @return bool
      * @throws InvalidArgumentException
+     * @param mixed[] $arguments
      */
-    public function remove($fqcn, array $arguments = [])
+    public function remove($fqcn, $arguments = [])
     {
         $fqcn = $this->class_cache->getFqn($fqcn);
         return $this->getSharedLoader()->remove($fqcn, $arguments);

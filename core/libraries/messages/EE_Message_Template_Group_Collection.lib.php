@@ -28,7 +28,7 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection
      *                         include the events as an array.
      * @return bool
      */
-    public function add($message_template_group, $EVT_ID = array()): bool
+    public function add($message_template_group, $EVT_ID = array())
     {
         $EVT_ID = is_array($EVT_ID) ? $EVT_ID : (array) $EVT_ID;
         if ($message_template_group instanceof $this->interface) {
@@ -90,7 +90,7 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection
      * @since 4.9.40.rc.017
      * @return string
      */
-    public function getKey($messenger, $message_type, array $EVT_ID = array())
+    public function getKey($messenger, $message_type, $EVT_ID = array())
     {
         sort($EVT_ID);
         $EVT_ID = implode(',', array_unique($EVT_ID));

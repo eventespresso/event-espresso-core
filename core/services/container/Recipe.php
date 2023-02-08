@@ -241,7 +241,7 @@ class Recipe implements RecipeInterface
      *                              array( 'ClassInterface' => 'Fully\Qualified\ClassName' )
      * @throws InvalidDataTypeException
      */
-    public function setIngredients(array $ingredients)
+    public function setIngredients($ingredients)
     {
         if (empty($ingredients)) {
             return;
@@ -273,7 +273,7 @@ class Recipe implements RecipeInterface
      *                          array( 'ClassInterface' => 'Fully\Qualified\ClassName' )
      * @throws InvalidDataTypeException
      */
-    public function setFilters(array $filters)
+    public function setFilters($filters)
     {
         if (empty($filters)) {
             return;

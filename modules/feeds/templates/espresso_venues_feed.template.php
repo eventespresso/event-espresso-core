@@ -27,4 +27,3 @@
 <p><?php esc_html_e('Website: ', 'event_espresso') . espresso_venue_website($VNU_ID); ?></p>
 <p><?php esc_html_e('Description: ', 'event_espresso') . $venue_description; ?></p>
 <br/>
- 

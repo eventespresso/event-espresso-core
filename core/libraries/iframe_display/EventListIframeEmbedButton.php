@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\libraries\iframe_display;
 
+use EEH_Array;
+
 /**
  * Class EventListIframeEmbedButton
  *
@@ -27,7 +29,8 @@ class EventListIframeEmbedButton extends IframeEmbedButton
     {
         add_filter(
             'FHEE__EE_Admin_Page___display_admin_list_table_page__after_list_table__template_args_array',
-            array($this, 'addEventListIframeEmbedButtonSection')
+            array($this, 'addEventListIframeEmbedButtonSection'),
+            20
         );
         add_action(
             'admin_enqueue_scripts',
@@ -44,15 +47,15 @@ class EventListIframeEmbedButton extends IframeEmbedButton
      * @param array $after_list_table
      * @return array
      */
-    public function addEventListIframeEmbedButtonSection(array $after_list_table)
+    public function addEventListIframeEmbedButtonSection($after_list_table)
     {
-        return \EEH_Array::insert_into_array(
+        return EEH_Array::insert_into_array(
             $after_list_table,
-            array(
+            [
                 'iframe_embed_buttons' => $this->addIframeEmbedButtonsSection(
-                    array('event_list' => $this->embedButtonHtml())
+                    ['event_list' => $this->embedButtonHtml()]
                 ),
-            ),
+            ],
             'legend'
         );
     }

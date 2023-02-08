@@ -61,7 +61,7 @@ class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base
 
     /**
      * @param $normalized_value
-     * @throws \EE_Validation_Error
+     * @throws EE_Validation_Error
      */
     public function validate($normalized_value)
     {

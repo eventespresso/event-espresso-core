@@ -89,7 +89,7 @@ class EE_Registration_Payment extends EE_Base_Class
      * registration
      *
      * @access    public
-     * @return \EE_Registration
+     * @return EE_Registration
      */
     public function registration()
     {
@@ -101,7 +101,7 @@ class EE_Registration_Payment extends EE_Base_Class
      * payment
      *
      * @access    public
-     * @return \EE_Payment
+     * @return EE_Payment
      */
     public function payment()
     {

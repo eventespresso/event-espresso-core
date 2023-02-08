@@ -32,7 +32,7 @@ class FileLocator extends Locator
      * @param string|null $file_mask
      * @throws InvalidDataTypeException
      */
-    public function setFileMask(?string $file_mask)
+    public function setFileMask($file_mask)
     {
         if (! is_string($file_mask)) {
             throw new InvalidDataTypeException('$file_mask', $file_mask, 'string');
@@ -44,7 +44,7 @@ class FileLocator extends Locator
     /**
      * @return array
      */
-    public function getFilePaths(): array
+    public function getFilePaths()
     {
         return $this->filepaths;
     }
@@ -53,7 +53,7 @@ class FileLocator extends Locator
     /**
      * @return int
      */
-    public function count(): int
+    public function count()
     {
         return count($this->filepaths);
     }
@@ -67,7 +67,7 @@ class FileLocator extends Locator
      * @return array
      * @throws InvalidDataTypeException
      */
-    public function locate($directory_paths): array
+    public function locate($directory_paths)
     {
         if (! (is_string($directory_paths) || is_array($directory_paths))) {
             throw new InvalidDataTypeException('$directory_paths', $directory_paths, 'string or array');
@@ -87,7 +87,7 @@ class FileLocator extends Locator
      * @param string $directory_path
      * @return FilesystemIterator
      */
-    protected function findFilesByPath(string $directory_path = '')
+    protected function findFilesByPath($directory_path = '')
     {
         $iterator = new GlobIterator(
             EEH_File::end_with_directory_separator($directory_path) . $this->file_mask

@@ -93,7 +93,7 @@ class ModelDataTranslator
      * @param EE_Model_Field_Base $field_obj
      * @param mixed               $original_value_maybe_array
      * @param string              $request_version (eg 4.8.36)
-     * @return array
+     * @return array|int|string
      * @throws EE_Error
      * @throws EE_Error
      */
@@ -353,9 +353,7 @@ class ModelDataTranslator
                 );
             }
             if ($new_value !== null) {
-                // phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mysql_DeprecatedRemoved
-                $new_value = mysql_to_rfc3339($new_value);
-                // phpcs:enable
+                $new_value = mysql2date('Y-m-d\TH:i:s', $new_value, false);
             }
         } else {
             $new_value = $original_value;
@@ -402,7 +400,7 @@ class ModelDataTranslator
      */
     public static function prepareConditionsQueryParamsForModels(
         $inputted_query_params_of_this_type,
-        EEM_Base $model,
+        $model,
         $requested_version,
         $writing = false
     ) {
@@ -495,7 +493,7 @@ class ModelDataTranslator
      * @param array $field_names
      * @return array of field names (possibly include model prefixes)
      */
-    public static function prepareFieldNamesFromJson(array $field_names)
+    public static function prepareFieldNamesFromJson($field_names)
     {
         $new_array = [];
         foreach ($field_names as $key => $field_name) {
@@ -512,7 +510,7 @@ class ModelDataTranslator
      * @param array $field_names_as_keys
      * @return array
      */
-    public static function prepareFieldNamesInArrayKeysFromJson(array $field_names_as_keys)
+    public static function prepareFieldNamesInArrayKeysFromJson($field_names_as_keys)
     {
         $new_array = [];
         foreach ($field_names_as_keys as $field_name => $value) {
@@ -534,8 +532,8 @@ class ModelDataTranslator
      * @throws ReflectionException
      */
     public static function prepareQueryParamsForRestApi(
-        array $model_query_params,
-        EEM_Base $model,
+        $model_query_params,
+        $model,
         $requested_version = null
     ) {
         if ($requested_version === null) {
@@ -583,7 +581,7 @@ class ModelDataTranslator
      */
     public static function prepareConditionsQueryParamsForRestApi(
         $inputted_query_params_of_this_type,
-        EEM_Base $model,
+        $model,
         $requested_version
     ) {
         $query_param_for_models = [];
@@ -650,7 +648,7 @@ class ModelDataTranslator
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function deduceFieldFromQueryParam($query_param_name, EEM_Base $model)
+    public static function deduceFieldFromQueryParam($query_param_name, $model)
     {
         // ok, now proceed with deducing which part is the model's name, and which is the field's name
         // which will help us find the database table and column

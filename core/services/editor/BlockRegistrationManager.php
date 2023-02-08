@@ -14,9 +14,10 @@ use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
 use EventEspresso\core\services\collections\CollectionLoaderException;
 use EventEspresso\core\services\request\RequestInterface;
-use EventEspresso\core\services\route_match\RouteMatchSpecificationManager;
+use EventEspresso\core\services\routing\RouteMatchSpecificationManager;
 use Exception;
 use WP_Block_Type;
+use WP_Block_Editor_Context;
 
 /**
  * Class BlockRegistrationManager
@@ -70,7 +71,7 @@ class BlockRegistrationManager extends BlockManager
 
 
     /**
-     *  Returns the name of a hookpoint to be used to call initialize()
+     *  Returns the name of a hook point to be used to call initialize()
      *
      * @return string
      */
@@ -91,7 +92,7 @@ class BlockRegistrationManager extends BlockManager
         $this->initializeBlocks();
         add_action('AHEE__EE_System__initialize_last', array($this, 'registerBlocks'));
         add_action('wp_loaded', array($this, 'unloadAssets'));
-        add_filter('block_categories_all', array($this, 'addEspressoBlockCategories'));
+        add_filter('block_categories_all', array($this, 'addEspressoBlockCategories'), 10, 2);
     }
 
 
@@ -100,16 +101,21 @@ class BlockRegistrationManager extends BlockManager
      * @since 4.9.71.p
      * @return array
      */
-    public function addEspressoBlockCategories(array $categories)
+    public function addEspressoBlockCategories($categories, $block_editor_context)
     {
+        // $block_editor_context can be either an object or a string
+        // so checking it here, thus no type hinting in function params
+        if (! $block_editor_context instanceof WP_Block_Editor_Context) {
+            return $categories;
+        }
         return array_merge(
             $categories,
-            array(
-                array(
-                    'slug' => 'event-espresso',
+            [
+                [
+                    'slug'  => 'event-espresso',
                     'title' => esc_html__('Event Espresso', 'event_espresso'),
-                ),
-            )
+                ]
+            ]
         );
     }
 
@@ -132,7 +138,7 @@ class BlockRegistrationManager extends BlockManager
                     'FHEE__EventEspresso_core_services_editor_BlockManager__populateBlockCollection__collection_FQCNs',
                     array('EventEspresso\core\domain\entities\editor\blocks')
                 ),
-                // filepaths to classes to add
+                // file paths to classes to add
                 array(),
                 // file mask to use if parsing folder for files to add
                 '',
@@ -196,7 +202,7 @@ class BlockRegistrationManager extends BlockManager
      * @return boolean
      * @throws InvalidClassException
      */
-    public function matchesRoute(BlockInterface $block)
+    public function matchesRoute($block)
     {
         if (isset($this->block_asset_managers[ $block->blockType() ])) {
             return true;

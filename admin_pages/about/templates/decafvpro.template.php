@@ -7,6 +7,7 @@
         '<a href="https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
         '</a>'
     ); ?>
+    </p>
     <br>
 
     <?php
@@ -70,7 +71,7 @@
         <tr>
             <td></td>
             <td colspan="2" class="text-right">
-                <a class='button button-primary button-hero'
+                <a class='button button--primary button-hero'
                    href="https://eventespresso.com/pricing/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular"
                    target="_blank"
                 >

@@ -147,7 +147,7 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base
      *
      * @param mixed $value
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function _set_raw_value($value)
     {

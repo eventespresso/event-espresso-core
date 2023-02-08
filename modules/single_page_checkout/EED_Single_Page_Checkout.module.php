@@ -369,14 +369,14 @@ class EED_Single_Page_Checkout extends EED_Module
     /**
      *    run
      *
-     * @param WP_Query $WP
+     * @param WP_Query $WP_Query
      * @return    void
      */
-    public function run($WP)
+    public function run($WP_Query)
     {
         if (
-            $WP instanceof WP_Query
-            && $WP->is_main_query()
+            $WP_Query instanceof WP_Query
+            && $WP_Query->is_main_query()
             && apply_filters('FHEE__EED_Single_Page_Checkout__run', true)
             && $this->_is_reg_checkout()
         ) {
@@ -720,15 +720,8 @@ class EED_Single_Page_Checkout extends EED_Module
             }
             if (isset($this->checkout->reg_steps['registration_confirmation'])) {
                 // skip the registration_confirmation page ?
-                if (EE_Registry::instance()->CFG->registration->skip_reg_confirmation) {
-                    // just remove it from the reg steps array
-                    $this->checkout->remove_reg_step('registration_confirmation', false);
-                } elseif (
-                    EE_Registry::instance()->CFG->registration->reg_confirmation_last
-                ) {
-                    // set the order to something big like 100
-                    $this->checkout->set_reg_step_order('registration_confirmation');
-                }
+                // just remove it from the reg steps array
+                $this->checkout->remove_reg_step('registration_confirmation', false);
             }
             // filter the array for good luck
             $this->checkout->reg_steps = apply_filters(
@@ -923,7 +916,7 @@ class EED_Single_Page_Checkout extends EED_Module
      * @param EE_Transaction $transaction
      * @return EE_Cart
      */
-    public function get_cart_for_transaction(EE_Transaction $transaction)
+    public function get_cart_for_transaction($transaction)
     {
         return $this->checkout->get_cart_for_transaction($transaction);
     }
@@ -1103,7 +1096,7 @@ class EED_Single_Page_Checkout extends EED_Module
      * @param EE_Registration $reg_B
      * @return int
      */
-    public static function sort_registrations_by_REG_count(EE_Registration $reg_A, EE_Registration $reg_B)
+    public static function sort_registrations_by_REG_count($reg_A, $reg_B)
     {
         // this shouldn't ever happen within the same TXN, but oh well
         if ($reg_A->count() === $reg_B->count()) {
@@ -1485,14 +1478,14 @@ class EED_Single_Page_Checkout extends EED_Module
         // load JS
         wp_register_script(
             'jquery_plugin',
-            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.plugin.min.js',
+            EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js',
             array('jquery'),
             '1.0.1',
             true
         );
         wp_register_script(
             'jquery_countdown',
-            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.countdown.min.js',
+            EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js',
             array('jquery_plugin'),
             '2.1.0',
             true

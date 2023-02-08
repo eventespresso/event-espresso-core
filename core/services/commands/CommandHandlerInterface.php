@@ -20,7 +20,7 @@ interface CommandHandlerInterface
      * @return CommandHandlerInterface
      * @since 4.9.80.p
      */
-    public function verify(CommandInterface $command);
+    public function verify($command);
 
     /**
      * Performs the command handler's logic.
@@ -28,5 +28,5 @@ interface CommandHandlerInterface
      * @param CommandInterface $command
      * @return mixed
      */
-    public function handle(CommandInterface $command);
+    public function handle($command);
 }

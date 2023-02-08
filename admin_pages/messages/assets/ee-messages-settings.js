@@ -262,27 +262,21 @@ jQuery(document).ready(function($) {
 		toggle_msg_elements: function( messenger, status, mts ) {
 			$('.ajax-loader-grey').toggle().hide();
 
-			var $on_off_button = $('#ee-on-off-toggle-' + messenger),
-				$messenger_settings = $('.messenger-settings', '.' + messenger + '-content'),
-				$active_mts = $('#active-message-types'),
+			var $active_mts = $('#active-message-types'),
 				$inactive_mts = $('#inactive-message-types'),
 				$inactive_on_msg = $('.inactive-on-message', '.' + messenger + '-content'),
 				$inactive_off_msg = $('.inactive-off-message', '.' + messenger + '-content'),
 				$active_on_msg = $('.active-on-message', '.' + messenger + '-content'),
-				$msgr_link = $('.item_display'),
-				show_hide_msgr_form = $('#has_form_class').text();
+				$msgr_link = $('.item_display');
 
-			if ( status == 'on' ) {
-				if ( show_hide_msgr_form !== 'hidden' )
-					$( $messenger_settings ).removeClass('hidden');
+			if ( status === 'on' ) {
 				$( $active_mts ).removeClass('hidden');
 				$( $inactive_mts ).removeClass('hidden');
 				$( $inactive_on_msg ).removeClass('hidden');
 				$( $inactive_off_msg ).addClass('hidden');
 				$( $active_on_msg ).removeClass('hidden');
 				$( $msgr_link ).addClass('messenger-active');
-			} else if ( status == 'off' ) {
-				$( $messenger_settings ).addClass('hidden');
+			} else if ( status === 'off' ) {
 				$( $active_mts ).addClass('hidden');
 				$( $inactive_mts ).addClass('hidden');
 				$( $inactive_on_msg ).addClass('hidden');
@@ -297,8 +291,7 @@ jQuery(document).ready(function($) {
 			//make sure active mts are moved to the right spot
 			if ( typeof(mts) !== 'undefined' ) {
 				$.each(mts, function( index, value ) {
-					var $item = $('#' + value + '-messagetype-'+messenger);
-					MSG_helper.switch_types($item, status);
+					MSG_helper.switch_types($('#' + value + '-messagetype-' + messenger), status);
 				});
 			}
 		},
@@ -414,22 +407,33 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 
 		//first set all content as hidden and other text links as not active
-		$('.ee-text-link-li').each( function() {
+		$('.ee-text-link').each( function() {
 			$(this).removeClass('item_display');
-			messenger = $('a', this).attr('href');
+			messenger = $(this).attr('href');
 			MSG_helper.init().toggle(messenger, 'inactive');
 		});
 
-		$(this).parent().addClass('item_display');
+		$(this).addClass('item_display');
 		//show new box
 		var this_messenger = $(this).attr('href');
 		MSG_helper.toggle(this_messenger);
 	});
 
 
-	$('.activate_messages_on_off_toggle_container').on('click', '.ee-on-off-toggle', function(e) {
-		var messenger = $(this).attr('id').replace('ee-on-off-toggle-',''),
-		status = $(this).prop('checked') ? 'on' : 'off';
+	$('.activate_messages_on_off_toggle_container').on('click', '.ee-switch__input', function(e) {
+		const messenger = $(this).attr('id').replace('ee-on-off-toggle-','')
+		const status = $(this).prop('checked') ? 'on' : 'off';
+		// change dashicon on text link
+		const $target = $('.ee-messenger-' + messenger + ' span');
+		if ($target.length) {
+			if (status === 'on') {
+				$target.addClass('dashicons-yes-alt');
+				$target.removeClass('dashicons-remove');
+			} else {
+				$target.removeClass('dashicons-yes-alt');
+				$target.addClass('dashicons-remove');
+			}
+		}
 		e.stopPropagation();
 		MSG_helper.messenger_toggle(messenger, status, e)
 	});

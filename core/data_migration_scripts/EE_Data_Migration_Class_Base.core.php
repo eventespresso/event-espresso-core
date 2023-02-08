@@ -49,12 +49,12 @@ abstract class EE_Data_Migration_Class_Base
     protected $_errors = array();
 
     /**
-     * @var \EventEspresso\core\services\database\TableManager $table_manager
+     * @var TableManager $table_manager
      */
     protected $_table_manager;
 
     /**
-     * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
+     * @var TableAnalysis $table_analysis
      */
     protected $_table_analysis;
 

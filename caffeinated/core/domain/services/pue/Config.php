@@ -35,38 +35,54 @@ class Config
 
     /**
      * Get the site license key for the site.
+     * @return string
      */
-    public function siteLicenseKey(): string
+    public function siteLicenseKey()
     {
         return $this->network_config->core->site_license_key;
     }
 
 
-    public function i18nDomain(): string
+    /**
+     * @return string
+     */
+    public function i18nDomain()
     {
         return 'event_espresso';
     }
 
 
-    public function checkPeriod(): int
+    /**
+     * @return int
+     */
+    public function checkPeriod()
     {
         return 24;
     }
 
 
-    public function optionKey(): string
+    /**
+     * @return string
+     */
+    public function optionKey()
     {
         return 'ee_site_license_key';
     }
 
 
-    public function optionsPageSlug(): string
+    /**
+     * @return string
+     */
+    public function optionsPageSlug()
     {
         return 'espresso_general_settings';
     }
 
 
-    public function hostServerUrl(): string
+    /**
+     * @return string
+     */
+    public function hostServerUrl()
     {
         return defined('PUE_UPDATES_ENDPOINT')
             ? PUE_UPDATES_ENDPOINT
@@ -74,7 +90,10 @@ class Config
     }
 
 
-    public function pluginSlug(): array
+    /**
+     * @return mixed[]
+     */
+    public function pluginSlug()
     {
         // Note: PUE uses a simple preg_match to determine what type is currently installed based on version number.
         //  So it's important that you use a key for the version type that is unique and not found in another key.
@@ -99,7 +118,7 @@ class Config
      *
      * @return bool
      */
-    public function isOptedInForUxip(): bool
+    public function isOptedInForUxip()
     {
         return filter_var($this->ee_config->core->ee_ueip_optin, FILTER_VALIDATE_BOOLEAN);
     }
@@ -110,7 +129,7 @@ class Config
      *
      * @return bool
      */
-    public function hasNotifiedForUxip(): bool
+    public function hasNotifiedForUxip()
     {
         return filter_var($this->ee_config->core->ee_ueip_has_notified, FILTER_VALIDATE_BOOLEAN);
     }

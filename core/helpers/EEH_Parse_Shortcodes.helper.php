@@ -56,11 +56,11 @@ class EEH_Parse_Shortcodes
      */
     public function parse_message_template(
         $template,
-        EE_Messages_Addressee $data,
+        $data,
         $valid_shortcodes,
-        EE_message_type $message_type,
-        EE_messenger $messenger,
-        EE_Message $message
+        $message_type,
+        $messenger,
+        $message
     ) {
         $extra_data = array(
             'messenger'    => $messenger,
@@ -73,9 +73,12 @@ class EEH_Parse_Shortcodes
     }
 
 
+    /**
+     * @param EE_Registration $registration
+     */
     public function parse_attendee_list_template(
         $template,
-        EE_Registration $registration,
+        $registration,
         $valid_shortcodes,
         $extra_data = array()
     ) {
@@ -84,7 +87,10 @@ class EEH_Parse_Shortcodes
         return $this->_parse_message_template();
     }
 
-    public function parse_event_list_template($template, EE_Event $event, $valid_shortcodes, $extra_data = array())
+    /**
+     * @param EE_Event $event
+     */
+    public function parse_event_list_template($template, $event, $valid_shortcodes, $extra_data = array())
     {
         $this->_init_data($template, $event, $valid_shortcodes, $extra_data);
         $this->_template = is_array($template) ? $template['event_list'] : $template;
@@ -92,7 +98,10 @@ class EEH_Parse_Shortcodes
     }
 
 
-    public function parse_ticket_list_template($template, EE_Ticket $ticket, $valid_shortcodes, $extra_data = array())
+    /**
+     * @param EE_Ticket $ticket
+     */
+    public function parse_ticket_list_template($template, $ticket, $valid_shortcodes, $extra_data = array())
     {
         $this->_init_data($template, $ticket, $valid_shortcodes, $extra_data);
         $this->_template = is_array($template) ? $template['ticket_list'] : $template;
@@ -100,9 +109,12 @@ class EEH_Parse_Shortcodes
     }
 
 
+    /**
+     * @param EE_Line_Item $line_item
+     */
     public function parse_line_item_list_template(
         $template,
-        EE_Line_Item $line_item,
+        $line_item,
         $valid_shortcodes,
         $extra_data = array()
     ) {
@@ -112,9 +124,12 @@ class EEH_Parse_Shortcodes
     }
 
 
+    /**
+     * @param EE_Payment $payment_item
+     */
     public function parse_payment_list_template(
         $template,
-        EE_Payment $payment_item,
+        $payment_item,
         $valid_shortcodes,
         $extra_data = array()
     ) {
@@ -124,9 +139,12 @@ class EEH_Parse_Shortcodes
     }
 
 
+    /**
+     * @param EE_Datetime $datetime
+     */
     public function parse_datetime_list_template(
         $template,
-        EE_Datetime $datetime,
+        $datetime,
         $valid_shortcodes,
         $extra_data = array()
     ) {
@@ -136,7 +154,10 @@ class EEH_Parse_Shortcodes
     }
 
 
-    public function parse_question_list_template($template, EE_Answer $answer, $valid_shortcodes, $extra_data = array())
+    /**
+     * @param EE_Answer $answer
+     */
+    public function parse_question_list_template($template, $answer, $valid_shortcodes, $extra_data = array())
     {
         $this->_init_data($template, $answer, $valid_shortcodes, $extra_data);
         $this->_template = is_array($template) ? $template['question_list'] : $template;

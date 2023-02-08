@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -206,7 +207,7 @@ class EEH_Template
                 $request = $loader->getShared(RequestInterface::class);
                 // get post_type
                 $post_type = $request->getRequestParam('post_type');
-                /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
+                /** @var CustomPostTypeDefinitions $custom_post_types */
                 $custom_post_types = $loader->getShared(
                     'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
                 );
@@ -299,6 +300,18 @@ class EEH_Template
             }
         }
 
+        // Display a deprecated notice if the template file is located in the WordPress uploads directory
+        if (strpos($template_path, 'wp-content/uploads/espresso') !== false) {
+            EE_Error::doing_it_wrong(
+                __CLASS__,
+                esc_html__(
+                    'The use of the WordPress uploads directory as a location to override template files has been deprecated.',
+                    'event_espresso'
+                ),
+                '5.0.0'
+            );
+        }
+
         // hook that can be used to display the full template path that will be used
         do_action('AHEE__EEH_Template__locate_template__full_template_path', $template_path);
 
@@ -357,7 +370,6 @@ class EEH_Template
         $return_string = false,
         $throw_exceptions = false
     ) {
-
         /**
          * These two filters are intended for last minute changes to templates being loaded and/or template arg
          * modifications.  NOTE... modifying these things can cause breakage as most templates running through
@@ -547,7 +559,7 @@ class EEH_Template
      *
      * @param string $url   the url for the link, note that `esc_url` will be called on it
      * @param string $label What is the label you want displayed for the button
-     * @param string $class what class is used for the button (defaults to 'button-primary')
+     * @param string $class what class is used for the button (defaults to 'button--primary')
      * @param string $icon
      * @param string $title
      * @return string the html output for the button
@@ -568,8 +580,13 @@ class EEH_Template
         }
         // sanitize & escape
         $id    = sanitize_title_with_dashes($label);
+        $url   = esc_url_raw($url);
+        $class = esc_attr($class);
+        $title = esc_attr($title);
+        $class .= $title ? ' ee-aria-tooltip' : '';
+        $title = $title ? " aria-label='{$title}'" : '';
         $label = esc_html($label);
-        return "<a id='" . esc_attr($id) . "' href='" . esc_url_raw($url) . "' class='" . esc_attr($class) . "' title='" . esc_attr($title) . "'>" . wp_kses($icon_html, AllowedTags::getAllowedTags()) . esc_html($label) . "</a>";
+        return "<a id='{$id}' href='{$url}' class='{$class}'{$title}>{$icon_html}{$label}</a>";
     }
 
 
@@ -598,20 +615,18 @@ class EEH_Template
 
 
         $help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
-        $icon         = ! $icon_style ? ' dashicons-editor-help' : $icon_style;
+        $icon         = ! $icon_style ? 'dashicons-editor-help' : $icon_style;
         $help_text    = ! $help_text ? '' : $help_text;
-        return '<a id="'
-               . esc_attr($help_tab_lnk)
-               . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22'
-               . esc_attr($icon)
-               . '" title="'
-               . esc_attr__(
+        return '
+            <a id="' . esc_attr($help_tab_lnk) . '"
+               class="espresso-help-tab-lnk ee-help-btn ee-aria-tooltip dashicons ' . esc_attr($icon) . '"
+               aria-label="' . esc_attr__(
                    'Click to open the \'Help\' tab for more information about this feature.',
                    'event_espresso'
-               )
-               . '" > '
-               . wp_kses($help_text, $allowedtags)
-               . ' </a>';
+               ) . '"
+            >
+                ' . wp_kses($help_text, $allowedtags) . '
+            </a>';
     }
 
 
@@ -651,7 +666,7 @@ class EEH_Template
             $active_class = $active_status == $status ? 'class="ee-is-active-status"' : '';
             $content      .= '
                     <dt id="' . esc_attr('ee-legend-item-tooltip-' . $item) . '" ' . $active_class . '>
-                        <span class="' . esc_attr('ee-status-legend ee-status-legend-' . $status) . '"></span>
+                        <span class="' . esc_attr('ee-status-legend ee-status-bg--' . $status) . '"></span>
                         <span class="ee-legend-description">
                             ' . EEH_Template::pretty_status($status, false, 'sentence') . '
                         </span>
@@ -683,16 +698,16 @@ class EEH_Template
             if (EEH_Array::is_associative_array($data)) { ?>
                 <table class="widefat">
                     <tbody>
-                    <?php foreach ($data as $data_key => $data_values) { ?>
-                        <tr>
-                            <td>
-                                <?php echo esc_html($data_key); ?>
-                            </td>
-                            <td>
-                                <?php echo self::layout_array_as_table($data_values); ?>
-                            </td>
-                        </tr>
-                    <?php } ?>
+                        <?php foreach ($data as $data_key => $data_values) { ?>
+                            <tr>
+                                <td>
+                                    <?php echo esc_html($data_key); ?>
+                                </td>
+                                <td>
+                                    <?php echo self::layout_array_as_table($data_values); ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
                     </tbody>
                 </table>
             <?php } else { ?>
@@ -750,13 +765,13 @@ class EEH_Template
     /**
      * A method for generating paging similar to WP_List_Table
      *
-     * @param integer $total_items      How many total items there are to page.
-     * @param integer $current          What the current page is.
-     * @param integer $per_page         How many items per page.
-     * @param string  $url              What the base url for page links is.
-     * @param boolean $show_num_field   Whether to show the input for changing page number.
-     * @param string  $paged_arg_name   The name of the key for the paged query argument.
-     * @param array   $items_label      An array of singular/plural values for the items label:
+     * @param int    $total_items       How many total items there are to page.
+     * @param int    $current           What the current page is.
+     * @param int    $per_page          How many items per page.
+     * @param string $url               What the base url for page links is.
+     * @param bool   $show_num_field    Whether to show the input for changing page number.
+     * @param string $paged_arg_name    The name of the key for the paged query argument.
+     * @param array  $items_label       An array of singular/plural values for the items label:
      *                                  array(
      *                                  'single' => 'item',
      *                                  'plural' => 'items'
@@ -764,6 +779,7 @@ class EEH_Template
      * @return  string
      * @since    4.4.0
      * @see      wp-admin/includes/class-wp-list-table.php WP_List_Table::pagination()
+     * @param string $button_size
      */
     public static function get_paging_html(
         $total_items,
@@ -772,13 +788,10 @@ class EEH_Template
         $url,
         $show_num_field = true,
         $paged_arg_name = 'paged',
-        $items_label = []
+        $items_label = [],
+        $button_size = 'small'
     ) {
         $page_links     = [];
-        $disable_first  = $disable_last = '';
-        $total_items    = (int) $total_items;
-        $per_page       = (int) $per_page;
-        $current        = (int) $current;
         $paged_arg_name = empty($paged_arg_name) ? 'paged' : sanitize_key($paged_arg_name);
 
         // filter items_label
@@ -804,7 +817,7 @@ class EEH_Template
             ];
         }
 
-        $total_pages = ceil($total_items / $per_page);
+        $total_pages = (int) ceil($total_items / $per_page);
 
         if ($total_pages <= 1) {
             return '';
@@ -814,39 +827,36 @@ class EEH_Template
 
         $output = '<span class="displaying-num">' . $item_label . '</span>';
 
-        if ($current === 1) {
-            $disable_first = ' disabled';
-        }
-        if ($current == $total_pages) {
-            $disable_last = ' disabled';
-        }
+        $disable_first = $current === 1 ? 'disabled' : '';
+        $disable_last  = $current === $total_pages ? 'disabled' : '';
+
+        $button_size = in_array($button_size, ['tiny', 'small', 'default', 'big']) ? $button_size : 'small';
+        $button_classes = "button button--secondary button--icon-only button--$button_size";
 
         $page_links[] = sprintf(
-            "<a class='%s' title='%s' href='%s'>%s</a>",
-            'first-page' . $disable_first,
+            '<a class="%s" aria-label="%s" href="%s"><span class="ee-pagination-arrow">%s</span></a>',
+            esc_attr("first-page $button_classes $disable_first"),
             esc_attr__('Go to the first page', 'event_espresso'),
             esc_url_raw(remove_query_arg($paged_arg_name, $url)),
             '&laquo;'
         );
 
         $page_links[] = sprintf(
-            '<a class="%s" title="%s" href="%s">%s</a>',
-            'prev-page' . $disable_first,
+            '<a class="%s" aria-label="%s" href="%s"><span class="ee-pagination-arrow">%s</span></a>',
+            esc_attr("prev-page $button_classes $disable_first"),
             esc_attr__('Go to the previous page', 'event_espresso'),
             esc_url_raw(add_query_arg($paged_arg_name, max(1, $current - 1), $url)),
             '&lsaquo;'
         );
 
-        if (! $show_num_field) {
-            $html_current_page = $current;
-        } else {
-            $html_current_page = sprintf(
-                "<input class='current-page' title='%s' type='text' name=$paged_arg_name value='%s' size='%d' />",
+        $html_current_page = $show_num_field
+            ? sprintf(
+                "<input class='current-page ee-input-size--small' title='%s' type='text' name=$paged_arg_name value='%s' size='%d' />",
                 esc_attr__('Current page', 'event_espresso'),
                 esc_attr($current),
                 strlen($total_pages)
-            );
-        }
+            )
+            : $current;
 
         $html_total_pages = sprintf(
             '<span class="total-pages">%s</span>',
@@ -854,34 +864,33 @@ class EEH_Template
         );
         $page_links[]     = sprintf(
             _x('%3$s%1$s of %2$s%4$s', 'paging', 'event_espresso'),
-            $html_current_page,
-            $html_total_pages,
+            "{$html_current_page}<span class='paging-input-of'>",
+            "</span>{$html_total_pages}",
             '<span class="paging-input">',
             '</span>'
         );
 
         $page_links[] = sprintf(
-            '<a class="%s" title="%s" href="%s">%s</a>',
-            'next-page' . $disable_last,
+            '<a class="%s" aria-label="%s" href="%s"><span class="ee-pagination-arrow">%s</span></a>',
+            esc_attr("next-page $button_classes $disable_last"),
             esc_attr__('Go to the next page', 'event_espresso'),
             esc_url_raw(add_query_arg($paged_arg_name, min($total_pages, $current + 1), $url)),
             '&rsaquo;'
         );
 
         $page_links[] = sprintf(
-            '<a class="%s" title="%s" href="%s">%s</a>',
-            'last-page' . $disable_last,
+            '<a class="%s" aria-label="%s" href="%s"><span class="ee-pagination-arrow">%s</span></a>',
+            esc_attr("last-page $button_classes $disable_last"),
             esc_attr__('Go to the last page', 'event_espresso'),
             esc_url_raw(add_query_arg($paged_arg_name, $total_pages, $url)),
             '&raquo;'
         );
 
         $output .= "\n" . '<span class="pagination-links">' . join("\n", $page_links) . '</span>';
-        // set page class
+
+        $page_class = ' no-pages';
         if ($total_pages) {
             $page_class = $total_pages < 2 ? ' one-page' : '';
-        } else {
-            $page_class = ' no-pages';
         }
 
         return '<div class="tablenav"><div class="tablenav-pages' . $page_class . '">' . $output . '</div></div>';
@@ -892,8 +901,9 @@ class EEH_Template
      * @param string $wrap_class
      * @param string $wrap_id
      * @return string
+     * @param mixed[] $query_args
      */
-    public static function powered_by_event_espresso($wrap_class = '', $wrap_id = '', array $query_args = [])
+    public static function powered_by_event_espresso($wrap_class = '', $wrap_id = '', $query_args = [])
     {
         $admin = is_admin() && ! (defined('DOING_AJAX') && DOING_AJAX);
         if (

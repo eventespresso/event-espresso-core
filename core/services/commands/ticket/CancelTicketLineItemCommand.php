@@ -2,6 +2,10 @@
 
 namespace EventEspresso\core\services\commands\ticket;
 
+use EE_Transaction;
+use EE_Ticket;
+use EE_Line_Item;
+use EE_Registration;
 use EventEspresso\core\services\commands\Command;
 
 /**
@@ -16,17 +20,17 @@ use EventEspresso\core\services\commands\Command;
 class CancelTicketLineItemCommand extends Command
 {
     /**
-     * @var \EE_Transaction $transaction
+     * @var EE_Transaction $transaction
      */
     private $transaction;
 
     /**
-     * @var \EE_Ticket $ticket
+     * @var EE_Ticket $ticket
      */
     private $ticket;
 
     /**
-     * @var \EE_Line_Item $ticket_line_item
+     * @var EE_Line_Item $ticket_line_item
      */
     protected $ticket_line_item;
 
@@ -37,10 +41,10 @@ class CancelTicketLineItemCommand extends Command
 
 
     /**
-     * @param \EE_Registration $registration
+     * @param EE_Registration $registration
      * @param int              $quantity
      */
-    public static function fromRegistration(\EE_Registration $registration, $quantity = 1)
+    public static function fromRegistration($registration, $quantity = 1)
     {
         new self(
             $registration->transaction(),
@@ -52,11 +56,11 @@ class CancelTicketLineItemCommand extends Command
 
 
     /**
-     * @param \EE_Line_Item $ticket_line_item
+     * @param EE_Line_Item $ticket_line_item
      * @param int           $quantity
      */
     public static function fromTicketLineItem(
-        \EE_Line_Item $ticket_line_item,
+        $ticket_line_item,
         $quantity = 1
     ) {
         new self(
@@ -71,16 +75,16 @@ class CancelTicketLineItemCommand extends Command
     /**
      * CancelTicketLineItemCommand constructor.
      *
-     * @param \EE_Transaction $transaction
-     * @param \EE_Ticket      $ticket
+     * @param EE_Transaction $transaction
+     * @param EE_Ticket $ticket
      * @param int             $quantity
-     * @param \EE_Line_Item   $ticket_line_item
+     * @param EE_Line_Item $ticket_line_item
      */
     public function __construct(
-        \EE_Transaction $transaction,
-        \EE_Ticket $ticket,
+        EE_Transaction $transaction,
+        EE_Ticket $ticket,
         $quantity = 1,
-        \EE_Line_Item $ticket_line_item = null
+        EE_Line_Item $ticket_line_item = null
     ) {
         $this->transaction = $transaction;
         $this->ticket = $ticket;
@@ -90,7 +94,7 @@ class CancelTicketLineItemCommand extends Command
 
 
     /**
-     * @return \EE_Transaction
+     * @return EE_Transaction
      */
     public function transaction()
     {
@@ -99,7 +103,7 @@ class CancelTicketLineItemCommand extends Command
 
 
     /**
-     * @return \EE_Ticket
+     * @return EE_Ticket
      */
     public function ticket()
     {
@@ -108,7 +112,7 @@ class CancelTicketLineItemCommand extends Command
 
 
     /**
-     * @return \EE_Line_Item
+     * @return EE_Line_Item
      */
     public function ticketLineItem()
     {

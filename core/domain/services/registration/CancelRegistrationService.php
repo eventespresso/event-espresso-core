@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\domain\services\registration;
 
+use EE_Registration;
+use EE_Error;
+use EEM_Registration;
 use EventEspresso\core\domain\services\ticket\CancelTicketLineItemService;
 
 /**
@@ -33,10 +36,10 @@ class CancelRegistrationService
 
 
     /**
-     * @param \EE_Registration $registration
+     * @param EE_Registration $registration
      * @param bool             $cancel_ticket_line_item
      */
-    public function cancelRegistrationAndTicketLineItem(\EE_Registration $registration, $cancel_ticket_line_item = true)
+    public function cancelRegistrationAndTicketLineItem($registration, $cancel_ticket_line_item = true)
     {
         // first cancel the original line item for the registration's ticket
         if ($cancel_ticket_line_item) {
@@ -47,13 +50,13 @@ class CancelRegistrationService
 
 
     /**
-     * @param \EE_Registration $registration
-     * @throws \EE_Error
+     * @param EE_Registration $registration
+     * @throws EE_Error
      */
-    public function cancelRegistrationOnly(\EE_Registration $registration)
+    public function cancelRegistrationOnly($registration)
     {
         // now cancel the registration itself
-        $registration->set_status(\EEM_Registration::status_id_cancelled);
+        $registration->set_status(EEM_Registration::status_id_cancelled);
         $registration->save();
     }
 }

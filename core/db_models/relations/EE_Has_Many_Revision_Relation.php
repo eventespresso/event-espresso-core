@@ -66,8 +66,8 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation
      * @param EE_Base_Class|int $this_obj_or_id
      * @param EE_Base_Class|int $other_obj_or_id
      * @param array             $extra_join_model_fields_n_values
-     * @return \EE_Base_Class
-     * @throws \EE_Error
+     * @return EE_Base_Class
+     * @throws EE_Error
      */
     public function add_relation_to($this_obj_or_id, $other_obj_or_id, $extra_join_model_fields_n_values = array())
     {
@@ -96,8 +96,8 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation
      * @param EE_Base_Class|int $this_obj_or_id
      * @param EE_Base_Class|int $other_obj_or_id
      * @param array             $where_query
-     * @return \EE_Base_Class
-     * @throws \EE_Error
+     * @return EE_Base_Class
+     * @throws EE_Error
      */
     public function remove_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = array())
     {
@@ -137,7 +137,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation
      * @param  array             $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param  boolean           $values_already_prepared_by_model_object @deprecated since 4.8.1
      * @return EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_all_related(
         $model_object_or_id,
@@ -169,8 +169,8 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation
      * @param      $model_object_or_id
      * @param      $query_params
      * @param bool $deprecated
-     * @return \EE_Base_Class[]
-     * @throws \EE_Error
+     * @return EE_Base_Class[]
+     * @throws EE_Error
      */
     protected function _do_autosave_get_all($model_object_or_id, $query_params, $deprecated = false)
     {
@@ -228,7 +228,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation
      * @param  EE_Base_Class $other_obj
      * @param  boolean       $remove_relation Indicates whether we're doing a remove_relation or add_relation.
      * @return EE_Base_Class. ($other_obj);
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _check_for_revision($this_obj, $other_obj, $remove_relation = false)
     {

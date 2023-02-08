@@ -19,7 +19,7 @@ class ConvertNoticesToEeErrors extends NoticeConverter
      * @param NoticesContainerInterface $notices
      * @throws EE_Error
      */
-    public function process(NoticesContainerInterface $notices)
+    public function process($notices)
     {
         $this->setNotices($notices);
         $notices = $this->getNotices();

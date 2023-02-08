@@ -306,7 +306,7 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      * @return array
      * @throws EE_Error
      */
-    protected function get_map_attributes(EE_Venue $venue, $field = 'gmap_link')
+    protected function get_map_attributes($venue, $field = 'gmap_link')
     {
         $state = $venue->state_obj();
         $country = $venue->country_obj();

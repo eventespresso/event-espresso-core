@@ -34,7 +34,7 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base
      * @param string $model_relation_chain like 'Event.Event_Venue.Venue'
      * @return string of SQL, eg "LEFT JOIN table_name AS table_alias ON this_model_primary_table.pk =
      *                other_model_primary_table.fk" etc
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_join_statement($model_relation_chain)
     {
@@ -69,8 +69,8 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base
      * @param EE_Base_Class|int $this_obj_or_id
      * @param EE_Base_Class|int $other_obj_or_id
      * @param array             $extra_join_model_fields_n_values
-     * @return \EE_Base_Class
-     * @throws \EE_Error
+     * @return EE_Base_Class
+     * @throws EE_Error
      */
     public function add_relation_to($this_obj_or_id, $other_obj_or_id, $extra_join_model_fields_n_values = array())
     {
@@ -95,8 +95,8 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base
      * @param EE_Base_Class|int $this_obj_or_id
      * @param EE_Base_Class|int $other_obj_or_id
      * @param array             $where_query
-     * @return \EE_Base_Class
-     * @throws \EE_Error
+     * @return EE_Base_Class
+     * @throws EE_Error
      */
     public function remove_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = array())
     {

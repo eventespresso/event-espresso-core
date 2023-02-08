@@ -192,7 +192,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Set registration limit
      * set the maximum number of attendees that can be registered for this datetime slot
      *
-     * @param int $reg_limit
+     * @param int|float $reg_limit
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -339,7 +339,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function set_reserved($reserved)
     {
         // reserved can not go below zero
-        $reserved = max(0, (int) $reserved);
+        $reserved = max(0, $reserved);
         $this->set('DTT_reserved', $reserved);
     }
 
@@ -978,7 +978,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      *    get the registration limit for this datetime slot
      *
-     * @return        mixed        int on success, FALSE on fail
+     * @return int|float                int = finite limit   EE_INF(float) = unlimited
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -994,7 +994,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      *    have the tickets sold for this datetime, met or exceed the registration limit ?
      *
-     * @return        boolean
+     * @return boolean
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -1016,7 +1016,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *                               then this datetime IS effectively sold out.
      *                               However, there are cases where we just want to know the spaces
      *                               remaining for this particular datetime, hence the flag.
-     * @return int
+     * @return int|float
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -1317,6 +1317,154 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         $this->set_sold($count_regs_for_this_datetime);
         $this->save();
         return $count_regs_for_this_datetime;
+    }
+
+
+    /**
+     * Adds a venue to this event
+     *
+     * @param int|EE_Venue /int $venue_id_or_obj
+     * @return EE_Base_Class|EE_Venue
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function add_venue($venue_id_or_obj)
+    {
+        return $this->_add_relation_to($venue_id_or_obj, 'Venue');
+    }
+
+
+    /**
+     * Removes a venue from the event
+     *
+     * @param EE_Venue /int $venue_id_or_obj
+     * @return EE_Base_Class|EE_Venue
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function remove_venue($venue_id_or_obj)
+    {
+        $venue_id_or_obj = ! empty($venue_id_or_obj) ? $venue_id_or_obj : $this->venue();
+        return $this->_remove_relation_to($venue_id_or_obj, 'Venue');
+    }
+
+
+    /**
+     * Gets the venue related to the event. May provide additional $query_params if desired
+     *
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function venue_ID($query_params = [])
+    {
+        $venue = $this->get_first_related('Venue', $query_params);
+        return $venue instanceof EE_Venue
+            ? $venue->ID()
+            : 0;
+    }
+
+
+    /**
+     * Gets the venue related to the event. May provide additional $query_params if desired
+     *
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return EE_Base_Class|EE_Venue
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function venue($query_params = [])
+    {
+        return $this->get_first_related('Venue', $query_params);
+    }
+
+
+    /**
+     * @param EE_Base_Class|int|string $otherObjectModelObjectOrID
+     * @param string                   $relationName
+     * @param array                    $extra_join_model_fields_n_values
+     * @param string|null              $cache_id
+     * @return EE_Base_Class
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function _add_relation_to(
+        $otherObjectModelObjectOrID,
+        $relationName,
+        $extra_join_model_fields_n_values = [],
+        $cache_id = null
+    ) {
+        // if we're adding a new relation to a ticket
+        if ($relationName === 'Ticket' && ! $this->hasRelation($otherObjectModelObjectOrID, $relationName)) {
+            /** @var EE_Ticket $ticket */
+            $ticket = EEM_Ticket::instance()->ensure_is_obj($otherObjectModelObjectOrID);
+            $this->increaseSold($ticket->sold(), false);
+            $this->increaseReserved($ticket->reserved());
+            $this->save();
+            $otherObjectModelObjectOrID = $ticket;
+        }
+        return parent::_add_relation_to(
+            $otherObjectModelObjectOrID,
+            $relationName,
+            $extra_join_model_fields_n_values,
+            $cache_id
+        );
+    }
+
+
+    /**
+     * @param EE_Base_Class|int|string $otherObjectModelObjectOrID
+     * @param string                   $relationName
+     * @param array                    $where_query
+     * @return bool|EE_Base_Class|null
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function _remove_relation_to($otherObjectModelObjectOrID, $relationName, $where_query = [])
+    {
+        if ($relationName === 'Ticket' && $this->hasRelation($otherObjectModelObjectOrID, $relationName)) {
+            /** @var EE_Ticket $ticket */
+            $ticket = EEM_Ticket::instance()->ensure_is_obj($otherObjectModelObjectOrID);
+            $this->decreaseSold($ticket->sold());
+            $this->decreaseReserved($ticket->reserved());
+            $this->save();
+            $otherObjectModelObjectOrID = $ticket;
+        }
+        return parent::_remove_relation_to(
+            $otherObjectModelObjectOrID,
+            $relationName,
+            $where_query
+        );
+    }
+
+
+    /**
+     * Removes ALL the related things for the $relationName.
+     *
+     * @param string $relationName
+     * @param array  $where_query_params
+     * @return EE_Base_Class
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
+     */
+    public function _remove_relations($relationName, $where_query_params = [])
+    {
+        if ($relationName === 'Ticket') {
+            $tickets = $this->tickets();
+            foreach ($tickets as $ticket) {
+                $this->decreaseSold($ticket->sold());
+                $this->decreaseReserved($ticket->reserved());
+                $this->save();
+            }
+        }
+        return parent::_remove_relations($relationName, $where_query_params);
     }
 
 

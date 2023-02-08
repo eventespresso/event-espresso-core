@@ -2,6 +2,7 @@
 
 namespace EventEspressoBatchRequest\Helpers;
 
+use Exception;
 /**
  * Class BatchRequestException
  * Exception class for whenever we have trouble running start, continuing, or finishing
@@ -12,7 +13,7 @@ namespace EventEspressoBatchRequest\Helpers;
  * @author                Mike Nelson
  * @since                 4.8.26
  */
-class BatchRequestException extends \Exception
+class BatchRequestException extends Exception
 {
     // so far the same as exception
 }

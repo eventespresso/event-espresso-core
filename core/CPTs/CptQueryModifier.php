@@ -193,7 +193,7 @@ class CptQueryModifier
     /**
      * @param array $taxonomies
      */
-    protected function setTaxonomies(array $taxonomies)
+    protected function setTaxonomies($taxonomies)
     {
         $this->taxonomies = $taxonomies;
     }
@@ -211,7 +211,7 @@ class CptQueryModifier
     /**
      * @param EE_Secondary_Table $meta_table
      */
-    public function setMetaTable(EE_Secondary_Table $meta_table)
+    public function setMetaTable($meta_table)
     {
         $this->meta_table = $meta_table;
     }
@@ -229,7 +229,7 @@ class CptQueryModifier
     /**
      * @param EEM_Base $CPT_model
      */
-    protected function setModel(EEM_Base $CPT_model)
+    protected function setModel($CPT_model)
     {
         $this->model = $CPT_model;
     }
@@ -265,7 +265,7 @@ class CptQueryModifier
     /**
      * @param WP_Query $wp_query
      */
-    public function setWpQuery(WP_Query $wp_query)
+    public function setWpQuery($wp_query)
     {
         $this->wp_query = $wp_query;
     }

@@ -2,6 +2,13 @@
 
 namespace EventEspresso\modules\ticket_selector;
 
+use EE_Event;
+use EE_Ticket;
+use EE_Datetime;
+use EE_Ticket_Selector_Config;
+use EE_Error;
+use EE_Checkbox_Dropdown_Selector_Input;
+use EEH_HTML;
 /**
  * Class DatetimeSelector
  * adds the ability to filter the Ticket Selector by the available ticket datetimes
@@ -12,27 +19,27 @@ namespace EventEspresso\modules\ticket_selector;
 class DatetimeSelector
 {
     /**
-     * @var \EE_Event $event
+     * @var EE_Event $event
      */
     protected $event;
 
     /**
-     * @var \EE_Ticket[] $tickets
+     * @var EE_Ticket[] $tickets
      */
     protected $tickets;
 
     /**
-     * @var \EE_Datetime[] $datetimes
+     * @var EE_Datetime[] $datetimes
      */
     protected $datetimes;
 
     /**
-     * @var \EE_Datetime[] $unique_dates
+     * @var EE_Datetime[] $unique_dates
      */
     protected $unique_dates;
 
     /**
-     * @var \EE_Ticket_Selector_Config $template_settings
+     * @var EE_Ticket_Selector_Config $template_settings
      */
     protected $template_settings;
 
@@ -45,17 +52,17 @@ class DatetimeSelector
     /**
      * DatetimeSelector constructor.
      *
-     * @param \EE_Event                  $event
-     * @param \EE_Ticket[]               $tickets
-     * @param \EE_Ticket_Selector_Config $template_settings
+     * @param EE_Event $event
+     * @param EE_Ticket[] $tickets
+     * @param EE_Ticket_Selector_Config $template_settings
      * @param string                     $date_format
      * @param string                     $time_format
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function __construct(
-        \EE_Event $event,
+        EE_Event $event,
         array $tickets,
-        \EE_Ticket_Selector_Config $template_settings,
+        EE_Ticket_Selector_Config $template_settings,
         $date_format = 'Y-m-d',
         $time_format = 'g:i a'
     ) {
@@ -69,9 +76,9 @@ class DatetimeSelector
 
 
     /**
-     * @param \EE_Ticket[] $tickets
+     * @param EE_Ticket[] $tickets
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function getAllDatetimesForAllTicket($tickets = array())
     {
@@ -84,12 +91,12 @@ class DatetimeSelector
 
 
     /**
-     * @param \EE_Ticket      $ticket
-     * @param  \EE_Datetime[] $datetimes
-     * @return \EE_Datetime[]
-     * @throws \EE_Error
+     * @param EE_Ticket $ticket
+     * @param EE_Datetime[] $datetimes
+     * @return EE_Datetime[]
+     * @throws EE_Error
      */
-    protected function getTicketDatetimes(\EE_Ticket $ticket, $datetimes = array())
+    protected function getTicketDatetimes($ticket, $datetimes = array())
     {
         $ticket_datetimes = $ticket->datetimes(
             array(
@@ -101,7 +108,7 @@ class DatetimeSelector
             )
         );
         foreach ($ticket_datetimes as $ticket_datetime) {
-            if (! $ticket_datetime instanceof \EE_Datetime) {
+            if (! $ticket_datetime instanceof EE_Datetime) {
                 continue;
             }
             $datetimes[ $ticket_datetime->ID() ] = $ticket_datetime;
@@ -111,11 +118,11 @@ class DatetimeSelector
 
 
     /**
-     * @param \EE_Ticket $ticket
+     * @param EE_Ticket $ticket
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public function getTicketDatetimeClasses(\EE_Ticket $ticket)
+    public function getTicketDatetimeClasses($ticket)
     {
         if (! $this->active) {
             return '';
@@ -123,7 +130,7 @@ class DatetimeSelector
         $ticket_datetimes = $this->getTicketDatetimes($ticket);
         $classes = '';
         foreach ($this->datetimes as $datetime) {
-            if (! $datetime instanceof \EE_Datetime || ! in_array($datetime, $ticket_datetimes, true)) {
+            if (! $datetime instanceof EE_Datetime || ! in_array($datetime, $ticket_datetimes, true)) {
                 continue;
             }
             $classes .= ' ee-ticket-datetimes-' . $datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_');
@@ -136,13 +143,13 @@ class DatetimeSelector
      * @param string $date_format
      * @param string $time_format
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function getUniqueDatetimeOptions($date_format = 'Y-m-d', $time_format = 'g:i a')
     {
         $datetime_options = array();
         foreach ($this->datetimes as $datetime) {
-            if (! $datetime instanceof \EE_Datetime) {
+            if (! $datetime instanceof EE_Datetime) {
                 continue;
             }
             $datetime_options[ $datetime->date_and_time_range('Y_m_d', 'H_i', '-', '_') ] =
@@ -154,14 +161,14 @@ class DatetimeSelector
 
     /**
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function getDatetimeSelector()
     {
         if (! $this->active) {
             return '';
         }
-        $dropdown_selector = new \EE_Checkbox_Dropdown_Selector_Input(
+        $dropdown_selector = new EE_Checkbox_Dropdown_Selector_Input(
             $this->unique_dates,
             array(
                 'html_id'               => 'datetime-selector-' . $this->event->ID(),
@@ -172,7 +179,7 @@ class DatetimeSelector
                 'other_html_attributes' => ' data-tkt_slctr_evt="' . $this->event->ID() . '"',
             )
         );
-        return \EEH_HTML::div(
+        return EEH_HTML::div(
             $dropdown_selector->get_html_for_input(),
             '',
             'datetime_selector-dv'

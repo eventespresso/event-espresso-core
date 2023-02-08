@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\exceptions;
 
+use RuntimeException;
 /**
  * Class SendMessageException
  * Thrown when a message is unsuccessfully sent and cannot be retried.
@@ -10,6 +11,6 @@ namespace EventEspresso\core\exceptions;
  * @author        Darren Ethier
  * @since         4.9.11.rc.001
  */
-class SendMessageException extends \RuntimeException
+class SendMessageException extends RuntimeException
 {
 }

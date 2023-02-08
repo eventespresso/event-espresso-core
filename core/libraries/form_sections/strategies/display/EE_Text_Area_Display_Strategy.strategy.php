@@ -3,13 +3,13 @@
 class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base
 {
     /**
-    *
-    * @return string of html to display the field
-    */
+     * @return string of html to display the field
+     * @throws EE_Error
+     */
     public function display()
     {
-        $input = $this->_input;
-        $raw_value = maybe_serialize($input->raw_value());
+        $input     = $this->_input;
+        $raw_value = maybe_serialize((string) $input->raw_value());
         if ($input instanceof EE_Text_Area_Input) {
             $rows = $input->get_rows();
             $cols = $input->get_cols();
@@ -20,7 +20,7 @@ class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base
         $html = '<textarea';
         $html .= ' id="' . $input->html_id() . '"';
         $html .= ' name="' . $input->html_name() . '"';
-        $html .= ' class="' . $input->html_class() . '"' ;
+        $html .= ' class="' . $input->html_class() . '"';
         $html .= ' style="' . $input->html_style() . '"';
         $html .= $input->other_html_attributes();
         $html .= ' rows= "' . $rows . '" cols="' . $cols . '">';
@@ -33,7 +33,7 @@ class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base
             ) {
                 $html .= sprintf(
                     esc_html__('%1$s(allowed tags: %2$s)%3$s', 'event_espresso'),
-                    '<p class="ee-question-desc">',
+                    '<p class="ee-question-desc description">',
                     $validation_strategy->get_list_of_allowed_tags(),
                     '</p>'
                 );

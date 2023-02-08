@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\database;
 
+use EE_Base;
+use EE_Error;
 /**
  * Class TableManager
  * For performing mysql database table schema manipulation
@@ -10,7 +12,7 @@ namespace EventEspresso\core\services\database;
  * @subpackage
  * @author                Mike Nelson
  */
-class TableManager extends \EE_Base
+class TableManager extends EE_Base
 {
     /**
      * @var TableAnalysis $table_analysis
@@ -33,14 +35,14 @@ class TableManager extends \EE_Base
      * Gets the injected table analyzer, or throws an exception
      *
      * @return TableAnalysis
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function getTableAnalysis()
     {
         if ($this->table_analysis instanceof TableAnalysis) {
             return $this->table_analysis;
         } else {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     esc_html__('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
                     get_class($this)
@@ -180,7 +182,7 @@ class TableManager extends \EE_Base
      * @param string $create_sql defining the table's columns and indexes
      * @param string $engine     (no need to specify "ENGINE=", that's implied)
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function createTable($table_name, $create_sql, $engine = 'MyISAM')
     {
@@ -208,10 +210,10 @@ class TableManager extends \EE_Base
             $wpdb->show_errors($old_show_errors_policy);
             $wpdb->suppress_errors($old_error_suppression_policy);
             if (! empty($output)) {
-                throw new \EE_Error($output);
+                throw new EE_Error($output);
             }
         } else {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     esc_html__(
                         'The following table creation SQL does not contain valid information about the table columns: %1$s %2$s',

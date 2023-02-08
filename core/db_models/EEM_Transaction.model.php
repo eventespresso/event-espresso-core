@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\values\session\SessionLifespan;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -421,7 +422,7 @@ class EEM_Transaction extends EEM_Base
      *
      * @return bool
      */
-    public static function unset_locked_transactions(array $transaction_IDs)
+    public static function unset_locked_transactions($transaction_IDs)
     {
         $locked_transactions = get_option('ee_locked_transactions', []);
         $update              = false;
@@ -484,7 +485,7 @@ class EEM_Transaction extends EEM_Base
         $comparison = $comparison === '>=' || $comparison === '<='
             ? $comparison
             : '>=';
-        /** @var EventEspresso\core\domain\values\session\SessionLifespan $session_lifespan */
+        /** @var SessionLifespan $session_lifespan */
         $session_lifespan = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\domain\values\session\SessionLifespan'
         );

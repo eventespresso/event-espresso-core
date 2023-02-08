@@ -133,7 +133,10 @@ class EE_Caf_Messages
     }
 
 
-    public function email_messenger_validator_config($validator_config, EE_Email_messenger $messenger)
+    /**
+     * @param EE_Email_messenger $messenger
+     */
+    public function email_messenger_validator_config($validator_config, $messenger)
     {
         $validator_config['attendee_list'] = array(
             'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'question_list'),
@@ -148,7 +151,10 @@ class EE_Caf_Messages
     }
 
 
-    public function html_messenger_validator_config($validator_config, EE_Html_messenger $messenger)
+    /**
+     * @param EE_Html_messenger $messenger
+     */
+    public function html_messenger_validator_config($validator_config, $messenger)
     {
         $validator_config['attendee_list'] = array(
             'shortcodes' => array('attendee', 'question_list'),
@@ -163,7 +169,10 @@ class EE_Caf_Messages
     }
 
 
-    public function pdf_messenger_validator_config($validator_config, EE_Pdf_messenger $messenger)
+    /**
+     * @param EE_Pdf_messenger $messenger
+     */
+    public function pdf_messenger_validator_config($validator_config, $messenger)
     {
         $validator_config['attendee_list'] = array(
             'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'question_list'),
@@ -178,13 +187,16 @@ class EE_Caf_Messages
     }
 
 
-    public function email_messenger_template_fields($template_fields, EE_Email_messenger $messenger)
+    /**
+     * @param EE_Email_messenger $messenger
+     */
+    public function email_messenger_template_fields($template_fields, $messenger)
     {
         $template_fields['extra']['content']['question_list'] = array(
             'input'               => 'textarea',
             'label'               => '[QUESTION_LIST]',
             'type'                => 'string',
-            'required'            => true,
+            'required'            => false,
             'validation'          => true,
             'format'              => '%s',
             'css_class'           => 'large-text',
@@ -196,13 +208,16 @@ class EE_Caf_Messages
     }
 
 
-    public function html_messenger_template_fields($template_fields, EE_Html_messenger $messenger)
+    /**
+     * @param EE_Html_messenger $messenger
+     */
+    public function html_messenger_template_fields($template_fields, $messenger)
     {
         $template_fields['extra']['content']['question_list'] = array(
             'input'               => 'textarea',
             'label'               => '[QUESTION_LIST]',
             'type'                => 'string',
-            'required'            => true,
+            'required'            => false,
             'validation'          => true,
             'format'              => '%s',
             'css_class'           => 'large-text',
@@ -214,13 +229,16 @@ class EE_Caf_Messages
     }
 
 
-    public function pdf_messenger_template_fields($template_fields, EE_Pdf_messenger $messenger)
+    /**
+     * @param EE_Pdf_messenger $messenger
+     */
+    public function pdf_messenger_template_fields($template_fields, $messenger)
     {
         $template_fields['extra']['content']['question_list'] = array(
             'input'               => 'textarea',
             'label'               => '[QUESTION_LIST]',
             'type'                => 'string',
-            'required'            => true,
+            'required'            => false,
             'validation'          => true,
             'format'              => '%s',
             'css_class'           => 'large-text',
@@ -232,14 +250,19 @@ class EE_Caf_Messages
     }
 
 
+    /**
+     * @param EE_messenger $messenger
+     * @param EE_message_type $message_type
+     * @param EE_Messages_Template_Pack $template_pack
+     */
     public function new_default_templates(
         $contents,
         $actual_path,
-        EE_messenger $messenger,
-        EE_message_type $message_type,
+        $messenger,
+        $message_type,
         $field,
         $context,
-        EE_Messages_Template_Pack $template_pack
+        $template_pack
     ) {
 
         // we're only modifying templates for the default template pack
@@ -315,7 +338,10 @@ class EE_Caf_Messages
     }
 
 
-    public function message_types_valid_shortcodes($valid_shortcodes, EE_Messages_Base $msg)
+    /**
+     * @param EE_Messages_Base $msg
+     */
+    public function message_types_valid_shortcodes($valid_shortcodes, $msg)
     {
         // make sure question_list and question are ONLY added for the core message types.  Any other message types will have to explicitly set question_list as a valid shortcode.
         $include_with = array(
@@ -492,7 +518,7 @@ class EE_Caf_Messages
      * @param string         $shortcode        The shortcode being parsed
      * @param array          $data             The shortcode parser data array
      * @param array          $extra_data       The shortcode parser extra data array
-     * @param \EE_Shortcodes $shortcode_parser Shortcode parser.
+     * @param EE_Shortcodes $shortcode_parser Shortcode parser.
      *
      * @return string
      */
@@ -600,7 +626,7 @@ class EE_Caf_Messages
      * @param string         $shortcode        The shortcode being parsed
      * @param array          $data             The shortcode parser data array
      * @param array          $extra_data       The shortcode parser extra data array
-     * @param \EE_Shortcodes $shortcode_parser Shortcode parser.
+     * @param EE_Shortcodes $shortcode_parser Shortcode parser.
      *
      * @return string
      */
@@ -770,7 +796,7 @@ class EE_Caf_Messages
     /**
      * Parses a question list shortcode using given data and template
      *
-     * @param \EE_Shortcodes $shortcode_parser
+     * @param EE_Shortcodes $shortcode_parser
      * @param EE_Question[]  $questions        An array of questions indexed by answer id.
      * @param EE_Answer[]    $answers          An array of answer objects
      * @param string         $template         Template content to be parsed.

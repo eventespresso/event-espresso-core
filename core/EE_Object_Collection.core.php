@@ -33,7 +33,7 @@ abstract class EE_Object_Collection extends SplObjectStorage
      * @param array|int|string $info
      * @return bool
      */
-    public function add($object, $info = ''): bool
+    public function add($object, $info = '')
     {
         $class = $this->interface;
         if (! $object instanceof $class) {
@@ -49,6 +49,7 @@ abstract class EE_Object_Collection extends SplObjectStorage
      * @return array|int|string
      * @since 4.10.33.p
      */
+    #[ReturnTypeWillChange]
     public function getInfo()
     {
         return $this->valid() ? maybe_unserialize(parent::getInfo()) : '';
@@ -62,13 +63,13 @@ abstract class EE_Object_Collection extends SplObjectStorage
      * @param array|int|string  $info
      * @return bool
      */
-    public function set_info($object, $info = ''): bool
+    public function set_info($object, $info = '')
     {
         $info = ! empty($info) ? $info : spl_object_hash($object);
         $info = $this->prepInfo($info);
         $this->rewind();
         while ($this->valid()) {
-            if ($object == $this->current()) {
+            if ($object === $this->current()) {
                 $this->setInfo($info);
                 $this->rewind();
                 return true;
@@ -108,7 +109,7 @@ abstract class EE_Object_Collection extends SplObjectStorage
      * @param object $object
      * @return bool
      */
-    public function has($object): bool
+    public function has($object)
     {
         return $this->contains($object);
     }
@@ -120,7 +121,7 @@ abstract class EE_Object_Collection extends SplObjectStorage
      * @param $object
      * @return bool
      */
-    public function remove($object): bool
+    public function remove($object)
     {
         $this->detach($object);
         return true;
@@ -169,7 +170,7 @@ abstract class EE_Object_Collection extends SplObjectStorage
      * @return string
      * @since 4.10.33.p
      */
-    private function prepInfo($info = ''): string
+    private function prepInfo($info = '')
     {
         return maybe_serialize($info);
     }

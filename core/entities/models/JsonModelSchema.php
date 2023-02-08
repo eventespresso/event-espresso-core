@@ -72,7 +72,7 @@ class JsonModelSchema
      * @param array                  $schema
      * @return array
      */
-    public function getModelSchemaForFields(array $model_fields, array $schema)
+    public function getModelSchemaForFields($model_fields, $schema)
     {
         foreach ($model_fields as $field => $model_field) {
             if (! $model_field instanceof EE_Model_Field_Base) {
@@ -111,7 +111,7 @@ class JsonModelSchema
      * @param array                    $schema
      * @return array
      */
-    public function getModelSchemaForRelations(array $relations_on_model, array $schema)
+    public function getModelSchemaForRelations($relations_on_model, $schema)
     {
         foreach ($relations_on_model as $model_name => $relation) {
             if (! $relation instanceof EE_Model_Relation_Base) {
@@ -269,10 +269,11 @@ class JsonModelSchema
      * $json_schema = new JsonModelSchema(EEM_Event::instance(), new CalculatedModelFields);
      * // if echoed, would convert schema to a json formatted string.
      *
-     * @return bool|false|mixed|string
+     * @return string
      */
     public function __toString()
     {
-        return wp_json_encode($this->getModelSchema());
+        $schema = wp_json_encode($this->getModelSchema());
+        return is_string($schema) ? $schema : '';
     }
 }

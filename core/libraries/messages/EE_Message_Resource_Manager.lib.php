@@ -125,9 +125,9 @@ class EE_Message_Resource_Manager
     /**
      * EE_Message_Resource_Manager constructor.
      *
-     * @param \EE_Messenger_Collection_Loader    $Messenger_Collection_Loader
-     * @param \EE_Message_Type_Collection_Loader $Message_Type_Collection_Loader
-     * @param \EEM_Message_Template_Group        $Message_Template_Group_Model
+     * @param EE_Messenger_Collection_Loader $Messenger_Collection_Loader
+     * @param EE_Message_Type_Collection_Loader $Message_Type_Collection_Loader
+     * @param EEM_Message_Template_Group $Message_Template_Group_Model
      */
     public function __construct(
         EE_Messenger_Collection_Loader $Messenger_Collection_Loader,
@@ -178,7 +178,7 @@ class EE_Message_Resource_Manager
 
     /**
      * @param string $messenger_name
-     * @return \EE_messenger
+     * @return EE_messenger
      */
     public function get_messenger($messenger_name)
     {
@@ -200,7 +200,7 @@ class EE_Message_Resource_Manager
 
 
     /**
-     * @return \EE_messenger[]
+     * @return EE_messenger[]
      */
     public function installed_messengers()
     {
@@ -218,7 +218,7 @@ class EE_Message_Resource_Manager
 
     /**
      * @param string $messenger_name
-     * @return \EE_messenger
+     * @return EE_messenger
      * @throws EE_Error
      */
     public function valid_messenger($messenger_name)
@@ -258,7 +258,7 @@ class EE_Message_Resource_Manager
 
     /**
      * @param string $message_type_name
-     * @return \EE_message_type
+     * @return EE_message_type
      */
     public function get_message_type($message_type_name)
     {
@@ -271,7 +271,7 @@ class EE_Message_Resource_Manager
      *
      * @param string $messenger_name
      * @param string $message_type_name
-     * @return \EE_message_type|null
+     * @return EE_message_type|null
      */
     public function get_active_message_type_for_messenger($messenger_name, $message_type_name)
     {
@@ -396,7 +396,7 @@ class EE_Message_Resource_Manager
      * Same as list_of_active_message_types() except this returns actual EE_message_type objects
      *
      * @since 4.9.0
-     * @return \EE_message_type[]
+     * @return EE_message_type[]
      */
     public function get_active_message_type_objects()
     {
@@ -413,7 +413,7 @@ class EE_Message_Resource_Manager
 
 
     /**
-     * @return \EE_message_type[]
+     * @return EE_message_type[]
      */
     public function installed_message_types()
     {
@@ -430,7 +430,7 @@ class EE_Message_Resource_Manager
 
     /**
      * @param string $message_type_name
-     * @return \EE_message_type
+     * @return EE_message_type
      * @throws EE_Error
      */
     public function valid_message_type($message_type_name)
@@ -456,7 +456,7 @@ class EE_Message_Resource_Manager
      * @return boolean
      * @throws EE_Error
      */
-    public function valid_message_type_for_messenger(EE_messenger $messenger, $message_type_name)
+    public function valid_message_type_for_messenger($messenger, $message_type_name)
     {
         $valid_message_types = $messenger->get_valid_message_types();
         if (! in_array($message_type_name, $valid_message_types)) {
@@ -753,11 +753,11 @@ class EE_Message_Resource_Manager
      * Note: (very important) This method does not persist the activation to the database.
      * See code implementing this method in this class for examples of how to persist.
      *
-     * @param \EE_messenger $messenger
+     * @param EE_messenger $messenger
      * @param  array        $message_type_names
      * @return array
      */
-    protected function _activate_message_types(EE_messenger $messenger, $message_type_names = array())
+    protected function _activate_message_types($messenger, $message_type_names = array())
     {
         // If $message_type_names is empty, AND $this->_active_message_types is empty, then that means
         // things have never been initialized (which should happen on EEH_Activation::generate_message_templates).
@@ -830,10 +830,10 @@ class EE_Message_Resource_Manager
      * @see phpdocs on EE_Message_Resource_Manager::HAS_ACTIVATED_MESSAGE_TYPE_FOR_MESSENGER_OPTION_NAME for more details.
      *
      * @access protected
-     * @param \EE_messenger $messenger
+     * @param EE_messenger $messenger
      * @param string        $message_type_name
      */
-    protected function _set_messenger_has_activated_message_type(EE_messenger $messenger, $message_type_name)
+    protected function _set_messenger_has_activated_message_type($messenger, $message_type_name)
     {
 
         // if _has_activated_messengers_and_message_types is empty then lets ensure its initialized
@@ -961,7 +961,7 @@ class EE_Message_Resource_Manager
      * @param EE_message_type $message_type message type used in trigger
      * @return bool true is a generating messenger and can be sent OR FALSE meaning cannot send.
      */
-    public function is_generating_messenger_and_active(EE_messenger $messenger, EE_message_type $message_type)
+    public function is_generating_messenger_and_active($messenger, $message_type)
     {
         // get the $messengers the message type says it can be used with.
         foreach ($message_type->with_messengers() as $generating_messenger => $secondary_messengers) {

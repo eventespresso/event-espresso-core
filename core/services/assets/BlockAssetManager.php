@@ -3,7 +3,6 @@
 namespace EventEspresso\core\services\assets;
 
 use EventEspresso\core\domain\entities\editor\BlockInterface;
-use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\values\assets\BrowserAsset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
@@ -21,7 +20,6 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 abstract class BlockAssetManager extends AssetManager implements BlockAssetManagerInterface
 {
-
     /**
      * @var string $editor_script_handle
      */
@@ -135,9 +133,9 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     public function addAssets()
     {
         $this->addEditorScript($this->getEditorScriptHandle());
-        $this->addEditorStyle($this->getEditorStyleHandle());
+        // $this->addEditorStyle($this->getEditorStyleHandle());
         $this->addScript($this->getScriptHandle());
-        $this->addStyle($this->getStyleHandle());
+        // $this->addStyle($this->getStyleHandle());
     }
 
 
@@ -150,12 +148,16 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function addEditorScript($handle, array $dependencies = array())
+    public function addEditorScript($handle, $dependencies = array())
     {
         if ($this->assets->hasJavascriptAsset($handle)){
             return $this->assets->getJavascriptAsset($handle);
         }
-        return $this->addJs($handle, $dependencies)->setRequiresTranslation();
+        $dependencies = array_merge(
+            $dependencies,
+            ['wp-blocks']
+        );
+        return $this->addJs($handle, $dependencies);
     }
 
 
@@ -168,7 +170,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function addEditorStyle($handle, array $dependencies = array())
+    public function addEditorStyle($handle, $dependencies = array())
     {
         if ($this->assets->hasStylesheetAsset($handle)) {
             return $this->assets->getStylesheetAsset($handle);
@@ -186,12 +188,12 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function addScript($handle, array $dependencies = array())
+    public function addScript($handle, $dependencies = array())
     {
         if ($this->assets->hasJavascriptAsset($handle)) {
             return $this->assets->getJavascriptAsset($handle);
         }
-        return $this->addJs($handle, $dependencies)->setRequiresTranslation();
+        return $this->addJs($handle, $dependencies);
     }
 
 
@@ -204,7 +206,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function addStyle($handle, array $dependencies = array())
+    public function addStyle($handle, $dependencies = array())
     {
         if ($this->assets->hasStylesheetAsset($handle)) {
             return $this->assets->getStylesheetAsset($handle);

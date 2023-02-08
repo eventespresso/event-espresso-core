@@ -68,7 +68,7 @@ class TicketDetails
     /**
      * @return EE_Ticket
      */
-    public function getTicket(): EE_Ticket
+    public function getTicket()
     {
         return $this->ticket;
     }
@@ -77,7 +77,7 @@ class TicketDetails
     /**
      * @return bool
      */
-    public function showTicketDetails(): bool
+    public function showTicketDetails()
     {
         return $this->template_settings->show_ticket_details;
     }
@@ -86,7 +86,7 @@ class TicketDetails
     /**
      * @return EE_Ticket_Selector_Config
      */
-    public function getTemplateSettings(): EE_Ticket_Selector_Config
+    public function getTemplateSettings()
     {
         return $this->template_settings;
     }
@@ -95,7 +95,7 @@ class TicketDetails
     /**
      * @return string
      */
-    public function getDateFormat(): string
+    public function getDateFormat()
     {
         return $this->date_format;
     }
@@ -104,7 +104,7 @@ class TicketDetails
     /**
      * @return string
      */
-    public function getTimeFormat(): string
+    public function getTimeFormat()
     {
         return $this->time_format;
     }
@@ -115,38 +115,38 @@ class TicketDetails
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function getShowHideLinks(): string
+    public function getShowHideLinks()
     {
         if (! $this->showTicketDetails()) {
             return '';
         }
         return EEH_HTML::link(
-                '',
-                sprintf(esc_html__('show%1$sdetails%1$s+', 'event_espresso'), '&nbsp;'),
-                esc_attr(
-                    apply_filters(
-                        'FHEE__ticket_selector_chart_template__show_ticket_details_link_title',
-                        esc_html__('click to show additional ticket details', 'event_espresso')
-                    )
-                ),
-                "display-{$this->cssId()}",
-                'display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js',
-                '',
-                'rel="' . $this->cssId() . '"'
-            ) . EEH_HTML::link(
-                '',
-                sprintf(esc_html__('hide%1$sdetails%1$s-', 'event_espresso'), '&nbsp;'),
-                esc_attr(
-                    apply_filters(
-                        'FHEE__ticket_selector_chart_template__hide_ticket_details_link_title',
-                        esc_html__('click to hide additional ticket details', 'event_espresso')
-                    )
-                ),
-                "hide-{$this->cssId()}",
-                'hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js',
-                'display:none;',
-                'rel="' . $this->cssId() . '"'
-            );
+            '',
+            sprintf(esc_html__('show%1$sdetails%1$s+', 'event_espresso'), '&nbsp;'),
+            esc_attr(
+                apply_filters(
+                    'FHEE__ticket_selector_chart_template__show_ticket_details_link_title',
+                    esc_html__('click to show additional ticket details', 'event_espresso')
+                )
+            ),
+            "display-{$this->cssId()}",
+            'display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js',
+            '',
+            'rel="' . $this->cssId() . '"'
+        ) . EEH_HTML::link(
+            '',
+            sprintf(esc_html__('hide%1$sdetails%1$s-', 'event_espresso'), '&nbsp;'),
+            esc_attr(
+                apply_filters(
+                    'FHEE__ticket_selector_chart_template__hide_ticket_details_link_title',
+                    esc_html__('click to hide additional ticket details', 'event_espresso')
+                )
+            ),
+            "hide-{$this->cssId()}",
+            'hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js',
+            'display:none;',
+            'rel="' . $this->cssId() . '"'
+        );
     }
 
 
@@ -155,7 +155,7 @@ class TicketDetails
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function cssId(): string
+    public function cssId()
     {
         return apply_filters(
             'FHEE__ticket_selector_chart_template__ticket_details_css_id',
@@ -165,9 +165,9 @@ class TicketDetails
 
 
     /**
-     * @param float|string $ticket_price
-     * @param int|string   $remaining
-     * @param int|string   $cols
+     * @param float     $ticket_price
+     * @param int|float $remaining
+     * @param int       $cols
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
@@ -176,7 +176,7 @@ class TicketDetails
         $ticket_price = 0.00,
         $remaining = EE_INF,
         $cols = 2
-    ): string {
+    ) {
         $template_args                             = [];
         $template_args['ticket']                   = $this->ticket;
         $template_args['ticket_price']             = $ticket_price;
@@ -186,7 +186,7 @@ class TicketDetails
         $template_args['show_ticket_sale_columns'] = $this->template_settings->show_ticket_sale_columns;
         $template_args['ticket_details_row_class'] = espresso_get_object_css_class($this->ticket, '', 'details');
         $template_args['ticket_details_css_id']    = $this->cssId();
-        $template_args['display_ticket_price']     = $ticket_price !== 0
+        $template_args['display_ticket_price']     = $ticket_price !== 0.0
                                                      && apply_filters(
                                                          'FHEE__ticket_selector_chart_template__display_ticket_price_details',
                                                          true

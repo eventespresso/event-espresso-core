@@ -74,7 +74,7 @@ class EEH_Event_Query
      * @param WP_Query $WP_Query
      * @return bool
      */
-    public static function apply_query_filters(WP_Query $WP_Query)
+    public static function apply_query_filters($WP_Query)
     {
         return (
                    isset($WP_Query->query['post_type'])
@@ -87,7 +87,7 @@ class EEH_Event_Query
     /**
      * @param WP_Query $WP_Query
      */
-    public static function filter_query_parts(WP_Query $WP_Query)
+    public static function filter_query_parts($WP_Query)
     {
         // ONLY add our filters if this isn't the main wp_query,
         // because if this is the main wp_query we already have
@@ -217,7 +217,7 @@ class EEH_Event_Query
      * @param WP_Query $wp_query
      * @return array   array of clauses
      */
-    public static function posts_clauses($clauses, WP_Query $wp_query)
+    public static function posts_clauses($clauses, $wp_query)
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             global $wpdb;
@@ -236,7 +236,7 @@ class EEH_Event_Query
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function posts_fields($SQL, WP_Query $wp_query)
+    public static function posts_fields($SQL, $wp_query)
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             // adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
@@ -254,7 +254,7 @@ class EEH_Event_Query
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function posts_fields_sql_for_orderby(array $orderby_params = [])
+    public static function posts_fields_sql_for_orderby($orderby_params = [])
     {
         $SQL = ', MIN( ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ) as event_start_date ';
         foreach ($orderby_params as $orderby) {
@@ -289,7 +289,7 @@ class EEH_Event_Query
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function posts_join($SQL, WP_Query $wp_query)
+    public static function posts_join($SQL, $wp_query)
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             // Category
@@ -353,7 +353,7 @@ class EEH_Event_Query
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function posts_join_for_orderby($SQL = '', array $orderby_params = [])
+    public static function posts_join_for_orderby($SQL = '', $orderby_params = [])
     {
         foreach ($orderby_params as $orderby) {
             switch ($orderby) {
@@ -416,32 +416,32 @@ class EEH_Event_Query
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected static function _posts_join_for_event_venue($SQL = '')
     {
-        // Event Venue table name
-        $event_venue_table = EEM_Event_Venue::instance()->table();
-        // generate conditions for:  Event <=> Event Venue  JOIN clause
-        $event_to_event_venue_join = EEM_Event::instance()->table() . '.ID = ';
-        $event_to_event_venue_join .= $event_venue_table . '.' . EEM_Event::instance()->primary_key_name();
+        // grab venue table PK name & event_meta table name
+        $VNU_ID = EEM_Venue::instance()->primary_key_name();
+        $event_meta = EEM_Event::instance()->second_table();
+        // generate conditions for:  Event <=> Venue  JOIN clause
+        $event_venue_join = "Venue.ID = $event_meta.$VNU_ID";
         // don't add joins if they have already been added
-        if (strpos($SQL, $event_to_event_venue_join) === false) {
-            // Venue table name
-            $venue_table = EEM_Venue::instance()->table();
-            // Venue table pk
-            $venue_table_pk = EEM_Venue::instance()->primary_key_name();
-            // Venue Meta table name
-            $venue_meta_table = EEM_Venue::instance()->second_table();
-            // generate JOIN clause for: Event <=> Event Venue
-            $venue_SQL = " LEFT JOIN $event_venue_table ON ( $event_to_event_venue_join )";
-            // generate JOIN clause for: Event Venue <=> Venue
-            $venue_SQL .= " LEFT JOIN $venue_table as Venue ON ( $event_venue_table.$venue_table_pk = Venue.ID )";
+        if (strpos($SQL, $event_venue_join) === false) {
+            global $wpdb;
+            // grab wp_posts (event), venue, and venue_meta table names
+            $wp_posts = $wpdb->posts;
+            $venue = EEM_Venue::instance()->table();
+            $venue_meta = EEM_Venue::instance()->second_table();
+            // generate JOIN clause for: Event <=> Event Meta
+            $venue_SQL = " LEFT JOIN $event_meta ON ( $wp_posts.ID = $event_meta.EVT_ID )";
+            // generate JOIN clause for: Event Meta <=> Venue
+            $venue_SQL .= " LEFT JOIN $venue AS Venue ON ( $event_venue_join )";
             // generate JOIN clause for: Venue <=> Venue Meta
-            $venue_SQL .= " LEFT JOIN $venue_meta_table ON ( Venue.ID = $venue_meta_table.$venue_table_pk )";
-            unset($event_venue_table, $event_to_event_venue_join, $venue_table, $venue_table_pk, $venue_meta_table);
+            $venue_SQL .= " LEFT JOIN $venue_meta ON ( Venue.ID = $venue_meta.$VNU_ID )";
+            unset($venue, $VNU_ID, $event_meta, $venue_meta, $event_venue_join);
             return $venue_SQL;
         }
-        unset($event_venue_table, $event_to_event_venue_join);
+        unset($VNU_ID, $event_meta, $event_venue_join);
         return '';
     }
 
@@ -486,7 +486,7 @@ class EEH_Event_Query
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function posts_where($SQL, WP_Query $wp_query)
+    public static function posts_where($SQL, $wp_query)
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             // Show Expired ?
@@ -568,7 +568,7 @@ class EEH_Event_Query
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function posts_orderby($SQL, WP_Query $wp_query)
+    public static function posts_orderby($SQL, $wp_query)
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             $SQL = EEH_Event_Query::posts_orderby_sql(
@@ -605,7 +605,7 @@ class EEH_Event_Query
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function posts_orderby_sql(array $orderby_params = [], $sort = 'ASC')
+    public static function posts_orderby_sql($orderby_params = [], $sort = 'ASC')
     {
         global $wpdb;
         $SQL     = '';

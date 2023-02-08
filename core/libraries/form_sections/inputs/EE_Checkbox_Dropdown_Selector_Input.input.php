@@ -57,7 +57,10 @@ class EE_Checkbox_Dropdown_Selector_Input extends EE_Form_Input_With_Options_Bas
     /*
      * add css and js for iframes
      */
-    protected function load_iframe_assets(EE_Checkbox_Dropdown_Selector_Display_Strategy $display_strategy)
+    /**
+     * @param EE_Checkbox_Dropdown_Selector_Display_Strategy $display_strategy
+     */
+    protected function load_iframe_assets($display_strategy)
     {
         add_filter(
             'FHEE__EED_Ticket_Selector__ticket_selector_iframe__css',

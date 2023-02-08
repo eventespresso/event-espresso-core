@@ -56,5 +56,5 @@ interface CacheStorageInterface
      *                              and proceed directly to deleting those entries from the cache storage
      * @return
      */
-    public function deleteMany(array $keys, $force_delete = false);
+    public function deleteMany($keys, $force_delete = false);
 }

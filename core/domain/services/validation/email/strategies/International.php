@@ -17,7 +17,7 @@ class International extends Basic
     /**
      * @param string $email_address
      * @return bool
-     * @throws \EventEspresso\core\domain\services\validation\email\EmailValidationException
+     * @throws EmailValidationException
      */
     public function validate($email_address)
     {

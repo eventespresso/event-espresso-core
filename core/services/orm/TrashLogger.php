@@ -60,7 +60,7 @@ class TrashLogger
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function logSoftDelete(EE_Soft_Delete_Base_Class $entity, $delete, $result)
+    public function logSoftDelete($entity, $delete, $result)
     {
         // which base meta key to use... trashed or restored?
         $action = $delete
@@ -78,7 +78,7 @@ class TrashLogger
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function logHardDelete(EE_Base_Class $entity, $result)
+    public function logHardDelete($entity, $result)
     {
         $entity_class = $this->getEntityClass($entity);
         $this->logDelete($entity->ID(), $entity_class, TrashLogger::EXTRA_META_KEY_ENTITY_DELETED, $result);

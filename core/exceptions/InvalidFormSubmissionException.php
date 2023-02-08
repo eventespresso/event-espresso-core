@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\exceptions;
 
+use OutOfBoundsException;
+use Exception;
 /**
  * Class InvalidFormSubmissionException
  * Description
@@ -9,7 +11,7 @@ namespace EventEspresso\core\exceptions;
  * @package       Event Espresso
  * @author        Brent Christensen
  */
-class InvalidFormSubmissionException extends \OutOfBoundsException
+class InvalidFormSubmissionException extends OutOfBoundsException
 {
     /**
      * InvalidFormSubmissionException constructor
@@ -17,9 +19,9 @@ class InvalidFormSubmissionException extends \OutOfBoundsException
      * @param string     $form_name
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($form_name, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($form_name, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(

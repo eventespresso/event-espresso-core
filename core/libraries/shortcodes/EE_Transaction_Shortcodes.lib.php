@@ -469,16 +469,18 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
      * This retrieves a logo to be used for the invoice from whatever is set on the invoice logo settings page.  If its
      * not present then the organization logo is used if its found (set on the organization settings page).
      *
-     * @since 4.5.0
      * @param bool $img_tags TRUE means to return with the img tag wrappers.  False just returns the url to the image.
      * @return string url or html
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since 4.5.0
      */
     private function _get_invoice_logo($img_tags = false)
     {
+        $img_tags = (bool) $img_tags;
         $invoice_logo_url = '';
         // try to get the invoice payment method's logo for this transaction image first
         $pm = $this->_get_invoice_payment_method();
@@ -494,15 +496,17 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
         if (! $img_tags) {
             return $invoice_logo_url;
         }
+        $invoice_logo_url = esc_url_raw($invoice_logo_url);
         // image tags have been requested.
-        $image_size = getimagesize($invoice_logo_url);
+        $image_size = @getimagesize($invoice_logo_url);
+        $image_width_attr = '';
         // if image is wider than 300px, set the width to 300
-        if ($image_size[0] > 300) {
-            $image_width = 300;
-        } else {
-            $image_width = $image_size[0];
+        if ($image_size !== false) {
+            $image_width = max($image_size[0], 300);
+            $image_width = esc_attr($image_width);
+            $image_width_attr = " width='$image_width'";
         }
-        return '<img class="logo screen" src="' . esc_url_raw($invoice_logo_url) . '" width="' . esc_attr($image_width) . '" alt="logo" />';
+        return '<img class="logo screen" src="' . $invoice_logo_url . '"' . $image_width_attr . ' alt="logo" />';
     }
 
 
@@ -765,7 +769,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
      * @return string
      * @throws EE_Error
      */
-    protected function _get_payment_due_date($shortcode, EE_Transaction $transaction)
+    protected function _get_payment_due_date($shortcode, $transaction)
     {
         // if transaction is paid in full then we can just return an empty string
         if ($transaction->remaining() === 0) {

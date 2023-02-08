@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\container;
 
+use ReturnTypeWillChange;
 use ArrayAccess;
 use ArrayIterator;
 use OutOfBoundsException;
@@ -35,8 +36,9 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     /**
      * @param mixed $offset
      * @param mixed $value
+     * @return void
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet($offset, $value)
     {
         $this->container[ $offset ] = $value;
     }
@@ -46,7 +48,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($offset): bool
+    public function offsetExists($offset)
     {
         return isset($this->container[ $offset ]);
     }
@@ -54,8 +56,9 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
 
     /**
      * @param mixed $offset
+     * @return void
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset($offset)
     {
         unset($this->container[ $offset ]);
     }
@@ -65,6 +68,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @param mixed $offset
      * @return mixed|null
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->offsetExists($offset) ? $this->container[ $offset ] : null;
@@ -74,7 +78,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     /**
      * @return int
      */
-    public function count(): int
+    public function count()
     {
         return count($this->container);
     }
@@ -83,7 +87,8 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     /**
      * @return ArrayIterator
      */
-    public function getIterator(): ArrayIterator
+    #[ReturnTypeWillChange]
+    public function getIterator()
     {
         return new ArrayIterator($this->container);
     }
@@ -164,7 +169,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @param $offset
      * @return bool
      */
-    public function has($offset): bool
+    public function has($offset)
     {
         return $this->offsetExists($offset);
     }

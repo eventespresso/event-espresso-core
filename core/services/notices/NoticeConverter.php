@@ -47,7 +47,7 @@ abstract class NoticeConverter implements NoticeConverterInterface
     /**
      * @param NoticesContainerInterface $notices
      */
-    protected function setNotices(NoticesContainerInterface $notices)
+    protected function setNotices($notices)
     {
         $this->notices = $notices;
     }

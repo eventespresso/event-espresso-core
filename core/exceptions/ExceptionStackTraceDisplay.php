@@ -3,11 +3,13 @@
 namespace EventEspresso\core\exceptions;
 
 use EEH_File;
+use EEH_Inflector;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
+use Throwable;
 
 /**
  * Class ExceptionStackTraceDisplay
@@ -33,10 +35,11 @@ class ExceptionStackTraceDisplay
 
 
     /**
-     * @param Exception $exception
-     * @throws Exception
+     * @param Throwable $exception
+     * @throws ReflectionException
+     * @throws Throwable
      */
-    public function __construct(Exception $exception)
+    public function __construct($exception)
     {
         if (WP_DEBUG && ! defined('EE_TESTS_DIR')) {
             $this->displayException($exception);
@@ -48,10 +51,10 @@ class ExceptionStackTraceDisplay
 
     /**
      * @access protected
-     * @param Exception $exception
+     * @param Throwable $exception
      * @throws ReflectionException
      */
-    protected function displayException(Exception $exception)
+    protected function displayException($exception)
     {
         // get separate user and developer messages if they exist
         $msg = explode('||', $exception->getMessage());
@@ -68,7 +71,7 @@ class ExceptionStackTraceDisplay
             : $this->genericError($msg, $code);
         // start gathering output
         $output = '
-        <div id="ee-error-message" class="error">
+        <div id="ee-error-message" class="ee-exception-stack-trace-display" >
             ' . $error_message . '
         </div>';
         $scripts = $this->printScripts(true);
@@ -90,14 +93,14 @@ class ExceptionStackTraceDisplay
 
 
     /**
-     * @param Exception $exception
+     * @param Throwable $exception
      * @param $msg
      * @param $code
      * @param $trace_details
      * @return string
      * @throws ReflectionException
      */
-    private function developerError(Exception $exception, $msg, $code, $trace_details)
+    private function developerError($exception, $msg, $code, $trace_details)
     {
         $time = time();
         return '
@@ -105,14 +108,14 @@ class ExceptionStackTraceDisplay
             <p class="ee-error-dev-msg-pg">
                 '
                 . sprintf(
-                    esc_html__('%1$sAn %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
+                    esc_html__('%1$s %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
                     '<strong class="ee-error-dev-msg-str">',
-                    get_class($exception),
+                    ucwords(EEH_Inflector::add_indefinite_article(get_class($exception))),
                     '</strong>  &nbsp; <span>',
                     $code . '</span>'
                 )
-                . '<br />
-                <span class="big-text">"' . trim($msg) . '"</span><br/>
+                . '
+                <span class="big-text">' . trim($msg) . '</span>
                 <a id="display-ee-error-trace-1'
                    . $time
                    . '" class="display-ee-error-trace-lnk small-text" rel="ee-error-trace-1'
@@ -160,12 +163,12 @@ class ExceptionStackTraceDisplay
     }
 
     /**
-     * @param Exception $exception
+     * @param Throwable $exception
      * @return string
      * @throws ReflectionException
      * @since 4.10.24.p
      */
-    private function traceDetails(Exception $exception)
+    private function traceDetails($exception)
     {
         $trace = $exception->getTrace();
         if (empty($trace)) {

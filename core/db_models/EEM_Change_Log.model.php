@@ -122,7 +122,7 @@ class EEM_Change_Log extends EEM_Base
             }
         }
         // use completely custom caps for this
-        $this->_cap_restriction_generators = false;
+        unset($this->_cap_restriction_generators);
         // caps-wise this is all-or-nothing: if you have the default role you can access anything, otherwise nothing
         foreach ($this->_cap_contexts_to_cap_action_map as $cap_context => $action) {
             $this->_cap_restrictions[ $cap_context ][ EE_Restriction_Generator_Base::get_default_restrictions_cap() ]
@@ -133,21 +133,20 @@ class EEM_Change_Log extends EEM_Base
 
 
     /**
-     * @param string        $log_type !see the acceptable values of LOG_type in EEM__Change_Log::__construct
-     * @param mixed         $message  array|string of the message you want to record
-     * @param EE_Base_Class $related_model_obj
+     * @param string             $log_type !see the acceptable values of LOG_type in EEM__Change_Log::__construct
+     * @param array|string       $message  array|string of the message you want to record
+     * @param EE_Base_Class|null $related_model_obj
      * @return EE_Change_Log
      * @throws EE_Error
      * @throws ReflectionException
      */
     public function log($log_type, $message, $related_model_obj)
     {
+        $obj_id   = null;
+        $obj_type = null;
         if ($related_model_obj instanceof EE_Base_Class) {
             $obj_id   = $related_model_obj->ID();
             $obj_type = $related_model_obj->get_model()->get_this_model_name();
-        } else {
-            $obj_id   = null;
-            $obj_type = null;
         }
         $log = EE_Change_Log::new_instance(
             [
@@ -165,9 +164,9 @@ class EEM_Change_Log extends EEM_Base
     /**
      * Adds a gateway log for the specified object, given its ID and type
      *
-     * @param string $message
-     * @param mixed  $related_obj_id
-     * @param string $related_obj_type
+     * @param array|string $message
+     * @param int|string   $related_obj_id
+     * @param string       $related_obj_type
      * @return EE_Change_Log
      * @throws ReflectionException
      * @throws EE_Error
@@ -220,7 +219,7 @@ class EEM_Change_Log extends EEM_Base
      * @return false|int
      * @throws EE_Error
      */
-    public function delete_gateway_logs_older_than(DateTime $datetime)
+    public function delete_gateway_logs_older_than($datetime)
     {
         global $wpdb;
         return $wpdb->query(
@@ -264,9 +263,7 @@ class EEM_Change_Log extends EEM_Base
     public static function get_pretty_label_for_type($type_identifier)
     {
         $type_identifier_map = self::get_pretty_label_map_for_registered_types();
-        // we fallback to the incoming type identifier if there is no localized label for it.
-        return isset($type_identifier_map[ $type_identifier ])
-            ? $type_identifier_map[ $type_identifier ]
-            : $type_identifier;
+        // we fall back to the incoming type identifier if there is no localized label for it.
+        return isset($type_identifier_map[ $type_identifier ]) ? $type_identifier_map[ $type_identifier ] : $type_identifier;
     }
 }

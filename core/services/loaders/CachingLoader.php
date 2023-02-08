@@ -50,8 +50,9 @@ class CachingLoader extends CachingLoaderDecorator
         LoaderDecoratorInterface $loader,
         CollectionInterface $cache,
         ObjectIdentifier $object_identifier,
-        string $identifier = ''
+        $identifier = ''
     ) {
+        $identifier = (string) $identifier;
         parent::__construct($loader);
         $this->cache             = $cache;
         $this->object_identifier = $object_identifier;
@@ -87,7 +88,7 @@ class CachingLoader extends CachingLoaderDecorator
     /**
      * @return string
      */
-    public function identifier(): string
+    public function identifier()
     {
         return $this->identifier;
     }
@@ -97,7 +98,7 @@ class CachingLoader extends CachingLoaderDecorator
      * @param string|null $identifier
      * @throws InvalidDataTypeException
      */
-    private function setIdentifier(?string $identifier)
+    private function setIdentifier($identifier)
     {
         if (! is_string($identifier)) {
             throw new InvalidDataTypeException('$identifier', $identifier, 'string');
@@ -113,7 +114,7 @@ class CachingLoader extends CachingLoaderDecorator
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function share($fqcn, $object, array $arguments = []): bool
+    public function share($fqcn, $object, $arguments = [])
     {
         if ($object instanceof $fqcn) {
             return $this->cache->add(
@@ -140,7 +141,7 @@ class CachingLoader extends CachingLoaderDecorator
      * @param array                     $interfaces
      * @return mixed
      */
-    public function load($fqcn, $arguments = [], $shared = true, array $interfaces = [])
+    public function load($fqcn, $arguments = [], $shared = true, $interfaces = [])
     {
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
@@ -195,7 +196,7 @@ class CachingLoader extends CachingLoaderDecorator
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function remove($fqcn, array $arguments = []): bool
+    public function remove($fqcn, $arguments = [])
     {
         $fqcn              = ltrim($fqcn, '\\');
         $object_identifier = $this->object_identifier->getIdentifier($fqcn, $arguments);

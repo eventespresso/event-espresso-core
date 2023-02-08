@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\orm\tree_traversal;
 
+use EE_Error;
 use EE_HABTM_Relation;
 use EE_Has_Many_Relation;
 use EE_Registry;
@@ -37,28 +38,32 @@ class ModelObjNode extends BaseNode
      */
     protected $nodes;
 
+
     /**
      * We don't pass the model objects because this needs to serialize to something tiny for effiency.
-     * @param $model_obj_id
+     *
+     * @param          $model_obj_id
      * @param EEM_Base $model
-     * @param array $dont_traverse_models array of model names we DON'T want to traverse.
+     * @param array    $dont_traverse_models array of model names we DON'T want to traverse.
      */
     public function __construct($model_obj_id, EEM_Base $model, array $dont_traverse_models = [])
     {
-        $this->id = $model_obj_id;
-        $this->model = $model;
+        $this->id                   = $model_obj_id;
+        $this->model                = $model;
         $this->dont_traverse_models = $dont_traverse_models;
     }
+
 
     /**
      * Creates a relation node for each relation of this model's relations.
      * Does NOT call `discover` on them yet though.
-     * @since 4.10.12.p
-     * @throws \EE_Error
+     *
+     * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @since 4.10.12.p
      */
     protected function discover()
     {
@@ -114,11 +119,13 @@ class ModelObjNode extends BaseNode
         return $this->complete;
     }
 
+
     /**
      * Triggers working on each child relation node that has work to do.
-     * @since 4.10.12.p
+     *
      * @param $model_objects_to_identify
      * @return int units of work done
+     * @since 4.10.12.p
      */
     protected function work($model_objects_to_identify)
     {
@@ -141,21 +148,22 @@ class ModelObjNode extends BaseNode
         return $num_identified;
     }
 
+
     /**
-     * @since 4.10.12.p
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @since 4.10.12.p
      */
     public function toArray()
     {
         $tree = [
-            'id' => $this->id,
+            'id'       => $this->id,
             'complete' => $this->isComplete(),
-            'rels' => []
+            'rels'     => [],
         ];
         if ($this->nodes === null) {
             $tree['rels'] = null;
@@ -167,21 +175,22 @@ class ModelObjNode extends BaseNode
         return $tree;
     }
 
+
     /**
-     * @since 4.10.12.p
      * @return array|mixed
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @since 4.10.12.p
      */
     public function getIds()
     {
         $ids = [
             $this->model->get_this_model_name() => [
-                $this->id => $this->id
-            ]
+                $this->id => $this->id,
+            ],
         ];
         if ($this->nodes && is_array($this->nodes)) {
             foreach ($this->nodes as $relation_node) {
@@ -191,8 +200,10 @@ class ModelObjNode extends BaseNode
         return $ids;
     }
 
+
     /**
      * Don't serialize the models. Just record their names on some dynamic properties.
+     *
      * @since 4.10.12.p
      */
     public function __sleep()
@@ -208,14 +219,16 @@ class ModelObjNode extends BaseNode
         );
     }
 
+
     /**
      * Use the dynamic properties to instantiate the models we use.
-     * @since 4.10.12.p
+     *
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since 4.10.12.p
      */
     public function __wakeup()
     {

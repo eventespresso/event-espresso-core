@@ -25,7 +25,7 @@ class EEM_Message_Template extends EEM_Base
      * @Constructor
      * @access protected
      * @param string $timezone
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function __construct($timezone = null)
     {

@@ -142,7 +142,7 @@ class Base
      * @param WP_Error $wp_error_response
      * @return WP_Error
      */
-    protected function addEeErrorsToResponse(WP_Error $wp_error_response)
+    protected function addEeErrorsToResponse($wp_error_response)
     {
         $notices_during_checkin = EE_Error::get_raw_notices();
         if (! empty($notices_during_checkin['errors'])) {
@@ -209,7 +209,7 @@ class Base
      * @param WP_Error $wp_error
      * @return WP_REST_Response
      */
-    protected function createRestResponseFromWpError(WP_Error $wp_error)
+    protected function createRestResponseFromWpError($wp_error)
     {
         $error_data = $wp_error->get_error_data();
         if (is_array($error_data) && isset($error_data['status'])) {
@@ -341,7 +341,7 @@ class Base
      * @param \WP_REST_Request $request
      * @return array
      */
-    protected function getBodyParams(\WP_REST_Request $request)
+    protected function getBodyParams($request)
     {
         // $request->get_params();
         return array_merge(

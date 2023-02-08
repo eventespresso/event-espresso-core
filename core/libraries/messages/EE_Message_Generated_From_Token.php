@@ -54,12 +54,12 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 
     /**
      * @param string                       $sending_messenger_slug
-     * @param \EE_Message_Resource_Manager $message_resource_manager
-     * @return \EE_messenger | string
+     * @param EE_Message_Resource_Manager $message_resource_manager
+     * @return EE_messenger|string
      */
     protected function _set_sending_messenger(
         $sending_messenger_slug,
-        EE_Message_Resource_Manager $message_resource_manager
+        $message_resource_manager
     ) {
         $sending_messenger = $message_resource_manager->get_active_messenger($sending_messenger_slug);
         return $sending_messenger instanceof EE_messenger ? $sending_messenger : $sending_messenger_slug;
@@ -82,7 +82,7 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
      *
      * @param array $properties
      * @return EE_Message
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _generate_message($properties = array())
     {

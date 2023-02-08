@@ -23,7 +23,7 @@ interface EEI_Repository extends EEI_Collection
      * @param string $persistence_callback  name of method found on object that can be used for persisting the object
      * @param array  $persistence_arguments arrays of arguments that will be passed to the object's persistence method
      * @return bool | int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function persist($persistence_callback = '', $persistence_arguments = array());
 

@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -51,7 +52,7 @@ class EED_Event_Single extends EED_Module
     {
         add_filter('FHEE_run_EE_wp', '__return_true');
         add_action('wp_loaded', array('EED_Event_Single', 'set_definitions'), 2);
-        /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_type_definitions */
+        /** @var CustomPostTypeDefinitions $custom_post_type_definitions */
         $custom_post_type_definitions = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
         );
@@ -103,14 +104,15 @@ class EED_Event_Single extends EED_Module
     /**
      * initialize_template_parts
      *
-     * @param EE_Config_Base|EE_Event_Single_Config $config
+     * @param EE_Event_Single_Config|null $config
      * @return EE_Template_Part_Manager
+     * @throws EE_Error
      */
-    public function initialize_template_parts(EE_Event_Single_Config $config = null)
+    public function initialize_template_parts($config = null)
     {
         /** @type EE_Event_Single_Config $config */
         $config = $config instanceof EE_Event_Single_Config ? $config : $this->config();
-        EEH_Autoloader::instance()->register_template_part_autoloaders();
+        EEH_Autoloader::register_template_part_autoloaders();
         $template_parts = new EE_Template_Part_Manager();
         $template_parts->add_template_part(
             'tickets',

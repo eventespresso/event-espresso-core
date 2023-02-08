@@ -21,7 +21,7 @@ interface CommandHandlerManagerInterface
      * @return void
      * @throws InvalidCommandHandlerException
      */
-    public function addCommandHandler(CommandHandlerInterface $command_handler, $fqcn_for_command = '');
+    public function addCommandHandler($command_handler, $fqcn_for_command = '');
 
 
 
@@ -30,5 +30,5 @@ interface CommandHandlerManagerInterface
      * @param CommandBusInterface $command_bus
      * @return mixed
      */
-    public function getCommandHandler(CommandInterface $command, CommandBusInterface $command_bus = null);
+    public function getCommandHandler($command, $command_bus = null);
 }

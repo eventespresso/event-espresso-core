@@ -43,9 +43,9 @@ class EE_Message_Type_Collection_Loader
 
 
     /**
-     * @param mixed $message_types
+     * @param EE_Message_Type_Collection $message_types
      */
-    public function set_message_type_collection(EE_Message_Type_Collection $message_types)
+    public function set_message_type_collection($message_types)
     {
         $this->_message_type_collection = $message_types;
     }
@@ -57,7 +57,7 @@ class EE_Message_Type_Collection_Loader
      * globs the supplied filepath and adds any found
      *
      * @param  string $folder
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function load_message_types_from_folder($folder = '')
     {
@@ -104,7 +104,7 @@ class EE_Message_Type_Collection_Loader
      * @param EE_message_type $message_type
      * @return bool
      */
-    protected function _load_message_type(EE_message_type $message_type)
+    protected function _load_message_type($message_type)
     {
         if ($this->message_type_collection()->has_by_name($message_type->name)) {
             return true;

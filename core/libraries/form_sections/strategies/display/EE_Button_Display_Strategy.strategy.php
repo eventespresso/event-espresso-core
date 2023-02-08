@@ -11,6 +11,7 @@ class EE_Button_Display_Strategy extends EE_Display_Strategy_Base
 {
     /**
      * @return string of html to display the input
+     * @throws EE_Error
      */
     public function display()
     {

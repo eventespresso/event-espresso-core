@@ -2,6 +2,7 @@
 
 namespace EventEspresso\widgets;
 
+use WP_Widget;
 /**
  * Class EspressoWidget
  * Description
@@ -9,7 +10,7 @@ namespace EventEspresso\widgets;
  * @package       Event Espresso
  * @author        Brent Christensen
  */
-class EspressoWidget extends \WP_Widget
+class EspressoWidget extends WP_Widget
 {
     /**
      * @param string $name

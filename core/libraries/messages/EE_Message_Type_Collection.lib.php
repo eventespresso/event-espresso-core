@@ -32,7 +32,7 @@ class EE_Message_Type_Collection extends EE_Object_Collection
      * @param mixed  $info
      * @return bool
      */
-    public function add($object, $info = ''): bool
+    public function add($object, $info = '')
     {
         $info = empty($info) && $object instanceof $this->interface ? $object->name : $info;
         return parent::add($object, $info);
@@ -48,7 +48,7 @@ class EE_Message_Type_Collection extends EE_Object_Collection
      * @param mixed  $info
      * @return bool
      */
-    public function set_info($object, $info = ''): bool
+    public function set_info($object, $info = '')
     {
         $info = empty($info) && $object instanceof $this->interface ? $object->name : $info;
         return parent::set_info($object, $info);
@@ -76,7 +76,7 @@ class EE_Message_Type_Collection extends EE_Object_Collection
      * @param object $object
      * @return bool
      */
-    public function has($object): bool
+    public function has($object)
     {
         return parent::has($object);
     }
@@ -89,7 +89,7 @@ class EE_Message_Type_Collection extends EE_Object_Collection
      * @param string $message_type_name
      * @return bool
      */
-    public function has_by_name(string $message_type_name): bool
+    public function has_by_name($message_type_name)
     {
         return $this->get_by_info($message_type_name) instanceof $this->interface;
     }
@@ -102,7 +102,7 @@ class EE_Message_Type_Collection extends EE_Object_Collection
      * @param $object
      * @return bool
      */
-    public function remove($object): bool
+    public function remove($object)
     {
         return parent::remove($object);
     }

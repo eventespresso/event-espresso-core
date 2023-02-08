@@ -48,7 +48,7 @@ class VsprintfFilter extends FormHtmlFilter
      * @param EE_Form_Section_Validatable $form_section
      * @return string
      */
-    public function filterHtml($html, EE_Form_Section_Validatable $form_section)
+    public function filterHtml($html, $form_section)
     {
         $this->args[] = $html;
         if ($form_section instanceof EE_Form_Section_Proper) {

@@ -55,9 +55,9 @@ class EE_Transaction_Payments
      * @param EE_Transaction $transaction
      * @param bool           $update_txn
      * @return bool true if TXN total was updated, false if not
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public function recalculate_transaction_total(EE_Transaction $transaction, $update_txn = true)
+    public function recalculate_transaction_total($transaction, $update_txn = true)
     {
         $total_line_item = $transaction->total_line_item();
         if (! $total_line_item instanceof EE_Line_Item) {
@@ -94,9 +94,9 @@ class EE_Transaction_Payments
      * @param            EE_Transaction /int $transaction_obj_or_id EE_Transaction or its ID
      * @param    boolean $update_txn whether to save the TXN
      * @return    boolean        whether the TXN was saved
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public function calculate_total_payments_and_update_status(EE_Transaction $transaction, $update_txn = true)
+    public function calculate_total_payments_and_update_status($transaction, $update_txn = true)
     {
         // verify transaction
         if (! $transaction instanceof EE_Transaction) {
@@ -136,10 +136,10 @@ class EE_Transaction_Payments
      * @param string         $payment_status One of EEM_Payment's statuses, like 'PAP' (Approved).
      *                                       By default, searches for approved payments
      * @return float|false   float on success, false on fail
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function recalculate_total_payments_for_transaction(
-        EE_Transaction $transaction,
+        $transaction,
         $payment_status = EEM_Payment::status_id_approved
     ) {
         // verify transaction
@@ -171,9 +171,9 @@ class EE_Transaction_Payments
      *
      * @param EE_Payment $payment
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public function delete_payment_and_update_transaction(EE_Payment $payment)
+    public function delete_payment_and_update_transaction($payment)
     {
         // verify payment
         if (! $payment instanceof EE_Payment) {
@@ -244,10 +244,10 @@ class EE_Transaction_Payments
      * @param EE_Payment $payment
      * @param array      $reg_payment_query_params
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function delete_registration_payments_and_update_registrations(
-        EE_Payment $payment,
+        $payment,
         $reg_payment_query_params = array()
     ) {
         $save_payment = false;
@@ -306,8 +306,6 @@ class EE_Transaction_Payments
 
 
     /********************************** DEPRECATED METHODS **********************************/
-
-
     /**
      * possibly toggles TXN status
      *
@@ -315,9 +313,9 @@ class EE_Transaction_Payments
      * @param EE_Transaction $transaction
      * @param    boolean     $update_txn whether to save the TXN
      * @return    boolean        whether the TXN was saved
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public function update_transaction_status_based_on_total_paid(EE_Transaction $transaction, $update_txn = true)
+    public function update_transaction_status_based_on_total_paid($transaction, $update_txn = true)
     {
         EE_Error::doing_it_wrong(
             __CLASS__ . '::' . __FUNCTION__,

@@ -30,7 +30,7 @@ class Checkin extends Base
      * @param string          $version
      * @return WP_Error|WP_REST_Response
      */
-    public static function handleRequestToggleCheckin(WP_REST_Request $request, $version)
+    public static function handleRequestToggleCheckin($request, $version)
     {
         $controller = new Checkin();
         return $controller->createCheckinCheckoutObject($request, $version);
@@ -44,7 +44,7 @@ class Checkin extends Base
      * @param string          $version
      * @return WP_Error|WP_REST_Response
      */
-    protected function createCheckinCheckoutObject(WP_REST_Request $request, $version)
+    protected function createCheckinCheckoutObject($request, $version)
     {
         $reg_id = $request->get_param('REG_ID');
         $dtt_id = $request->get_param('DTT_ID');

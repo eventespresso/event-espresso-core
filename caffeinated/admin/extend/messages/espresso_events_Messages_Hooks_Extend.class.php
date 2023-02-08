@@ -112,16 +112,27 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      */
     public function attach_evt_message_templates($event, $data)
     {
-        // first we remove all existing relations on the Event for message types.
-        $event->_remove_relations('Message_Template_Group');
-        // now let's just loop through the selected templates and add relations!
+        $success = true;
         if (isset($data['event_message_templates_relation'])) {
-            foreach ($data['event_message_templates_relation'] as $grp_ID) {
-                $event->_add_relation_to($grp_ID, 'Message_Template_Group');
+            // first get all existing relations on the Event for message types.
+            $existing_templates = EEM_Event_Message_Template::instance()->messageTemplateGroupIDsForEvent($event);
+            $current_templates  = $data['event_message_templates_relation'];
+            // new templates are those in the $current_templates array that don't exist in $existing_templates
+            $templates_to_add = array_diff($current_templates, $existing_templates);
+            foreach ($templates_to_add as $template_to_add) {
+                $added_template = $event->_add_relation_to($template_to_add, 'Message_Template_Group');
+                // toggle success to false if we don't get back a template group object
+                $success = $added_template instanceof EE_Message_Template_Group ? $success : false;
+            }
+            // templates to remove are those in the $existing_templates array that don't exist in $current_templates
+            $templates_to_remove = array_diff($existing_templates, $current_templates);
+            foreach ($templates_to_remove as $template_to_remove) {
+                $removed_template = $event->_remove_relation_to($template_to_remove, 'Message_Template_Group');
+                // toggle success to false if we don't get back a template group object
+                $success = $removed_template instanceof EE_Message_Template_Group ? $success : false;
             }
         }
-        // now save
-        return $event->save();
+        return $success;
     }
 
 
@@ -284,7 +295,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function duplicate_custom_message_settings(EE_Event $new_event, EE_Event $original_event)
+    public function duplicate_custom_message_settings($new_event, $original_event)
     {
         $message_template_groups = $original_event->get_many_related('Message_Template_Group');
         foreach ($message_template_groups as $message_template_group) {

@@ -10,41 +10,80 @@ use EE_State;
  */
 interface AddressInterface
 {
-    public function address(): string;
+    /**
+     * @return string
+     */
+    public function address();
 
 
-    public function address2(): string;
+    /**
+     * @return string
+     */
+    public function address2();
 
 
-    public function city(): string;
+    /**
+     * @return string
+     */
+    public function city();
 
 
-    public function state_obj(): ?EE_State;
+    /**
+     * @return \EE_State|null
+     */
+    public function state_obj();
 
 
-    public function state_ID(): int;
+    /**
+     * @return int
+     */
+    public function state_ID();
 
 
-    public function state_name(): string;
+    /**
+     * @return string
+     */
+    public function state_name();
 
 
-    public function state_abbrev(): string;
+    /**
+     * @return string
+     */
+    public function state_abbrev();
 
 
-    public function state(): string;
+    /**
+     * @return string
+     */
+    public function state();
 
 
-    public function country_obj(): ?EE_Country;
+    /**
+     * @return \EE_Country|null
+     */
+    public function country_obj();
 
 
-    public function country_ID(): string;
+    /**
+     * @return string
+     */
+    public function country_ID();
 
 
-    public function country_name(): string;
+    /**
+     * @return string
+     */
+    public function country_name();
 
 
-    public function country(): string;
+    /**
+     * @return string
+     */
+    public function country();
 
 
-    public function zip(): string;
+    /**
+     * @return string
+     */
+    public function zip();
 }

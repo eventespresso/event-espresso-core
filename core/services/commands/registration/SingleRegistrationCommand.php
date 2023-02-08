@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\commands\registration;
 
+use EE_Registration;
 use EventEspresso\core\services\commands\Command;
 
 /**
@@ -16,7 +17,7 @@ use EventEspresso\core\services\commands\Command;
 abstract class SingleRegistrationCommand extends Command
 {
     /**
-     * @var \EE_Registration $registration
+     * @var EE_Registration $registration
      */
     private $registration;
 
@@ -24,17 +25,17 @@ abstract class SingleRegistrationCommand extends Command
     /**
      * CancelRegistrationAndTicketLineItemCommand constructor.
      *
-     * @param \EE_Registration $registration
+     * @param EE_Registration $registration
      */
     public function __construct(
-        \EE_Registration $registration
+        EE_Registration $registration
     ) {
         $this->registration = $registration;
     }
 
 
     /**
-     * @return \EE_Registration
+     * @return EE_Registration
      */
     public function registration()
     {

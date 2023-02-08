@@ -53,13 +53,12 @@ class EventAttendees extends Block
      */
     public function initialize()
     {
-        $this->setBlockType(self::BLOCK_TYPE);
+        $this->setBlockType(EventAttendees::BLOCK_TYPE);
         $this->setSupportedRoutes(
             array(
-                'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoStandardPostTypeEditor',
-                'EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostTypeEditor',
-                'EventEspresso\core\domain\entities\route_match\specifications\frontend\EspressoBlockRenderer',
-                'EventEspresso\core\domain\entities\route_match\specifications\frontend\AnyFrontendRequest'
+                'EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostTypeEditor',
+                'EventEspresso\core\domain\entities\routing\specifications\frontend\EspressoBlockRenderer',
+                'EventEspresso\core\domain\entities\routing\specifications\frontend\AnyFrontendRequest'
             )
         );
         $EVT_ID = $this->request->getRequestParam('page') === 'espresso_events'
@@ -127,6 +126,9 @@ class EventAttendees extends Block
     private function getAttributesMap()
     {
         return array(
+            'event'             => 'sanitize_text_field',
+            'datetime'          => 'sanitize_text_field',
+            'ticket'            => 'sanitize_text_field',
             'eventId'           => 'absint',
             'datetimeId'        => 'absint',
             'ticketId'          => 'absint',
@@ -181,11 +183,12 @@ class EventAttendees extends Block
      * @throws DomainException
      * @throws EE_Error
      */
-    public function renderBlock(array $attributes = array())
+    public function renderBlock($attributes = array())
     {
         $attributes = $this->sanitizeAttributes($attributes);
-        return (is_archive() || is_front_page() || is_home()) && ! $attributes['displayOnArchives']
-            ? ''
-            : $this->renderer->render($attributes);
+        if (! (bool) $attributes['displayOnArchives'] && (is_archive() || is_front_page() || is_home())) {
+            return '';
+        }
+        return $this->renderer->render($attributes);
     }
 }

@@ -92,7 +92,7 @@ class ContextChecker
      * @return bool
      * @since   4.10.14.p
      */
-    public function evaluateContext(ContextInterface $context, array $acceptable_values = [])
+    public function evaluateContext($context, $acceptable_values = [])
     {
         return in_array($context->slug(), $acceptable_values, true);
     }
@@ -155,7 +155,7 @@ class ContextChecker
      * @param ContextInterface $context
      * @return boolean
      */
-    public function isAllowed(ContextInterface $context)
+    public function isAllowed($context)
     {
         $evaluation_callback = $this->evaluationCallback();
         return filter_var(

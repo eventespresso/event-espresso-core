@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
+use UnexpectedValueException;
+use Exception;
 /**
  * Class InvalidFormHandlerException
  * thrown when a FormHandler class is found to be invalid
@@ -10,7 +12,7 @@ namespace EventEspresso\core\libraries\form_sections\form_handlers;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidFormHandlerException extends \UnexpectedValueException
+class InvalidFormHandlerException extends UnexpectedValueException
 {
     /**
      * InvalidFormHandlerException constructor.
@@ -18,9 +20,9 @@ class InvalidFormHandlerException extends \UnexpectedValueException
      * @param string     $actual the FormHandler object that was received
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($actual, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($actual, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(

@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -47,7 +48,7 @@ class EED_Venues_Archive extends EED_Module
      */
     public static function set_hooks()
     {
-        /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_type_definitions */
+        /** @var CustomPostTypeDefinitions $custom_post_type_definitions */
         $custom_post_type_definitions = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
         );

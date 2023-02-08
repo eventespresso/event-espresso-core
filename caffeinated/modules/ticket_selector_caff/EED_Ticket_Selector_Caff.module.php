@@ -90,8 +90,8 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
      */
     public static function _ticket_selector_settings_form()
     {
@@ -117,8 +117,8 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
      */
     public static function _ticket_selector_appearance_settings()
     {
@@ -269,7 +269,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function update_template_settings(EE_Template_Config $CFG, $REQ)
+    public static function update_template_settings($CFG, $REQ)
     {
         if (! $CFG->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config) {
             EED_Ticket_Selector::instance()->set_config();
@@ -321,11 +321,11 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @param \EE_Ticket $ticket
+     * @param EE_Ticket $ticket
      * @param int        $ticket_price
      * @param bool       $display_ticket_price
      */
-    public static function ticket_price_details(EE_Ticket $ticket, $ticket_price = 0, $display_ticket_price = false)
+    public static function ticket_price_details($ticket, $ticket_price = 0, $display_ticket_price = false)
     {
         require str_replace('\\', '/', plugin_dir_path(__FILE__))
                 . 'templates/ticket_selector_price_details.template.php';

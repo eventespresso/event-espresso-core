@@ -76,6 +76,11 @@ class RequestTypeContext extends Context
     const IFRAME = 'iframe-request';
 
     /**
+     * indicates that the current request is for the EE GraphQL manager
+     */
+    const GQL = 'graphql';
+
+    /**
      * indicates that the current request is for the WP REST API
      */
     const WP_API = 'wp-rest-api';
@@ -89,6 +94,11 @@ class RequestTypeContext extends Context
      * @var boolean $is_activation
      */
     private $is_activation = false;
+
+    /**
+     * @var boolean $is_unit_testing
+     */
+    private $is_unit_testing = false;
 
     /**
      * @var array $valid_request_types
@@ -113,6 +123,7 @@ class RequestTypeContext extends Context
                         'The RequestTypeContext slug must be one of the following values: %1$s %2$s',
                         'event_espresso'
                     ),
+                    '<br />',
                     var_export($this->validRequestTypes(), true)
                 )
             );
@@ -140,6 +151,7 @@ class RequestTypeContext extends Context
                     RequestTypeContext::CRON,
                     RequestTypeContext::FEED,
                     RequestTypeContext::FRONTEND,
+                    RequestTypeContext::GQL,
                     RequestTypeContext::IFRAME,
                     RequestTypeContext::WP_API,
                     RequestTypeContext::WP_SCRAPE,
@@ -162,8 +174,26 @@ class RequestTypeContext extends Context
     /**
      * @param bool $is_activation
      */
-    public function setIsActivation($is_activation)
+    public function setIsActivation($is_activation = false)
     {
         $this->is_activation = filter_var($is_activation, FILTER_VALIDATE_BOOLEAN);
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isUnitTesting()
+    {
+        return $this->is_unit_testing;
+    }
+
+
+    /**
+     * @param bool $is_unit_testing
+     */
+    public function setIsUnitTesting($is_unit_testing = false)
+    {
+        $this->is_unit_testing = filter_var($is_unit_testing, FILTER_VALIDATE_BOOLEAN);
     }
 }

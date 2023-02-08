@@ -25,15 +25,15 @@ class AddressFormatter
      * @return string
      */
     protected function parse_formatted_address(
-        string $address,
-        string $address2,
-        string $city,
-        string $state,
-        string $zip,
-        string $country,
-        string $formatted_address,
-        string $sub
-    ): string {
+        $address,
+        $address2,
+        $city,
+        $state,
+        $zip,
+        $country,
+        $formatted_address,
+        $sub
+    ) {
         // swap address part placeholders for the real text
         $formatted_address = str_replace(
             // find

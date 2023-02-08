@@ -18,5 +18,5 @@ interface LocatorInterface
      * @param array|string $location
      * @return array
      */
-    public function locate($location): array;
+    public function locate($location);
 }

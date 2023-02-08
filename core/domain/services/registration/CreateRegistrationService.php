@@ -41,10 +41,10 @@ class CreateRegistrationService extends DomainService
      * @throws UnexpectedEntityException
      */
     public function create(
-        EE_Event $event,
-        EE_Transaction $transaction,
-        EE_Ticket $ticket,
-        EE_Line_Item $ticket_line_item,
+        $event,
+        $transaction,
+        $ticket,
+        $ticket_line_item,
         $reg_count,
         $reg_group_size,
         $reg_status = EEM_Registration::status_id_incomplete
@@ -93,9 +93,9 @@ class CreateRegistrationService extends DomainService
      * @throws OutOfRangeException
      */
     protected function resolveFinalPrice(
-        EE_Transaction $transaction,
-        EE_Ticket $ticket,
-        EE_Line_Item $ticket_line_item
+        $transaction,
+        $ticket,
+        $ticket_line_item
     ) {
         $final_price = EEH_Line_Item::calculate_final_price_for_ticket_line_item(
             $transaction->total_line_item(),
@@ -112,7 +112,7 @@ class CreateRegistrationService extends DomainService
      * @return int
      * @throws EE_Error
      */
-    protected function incrementRegGroupSize(array $registrations, $update_existing_registrations = true)
+    protected function incrementRegGroupSize($registrations, $update_existing_registrations = true)
     {
         $new_reg_group_size = count($registrations) + 1;
         if ($update_existing_registrations) {

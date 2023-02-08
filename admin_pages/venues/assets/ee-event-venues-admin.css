@@ -23,6 +23,11 @@
 .use-ven-manager #venue-manager label {
     margin: 5px 0;
 }
+.use-ven-manager .select-venue-div {
+    display: flex;
+}
+
+
 
 .use-ven-manager .ee-venue-not-selected {
     display: none

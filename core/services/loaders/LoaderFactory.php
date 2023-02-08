@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\loaders;
 
 use EE_Registry;
+use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\LooseCollection;
@@ -88,8 +89,8 @@ class LoaderFactory
      */
     public static function getLoader(
         $generator = null,
-        ClassInterfaceCache $class_cache = null,
-        ObjectIdentifier $object_identifier = null
+        $class_cache = null,
+        $object_identifier = null
     ) {
         if (
             ! LoaderFactory::$loader instanceof LoaderInterface
@@ -109,5 +110,31 @@ class LoaderFactory
             );
         }
         return LoaderFactory::$loader;
+    }
+
+
+    /**
+     * Used for instantiating a new instance of a class
+     *
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
+     * @return mixed
+     */
+    public static function getNew($fqcn, $arguments = [])
+    {
+        return LoaderFactory::getLoader()->getNew($fqcn, $arguments);
+    }
+
+
+    /**
+     * Used for getting a shared instance of a class
+     *
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
+     * @return mixed
+     */
+    public static function getShared($fqcn, $arguments = [])
+    {
+        return LoaderFactory::getLoader()->getShared($fqcn, $arguments);
     }
 }

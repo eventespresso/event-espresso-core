@@ -22,7 +22,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
     /**
      * @param string $value_to_normalize
      * @return int|mixed|string
-     * @throws \EE_Validation_Error
+     * @throws EE_Validation_Error
      */
     public function normalize($value_to_normalize)
     {

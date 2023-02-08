@@ -1,0 +1,48 @@
+<?php
+
+namespace EventEspresso\core\domain\entities\admin\GraphQLData;
+
+/**
+ * Class CurrentUser
+ * Description
+ *
+ * @package EventEspresso\core\domain\entities\admin\GraphQLData
+ * @author  Manzoor Wani
+ * @since   $VID:$
+ */
+class CurrentUser extends GraphQLData
+{
+    /**
+     * @param array $where_params
+     * @return array|null
+     * @since $VID:$
+     */
+    public function getData($where_params = [])
+    {
+        $field_key = 'viewer';
+        $query = <<<QUERY
+        query GET_CURRENT_USER {
+            {$field_key} {
+                id
+                databaseId
+                description
+                email
+                firstName
+                lastName
+                locale
+                name
+                nicename
+                nickname
+                username
+                __typename
+            }
+        }
+QUERY;
+        $this->setParams([
+            'operation_name' => 'GET_CURRENT_USER',
+            'query'          => $query,
+        ]);
+
+        return $this->getQueryResponse($field_key, $where_params);
+    }
+}

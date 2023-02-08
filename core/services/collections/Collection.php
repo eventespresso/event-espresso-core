@@ -63,7 +63,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      * @return string
      * @since 4.10.33.p
      */
-    public function collectionInterface(): string
+    public function collectionInterface()
     {
         return $this->collection_interface;
     }

@@ -87,7 +87,7 @@
                 ),
                 implode(', ', $active_offsite_payment_methods)
             ); ?></p>
-    <?php } ?>
+<?php } ?>
     <h2><?php esc_html_e('Payment Logging', 'event_espresso'); ?></h2>
     <p><?php
         esc_html_e(

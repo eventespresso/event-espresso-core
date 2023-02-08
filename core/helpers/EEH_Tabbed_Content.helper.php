@@ -1,7 +1,5 @@
 <?php
 
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
 /**
  * EEH_Tabbed_Content
  *
@@ -84,8 +82,9 @@ class EEH_Tabbed_Content
      * @param string[][] $nav_tabs tab array for nav tabs
      * @return string
      * @throws EE_Error
+     * @param string $page_slug
      */
-    public static function display_admin_nav_tabs($nav_tabs = [])
+    public static function display_admin_nav_tabs($nav_tabs = [], $page_slug = '')
     {
         if (empty($nav_tabs)) {
             throw new EE_Error(
@@ -93,12 +92,17 @@ class EEH_Tabbed_Content
             );
         }
         $tab_content = '';
+        $tab_count = 0;
         foreach ($nav_tabs as $slug => $tab) {
+            $tab_count++;
             $tab_content .= self::tab($slug, false, $tab['link_text'], $tab['url'], $tab['css_class']);
         }
+        $aria_label = esc_attr__('Secondary menu', 'event_espresso');
+        $css_class = "ee-nav-tabs--{$tab_count}";
+        $css_class .= $page_slug ? " ee-nav-tabs--$page_slug" : '';
         return "
-        <nav class='nav-tab-wrapper wp-clearfix' aria-label='" . esc_attr__('Secondary menu', 'event_espresso') . "'>
-            " . wp_kses($tab_content, AllowedTags::getWithFormTags()) . "
+        <nav class='nav-tab-wrapper wp-clearfix {$css_class}' aria-label='{$aria_label}'>
+            {$tab_content}
         </nav>
         ";
     }
@@ -116,14 +120,14 @@ class EEH_Tabbed_Content
      */
     private static function tab($name, $active = false, $nice_name = false, $url = false, $css = false)
     {
-        $nice_name = $nice_name ?: ucwords(str_replace(['_', '-'], ' ', $name));
-        $name      = self::generateTadID($name);
+        $nice_name = $nice_name ?: esc_html(ucwords(str_replace(['_', '-'], ' ', $name)));
+        $name      = self::generateTabID($name);
         $class     = $css ? ' ' . esc_attr($css) : '';
-        $class    .= $active ? ' nav-tab-active' : '';
+        $class     .= $active ? ' nav-tab-active' : '';
         $url       = $url ?: '#' . esc_attr($name);
         return "
-        <a class='nav-tab " . esc_attr($class) . "' rel='" . esc_attr($name) . "' href='" . esc_attr($url) . "'>
-            " . esc_html($nice_name) . "
+        <a class='nav-tab{$class}' rel='{$name}' href='{$url}'>
+            $nice_name
         </a>
         ";
     }
@@ -134,7 +138,7 @@ class EEH_Tabbed_Content
      * @return string
      * @since   4.10.14.p
      */
-    private static function generateTadID($tab_name)
+    private static function generateTabID($tab_name)
     {
         return 'ee-tab-' . esc_attr(str_replace(' ', '-', $tab_name));
     }
@@ -151,9 +155,9 @@ class EEH_Tabbed_Content
     private static function tab_content($name, $tab_content, $active = false)
     {
         $class = $active ? '' : ' hidden';
-        $name  = self::generateTadID($name);
+        $name  = self::generateTabID($name);
         return "
-    <div class='nav-tab-content " . esc_attr($class) . "' id='" . esc_attr($name) . "'>
+    <div class='nav-tab-content{$class}' id='{$name}'>
         {$tab_content}
         <div style='clear:both'></div>
     </div>";
@@ -184,7 +188,7 @@ class EEH_Tabbed_Content
      *                                  for the js.
      * @return string                  a html snippet of of all the formatted link elements.
      */
-    public static function tab_text_links(array $item_array, $container_class = '', $sep = '|', $default = '')
+    public static function tab_text_links($item_array, $container_class = '', $sep = '|', $default = '')
     {
         $item_array = apply_filters('FHEE__EEH_Tabbed_Content__tab_text_links', $item_array, $container_class);
         if (! is_array($item_array) || empty($item_array)) {
@@ -214,7 +218,7 @@ class EEH_Tabbed_Content
         }
 
         return "
-        <ul class='ee-text-links{$container_class}'>{$list}</ul>
+        <div class='ee-text-links{$container_class}'>{$list}</div>
         ";
     }
 
@@ -225,21 +229,21 @@ class EEH_Tabbed_Content
      */
     private static function textLinkItem(array $item)
     {
-        $class = $item['class'] ? $item['class'] : '';
-        $label = $item['label'];
-        $href  = $item['href'] ? $item['href'] : '';
-        $title = $item['title'];
+        $class = $item['class'] ? esc_attr($item['class']) : '';
+        $label = esc_html($item['label']);
+        $href  = $item['href'] ? esc_attr($item['href']) : '';
+        $icon  = isset($item['icon']) ? $item['icon'] : '';
+        $title = esc_attr($item['title']);
+        $tag = isset($item['tag']) ? $item['tag'] : 'a';
 
-        $link = ! empty($href)
+
+        return ! empty($href)
             ? "
-            <a class='ee-text-link' href='#" . esc_attr($href) . "' title='" . esc_attr($title) . "'>
-                " . esc_html($label) . "
-            </a>
+            <{$tag} class='{$class} ee-text-link ee-aria-tooltip' href='#{$href}' aria-label='{$title}'>
+                {$icon}{$label}
+            </{$tag}>
             "
-            : esc_html($label);
-        return "
-        <li class='ee-text-link-li " . esc_attr($class) . "'>" . wp_kses($link, AllowedTags::getAllowedTags()) . "</li>
-        ";
+            : $label;
     }
 
 
@@ -252,7 +256,7 @@ class EEH_Tabbed_Content
     {
         $separator = esc_html($separator);
         return "
-        <li class='ee-text-link-sep'>{$separator}</li>
+        <span class='ee-text-link-sep'>{$separator}</span>
         ";
     }
 }

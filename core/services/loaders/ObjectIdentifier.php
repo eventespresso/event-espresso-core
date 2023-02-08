@@ -67,6 +67,7 @@ class ObjectIdentifier
      */
     public function fqcnMatchesObjectIdentifier($fqcn, $object_identifier)
     {
+        $fqcn = str_replace('\\', '_', $fqcn);
         return $fqcn === $object_identifier
                || strpos($object_identifier, $fqcn . ObjectIdentifier::DELIMITER) === 0;
     }
@@ -79,7 +80,7 @@ class ObjectIdentifier
      * @param array  $arguments
      * @return string
      */
-    public function getIdentifier($fqcn, array $arguments = array())
+    public function getIdentifier($fqcn, $arguments = array())
     {
         // only build identifier from arguments if class is not ReservedInstanceInterface
         $identifier = ! $this->class_cache->hasInterface(
@@ -91,6 +92,7 @@ class ObjectIdentifier
         if (! empty($identifier)) {
             $fqcn .= ObjectIdentifier::DELIMITER . md5($identifier);
         }
+        $fqcn = str_replace('\\', '_', $fqcn);
         return $fqcn;
     }
 
@@ -102,7 +104,7 @@ class ObjectIdentifier
      * @param array $arguments
      * @return string
      */
-    protected function getIdentifierForArguments(array $arguments)
+    protected function getIdentifierForArguments($arguments)
     {
         if (empty($arguments)) {
             return '';

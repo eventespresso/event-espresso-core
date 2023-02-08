@@ -107,11 +107,11 @@ abstract class EE_Base_Class_Repository extends EE_Object_Repository implements 
      *
      * calls EE_Base_Class::update_extra_meta() on the current object using the supplied values
      *
-     * @access public
      * @param string $meta_key
-     * @param string $meta_value
-     * @param string $previous_value
-     * @return bool | int
+     * @param mixed $meta_value
+     * @param mixed $previous_value
+     * @return bool|int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+     * NOTE: if the values haven't changed, returns 0
      */
     public function update_extra_meta($meta_key, $meta_value, $previous_value = null)
     {

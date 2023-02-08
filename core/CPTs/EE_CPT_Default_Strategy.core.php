@@ -25,7 +25,7 @@ class EE_CPT_Default_Strategy
      *
      * @access    private
      * @param    array $arguments
-     * @return    \EE_CPT_Default_Strategy
+     * @return EE_CPT_Default_Strategy
      */
     public function __construct($arguments = array())
     {
@@ -40,7 +40,7 @@ class EE_CPT_Default_Strategy
      * @param    \WP_Query $WP_Query
      * @return    \WP_Query
      */
-    public function pre_get_posts(WP_Query $WP_Query)
+    public function pre_get_posts($WP_Query)
     {
         if (! $WP_Query->is_main_query() && ! $WP_Query->is_archive()) {
             return $WP_Query;
@@ -57,7 +57,7 @@ class EE_CPT_Default_Strategy
      * @param    \WP_Query  $WP_Query
      * @return    \WP_Post[]
      */
-    public function the_posts($posts, WP_Query $WP_Query)
+    public function the_posts($posts, $WP_Query)
     {
         return $posts;
     }

@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\Core\CPTs\CptQueryModifier;
 use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -55,7 +56,7 @@ class EE_CPT_Strategy extends EE_Base
     protected $CPT_model;
 
     /**
-     * @var EventEspresso\Core\CPTs\CptQueryModifier $query_modifier
+     * @var CptQueryModifier $query_modifier
      */
     protected $query_modifier;
 
@@ -67,8 +68,8 @@ class EE_CPT_Strategy extends EE_Base
      * @return EE_CPT_Strategy
      */
     public static function instance(
-        CustomPostTypeDefinitions $custom_post_types = null,
-        CustomTaxonomyDefinitions $taxonomies = null
+        $custom_post_types = null,
+        $taxonomies = null
     ) {
         // check if class object is instantiated
         if (
@@ -142,10 +143,10 @@ class EE_CPT_Strategy extends EE_Base
      *
      * @param WP_Query $WP_Query
      * @return void
-     * @throws \EE_Error
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
      */
     public function pre_get_posts($WP_Query)
     {
@@ -252,7 +253,7 @@ class EE_CPT_Strategy extends EE_Base
     /**
      * @param \WP_Query $WP_Query
      */
-    protected function _set_CPT_taxonomies_on_WP_Query(WP_Query $WP_Query)
+    protected function _set_CPT_taxonomies_on_WP_Query($WP_Query)
     {
         // is a taxonomy set ?
         if ($WP_Query->is_tax) {
@@ -302,7 +303,7 @@ class EE_CPT_Strategy extends EE_Base
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _process_WP_Query_post_types(WP_Query $WP_Query)
+    protected function _process_WP_Query_post_types($WP_Query)
     {
         if (isset($WP_Query->query_vars['post_type'])) {
             // loop thru post_types as array
@@ -334,7 +335,7 @@ class EE_CPT_Strategy extends EE_Base
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _generate_CptQueryModifier(WP_Query $WP_Query, $post_type)
+    protected function _generate_CptQueryModifier($WP_Query, $post_type)
     {
         $this->query_modifier = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\CPTs\CptQueryModifier',
@@ -381,7 +382,7 @@ class EE_CPT_Strategy extends EE_Base
      */
     public function posts_fields($SQL)
     {
-        if ($this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier) {
+        if ($this->query_modifier instanceof CptQueryModifier) {
             return $this->query_modifier->postsFields($SQL);
         }
         return $SQL;
@@ -396,7 +397,7 @@ class EE_CPT_Strategy extends EE_Base
      */
     public function posts_join($SQL)
     {
-        if ($this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier) {
+        if ($this->query_modifier instanceof CptQueryModifier) {
             return $this->query_modifier->postsJoin($SQL);
         }
         return $SQL;
@@ -411,7 +412,7 @@ class EE_CPT_Strategy extends EE_Base
      */
     public function the_posts($posts)
     {
-        if ($this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier) {
+        if ($this->query_modifier instanceof CptQueryModifier) {
             $this->query_modifier->thePosts($posts);
         }
         return $posts;
@@ -427,7 +428,7 @@ class EE_CPT_Strategy extends EE_Base
      */
     public function get_edit_post_link($url, $ID)
     {
-        if ($this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier) {
+        if ($this->query_modifier instanceof CptQueryModifier) {
             return $this->query_modifier->getEditPostLink($url, $ID);
         }
         return '';
@@ -441,7 +442,7 @@ class EE_CPT_Strategy extends EE_Base
      */
     protected function _do_template_filters($WP_Query = null)
     {
-        if ($this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier) {
+        if ($this->query_modifier instanceof CptQueryModifier) {
             $this->query_modifier->addTemplateFilters();
         }
     }
@@ -455,7 +456,7 @@ class EE_CPT_Strategy extends EE_Base
      */
     public function single_cpt_template($current_template)
     {
-        if ($this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier) {
+        if ($this->query_modifier instanceof CptQueryModifier) {
             return $this->query_modifier->singleCptTemplate($current_template);
         }
         return $current_template;

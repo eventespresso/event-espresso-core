@@ -1,0 +1,159 @@
+<?php
+
+namespace EventEspresso\core\services\form\meta;
+
+use EventEspresso\core\services\json\JsonDataHandler;
+
+/**
+ * Class HelpText
+ * For managing help text that may accompany a form element
+ *
+ * @author  Brent Christensen
+ * @package EventEspresso\core\services\form\meta
+ * @since   $VID:$
+ */
+class HelpText implements JsonableInterface
+{
+    /**
+     * @var JsonDataHandler
+     */
+    private $json_data_handler;
+
+    /**
+     * Additional text displayed alongside a form input to assist users with completing the form.
+     *
+     * @var string
+     */
+    private $helpText;
+
+    /**
+     * Custom HTML classes to be applied to this form input's help text.
+     *
+     * @var array
+     */
+    private $htmlClasses;
+
+
+    /**
+     * HelpText constructor.
+     *
+     * @param JsonDataHandler $json_data_handler
+     * @param array           $htmlClass
+     * @param string          $helpText
+     */
+    public function __construct(
+        JsonDataHandler $json_data_handler,
+        array $htmlClass,
+        $helpText
+    ) {
+        $helpText = (string) $helpText;
+        $this->json_data_handler = $json_data_handler;
+        $this->setHtmlClasses($htmlClass);
+        $this->setHelpText($helpText);
+    }
+
+
+    /**
+     * @param string $json
+     * @return HelpText
+     */
+    public static function fromJson($json)
+    {
+        $json_data_handler = new JsonDataHandler();
+        $json_data_handler->configure(JsonDataHandler::DATA_TYPE_OBJECT);
+        $data      = $json_data_handler->decodeJson($json);
+        $htmlClass = (array) (isset($data->htmlClass) ? $data->htmlClass : []);
+        $helpText  = isset($data->helpText) ? $data->helpText : '';
+        return new HelpText($json_data_handler, $htmlClass, $helpText);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'helpText'  => $this->helpText,
+            'htmlClass' => $this->htmlClasses(),
+        ];
+    }
+
+
+    /**
+     * @return string
+     */
+    public function toJson()
+    {
+        return $this->json_data_handler->encodeData($this->toArray());
+    }
+
+
+    /**
+     * Input label displayed on public forms, ie: the actual question text.
+     *
+     * @return string
+     */
+    public function helpText()
+    {
+        return $this->helpText;
+    }
+
+
+    /**
+     * @param string $helpText
+     * @return void
+     */
+    public function setHelpText($helpText)
+    {
+        $this->helpText = sanitize_text_field($helpText);
+    }
+
+
+    /**
+     * Custom HTML classes to be applied to this form input's help text.
+     * returns a concatenated string unless $as_array is set to true
+     *
+     * @return array|string
+     */
+    public function htmlClasses($as_array = false)
+    {
+        return $as_array
+            ? $this->htmlClasses
+            : implode(' ', $this->htmlClasses);
+    }
+
+
+    /**
+     * @param string $htmlClass
+     * @return void
+     */
+    public function addHtmlClass($htmlClass)
+    {
+        $htmlClass = sanitize_key($htmlClass);
+        if (! in_array($htmlClass, $this->htmlClasses, true)) {
+            $this->htmlClasses[] = $htmlClass;
+        }
+    }
+
+
+    /**
+     * @param string $htmlClass
+     * @return void
+     */
+    public function removeHtmlClass($htmlClass)
+    {
+        $htmlClass = sanitize_key($htmlClass);
+        unset($this->htmlClasses[ $htmlClass ]);
+    }
+
+
+    /**
+     * @param array $htmlClasses
+     * @return void
+     */
+    public function setHtmlClasses($htmlClasses)
+    {
+        $this->htmlClasses = array_map('sanitize_key', $htmlClasses);
+    }
+}

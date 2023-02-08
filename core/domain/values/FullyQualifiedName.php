@@ -32,6 +32,7 @@ class FullyQualifiedName
      */
     public function __construct($fully_qualified_name)
     {
+        $fully_qualified_name = (string) $fully_qualified_name;
         if (! is_string($fully_qualified_name)) {
             throw new InvalidDataTypeException(
                 '$fully_qualified_name',

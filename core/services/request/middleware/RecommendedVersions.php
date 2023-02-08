@@ -18,6 +18,9 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class RecommendedVersions extends Middleware
 {
+    const CHECK_UPCOMING_REQUIRED_PHP_VERSION = false;
+    const UPCOMING_REQUIRED_PHP_VERSION = '7.4';
+
     /**
      * converts a Request to a Response
      *
@@ -26,7 +29,7 @@ class RecommendedVersions extends Middleware
      * @return ResponseInterface
      * @throws InvalidDataTypeException
      */
-    public function handleRequest(RequestInterface $request, ResponseInterface $response)
+    public function handleRequest($request, $response)
     {
         $this->request = $request;
         $this->response = $response;
@@ -42,7 +45,7 @@ class RecommendedVersions extends Middleware
             $this->displayMinimumRecommendedPhpVersionNotice();
         }
         // upcoming required version
-        if (! $this->upcomingRequiredPhpVersion()) {
+        if (self::CHECK_UPCOMING_REQUIRED_PHP_VERSION && ! $this->upcomingRequiredPhpVersion()) {
             $this->displayUpcomingRequiredVersion();
         }
         $this->response = $this->processRequestStack($this->request, $this->response);
@@ -88,9 +91,10 @@ class RecommendedVersions extends Middleware
      * @param string $min_version
      * @return boolean
      */
-    private function checkPhpVersion($min_version = EE_MIN_PHP_VER_RECOMMENDED)
+    private function checkPhpVersion($min_version)
     {
-        return version_compare(PHP_VERSION, $min_version, '>=') ? true : false;
+        $min_version = (string) $min_version;
+        return (bool) version_compare(PHP_VERSION, $min_version, '>=');
     }
 
 
@@ -99,7 +103,18 @@ class RecommendedVersions extends Middleware
      */
     private function minimumPhpVersionRecommended()
     {
-        return $this->checkPhpVersion();
+        return $this->checkPhpVersion(EE_MIN_PHP_VER_RECOMMENDED);
+    }
+
+
+    /**
+     * Returns whether the provided php version number is less than the current version of php installed on the server.
+     *
+     * @return bool
+     */
+    private function upcomingRequiredPhpVersion()
+    {
+        return $this->checkPhpVersion(self::UPCOMING_REQUIRED_PHP_VERSION);
     }
 
 
@@ -121,7 +136,7 @@ class RecommendedVersions extends Middleware
                     EE_MIN_WP_VER_REQUIRED,
                     $wp_version,
                     '<br/>',
-                    '<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
+                    '<a href="https://codex.wordpress.org/Updating_WordPress">https://codex.wordpress.org/Updating_WordPress</a>'
                 );
                 ?>
             </p>
@@ -150,23 +165,10 @@ class RecommendedVersions extends Middleware
                     EE_MIN_PHP_VER_RECOMMENDED,
                     PHP_VERSION,
                     '<br/>',
-                    '<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
+                    '<a href="https://php.net/downloads.php">https://php.net/downloads.php</a>'
                 )
             );
         }
-    }
-
-
-    /**
-     * Returns whether the provided php version number is less than the current version of php installed on the server.
-     *
-     * @param string $version_required
-     * @return bool
-     */
-    private function upcomingRequiredPhpVersion($version_required = '5.5')
-    {
-        return true;
-        // return $this->checkPhpVersion($version_required);
     }
 
 

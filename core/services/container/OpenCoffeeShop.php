@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\container;
 
+use EEH_Array;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -58,7 +59,7 @@ class OpenCoffeeShop
         // create a dependency injector class for resolving class constructor arguments
         $DependencyInjector = new DependencyInjector(
             $this->CoffeeShop,
-            new \EEH_Array()
+            new EEH_Array()
         );
         // and some coffeemakers, one for creating new instances
         $this->CoffeeShop->addCoffeeMaker(

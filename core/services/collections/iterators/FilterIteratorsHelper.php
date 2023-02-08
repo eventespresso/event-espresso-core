@@ -25,7 +25,7 @@ class FilterIteratorsHelper
      * @param Closure    $acceptance_callback
      * @return array
      */
-    public static function getFilteredObjectsFromCollection(Collection $collection, Closure $acceptance_callback)
+    public static function getFilteredObjectsFromCollection($collection, $acceptance_callback)
     {
         $collection_filter_iterator = new CollectionFilterCallbackIterator($collection, $acceptance_callback);
         return $collection_filter_iterator->getFiltered();

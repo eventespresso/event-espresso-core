@@ -188,9 +188,10 @@ class EEH_Debug_Tools
     {
         if (WP_DEBUG) {
             $activation_errors = ob_get_contents();
-            if (! empty($activation_errors)) {
-                $activation_errors = date('Y-m-d H:i:s') . "\n" . $activation_errors;
+            if (empty($activation_errors)) {
+                return;
             }
+            $activation_errors = date('Y-m-d H:i:s') . "\n" . $activation_errors;
             espresso_load_required('EEH_File', EE_HELPERS . 'EEH_File.helper.php');
             if (class_exists('EEH_File')) {
                 try {
@@ -397,8 +398,8 @@ class EEH_Debug_Tools
         $is_method = method_exists($var_name, $var);
         $var_name = ucwords(str_replace('_', ' ', $var_name));
         $heading_tag = EEH_Debug_Tools::headingTag($heading_tag);
-        $result = EEH_Debug_Tools::headingSpacer($heading_tag);
-        $result .= EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
+        // $result = EEH_Debug_Tools::headingSpacer($heading_tag);
+        $result = EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
         $result .= $is_method
             ? EEH_Debug_Tools::grey_span('::') . EEH_Debug_Tools::orange_span($var . '()')
             : EEH_Debug_Tools::grey_span(' : ') . EEH_Debug_Tools::orange_span($var);
@@ -425,16 +426,10 @@ class EEH_Debug_Tools
     }
 
 
-    protected static function lineBreak()
-    {
-        return defined('DOING_AJAX') && DOING_AJAX ? '<br />' : "\n";
-    }
-
-
     protected static function plainOutput()
     {
         return defined('EE_TESTS_DIR')
-               || (defined('DOING_AJAX') && DOING_AJAX)
+               || (defined('DOING_AJAX') && DOING_AJAX && ! isset($_REQUEST['pretty_output']))
                || (
                    isset($_SERVER['REQUEST_URI'])
                    && strpos(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), 'wp-json') !== false
@@ -452,12 +447,18 @@ class EEH_Debug_Tools
     protected static function heading($var_name = '', $heading_tag = 'h5', $margin = '', $line = 0)
     {
         if (EEH_Debug_Tools::plainOutput()) {
-            $heading = '';
-            if ($heading_tag === 'h1' || $heading_tag === 'h2') {
-                $heading .= self::lineBreak();
+            switch ($heading_tag) {
+                case 'h1':
+                    $line_breaks = EEH_Debug_Tools::lineBreak(3);
+                    break;
+                case 'h2':
+                    $line_breaks = EEH_Debug_Tools::lineBreak(2);
+                    break;
+                default:
+                    $line_breaks = EEH_Debug_Tools::lineBreak();
+                    break;
             }
-            $heading .= self::lineBreak() . "{$line}) {$var_name}";
-            return $heading;
+            return "{$line_breaks}{$line}) {$var_name}";
         }
         $margin = "25px 0 0 {$margin}";
         return '<' . $heading_tag . ' style="color:#2EA2CC; margin:' . $margin . ';"><b>' . $var_name . '</b>';
@@ -506,13 +507,15 @@ class EEH_Debug_Tools
         $file = str_replace(EE_PLUGIN_DIR_PATH, '/', $file);
         if (EEH_Debug_Tools::plainOutput()) {
             if ($heading_tag === 'h1' || $heading_tag === 'h2') {
-                return " ({$file})";
+                return " ({$file})" . EEH_Debug_Tools::lineBreak();
             }
             return '';
         }
-        return '<br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
+        return EEH_Debug_Tools::lineBreak()
+               . '<span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">'
                . $file
-               . '<br />line no: '
+               . EEH_Debug_Tools::lineBreak()
+               . 'line no: '
                . $line
                . '</span>';
     }
@@ -545,7 +548,7 @@ class EEH_Debug_Tools
         if (EEH_Debug_Tools::plainOutput()) {
             return str_replace("\n", '', $var);
         }
-        return '<pre style="color:#999; padding:1em; background: #fff">' . $var . '</pre>';
+        return '<pre style="color: #9C3; display: inline-block; padding:.4em .6em; background: #334">' . $var . '</pre>';
     }
 
 
@@ -568,6 +571,12 @@ class EEH_Debug_Tools
     ) {
         // return;
         $file = str_replace(rtrim(ABSPATH, '\\/'), '', $file);
+        if (empty($var) && empty($var_name)) {
+            $var = $file;
+            $var_name = "line $line";
+            $file = '';
+            $line = '';
+        }
         $margin = is_admin() ? ' 180px' : '0';
         if (is_string($var)) {
             EEH_Debug_Tools::printv($var, $var_name, $file, $line, $heading_tag, $die, $margin);
@@ -582,10 +591,10 @@ class EEH_Debug_Tools
         } elseif ($var === null) {
             $var_name = ! $var_name ? 'null' : $var_name;
         }
-        $var_name = ucwords(str_replace(array('$', '_'), array('', ' '), $var_name));
+        $var_name = EEH_Debug_Tools::trimVarName($var_name);
         $heading_tag = EEH_Debug_Tools::headingTag($heading_tag);
-        $result = EEH_Debug_Tools::headingSpacer($heading_tag);
-        $result .= EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
+        // $result = EEH_Debug_Tools::headingSpacer($heading_tag);
+        $result = EEH_Debug_Tools::heading($var_name, $heading_tag, $margin, $line);
         $result .= EEH_Debug_Tools::grey_span(' : ') . EEH_Debug_Tools::orange_span(
             EEH_Debug_Tools::pre_span($var)
         );
@@ -595,6 +604,43 @@ class EEH_Debug_Tools
             die($result);
         }
         echo wp_kses($result, AllowedTags::getWithFormTags());
+    }
+
+
+    /**
+     * @return string
+     */
+    private static function trimVarName($var_name)
+    {
+        $converted = str_replace(['$', '_', 'this->'], ['', ' ', ''], $var_name);
+        $words = explode(' ', $converted);
+        $words = array_map(
+            function ($word) {
+                return $word === 'id' || $word === 'Id' ? 'ID' : $word;
+            },
+            $words
+        );
+        return ucwords(implode(' ', $words));
+    }
+
+
+    /**
+     * @return string
+     */
+    private static function lineBreak($lines = 1)
+    {
+        $linebreak = defined('DOING_AJAX') && DOING_AJAX ? '<br />' : PHP_EOL;
+        return str_repeat($linebreak, $lines);
+    }
+
+
+    /**
+     * @param string $fqcn
+     * @return string
+     */
+    public static function shortClassName($fqcn)
+    {
+        return substr(strrchr($fqcn, '\\'), 1);
     }
 
 

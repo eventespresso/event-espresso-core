@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 /**
  * The message type for newsletter type of messages.
  * Newsletter message types are triggered manually by the admin for sending mass email to select groups of
@@ -57,7 +59,7 @@ class EE_Newsletter_message_type extends EE_message_type
      * @param int             $id
      * @return array|mixed
      */
-    protected function _get_data_for_context($context, EE_Registration $registration, $id)
+    protected function _get_data_for_context($context, $registration, $id)
     {
         // newsletter message type data handler is 'Registrations' and it expects an array of EE_Registration objects.
         return array($registration);
@@ -130,8 +132,8 @@ class EE_Newsletter_message_type extends EE_message_type
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     protected function _attendee_addressees()
     {

@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\entities;
 
+use EE_Line_Item;
 use EE_Error;
 use EE_Registration;
 use EventEspresso\core\exceptions\EntityNotFoundException;
@@ -49,7 +50,7 @@ class RegUrlLink
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
-    public static function fromRegistration(EE_Registration $registration)
+    public static function fromRegistration($registration)
     {
         return new RegUrlLink(
             $registration->count(),
@@ -82,7 +83,7 @@ class RegUrlLink
             return;
         }
         $reg_count = max(1, absint($reg_count));
-        $base_code = $base_code instanceof \EE_Line_Item ? $base_code->code() : $base_code;
+        $base_code = $base_code instanceof EE_Line_Item ? $base_code->code() : $base_code;
         if (empty($base_code) || ! is_string($base_code)) {
             throw new InvalidArgumentException(
                 esc_html__(

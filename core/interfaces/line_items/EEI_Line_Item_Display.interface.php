@@ -10,5 +10,5 @@ interface EEI_Line_Item_Display
      * @param array        $options
      * @return mixed
      */
-    public function display_line_item(EE_Line_Item $line_item, $options = array());
+    public function display_line_item($line_item, $options = array());
 }

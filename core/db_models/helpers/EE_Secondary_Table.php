@@ -30,7 +30,10 @@ class EE_Secondary_Table extends EE_Table_Base
     {
         return $this->_fk_on_table;
     }
-    public function _construct_finalize_set_table_to_join_with(EE_Table_Base $table)
+    /**
+     * @param EE_Table_Base $table
+     */
+    public function _construct_finalize_set_table_to_join_with($table)
     {
         $this->_table_to_join_with = $table;
     }

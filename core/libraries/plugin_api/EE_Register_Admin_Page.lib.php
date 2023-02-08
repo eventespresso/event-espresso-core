@@ -22,7 +22,7 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
      * The purpose of this method is to provide an easy way for addons to register their admin pages (using the EE
      * Admin Page loader system).
      *
-     * @param string $identifier                                      This string represents the basename of the Admin
+     * @param string $addon_name                                      This string represents the basename of the Admin
      *                                                                Page init. The init file must use this basename
      *                                                                in its name and class (i.e.
      *                                                                {page_basename}_Admin_Page_Init.core.php).
@@ -33,29 +33,32 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
      *        reside ( used to setup autoloaders).
      *
      *    }
-     * @return void
+     * @return bool
      * @throws EE_Error
      * @since 4.3.0
      *
      */
-    public static function register($identifier = '', array $setup_args = [])
+    public static function register($addon_name = '', $setup_args = [])
     {
 
         // check that an admin_page has not already been registered with that name
-        if (isset(self::$_ee_admin_page_registry[ $identifier ])) {
+        if (isset(self::$_ee_admin_page_registry[ $addon_name ])) {
             throw new EE_Error(
                 sprintf(
                     esc_html__(
-                        'An Admin Page with the name "%s" has already been registered and each Admin Page requires a unique name.',
+                        'An Admin Page located at %1$s has already been registered and each Admin Page requires a unique name.
+                        Error thrown while registering an Admin Page of the same name for the %2$s addon with the admin page path: %3$s."',
                         'event_espresso'
                     ),
-                    $identifier
+                    '<pre>' . (self::$_ee_admin_page_registry[ $addon_name ]['page_path']) . '</pre>',
+                    $addon_name,
+                    '<pre>' . (isset($setup_args['page_path']) ? $setup_args['page_path'] : '') . '</pre>'
                 )
             );
         }
 
         // required fields MUST be present, so let's make sure they are.
-        if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['page_path'])) {
+        if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['page_path'])) {
             throw new EE_Error(
                 esc_html__(
                     'In order to register an Admin Page with EE_Register_Admin_Page::register(), you must include the "page_basename" (the class name of the page), and an array containing the following keys: "page_path" (the path where the registered admin pages reside)',
@@ -65,8 +68,8 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_ee_admin_page_registry[ $identifier ])) {
-            return;
+        if (isset(self::$_ee_admin_page_registry[ $addon_name ])) {
+            return true;
         }
 
         if (! did_action('AHEE__EE_System__load_espresso_addons') || did_action('AHEE__EE_Admin__loaded')) {
@@ -74,29 +77,28 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
                 __METHOD__,
                 sprintf(
                     esc_html__(
-                        'An attempt was made to register "%s" as an EE Admin page has failed because it was not registered at the correct time.  Please use the "AHEE__EE_Admin__loaded" hook to register Admin pages.',
+                        'An attempt was made to register "%s" as an EE Admin page has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_controllers__load_admin_controllers" hook to register Admin pages.',
                         'event_espresso'
                     ),
-                    $identifier
+                    $addon_name
                 ),
                 '4.3'
             );
         }
 
         // add incoming stuff to our registry property
-        self::$_ee_admin_page_registry[ $identifier ] = [
+        self::$_ee_admin_page_registry[ $addon_name ] = [
             'page_path' => $setup_args['page_path'],
             'config'    => $setup_args,
         ];
 
         // add filters
-
         add_filter(
-            'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs',
-            ['EE_Register_Admin_Page', 'set_page_basename'],
-            10
+            'FHEE__EE_Admin_Page_Loader__findAdminPages__admin_page_folders',
+            ['EE_Register_Admin_Page', 'set_page_path']
         );
-        add_filter('FHEE__EEH_Autoloader__load_admin_core', ['EE_Register_Admin_Page', 'set_page_path'], 10);
+
+        return true;
     }
 
 
@@ -104,43 +106,28 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
      * This deregisters a EE_Admin page that is already registered.  Note, this MUST be loaded after the
      * page being deregistered is loaded.
      *
-     * @param string $identifier Use whatever string was used to register the admin page.
+     * @param string $addon_name Use whatever string was used to register the admin page.
      * @return  void
      * @since    4.3.0
      *
      */
-    public static function deregister($identifier = '')
+    public static function deregister($addon_name = '')
     {
-        unset(self::$_ee_admin_page_registry[ $identifier ]);
-    }
-
-
-    /**
-     * set_page_basename
-     *
-     * @param $installed_refs
-     * @return mixed
-     */
-    public static function set_page_basename($installed_refs)
-    {
-        if (! empty(self::$_ee_admin_page_registry)) {
-            foreach (self::$_ee_admin_page_registry as $basename => $args) {
-                $installed_refs[ $basename ] = $args['page_path'];
-            }
-        }
-        return $installed_refs;
+        unset(self::$_ee_admin_page_registry[ $addon_name ]);
     }
 
 
     /**
      * set_page_path
      *
-     * @param $paths
+     * @param array $paths
      * @return mixed
+     * @throws EE_Error
      */
     public static function set_page_path($paths)
     {
         foreach (self::$_ee_admin_page_registry as $basename => $args) {
+            EEH_Autoloader::register_autoloaders_for_each_file_in_folder($args['page_path']);
             $paths[ $basename ] = $args['page_path'];
         }
         return $paths;

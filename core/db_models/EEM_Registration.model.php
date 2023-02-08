@@ -197,7 +197,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
                 ),
                 'REG_count' => new EE_Integer_Field(
                     'REG_count',
-                    esc_html__('Count of this registration in the group registration ', 'event_espresso'),
+                    esc_html__('Count of this registration in the group registration', 'event_espresso'),
                     true,
                     1
                 ),

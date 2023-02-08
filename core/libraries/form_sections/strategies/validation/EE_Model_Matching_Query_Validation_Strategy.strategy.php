@@ -28,7 +28,7 @@ class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy
      * @param string $model_name  name of an EEM_Base model
      * @param array  $query_params     @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $input_field_name the input will be treated as this field's value
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function __construct($validation_error_message = null, $model_name = '', $query_params = array(), $input_field_name = '')
     {
@@ -49,8 +49,8 @@ class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy
     /**
      * @param $normalized_value
      * @return bool|void
-     * @throws \EE_Error
-     * @throws \EE_Validation_Error
+     * @throws EE_Error
+     * @throws EE_Validation_Error
      */
     public function validate($normalized_value)
     {

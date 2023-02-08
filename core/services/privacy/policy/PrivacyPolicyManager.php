@@ -42,7 +42,7 @@ class PrivacyPolicyManager
      * @throws InvalidIdentifierException
      * @throws InvalidInterfaceException
      */
-    public function addPrivacyPolicy(WP_Screen $screen)
+    public function addPrivacyPolicy($screen)
     {
         /** @var RequestInterface $request */
         $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);

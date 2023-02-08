@@ -19,9 +19,9 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
     /**
      * register method for setting up model extensions
      *
-     * @param string $identifier            unique id for the extensions being setup
+     * @param string $addon_name            unique id for the extensions being setup
      * @param array  $setup_args            {
-     * @return void
+     * @return bool
      * @throws EE_Error
      * @type  array  $model_extension_paths array of folders containing DB model extensions, where each file follows
      *                                      the models naming convention, which is:
@@ -50,13 +50,16 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
      *                                      }
      *
      */
-    public static function register($identifier = '', array $setup_args = [])
+    public static function register($addon_name = '', $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
         if (
-            empty($identifier)
+            empty($addon_name)
             || ! is_array($setup_args)
-            || (empty($setup_args['model_extension_paths']) && empty($setup_args['class_extension_paths']))
+            || (
+                empty($setup_args['model_extension_paths'])
+                && empty($setup_args['class_extension_paths'])
+            )
         ) {
             throw new EE_Error(
                 esc_html__(
@@ -67,8 +70,8 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_registry[ $identifier ])) {
-            return;
+        if (isset(self::$_registry[ $addon_name ])) {
+            return true;
         }
         // check correct loading
         if (! did_action('AHEE__EE_System__load_espresso_addons') || did_action('AHEE__EE_Admin__loaded')) {
@@ -79,17 +82,18 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
                         'An attempt was made to register "%1$s" as a Model extension has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register models.%2$s Hook Status: %2$s "AHEE__EE_System__load_espresso_addons" : %3$s %2$s "AHEE__EE_Admin__loaded" : %4$s%2$s',
                         'event_espresso'
                     ),
-                    $identifier,
+                    $addon_name,
                     '<br />',
                     did_action('AHEE__EE_System__load_espresso_addons') ? 'action done' : 'action NOT done',
                     did_action('AHEE__EE_Admin__loaded') ? 'action done' : 'action NOT done'
                 ),
                 '4.3'
             );
+            return false;
         }
 
-        self::$_registry[ $identifier ]   = $setup_args;
-        self::$_extensions[ $identifier ] = [];
+        self::$_registry[ $addon_name ]   = $setup_args;
+        self::$_extensions[ $addon_name ] = [];
 
         if (isset($setup_args['model_extension_paths'])) {
             require_once(EE_LIBRARIES . 'plugin_api/db/EEME_Base.lib.php');
@@ -102,7 +106,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
             }
             EEH_Autoloader::register_autoloader($class_to_filepath_map);
             foreach (array_keys($class_to_filepath_map) as $classname) {
-                self::$_extensions[ $identifier ]['models'][ $classname ] = new $classname();
+                self::$_extensions[ $addon_name ]['models'][ $classname ] = new $classname();
             }
             unset($setup_args['model_extension_paths']);
         }
@@ -111,7 +115,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
             $class_to_filepath_map = EEH_File::get_contents_of_folders($setup_args['class_extension_paths']);
             EEH_Autoloader::register_autoloader($class_to_filepath_map);
             foreach (array_keys($class_to_filepath_map) as $classname) {
-                self::$_extensions[ $identifier ]['classes'][ $classname ] = new $classname();
+                self::$_extensions[ $addon_name ]['classes'][ $classname ] = new $classname();
             }
             unset($setup_args['class_extension_paths']);
         }
@@ -120,19 +124,20 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
                 sprintf(esc_html__("The key '%s' is not a known key for registering a model", "event_espresso"), $unknown_key)
             );
         }
+        return true;
     }
 
 
     /**
      * deregister
      *
-     * @param string $identifier
+     * @param string $addon_name
      */
-    public static function deregister($identifier = '')
+    public static function deregister($addon_name = '')
     {
-        if (isset(self::$_registry[ $identifier ])) {
-            unset(self::$_registry[ $identifier ]);
-            foreach (self::$_extensions[ $identifier ] as $extension_of_type) {
+        if (isset(self::$_registry[ $addon_name ])) {
+            unset(self::$_registry[ $addon_name ]);
+            foreach (self::$_extensions[ $addon_name ] as $extension_of_type) {
                 foreach ($extension_of_type as $extension) {
                     $extension->deregister();
                 }

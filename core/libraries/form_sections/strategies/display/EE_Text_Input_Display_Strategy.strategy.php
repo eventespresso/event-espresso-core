@@ -27,6 +27,7 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base
      */
     public function __construct($type = 'text')
     {
+        $type = (string) $type;
         $this->_type = $type;
         parent::__construct();
     }
@@ -49,10 +50,9 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base
     }
 
 
-
     /**
-     *
      * @return string of html to display the field
+     * @throws EE_Error
      */
     public function display()
     {

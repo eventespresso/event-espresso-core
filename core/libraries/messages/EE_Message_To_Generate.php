@@ -12,24 +12,24 @@
 class EE_Message_To_Generate
 {
     /**
-     * @var string name of EE_messenger
+     * @var string
      */
-    protected $_messenger_name = null;
+    protected $_messenger_name;
 
     /**
-     * @var string name of EE_message_type
+     * @var string
      */
-    protected $_message_type_name = null;
+    protected $_message_type_name;
 
     /**
      * @var EE_messenger
      */
-    protected $_messenger = null;
+    protected $_messenger;
 
     /**
      * @var EE_message_type
      */
-    protected $_message_type = null;
+    protected $_message_type;
 
     /**
      * Identifier for the context the message is to be generated for.
@@ -53,9 +53,9 @@ class EE_Message_To_Generate
     protected $_preview = false;
 
     /**
-     * @var EE_Message $_message
+     * @var EE_Message
      */
-    protected $_message = null;
+    protected $_message;
 
     /**
      * This is set by the constructor to indicate whether the incoming messenger

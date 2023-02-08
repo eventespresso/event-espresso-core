@@ -218,7 +218,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
      * @param null   $limit
      * @param bool   $count
      * @param bool   $global
-     * @return \EE_Message_Template_Group[] message template groups.
+     * @return EE_Message_Template_Group[] message template groups.
      */
     public function get_all_trashed_grouped_message_templates(
         $orderby = 'GRP_ID',
@@ -355,7 +355,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
      * @param string $message_type The message type we are validating.
      * @return mixed If the fields all check out then we return true otherwise error messages are returned
      *                       (indexed by field name);
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function validate($fields, $context, $messenger, $message_type)
     {

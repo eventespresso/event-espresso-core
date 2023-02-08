@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\exceptions;
 
+use UnexpectedValueException;
+use Exception;
 /**
  * Class UnexpectedEntityException
  * Description
@@ -9,7 +11,7 @@ namespace EventEspresso\core\exceptions;
  * @package       Event Espresso
  * @author        Brent Christensen
  */
-class UnexpectedEntityException extends \UnexpectedValueException
+class UnexpectedEntityException extends UnexpectedValueException
 {
     /**
      * UnexpectedEntityException constructor
@@ -18,9 +20,9 @@ class UnexpectedEntityException extends \UnexpectedValueException
      * @param string     $expected_class classname of the entity we wanted
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($entity, $expected_class, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($entity, $expected_class, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(

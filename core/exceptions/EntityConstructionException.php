@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\exceptions;
 
+use DomainException;
+use Exception;
 /**
  * Class EntityConstructionException
  * Description
@@ -9,7 +11,7 @@ namespace EventEspresso\core\exceptions;
  * @package       Event Espresso
  * @author        Brent Christensen
  */
-class EntityConstructionException extends \DomainException
+class EntityConstructionException extends DomainException
 {
     /**
      * EntityConstructionException constructor
@@ -17,9 +19,9 @@ class EntityConstructionException extends \DomainException
      * @param string     $entity_class class name of the entity being constructed
      * @param string     $message
      * @param int        $code
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($entity_class, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($entity_class, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(

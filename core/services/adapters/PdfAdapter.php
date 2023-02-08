@@ -23,9 +23,6 @@ class PdfAdapter
      */
     public function __construct()
     {
-        if (! class_exists('Dompdf/Dompdf')) {
-            require_once EE_VENDOR . 'autoload.php';
-        }
     }
 
 
@@ -33,7 +30,7 @@ class PdfAdapter
      * @param array $extra_options
      * @return PdfAdapter
      */
-    public function initializeOptions(array $extra_options = []): PdfAdapter
+    public function initializeOptions($extra_options = [])
     {
         $this->options = new Options();
         $this->options->set('isRemoteEnabled', true);
@@ -60,7 +57,7 @@ class PdfAdapter
      * @param bool $download
      * @return void
      */
-    public function generate(string $content, string $filename, bool $download): void
+    public function generate($content, $filename, $download)
     {
         $dompdf = new Dompdf($this->options);
         $dompdf->loadHtml($content);

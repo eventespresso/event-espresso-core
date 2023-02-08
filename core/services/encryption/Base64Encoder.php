@@ -36,7 +36,7 @@ class Base64Encoder
     public function encodeString($text_string = '')
     {
         // you give me nothing??? GET OUT !
-        if (empty($text_string) || ! $this->use_base64_encode) {
+        if (! $this->use_base64_encode || empty($text_string)) {
             return $text_string;
         }
         // encode
@@ -55,7 +55,7 @@ class Base64Encoder
     public function decodeString($encoded_string = '')
     {
         // you give me nothing??? GET OUT !
-        if (empty($encoded_string)) {
+        if (! $this->use_base64_encode || empty($encoded_string)) {
             return $encoded_string;
         }
         $this->isValidBase64OrFail($encoded_string);
@@ -70,6 +70,7 @@ class Base64Encoder
      */
     private function decode($encoded_string)
     {
+        $encoded_string = (string) $encoded_string;
         $decoded_string = base64_decode($encoded_string);
         if ($decoded_string === false) {
             throw new RuntimeException(
@@ -90,7 +91,7 @@ class Base64Encoder
     public function encodeUrl($text_string = '')
     {
         // you give me nothing??? GET OUT !
-        if (empty($text_string) || ! $this->use_base64_encode) {
+        if (! $this->use_base64_encode || empty($text_string)) {
             return $text_string;
         }
         // encode
@@ -111,7 +112,7 @@ class Base64Encoder
     public function decodeUrl($encoded_string = '')
     {
         // you give me nothing??? GET OUT !
-        if (empty($encoded_string)) {
+        if (! $this->use_base64_encode || empty($encoded_string)) {
             return $encoded_string;
         }
         // replace previously removed characters
@@ -141,13 +142,12 @@ class Base64Encoder
 
     /**
      * @see https://stackoverflow.com/a/51877882
-     * @param $string
+     * @param string $string
      * @return bool
      */
     public function isValidBase64($string)
     {
-        // ensure data is a string
-        if (! is_string($string) || ! $this->use_base64_encode) {
+        if (! $this->use_base64_encode) {
             return false;
         }
         // first check if we're dealing with an actual valid base64 encoded string

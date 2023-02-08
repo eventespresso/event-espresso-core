@@ -55,7 +55,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
      *
      * @param string $model_relation_chain like 'Event.Event_Venue.Venue'
      * @return string of SQL
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_join_to_intermediate_model_statement($model_relation_chain)
     {
@@ -99,7 +99,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
      *
      * @param string $model_relation_chain like 'Event.Event_Venue.Venue'
      * @return string of SQL
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_join_statement($model_relation_chain)
     {
@@ -145,7 +145,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
      *                                                            checking existing values and for setting new rows if
      *                                                            no exact matches.
      * @return EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function add_relation_to($this_obj_or_id, $other_obj_or_id, $extra_join_model_fields_n_values = array())
     {
@@ -201,7 +201,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
      * @param array             $where_query col=>val pairs that are used as extra conditions for checking existing
      *                                       values and for removing existing rows if exact matches exist.
      * @return EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function remove_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = array())
     {

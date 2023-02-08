@@ -23,7 +23,8 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
 
 
     /**
-     * @param null $pm_instance
+     * @param EE_Payment_Method|null $pm_instance
+     * @throws ReflectionException
      * @throws EE_Error
      */
     public function __construct($pm_instance = null)
@@ -46,12 +47,14 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
 
     /**
      * Creates the billing form for this payment method type
-     *
-     * @param EE_Transaction $transaction
-     * @return NULL
+     * @param EE_Transaction|null $transaction
+     * @param array|null          $extra_args
+     * @return EE_Billing_Info_Form|null
      */
-    public function generate_new_billing_form(EE_Transaction $transaction = null)
-    {
+    public function generate_new_billing_form(
+        $transaction = null,
+        $extra_args = []
+    ) {
         return null;
     }
 
@@ -61,6 +64,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
      *
      * @return EE_Payment_Method_Form
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_new_settings_form()
     {
@@ -103,6 +107,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
      * @param EE_Transaction $transaction
      * @return EE_Payment
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function finalize_payment_for($transaction)
     {
@@ -112,8 +117,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
         // so in case the IPN is arriving later, let's try to process an IPN!
         if ($request->getServerParam('REQUEST_METHOD') === 'POST') {
             return $this->handle_ipn($request->postParams(), $transaction);
-        } else {
-            return parent::finalize_payment_for($transaction);
         }
+        return parent::finalize_payment_for($transaction);
     }
 }

@@ -182,10 +182,10 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @singleton method used to instantiate class object
-     * @param CacheStorageInterface $cache_storage
+     * @param CacheStorageInterface|null $cache_storage
      * @param SessionLifespan|null  $lifespan
-     * @param RequestInterface      $request
-     * @param SessionStartHandler   $session_start_handler
+     * @param RequestInterface|null $request
+     * @param SessionStartHandler|null $session_start_handler
      * @param EE_Encryption         $encryption
      * @return EE_Session
      * @throws InvalidArgumentException
@@ -193,11 +193,11 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidInterfaceException
      */
     public static function instance(
-        CacheStorageInterface $cache_storage = null,
-        SessionLifespan $lifespan = null,
-        RequestInterface $request = null,
-        SessionStartHandler $session_start_handler = null,
-        EE_Encryption $encryption = null
+        $cache_storage = null,
+        $lifespan = null,
+        $request = null,
+        $session_start_handler = null,
+        $encryption = null
     ) {
         // check if class object is instantiated
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
@@ -435,10 +435,10 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @param \EE_Cart $cart
+     * @param EE_Cart $cart
      * @return bool
      */
-    public function set_cart(EE_Cart $cart)
+    public function set_cart($cart)
     {
         $this->_session_data['cart'] = $cart;
         $this->setSaveState();
@@ -458,7 +458,7 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @return \EE_Cart
+     * @return EE_Cart
      */
     public function cart()
     {
@@ -469,10 +469,10 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @param \EE_Checkout $checkout
+     * @param EE_Checkout $checkout
      * @return bool
      */
-    public function set_checkout(EE_Checkout $checkout)
+    public function set_checkout($checkout)
     {
         $this->_session_data['checkout'] = $checkout;
         $this->setSaveState();
@@ -492,7 +492,7 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @return \EE_Checkout
+     * @return EE_Checkout
      */
     public function checkout()
     {
@@ -503,11 +503,11 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return bool
      * @throws EE_Error
      */
-    public function set_transaction(EE_Transaction $transaction)
+    public function set_transaction($transaction)
     {
         // first remove the session from the transaction before we save the transaction in the session
         $transaction->set_txn_session_data(null);
@@ -529,7 +529,7 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @return \EE_Transaction
+     * @return EE_Transaction
      */
     public function transaction()
     {
@@ -545,7 +545,7 @@ class EE_Session implements SessionIdentifierInterface
      *
      * @param null $key
      * @param bool $reset_cache
-     * @return array
+     * @return array|EE_Cart|EE_Checkout|EE_Transaction
      */
     public function get_session_data($key = null, $reset_cache = false)
     {

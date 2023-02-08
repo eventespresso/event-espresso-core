@@ -47,7 +47,7 @@ class CapChecker implements CommandBusMiddlewareInterface
      * @throws InvalidClassException
      * @throws InsufficientPermissionsException
      */
-    public function handle(CommandInterface $command, Closure $next)
+    public function handle($command, $next)
     {
         if ($command instanceof CommandRequiresCapCheckInterface) {
             $this->capabilities_checker->processCapCheck(

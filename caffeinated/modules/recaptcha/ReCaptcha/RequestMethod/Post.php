@@ -47,7 +47,7 @@ class Post implements RequestMethod
      * @param RequestParameters $params Request parameters
      * @return string Body of the reCAPTCHA response
      */
-    public function submit(RequestParameters $params)
+    public function submit($params)
     {
         /**
          * PHP 5.6.0 changed the way you specify the peer name for SSL context options.

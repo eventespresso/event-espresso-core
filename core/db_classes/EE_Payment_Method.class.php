@@ -25,7 +25,7 @@ class EE_Payment_Method extends EE_Base_Class
     /**
      * @param array $props_n_values
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function new_instance($props_n_values = array())
     {
@@ -37,7 +37,7 @@ class EE_Payment_Method extends EE_Base_Class
     /**
      * @param array $props_n_values
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function new_instance_from_db($props_n_values = array())
     {
@@ -81,7 +81,7 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets this PM as active by making it usable within the CART scope. Offline gateways
      * are also usable from the admin-scope as well. DOES NOT SAVE it
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function set_active()
     {
@@ -134,7 +134,7 @@ class EE_Payment_Method extends EE_Base_Class
      */
     public function debug_mode()
     {
-        return $this->get('PMD_debug_mode');
+        return (bool) $this->get('PMD_debug_mode');
     }
 
 
@@ -459,7 +459,7 @@ class EE_Payment_Method extends EE_Base_Class
      * @param string $url
      * @param string $css_class
      * @return string of HTML for displaying the button
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function button_html($url = '', $css_class = '')
     {
@@ -487,7 +487,7 @@ class EE_Payment_Method extends EE_Base_Class
      * (as defined by the gateway and the currently active currencies)
      *
      * @return EE_Currency[]
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_all_usable_currencies()
     {
@@ -500,7 +500,7 @@ class EE_Payment_Method extends EE_Base_Class
      *
      * @param string $currency_code currency ID (code)
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function usable_for_currency($currency_code)
     {
@@ -517,7 +517,7 @@ class EE_Payment_Method extends EE_Base_Class
      * Returns TRUE if this payment method's gateway is an instance of EE_Onsite_Gateway
      *
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function is_on_site()
     {
@@ -529,7 +529,7 @@ class EE_Payment_Method extends EE_Base_Class
      * Returns TRUE if this payment method's gateway is an instance of EE_Offsite_Gateway
      *
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function is_off_site()
     {
@@ -541,7 +541,7 @@ class EE_Payment_Method extends EE_Base_Class
      * Returns TRUE if this payment method does not utilize a gateway
      *
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function is_off_line()
     {
@@ -568,7 +568,7 @@ class EE_Payment_Method extends EE_Base_Class
      *
      * @param array $set_cols_n_values
      * @return int @see EE_Base_Class::save()
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function save($set_cols_n_values = array())
     {

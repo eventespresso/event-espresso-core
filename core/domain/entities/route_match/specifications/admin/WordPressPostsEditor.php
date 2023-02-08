@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\entities\route_match\specifications\admin;
 
+use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\domain\entities\route_match\MatchAnyRouteSpecification;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -24,7 +25,7 @@ class WordPressPostsEditor extends MatchAnyRouteSpecification
      * @param WordPressPostsEditorEdit $edit_post_route_match
      * @param WordPressPostsEditorAddNew $create_post_route_match
      * @param RequestInterface           $request
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws InvalidEntityException
      */
     public function __construct(
         WordPressPostsEditorEdit $edit_post_route_match,

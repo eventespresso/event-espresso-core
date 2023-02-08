@@ -44,7 +44,10 @@ abstract class EE_Payment_Base_message_type extends EE_message_type
 
 
 
-    protected function _get_data_for_context($context, EE_Registration $registration, $id)
+    /**
+     * @param EE_Registration $registration
+     */
+    protected function _get_data_for_context($context, $registration, $id)
     {
 
         // use the registration to get the transaction.
@@ -62,7 +65,10 @@ abstract class EE_Payment_Base_message_type extends EE_message_type
 
 
 
-    protected function _get_admin_content_events_edit_for_messenger(EE_messenger $messenger)
+    /**
+     * @param EE_messenger $messenger
+     */
+    protected function _get_admin_content_events_edit_for_messenger($messenger)
     {
         // this is just a test
         return $this->name . ' Message Type for ' . $messenger->name . ' Messenger ';

@@ -39,12 +39,10 @@ class EE_Country_Select_Input extends EE_Select_Input
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function __construct($country_options = null, $input_settings = array())
+    public function __construct($country_options = null, $input_settings = [])
     {
-        $get = isset($input_settings[ self::OPTION_GET_KEY ])
-            ? $input_settings[ self::OPTION_GET_KEY ]
-            : self::OPTION_GET_ACTIVE;
-        $country_options = apply_filters(
+        $get                          = isset($input_settings[ self::OPTION_GET_KEY ]) ? $input_settings[ self::OPTION_GET_KEY ] : self::OPTION_GET_ACTIVE;
+        $country_options              = apply_filters(
             'FHEE__EE_Country_Select_Input____construct__country_options',
             $this->get_country_answer_options($country_options, $get),
             $this,
@@ -60,8 +58,8 @@ class EE_Country_Select_Input extends EE_Select_Input
     /**
      * get_country_answer_options
      *
-     * @param array  $country_options
-     * @param string $get
+     * @param array|null $country_options
+     * @param string     $get
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -69,8 +67,10 @@ class EE_Country_Select_Input extends EE_Select_Input
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function get_country_answer_options($country_options = null, $get = self::OPTION_GET_ACTIVE)
-    {
+    public function get_country_answer_options(
+        $country_options = null,
+        $get = self::OPTION_GET_ACTIVE
+    ) {
         // if passed something that is NOT an array
         if (! is_array($country_options)) {
             // get possibly cached list of countries
@@ -85,7 +85,7 @@ class EE_Country_Select_Input extends EE_Select_Input
                     }
                 }
             } else {
-                $country_options = array();
+                $country_options = [];
             }
         }
         return $country_options;

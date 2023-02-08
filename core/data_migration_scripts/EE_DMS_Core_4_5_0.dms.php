@@ -1,13 +1,5 @@
 <?php
 
-/**
- * meant to convert DBs between 4.3 and 4.5
- * mostly just
- * -adds QGQ_order to teh question-group_question table;
- * -adds DTT_name and DTT_description to the datetime table;
- * -adds users onto prices, price types, question groups, and tickets
- */
-
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -26,8 +18,16 @@ foreach ($stages as $filepath) {
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_5_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
-
-
+/**
+ * Class EE_DMS_Core_4_5_0
+ * meant to convert DBs between 4.3 and 4.5
+ * mostly just
+ * -adds QGQ_order to teh question-group_question table;
+ * -adds DTT_name and DTT_description to the datetime table;
+ * -adds users onto prices, price types, question groups, and tickets
+ *
+ * @author  Mike Nelson
+ */
 class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base
 {
     /**

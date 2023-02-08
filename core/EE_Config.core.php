@@ -117,28 +117,29 @@ final class EE_Config implements ResettableInterface
     public $gateway;
 
     /**
-     * @var    array $_addon_option_names
-     * @access    private
+     * @var array
      */
     private $_addon_option_names = array();
 
     /**
-     * @var    array $_module_route_map
-     * @access    private
+     * @var array
      */
     private static $_module_route_map = array();
 
     /**
-     * @var    array $_module_forward_map
-     * @access    private
+     * @var array
      */
     private static $_module_forward_map = array();
 
     /**
-     * @var    array $_module_view_map
-     * @access    private
+     * @var array
      */
     private static $_module_view_map = array();
+
+    /**
+     * @var bool
+     */
+    private static $initialized = false;
 
 
     /**
@@ -180,6 +181,7 @@ final class EE_Config implements ResettableInterface
             self::$_instance->update_addon_option_names();
         }
         self::$_instance = null;
+        self::$initialized = false;
         // we don't need to reset the static properties imo because those should
         // only change when a module is added or removed. Currently we don't
         // support removing a module during a request when it previously existed
@@ -191,13 +193,12 @@ final class EE_Config implements ResettableInterface
     }
 
 
-    /**
-     *    class constructor
-     *
-     * @access    private
-     */
     private function __construct()
     {
+        if (self::$initialized) {
+            return;
+        }
+        self::$initialized = true;
         do_action('AHEE__EE_Config__construct__begin', $this);
         EE_Config::$_logging_enabled = apply_filters('FHEE__EE_Config___construct__logging_enabled', false);
         // setup empty config classes
@@ -209,15 +210,15 @@ final class EE_Config implements ResettableInterface
         //  register shortcodes and modules
         add_action(
             'AHEE__EE_System__register_shortcodes_modules_and_widgets',
-            array($this, 'register_shortcodes_and_modules'),
+            [$this, 'register_shortcodes_and_modules'],
             999
         );
         //  initialize shortcodes and modules
-        add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'initialize_shortcodes_and_modules'));
+        add_action('AHEE__EE_System__core_loaded_and_ready', [$this, 'initialize_shortcodes_and_modules']);
         // register widgets
-        add_action('widgets_init', array($this, 'widgets_init'), 10);
+        add_action('widgets_init', [$this, 'widgets_init'], 10);
         // shutdown
-        add_action('shutdown', array($this, 'shutdown'), 10);
+        add_action('shutdown', [$this, 'shutdown'], 10);
         // construct__end hook
         do_action('AHEE__EE_Config__construct__end', $this);
         // hardcoded hack
@@ -241,8 +242,7 @@ final class EE_Config implements ResettableInterface
      */
     public static function get_current_theme()
     {
-        return isset(self::$_instance->template_settings->current_espresso_theme)
-            ? self::$_instance->template_settings->current_espresso_theme : 'Espresso_Arabica_2014';
+        return isset(self::$_instance->template_settings->current_espresso_theme) ? self::$_instance->template_settings->current_espresso_theme : 'Espresso_Arabica_2014';
     }
 
 
@@ -277,7 +277,12 @@ final class EE_Config implements ResettableInterface
     {
         // load_core_config__start hook
         do_action('AHEE__EE_Config___load_core_config__start', $this);
-        $espresso_config = $this->get_espresso_config();
+        $espresso_config = (array) $this->get_espresso_config();
+        // need to move the "addons" element to the end of the config array
+        // in case an addon config references one of the other config classes
+        $addons = isset($espresso_config['addons']) ? $espresso_config['addons'] : new StdClass();
+        unset($espresso_config['addons']);
+        $espresso_config['addons'] = $addons;
         foreach ($espresso_config as $config => $settings) {
             // load_core_config__start hook
             $settings = apply_filters(
@@ -731,17 +736,18 @@ final class EE_Config implements ResettableInterface
 
 
     /**
-     *    set_config
-     *
-     * @access    protected
-     * @param    string         $section
-     * @param    string         $name
-     * @param    string         $config_class
-     * @param    EE_Config_Base $config_obj
-     * @return    EE_Config_Base
+     * @param string              $section
+     * @param string              $name
+     * @param string              $config_class
+     * @param EE_Config_Base|null $config_obj
+     * @return EE_Config_Base
      */
-    public function set_config($section = '', $name = '', $config_class = '', EE_Config_Base $config_obj = null)
-    {
+    public function set_config(
+        $section = '',
+        $name = '',
+        $config_class = '',
+        $config_obj = null
+    ) {
         // ensure config class is set to something
         $config_class = $this->_set_config_class($config_class, $name);
         // run tests 1-4, 6, and 7 to verify all config params are set and valid
@@ -760,7 +766,22 @@ final class EE_Config implements ResettableInterface
         }
         if (get_option($config_option_name)) {
             EE_Config::log($config_option_name);
-            update_option($config_option_name, $config_obj);
+            try {
+                update_option($config_option_name, $config_obj);
+            } catch (Exception $exception) {
+                throw new DomainException(
+                    sprintf(
+                        esc_html__(
+                            'The following exception occurred while attempting to update the "%1$s" class for config section "%2$s->%3$s": %4$s',
+                            'event_espresso'
+                        ),
+                        $config_class,
+                        $section,
+                        $name,
+                        $exception->getMessage()
+                    )
+                );
+            }
             $this->{$section}->{$name} = $config_obj;
             return $this->{$section}->{$name};
         } else {
@@ -1230,9 +1251,9 @@ final class EE_Config implements ResettableInterface
         foreach (EE_Registry::instance()->modules as $module_class => $module_path) {
             // fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
             // which set hooks ?
-            if (is_admin()) {
+            if (is_admin() && is_callable([$module_class, 'set_hooks_admin'])) {
                 // fire immediately
-                call_user_func(array($module_class, 'set_hooks_admin'));
+                call_user_func([$module_class, 'set_hooks_admin']);
             } else {
                 // delay until other systems are online
                 add_action(
@@ -1953,7 +1974,7 @@ class EE_Organization_Config extends EE_Config_Base
      * @var string $CNT_ISO
      * eg US
      */
-    public $CNT_ISO = '';
+    public $CNT_ISO = 'US';
 
     /**
      * @var string $zip
@@ -1987,8 +2008,6 @@ class EE_Organization_Config extends EE_Config_Base
 
     /**
      * The below are all various properties for holding links to organization social network profiles
-     *
-     * @var string
      */
     /**
      * facebook (facebook.com/profile.name)
@@ -2112,58 +2131,99 @@ class EE_Currency_Config extends EE_Config_Base
 
 
     /**
-     *    class constructor
-     *
-     * @access    public
-     * @param string $CNT_ISO
+     * @param string|null $CNT_ISO
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function __construct($CNT_ISO = '')
+    public function __construct($CNT_ISO = 'US')
     {
-        /** @var TableAnalysis $table_analysis */
-        $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
+        if ($CNT_ISO && $CNT_ISO === $this->code) {
+            return;
+        }
         // get country code from organization settings or use default
         $ORG_CNT = isset(EE_Registry::instance()->CFG->organization)
                    && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
             ? EE_Registry::instance()->CFG->organization->CNT_ISO
-            : '';
+            : 'US';
         // but override if requested
         $CNT_ISO = ! empty($CNT_ISO) ? $CNT_ISO : $ORG_CNT;
         // so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
-        if (
-            ! empty($CNT_ISO)
-            && EE_Maintenance_Mode::instance()->models_can_query()
-            && $table_analysis->tableExists(EE_Registry::instance()->load_model('Country')->table())
-        ) {
-            // retrieve the country settings from the db, just in case they have been customized
-            $country = EE_Registry::instance()->load_model('Country')->get_one_by_ID($CNT_ISO);
-            if ($country instanceof EE_Country) {
-                $this->code = $country->currency_code();    // currency code: USD, CAD, EUR
-                $this->name = $country->currency_name_single();    // Dollar
-                $this->plural = $country->currency_name_plural();    // Dollars
-                $this->sign = $country->currency_sign();            // currency sign: $
-                $this->sign_b4 = $country->currency_sign_before(
-                );        // currency sign before or after: $TRUE  or  FALSE$
-                $this->dec_plc = $country->currency_decimal_places();    // decimal places: 2 = 0.00  3 = 0.000
-                $this->dec_mrk = $country->currency_decimal_mark(
-                );    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-                $this->thsnds = $country->currency_thousands_separator(
-                );    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
-            }
-        }
+        $this->setCurrency($CNT_ISO);
         // fallback to hardcoded defaults, in case the above failed
         if (empty($this->code)) {
-            // set default currency settings
-            $this->code = 'USD';    // currency code: USD, CAD, EUR
-            $this->name = esc_html__('Dollar', 'event_espresso');    // Dollar
-            $this->plural = esc_html__('Dollars', 'event_espresso');    // Dollars
-            $this->sign = '$';    // currency sign: $
-            $this->sign_b4 = true;    // currency sign before or after: $TRUE  or  FALSE$
-            $this->dec_plc = 2;    // decimal places: 2 = 0.00  3 = 0.000
-            $this->dec_mrk = '.';    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-            $this->thsnds = ',';    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
+            $this->setFallbackCurrency();
         }
+    }
+
+
+    /**
+     * @param string|null $CNT_ISO
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setCurrency($CNT_ISO = 'US')
+    {
+        if (empty($CNT_ISO) || ! EE_Maintenance_Mode::instance()->models_can_query()) {
+            return;
+        }
+
+        /** @var TableAnalysis $table_analysis */
+        $table_analysis = EE_Registry::instance()->create('TableAnalysis', [], true);
+        if (! $table_analysis->tableExists(EE_Registry::instance()->load_model('Country')->table())) {
+            return;
+        }
+        // retrieve the country settings from the db, just in case they have been customized
+        $country = EE_Registry::instance()->load_model('Country')->get_one_by_ID($CNT_ISO);
+        if (! $country instanceof EE_Country) {
+            throw new DomainException(
+                esc_html__('Invalid Country ISO Code.', 'event_espresso')
+            );
+        }
+        $this->code    = $country->currency_code();                  // currency code: USD, CAD, EUR
+        $this->name    = $country->currency_name_single();           // Dollar
+        $this->plural  = $country->currency_name_plural();           // Dollars
+        $this->sign    = $country->currency_sign();                  // currency sign: $
+        $this->sign_b4 = $country->currency_sign_before();           // currency sign before or after
+        $this->dec_plc = $country->currency_decimal_places();        // decimal places: 2 = 0.00  3 = 0.000
+        $this->dec_mrk = $country->currency_decimal_mark();          // decimal mark: ',' = 0,01 or '.' = 0.01
+        $this->thsnds  = $country->currency_thousands_separator();   // thousands sep: ',' = 1,000 or '.' = 1.000
+    }
+
+
+    private function setFallbackCurrency()
+    {
+        // set default currency settings
+        $this->code    = 'USD';
+        $this->name    = esc_html__('Dollar', 'event_espresso');
+        $this->plural  = esc_html__('Dollars', 'event_espresso');
+        $this->sign    = '$';
+        $this->sign_b4 = true;
+        $this->dec_plc = 2;
+        $this->dec_mrk = '.';
+        $this->thsnds  = ',';
+    }
+
+
+    /**
+     * @param string|null $CNT_ISO
+     * @return EE_Currency_Config
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function getCurrencyConfig($CNT_ISO = '')
+    {
+        // if CNT_ISO passed lets try to get currency settings for it.
+        $currency_config = ! empty($CNT_ISO)
+            ? new EE_Currency_Config($CNT_ISO)
+            : null;
+        // default currency settings for site if not set
+        if ($currency_config instanceof EE_Currency_Config) {
+            return $currency_config;
+        }
+        EE_Config::instance()->currency = EE_Config::instance()->currency instanceof EE_Currency_Config
+            ? EE_Config::instance()->currency
+            : new EE_Currency_Config();
+        return EE_Config::instance()->currency;
     }
 }
 
@@ -2202,13 +2262,6 @@ class EE_Registration_Config extends EE_Config_Base
      * @var boolean $show_pending_payment_options
      */
     public $show_pending_payment_options;
-
-    /**
-     * Whether to skip the registration confirmation page
-     *
-     * @var boolean $skip_reg_confirmation
-     */
-    public $skip_reg_confirmation;
 
     /**
      * an array of SPCO reg steps where:
@@ -2357,7 +2410,6 @@ class EE_Registration_Config extends EE_Config_Base
         $this->default_STS_ID = EEM_Registration::status_id_pending_payment;
         $this->email_validation_level = 'wp_default';
         $this->show_pending_payment_options = true;
-        $this->skip_reg_confirmation = true;
         $this->reg_steps = array();
         $this->reg_confirmation_last = false;
         $this->use_bot_trap = true;
@@ -2561,24 +2613,9 @@ class EE_Registration_Config extends EE_Config_Base
 class EE_Admin_Config extends EE_Config_Base
 {
     /**
-     * @var boolean $use_personnel_manager
+     * @var boolean $useAdvancedEditor
      */
-    public $use_personnel_manager;
-
-    /**
-     * @var boolean $use_dashboard_widget
-     */
-    public $use_dashboard_widget;
-
-    /**
-     * @var int $events_in_dashboard
-     */
-    public $events_in_dashboard;
-
-    /**
-     * @var boolean $use_event_timezones
-     */
-    public $use_event_timezones;
+    private $useAdvancedEditor;
 
     /**
      * @var string $log_file_name
@@ -2620,6 +2657,11 @@ class EE_Admin_Config extends EE_Config_Base
      */
     private $encode_session_data = false;
 
+    /**
+     * @var boolean
+     */
+    private $is_caffeinated;
+
 
     /**
      *    class constructor
@@ -2629,10 +2671,7 @@ class EE_Admin_Config extends EE_Config_Base
     public function __construct()
     {
         // set default general admin settings
-        $this->use_personnel_manager = true;
-        $this->use_dashboard_widget = true;
-        $this->events_in_dashboard = 30;
-        $this->use_event_timezones = false;
+        $this->useAdvancedEditor = true;
         $this->use_remote_logging = false;
         $this->remote_logging_url = null;
         $this->show_reg_footer = apply_filters(
@@ -2697,6 +2736,32 @@ class EE_Admin_Config extends EE_Config_Base
     {
         $this->encode_session_data = filter_var($encode_session_data, FILTER_VALIDATE_BOOLEAN);
     }
+
+    /**
+     * @return boolean
+     */
+    public function useAdvancedEditor()
+    {
+        if ($this->is_caffeinated === null) {
+            $domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
+            $this->is_caffeinated = $domain->isCaffeinated();
+        }
+        return $this->useAdvancedEditor && $this->is_caffeinated;
+    }
+
+    /**
+     * @param boolean $use_advanced_editor
+     */
+    public function setUseAdvancedEditor($use_advanced_editor = true)
+    {
+        $this->useAdvancedEditor = filter_var(
+            apply_filters(
+                'FHEE__EE_Admin_Config__setUseAdvancedEditor__use_advanced_editor',
+                $use_advanced_editor
+            ),
+            FILTER_VALIDATE_BOOLEAN
+        );
+    }
 }
 
 /**
@@ -2704,31 +2769,6 @@ class EE_Admin_Config extends EE_Config_Base
  */
 class EE_Template_Config extends EE_Config_Base
 {
-    /**
-     * @var boolean $enable_default_style
-     */
-    public $enable_default_style;
-
-    /**
-     * @var string $custom_style_sheet
-     */
-    public $custom_style_sheet;
-
-    /**
-     * @var boolean $display_address_in_regform
-     */
-    public $display_address_in_regform;
-
-    /**
-     * @var int $display_description_on_multi_reg_page
-     */
-    public $display_description_on_multi_reg_page;
-
-    /**
-     * @var boolean $use_custom_templates
-     */
-    public $use_custom_templates;
-
     /**
      * @var string $current_espresso_theme
      */
@@ -2758,11 +2798,6 @@ class EE_Template_Config extends EE_Config_Base
     public function __construct()
     {
         // set default template settings
-        $this->enable_default_style = true;
-        $this->custom_style_sheet = null;
-        $this->display_address_in_regform = true;
-        $this->display_description_on_multi_reg_page = false;
-        $this->use_custom_templates = false;
         $this->current_espresso_theme = 'Espresso_Arabica_2014';
         $this->EED_Event_Single = null;
         $this->EED_Events_Archive = null;
@@ -3042,7 +3077,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
      * @param array $datetimes
      * @return bool
      */
-    public function showDatetimeSelector(array $datetimes)
+    public function showDatetimeSelector($datetimes)
     {
         // if the settings are NOT: don't show OR below threshold, THEN active = true
         return ! (

@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\services\custom_post_types\RewriteRules;
+use EventEspresso\core\domain\services\custom_post_types\registerCustomTaxonomies;
+use EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes;
 use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions;
 use EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms;
@@ -39,7 +42,7 @@ class EE_Register_CPTs
      */
     public static function maybe_flush_rewrite_rules()
     {
-        /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
+        /** @var RewriteRules $rewrite_rules */
         $rewrite_rules = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
         );
@@ -182,7 +185,7 @@ class EE_Register_CPTs
      */
     public function register_taxonomy($taxonomy_name, $singular_name, $plural_name, $override_args = array())
     {
-        /** @var \EventEspresso\core\domain\services\custom_post_types\registerCustomTaxonomies $taxonomies */
+        /** @var registerCustomTaxonomies $taxonomies */
         $taxonomies = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies'
         );
@@ -221,7 +224,7 @@ class EE_Register_CPTs
         $singular_slug = '',
         $plural_slug = ''
     ) {
-        /** @var \EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes $register_custom_post_types */
+        /** @var RegisterCustomPostTypes $register_custom_post_types */
         $register_custom_post_types = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes'
         );

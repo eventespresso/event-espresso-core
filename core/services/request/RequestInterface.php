@@ -18,7 +18,7 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
     /**
      * @param RequestTypeContextCheckerInterface $type
      */
-    public function setRequestTypeContextChecker(RequestTypeContextCheckerInterface $type);
+    public function setRequestTypeContextChecker($type);
 
 
     /**
@@ -56,18 +56,10 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
     /**
      * @param string                 $key
      * @param array|int|float|string $value
+     * @param bool                   $set_global_too
      * @return void
      */
-    public function setServerParam($key, $value);
-
-
-    /**
-     * remove param
-     *
-     * @param string $key
-     * @param bool   $unset_from_global_too
-     */
-    public function unSetServerParam($key, $unset_from_global_too = false);
+    public function setServerParam($key, $value, $set_global_too = false);
 
 
     /**
@@ -167,7 +159,15 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
      * @param array $keys
      * @param bool  $unset_from_global_too
      */
-    public function unSetRequestParams(array $keys, $unset_from_global_too = false);
+    public function unSetRequestParams($keys, $unset_from_global_too = false);
+
+
+    /**
+     * @param string $key
+     * @param bool   $unset_from_global_too
+     * @return void
+     */
+    public function unSetServerParam($key, $unset_from_global_too = false);
 
 
     /**
@@ -177,10 +177,11 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
-     * @param boolean $relativeToWpRoot whether to return the uri relative to WordPress' home URL, or not.
+     * @param boolean $relativeToWpRoot    whether or not to return the uri relative to WordPress' home URL.
+     * @param boolean $remove_query_params whether or not to return the uri with all query params removed.
      * @return string
      */
-    public function requestUri($relativeToWpRoot = false);
+    public function requestUri($relativeToWpRoot = false, $remove_query_params = false);
 
 
     /**
@@ -208,11 +209,30 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
+     * returns the path portion of the current request URI with both the WP Root (home_url()) and query params removed
+     *
+     * @return string
+     * @since   $VID:$
+     */
+    public function requestPath();
+
+
+    /**
+     * returns true if the last segment of the current request path (without params) matches the provided string
+     *
+     * @param string $uri_segment
+     * @return bool
+     * @since   $VID:$
+     */
+    public function currentPageIs($uri_segment);
+
+
+    /**
      * merges the incoming array of parameters into the existing request parameters
      *
      * @param array $request_params
      * @return mixed
      * @since   4.10.24.p
      */
-    public function mergeRequestParams(array $request_params);
+    public function mergeRequestParams($request_params);
 }

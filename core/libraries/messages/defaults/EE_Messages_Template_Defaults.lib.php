@@ -81,16 +81,16 @@ class EE_Messages_Template_Defaults extends EE_Base
     public function __construct(
         EE_messenger $messenger,
         EE_message_type $message_type,
-        ?int $GRP_ID,
-        ?EEM_Message_Template_Group $message_template_group_model,
-        ?EEM_Message_Template $message_template_model
+        $GRP_ID,
+        $message_template_group_model,
+        $message_template_model
     ) {
         $this->_messenger    = $messenger;
         $this->_message_type = $message_type;
-        $this->_GRP_ID       = $GRP_ID ?? 0;
+        $this->_GRP_ID       = isset($GRP_ID) ? $GRP_ID : 0;
         // set the model object
-        $this->_message_template_group_model = $message_template_group_model ?? EEM_Message_Template_Group::instance();
-        $this->_message_template_model       = $message_template_model ?? EEM_Message_Template::instance();
+        $this->_message_template_group_model = isset($message_template_group_model) ? $message_template_group_model : EEM_Message_Template_Group::instance();
+        $this->_message_template_model       = isset($message_template_model) ? $message_template_model : EEM_Message_Template::instance();
         $this->_fields                       = $this->_messenger->get_template_fields();
         $this->_contexts                     = $this->_message_type->get_contexts();
     }
@@ -104,8 +104,9 @@ class EE_Messages_Template_Defaults extends EE_Base
      *                              about where to obtain the templates.
      *
      */
-    private function _set_templates(string $template_pack)
+    private function _set_templates($template_pack)
     {
+        $template_pack = (string) $template_pack;
         // get the corresponding template pack object (if present.  If not then we just load the default and add a
         // notice).  The class name should be something like 'EE_Messages_Template_Pack_Default' where "default' would be
         // the incoming template pack reference.
@@ -140,7 +141,7 @@ class EE_Messages_Template_Defaults extends EE_Base
      *
      * @return array
      */
-    public function get_contexts(): array
+    public function get_contexts()
     {
         return $this->_contexts;
     }
@@ -178,7 +179,7 @@ class EE_Messages_Template_Defaults extends EE_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _create_new_templates(string $template_pack)
+    protected function _create_new_templates($template_pack)
     {
         $this->_set_templates($template_pack);
 

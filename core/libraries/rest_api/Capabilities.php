@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\libraries\rest_api;
 
+use EE_Return_None_Where_Conditions;
 use EE_Error;
 use EEM_Base;
 use EEH_Inflector;
@@ -37,7 +38,7 @@ class Capabilities
             return true;
         }
         foreach ($model->caps_missing($model_context) as $capability_name => $restriction_obj) {
-            if ($restriction_obj instanceof \EE_Return_None_Where_Conditions) {
+            if ($restriction_obj instanceof EE_Return_None_Where_Conditions) {
                 return false;
             }
         }
@@ -93,8 +94,8 @@ class Capabilities
      */
     public static function filterOutPasswordProtectedFields(
         $entity,
-        EEM_Base $model,
-        ModelVersionInfo $model_version_info
+        $model,
+        $model_version_info
     ) {
         $has_password = $model->hasPassword();
         if ($has_password) {

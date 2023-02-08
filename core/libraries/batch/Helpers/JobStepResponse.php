@@ -13,11 +13,11 @@ namespace EventEspressoBatchRequest\Helpers;
  */
 class JobStepResponse
 {
-    // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
+	// phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
     /**
      * Description fo what happened during this step
      *
-     * @var string
+     * @var array|string
      */
     protected $_update_text;
 
@@ -31,20 +31,21 @@ class JobStepResponse
      *
      * @var array
      */
-    protected $_extra_data = array();
-    // phpcs:enable
+    protected $_extra_data = [];
 
-    // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+	// phpcs:enable
+
+	// phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     /**
-     * @param \EventEspressoBatchRequest\Helpers\JobParameters $job_parameters
-     * @param string                                           $update_text
-     * @param array                                            $extra_data
+     * @param JobParameters $job_parameters
+     * @param array|string  $update_text
+     * @param array         $extra_data
      */
-    public function __construct(JobParameters $job_parameters, $update_text, $extra_data = array())
+    public function __construct(JobParameters $job_parameters, $update_text = [], array $extra_data = [])
     {
         $this->_job_parameters = $job_parameters;
-        $this->_update_text = $update_text;
-        $this->_extra_data = (array) $extra_data;
+        $this->_update_text    = (array) $update_text;
+        $this->_extra_data     = $extra_data;
     }
 
 
@@ -64,7 +65,16 @@ class JobStepResponse
      */
     public function update_text()
     {
-        return $this->_update_text;
+        return implode('', array_filter(array_map('trim', $this->_update_text)));
+    }
+
+
+    /**
+     * @param string $update_text
+     */
+    public function addUpdateText($update_text)
+    {
+        $this->_update_text[] = $update_text;
     }
 
 
@@ -75,7 +85,7 @@ class JobStepResponse
      */
     public function extra_data()
     {
-        return $this->_extra_data;
+        return $this->_extra_data ?: [];
     }
 
 
@@ -95,16 +105,15 @@ class JobStepResponse
     {
         return apply_filters(
             'FHEE__EventEspressoBatchRequest\Helpers\JobStepResponse__to_array__return',
-            array_merge(
-                $this->extra_data(),
-                array(
-                    'status'          => $this->job_parameters()->status(),
-                    'units_processed' => $this->job_parameters()->units_processed(),
-                    'job_size'        => $this->job_parameters()->job_size(),
-                    'job_id'          => $this->job_parameters()->job_id(),
-                    'update_text'     => $this->update_text(),
-                )
-            ),
+            [
+                'status'          => $this->job_parameters()->status(),
+                'units_processed' => $this->job_parameters()->units_processed(),
+                'job_size'        => $this->job_parameters()->job_size(),
+                'job_id'          => $this->job_parameters()->job_id(),
+                'update_text'     => $this->update_text(),
+            ]
+            + $this->extra_data()
+            + $this->job_parameters()->extra_data(),
             $this
         );
     }

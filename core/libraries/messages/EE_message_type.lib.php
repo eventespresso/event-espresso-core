@@ -259,7 +259,7 @@ abstract class EE_message_type extends EE_Messages_Base
      *                                      EE_Base_Class_Object
      * @return mixed ( EE_Base_Class||EE_Base_Class[] )
      */
-    abstract protected function _get_data_for_context($context, EE_Registration $registration, $id);
+    abstract protected function _get_data_for_context($context, $registration, $id);
 
 
     /**
@@ -284,7 +284,7 @@ abstract class EE_message_type extends EE_Messages_Base
      * @deprecated 4.9.0
      * @return int
      */
-    protected function _get_id_for_msg_url($context, EE_Registration $registration)
+    protected function _get_id_for_msg_url($context, $registration)
     {
         return 0;
     }
@@ -402,7 +402,7 @@ abstract class EE_message_type extends EE_Messages_Base
      * @deprecated  4.9.0  Likely 4.9.10 or 4.10.0 will remove this method completely
      * @return string          generated url
      */
-    public function get_url_trigger($context, $sending_messenger, EE_Registration $registration)
+    public function get_url_trigger($context, $sending_messenger, $registration)
     {
         // validate context
         // valid context?
@@ -459,7 +459,7 @@ abstract class EE_message_type extends EE_Messages_Base
      *                                      EE_Base_Class_Object
      * @return mixed (EE_Base_Class||EE_Base_Class[])
      */
-    public function get_data_for_context($context, EE_Registration $registration, $id = 0)
+    public function get_data_for_context($context, $registration, $id = 0)
     {
         // valid context?
         if (! isset($this->_contexts[ $context ])) {
@@ -615,7 +615,7 @@ abstract class EE_message_type extends EE_Messages_Base
      *                                           that context
      * @throws EE_Error
      */
-    public function get_addressees(EE_Messages_incoming_data $data, $context = '')
+    public function get_addressees($data, $context = '')
     {
         // override _data
         $this->_data       = $data;

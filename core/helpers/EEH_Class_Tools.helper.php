@@ -3,54 +3,81 @@
 /**
  * EEH_Class_Tools Helper
  *
- * @package         Event Espresso
- * @subpackage      /helpers/
+ * @package             Event Espresso
+ * @subpackage          /helpers/
  * @author              Brent Christensen
- *
+ * @deprecated          $VID:$
  * ------------------------------------------------------------------------
  */
 class EEH_Class_Tools
 {
-    public static $i = 0;
+    public static $i         = 0;
+
     public static $file_line = null;
+
 
     /**
      *  get_called_class - for PHP versions < 5.3
      *
-     *  @access     public
-     *  @author origins:  http://stackoverflow.com/a/1542045
+     * @access     public
+     * @author     origins:  http://stackoverflow.com/a/1542045
      *  return string
      */
     public static function get_called_class()
     {
         $backtrace = debug_backtrace();
-        if (isset($backtrace[2]) && is_array($backtrace[2]) && isset($backtrace[2]['class']) && ! isset($backtrace[2]['file'])) {
+        if (
+            isset($backtrace[2])
+            && is_array($backtrace[2])
+            && isset($backtrace[2]['class'])
+            && ! isset($backtrace[2]['file'])
+        ) {
             return $backtrace[2]['class'];
-        } elseif (isset($backtrace[3]) && is_array($backtrace[3]) && isset($backtrace[3]['class']) && ! isset($backtrace[3]['file'])) {
+        } elseif (
+            isset($backtrace[3])
+            && is_array($backtrace[3])
+            && isset($backtrace[3]['class'])
+            && ! isset($backtrace[3]['file'])
+        ) {
             return $backtrace[3]['class'];
-        } elseif (isset($backtrace[2]) && is_array($backtrace[2]) && isset($backtrace[2]['file']) && isset($backtrace[2]['line'])) {
+        } elseif (
+            isset($backtrace[2])
+            && is_array($backtrace[2])
+            && isset($backtrace[2]['file'])
+            && isset($backtrace[2]['line'])
+        ) {
             if (self::$file_line == $backtrace[2]['file'] . $backtrace[2]['line']) {
                 self::$i++;
             } else {
-                self::$i = 0;
+                self::$i         = 0;
                 self::$file_line = $backtrace[2]['file'] . $backtrace[2]['line'];
             }
             // was  class method called via call_user_func ?
-            if ($backtrace[2]['function'] == 'call_user_func' && isset($backtrace[2]['args']) && is_array($backtrace[2]['args'])) {
+            if (
+                $backtrace[2]['function'] == 'call_user_func' && isset($backtrace[2]['args'])
+                && is_array(
+                    $backtrace[2]['args']
+                )
+            ) {
                 if (isset($backtrace[2]['args'][0]) && isset($backtrace[2]['args'][0][0])) {
                     $called_class = $backtrace[2]['args'][0][0];
                     // is it an EE function ?
                     if (strpos($called_class, 'EE') === 0) {
                         $prefix_chars = strpos($called_class, '_') + 1;
-                        $prefix = substr($called_class, 0, $prefix_chars);
-                        $classname = substr($called_class, $prefix_chars, strlen($called_class));
-                        $classname = $prefix . str_replace(' ', '_', ucwords(strtolower(str_replace('_', ' ', $classname))));
+                        $prefix       = substr($called_class, 0, $prefix_chars);
+                        $classname    = substr($called_class, $prefix_chars, strlen($called_class));
+                        $classname    =
+                            $prefix . str_replace(' ', '_', ucwords(strtolower(str_replace('_', ' ', $classname))));
                         return $classname;
                     }
                 }
             } else {
                 $lines = file($backtrace[2]['file']);
-                preg_match_all('/([a-zA-Z0-9\_]+)::' . $backtrace[2]['function'] . '/', $lines[ $backtrace[2]['line'] - 1 ], $matches);
+                preg_match_all(
+                    '/([a-zA-Z0-9_]+)::' . $backtrace[2]['function'] . '/',
+                    $lines[ $backtrace[2]['line'] - 1 ],
+                    $matches
+                );
                 if (isset($matches[1]) && isset($matches[1][ self::$i ])) {
                     return $matches[1][ self::$i ];
                 }
@@ -60,19 +87,19 @@ class EEH_Class_Tools
     }
 
 
-
-
     /**
      *  get_class_names_for_all_callbacks_on_hook
-     * returns an array of names for all classes that have methods registered as callbacks for the given action or filter hook
-     *  @access     public
-     *  @param  string  $hook
-     *  @return     array
+     * returns an array of names for all classes that have methods registered as callbacks for the given action or
+     * filter hook
+     *
+     * @access     public
+     * @param string $hook
+     * @return     array
      */
     public static function get_class_names_for_all_callbacks_on_hook($hook = null)
     {
         global $wp_filter;
-        $class_names = array();
+        $class_names = [];
         // are any callbacks registered for this hook ?
         if (isset($wp_filter[ $hook ])) {
             // loop thru all of the callbacks attached to the deprecated hookpoint
@@ -83,12 +110,10 @@ class EEH_Class_Tools
                         if (isset($callback['function'][0]) && is_object($callback['function'][0])) {
                             $class_names[] = get_class($callback['function'][0]);
                         }
-                    // test for static method
+                        // test for static method
                     } elseif (strpos($callback['function'], '::') !== false) {
-                        $class = explode('::', $callback['function']);
+                        $class         = explode('::', $callback['function']);
                         $class_names[] = $class[0];
-                    } else {
-                        // just a function
                     }
                 }
             }
@@ -97,14 +122,14 @@ class EEH_Class_Tools
     }
 
 
-
-
     /**
      *  property_exists() with fallback for PHP versions < 5.3
-     *  @access     public
-     *  @param      mixed object | string   $class
-     *  @param      string  $property
-     *  @return         boolean
+     *
+     * @access     public
+     * @param mixed object | string   $class
+     * @param string $property
+     * @return         boolean
+     * @throws ReflectionException
      */
     public static function has_property($class = null, $property = null)
     {

@@ -72,7 +72,7 @@ class CountrySubRegionDao
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function saveCountrySubRegions(EE_Country $country_object)
+    public function saveCountrySubRegions($country_object)
     {
         $CNT_ISO = $country_object->ID();
         $has_sub_regions = $this->state_model->count(array(array('Country.CNT_ISO' => $CNT_ISO)));

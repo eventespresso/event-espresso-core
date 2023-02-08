@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\libraries\rest_api\changes;
 
+use EEM_CPT_Base;
+use EE_Model_Field_Base;
 use WP_REST_Request;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
@@ -69,7 +71,7 @@ class ChangesIn40836 extends ChangesInBase
      * @param string   $version
      * @return array
      */
-    public function removeCalculateQueryParam($query_params, EEM_Base $model, $version)
+    public function removeCalculateQueryParam($query_params, $model, $version)
     {
         if ($this->appliesToVersion($version)) {
             unset($query_params['calculate']);
@@ -90,10 +92,10 @@ class ChangesIn40836 extends ChangesInBase
      */
     public function removeCalculatedFieldsFromResponse(
         $entity_response_array,
-        EEM_Base $model,
+        $model,
         $request_context,
-        WP_REST_Request $request,
-        Read $controller
+        $request,
+        $controller
     ) {
         if ($this->appliesToVersion($controller->getModelVersionInfo()->requestedVersion())) {
             unset($entity_response_array['_calculated_fields']);
@@ -112,7 +114,7 @@ class ChangesIn40836 extends ChangesInBase
      */
     public function removeHeadersNewInThisVersion(
         $headers,
-        Controller_Base $controller,
+        $controller,
         $version
     ) {
         if ($this->appliesToVersion($version)) {
@@ -143,14 +145,14 @@ class ChangesIn40836 extends ChangesInBase
      */
     public function addOldFeaturedImagePartOfCptEntities(
         $entity_response_array,
-        EEM_Base $model,
+        $model,
         $request_context,
-        WP_REST_Request $request,
-        Read $controller
+        $request,
+        $controller
     ) {
         if (
             $this->appliesToVersion($controller->getModelVersionInfo()->requestedVersion())
-            && $model instanceof \EEM_CPT_Base
+            && $model instanceof EEM_CPT_Base
         ) {
             $attachment = wp_get_attachment_image_src(
                 get_post_thumbnail_id($entity_response_array[ $model->primary_key_name() ]),
@@ -167,7 +169,7 @@ class ChangesIn40836 extends ChangesInBase
      * but before this version we used -1.
      *
      * @param mixed                $new_value
-     * @param \EE_Model_Field_Base $field_obj
+     * @param EE_Model_Field_Base $field_obj
      * @param mixed                $original_value
      * @param string               $requested_value
      * @return mixed

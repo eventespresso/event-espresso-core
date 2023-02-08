@@ -52,6 +52,7 @@ class ServerParams
 
 
     /**
+     * @param array $server
      * @return array
      */
     private function cleanServerParams(array $server)
@@ -74,7 +75,7 @@ class ServerParams
 
 
     /**
-     * @param string $key
+     * @param string     $key
      * @param mixed|null $default
      * @return array|int|float|string
      */
@@ -87,31 +88,23 @@ class ServerParams
     /**
      * @param string                 $key
      * @param array|int|float|string $value
+     * @param bool                   $set_global_too
      * @return void
      */
-    public function setServerParam($key, $value)
+    public function setServerParam($key, $value, $set_global_too = false)
     {
-        $clean_value = $this->sanitizer->clean($key, $value);
-        $this->server[ $key ] = $clean_value;
-        // modify global too
-        $_SERVER[ $key ] = $clean_value;
+        $value                = $this->sanitizer->clean($key, $value);
+        $this->server[ $key ] = $value;
+        if ($set_global_too) {
+            $_SERVER[ $key ] = $value;
+        }
     }
 
 
     /**
-     * @return bool
-     */
-    public function serverParamIsSet($key)
-    {
-        return isset($this->server[ $key ]);
-    }
-
-
-    /**
-     * remove param
-     *
      * @param string $key
      * @param bool   $unset_from_global_too
+     * @return void
      */
     public function unSetServerParam($key, $unset_from_global_too = false)
     {
@@ -125,11 +118,21 @@ class ServerParams
 
 
     /**
+     * @param string $key
+     * @return bool
+     */
+    public function serverParamIsSet($key)
+    {
+        return isset($this->server[ $key ]);
+    }
+
+
+    /**
      * @return string
      */
     public function ipAddress()
     {
-        return $this->ip_address;
+        return (string) $this->ip_address;
     }
 
 
@@ -137,7 +140,6 @@ class ServerParams
      * attempt to get IP address of current visitor from server
      * plz see: http://stackoverflow.com/a/2031935/1475279
      *
-     * @access public
      * @return string
      */
     private function setVisitorIp()
@@ -162,7 +164,7 @@ class ServerParams
                 }
             }
         }
-        return $visitor_ip;
+        return (string) $visitor_ip;
     }
 
 
@@ -177,8 +179,12 @@ class ServerParams
     public function requestUri($relativeToWpRoot = false)
     {
         if ($relativeToWpRoot) {
-            $home_path = untrailingslashit(parse_url(home_url(), PHP_URL_PATH));
-            return str_replace($home_path, '', $this->server['REQUEST_URI']);
+            $home_path = parse_url(home_url(), PHP_URL_PATH);
+            $home_path = trim((string) $home_path, '/');
+            $home_path = ! empty($home_path)
+                ? trailingslashit($home_path)
+                : $home_path;
+            return str_replace($home_path, '', (string) $this->server['REQUEST_URI']);
         }
         return $this->server['REQUEST_URI'];
     }
@@ -192,17 +198,17 @@ class ServerParams
         if (empty($this->user_agent)) {
             $this->setUserAgent();
         }
-        return $this->user_agent;
+        return (string) $this->user_agent;
     }
 
 
     /**
-     * @param string $user_agent
+     * @param string|null $user_agent
      */
     public function setUserAgent($user_agent = '')
     {
         $this->user_agent = $user_agent === '' || ! is_string($user_agent)
-            ? $this->getServerParam('HTTP_USER_AGENT')
-            : esc_attr($user_agent);
+            ? (string) $this->getServerParam('HTTP_USER_AGENT', 'unknown')
+            : (string) esc_attr($user_agent);
     }
 }

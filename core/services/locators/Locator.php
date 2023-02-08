@@ -46,7 +46,7 @@ abstract class Locator implements LocatorInterface, Countable
      * @param array|null $flags
      * @throws InvalidDataTypeException
      */
-    public function setFlags(?array $flags)
+    public function setFlags($flags)
     {
         if (! is_array($flags)) {
             throw new InvalidDataTypeException('$flags', $flags, 'array');

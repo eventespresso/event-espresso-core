@@ -32,7 +32,7 @@ class CoffeeMill
     /**
      * @param CoffeeShop $coffee_shop
      */
-    public static function setCoffeeShop(CoffeeShop $coffee_shop)
+    public static function setCoffeeShop($coffee_shop)
     {
         self::$coffee_shop = $coffee_shop;
     }

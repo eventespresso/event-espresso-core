@@ -80,7 +80,7 @@ class EE_Request implements LegacyRequestInterface, InterminableInterface
     /**
      * @param RequestInterface $request
      */
-    public function setRequest(RequestInterface $request)
+    public function setRequest($request)
     {
         $this->request = $request;
     }

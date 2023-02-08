@@ -289,7 +289,7 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes
             // loop through each registration for recipient and see if there is a match for this ticket
             foreach ($this->_registrations_for_recipient as $reg) {
                 if ($reg instanceof EE_Registration && $reg->ticket_ID() == $this->_data->ID()) {
-                    $reg_code = $reg->reg_code();
+                    $reg_code[] = $reg->reg_code();
                 }
             }
             return implode(', ', $reg_code);

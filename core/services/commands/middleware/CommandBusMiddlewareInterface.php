@@ -17,5 +17,5 @@ interface CommandBusMiddlewareInterface
      * @param Closure         $next
      * @return mixed
      */
-    public function handle(CommandInterface $command, Closure $next);
+    public function handle($command, $next);
 }

@@ -96,7 +96,7 @@ class ProcessTicketSelectorPostData
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function getEventId(): int
+    public function getEventId()
     {
         // do we have an event id?
         if ($this->event_id === null) {
@@ -140,7 +140,7 @@ class ProcessTicketSelectorPostData
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function validatePostData(): array
+    public function validatePostData()
     {
         // grab valid id
         $this->valid_data[ self::DATA_KEY_EVENT_ID ] = $this->getEventId();
@@ -179,9 +179,9 @@ class ProcessTicketSelectorPostData
      * @param string $what
      * @param string $input_key
      */
-    protected function processInteger(string $what, string $input_key)
+    protected function processInteger($what, $input_key)
     {
-        $this->valid_data[ $what ] = $this->valid_data[ $what ] ?? $this->request->getRequestParam($input_key, 0, 'int');
+        $this->valid_data[ $what ] = isset($this->valid_data[ $what ]) ? $this->valid_data[ $what ] : $this->request->getRequestParam($input_key, 0, 'int');
     }
 
 
@@ -189,7 +189,7 @@ class ProcessTicketSelectorPostData
      * @param string $input_key
      * @throws DomainException
      */
-    protected function processQuantity(string $input_key)
+    protected function processQuantity($input_key)
     {
         /** @var array $row_qty */
         $row_qty = $this->request->getRequestParam($input_key, [], 'int', true);
@@ -217,13 +217,13 @@ class ProcessTicketSelectorPostData
                 $row_qty = explode($delimiter, $raw_qty);
             }
             // grab that ticket ID regardless of where it is
-            $ticket_id = $row_qty[0] ?? key($row_qty);
+            $ticket_id = isset($row_qty[0]) ? $row_qty[0] : key($row_qty);
             // use it as the key, and set the value to 1
             // ex: row qty = [ TKT_ID => 1 ]
             $row_qty = [$ticket_id => 1];
         }
         foreach ($this->valid_data[ self::DATA_KEY_TICKET_ID ] as $ticket_id) {
-            $qty = $row_qty[ $ticket_id ] ?? 0;
+            $qty = isset($row_qty[ $ticket_id ]) ? $row_qty[ $ticket_id ] : 0;
             $this->valid_data[ self::DATA_KEY_QUANTITY ][ $ticket_id ]     = $qty;
             $this->valid_data[ self:: DATA_KEY_TOTAL_TICKETS ] += $qty;
         }
@@ -233,7 +233,7 @@ class ProcessTicketSelectorPostData
     /**
      * @param string $input_key
      */
-    protected function processReturnURL(string $input_key)
+    protected function processReturnURL($input_key)
     {
         // grab and sanitize return-url
         $input_value = $this->request->getRequestParam($input_key, '', 'url');
@@ -253,7 +253,7 @@ class ProcessTicketSelectorPostData
      * @param string $input_key
      * @throws DomainException
      */
-    protected function processTicketIDs(string $input_key)
+    protected function processTicketIDs($input_key)
     {
         $ticket_ids          = (array) $this->request->getRequestParam($input_key, [], 'int', true);
         $filtered_ticket_ids = array_filter($ticket_ids);

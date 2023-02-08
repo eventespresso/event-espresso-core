@@ -352,7 +352,7 @@ abstract class SequentialStepFormManager
      * @throws InvalidEntityException
      * @throws InvalidFormHandlerException
      */
-    protected function generateProgressSteps(Collection $progress_steps_collection)
+    protected function generateProgressSteps($progress_steps_collection)
     {
         $current_step = $this->getCurrentStep();
         /** @var SequentialStepForm $form_step */
@@ -580,7 +580,7 @@ abstract class SequentialStepFormManager
      * @throws InvalidDataTypeException
      * @throws InvalidFormHandlerException
      */
-    public function redirectForm(SequentialStepFormInterface $current_step)
+    public function redirectForm($current_step)
     {
         $redirect_step = $current_step;
         switch ($current_step->redirectTo()) {

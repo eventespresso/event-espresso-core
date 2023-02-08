@@ -22,7 +22,7 @@ class Curl implements RequestMethod
      * @param RequestParameters $params Request parameters
      * @return string Body of the reCAPTCHA response
      */
-    public function submit(RequestParameters $params)
+    public function submit($params)
     {
         $handle = curl_init(self::SITE_VERIFY_URL);
 

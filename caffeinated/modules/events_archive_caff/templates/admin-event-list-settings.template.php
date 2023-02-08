@@ -28,20 +28,21 @@ $description = EEH_Form_Fields::prep_answer_options(
 <h2 class="ee-admin-settings-hdr">
     <?php esc_html_e('Event List Pages', 'event_espresso'); ?>
 </h2>
-<table class="form-table">
+<table class="ee-admin-two-column-layout form-table">
     <tbody>
 
     <tr>
         <th>
             <label for="event_listings_url">
-                <?php esc_html_e('Event Listings URL', 'event_espresso'); ?>
-                <?php echo wp_kses(EEH_Template::get_help_tab_link('event_listings_url_info'), AllowedTags::getAllowedTags()); ?>
+                <?php esc_html_e('Event Listings URL', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    'event_listings_url_info'
+                ); ?>
             </label>
         </th>
         <td>
-            <a id="event_listings_url" class="ee-admin-settings-hdr-lnk small-text"
-                href="<?php echo esc_url_raw(EEH_Event_View::event_archive_url()); ?>">
-                <?php echo esc_html(EEH_Event_View::event_archive_url()); ?>
+            <a id="event_listings_url" href="<?php echo esc_url_raw(EEH_Event_View::event_archive_url()); ?> target="_blank">
+                <?php echo esc_url(EEH_Event_View::event_archive_url()); ?>
+                <span class="dashicons dashicons-external"></span>
             </a>
         </td>
     </tr>
@@ -53,14 +54,14 @@ $description = EEH_Form_Fields::prep_answer_options(
             </label>
         </th>
         <td>
-            <p><?php echo site_url() . '/ '
-                          . EEH_Form_Fields::text(
-                              'not_used',
-                              EE_Registry::instance()->CFG->core->event_cpt_slug,
-                              'event_cpt_slug',
-                              'event_cpt_slug',
-                              'regular'
-                          ); ?></p>
+            <span class="base-url"><?php echo site_url() . '/ ';?></span>
+            <?php echo EEH_Form_Fields::text(
+                'not_used',
+                EE_Registry::instance()->CFG->core->event_cpt_slug,
+                'event_cpt_slug',
+                'event_cpt_slug',
+                'regular'
+            ); ?>
             <p class="description"><?php
                 esc_html_e(
                     'This allows you to configure what slug is used for the url of all event pages.',
@@ -111,8 +112,9 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_description">
-                <?php esc_html_e('Display Description', 'event_espresso'); ?>
-                <?php echo wp_kses(EEH_Template::get_help_tab_link('display_description_info'), AllowedTags::getAllowedTags()); ?>
+                <?php esc_html_e('Display Description', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    'display_description_info'
+                ); ?>
             </label>
         </th>
         <td>
@@ -132,8 +134,9 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_ticket_selector">
-                <?php esc_html_e('Display Ticket Selector', 'event_espresso'); ?>
-                <?php echo wp_kses(EEH_Template::get_help_tab_link('display_ticket_selector_info'), AllowedTags::getAllowedTags()); ?>
+                <?php esc_html_e('Display Ticket Selector', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    'display_ticket_selector_info'
+                ); ?>
             </label>
         </th>
         <td>
@@ -153,8 +156,9 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_datetimes">
-                <?php esc_html_e('Display Datetimes', 'event_espresso'); ?>
-                <?php echo wp_kses(EEH_Template::get_help_tab_link('display_datetimes_info'), AllowedTags::getAllowedTags()); ?>
+                <?php esc_html_e('Display Datetimes', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    'display_datetimes_info'
+                ); ?>
             </label>
         </th>
         <td>
@@ -174,8 +178,9 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_venue">
-                <?php esc_html_e('Display Venue Details', 'event_espresso'); ?>
-                <?php echo wp_kses(EEH_Template::get_help_tab_link('display_venue_details_info'), AllowedTags::getAllowedTags()); ?>
+                <?php esc_html_e('Display Venue Details', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    'display_venue_details_info'
+                ); ?>
             </label>
         </th>
         <td>
@@ -195,8 +200,9 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="EED_Events_Archive_display_expired_events">
-                <?php esc_html_e('Display Expired Events', 'event_espresso'); ?>
-                <?php echo wp_kses(EEH_Template::get_help_tab_link('display_expired_events_info'), AllowedTags::getAllowedTags()); ?>
+                <?php esc_html_e('Display Expired Events', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    'display_expired_events_info'
+                ); ?>
             </label>
         </th>
         <td>
@@ -219,7 +225,7 @@ $description = EEH_Form_Fields::prep_answer_options(
                 <?php esc_html_e(
                     'Use Custom Display Order?',
                     'event_espresso'
-                ); ?><?php // echo wp_kses(EEH_Template::get_help_tab_link('use_sortable_display_order_info'),AllowedTags::getAllowedTags()); ?>
+                ); ?><?php // echo EEH_Template::get_help_tab_link('use_sortable_display_order_info');?>
             </label>
         </th>
         <td>
@@ -241,7 +247,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             <?php esc_html_e(
                 'Display Order',
                 'event_espresso'
-            ); ?><?php // echo wp_kses(EEH_Template::get_help_tab_link('event_archive_order_info'),AllowedTags::getAllowedTags()); ?>
+            ); ?><?php // echo EEH_Template::get_help_tab_link( 'event_archive_order_info' ); ?>
         </th>
         <td>
 

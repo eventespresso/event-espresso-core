@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\commands;
 
+use OutOfBoundsException;
+use Exception;
 /**
  * Class CommandHandlerNotFoundException
  * Description
@@ -10,16 +12,16 @@ namespace EventEspresso\core\services\commands;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CommandHandlerNotFoundException extends \OutOfBoundsException
+class CommandHandlerNotFoundException extends OutOfBoundsException
 {
     /**
      * @access public
      * @param  string     $command_handler_name
      * @param  string     $message
      * @param  int        $code
-     * @param  \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($command_handler_name, $message = '', $code = 0, \Exception $previous = null)
+    public function __construct($command_handler_name, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
             $message = sprintf(

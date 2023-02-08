@@ -6,7 +6,7 @@
 interface EEI_Transaction extends EEI_Base
 {
     /**
-     * @return EEI_Payment
+     * @return EE_Payment
      */
     public function last_payment();
 
@@ -24,7 +24,7 @@ interface EEI_Transaction extends EEI_Base
     /**
      * Get the line item that represents the total for the transaction
      *
-     * @return EEI_Line_Item
+     * @return EE_Line_Item
      */
     public function total_line_item();
 
@@ -33,7 +33,7 @@ interface EEI_Transaction extends EEI_Base
     /**
      * Gets the primary registration for this transaction
      *
-     * @return EEI_Registration
+     * @return EE_Registration
      */
     public function primary_registration();
 
@@ -61,7 +61,7 @@ interface EEI_Transaction extends EEI_Base
     /**
      * Retrieves all the pending payments on this transaction
      *
-     * @return EEI_Payment[]
+     * @return EE_Payment[]
      */
     public function pending_payments();
 }

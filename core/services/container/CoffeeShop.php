@@ -241,7 +241,7 @@ class CoffeeShop implements CoffeePotInterface
      * @return mixed
      * @throws InstantiationException
      */
-    protected function brewedClosure($identifier, array $arguments)
+    protected function brewedClosure($identifier, $arguments)
     {
         $closure = $this->reservoir->get($identifier);
         if (empty($closure)) {
@@ -266,7 +266,7 @@ class CoffeeShop implements CoffeePotInterface
      * @throws InvalidIdentifierException
      * @throws InvalidEntityException
      */
-    public function addCoffeeMaker(CoffeeMakerInterface $coffee_maker, $type)
+    public function addCoffeeMaker($coffee_maker, $type)
     {
         $type = CoffeeMaker::validateType($type);
         return $this->coffee_makers->add($coffee_maker, $type);
@@ -313,7 +313,7 @@ class CoffeeShop implements CoffeePotInterface
      *                            Typically a Fully Qualified Class Name
      * @param mixed   $service
      * @return bool
-     * @throws \EventEspresso\core\services\container\exceptions\InvalidServiceException
+     * @throws InvalidServiceException
      * @throws InvalidIdentifierException
      */
     public function addService($identifier, $service)
@@ -346,7 +346,7 @@ class CoffeeShop implements CoffeePotInterface
      * @return mixed
      * @throws InvalidIdentifierException
      */
-    public function addRecipe(RecipeInterface $recipe)
+    public function addRecipe($recipe)
     {
         $this->addAliases($recipe->identifier(), $recipe->filters());
         $identifier = $this->processIdentifier($recipe->identifier());

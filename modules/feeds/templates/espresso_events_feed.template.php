@@ -29,4 +29,3 @@
 <p><?php esc_html_e('Event Venue: ', 'event_espresso') . espresso_venue_name(null, false); ?></p>
 <p><?php esc_html_e('Description: ', 'event_espresso') . $event_description; ?></p>
 <br/>
- 

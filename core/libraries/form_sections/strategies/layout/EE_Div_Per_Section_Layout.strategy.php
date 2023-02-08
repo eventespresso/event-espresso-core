@@ -33,7 +33,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
      *
      * @param EE_Form_Input_Base $input
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function layout_input($input)
     {
@@ -99,8 +99,9 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
      * @return string
      * @since 4.10.31.p
      */
-    private function processHtmlClasses($classes, string $suffix): string
+    private function processHtmlClasses($classes, $suffix)
     {
+        $suffix = (string) $suffix;
         $html_classes = [];
         $classes = is_string($classes) ? explode(' ', $classes) : $classes;
         $classes = (array) $classes;
@@ -124,7 +125,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base
      * @param EE_Form_Input_With_Options_Base $input
      * @return string
      */
-    protected function _display_label_for_option_type_question(EE_Form_Input_With_Options_Base $input)
+    protected function _display_label_for_option_type_question($input)
     {
         if ($input->display_html_label_text()) {
             $html_label_text = $input->html_label_text();

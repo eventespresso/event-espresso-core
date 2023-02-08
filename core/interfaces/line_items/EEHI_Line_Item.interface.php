@@ -11,7 +11,7 @@ interface EEHI_Line_Item
      * @param EE_Line_Item $total_line_item
      * @param EE_Line_Item $line_item
      */
-    public function add_item(EE_Line_Item $total_line_item, EE_Line_Item $line_item);
+    public function add_item($total_line_item, $line_item);
 
 
 
@@ -30,7 +30,7 @@ interface EEHI_Line_Item
      * @return EE_Line_Item the new tax created
      */
     public function set_total_tax_to(
-        EE_Line_Item $total_line_item,
+        $total_line_item,
         $amount,
         $name = null,
         $description = null,
@@ -50,7 +50,7 @@ interface EEHI_Line_Item
      *                                                   it will be whitelisted (ie, except from becoming taxable)
      */
     public static function set_line_items_taxable(
-        EE_Line_Item $line_item,
+        $line_item,
         $taxable = true,
         $code_substring_for_whitelist = null
     );
@@ -71,7 +71,7 @@ interface EEHI_Line_Item
      * @return boolean success
      */
     public function add_unrelated_item(
-        EE_Line_Item $total_line_item,
+        $total_line_item,
         $name,
         $unit_price,
         $description = '',
@@ -86,7 +86,7 @@ interface EEHI_Line_Item
      * Gets the line item for the taxes subtotal
      *
      * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
-     * @return \EE_Line_Item
+     * @return EE_Line_Item
      */
-    public static function get_taxes_subtotal(EE_Line_Item $total_line_item);
+    public static function get_taxes_subtotal($total_line_item);
 }

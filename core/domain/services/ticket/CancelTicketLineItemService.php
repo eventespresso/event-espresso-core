@@ -2,6 +2,14 @@
 
 namespace EventEspresso\core\domain\services\ticket;
 
+use EE_Registration;
+use EE_Transaction;
+use EE_Ticket;
+use EE_Line_Item;
+use EEH_Line_Item;
+use EEM_Line_Item;
+use RuntimeException;
+use EE_Error;
 use EventEspresso\core\domain\services\DomainService;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 
@@ -19,11 +27,11 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
 class CancelTicketLineItemService extends DomainService
 {
     /**
-     * @param \EE_Registration $registration
+     * @param EE_Registration $registration
      * @param int              $quantity
      * @return bool|int
      */
-    public function forRegistration(\EE_Registration $registration, $quantity = 1)
+    public function forRegistration($registration, $quantity = 1)
     {
         return $this->cancel(
             $registration->transaction(),
@@ -35,37 +43,37 @@ class CancelTicketLineItemService extends DomainService
 
 
     /**
-     * @param \EE_Transaction $transaction
-     * @param \EE_Ticket      $ticket
+     * @param EE_Transaction $transaction
+     * @param EE_Ticket $ticket
      * @param int             $quantity
-     * @param \EE_Line_Item   $ticket_line_item
+     * @param EE_Line_Item $ticket_line_item
      * @return bool|int
      */
     public function cancel(
-        \EE_Transaction $transaction,
-        \EE_Ticket $ticket,
+        $transaction,
+        $ticket,
         $quantity = 1,
-        \EE_Line_Item $ticket_line_item = null
+        $ticket_line_item = null
     ) {
-        $ticket_line_item = $ticket_line_item instanceof \EE_Line_Item
+        $ticket_line_item = $ticket_line_item instanceof EE_Line_Item
             ? $ticket_line_item
             : $this->getTicketLineItem($transaction, $ticket);
         // first we need to decrement the ticket quantity
-        \EEH_Line_Item::decrement_quantity($ticket_line_item, $quantity);
+        EEH_Line_Item::decrement_quantity($ticket_line_item, $quantity);
         // no tickets left for this line item ?
         if ((int) $ticket_line_item->quantity() === 0) {
             // then just set this line item as cancelled, save, and get out
-            $ticket_line_item->set_type(\EEM_Line_Item::type_cancellation);
+            $ticket_line_item->set_type(EEM_Line_Item::type_cancellation);
             $success = $ticket_line_item->save();
         } else {
             // otherwise create a new cancelled line item, so that we have a record of the cancellation
-            $items_subtotal = \EEH_Line_Item::get_pre_tax_subtotal(
-                \EEH_Line_Item::get_event_line_item_for_ticket(
+            $items_subtotal = EEH_Line_Item::get_pre_tax_subtotal(
+                EEH_Line_Item::get_event_line_item_for_ticket(
                     $transaction->total_line_item(),
                     $ticket
                 )
             );
-            $cancelled_line_item = \EE_Line_Item::new_instance(
+            $cancelled_line_item = EE_Line_Item::new_instance(
                 array(
                     'LIN_name'       => $ticket_line_item->name(),
                     'LIN_desc'       => sprintf(
@@ -77,17 +85,17 @@ class CancelTicketLineItemService extends DomainService
                     'LIN_quantity'   => $quantity,
                     'LIN_percent'    => null,
                     'LIN_is_taxable' => false,
-                    'LIN_order'      => $items_subtotal instanceof \EE_Line_Item
+                    'LIN_order'      => $items_subtotal instanceof EE_Line_Item
                         ? count($items_subtotal->children())
                         : 0,
                     'LIN_total'      => (float) $ticket_line_item->unit_price(),
-                    'LIN_type'       => \EEM_Line_Item::type_cancellation,
+                    'LIN_type'       => EEM_Line_Item::type_cancellation,
                 )
             );
-            $success = \EEH_Line_Item::add_item($transaction->total_line_item(), $cancelled_line_item);
+            $success = EEH_Line_Item::add_item($transaction->total_line_item(), $cancelled_line_item);
         }
         if (! $success) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     esc_html__('An error occurred while attempting to cancel ticket line item %1$s', 'event_espresso'),
                     $ticket_line_item->ID()
@@ -99,23 +107,23 @@ class CancelTicketLineItemService extends DomainService
 
 
     /**
-     * @param \EE_Transaction $transaction
-     * @param \EE_Ticket      $ticket
-     * @return \EE_Line_Item
+     * @param EE_Transaction $transaction
+     * @param EE_Ticket $ticket
+     * @return EE_Line_Item
      * @throws EntityNotFoundException
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    protected static function getTicketLineItem(\EE_Transaction $transaction, \EE_Ticket $ticket)
+    protected static function getTicketLineItem($transaction, $ticket)
     {
         $line_item = null;
-        $ticket_line_items = \EEH_Line_Item::get_line_items_by_object_type_and_IDs(
+        $ticket_line_items = EEH_Line_Item::get_line_items_by_object_type_and_IDs(
             $transaction->total_line_item(),
             'Ticket',
             array($ticket->ID())
         );
         foreach ($ticket_line_items as $ticket_line_item) {
             if (
-                $ticket_line_item instanceof \EE_Line_Item
+                $ticket_line_item instanceof EE_Line_Item
                 && $ticket_line_item->OBJ_type() === 'Ticket'
                 && $ticket_line_item->OBJ_ID() === $ticket->ID()
             ) {
@@ -123,7 +131,7 @@ class CancelTicketLineItemService extends DomainService
                 break;
             }
         }
-        if (! ($line_item instanceof \EE_Line_Item && $line_item->OBJ_type() === 'Ticket')) {
+        if (! ($line_item instanceof EE_Line_Item && $line_item->OBJ_type() === 'Ticket')) {
             throw new EntityNotFoundException('Line Item Ticket ID', $ticket->ID());
         }
         return $line_item;

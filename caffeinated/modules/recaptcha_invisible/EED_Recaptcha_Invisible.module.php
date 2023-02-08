@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\services\request\Request;
 use EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaFactory;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -150,7 +151,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      */
     public static function localizeScriptVars()
     {
-        /** @var \EventEspresso\core\services\request\Request $request */
+        /** @var Request $request */
         $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\Request');
         // Invisible Recaptcha is ONLY ever required for the frontend and admin
         // so we don't need to load any JS assets for other types of requests (like AJAX or API).
@@ -190,7 +191,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws InvalidInterfaceException
      * @throws RuntimeException
      */
-    public static function verifyToken(RequestInterface $request)
+    public static function verifyToken($request)
     {
         return RecaptchaFactory::create()->verifyToken($request);
     }
@@ -205,7 +206,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws InvalidInterfaceException
      * @throws DomainException
      */
-    public static function spcoRegStepForm(EE_Form_Section_Proper $reg_form)
+    public static function spcoRegStepForm($reg_form)
     {
         // do nothing if form isn't for a reg step or test has already been passed
         if (! EED_Recaptcha_Invisible::processSpcoRegStepForm($reg_form)) {
@@ -227,7 +228,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
-    public static function processSpcoRegStepForm(EE_Form_Section_Proper $reg_form)
+    public static function processSpcoRegStepForm($reg_form)
     {
         return strpos($reg_form->name(), 'reg-step-form') !== false
                && ! RecaptchaFactory::create()->recaptchaPassed();
@@ -244,7 +245,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws InvalidInterfaceException
      * @throws RuntimeException
      */
-    public static function receiveSpcoRegStepForm($req_data, EE_Form_Section_Proper $reg_form)
+    public static function receiveSpcoRegStepForm($req_data, $reg_form)
     {
         // do nothing if form isn't for a reg step or test has already been passed
         if (! EED_Recaptcha_Invisible::processSpcoRegStepForm($reg_form)) {
@@ -277,7 +278,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws ReflectionException
      * @throws DomainException
      */
-    public static function ticketSelectorForm($html, EE_Event $event, $iframe = false)
+    public static function ticketSelectorForm($html, $event, $iframe = false)
     {
         $recaptcha = RecaptchaFactory::create();
         // do nothing if test has  already  been passed
@@ -341,7 +342,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function updateAdminSettings(EE_Registration_Config $EE_Registration_Config)
+    public static function updateAdminSettings($EE_Registration_Config)
     {
         return RecaptchaFactory::getAdminModule()->updateAdminSettings($EE_Registration_Config);
     }

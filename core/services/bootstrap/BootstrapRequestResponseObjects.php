@@ -29,22 +29,22 @@ use InvalidArgumentException;
 class BootstrapRequestResponseObjects
 {
     /**
-     * @type LegacyRequestInterface $legacy_request
+     * @var LegacyRequestInterface
      */
     protected $legacy_request;
 
     /**
-     * @type LoaderInterface $loader
+     * @var LoaderInterface
      */
     protected $loader;
 
     /**
-     * @var RequestInterface $request
+     * @var RequestInterface
      */
     protected $request;
 
     /**
-     * @var ResponseInterface $response
+     * @var ResponseInterface
      */
     protected $response;
 

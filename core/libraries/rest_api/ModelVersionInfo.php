@@ -2,6 +2,10 @@
 
 namespace EventEspresso\core\libraries\rest_api;
 
+use EEM_Base;
+use EE_Error;
+use EE_Model_Field_Base;
+use EE_Model_Relation_Base;
 use EE_Registry;
 use EED_Core_Rest_Api;
 
@@ -249,15 +253,15 @@ class ModelVersionInfo
      * version's models into account
      *
      * @param string $model_name
-     * @return \EEM_Base
-     * @throws \EE_Error
+     * @return EEM_Base
+     * @throws EE_Error
      */
     public function loadModel($model_name)
     {
         if ($this->isModelNameInThisVersion($model_name)) {
             return EE_Registry::instance()->load_model($model_name);
         } else {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     esc_html__(
                         'Cannot load model "%1$s" because it does not exist in version %2$s of Event Espresso',
@@ -274,8 +278,8 @@ class ModelVersionInfo
     /**
      * Gets all the fields that should exist on this model right now
      *
-     * @param \EEM_Base $model
-     * @return array|\EE_Model_Field_Base[]
+     * @param EEM_Base $model
+     * @return array|EE_Model_Field_Base[]
      */
     public function fieldsOnModelInThisVersion($model)
     {
@@ -418,7 +422,7 @@ class ModelVersionInfo
      * Returns an array where keys are extra resource properties in this version of the API,
      * and values are key-value pairs describing the new properties. @see Model_Version::_resource_changes
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @return array
      */
     public function extraResourcePropertiesForModel($model)
@@ -439,10 +443,10 @@ class ModelVersionInfo
      * Gets all the related models for the specified model. It's good to use this
      * in case this model didn't exist for this version or something
      *
-     * @param \EEM_Base $model
-     * @return \EE_Model_Relation_Base[]
+     * @param EEM_Base $model
+     * @return EE_Model_Relation_Base[]
      */
-    public function relationSettings(\EEM_Base $model)
+    public function relationSettings($model)
     {
         $relations = array();
         foreach ($model->relation_settings() as $relation_name => $relation_obj) {

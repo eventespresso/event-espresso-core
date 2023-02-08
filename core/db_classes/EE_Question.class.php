@@ -359,7 +359,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
     /**
      * returns an array of EE_Question_Options which relate to this question
      *
-     * @return \EE_Question_Option[]
+     * @return EE_Question_Option[]
      */
     public function temp_options()
     {
@@ -374,7 +374,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * @param EE_Question_Option $option
      * @return boolean success
      */
-    public function add_option(EE_Question_Option $option)
+    public function add_option($option)
     {
         return $this->_add_relation_to($option, 'Question_Option');
     }
@@ -386,7 +386,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * @param EE_Question_Option $option
      * @return boolean success
      */
-    public function add_temp_option(EE_Question_Option $option)
+    public function add_temp_option($option)
     {
         $this->_model_relations['Question_Option'][] = $option;
         return true;
@@ -399,7 +399,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * @param EE_Question_Option $option
      * @return boolean success
      */
-    public function remove_option(EE_Question_Option $option)
+    public function remove_option($option)
     {
         return $this->_remove_relation_to($option, 'Question_Option');
     }
@@ -444,7 +444,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
     /**
      * Duplicates this question and its question options
      *
-     * @return \EE_Question
+     * @return EE_Question
      */
     public function duplicate($options = array())
     {

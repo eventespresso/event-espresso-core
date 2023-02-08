@@ -66,7 +66,7 @@ class SocketPost implements RequestMethod
     /**
      * Constructor
      *
-     * @param \ReCaptcha\RequestMethod\Socket $socket optional socket, injectable for testing
+     * @param Socket $socket optional socket, injectable for testing
      */
     public function __construct(Socket $socket = null)
     {
@@ -83,7 +83,7 @@ class SocketPost implements RequestMethod
      * @param RequestParameters $params Request parameters
      * @return string Body of the reCAPTCHA response
      */
-    public function submit(RequestParameters $params)
+    public function submit($params)
     {
         $errno = 0;
         $errstr = '';

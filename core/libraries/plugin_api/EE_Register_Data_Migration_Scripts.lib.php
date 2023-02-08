@@ -19,25 +19,26 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      *
      * @var array[][]
      */
-    protected static $_settings = array();
+    protected static $_settings = [];
 
 
     /**
      * Method for registering new Data Migration Scripts
      *
-     * @since 4.3.0
-     * @param string $identifier EE_Addon class name that this set of data migration scripts belongs to
+     * @param string $addon_name EE_Addon class name that this set of data migration scripts belongs to
      *                           If EE_Addon class is namespaced, then this needs to be the Fully Qualified Class Name
      * @param array  $setup_args {
      * @type string  $dms_paths  an array of full server paths to folders that contain data migration scripts
      *                           }
+     * @return bool
      * @throws EE_Error
-     * @return void
+     * @since 4.3.0
+     * @since 4.3.0
      */
-    public static function register($identifier = '', array $setup_args = [])
+    public static function register($addon_name = '', $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
-        if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['dms_paths'])) {
+        if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['dms_paths'])) {
             throw new EE_Error(
                 esc_html__(
                     'In order to register Data Migration Scripts with EE_Register_Data_Migration_Scripts::register(), you must include the EE_Addon class name (used as a unique identifier for this set of data migration scripts), and an array containing the following keys: "dms_paths" (an array of full server paths to folders that contain data migration scripts)',
@@ -46,8 +47,8 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
             );
         }
         // make sure we don't register twice
-        if (isset(self::$_settings[ $identifier ])) {
-            return;
+        if (isset(self::$_settings[ $addon_name ])) {
+            return true;
         }
         // make sure this was called in the right place!
         if (
@@ -64,14 +65,19 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
             );
         }
         // setup $_settings array from incoming values.
-        self::$_settings[ $identifier ] = array(
-            'dms_paths' => (array) $setup_args['dms_paths'],
-        );
+        self::$_settings[ $addon_name ] = ['dms_paths' => (array) $setup_args['dms_paths']];
         // setup DMS
-        add_filter(
+        $filters_set = has_filter(
             'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
-            array('EE_Register_Data_Migration_Scripts', 'add_data_migration_script_folders')
+            ['EE_Register_Data_Migration_Scripts', 'add_data_migration_script_folders']
         );
+        if (! $filters_set) {
+            add_filter(
+                'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
+                ['EE_Register_Data_Migration_Scripts', 'add_data_migration_script_folders']
+            );
+        }
+        return true;
     }
 
 
@@ -79,9 +85,9 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      * @param array $dms_paths
      * @return array
      */
-    public static function add_data_migration_script_folders(array $dms_paths = array())
+    public static function add_data_migration_script_folders($dms_paths = [])
     {
-        foreach (self::$_settings as $identifier => $settings) {
+        foreach (self::$_settings as $addon_name => $settings) {
             $wildcards = 0;
             foreach ($settings['dms_paths'] as $dms_path) {
                 // since we are using the addon name for the array key
@@ -89,7 +95,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
                 // so if for some reason an addon has multiple dms paths,
                 // we append one or more * to the classname
                 // which will get stripped out later on
-                $dms_paths[ $identifier . str_repeat('*', $wildcards) ] = $dms_path;
+                $dms_paths[ $addon_name . str_repeat('*', $wildcards) ] = $dms_path;
                 $wildcards++;
             }
         }
@@ -100,12 +106,13 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
     /**
      * This deregisters a set of Data Migration Scripts that were previously registered with a specific dms_id
      *
-     * @since 4.3.0
-     * @param string $identifier EE_Addon class name that this set of data migration scripts belongs to
+     * @param string $addon_name EE_Addon class name that this set of data migration scripts belongs to
      * @return void
+     * @since 4.3.0
+     * @since 4.3.0
      */
-    public static function deregister($identifier = '')
+    public static function deregister($addon_name = '')
     {
-        unset(self::$_settings[ $identifier ]);
+        unset(self::$_settings[ $addon_name ]);
     }
 }

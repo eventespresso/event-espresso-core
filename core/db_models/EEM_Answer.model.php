@@ -71,7 +71,7 @@ class EEM_Answer extends EEM_Base
      * @param boolean $pretty_answer whether to call 'pretty_value' or just 'value'
      * @return string
      */
-    public function get_answer_value_to_question(EE_Registration $registration, $question_id = null, $pretty_answer = false)
+    public function get_answer_value_to_question($registration, $question_id = null, $pretty_answer = false)
     {
         $value = $this->get_attendee_property_answer_value($registration, $question_id, $pretty_answer);
         if ($value === null) {
@@ -95,28 +95,31 @@ class EEM_Answer extends EEM_Base
      * @param int $question_id
      * @return EE_Answer
      */
-    public function get_registration_question_answer_object(EE_Registration $registration, $question_id = null)
+    public function get_registration_question_answer_object($registration, $question_id = null)
     {
         $answer_obj = $this->get_one(array( array( 'QST_ID' => $question_id, 'REG_ID' => $registration->ID() )));
         return apply_filters('FHEE__EEM_Answer__get_registration_question_answer_object__answer_obj', $answer_obj, $registration, $question_id);
     }
 
 
-
     /**
      * Gets the string answer to the question for this registration's attendee
+     *
      * @param EE_Registration $registration
-     * @param int|string $question_system_id if an INT this is understood to be the question's ID; if a string then it should be its QST_system value.
-     *  Passing in the QST_system value is more efficient
-     * @param boolean $pretty_answer
-     * @return string|null (if the registration has no attendee, or the question_system_id is not a QST_ID or QST_system for
-     * a question corresponding to an attendee field, returns null)
+     * @param int|string      $question_system_id if an INT this is understood to be the question's ID; if a string
+     *                                            then it should be its QST_system value. Passing in the QST_system
+     *                                            value is more efficient
+     * @param boolean         $pretty_answer
+     * @return string|null (if the registration has no attendee, or the question_system_id is not a QST_ID or
+     *                                            QST_system for a question corresponding to an attendee field, returns
+     *                                            null)
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_attendee_property_answer_value(EE_Registration $registration, $question_system_id = null, $pretty_answer = false)
+    public function get_attendee_property_answer_value($registration, $question_system_id = null, $pretty_answer = false)
     {
-        $field_name = null;
         $value = null;
-                // backward compat: we still want to find the question's ID
+        // backward compat: we still want to find the question's ID
         if (is_numeric($question_system_id)) {
             // find this question's QST_system value
             $question_id = $question_system_id;

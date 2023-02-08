@@ -55,7 +55,7 @@ class EE_Export
      *        @ access public
      *
      * @param array $request_data
-     * @return \EE_Export
+     * @return EE_Export
      */
     public static function instance($request_data = array())
     {
@@ -678,7 +678,7 @@ class EE_Export
      * @return string
      * @throws EE_Error
      */
-    protected function _get_column_name_for_field(EE_Model_Field_Base $field)
+    protected function _get_column_name_for_field($field)
     {
         return $field->get_nicename() . "[" . $field->get_name() . "]";
     }

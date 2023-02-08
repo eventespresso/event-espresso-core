@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\bootstrap\BootstrapCore;
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -52,8 +54,10 @@ function espresso_load_error_handling()
  * @param string $full_path_to_file
  * @throws EE_Error
  */
-function espresso_load_required(string $classname, string $full_path_to_file)
+function espresso_load_required($classname, $full_path_to_file)
 {
+    $classname = (string) $classname;
+    $full_path_to_file = (string) $full_path_to_file;
     if (is_readable($full_path_to_file)) {
         require_once $full_path_to_file;
     } else {
@@ -129,9 +133,9 @@ function bootstrap_espresso()
         );
         $AutoloaderInit = new EE_Psr4AutoloaderInit();
         $AutoloaderInit->initializeAutoloader();
-        new EventEspresso\core\services\bootstrap\BootstrapCore();
+        new BootstrapCore();
     } catch (Exception $e) {
         require_once EE_CORE . 'exceptions/ExceptionStackTraceDisplay.php';
-        new EventEspresso\core\exceptions\ExceptionStackTraceDisplay($e);
+        new ExceptionStackTraceDisplay($e);
     }
 }

@@ -30,8 +30,8 @@ class EE_Required_Validation_Strategy extends EE_Validation_Strategy_Base
      *
      * @param $normalized_value
      * @return bool
-     * @throws \EE_Error
-     * @throws \EE_Validation_Error
+     * @throws EE_Error
+     * @throws EE_Validation_Error
      */
     public function validate($normalized_value)
     {
@@ -50,7 +50,7 @@ class EE_Required_Validation_Strategy extends EE_Validation_Strategy_Base
 
     /**
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_jquery_validation_rule_array()
     {

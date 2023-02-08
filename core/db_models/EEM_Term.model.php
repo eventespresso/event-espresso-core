@@ -93,7 +93,7 @@ class EEM_Term extends EEM_Base
      *
      * @access public
      * @param bool $show_uncategorized
-     * @return \EE_Base_Class[]
+     * @return EE_Base_Class[]
      */
     public function get_all_ee_categories($show_uncategorized = false)
     {
@@ -173,6 +173,9 @@ class EEM_Term extends EEM_Base
                 'limit' => 2
             )
         );
+        if (! $post_tag_results) {
+            return null;
+        }
 
         $post_types = array();
         foreach ((array) $post_tag_results as $row) {

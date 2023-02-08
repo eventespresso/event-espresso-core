@@ -21,7 +21,7 @@ class TableAnalysis extends EE_Base
      * The maximum number of characters that can be indexed on a column using utf8mb4 collation,
      * see https://events.codebasehq.com/redirect?https://make.wordpress.org/core/2015/04/02/the-utf8mb4-upgrade/
      */
-    public const INDEX_COLUMN_SIZE = 191;
+    const INDEX_COLUMN_SIZE = 191;
 
 
     /**
@@ -33,7 +33,7 @@ class TableAnalysis extends EE_Base
      * @return string $tableName, having ensured it has the wpdb prefix on the front
      * @global wpdb  $wpdb
      */
-    public function ensureTableNameHasPrefix(string $table_name): string
+    public function ensureTableNameHasPrefix($table_name)
     {
         global $wpdb;
         return strpos($table_name, $wpdb->base_prefix) === 0 ? $table_name : $wpdb->prefix . $table_name;
@@ -48,7 +48,7 @@ class TableAnalysis extends EE_Base
      * @return bool
      * @global wpdb  $wpdb
      */
-    public function tableIsEmpty(string $table_name): bool
+    public function tableIsEmpty($table_name)
     {
         global $wpdb;
         $table_name = $this->ensureTableNameHasPrefix($table_name);
@@ -69,7 +69,7 @@ class TableAnalysis extends EE_Base
      * @global wpdb  $wpdb
      * @global array $EZSQL_ERROR
      */
-    public function tableExists(string $table_name): bool
+    public function tableExists($table_name)
     {
         global $wpdb, $EZSQL_ERROR;
         $table_name = $this->ensureTableNameHasPrefix($table_name);
@@ -124,7 +124,7 @@ class TableAnalysis extends EE_Base
      * @return array of columns used on that index, Each entry is an object with the following properties {
      * }
      */
-    public function showIndexes(string $table_name, string $index_name): array
+    public function showIndexes($table_name, $index_name)
     {
         global $wpdb;
         $table_name         = $this->ensureTableNameHasPrefix($table_name);

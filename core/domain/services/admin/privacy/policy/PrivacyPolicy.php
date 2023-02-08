@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\admin\privacy\policy;
 
+use EE_PMT_Base;
 use EE_Offsite_Gateway;
 use EE_Onsite_Gateway;
 use EEH_Template;
@@ -65,7 +66,7 @@ class PrivacyPolicy implements PrivacyPolicyInterface
         $active_onsite_pms = array();
         $active_offsite_pms = array();
         foreach ($active_payment_methods as $payment_method) {
-            if ($payment_method->type_obj() instanceof \EE_PMT_Base) {
+            if ($payment_method->type_obj() instanceof EE_PMT_Base) {
                 if ($payment_method->type_obj()->get_gateway() instanceof EE_Onsite_Gateway) {
                     $active_onsite_pms[] = $payment_method->name();
                 } elseif ($payment_method->type_obj()->get_gateway() instanceof EE_Offsite_Gateway) {
