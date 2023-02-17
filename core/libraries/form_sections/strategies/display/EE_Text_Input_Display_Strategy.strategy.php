@@ -18,14 +18,14 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base
      * The html "type" attribute value. default is "text"
      * @var string
      */
-    protected $_type;
+    protected string $_type;
 
 
 
     /**
      * @param string $type
      */
-    public function __construct($type = 'text')
+    public function __construct(string $type = 'text')
     {
         $this->_type = $type;
         parent::__construct();
@@ -37,7 +37,7 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base
      * Gets the html "type" attribute's value
      * @return string
      */
-    public function get_type()
+    public function get_type(): string
     {
         if (
             $this->_type === 'email'
@@ -49,12 +49,11 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base
     }
 
 
-
     /**
-     *
      * @return string of html to display the field
+     * @throws EE_Error
      */
-    public function display()
+    public function display(): string
     {
         $input = '<input type="' . $this->get_type() . '"';
         $input .= ' name="' . $this->_input->html_name() . '"';

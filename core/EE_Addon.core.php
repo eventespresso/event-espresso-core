@@ -12,9 +12,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  * Class EE_Addon
  * Abstract Parent class for all classes that want to function as EE Addons
  *
- * @package               Event Espresso
- * @subpackage            core
- * @author                Michael Nelson, Brent Christensen
+ * @package     Event Espresso
+ * @subpackage  core
+ * @author      Michael Nelson, Brent Christensen
  */
 abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMapInterface, RequiresDomainInterface
 {
@@ -77,7 +77,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @type array $_plugins_page_row
      */
-    protected $_plugins_page_row = array();
+    protected $_plugins_page_row = [];
 
 
     /**
@@ -92,7 +92,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @type string
      */
-    protected $pue_slug;
+    protected $pue_slug = '';
 
 
     /**
@@ -108,8 +108,8 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
 
 
     /**
-     * @param EE_Dependency_Map $dependency_map [optional]
-     * @param DomainInterface   $domain         [optional]
+     * @param EE_Dependency_Map|null $dependency_map [optional]
+     * @param DomainInterface|null   $domain         [optional]
      */
     public function __construct(EE_Dependency_Map $dependency_map = null, DomainInterface $domain = null)
     {
@@ -119,7 +119,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         if ($domain instanceof DomainInterface) {
             $this->setDomain($domain);
         }
-        add_action('AHEE__EE_System__load_controllers__load_admin_controllers', array($this, 'admin_init'));
+        add_action('AHEE__EE_System__load_controllers__load_admin_controllers', [$this, 'admin_init']);
     }
 
 
@@ -135,7 +135,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @return EE_Dependency_Map
      */
-    public function dependencyMap()
+    public function dependencyMap(): ?EE_Dependency_Map
     {
         return $this->dependency_map;
     }
@@ -149,19 +149,20 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         $this->domain = $domain;
     }
 
+
     /**
      * @return DomainInterface
      */
-    public function domain()
+    public function domain(): ?DomainInterface
     {
         return $this->domain;
     }
 
 
     /**
-     * @param mixed $version
+     * @param string $version
      */
-    public function set_version($version = null)
+    public function set_version(string $version = '')
     {
         $this->_version = $version;
     }
@@ -172,7 +173,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return string
      */
-    public function version()
+    public function version(): string
     {
         return $this->_version;
     }
@@ -192,7 +193,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return string
      */
-    public function min_core_version()
+    public function min_core_version(): string
     {
         return $this->_min_core_version;
     }
@@ -202,11 +203,10 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * Sets addon_name
      *
      * @param string $addon_name
-     * @return bool
      */
-    public function set_name($addon_name)
+    public function set_name(string $addon_name)
     {
-        return $this->_addon_name = $addon_name;
+        $this->_addon_name = $addon_name;
     }
 
 
@@ -224,7 +224,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @return string
      */
-    public function plugin_basename()
+    public function plugin_basename(): string
     {
 
         return $this->_plugin_basename;
@@ -234,7 +234,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @param string $plugin_basename
      */
-    public function set_plugin_basename($plugin_basename)
+    public function set_plugin_basename(string $plugin_basename)
     {
 
         $this->_plugin_basename = $plugin_basename;
@@ -244,7 +244,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @return string
      */
-    public function plugin_slug()
+    public function plugin_slug(): string
     {
 
         return $this->_plugin_slug;
@@ -254,7 +254,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @param string $plugin_slug
      */
-    public function set_plugin_slug($plugin_slug)
+    public function set_plugin_slug(string $plugin_slug)
     {
 
         $this->_plugin_slug = $plugin_slug;
@@ -264,7 +264,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @return string
      */
-    public function plugin_action_slug()
+    public function plugin_action_slug(): string
     {
 
         return $this->_plugin_action_slug;
@@ -274,7 +274,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @param string $plugin_action_slug
      */
-    public function set_plugin_action_slug($plugin_action_slug)
+    public function set_plugin_action_slug(string $plugin_action_slug)
     {
 
         $this->_plugin_action_slug = $plugin_action_slug;
@@ -284,7 +284,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     /**
      * @return array
      */
-    public function get_plugins_page_row()
+    public function get_plugins_page_row(): array
     {
 
         return $this->_plugins_page_row;
@@ -292,16 +292,16 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
 
 
     /**
-     * @param array $plugins_page_row
+     * @param array|string $plugins_page_row
      */
-    public function set_plugins_page_row($plugins_page_row = array())
+    public function set_plugins_page_row(array $plugins_page_row = [])
     {
         // sigh.... check for example content that I stupidly merged to master and remove it if found
         if (
             ! is_array($plugins_page_row)
             && strpos($plugins_page_row, '<h3>Promotions Addon Upsell Info</h3>') !== false
         ) {
-            $plugins_page_row = array();
+            $plugins_page_row = [];
         }
         $this->_plugins_page_row = (array) $plugins_page_row;
     }
@@ -322,7 +322,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
         add_action(
             'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required')
+            [$this, 'initialize_db_if_no_migrations_required']
         );
     }
 
@@ -342,7 +342,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
         add_action(
             'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required')
+            [$this, 'initialize_db_if_no_migrations_required']
         );
     }
 
@@ -393,10 +393,10 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
             $this->initialize_default_data();
             // @todo: this will probably need to be adjusted in 4.4 as the array changed formats I believe
             EE_Data_Migration_Manager::instance()->update_current_database_state_to(
-                array(
+                [
                     'slug'    => $this->name(),
                     'version' => $this->version(),
-                )
+                ]
             );
             /* make sure core's data is a-ok
              * (at the time of writing, we especially want to verify all the caps are present
@@ -427,6 +427,9 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * data in them. The default is to actually use the most up-to-date data migration script
      * for this addon, and just use its schema_changes_before_migration() and schema_changes_after_migration()
      * methods to setup the db.
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initialize_db()
     {
@@ -445,10 +448,10 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         }
         // if not DMS was found that should be ok. This addon just doesn't require any database changes
         EE_Data_Migration_Manager::instance()->update_current_database_state_to(
-            array(
+            [
                 'slug'    => $this->name(),
                 'version' => $this->version(),
-            )
+            ]
         );
     }
 
@@ -495,7 +498,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         // also it's possible there is new default data that needs to be added
         add_action(
             'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required')
+            [$this, 'initialize_db_if_no_migrations_required']
         );
     }
 
@@ -511,7 +514,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         // it's possible there's old default data that needs to be double-checked
         add_action(
             'AHEE__EE_System__perform_activations_upgrades_and_migrations',
-            array($this, 'initialize_db_if_no_migrations_required')
+            [$this, 'initialize_db_if_no_migrations_required']
         );
     }
 
@@ -523,7 +526,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return bool
      */
-    public function set_db_update_option_name()
+    public function set_db_update_option_name(): bool
     {
         EE_Error::doing_it_wrong(
             __FUNCTION__,
@@ -542,10 +545,10 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * Returns the name of the activation indicator option
      * (an option which is set temporarily to indicate that this addon was just activated)
      *
-     * @deprecated since version 4.3.0.alpha.016
      * @return string
+     * @deprecated since version 4.3.0.alpha.016
      */
-    public function get_db_update_option_name()
+    public function get_db_update_option_name(): string
     {
         EE_Error::doing_it_wrong(
             __FUNCTION__,
@@ -565,7 +568,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return bool
      */
-    public function set_activation_indicator_option()
+    public function set_activation_indicator_option(): bool
     {
         // let's just handle this on the next request, ok? right now we're just not really ready
         return update_option($this->get_activation_indicator_option_name(), true);
@@ -577,7 +580,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return string
      */
-    public function get_activation_indicator_option_name()
+    public function get_activation_indicator_option_name(): string
     {
         return 'ee_activation_' . $this->name();
     }
@@ -588,7 +591,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @param int $req_type
      */
-    public function set_req_type($req_type)
+    public function set_req_type(int $req_type)
     {
         $this->_req_type = $req_type;
     }
@@ -599,7 +602,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * EE_System::req_type_reactivation, EE_System::req_type_upgrade, or EE_System::req_type_downgrade). This is set by
      * EE_System when it is checking for new install or upgrades of addons
      */
-    public function detect_req_type($redetect = false)
+    public function detect_req_type($redetect = false): int
     {
         if ($this->_req_type === null || $redetect) {
             $this->detect_activation_or_upgrade();
@@ -618,7 +621,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     public function detect_activation_or_upgrade()
     {
         $activation_history_for_addon = $this->get_activation_history();
-        $request_type = EE_System::detect_req_type_given_activation_history(
+        $request_type                 = EE_System::detect_req_type_given_activation_history(
             $activation_history_for_addon,
             $this->get_activation_indicator_option_name(),
             $this->version()
@@ -658,6 +661,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         do_action("AHEE__{$classname}__detect_if_activation_or_upgrade__complete");
     }
 
+
     /**
      * Updates the version history for this addon
      *
@@ -665,7 +669,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * @param string $current_version_to_add
      * @return bool success
      */
-    public function update_list_of_installed_versions($version_history = null, $current_version_to_add = null)
+    public function update_list_of_installed_versions($version_history = null, $current_version_to_add = null): bool
     {
         if (! $version_history) {
             $version_history = $this->get_activation_history();
@@ -674,9 +678,9 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
             $current_version_to_add = $this->version();
         }
         $version_history[ $current_version_to_add ][] = date('Y-m-d H:i:s', time());
-        // resave
         return update_option($this->get_activation_history_option_name(), $version_history);
     }
+
 
     /**
      * Gets the name of the wp option that stores the activation history
@@ -684,7 +688,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return string
      */
-    public function get_activation_history_option_name()
+    public function get_activation_history_option_name(): string
     {
         return self::ee_addon_version_history_option_prefix . $this->name();
     }
@@ -695,9 +699,9 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return array
      */
-    public function get_activation_history()
+    public function get_activation_history(): array
     {
-        return get_option($this->get_activation_history_option_name(), null);
+        return get_option($this->get_activation_history_option_name(), []);
     }
 
 
@@ -709,25 +713,28 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         $this->_config_section = ! empty($config_section) ? $config_section : 'addons';
     }
 
+
     /**
      * Sets the filepath to the main plugin file
      *
      * @param string $filepath
      */
-    public function set_main_plugin_file($filepath)
+    public function set_main_plugin_file(string $filepath)
     {
         $this->_main_plugin_file = $filepath;
     }
+
 
     /**
      * gets the filepath to teh main file
      *
      * @return string
      */
-    public function get_main_plugin_file()
+    public function get_main_plugin_file(): string
     {
         return $this->_main_plugin_file;
     }
+
 
     /**
      * Gets the filename (no path) of the main file (the main file loaded
@@ -735,17 +742,18 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return string
      */
-    public function get_main_plugin_file_basename()
+    public function get_main_plugin_file_basename(): string
     {
         return plugin_basename($this->get_main_plugin_file());
     }
+
 
     /**
      * Gets the folder name which contains the main plugin file
      *
      * @return string
      */
-    public function get_main_plugin_file_dirname()
+    public function get_main_plugin_file_dirname(): string
     {
         return dirname($this->get_main_plugin_file());
     }
@@ -760,8 +768,8 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     {
         // is admin and not in M-Mode ?
         if (is_admin() && ! EE_Maintenance_Mode::instance()->level()) {
-            add_filter('plugin_action_links', array($this, 'plugin_action_links'), 10, 2);
-            add_filter('after_plugin_row_' . $this->_plugin_basename, array($this, 'after_plugin_row'), 10, 3);
+            add_filter('plugin_action_links', [$this, 'plugin_action_links'], 10, 2);
+            add_filter('after_plugin_row_' . $this->_plugin_basename, [$this, 'after_plugin_row'], 10, 3);
         }
     }
 
@@ -770,11 +778,11 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * plugin_actions
      * Add a settings link to the Plugins page, so people can go straight from the plugin page to the settings page.
      *
-     * @param $links
-     * @param $file
+     * @param array  $links
+     * @param string $file
      * @return array
      */
-    public function plugin_action_links($links, $file)
+    public function plugin_action_links(array $links, string $file): array
     {
         if ($file === $this->plugin_basename() && $this->plugin_action_slug() !== '') {
             // before other links
@@ -794,19 +802,19 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * Add additional content to the plugins page plugin row
      * Inserts another row
      *
-     * @param $plugin_file
-     * @param $plugin_data
-     * @param $status
+     * @param string $plugin_file
+     * @param array  $plugin_data
+     * @param string $status
      * @return void
      */
-    public function after_plugin_row($plugin_file, $plugin_data, $status)
+    public function after_plugin_row(string $plugin_file, array $plugin_data, string $status)
     {
         $after_plugin_row = '';
         $plugins_page_row = $this->get_plugins_page_row();
         if (! empty($plugins_page_row) && $plugin_file === $this->plugin_basename()) {
-            $class = $status ? 'active' : 'inactive';
-            $link_text = isset($plugins_page_row['link_text']) ? $plugins_page_row['link_text'] : '';
-            $link_url = isset($plugins_page_row['link_url']) ? $plugins_page_row['link_url'] : '';
+            $class       = $status ? 'active' : 'inactive';
+            $link_text   = isset($plugins_page_row['link_text']) ? $plugins_page_row['link_text'] : '';
+            $link_url    = isset($plugins_page_row['link_url']) ? $plugins_page_row['link_url'] : '';
             $description = isset($plugins_page_row['description'])
                 ? $plugins_page_row['description']
                 : '';
@@ -859,17 +867,20 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         // cricket chirp... cricket chirp...
     }
 
+
     /**
      * @return string
      */
-    public function getPueSlug()
+    public function getPueSlug(): string
     {
         return $this->pue_slug;
     }
+
+
     /**
      * @param string $pue_slug
      */
-    public function setPueSlug($pue_slug)
+    public function setPueSlug(string $pue_slug)
     {
         $this->pue_slug = $pue_slug;
     }

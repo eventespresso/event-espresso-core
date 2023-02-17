@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\domain\services\registration\form\v1\CountryOptions;
+use EventEspresso\core\domain\services\registration\form\v1\StateOptions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -234,8 +236,9 @@ class EED_Add_New_State extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function display_add_new_state_micro_form(EE_Form_Section_Proper $question_group_reg_form)
-    {
+    public static function display_add_new_state_micro_form(
+        EE_Form_Section_Proper $question_group_reg_form
+    ): EE_Form_Section_Proper {
         $request = self::getRequest();
         // only add the 'new_state_micro_form' when displaying reg forms,
         // not during processing since we process the 'new_state_micro_form' in it's own AJAX request
@@ -402,7 +405,7 @@ class EED_Add_New_State extends EED_Module
                                 EEH_HTML::div(
                                     EEH_HTML::button(
                                         esc_html__('ADD', 'event_espresso'),
-                                        'ee-form-add-new-state-submit button button-secondary',
+                                        'ee-form-add-new-state-submit button button--secondary',
                                         '',
                                         'submit-' . $new_state_submit_id,
                                         '',
@@ -561,7 +564,7 @@ class EED_Add_New_State extends EED_Module
      * @param array $request_params
      * @return array
      */
-    public static function filter_checkout_request_params($request_params)
+    public static function filter_checkout_request_params(array $request_params): array
     {
         foreach ((array) $request_params as $form_section) {
             if (is_array($form_section)) {
@@ -577,7 +580,7 @@ class EED_Add_New_State extends EED_Module
      * @param array $request_params
      * @return array
      */
-    public static function unset_new_state_request_params($request_params)
+    public static function unset_new_state_request_params(array $request_params): array
     {
         unset(
             $request_params['new_state_micro_form'],
@@ -596,7 +599,7 @@ class EED_Add_New_State extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function save_new_state_to_db($props_n_values = [])
+    public static function save_new_state_to_db(array $props_n_values = []): ?EE_State
     {
         /** @var EE_State[] $existing_state */
         $existing_state = EEM_State::instance()->get_all([$props_n_values, 'limit' => 1]);
@@ -645,7 +648,7 @@ class EED_Add_New_State extends EED_Module
 
     /**
      * @param string $CNT_ISO
-     * @param string $STA_ID
+     * @param int    $STA_ID
      * @param array  $cols_n_values
      * @return void
      * @throws DomainException
@@ -653,8 +656,9 @@ class EED_Add_New_State extends EED_Module
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function update_country_settings($CNT_ISO = '', $STA_ID = '', $cols_n_values = [])
+    public static function update_country_settings(string $CNT_ISO = '', int $STA_ID = 0, array $cols_n_values = [])
     {
         if (! $CNT_ISO) {
             EE_Error::add_error(
@@ -689,22 +693,22 @@ class EED_Add_New_State extends EED_Module
 
 
     /**
-     * @param EE_State[]                                 $state_options
-     * @param EE_SPCO_Reg_Step_Attendee_Information|null $reg_step
-     * @param EE_Registration|null                       $registration
-     * @param EE_Question|null                           $question
-     * @param null                                       $answer
+     * @param EE_State[]                                              $state_options
+     * @param EE_SPCO_Reg_Step_Attendee_Information|StateOptions|null $deprecated
+     * @param EE_Registration                                         $registration
+     * @param EE_Question|null                                        $question
+     * @param EE_Answer|null                                          $answer
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
     public static function inject_new_reg_state_into_options(
         array $state_options,
-        EE_SPCO_Reg_Step_Attendee_Information $reg_step = null,
-        EE_Registration $registration = null,
-        EE_Question $question = null,
-        $answer = null
-    ) {
+        $deprecated,
+        EE_Registration $registration,
+        ?EE_Question $question,
+        ?EE_Answer $answer
+    ): array {
         if (
             $answer instanceof EE_Answer && $question instanceof EE_Question
             && $question->type() === EEM_Question::QST_type_state
@@ -730,22 +734,25 @@ class EED_Add_New_State extends EED_Module
 
 
     /**
-     * @param EE_Country[]                               $country_options
-     * @param EE_SPCO_Reg_Step_Attendee_Information|null $reg_step
-     * @param EE_Registration|null                       $registration
-     * @param EE_Question|null                           $question
-     * @param null                                       $answer
+     * @param EE_Country[]                                              $country_options
+     * @param EE_SPCO_Reg_Step_Attendee_Information|CountryOptions|null $deprecated
+     * @param EE_Registration                                           $registration
+     * @param EE_Question|null                                          $question
+     * @param EE_Answer|null                                            $answer
      * @return array
      * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public static function inject_new_reg_country_into_options(
         array $country_options,
-        EE_SPCO_Reg_Step_Attendee_Information $reg_step = null,
-        EE_Registration $registration = null,
-        EE_Question $question = null,
-        $answer = null
-    ) {
+        $deprecated,
+        EE_Registration $registration,
+        ?EE_Question $question,
+        ?EE_Answer $answer
+    ): array {
         if (
             $answer instanceof EE_Answer
             && $question instanceof EE_Question
@@ -771,7 +778,7 @@ class EED_Add_New_State extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function state_options($state_options = [])
+    public static function state_options(array $state_options = []): array
     {
         $new_states = EED_Add_New_State::_get_new_states();
         foreach ($new_states as $new_state) {
@@ -792,7 +799,7 @@ class EED_Add_New_State extends EED_Module
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected static function _get_new_states()
+    protected static function _get_new_states(): array
     {
         $new_states = [];
         if (EE_Registry::instance()->SSN instanceof EE_Session) {
@@ -810,7 +817,7 @@ class EED_Add_New_State extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function country_options($country_options = [])
+    public static function country_options(array $country_options = []): array
     {
         $new_states = EED_Add_New_State::_get_new_states();
         foreach ($new_states as $new_state) {

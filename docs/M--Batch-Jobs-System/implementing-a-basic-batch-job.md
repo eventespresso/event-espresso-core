@@ -30,7 +30,8 @@ use EventEspressoBatchRequest\Helpers\JobStepResponse;
 class AttendeesReport extends JobHandlerFile {
 
 
-	public function create_job(JobParameters $job_parameters) {
+	public function create_job(JobParameters $job_parameters): JobStepResponse
+	{
 		if( ! \EE_Capabilities::instance()->current_user_can( 'ee_read_contacts', 'generating_report' ) ) {
 			throw new BatchRequestException(
 				__( 'You do not have permission to view contacts', 'event_espresso')
@@ -56,7 +57,8 @@ class AttendeesReport extends JobHandlerFile {
 	}
 
 
-	public function continue_job(JobParameters $job_parameters, $batch_size = 50) {
+	public function continue_job(JobParameters $job_parameters, int $batch_size = 50): JobStepResponse
+	{
 		$csv_data = $this->get_csv_data( $job_parameters->units_processed(), $batch_size );
 		\EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
 		$units_processed = count( $csv_data );
@@ -77,7 +79,8 @@ class AttendeesReport extends JobHandlerFile {
 	}
 
 
-	public function cleanup_job(JobParameters $job_parameters) {
+	public function cleanup_job(JobParameters $job_parameters): JobStepResponse
+	{
 		$this->_file_helper->delete(
 			\EEH_File::remove_filename_from_filepath( $job_parameters->extra_datum( 'filepath' ) ),
 			true,
@@ -86,10 +89,13 @@ class AttendeesReport extends JobHandlerFile {
 		return new JobStepResponse( $job_parameters, __( 'Cleaned up temporary file', 'event_espresso' ) );
 	}
 
-	public function count_units_to_process() {
+	public function count_units_to_process()
+	{
 		return \EEM_Attendee::instance()->count();
 	}
-	public function get_csv_data( $offset, $limit ) {
+
+	public function get_csv_data( $offset, $limit )
+	{
 		$attendee_rows = \EEM_Attendee::instance()->get_all_wpdb_results(
 				array(
 					'limit' => array( $offset, $limit ),

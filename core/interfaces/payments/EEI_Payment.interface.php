@@ -101,7 +101,7 @@ interface EEI_Payment extends EEI_Base
 
 
     /**
-     * @return EEI_Transaction
+     * @return EE_Transaction
      */
     public function transaction();
 

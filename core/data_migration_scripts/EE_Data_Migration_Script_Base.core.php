@@ -165,6 +165,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string     $new_table with wpdb prefix (wp_). Eg: wp_posts
      * @param int|string $new_pk    eg posts.ID
      * @return void
+     * @throws EE_Error
      */
     public function set_mapping($old_table, $old_pk, $new_table, $new_pk)
     {
@@ -184,6 +185,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param int|string $old_pk    old primary key. Eg events_detail.id's value
      * @param string     $new_table with wpdb prefix (wp_). Eg: wp_posts
      * @return mixed the primary key on the new table
+     * @throws EE_Error
      */
     public function get_mapping_new_pk($old_table, $old_pk, $new_table)
     {
@@ -207,6 +209,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string $new_table with wpdb prefix (wp_). Eg: wp_posts
      * @param mixed  $new_pk
      * @return mixed
+     * @throws EE_Error
      */
     public function get_mapping_old_pk($old_table, $new_table, $new_pk)
     {
@@ -233,11 +236,11 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string $old_table_name
      * @param string $new_table_name
      * @return array
+     * @throws EE_Error
      */
     protected function _get_mapping_option($old_table_name, $new_table_name)
     {
-        $option = get_option($this->_get_mapping_option_name($old_table_name, $new_table_name), array());
-        return $option;
+        return get_option($this->_get_mapping_option_name($old_table_name, $new_table_name), array());
     }
 
 
@@ -248,6 +251,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string $new_table_name
      * @param array  $mapping_array
      * @return boolean success of updating option
+     * @throws EE_Error
      */
     protected function _set_mapping_option($old_table_name, $new_table_name, $mapping_array)
     {
@@ -262,6 +266,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string $old_table_name
      * @param string $new_table_name
      * @return string
+     * @throws EE_Error
      */
     protected function _get_mapping_option_name($old_table_name, $new_table_name)
     {
@@ -466,6 +471,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string $table_name
      * @param string $table_definition_sql
      * @param string $engine_string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _table_is_new_in_this_version(
         $table_name,
@@ -480,6 +487,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
         );
     }
 
+
     /**
      * Like _table_is_new_in_this_version and _table_should_exist_previously, this function verifies the given table
      * exists. But we understand that this table has CHANGED in this version since the previous version. So it's not
@@ -492,6 +500,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string $table_name
      * @param string $table_definition_sql
      * @param string $engine_string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _table_is_changed_in_this_version(
         $table_name,
@@ -513,6 +523,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      *
      * @param string $table_name
      * @return boolean
+     * @throws EE_Error
      */
     protected function _old_table_exists($table_name)
     {
@@ -526,6 +537,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      *
      * @param string $table_name
      * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _delete_table_if_empty($table_name)
     {
@@ -548,6 +561,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string $table_name
      * @param string $table_definition_sql
      * @param string $engine_string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _table_should_exist_previously(
         $table_name,
@@ -562,6 +577,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
         );
     }
 
+
     /**
      * Exactly the same as _table_should_exist_previously(), except if this migration script is currently doing
      * a migration, we skip checking this table's structure in the database and just assume it's correct.
@@ -574,6 +590,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string $table_name
      * @param string $table_definition_sql
      * @param string $engine_string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _table_has_not_changed_since_previous(
         $table_name,
@@ -607,6 +625,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
                EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance;
     }
 
+
     /**
      * Determines if a table should be dropped, based on whether it's reported to be new in $table_is_new,
      * and the plugin's request type.
@@ -615,6 +634,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      *
      * @param boolean $table_is_new
      * @return boolean
+     * @throws EE_Error
      */
     protected function _pre_existing_table_should_be_dropped($table_is_new)
     {
@@ -641,6 +661,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
         }
     }
 
+
     /**
      * Just wraps EEH_Activation::create_table, but catches any errors it may throw and adds them as errors on the DMS
      *
@@ -648,6 +669,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string  $table_definition_sql
      * @param string  $engine_string
      * @param boolean $drop_pre_existing_tables
+     * @throws ReflectionException
      */
     private function _create_table_and_catch_errors(
         $table_name,
@@ -839,6 +861,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      *
      * @return array where the first key is the plugin's slug, the 2nd is the version of that plugin
      * that will be updated to. Eg array('Core','4.1.0')
+     * @throws EE_Error
      */
     final public function migrates_to_version()
     {
@@ -853,6 +876,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * Or 'Core' for core (non-addon).
      *
      * @return string
+     * @throws EE_Error
      */
     public function slug()
     {

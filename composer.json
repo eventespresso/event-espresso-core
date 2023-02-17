@@ -1,7 +1,7 @@
 {
 	"name": "eventespresso/event-espresso-core",
 	"type": "wordpress-plugin",
-	"license": "GPL-2.0-or-later",
+	"license": "GPL-3.0-or-later",
 	"description": "Event Espresso 4 Core for WordPress: Build an Event Ticketing Website Today!",
 	"authors": [
 		{
@@ -27,39 +27,14 @@
 		"docs": "https://github.com/eventespresso/event-espresso-core/tree/master/docs"
 	},
 	"require": {
-		"php": ">=7.2",
+		"php": ">=7.4",
 		"ext-json": "*",
 		"ext-mbstring": "*",
 		"ext-openssl": "*",
-		"tijsverkoyen/css-to-inline-styles": "2.2.3",
-		"dompdf/dompdf": "^2.0.1"
-	},
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/eventespresso/ee-coding-standards"
-		}
-	],
-	"require-dev": {
-		"eventespresso/ee-coding-standards": "dev-master",
-		"roave/security-advisories": "dev-master",
-		"yoast/phpunit-polyfills": "^1.0"
-	},
-	"config": {
-		"allow-plugins": {
-			"eventespresso/*": true,
-			"phpunit/phpunit": true,
-			"roave/security-advisories": true,
-			"yoast/phpunit-polyfills": true
-		}
-	},
-	"scripts": {
-		"config-eventespressocs": [
-			"\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
-			"\"vendor/bin/phpcs\" --config-set default_standard EventEspresso"
-		],
-		"lint": "\"vendor/bin/phpcs\" --runtime-set testVersion 7.2-",
-		"lint:skip-warnings": "\"vendor/bin/phpcs\" -n --runtime-set testVersion 7.2-",
-		"lint:fix": "\"vendor/bin/phpcbf\" --standard=phpcs.xml --ignore=assets/*,languages/*,*/index.php"
+		"dompdf/dompdf": "^2.0.1",
+		"endyjasmi/cuid": "2.*",
+		"tijsverkoyen/css-to-inline-styles": "2.2.4",
+		"jaybizzle/crawler-detect": "^1.2",
+		"wp-graphql/wp-graphql": "^1.12"
 	}
 }

@@ -310,6 +310,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         );
         foreach ($registrations as $REG_ID => $registration) {
             /** @var $registration EE_Registration */
+            // Skip if the registration has been moved
+            if ($registration->wasMoved()) {
+                continue;
+            }
             // has this registration lost it's space ?
             if (isset($ejected_registrations[ $REG_ID ])) {
                 if ($registration->event()->is_sold_out() || $registration->event()->is_sold_out(true)) {
@@ -1274,7 +1278,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * _get_billing_form_for_payment_method
      *
      * @param EE_Payment_Method $payment_method
-     * @return EE_Billing_Info_Form|EE_Form_Section_HTML
+     * @return EE_Billing_Info_Form|EE_Billing_Attendee_Info_Form|EE_Form_Section_HTML
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1424,8 +1428,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             apply_filters(
                 'FHEE__populate_billing_form_fields_from_attendee',
                 (
-                $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
-                && $this->checkout->transaction_has_primary_registrant()
+                    $this->checkout->billing_form instanceof EE_Billing_Attendee_Info_Form
+                    && $this->checkout->transaction_has_primary_registrant()
                 ),
                 $this->checkout->billing_form,
                 $this->checkout->transaction
@@ -2258,7 +2262,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 $payment_method,
                 $this->checkout->transaction,
                 $this->checkout->amount_owing,
-                $this->checkout->billing_form,
+                $this->checkout->billing_form instanceof EE_Billing_Info_Form
+                    ? $this->checkout->billing_form
+                    : null,
                 $this->_get_return_url($payment_method),
                 'CART',
                 $this->checkout->admin_request,

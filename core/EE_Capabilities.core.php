@@ -13,6 +13,11 @@
  */
 final class EE_Capabilities extends EE_Base
 {
+    const ROLE_ADMINISTRATOR        = 'administrator';
+
+    const ROLE_EVENTS_ADMINISTRATOR = 'ee_events_administrator';
+
+
     /**
      * the name of the wp option used to store caps previously initialized
      */
@@ -34,7 +39,7 @@ final class EE_Capabilities extends EE_Base
      *
      * @var array
      */
-    private $capabilities_map = array();
+    private $capabilities_map = [];
 
     /**
      * This used to hold an array of EE_Meta_Capability_Map objects
@@ -42,7 +47,7 @@ final class EE_Capabilities extends EE_Base
      *
      * @var EE_Meta_Capability_Map[]
      */
-    private $_meta_caps = array();
+    private $_meta_caps = [];
 
     /**
      * The internal $capabilities_map needs to be initialized before it can be used.
@@ -72,11 +77,11 @@ final class EE_Capabilities extends EE_Base
     /**
      * singleton method used to instantiate class object
      *
+     * @return EE_Capabilities
      * @since 4.5.0
      *
-     * @return EE_Capabilities
      */
-    public static function instance()
+    public static function instance(): EE_Capabilities
     {
         // check if instantiated, and if not do so.
         if (! self::$_instance instanceof EE_Capabilities) {
@@ -107,7 +112,7 @@ final class EE_Capabilities extends EE_Base
      * @return bool
      * @throws EE_Error
      */
-    public function init_caps($reset = false)
+    public function init_caps(?bool $reset = false): bool
     {
         if (! EE_Maintenance_Mode::instance()->models_can_query()) {
             return false;
@@ -115,8 +120,8 @@ final class EE_Capabilities extends EE_Base
         $this->reset = filter_var($reset, FILTER_VALIDATE_BOOLEAN);
         // if reset, then completely delete the cache option and clear the $capabilities_map property.
         if ($this->reset) {
-            $this->initialized = null;
-            $this->capabilities_map = array();
+            $this->initialized      = null;
+            $this->capabilities_map = [];
             delete_option(self::option_name);
         }
         if ($this->initialized === null) {
@@ -142,9 +147,9 @@ final class EE_Capabilities extends EE_Base
     /**
      * This sets the meta caps property.
      *
-     * @since 4.5.0
      * @return void
      * @throws EE_Error
+     * @since 4.5.0
      */
     private function _set_meta_caps()
     {
@@ -154,8 +159,8 @@ final class EE_Capabilities extends EE_Base
             $this->_get_default_meta_caps_array()
         );
         // add filter for map_meta_caps but only if models can query.
-        if (! has_filter('map_meta_cap', array($this, 'map_meta_caps'))) {
-            add_filter('map_meta_cap', array($this, 'map_meta_caps'), 10, 4);
+        if (! has_filter('map_meta_cap', [$this, 'map_meta_caps'])) {
+            add_filter('map_meta_cap', [$this, 'map_meta_caps'], 10, 4);
         }
     }
 
@@ -163,130 +168,130 @@ final class EE_Capabilities extends EE_Base
     /**
      * This builds and returns the default meta_caps array only once.
      *
-     * @since  4.8.28.rc.012
      * @return array
      * @throws EE_Error
+     * @since  4.8.28.rc.012
      */
-    private function _get_default_meta_caps_array()
+    private function _get_default_meta_caps_array(): array
     {
-        static $default_meta_caps = array();
+        static $default_meta_caps = [];
         // make sure we're only ever initializing the default _meta_caps array once if it's empty.
         if (empty($default_meta_caps)) {
-            $default_meta_caps = array(
+            $default_meta_caps = [
                 // edits
                 new EE_Meta_Capability_Map_Edit(
                     'ee_edit_event',
-                    array('Event', 'ee_edit_published_events', 'ee_edit_others_events', 'ee_edit_private_events')
+                    ['Event', 'ee_edit_published_events', 'ee_edit_others_events', 'ee_edit_private_events']
                 ),
                 new EE_Meta_Capability_Map_Edit(
                     'ee_edit_venue',
-                    array('Venue', 'ee_edit_published_venues', 'ee_edit_others_venues', 'ee_edit_private_venues')
+                    ['Venue', 'ee_edit_published_venues', 'ee_edit_others_venues', 'ee_edit_private_venues']
                 ),
                 new EE_Meta_Capability_Map_Edit(
                     'ee_edit_registration',
-                    array('Registration', '', 'ee_edit_others_registrations', '')
+                    ['Registration', '', 'ee_edit_others_registrations', '']
                 ),
                 new EE_Meta_Capability_Map_Edit(
                     'ee_edit_checkin',
-                    array('Registration', '', 'ee_edit_others_checkins', '')
+                    ['Registration', '', 'ee_edit_others_checkins', '']
                 ),
                 new EE_Meta_Capability_Map_Messages_Cap(
                     'ee_edit_message',
-                    array('Message_Template_Group', '', 'ee_edit_others_messages', 'ee_edit_global_messages')
+                    ['Message_Template_Group', '', 'ee_edit_others_messages', 'ee_edit_global_messages']
                 ),
                 new EE_Meta_Capability_Map_Edit(
                     'ee_edit_default_ticket',
-                    array('Ticket', '', 'ee_edit_others_default_tickets', '')
+                    ['Ticket', '', 'ee_edit_others_default_tickets', '']
                 ),
                 new EE_Meta_Capability_Map_Registration_Form_Cap(
                     'ee_edit_question',
-                    array('Question', '', '', 'ee_edit_system_questions')
+                    ['Question', '', '', 'ee_edit_system_questions']
                 ),
                 new EE_Meta_Capability_Map_Registration_Form_Cap(
                     'ee_edit_question_group',
-                    array('Question_Group', '', '', 'ee_edit_system_question_groups')
+                    ['Question_Group', '', '', 'ee_edit_system_question_groups']
                 ),
                 new EE_Meta_Capability_Map_Edit(
                     'ee_edit_payment_method',
-                    array('Payment_Method', '', 'ee_edit_others_payment_methods', '')
+                    ['Payment_Method', '', 'ee_edit_others_payment_methods', '']
                 ),
                 // reads
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_event',
-                    array('Event', '', 'ee_read_others_events', 'ee_read_private_events')
+                    ['Event', '', 'ee_read_others_events', 'ee_read_private_events']
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_venue',
-                    array('Venue', '', 'ee_read_others_venues', 'ee_read_private_venues')
+                    ['Venue', '', 'ee_read_others_venues', 'ee_read_private_venues']
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_registration',
-                    array('Registration', '', 'ee_read_others_registrations', '')
+                    ['Registration', '', 'ee_read_others_registrations', '']
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_checkin',
-                    array('Registration', '', 'ee_read_others_checkins', '')
+                    ['Registration', '', 'ee_read_others_checkins', '']
                 ),
                 new EE_Meta_Capability_Map_Messages_Cap(
                     'ee_read_message',
-                    array('Message_Template_Group', '', 'ee_read_others_messages', 'ee_read_global_messages')
+                    ['Message_Template_Group', '', 'ee_read_others_messages', 'ee_read_global_messages']
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_default_ticket',
-                    array('Ticket', '', 'ee_read_others_default_tickets', '')
+                    ['Ticket', '', 'ee_read_others_default_tickets', '']
                 ),
                 new EE_Meta_Capability_Map_Read(
                     'ee_read_payment_method',
-                    array('Payment_Method', '', 'ee_read_others_payment_methods', '')
+                    ['Payment_Method', '', 'ee_read_others_payment_methods', '']
                 ),
                 // deletes
                 new EE_Meta_Capability_Map_Delete(
                     'ee_delete_event',
-                    array(
+                    [
                         'Event',
                         'ee_delete_published_events',
                         'ee_delete_others_events',
                         'ee_delete_private_events',
-                    )
+                    ]
                 ),
                 new EE_Meta_Capability_Map_Delete(
                     'ee_delete_venue',
-                    array(
+                    [
                         'Venue',
                         'ee_delete_published_venues',
                         'ee_delete_others_venues',
                         'ee_delete_private_venues',
-                    )
+                    ]
                 ),
                 new EE_Meta_Capability_Map_Delete(
                     'ee_delete_registration',
-                    array('Registration', '', 'ee_delete_others_registrations', '')
+                    ['Registration', '', 'ee_delete_others_registrations', '']
                 ),
                 new EE_Meta_Capability_Map_Delete(
                     'ee_delete_checkin',
-                    array('Registration', '', 'ee_delete_others_checkins', '')
+                    ['Registration', '', 'ee_delete_others_checkins', '']
                 ),
                 new EE_Meta_Capability_Map_Messages_Cap(
                     'ee_delete_message',
-                    array('Message_Template_Group', '', 'ee_delete_others_messages', 'ee_delete_global_messages')
+                    ['Message_Template_Group', '', 'ee_delete_others_messages', 'ee_delete_global_messages']
                 ),
                 new EE_Meta_Capability_Map_Delete(
                     'ee_delete_default_ticket',
-                    array('Ticket', '', 'ee_delete_others_default_tickets', '')
+                    ['Ticket', '', 'ee_delete_others_default_tickets', '']
                 ),
                 new EE_Meta_Capability_Map_Registration_Form_Cap(
                     'ee_delete_question',
-                    array('Question', '', '', 'delete_system_questions')
+                    ['Question', '', '', 'delete_system_questions']
                 ),
                 new EE_Meta_Capability_Map_Registration_Form_Cap(
                     'ee_delete_question_group',
-                    array('Question_Group', '', '', 'delete_system_question_groups')
+                    ['Question_Group', '', '', 'delete_system_question_groups']
                 ),
                 new EE_Meta_Capability_Map_Delete(
                     'ee_delete_payment_method',
-                    array('Payment_Method', '', 'ee_delete_others_payment_methods', '')
+                    ['Payment_Method', '', 'ee_delete_others_payment_methods', '']
                 ),
-            );
+            ];
         }
         return $default_meta_caps;
     }
@@ -298,17 +303,18 @@ final class EE_Capabilities extends EE_Base
      *
      * The actual logic is carried out by implementer classes in their definition of _map_meta_caps.
      *
-     * @since 4.5.0
-     * @see   wp-includes/capabilities.php
-     *
      * @param array  $caps    actual users capabilities
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
      * @return array actual users capabilities
      * @throws EE_Error
+     * @throws ReflectionException
+     * @since 4.5.0
+     * @see   wp-includes/capabilities.php
+     *
      */
-    public function map_meta_caps($caps, $cap, $user_id, $args)
+    public function map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
     {
         if (did_action('AHEE__EE_System__load_espresso_addons__complete')) {
             // loop through our _meta_caps array
@@ -332,16 +338,16 @@ final class EE_Capabilities extends EE_Base
      * Note this array is filtered.
      * It is assumed that all available EE capabilities are assigned to the administrator role.
      *
+     * @return array
      * @since 4.5.0
      *
-     * @return array
      */
-    private function _init_caps_map()
+    private function _init_caps_map(): array
     {
         return apply_filters(
             'FHEE__EE_Capabilities__init_caps_map__caps',
-            array(
-                'administrator'           => array(
+            [
+                EE_Capabilities::ROLE_ADMINISTRATOR        => [
                     // basic access
                     'ee_read_ee',
                     // gateways
@@ -460,8 +466,8 @@ final class EE_Capabilities extends EE_Base
                     'ee_manage_event_types',
                     'ee_edit_event_type',
                     'ee_delete_event_type',
-                ),
-                'ee_events_administrator' => array(
+                ],
+                EE_Capabilities::ROLE_EVENTS_ADMINISTRATOR => [
                     // core wp caps
                     'read',
                     'read_private_pages',
@@ -606,8 +612,8 @@ final class EE_Capabilities extends EE_Base
                     'ee_manage_event_types',
                     'ee_edit_event_type',
                     'ee_delete_event_type',
-                ),
-            )
+                ],
+            ]
         );
     }
 
@@ -616,7 +622,7 @@ final class EE_Capabilities extends EE_Base
      * @return bool
      * @throws EE_Error
      */
-    private function setupCapabilitiesMap()
+    private function setupCapabilitiesMap(): bool
     {
         // if the initialization process hasn't even started, then we need to call init_caps()
         if ($this->initialized === null) {
@@ -625,7 +631,7 @@ final class EE_Capabilities extends EE_Base
         // unless resetting, get caps from db if we haven't already
         $this->capabilities_map = $this->reset || ! empty($this->capabilities_map)
             ? $this->capabilities_map
-            : get_option(self::option_name, array());
+            : get_option(self::option_name, []);
         return true;
     }
 
@@ -634,30 +640,30 @@ final class EE_Capabilities extends EE_Base
      * @param bool $update
      * @return bool
      */
-    private function updateCapabilitiesMap($update = true)
+    private function updateCapabilitiesMap(bool $update = true): bool
     {
-        return $update ? update_option(self::option_name, $this->capabilities_map) : false;
+        return $update && update_option(self::option_name, $this->capabilities_map);
     }
 
 
     /**
      * Adds capabilities to roles.
      *
-     * @since 4.9.42
      * @param array $capabilities_to_add array of capabilities to add, indexed by roles.
      *                                   Note that this should ONLY be called on activation hook
      *                                   otherwise the caps will be added on every request.
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @since 4.9.42
      */
-    public function addCaps(array $capabilities_to_add)
+    public function addCaps(array $capabilities_to_add): bool
     {
         // don't do anything if the capabilities map can not be initialized
         if (! $this->setupCapabilitiesMap()) {
             return false;
         }
         // and filter the array so others can get in on the fun during resets
-        $capabilities_to_add = apply_filters(
+        $capabilities_to_add     = apply_filters(
             'FHEE__EE_Capabilities__addCaps__capabilities_to_add',
             $capabilities_to_add,
             $this->reset,
@@ -690,9 +696,9 @@ final class EE_Capabilities extends EE_Base
      *
      * @param array $caps_map map of capabilities to be removed (indexed by roles)
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public function removeCaps($caps_map)
+    public function removeCaps(array $caps_map): bool
     {
         // don't do anything if the capabilities map can not be initialized
         if (! $this->setupCapabilitiesMap()) {
@@ -724,7 +730,7 @@ final class EE_Capabilities extends EE_Base
      *
      * @param bool $flush Default is to flush the WP_User object.  If false, then this method effectively does nothing.
      */
-    private function flushWpUser($flush = true)
+    private function flushWpUser(bool $flush = true)
     {
         if ($flush) {
             $user = wp_get_current_user();
@@ -740,20 +746,24 @@ final class EE_Capabilities extends EE_Base
      * specific to prevent the cap from being added on every page load (adding caps are persistent to the db). Note.
      * this is a wrapper for $wp_role->add_cap()
      *
-     * @see   wp-includes/capabilities.php
-     * @since 4.5.0
      * @param string|WP_Role $role  A WordPress role the capability is being added to
      * @param string         $cap   The capability being added to the role
      * @param bool           $grant Whether to grant access to this cap on this role.
      * @param bool           $update_capabilities_map
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @see   wp-includes/capabilities.php
+     * @since 4.5.0
      */
-    public function add_cap_to_role($role, $cap, $grant = true, $update_capabilities_map = true)
-    {
+    public function add_cap_to_role(
+        $role,
+        string $cap,
+        bool $grant = true,
+        bool $update_capabilities_map = true
+    ): bool {
         // capture incoming value for $role because we may need it to create a new WP_Role
         $orig_role = $role;
-        $role = $role instanceof WP_Role ? $role : get_role($role);
+        $role      = $role instanceof WP_Role ? $role : get_role($role);
         // if the role isn't available then we create it.
         if (! $role instanceof WP_Role) {
             // if a plugin wants to create a specific role name then they should create the role before
@@ -761,8 +771,8 @@ final class EE_Capabilities extends EE_Base
             // - removes any `ee_` namespacing from the start of the slug.
             // - replaces `_` with ` ` (empty space).
             // - sentence case on the resulting string.
-            $role_label = ucwords(str_replace(array('ee_', '_'), array('', ' '), $orig_role));
-            $role = add_role($orig_role, $role_label);
+            $role_label = ucwords(str_replace(['ee_', '_'], ['', ' '], $orig_role));
+            $role       = add_role($orig_role, $role_label);
         }
         if ($role instanceof WP_Role) {
             // don't do anything if the capabilities map can not be initialized
@@ -784,15 +794,15 @@ final class EE_Capabilities extends EE_Base
      * Functions similarly to add_cap_to_role except removes cap from given role.
      * Wrapper for $wp_role->remove_cap()
      *
-     * @see   wp-includes/capabilities.php
-     * @since 4.5.0
      * @param string|WP_Role $role A WordPress role the capability is being removed from.
      * @param string         $cap  The capability being removed
      * @param bool           $update_capabilities_map
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @since 4.5.0
+     * @see   wp-includes/capabilities.php
      */
-    public function remove_cap_from_role($role, $cap, $update_capabilities_map = true)
+    public function remove_cap_from_role($role, string $cap, bool $update_capabilities_map = true): bool
     {
         // don't do anything if the capabilities map can not be initialized
         if (! $this->setupCapabilitiesMap()) {
@@ -814,9 +824,9 @@ final class EE_Capabilities extends EE_Base
      * @param string $role_name
      * @param string $cap
      * @param bool   $get_index
-     * @return bool|mixed
+     * @return bool|int|string
      */
-    private function capHasBeenAddedToRole($role_name = '', $cap = '', $get_index = false)
+    private function capHasBeenAddedToRole(string $role_name = '', string $cap = '', bool $get_index = false)
     {
         if (
             isset($this->capabilities_map[ $role_name ])
@@ -835,16 +845,16 @@ final class EE_Capabilities extends EE_Base
      * write those filters wherever current_user_can is called).
      * 2. Explicit passing of $id from a given context ( useful in the cases of map_meta_cap filters )
      *
-     * @since 4.5.0
-     *
      * @param string $cap     The cap being checked.
      * @param string $context The context where the current_user_can is being called from.
      * @param int    $id      Optional. Id for item where current_user_can is being called from (used in map_meta_cap()
      *                        filters.
      *
      * @return bool  Whether user can or not.
+     * @since 4.5.0
+     *
      */
-    public function current_user_can($cap, $context, $id = 0)
+    public function current_user_can(string $cap, string $context, int $id = 0): bool
     {
         // apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
         $filtered_cap = apply_filters('FHEE__EE_Capabilities__current_user_can__cap__' . $context, $cap, $id);
@@ -872,7 +882,7 @@ final class EE_Capabilities extends EE_Base
      *
      * @return bool Whether user can or not.
      */
-    public function user_can($user, $cap, $context, $id = 0)
+    public function user_can($user, string $cap, string $context, int $id = 0): bool
     {
         // apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
         $filtered_cap = apply_filters('FHEE__EE_Capabilities__user_can__cap__' . $context, $cap, $user, $id);
@@ -897,8 +907,6 @@ final class EE_Capabilities extends EE_Base
      * write those filters wherever current_user_can is called).
      * 2. Explicit passing of $id from a given context ( useful in the cases of map_meta_cap filters )
      *
-     * @since 4.5.0
-     *
      * @param int    $blog_id The blog id that is being checked for.
      * @param string $cap     The cap being checked.
      * @param string $context The context where the current_user_can is being called from.
@@ -906,8 +914,10 @@ final class EE_Capabilities extends EE_Base
      *                        filters.
      *
      * @return bool  Whether user can or not.
+     * @since 4.5.0
+     *
      */
-    public function current_user_can_for_blog($blog_id, $cap, $context, $id = 0)
+    public function current_user_can_for_blog(int $blog_id, string $cap, string $context, int $id = 0): bool
     {
         $user_can = ! empty($id)
             ? current_user_can_for_blog($blog_id, $cap, $id)
@@ -920,7 +930,7 @@ final class EE_Capabilities extends EE_Base
             $cap,
             $id
         );
-        $user_can = apply_filters(
+        return apply_filters(
             'FHEE__EE_Capabilities__current_user_can_for_blog__user_can',
             $user_can,
             $context,
@@ -928,35 +938,31 @@ final class EE_Capabilities extends EE_Base
             $cap,
             $id
         );
-        return $user_can;
     }
 
 
     /**
      * This helper method just returns an array of registered EE capabilities.
      *
-     * @since 4.5.0
-     * @param string $role If empty then the entire role/capability map is returned.
-     *                     Otherwise just the capabilities for the given role are returned.
+     * @param string|null $role If empty then the entire role/capability map is returned.
+     *                          Otherwise just the capabilities for the given role are returned.
      * @return array
      * @throws EE_Error
+     * @since 4.5.0
      */
-    public function get_ee_capabilities($role = 'administrator')
+    public function get_ee_capabilities(?string $role = EE_Capabilities::ROLE_ADMINISTRATOR): array
     {
         if (! $this->initialized) {
             $this->init_caps();
         }
-        if (empty($role)) {
+        if ($role === '') {
             return $this->capabilities_map;
         }
-        return isset($this->capabilities_map[ $role ])
-            ? $this->capabilities_map[ $role ]
-            : array();
+        return $this->capabilities_map[ $role ] ?? [];
     }
 
 
     /**
-     * @deprecated 4.9.42
      * @param bool  $reset      If you need to reset Event Espresso's capabilities,
      *                          then please use the init_caps() method with the "$reset" parameter set to "true"
      * @param array $caps_map   Optional.
@@ -965,8 +971,9 @@ final class EE_Capabilities extends EE_Base
      *                          task otherwise the caps will be added on every request.
      * @return void
      * @throws EE_Error
+     * @deprecated 4.9.42
      */
-    public function init_role_caps($reset = false, $caps_map = array())
+    public function init_role_caps(bool $reset = false, array $caps_map = [])
     {
         // If this method is called directly and reset is set as 'true',
         // then display a doing it wrong notice, because we want resets to go through init_caps()
@@ -1006,27 +1013,40 @@ final class EE_Capabilities extends EE_Base
  */
 abstract class EE_Meta_Capability_Map
 {
-    public $meta_cap;
-
     /**
      * @var EEM_Base
      */
     protected $_model;
 
+    /**
+     * @var string
+     */
     protected $_model_name;
 
+    /**
+     * @var string
+     */
+    public $meta_cap;
+
+    /**
+     * @var string
+     */
     public $published_cap = '';
 
+    /**
+     * @var string
+     */
     public $others_cap = '';
 
+    /**
+     * @var string
+     */
     public $private_cap = '';
 
 
     /**
      * constructor.
      * Receives the setup arguments for the map.
-     *
-     * @since                        4.5.0
      *
      * @param string $meta_cap   What meta capability is this mapping.
      * @param array  $map_values array {
@@ -1042,8 +1062,10 @@ abstract class EE_Meta_Capability_Map
      * @type         $map_values [3] string represents the capability used for private. Optional.
      *                               }
      * @throws EE_Error
+     * @since                        4.5.0
+     *
      */
-    public function __construct($meta_cap, $map_values)
+    public function __construct(string $meta_cap, array $map_values)
     {
         $this->meta_cap = $meta_cap;
         // verify there are four args in the $map_values array;
@@ -1059,29 +1081,30 @@ abstract class EE_Meta_Capability_Map
             );
         }
         // set properties
-        $this->_model = null;
-        $this->_model_name = $map_values[0];
+        $this->_model        = null;
+        $this->_model_name   = $map_values[0];
         $this->published_cap = (string) $map_values[1];
-        $this->others_cap = (string) $map_values[2];
-        $this->private_cap = (string) $map_values[3];
+        $this->others_cap    = (string) $map_values[2];
+        $this->private_cap   = (string) $map_values[3];
     }
+
 
     /**
      * Makes it so this object stops filtering caps
      */
     public function remove_filters()
     {
-        remove_filter('map_meta_cap', array($this, 'map_meta_caps'), 10);
+        remove_filter('map_meta_cap', [$this, 'map_meta_caps']);
     }
 
 
     /**
      * This method ensures that the $model property is converted from the model name string to a proper EEM_Base class
      *
-     * @since 4.5.0
-     * @throws EE_Error
-     *
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 4.5.0
      */
     public function ensure_is_model()
     {
@@ -1093,7 +1116,7 @@ abstract class EE_Meta_Capability_Map
         $this->_model_name = (string) $this->_model_name;
         // error proof if the name has EEM in it
         $this->_model_name = str_replace('EEM', '', $this->_model_name);
-        $this->_model = EE_Registry::instance()->load_model($this->_model_name);
+        $this->_model      = EE_Registry::instance()->load_model($this->_model_name);
         if (! $this->_model instanceof EEM_Base) {
             throw new EE_Error(
                 sprintf(
@@ -1111,19 +1134,19 @@ abstract class EE_Meta_Capability_Map
 
     /**
      *
-     * @see   EE_Meta_Capability_Map::_map_meta_caps() for docs on params.
-     * @since 4.6.x
-     *
      * @param $caps
      * @param $cap
      * @param $user_id
      * @param $args
      *
      * @return array
+     * @since 4.6.x
+     *
+     * @see   EE_Meta_Capability_Map::_map_meta_caps() for docs on params.
      */
-    public function map_meta_caps($caps, $cap, $user_id, $args)
+    public function map_meta_caps($caps, $cap, $user_id, $args): array
     {
-        return $this->_map_meta_caps($caps, $cap, $user_id, $args);
+        return $this->_map_meta_caps($caps, $cap, (int) $user_id, $args);
     }
 
 
@@ -1131,17 +1154,17 @@ abstract class EE_Meta_Capability_Map
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
      *
-     * @since 4.5.0
-     * @see   wp-includes/capabilities.php
-     *
      * @param array  $caps    actual users capabilities
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
      *
      * @return array   actual users capabilities
+     * @see   wp-includes/capabilities.php
+     *
+     * @since 4.5.0
      */
-    abstract protected function _map_meta_caps($caps, $cap, $user_id, $args);
+    abstract protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array;
 }
 
 
@@ -1160,17 +1183,19 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
      *
-     * @since 4.5.0
-     * @see   wp-includes/capabilities.php
-     *
      * @param array  $caps    actual users capabilities
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
      *
      * @return array   actual users capabilities
+     * @throws EE_Error
+     * @throws EE_Error
+     * @since 4.5.0
+     * @see   wp-includes/capabilities.php
+     *
      */
-    protected function _map_meta_caps($caps, $cap, $user_id, $args)
+    protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
     {
         // only process if we're checking our mapped_cap
         if ($cap !== $this->meta_cap) {
@@ -1181,9 +1206,6 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
         if (($key = array_search($cap, $caps)) !== false) {
             unset($caps[ $key ]);
         }
-
-        // cast $user_id to int for later explicit comparisons
-        $user_id = (int) $user_id;
 
         /** @var EE_Base_Class $obj */
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
@@ -1250,17 +1272,18 @@ class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
      *
-     * @since 4.5.0
-     * @see   wp-includes/capabilities.php
-     *
      * @param array  $caps    actual users capabilities
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
      *
      * @return array   actual users capabilities
+     * @throws EE_Error
+     * @since 4.5.0
+     * @see   wp-includes/capabilities.php
+     *
      */
-    protected function _map_meta_caps($caps, $cap, $user_id, $args)
+    protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
     {
         return parent::_map_meta_caps($caps, $cap, $user_id, $args);
     }
@@ -1282,17 +1305,19 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
      *
-     * @since 4.5.0
-     * @see   wp-includes/capabilities.php
-     *
      * @param array  $caps    actual users capabilities
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
      *
      * @return array   actual users capabilities
+     * @throws EE_Error
+     * @throws EE_Error
+     * @since 4.5.0
+     * @see   wp-includes/capabilities.php
+     *
      */
-    protected function _map_meta_caps($caps, $cap, $user_id, $args)
+    protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
     {
         // only process if we're checking our mapped cap;
         if ($cap !== $this->meta_cap) {
@@ -1303,9 +1328,6 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
         if (($key = array_search($cap, $caps)) !== false) {
             unset($caps[ $key ]);
         }
-
-        // cast $user_id to int for later explicit comparisons
-        $user_id = (int) $user_id;
 
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
         // if no obj then let's just do cap
@@ -1377,17 +1399,19 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
      *
-     * @since 4.5.0
-     * @see   wp-includes/capabilities.php
-     *
      * @param array  $caps    actual users capabilities
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
      *
      * @return array   actual users capabilities
+     * @throws EE_Error
+     * @throws EE_Error
+     * @since 4.5.0
+     * @see   wp-includes/capabilities.php
+     *
      */
-    protected function _map_meta_caps($caps, $cap, $user_id, $args)
+    protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
     {
         // only process if we're checking our mapped_cap
         if ($cap !== $this->meta_cap) {
@@ -1399,16 +1423,13 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map
             unset($caps[ $key ]);
         }
 
-        // cast $user_id to int for later explicit comparisons
-        $user_id = (int) $user_id;
-
         $obj = ! empty($args[0]) ? $this->_model->get_one_by_ID($args[0]) : null;
         // if no obj then let's just do cap
         if (! $obj instanceof EE_Message_Template_Group) {
             $caps[] = 'do_not_allow';
             return $caps;
         }
-        $caps[] = $cap . 's';
+        $caps[]    = $cap . 's';
         $is_global = $obj->is_global();
         if ($obj->wp_user() && $obj->wp_user() === $user_id) {
             if ($is_global) {
@@ -1442,15 +1463,17 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
      *
-     * @since 4.5.0
-     * @see   wp-includes/capabilities.php
      * @param array  $caps    actual users capabilities
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
      * @return array   actual users capabilities
+     * @throws EE_Error
+     * @throws EE_Error
+     * @since 4.5.0
+     * @see   wp-includes/capabilities.php
      */
-    protected function _map_meta_caps($caps, $cap, $user_id, $args)
+    protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
     {
         // only process if we're checking our mapped_cap
         if ($cap !== $this->meta_cap) {
@@ -1466,7 +1489,7 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
             $caps[] = 'do_not_allow';
             return $caps;
         }
-        $caps[] = $cap . 's';
+        $caps[]    = $cap . 's';
         $is_system = $obj instanceof EE_Question_Group ? $obj->system_group() : false;
         $is_system = $obj instanceof EE_Question ? $obj->is_system_question() : $is_system;
         if ($is_system) {

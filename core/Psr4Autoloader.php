@@ -55,7 +55,7 @@ class Psr4Autoloader
      *
      * @var array
      */
-    protected $prefixes = array();
+    protected $prefixes = [];
 
 
     /**
@@ -81,20 +81,18 @@ class Psr4Autoloader
      */
     public function register()
     {
-        spl_autoload_register(array($this, 'loadClass'));
+        spl_autoload_register([$this, 'loadClass']);
     }
 
 
     /**
      * Adds a base directory for a namespace prefix.
      *
-     * @param string $prefix   The namespace prefix.
-     * @param string $base_dir A base directory for class files in the
-     *                         namespace.
-     * @param bool   $prepend  If true, prepend the base directory to the stack
-     *                         instead of appending it; this causes it to be searched first rather
-     *                         than last.
-     * @return void
+     * @param string $prefix    The namespace prefix.
+     * @param string $base_dir  A base directory for class files in the namespace.
+     * @param bool $prepend     If true, prepend the base directory to the stack instead of appending it;
+     *                          this causes it to be searched first rather than last.
+     * @return bool             returns TRUE if the namespace was successfully added
      */
     public function addNamespace(string $prefix, string $base_dir, bool $prepend = false)
     {
@@ -104,8 +102,8 @@ class Psr4Autoloader
         $base_dir = str_replace(['\\', '/'], '/', $base_dir);
         $base_dir = rtrim($base_dir, '/\\') . '/';
         // initialize the namespace prefix array
-        if (isset($this->prefixes[ $prefix ]) === false) {
-            $this->prefixes[ $prefix ] = array();
+        if (! isset($this->prefixes[ $prefix ])) {
+            $this->prefixes[ $prefix ] = [];
         }
         // retain the base directory for the namespace prefix
         if ($prepend) {
@@ -113,6 +111,7 @@ class Psr4Autoloader
         } else {
             $this->prefixes[ $prefix ][] = $base_dir;
         }
+        return isset($this->prefixes[ $prefix ]);
     }
 
 
@@ -142,7 +141,7 @@ class Psr4Autoloader
             $prefix = rtrim($prefix, Psr4Autoloader::NS);
         }
         // never found a mapped file
-        return false;
+        return '';
     }
 
 
@@ -178,8 +177,8 @@ class Psr4Autoloader
     /**
      * If a file exists, require it from the file system.
      *
-     * @param string $file The file to require.
-     * @return bool True if the file exists, false if not.
+     * @param string $file  The file to require.
+     * @return bool         True if the file exists, false if not.
      */
     protected function requireFile(string $file): bool
     {

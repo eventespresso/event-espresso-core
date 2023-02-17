@@ -19,6 +19,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
 
     /**
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _setup_data()
     {
@@ -58,7 +59,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
-    protected function _get_table_filters()
+    protected function _get_table_filters(): array
     {
         return [];
     }
@@ -70,7 +71,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
     }
 
 
-    public function column_cb($item)
+    public function column_cb($item): string
     {
         return sprintf('<input type="checkbox" name="EVT_CAT_ID[]" value="%s" />', $item->get('term_id'));
     }
@@ -82,12 +83,14 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_id(EE_Term_Taxonomy $item)
+    public function column_id(EE_Term_Taxonomy $item): string
     {
-        $category_name = $item->get_first_related('Term')->get('name');
-        $content       = $item->get('term_id');
-        $content       .= ' <span class="show-on-mobile-view-only">' . $category_name . '</span>';
-        return $content;
+        $content = '
+        <span class="ee-entity-id">' . $item->get('term_id') . '</span>
+        <span class="show-on-mobile-view-only">
+            ' . $item->get_first_related('Term')->get('name') . '
+        </span>';
+        return $this->columnContent('id', $content, 'end');
     }
 
 
@@ -97,7 +100,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_name(EE_Term_Taxonomy $item)
+    public function column_name(EE_Term_Taxonomy $item): string
     {
         $edit_query_args = [
             'action'     => 'edit_category',
@@ -116,7 +119,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
         $term_name = $item->get_first_related('Term')->get('name');
 
         $edit_category_label = sprintf(
-            /* translators: The name of the event category */
+        /* translators: The name of the event category */
             esc_attr__(
                 'Edit Category (%s)',
                 'event_espresso'
@@ -128,21 +131,13 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
                 ' . esc_html__('Edit', 'event_espresso') . '
             </a>';
 
-        $delete_category_label = sprintf(
-            /* translators: The name of the event category */
-            esc_attr__(
-                'Delete Category (%s)',
-                'event_espresso'
-            ),
-            $term_name
-        );
-        $actions['delete']     = '
-            <a href="' . $delete_link . '" aria-label="' . $delete_category_label . '">
-                ' . esc_html__('Delete', 'event_espresso') . '
-            </a>';
+        $actions['delete'] = '<a href="' . $delete_link . '" aria-label="' . esc_attr__(
+            'Delete Category',
+            'event_espresso'
+        ) . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
 
         $view_category_label = sprintf(
-            /* translators: %s: event category name */
+        /* translators: %s: event category name */
             esc_html__('View &#8220;%s&#8221; archive', 'event_espresso'),
             $item->get_first_related('Term')->get('name')
         );
@@ -153,7 +148,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
 
         $content = '<strong><a class="row-title" href="' . $edit_link . '">' . $term_name . '</a></strong>';
         $content .= $this->row_actions($actions);
-        return $content;
+        return $this->columnContent('name', $content);
     }
 
 
@@ -163,9 +158,10 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_shortcode(EE_Term_Taxonomy $item)
+    public function column_shortcode(EE_Term_Taxonomy $item): string
     {
-        return '[ESPRESSO_EVENTS category_slug=' . $item->get_first_related('Term')->get('slug') . ']';
+        $content = '[ESPRESSO_EVENTS category_slug=' . $item->get_first_related('Term')->get('slug') . ']';
+        return $this->columnContent('shortcode', $content);
     }
 
 
@@ -175,7 +171,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_count(EE_Term_Taxonomy $item)
+    public function column_count(EE_Term_Taxonomy $item): string
     {
         $category_url = EE_Admin_Page::add_query_args_and_nonce(
             [
@@ -184,6 +180,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
             ],
             EVENTS_ADMIN_URL
         );
-        return '<a href="' . $category_url . '">' . $item->get('term_count') . '</a>';
+        $content      = '<a href="' . $category_url . '">' . $item->get('term_count') . '</a>';
+        return $this->columnContent('count', $content);
     }
 }

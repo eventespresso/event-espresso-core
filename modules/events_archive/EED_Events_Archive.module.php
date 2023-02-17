@@ -165,7 +165,7 @@ class EED_Events_Archive extends EED_Module
     public function initialize_template_parts(EE_Events_Archive_Config $config = null)
     {
         $config = $config instanceof EE_Events_Archive_Config ? $config : $this->config();
-        EEH_Autoloader::instance()->register_template_part_autoloaders();
+        EEH_Autoloader::register_template_part_autoloaders();
         $template_parts = new EE_Template_Part_Manager();
         $template_parts->add_template_part(
             'tickets',

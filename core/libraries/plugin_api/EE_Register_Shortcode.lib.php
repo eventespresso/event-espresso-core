@@ -30,25 +30,26 @@ class EE_Register_Shortcode implements EEI_Plugin_API
     /**
      *    Method for registering new EE_Shortcodes
      *
-     * @param string $identifier    a unique identifier for this set of modules Required.
+     * @param string $addon_name    a unique identifier for this set of modules Required.
      * @param array  $setup_args    an array of arguments provided for registering shortcodes Required.
      * @type array shortcode_paths  an array of full server paths to folders containing any EES_Shortcodes
      * @type array shortcode_fqcns  an array of fully qualified class names for any new shortcode classes to register.
      *                              Shortcode classes should extend EspressoShortcode
      *                              and be properly namespaced so they are autoloaded.
-     * @return void
+     * @return bool
      * @throws EE_Error
      * @since    4.3.0
      * @since    4.9.46.rc.025  for the new `shortcode_fqcns` array argument.
      */
-    public static function register($identifier = '', array $setup_args = [])
+    public static function register(string $addon_name = '', array $setup_args = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
         if (
-            empty($identifier)
+            empty($addon_name)
             || ! is_array($setup_args)
             || (
-               empty($setup_args['shortcode_paths']))
+                empty($setup_args['shortcode_paths'])
+            )
                && empty($setup_args['shortcode_fqcns'])
         ) {
             throw new EE_Error(
@@ -60,8 +61,8 @@ class EE_Register_Shortcode implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_settings[ $identifier ])) {
-            return;
+        if (isset(self::$_settings[ $addon_name ])) {
+            return true;
         }
 
         // make sure this was called in the right place!
@@ -79,7 +80,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
             );
         }
         // setup $_settings array from incoming values.
-        self::$_settings[ $identifier ] = [
+        self::$_settings[ $addon_name ] = [
             // array of full server paths to any EES_Shortcodes used by the shortcode
             'shortcode_paths' => isset($setup_args['shortcode_paths'])
                 ? (array) $setup_args['shortcode_paths']
@@ -98,6 +99,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
             'FHEE__EventEspresso_core_services_shortcodes_ShortcodesManager__registerShortcodes__shortcode_collection',
             ['EE_Register_Shortcode', 'instantiateAndAddToShortcodeCollection']
         );
+        return true;
     }
 
 
@@ -109,12 +111,13 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      * @param array $shortcodes_to_register array of paths to all shortcodes that require registering
      * @return array
      */
-    public static function add_shortcodes(array $shortcodes_to_register)
+    public static function add_shortcodes(array $shortcodes_to_register): array
     {
+        $shortcode_paths = [];
         foreach (self::$_settings as $settings) {
-            $shortcodes_to_register = array_merge($shortcodes_to_register, $settings['shortcode_paths']);
+            $shortcode_paths[] = $settings['shortcode_paths'];
         }
-        return $shortcodes_to_register;
+        return array_merge($shortcodes_to_register, ...$shortcode_paths);
     }
 
 
@@ -130,8 +133,9 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function instantiateAndAddToShortcodeCollection(CollectionInterface $shortcodes_collection)
-    {
+    public static function instantiateAndAddToShortcodeCollection(
+        CollectionInterface $shortcodes_collection
+    ): CollectionInterface {
         foreach (self::$_settings as $settings) {
             if (! empty($settings['shortcode_fqcns'])) {
                 foreach ($settings['shortcode_fqcns'] as $shortcode_fqcn) {
@@ -164,14 +168,14 @@ class EE_Register_Shortcode implements EEI_Plugin_API
 
 
     /**
-     * This deregisters a shortcode that was previously registered with a specific $identifier.
+     * This deregisters a shortcode that was previously registered with a specific $addon_name.
      *
-     * @param string $identifier the name for the shortcode that was previously registered
+     * @param string $addon_name the name for the shortcode that was previously registered
      * @return void
      * @since    4.3.0
      */
-    public static function deregister($identifier = '')
+    public static function deregister(string $addon_name = '')
     {
-        unset(self::$_settings[ $identifier ]);
+        unset(self::$_settings[ $addon_name ]);
     }
 }

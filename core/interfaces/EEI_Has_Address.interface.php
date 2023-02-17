@@ -2,6 +2,7 @@
 
 /**
  * Interface EEI_Has_Address
+ * @deprecated $VID:$
  */
 interface EEI_Has_Address
 {

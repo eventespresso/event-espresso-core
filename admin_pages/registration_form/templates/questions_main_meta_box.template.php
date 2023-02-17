@@ -40,13 +40,16 @@ do_action('AHEE__questions_main_meta_box__template__before_admin_page_content', 
 
 // does question have any answers? cause if it does then we have to disable type
 $has_answers = $question->has_answers();
-
+global $allowedposttags;
+$info_box = '';
 if ($QST_system === 'country') {
     // already escaped
-    echo EEH_HTML::div(
-        EEH_HTML::h4(
-            '<span class="dashicons dashicons-info"></span>'
-            . esc_html__('Did you know...', 'event_espresso')
+    $info_box = EEH_HTML::div(
+        EEH_HTML::h3(
+            '<span class="dashicons dashicons-info"></span> '
+            . esc_html__('Did you know...', 'event_espresso'),
+            '',
+            'ee-status--info'
         ) .
         EEH_HTML::p(
             esc_html__(
@@ -63,19 +66,19 @@ if ($QST_system === 'country') {
 <?php do_action('AHEE__questions_main_meta_box__template__inner_admin_page_content', $question); ?>
 
     <div class="padding">
-        <table class="form-table">
+        <?php echo wp_kses($info_box, $allowedposttags); ?>
+        <table class="ee-reg-form-questions ee-admin-two-column-layout form-table">
             <tbody>
                 <?php do_action('AHEE__questions_main_meta_box__template__before_table_form_table', $question); ?>
                 <tr>
                     <th>
                         <label for="QST_display_text">
                             <?php echo wp_kses($fields['QST_display_text']->get_nicename(), AllowedTags::getAllowedTags()); ?>
+                            <?php echo wp_kses(EEH_Template::get_help_tab_link('question_text_info'), AllowedTags::getAllowedTags()); ?>
                         </label>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('question_text_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
-                        <input class='regular-text'
-                               id="QST_display_text"
+                        <input id="QST_display_text"
                                name="QST_display_text"
                                type="text"
                                value="<?php echo esc_attr($question->get_f('QST_display_text')); ?>"
@@ -87,26 +90,19 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_admin_label">
                             <?php echo wp_kses($fields['QST_admin_label']->get_nicename(), AllowedTags::getAllowedTags()); ?>
+                            <?php echo wp_kses(EEH_Template::get_help_tab_link('question_label_info'), AllowedTags::getAllowedTags()); ?>
                         </label>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('question_label_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <?php
                         $id            = ! empty($QST_system) ? '_disabled' : '';
                         $disabled_attr = ! empty($QST_system) ? 'disabled' : '';
                         ?>
-                        <input class='regular-text'
-                               id="QST_admin_label<?php echo esc_attr($id); ?>"
+                        <input id="QST_admin_label<?php echo esc_attr($id); ?>"
                                name="QST_admin_label<?php echo esc_attr($id); ?>"
                                type="text"
                                value="<?php echo esc_attr($question->get_f('QST_admin_label')); ?>"
                                <?php echo esc_attr($disabled_attr); ?>
-                        />
-                        <input class="QST_order"
-                               id="QST_order<?php echo esc_attr($id); ?>"
-                               name="QST_order<?php echo esc_attr($id); ?>"
-                               type="hidden"
-                               value="<?php echo esc_attr($question->get('QST_order')); ?>"
                         />
                         <?php if (! empty($QST_system)) { ?>
                             <input id='QST_admin_label'
@@ -116,14 +112,17 @@ if ($QST_system === 'country') {
                             />
                         <?php } ?>
                         <br />
-                        <p class="description">
-                            <?php if (! empty($QST_system)) { ?>
-                                <span class="description" style="color:#D54E21;">
+                        <?php if (! empty($QST_system)) { ?>
+                            <p class="description ee-system-question" >
                                 <?php esc_html_e('System question! This field cannot be changed.', 'event_espresso') ?>
-                        </span>
-                            <?php } ?>
-
-                        </p>
+                            </p>
+                        <?php } ?>
+                        <input class="QST_order"
+                               id="QST_order<?php echo esc_attr($id); ?>"
+                               name="QST_order<?php echo esc_attr($id); ?>"
+                               type="hidden"
+                               value="<?php echo esc_attr($question->get('QST_order')); ?>"
+                        />
                     </td>
                 </tr>
 
@@ -131,8 +130,8 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_admin_only">
                             <?php echo esc_html($fields['QST_admin_only']->get_nicename()); ?>
+                            <?php echo EEH_Template::get_help_tab_link('question_admin_only_info'); // already escaped ?>
                         </label>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('question_admin_only_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <?php
@@ -152,17 +151,15 @@ if ($QST_system === 'country') {
                             ?>
                         />
                         <br />
-                        <p class="description">
                             <?php
                             if (! empty($QST_system)) { ?>
-                                <span class="description" style="color:#D54E21;">
+                                <p class="description ee-system-question" >
                                     <?php esc_html_e(
                                         'System question! This field cannot be changed.',
                                         'event_espresso'
                                     ); ?>
-                                </span>
+                                </p>
                             <?php } ?>
-                        </p>
                     </td>
                 </tr>
 
@@ -170,8 +167,8 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_type">
                             <?php echo esc_html($fields['QST_type']->get_nicename()); ?>
+                            <?php echo EEH_Template::get_help_tab_link('question_type_info'); // already escaped ?>
                         </label>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('question_type_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <?php
@@ -216,10 +213,8 @@ if ($QST_system === 'country') {
                             );
                         }
                         if ($disabled || $has_answers) { ?>
-                            <p>
-                                <span class="description" style="color:#D54E21;">
+                            <p class="description ee-system-question" >
                                     <?php echo esc_html($explanatory_text); ?>
-                                </span>
                             </p>
                         <?php } ?>
 
@@ -244,25 +239,21 @@ if ($QST_system === 'country') {
                             type="number"
                             value="<?php echo esc_attr($question->get_f('QST_max')); ?>"
                         />
-                        <p>
-                            <span class="description">
-                                <?php esc_html_e(
-                                    'Maximum number of characters allowed when answering this question',
-                                    'event_espresso'
-                                ); ?>
-                            </span>
+                        <p class="description">
+                            <?php esc_html_e(
+                                'Maximum number of characters allowed when answering this question',
+                                'event_espresso'
+                            ); ?>
                         </p>
                         <?php if ($QST_system) { ?>
-                        <p>
-                            <span class="description" style="color:#D54E21;">
-                                <?php printf(
-                                    esc_html__(
-                                        'System question! The maximum number of characters that can be used for this question is %1$s',
-                                        'event_espresso'
-                                    ),
-                                    $max_max
-                                ); ?>
-                            </span>
+                        <p class="description ee-system-question" >
+                            <?php printf(
+                                esc_html__(
+                                    'System question! The maximum number of characters that can be used for this question is %1$s',
+                                    'event_espresso'
+                                ),
+                                $max_max
+                            ); ?>
                         </p>
                         <?php } ?>
                     </td>
@@ -279,13 +270,17 @@ if ($QST_system === 'country') {
                             <thead>
                                 <tr>
                                     <th class="option-value-header">
-                                        <?php esc_html_e('Value', 'event_espresso') ?>
+                                        <label>
+                                            <?php esc_html_e('Value', 'event_espresso') ?>
+                                        </label>
                                     </th>
                                     <th class="option-desc-header">
+                                        <label>
                                         <?php esc_html_e(
                                             'Description (optional, only shown on registration form)',
                                             'event_espresso'
                                         ) ?>
+                                        </label>
                                     </th>
                                     <th>
                                     </th>
@@ -295,27 +290,44 @@ if ($QST_system === 'country') {
                             <tbody>
                                 <tr class="question-option sample">
                                     <td class="option-value-cell">
-                                        <input type="hidden"
-                                               class="QSO_order"
-                                               name="question_options[xxcountxx][QSO_order]"
-                                               value="0"
-                                        />
+                                        <label class='screen-reader-text' for='question_options-xxcountxx-QSO_value'>
+                                            <?php esc_html_e('Value', 'event_espresso') ?>
+                                        </label>
                                         <input type="text"
+                                               id="question_options-xxcountxx-QSO_value"
                                                name="question_options[xxcountxx][QSO_value]"
-                                               class="option-value regular-text"
+                                               class="option-value ee-input-width--reg"
+                                        />
+                                        <input type='hidden'
+                                               class='QSO_order'
+                                               name='question_options[xxcountxx][QSO_order]'
+                                               value='0'
                                         />
                                     </td>
                                     <td class="option-desc-cell">
+                                        <label class='screen-reader-text' for='question_options-xxcountxx-QSO_desc'>
+                                            <?php esc_html_e('Description', 'event_espresso') ?>
+                                        </label>
                                         <input type="text"
+                                               id='question_options-xxcountxx-QSO_desc'
                                                name="question_options[xxcountxx][QSO_desc]"
-                                               class="option-desc regular-text"
+                                               class="option-desc ee-input-width--big"
                                         />
                                     </td>
                                     <td>
-                            <span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item">
-                            </span>
-                                        <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18">
-                            </span>
+                                        <a  class="button button--icon-only remove-option remove-item ee-aria-tooltip"
+                                            aria-label="<?php esc_html_e('click to delete this option', 'event_espresso') ?>"
+                                        >
+                                            <span class='dashicons clickable dashicons-post-trash'></span>
+                                        </a>
+                                        <a class="button button--icon-only sortable-drag-handle ee-aria-tooltip"
+                                            aria-label="<?php esc_html_e(
+                                                'click and drag to change the order of this option',
+                                                'event_espresso'
+                                            ) ?>"
+                                        >
+                                            <span class='dashicons dashicons-image-flip-vertical '></span>
+                                        </a>
                                     </td>
                                 </tr>
 
@@ -330,16 +342,22 @@ if ($QST_system === 'country') {
                                         ?>
                                         <tr class="question-option ee-options-sortable">
                                             <td class="option-value-cell">
+                                                <label class='screen-reader-text'
+                                                       for='question_options-<?php echo $count ?>-QSO_value'
+                                                >
+                                                    <?php esc_html_e('Value', 'event_espresso') ?>
+                                                </label>
+                                                <input type="text"
+                                                       class="option-value ee-input-width--reg"
+                                                       id="question_options-<?php echo $count ?>-QSO_value"
+                                                       name="question_options[<?php echo $count ?>][QSO_value]"
+                                                       value="<?php echo esc_attr($option->get_f('QSO_value')); ?>"
+                                                    <?php echo esc_attr($disabled_attr); ?>
+                                                />
                                                 <input type="hidden"
                                                        class="QSO_order"
                                                        name="question_options[<?php echo absint($count); ?>][QSO_order]"
                                                        value="<?php echo absint($count); ?>"
-                                                />
-                                                <input type="text"
-                                                       class="option-value regular-text"
-                                                       name="question_options[<?php echo absint($count) ?>][QSO_value]"
-                                                       value="<?php echo esc_attr($option->get_f('QSO_value')); ?>"
-                                                    <?php echo esc_attr($disabled_attr); ?>
                                                 />
                                                 <?php if ($has_answers) : ?>
                                                     <input type="hidden"
@@ -349,20 +367,34 @@ if ($QST_system === 'country') {
                                                 <?php endif; ?>
                                             </td>
                                             <td class="option-desc-cell">
+                                                <label class='screen-reader-text'
+                                                       for='question_options-<?php echo $count ?>-QSO_desc'
+                                                >
+                                                    <?php esc_html_e('Description', 'event_espresso') ?>
+                                                </label>
                                                 <input type="text"
-                                                       class="option-desc regular-text"
+                                                       class="option-desc ee-input-width--big"
+                                                       id="question_options-<?php echo $count ?>-QSO_desc"
                                                        name="question_options[<?php echo absint($count); ?>][QSO_desc]"
                                                        value="<?php echo esc_attr($option->get_f('QSO_desc')); ?>"
                                                 />
                                             </td>
                                             <td>
-                                                <?php if (! $option->system()) { ?>
-                                                    <span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item">
-                                        </span>
-                                                <?php } ?>
-                                                <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18">
-                                    </span>
-                                            </td>
+                                            <?php if (! $option->system()) { ?>
+                                                <a class='button button--icon-only remove-option remove-item ee-aria-tooltip'
+                                                   aria-label="<?php esc_html_e('click to delete this option', 'event_espresso') ?>"
+                                                >
+                                                    <span class='dashicons clickable dashicons-post-trash'></span>
+                                                </a>
+                                            <?php } ?>
+                                                <a class='button button--icon-only sortable-drag-handle ee-aria-tooltip'
+                                                   aria-label="<?php esc_html_e(
+                                                       'click and drag to change the order of this option',
+                                                       'event_espresso'
+                                                   ) ?>"
+                                                >
+                                                    <span class='dashicons dashicons-image-flip-vertical '></span>
+                                                </a>
                                             <?php
                                             echo wp_kses(
                                                 EEH_Form_Fields::hidden_input(
@@ -380,6 +412,7 @@ if ($QST_system === 'country') {
                                             );
                                             $count++;
                                             ?>
+                                            </td>
                                         </tr>
                                         <?php
                                     }
@@ -387,20 +420,20 @@ if ($QST_system === 'country') {
                                     ?>
                                     <tr class="question-option ee-options-sortable">
                                         <td class="option-value-cell">
-                                            <input type="hidden"
-                                                   class="QSO_order"
-                                                   name="question_options[0][QSO_order]"
-                                                   value="0"
-                                            />
                                             <input type="text"
                                                    name="question_options[0][QSO_value]"
-                                                   class="option-value regular-text"
+                                                   class="option-value ee-input-width--reg"
+                                            />
+                                            <input type='hidden'
+                                                   class='QSO_order'
+                                                   name='question_options[0][QSO_order]'
+                                                   value='0'
                                             />
                                         </td>
                                         <td class="option-desc-cell">
                                             <input type="text"
                                                    name="question_options[0][QSO_desc]"
-                                                   class="option-desc regular-text"
+                                                   class="option-desc ee-input-width--big"
                                             />
                                         </td>
                                         <td>
@@ -416,26 +449,20 @@ if ($QST_system === 'country') {
                                     <?php
                                 }
                                 ?>
-                                <tr style="display:none">
-                                    <td colspan="3">
-                                        <?php echo wp_kses(
-                                            EEH_Form_Fields::hidden_input(
-                                                "question_options_count",
-                                                $count
-                                            ),
-                                            AllowedTags::getWithFormTags()
-                                        ); ?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3">
-                                        <a id='new-question-option' class='button' style='margin:0 0 1em 3px;'>
-                                            <?php esc_html_e('Add Another Answer Option', 'event_espresso') ?>
-                                        </a>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
+                        <div class="ee-admin-button-row">
+                            <a id='new-question-option' class='button button--secondary'>
+                                <?php esc_html_e('Add Another Answer Option', 'event_espresso') ?>
+                            </a>
+                            <?php echo wp_kses(
+                                EEH_Form_Fields::hidden_input(
+                                    "question_options_count",
+                                    $count
+                                ),
+                                AllowedTags::getWithFormTags()
+                            ); ?>
+                        </div>
                         <br />
 
                         <p class="description">
@@ -445,13 +472,12 @@ if ($QST_system === 'country') {
                             ) ?>
                         </p>
                         <?php if ($has_answers) : ?>
-                            <p class="description" style="color:#D54E21;">
+                            <p class="description ee-system-question" >
                                 <?php esc_html_e(
                                     'Answer values that are uneditable are this way because there are registrations in the database that have answers for this question.  If you need to correct a mistake, or edit an existing option value, then trash the existing one and create a new option with the changes.  This will ensure that the existing registrations that chose the original answer will preserve that answer.',
                                     'event_espresso'
                                 ); ?>
                             </p>
-
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -460,15 +486,15 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_required">
                             <?php echo esc_html($fields['QST_required']->get_nicename()); ?>
+                            <?php echo EEH_Template::get_help_tab_link('required_question_info'); // already escaped ?>
                         </label>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('required_question_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <?php
                         $system_required   = ['fname', 'email'];
                         $disabled_attr     = in_array($QST_system, $system_required) ? ' disabled="disabled"' : '';
                         $required_on       = $question->get('QST_admin_only');
-                        $show_required_msg = $required_on ? '' : ' display:none;';
+                        $show_required_class = $required_on ? '' : ' hidden';
                         $disabled_attr     = $required_on || ! empty($disabled_attr) ? ' disabled="disabled"' : '';
                         $id                =
                             ! empty($disabled_attr) && in_array($QST_system, $system_required) ? '_disabled' : '';
@@ -481,35 +507,34 @@ if ($QST_system === 'country') {
                                 'QST_required' . $id,
                                 $requiredOptions,
                                 $question->required(),
-                                'id="QST_required' . $id . '"' . $disabled_attr
+                                'id="QST_required' . $id . '"' . $disabled_attr,
+                                'ee-input-width--small'
                             ),
                             AllowedTags::getWithFormTags()
                         );
                         ?>
-                        <p>
-                            <span id="required_toggled_on" class="description"
-                                  style="color:#D54E21;<?php echo esc_attr($show_required_msg); ?>"
-                            >
-                                <?php esc_html_e(
-                                    'Required is set to optional, and this field is disabled, because the question is Admin-Only.',
-                                    'event_espresso'
-                                ) ?>
-                            </span
+                        <p id="required_toggled_on" 
+                           class="description<?php echo esc_attr($show_required_class); ?>"
+                        >
+                            <?php esc_html_e(
+                                'Required is set to optional, and this field is disabled, because the question is Admin-Only.',
+                                'event_espresso'
+                            ) ?>
                         </p>
-                        <p>
-                            <span id="required_toggled_off" class="description" style="color:#D54E21; display: none;">
+                        <p id="required_toggled_off" class="description ee-system-question" style="color:#D54E21; display: none;">
                                 <?php esc_html_e(
                                     'Required option field is no longer disabled because the question is not Admin-Only',
                                     'event_espresso'
                                 ) ?>
-                            </span>
                         </p>
                         <?php if (! empty($disabled_attr) && in_array($QST_system, $system_required)) { ?>
-                            <input type="hidden" id="QST_required" name="QST_required" value="1" />
-                            <p>
-                            <span class="description" style="color:#D54E21;">
+                            <input id="QST_required"
+                                   name="QST_required"
+                                   type='hidden'
+                                   value="1"
+                            />
+                            <p class="description ee-system-question" >
                                 <?php esc_html_e('System question! This field cannot be changed.', 'event_espresso') ?>
-                            </span>
                             </p>
                         <?php } ?>
                     </td>
@@ -519,13 +544,13 @@ if ($QST_system === 'country') {
                     <th>
                         <label for="QST_required_text">
                             <?php esc_html_e('Required Text', 'event_espresso'); ?>
+                            <?php echo EEH_Template::get_help_tab_link('required_text_info'); // already escaped ?>
                         </label>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('required_text_info'), AllowedTags::getAllowedTags()); ?>
                     </th>
                     <td>
                         <input type="text"
                                maxlength="100"
-                               class="regular-text"
+                               class=""
                                id="QST_required_text"
                                name="QST_required_text"
                                value="<?php echo esc_attr($question->get_f('QST_required_text')); ?>"

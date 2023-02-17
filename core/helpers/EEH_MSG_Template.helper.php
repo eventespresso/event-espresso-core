@@ -654,7 +654,7 @@ class EEH_MSG_Template
             array(
                 'view' => array(
                     'label' => esc_html__('View Message', 'event_espresso'),
-                    'css_class' => 'dashicons dashicons-welcome-view-site',
+                    'css_class' => 'dashicons dashicons-visibility',
                 ),
                 'error' => array(
                     'label' => esc_html__('View Error Message', 'event_espresso'),
@@ -805,23 +805,26 @@ class EEH_MSG_Template
     {
         $url = EEH_MSG_Template::get_message_action_url($type, $message, $query_params);
         $icon_css = EEH_MSG_Template::get_message_action_icon($type);
-        $label = isset($icon_css['label']) ? 'aria-label="' . $icon_css['label'] . '"' : '';
+        $label = $icon_css['label'] ?? null;
+        $label = $label ? 'aria-label="' . $label . '"' : '';
+        $class = $label ? ' ee-aria-tooltip' : '';
 
         if (empty($url) || empty($icon_css) || ! isset($icon_css['css_class'])) {
             return '';
         }
 
-        $icon_css['css_class'] .= esc_attr(
-            apply_filters(
-                'FHEE__EEH_MSG_Template__get_message_action_link__icon_css_class',
-                ' js-ee-message-action-link ee-message-action-link-' . $type,
-                $type,
-                $message,
-                $query_params
-            )
+        $icon_css_class = $icon_css['css_class'] . apply_filters(
+            'FHEE__EEH_MSG_Template__get_message_action_link__icon_css_class',
+            ' js-ee-message-action-link ee-message-action-link-' . $type,
+            $type,
+            $message,
+            $query_params
         );
 
-        return '<a href="' . $url . '" ' . $label . '><span class="' . esc_attr($icon_css['css_class']) . '"></span></a>';
+        return '
+            <a href="' . $url . '" ' . $label . ' class="button button--icon-only' . $class . '">
+                <span class="' .  esc_attr($icon_css_class) . '"></span>
+            </a>';
     }
 
 

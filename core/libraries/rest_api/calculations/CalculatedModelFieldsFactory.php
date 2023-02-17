@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
-use EventEspresso\core\domain\services\factories\FactoryInterface;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\loaders\LoaderInterface;
 

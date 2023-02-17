@@ -13,6 +13,7 @@ use EEM_Registration;
 use EE_Registration;
 use EEM_Datetime;
 use InvalidArgumentException;
+use ReflectionException;
 use WP_REST_Request;
 
 /**
@@ -38,28 +39,27 @@ class Registration extends RegistrationCalculationBase
         $this->registration_model = $registration_model;
     }
 
+
     /**
      * Calculates the checkin status for each datetime this registration has access to
      *
-     * @param array            $wpdb_row
-     * @param WP_REST_Request $request
+     * @param array                      $wpdb_row
+     * @param WP_REST_Request            $request
      * @param RegistrationControllerBase $controller
      * @return array
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
-    public function datetimeCheckinStati($wpdb_row, $request, $controller)
+    public function datetimeCheckinStati($wpdb_row, $request, $controller): array
     {
-        if (is_array($wpdb_row) && isset($wpdb_row['Registration.REG_ID'])) {
-            $reg = $this->registration_model->get_one_by_ID($wpdb_row['Registration.REG_ID']);
-        } else {
-            $reg = null;
-        }
-        if (
-            ! $reg instanceof EE_Registration
-        ) {
+        $registration = is_array($wpdb_row) && isset($wpdb_row['Registration.REG_ID'])
+            ? $this->registration_model->get_one_by_ID($wpdb_row['Registration.REG_ID'])
+            : null;
+
+        if (! $registration instanceof EE_Registration) {
             throw new EE_Error(
                 sprintf(
                     esc_html__(
@@ -76,14 +76,14 @@ class Registration extends RegistrationCalculationBase
         $datetime_ids = EEM_Datetime::instance()->get_col(
             [
                 [
-                    'Ticket.TKT_ID' => $reg->ticket_ID(),
+                    'Ticket.TKT_ID' => $registration->ticket_ID(),
                 ],
                 'default_where_conditions' => EEM_Base::default_where_conditions_minimum_all,
             ]
         );
-        $checkin_stati = array();
+        $checkin_stati = [];
         foreach ($datetime_ids as $datetime_id) {
-            $status = $reg->check_in_status_for_datetime($datetime_id);
+            $status = $registration->check_in_status_for_datetime($datetime_id);
             switch ($status) {
                 case EE_Checkin::status_checked_out:
                     $status_pretty = 'OUT';
@@ -94,7 +94,6 @@ class Registration extends RegistrationCalculationBase
                 case EE_Checkin::status_checked_never:
                 default:
                     $status_pretty = 'NEVER';
-                    break;
             }
             $checkin_stati[ $datetime_id ] = $status_pretty;
         }

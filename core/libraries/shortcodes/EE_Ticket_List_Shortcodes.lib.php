@@ -18,12 +18,6 @@
  */
 class EE_Ticket_List_Shortcodes extends EE_Shortcodes
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     protected function _init_props()
     {
         $this->label       = esc_html__('Ticket List Shortcodes', 'event_espresso');
@@ -199,6 +193,8 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
 
 
     /**
+     * @param EE_Event $event
+     * @return array|mixed
      * @throws EE_Error
      * @throws ReflectionException
      */

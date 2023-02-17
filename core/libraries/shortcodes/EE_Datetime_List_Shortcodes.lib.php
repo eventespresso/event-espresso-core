@@ -32,6 +32,8 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
 
 
     /**
+     * @param string $shortcode
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -49,7 +51,6 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
      * figure out what the incoming data is and then return the appropriate parsed value.
      *
      * @return string
-     * @throws EE_Error
      * @throws EE_Error
      * @throws ReflectionException
      */

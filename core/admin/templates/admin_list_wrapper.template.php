@@ -18,10 +18,10 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
       id="<?php echo esc_attr($list_table_class); ?>-table-frm"
       method="get"
 >
-    <?php $list_table->search_box($search['btn_label'], $current_page); ?><br/>
+    <?php $list_table->search_box($search['btn_label'], $current_page); ?>
     <?php echo wp_kses($sortable_list_table_form_fields, AllowedTags::getWithFormTags()); ?>
     <?php $list_table->display_views(); ?>
     <?php $list_table->display(); ?>
     <?php echo wp_kses($list_table_hidden_fields, AllowedTags::getWithFormTags()); ?>
 </form>
-<?php echo wp_kses($after_list_table, AllowedTags::getWithFormTags()); ?>
+<?php echo wp_kses($after_list_table, AllowedTags::getWithFullTags()); ?>

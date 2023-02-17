@@ -11,8 +11,9 @@ class EE_Button_Display_Strategy extends EE_Display_Strategy_Base
 {
     /**
      * @return string of html to display the input
+     * @throws EE_Error
      */
-    public function display()
+    public function display(): string
     {
         $default_value = $this->_input->get_default();
         if ($this->_input->get_normalization_strategy() instanceof EE_Normalization_Strategy_Base) {

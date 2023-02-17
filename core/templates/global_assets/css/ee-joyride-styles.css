@@ -1,0 +1,20 @@
+/* joyride z-index fixes for WP admin core changes introduced with 4.0*/
+.joyride-tip-guide {
+	z-index: 99999901;
+}
+
+.joyride-modal-bg {
+	z-index: 99999900;
+}
+
+.joyride-expose-wrapper {
+	z-index: 99999902;
+}
+
+.joyride-expose-cover {
+	z-index: 9999990000;
+}
+
+.joyride-tip-guide a {
+	color: orange;
+}

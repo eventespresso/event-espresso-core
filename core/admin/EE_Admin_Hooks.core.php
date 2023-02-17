@@ -215,18 +215,21 @@ abstract class EE_Admin_Hooks extends EE_Base
      *
      * @param EE_Admin_Page $admin_page
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct(EE_Admin_Page $admin_page)
     {
         $this->_adminpage_obj = $admin_page;
         $this->request        = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $this->_req_data      = $this->request->requestParams();
-        $this->_set_defaults();
-        $this->_set_hooks_properties();
+        $current_page = $this->request->getRequestParam('page');
+        $current_page = $this->request->getRequestParam('current_page', $current_page);
         // first let's verify we're on the right page
-        if (! isset($this->_req_data['page']) || $this->_req_data['page'] !== $this->_adminpage_obj->page_slug) {
+        if ($current_page !== $this->_adminpage_obj->page_slug) {
             return;
         }
+        $this->_set_defaults();
+        $this->_set_hooks_properties();
         // get out nothing more to be done here.
         // allow for extends to modify properties
         if (method_exists($this, '_extend_properties')) {
@@ -271,7 +274,6 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     public function enqueue_scripts_styles()
     {
-
         if (! empty($this->_scripts_styles)) {
             // first let's do all the registrations
             if (! isset($this->_scripts_styles['registers'])) {
@@ -313,7 +315,7 @@ abstract class EE_Admin_Hooks extends EE_Base
                     );
                     $msg[] = sprintf(
                         esc_html__(
-                            'Doublecheck your <code>$this->_scripts_styles</code> array in %s and make sure that there is a "url" set for the %s ref',
+                            'Double-check your <code>$this->_scripts_styles</code> array in %s and make sure that there is a "url" set for the %s ref',
                             'event_espresso'
                         ),
                         '<strong>' . $this->caller . '</strong>',
@@ -391,7 +393,7 @@ abstract class EE_Admin_Hooks extends EE_Base
      *
      * @return string
      */
-    private function getCurrentRoute()
+    private function getCurrentRoute(): string
     {
         $action = $this->request->getRequestParam('action');
         // list tables do something else with 'action' for bulk actions.
@@ -407,9 +409,13 @@ abstract class EE_Admin_Hooks extends EE_Base
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _set_page_object()
     {
+        if ($this->_page_object instanceof EE_Admin_Page) {
+            return;
+        }
         // first make sure $this->_name is set
         if (empty($this->_name)) {
             $msg[] = esc_html__('We can\'t load the page object', 'event_espresso');
@@ -424,13 +430,13 @@ abstract class EE_Admin_Hooks extends EE_Base
         // change "the message" to "The_Message_Admin_Page"
         $class_name = str_replace(' ', '_', ucwords($class_name)) . '_Admin_Page';
         // first default file (if exists)
-        $decaf_file = EE_ADMIN_PAGES . $this->_name . '/' . $class_name . '.core.php';
+        $decaf_file = EE_ADMIN_PAGES . "$this->_name/$class_name.core.php";
         if (is_readable($decaf_file)) {
             require_once($decaf_file);
         }
         // now we have to do require for extended file (if needed)
         if ($this->_extend) {
-            require_once(EE_CORE_CAF_ADMIN_EXTEND . $this->_name . '/Extend_' . $class_name . '.core.php');
+            require_once EE_CORE_CAF_ADMIN_EXTEND . "$this->_name/Extend_$class_name.core.php";
             // and extend the class name as well
             $class_name = 'Extend_' . $class_name;
         }
@@ -447,6 +453,7 @@ abstract class EE_Admin_Hooks extends EE_Base
             throw new EE_Error(implode('||', $msg));
         }
         $this->_page_object = LoaderFactory::getLoader()->getShared($class_name, [false]);
+        $this->_page_object->initializePage();
     }
 
 
@@ -468,10 +475,10 @@ abstract class EE_Admin_Hooks extends EE_Base
          */
         $method_callback = $this->_current_route == 'default' ? 'default_callback' : $this->_current_route;
         // these run before the Admin_Page route executes.
-        if (method_exists($this, $method_callback)) {
+        if (is_callable($this, $method_callback)) {
             call_user_func([$this, $method_callback]);
         }
-        // these run via the _redirect_after_action method in EE_Admin_Page which usually happens after non_UI methods in EE_Admin_Page classes.  There are two redirect actions, the first fires before $query_args might be manipulated by "save and close" actions and the seond fires right before the actual redirect happens.
+        // these run via the _redirect_after_action method in EE_Admin_Page which usually happens after non_UI methods in EE_Admin_Page classes.  There are two redirect actions, the first fires before $query_args might be manipulated by "save and close" actions and the second fires right before the actual redirect happens.
         // first the actions
         // note that these action hooks will have the $query_args value available.
         $admin_class_name = get_class($this->_adminpage_obj);
@@ -568,14 +575,13 @@ abstract class EE_Admin_Hooks extends EE_Base
 
 
     /**
-     * Loop throught the $_ajax_func array and add_actions for the array.
+     * Loop through the $_ajax_func array and add_actions for the array.
      *
      * @return void
      * @throws EE_Error
      */
     private function _ajax_hooks()
     {
-
         if (empty($this->_ajax_func)) {
             return;
         } //get out there's nothing to take care of.
@@ -602,7 +608,7 @@ abstract class EE_Admin_Hooks extends EE_Base
 
 
     /**
-     * Loop throught the $_init_func array and add_actions for the array.
+     * Loop through the $_init_func array and add_actions for the array.
      *
      * @return void
      * @throws EE_Error
@@ -656,12 +662,11 @@ abstract class EE_Admin_Hooks extends EE_Base
 
     /**
      * @param array $boxes
-     * @param bool  $add
+     * @param bool|null  $add
      * @throws EE_Error
      */
-    private function _handle_metabox_array(array $boxes, $add = true)
+    private function _handle_metabox_array(array $boxes, ?bool $add = true)
     {
-
         foreach ($boxes as $box) {
             if (! isset($box['page_route'])) {
                 continue;
@@ -691,7 +696,6 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     public function remove_metaboxes()
     {
-
         if (empty($this->_remove_metaboxes)) {
             return;
         } //get out there are no metaboxes to remove
@@ -705,31 +709,31 @@ abstract class EE_Admin_Hooks extends EE_Base
      * @param array $args an array of args that have been set for this metabox by the child class
      * @throws EE_Error
      */
-    private function _add_metabox($args)
+    private function _add_metabox(array $args)
     {
         $current_screen = get_current_screen();
         $screen_id      = is_object($current_screen) ? $current_screen->id : null;
-        $func           = isset($args['func']) ? $args['func'] : 'some_invalid_callback';
+        $callback       = $args['func'] ?? 'some_invalid_callback';
+        $callback_function = is_array($callback) ? end($callback) : $callback;
         // set defaults
         $defaults      = [
             'callback_args' => [],
             'context'       => 'advanced',
-            'func'          => $func,
-            'id'            => $this->caller . '_' . $func . '_metabox',
+            'func'          => $callback,
+            'id'            => $this->caller . '_' . $callback_function . '_metabox',
             'label'         => $this->caller,
-            'page'          => isset($args['page']) ? $args['page'] : $screen_id,
+            'page'          => $args['page'] ?? $screen_id,
             'priority'      => 'default',
         ];
         $args          = wp_parse_args($args, $defaults);
         $callback_args = $args['callback_args'];
         $context       = $args['context'];
-        $func          = $args['func'];
         $id            = $args['id'];
         $label         = $args['label'];
         $page          = $args['page'];
         $priority      = $args['priority'];
         // make sure method exists
-        if (! method_exists($this, $func)) {
+        if (! method_exists($this, $callback_function)) {
             $msg[] =
                 esc_html__('There is no corresponding method to display the metabox content', 'event_espresso')
                 . '<br />';
@@ -738,13 +742,20 @@ abstract class EE_Admin_Hooks extends EE_Base
                     'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
                     'event_espresso'
                 ),
-                $func,
+                $callback_function,
                 $this->caller
             );
             throw new EE_Error(implode('||', $msg));
         }
         // everything checks out so let's add the metabox
-        add_meta_box($id, $label, [$this, $func], $page, $context, $priority, $callback_args);
+        add_meta_box($id, $label, [$this, $callback_function], $page, $context, $priority, $callback_args);
+        add_filter(
+            "postbox_classes_{$page}_$id",
+            function ($classes) {
+                $classes[] = 'ee-admin-container';
+                return $classes;
+            }
+        );
     }
 
 
@@ -752,14 +763,12 @@ abstract class EE_Admin_Hooks extends EE_Base
     {
         $current_screen = get_current_screen();
         $screen_id      = is_object($current_screen) ? $current_screen->id : null;
-        $func           = isset($args['func']) ? $args['func'] : 'some_invalid_callback';
+        $func           = $args['func'] ?? 'some_invalid_callback';
         // set defaults
         $defaults = [
             'context' => 'default',
-            'id'      => isset($args['id'])
-                ? $args['id']
-                : $this->_current_route . '_' . $this->caller . '_' . $func . '_metabox',
-            'screen'  => isset($args['screen']) ? $args['screen'] : $screen_id,
+            'id'      => $args['id'] ?? "{$this->_current_route}_{$this->caller}_{$func}_metabox",
+            'screen'  => $args['screen'] ?? $screen_id,
         ];
         $args     = wp_parse_args($args, $defaults);
         $context  = $args['context'];

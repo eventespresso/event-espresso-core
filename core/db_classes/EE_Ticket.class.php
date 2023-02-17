@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\tickets\TicketPriceModifiers;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -14,29 +15,39 @@ use EventEspresso\core\exceptions\UnexpectedEntityException;
 class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Object, EEI_Event_Relation, EEI_Has_Icon
 {
     /**
-     * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
-     */
-    const sold_out = 'TKS';
-
-    /**
-     *
-     */
-    const expired = 'TKE';
-
-    /**
-     *
+     * TicKet Archived:
+     * constant used by ticket_status() to indicate that a ticket is archived
+     * and no longer available for purchase
      */
     const archived = 'TKA';
 
     /**
-     *
+     * TicKet Expired:
+     * constant used by ticket_status() to indicate that a ticket is expired
+     * and no longer available for purchase
+     */
+    const expired = 'TKE';
+
+    /**
+     * TicKet On sale:
+     * constant used by ticket_status() to indicate that a ticket is On Sale
+     * and IS available for purchase
+     */
+    const onsale = 'TKO';
+
+    /**
+     * TicKet Pending:
+     * constant used by ticket_status() to indicate that a ticket is pending
+     * and is NOT YET available for purchase
      */
     const pending = 'TKP';
 
     /**
-     *
+     * TicKet Sold out:
+     * constant used by ticket_status() to indicate that a ticket is sold out
+     * and no longer available for purchases
      */
-    const onsale = 'TKO';
+    const sold_out = 'TKS';
 
     /**
      * extra meta key for tracking ticket reservations
@@ -46,11 +57,23 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     const META_KEY_TICKET_RESERVATIONS = 'ticket_reservations';
 
     /**
+     * override of parent property
+     *
+     * @var EEM_Ticket
+     */
+    protected $_model;
+
+    /**
      * cached result from method of the same name
      *
      * @var float $_ticket_total_with_taxes
      */
     private $_ticket_total_with_taxes;
+
+    /**
+     * @var TicketPriceModifiers
+     */
+    protected $ticket_price_modifiers;
 
 
     /**
@@ -66,7 +89,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public static function new_instance($props_n_values = [], $timezone = null, $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        return $has_object ?: new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
@@ -81,6 +104,21 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public static function new_instance_from_db($props_n_values = [], $timezone = null)
     {
         return new self($props_n_values, true, $timezone);
+    }
+
+
+    /**
+     * @param array  $fieldValues
+     * @param false  $bydb
+     * @param string $timezone
+     * @param array  $date_formats
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function __construct($fieldValues = [], $bydb = false, $timezone = '', $date_formats = [])
+    {
+        parent::__construct($fieldValues, $bydb, $timezone, $date_formats);
+        $this->ticket_price_modifiers = new TicketPriceModifiers($this);
     }
 
 
@@ -115,7 +153,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             }
         }
         // datetime is still open for registration, but is this ticket sold out ?
-        return $this->qty() < 1 || $this->qty() > $this->sold() ? true : false;
+        return $this->qty() < 1 || $this->qty() > $this->sold();
     }
 
 
@@ -156,10 +194,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * The purpose of this method is to simply return a boolean for whether there are any tickets remaining for sale
      * considering ALL the factors used for figuring that out.
      *
-     * @access public
      * @param int $DTT_ID if an int above 0 is included here then we get a specific dtt.
      * @return boolean         true = tickets remaining, false not.
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_remaining($DTT_ID = 0)
     {
@@ -181,6 +219,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *                     set to 0 for all related datetimes
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function remaining($DTT_ID = 0)
     {
@@ -223,7 +262,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function is_pending()
     {
-        return ($this->get_raw('TKT_start_date') > time());
+        return ($this->get_raw('TKT_start_date') >= time());
     }
 
 
@@ -236,33 +275,29 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function is_on_sale()
     {
-        return ($this->get_raw('TKT_start_date') < time() && $this->get_raw('TKT_end_date') > time());
+        return ($this->get_raw('TKT_start_date') <= time() && $this->get_raw('TKT_end_date') >= time());
     }
 
 
     /**
      * This returns the chronologically last datetime that this ticket is associated with
      *
-     * @param string $dt_frmt
+     * @param string $date_format
      * @param string $conjunction - conjunction junction what's your function ? this string joins the start date with
      *                            the end date ie: Jan 01 "to" Dec 31
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function date_range($dt_frmt = '', $conjunction = ' - ')
+    public function date_range($date_format = '', $conjunction = ' - ')
     {
-        $dt_frmt    = ! empty($dt_frmt) ? $dt_frmt : $this->_dt_frmt;
-        $first_date = $this->first_datetime() instanceof EE_Datetime
-            ? $this->first_datetime()->get_i18n_datetime(
-                'DTT_EVT_start',
-                $dt_frmt
-            ) : '';
-        $last_date  =
-            $this->last_datetime() instanceof EE_Datetime ? $this->last_datetime()->get_i18n_datetime(
-                'DTT_EVT_end',
-                $dt_frmt
-            ) : '';
+        $date_format = ! empty($date_format) ? $date_format : $this->_dt_frmt;
+        $first_date  = $this->first_datetime() instanceof EE_Datetime
+            ? $this->first_datetime()->get_i18n_datetime('DTT_EVT_start', $date_format)
+            : '';
+        $last_date   = $this->last_datetime() instanceof EE_Datetime
+            ? $this->last_datetime()->get_i18n_datetime('DTT_EVT_end', $date_format)
+            : '';
 
         return $first_date && $last_date ? $first_date . $conjunction . $last_date : '';
     }
@@ -273,6 +308,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @return EE_Datetime
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function first_datetime()
     {
@@ -285,8 +321,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets all the datetimes this ticket can be used for attending.
      * Unless otherwise specified, orders datetimes by start date.
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Datetime[]|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
@@ -305,6 +341,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @return EE_Datetime
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function last_datetime()
     {
@@ -325,6 +362,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param int    $dtt_id  [optional] include the dtt_id with $what = 'datetime'.
      * @return mixed (array|int)          how many tickets have sold
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function tickets_sold($what = 'ticket', $dtt_id = null)
     {
@@ -333,7 +371,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         switch ($what) {
             case 'ticket':
                 return $tickets_sold['ticket'];
-                break;
+
             case 'datetime':
                 if (empty($tickets_sold['datetime'])) {
                     return $total;
@@ -351,7 +389,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
                     return $total;
                 }
                 return empty($dtt_id) ? $tickets_sold['datetime'] : $tickets_sold['datetime'][ $dtt_id ];
-                break;
+
             default:
                 return $total;
         }
@@ -388,8 +426,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function base_price($return_array = false)
+    public function base_price(bool $return_array = false)
     {
+        $base_price = $this->ticket_price_modifiers->getBasePrice();
+        if (! empty($base_price)) {
+            return $return_array ? $base_price : reset($base_price);
+        }
         $_where = ['Price_Type.PBT_ID' => EEM_Price_Type::base_type_base_price];
         return $return_array
             ? $this->get_many_related('Price', [$_where])
@@ -400,44 +442,71 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * This returns ONLY the price modifiers for the ticket (i.e. no taxes or base price)
      *
-     * @access public
      * @return EE_Price[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function price_modifiers()
+    public function price_modifiers(): array
     {
-        $query_params = [
-            0 => [
-                'Price_Type.PBT_ID' => [
-                    'NOT IN',
-                    [EEM_Price_Type::base_type_base_price, EEM_Price_Type::base_type_tax],
-                ],
-            ],
-        ];
-        return $this->prices($query_params);
+        $price_modifiers = $this->usesGlobalTaxes()
+            ? $this->ticket_price_modifiers->getAllDiscountAndSurchargeModifiersForTicket()
+            : $this->ticket_price_modifiers ->getAllModifiersForTicket();
+        if (! empty($price_modifiers)) {
+            return $price_modifiers;
+        }
+        return $this->prices(
+            [
+                [
+                    'Price_Type.PBT_ID' => [
+                        'NOT IN',
+                        [EEM_Price_Type::base_type_base_price, EEM_Price_Type::base_type_tax],
+                    ]
+                ]
+            ]
+        );
+    }
+
+
+    /**
+     * This returns ONLY the TAX price modifiers for the ticket
+     *
+     * @return EE_Price[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function tax_price_modifiers(): array
+    {
+        $tax_price_modifiers = $this->ticket_price_modifiers->getAllTaxesForTicket();
+        if (! empty($tax_price_modifiers)) {
+            return $tax_price_modifiers;
+        }
+        return $this->prices([['Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax]]);
     }
 
 
     /**
      * Gets all the prices that combine to form the final price of this ticket
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Price[]|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function prices($query_params = [])
+    public function prices(array $query_params = []): array
     {
+        if (! isset($query_params['order_by'])) {
+            $query_params['order_by']['PRC_order'] = 'ASC';
+        }
         return $this->get_many_related('Price', $query_params);
     }
 
 
     /**
-     * Gets all the ticket applicabilities (ie, relations between datetimes and tickets)
+     * Gets all the ticket datetimes (ie, relations between datetimes and tickets)
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Datetime_Ticket|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
@@ -455,6 +524,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param boolean $show_deleted
      * @return EE_Datetime[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function datetimes_ordered($show_expired = true, $show_deleted = false)
     {
@@ -511,10 +581,26 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @return EE_Price[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_ticket_taxes_for_admin()
+    public function get_ticket_taxes_for_admin(): array
     {
-        return EE_Taxes::get_taxes_for_admin();
+        return $this->usesGlobalTaxes() ? EE_Taxes::get_taxes_for_admin() : $this->tax_price_modifiers();
+    }
+
+
+    /**
+     * alias of taxable() to better indicate that ticket uses the legacy method of applying default "global" taxes
+     * as opposed to having tax price modifiers added directly to each ticket
+     *
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function usesGlobalTaxes(): bool
+    {
+        return $this->taxable();
     }
 
 
@@ -543,6 +629,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_free()
     {
@@ -556,16 +643,23 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @param bool $no_cache
      * @return float
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_ticket_total_with_taxes($no_cache = false)
     {
         if ($this->_ticket_total_with_taxes === null || $no_cache) {
-            $this->_ticket_total_with_taxes = $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
+            $this->_ticket_total_with_taxes = $this->usesGlobalTaxes()
+                ? $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin()
+                : $this->ticket_price();
         }
         return (float) $this->_ticket_total_with_taxes;
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function ensure_TKT_Price_correct()
     {
         $this->set('TKT_price', EE_Taxes::get_subtotal_for_admin($this));
@@ -576,6 +670,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * @return float
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_ticket_subtotal()
     {
@@ -588,6 +683,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @return float
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_ticket_taxes_total_for_admin()
     {
@@ -637,15 +733,15 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets start_date
      *
-     * @param string $dt_frmt
-     * @param string $tm_frmt
+     * @param string|null $date_format
+     * @param string|null $time_format
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function start_date($dt_frmt = '', $tm_frmt = '')
+    public function start_date(?string $date_format = '', ?string $time_format = ''): string
     {
-        return $this->_get_datetime('TKT_start_date', $dt_frmt, $tm_frmt);
+        return $this->_get_datetime('TKT_start_date', $date_format, $time_format);
     }
 
 
@@ -666,15 +762,15 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets end_date
      *
-     * @param string $dt_frmt
-     * @param string $tm_frmt
+     * @param string|null $date_format
+     * @param string|null $time_format
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function end_date($dt_frmt = '', $tm_frmt = '')
+    public function end_date(?string $date_format = '', ?string $time_format = ''): string
     {
-        return $this->_get_datetime('TKT_end_date', $dt_frmt, $tm_frmt);
+        return $this->_get_datetime('TKT_end_date', $date_format, $time_format);
     }
 
 
@@ -696,7 +792,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Sets sell until time
      *
      * @param string $time a string representation of the sell until time (ex 9am or 7:30pm)
-     * @throws EE_Error*@throws ReflectionException
+     * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.5.0
      */
     public function set_end_time($time)
@@ -767,9 +864,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function sold()
+    public function sold(): int
     {
-        return $this->get_raw('TKT_sold');
+        return (int) $this->get_raw('TKT_sold');
     }
 
 
@@ -915,9 +1012,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function reserved()
+    public function reserved(): int
     {
-        return $this->get_raw('TKT_reserved');
+        return (int) $this->get_raw('TKT_reserved');
     }
 
 
@@ -1122,7 +1219,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *                            is therefore the truest measure of tickets that can be purchased at the moment
      * @param int    $DTT_ID      the primary key for a particular datetime.
      *                            set to 0 for all related datetimes
-     * @return int
+     * @return int|float          int for finite quantity or float for INF
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -1426,6 +1523,34 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
+     * @return boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function reverse_calculate()
+    {
+        return $this->get('TKT_reverse_calculate');
+    }
+
+
+    /**
+     * @param boolean $reverse_calculate
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function set_reverse_calculate($reverse_calculate)
+    {
+        $this->set('TKT_reverse_calculate', $reverse_calculate);
+    }
+
+
+    /**
      * Gets a string which is handy for showing in gateways etc that describes the ticket.
      *
      * @return string
@@ -1438,7 +1563,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         foreach ($this->datetimes() as $datetime) {
             $times[] = $datetime->start_date_and_time();
         }
-        return $this->name() . ' @ ' . implode(', ', $times) . ' for ' . $this->pretty_price();
+        /* translators: %1$s ticket name, %2$s start datetimes separated by comma, %3$s ticket price */
+        return sprintf(
+            esc_html__('%1$s @ %2$s for %3$s', 'event_espresso'),
+            $this->name(),
+            implode(', ', $times),
+            $this->pretty_price()
+        );
     }
 
 
@@ -1471,8 +1602,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets all the registrations for this ticket
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Registration[]|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
@@ -1509,9 +1640,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Counts the registrations for this ticket
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function count_registrations($query_params = [])
     {
@@ -1536,14 +1669,15 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @return EE_Event
      * @throws EE_Error
-     * @throws UnexpectedEntityException*@throws ReflectionException
+     * @throws UnexpectedEntityException
+     * @throws ReflectionException
      * @see EEI_Event_Relation for comments
      */
     public function get_related_event()
     {
         // get one datetime to use for getting the event
         $datetime = $this->first_datetime();
-        if (! $datetime instanceof \EE_Datetime) {
+        if (! $datetime instanceof EE_Datetime) {
             throw new UnexpectedEntityException(
                 $datetime,
                 'EE_Datetime',
@@ -1554,7 +1688,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             );
         }
         $event = $datetime->event();
-        if (! $event instanceof \EE_Event) {
+        if (! $event instanceof EE_Event) {
             throw new UnexpectedEntityException(
                 $event,
                 'EE_Event',
@@ -1573,7 +1707,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @return string
      * @throws UnexpectedEntityException
-     * @throws EE_Error*@throws ReflectionException
+     * @throws EE_Error
+     * @throws ReflectionException
      * @see EEI_Event_Relation for comments
      */
     public function get_event_name()
@@ -1588,7 +1723,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @return int
      * @throws UnexpectedEntityException
-     * @throws EE_Error*@throws ReflectionException
+     * @throws EE_Error
+     * @throws ReflectionException
      * @see EEI_Event_Relation for comments
      */
     public function get_event_ID()
@@ -1604,10 +1740,220 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * If there are none then it can be permanently deleted.
      *
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_permanently_deleteable()
     {
         return $this->count_registrations() === 0;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function visibility(): int
+    {
+        return $this->get('TKT_visibility');
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isHidden(): int
+    {
+        return $this->visibility() === EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isNotHidden(): int
+    {
+        return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isPublicOnly(): int
+    {
+        return $this->isNotHidden() && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_PUBLIC_VALUE;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isMembersOnly(): int
+    {
+        return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_PUBLIC_VALUE
+               && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY_VALUE;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isAdminsOnly(): int
+    {
+        return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY_VALUE
+               && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY_VALUE;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isAdminUiOnly(): int
+    {
+        return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY_VALUE
+               && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY_VALUE;
+    }
+
+
+    /**
+     * @param int $visibility
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function set_visibility(int $visibility)
+    {
+
+        $ticket_visibility_options = $this->_model->ticketVisibilityOptions();
+        $ticket_visibility         = -1;
+        foreach ($ticket_visibility_options as $ticket_visibility_option) {
+            if ($visibility === $ticket_visibility_option) {
+                $ticket_visibility = $visibility;
+            }
+        }
+        if ($ticket_visibility === -1) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'The supplied ticket visibility setting of "%1$s" is not valid. It needs to match one of the keys in the following array:%2$s %3$s ',
+                        'event_espresso'
+                    ),
+                    $visibility,
+                    '<br />',
+                    var_export($ticket_visibility_options, true)
+                )
+            );
+        }
+        $this->set('TKT_visibility', $ticket_visibility);
+    }
+
+
+    /**
+     * @param EE_Base_Class|int|string $otherObjectModelObjectOrID
+     * @param string                   $relationName
+     * @param array                    $extra_join_model_fields_n_values
+     * @param string|null              $cache_id
+     * @return EE_Base_Class
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function _add_relation_to(
+        $otherObjectModelObjectOrID,
+        $relationName,
+        $extra_join_model_fields_n_values = [],
+        $cache_id = null
+    ) {
+        if ($relationName === 'Datetime' && ! $this->hasRelation($otherObjectModelObjectOrID, $relationName)) {
+            /** @var EE_Datetime $datetime */
+            $datetime = EEM_Datetime::instance()->ensure_is_obj($otherObjectModelObjectOrID);
+            $datetime->increaseSold($this->sold(), false);
+            $datetime->increaseReserved($this->reserved());
+            $datetime->save();
+            $otherObjectModelObjectOrID = $datetime;
+        }
+        return parent::_add_relation_to(
+            $otherObjectModelObjectOrID,
+            $relationName,
+            $extra_join_model_fields_n_values,
+            $cache_id
+        );
+    }
+
+
+    /**
+     * @param EE_Base_Class|int|string $otherObjectModelObjectOrID
+     * @param string                   $relationName
+     * @param array                    $where_query
+     * @return bool|EE_Base_Class|null
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function _remove_relation_to($otherObjectModelObjectOrID, $relationName, $where_query = [])
+    {
+        // if we're adding a new relation to a datetime
+        if ($relationName === 'Datetime' && $this->hasRelation($otherObjectModelObjectOrID, $relationName)) {
+            /** @var EE_Datetime $datetime */
+            $datetime = EEM_Datetime::instance()->ensure_is_obj($otherObjectModelObjectOrID);
+            $datetime->decreaseSold($this->sold());
+            $datetime->decreaseReserved($this->reserved());
+            $datetime->save();
+            $otherObjectModelObjectOrID = $datetime;
+        }
+        return parent::_remove_relation_to(
+            $otherObjectModelObjectOrID,
+            $relationName,
+            $where_query
+        );
+    }
+
+
+    /**
+     * Removes ALL the related things for the $relationName.
+     *
+     * @param string $relationName
+     * @param array  $where_query_params
+     * @return EE_Base_Class
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
+     */
+    public function _remove_relations($relationName, $where_query_params = [])
+    {
+        if ($relationName === 'Datetime') {
+            $datetimes = $this->datetimes();
+            foreach ($datetimes as $datetime) {
+                $datetime->decreaseSold($this->sold());
+                $datetime->decreaseReserved($this->reserved());
+                $datetime->save();
+            }
+        }
+        return parent::_remove_relations($relationName, $where_query_params);
     }
 
 

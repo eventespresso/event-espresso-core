@@ -105,7 +105,7 @@
  * 'REG_session'=>new EE_Plain_Text_Field('REG_session', esc_html__('Session ID of registration','event_espresso'), false, ''),
  * 'REG_code'=>new EE_Plain_Text_Field('REG_code', esc_html__('Unique Code for this registration','event_espresso'), false, ''),
  * 'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', esc_html__('String to be used in URL for identifying registration','event_espresso'), false, ''),
- * 'REG_count'=>new EE_Integer_Field('REG_count', esc_html__('Count of this registration in the group registration ','event_espresso'), true, 1),
+ * 'REG_count'=>new EE_Integer_Field('REG_count', esc_html__('Count of this registration in the group registration','event_espresso'), true, 1),
  * 'REG_group_size'=>new EE_Integer_Field('REG_group_size', esc_html__('Number of registrations on this group','event_espresso'), false, 1),
  * 'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', esc_html__('Flag indicating the registrant plans on attending','event_espresso'), false, false),
  * 'REG_deleted' => new EE_Trashed_Flag_Field('REG_deleted', esc_html__('Flag indicating if registration has been archived or not.', 'event_espresso'), false, false )

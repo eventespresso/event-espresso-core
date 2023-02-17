@@ -17,9 +17,9 @@ $values = EEH_Form_Fields::prep_answer_options(
     <?php esc_html_e(
         'Single Event Pages',
         'event_espresso'
-    ); ?><?php // echo wp_kses(EEH_Template::get_help_tab_link('event_single_settings_info'),AllowedTags::getAllowedTags()); ?>
+    ); ?><?php // echo EEH_Template::get_help_tab_link('event_single_settings_info');?>
 </h2>
-<table class="form-table">
+<table class="ee-admin-two-column-layout form-table">
     <tbody>
     <tr>
         <th>
@@ -49,8 +49,9 @@ $values = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="display_venue">
-                <?php esc_html_e('Display Venue Details', 'event_espresso'); ?>
-                <?php echo wp_kses(EEH_Template::get_help_tab_link('display_addresses_in_reg_form_info'), AllowedTags::getAllowedTags()); ?>
+                <?php esc_html_e('Display Venue Details', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    'display_addresses_in_reg_form_info'
+                ); ?>
             </label>
         </th>
         <td>
@@ -96,8 +97,9 @@ $values = EEH_Form_Fields::prep_answer_options(
 
     <tr>
         <th>
-            <?php esc_html_e('Display Order', 'event_espresso'); ?>
-            <?php echo wp_kses(EEH_Template::get_help_tab_link('display_addresses_in_reg_form_info'), AllowedTags::getAllowedTags()); ?>
+            <?php esc_html_e('Display Order', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                'display_addresses_in_reg_form_info'
+            ); ?>
         </th>
         <td>
 

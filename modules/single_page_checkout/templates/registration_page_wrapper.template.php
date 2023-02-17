@@ -105,4 +105,3 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     ?>
 
 </div>
-

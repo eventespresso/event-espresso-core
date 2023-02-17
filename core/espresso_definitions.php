@@ -4,7 +4,7 @@
 define('EVENT_ESPRESSO_VERSION', espresso_version());
 define('EE_MIN_WP_VER_REQUIRED', '4.5');
 define('EE_MIN_WP_VER_RECOMMENDED', '4.9');
-define('EE_MIN_PHP_VER_RECOMMENDED', '5.6.32');
+define('EE_MIN_PHP_VER_RECOMMENDED', '7.4');
 define('EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 // used to be DIRECTORY_SEPARATOR, but that caused issues on windows
 if (! defined('DS')) {
@@ -32,7 +32,6 @@ define('EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes/');
 define('EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets/');
 define('EE_PAYMENT_METHODS', EE_PLUGIN_DIR_PATH . 'payment_methods/');
 define('EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated/');
-define('EE_VENDOR', EE_PLUGIN_DIR_PATH . 'vendor/');
 // core system paths
 define('EE_ADMIN', EE_CORE . 'admin/');
 define('EE_CPTS', EE_CORE . 'CPTs/');
@@ -64,9 +63,6 @@ define('EVENT_ESPRESSO_UPLOAD_URL', $uploads['baseurl'] . '/espresso/');
 // define the templates directory and URL
 define('EVENT_ESPRESSO_TEMPLATE_DIR', $uploads['basedir'] . '/espresso/templates/');
 define('EVENT_ESPRESSO_TEMPLATE_URL', $uploads['baseurl'] . '/espresso/templates/');
-// define the gateway directory and URL
-define('EVENT_ESPRESSO_GATEWAY_DIR', $uploads['basedir'] . '/espresso/gateways/');
-define('EVENT_ESPRESSO_GATEWAY_URL', $uploads['baseurl'] . '/espresso/gateways/');
 // languages folder/path
 define('EE_LANGUAGES_SAFE_LOC', '../' . 'uploads/' . 'espresso/languages/');
 define('EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages/');

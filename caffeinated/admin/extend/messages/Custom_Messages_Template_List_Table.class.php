@@ -121,11 +121,12 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
                 'action'       => 'add_new_message_template',
             );
             $create_link = EE_Admin_Page::add_query_args_and_nonce($create_args, EE_MSG_ADMIN_URL);
-            return sprintf(
-                '<p><a href="%s" class="button button-small">%s</a></p>',
-                $create_link,
-                esc_html__('Create Custom', 'event_espresso')
-            );
+
+            $aria_label = esc_html__('Create Custom Message Template', 'event_espresso');
+            return "
+            <a href='$create_link' class='ee-aria-tooltip button button--icon-only' aria-label='$aria_label'>
+                <span class='dashicons dashicons-admin-customizer'></span>
+            </a>";
         }
         return '';
     }

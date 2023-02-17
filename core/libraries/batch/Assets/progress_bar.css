@@ -1,10 +1,11 @@
 /*
 Styles for generic progress bars
 Would style HTML like this:
+
 <div class="progress-responsive">
+	<div class="percent"></div>
 	<figure>
 		<div class="bar"></div>
-		<div class="percent"></div>
 	</figure>
 </div>
 
@@ -17,35 +18,87 @@ to look like a responsive progress bar
 
 /* PROGRESS BAR STUFF */
 
-.progress-responsive {
-	margin-right:2em;
-}
-/* Progress bar containers */
-.progress-responsive figure {
+.progress-bar-wrapper {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	margin-block-end: 1rem;
+	margin-block-start: -2rem;
 	position: relative;
-	height: 25px;
-	border: 2px solid #A39D9C;
-	border-radius: 3px;
-	background: #fff;
-	margin: 0 0 1em;
 }
 
-/* blue bar */
-.progress-responsive .bar {
-	background: #2EA2CC;
-	width: 0;
-	height: 25px;
-	border-radius: 2px;
+.progress-responsive {
+	display: block;
+	text-align: center;
+	width: 100%;
+}
+
+/* Progress bar containers */
+.progress-responsive figure {
+	background: #fff;
+	border-radius: 1rem;
+	height: 1rem;
+	inset-inline-start: 4px;
+	margin-block: 0.5rem;
+	margin: 0;
+	outline-offset: 2px;
+	outline: 1px solid hsl(203, 5%, 50%);
+	overflow: hidden;
+	position: relative;
+	width: calc(100% - 8px);
 }
 
 /* Percent text */
 .progress-responsive .percent {
-	position: absolute;
-	top: 5px;
-	right: 10px;
-	font-size: 15px;
-	line-height: 15px;
-	font-weight: normal;
+	border-radius: 1rem;
+	color: var(--ee-font-color-light);
 	font-family: sans-serif;
-	color: #59595B;
+	font-size: 1.5rem;
+	font-weight: 600;
+}
+
+/* blue bar */
+.progress-responsive .bar {
+	background: hsl(340, 100%, 65%);
+	border: none unset;
+	border-right-color: unset;
+	height: 1rem;
+	transition: all 250ms linear;
+}
+.progress-responsive .bar.progress-1 {
+	background: linear-gradient(to right, hsl(340, 100%, 65%), hsl(326, 100%, 59%));
+}
+.progress-responsive .bar.progress-2 {
+	background: linear-gradient(to right, hsl(340, 100%, 65%), hsl(312, 100%, 58%));
+}
+.progress-responsive .bar.progress-3 {
+	background: linear-gradient(to right, hsl(340, 100%, 65%), hsl(298, 100%, 57%));
+}
+.progress-responsive .bar.progress-4 {
+	background: linear-gradient(to right, hsl(340, 100%, 65%), hsl(284, 100%, 56%));
+}
+.progress-responsive .bar.progress-5 {
+	background: linear-gradient(to right, hsl(340, 100%, 65%), hsl(270, 100%, 55%));
+}
+.progress-responsive .bar.progress-6 {
+	background: linear-gradient(to right, hsl(340, 100%, 65%), hsl(256, 100%, 54%));
+}
+.progress-responsive .bar.progress-7 {
+	background: linear-gradient(to right, hsl(340, 100%, 65%), hsl(242, 100%, 53%));
+}
+.progress-responsive .bar.progress-8 {
+	background: linear-gradient(to right, hsl(340, 100%, 65%), hsl(228, 100%, 52%));
+}
+.progress-responsive .bar.progress-9 {
+	background: linear-gradient(to right, hsl(340, 100%, 65%), hsl(214, 100%, 51%));
+}
+.progress-responsive .bar.progress-10 {
+	background: linear-gradient(to right, hsl(340, 100%, 65%), hsl(203, 100%, 50%));
+}
+
+@media only screen and (max-width: 1220px) {
+	.progress-bar-wrapper {
+		margin-block-start: -1rem;
+	}
 }

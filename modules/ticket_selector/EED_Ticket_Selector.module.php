@@ -108,7 +108,7 @@ class EED_Ticket_Selector extends EED_Module
         // hook into the end of the \EE_Admin_Page::_load_page_dependencies()
         // to load assets for "espresso_events" page on the "edit" route (action)
         add_action(
-            'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__edit',
+            'admin_init',
             ['EED_Ticket_Selector', 'ticket_selector_iframe_embed_button'],
             10
         );
@@ -160,13 +160,17 @@ class EED_Ticket_Selector extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function ticketSelector()
+    public static function ticketSelector(): DisplayTicketSelector
     {
         if (! EED_Ticket_Selector::$ticket_selector instanceof DisplayTicketSelector) {
-            EED_Ticket_Selector::$ticket_selector = new DisplayTicketSelector(
-                EED_Ticket_Selector::getRequest(),
-                EED_Ticket_Selector::ticketConfig(),
-                EED_Events_Archive::is_iframe()
+            EED_Ticket_Selector::$ticket_selector = LoaderFactory::getLoader()->getShared(
+                DisplayTicketSelector::class,
+                [
+                    null,
+                    EED_Ticket_Selector::getRequest(),
+                    EED_Ticket_Selector::ticketConfig(),
+                    EED_Events_Archive::is_iframe(),
+                ]
             );
         }
         return EED_Ticket_Selector::$ticket_selector;

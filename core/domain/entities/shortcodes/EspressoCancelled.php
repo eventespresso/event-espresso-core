@@ -3,10 +3,12 @@
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EE_Cart;
+use EE_Error;
 use EE_Registration;
 use EE_Registry;
 use EE_Transaction;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
+use ReflectionException;
 
 /**
  * Class EspressoCancelled
@@ -59,9 +61,10 @@ class EspressoCancelled extends EspressoShortcode
      * IMPORTANT !!!
      * remember that shortcode content should be RETURNED and NOT echoed out
      *
-     * @param array $attributes
+     * @param array|string $attributes
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function processShortcode($attributes = array())
     {

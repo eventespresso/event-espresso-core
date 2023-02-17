@@ -9,14 +9,7 @@
     <tr>
         <th><?php esc_html_e('Code', 'event_espresso'); ?></th>
         <th><?php esc_html_e('Name', 'event_espresso'); ?></th>
-        <th colspan="2">
-            <span class="small-text">
-                <?php printf(
-                    esc_html__('State Appears in%1$sDropdown Select Lists ', 'event_espresso'),
-                    '<br />'
-                ); ?>
-            </span>
-        </th>
+        <th colspan="2"><?php esc_html_e('State Appears in Dropdown Select Lists', 'event_espresso'); ?></th>
     </tr>
     </thead>
     <tbody>
@@ -33,65 +26,79 @@
             }
             ?>
             <td class="delete-state-td">
-                <a class="dashicons dashicons-post-trash ee-icon-size-20 delete-state-lnk"
+                <a aria-label="<?php echo sprintf(esc_attr__('Delete State #%d?', 'event_espresso'), $STA_ID); ?>"
+                   class="button button--secondary button--icon-only delete-state-lnk"
                    id="delete-state-<?php echo absint($STA_ID); ?>-lnk"
                    href="<?php echo esc_url_raw($state['delete_state_url']); ?>"
                    rel="<?php echo esc_attr($STA_ID); ?>"
-                   aria-label="<?php echo sprintf(esc_attr__('Delete State #%d?', 'event_espresso'), $STA_ID); ?>"
                 >
+                    <span class="dashicons dashicons-post-trash"></span>
                 </a>
             </td>
         </tr>
             <?php
         }
         ?>
+        <tr>
+            <td></td>
+            <td>
+                <input class="button button--primary save"
+                       id='country_settings_save3'
+                       name="save"
+                       type="submit"
+                       value="<?php esc_html_e('Save States/Provinces', 'event_espresso'); ?>"
+                />
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
     </tbody>
 </table>
-<br/>
-<input class="button-primary save right"
-       id='country_settings_save3'
-       type="submit"
-       name="save"
-       value="<?php esc_html_e('Save States/Provinces', 'event_espresso'); ?>"
-/>
 <br/>
         <?php
     }
     ?>
 <table class="form-table add-new-state-tbl">
     <tbody>
-    <tr>
-        <td colspan="2">
-            <h4><?php esc_html_e('Add New State/Province', 'event_espresso'); ?></h4>
-        </td>
-    </tr>
+        <tr>
+            <td colspan="2">
+                <h4><?php esc_html_e('Add New State/Province', 'event_espresso'); ?></h4>
+            </td>
+        </tr>
 
-    <tr>
-        <td class="general-settings-country-state-input-td">
-            <label for="STA_abbrev_XXX"><?php esc_html_e('Code', 'event_espresso'); ?></label>
-            <br/>
-            <input class="STA_abbrev small-text "
-                   id='STA_abbrev-XXX'
-                   name="STA_abbrev_XXX"
-                   type="text"
-                   value=""
-            />
-        </td>
-        <td class="general-settings-country-state-input-td">
-            <label for="STA_name_XXX"><?php esc_html_e('Name', 'event_espresso'); ?></label>
-            <br/>
-            <input id="STA_name-XXX" class="STA_name regular-text " type="text" value="" name="STA_name_XXX">
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2">
-            <input class="secondary-button button right"
-                   id='add-new-state-btn'
-                   type='submit'
-                   value="<?php esc_html_e('Add New State/Province', 'event_espresso'); ?>"
-            />
-        </td>
-    </tr>
+        <tr>
+            <td class="general-settings-country-state-input-td">
+                <label for="STA_abbrev-XXX"><?php esc_html_e('Code', 'event_espresso'); ?></label>
+                <input class="STA_abbrev ee-input-width--small"
+                       id='STA_abbrev-XXX'
+                       name="STA_abbrev_XXX"
+                       type="text"
+                       value=""
+                />
+            </td>
+            <td class="general-settings-country-state-input-td">
+                <label for="STA_name-XXX"><?php esc_html_e('Name', 'event_espresso'); ?></label>
+                <input type="text"
+                       class="STA_name ee-input-width--big"
+                       id="STA_name-XXX"
+                       name="STA_name_XXX"
+                       title=""
+                       value=""
+                />
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input class="button button--secondary"
+                       id='add-new-state-btn'
+                       type='submit'
+                       value="<?php esc_html_e('Add New State/Province', 'event_espresso'); ?>"
+                />
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
 
     </tbody>
 </table>

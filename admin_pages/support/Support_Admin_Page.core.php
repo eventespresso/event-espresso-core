@@ -57,6 +57,7 @@ class Support_Admin_Page extends EE_Admin_Page
             'default'    => array(
                 'nav'           => array(
                     'label' => esc_html__('Support', 'event_espresso'),
+                    'icon' => 'dashicons-sos',
                     'order' => 30,
                 ),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_support_boxes')),
@@ -65,6 +66,7 @@ class Support_Admin_Page extends EE_Admin_Page
             'developers' => array(
                 'nav'           => array(
                     'label' => esc_html__('Developers', 'event_espresso'),
+                    'icon' => 'dashicons-coffee',
                     'order' => 50,
                 ),
                 'metaboxes'     => $this->_default_espresso_metaboxes,
@@ -73,6 +75,7 @@ class Support_Admin_Page extends EE_Admin_Page
             'shortcodes' => array(
                 'nav'           => array(
                     'label' => esc_html__('Shortcodes', 'event_espresso'),
+                    'icon' => 'dashicons-shortcode',
                     'order' => 60,
                 ),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_shortcodes_boxes')),
@@ -133,7 +136,7 @@ class Support_Admin_Page extends EE_Admin_Page
 
     protected function _add_settings_metabox($box, $label, array $args)
     {
-        add_meta_box(
+        $this->addMetaBox(
             "espresso_{$box}_settings",
             $label,
             function ($post, $metabox) {

@@ -1,32 +1,33 @@
 jQuery(document).ready(function($) {
 
 	const $message = $('#ee-error-message');
-	const $notices = $('#espresso-notices');
+	// const $notices = $('#espresso-notices');
 	const $body = $('body');
 
-	let target;
+	// let target;
 
 	if ($message.length) {
-		if ($notices.length) {
-			target = $notices;
-		} else if ( $('#screen-meta-links').length ) {
-			target = $('#screen-meta-links');
-		} else if ( $('#wpbody-content').length ) {
-			target = $('#wpbody-content');
-		} else {
-			target = {};
-		}
+        // $message.remove();
+		// if ($notices.length) {
+		// 	target = $notices;
+		// } else if ( $('#screen-meta-links').length ) {
+		// 	target = $('#screen-meta-links');
+		// } else if ( $('#wpbody-content').length ) {
+		// 	target = $('#wpbody-content');
+		// } else {
+		// 	target = {};
+		// }
 
-		if (target.length) {
-			$(target).html($message).css(
-				{
-					'position': 'relative',
-					'top': 0, 'left': 0,
-					'margin': '3em 1em 0 0',
-					'z-index': 5
-				}
-			);
-		}
+		// if (target.length) {
+		// 	$(target).html($message)/*.css(
+		// 		{
+		// 			'position': 'relative',
+		// 			'top': 0, 'left': 0,
+		// 			'margin': '3em 1em 0 0',
+		// 			'z-index': 5
+		// 		}
+		// 	)*/;
+		// }
 		//set from wp_localize_script in php
 		if( ee_settings.wp_debug !== '1' ) {
 			$( '.ee-error-trace-dv').hide();

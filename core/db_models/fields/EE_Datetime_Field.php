@@ -212,8 +212,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
             default:
                 return $pretty
-                    ? $this->_pretty_date_format . ' ' . $this->_pretty_time_format
-                    : $this->_date_format . ' ' . $this->_time_format;
+                    ? trim($this->_pretty_date_format . ' ' . $this->_pretty_time_format)
+                    : trim($this->_date_format . ' ' . $this->_time_format);
         }
     }
 
@@ -450,9 +450,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * @return string
      * @throws \EE_Error
      */
-    public function prepare_for_pretty_echoing($DateTime, $schema = null)
+    public function prepare_for_pretty_echoing($DateTime, ?string $schema = null)
     {
-        return $this->_prepare_for_display($DateTime, $schema ? $schema : true);
+        return $this->_prepare_for_display($DateTime, ($schema ?: true));
     }
 
 

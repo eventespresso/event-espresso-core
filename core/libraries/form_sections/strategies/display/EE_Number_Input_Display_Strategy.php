@@ -30,6 +30,7 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
      * Controls the increments on the input when incrementing or decrementing the value.
      * Note:  Although the step attribute allows for the string "any" to be used, Firefox and Chrome will interpret that
      * to increment by 1.  So although "any" is accepted as a value, it is converted to 1.
+     *
      * @var float
      */
     protected $step;
@@ -40,20 +41,23 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
      * Null is the default value for the incoming arguments because 0 is a valid value.  So we use null
      * to indicate NOT setting this attribute.
      *
-     * @param int|null $min
-     * @param int|null $max
-     * @param int|null $step
+     * @param int|float|null  $min
+     * @param int|float|null  $max
+     * @param int|string|null $step
      * @throws InvalidArgumentException
      */
     public function __construct($min = null, $max = null, $step = null)
     {
-        $this->min = is_numeric($min) || $min === null
+        parent::__construct();
+        $this->min  = is_numeric($min) || $min === null
             ? $min
             : $this->throwValidationException('min', $min);
-        $this->max = is_numeric($max) || $max === null
+        $this->max  = is_numeric($max) || $max === null
             ? $max
             : $this->throwValidationException('max', $max);
-        $step = $step === 'any' ? 1 : $step;
+        $step       = $step === 'any'
+            ? 1
+            : $step;
         $this->step = is_numeric($step) || $step === null
             ? $step
             : $this->throwValidationException('step', $step);
@@ -76,11 +80,11 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
     }
 
 
-
     /**
      * @return string of html to display the field
+     * @throws EE_Error
      */
-    public function display()
+    public function display(): string
     {
         $input = $this->_opening_tag('input');
         $input .= $this->_attributes_string(
@@ -96,14 +100,15 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
 
     /**
      * Return the attributes specific to this display strategy
+     *
      * @return array
      */
-    private function getNumberInputAttributes()
+    private function getNumberInputAttributes(): array
     {
-        $attributes = array(
-            'type' => 'number',
-            'value' => $this->_input->raw_value_in_form()
-        );
+        $attributes = [
+            'type'  => 'number',
+            'value' => $this->_input->raw_value_in_form(),
+        ];
         if ($this->min !== null) {
             $attributes['min'] = $this->min;
         }

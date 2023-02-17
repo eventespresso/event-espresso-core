@@ -28,12 +28,18 @@ class ManifestFile extends Asset
     }
 
 
+    /**
+     * @return string
+     */
     public function urlBase()
     {
         return $this->domain->distributionAssetsUrl();
     }
 
 
+    /**
+     * @return string
+     */
     public function filepath()
     {
         return $this->domain->distributionAssetsPath();

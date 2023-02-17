@@ -346,7 +346,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table
          *
          * @var array
          */
-        $_sortable = apply_filters("FHEE_manage_{$this->screen->id}_sortable_columns", $_sortable, $this->_screen);
+        $_sortable = apply_filters(
+            "FHEE_manage_{$this->screen->id}_sortable_columns",
+            $_sortable,
+            $this->_screen,
+            $this
+        );
 
         $sortable = [];
         foreach ($_sortable as $id => $data) {
@@ -416,7 +421,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      * @access protected
      * @return array bulk_actions
      */
-    protected function _get_bulk_actions()
+    protected function _get_bulk_actions(): array
     {
         $actions = [];
         // the _views property should have the bulk_actions, so let's go through and extract them into a properly
@@ -491,23 +496,29 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             ? 'yes'
             : 'no';
 
-        echo '<div class="ee-list-table-filters actions alignleft">';
+        $filters_html = '';
         foreach ($filters as $filter) {
-            echo wp_kses($filter, AllowedTags::getWithFormTags());
+            $filters_html .= wp_kses($filter, AllowedTags::getWithFormTags());
         }
-        // add filter button at end
-        echo '<input type="submit" class="ee-list-table-filter-submit button button--secondary" value="'
-             . esc_html__('Filter', 'event_espresso')
-             . '" id="post-query-submit" />';
-        echo '<input type="hidden" id="ee-list-table-use-filters" name="use_filters" value="' . $use_filters . '"/>';
+        $filter_submit_btn_text = esc_html__('Filter', 'event_espresso');
+        $filter_reset_btn_text = esc_html__('Reset Filters', 'event_espresso');
+        $filter_reset_btn_url = esc_url_raw($this->_admin_page->get_current_page_view_url());
 
-        // add reset filters button at end
-        echo '<a class="button button--secondary"  href="'
-             . esc_url_raw($this->_admin_page->get_current_page_view_url())
-             . '" style="display:inline-block">'
-             . esc_html__('Reset Filters', 'event_espresso')
-             . '</a>';
-        echo '</div>';
+        echo "
+        <div class='ee-list-table-filters actions alignleft'>
+           $filters_html
+            <span class='ee-list-table-filters__submit-buttons'>
+                <input type='submit'
+                       class='ee-list-table-filter-submit button button--secondary'
+                       id='post-query-submit'
+                       value='$filter_submit_btn_text'
+                />
+                <input type='hidden' id='ee-list-table-use-filters' name='use_filters' value='$use_filters' />
+                <a class='ee-list-table-filter-reset button button--secondary' href='$filter_reset_btn_url'>
+                    $filter_reset_btn_text
+                </a>
+            </span>
+        </div>";
     }
 
 
@@ -579,7 +590,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             $item,
             $this->_screen
         );
-        return ob_get_clean();
+        $content = ob_get_clean();
+        return $column_name === 'actions' ? $this->actionsModalMenu($content) : $content;
     }
 
 
@@ -604,7 +616,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
          *
          * @var array
          */
-        return apply_filters('FHEE_manage_' . $this->screen->id . '_columns', $this->_columns, $this->_screen);
+        return apply_filters("FHEE_manage_{$this->screen->id}_columns", $this->_columns, $this->_screen, $this);
     }
 
 
@@ -766,11 +778,11 @@ abstract class EE_Admin_List_Table extends WP_List_Table
                     $this
                 );
                 echo '</th>';
-            } elseif (method_exists($this, 'column_' . $column_name)) {
+            } elseif (method_exists($this, "column_$column_name")) {
                 echo "<td $attributes>"; // already escaped
                 echo apply_filters(
                     'FHEE__EE_Admin_List_Table__single_row_columns__column_' . $column_name . '__column_content',
-                    call_user_func([$this, 'column_' . $column_name], $item),
+                    call_user_func([$this, "column_$column_name"], $item),
                     $item,
                     $this
                 );
@@ -807,14 +819,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         } else {
             echo '<div class="list-table-bottom-buttons alignleft actions">';
             foreach ($this->_bottom_buttons as $type => $action) {
-                $route         = isset($action['route']) ? $action['route'] : '';
-                $extra_request = isset($action['extra_request']) ? $action['extra_request'] : '';
+                $route         = $action['route'] ?? '';
+                $extra_request = $action['extra_request'] ?? '';
+                $btn_class     = $action['btn_class'] ?? 'button button--secondary';
                 // already escaped
                 echo wp_kses($this->_admin_page->get_action_link_or_button(
                     $route,
                     $type,
                     $extra_request,
-                    'button button--secondary'
+                    $btn_class
                 ), AllowedTags::getWithFormTags());
             }
             do_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen);
@@ -913,5 +926,65 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         $host = $this->_admin_page->get_request()->getServerParam('HTTP_HOST');
         $uri  = $this->_admin_page->get_request()->getServerParam('REQUEST_URI');
         return urlencode(esc_url_raw("//{$host}{$uri}"));
+    }
+
+
+    /**
+     * @param string $id
+     * @param string $content
+     * @param string $align     start (default), center, end
+     * @return string
+     * @since   $VID:$
+     */
+    protected function columnContent($id, $content, $align = 'start')
+    {
+        if (! isset($this->_columns[ $id ])) {
+            throw new DomainException('missing column id');
+        }
+        $heading = $id !== 'cb' ? $this->_columns[ $id ] : '';
+        $align = in_array($align, ['start', 'center', 'end']) ? $align : 'start';
+        $align = "ee-responsive-table-cell--{$align}";
+
+        $html = "<div class='ee-responsive-table-cell ee-responsive-table-cell--column-{$id} {$align} ee-layout-row'>";
+        $html .= "<div class='ee-responsive-table-cell__heading'>{$heading}</div>";
+        $html .= "<div class='ee-responsive-table-cell__content ee-layout-row'>{$content}</div>";
+        $html .= "</div>";
+        return $html;
+    }
+
+
+    protected function actionsModalMenu($actions): string
+    {
+        return '
+        <div class="ee-modal-menu">
+            <button class="ee-modal-menu__button button button--secondary button--icon-only ee-aria-tooltip"
+                    aria-label="' . esc_attr__('list table actions menu', 'event_espresso') . '"
+            >
+                <span class="dashicons dashicons-menu"></span>
+            </button>
+            <div class="ee-modal-menu__content ee-admin-container">
+                <span class="ee-modal-menu__close dashicons dashicons-no"></span>
+                ' . $actions . '
+            </div>
+        </div>';
+    }
+
+
+    public function actionsColumnHeader(): string
+    {
+        return '
+            <span class="ee-actions-column-header-wrap">
+                <span class="dashicons dashicons-screenoptions"></span>
+                <span class="ee-actions-column-header">' . esc_html__('Actions', 'event_espresso') . '</span>
+            </span>';
+    }
+
+
+    protected function getActionLink(string $url, string $display_text, string $label, $class = ''): string
+    {
+        $class = ! empty($class) ? "{$class} ee-list-table-action" : 'ee-list-table-action';
+        $class = ! empty($label) ? "{$class} ee-aria-tooltip" : $class;
+        $label = ! empty($label) ? " aria-label='{$label}'" : '';
+        return "<a href='{$url}' class='{$class}'{$label}>{$display_text}</a>";
     }
 }

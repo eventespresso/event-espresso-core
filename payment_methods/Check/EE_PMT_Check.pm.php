@@ -12,8 +12,9 @@
 class EE_PMT_Check extends EE_PMT_Base
 {
     /**
-     * @param null $pm_instance
-     * @return EE_PMT_Check
+     * @param EE_Payment_Method|null $pm_instance
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     public function __construct($pm_instance = null)
     {
@@ -27,19 +28,23 @@ class EE_PMT_Check extends EE_PMT_Base
 
     /**
      * Creates the billing form for this payment method type
-     * @param \EE_Transaction $transaction
-     * @return NULL
+     * @param EE_Transaction|null $transaction
+     * @return EE_Billing_Info_Form|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_new_billing_form(EE_Transaction $transaction = null)
-    {
-        return null;
+    {    return null;
     }
 
 
 
     /**
      * Overrides parent to dynamically set some defaults, but only when the form is requested
-     * @return EE_Form_Section_Proper
+     *
+     * @return EE_Payment_Method_Form
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_new_settings_form()
     {
@@ -88,8 +93,9 @@ class EE_PMT_Check extends EE_PMT_Base
 
     /**
      * Adds the help tab
-     * @see EE_PMT_Base::help_tabs_config()
+     *
      * @return array
+     * @see EE_PMT_Base::help_tabs_config()
      */
     public function help_tabs_config()
     {
@@ -107,7 +113,11 @@ class EE_PMT_Check extends EE_PMT_Base
      * For adding any html output ab ove the payment overview.
      * Many gateways won't want ot display anything, so this function just returns an empty string.
      * Other gateways may want to override this, such as offline gateways.
+     *
+     * @param EE_Payment $payment
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function payment_overview_content(EE_Payment $payment)
     {

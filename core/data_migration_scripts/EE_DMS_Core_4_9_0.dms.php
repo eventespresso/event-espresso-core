@@ -24,6 +24,7 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
 
 /**
  * Class EE_DMS_Core_4_9_0
+ * Meant to add the new ee_message table to the database.
  *
  * @package               Event Espresso
  * @subpackage            core
@@ -148,17 +149,6 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
 				CUR_active tinyint(1) DEFAULT '0',
 				PRIMARY KEY  (CUR_code)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
-        // note: although this table is no longer in use,
-        // it hasn't been removed because then queries to the model will have errors.
-        // but you should expect this table and its corresponding model to be removed in
-        // the next few months
-        $table_name = 'esp_currency_payment_method';
-        $sql = "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
-				CUR_code varchar(6) NOT NULL,
-				PMD_ID int(11) NOT NULL,
-				PRIMARY KEY  (CPM_ID),
-				KEY PMD_ID (PMD_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_datetime';
         $sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				EVT_ID bigint(20) unsigned NOT NULL,

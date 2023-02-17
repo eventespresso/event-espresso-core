@@ -9,6 +9,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  * Payments_Admin_Page
  * This contains the logic for setting up the Event Payments related admin pages.  Any methods without
  * phpdoc comments have inline docs with parent class.
+ *
  * @package         Payments_Admin_Page
  * @subpackage      includes/core/admin/Payments_Admin_Page.core.php
  * @author          Darren Ethier
@@ -42,9 +43,9 @@ class Payments_Admin_Page extends EE_Admin_Page
 
     protected function _init_page_props()
     {
-        $this->page_slug = EE_PAYMENTS_PG_SLUG;
-        $this->page_label = esc_html__('Payment Methods', 'event_espresso');
-        $this->_admin_base_url = EE_PAYMENTS_ADMIN_URL;
+        $this->page_slug        = EE_PAYMENTS_PG_SLUG;
+        $this->page_label       = esc_html__('Payment Methods', 'event_espresso');
+        $this->_admin_base_url  = EE_PAYMENTS_ADMIN_URL;
         $this->_admin_base_path = EE_PAYMENTS_ADMIN;
     }
 
@@ -58,9 +59,18 @@ class Payments_Admin_Page extends EE_Admin_Page
     protected function _define_page_props()
     {
         $this->_admin_page_title = $this->page_label;
-        $this->_labels = array(
+        $this->_labels           = [
             'publishbox' => esc_html__('Update Settings', 'event_espresso'),
-        );
+        ];
+    }
+
+
+    /**
+     * @param string $sort_logs_again_direction
+     */
+    public function setSortLogsAgainDirection(string $sort_logs_again_direction): void
+    {
+        $this->_sort_logs_again_direction = $sort_logs_again_direction;
     }
 
 
@@ -74,45 +84,45 @@ class Payments_Admin_Page extends EE_Admin_Page
          * When cap mapping is implemented, some routes will need to use the singular form of
          * capability method and also include the $id of the payment method for the route.
          **/
-        $this->_page_routes = array(
-            'default'                   => array(
+        $this->_page_routes = [
+            'default'                   => [
                 'func'       => '_payment_methods_list',
                 'capability' => 'ee_edit_payment_methods',
-            ),
-            'payment_settings'          => array(
+            ],
+            'payment_settings'          => [
                 'func'       => '_payment_settings',
                 'capability' => 'ee_manage_gateways',
-            ),
-            'activate_payment_method'   => array(
+            ],
+            'activate_payment_method'   => [
                 'func'       => '_activate_payment_method',
                 'noheader'   => true,
                 'capability' => 'ee_edit_payment_methods',
-            ),
-            'deactivate_payment_method' => array(
+            ],
+            'deactivate_payment_method' => [
                 'func'       => '_deactivate_payment_method',
                 'noheader'   => true,
                 'capability' => 'ee_delete_payment_methods',
-            ),
-            'update_payment_method'     => array(
+            ],
+            'update_payment_method'     => [
                 'func'               => '_update_payment_method',
                 'noheader'           => true,
                 'headers_sent_route' => 'default',
                 'capability'         => 'ee_edit_payment_methods',
-            ),
-            'update_payment_settings'   => array(
+            ],
+            'update_payment_settings'   => [
                 'func'       => '_update_payment_settings',
                 'noheader'   => true,
                 'capability' => 'ee_manage_gateways',
-            ),
-            'payment_log'               => array(
+            ],
+            'payment_log'               => [
                 'func'       => '_payment_log_overview_list_table',
                 'capability' => 'ee_read_payment_methods',
-            ),
-            'payment_log_details'       => array(
+            ],
+            'payment_log_details'       => [
                 'func'       => '_payment_log_details',
                 'capability' => 'ee_read_payment_methods',
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -122,49 +132,52 @@ class Payments_Admin_Page extends EE_Admin_Page
      */
     protected function _set_page_config()
     {
-        $payment_method_list_config = array(
-            'nav'           => array(
+        $payment_method_list_config = [
+            'nav'           => [
                 'label' => esc_html__('Payment Methods', 'event_espresso'),
+                'icon'  => 'dashicons-bank',
                 'order' => 10,
-            ),
+            ],
             'metaboxes'     => $this->_default_espresso_metaboxes,
             'help_tabs'     => array_merge(
-                array(
-                    'payment_methods_overview_help_tab' => array(
+                [
+                    'payment_methods_overview_help_tab' => [
                         'title'    => esc_html__('Payment Methods Overview', 'event_espresso'),
                         'filename' => 'payment_methods_overview',
-                    ),
-                ),
+                    ],
+                ],
                 $this->_add_payment_method_help_tabs()
             ),
             'require_nonce' => false,
-        );
-        $this->_page_config = array(
+        ];
+        $this->_page_config         = [
             'default'          => $payment_method_list_config,
-            'payment_settings' => array(
-                'nav'           => array(
+            'payment_settings' => [
+                'nav'           => [
                     'label' => esc_html__('Settings', 'event_espresso'),
+                    'icon'  => 'dashicons-admin-generic',
                     'order' => 20,
-                ),
-                'help_tabs'     => array(
-                    'payment_methods_settings_help_tab' => array(
+                ],
+                'help_tabs'     => [
+                    'payment_methods_settings_help_tab' => [
                         'title'    => esc_html__('Payment Method Settings', 'event_espresso'),
                         'filename' => 'payment_methods_settings',
-                    ),
-                ),
-                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
+                    ],
+                ],
+                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
                 'require_nonce' => false,
-            ),
-            'payment_log'      => array(
-                'nav'           => array(
+            ],
+            'payment_log'      => [
+                'nav'           => [
                     'label' => esc_html__("Logs", 'event_espresso'),
+                    'icon'  => 'dashicons-text-page',
                     'order' => 30,
-                ),
+                ],
                 'list_table'    => 'Payment_Log_Admin_List_Table',
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -177,11 +190,11 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _add_payment_method_help_tabs()
+    protected function _add_payment_method_help_tabs(): array
     {
         EE_Registry::instance()->load_lib('Payment_Method_Manager');
-        $payment_method_types = EE_Payment_Method_Manager::instance()->payment_method_types();
-        $all_pmt_help_tabs_config = array();
+        $payment_method_types     = EE_Payment_Method_Manager::instance()->payment_method_types();
+        $all_pmt_help_tabs_config = [];
         foreach ($payment_method_types as $payment_method_type) {
             if (
                 ! EE_Registry::instance()->CAP->current_user_can(
@@ -192,16 +205,16 @@ class Payments_Admin_Page extends EE_Admin_Page
                 continue;
             }
             foreach ($payment_method_type->help_tabs_config() as $help_tab_name => $config) {
-                $template_args = isset($config['template_args']) ? $config['template_args'] : array();
-                $template_args['admin_page_obj'] = $this;
-                $all_pmt_help_tabs_config[ $help_tab_name ] = array(
+                $template_args                              = $config['template_args'] ?? [];
+                $template_args['admin_page_obj']            = $this;
+                $all_pmt_help_tabs_config[ $help_tab_name ] = [
                     'title'   => $config['title'],
                     'content' => EEH_Template::display_template(
                         $payment_method_type->file_folder() . 'help_tabs/' . $config['filename'] . '.help_tab.php',
                         $template_args,
                         true
                     ),
-                );
+                ];
             }
         }
         return $all_pmt_help_tabs_config;
@@ -238,13 +251,19 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         // styles
         wp_enqueue_style('espresso-ui-theme');
+        wp_register_style(
+            'espresso_payments',
+            EE_PAYMENTS_ASSETS_URL . 'ee-payments.css',
+            [],
+            EVENT_ESPRESSO_VERSION
+        );
         // scripts
         wp_enqueue_script('ee_admin_js');
         wp_enqueue_script('ee-text-links');
         wp_enqueue_script(
             'espresso_payments',
             EE_PAYMENTS_ASSETS_URL . 'espresso_payments_admin.js',
-            array('ee-datepicker'),
+            ['ee-datepicker'],
             EVENT_ESPRESSO_VERSION,
             true
         );
@@ -253,16 +272,14 @@ class Payments_Admin_Page extends EE_Admin_Page
 
     public function load_scripts_styles_default()
     {
-        // styles
-        wp_register_style(
-            'espresso_payments',
-            EE_PAYMENTS_ASSETS_URL . 'ee-payments.css',
-            array(),
-            EVENT_ESPRESSO_VERSION
-        );
         wp_enqueue_style('espresso_payments');
         wp_enqueue_style('ee-text-links');
-        // scripts
+    }
+
+
+    public function load_scripts_styles_payment_log_details()
+    {
+        wp_enqueue_style('espresso_payments');
     }
 
 
@@ -282,8 +299,8 @@ class Payments_Admin_Page extends EE_Admin_Page
         EE_Registry::instance()->load_lib('Payment_Method_Manager');
         EEM_Payment_Method::instance()->verify_button_urls();
         // set up tabs, one for each payment method type
-        $tabs = array();
-        $payment_methods = array();
+        $tabs            = [];
+        $payment_methods = [];
         foreach (EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj) {
             // we don't want to show admin-only PMTs for now
             if ($pmt_obj instanceof EE_PMT_Admin_Only) {
@@ -302,12 +319,12 @@ class Payments_Admin_Page extends EE_Admin_Page
             $payment_method = EEM_Payment_Method::instance()->get_one_of_type($pmt_obj->system_name());
             if (! $payment_method instanceof EE_Payment_Method) {
                 $payment_method = EE_Payment_Method::new_instance(
-                    array(
+                    [
                         'PMD_slug'       => sanitize_key($pmt_obj->system_name()),
                         'PMD_type'       => $pmt_obj->system_name(),
                         'PMD_name'       => $pmt_obj->pretty_name(),
                         'PMD_admin_name' => $pmt_obj->pretty_name(),
-                    )
+                    ]
                 );
             }
             $payment_methods[ $payment_method->slug() ] = $payment_method;
@@ -318,13 +335,13 @@ class Payments_Admin_Page extends EE_Admin_Page
         );
         foreach ($payment_methods as $payment_method) {
             if ($payment_method instanceof EE_Payment_Method) {
-                add_meta_box(
-                    // html id
+                $this->addMetaBox(
+                // html id
                     'espresso_' . $payment_method->slug() . '_payment_settings',
                     // title
                     sprintf(esc_html__('%s Settings', 'event_espresso'), $payment_method->admin_name()),
                     // callback
-                    array($this, 'payment_method_settings_meta_box'),
+                    [$this, 'payment_method_settings_meta_box'],
                     // post type
                     null,
                     // context
@@ -332,22 +349,27 @@ class Payments_Admin_Page extends EE_Admin_Page
                     // priority
                     'default',
                     // callback args
-                    array('payment_method' => $payment_method)
+                    ['payment_method' => $payment_method]
                 );
                 // setup for tabbed content
-                $tabs[ $payment_method->slug() ] = array(
+                $tabs[ $payment_method->slug() ] = [
                     'label' => $payment_method->admin_name(),
-                    'class' => $payment_method->active() ? 'gateway-active' : '',
+                    'class' => $payment_method->active()
+                        ? 'gateway-active'
+                        : '',
                     'href'  => 'espresso_' . $payment_method->slug() . '_payment_settings',
                     'title' => esc_html__('Modify this Payment Method', 'event_espresso'),
                     'slug'  => $payment_method->slug(),
-                );
+                    'icon'  => $payment_method->active()
+                        ? '<span class="dashicons dashicons-yes-alt"></span>'
+                        : '<span class="dashicons dashicons-remove"></span>',
+                ];
             }
         }
         $this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links(
             $tabs,
             'payment_method_links',
-            '|',
+            '',
             $this->_get_active_payment_method_slug()
         );
         $this->display_admin_page_with_sidebar();
@@ -359,6 +381,7 @@ class Payments_Admin_Page extends EE_Admin_Page
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_active_payment_method_slug()
     {
@@ -369,7 +392,7 @@ class Payments_Admin_Page extends EE_Admin_Page
             $payment_method_slug = sanitize_key($this->_req_data['payment_method']);
         }
         /** @var EE_Payment_Method $payment_method */
-        $payment_method = EEM_Payment_Method::instance()->get_one(array(array('PMD_slug' => $payment_method_slug)));
+        $payment_method = EEM_Payment_Method::instance()->get_one([['PMD_slug' => $payment_method_slug]]);
         // if that didn't work or wasn't provided, find another way to select the current pm
         if (! $this->_verify_payment_method($payment_method)) {
             // like, looking for an active one
@@ -390,22 +413,18 @@ class Payments_Admin_Page extends EE_Admin_Page
      *    returns TRUE if the passed payment method is properly constructed and the logged-in user has the correct
      *    capabilities to access it
      *
-     * @param EE_Payment_Method $payment_method
+     * @param EE_Payment_Method|null $payment_method
      * @return boolean
      * @throws EE_Error
      */
-    protected function _verify_payment_method($payment_method)
+    protected function _verify_payment_method(?EE_Payment_Method $payment_method): bool
     {
-        if (
-            $payment_method instanceof EE_Payment_Method && $payment_method->type_obj() instanceof EE_PMT_Base
-            && EE_Registry::instance()->CAP->current_user_can(
-                $payment_method->type_obj()->cap_name(),
-                'specific_payment_method_type_access'
-            )
-        ) {
-            return true;
-        }
-        return false;
+        return $payment_method instanceof EE_Payment_Method
+               && $payment_method->type_obj() instanceof EE_PMT_Base
+               && EE_Registry::instance()->CAP->current_user_can(
+                   $payment_method->type_obj()->cap_name(),
+                   'specific_payment_method_type_access'
+               );
     }
 
 
@@ -419,10 +438,11 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function payment_method_settings_meta_box($post_obj_which_is_null, $metabox)
+    public function payment_method_settings_meta_box($post_obj_which_is_null, array $metabox)
     {
         $payment_method = isset($metabox['args'], $metabox['args']['payment_method'])
-            ? $metabox['args']['payment_method'] : null;
+            ? $metabox['args']['payment_method']
+            : null;
         if (! $payment_method instanceof EE_Payment_Method) {
             throw new EE_Error(
                 esc_html__(
@@ -438,9 +458,15 @@ class Payments_Admin_Page extends EE_Admin_Page
             if ($form->form_data_present_in($this->_req_data)) {
                 $form->receive_form_submission($this->_req_data);
             }
-            echo wp_kses($form->form_open() . $form->get_html_and_js() . $form->form_close(), AllowedTags::getWithFormTags());
+            echo wp_kses(
+                $form->form_open() . $form->get_html_and_js() . $form->form_close(),
+                AllowedTags::getWithFormTags()
+            );
         } else {
-            echo wp_kses($this->_activate_payment_method_button($payment_method)->get_html_and_js(), AllowedTags::getWithFormTags());
+            echo wp_kses(
+                $this->_activate_payment_method_button($payment_method)->get_html_and_js(),
+                AllowedTags::getWithFormTags()
+            );
         }
     }
 
@@ -449,40 +475,43 @@ class Payments_Admin_Page extends EE_Admin_Page
      * Gets the form for all the settings related to this payment method type
      *
      * @access protected
-     * @param EE_Payment_Method $payment_method
+     * @param EE_Payment_Method|null $payment_method
      * @return EE_Form_Section_Proper
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _generate_payment_method_settings_form(EE_Payment_Method $payment_method = null)
-    {
+    protected function _generate_payment_method_settings_form(
+        ?EE_Payment_Method $payment_method
+    ): EE_Form_Section_Proper {
         if (! $payment_method instanceof EE_Payment_Method) {
             return new EE_Form_Section_Proper();
         }
+        $subsections = apply_filters(
+            'FHEE__Payments_Admin_Page___generate_payment_method_settings_form__form_subsections',
+            [
+                'pci_dss_compliance'      => $this->_pci_dss_compliance($payment_method),
+                'currency_support'        => $this->_currency_support($payment_method),
+                'payment_method_settings' => $this->_payment_method_settings($payment_method),
+                'update'                  => $this->_update_payment_method_button($payment_method),
+                'deactivate'              => $this->_deactivate_payment_method_button($payment_method),
+                'fine_print'              => $this->_fine_print(),
+            ],
+            $payment_method
+        );
         return new EE_Form_Section_Proper(
-            array(
+            [
                 'name'            => $payment_method->slug() . '_settings_form',
                 'html_id'         => $payment_method->slug() . '_settings_form',
                 'action'          => EE_Admin_Page::add_query_args_and_nonce(
-                    array(
+                    [
                         'action'         => 'update_payment_method',
                         'payment_method' => $payment_method->slug(),
-                    ),
+                    ],
                     EE_PAYMENTS_ADMIN_URL
                 ),
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
-                'subsections'     => apply_filters(
-                    'FHEE__Payments_Admin_Page___generate_payment_method_settings_form__form_subsections',
-                    array(
-                        'pci_dss_compliance'      => $this->_pci_dss_compliance($payment_method),
-                        'currency_support'        => $this->_currency_support($payment_method),
-                        'payment_method_settings' => $this->_payment_method_settings($payment_method),
-                        'update'                  => $this->_update_payment_method_button($payment_method),
-                        'deactivate'              => $this->_deactivate_payment_method_button($payment_method),
-                        'fine_print'              => $this->_fine_print(),
-                    ),
-                    $payment_method
-                ),
-            )
+                'subsections'     => array_filter($subsections),
+            ]
         );
     }
 
@@ -492,45 +521,50 @@ class Payments_Admin_Page extends EE_Admin_Page
      *
      * @access protected
      * @param EE_Payment_Method $payment_method
-     * @return EE_Form_Section_HTML
+     * @return EE_Form_Section_HTML|null
      * @throws EE_Error
      */
-    protected function _pci_dss_compliance(EE_Payment_Method $payment_method)
+    protected function _pci_dss_compliance(EE_Payment_Method $payment_method): ?EE_Form_Section_HTML
     {
-        if ($payment_method->type_obj()->requires_https()) {
-            return new EE_Form_Section_HTML(
-                EEH_HTML::table(
-                    EEH_HTML::tr(
-                        EEH_HTML::th(
-                            EEH_HTML::label(
-                                EEH_HTML::strong(
-                                    esc_html__('IMPORTANT', 'event_espresso'),
-                                    '',
-                                    'important-notice'
-                                )
-                            )
-                        ) .
-                        EEH_HTML::td(
-                            EEH_HTML::strong(
-                                esc_html__(
-                                    'You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.',
-                                    'event_espresso'
-                                )
-                            )
-                            .
-                            EEH_HTML::br()
-                            .
-                            esc_html__('Learn more about ', 'event_espresso')
-                            . EEH_HTML::link(
-                                'https://www.pcisecuritystandards.org/merchants/index.php',
-                                esc_html__('PCI DSS compliance', 'event_espresso')
-                            )
+        if (! $payment_method->type_obj()->requires_https()) {
+            return null;
+        }
+        return new EE_Form_Section_HTML(
+            EEH_HTML::tr(
+                EEH_HTML::th(
+                    EEH_HTML::label(
+                        EEH_HTML::strong(
+                            esc_html__('IMPORTANT', 'event_espresso'),
+                            '',
+                            'important-notice'
                         )
                     )
+                ) .
+                EEH_HTML::td(
+                    EEH_HTML::div(
+                        EEH_HTML::strong(
+                            esc_html__(
+                                'You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.',
+                                'event_espresso'
+                            )
+                        ),
+                        '',
+                        'ee-status-outline ee-status-bg--warning'
+                    )
+                    . EEH_HTML::br()
+
+                    . EEH_HTML::div(
+                        esc_html__('Learn more about ', 'event_espresso')
+                        . EEH_HTML::link(
+                            'https://www.pcisecuritystandards.org/merchants/index.php',
+                            esc_html__('PCI DSS compliance', 'event_espresso')
+                        ),
+                        '',
+                        'ee-status-outline ee-status-bg--info'
+                    )
                 )
-            );
-        }
-        return new EE_Form_Section_HTML('');
+            )
+        );
     }
 
 
@@ -539,40 +573,42 @@ class Payments_Admin_Page extends EE_Admin_Page
      *
      * @access protected
      * @param EE_Payment_Method $payment_method
-     * @return EE_Form_Section_HTML
+     * @return EE_Form_Section_HTML|null
      * @throws EE_Error
      */
-    protected function _currency_support(EE_Payment_Method $payment_method)
+    protected function _currency_support(EE_Payment_Method $payment_method): ?EE_Form_Section_HTML
     {
-        if (! $payment_method->usable_for_currency(EE_Config::instance()->currency->code)) {
-            return new EE_Form_Section_HTML(
-                EEH_HTML::table(
-                    EEH_HTML::tr(
-                        EEH_HTML::th(
-                            EEH_HTML::label(
-                                EEH_HTML::strong(
-                                    esc_html__('IMPORTANT', 'event_espresso'),
-                                    '',
-                                    'important-notice'
-                                )
-                            )
-                        ) .
-                        EEH_HTML::td(
-                            EEH_HTML::strong(
-                                sprintf(
-                                    esc_html__(
-                                        'This payment method does not support the currency set on your site (%1$s). Please activate a different payment method or change your site\'s country and associated currency.',
-                                        'event_espresso'
-                                    ),
-                                    EE_Config::instance()->currency->code
-                                )
-                            )
+        if ($payment_method->usable_for_currency(EE_Config::instance()->currency->code)) {
+            return null;
+        }
+        return new EE_Form_Section_HTML(
+            EEH_HTML::tr(
+                EEH_HTML::th(
+                    EEH_HTML::label(
+                        EEH_HTML::strong(
+                            esc_html__('IMPORTANT', 'event_espresso'),
+                            '',
+                            'important-notice'
                         )
                     )
+                ) .
+                EEH_HTML::td(
+                    EEH_HTML::div(
+                        EEH_HTML::strong(
+                            sprintf(
+                                esc_html__(
+                                    'This payment method does not support the currency set on your site (%1$s). Please activate a different payment method or change your site\'s country and associated currency.',
+                                    'event_espresso'
+                                ),
+                                EE_Config::instance()->currency->code
+                            )
+                        ),
+                        '',
+                        'ee-status-outline ee-status-bg--warning'
+                    )
                 )
-            );
-        }
-        return new EE_Form_Section_HTML('');
+            )
+        );
     }
 
 
@@ -583,8 +619,9 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @param EE_Payment_Method $payment_method
      * @return EE_Payment_Method_Form
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _payment_method_settings(EE_Payment_Method $payment_method)
+    protected function _payment_method_settings(EE_Payment_Method $payment_method): EE_Payment_Method_Form
     {
         // modify the form, so we only have/show fields that will be implemented for this version
         return $this->_simplify_form($payment_method->type_obj()->settings_form(), $payment_method->name());
@@ -599,29 +636,30 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @return EE_Payment_Method_Form
      * @throws EE_Error
      */
-    protected function _simplify_form($form_section, $payment_method_name = '')
-    {
+    protected function _simplify_form(
+        EE_Form_Section_Proper $form_section,
+        string $payment_method_name = ''
+    ): EE_Payment_Method_Form {
         if ($form_section instanceof EE_Payment_Method_Form) {
             $form_section->exclude(
-                array(
+                [
                     'PMD_type', // don't want them changing the type
                     'PMD_slug', // or the slug (probably never)
                     'PMD_wp_user', // or the user's ID
-                    'Currency' // or the currency, until the rest of EE supports simultaneous currencies
-                )
+                    'Currency', // or the currency, until the rest of EE supports simultaneous currencies
+                ]
             );
             return $form_section;
-        } else {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        'The EE_Payment_Method_Form for the "%1$s" payment method is missing or invalid.',
-                        'event_espresso'
-                    ),
-                    $payment_method_name
-                )
-            );
         }
+        throw new EE_Error(
+            sprintf(
+                esc_html__(
+                    'The EE_Payment_Method_Form for the "%1$s" payment method is missing or invalid.',
+                    'event_espresso'
+                ),
+                $payment_method_name
+            )
+        );
     }
 
 
@@ -633,10 +671,10 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @return EE_Form_Section_HTML
      * @throws EE_Error
      */
-    protected function _update_payment_method_button(EE_Payment_Method $payment_method)
+    protected function _update_payment_method_button(EE_Payment_Method $payment_method): EE_Form_Section_HTML
     {
         $update_button = new EE_Submit_Input(
-            array(
+            [
                 'name'       => 'submit',
                 'html_id'    => 'save_' . $payment_method->slug() . '_settings',
                 'default'    => sprintf(
@@ -644,17 +682,23 @@ class Payments_Admin_Page extends EE_Admin_Page
                     $payment_method->admin_name()
                 ),
                 'html_label' => EEH_HTML::nbsp(),
-            )
+            ]
         );
         return new EE_Form_Section_HTML(
-            EEH_HTML::table(
-                EEH_HTML::no_row(EEH_HTML::br(2)) .
-                EEH_HTML::tr(
-                    EEH_HTML::th(esc_html__('Update Settings', 'event_espresso')) .
-                    EEH_HTML::td(
-                        $update_button->get_html_for_input()
-                    )
-                )
+            EEH_HTML::tr(
+                EEH_HTML::th(
+                // esc_html__('Update Settings', 'event_espresso'),
+                    '&nbsp;',
+                    '',
+                    'ee-update-' . $payment_method->slug() . '-settings__label'
+                ) .
+                EEH_HTML::td(
+                    $update_button->get_html_for_input(),
+                    '',
+                    'ee-update-' . $payment_method->slug() . '-settings__input'
+                ),
+                '',
+                'ee-update-' . $payment_method->slug() . '-settings'
             )
         );
     }
@@ -667,32 +711,39 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @param EE_Payment_Method $payment_method
      * @return EE_Form_Section_HTML
      */
-    protected function _deactivate_payment_method_button(EE_Payment_Method $payment_method)
+    protected function _deactivate_payment_method_button(EE_Payment_Method $payment_method): EE_Form_Section_HTML
     {
         $link_text_and_title = sprintf(
             esc_html__('Deactivate %1$s Payments?', 'event_espresso'),
             $payment_method->admin_name()
         );
         return new EE_Form_Section_HTML(
-            EEH_HTML::table(
-                EEH_HTML::tr(
-                    EEH_HTML::th(esc_html__('Deactivate Payment Method', 'event_espresso')) .
-                    EEH_HTML::td(
-                        EEH_HTML::link(
-                            EE_Admin_Page::add_query_args_and_nonce(
-                                array(
-                                    'action'         => 'deactivate_payment_method',
-                                    'payment_method' => $payment_method->slug(),
-                                ),
-                                EE_PAYMENTS_ADMIN_URL
-                            ),
-                            $link_text_and_title,
-                            $link_text_and_title,
-                            'deactivate_' . $payment_method->slug(),
-                            'espresso-button button-secondary'
-                        )
-                    )
-                )
+            EEH_HTML::tr(
+                EEH_HTML::th(
+                // esc_html__('Deactivate Payment Method', 'event_espresso'),
+                    '&nbsp;',
+                    '',
+                    'ee-deactivate-' . $payment_method->slug() . '-settings__label'
+                ) .
+                EEH_HTML::td(
+                    EEH_HTML::link(
+                        EE_Admin_Page::add_query_args_and_nonce(
+                            [
+                                'action'         => 'deactivate_payment_method',
+                                'payment_method' => $payment_method->slug(),
+                            ],
+                            EE_PAYMENTS_ADMIN_URL
+                        ),
+                        $link_text_and_title,
+                        $link_text_and_title,
+                        'deactivate_' . $payment_method->slug(),
+                        'button button--secondary'
+                    ),
+                    '',
+                    'ee-deactivate-' . $payment_method->slug() . '-settings__input'
+                ),
+                '',
+                'ee-deactivate-' . $payment_method->slug() . '-settings'
             )
         );
     }
@@ -706,21 +757,21 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @return EE_Form_Section_Proper
      * @throws EE_Error
      */
-    protected function _activate_payment_method_button(EE_Payment_Method $payment_method)
+    protected function _activate_payment_method_button(EE_Payment_Method $payment_method): EE_Form_Section_Proper
     {
         $link_text_and_title = sprintf(
             esc_html__('Activate %1$s Payment Method?', 'event_espresso'),
             $payment_method->admin_name()
         );
         return new EE_Form_Section_Proper(
-            array(
+            [
                 'name'            => 'activate_' . $payment_method->slug() . '_settings_form',
                 'html_id'         => 'activate_' . $payment_method->slug() . '_settings_form',
                 'action'          => '#',
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
                 'subsections'     => apply_filters(
                     'FHEE__Payments_Admin_Page___activate_payment_method_button__form_subsections',
-                    array(
+                    [
                         new EE_Form_Section_HTML(
                             EEH_HTML::table(
                                 EEH_HTML::tr(
@@ -739,25 +790,25 @@ class Payments_Admin_Page extends EE_Admin_Page
                                     EEH_HTML::td(
                                         EEH_HTML::link(
                                             EE_Admin_Page::add_query_args_and_nonce(
-                                                array(
+                                                [
                                                     'action'              => 'activate_payment_method',
                                                     'payment_method_type' => $payment_method->type(),
-                                                ),
+                                                ],
                                                 EE_PAYMENTS_ADMIN_URL
                                             ),
                                             $link_text_and_title,
                                             $link_text_and_title,
                                             'activate_' . $payment_method->slug(),
-                                            'espresso-button-green button-primary'
+                                            'button button--primary-alt'
                                         )
                                     )
                                 )
                             )
                         ),
-                    ),
+                    ],
                     $payment_method
                 ),
-            )
+            ]
         );
     }
 
@@ -768,14 +819,16 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @access protected
      * @return EE_Form_Section_HTML
      */
-    protected function _fine_print()
+    protected function _fine_print(): EE_Form_Section_HTML
     {
         return new EE_Form_Section_HTML(
-            EEH_HTML::table(
-                EEH_HTML::tr(
-                    EEH_HTML::th() .
-                    EEH_HTML::td(
-                        EEH_HTML::p(esc_html__('All fields marked with a * are required fields', 'event_espresso'), '', 'grey-text')
+            EEH_HTML::tr(
+                EEH_HTML::th() .
+                EEH_HTML::td(
+                    EEH_HTML::p(
+                        esc_html__('All fields marked with a * are required fields', 'event_espresso'),
+                        '',
+                        'grey-text'
                     )
                 )
             )
@@ -802,10 +855,10 @@ class Payments_Admin_Page extends EE_Admin_Page
                 1,
                 'Payment Method',
                 'activated',
-                array('action' => 'default', 'payment_method' => $payment_method->slug())
+                ['action' => 'default', 'payment_method' => $payment_method->slug()]
             );
         } else {
-            $this->_redirect_after_action(false, 'Payment Method', 'activated', array('action' => 'default'));
+            $this->_redirect_after_action(false, 'Payment Method', 'activated', ['action' => 'default']);
         }
     }
 
@@ -825,10 +878,10 @@ class Payments_Admin_Page extends EE_Admin_Page
                 $count_updated,
                 'Payment Method',
                 'deactivated',
-                array('action' => 'default', 'payment_method' => $payment_method_slug)
+                ['action' => 'default', 'payment_method' => $payment_method_slug]
             );
         } else {
-            $this->_redirect_after_action(false, 'Payment Method', 'deactivated', array('action' => 'default'));
+            $this->_redirect_after_action(false, 'Payment Method', 'deactivated', ['action' => 'default']);
         }
     }
 
@@ -852,7 +905,7 @@ class Payments_Admin_Page extends EE_Admin_Page
             EE_Registry::instance()->load_lib('Payment_Method_Manager');
             /** @var $correct_pmt_form_to_use EE_Payment_Method_Form */
             $correct_pmt_form_to_use = null;
-            $payment_method = null;
+            $payment_method          = null;
             foreach (EEM_Payment_Method::instance()->get_all() as $payment_method) {
                 if ($payment_method instanceof EE_Payment_Method) {
                     // get the form and simplify it, like what we do when we display it
@@ -874,7 +927,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                     __FUNCTION__,
                     __LINE__
                 );
-                $this->_redirect_after_action(false, 'Payment Method', 'activated', array('action' => 'default'));
+                $this->_redirect_after_action(false, 'Payment Method', 'activated', ['action' => 'default']);
             }
             $correct_pmt_form_to_use->receive_form_submission($this->_req_data);
             if ($correct_pmt_form_to_use->is_valid()) {
@@ -896,7 +949,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                     true,
                     'Payment Method',
                     'updated',
-                    array('action' => 'default', 'payment_method' => $payment_method->slug())
+                    ['action' => 'default', 'payment_method' => $payment_method->slug()]
                 );
             } else {
                 EE_Error::add_error(
@@ -905,7 +958,8 @@ class Payments_Admin_Page extends EE_Admin_Page
                             'Payment method of type %s was not saved because there were validation errors. They have been marked in the form',
                             'event_espresso'
                         ),
-                        $payment_method instanceof EE_Payment_Method ? $payment_method->type_obj()->pretty_name()
+                        $payment_method instanceof EE_Payment_Method
+                            ? $payment_method->type_obj()->pretty_name()
                             : esc_html__('"(unknown)"', 'event_espresso')
                     ),
                     __FILE__,
@@ -919,6 +973,7 @@ class Payments_Admin_Page extends EE_Admin_Page
 
     /**
      * Displays payment settings (not payment METHOD settings, that's _payment_method_settings)
+     *
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -929,8 +984,12 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         $form = $this->getPaymentSettingsForm();
         $this->_set_add_edit_form_tags('update_payment_settings');
-        $this->_set_publish_post_box_vars(null, false, false, null, false);
-        $this->_template_args['admin_page_content'] =  $form->get_html_and_js();
+        $this->_set_publish_post_box_vars();
+        $this->_template_args['admin_page_content'] = EEH_HTML::div(
+            $form->get_html_and_js(),
+            '',
+            'padding'
+        );
         $this->display_admin_page_with_sidebar();
     }
 
@@ -954,11 +1013,12 @@ class Payments_Admin_Page extends EE_Admin_Page
                 /**
                  * @var $reg_config EE_Registration_Config
                  */
-                $loader = LoaderFactory::getLoader();
-                $reg_config = $loader->getShared('EE_Registration_Config');
-                $valid_data = $form->valid_data();
-                $reg_config->show_pending_payment_options = $valid_data['show_pending_payment_options'];
-                $reg_config->gateway_log_lifespan = $valid_data['gateway_log_lifespan'];
+                $loader                                   = LoaderFactory::getLoader();
+                $reg_config                               = $loader->getShared('EE_Registration_Config');
+                $valid_data                               = $form->valid_data();
+                $show_pending_payment_options             = $valid_data['show_pending_payment_options'] ?? null;
+                $reg_config->show_pending_payment_options = $show_pending_payment_options === 'ON';
+                $reg_config->gateway_log_lifespan         = $valid_data['gateway_log_lifespan'];
             }
         }
         EE_Registry::instance()->CFG = apply_filters(
@@ -966,7 +1026,7 @@ class Payments_Admin_Page extends EE_Admin_Page
             EE_Registry::instance()->CFG
         );
 
-        $what = esc_html__('Payment Settings', 'event_espresso');
+        $what    = esc_html__('Payment Settings', 'event_espresso');
         $success = $this->_update_espresso_configuration(
             $what,
             EE_Registry::instance()->CFG,
@@ -978,7 +1038,7 @@ class Payments_Admin_Page extends EE_Admin_Page
             $success,
             $what,
             esc_html__('updated', 'event_espresso'),
-            array('action' => 'payment_settings')
+            ['action' => 'payment_settings']
         );
     }
 
@@ -992,37 +1052,52 @@ class Payments_Admin_Page extends EE_Admin_Page
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function getPaymentSettingsForm()
+    protected function getPaymentSettingsForm(): EE_Form_Section_Proper
     {
         /**
          * @var $reg_config EE_Registration_Config
          */
         $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
         return new EE_Form_Section_Proper(
-            array(
-                'name' => 'payment-settings',
+            [
+                'name'            => 'payment-settings',
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
-                'subsections' => array(
-                    'show_pending_payment_options' => new EE_Yes_No_Input(
-                        array(
-                            'html_name' => 'show_pending_payment_options',
-                            'default' => $reg_config->show_pending_payment_options,
+                'subsections'     => [
+                    'show_pending_payment_options' => new EE_Switch_Input(
+                        [
+                            'default'        => $reg_config->show_pending_payment_options
+                                ? EE_Switch_Input::OPTION_ON
+                                : EE_Switch_Input::OPTION_OFF,
+                            'html_name'      => 'show_pending_payment_options',
                             'html_help_text' => esc_html__(
                                 "If a payment is marked as 'Pending Payment', or if payment is deferred (ie, an offline gateway like Check, Bank, or Invoice is used), then give registrants the option to retry payment. ",
                                 'event_espresso'
-                            )
-                        )
+                            ),
+                        ],
+                        [
+                            EE_Switch_Input::OPTION_OFF => esc_html__(
+                                'pending payment options are NOT displayed',
+                                'event_espresso'
+                            ),
+                            EE_Switch_Input::OPTION_ON  => esc_html__(
+                                'pending payment options are displayed',
+                                'event_espresso'
+                            ),
+                        ]
                     ),
-                    'gateway_log_lifespan' => new EE_Select_Input(
+                    'gateway_log_lifespan'         => new EE_Select_Input(
                         $reg_config->gatewayLogLifespanOptions(),
-                        array(
+                        [
                             'html_label_text' => esc_html__('Gateway Logs Lifespan', 'event_espresso'),
-                            'html_help_text' => esc_html__('If issues arise with payments being made through a payment gateway, it\'s helpful to log non-sensitive communications with the payment gateway. But it\'s a security responsibility, so it\'s a good idea to not keep them for any longer than necessary.', 'event_espresso'),
-                            'default' => $reg_config->gateway_log_lifespan,
-                        )
-                    )
-                )
-            )
+                            'html_help_text'  => esc_html__(
+                                'If issues arise with payments being made through a payment gateway, it\'s helpful to log non-sensitive communications with the payment gateway. But it\'s a security responsibility, so it\'s a good idea to not keep them for any longer than necessary.',
+                                'event_espresso'
+                            ),
+                            'default'         => $reg_config->gateway_log_lifespan,
+                        ]
+                    ),
+                ],
+            ]
         );
     }
 
@@ -1038,13 +1113,13 @@ class Payments_Admin_Page extends EE_Admin_Page
 
     protected function _set_list_table_views_payment_log()
     {
-        $this->_views = array(
-            'all' => array(
+        $this->_views = [
+            'all' => [
                 'slug'  => 'all',
                 'label' => esc_html__('View All Logs', 'event_espresso'),
                 'count' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -1060,28 +1135,28 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         EE_Registry::instance()->load_model('Change_Log');
         // we may need to do multiple queries (joining differently), so we actually want an array of query params
-        $query_params = array(array('LOG_type' => EEM_Change_Log::type_gateway));
+        $query_params = [['LOG_type' => EEM_Change_Log::type_gateway]];
         // check if they've selected a specific payment method
         if (isset($this->_req_data['_payment_method']) && $this->_req_data['_payment_method'] !== 'all') {
-            $query_params[0]['OR*pm_or_pay_pm'] = array(
+            $query_params[0]['OR*pm_or_pay_pm'] = [
                 'Payment.Payment_Method.PMD_ID' => $this->_req_data['_payment_method'],
                 'Payment_Method.PMD_ID'         => $this->_req_data['_payment_method'],
-            );
+            ];
         }
         // take into account search
         if (isset($this->_req_data['s']) && $this->_req_data['s']) {
-            $similarity_string = array('LIKE', '%' . str_replace("", "%", $this->_req_data['s']) . '%');
+            $similarity_string                                                              =
+                ['LIKE', '%' . str_replace("", "%", $this->_req_data['s']) . '%'];
             $query_params[0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_fname'] = $similarity_string;
             $query_params[0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_lname'] = $similarity_string;
             $query_params[0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_email'] = $similarity_string;
-            $query_params[0]['OR*s']['Payment.Payment_Method.PMD_name'] = $similarity_string;
-            $query_params[0]['OR*s']['Payment.Payment_Method.PMD_admin_name'] = $similarity_string;
-            $query_params[0]['OR*s']['Payment.Payment_Method.PMD_type'] = $similarity_string;
-            $query_params[0]['OR*s']['LOG_message'] = $similarity_string;
-            $query_params[0]['OR*s']['Payment_Method.PMD_name'] = $similarity_string;
-            $query_params[0]['OR*s']['Payment_Method.PMD_admin_name'] = $similarity_string;
-            $query_params[0]['OR*s']['Payment_Method.PMD_type'] = $similarity_string;
-            $query_params[0]['OR*s']['LOG_message'] = $similarity_string;
+            $query_params[0]['OR*s']['Payment.Payment_Method.PMD_name']                     = $similarity_string;
+            $query_params[0]['OR*s']['Payment.Payment_Method.PMD_admin_name']               = $similarity_string;
+            $query_params[0]['OR*s']['Payment.Payment_Method.PMD_type']                     = $similarity_string;
+            $query_params[0]['OR*s']['Payment_Method.PMD_name']                             = $similarity_string;
+            $query_params[0]['OR*s']['Payment_Method.PMD_admin_name']                       = $similarity_string;
+            $query_params[0]['OR*s']['Payment_Method.PMD_type']                             = $similarity_string;
+            $query_params[0]['OR*s']['LOG_message']                                         = $similarity_string;
         }
         if (
             isset($this->_req_data['payment-filter-start-date'])
@@ -1089,43 +1164,43 @@ class Payments_Admin_Page extends EE_Admin_Page
         ) {
             // add date
             $start_date = wp_strip_all_tags($this->_req_data['payment-filter-start-date']);
-            $end_date = wp_strip_all_tags($this->_req_data['payment-filter-end-date']);
+            $end_date   = wp_strip_all_tags($this->_req_data['payment-filter-end-date']);
             // make sure our timestamps start and end right at the boundaries for each day
             $start_date = date('Y-m-d', strtotime($start_date)) . ' 00:00:00';
-            $end_date = date('Y-m-d', strtotime($end_date)) . ' 23:59:59';
+            $end_date   = date('Y-m-d', strtotime($end_date)) . ' 23:59:59';
             // convert to timestamps
             $start_date = strtotime($start_date);
-            $end_date = strtotime($end_date);
+            $end_date   = strtotime($end_date);
             // makes sure start date is the lowest value and vice versa
             $start_date = min($start_date, $end_date);
-            $end_date = max($start_date, $end_date);
+            $end_date   = max($start_date, $end_date);
             // convert for query
-            $start_date = EEM_Change_Log::instance()->convert_datetime_for_query(
+            $start_date                  = EEM_Change_Log::instance()->convert_datetime_for_query(
                 'LOG_time',
                 date('Y-m-d H:i:s', $start_date),
                 'Y-m-d H:i:s'
             );
-            $end_date   = EEM_Change_Log::instance()->convert_datetime_for_query(
+            $end_date                    = EEM_Change_Log::instance()->convert_datetime_for_query(
                 'LOG_time',
                 date('Y-m-d H:i:s', $end_date),
                 'Y-m-d H:i:s'
             );
-            $query_params[0]['LOG_time'] = array('BETWEEN', array($start_date, $end_date));
+            $query_params[0]['LOG_time'] = ['BETWEEN', [$start_date, $end_date]];
         }
         if ($count) {
             return EEM_Change_Log::instance()->count($query_params);
         }
         if (isset($this->_req_data['order'])) {
-            $sort = (isset($this->_req_data['order']) && ! empty($this->_req_data['order']))
+            $sort                     = (isset($this->_req_data['order']) && ! empty($this->_req_data['order']))
                 ? $this->_req_data['order']
                 : 'DESC';
-            $query_params['order_by'] = array('LOG_time' => $sort);
+            $query_params['order_by'] = ['LOG_time' => $sort];
         } else {
-            $query_params['order_by'] = array('LOG_time' => 'DESC');
+            $query_params['order_by'] = ['LOG_time' => 'DESC'];
         }
         $offset = ($current_page - 1) * $per_page;
         if (! isset($this->_req_data['download_results'])) {
-            $query_params['limit'] = array($offset, $per_page);
+            $query_params['limit'] = [$offset, $per_page];
         }
         // now they've requested to instead just download the file instead of viewing it.
         if (isset($this->_req_data['download_results'])) {
@@ -1133,11 +1208,11 @@ class Payments_Admin_Page extends EE_Admin_Page
             header('Content-Disposition: attachment');
             header("Content-Disposition: attachment; filename=ee_payment_logs_for_" . sanitize_key(site_url()));
             echo '<h1> '
-                . sprintf(
-                    esc_html__('Payment Logs for %1$s', 'event_espresso'),
-                    esc_url_raw(site_url())
-                )
-                . '</h1 >';
+                 . sprintf(
+                     esc_html__('Payment Logs for %1$s', 'event_espresso'),
+                     esc_url_raw(site_url())
+                 )
+                 . '</h1 >';
             echo '<h3>' . esc_html__('Query:', 'event_espresso') . '</h3>';
             echo esc_html(var_export($query_params, true));
             echo '<h3>' . esc_html__('Results:', 'event_espresso') . '</h3>';
@@ -1165,7 +1240,9 @@ class Payments_Admin_Page extends EE_Admin_Page
         if ($timeA == $timeB) {
             return 0;
         }
-        $comparison = $timeA < $timeB ? -1 : 1;
+        $comparison = $timeA < $timeB
+            ? -1
+            : 1;
         if (strtoupper($this->_sort_logs_again_direction) == 'DESC') {
             return $comparison * -1;
         }
@@ -1181,29 +1258,29 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         EE_Registry::instance()->load_model('Change_Log');
         /** @var $payment_log EE_Change_Log */
-        $payment_log = EEM_Change_Log::instance()->get_one_by_ID($this->_req_data['ID']);
+        $payment_log    = EEM_Change_Log::instance()->get_one_by_ID($this->_req_data['ID']);
         $payment_method = null;
-        $transaction = null;
+        $transaction    = null;
         if ($payment_log instanceof EE_Change_Log) {
             if ($payment_log->object() instanceof EE_Payment) {
                 $payment_method = $payment_log->object()->payment_method();
-                $transaction = $payment_log->object()->transaction();
+                $transaction    = $payment_log->object()->transaction();
             } elseif ($payment_log->object() instanceof EE_Payment_Method) {
                 $payment_method = $payment_log->object();
             } elseif ($payment_log->object() instanceof EE_Transaction) {
-                $transaction = $payment_log->object();
+                $transaction    = $payment_log->object();
                 $payment_method = $transaction->payment_method();
             }
         }
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             EE_PAYMENTS_TEMPLATE_PATH . 'payment_log_details.template.php',
-            array(
+            [
                 'payment_log'    => $payment_log,
                 'payment_method' => $payment_method,
                 'transaction'    => $transaction,
-            ),
+            ],
             true
         );
-        $this->display_admin_page_with_sidebar();
+        $this->display_admin_page_with_no_sidebar();
     }
 }

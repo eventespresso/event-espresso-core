@@ -439,22 +439,20 @@ class EED_Messages extends EED_Module
      */
     protected static function _set_messages_paths()
     {
-        $dir_ref = [
-            'messages/message_type',
-            'messages/messenger',
-            'messages/defaults',
-            'messages/defaults/email',
-            'messages/data_class',
-            'messages/validators',
-            'messages/validators/email',
-            'messages/validators/html',
-            'shortcodes',
-        ];
-        $paths   = [];
-        foreach ($dir_ref as $index => $dir) {
-            $paths[ $index ] = EE_LIBRARIES . $dir;
-        }
-        self::$_MSG_PATHS = apply_filters('FHEE__EED_Messages___set_messages_paths___MSG_PATHS', $paths);
+        self::$_MSG_PATHS = apply_filters(
+            'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
+            [
+                EE_LIBRARIES . 'messages/message_type',
+                EE_LIBRARIES . 'messages/messenger',
+                EE_LIBRARIES . 'messages/defaults',
+                EE_LIBRARIES . 'messages/defaults/email',
+                EE_LIBRARIES . 'messages/data_class',
+                EE_LIBRARIES . 'messages/validators',
+                EE_LIBRARIES . 'messages/validators/email',
+                EE_LIBRARIES . 'messages/validators/html',
+                EE_LIBRARIES . 'shortcodes',
+            ]
+        );
     }
 
 
@@ -1339,7 +1337,7 @@ class EED_Messages extends EED_Module
         $func = '',
         $line = '',
         EE_Transaction $transaction = null,
-        $info = array(),
+        $info = [],
         $display_request = false
     ) {
         if (defined('EE_DEBUG') && EE_DEBUG) {

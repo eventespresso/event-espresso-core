@@ -2,7 +2,6 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\orm\ModelFieldFactory;
 
 /**
  * EEM_Event Model
@@ -53,13 +52,12 @@ class EEM_Event extends EEM_CPT_Base
     protected static $_instance;
 
 
-
-
     /**
      * Adds a relationship to Term_Taxonomy for each CPT_Base
      *
      * @param string $timezone
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function __construct($timezone = null)
     {
@@ -89,7 +87,8 @@ class EEM_Event extends EEM_CPT_Base
                 ),
             )
         );
-        self::$_default_reg_status = empty(self::$_default_reg_status) ? EEM_Registration::status_id_pending_payment
+        self::$_default_reg_status = empty(self::$_default_reg_status)
+            ? EEM_Registration::status_id_pending_payment
             : self::$_default_reg_status;
         $this->_tables = array(
             'Event_CPT'  => new EE_Primary_Table('posts', 'ID'),
@@ -196,6 +195,13 @@ class EEM_Event extends EEM_CPT_Base
                     esc_html__('Foreign key to Event ID from Event Meta table', 'event_espresso'),
                     false
                 ),
+                'VNU_ID' => new EE_Foreign_Key_Int_Field(
+                    'VNU_ID',
+                    __('Venue ID', 'event_espresso'),
+                    false,
+                    0,
+                    'Venue'
+                ),
                 'EVT_display_desc'                => new EE_Boolean_Field(
                     'EVT_display_desc',
                     esc_html__('Display Description Flag', 'event_espresso'),
@@ -217,7 +223,7 @@ class EEM_Event extends EEM_CPT_Base
                 'EVT_additional_limit'            => new EE_Integer_Field(
                     'EVT_additional_limit',
                     esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
-                    true,
+                    false,
                     self::$_default_additional_limit
                 ),
                 'EVT_default_registration_status' => new EE_Enum_Text_Field(
@@ -262,18 +268,27 @@ class EEM_Event extends EEM_CPT_Base
                     false,
                     false
                 ),
+                'FSC_UUID'                        => new EE_Foreign_Key_String_Field(
+                    'FSC_UUID',
+                    esc_html__('Registration Form UUID (universally unique identifier)', 'event_espresso'),
+                    true,
+                    null,
+                    'Form_Section',
+                    false
+                ),
             ),
         );
         $this->_model_relations = array(
-            'Registration'           => new EE_Has_Many_Relation(),
+            'Attendee'               => new EE_HABTM_Relation('Registration'),
             'Datetime'               => new EE_Has_Many_Relation(),
-            'Question_Group'         => new EE_HABTM_Relation('Event_Question_Group'),
             'Event_Question_Group'   => new EE_Has_Many_Relation(),
-            'Venue'                  => new EE_HABTM_Relation('Event_Venue'),
+            'Form_Section'           => new EE_Belongs_To_Relation(),
+            'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
+            'Question_Group'         => new EE_HABTM_Relation('Event_Question_Group'),
+            'Registration'           => new EE_Has_Many_Relation(),
             'Term_Relationship'      => new EE_Has_Many_Relation(),
             'Term_Taxonomy'          => new EE_HABTM_Relation('Term_Relationship'),
-            'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
-            'Attendee'               => new EE_HABTM_Relation('Registration'),
+            'Venue'                  => new EE_Belongs_To_Relation(),
             'WP_User'                => new EE_Belongs_To_Relation(),
         );
         // this model is generally available for reading
@@ -283,9 +298,10 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * @param string $default_reg_status
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public static function set_default_reg_status($default_reg_status)
     {
@@ -321,7 +337,7 @@ class EEM_Event extends EEM_CPT_Base
             self::$_instance->_fields['Event_Meta']['EVT_additional_limit'] = new EE_Integer_Field(
                 'EVT_additional_limit',
                 esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
-                true,
+                false,
                 self::$_default_additional_limit
             );
             self::$_instance->_fields['Event_Meta']['EVT_additional_limit']->_construct_finalize(
@@ -347,7 +363,8 @@ class EEM_Event extends EEM_CPT_Base
      * get_question_groups
      *
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_question_groups()
     {
@@ -360,13 +377,13 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * get_question_groups
      *
      * @param int $EVT_ID
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_event_question_groups($EVT_ID = 0)
     {
@@ -447,7 +464,7 @@ class EEM_Event extends EEM_CPT_Base
      */
     public function get_question_groups_for_event($EVT_ID, EE_Registration $registration)
     {
-        if (! isset($EVT_ID) || ! absint($EVT_ID)) {
+        if (! absint($EVT_ID)) {
             EE_Error::add_error(
                 esc_html__(
                     'An error occurred. No Question Groups could be retrieved because an Event ID was not received.',
@@ -474,13 +491,13 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * get_question_target_db_column
      *
      * @param string $QSG_IDs csv list of $QSG IDs
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_questions_in_groups($QSG_IDs = '')
     {
@@ -506,13 +523,13 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * get_options_for_question
      *
      * @param string $QST_IDs csv list of $QST IDs
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_options_for_question($QST_IDs)
     {
@@ -537,20 +554,16 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
-
-
-
-
     /**
      * Gets all events that are published
      * and have event start time earlier than now and an event end time later than now
      *
-     * @param  array $query_params An array of query params to further filter on
+     * @param array $query_params  An array of query params to further filter on
      *                             (note that status and DTT_EVT_start and DTT_EVT_end will be overridden)
-     * @param bool   $count        whether to return the count or not (default FALSE)
+     * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_active_events($query_params, $count = false)
     {
@@ -564,9 +577,8 @@ class EEM_Event extends EEM_CPT_Base
         if ($count && isset($query_params['group_by'])) {
             unset($query_params['group_by']);
         }
-        // let's add specific query_params for active_events
-        // keep in mind this will override any sent status in the query AND any date queries.
-        $where_params['status'] = array('IN', array('publish', EEM_Event::sold_out));
+        // add status query
+        $where_params = $this->set_where_conditions_for_status($where_params);
         // if already have where params for DTT_EVT_start or DTT_EVT_end then append these conditions
         if (isset($where_params['Datetime.DTT_EVT_start'])) {
             $where_params['Datetime.DTT_EVT_start******'] = array(
@@ -579,35 +591,20 @@ class EEM_Event extends EEM_CPT_Base
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start'),
             );
         }
-        if (isset($where_params['Datetime.DTT_EVT_end'])) {
-            $where_params['Datetime.DTT_EVT_end*****'] = array(
-                '>',
-                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
-            );
-        } else {
-            $where_params['Datetime.DTT_EVT_end'] = array(
-                '>',
-                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
-            );
-        }
-        $query_params[0] = $where_params;
-        // don't use $query_params with count()
-        // because we don't want to include additional query clauses like "GROUP BY"
-        return $count
-            ? $this->count(array($where_params), 'EVT_ID', true)
-            : $this->get_all($query_params);
+        $where_params = $this->set_where_conditions_for_end_datetime($where_params);
+        return $this->_get_count_or_all($query_params, $where_params, $count);
     }
-
 
 
     /**
      * get all events that are published and have an event start time later than now
      *
-     * @param  array $query_params An array of query params to further filter on
+     * @param array $query_params  An array of query params to further filter on
      *                             (Note that status and DTT_EVT_start will be overridden)
-     * @param bool   $count        whether to return the count or not (default FALSE)
+     * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_upcoming_events($query_params, $count = false)
     {
@@ -621,15 +618,8 @@ class EEM_Event extends EEM_CPT_Base
         if ($count && isset($query_params['group_by'])) {
             unset($query_params['group_by']);
         }
-        // let's add specific query_params for active_events
-        // keep in mind this will override any sent status in the query AND any date queries.
-        // we need to pull events with a status of publish and sold_out
-        $event_status = array('publish', EEM_Event::sold_out);
-        // check if the user can read private events and if so add the 'private status to the were params'
-        if (EE_Registry::instance()->CAP->current_user_can('ee_read_private_events', 'get_upcoming_events')) {
-            $event_status[] = 'private';
-        }
-        $where_params['status'] = array('IN', $event_status);
+        // add status query
+        $where_params = $this->set_where_conditions_for_status($where_params);
         // if there are already query_params matching DTT_EVT_start then we need to modify that to add them.
         if (isset($where_params['Datetime.DTT_EVT_start'])) {
             $where_params['Datetime.DTT_EVT_start*****'] = array(
@@ -642,25 +632,20 @@ class EEM_Event extends EEM_CPT_Base
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start'),
             );
         }
-        $query_params[0] = $where_params;
-        // don't use $query_params with count()
-        // because we don't want to include additional query clauses like "GROUP BY"
-        return $count
-            ? $this->count(array($where_params), 'EVT_ID', true)
-            : $this->get_all($query_params);
+        return $this->_get_count_or_all($query_params, $where_params, $count);
     }
-
 
 
     /**
      * Gets all events that are published
      * and have an event end time later than now
      *
-     * @param  array $query_params An array of query params to further filter on
+     * @param array $query_params  An array of query params to further filter on
      *                             (note that status and DTT_EVT_end will be overridden)
-     * @param bool   $count        whether to return the count or not (default FALSE)
+     * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_active_and_upcoming_events($query_params, $count = false)
     {
@@ -674,40 +659,24 @@ class EEM_Event extends EEM_CPT_Base
         if ($count && isset($query_params['group_by'])) {
             unset($query_params['group_by']);
         }
-        // let's add specific query_params for active_events
-        // keep in mind this will override any sent status in the query AND any date queries.
-        $where_params['status'] = array('IN', array('publish', EEM_Event::sold_out));
+        // add status query
+        $where_params = $this->set_where_conditions_for_status($where_params);
         // add where params for DTT_EVT_end
-        if (isset($where_params['Datetime.DTT_EVT_end'])) {
-            $where_params['Datetime.DTT_EVT_end*****'] = array(
-                '>',
-                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
-            );
-        } else {
-            $where_params['Datetime.DTT_EVT_end'] = array(
-                '>',
-                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
-            );
-        }
-        $query_params[0] = $where_params;
-        // don't use $query_params with count()
-        // because we don't want to include additional query clauses like "GROUP BY"
-        return $count
-            ? $this->count(array($where_params), 'EVT_ID', true)
-            : $this->get_all($query_params);
+        $where_params = $this->set_where_conditions_for_end_datetime($where_params);
+        return $this->_get_count_or_all($query_params, $where_params, $count);
     }
-
 
 
     /**
      * This only returns events that are expired.
      * They may still be published but all their datetimes have expired.
      *
-     * @param  array $query_params An array of query params to further filter on
+     * @param array $query_params  An array of query params to further filter on
      *                             (note that status and DTT_EVT_end will be overridden)
-     * @param bool   $count        whether to return the count or not (default FALSE)
+     * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_expired_events($query_params, $count = false)
     {
@@ -721,19 +690,8 @@ class EEM_Event extends EEM_CPT_Base
         if (isset($where_params['status'])) {
             unset($where_params['status']);
         }
-        $exclude_query = $query_params;
-        if (isset($exclude_query[0])) {
-            unset($exclude_query[0]);
-        }
-        $exclude_query[0] = array(
-            'Datetime.DTT_EVT_end' => array(
-                '>',
-                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
-            ),
-        );
         // first get all events that have datetimes where its not expired.
-        $event_ids = $this->_get_all_wpdb_results($exclude_query, OBJECT_K, 'Event_CPT.ID');
-        $event_ids = array_keys($event_ids);
+        $event_ids = $this->get_all_not_expired_event_ids($query_params);
         // if we have any additional query_params, let's add them to the 'AND' condition
         $and_condition = array(
             'Datetime.DTT_EVT_end' => array('<', EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end')),
@@ -753,24 +711,38 @@ class EEM_Event extends EEM_CPT_Base
         }
         // merge remaining $where params with the and conditions.
         $where_params['AND'] = array_merge($and_condition, $where_params);
-        $query_params[0] = $where_params;
-        // don't use $query_params with count()
-        // because we don't want to include additional query clauses like "GROUP BY"
-        return $count
-            ? $this->count(array($where_params), 'EVT_ID', true)
-            : $this->get_all($query_params);
+        return $this->_get_count_or_all($query_params, $where_params, $count);
     }
 
+
+    /**
+     * @param array $query_params
+     * @return int[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function get_all_not_expired_event_ids(array $query_params = []): array
+    {
+        $query_params[0] = [
+            'Datetime.DTT_EVT_end' => [
+                '>',
+                EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
+            ],
+        ];
+        $event_ids       = $this->_get_all_wpdb_results($query_params, OBJECT_K, 'Event_CPT.ID');
+        return array_keys($event_ids);
+    }
 
 
     /**
      * This basically just returns the events that do not have the publish status.
      *
-     * @param  array   $query_params An array of query params to further filter on
+     * @param array   $query_params  An array of query params to further filter on
      *                               (note that status will be overwritten)
-     * @param  boolean $count        whether to return the count or not (default FALSE)
+     * @param boolean $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_inactive_events($query_params, $count = false)
     {
@@ -797,14 +769,8 @@ class EEM_Event extends EEM_CPT_Base
             $where_params['AND']['Datetime.DTT_EVT_start'] = $where_params['Datetime.DTT_EVT_start'];
             unset($where_params['Datetime.DTT_EVT_start']);
         }
-        $query_params[0] = $where_params;
-        // don't use $query_params with count()
-        // because we don't want to include additional query clauses like "GROUP BY"
-        return $count
-            ? $this->count(array($where_params), 'EVT_ID', true)
-            : $this->get_all($query_params);
+        return $this->_get_count_or_all($query_params, $where_params, $count);
     }
-
 
 
     /**
@@ -818,6 +784,7 @@ class EEM_Event extends EEM_CPT_Base
      * @param array  $where_query
      * @return EE_Base_Class
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function add_relationship_to($id_or_obj, $other_model_id_or_obj, $relationName, $where_query = array())
     {
@@ -837,23 +804,81 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
+    /**
+     * @param array $where_params
+     * @return array
+     */
+    public function set_where_conditions_for_status(array $where_params): array
+    {
+        // let's add specific query_params for active_events
+        // keep in mind this will override any sent status in the query AND any date queries.
+        // we need to pull events with a status of publish and sold_out
+        $event_status = ['publish', EEM_Event::sold_out];
+        // check if the user can read private events and if so add the 'private status to the where params'
+        if (EE_Registry::instance()->CAP->current_user_can('ee_read_private_events', 'get_upcoming_events')) {
+            $event_status[] = 'private';
+        }
+        $where_params['status'] = ['IN', $event_status];
+        return $where_params;
+    }
+
+
+    /**
+     * @param array $where_params
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function set_where_conditions_for_end_datetime(array $where_params): array
+    {
+        $end_date_field_name = isset($where_params['Datetime.DTT_EVT_end'])
+            ? 'Datetime.DTT_EVT_end*****' // prevents overwrite of existing where condition
+            : 'Datetime.DTT_EVT_end';
+
+        $where_params[ $end_date_field_name ] = [
+            '>',
+            EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
+        ];
+
+        return $where_params;
+    }
+
+
+    /**
+     * @param array $query_params
+     * @param array $where_params
+     * @param bool  $count
+     * @return EE_Soft_Delete_Base_Class[]|int
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function _get_count_or_all(array $query_params, array $where_params, bool $count = false)
+    {
+        $query_params[0] = $where_params;
+        // don't use $query_params with count()
+        // because we don't want to include additional query clauses like "GROUP BY"
+        return $count
+            ? $this->count([$where_params], 'EVT_ID', true)
+            : $this->get_all($query_params);
+    }
+
 
     /******************** DEPRECATED METHODS ********************/
-
 
 
     /**
      * _get_question_target_db_column
      *
-     * @deprecated as of 4.8.32.rc.001. Instead consider using
-     *             EE_Registration_Custom_Questions_Form located in
-     *             admin_pages/registrations/form_sections/EE_Registration_Custom_Questions_Form.form.php
-     * @access     public
-     * @param    EE_Registration $registration (so existing answers for registration are included)
-     * @param    int             $EVT_ID       so all question groups are included for event (not just answers from
+     * @param EE_Registration $registration    (so existing answers for registration are included)
+     * @param int             $EVT_ID          so all question groups are included for event (not just answers from
      *                                         registration).
-     * @throws EE_Error
      * @return    array
+     * @throws ReflectionException
+     * @throws EE_Error
+     * @deprecated as of 4.8.32.rc.001. Instead consider using
+     *                                         EE_Registration_Custom_Questions_Form located in
+     *                                         admin_pages/registrations/form_sections/EE_Registration_Custom_Questions_Form.form.php
+     * @access     public
      */
     public function assemble_array_of_groups_questions_and_options(EE_Registration $registration, $EVT_ID = 0)
     {
@@ -918,7 +943,8 @@ class EEM_Event extends EEM_CPT_Base
      * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
      *                             or an stdClass where each property is the name of a column,
      * @return EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function instantiate_class_from_array_or_object($cols_n_values)
     {

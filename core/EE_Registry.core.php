@@ -474,7 +474,7 @@ class EE_Registry implements ResettableInterface
      *                           set this to FALSE (ie. when instantiating model objects from client in a loop)
      * @param bool   $load_only  whether or not to just load the file and NOT instantiate, or load AND instantiate
      *                           (default)
-     * @return bool|null|object
+     * @return EE_Base_Class|object|bool|null
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
@@ -1289,6 +1289,21 @@ class EE_Registry implements ResettableInterface
             return call_user_func_array([$class_name, 'instance'], $arguments);
         }
         if ($reflector->isInstantiable()) {
+            $args_passed_count = count($arguments);
+            $args_required_count = count($this->mirror->getRequiredParameters($class_name));
+            if ($args_passed_count < $args_required_count) {
+                throw new RuntimeException(
+                    sprintf(
+                        __(
+                            'Invalid arguments supplied for the %1$s class, %2$s were required but %3$s were passed.',
+                            'event_espresso'
+                        ),
+                        $class_name,
+                        $args_required_count,
+                        $args_passed_count
+                    )
+                );
+            }
             // $instantiation_mode = "6) constructor";
             return $reflector->newInstanceArgs($arguments);
         }
@@ -1369,10 +1384,9 @@ class EE_Registry implements ResettableInterface
             $param_class = $this->class_cache->isAlias($param_class, $class_name)
                 ? $this->class_cache->getFqnForAlias($param_class, $class_name)
                 : $param_class;
-            // param is not even a class
             if (
-                ! empty($param_class)
-                && ! class_exists($param_class, false)
+                // param is not even a class
+                ($param_class === null || $this->parameterIsPrimitive($param_class))
                 // and something already exists in the incoming arguments for this param
                 && array_key_exists($index, $argument_keys)
                 && isset($arguments[ $argument_keys[ $index ] ])
@@ -1640,13 +1654,10 @@ class EE_Registry implements ResettableInterface
         $instance->_cache_on = true;
         // reset some "special" classes
         EEH_Activation::reset();
-        $hard                     = apply_filters('FHEE__EE_Registry__reset__hard', $hard);
-        $instance->CFG            = EE_Config::reset($hard, $reinstantiate);
-        $instance->CART           = null;
-        $instance->MRM            = null;
-        $instance->AssetsRegistry = LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\services\assets\Registry'
-        );
+        $hard = apply_filters('FHEE__EE_Registry__reset__hard', $hard);
+        $instance->CFG = EE_Config::reset($hard, $reinstantiate);
+        $instance->CART = null;
+        $instance->MRM = null;
         // messages reset
         EED_Messages::reset();
         // handle of objects cached on LIB
@@ -1737,5 +1748,19 @@ class EE_Registry implements ResettableInterface
     public function get_ReflectionClass(string $class_name): ReflectionClass
     {
         return $this->mirror->getReflectionClass($class_name);
+    }
+
+    private function parameterIsPrimitive(?string $param_class): bool
+    {
+        return in_array(
+            $param_class,
+            [
+                'array',
+                'bool',
+                'float',
+                'int',
+                'string',
+            ]
+        );
     }
 }

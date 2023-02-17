@@ -35,7 +35,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
     protected $tax_settings;
 
     /**
-     * @var bool
+     * @var boolean
      */
     protected $prices_displayed_including_taxes;
 
@@ -206,7 +206,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return void
      * @throws EE_Error
-     * @throws ReflectionException
      */
     protected function setTicketPriceDetails()
     {
@@ -266,7 +265,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return string
      * @throws EE_Error
-     * @throws ReflectionException
      */
     protected function ticketPriceTableCell()
     {
@@ -279,7 +277,11 @@ class TicketSelectorRowStandard extends TicketSelectorRow
                 '',
                 'headers="price-' . $this->EVT_ID . '"'
             );
-            $html .= EEH_Template::format_currency($this->ticket_price);
+            $html .= EEH_HTML::span(
+                EEH_Template::format_currency($this->ticket_price),
+                '',
+                'tckt-price--nowrap'
+            );
             $html .= $this->ticket->taxable()
                 ? EEH_HTML::span('*', '', 'taxable-tickets-asterisk grey-text')
                 : '';
@@ -311,7 +313,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return string
      * @throws EE_Error
-     * @throws ReflectionException
      */
     protected function onlyOneAttendeeCanRegister()
     {
@@ -320,15 +321,14 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
 
         $TKT   = $this->ticket->ID();
+        $label = esc_html__('Select this ticket', 'event_espresso');
         $name  = "tkt-slctr-qty-{$this->EVT_ID}";
         $class = "ticket-selector-tbl-qty-slct";
         $id    = "{$class}-{$this->EVT_ID}-{$this->row}";
         $checked = $this->total_tickets === 1 ? ' checked' : '';
 
-        $html = "<label class='ee-a11y-screen-reader-text' for='" . esc_attr($id) . "'>"
-                . esc_html__('Select this ticket', 'event_espresso') . "</label>";
-        $html .= "<input type='radio' {$checked} name='" . esc_attr($name) . "' id='" . esc_attr($id) . "'
-        class='" . esc_attr($class) . "' value='" . esc_attr($TKT) . "-1' title='' />";
+        $html = "<label class='ee-a11y-screen-reader-text' for='{$id}' >{$label}</label>";
+        $html .= "<input type='radio'{$checked} name='{$name}' id='{$id}' class='{$class}' value='{$TKT}-1' title='' />";
         return $html;
     }
 
@@ -338,7 +338,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return string
      * @throws EE_Error
-     * @throws ReflectionException
      */
     protected function ticketQuantitySelector()
     {
@@ -351,15 +350,15 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $class = 'ticket-selector-tbl-qty-slct';
         $id = "{$class}-{$this->EVT_ID}-{$this->row}";
 
-        $html = "<label class='ee-a11y-screen-reader-text' for='" . esc_attr($id) . "'>" . esc_html($label) . "</label>";
-        $html .= "<select name='tkt-slctr-qty-" . esc_attr($this->EVT_ID) . "[" . esc_attr($TKT) . "]' id='" . esc_attr($id) . "' class='" . esc_attr($class) . "'>";
+        $html = "<label class='ee-a11y-screen-reader-text' for='{$id}' >{$label}</label>";
+        $html .= "<select name='tkt-slctr-qty-{$this->EVT_ID}[{$TKT}]' id='{$id}' class='{$class}'>";
         // this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
         if ($this->min !== 0 && ! $this->ticket->required()) {
             $html .= "<option value='0'>&nbsp;0&nbsp;</option>";
         }
         // offer ticket quantities from the min to the max
         for ($i = $this->min; $i <= $this->max; $i++) {
-            $html .= "<option value='" . esc_attr($i) . "'>&nbsp;" . esc_html($i) . "&nbsp;</option>";
+            $html .= "<option value='{$i}'>&nbsp;{$i}&nbsp;</option>";
         }
         $html .= "</select>";
         return $html;
@@ -371,7 +370,6 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return string
      * @throws EE_Error
-     * @throws ReflectionException
      */
     protected function ticketQtyAndIdHiddenInputs()
     {
@@ -380,9 +378,9 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $TKT = $this->ticket->ID();
         // depending on group reg we need to change the format for qty
         if ($this->hidden_input_qty) {
-            $html .= "<input type='hidden' name='tkt-slctr-qty-" . esc_attr($EVT) . "[]' value='0' />";
+            $html .= "<input type='hidden' name='tkt-slctr-qty-{$EVT}[]' value='0' />";
         }
-        $html .= "<input type='hidden' name='tkt-slctr-ticket-id-" . esc_attr($EVT) . "[]' value='" . esc_attr($TKT) . "' />";
+        $html .= "<input type='hidden' name='tkt-slctr-ticket-id-{$EVT}[]' value='{$TKT}' />";
         return $html;
     }
 }

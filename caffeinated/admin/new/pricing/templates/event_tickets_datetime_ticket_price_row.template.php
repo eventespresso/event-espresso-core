@@ -19,7 +19,7 @@
  * @var string $show_plus_or_minus
  * @var string $edit_prices_name
  * @var string $PRC_desc
- * @var string $price_type_selector;
+ * @var string $price_type_selector
  * @var string $PRC_name
  * @var string $price_currency_symbol
  */
@@ -76,7 +76,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     </td>
     <td>
         <?php if ($disabled) : ?>
-            <span class="ee-lock-icon"></span>
+            <span class="dashicons dashicons-lock"></span>
         <?php else : ?>
             <span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
                   data-context="price" data-price-row="<?php echo esc_attr($PRC_order); ?>"<?php echo wp_kses($show_trash_icon, AllowedTags::getWithFormTags()); ?>></span>

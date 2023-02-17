@@ -3,9 +3,10 @@
 namespace EventEspresso\core\domain\services\contexts;
 
 use EventEspresso\core\domain\Domain;
+use EventEspresso\core\services\graphql\GraphQLEndpoint;
 use EventEspresso\core\services\request\RequestInterface;
-use InvalidArgumentException;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+use InvalidArgumentException;
 
 /**
  * Class RequestTypeContextDetector
@@ -17,6 +18,11 @@ use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
  */
 class RequestTypeContextDetector
 {
+    /**
+     * @var GraphQLEndpoint $gql_endpoint
+     */
+    private $gql_endpoint;
+
     /**
      * @var RequestTypeContextFactoryInterface $factory
      */
@@ -36,6 +42,7 @@ class RequestTypeContextDetector
     /**
      * RequestTypeContextDetector constructor.
      *
+     * @param GraphQLEndpoint                    $gql_endpoint
      * @param RequestInterface                   $request
      * @param RequestTypeContextFactoryInterface $factory
      * @param array                              $globalRouteConditions an array for injecting values that would
@@ -44,10 +51,12 @@ class RequestTypeContextDetector
      *                                                                  request route such as DOING_AJAX
      */
     public function __construct(
+        GraphQLEndpoint $gql_endpoint,
         RequestInterface $request,
         RequestTypeContextFactoryInterface $factory,
-        array $globalRouteConditions = array()
+        array $globalRouteConditions = []
     ) {
+        $this->gql_endpoint = $gql_endpoint;
         $this->request = $request;
         $this->factory = $factory;
         $this->globalRouteConditions = $globalRouteConditions;
@@ -55,13 +64,13 @@ class RequestTypeContextDetector
 
 
     /**
+     * @param string $globalRouteCondition
+     * @param mixed  $default
      * @return mixed
      */
-    private function getGlobalRouteCondition($globalRouteCondition, $default)
+    private function getGlobalRouteCondition(string $globalRouteCondition, $default)
     {
-        return isset($this->globalRouteConditions[ $globalRouteCondition ])
-            ? $this->globalRouteConditions[ $globalRouteCondition ]
-            : $default;
+        return $this->globalRouteConditions[ $globalRouteCondition ] ?? $default;
     }
 
 
@@ -69,14 +78,15 @@ class RequestTypeContextDetector
      * @return RequestTypeContext
      * @throws InvalidArgumentException
      */
-    public function detectRequestTypeContext()
+    public function detectRequestTypeContext(): RequestTypeContext
     {
         // Detect error scrapes
-        if (
-            $this->request->getRequestParam('wp_scrape_key')
-            && $this->request->getRequestParam('wp_scrape_nonce')
-        ) {
+        if ($this->isWordPressErrorScrape()) {
             return $this->factory->create(RequestTypeContext::WP_SCRAPE);
+        }
+        // Detect activations
+        if ($this->isWordPressActivationRequest()) {
+            return $this->factory->create(RequestTypeContext::ACTIVATION);
         }
         // Detect EE REST API
         if ($this->isEspressoRestApiRequest()) {
@@ -86,16 +96,13 @@ class RequestTypeContextDetector
         if ($this->isWordPressRestApiRequest()) {
             return $this->factory->create(RequestTypeContext::WP_API);
         }
+        // Detect EE GraphQL
+        if ($this->isEspressoGraphQLRequest()) {
+            return $this->factory->create(RequestTypeContext::GQL);
+        }
         // Detect AJAX
         if ($this->getGlobalRouteCondition('DOING_AJAX', false)) {
             return $this->isAjaxRequest();
-        }
-        // make sure these constants are defined
-        if (! defined('EE_ADMIN_AJAX')) {
-            define('EE_ADMIN_AJAX', false);
-        }
-        if (! defined('EE_FRONT_AJAX')) {
-            define('EE_FRONT_AJAX', false);
         }
         // Detect WP_Cron
         if ($this->isCronRequest()) {
@@ -125,7 +132,7 @@ class RequestTypeContextDetector
     /**
      * @return RequestTypeContext
      */
-    private function isAjaxRequest()
+    private function isAjaxRequest(): RequestTypeContext
     {
         if (
             $this->request->getRequestParam('ee_front_ajax', false, 'bool')
@@ -161,33 +168,96 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
-    private function isEspressoRestApiRequest()
+    private function isWordPressErrorScrape(): bool
     {
-        // Check for URLs like http://mysite.com/?rest_route=/ee... and http://mysite.com/wp-json/ee/...
-        return strpos(
-            $this->request->getRequestParam('rest_route'),
-            '/' . Domain::API_NAMESPACE
-        ) === 0
-            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+        return (
+            $this->request->getRequestParam('wp_scrape_key') !== ''
+            && $this->request->getRequestParam('wp_scrape_nonce') !== ''
+        ) || (
+            $this->request->getRequestParam('action') === 'error_scrape'
+            && $this->request->getRequestParam('_wpnonce') !== ''
+        );
     }
-
 
 
     /**
      * @return bool
      */
-    private function isWordPressRestApiRequest()
+    private function isWordPressActivationRequest(): bool
+    {
+        $action = $this->request->getRequestParam('action');
+        $plugins_page_actions = [
+            'activate',
+            'activate-multi',
+            'activate-selected',
+            'deactivate',
+            'deactivate-multi',
+            'deactivate-selected',
+            'delete-selected',
+            'disable-auto-update-selected',
+            'enable-auto-update-selected',
+            'update-selected',
+        ];
+        return $this->uriPathMatches('wp-admin/plugins.php')
+               && ($action === 'true' || in_array($action, $plugins_page_actions, true));
+    }
+
+
+    /**
+     * @param string $extra_path
+     * @return bool
+     */
+    private function isRestApiRequest(string $extra_path = ''): bool
+    {
+        $rest_route = $this->request->getRequestParam('rest_route');
+        return (
+            $this->request->getRequestParam('rest_route') !== ''
+            && ( $extra_path === '' || strpos($rest_route, $extra_path) !== 0 )
+        )
+        || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . $extra_path);
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function isEspressoRestApiRequest(): bool
+    {
+        $api_namespace = '/' . ltrim(Domain::API_NAMESPACE, '/');
+        // Check for URLs like http://mysite.com/?rest_route=/ee... and http://mysite.com/wp-json/ee/...
+        return $this->isRestApiRequest($api_namespace);
+    }
+
+
+    /**
+     * Checks for URLs like https://mysite.com/graphql
+     *
+     * @return bool
+     */
+    private function isEspressoGraphQLRequest(): bool
+    {
+        if ($this->gql_endpoint->isGraphqlRequest()) {
+            return true;
+        }
+        $gql_endpoint = $this->gql_endpoint->getEndpoint();
+        return $this->uriPathMatches($gql_endpoint) || $this->request->requestParamIsSet($gql_endpoint);
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function isWordPressRestApiRequest(): bool
     {
         // Check for URLs like http://mysite.com/?rest_route=/.. and http://mysite.com/wp-json/...
-        return $this->request->getRequestParam('rest_route') !== ''
-            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/'));
+        return $this->isRestApiRequest();
     }
 
 
     /**
      * @return bool
      */
-    private function isCronRequest()
+    private function isCronRequest(): bool
     {
         return $this->uriPathMatches('wp-cron.php');
     }
@@ -196,17 +266,19 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
-    private function isFeedRequest()
+    private function isFeedRequest(): bool
     {
         return $this->uriPathMatches('feed');
     }
 
 
     /**
+     * returns true if the current request URI starts with the supplied $component string
+     *
      * @param string $component
      * @return bool
      */
-    private function uriPathMatches($component)
+    private function uriPathMatches(string $component): bool
     {
         $request_uri = $this->request->requestUri(true);
         $parts = explode('?', $request_uri);
@@ -218,7 +290,7 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
-    private function isIframeRoute()
+    private function isIframeRoute(): bool
     {
         $is_iframe_route = apply_filters(
             'FHEE__EventEspresso_core_domain_services_contexts_RequestTypeContextDetector__isIframeRoute',

@@ -44,8 +44,9 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
      *
      * @param EE_Registration[] $registrations
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function __construct($registrations)
+    public function __construct(array $registrations)
     {
         $this->_registrations = $registrations;
         $this->_calculate_registrations_per_line_item_code($registrations);
@@ -60,8 +61,9 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
      * @param EE_Registration[] $registrations
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _calculate_registrations_per_line_item_code($registrations)
+    protected function _calculate_registrations_per_line_item_code(array $registrations)
     {
         foreach ($registrations as $registration) {
             $line_item_code = EEM_Line_Item::instance()->get_var(
@@ -85,11 +87,12 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
      * Creates a duplicate of the line item tree, except only includes billable items
      * and the portion of line items attributed to billable things
      *
-     * @param EEI_Line_Item $line_item
-     * @return EEI_Line_Item
+     * @param EE_Line_Item $line_item
+     * @return EE_Line_Item
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function process(EEI_Line_Item $line_item)
+    public function process(EE_Line_Item $line_item): ?EE_Line_Item
     {
         $this->_adjust_line_item_quantity($line_item);
         if (! $line_item->children()) {
@@ -123,7 +126,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
                     $child_line_item->set_unit_price($child_line_item->total() / $child_line_item->quantity());
                 }
             } elseif (
-// make sure this item's quantity and total matches its parent
+                // make sure this item's quantity and total matches its parent
                 $line_item->type() === EEM_Line_Item::type_line_item
                 && $line_item->OBJ_type() === 'Ticket'
                 // but not if it's a percentage modifier
@@ -139,6 +142,10 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
                     )
                 )
             ) {
+                $child_line_item->set_quantity($line_item->quantity());
+                $child_line_item->set_total($child_line_item->unit_price() * $child_line_item->quantity());
+            } elseif ($child_line_item->type() === EEM_Line_Item::type_sub_tax) {
+                // add this line item's portion of any directly applied taxes
                 $child_line_item->set_quantity($line_item->quantity());
                 $child_line_item->set_total($child_line_item->unit_price() * $child_line_item->quantity());
             }
@@ -165,10 +172,12 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
      * Adjusts quantities for line items for tickets according to the registrations provided
      * in the constructor
      *
-     * @param EEI_Line_Item $line_item
-     * @return EEI_Line_Item
+     * @param EE_Line_Item $line_item
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _adjust_line_item_quantity(EEI_Line_Item $line_item)
+    protected function _adjust_line_item_quantity(EE_Line_Item $line_item): EE_Line_Item
     {
         // is this a ticket ?
         if ($line_item->type() === EEM_Line_Item::type_line_item && $line_item->OBJ_type() === 'Ticket') {

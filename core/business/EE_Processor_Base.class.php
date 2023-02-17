@@ -7,7 +7,6 @@
  * @subpackage            core
  * @author                Brent Christensen
  * @since                 4.6
- *
  */
 class EE_Processor_Base
 {
@@ -52,7 +51,7 @@ class EE_Processor_Base
      *
      * @param string              $class
      * @param string              $func
-     * @param string              $line
+     * @param int|string              $line
      * @param EE_Transaction|null $transaction
      * @param array               $info
      * @param bool                $display_request
@@ -62,7 +61,7 @@ class EE_Processor_Base
     protected function log(
         string $class = '',
         string $func = '',
-        string $line = '',
+        $line = '',
         ?EE_Transaction $transaction = null,
         array $info = [],
         bool $display_request = false

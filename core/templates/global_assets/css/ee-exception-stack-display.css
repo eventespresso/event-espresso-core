@@ -1,15 +1,28 @@
-#ee-error-message {
-    max-width:90% !important;
+.ee-exception-stack-trace-display {
+    background: hsl(0deg 0% 100%);
+    max-width: 90% !important;
     margin: 2em 5%;
+    padding: 2rem 2rem 1rem;
 }
 .ee-error-dev-msg-pg,
-.error .ee-error-dev-msg-pg {
-    padding:1em;
-    margin:0 0 1em;
-    border:2px solid #e65983;
-    background:#fff;
-    border-radius:3px;
-    line-height: 1.5em;;
+.ee-exception-stack-trace-display .ee-error-dev-msg-pg {
+    background: hsl(0deg 0% 100%);
+    border-radius: 3px;
+    border: 0.25rem solid hsl(340, 100%, 60%);
+    color: hsl(340, 10%, 45%);
+    font-size: .75rem;
+    line-height: 1.5em;
+    margin: 0 0 1em;
+    padding: 1.5rem 2rem;;
+}
+.ee-exception-stack-trace-display .ee-error-dev-msg-pg  strong{
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+.ee-exception-stack-trace-display .ee-error-dev-msg-pg  .big-text {
+    display: block;
+    font-size: 1.25rem;
+    padding: .5rem 0;
 }
 #ee-trace-details {
     margin:0 0 1em;
@@ -32,10 +45,10 @@
     text-align: end;
 }
 #ee-trace-details tr:nth-child(odd) {
-    background:#f6f6f6;
+    background: hsl(207, 0%, 97%);
 }
 .display-ee-error-trace-lnk {
-    color: #008dcb;
+    color: hsl(203, 60%, 50%);
     cursor:pointer;
     font-weight: bold;
 }
@@ -51,5 +64,5 @@
     letter-spacing: 1px;
 }
 .lt-grey-text {
-    color: #999;
+    color: hsl(220deg 5% 60%);
 }

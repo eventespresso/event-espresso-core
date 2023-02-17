@@ -1,9 +1,5 @@
 <?php
 
-/**
- * meant to convert DBs between 3.1.26 and 4.0.0 to 4.1.0
- */
-
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -24,9 +20,8 @@ if (! empty($stages)) {
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_1_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
-
-
 /**
+ * meant to convert DBs between 3.1.26 and 4.0.0 to 4.1.0
  * Organizes all the various stages of the migration from 3.1 (but only versions above 3.1.26,
  * lower versions need to eb upgraded to 3.1.26 normally) to 4.1.0.P.
  * It adds the database tables on some of the first migration_steps, then migrates the data within
@@ -811,7 +806,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
 				('TR', 'TUR', 0, 'Turkey', 'TRY', 'Lira', 'Liras', '$', 1, 2, '+90', 0, 0),
 				('TT', 'TTO', 0, 'Trinidad and Tobago', 'TTD', 'Dollar', 'Dollars', 'TT$', 1, 2, '+1-868', 0, 0),
 				('TV', 'TUV', 0, 'Tuvalu', 'AUD', 'Dollar', 'Dollars', '$', 1, 2, '+688', 0, 0),
-				('TW', 'TWN', 0, 'Taiwan, Province of China', 'TWD', 'Dollar', 'Dollars', 'NT$', 1, 2, '+886', 0, 0),
+				('TW', 'TWN', 0, 'Taiwan', 'TWD', 'Dollar', 'Dollars', 'NT$', 1, 2, '+886', 0, 0),
 				('TZ', 'TZA', 0, 'Tanzania, United Republic of', 'TZS', 'Shilling', 'Shillings', 'S', 1, 2, '+255', 0, 0),
 				('UA', 'UKR', 0, 'Ukraine', 'UAH', 'Hryvnia', 'Hryvnias', '₴', 1, 2, '+380', 0, 0),
 				('UG', 'UGA', 0, 'Uganda', 'UGX', 'Shilling', 'Shillings', 'S', 1, 2, '+256', 0, 0),

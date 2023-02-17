@@ -34,9 +34,9 @@
             <input id="custom-message-template-grpID" type="hidden" name="custom_template_args[GRP_ID]"
                    value="XXXGRP_IDXXX">
             <div class="submit-button-container right">
-                <input type="submit" class="button button-primary"
+                <input type="submit" class="button button--primary"
                        value="<?php esc_html_e('Create Template', 'event_espresso'); ?>">
-                <button type="button" class="button button-secondary cancel-create-template">
+                <button type="button" class="button button--secondary cancel-create-template">
                     <?php esc_html_e(
                         'Cancel',
                         'event_espresso'

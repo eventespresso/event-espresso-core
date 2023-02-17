@@ -58,7 +58,7 @@ class TicketSelectorStandard extends TicketSelector
         EE_Tax_Config $tax_config,
         EE_Event $event,
         array $tickets,
-        $max_attendees,
+        int $max_attendees,
         array $template_args,
         $date_format = 'Y-m-d',
         $time_format = 'g:i a'
@@ -138,9 +138,36 @@ class TicketSelectorStandard extends TicketSelector
         $this->template_args['ticket_row_html']                  = $all_ticket_rows_html;
         $this->template_args['taxable_tickets']                  = $taxable_tickets;
         $this->template_args['prices_displayed_including_taxes'] = $this->tax_config->prices_displayed_including_taxes;
-        // now load template
-        $this->template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH
-                                                . 'standard_ticket_selector.template.php';
+
+
+        /**
+         * Filters the text printed for the header of the price column in the ticket selector table
+         *
+         * @param string 'Price' The translatable text to display in the table header for price
+         * @param int $EVT_ID The Event ID
+         * @since 4.7.2
+         *
+         */
+        $this->template_args['table_header_price'] = apply_filters(
+            'FHEE__ticket_selector_chart_template__table_header_price',
+            esc_html__('Price', 'event_espresso'),
+            $this->event->ID()
+        );
+
+        /**
+         * Filters the text printed for the header of the quantity column in the ticket selector table
+         *
+         * @param string 'Qty' The translatable text to display in the table header for the Quantity of tickets
+         * @param int $EVT_ID The Event ID
+         * @since 4.7.2
+         *
+         */
+        $this->template_args['table_header_qty'] = apply_filters(
+            'FHEE__ticket_selector_chart_template__table_header_qty',
+            esc_html__('Qty', 'event_espresso'),
+            $this->event->ID()
+        );
+        $this->template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH . 'standard_ticket_selector.template.php';
         remove_all_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector');
     }
 }

@@ -93,7 +93,7 @@ class ModelDataTranslator
      * @param EE_Model_Field_Base $field_obj
      * @param mixed               $original_value_maybe_array
      * @param string              $request_version (eg 4.8.36)
-     * @return array
+     * @return array|int|string
      * @throws EE_Error
      * @throws EE_Error
      */
@@ -353,9 +353,7 @@ class ModelDataTranslator
                 );
             }
             if ($new_value !== null) {
-                // phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mysql_DeprecatedRemoved
-                $new_value = mysql_to_rfc3339($new_value);
-                // phpcs:enable
+                $new_value = mysql2date('Y-m-d\TH:i:s', $new_value, false);
             }
         } else {
             $new_value = $original_value;

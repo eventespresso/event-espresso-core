@@ -25,7 +25,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
     /**
      * Used to register capability items with EE core.
      *
-     * @param string $identifier                                                          usually will be a class name
+     * @param string $addon_name                                                          usually will be a class name
      *                                                                                    that references capability
      *                                                                                    related items setup for
      *                                                                                    something.
@@ -42,7 +42,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      *                                                                                    array( 'read_cap' )
      *                                                                                    ).
      * @type array   $capability_maps                                                     EE_Meta_Capability_Map[]
-     * @return void
+     * @return bool
      * @throws EE_Error
      * @since 4.5.0
      * @see   EE_Capabilities.php for php docs on these objects.
@@ -52,10 +52,10 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      *                                                                                    the arguments for the map.
      *                                                                                    }
      */
-    public static function register($identifier = '', array $setup_args = [])
+    public static function register(string $addon_name = '', array $setup_args = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
-        if ($identifier === null || ! is_array($setup_args) || empty($setup_args['capabilities'])) {
+        if ($addon_name === null || ! is_array($setup_args) || empty($setup_args['capabilities'])) {
             throw new EE_Error(
                 esc_html__(
                     'In order to register capabilities with EE_Register_Capabilities::register, you must include a unique name to reference the capabilities being registered, plus an array containing the following keys: "capabilities".',
@@ -64,8 +64,8 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             );
         }
         // make sure we don't register twice
-        if (isset(self::$_registry[ $identifier ])) {
-            return;
+        if (isset(self::$_registry[ $addon_name ])) {
+            return true;
         }
         // make sure this is not registered too late or too early.
         if (
@@ -79,17 +79,18 @@ class EE_Register_Capabilities implements EEI_Plugin_API
                         '%s has been registered too late.  Please ensure that EE_Register_Capabilities::register has been called at some point before the "AHEE__EE_System___detect_if_activation_or_upgrade__begin" action hook has been called.',
                         'event_espresso'
                     ),
-                    $identifier
+                    $addon_name
                 ),
                 '4.5.0'
             );
+            return false;
         }
         // some preliminary sanitization and setting to the $_registry property
-        self::$_registry[ $identifier ] = [
+        self::$_registry[ $addon_name ] = [
             'caps'     => isset($setup_args['capabilities']) && is_array($setup_args['capabilities'])
                 ? $setup_args['capabilities']
                 : [],
-            'cap_maps' => isset($setup_args['capability_maps']) ? $setup_args['capability_maps'] : [],
+            'cap_maps' => $setup_args['capability_maps'] ?? [],
         ];
         // set initial caps (note that EE_Capabilities takes care of making sure that the caps get added only once)
         add_filter(
@@ -101,6 +102,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             'FHEE__EE_Capabilities___set_meta_caps__meta_caps',
             ['EE_Register_Capabilities', 'register_cap_maps']
         );
+        return true;
     }
 
 
@@ -112,12 +114,13 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      * @param array $incoming_caps The original caps map.
      * @return array merged in new caps.
      */
-    public static function register_capabilities(array $incoming_caps)
+    public static function register_capabilities(array $incoming_caps): array
     {
+        $caps = [];
         foreach (self::$_registry as $caps_and_cap_map) {
-            $incoming_caps = array_merge_recursive($incoming_caps, $caps_and_cap_map['caps']);
+            $caps[] = $caps_and_cap_map['caps'];
         }
-        return $incoming_caps;
+        return array_merge_recursive($incoming_caps, ...$caps);
     }
 
 
@@ -130,10 +133,10 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      * @throws EE_Error
      * @since 4.5.0
      */
-    public static function register_cap_maps(array $cap_maps)
+    public static function register_cap_maps(array $cap_maps): array
     {
         // loop through and instantiate cap maps.
-        foreach (self::$_registry as $identifier => $setup) {
+        foreach (self::$_registry as $addon_name => $setup) {
             if (! isset($setup['cap_maps'])) {
                 continue;
             }
@@ -173,7 +176,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
                                 'An addon (%s) has tried to register a capability map improperly.  Capability map arrays must be indexed by capability map classname, and an array for the class arguments',
                                 'event_espresso'
                             ),
-                            $identifier
+                            $addon_name
                         )
                     );
                 }
@@ -185,7 +188,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
                                 'An addon (%s) has tried to register a capability map improperly.  Capability map arrays must be indexed by capability map classname, and an array for the class arguments.  The array should have two values the first being a string and the second an array.',
                                 'event_espresso'
                             ),
-                            $identifier
+                            $addon_name
                         )
                     );
                 }
@@ -197,17 +200,17 @@ class EE_Register_Capabilities implements EEI_Plugin_API
 
 
     /**
-     * @param string $identifier
+     * @param string $addon_name
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function deregister($identifier = '')
+    public static function deregister(string $addon_name = '')
     {
-        if (! empty(self::$_registry[ $identifier ])) {
-            if (! empty(self::$_registry[ $identifier ]['caps'])) {
+        if (! empty(self::$_registry[ $addon_name ])) {
+            if (! empty(self::$_registry[ $addon_name ]['caps'])) {
                 // if it's too early to remove capabilities, wait to do this until core is loaded and ready
-                $caps_to_remove = self::$_registry[ $identifier ]['caps'];
+                $caps_to_remove = self::$_registry[ $addon_name ]['caps'];
                 if (did_action('AHEE__EE_System__core_loaded_and_ready')) {
                     $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
                     $capabilities->removeCaps($caps_to_remove);
@@ -222,6 +225,6 @@ class EE_Register_Capabilities implements EEI_Plugin_API
                 }
             }
         }
-        unset(self::$_registry[ $identifier ]);
+        unset(self::$_registry[ $addon_name ]);
     }
 }

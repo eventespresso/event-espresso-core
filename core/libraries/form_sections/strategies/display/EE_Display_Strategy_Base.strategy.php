@@ -13,10 +13,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     /**
      * @var string $_tag
      */
-    protected $_tag = '';
-
-
-
+    protected string $_tag = '';
 
 
     /**
@@ -24,8 +21,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      *
      * @return string
      */
-    abstract public function display();
-
+    abstract public function display(): string;
 
 
     /**
@@ -36,13 +32,14 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * @param string $chars  - exact string of characters to remove
      * @return string
      */
-    protected function _remove_chars($string = '', $chars = '-')
+    protected function _remove_chars(string $string = '', string $chars = '-'): string
     {
         $char_length = strlen($chars) * -1;
         // if last three characters of string is  " - ", then remove it
-        return substr($string, $char_length) === $chars ? substr($string, 0, $char_length) : $string;
+        return substr($string, $char_length) === $chars
+            ? substr($string, 0, $char_length)
+            : $string;
     }
-
 
 
     /**
@@ -53,11 +50,10 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * @param string $chars  - exact string of characters to be added to end of string
      * @return string
      */
-    protected function _append_chars($string = '', $chars = '-')
+    protected function _append_chars(string $string = '', string $chars = '-'): string
     {
         return $this->_remove_chars($string, $chars) . $chars;
     }
-
 
 
     /**
@@ -65,12 +61,12 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      *
      * @param bool $add_pound_sign
      * @return array
+     * @throws EE_Error
      */
-    public function get_html_input_ids($add_pound_sign = false)
+    public function get_html_input_ids(bool $add_pound_sign = false): array
     {
-        return array($this->get_input()->html_id($add_pound_sign));
+        return [$this->get_input()->html_id($add_pound_sign)];
     }
-
 
 
     /**
@@ -80,11 +76,10 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * @param array $other_js_data
      * @return array
      */
-    public function get_other_js_data($other_js_data = array())
+    public function get_other_js_data(array $other_js_data = []): array
     {
         return $other_js_data;
     }
-
 
 
     /**
@@ -96,19 +91,17 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     }
 
 
-
     /**
      * returns string like: '<tag'
      *
      * @param string $tag
      * @return string
      */
-    protected function _opening_tag($tag)
+    protected function _opening_tag(string $tag): string
     {
         $this->_tag = $tag;
-        return "<{$this->_tag}";
+        return "<$this->_tag";
     }
-
 
 
     /**
@@ -116,11 +109,10 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      *
      * @return string
      */
-    protected function _closing_tag()
+    protected function _closing_tag(): string
     {
-        return "</{$this->_tag}>";
+        return "</$this->_tag>";
     }
-
 
 
     /**
@@ -128,11 +120,10 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      *
      * @return string
      */
-    protected function _close_tag()
+    protected function _close_tag(): string
     {
         return '/>';
     }
-
 
 
     /**
@@ -143,19 +134,19 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * it.
      *
      * @return array
+     * @throws EE_Error
      */
-    protected function _standard_attributes_array()
+    protected function _standard_attributes_array(): array
     {
-        return array(
+        return [
             'name'  => $this->_input->html_name(),
             'id'    => $this->_input->html_id(),
             'class' => $this->_input->html_class(true),
-            0       => array('required', $this->_input->required()),
+            0       => ['required', $this->_input->required()],
             1       => $this->_input->other_html_attributes(),
             'style' => $this->_input->html_style(),
-        );
+        ];
     }
-
 
 
     /**
@@ -165,9 +156,9 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * @param array $attributes
      * @return string
      */
-    protected function _attributes_string($attributes = array())
+    protected function _attributes_string(array $attributes = []): string
     {
-        $attributes = apply_filters(
+        $attributes        = apply_filters(
             'FHEE__EE_Display_Strategy_Base__attributes_string__attributes',
             $attributes,
             $this,
@@ -178,8 +169,8 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
             if (is_numeric($attribute)) {
                 $add = true;
                 if (is_array($value)) {
-                    $attribute = isset($value[0]) ? $value[0] : '';
-                    $add = isset($value[1]) ? $value[1] : false;
+                    $attribute = $value[0] ?? '';
+                    $add       = $value[1] ?? false;
                 } else {
                     $attribute = $value;
                 }
@@ -192,7 +183,6 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     }
 
 
-
     /**
      * returns string like: ' attribute="value"'
      * returns an empty string if $value is null
@@ -201,15 +191,14 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * @param string $value
      * @return string
      */
-    protected function _attribute($attribute, $value = '')
+    protected function _attribute(string $attribute, string $value = ''): string
     {
         if ($value === null) {
             return '';
         }
         $value = esc_attr($value);
-        return " {$attribute}=\"{$value}\"";
+        return " $attribute=\"$value\"";
     }
-
 
 
     /**
@@ -220,15 +209,14 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * @param string $value
      * @return string
      */
-    protected function _data_attribute($attribute, $value = '')
+    protected function _data_attribute(string $attribute, string $value = ''): string
     {
         if ($value === null) {
             return '';
         }
         $value = esc_attr($value);
-        return " data-{$attribute}=\"{$value}\"";
+        return " data-$attribute=\"$value\"";
     }
-
 
 
     /**
@@ -238,8 +226,10 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * @param boolean $add
      * @return string
      */
-    protected function _single_attribute($attribute, $add = true)
+    protected function _single_attribute(string $attribute, bool $add = true): string
     {
-        return $add ? " {$attribute}" : '';
+        return $add
+            ? " $attribute"
+            : '';
     }
 }
