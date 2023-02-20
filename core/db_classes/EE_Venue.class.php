@@ -196,7 +196,9 @@ class EE_Venue extends EE_CPT_Base implements AddressInterface
      */
     public function state_name(): string
     {
-        return (string) $this->state_obj() instanceof EE_State ? $this->state_obj()->name() : '';
+        return $this->state_obj() instanceof EE_State
+            ? (string) $this->state_obj()->name()
+            : '';
     }
 
 
