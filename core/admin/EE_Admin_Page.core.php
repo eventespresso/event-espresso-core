@@ -818,7 +818,12 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_set_list_table();
         // child classes can "register" a metabox to be automatically handled via the _page_config array property.
         // However in some cases the metaboxes will need to be added within a route handling callback.
-        add_action('add_meta_boxes', [$this, 'addRegisteredMetaBoxes'], 99);
+        if ($this->class_name === 'Promotions_Admin_Page') {
+            // hack because promos admin was loading the edited promotion object in the metaboxes callback
+            $this->addRegisteredMetaBoxes();
+        } else {
+            add_action('add_meta_boxes', [$this, 'addRegisteredMetaBoxes'], 99);
+        }
         $this->_add_screen_columns();
         // add screen options - global, page child class, and view specific
         $this->_add_global_screen_options();
@@ -1172,6 +1177,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             try {
                 call_user_func_array($route_callback, $args);
             } catch (Throwable $throwable) {
+                $arg_keys = array_keys($args);
+                $nice_args = [];
+                foreach ($args as $key => $arg) {
+                    $nice_args[ $key ] = is_object($arg) ? get_class($arg) : $arg_keys[ $key ];
+                }
                 new ExceptionStackTraceDisplay(
                         new RuntimeException(
                             sprintf(
@@ -1180,7 +1190,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                                     'event_espresso'
                                 ),
                                 $method,
-                                implode(', ', array_keys($args)),
+                                implode(', ', $nice_args),
                                 $throwable->getMessage()
                             ),
                             $throwable->getCode(),

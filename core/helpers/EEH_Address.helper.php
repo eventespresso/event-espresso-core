@@ -33,7 +33,7 @@ class EEH_Address
         bool $add_wrapper = true
     ): string {
         // check that incoming object implements the AddressInterface interface
-        if (! $obj_with_address instanceof AddressInterface) {
+        if (! $obj_with_address instanceof AddressInterface && ! $obj_with_address instanceof EEI_Address) {
             $msg     = esc_html__('The address could not be formatted.', 'event_espresso');
             $dev_msg = esc_html__(
                 'The Address Formatter requires passed objects to implement the AddressInterface interface.',
