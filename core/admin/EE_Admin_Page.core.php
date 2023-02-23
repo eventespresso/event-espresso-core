@@ -1171,10 +1171,12 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 // send along this admin page object for access by addons.
                 $args['admin_page'] = $this;
             }
-
             // hack because promos admin was loading the edited promotion object in the metaboxes callback
             // which should NOT be generated on non-UI requests
-            if ($this->class_name === 'Promotions_Admin_Page' && $method === '_insert_update_promotions') {
+            if (
+                $this->class_name === 'Promotions_Admin_Page'
+                && ($method === '_insert_update_promotions' || $method === '_promotion_details')
+            ) {
                 $this->addRegisteredMetaBoxes();
             }
 
