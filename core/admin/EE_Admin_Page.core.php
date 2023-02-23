@@ -8,6 +8,7 @@ use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\admin\AdminListTableFilters;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
@@ -796,6 +797,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _load_page_dependencies()
     {
@@ -818,12 +820,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_set_list_table();
         // child classes can "register" a metabox to be automatically handled via the _page_config array property.
         // However in some cases the metaboxes will need to be added within a route handling callback.
-        if ($this->class_name === 'Promotions_Admin_Page') {
-            // hack because promos admin was loading the edited promotion object in the metaboxes callback
-            $this->addRegisteredMetaBoxes();
-        } else {
-            add_action('add_meta_boxes', [$this, 'addRegisteredMetaBoxes'], 99);
-        }
+        add_action('add_meta_boxes', [$this, 'addRegisteredMetaBoxes'], 99);
         $this->_add_screen_columns();
         // add screen options - global, page child class, and view specific
         $this->_add_global_screen_options();
@@ -1174,6 +1171,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 // send along this admin page object for access by addons.
                 $args['admin_page'] = $this;
             }
+
+            // hack because promos admin was loading the edited promotion object in the metaboxes callback
+            // which should NOT be generated on non-UI requests
+            if ($this->class_name === 'Promotions_Admin_Page' && $method === '_insert_update_promotions') {
+                $this->addRegisteredMetaBoxes();
+            }
+
             try {
                 call_user_func_array($route_callback, $args);
             } catch (Throwable $throwable) {
@@ -1569,30 +1573,29 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public function check_user_access($route_to_check = '', $verify_only = false)
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $route_to_check = empty($route_to_check) ? $this->_req_action : $route_to_check;
-        $capability     = ! empty($route_to_check) && isset($this->_page_routes[ $route_to_check ])
+        $route_to_check = ! empty($route_to_check) ? $route_to_check : $this->_req_action;
+        $capability     = ! empty($route_to_check)
+                          && isset($this->_page_routes[ $route_to_check ])
                           && is_array($this->_page_routes[ $route_to_check ])
                           && ! empty($this->_page_routes[ $route_to_check ]['capability'])
             ? $this->_page_routes[ $route_to_check ]['capability']
             : null;
 
         if (empty($capability) && empty($route_to_check)) {
-            $capability = is_array($this->_route) && empty($this->_route['capability']) ? 'manage_options'
-                : $this->_route['capability'];
+            $capability = ! empty($this->_route['capability']) ? $this->_route['capability'] : 'manage_options';
         } else {
             $capability = empty($capability) ? 'manage_options' : $capability;
         }
+
         $id = is_array($this->_route) && ! empty($this->_route['obj_id']) ? $this->_route['obj_id'] : 0;
+
         if (
             ! $this->request->isAjax()
             && (
                 ! function_exists('is_admin')
                 || ! EE_Registry::instance()->CAP->current_user_can(
                     $capability,
-                    $this->page_slug
-                    . '_'
-                    . $route_to_check,
+                    "{$this->page_slug}_$route_to_check",
                     $id
                 )
             )
@@ -1602,9 +1605,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             }
             if (is_user_logged_in()) {
                 wp_die(esc_html__('You do not have access to this route.', 'event_espresso'));
-            } else {
-                return false;
             }
+            return false;
         }
         return true;
     }
@@ -2104,7 +2106,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             }
             $this->_list_table_object = $this->loader->getShared(
                 $this->_route_config['list_table'],
-                [$this]
+                [
+                    $this,
+                    LoaderFactory::getShared(AdminListTableFilters::class)
+                ]
             );
         }
     }

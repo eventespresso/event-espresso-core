@@ -62,7 +62,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
     /**
      * @return array
      */
-    protected function _get_table_filters(): array
+    protected function _get_table_filters()
     {
         return [];
     }

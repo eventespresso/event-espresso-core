@@ -110,9 +110,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
         $filters[]  = EEH_Form_Fields::select_input(
             '_payment_method',
             $payment_method_names,
-            isset($this->_req_data['_payment_method'])
-                ? $this->_req_data['_payment_method']
-                : 'all'
+            $this->_req_data['_payment_method'] ?? 'all'
         );
         $start_date = isset($this->_req_data['payment-filter-start-date'])
             ? wp_strip_all_tags($this->_req_data['payment-filter-start-date'])

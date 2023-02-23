@@ -82,7 +82,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
 
 
     // not needed
-    protected function _get_table_filters(): array
+    protected function _get_table_filters()
     {
         return [];
     }

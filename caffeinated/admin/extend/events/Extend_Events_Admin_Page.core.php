@@ -202,7 +202,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             2
         );
         // filters for event list table
-        add_filter('FHEE__Extend_Events_Admin_List_Table__filters', [$this, 'list_table_filters'], 10);
         add_filter(
             'FHEE__Events_Admin_List_Table__column_actions__action_links',
             [$this, 'extra_list_table_actions'],
@@ -947,33 +946,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * wp_list_table_mods for caf
      * ============================
      */
-    /**
-     * hook into list table filters and provide filters for caffeinated list table
-     *
-     * @param array $filters any existing filters present
-     * @return array                  new filters
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function list_table_filters(array $filters): array
-    {
-        // first month/year filters
-        $filters[] = $this->espresso_event_months_dropdown();
-        $status    = $this->request->getRequestParam('status');
-        // active status dropdown
-        if ($status !== 'draft') {
-            $filters[] = $this->active_status_dropdown($this->request->getRequestParam('active_status'));
-            $filters[] = $this->venuesDropdown($this->request->getRequestParam('venue'));
-        }
-        // category filter
-        $filters[] = $this->category_dropdown();
-        return $filters;
-    }
 
 
     /**
      * espresso_event_months_dropdown
      *
+     * @deprecatd $VID:$
      * @access public
      * @return string                dropdown listing month/year selections for events.
      * @throws EE_Error
@@ -994,6 +972,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * returns a list of "active" statuses on the event
      *
+     * @deprecatd $VID:$
      * @param string $current_value whatever the current active status is
      * @return string
      */
@@ -1015,6 +994,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * returns a list of "venues"
      *
+     * @deprecatd $VID:$
      * @param string $current_value whatever the current active status is
      * @return string
      * @throws EE_Error
@@ -1037,6 +1017,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * output a dropdown of the categories for the category filter on the event admin list table
      *
+     * @deprecatd $VID:$
      * @access  public
      * @return string html
      * @throws EE_Error

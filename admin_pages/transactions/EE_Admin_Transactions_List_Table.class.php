@@ -106,10 +106,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     /**
      * _get_table_filters
      * We use this to assemble and return any filters that are associated with this table that help further refine what
-     * get's shown in the table.
+     * gets shown in the table.
      *
      * @abstract
-     * @access protected
      * @return array
      */
     protected function _get_table_filters()

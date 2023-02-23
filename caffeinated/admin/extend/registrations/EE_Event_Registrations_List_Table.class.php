@@ -223,7 +223,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_table_filters(): array
+    protected function _get_table_filters()
     {
         $filters = [];
         $this->hide_expired = $this->request->getRequestParam('hide_expired', false, 'bool');

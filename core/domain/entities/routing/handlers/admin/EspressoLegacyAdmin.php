@@ -116,6 +116,12 @@ class EspressoLegacyAdmin extends AdminRoute
                 'EEM_Ticket'                                  => EE_Dependency_Map::load_from_cache,
             ]
         );
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\services\admin\AdminListTableFilters',
+            [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
     }
 
 

@@ -224,7 +224,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_table_filters(): array
+    protected function _get_table_filters()
     {
         $filters = [];
         // todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as

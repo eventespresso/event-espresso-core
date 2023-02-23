@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\admin\AdminListTableFilters;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 if (! class_exists('WP_List_Table')) {
@@ -212,11 +214,17 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     protected $_has_checkbox_column = false;
 
+    /**
+     * @var AdminListTableFilters|null
+     */
+    protected ?AdminListTableFilters $admin_list_table_filters = null;
+
 
     /**
-     * @param EE_Admin_Page $admin_page we use this for obtaining everything we need in the list table
+     * @param EE_Admin_Page              $admin_page we use this for obtaining everything we need in the list table
+     * @param AdminListTableFilters|null $filters    to display list table filters
      */
-    public function __construct(EE_Admin_Page $admin_page)
+    public function __construct(EE_Admin_Page $admin_page, ?AdminListTableFilters $filters = null)
     {
         $this->_admin_page   = $admin_page;
         $this->_req_data     = $this->_admin_page->get_request_data();
@@ -230,6 +238,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         ];
 
         $this->_per_page = $this->get_items_per_page($this->_screen . '_per_page');
+
+        $this->admin_list_table_filters = $filters instanceof AdminListTableFilters
+            ? $filters
+            : LoaderFactory::getShared(AdminListTableFilters::class);
 
         $this->_setup_data();
         $this->_add_view_counts();
@@ -281,7 +293,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @abstract
      * @access protected
-     * @return string
+     * @return string[]
      */
     abstract protected function _get_table_filters();
 
@@ -478,12 +490,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      * @access private
      * @return void  echos html showing filters
      */
-    private function _filters()
+    private function _filters(): void
     {
         $classname = get_class($this);
         $filters   = apply_filters(
             "FHEE__{$classname}__filters",
-            (array) $this->_get_table_filters(),
+            $this->_get_table_filters(),
             $this,
             $this->_screen
         );
@@ -491,34 +503,11 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         if (empty($filters)) {
             return;
         }
-        $use_filters = isset($this->_req_data['use_filters'])
-                       && filter_var($this->_req_data['use_filters'], FILTER_VALIDATE_BOOLEAN)
-            ? 'yes'
-            : 'no';
 
-        $filters_html = '';
-        foreach ($filters as $filter) {
-            $filters_html .= wp_kses($filter, AllowedTags::getWithFormTags());
-        }
-        $filter_submit_btn_text = esc_html__('Filter', 'event_espresso');
-        $filter_reset_btn_text = esc_html__('Reset Filters', 'event_espresso');
-        $filter_reset_btn_url = esc_url_raw($this->_admin_page->get_current_page_view_url());
-
-        echo "
-        <div class='ee-list-table-filters actions alignleft'>
-           $filters_html
-            <span class='ee-list-table-filters__submit-buttons'>
-                <input type='submit'
-                       class='ee-list-table-filter-submit button button--secondary'
-                       id='post-query-submit'
-                       value='$filter_submit_btn_text'
-                />
-                <input type='hidden' id='ee-list-table-use-filters' name='use_filters' value='$use_filters' />
-                <a class='ee-list-table-filter-reset button button--secondary' href='$filter_reset_btn_url'>
-                    $filter_reset_btn_text
-                </a>
-            </span>
-        </div>";
+        $this->admin_list_table_filters->filters(
+            $filters,
+            $this->get_admin_page()->get_current_page_view_url()
+        );
     }
 
 
@@ -986,5 +975,24 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         $class = ! empty($label) ? "{$class} ee-aria-tooltip" : $class;
         $label = ! empty($label) ? " aria-label='{$label}'" : '';
         return "<a href='{$url}' class='{$class}'{$label}>{$display_text}</a>";
+    }
+
+    /**
+     * Override the search box method of WP List Table to include a reset button
+     *
+     * @param string $text     The 'submit' button label.
+     * @param string $input_id ID attribute value for the search input field.
+     */
+    public function search_box($text, $input_id)
+    {
+        if (empty($_REQUEST['s']) && ! $this->has_items()) {
+            return;
+        }
+
+        $this->admin_list_table_filters->searchBox(
+            $text,
+            $input_id,
+            $this->get_admin_page()->get_current_page_view_url()
+        );
     }
 }

@@ -847,27 +847,22 @@ final class EE_Capabilities extends EE_Base
      *
      * @param string $cap     The cap being checked.
      * @param string $context The context where the current_user_can is being called from.
-     * @param int    $id      Optional. Id for item where current_user_can is being called from (used in map_meta_cap()
-     *                        filters.
-     *
+     * @param int|string $id  [optional] ID for entity where current_user_can() is being called from
+     *                        (used in map_meta_cap() filters).
      * @return bool  Whether user can or not.
      * @since 4.5.0
-     *
      */
-    public function current_user_can(string $cap, string $context, int $id = 0): bool
+    public function current_user_can(string $cap, string $context, $id = 0): bool
     {
         // apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
-        $filtered_cap = apply_filters('FHEE__EE_Capabilities__current_user_can__cap__' . $context, $cap, $id);
         $filtered_cap = apply_filters(
             'FHEE__EE_Capabilities__current_user_can__cap',
-            $filtered_cap,
+            apply_filters('FHEE__EE_Capabilities__current_user_can__cap__' . $context, $cap, $id),
             $context,
             $cap,
             $id
         );
-        return ! empty($id)
-            ? current_user_can($filtered_cap, $id)
-            : current_user_can($filtered_cap);
+        return ! empty($id) ? current_user_can($filtered_cap, $id) : current_user_can($filtered_cap);
     }
 
 
