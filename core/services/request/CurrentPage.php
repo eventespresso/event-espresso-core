@@ -170,7 +170,7 @@ class CurrentPage
      * similar to getPostId() above but attempts to obtain the "name" for the current page/post
      *
      * @param WP|null $WP $WP
-     * @return string
+     * @return string|null
      */
     private function getPostName(WP $WP = null): ?string
     {
@@ -179,11 +179,12 @@ class CurrentPage
         if ($WP instanceof WP) {
             // if this is a post, then is the post name set?
             if (isset($WP->query_vars['name']) && ! empty($WP->query_vars['name'])) {
-                $post_name = $WP->query_vars['name'];
+                $post_name = is_array($WP->query_vars['name']) ? $WP->query_vars['name'][0] : $WP->query_vars['name'];
             }
             // what about the page name?
             if (! $post_name && isset($WP->query_vars['pagename']) && ! empty($WP->query_vars['pagename'])) {
-                $post_name = $WP->query_vars['pagename'];
+                $post_name = is_array($WP->query_vars['pagename']) ? $WP->query_vars['pagename'][0]
+                    : $WP->query_vars['pagename'];
             }
             // this stinks but let's run a query to try and get the post name from the URL
             // (assuming pretty permalinks are on)

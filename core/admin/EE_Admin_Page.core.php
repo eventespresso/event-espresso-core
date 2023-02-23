@@ -821,6 +821,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // child classes can "register" a metabox to be automatically handled via the _page_config array property.
         // However in some cases the metaboxes will need to be added within a route handling callback.
         add_action('add_meta_boxes', [$this, 'addRegisteredMetaBoxes'], 99);
+        // hack because promos admin was loading the edited promotion object in the metaboxes callback
+        // which should NOT be generated on non-UI requests like POST updates/inserts
+        if (
+            $this->class_name === 'Promotions_Admin_Page'
+            && ($this->_req_action === 'edit' || $this->_req_action === 'create_new')
+        ) {
+            $this->addRegisteredMetaBoxes();
+        }
         $this->_add_screen_columns();
         // add screen options - global, page child class, and view specific
         $this->_add_global_screen_options();
@@ -1170,14 +1178,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             if ($class !== $this && ! in_array($this, $args)) {
                 // send along this admin page object for access by addons.
                 $args['admin_page'] = $this;
-            }
-            // hack because promos admin was loading the edited promotion object in the metaboxes callback
-            // which should NOT be generated on non-UI requests
-            if (
-                $this->class_name === 'Promotions_Admin_Page'
-                && ($method === '_insert_update_promotions' || $method === '_promotion_details')
-            ) {
-                $this->addRegisteredMetaBoxes();
             }
 
             try {
@@ -2577,11 +2577,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         ?string $save_close_redirect_URL = '',
         bool $both_btns = true
     ) {
-        static $already_set = false;
-        if ($already_set) {
-            return;
-        }
-        $already_set = true;
         // if Save & Close, use a custom redirect URL or default to the main page?
         $save_close_redirect_URL = ! empty($save_close_redirect_URL)
             ? $save_close_redirect_URL
@@ -2590,18 +2585,19 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_set_save_buttons($both_btns, [], [], $save_close_redirect_URL);
         // if we have extra content set let's add it in if not make sure its empty
         $this->_template_args['publish_box_extra_content'] = $this->_template_args['publish_box_extra_content'] ?? '';
-        $delete_link                                       = '';
-        if ($delete && ! empty($id)) {
+        if ($delete && ! empty($id) && empty($this->_template_args['publish_delete_link'])) {
             // make sure we have a default if just true is sent.
             $delete      = ! empty($delete) ? $delete : 'delete';
-            $delete_link = $this->get_action_link_or_button(
+            $this->_template_args['publish_delete_link'] = $this->get_action_link_or_button(
                 $delete,
                 $delete,
                 [$name => $id],
                 'submitdelete deletion button button--outline button--caution'
             );
         }
-        $this->_template_args['publish_delete_link'] = $delete_link;
+        if (! isset($this->_template_args['publish_delete_link'])) {
+            $this->_template_args['publish_delete_link'] = '';
+        }
         if (! empty($name) && ! empty($id)) {
             $this->addPublishPostMetaBoxHiddenFields($name, ['type' => 'hidden', 'value' => $id]);
         }

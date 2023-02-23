@@ -3756,6 +3756,14 @@ body.espresso-admin #contextual-help-wrap strong {
     background-position: right .5rem top 50%;
 }
 
+.espresso-admin a.chosen-single > div > b {
+    display: none;
+}
+
+.espresso-admin a.chosen-single + .chosen-drop {
+    width: unset;
+}
+
 
 @media screen and (min-width: 782px) {
     .espresso-admin select,
