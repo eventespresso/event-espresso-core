@@ -29,7 +29,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             <?php esc_html_e('Message Type', 'event_espresso'); ?>
         </label>
         <div class='event-message-type'>
-            <span class='ee-status-dot ee-status-bg--<?php echo esc_attr($status_code); ?>'></span>
+
             <?php echo esc_html($mt_name); ?>
         </div>
     </td>

@@ -21,9 +21,8 @@ class EEH_Maps
      * @param array $ee_gmaps_opts array of attributes required for the map link generation
      * @return string (link to map!)
      */
-    public static function google_map($ee_gmaps_opts)
+    public static function google_map(array $ee_gmaps_opts): string
     {
-
         $ee_map_width = ! empty($ee_gmaps_opts['ee_map_width'])
             ? absint($ee_gmaps_opts['ee_map_width'])
             : 300;
@@ -82,8 +81,7 @@ class EEH_Maps
                     >
                 </iframe>
                 <a href="' . $static_url . '">' . esc_html__('View Large map', 'event_espresso') . '</a>
-            </div>
-';
+            </div>';
         } else {
             EEH_Maps::$gmap_vars[ $ee_gmaps_opts['map_ID'] ] = [
                 'map_ID'              => $ee_gmaps_opts['map_ID'],
@@ -116,7 +114,7 @@ class EEH_Maps
      *
      * @return void
      */
-    public static function footer_enqueue_script()
+    public static function footer_enqueue_script(): void
     {
         wp_localize_script('ee_gmap', 'ee_gmap_vars', EEH_Maps::$gmap_vars);
     }
@@ -124,28 +122,30 @@ class EEH_Maps
 
     /**
      * registers scripts for maps
+     *
+     * @return void
      */
-    public static function espresso_google_map_js()
+    public static function espresso_google_map_js(): void
     {
         $api_url = sprintf(
-            "https://maps.googleapis.com/maps/api/js?key=%s",
+            "https://maps.googleapis.com/maps/api/js?callback=ee_gmap_callback&key=%s",
             apply_filters(
                 'FHEE__EEH_Maps__espresso_google_maps_js__api_key',
                 EE_Registry::instance()->CFG->map_settings->google_map_api_key
             )
         );
         wp_register_script(
-            'gmap_api',
-            esc_url_raw($api_url),
+            'ee_gmap',
+            plugin_dir_url(__FILE__) . 'assets/ee_gmap.js',
             ['jquery'],
-            null,
+            '1.1',
             true
         );
         wp_register_script(
-            'ee_gmap',
-            plugin_dir_url(__FILE__) . 'assets/ee_gmap.js',
-            ['gmap_api'],
-            '1.0',
+            'gmap_api',
+            esc_url_raw($api_url),
+            ['ee_gmap'],
+            null,
             true
         );
     }
@@ -157,7 +157,7 @@ class EEH_Maps
      * @param array $atts array of attributes required for the map link generation
      * @return string (link to map!)
      */
-    public static function google_map_link($atts)
+    public static function google_map_link(array $atts): string
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         extract($atts);
@@ -166,17 +166,17 @@ class EEH_Maps
         /** @var string $state */
         /** @var string $zip */
         /** @var string $country */
-        $address         = "{$address}";
-        $city            = "{$city}";
-        $state           = "{$state}";
-        $zip             = "{$zip}";
-        $country         = "{$country}";
-        $text            = isset($text) ? "{$text}" : "";
-        $type            = isset($type) ? "{$type}" : "";
-        $map_w           = isset($map_w) ? "{$map_w}" : 400;
-        $map_h           = isset($map_h) ? "{$map_h}" : 400;
-        $id              = isset($id) ? $id : 'not_set';
-        $map_image_class = isset($map_image_class) ? $map_image_class : 'ee_google_map_view';
+        $address         = "$address";
+        $city            = "$city";
+        $state           = "$state";
+        $zip             = "$zip";
+        $country         = "$country";
+        $text            = isset($text) ? "$text" : "";
+        $type            = isset($type) ? "$type" : "";
+        $map_w           = isset($map_w) ? "$map_w" : 400;
+        $map_h           = isset($map_h) ? "$map_h" : 400;
+        $id              = $id ?? 'not_set';
+        $map_image_class = $map_image_class ?? 'ee_google_map_view';
 
         $address_string = ($address != '' ? $address : '')
                           . ($city != '' ? ',' . $city : '')

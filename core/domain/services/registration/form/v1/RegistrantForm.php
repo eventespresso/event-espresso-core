@@ -95,6 +95,7 @@ class RegistrantForm extends EE_Form_Section_Proper
                         [
                             'Event.EVT_ID' => $registration->event()->ID(),
                             $field_name    => true,
+                            'QSG_deleted'  => false,
                         ],
                         'order_by' => ['QSG_order' => 'ASC'],
                     ],

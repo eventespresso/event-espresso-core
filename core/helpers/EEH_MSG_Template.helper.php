@@ -1140,7 +1140,10 @@ class EEH_MSG_Template
         $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $template_name = $request->isAjax() && $request->requestParamIsSet('templateName')
             ? $request->getRequestParam('templateName')
-            : esc_html__('New Custom Template', 'event_espresso');
+            : sprintf(
+                esc_html__('Custom %1$s', 'event_espresso'),
+                ucwords($message_type->label['singular']) ?? esc_html__('Template', 'event_espresso')
+            );
         $template_description = $request->isAjax() && $request->requestParamIsSet('templateDescription')
             ? $request->getRequestParam('templateDescription')
             : sprintf(

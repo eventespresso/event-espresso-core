@@ -98,6 +98,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _define_page_props()
     {
+        $event_id = $this->request->getRequestParam('post', 0, DataType::INT);
+        if ($event_id) {
+            $event_post = get_post($event_id);
+        }
+
         $this->_admin_page_title = EVENTS_LABEL;
         $this->_labels           = [
             'buttons'      => [
@@ -109,7 +114,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'delete_category' => esc_html__('Delete Category', 'event_espresso'),
             ],
             'editor_title' => [
-                'espresso_events' => esc_html__('Enter event title here', 'event_espresso'),
+                'espresso_events' => isset($event_post) && $event_post instanceof WP_Post
+                    ? $event_post->post_title
+                    : esc_html__('Edit Event', 'event_espresso'),
             ],
             'publishbox'   => [
                 'create_new'        => esc_html__('Save New Event', 'event_espresso'),

@@ -39,7 +39,6 @@
 /*.messages-custom-template-switcher td:last-child {*/
 /*    width: 50%;*/
 /*}*/
-
-.messages-custom-template-switcher select {
-    width: 100%;
+.espresso-admin .postbox .inside .messages-custom-template-switcher select {
+    max-width: 100%;
 }

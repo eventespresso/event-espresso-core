@@ -528,20 +528,6 @@ abstract class EE_messenger extends EE_Messages_Base
         );
         $templates_for_event = !empty($templates_for_event) ? $templates_for_event : array();
 
-        $msg_type_status_map = [
-            'payment' => 'PAP',
-            'payment_refund' => 'PRF',
-            'payment_reminder' => 'PPN',
-            'registration' => 'RAP',
-            'not_approved_registration' => 'RNA',
-            'pending_approval' => 'RPP',
-            'payment_declined' => 'PDC',
-            'declined_registration' => 'RDC',
-            'cancelled_registration' => 'RCN',
-            'payment_failed' => 'PFL',
-            'payment_cancelled' => 'PCN',
-        ];
-
         // so we need to setup the rows for the selectors and we use the global mtpgs (cause those will the active message template groups)
         foreach ($global_templates as $mtpgID => $mtpg) {
             if ($mtpg instanceof EE_Message_Template_Group) {
@@ -591,7 +577,6 @@ abstract class EE_messenger extends EE_Messages_Base
                 $st_args['mt_name'] = ucwords($mtp_obj->label['singular']);
                 $st_args['mt_slug'] = $mt_slug;
                 $st_args['messenger_slug'] = $this->name;
-                $st_args['status_code'] = $msg_type_status_map[ $mt_slug ] ?? '';
                 $st_args['selector'] = EEH_Form_Fields::select_input(
                     'event_message_templates_relation[' . $mtpgID . ']',
                     $select_values,
@@ -599,16 +584,21 @@ abstract class EE_messenger extends EE_Messages_Base
                     'data-messenger="' . $this->name . '" data-messagetype="' . $mt_slug . '"',
                     'message-template-selector'
                 );
+                $new_template_name = sprintf(
+                    esc_html__('Custom %1$s', 'event_espresso'),
+                    $st_args['mt_name'] ?? esc_html__('Template', 'event_espresso')
+                );
                 // note that  message template group that has override_all_custom set will remove the ability to set a custom message template based off of the global (and that also in turn overrides any other custom templates).
                 $st_args['create_button'] = $mtpg->get('MTP_is_override')
                     ? ''
                     : '
                     <a data-messenger="' . $this->name . '"
                        data-messagetype="' . $mt_slug . '"
+                       data-new_template_name="' . $new_template_name . '"
                        data-grpid="' . $default_value . '"
                        target="_blank"
                        href="' . $create_url . '"
-                       class="button button--secondary button--tiny create-mtpg-button"
+                       class="button button--secondary create-mtpg-button"
                     >
                         ' . esc_html__('Create New Custom', 'event_espresso') . '
                     </a>';
@@ -628,7 +618,7 @@ abstract class EE_messenger extends EE_Messages_Base
                        data-grpid="' . $default_value . '"
                        target="_blank"
                        href="' . $edit_url . '"
-                       class="button button--secondary button--tiny edit-mtpg-button"
+                       class="button button--secondary edit-mtpg-button"
                     >
                         ' . esc_html__('Edit', 'event_espresso') . '
                     </a>'

@@ -11,7 +11,6 @@
 
 /**
  * Template args in this template
- *
  */
 ?>
 <div id="messages-change-edit-templates-dv" class="messages-change-edit-templates-option auto-hide hidden">
@@ -19,28 +18,38 @@
         <form id="custom-message-template-form" method="POST" action="">
             <p>
                 <label for="custom-message-template-name">
-                    <?php esc_html_e(
-                        'Name for Template:',
-                        'event_espresso'
-                    ); ?></label><br/>
-                <input id="custom-message-template-name" type="text" class="regular-text"
-                       name="custom_template_args[MTP_name]" value="">
+                    <?php esc_html_e('Name for Template:', 'event_espresso'); ?>
+                </label>
+                <input type="text"
+                       class="ee-input-width--big"
+                       id="custom-message-template-name"
+                       name="custom_template_args[MTP_name]"
+                       value=""
+                >
             </p>
             <p>
-                <label for="custom-message-template-description"><?php esc_html_e('Description:', 'event_espresso'); ?></label>
-                <textarea class="large-text" id="custom-message-template-description"
-                          name="custom_template_args[MTP_description]"></textarea>
+                <label for="custom-message-template-description">
+                    <?php esc_html_e('Description:', 'event_espresso'); ?>
+                </label>
+                <textarea class="ee-input-width--big"
+                          id="custom-message-template-description"
+                          name="custom_template_args[MTP_description]"
+                ></textarea>
             </p>
-            <input id="custom-message-template-grpID" type="hidden" name="custom_template_args[GRP_ID]"
-                   value="XXXGRP_IDXXX">
+            <input type="hidden"
+                   id="custom-message-template-grpID"
+                   name="custom_template_args[GRP_ID]"
+                   value="XXXGRP_IDXXX"
+            >
+            <br />
             <div class="submit-button-container right">
-                <input type="submit" class="button button--primary"
-                       value="<?php esc_html_e('Create Template', 'event_espresso'); ?>">
+                <input type="submit"
+                       class="button button--primary"
+                       value="<?php esc_html_e('Create Template', 'event_espresso'); ?>"
+                >
                 <button type="button" class="button button--secondary cancel-create-template">
-                    <?php esc_html_e(
-                        'Cancel',
-                        'event_espresso'
-                    ); ?></button>
+                    <?php esc_html_e('Cancel', 'event_espresso'); ?>
+                </button>
             </div>
         </form>
     </div>

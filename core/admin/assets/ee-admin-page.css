@@ -5714,7 +5714,7 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin #postcustomstuff th:not(.left),
 .espresso-admin #postcustomstuff td:not(.left) {
     float: unset;
-    width: 50%;
+    width: 40%;
 }
 
 .espresso-admin #postcustomstuff td.left,
@@ -5842,9 +5842,8 @@ body.espresso-admin #contextual-help-wrap strong {
     }
 
     .espresso-admin #postcustomstuff table td:not(.left) {
-        margin-block-end: 2rem;
         padding-block-start: 0;
-        margin-block-start: -0.5rem;
+        margin-block-start: .5rem;
     }
 
     .espresso-admin table.messages-custom-template-switcher tr {
