@@ -55,7 +55,7 @@
 		"cuid": "^2.1.8",
 		"decimal.js-light": "^2.5.1",
 		"immutable": "^4.0.0",
-		"js-green-licenses": "^3.0.1",
+		"js-green-licenses": "^4.0.0",
 		"memize": "^1.1.0",
 		"moment-duration-format": "^2.3.2",
 		"moment-timezone": "^0.5.34",
