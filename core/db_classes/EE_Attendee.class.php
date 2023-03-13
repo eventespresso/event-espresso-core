@@ -355,7 +355,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      */
     public function address(): string
     {
-        return $this->get('ATT_address');
+        return (string) $this->get('ATT_address');
     }
 
 
@@ -367,7 +367,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      */
     public function address2(): string
     {
-        return $this->get('ATT_address2');
+        return (string) $this->get('ATT_address2');
     }
 
 
@@ -379,7 +379,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      */
     public function city(): string
     {
-        return $this->get('ATT_city');
+        return (string) $this->get('ATT_city');
     }
 
 
@@ -391,7 +391,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      */
     public function state_ID(): int
     {
-        return $this->get('STA_ID');
+        return (int) $this->get('STA_ID');
     }
 
 
@@ -401,7 +401,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      */
     public function state_abbrev(): string
     {
-        return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : '';
+        return $this->state_obj() instanceof EE_State ? (string) $this->state_obj()->abbrev() : '';
     }
 
 
@@ -426,7 +426,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
     public function state_name(): string
     {
         if ($this->state_obj()) {
-            return $this->state_obj()->name();
+            return (string) $this->state_obj()->name();
         } else {
             return '';
         }
@@ -444,9 +444,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
     public function state(): string
     {
         if (apply_filters('FHEE__EEI_Address__state__use_abbreviation', true, $this->state_obj())) {
-            return $this->state_abbrev();
+            return (string) $this->state_abbrev();
         }
-        return $this->state_name();
+        return (string) $this->state_name();
     }
 
 
@@ -458,7 +458,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      */
     public function country_ID(): string
     {
-        return $this->get('CNT_ISO');
+        return (string) $this->get('CNT_ISO');
     }
 
 
@@ -483,7 +483,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
     public function country_name(): string
     {
         if ($this->country_obj()) {
-            return $this->country_obj()->name();
+            return (string) $this->country_obj()->name();
         }
         return '';
     }
@@ -500,9 +500,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
     public function country(): string
     {
         if (apply_filters('FHEE__EEI_Address__country__use_abbreviation', true, $this->country_obj())) {
-            return $this->country_ID();
+            return (string) $this->country_ID();
         }
-        return $this->country_name();
+        return (string) $this->country_name();
     }
 
 
@@ -514,7 +514,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      */
     public function zip(): string
     {
-        return $this->get('ATT_zip');
+        return (string) $this->get('ATT_zip');
     }
 
 
