@@ -111,7 +111,7 @@
 		"css-loader": "^6.7.1",
 		"cssnano": "^5.1.7",
 		"deep-freeze": "0.0.1",
-		"del": "git+https://github.com/sindresorhus/del.git",
+		"del": "^3.0.0",
 		"equivalent-key-map": "^0.2.2",
 		"eslint": "^8.0.0",
 		"eslint-plugin-jest": "^25.2.0",
