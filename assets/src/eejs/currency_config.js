@@ -1,4 +1,4 @@
-import data from './data';
+import data from './data.js';
 
 /**
  * Provided via the data passed along by the server.

@@ -4,12 +4,6 @@ import {
 	CONTEXT_CAPS_READ_ADMIN,
 	CONTEXT_CAPS_EDIT,
 	CONTEXT_CAPS_DELETE,
-} from './caps-middleware';
+} from './caps-middleware.js';
 
-export {
-	capsMiddleware,
-	CONTEXT_CAPS_READ,
-	CONTEXT_CAPS_READ_ADMIN,
-	CONTEXT_CAPS_EDIT,
-	CONTEXT_CAPS_DELETE,
-};
+export { capsMiddleware, CONTEXT_CAPS_READ, CONTEXT_CAPS_READ_ADMIN, CONTEXT_CAPS_EDIT, CONTEXT_CAPS_DELETE };
