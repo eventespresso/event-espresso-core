@@ -1,5 +1,5 @@
 export default function (api) {
-	api.cache(true);
+	// api.cache(true);
 
 	return {
 		presets: ['@wordpress/babel-preset-default'],
