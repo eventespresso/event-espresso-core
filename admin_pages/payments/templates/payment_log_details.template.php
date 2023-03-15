@@ -3,9 +3,9 @@
 /**
  * payment_log_details
  *
- * @package               Event Espresso
+ * @package     Event Espresso
  * @subpackage
- * @author                Mike Nelson
+ * @author      Mike Nelson
  * @var EE_Change_Log     $payment_log
  * @var EE_Payment_Method $payment_method
  * @var EE_Transaction    $transaction
@@ -15,7 +15,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
 <div class="padding">
-    <table class="form-table">
+    <table class="ee-payment-log-details widefat">
         <tbody>
             <tr>
                 <th>
@@ -67,7 +67,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         <?php esc_html_e('Content', 'event_espresso'); ?>
                     </label>
                 </th>
-                <td>
+                <td class='ee-payment-log-details__content'>
                     <?php echo wp_kses($payment_log->get_pretty('LOG_message', 'as_table'), AllowedTags::getWithFormTags()); ?>
                 </td>
             </tr>

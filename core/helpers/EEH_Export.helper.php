@@ -37,54 +37,60 @@ class EEH_Export
         return $column_name;
     }
 
+
     /**
      * Writes $data to the csv file open in $filehandle. uses the array indices of $data for column headers
      *
-     * @param string    $filepath
-     * @param array     $data 2D array,         first numerically-indexed,
-     *                                          and next-level-down preferably indexed by string
-     * @param boolean   $write_column_headers   whether or not we should add the keys in the bottom-most array
-     *                                          as a row for headers in the CSV.
-     *                                            Eg, if $data looked like:
-     *                                            array(
-     *                                                  0=>array('EVT_ID'=>1,'EVT_name'=>'monkey'...),
-     *                                                  1=>array(...,...)
-     *                                            )
-     *
-     * @return boolean      if we successfully wrote to the CSV or not. If there's no $data,
-     *                      we consider that a success (because we wrote everything there was...nothing)
+     * @param string $filepath
+     * @param array  $data                  2D array,first numerically-indexed,
+     *                                      and next-level-down preferably indexed by string
+     * @param bool   $write_column_headers  whether or not we should add the keys in the bottom-most array
+     *                                      as a row for headers in the CSV.
+     *                                      Eg, if $data looked like:
+     *                                          array(
+     *                                              0=>array('EVT_ID'=>1,'EVT_name'=>'monkey'...),
+     *                                              1=>array(...,...)
+     *                                          )
+     * @param bool   $headers_only          if true then we won't print any data, just headers. defaults to false
+     * @return boolean                      if we successfully wrote to the CSV or not. If there's no $data,
+     *                                      we consider that a success (because we wrote everything there was...nothing)
      * @throws EE_Error
      */
-    public static function write_data_array_to_csv($filepath, $data, $write_column_headers = true)
-    {
-
-        $new_file_contents = '';
+    public static function write_data_array_to_csv(
+        string $filepath,
+        array $data,
+        bool $write_column_headers = true,
+        bool $headers_only = false
+    ) {
         // determine if $data is actually a 2d array
         if ($data && is_array($data) && is_array(EEH_Array::get_one_item_from_array($data))) {
             // make sure top level is numerically indexed,
-
             if (EEH_Array::is_associative_array($data)) {
                 throw new EE_Error(sprintf(esc_html__("top-level array must be numerically indexed. Does these look like numbers to you? %s", "event_espresso"), implode(",", array_keys($data))));
             }
+            $new_file_contents = '';
             $item_in_top_level_array = EEH_Array::get_one_item_from_array($data);
             // now, is the last item in the top-level array of $data an associative or numeric array?
-            if (
-                $write_column_headers &&
-                    EEH_Array::is_associative_array($item_in_top_level_array)
-            ) {
+            if ($write_column_headers && EEH_Array::is_associative_array($item_in_top_level_array)) {
                 // its associative, so we want to output its keys as column headers
                 $keys = array_keys($item_in_top_level_array);
                 $new_file_contents .=  EEH_Export::get_csv_row($keys);
+                if ($headers_only) {
+                    return EEH_File::write_to_file(
+                        $filepath,
+                        EEH_File::get_file_contents($filepath) . $new_file_contents
+                    );
+                }
             }
             // start writing data
             foreach ($data as $data_row) {
-                $new_file_contents .= EEH_Export::get_csv_row($data_row);
+                $new_row = EEH_Export::get_csv_row($data_row);
+                $new_file_contents .= $new_row ?: '';
             }
             return EEH_File::write_to_file($filepath, EEH_File::get_file_contents($filepath) . $new_file_contents);
-        } else {
-            // no data TO write... so we can assume that's a success
-            return true;
         }
+        // no data TO write... so we can assume that's a success
+        return true;
     }
 
 

@@ -94,4 +94,4 @@ Various model specific functions/interfaces.  In many cases these are composed f
 | [`ticketModel`](./ticket/README.md) | A module containing all model related interfaces for the Ticket model.
 | [`checkInModel`](./check-in/README.md) | A module containing all model related interfaces for the Checkin model.
 
-Note: The list of exposed models will be added to over time so the above list may be out of date. You can find all the models and their exposed interfaces [here](../../../assets/src/data/model/)
+Note: The list of exposed models will be added to over time so the above list may be out of date. You can find all the models and their exposed interfaces [here](../../../assets/ZZZ/data/model/)

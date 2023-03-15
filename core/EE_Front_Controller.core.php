@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\event\FilterNextPreviousEventPostQuery;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -282,7 +283,11 @@ final class EE_Front_Controller
         $load_assets = $load_assets || $this->espresso_widgets_in_active_sidebars();
         if ($load_assets) {
             add_action('wp_enqueue_scripts', array($this, 'enqueueStyle'), 10);
-            add_action('wp_print_footer_scripts', array($this, 'enqueueScripts'), 10);
+            add_action('wp_enqueue_scripts', array($this, 'enqueueScripts'), 10);
+        }
+
+        if (is_singular('espresso_events')) {
+            new FilterNextPreviousEventPostQuery();
         }
     }
 

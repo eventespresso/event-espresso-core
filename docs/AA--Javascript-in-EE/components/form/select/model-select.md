@@ -49,7 +49,7 @@ This informs what model the incoming modelEntities are for.  This should corresp
 
 ### mapOptionsCallback
 
-This should be a function that converts incoming modelEntities into an array of option objects usable by the react-select component.  By default, this is the built-in [`buildOptions`](../../../../../assets/src/components/form/model/base/build-options.js) callback and that can be used as a reference for how any custom function should behave.
+This should be a function that converts incoming modelEntities into an array of option objects usable by the react-select component.  By default, this is the built-in [`buildOptions`](../../../../../assets/ZZZ/components/form/model/base/build-options.js) callback and that can be used as a reference for how any custom function should behave.
 
 - Type: `Function`
 - Required: No

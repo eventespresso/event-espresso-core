@@ -102,7 +102,7 @@ class EspressoTxnPage extends EspressoShortcode
      * IMPORTANT !!!
      * remember that shortcode content should be RETURNED and NOT echoed out
      *
-     * @param array $attributes
+     * @param array|string $attributes
      * @return string
      */
     public function processShortcode($attributes = array())

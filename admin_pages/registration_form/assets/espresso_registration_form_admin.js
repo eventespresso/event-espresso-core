@@ -66,27 +66,25 @@ function espresso_reg_forms_show_or_hide_question_options(){
 
 function espresso_reg_forms_add_option(){
 
-    var $question_options = jQuery('#question_options');
-    var $question_options_count = jQuery('#question_options_count');
-	var count =  $question_options_count.val();
+    const $question_options = jQuery('#question_options');
+	const $question_options_count = jQuery('#question_options_count');
+	let count =  $question_options_count.val();
 	count++;
 
-    var sampleRow = $question_options.find('tbody tr:first-child');
-	var newRow=sampleRow.clone(true);
-	var newRowName=newRow.find('.option-value');
-	var newRowValue=newRow.find('.option-desc');
-	var newRowOrder=newRow.find('.QSO_order');
-	var name=newRowName.attr('name');
-    var value=newRowValue.attr('name');
-    var order=newRowOrder.attr('name');
-    newRowName.attr('name',name.replace("xxcountxx",count));
-	newRowValue.attr('name', value.replace("xxcountxx",count));
-	newRowOrder.attr('name', order.replace("xxcountxx",count));
+	const sampleRow = $question_options.find('tbody tr:first-child');
+	const newRow=sampleRow.clone(true);
+	const newRowName=newRow.find('.option-value');
 	newRow.removeClass('sample');
 	newRow.addClass('ee-options-sortable');
+	// since html() only returns the inner HTML,
+	// we need to wrap the row in a dummy p tag and then traverse up to the parent
+	// so that the call to html() will return the actual row as well
+	const newRowHtml = newRow.wrap('<p/>').parent().html();
+	// use global regex to replace ALL counts with new value
+	const newContent = newRowHtml.replace(new RegExp("xxcountxx", 'g'), count);
 
 	//add to dom
-    $question_options.find('tr:last').after(newRow);
+    $question_options.find('tr:last').after(newContent);
 	//add new count to dom.
     $question_options_count.val(count);
 
@@ -99,8 +97,6 @@ function espresso_reg_forms_add_option(){
 function espresso_reg_forms_show_option_desc(){
 	jQuery('.option-desc-cell').show();
 	jQuery('.option-desc-header').show();
-	jQuery('.option-value-header').css('width', '45%');
-	jQuery('.option-value-cell').css('width','45%');
 	/** focus on value field **/
 	jQuery('.option-value').focus();
 }

@@ -87,7 +87,7 @@ class EEM_Payment_Method extends EEM_Base
                 ),
                 'PMD_debug_mode'      => new EE_Boolean_Field(
                     'PMD_debug_mode',
-                    esc_html__('Debug Mode On?', 'event_espresso'),
+                    esc_html__('Sandbox Mode On? (AKA: debug mode)', 'event_espresso'),
                     false,
                     false
                 ),
@@ -117,8 +117,8 @@ class EEM_Payment_Method extends EEM_Base
             ],
         ];
         $this->_model_relations = [
-            'Payment'     => new EE_Has_Many_Relation(),
             'Currency'    => new EE_HABTM_Relation('Currency_Payment_Method'),
+            'Payment'     => new EE_Has_Many_Relation(),
             'Transaction' => new EE_Has_Many_Relation(),
             'WP_User'     => new EE_Belongs_To_Relation(),
         ];

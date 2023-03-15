@@ -47,7 +47,7 @@
                     </td>
                     <td>
                         <a id="db-backed-up"
-                           class="toggle-migration-monitor button-primary"
+                           class="toggle-migration-monitor button--primary"
                         >
                             <?php echo esc_html(
                                 apply_filters(

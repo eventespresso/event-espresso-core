@@ -44,7 +44,7 @@ class Base extends Controller_Base
      * Gets the object that should be used for getting any info from the models,
      * because it's takes the requested and current core version into account
      *
-     * @return \EventEspresso\core\libraries\rest_api\ModelVersionInfo
+     * @return ModelVersionInfo
      * @throws EE_Error
      */
     public function getModelVersionInfo()

@@ -15,10 +15,10 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     <h2 class="ee-admin-settings-hdr">
         <?php
         echo esc_html__('Countries and States/Provinces', 'event_espresso');
-        echo wp_kses(EEH_Template::get_help_tab_link('country_select_info'), AllowedTags::getAllowedTags());
+        echo EEH_Template::get_help_tab_link('country_select_info'); // already escaped
         ?>
     </h2>
-    <table class="form-table">
+    <table class="ee-admin-two-column-layout form-table">
         <tbody>
         <?php echo EEH_Form_Fields::generate_form_input($countries); // already escaped ?>
         </tbody>
@@ -41,27 +41,32 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             ); ?>
         </span>
     </p>
-    <div id="country-details-settings-dv">
-        <h2 class="ee-admin-settings-hdr">
-            <?php
-            echo esc_html__('Country Details', 'event_espresso');
-            echo wp_kses(EEH_Template::get_help_tab_link('country_details_info'), AllowedTags::getAllowedTags());
-            ?>
-        </h2>
-        <div id="country-details-dv"><?php echo wp_kses($country_details_settings, AllowedTags::getAllowedTags()); ?></div>
-    </div>
+    <div id="country-settings-dv" class="ee-layout-row">
+        <div id="country-details-settings-dv">
+            <h2 class="ee-admin-settings-hdr">
+                <?php
+                echo esc_html__('Country Details', 'event_espresso');
+                echo wp_kses(EEH_Template::get_help_tab_link('country_details_info'), AllowedTags::getAllowedTags());
+                ?>
+            </h2>
+            <div id="country-details-dv">
+                <?php echo wp_kses($country_details_settings, AllowedTags::getAllowedTags()); ?>
+            </div>
+        </div>
 
-    <div id="country-states-settings-dv">
-        <h2 class="ee-admin-settings-hdr">
-            <?php
-            echo esc_html__('States/Provinces', 'event_espresso');
-            echo wp_kses(EEH_Template::get_help_tab_link('country_states_info'), AllowedTags::getAllowedTags());
-            ?>
-        </h2>
-        <div id="country-states-dv"><?php echo wp_kses($country_states_settings, AllowedTags::getAllowedTags()); ?></div>
+        <div id="country-states-settings-dv">
+            <h2 class="ee-admin-settings-hdr">
+                <?php
+                echo esc_html__('States/Provinces', 'event_espresso');
+                echo wp_kses(EEH_Template::get_help_tab_link('country_states_info'), AllowedTags::getAllowedTags());
+                ?>
+            </h2>
+            <div id="country-states-dv">
+                <?php echo wp_kses($country_states_settings, AllowedTags::getAllowedTags()); ?>
+            </div>
+        </div>
     </div>
 
     <div class="clear"></div>
 
 </div>
-

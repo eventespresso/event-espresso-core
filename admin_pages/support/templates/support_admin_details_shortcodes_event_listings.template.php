@@ -35,12 +35,10 @@
         </li>
         <li>
             <strong>
-                <?php
-                esc_html_e(
+                <?php esc_html_e(
                     'Limit (paginate) the number of events that are shown in the event list on a page or post',
                     'event_espresso'
-                );
-                ?>
+                ); ?>
             </strong>
             <br />
             [ESPRESSO_EVENTS limit=5]
@@ -82,12 +80,10 @@
         </li>
         <li>
             <strong>
-                <?php
-                esc_html_e(
+                <?php esc_html_e(
                     'Order the event list by a specific set of parameters (refer to available options below)',
                     'event_espresso'
-                );
-                ?>
+                ); ?>
             </strong>
             <br />
             [ESPRESSO_EVENTS order_by=start_date,id]
@@ -95,7 +91,7 @@
     </ul>
     <p>
         <?php
-        echo sprintf(
+        printf(
             esc_html__(
                 'These parameters (options) are available for the %s shortcode parameter above. Multiple parameters should be separated by a comma.',
                 'event_espresso'

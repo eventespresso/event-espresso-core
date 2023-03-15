@@ -9,6 +9,7 @@ use EE_Transaction;
 use EEM_Registration;
 use EventEspresso\core\domain\services\capabilities\CapCheck;
 use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\Command;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
@@ -98,8 +99,8 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
 
 
     /**
-     * @return \EventEspresso\core\domain\services\capabilities\CapCheckInterface
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+     * @return CapCheckInterface
+     * @throws InvalidDataTypeException
      */
     public function getCapCheck()
     {

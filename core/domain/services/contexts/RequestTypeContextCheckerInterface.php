@@ -22,7 +22,6 @@ interface RequestTypeContextCheckerInterface
 
     /**
      * @param $is_activation
-     * @return bool
      */
     public function setIsActivation($is_activation);
 
@@ -105,6 +104,11 @@ interface RequestTypeContextCheckerInterface
      */
     public function isFrontAjax();
 
+    /**
+     * @return bool
+     */
+    public function isGQL();
+
 
     /**
      * @return bool
@@ -119,6 +123,13 @@ interface RequestTypeContextCheckerInterface
      */
     public function isOtherAjax();
 
+
+    /**
+     * true if the current request is occurring while unit testing
+     *
+     * @return bool
+     */
+    public function isUnitTesting();
 
     /**
      * true if the current request is for the WP REST API

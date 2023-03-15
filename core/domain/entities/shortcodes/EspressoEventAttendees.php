@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\shortcodes;
 
 use DomainException;
+use EE_Base_Class;
 use EE_Datetime;
 use EE_Error;
 use EE_Event;
@@ -19,6 +20,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
 use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class EspressoEventAttendees
@@ -100,13 +102,14 @@ class EspressoEventAttendees extends EspressoShortcode
      *  - if no event_id then datetime is used whenever its present and any others are ignored.
      *  - otherwise ticket_id is used if present.
      *
-     * @param array $attributes
+     * @param array|string $attributes
      * @return string
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws DomainException
+     * @throws ReflectionException
      */
     public function processShortcode($attributes = array())
     {
@@ -147,7 +150,7 @@ class EspressoEventAttendees extends EspressoShortcode
      * @param array $attributes
      * @return array
      */
-    private function getAttributes(array $attributes)
+    private function getAttributes(array $attributes): array
     {
         return (array) apply_filters(
             'EES_Espresso_Event_Attendees__process_shortcode__default_shortcode_atts',
@@ -177,6 +180,7 @@ class EspressoEventAttendees extends EspressoShortcode
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     private function setBaseTemplateArguments(array $attributes)
     {
@@ -260,8 +264,9 @@ class EspressoEventAttendees extends EspressoShortcode
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
-    private function getEvent(array $attributes)
+    private function getEvent(array $attributes): ?EE_Event
     {
         switch (true) {
             case ! empty($attributes['event_id']):
@@ -314,7 +319,7 @@ class EspressoEventAttendees extends EspressoShortcode
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    private function getDatetime(array $attributes)
+    private function getDatetime(array $attributes): ?EE_Datetime
     {
         if (! empty($attributes['datetime_id'])) {
             $datetime = EEM_Datetime::instance()->get_one_by_ID($attributes['datetime_id']);
@@ -328,7 +333,7 @@ class EspressoEventAttendees extends EspressoShortcode
 
     /**
      * @param array $attributes
-     * @return \EE_Base_Class|EE_Ticket|null
+     * @return EE_Base_Class|EE_Ticket|null
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException

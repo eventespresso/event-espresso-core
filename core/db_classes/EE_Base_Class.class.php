@@ -162,7 +162,7 @@ abstract class EE_Base_Class
         }
         $this->_timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
         if (! empty($date_formats) && is_array($date_formats)) {
-            list($this->_dt_frmt, $this->_tm_frmt) = $date_formats;
+            [$this->_dt_frmt, $this->_tm_frmt] = $date_formats;
         } else {
             // set default formats for date and time
             $this->_dt_frmt = (string) get_option('date_format', 'Y-m-d');
@@ -701,24 +701,22 @@ abstract class EE_Base_Class
         if (! isset($this->_fields[ $fieldname ])) {
             $this->_fields[ $fieldname ] = null;
         }
-        $value = $pretty
+        return $pretty
             ? $field_obj->prepare_for_pretty_echoing($this->_fields[ $fieldname ], $extra_cache_ref)
             : $field_obj->prepare_for_get($this->_fields[ $fieldname ]);
-        return $value;
     }
 
 
     /**
      * set timezone, formats, and output for EE_Datetime_Field objects
      *
-     * @param \EE_Datetime_Field $datetime_field
-     * @param bool               $pretty
-     * @param null               $date_or_time
+     * @param EE_Datetime_Field $datetime_field
+     * @param bool              $pretty
+     * @param null              $date_or_time
      * @return void
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
-     * @throws EE_Error
      */
     protected function _prepare_datetime_field(
         EE_Datetime_Field $datetime_field,
@@ -1321,28 +1319,30 @@ abstract class EE_Base_Class
      * (and the equivalent e_date, e_time, e_datetime).
      *
      * @access   protected
-     * @param string   $field_name   Field on the instantiated EE_Base_Class child object
-     * @param string   $dt_frmt      valid datetime format used for date
-     *                               (if '' then we just use the default on the field,
-     *                               if NULL we use the last-used format)
-     * @param string   $tm_frmt      Same as above except this is for time format
-     * @param string   $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time.
-     * @param  boolean $echo         Whether the dtt is echoing using pretty echoing or just returned using vanilla get
+     * @param string      $field_name   Field on the instantiated EE_Base_Class child object
+     * @param string|null $date_format  valid datetime format used for date
+     *                                  (if '' then we just use the default on the field,
+     *                                  if NULL we use the last-used format)
+     * @param string|null $time_format  Same as above except this is for time format
+     * @param string|null $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time.
+     * @param bool|null   $echo         Whether the datetime is pretty echoing or just returned using vanilla get
      * @return string|bool|EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown
-     *                               if field is not a valid dtt field, or void if echoing
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
+     *                                  if field is not a valid dtt field, or void if echoing
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _get_datetime($field_name, $dt_frmt = '', $tm_frmt = '', $date_or_time = '', $echo = false)
-    {
+    protected function _get_datetime(
+        string $field_name,
+        ?string $date_format = '',
+        ?string $time_format = '',
+        ?string $date_or_time = '',
+        ?bool $echo = false
+    ) {
         // clear cached property
         $this->_clear_cached_property($field_name);
         // reset format properties because they are used in get()
-        $this->_dt_frmt = $dt_frmt !== '' ? $dt_frmt : $this->_dt_frmt;
-        $this->_tm_frmt = $tm_frmt !== '' ? $tm_frmt : $this->_tm_frmt;
+        $this->_dt_frmt = $date_format !== '' ? $date_format : $this->_dt_frmt;
+        $this->_tm_frmt = $time_format !== '' ? $time_format : $this->_tm_frmt;
         if ($echo) {
             $this->e($field_name, $date_or_time);
             return '';
@@ -1565,12 +1565,12 @@ abstract class EE_Base_Class
 
     /**
      * This takes care of setting a date or time independently on a given model object property. This method also
-     * verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
+     * verifies that the given field_name matches a model object property and is for a EE_Datetime_Field field
      *
      * @access protected
      * @param string          $what           "T" for time, 'B' for both, 'D' for Date.
      * @param string|DateTime $datetime_value A valid Date or Time string (or DateTime object)
-     * @param string          $fieldname      the name of the field the date OR time is being set on (must match a
+     * @param string          $field_name     the name of the field the date OR time is being set on (must match a
      *                                        EE_Datetime_Field property)
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1578,34 +1578,33 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    protected function _set_date_time($what, $datetime_value, $fieldname)
+    protected function _set_date_time(string $what, $datetime_value, string $field_name)
     {
-        $what  = $what ?: 'T';
-        $field = $this->_get_dtt_field_settings($fieldname);
+        $field = $this->_get_dtt_field_settings($field_name);
         $field->set_timezone($this->_timezone);
         $field->set_date_format($this->_dt_frmt);
         $field->set_time_format($this->_tm_frmt);
         switch ($what) {
             case 'T':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set_with_new_time(
+                $this->_fields[ $field_name ] = $field->prepare_for_set_with_new_time(
                     $datetime_value,
-                    $this->_fields[ $fieldname ]
+                    $this->_fields[ $field_name ]
                 );
                 $this->_has_changes = true;
                 break;
             case 'D':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set_with_new_date(
+                $this->_fields[ $field_name ] = $field->prepare_for_set_with_new_date(
                     $datetime_value,
-                    $this->_fields[ $fieldname ]
+                    $this->_fields[ $field_name ]
                 );
                 $this->_has_changes = true;
                 break;
             case 'B':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set($datetime_value);
+                $this->_fields[ $field_name ] = $field->prepare_for_set($datetime_value);
                 $this->_has_changes = true;
                 break;
         }
-        $this->_clear_cached_property($fieldname);
+        $this->_clear_cached_property($field_name);
     }
 
 
@@ -1797,13 +1796,13 @@ abstract class EE_Base_Class
      * object just before saving.
      *
      * @access public
-     * @param array $set_cols_n_values  keys are field names, values are their new values,
-     *                                  if provided during the save() method
-     *                                  (often client code will change the fields' values before calling save)
-     * @return false|int|string         1 on a successful update;
-     *                                  the ID of the new entry on insert;
-     *                                  0 on failure, or if the model object isn't allowed to persist
-     *                                  (as determined by EE_Base_Class::allow_persist())
+     * @param array $set_cols_n_values keys are field names, values are their new values,
+     *                                 if provided during the save() method (often client code will change the fields'
+     *                                 values before calling save)
+     * @return bool|int|string         1 on a successful update
+     *                                 the ID of the new entry on insert
+     *                                 0 on failure or if the model object isn't allowed to persist
+     *                                 (as determined by EE_Base_Class::allow_persist())
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
@@ -2188,17 +2187,14 @@ abstract class EE_Base_Class
      * If a model name is provided (eg Registration), gets the model classname for that model.
      * Also works if a model class's classname is provided (eg EE_Registration).
      *
-     * @param null $model_name
+     * @param string|null $model_name
      * @return string like EEM_Attendee
      */
-    private static function _get_model_classname($model_name = null)
+    private static function _get_model_classname($model_name = '')
     {
-        if (strpos($model_name, 'EE_') === 0) {
-            $model_classname = str_replace('EE_', 'EEM_', $model_name);
-        } else {
-            $model_classname = 'EEM_' . $model_name;
-        }
-        return $model_classname;
+        return strpos((string) $model_name, 'EE_') === 0
+            ? str_replace('EE_', 'EEM_', $model_name)
+            : 'EEM_' . $model_name;
     }
 
 
@@ -2248,6 +2244,27 @@ abstract class EE_Base_Class
             return $this->_fields[ $model->primary_key_name() ];
         }
         return $model->get_index_primary_key_string($this->_fields);
+    }
+
+
+    /**
+     * @param EE_Base_Class|int|string $otherModelObjectOrID
+     * @param string                   $relationName
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function hasRelation($otherModelObjectOrID, string $relationName): bool
+    {
+        $other_model = self::_get_model_instance_with_name(
+            self::_get_model_classname($relationName),
+            $this->_timezone
+        );
+        $primary_key = $other_model->primary_key_name();
+        /** @var EE_Base_Class $otherModelObject */
+        $otherModelObject = $other_model->ensure_is_obj($otherModelObjectOrID, $relationName);
+        return $this->count_related($relationName, [[$primary_key => $otherModelObject->ID()]]) > 0;
     }
 
 
@@ -2797,15 +2814,15 @@ abstract class EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function update_extra_meta($meta_key, $meta_value, $previous_value = null)
+    public function update_extra_meta(string $meta_key, $meta_value, $previous_value = null)
     {
-        $query_params = array(
-            array(
+        $query_params = [
+            [
                 'EXM_key'  => $meta_key,
                 'OBJ_ID'   => $this->ID(),
                 'EXM_type' => $this->get_model()->get_this_model_name(),
-            ),
-        );
+            ],
+        ];
         if ($previous_value !== null) {
             $query_params[0]['EXM_value'] = $meta_value;
         }
@@ -2814,7 +2831,7 @@ abstract class EE_Base_Class
             return $this->add_extra_meta($meta_key, $meta_value);
         }
         foreach ($existing_rows_like_that as $existing_row) {
-            $existing_row->save(array('EXM_value' => $meta_value));
+            $existing_row->save(['EXM_value' => $meta_value]);
         }
         return count($existing_rows_like_that);
     }
@@ -2825,10 +2842,10 @@ abstract class EE_Base_Class
      * no other extra meta for this model object have the same key. Returns TRUE if the
      * extra meta row was entered, false if not
      *
-     * @param string  $meta_key
-     * @param mixed   $meta_value
-     * @param boolean $unique
-     * @return boolean
+     * @param string $meta_key
+     * @param mixed  $meta_value
+     * @param bool   $unique
+     * @return bool
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -2836,29 +2853,29 @@ abstract class EE_Base_Class
      * @throws ReflectionException
      * @throws ReflectionException
      */
-    public function add_extra_meta($meta_key, $meta_value, $unique = false)
+    public function add_extra_meta(string $meta_key, $meta_value, bool $unique = false): bool
     {
         if ($unique) {
             $existing_extra_meta = EEM_Extra_Meta::instance()->get_one(
-                array(
-                    array(
+                [
+                    [
                         'EXM_key'  => $meta_key,
                         'OBJ_ID'   => $this->ID(),
                         'EXM_type' => $this->get_model()->get_this_model_name(),
-                    ),
-                )
+                    ],
+                ]
             );
             if ($existing_extra_meta) {
                 return false;
             }
         }
         $new_extra_meta = EE_Extra_Meta::new_instance(
-            array(
+            [
                 'EXM_key'   => $meta_key,
                 'EXM_value' => $meta_value,
                 'OBJ_ID'    => $this->ID(),
                 'EXM_type'  => $this->get_model()->get_this_model_name(),
-            )
+            ]
         );
         $new_extra_meta->save();
         return true;
@@ -2871,22 +2888,22 @@ abstract class EE_Base_Class
      *
      * @param string $meta_key
      * @param mixed  $meta_value
-     * @return int number of extra meta rows deleted
+     * @return int|bool number of extra meta rows deleted
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function delete_extra_meta($meta_key, $meta_value = null)
+    public function delete_extra_meta(string $meta_key, $meta_value = null)
     {
-        $query_params = array(
-            array(
+        $query_params = [
+            [
                 'EXM_key'  => $meta_key,
                 'OBJ_ID'   => $this->ID(),
                 'EXM_type' => $this->get_model()->get_this_model_name(),
-            ),
-        );
+            ],
+        ];
         if ($meta_value !== null) {
             $query_params[0]['EXM_value'] = $meta_value;
         }
@@ -2899,33 +2916,26 @@ abstract class EE_Base_Class
      * an array of everything found. Requires that this model actually have a relation of type EE_Has_Many_Any_Relation.
      * You can specify $default is case you haven't found the extra meta
      *
-     * @param string  $meta_key
-     * @param boolean $single
-     * @param mixed   $default if we don't find anything, what should we return?
+     * @param string     $meta_key
+     * @param bool       $single
+     * @param mixed      $default if we don't find anything, what should we return?
+     * @param array|null $extra_where
      * @return mixed single value if $single; array if ! $single
      * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function get_extra_meta($meta_key, $single = false, $default = null)
+    public function get_extra_meta(string $meta_key, bool $single = false, $default = null, ?array $extra_where = [])
     {
+        $query_params = [ $extra_where + ['EXM_key' => $meta_key] ];
         if ($single) {
-            $result = $this->get_first_related(
-                'Extra_Meta',
-                array(array('EXM_key' => $meta_key))
-            );
+            $result = $this->get_first_related('Extra_Meta', $query_params);
             if ($result instanceof EE_Extra_Meta) {
                 return $result->value();
             }
         } else {
-            $results = $this->get_many_related(
-                'Extra_Meta',
-                array(array('EXM_key' => $meta_key))
-            );
+            $results = $this->get_many_related('Extra_Meta', $query_params);
             if ($results) {
-                $values = array();
+                $values = [];
                 foreach ($results as $result) {
                     if ($result instanceof EE_Extra_Meta) {
                         $values[ $result->ID() ] = $result->value();
@@ -2955,7 +2965,7 @@ abstract class EE_Base_Class
      * finally the extra meta's value as each sub-value. (eg
      * array('foo'=>array(1=>'bar',2=>'bill'),'monkey'=>array(3=>123)))
      *
-     * @param boolean $one_of_each_key
+     * @param bool $one_of_each_key
      * @return array
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2963,13 +2973,13 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function all_extra_meta_array($one_of_each_key = true)
+    public function all_extra_meta_array(bool $one_of_each_key = true): array
     {
-        $return_array = array();
+        $return_array = [];
         if ($one_of_each_key) {
             $extra_meta_objs = $this->get_many_related(
                 'Extra_Meta',
-                array('group_by' => 'EXM_key')
+                ['group_by' => 'EXM_key']
             );
             foreach ($extra_meta_objs as $extra_meta_obj) {
                 if ($extra_meta_obj instanceof EE_Extra_Meta) {
@@ -2981,7 +2991,7 @@ abstract class EE_Base_Class
             foreach ($extra_meta_objs as $extra_meta_obj) {
                 if ($extra_meta_obj instanceof EE_Extra_Meta) {
                     if (! isset($return_array[ $extra_meta_obj->key() ])) {
-                        $return_array[ $extra_meta_obj->key() ] = array();
+                        $return_array[ $extra_meta_obj->key() ] = [];
                     }
                     $return_array[ $extra_meta_obj->key() ][ $extra_meta_obj->ID() ] = $extra_meta_obj->value();
                 }

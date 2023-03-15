@@ -55,19 +55,20 @@ class OrganizationSettings extends FormHandler
      */
     protected $network_core_config;
 
-    /**
+ /**
      * @var CountrySubRegionDao
      */
     protected $countrySubRegionDao;
 
+
     /**
      * Form constructor.
      *
-     * @param EE_Registry             $registry
-     * @param EE_Organization_Config  $organization_config
-     * @param EE_Core_Config          $core_config
+     * @param EE_Registry            $registry
+     * @param EE_Organization_Config $organization_config
+     * @param EE_Core_Config         $core_config
      * @param EE_Network_Core_Config $network_core_config
-     * @param CountrySubRegionDao $countrySubRegionDao
+     * @param CountrySubRegionDao    $countrySubRegionDao
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws DomainException
@@ -80,7 +81,7 @@ class OrganizationSettings extends FormHandler
         CountrySubRegionDao $countrySubRegionDao
     ) {
         $this->organization_config = $organization_config;
-        $this->core_config = $core_config;
+        $this->core_config         = $core_config;
         $this->network_core_config = $network_core_config;
         $this->countrySubRegionDao = $countrySubRegionDao;
         parent::__construct(
@@ -107,7 +108,7 @@ class OrganizationSettings extends FormHandler
     public function generate(): EE_Form_Section_Proper
     {
         $has_sub_regions = EEM_State::instance()->count(
-            array(array('Country.CNT_ISO' => $this->organization_config->CNT_ISO))
+            [['Country.CNT_ISO' => $this->organization_config->CNT_ISO]]
         );
         return apply_filters(
             'FHEE__EventEspresso_admin_pages_general_settings_OrganizationSettings__generate__form',
@@ -157,6 +158,7 @@ class OrganizationSettings extends FormHandler
                         'organization_city'      => new EE_Text_Input(
                             array(
                                 'html_name' => 'organization_city',
+                                'html_class'   => 'ee-input-size--reg',
                                 'html_label_text' => esc_html__('City', 'event_espresso'),
                                 'default'         => $this->organization_config->get_pretty('city'),
                                 'required'        => false,
@@ -167,6 +169,7 @@ class OrganizationSettings extends FormHandler
                             array(
                                 EE_Country_Select_Input::OPTION_GET_KEY => EE_Country_Select_Input::OPTION_GET_ALL,
                                 'html_name'       => 'organization_country',
+                                'html_class'         => 'ee-input-size--reg',
                                 'html_label_text' => esc_html__('Country', 'event_espresso'),
                                 'default'         => $this->organization_config->CNT_ISO,
                                 'required'        => false,
@@ -203,6 +206,7 @@ class OrganizationSettings extends FormHandler
                         'organization_zip'      => new EE_Text_Input(
                             array(
                                 'html_name' => 'organization_zip',
+                                'html_class'  => 'ee-input-size--small',
                                 'html_label_text' => esc_html__('Zip/Postal Code', 'event_espresso'),
                                 'default'         => $this->organization_config->get_pretty('zip'),
                                 'required'        => false,
@@ -227,6 +231,7 @@ class OrganizationSettings extends FormHandler
                         'organization_phone'      => new EE_Text_Input(
                             array(
                                 'html_name' => 'organization_phone',
+                                'html_class'  => 'ee-input-size--small',
                                 'html_label_text' => esc_html__('Phone Number', 'event_espresso'),
                                 'html_help_text'  => esc_html__(
                                     'The phone number for your organization.',
@@ -239,6 +244,7 @@ class OrganizationSettings extends FormHandler
                         'organization_vat'      => new EE_Text_Input(
                             array(
                                 'html_name' => 'organization_vat',
+                                'html_class'      => 'ee-input-size--reg',
                                 'html_label_text' => esc_html__('VAT/Tax Number', 'event_espresso'),
                                 'html_help_text'  => esc_html__(
                                     'The VAT/Tax Number may be displayed on invoices and receipts.',
@@ -385,58 +391,58 @@ class OrganizationSettings extends FormHandler
                 ? sanitize_text_field($form_data['ee_site_license_key'])
                 : $this->network_core_config->site_license_key;
         }
-        $this->organization_config->name = isset($form_data['organization_name'])
+        $this->organization_config->name         = isset($form_data['organization_name'])
             ? sanitize_text_field($form_data['organization_name'])
             : $this->organization_config->name;
-        $this->organization_config->address_1 = isset($form_data['organization_address_1'])
+        $this->organization_config->address_1    = isset($form_data['organization_address_1'])
             ? sanitize_text_field($form_data['organization_address_1'])
             : $this->organization_config->address_1;
-        $this->organization_config->address_2 = isset($form_data['organization_address_2'])
+        $this->organization_config->address_2    = isset($form_data['organization_address_2'])
             ? sanitize_text_field($form_data['organization_address_2'])
             : $this->organization_config->address_2;
-        $this->organization_config->city = isset($form_data['organization_city'])
+        $this->organization_config->city         = isset($form_data['organization_city'])
             ? sanitize_text_field($form_data['organization_city'])
             : $this->organization_config->city;
-        $this->organization_config->STA_ID = isset($form_data['organization_state'])
+        $this->organization_config->STA_ID       = isset($form_data['organization_state'])
             ? absint($form_data['organization_state'])
             : $this->organization_config->STA_ID;
-        $this->organization_config->CNT_ISO = isset($form_data['organization_country'])
+        $this->organization_config->CNT_ISO      = isset($form_data['organization_country'])
             ? sanitize_text_field($form_data['organization_country'])
             : $this->organization_config->CNT_ISO;
-        $this->organization_config->zip = isset($form_data['organization_zip'])
+        $this->organization_config->zip          = isset($form_data['organization_zip'])
             ? sanitize_text_field($form_data['organization_zip'])
             : $this->organization_config->zip;
-        $this->organization_config->email = isset($form_data['organization_email'])
+        $this->organization_config->email        = isset($form_data['organization_email'])
             ? sanitize_email($form_data['organization_email'])
             : $this->organization_config->email;
-        $this->organization_config->vat = isset($form_data['organization_vat'])
+        $this->organization_config->vat          = isset($form_data['organization_vat'])
             ? sanitize_text_field($form_data['organization_vat'])
             : $this->organization_config->vat;
-        $this->organization_config->phone = isset($form_data['organization_phone'])
+        $this->organization_config->phone        = isset($form_data['organization_phone'])
             ? sanitize_text_field($form_data['organization_phone'])
             : $this->organization_config->phone;
-        $this->organization_config->logo_url = isset($form_data['organization_logo_url'])
+        $this->organization_config->logo_url     = isset($form_data['organization_logo_url'])
             ? esc_url_raw($form_data['organization_logo_url'])
             : $this->organization_config->logo_url;
-        $this->organization_config->facebook = isset($form_data['organization_facebook'])
+        $this->organization_config->facebook     = isset($form_data['organization_facebook'])
             ? esc_url_raw($form_data['organization_facebook'])
             : $this->organization_config->facebook;
-        $this->organization_config->twitter = isset($form_data['organization_twitter'])
+        $this->organization_config->twitter      = isset($form_data['organization_twitter'])
             ? esc_url_raw($form_data['organization_twitter'])
             : $this->organization_config->twitter;
-        $this->organization_config->linkedin = isset($form_data['organization_linkedin'])
+        $this->organization_config->linkedin     = isset($form_data['organization_linkedin'])
             ? esc_url_raw($form_data['organization_linkedin'])
             : $this->organization_config->linkedin;
-        $this->organization_config->pinterest = isset($form_data['organization_pinterest'])
+        $this->organization_config->pinterest    = isset($form_data['organization_pinterest'])
             ? esc_url_raw($form_data['organization_pinterest'])
             : $this->organization_config->pinterest;
-        $this->organization_config->google = isset($form_data['organization_google'])
+        $this->organization_config->google       = isset($form_data['organization_google'])
             ? esc_url_raw($form_data['organization_google'])
             : $this->organization_config->google;
-        $this->organization_config->instagram = isset($form_data['organization_instagram'])
+        $this->organization_config->instagram    = isset($form_data['organization_instagram'])
             ? esc_url_raw($form_data['organization_instagram'])
             : $this->organization_config->instagram;
-        $this->core_config->ee_ueip_optin = isset($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0])
+        $this->core_config->ee_ueip_optin        = isset($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0])
             ? filter_var($form_data[ EE_Core_Config::OPTION_NAME_UXIP ][0], FILTER_VALIDATE_BOOLEAN)
             : false;
         $this->core_config->ee_ueip_has_notified = true;

@@ -2,7 +2,7 @@
 
 /**
  * Serialized text field should basically: accept either an array or serialized text as input.
- * When initally set by client code (ie, not EEM_Base or children), the value should remain an array.
+ * When initially set by client code (ie, not EEM_Base or children), the value should remain an array.
  * However, when inserting into the DB, it should be serialized.
  * Upon retrieval from the DB, it should be unserialized back into an array.
  */
@@ -37,11 +37,12 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base
         $value_inputted_for_field_on_model_object = EEH_Array::maybe_unserialize($value_inputted_for_field_on_model_object);
         if (is_string($value_inputted_for_field_on_model_object)) {
             return parent::prepare_for_set($value_inputted_for_field_on_model_object);
-        } elseif (is_array($value_inputted_for_field_on_model_object)) {
-            return array_map(array($this, 'prepare_for_set'), $value_inputted_for_field_on_model_object);
-        } else {// so they passed NULL or an INT or something wack
-            return $value_inputted_for_field_on_model_object;
         }
+        if (is_array($value_inputted_for_field_on_model_object)) {
+            return array_map(array($this, 'prepare_for_set'), $value_inputted_for_field_on_model_object);
+        }
+        // so they passed NULL or an INT or something wack
+        return $value_inputted_for_field_on_model_object;
     }
 
     /**
@@ -58,11 +59,11 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base
     /**
      * Gets a string representation of the array
      *
-     * @param type   $value_on_field_to_be_outputted
-     * @param string $schema , possible values are ',', others can be added
+     * @param mixed       $value_on_field_to_be_outputted
+     * @param string|null $schema , possible values are ',', others can be added
      * @return string
      */
-    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, ?string $schema = null)
     {
         switch ($schema) {
             case 'print_r':

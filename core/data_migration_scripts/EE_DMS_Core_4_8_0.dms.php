@@ -1,14 +1,5 @@
 <?php
 
-/**
- * meant to convert DBs from 4.6 (OR 4.7, which basically supports MER and wasn't clear if it was
- * going to be released before this version) to 4.8 (which basically supports promotions)
- * mostly just
- * -refactors line item trees, so that there are subtotals for EACH event purchased,
- * which is especially convenient for applying event-wide promotions
- * -does NOT actually make any database schema changes
- */
-
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -27,10 +18,14 @@ foreach ($stages as $filepath) {
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_8_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
-
-
 /**
  * Class EE_DMS_Core_4_8_0
+ * meant to convert DBs from 4.6 (OR 4.7, which basically supports MER and wasn't clear if it was
+ * going to be released before this version) to 4.8 (which basically supports promotions)
+ * mostly just
+ * -refactors line item trees, so that there are subtotals for EACH event purchased,
+ * which is especially convenient for applying event-wide promotions
+ * -does NOT actually make any database schema changes
  *
  * @package               Event Espresso
  * @subpackage            core
@@ -146,13 +141,6 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base
 				CUR_active tinyint(1) DEFAULT '0',
 				PRIMARY KEY  (CUR_code)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
-        $table_name = 'esp_currency_payment_method';
-        $sql = "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
-				CUR_code varchar(6) collate utf8_bin NOT NULL,
-				PMD_ID int(11) NOT NULL,
-				PRIMARY KEY  (CPM_ID),
-				KEY PMD_ID (PMD_ID)";
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_datetime';
         $sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  EVT_ID bigint(20) unsigned NOT NULL,

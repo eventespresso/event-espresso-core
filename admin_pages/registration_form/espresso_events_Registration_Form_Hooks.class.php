@@ -23,8 +23,15 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
 
     protected function _set_hooks_properties()
     {
-
-        $this->_name      = 'registration_form';
+        $this->_name = 'registration_form';
+        if (
+            $this->_adminpage_obj->adminConfig()->useAdvancedEditor()
+            && $this->_adminpage_obj->feature()->allowed('use_reg_form_builder')
+        ) {
+            $this->_metaboxes      = [];
+            $this->_scripts_styles = [];
+            return;
+        }
         $this->_metaboxes = [
             0 => [
                 'page_route' => ['edit', 'create_new'],
@@ -57,7 +64,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
     public function modify_callbacks($callbacks)
     {
         // now let's add the question group callback
-        $callbacks[] = [$this, 'primary_question_group_update'];
+        $callbacks['primary_question_group_update'] = [$this, 'primary_question_group_update'];
         return $callbacks;
     }
 
@@ -164,14 +171,14 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
 
                     $html .= '
 					<p id="event-question-group-' . $QSG_ID . '">
-						<input value="' . $QSG_ID . '" 
+						<input value="' . $QSG_ID . '"
 						    type="checkbox"
 						    name="question_groups[' . $QSG_ID . ']" '
-                             . $visibility
-                             . $checked . ' 
+                            . $visibility
+                            . $checked . '
                         />
-						<a href="' . esc_url_raw($edit_link) . '" 
-						    aria-label="' . esc_attr($edit_link_title) . '" 
+						<a href="' . esc_url_raw($edit_link) . '"
+						    aria-label="' . esc_attr($edit_link_title) . '"
 						    target="_blank"
 						    >
 						    ' . $QSG->get('QSG_name') . '

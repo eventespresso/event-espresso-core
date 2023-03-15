@@ -16,6 +16,7 @@ use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
 use EventEspresso\core\services\request\CurrentPage;
 use Exception;
+use WP_Post;
 
 /**
  * Class ShortcodesManager
@@ -40,7 +41,7 @@ class ShortcodesManager
     private $legacy_shortcodes_manager;
 
     /**
-     * @var ShortcodeInterface[] $shortcodes
+     * @var CollectionInterface|ShortcodeInterface[] $shortcodes
      */
     private $shortcodes;
 
@@ -201,7 +202,7 @@ class ShortcodesManager
         $posts = is_array($wp_query->posts) ? $wp_query->posts : [$wp_query->posts];
         foreach ($posts as $post) {
             // now check post content and excerpt for EE shortcodes
-            $load_assets = $this->parseContentForShortcodes($post->post_content)
+            $load_assets = $this->parseContentForShortcodes($post->post_content, $post)
                 ? true
                 : $load_assets;
         }
@@ -218,17 +219,26 @@ class ShortcodesManager
      * then initializes any found shortcodes, and returns true.
      * returns false if no shortcodes found.
      *
-     * @param string $content
+     * @param string  $content
+     * @param WP_Post $post
      * @return bool
      */
-    public function parseContentForShortcodes($content)
+    public function parseContentForShortcodes(string $content, WP_Post $post): bool
     {
         if (empty($this->shortcodes)) {
             return false;
         }
         $has_shortcode = false;
         foreach ($this->shortcodes as $shortcode) {
-            if (has_shortcode($content, $shortcode->getTag())) {
+            if (
+                apply_filters(
+                    'FHEE__EventEspresso_core_services_shortcodes_ShortcodesManager__parseContentForShortcodes__has_shortcode',
+                    has_shortcode($content, $shortcode->getTag()),
+                    $content,
+                    $post,
+                    $shortcode
+                )
+            ) {
                 $shortcode->initializeShortcode();
                 $has_shortcode = true;
             }

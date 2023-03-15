@@ -1,11 +1,5 @@
 <?php
 
-/**
- * meant to convert DBs between 4.6 and 4.6
- * mostly just
- * -move payment methods from EE_Config into a separate table just for them
- */
-
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -28,6 +22,9 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
 
 /**
  * Class EE_DMS_Core_4_6_0
+ * meant to convert DBs between 4.6 and 4.6
+ * mostly just
+ * -move payment methods from EE_Config into a separate table just for them
  *
  * @package               Event Espresso
  * @subpackage            core
@@ -142,12 +139,6 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base
 				CUR_active tinyint(1) DEFAULT '0',
 				PRIMARY KEY  (CUR_code)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
-        $table_name = 'esp_currency_payment_method';
-        $sql = "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
-				CUR_code varchar(6) COLLATE utf8_bin NOT NULL,
-				PMD_ID int(11) NOT NULL,
-				PRIMARY KEY  (CPM_ID)";
-        $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_datetime';
         $sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  EVT_ID bigint(20) unsigned NOT NULL,

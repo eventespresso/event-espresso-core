@@ -6,6 +6,7 @@ use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use Exception;
 use SplDoublyLinkedList;
+use Throwable;
 
 /**
  * Class RequestStackBuilder
@@ -19,10 +20,7 @@ use SplDoublyLinkedList;
  */
 class RequestStackBuilder extends SplDoublyLinkedList
 {
-    /**
-     * @type LoaderInterface $loader
-     */
-    private $loader;
+    private LoaderInterface $loader;
 
 
     /**
@@ -44,8 +42,9 @@ class RequestStackBuilder extends SplDoublyLinkedList
      * @param RequestStackCoreAppInterface $application
      * @return RequestStack
      * @throws Exception
+     * @throws Throwable
      */
-    public function resolve(RequestStackCoreAppInterface $application)
+    public function resolve(RequestStackCoreAppInterface $application): RequestStack
     {
         $core_app = $application;
         // NOW... because the RequestStack is following the decorator pattern,
@@ -84,12 +83,12 @@ class RequestStackBuilder extends SplDoublyLinkedList
      * @return array
      * @throws InvalidRequestStackMiddlewareException
      */
-    protected function validateMiddlewareAppDetails(array $middleware_app, $recurse = false)
+    protected function validateMiddlewareAppDetails(array $middleware_app, bool $recurse = false): array
     {
         $middleware_app_class = reset($middleware_app);
         // is array empty ?
         if ($middleware_app_class === false) {
-            throw new InvalidRequestStackMiddlewareException($middleware_app_class);
+            throw new InvalidRequestStackMiddlewareException('invalid middleware');
         }
         // are the class and arguments in the wrong order ?
         if (is_array($middleware_app_class)) {

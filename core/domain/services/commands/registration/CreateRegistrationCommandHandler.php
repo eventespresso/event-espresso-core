@@ -3,12 +3,14 @@
 namespace EventEspresso\core\domain\services\commands\registration;
 
 use EE_Error;
+use EE_Registration;
 use EventEspresso\core\domain\services\registration\CreateRegistrationService;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
 use OutOfRangeException;
+use ReflectionException;
 
 /**
  * Class CreateRegistrationCommandHandler
@@ -39,12 +41,13 @@ class CreateRegistrationCommandHandler extends CommandHandler
 
 
     /**
-     * @param  CommandInterface|CreateRegistrationCommand $command
-     * @return mixed
+     * @param CommandInterface|CreateRegistrationCommand $command
+     * @return EE_Registration
      * @throws OutOfRangeException
      * @throws UnexpectedEntityException
      * @throws EE_Error
      * @throws InvalidEntityException
+     * @throws ReflectionException
      */
     public function handle(CommandInterface $command)
     {
@@ -52,6 +55,7 @@ class CreateRegistrationCommandHandler extends CommandHandler
         if (! $command instanceof CreateRegistrationCommand) {
             throw new InvalidEntityException(get_class($command), 'CreateRegistrationCommand');
         }
+
         // now create a new registration for the ticket
         return $this->registration_service->create(
             $command->ticket()->get_related_event(),

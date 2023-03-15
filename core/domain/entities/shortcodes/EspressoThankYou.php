@@ -2,8 +2,11 @@
 
 namespace EventEspresso\core\domain\entities\shortcodes;
 
+use EE_Error;
 use EE_Registry;
+use EED_Thank_You_Page;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
+use ReflectionException;
 use WP_Post;
 
 /**
@@ -16,7 +19,7 @@ use WP_Post;
 class EspressoThankYou extends EspressoShortcode
 {
     /**
-     * @var boolean $is_thank_you_page
+     * @var bool $is_thank_you_page
      */
     private $is_thank_you_page = false;
 
@@ -49,7 +52,8 @@ class EspressoThankYou extends EspressoShortcode
      * and need to enqueue assets for that module
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initializeShortcode()
     {
@@ -62,7 +66,7 @@ class EspressoThankYou extends EspressoShortcode
             return;
         }
         $this->is_thank_you_page = true;
-        \EED_Thank_You_Page::instance()->load_resources();
+        EED_Thank_You_Page::instance()->load_resources();
         $this->shortcodeHasBeenInitialized();
     }
 
@@ -72,14 +76,15 @@ class EspressoThankYou extends EspressoShortcode
      * IMPORTANT !!!
      * remember that shortcode content should be RETURNED and NOT echoed out
      *
-     * @param array $attributes
+     * @param array|string $attributes
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function processShortcode($attributes = array())
     {
         return $this->is_thank_you_page
-            ? \EED_Thank_You_Page::instance()->thank_you_page_results()
+            ? EED_Thank_You_Page::instance()->thank_you_page_results()
             : '';
     }
 }

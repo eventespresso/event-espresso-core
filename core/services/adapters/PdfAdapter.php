@@ -23,9 +23,6 @@ class PdfAdapter
      */
     public function __construct()
     {
-        if (! class_exists('Dompdf/Dompdf')) {
-            require_once EE_VENDOR . 'autoload.php';
-        }
     }
 
 

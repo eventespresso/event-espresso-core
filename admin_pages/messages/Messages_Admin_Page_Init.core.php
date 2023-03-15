@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+
 /**
  * Messages_Admin_Page_Init
  *
@@ -8,8 +10,6 @@
  * @package         Event Espresso
  * @subpackage      includes/core/message/EE_Message_Admin_Page_Init.core.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Messages_Admin_Page_Init extends EE_Admin_Page_Init
 {
@@ -22,7 +22,6 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init
      */
     public function __construct()
     {
-
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
         if (! defined('EE_MSG_PG_SLUG')) {
@@ -46,19 +45,17 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init
     }
 
 
-    protected function _set_menu_map()
+    public function getMenuProperties(): array
     {
-        $this->_menu_map = new EE_Admin_Page_Sub_Menu(
-            array(
-                'menu_group'      => 'management',
-                'menu_order'      => 10,
-                'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
-                'parent_slug'     => 'espresso_events',
-                'menu_slug'       => EE_MSG_PG_SLUG,
-                'menu_label'      => esc_html__('Messages', 'event_espresso'),
-                'capability'      => 'ee_read_global_messages',
-                'admin_init_page' => $this,
-            )
-        );
+        return [
+            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'      => 'management',
+            'menu_order'      => 10,
+            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'     => 'espresso_events',
+            'menu_slug'       => EE_MSG_PG_SLUG,
+            'menu_label'      => esc_html__('Messages', 'event_espresso'),
+            'capability'      => 'ee_read_global_messages',
+        ];
     }
 }

@@ -8,6 +8,7 @@ use EEM_Base;
 use EEM_Registration;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 
@@ -25,6 +26,11 @@ class QueryBuilder
      * @var RequestInterface $request
      */
     protected $request;
+
+    /**
+     * @var array
+     */
+    protected $filters;
 
     /**
      * @var EEM_Registration $registration_model
@@ -55,6 +61,7 @@ class QueryBuilder
         array $extra_request_params = []
     ) {
         $this->request = $request;
+        $this->filters = $this->request->getRequestParam('filters', [], DataType::STRING, true);
         $this->registration_model = $registration_model;
         foreach ($extra_request_params as $key => $value) {
             if (! $this->request->requestParamIsSet($key)) {
@@ -154,7 +161,9 @@ class QueryBuilder
      */
     protected function addCategoryIdToWhereConditions()
     {
-        $EVT_CAT = (int) $this->request->getRequestParam('EVT_CAT', 0, 'int');
+        $EVT_CAT = $this->request->getRequestParam('EVT_CAT', 0, DataType::INTEGER);
+        $EVT_CAT = $this->filters['EVT_CAT'] ?? $EVT_CAT;
+        $EVT_CAT = (int) $EVT_CAT;
         if ($EVT_CAT > 0) {
             $this->where_params['Event.Term_Taxonomy.term_id'] = $EVT_CAT;
         }
@@ -168,7 +177,10 @@ class QueryBuilder
     {
         // first look for 'datetime_id' then 'DTT_ID' using first result as fallback default value
         $DTT_ID = $this->request->getRequestParam('datetime_id');
-        $DTT_ID = $this->request->getRequestParam('DTT_ID', $DTT_ID, 'int');
+        $DTT_ID = $this->request->getRequestParam('DTT_ID', $DTT_ID, DataType::INTEGER);
+        $DTT_ID = $this->filters['datetime_id'] ?? $DTT_ID;
+        $DTT_ID = (int) $DTT_ID;
+
         if ($DTT_ID) {
             $this->where_params['Ticket.Datetime.DTT_ID'] = $DTT_ID;
         }
@@ -182,7 +194,10 @@ class QueryBuilder
     {
         // first look for 'ticket_id' then 'TKT_ID' using first result as fallback default value
         $TKT_ID = $this->request->getRequestParam('ticket_id');
-        $TKT_ID = $this->request->getRequestParam('TKT_ID', $TKT_ID, 'int');
+        $TKT_ID = $this->request->getRequestParam('TKT_ID', $TKT_ID, DataType::INTEGER);
+        $TKT_ID = $this->filters['ticket_id'] ?? $TKT_ID;
+        $TKT_ID = (int) $TKT_ID;
+
         if ($TKT_ID) {
             $this->where_params['TKT_ID'] = $TKT_ID;
         }
@@ -198,6 +213,7 @@ class QueryBuilder
     protected function addRegistrationStatusToWhereConditions()
     {
         $registration_status = $this->request->getRequestParam('_reg_status');
+        $registration_status = $this->filters['_reg_status'] ?? $registration_status;
         if ($registration_status) {
             $this->where_params['STS_ID'] = sanitize_text_field($registration_status);
             return;
@@ -263,6 +279,7 @@ class QueryBuilder
             return;
         }
         $month_range = $this->request->getRequestParam('month_range');
+        $month_range = $this->filters['month_range'] ?? $month_range;
         if ($month_range) {
             $month_range = sanitize_text_field($month_range);
             $pieces = explode(' ', $month_range, 3);

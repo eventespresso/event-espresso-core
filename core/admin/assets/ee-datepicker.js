@@ -135,8 +135,9 @@ var dttPickerHelper = {
 
 
 
-	picker: function(start, end, next, doingstart) {
+	picker: function(start, end, next, doingstart, reset_on_close) {
 	    doingstart = typeof doingstart === 'boolean' ? doingstart : true;
+		reset_on_close = typeof reset_on_close === 'boolean' ? reset_on_close : true;
 
 		this.startobj = start;
 		this.endobj = end;
@@ -199,8 +200,10 @@ var dttPickerHelper = {
 				}
                 //trigger the dttPicker close event
                 dttPickerHelper.pickerobj.trigger({ type:'datepickerclose',dateText:dateText, dttinst:dpinst } );
-				dttPickerHelper.resetpicker();
-				dttPickerHelper.pickerobj.datetimepicker('destroy');
+				if (reset_on_close) {
+					dttPickerHelper.resetpicker();
+					dttPickerHelper.pickerobj.datetimepicker('destroy');
+				}
 				return false;
 			};
 			this.pickerobj.datetimepicker(this.dttOptions);

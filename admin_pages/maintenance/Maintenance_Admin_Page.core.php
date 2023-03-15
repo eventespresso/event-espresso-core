@@ -162,6 +162,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'default'        => [
                 'nav'           => [
                     'label' => esc_html__('Maintenance', 'event_espresso'),
+                    'icon' => 'dashicons-admin-tools',
                     'order' => 10,
                 ],
                 'require_nonce' => false,
@@ -169,6 +170,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'data_reset'     => [
                 'nav'           => [
                     'label' => esc_html__('Reset/Delete Data', 'event_espresso'),
+                    'icon' => 'dashicons-trash',
                     'order' => 20,
                 ],
                 'require_nonce' => false,
@@ -176,6 +178,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'datetime_tools' => [
                 'nav'           => [
                     'label' => esc_html__('Datetime Utilities', 'event_espresso'),
+                    'icon' => 'dashicons-calendar-alt',
                     'order' => 25,
                 ],
                 'require_nonce' => false,
@@ -183,6 +186,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'system_status'  => [
                 'nav'           => [
                     'label' => esc_html__("System Information", "event_espresso"),
+                    'icon' => 'dashicons-info',
                     'order' => 30,
                 ],
                 'require_nonce' => false,
@@ -432,13 +436,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'reset_reservations',
             'reset_reservations',
             [],
-            'button button-primary ee-confirm'
+            'button button--caution ee-confirm'
         );
         $this->_template_args['reset_capabilities_button'] = $this->get_action_link_or_button(
             'reset_capabilities',
             'reset_capabilities',
             [],
-            'button button-primary ee-confirm'
+            'button button--caution ee-confirm'
         );
         $this->_template_args['delete_db_url']             = EE_Admin_Page::add_query_args_and_nonce(
             ['action' => 'delete_db'],
@@ -453,7 +457,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             $this->_template_args,
             true
         );
-        $this->display_admin_page_with_sidebar();
+        $this->display_admin_page_with_no_sidebar();
     }
 
 
@@ -532,7 +536,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             $this->_template_args,
             true
         );
-        $this->display_admin_page_with_sidebar();
+        $this->display_admin_page_with_no_sidebar();
     }
 
 
@@ -802,7 +806,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         $this->_template_args['admin_page_content'] = $form->form_open($form_action, 'post')
                                                       . $form->get_html_and_js()
                                                       . $form->form_close();
-        $this->display_admin_page_with_no_sidebar();
+        $this->display_admin_page_with_sidebar();
     }
 
 
@@ -935,8 +939,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 wp_redirect(
                     EE_Admin_Page::add_query_args_and_nonce(
                         [
-                            'page'        => 'espresso_batch',
-                            'batch'       => 'job',
+                            'page'        => EED_Batch::PAGE_SLUG,
+                            'batch'       => EED_Batch::batch_job,
                             'label'       => esc_html__('Applying Offset', 'event_espresso'),
                             'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix'),
                             'return_url'  => urlencode(

@@ -65,8 +65,26 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
 
 
     /**
-     * @param EEI_Payment $payment
-     * @param array       $billing_info {
+     * CLeans out sensitive CC data and then logs it, and returns the cleaned request
+     *
+     * @param array       $request
+     * @param EE_Payment $payment
+     * @return void
+     */
+    private function _log_clean_request($request, $payment)
+    {
+        $cleaned_request_data = $request;
+        unset($cleaned_request_data['CCDetails']['acct']);
+        unset($cleaned_request_data['CCDetails']['cvv2']);
+        unset($cleaned_request_data['CCDetails']['expdate']);
+        $this->log(array('Paypal Request' => $cleaned_request_data), $payment);
+    }
+
+
+
+    /**
+     * @param EE_Payment|null $payment
+     * @param array|null $billing_info {
      * @type string $credit_card
      * @type string $credit_card_type
      * @type string $exp_month always 2 characters
@@ -74,19 +92,20 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
      * @type string $cvv
      * }
      * @see      parent::do_direct_payment for more info
-     * @return EE_Payment|EEI_Payment
+     * @return EE_Payment
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function do_direct_payment($payment, $billing_info = null)
     {
         $transaction = $payment->transaction();
-        if (! $transaction instanceof EEI_Transaction) {
+        if (! $transaction instanceof EE_Transaction) {
             throw new EE_Error(
                 esc_html__('No transaction for payment while paying with PayPal Pro.', 'event_espresso')
             );
         }
         $primary_registrant = $transaction->primary_registration();
-        if (! $primary_registrant instanceof EEI_Registration) {
+        if (! $primary_registrant instanceof EE_Registration) {
             throw new EE_Error(
                 esc_html__(
                     'No primary registration on transaction while paying with PayPal Pro.',
@@ -356,24 +375,6 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         // $payment->set_status( $this->_pay_model->declined_status() );
         // $payment->set_gateway_response( '' );
         return $payment;
-    }
-
-
-
-    /**
-     * CLeans out sensitive CC data and then logs it, and returns the cleaned request
-     *
-     * @param array       $request
-     * @param EEI_Payment $payment
-     * @return void
-     */
-    private function _log_clean_request($request, $payment)
-    {
-        $cleaned_request_data = $request;
-        unset($cleaned_request_data['CCDetails']['acct']);
-        unset($cleaned_request_data['CCDetails']['cvv2']);
-        unset($cleaned_request_data['CCDetails']['expdate']);
-        $this->log(array('Paypal Request' => $cleaned_request_data), $payment);
     }
 
 

@@ -2,10 +2,12 @@
 
 namespace EventEspresso\core\domain\entities\shortcodes;
 
+use EE_Error;
 use EED_Single_Page_Checkout;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\ResponseInterface;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
+use ReflectionException;
 
 /**
  * Class EspressoCheckout
@@ -46,6 +48,8 @@ class EspressoCheckout extends EspressoShortcode
      * and need to enqueue assets for that module
      *
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initializeShortcode()
     {
@@ -60,7 +64,7 @@ class EspressoCheckout extends EspressoShortcode
      * IMPORTANT !!!
      * remember that shortcode content should be RETURNED and NOT echoed out
      *
-     * @param array $attributes
+     * @param array|string $attributes
      * @return string
      */
     public function processShortcode($attributes = array())

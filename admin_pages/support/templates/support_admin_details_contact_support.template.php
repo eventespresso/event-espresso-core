@@ -27,12 +27,10 @@
         </li>
         <li>
             <strong><em><?php esc_html_e('A plugin conflict.', 'event_espresso'); ?></em></strong>
-            <?php
-            esc_html_e(
+            <?php esc_html_e(
                 'You can check to see if there is a plugin conflict by temporarily deactivating all plugins except for Event Espresso. If the problem goes away, then reactivate your plugins one by one until the issue returns. This will help you pinpoint the source of the conflict.',
                 'event_espresso'
-            );
-            ?>
+            ); ?>
         </li>
         <li>
             <strong><em><?php esc_html_e('A theme conflict.', 'event_espresso'); ?></em></strong>

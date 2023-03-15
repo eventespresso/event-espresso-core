@@ -11,9 +11,9 @@
 class EE_PMT_Aim extends EE_PMT_Base
 {
     /**
-     * @param EE_Payment_Method $pm_instance
-     * @return EE_PMT_Aim
-     * @throws \EE_Error
+     * @param EE_Payment_Method|null $pm_instance
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     public function __construct($pm_instance = null)
     {
@@ -41,9 +41,10 @@ class EE_PMT_Aim extends EE_PMT_Base
     /**
      * Creates the billing form for this payment method type
      *
-     * @param \EE_Transaction $transaction
-     * @return EE_Billing_Info_Form
-     * @throws \EE_Error
+     * @param EE_Transaction|null $transaction
+     * @return EE_Billing_Info_Form|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_new_billing_form(EE_Transaction $transaction = null)
     {
@@ -105,14 +106,14 @@ class EE_PMT_Aim extends EE_PMT_Base
     }
 
 
-
     /**
      * apply_billing_form_debug_settings
      * applies debug data to the form
      *
-     * @param \EE_Billing_Info_Form $billing_form
-     * @return \EE_Billing_Info_Form
-     * @throws \EE_Error
+     * @param EE_Billing_Info_Form $billing_form
+     * @return EE_Billing_Info_Form|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function apply_billing_form_debug_settings(EE_Billing_Info_Form $billing_form)
     {
@@ -145,7 +146,10 @@ class EE_PMT_Aim extends EE_PMT_Base
 
     /**
      * Gets the form for all the settings related to this payment method type
+     *
      * @return EE_Payment_Method_Form
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function generate_new_settings_form()
     {
@@ -225,7 +229,7 @@ class EE_PMT_Aim extends EE_PMT_Base
      * Overrides parent so we always have all billing inputs in the returned array,
      * not just the ones included at the time. This helps simplify the gateway code
      *
-     * @param EE_Billing_Info_Form $billing_form
+     * @param EE_Billing_Info_Form|null $billing_form
      * @return array
      */
     protected function _get_billing_values_from_form($billing_form)
@@ -244,8 +248,9 @@ class EE_PMT_Aim extends EE_PMT_Base
 
     /**
      * Adds the help tab
-     * @see EE_PMT_Base::help_tabs_config()
+     *
      * @return array
+     * @see EE_PMT_Base::help_tabs_config()
      */
     public function help_tabs_config()
     {

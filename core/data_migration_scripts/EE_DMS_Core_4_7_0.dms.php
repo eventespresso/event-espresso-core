@@ -1,14 +1,5 @@
 <?php
 
-/**
- * converts DBs to 4.7
- * Adds the esp_registration_payment table (indicating which registrations payments are for),
- * adds fields esp_registration.REG_paid field,
- * and recalculates esp_registration.REG_final_price to actually be the final price
- * for that registration (before this it was just the ticket's price, NOT including
- * taxes or other price modifiers)
- */
-
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -27,10 +18,14 @@ foreach ($stages as $filepath) {
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_7_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
-
-
 /**
  * Class EE_DMS_Core_4_7_0
+ * converts DBs to 4.7
+ * Adds the esp_registration_payment table (indicating which registrations payments are for),
+ * adds fields esp_registration.REG_paid field,
+ * and recalculates esp_registration.REG_final_price to actually be the final price
+ * for that registration (before this it was just the ticket's price, NOT including
+ * taxes or other price modifiers)
  *
  * @package               Event Espresso
  * @subpackage            core
@@ -149,13 +144,6 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base
 				CUR_active tinyint(1) DEFAULT '0',
 				PRIMARY KEY  (CUR_code)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
-        $table_name = 'esp_currency_payment_method';
-        $sql = "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
-				CUR_code varchar(6) COLLATE utf8_bin NOT NULL,
-				PMD_ID int(11) NOT NULL,
-				PRIMARY KEY  (CPM_ID),
-				KEY PMD_ID (PMD_ID)";
-        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
         $table_name = 'esp_datetime';
         $sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  EVT_ID bigint(20) unsigned NOT NULL,

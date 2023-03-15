@@ -55,7 +55,7 @@
     );
 
     ?>
-    <a href="<?php echo esc_url_raw($system_status_link); ?>" class="button-secondary right">
+    <a href="<?php echo esc_url_raw($system_status_link); ?>" class="button--secondary right">
         <?php esc_html_e('System Information', 'event_espresso'); ?>
     </a>
     <div class="localhost-information">

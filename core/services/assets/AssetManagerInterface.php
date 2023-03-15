@@ -3,9 +3,7 @@
 namespace EventEspresso\core\services\assets;
 
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
-use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
-use EventEspresso\core\domain\values\assets\VendorJavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
@@ -30,23 +28,6 @@ interface AssetManagerInterface
      * @since 4.9.62.p
      */
     public function addAssets();
-
-
-    /**
-     * @return ManifestFile
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @since 4.9.62.p
-     */
-    public function addManifestFile();
-
-
-    /**
-     * @return ManifestFile[]
-     * @since 4.9.62.p
-     */
-    public function getManifestFile();
 
 
     /**

@@ -49,35 +49,28 @@ if (count($registrations) > 0) {
                         <?php echo esc_html($registration->event()->name()); ?>
                     </h4>
                 <?php } ?>
-                <?php if ($registration->ticket()->ID() !== $prev_ticket) { ?>
-                    <?php if (! $revisit) { ?>
-                        <div class="spco-ticket-info-dv small-text">
-                            <?php if (! is_admin()) : ?>
-                                <h5><?php esc_html_e('Details', 'event_espresso'); ?></h5>
-                            <?php endif; ?>
-                            <table class="spco-ticket-details">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" width="" class="jst-left">
-                                            <?php esc_html_e('Name and Description', 'event_espresso'); ?>
-                                        </th>
-                                        <th scope="col" width="7.5%" class="jst-rght">
-                                            <?php esc_html_e('Qty', 'event_espresso'); ?>
-                                        </th>
-                                        <th scope="col" width="17.5%" class="jst-rght">
-                                            <?php esc_html_e('Price', 'event_espresso'); ?>
-                                        </th>
-                                        <th scope="col" width="17.5%" class="jst-rght">
-                                            <?php esc_html_e('Total', 'event_espresso'); ?>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php echo wp_kses($ticket_line_item[ $registration->ticket()->ID() ], AllowedTags::getWithFormTags()); ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php } ?>
+                <?php if (! $revisit && $registration->ticket()->ID() !== $prev_ticket) { ?>
+                    <div class="spco-ticket-info-dv">
+                        <table class="spco-ticket-details">
+                            <thead>
+                                <tr>
+                                    <th scope="col" width="" class="jst-left"></th>
+                                    <th scope="col" width="7.5%" class="jst-rght">
+                                        <?php esc_html_e('Qty', 'event_espresso'); ?>
+                                    </th>
+                                    <th scope="col" width="17.5%" class="jst-rght">
+                                        <?php esc_html_e('Price', 'event_espresso'); ?>
+                                    </th>
+                                    <th scope="col" width="17.5%" class="jst-rght">
+                                        <?php esc_html_e('Total', 'event_espresso'); ?>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo wp_kses($ticket_line_item[ $registration->ticket()->ID() ], AllowedTags::getWithFormTags()); ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php } ?>
 
                 <?php

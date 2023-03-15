@@ -32,9 +32,9 @@ class EEH_Array extends EEH_Base
      * @param array $array
      * @return boolean
      */
-    public static function is_associative_array(array $array)
+    public static function is_associative_array(array $array): bool
     {
-        return array_keys($array) !== range(0, count($array) - 1);
+        return ! empty($array) && array_keys($array) !== range(0, count($array) - 1);
     }
 
     /**
@@ -109,28 +109,26 @@ class EEH_Array extends EEH_Base
      *
      * @param array        $target_array the array to insert new data into
      * @param array        $array_to_insert the new data to be inserted
-     * @param int | string $offset a known key within $target_array where new data will be inserted
+     * @param int|string|null $offset a known key within $target_array where new data will be inserted
      * @param bool         $add_before whether to add new data before or after the offset key
      * @param bool         $preserve_keys whether or not to reset numerically indexed arrays
      * @return array
      */
     public static function insert_into_array(
-        $target_array = array(),
-        $array_to_insert = array(),
+        array $target_array = array(),
+        array $array_to_insert = array(),
         $offset = null,
-        $add_before = true,
-        $preserve_keys = true
+        bool $add_before = true,
+        bool $preserve_keys = true
     ) {
-        // ensure incoming arrays are actually arrays
-        $target_array = (array) $target_array;
-        $array_to_insert = (array) $array_to_insert;
+        $target_array_keys = array_keys($target_array);
         // if no offset key was supplied
         if (empty($offset)) {
             // use start or end of $target_array based on whether we are adding before or not
             $offset = $add_before ? 0 : count($target_array);
         }
         // if offset key is a string, then find the corresponding numeric location for that element
-        $offset = is_int($offset) ? $offset : array_search($offset, array_keys($target_array));
+        $offset = is_int($offset) ? $offset : array_search($offset, $target_array_keys, true);
         // add one to the offset if adding after
         $offset = $add_before ? $offset : $offset + 1;
         // but ensure offset does not exceed the length of the array
@@ -227,5 +225,99 @@ class EEH_Array extends EEH_Base
             return $element;
         }
         return is_string($element) ? addslashes($element) : $element;
+    }
+
+
+    /**
+     * link https://stackoverflow.com/a/3877494
+     *
+     * @param array $array_1
+     * @param array $array_2
+     * @return array
+     * @since   $VID:$
+     */
+    public static function array_diff_recursive(array $array_1, array $array_2): array
+    {
+        $diff = [];
+        foreach ($array_1 as $key => $value) {
+            if (array_key_exists($key, $array_2)) {
+                if (is_array($value)) {
+                    $inner_diff = EEH_Array::array_diff_recursive($value, $array_2[ $key ]);
+                    if (count($inner_diff)) {
+                        $diff[ $key ] = $inner_diff;
+                    }
+                } else {
+                    if ($value != $array_2[ $key ]) {
+                        $diff[ $key ] = $value;
+                    }
+                }
+            } else {
+                $diff[ $key ] = $value;
+            }
+        }
+        return $diff;
+    }
+
+
+    /**
+     * converts multidimensional arrays into a single depth associative array
+     * or converts arrays of any depth into a readable string representation
+     *
+     *  $example = [
+     *      'a' => 'A',
+     *      'b' => 'B',
+     *      'c' => [
+     *          'd' => 'D',
+     *          'e' => 'E',
+     *          'f' => [ 'G', 'H', 'I' ],
+     *      ],
+     *      [ 'J', 'K' ],
+     *      'L',
+     *      'M',
+     *      'n' => [
+     *          'o' => 'P'
+     *      ],
+     *  ];
+     *
+     *  print_r( EEH_Array::flattenArray($example) );
+     *
+     *  Array (
+     *      [a] => A
+     *      [b] => B
+     *      [c] => [ d:D, e:E, f:[ G, H, I ] ]
+     *      [0] => [ J, K ]
+     *      [1] => L
+     *      [2] => M
+     *      [n] => [ o:P ]
+     *  )
+     *
+     *  print_r( EEH_Array::flattenArray($example, true) );
+     *
+     *  "a:A, b:B, c:[ d:D, e:E, f:[ G, H, I ] ], [ J, K ], L, M, n:[ o:P ]"
+     *
+     * @param array $array      the array to be flattened
+     * @param bool  $to_string  [true] will flatten the entire array down into a string
+     *                          [false] will only flatten sub-arrays down into strings and return a array
+     * @param bool  $top_level  used for formatting purposes only, best to leave this alone as it's set internally
+     * @return array|false|string
+     * @since $VID:$
+     */
+    public static function flattenArray(array $array, bool $to_string = false, bool $top_level = true)
+    {
+        $flat_array = [];
+        foreach ($array as $key => $value) {
+            $flat_array[ $key ] = is_array($value)
+                ? EEH_Array::flattenArray($value, true, false)
+                : $value;
+        }
+        if (! $to_string) {
+            return $flat_array;
+        }
+        $flat = '';
+        foreach ($flat_array as $key => $value) {
+            $flat .= is_int($key) ? "$value, " : "$key:$value, ";
+        }
+        $flat = substr($flat, 0, -2);
+        return $top_level ? $flat : "[ $flat ]";
     }
 }

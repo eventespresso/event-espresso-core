@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * This template is responsible for the template pack and variations metabox that appears on the Message Templates
  * editor.
@@ -13,8 +15,6 @@
  * @var string $template_variation_description The description for the template variations for the given messenger.
  */
 
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
 ?>
 <div id="template-variations-selectors">
     <label for="MTP_template_pack">
@@ -24,11 +24,11 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     <span class="spinner"></span>
     <p class="description">
         <?php echo wp_kses($template_pack_description, AllowedTags::getAllowedTags()); ?>
-    <p>
-        <label for="MTP_template_variation">
-            <?php echo wp_kses($template_variation_label, AllowedTags::getAllowedTags()); ?>:&nbsp;
-        </label>
-        <?php echo wp_kses($variations_selector, AllowedTags::getWithFormTags()); ?>
+    </p>
+    <label for="MTP_template_variation">
+        <?php echo wp_kses($template_variation_label, AllowedTags::getAllowedTags()); ?>:&nbsp;
+    </label>
+    <?php echo wp_kses($variations_selector, AllowedTags::getWithFormTags()); ?>
     <p class="description">
         <?php echo wp_kses($template_variation_description, AllowedTags::getWithFormTags()); ?>
     </p>

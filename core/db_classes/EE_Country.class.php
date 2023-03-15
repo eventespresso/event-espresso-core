@@ -28,7 +28,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = [])
+    public static function new_instance_from_db($props_n_values = []): EE_Country
     {
         return new self($props_n_values, true);
     }
@@ -41,7 +41,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function name()
+    public function name(): string
     {
         return $this->get('CNT_name');
     }
@@ -54,7 +54,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return (bool) $this->get('CNT_active');
     }
@@ -67,7 +67,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function ISO3()
+    public function ISO3(): string
     {
         return $this->get('CNT_ISO3');
     }
@@ -80,7 +80,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function currency_code()
+    public function currency_code(): string
     {
         return $this->get('CNT_cur_code');
     }
@@ -93,10 +93,10 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function currency_sign()
+    public function currency_sign(): string
     {
         $CNT_cur_sign = $this->get('CNT_cur_sign');
-        return $CNT_cur_sign ? $CNT_cur_sign : '';
+        return $CNT_cur_sign ?: '';
     }
 
 
@@ -107,7 +107,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function currency_name_single()
+    public function currency_name_single(): string
     {
         return $this->get('CNT_cur_single');
     }
@@ -120,7 +120,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function currency_name_plural()
+    public function currency_name_plural(): string
     {
         return $this->get('CNT_cur_plural');
     }
@@ -133,7 +133,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function currency_sign_before()
+    public function currency_sign_before(): bool
     {
         return (bool) $this->get('CNT_cur_sign_b4');
     }
@@ -146,7 +146,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function currency_decimal_places()
+    public function currency_decimal_places(): int
     {
         return $this->get('CNT_cur_dec_plc');
     }
@@ -159,7 +159,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function currency_decimal_mark()
+    public function currency_decimal_mark(): string
     {
         return $this->get('CNT_cur_dec_mrk');
     }
@@ -172,7 +172,7 @@ class EE_Country extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function currency_thousands_separator()
+    public function currency_thousands_separator(): string
     {
         return $this->get('CNT_cur_thsnds');
     }
@@ -184,7 +184,7 @@ class EE_Country extends EE_Base_Class
      * @throws ReflectionException
      * @since 4.10.30.p
      */
-    public function isEU()
+    public function isEU(): bool
     {
         return (bool) $this->get('CNT_is_EU');
     }
@@ -198,17 +198,17 @@ class EE_Country extends EE_Base_Class
      * @throws ReflectionException
      * @since 4.10.30.p
      */
-    public function telephoneCode()
+    public function telephoneCode(): string
     {
         return $this->get('CNT_tel_code');
     }
 
 
     /**
-     * @deprecated 4.10.30.p
      * @return bool
+     * @deprecated 4.10.30.p
      */
-    public function is_active()
+    public function is_active(): bool
     {
         return $this->isActive();
     }

@@ -9,20 +9,15 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
  * @var EE_Ticket[]               $tickets
  * @var EE_Ticket_Selector_Config $template_settings
  * @var TicketDetails             $ticket_details
- * @var boolean                   $event_is_expired
  * @var boolean                   $prices_displayed_including_taxes
  * @var boolean                   $taxable_tickets
  * @var int                       $EVT_ID
  * @var int                       $max_atndz
- * @var int                       $row
- * @var int                       $ticket_count
- * @var string                    $anchor_id
- * @var string                    $date_format
  * @var string                    $datetime_selector
- * @var string                    $event_status
  * @var string                    $hidden_inputs
+ * @var string                    $table_header_price
+ * @var string                    $table_header_qty
  * @var string                    $ticket_row_html
- * @var string                    $time_format
  */
 ?>
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo esc_attr($EVT_ID); ?>" class="tkt-slctr-tbl-wrap-dv">
@@ -43,40 +38,13 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
                 ?>
             </th>
             <?php if (apply_filters('FHEE__ticket_selector_chart_template__display_ticket_price_details', true)) { ?>
-                <th id="price-<?php echo esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-price-th cntr">
-                    <?php
-                    /**
-                     * Filters the text printed for the header of the price column in the ticket selector table
-                     *
-                     * @since 4.7.2
-                     *
-                     * @param string 'Price' The translatable text to display in the table header for price
-                     * @param int $EVT_ID The Event ID
-                     */
-                    echo apply_filters(
-                        'FHEE__ticket_selector_chart_template__table_header_price',
-                        esc_html__('Price', 'event_espresso'),
-                        $EVT_ID
-                    );
-                    ?>
+                <th id="price-<?php echo esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-price-th
+                 cntr">
+                    <?php echo $table_header_price; ?>
                 </th>
             <?php } ?>
             <th id="quantity-<?php echo esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
-                <?php
-                /**
-                 * Filters the text printed for the header of the quantity column in the ticket selector table
-                 *
-                 * @since 4.7.2
-                 *
-                 * @param string 'Qty' The translatable text to display in the table header for the Quantity of tickets
-                 * @param int $EVT_ID The Event ID
-                 */
-                echo apply_filters(
-                    'FHEE__ticket_selector_chart_template__table_header_qty',
-                    esc_html__('Qty', 'event_espresso'),
-                    $EVT_ID
-                );
-                ?>
+                <?php echo $table_header_qty; ?>
             </th>
         </tr>
         </thead>

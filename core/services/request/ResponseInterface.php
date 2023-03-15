@@ -18,47 +18,70 @@ interface ResponseInterface
      */
     public function setNotice($key, $value);
 
+
     /**
      * @param $key
      * @return    mixed
      */
     public function getNotice($key);
 
+
     /**
      * @return    array
      */
-    public function getNotices();
+    public function getNotices(): array;
+
 
     /**
      * @param string $string
      * @param bool   $append
      */
-    public function addOutput($string, $append = true);
+    public function addOutput(string $string, bool $append = true);
+
 
     /**
      * @param bool   $as_string
      * @param string $separator
      * @return array|string
      */
-    public function getOutput($as_string = true, $separator = PHP_EOL);
+    public function getOutput(bool $as_string = true, string $separator = PHP_EOL);
+
 
     /**
      * @return boolean
      */
-    public function requestTerminated();
+    public function requestTerminated(): bool;
+
 
     /**
-     * @param boolean $request_terminated
+     * @param bool|int|string|null $request_terminated
      */
     public function terminateRequest($request_terminated = true);
 
+
     /**
      * @return boolean
      */
-    public function pluginDeactivated();
+    public function pluginDeactivated(): bool;
+
 
     /**
      * sets $deactivate_plugin to true
      */
     public function deactivatePlugin();
+
+
+    /**
+     * @return array
+     * @since $VID:$
+     */
+    public function requestHeaders(): array;
+
+
+    /**
+     * @param string $request_header
+     * @return void
+     * @since $VID:$
+     */
+    public function setRequestHeader(string $request_header): void;
 }

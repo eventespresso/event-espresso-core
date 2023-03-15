@@ -7,6 +7,7 @@ use EE_Dependency_Map;
 use EE_Error;
 use EE_Front_controller;
 use EE_Registry;
+use EventEspresso\core\services\container\RegistryContainer;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\CurrentPage;
 use ReflectionClass;
@@ -26,7 +27,12 @@ use WP_Query;
 class LegacyShortcodesManager
 {
     /**
-     * @type CurrentPage
+     * @var string
+     */
+    public const SHORTCODE_PREFIX = 'EES_';
+
+    /**
+     * @var CurrentPage
      */
     protected $current_page;
 
@@ -44,7 +50,7 @@ class LegacyShortcodesManager
      */
     public function __construct(EE_Registry $registry, CurrentPage $current_page)
     {
-        $this->registry = $registry;
+        $this->registry     = $registry;
         $this->current_page = $current_page;
     }
 
@@ -52,7 +58,7 @@ class LegacyShortcodesManager
     /**
      * @return EE_Registry
      */
-    public function registry()
+    public function registry(): EE_Registry
     {
         return $this->registry;
     }
@@ -72,7 +78,7 @@ class LegacyShortcodesManager
     /**
      * getShortcodes
      *
-     * @return array
+     * @return array|RegistryContainer
      */
     public function getShortcodes()
     {
@@ -83,7 +89,7 @@ class LegacyShortcodesManager
         // to still get loaded and processed, albeit using the same legacy logic as before
         $shortcodes_to_register = apply_filters(
             'FHEE__EE_Config__register_shortcodes__shortcodes_to_register',
-            array()
+            []
         );
         if (! empty($shortcodes_to_register)) {
             // cycle thru shortcode folders
@@ -97,7 +103,7 @@ class LegacyShortcodesManager
             'FHEE__EE_Config___register_shortcodes__installed_shortcodes',
             ! empty($this->registry->shortcodes)
                 ? $this->registry->shortcodes
-                : array()
+                : []
         );
     }
 
@@ -105,23 +111,21 @@ class LegacyShortcodesManager
     /**
      * register_shortcode - makes core aware of this shortcode
      *
-     * @param    string $shortcode_path - full path up to and including shortcode folder
+     * @param string|null $shortcode_path - full path up to and including shortcode folder
      * @return    bool
      */
-    public function registerShortcode($shortcode_path = null)
+    public function registerShortcode(string $shortcode_path = ''): bool
     {
         do_action('AHEE__EE_Config__register_shortcode__begin', $shortcode_path);
         $shortcode_ext = '.shortcode.php';
         // make all separators match
-        $shortcode_path = str_replace(array('\\', '/'), '/', $shortcode_path);
+        $shortcode_path = str_replace(['\\', '/'], '/', $shortcode_path);
         // does the file path INCLUDE the actual file name as part of the path ?
         if (strpos($shortcode_path, $shortcode_ext) !== false) {
             // grab shortcode file name from directory name and break apart at dots
             $shortcode_file = explode('.', basename($shortcode_path));
             // take first segment from file name pieces and remove class prefix if it exists
-            $shortcode = strpos($shortcode_file[0], 'EES_') === 0
-                ? substr($shortcode_file[0], 4)
-                : $shortcode_file[0];
+            $shortcode = LegacyShortcodesManager::stripShortcodeClassPrefix($shortcode_file[0]);
             // sanitize shortcode directory name
             $shortcode = sanitize_key($shortcode);
             // now we need to rebuild the shortcode path
@@ -133,13 +137,13 @@ class LegacyShortcodesManager
         } else {
             // we need to generate the filename based off of the folder name
             // grab and sanitize shortcode directory name
-            $shortcode = sanitize_key(basename($shortcode_path));
+            $shortcode      = sanitize_key(basename($shortcode_path));
             $shortcode_path = rtrim($shortcode_path, '/') . '/';
         }
         // create classname from shortcode directory or file name
         $shortcode = str_replace(' ', '_', ucwords(str_replace('_', ' ', $shortcode)));
         // add class prefix
-        $shortcode_class = 'EES_' . $shortcode;
+        $shortcode_class = LegacyShortcodesManager::addShortcodeClassPrefix($shortcode);
         // does the shortcode exist ?
         if (! is_readable($shortcode_path . '/' . $shortcode_class . $shortcode_ext)) {
             $msg = sprintf(
@@ -182,17 +186,17 @@ class LegacyShortcodesManager
         // cycle thru shortcode folders
         foreach ($this->registry->shortcodes as $shortcode => $shortcode_path) {
             // add class prefix
-            $shortcode_class = 'EES_' . $shortcode;
+            $shortcode_class = LegacyShortcodesManager::addShortcodeClassPrefix($shortcode);
             // fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
             // which set hooks ?
             if (is_admin()) {
                 // fire immediately
-                call_user_func(array($shortcode_class, 'set_hooks_admin'));
+                call_user_func([$shortcode_class, 'set_hooks_admin']);
             } else {
                 // delay until other systems are online
                 add_action(
                     'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons',
-                    array($shortcode_class, 'set_hooks')
+                    [$shortcode_class, 'set_hooks']
                 );
                 // convert classname to UPPERCASE and create WP shortcode.
                 $shortcode_tag = strtoupper($shortcode);
@@ -201,7 +205,7 @@ class LegacyShortcodesManager
                 if (! shortcode_exists($shortcode_tag)) {
                     // NOTE: this shortcode declaration will get overridden if the shortcode
                     // is successfully detected in the post content in initializeShortcode()
-                    add_shortcode($shortcode_tag, array($shortcode_class, 'fallback_shortcode_processor'));
+                    add_shortcode($shortcode_tag, [$shortcode_class, 'fallback_shortcode_processor']);
                 }
             }
         }
@@ -219,16 +223,21 @@ class LegacyShortcodesManager
      */
     public function initializeShortcodes(WP_Query $wp_query)
     {
-        if (empty($this->registry->shortcodes) || ! $wp_query->is_main_query() || is_admin()) {
+        if (
+            empty($this->registry->shortcodes)
+            || defined('EE_TESTS_DIR')
+            || ! $wp_query->is_main_query()
+            || is_admin()
+        ) {
             return;
         }
         // in case shortcode is loaded unexpectedly and deps haven't been set up correctly
         EE_Dependency_Map::register_dependencies(
             'EE_Front_Controller',
             [
-                'EE_Registry' => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'                                     => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\CurrentPage' => EE_Dependency_Map::load_from_cache,
-                'EE_Module_Request_Router' => EE_Dependency_Map::load_from_cache,
+                'EE_Module_Request_Router'                        => EE_Dependency_Map::load_from_cache,
             ]
         );
         global $wp;
@@ -237,7 +246,7 @@ class LegacyShortcodesManager
         do_action('AHEE__EE_Front_Controller__initialize_shortcodes__begin', $wp, $Front_Controller);
         $this->current_page->parseQueryVars();
         // grab post_name from request
-        $current_post = apply_filters(
+        $current_post  = apply_filters(
             'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',
             $this->current_page->postName()
         );
@@ -255,7 +264,7 @@ class LegacyShortcodesManager
                     global $wpdb;
                     $page_on_front = $wpdb->get_var(
                         $wpdb->prepare(
-                            "SELECT post_name from {$wpdb->posts} WHERE post_type='page' AND post_status NOT IN ('auto-draft', 'inherit', 'trash') AND ID=%d",
+                            "SELECT post_name from $wpdb->posts WHERE post_type='page' AND post_status NOT IN ('auto-draft', 'inherit', 'trash') AND ID=%d",
                             $page_on_front
                         )
                     );
@@ -285,7 +294,7 @@ class LegacyShortcodesManager
                 global $wpdb;
                 $post_content = $wpdb->get_var(
                     $wpdb->prepare(
-                        "SELECT post_content from {$wpdb->posts} WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND post_name=%s",
+                        "SELECT post_content from $wpdb->posts WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND post_name=%s",
                         $current_post
                     )
                 );
@@ -306,12 +315,12 @@ class LegacyShortcodesManager
      * then initializes any found shortcodes, and returns true.
      * returns false if no shortcodes found.
      *
-     * @param string $content
-     * @param bool   $load_all if true, then ALL active legacy shortcodes will be initialized
+     * @param string|null $content
+     * @param bool $load_all if true, then ALL active legacy shortcodes will be initialized
      * @return bool
      * @throws ReflectionException
      */
-    public function parseContentForShortcodes($content = '', $load_all = false)
+    public function parseContentForShortcodes(?string $content = '', bool $load_all = false): bool
     {
         $has_shortcode = false;
         foreach ($this->registry->shortcodes as $shortcode_class => $shortcode) {
@@ -332,11 +341,11 @@ class LegacyShortcodesManager
     /**
      * given a shortcode name, will instantiate the shortcode and call it's run() method
      *
-     * @param string $shortcode_class
-     * @param WP     $wp
+     * @param string  $shortcode_class
+     * @param WP|null $wp
      * @throws ReflectionException
      */
-    public function initializeShortcode($shortcode_class = '', WP $wp = null)
+    public function initializeShortcode(string $shortcode_class = '', WP $wp = null): void
     {
         // don't do anything if shortcode is already initialized
         if (
@@ -382,9 +391,9 @@ class LegacyShortcodesManager
      * @param string $class_name
      * @return string
      */
-    public static function generateShortcodeTagFromClassName($class_name)
+    public static function generateShortcodeTagFromClassName(string $class_name): string
     {
-        return strtoupper(str_replace('EES_', '', $class_name));
+        return strtoupper(LegacyShortcodesManager::stripShortcodeClassPrefix(strtoupper($class_name)));
     }
 
 
@@ -394,20 +403,20 @@ class LegacyShortcodesManager
      * @param string $tag
      * @return string
      */
-    public static function generateShortcodeClassNameFromTag($tag)
+    public static function generateShortcodeClassNameFromTag(string $tag): string
     {
         // order of operation runs from inside to out
         // 5) maybe add prefix
         return LegacyShortcodesManager::addShortcodeClassPrefix(
-            // 4) find spaces, replace with underscores
+        // 4) find spaces, replace with underscores
             str_replace(
                 ' ',
                 '_',
                 // 3) capitalize first letter of each word
                 ucwords(
-                    // 2) also change to lowercase so ucwords() will work
+                // 2) also change to lowercase so ucwords() will work
                     strtolower(
-                        // 1) find underscores, replace with spaces so ucwords() will work
+                    // 1) find underscores, replace with spaces so ucwords() will work
                         str_replace(
                             '_',
                             ' ',
@@ -421,23 +430,39 @@ class LegacyShortcodesManager
 
 
     /**
-     * maybe add EES_prefix
+     * maybe add EES_ prefix
      *
      * @param string $class_name
      * @return string
      */
-    public static function addShortcodeClassPrefix($class_name)
+    public static function addShortcodeClassPrefix(string $class_name): string
     {
-        return strpos($class_name, 'EES_') === 0 ? $class_name : 'EES_' . $class_name;
+        return strpos($class_name, LegacyShortcodesManager::SHORTCODE_PREFIX) === 0
+            ? $class_name
+            : LegacyShortcodesManager::SHORTCODE_PREFIX . $class_name;
+    }
+
+
+    /**
+     * maybe remove EES_ prefix
+     *
+     * @param string $class_name
+     * @return string
+     */
+    public static function stripShortcodeClassPrefix(string $class_name): string
+    {
+        return strpos($class_name, LegacyShortcodesManager::SHORTCODE_PREFIX) === 0
+            ? substr($class_name, 4)
+            : $class_name;
     }
 
 
     /**
      * @return array
      */
-    public function getEspressoShortcodeTags()
+    public function getEspressoShortcodeTags(): array
     {
-        static $shortcode_tags = array();
+        static $shortcode_tags = [];
         if (empty($shortcode_tags)) {
             $shortcode_tags = array_keys((array) $this->registry->shortcodes);
         }
@@ -450,7 +475,7 @@ class LegacyShortcodesManager
      * @return string
      * @throws ReflectionException
      */
-    public function doShortcode($content)
+    public function doShortcode(string $content): string
     {
         foreach ($this->getEspressoShortcodeTags() as $shortcode_tag) {
             if (strpos($content, $shortcode_tag) !== false) {

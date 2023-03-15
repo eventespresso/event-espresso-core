@@ -2,6 +2,8 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\i18n\LegacyTextDomainOptions;
+use EventEspresso\core\services\i18n\LoadedTextDomains;
 
 /**
  * EE_Load_Textdomain
@@ -12,12 +14,15 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EE_Load_Textdomain extends EE_Base
 {
+    private const REPO_BASE_URL = 'https://raw.githubusercontent.com/eventespresso/languages-ee4/master/event_espresso';
+
+
     /**
      * holds the current lang in WP
      *
      * @var string
      */
-    private static $locale;
+    public static $locale;
 
 
     /**
@@ -47,12 +52,13 @@ class EE_Load_Textdomain extends EE_Base
                 return;
             }
         }
-        load_plugin_textdomain('event_espresso', false, dirname(EE_PLUGIN_BASENAME) . '/languages/');
+        load_plugin_textdomain('event_espresso', false, WP_LANG_DIR);
     }
 
 
     /**
-     * The purpose of this method is to sideload all of the lang files for EE, this includes the POT file and also the PO/MO files for the given WPLANG locale (if necessary).
+     * The purpose of this method is to sideload the language files for EE,
+     * this includes the POT file and the PO/MO files for the given WPLANG locale (if necessary).
      *
      * @access private
      * @static
@@ -70,23 +76,21 @@ class EE_Load_Textdomain extends EE_Base
         if (empty(EE_Load_Textdomain::$locale)) {
             return;
         }
-        $language_check_option_name = 'ee_lang_check_' . EE_Load_Textdomain::$locale . '_' . EVENT_ESPRESSO_VERSION;
+        $loaded_text_domains = new LoadedTextDomains();
+
         // check if language files has already been sideloaded
-        if (get_option($language_check_option_name)) {
+        if ($loaded_text_domains->hasVersion(EE_Load_Textdomain::$locale, EVENT_ESPRESSO_VERSION)) {
             return;
         }
 
-        $repo_base_URL = 'https://github.com/eventespresso/languages-ee4/blob/master/event_espresso';
-
-        // Create directory if not exists
-        if (! is_dir(EE_PLUGIN_DIR_PATH . 'languages/')) {
-            wp_mkdir_p(EE_PLUGIN_DIR_PATH . 'languages/');
-        }
+        // clean up old text domain tracking
+        $LegacyTextDomainOptions = new LegacyTextDomainOptions($loaded_text_domains);
+        $LegacyTextDomainOptions->convertToConsolidatedFormat();
 
         // load sideloader and sideload the .POT file as this should always be included.
         $sideloader_args = array(
-            '_upload_to'     => EE_PLUGIN_DIR_PATH . 'languages/',
-            '_download_from'   => $repo_base_URL . '.pot?raw=true',
+            '_upload_to'     => WP_LANG_DIR,
+            '_download_from' => EE_Load_Textdomain::REPO_BASE_URL . '.pot',
             '_new_file_name' => 'event_espresso.pot',
         );
         /** @var EEH_Sideloader $sideloader */
@@ -99,23 +103,38 @@ class EE_Load_Textdomain extends EE_Base
         // if locale is "en_US" then lets just get out, since Event Espresso core is already "en_US"
         if (EE_Load_Textdomain::$locale === 'en_US') {
             // but set option first else we'll forever be downloading the pot file
-            update_option($language_check_option_name, 1);
+            $loaded_text_domains->versionLoaded(EE_Load_Textdomain::$locale, EVENT_ESPRESSO_VERSION);
             return;
         }
-        $repo_locale_URL = $repo_base_URL . '-' . EE_Load_Textdomain::$locale;
+        $repo_locale_URL = EE_Load_Textdomain::REPO_BASE_URL . '-' . EE_Load_Textdomain::$locale;
         $file_name_base = 'event_espresso-' . EE_Load_Textdomain::$locale;
 
-        // made it here so let's get the language files from the github repo, first the .mo file
-        $sideloader->set_download_from("{$repo_locale_URL}.mo?raw=true");
-        $sideloader->set_new_file_name("{$file_name_base}.mo");
-        $sideloader->sideload();
+        // made it here so let's get the language files from the GitHub repo, first the .mo file
+        $sideloader->set_download_from("$repo_locale_URL.mo");
+        $sideloader->set_new_file_name("$file_name_base.mo");
+        $mo_loaded = $sideloader->sideload();
 
         // now the .po file:
-        $sideloader->set_download_from("{$repo_locale_URL}.po?raw=true");
-        $sideloader->set_new_file_name("{$file_name_base}.po");
-        $sideloader->sideload();
+        $sideloader->set_download_from("$repo_locale_URL.po");
+        $sideloader->set_new_file_name("$file_name_base.po");
+        $po_loaded = $sideloader->sideload();
 
         // set option so the above only runs when EE updates.
-        update_option($language_check_option_name, 1);
+        $loaded_text_domains->versionLoaded(EE_Load_Textdomain::$locale, EVENT_ESPRESSO_VERSION);
+
+        if ($mo_loaded && $po_loaded) {
+            EE_Error::add_success(
+                sprintf(
+                    esc_html__(
+                        'Successfully downloaded the Event Espresso text domain for the "%1$s" locale.',
+                        'event_espresso'
+                    ),
+                    EE_Load_Textdomain::$locale
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+        }
     }
 }

@@ -1011,20 +1011,20 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * meaning it takes them all into account on its total)
      *
      * @param bool $create_if_not_found
-     * @return \EE_Line_Item
+     * @return EE_Line_Item|null
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function total_line_item($create_if_not_found = true)
+    public function total_line_item(bool $create_if_not_found = true): ?EE_Line_Item
     {
         $item = $this->get_first_related('Line_Item', [['LIN_type' => EEM_Line_Item::type_total]]);
-        if (! $item && $create_if_not_found) {
-            $item = EEH_Line_Item::create_total_line_item($this);
+        if ($item instanceof EE_Line_Item) {
+            return $item;
         }
-        return $item;
+        return $create_if_not_found ? EEH_Line_Item::create_total_line_item($this) : null;
     }
 
 
@@ -1181,14 +1181,14 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * Gets the last payment made
      *
-     * @return EE_Base_Class|EE_Payment
+     * @return EE_Base_Class|EE_Payment|null
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function last_payment()
+    public function last_payment(): ?EE_Payment
     {
         return $this->get_first_related('Payment', ['order_by' => ['PAY_ID' => 'desc']]);
     }

@@ -2,6 +2,11 @@
 
 namespace EventEspresso\core\domain\entities;
 
+use EE_Error;
+use EE_Ticket;
+use EE_Transaction;
+use ReflectionException;
+
 /**
  * Class RegCode
  * generates a REG_code
@@ -21,23 +26,25 @@ class RegCode
     /**
      * RegCode constructor.
      *
-     * @param RegUrlLink      $reg_url_link
-     * @param \EE_Transaction $transaction
-     * @param \EE_Ticket      $ticket
+     * @param RegUrlLink     $reg_url_link
+     * @param EE_Transaction $transaction
+     * @param EE_Ticket      $ticket
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct(
         RegUrlLink $reg_url_link,
-        \EE_Transaction $transaction,
-        \EE_Ticket $ticket
+        EE_Transaction $transaction,
+        EE_Ticket $ticket
     ) {
         // figure out where to start parsing the reg code
         $chars = strpos($reg_url_link, '-') + 5;
         // TXN_ID + TKT_ID + first 3 and last 3 chars of reg_url_link
-        $this->reg_code = array(
+        $this->reg_code = [
             $transaction->ID(),
             $ticket->ID(),
             substr($reg_url_link, 0, $chars),
-        );
+        ];
         // now put it all together
         $this->reg_code = apply_filters(
             'FHEE__Create__regCode__new_reg_code',

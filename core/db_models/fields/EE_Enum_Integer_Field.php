@@ -87,7 +87,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
      * @param null         $schema
      * @return string
      */
-    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, ?string $schema = null)
     {
         $options = $this->_allowed_enum_values();
         if (isset($options[ $value_on_field_to_be_outputted ])) {

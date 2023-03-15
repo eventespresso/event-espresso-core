@@ -7,6 +7,7 @@ use EEH_Export;
 use EEM_Attendee;
 use EEM_Country;
 use EEM_State;
+use ReflectionException;
 
 /**
  * Class Attendee
@@ -25,15 +26,19 @@ class AttendeeCSV
      * @param array $data
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function addAttendeeColumns(array $fields, array $reg_row, array $data)
+    public static function addAttendeeColumns(array $fields, array $reg_row, array $data): array
     {
+        $att_model = EEM_Attendee::instance();
+        $state_model   = EEM_State::instance();
+        $country_model = EEM_Country::instance();
         foreach ($fields as $field_name) {
-            $field_obj = EEM_Attendee::instance()->field_settings_for($field_name);
+            $field_obj = $att_model->field_settings_for($field_name);
             if ($reg_row['Attendee_CPT.ID']) {
                 switch ($field_name) {
                     case 'STA_ID':
-                        $value = EEM_State::instance()->get_var(
+                        $value = $state_model->get_var(
                             [
                                 ['STA_ID' => $reg_row['Attendee_Meta.STA_ID']]
                             ],
@@ -41,7 +46,7 @@ class AttendeeCSV
                         );
                         break;
                     case 'CNT_ISO':
-                        $value = EEM_Country::instance()->get_var(
+                        $value = $country_model->get_var(
                             [
                                 ['CNT_ISO' => $reg_row['Attendee_Meta.CNT_ISO']]
                             ],
@@ -50,7 +55,7 @@ class AttendeeCSV
                         break;
                     default:
                         $value = EEH_Export::prepare_value_from_db_for_display(
-                            EEM_Attendee::instance(),
+                            $att_model,
                             $field_name,
                             $reg_row[ $field_obj->get_qualified_column() ]
                         );

@@ -49,22 +49,22 @@ class CollectionLoader
 
 
     /**
-     * @var CollectionDetailsInterface $collection_details
+     * @var CollectionDetailsInterface
      */
     protected $collection_details;
 
     /**
-     * @var CollectionInterface $collection
+     * @var CollectionInterface|array
      */
     protected $collection;
 
     /**
-     * @var FactoryInterface $entity_factory
+     * @var FactoryInterface
      */
     protected $entity_factory;
 
     /**
-     * @var FileLocator $file_locator
+     * @var FileLocator
      */
     protected $file_locator;
 
@@ -73,8 +73,8 @@ class CollectionLoader
      * CollectionLoader constructor.
      *
      * @param CollectionDetailsInterface $collection_details
-     * @param CollectionInterface        $collection
-     * @param LocatorInterface           $file_locator
+     * @param CollectionInterface|null   $collection
+     * @param LocatorInterface|null      $file_locator
      * @param FactoryInterface|null      $entity_factory
      * @throws CollectionLoaderException
      */
@@ -89,8 +89,8 @@ class CollectionLoader
             if (! $collection instanceof CollectionInterface) {
                 $collection = new Collection($this->collection_details->getCollectionInterface());
             }
-            $this->collection = $collection;
-            $this->file_locator = $file_locator;
+            $this->collection     = $collection;
+            $this->file_locator   = $file_locator;
             $this->entity_factory = $entity_factory;
             $this->loadAllFromFilepaths();
             $this->loadFromFQCNs();
@@ -122,7 +122,7 @@ class CollectionLoader
             $this->file_locator = new FileLocator();
         }
         $this->file_locator->setFileMask($this->collection_details->getFileMask());
-        // find all of the files that match the file mask in the specified folder
+        // find all the files that match the file mask in the specified folder
         $this->file_locator->locate($this->collection_details->getCollectionPaths());
         // filter the results
         $filepaths = (array) apply_filters(
@@ -141,7 +141,7 @@ class CollectionLoader
 
 
     /**
-     * @param  string $filepath
+     * @param string|null $filepath
      * @return string
      * @throws InvalidEntityException
      * @throws InvalidDataTypeException
@@ -149,7 +149,7 @@ class CollectionLoader
      * @throws InvalidClassException
      * @throws DuplicateCollectionIdentifierException
      */
-    protected function loadClassFromFilepath($filepath)
+    protected function loadClassFromFilepath(?string $filepath): string
     {
         if (! is_string($filepath)) {
             throw new InvalidDataTypeException('$filepath', $filepath, 'string');
@@ -166,20 +166,20 @@ class CollectionLoader
             throw new InvalidClassException($class_name);
         }
         $entity = $this->entity_factory instanceof FactoryInterface
-            ? call_user_func(array($this->entity_factory, 'create'), $class_name)
+            ? call_user_func([$this->entity_factory, 'create'], $class_name)
             : new $class_name();
         return $this->addEntityToCollection($entity, $file_name);
     }
 
 
     /**
-     * @param        $entity
-     * @param  mixed $identifier
+     * @param mixed $entity
+     * @param mixed $identifier
      * @return string
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
      */
-    protected function addEntityToCollection($entity, $identifier)
+    protected function addEntityToCollection($entity, $identifier): string
     {
         do_action(
             'FHEE__CollectionLoader__addEntityToCollection__entity',
@@ -217,9 +217,9 @@ class CollectionLoader
 
 
     /**
-     * @param        $entity
-     * @param  mixed $identifier
-     * @return string
+     * @param mixed $entity
+     * @param mixed $identifier
+     * @return mixed
      * @throws InvalidEntityException
      */
     protected function setIdentifier($entity, $identifier)
@@ -289,7 +289,7 @@ class CollectionLoader
 
 
     /**
-     * @param  string $FQCN Fully Qualified Class Name
+     * @param string|null $FQCN Fully Qualified Class Name
      * @return string
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -300,7 +300,7 @@ class CollectionLoader
      * @throws InvalidClassException
      * @throws DuplicateCollectionIdentifierException
      */
-    protected function loadClassFromFQCN($FQCN)
+    protected function loadClassFromFQCN(?string $FQCN): string
     {
         if (! is_string($FQCN)) {
             throw new InvalidDataTypeException('$FQCN', $FQCN, 'string');
@@ -315,7 +315,7 @@ class CollectionLoader
             $this->collection_details
         );
         $entity = $this->entity_factory instanceof FactoryInterface
-            ? call_user_func(array($this->entity_factory, 'create'), $FQCN)
+            ? call_user_func([$this->entity_factory, 'create'], $FQCN)
             : EE_Registry::instance()->create($FQCN);
         return $this->addEntityToCollection($entity, $FQCN);
     }

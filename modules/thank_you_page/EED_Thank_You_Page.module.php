@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * Class EED_Thank_You_Page
  * Description
@@ -272,10 +274,13 @@ class EED_Thank_You_Page extends EED_Module
         if (self::getRequest()->requestParamIsSet('resend')) {
             EED_Thank_You_Page::resend_reg_confirmation_email();
         }
+        if (! EE_Registry::instance()->SSN instanceof EE_Session) {
+            EE_Registry::instance()->SSN = LoaderFactory::getShared('EE_Session');
+        }
         EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
         $this->_translate_strings();
         // load assets
-        add_action('wp_enqueue_scripts', array($this, 'load_js'), 10);
+        add_action('wp_enqueue_scripts', [$this, 'load_js'], 10);
     }
 
 
@@ -699,13 +704,17 @@ class EED_Thank_You_Page extends EED_Module
      */
     public function get_transaction_details()
     {
+        // primary attendee
+        $primary_attendee = $this->_primary_registrant->attendee();
         // prepare variables for displaying
-        $template_args = array();
-        $template_args['transaction'] = $this->_current_txn;
-        $template_args['reg_url_link'] = $this->_reg_url_link;
-        $template_args['primary_registrant_name'] = $this->_primary_registrant->attendee()->full_name(true);
+        $template_args                            = [];
+        $template_args['transaction']             = $this->_current_txn;
+        $template_args['reg_url_link']            = $this->_reg_url_link;
+        $template_args['primary_registrant_name'] = $primary_attendee instanceof EE_Attendee
+            ? $primary_attendee->full_name(true)
+            : '';
         // link to SPCO payment_options
-        $template_args['show_try_pay_again_link'] = $this->_show_try_pay_again_link;
+        $template_args['show_try_pay_again_link']  = $this->_show_try_pay_again_link;
         $template_args['SPCO_payment_options_url'] = $this->_SPCO_payment_options_url;
         // verify template arguments
         EEH_Template_Validator::verify_instanceof($template_args['transaction'], '$transaction', 'EE_Transaction');

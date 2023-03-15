@@ -23,7 +23,7 @@ class DetectFileEditorRequest extends Middleware
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function handleRequest(RequestInterface $request, ResponseInterface $response)
+    public function handleRequest(RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $this->request  = $request;
         $this->response = $response;

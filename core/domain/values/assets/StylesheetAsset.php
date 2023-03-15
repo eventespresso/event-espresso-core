@@ -79,6 +79,9 @@ class StylesheetAsset extends BrowserAsset
      */
     public function enqueueAsset()
     {
+        if ($this->source() === '') {
+            return;
+        }
         wp_enqueue_style($this->handle());
     }
 }

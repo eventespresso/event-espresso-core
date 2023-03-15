@@ -22,10 +22,10 @@ jQuery(document).ready(function ($) {
             var active_rows = 0;
             var datetimes = [];
             var $ticket_selector = $('#tkt-slctr-tbl-' + event_id);
-            if (object_exists($ticket_selector, '$ticket_selector')) {
+            if (object_exists($ticket_selector, '$ticket_selector', false)) {
                 // first let's put together an array of ALL checked datetime options for this event
                 $datetime_options = $datetime_selector_option.parents('ul').find('.datetime-selector-option');
-                if (object_exists($datetime_options, '$datetime_options')) {
+                if (object_exists($datetime_options, '$datetime_options', false)) {
                     // add each datetime options to our array of datetimes
                     $.each($datetime_options, function (index) {
                         // if checked, then display row and increment active_rows count
@@ -38,6 +38,7 @@ jQuery(document).ready(function ($) {
                 var $ticket_selector_rows = $ticket_selector.find('.tckt-slctr-tbl-tr');
                 $.each($ticket_selector_rows, function () {
                     var $ticket_selector_row = $(this);
+					var $ticket_details_row = $ticket_selector_row.next('.tckt-slctr-tkt-details-tr');
                     // get all of the specific datetime related classes assigned to this ticket row
                     var ticket_row_datetime_classes = $ticket_selector_row.attr('class').split(' ').filter(
                         function(element) {
@@ -54,9 +55,11 @@ jQuery(document).ready(function ($) {
                     });
                     if (display) {
                         $ticket_selector_row.removeClass('ee-hidden-ticket-tr');
+						$ticket_details_row.removeClass('ee-hidden-ticket-tr');
                         active_rows++;
                     } else {
 						$ticket_selector_row.addClass( 'ee-hidden-ticket-tr' );
+						$ticket_details_row.addClass( 'ee-hidden-ticket-tr' );
 						var $qty_input = $ticket_selector_row.find(
 							'.ticket-selector-tbl-qty-slct'
 						);
@@ -68,7 +71,7 @@ jQuery(document).ready(function ($) {
                 });
             }
             // enable or disable submit button based on active_rows count
-            if (object_exists($submit_button, '$submit_button')) {
+            if (object_exists($submit_button, '$submit_button', false)) {
                 if (active_rows > 0) {
                     $submit_button.removeClass('ee-disabled-btn');
                 } else {
@@ -124,5 +127,41 @@ jQuery(document).ready(function ($) {
 		}
 		$( this ).click();
 	} );
+
+
+	$('.display-tckt-slctr-tkt-details').on(
+		'click',
+		function () {
+			// get target element from "this" (the control element's) "rel" attribute
+			var target = $(this).attr("rel");
+			if (target.length) {
+				var $ticket_details_row = $('#' + target + '-dv').closest('.tckt-slctr-tkt-details-tr');
+				$ticket_details_row.removeClass('ee-hidden-ticket-tr');
+				if ($ticket_details_row.length) {
+					$ticket_details_row.removeClass('ee-hidden-ticket-tr');
+				}
+			}
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		}
+	);
+
+	$('.hide-tckt-slctr-tkt-details').on(
+		'click',
+		function () {
+			// get target element from "this" (the control element's) "rel" attribute
+			var target = $(this).attr("rel");
+			if (target.length) {
+				var $ticket_details_row = $('#' + target + '-dv').closest('.tckt-slctr-tkt-details-tr');
+				if ($ticket_details_row.length){
+					$ticket_details_row.addClass('ee-hidden-ticket-tr');
+				}
+			}
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		}
+	);
 
 });

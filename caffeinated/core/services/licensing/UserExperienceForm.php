@@ -75,8 +75,8 @@ class UserExperienceForm
                             'default'          => $this->network_core_config->site_license_key ?? '',
                             'required'         => false,
                             'form_html_filter' => new VsprintfFilter(
-                                '%2$s %1$s',
-                                [$this->getValidationIndicator()]
+                                '%1$s %4$s %2$s %3$s',
+                                ['<div class="ee-layout-row--fixed">', $this->getValidationIndicator(), '</div>']
                             )
                         ]
                     )
@@ -138,7 +138,7 @@ class UserExperienceForm
      */
     private function getValidationIndicator(): string
     {
-        $verified_class = $this->licenseKeyVerified() ? 'ee-icon-color-ee-green' : 'ee-icon-color-ee-red';
-        return '<span class="dashicons dashicons-admin-network ' . $verified_class . ' ee-icon-size-20"></span>';
+        $verified_class = $this->licenseKeyVerified() ? 'ee-status--success' : 'ee-status--error';
+        return '<span class="dashicons dashicons-admin-network ' . $verified_class . '"></span>';
     }
 }

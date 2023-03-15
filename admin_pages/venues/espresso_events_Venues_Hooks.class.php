@@ -14,6 +14,9 @@
  */
 class espresso_events_Venues_Hooks extends EE_Admin_Hooks
 {
+    /**
+     * @var EE_Event
+     */
     protected $_event;
 
 
@@ -26,6 +29,11 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
     protected function _set_hooks_properties()
     {
         $this->_name = 'venues';
+        if ($this->_adminpage_obj->adminConfig()->useAdvancedEditor()) {
+            $this->_metaboxes      = [];
+            $this->_scripts_styles = [];
+            return;
+        }
 
         $this->_metaboxes = array(
             0 => array(
@@ -35,7 +43,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
                 'priority'   => 'high',
                 'context'    => 'normal',
             ),
-        );/**/
+        );
 
         $this->_scripts_styles = array(
             'registers' => array(
@@ -70,14 +78,9 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
     public function modify_callbacks($callbacks)
     {
         // first remove default venue callback
-        foreach ($callbacks as $key => $callback) {
-            if ($callback[1] == '_default_venue_update') {
-                unset($callbacks[ $key ]);
-            }
-        }
-
+        unset($callbacks['_default_venue_update']);
         // now let's add the caf version
-        $callbacks[] = array($this, 'caf_venue_update');
+        $callbacks['caf_venue_update'] = array($this, 'caf_venue_update');
         return $callbacks;
     }
 
@@ -129,7 +132,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
             array(
                 'html_name'  => 'venue_id',
                 'html_id'    => 'venue_id',
-                'html_class' => 'wide',
+                'html_class' => '',
                 'default'    => $evt_venue_id ? $evt_venue_id : '0'
             )
         );
@@ -150,7 +153,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
             esc_html_x('Add new Venue', 'a link to add a new venue', 'event_espresso'),
             esc_html_x('Add new Venue', 'a link to add a new venue', 'event_espresso'),
             'ev_new_venue_link',
-            'button',
+            'button button--secondary',
             'margin-left:10px;',
             'target="_blank"'
         );
@@ -181,7 +184,8 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
             'info'
         );
 
-        $template_path = empty($venues) ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php'
+        $template_path = empty($venues)
+            ? EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content.template.php'
             : EE_VENUES_TEMPLATE_PATH . 'event_venues_metabox_content_from_manager.template.php';
 
         // Allow events venue metabox template args filtering.
@@ -193,7 +197,6 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
 
         EEH_Template::display_template($template_path, $template_args);
     }
-
 
     public function caf_venue_update($evtobj, $data)
     {

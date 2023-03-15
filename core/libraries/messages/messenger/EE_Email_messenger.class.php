@@ -270,7 +270,7 @@ class EE_Email_messenger extends EE_messenger
                     'event_espresso'
                 ),
                 'type'       => 'string',
-                'required'   => true,
+                'required'   => false,
                 'validation' => true,
                 'css_class'  => 'large-text',
                 'format'     => '%s',
@@ -296,7 +296,7 @@ class EE_Email_messenger extends EE_messenger
                     'event_espresso'
                 ),
                 'type'       => 'string',
-                'required'   => true,
+                'required'   => false,
                 'validation' => true,
                 'css_class'  => 'large-text',
                 'format'     => '%s',
@@ -322,7 +322,7 @@ class EE_Email_messenger extends EE_messenger
                         'input'      => 'wp_editor',
                         'label'      => esc_html__('Main Content', 'event_espresso'),
                         'type'       => 'string',
-                        'required'   => true,
+                        'required'   => false,
                         'validation' => true,
                         'format'     => '%s',
                         'rows'       => '15',
@@ -331,7 +331,7 @@ class EE_Email_messenger extends EE_messenger
                         'input'               => 'wp_editor',
                         'label'               => '[EVENT_LIST]',
                         'type'                => 'string',
-                        'required'            => true,
+                        'required'            => false,
                         'validation'          => true,
                         'format'              => '%s',
                         'rows'                => '15',
@@ -341,7 +341,7 @@ class EE_Email_messenger extends EE_messenger
                         'input'               => 'textarea',
                         'label'               => '[ATTENDEE_LIST]',
                         'type'                => 'string',
-                        'required'            => true,
+                        'required'            => false,
                         'validation'          => true,
                         'format'              => '%s',
                         'css_class'           => 'large-text',
@@ -352,7 +352,7 @@ class EE_Email_messenger extends EE_messenger
                         'input'               => 'textarea',
                         'label'               => '[TICKET_LIST]',
                         'type'                => 'string',
-                        'required'            => true,
+                        'required'            => false,
                         'validation'          => true,
                         'format'              => '%s',
                         'css_class'           => 'large-text',
@@ -363,7 +363,7 @@ class EE_Email_messenger extends EE_messenger
                         'input'               => 'textarea',
                         'label'               => '[DATETIME_LIST]',
                         'type'                => 'string',
-                        'required'            => true,
+                        'required'            => false,
                         'validation'          => true,
                         'format'              => '%s',
                         'css_class'           => 'large-text',
@@ -608,8 +608,6 @@ class EE_Email_messenger extends EE_messenger
          * @return  bool    true  indicates to use the inliner, false bypasses it.
          */
         if (apply_filters('FHEE__EE_Email_messenger__apply_CSSInliner ', true, $preview)) {
-            // require CssToInlineStyles library and its dependencies via composer autoloader
-            require_once EE_VENDOR . 'autoload.php';
             // now if this isn't a preview, let's setup the body so it has inline styles
             if (! $preview || ($preview && defined('DOING_AJAX'))) {
                 $style = file_get_contents(
@@ -622,8 +620,8 @@ class EE_Email_messenger extends EE_messenger
                     ),
                     true
                 );
-                $CSS  = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles();
-                $body = $CSS->convert($body, $style);
+                $CSS   = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles();
+                $body  = $CSS->convert($body, $style);
             }
         }
         return $body;

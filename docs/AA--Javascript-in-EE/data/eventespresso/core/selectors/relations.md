@@ -2,7 +2,7 @@ The following are various relation type selectors that are exposed on the object
 
 Relation type selectors are used for retrieving various relations on a given set of data.
 
-## `getRelationIdsForEntityRelation( entity, relationName )`
+## `getIdsForRelatedEntities( entity, relationName )`
 
 Retrieves the relation ids from the state for the given entity and relation name.
 
@@ -20,7 +20,7 @@ This returns an array of ids if the relation exists or an empty array if it does
 If we wanted to get all the ids of the datetime entities existing in the state, that are related to the given event entity, we would do something like this.
 
 ```js
-datetimeEntityIds = wp.data.select( 'eventespresso/core' ).getRelationIdsForEntityRelation( EventEntity, 'datetime' );
+datetimeEntityIds = wp.data.select( 'eventespresso/core' ).getIdsForRelatedEntities( EventEntity, 'datetime' );
 ```
 
 ## `getRelatedEntities( entity, relationName )`

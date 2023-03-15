@@ -6,6 +6,7 @@ use EventEspresso\core\domain\RequiresDomainInterface;
 use EventEspresso\core\exceptions\ExceptionLogger;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -39,20 +40,25 @@ class EE_Register_Addon implements EEI_Plugin_API
 
     /**
      * @var  array $_incompatible_addons keys are addon SLUGS
-     *                                   (first argument passed to EE_Register_Addon::register()), keys are
-     *                                   their MINIMUM VERSION (with all 5 parts. Eg 1.2.3.rc.004).
-     *                                   Generally this should be used sparingly, as we don't want to muddle up
-     *                                   EE core with knowledge of ALL the addons out there.
-     *                                   If you want NO versions of an addon to run with a certain version of core,
-     *                                   it's usually best to define the addon's "min_core_version" as part of its call
-     *                                   to EE_Register_Addon::register(), rather than using this array with a super
-     *                                   high value for its minimum plugin version.
+     * (first argument passed to EE_Register_Addon::register()), keys are
+     * their MINIMUM VERSION (with all 5 parts. Eg 1.2.3.rc.004).
+     * Generally this should be used sparingly, as we don't want to muddle up
+     * EE core with knowledge of ALL the addons out there.
+     * If you want NO versions of an addon to run with a certain version of core,
+     * it's usually best to define the addon's "min_core_version" as part of its call
+     * to EE_Register_Addon::register(), rather than using this array with a super high value for its
+     * minimum plugin version.
      * @access    protected
      */
     protected static $_incompatible_addons = [
         'Multi_Event_Registration' => '2.0.11.rc.002',
         'Promotions'               => '1.0.0.rc.084',
     ];
+
+    /**
+     * @var LoaderInterface
+     */
+    protected static $loader;
 
 
     /**
@@ -179,22 +185,22 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  EE_Meta_Capability_Map class name and the
      *                                                                  values are the arguments sent to the class.
      * @type array                    $model_paths                      array of folders containing DB models
-     * @return void
+     * @return bool
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since    4.3.0
-     * @see      EE_Register_Model
+     * @since                                                           4.3.0
+     * @see                                                             EE_Register_Model
      * @type array                    $class_paths                      array of folders containing DB classes
-     * @see      EE_Register_Model
+     * @see                                                             EE_Register_Model
      * @type array                    $model_extension_paths            array of folders containing DB model
      *                                                                  extensions
-     * @see      EE_Register_Model_Extension
+     * @see                                                             EE_Register_Model_Extension
      * @type array                    $class_extension_paths            array of folders containing DB class
      *                                                                  extensions
-     * @see      EE_Register_Model_Extension
+     * @see                                                             EE_Register_Model_Extension
      * @type array message_types {
      *                                                                  An array of message types with the key as
      *                                                                  the message type name and the values as
@@ -236,7 +242,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  use
      *                                                                  EventEspresso\core\Psr4Autoloader::addNamespace()
      *                                                                  directly)
-     * @see      EventEspresso\core\Psr4Autoloader::addNamespace()
+     * @see                                                             EventEspresso\core\Psr4Autoloader::addNamespace()
      * @type string                   $FQNS                             the namespace prefix
      * @type string                   $DIR                              a base directory for class files in the
      *                                                                  namespace.
@@ -252,8 +258,32 @@ class EE_Register_Addon implements EEI_Plugin_API
      *                                                                  privacy policy classes) or FQCNs (specific
      *                                                                  classnames of privacy policy classes)
      */
-    public static function register($addon_name = '', array $setup_args = [])
+    public static function register(string $addon_name = '', array $setup_args = []): bool
     {
+        if (! self::$loader instanceof LoaderInterface) {
+            self::$loader = LoaderFactory::getLoader();
+        }
+        // make sure this was called in the right place!
+        if (
+            ! did_action('activate_plugin')
+            && (
+                ! did_action('AHEE__EE_System__load_espresso_addons')
+                || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
+            )
+        ) {
+            EE_Error::doing_it_wrong(
+                __METHOD__,
+                sprintf(
+                    esc_html__(
+                        'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.',
+                        'event_espresso'
+                    ),
+                    $addon_name
+                ),
+                '4.3.0'
+            );
+            return false;
+        }
         // required fields MUST be present, so let's make sure they are.
         EE_Register_Addon::_verify_parameters($addon_name, $setup_args);
         // get class name for addon
@@ -271,14 +301,14 @@ class EE_Register_Addon implements EEI_Plugin_API
         // does this addon work with this version of core or WordPress ?
         // does this addon work with this version of core or WordPress ?
         if (! EE_Register_Addon::_addon_is_compatible($addon_name, $addon_settings)) {
-            return;
+            return false;
         }
         // register namespaces
         EE_Register_Addon::_setup_namespaces($addon_settings);
         // check if this is an activation request
         if (EE_Register_Addon::_addon_activation($addon_name, $addon_settings)) {
             // dont bother setting up the rest of the addon atm
-            return;
+            return false;
         }
         // we need cars
         EE_Register_Addon::_setup_autoloaders($addon_name);
@@ -314,6 +344,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         $addon = EE_Register_Addon::_load_and_init_addon_class($addon_name);
         // delay calling after_registration hook on each addon until after all add-ons have been registered.
         add_action('AHEE__EE_System__load_espresso_addons__complete', [$addon, 'after_registration'], 999);
+        return $addon instanceof EE_Addon;
     }
 
 
@@ -506,7 +537,9 @@ class EE_Register_Addon implements EEI_Plugin_API
                 : [],
             // if not empty, inserts a new table row after this plugin's row on the WP Plugins page
             // that can be used for adding upgrading/marketing info
-            'plugins_page_row'      => $setup_args['plugins_page_row'] ?? '',
+            'plugins_page_row'      => isset($setup_args['plugins_page_row'])
+                ? (array) $setup_args['plugins_page_row']
+                : [],
             'namespace'             => isset(
                 $setup_args['namespace']['FQNS'],
                 $setup_args['namespace']['DIR']
@@ -660,23 +693,6 @@ class EE_Register_Addon implements EEI_Plugin_API
                 // we know it was just activated and the request will end soon
             }
             return true;
-        }
-        // make sure this was called in the right place!
-        if (
-            ! did_action('AHEE__EE_System__load_espresso_addons')
-            || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
-        ) {
-            EE_Error::doing_it_wrong(
-                __METHOD__,
-                sprintf(
-                    esc_html__(
-                        'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.',
-                        'event_espresso'
-                    ),
-                    $addon_name
-                ),
-                '4.3.0'
-            );
         }
         // make sure addon settings are set correctly without overwriting anything existing
         if (isset(self::$_settings[ $addon_name ])) {
@@ -990,24 +1006,21 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _load_and_init_addon_class(string $addon_name): EE_Addon
     {
-        $addon = LoaderFactory::getLoader()->getShared(
+        $addon = self::$loader->getShared(
             self::$_settings[ $addon_name ]['class_name'],
             ['EE_Registry::create(addon)' => true]
         );
         if (! $addon instanceof EE_Addon) {
             throw new DomainException(
                 sprintf(
-                    esc_html__(
-                        'Failed to instantiate the %1$s class. PLease check that the class exists.',
-                        'event_espresso'
-                    ),
-                    $addon_name
+                    esc_html__('The "%1$s" EE_Addon class failed to instantiate!', 'event_espresso'),
+                    self::$_settings[ $addon_name ]['class_name']
                 )
             );
         }
         // setter inject dep map if required
         if ($addon->dependencyMap() === null) {
-            $addon->setDependencyMap(LoaderFactory::getLoader()->getShared('EE_Dependency_Map'));
+            $addon->setDependencyMap(self::$loader->getShared('EE_Dependency_Map'));
         }
         // setter inject domain if required
         EE_Register_Addon::injectAddonDomain($addon_name, $addon);
@@ -1057,7 +1070,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                 : null;
             // or construct one using Domain FQCN
             if ($domain === null && self::$_settings[ $addon_name ]['domain_fqcn'] !== '') {
-                $domain = LoaderFactory::getLoader()->getShared(
+                $domain = self::$loader->getShared(
                     self::$_settings[ $addon_name ]['domain_fqcn'],
                     [
                         new EventEspresso\core\domain\values\FilePath(
@@ -1078,6 +1091,7 @@ class EE_Register_Addon implements EEI_Plugin_API
 
     /**
      * @return void
+     * @deprecated $VID:$
      */
     public static function load_pue_update()
     {
@@ -1114,7 +1128,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      * @throws InvalidInterfaceException
      * @since    4.3.0
      */
-    public static function deregister($addon_name = '')
+    public static function deregister(string $addon_name = '')
     {
         if (isset(self::$_settings[ $addon_name ]['class_name'])) {
             try {

@@ -167,7 +167,7 @@ class Base
      * @param array|WP_Error|Exception|RestException $response
      * @return WP_REST_Response
      */
-    public function sendResponse($response)
+    public function sendResponse($response): WP_REST_Response
     {
         if ($response instanceof RestException) {
             $response = new WP_Error($response->getStringCode(), $response->getMessage(), $response->getData());

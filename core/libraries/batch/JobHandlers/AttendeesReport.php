@@ -19,7 +19,7 @@ use EventEspressoBatchRequest\Helpers\JobStepResponse;
 class AttendeesReport extends JobHandlerFile
 {
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function create_job(JobParameters $job_parameters)
+    public function create_job(JobParameters $job_parameters): JobStepResponse
     {
         if (! \EE_Capabilities::instance()->current_user_can('ee_read_contacts', 'generating_report')) {
             throw new BatchRequestException(
@@ -46,7 +46,7 @@ class AttendeesReport extends JobHandlerFile
     }
 
 
-    public function continue_job(JobParameters $job_parameters, $batch_size = 50)
+    public function continue_job(JobParameters $job_parameters, int $batch_size = 50): JobStepResponse
     {
         $csv_data = $this->get_csv_data($job_parameters->units_processed(), $batch_size);
         \EEH_Export::write_data_array_to_csv(
@@ -74,7 +74,7 @@ class AttendeesReport extends JobHandlerFile
     }
 
 
-    public function cleanup_job(JobParameters $job_parameters)
+    public function cleanup_job(JobParameters $job_parameters): JobStepResponse
     {
         $this->_file_helper->delete(
             \EEH_File::remove_filename_from_filepath($job_parameters->extra_datum('filepath')),

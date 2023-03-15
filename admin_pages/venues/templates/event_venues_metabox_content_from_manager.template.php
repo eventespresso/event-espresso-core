@@ -11,15 +11,19 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
 
-<table class="form-table">
+<table class="ee-admin-two-column-layout form-table">
     <tr>
-        <td valign="top" class="use-ven-manager">
+        <th>
             <label>
-                <?php esc_html_e('Select from Venue Manager List', 'event_espresso'); ?>
+                <?php esc_html_e('Select Venue', 'event_espresso'); ?>
             </label>
+        </th>
+        <td class="use-ven-manager">
+            <div class="select-venue-div">
+                <?php echo wp_kses($venue_selector, AllowedTags::getWithFormTags());?>
+                <?php echo wp_kses($new_venue_link, AllowedTags::getWithFormTags());?>
+            </div>
             <?php
-            echo wp_kses($venue_selector, AllowedTags::getWithFormTags());
-            echo wp_kses($new_venue_link, AllowedTags::getWithFormTags());
             foreach ($venues as $venue) :
                 if (! $venue instanceof EE_Venue) {
                     continue;

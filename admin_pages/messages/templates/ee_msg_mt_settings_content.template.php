@@ -23,7 +23,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 echo wp_kses($field['field'], AllowedTags::getWithFormTags());
             }
             ?>
-            <input class='button-secondary mt-settings-submit no-drag'
+            <input class='button--secondary mt-settings-submit no-drag'
                    type="submit"
                    value="<?php esc_attr_e('Submit', 'event_espresso'); ?>"
             />

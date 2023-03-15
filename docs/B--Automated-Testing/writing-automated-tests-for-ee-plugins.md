@@ -21,7 +21,7 @@ Event Espresso core provides a handy class for making it _really_ easy to bootst
 /**
  * Bootstrap for my Event Espresso add-on
  */
- use EventEspresso\tests\includes\AddonLoader
+ use EspressoTests\phpunit\includes\AddonLoader;
  //assuming your add-on is installed in the wp-content/plugins/my-addon folder
  //and Event Espresso is installed in the same WordPress instance at wp-
  //content/plugins/event-espresso-core.
@@ -39,7 +39,7 @@ Event Espresso core provides a handy class for making it _really_ easy to bootst
  $addon_loader->init();
 ```
 
-That's it!  The `EventEspresso\tests\includes\AddonLoader` class will take care of all the bootstrapping needed for your add-on against the installed version of Event Espresso.  If you namespace your unit tests and you aren't doing any custom registering of autoloaders for the namespaces (via composer or some other method), this class also exposes a helper for registering a Psr4 Autoloader for your namespace.  Something like this (after the call to `$addon_loader->init()`:
+That's it!  The `EspressoTests\phpunit\includes\AddonLoader` class will take care of all the bootstrapping needed for your add-on against the installed version of Event Espresso.  If you namespace your unit tests and you aren't doing any custom registering of autoloaders for the namespaces (via composer or some other method), this class also exposes a helper for registering a Psr4 Autoloader for your namespace.  Something like this (after the call to `$addon_loader->init()`:
 
 ```php
 $addon_loader->registerPsr4Path(
@@ -51,8 +51,8 @@ $addon_loader->registerPsr4Path(
 //the above will point namespace MyNameSpace to the tests directory for your add-on.
 ```
 
-### EE_UnitTestCase and Data Factories
+### EspressoUnitTestCase and Data Factories
 
-When you use `EE_UnitTestCase` class for your test cases, you have access to a number of helpful utility methods as well as the Event Espresso data factories for generating Events, Registrations, Tickets etc.  If your plugin has additional requirements for data factories, you might consider building your own `_UnitTestCase` that extends `EE_UnitTestCase`.
+When you use `EspressoTests\phpunit\includes\EspressoUnitTestCase` class for your test cases, you have access to a number of helpful utility methods as well as the Event Espresso data factories for generating Events, Registrations, Tickets etc.  If your plugin has additional requirements for data factories, you might consider building your own `UnitTestCase` that extends `EspressoTests\phpunit\includes\EspressoUnitTestCase`.
 
 There is also a `EE_REST_TestCase` class that you can use for any testcases you build that are working with REST endpoints in the EE REST API.

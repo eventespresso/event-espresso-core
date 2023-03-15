@@ -24,47 +24,29 @@ use InvalidArgumentException;
  */
 class BootstrapDependencyInjectionContainer
 {
-    /**
-     * @var EE_Dependency_Map $dependency_map
-     */
-    protected $dependency_map;
+    private ClassInterfaceCache $class_cache;
 
-    /**
-     * @type LoaderInterface $loader
-     */
-    protected $loader;
+    private Mirror              $mirror;
 
-    /**
-     * @var EE_Registry $registry
-     */
-    protected $registry;
+    private ObjectIdentifier    $object_identifier;
 
-    /**
-     * @var ClassInterfaceCache $class_cache
-     */
-    private $class_cache;
+    protected EE_Dependency_Map $dependency_map;
 
-    /**
-     * @var Mirror
-     */
-    private $mirror;
+    protected EE_Registry       $registry;
 
-    /**
-     * @var ObjectIdentifier
-     */
-    private $object_identifier;
+    protected LoaderInterface   $loader;
 
 
-    /**
-     * Can't use this just yet until we exorcise some more of our singleton usage from core
-     */
-    public function buildDependencyInjectionContainer()
-    {
-        // build DI container
-        // $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
-        // $OpenCoffeeShop->addRecipes();
-        // $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
-    }
+    // /**
+    //  * Can't use this just yet until we exorcise some more of our singleton usage from core
+    //  */
+    // public function buildDependencyInjectionContainer()
+    // {
+    //      // build DI container
+    //      $OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
+    //      $OpenCoffeeShop->addRecipes();
+    //      $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
+    // }
 
 
     /**
@@ -74,9 +56,9 @@ class BootstrapDependencyInjectionContainer
      */
     public function buildLegacyDependencyInjectionContainer()
     {
-        $this->class_cache = new ClassInterfaceCache();
+        $this->class_cache       = new ClassInterfaceCache();
         $this->object_identifier = new ObjectIdentifier($this->class_cache);
-        $this->mirror = new Mirror();
+        $this->mirror            = new Mirror();
         // EE_Dependency_Map: info about how to load classes required by other classes
         espresso_load_required(
             'EE_Dependency_Map',

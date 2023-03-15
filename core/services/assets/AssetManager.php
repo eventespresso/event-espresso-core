@@ -5,8 +5,8 @@ namespace EventEspresso\core\services\assets;
 use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\Asset;
+use EventEspresso\core\domain\values\assets\BrowserAsset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
-use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -24,7 +24,7 @@ abstract class AssetManager implements AssetManagerInterface
 {
 
     /**
-     * @var AssetCollection $assets
+     * @var AssetCollection|Asset[] $assets
      */
     protected $assets;
 
@@ -51,10 +51,18 @@ abstract class AssetManager implements AssetManagerInterface
         $this->domain = $domain;
         $this->assets = $assets;
         $this->registry = $registry;
-        add_action('wp_enqueue_scripts', array($this, 'addManifestFile'), 0);
-        add_action('admin_enqueue_scripts', array($this, 'addManifestFile'), 0);
+        $this->registry->addAssetCollection($assets);
         add_action('wp_enqueue_scripts', array($this, 'addAssets'), 2);
         add_action('admin_enqueue_scripts', array($this, 'addAssets'), 2);
+    }
+
+
+    /**
+     * @return AssetCollection
+     */
+    public function getAssets()
+    {
+        return $this->assets;
     }
 
 
@@ -65,34 +73,6 @@ abstract class AssetManager implements AssetManagerInterface
     public function assetNamespace()
     {
         return $this->domain->assetNamespace();
-    }
-
-
-    /**
-     * @return void
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @since 4.9.62.p
-     */
-    public function addManifestFile()
-    {
-        // if a manifest file has already been added for this domain, then just return
-        if ($this->assets->has($this->domain->assetNamespace())) {
-            return;
-        }
-        $asset = new ManifestFile($this->domain);
-        $this->assets->add($asset, $this->domain->assetNamespace());
-    }
-
-
-    /**
-     * @return ManifestFile[]
-     * @since 4.9.62.p
-     */
-    public function getManifestFile()
-    {
-        return $this->assets->getManifestFiles();
     }
 
 
@@ -147,9 +127,10 @@ abstract class AssetManager implements AssetManagerInterface
             $handle,
             $extra_dependencies
         );
+        $source = $this->registry->getJsUrl($this->domain->assetNamespace(), $handle);
         return $this->addJavascript(
             $handle,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), $handle),
+            $source,
             $details['dependencies'],
             true,
             $details['version']
@@ -256,13 +237,28 @@ abstract class AssetManager implements AssetManagerInterface
     public function enqueueAsset($handle)
     {
         if ($this->assets->has($handle)) {
+            /** @var Asset $asset */
             $asset = $this->assets->get($handle);
-            if ($asset->isRegistered()) {
+            if ($asset instanceof BrowserAsset && $asset->isRegistered()) {
                 $asset->enqueueAsset();
                 return true;
             }
         }
         return false;
+    }
+
+
+    /**
+     * @return  void
+     * @since   $VID:$
+     */
+    public function enqueueBrowserAssets()
+    {
+        foreach ($this->assets as $asset) {
+            if ($asset instanceof BrowserAsset && $asset->isRegistered()) {
+                $asset->enqueueAsset();
+            }
+        }
     }
 
 
@@ -302,5 +298,57 @@ abstract class AssetManager implements AssetManagerInterface
             : $details['dependencies'];
         return $details;
 
+    }
+
+
+    /**
+     * @param string $handle
+     * @return bool
+     * @throws DomainException
+     */
+    public function verifyAssetIsRegistered($handle)
+    {
+        if (wp_script_is($handle, 'registered')) {
+            return true;
+        }
+        if (WP_DEBUG) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'The "%1$s" script is not registered when it should be!%2$s
+                        Are you running the Barista plugin for development purposes? 
+                        If so, then you need to build the appropriate assets for this domain.%2$s
+                        If you are seeing this error on a live website, then you should not have 
+                        the WP_DEBUG constant in your wp-config.php file set to "true". 
+                        Please contact Event Espresso support for more information.',
+                        'event_espresso'
+                    ),
+                    $handle,
+                    '<br />'
+                )
+            );
+        }
+        return false;
+    }
+
+
+    /**************** deprecated ****************/
+
+
+    /**
+     * @return void
+     * @deprecated $VID:$
+     */
+    public function addManifestFile()
+    {
+    }
+
+
+    /**
+     * @return void
+     * @deprecated $VID:$
+     */
+    public function getManifestFile()
+    {
     }
 }

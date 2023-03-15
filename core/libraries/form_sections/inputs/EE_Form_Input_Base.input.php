@@ -122,6 +122,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     /**
      * Normalized default value either initially set on the input, or provided by calling
      * set_default().
+     *
      * @var mixed
      */
     protected $_default;
@@ -139,7 +140,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      *
      * @var EE_Validation_Strategy_Base[]
      */
-    private $_validation_strategies = array();
+    private $_validation_strategies = [];
 
     /**
      * The normalization strategy for this field
@@ -160,12 +161,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * If it's disabled while rendering, an extra hidden input is added that indicates it has been knowingly disabled.
      * (Client-side code that wants to dynamically disable it must also add this hidden input).
      * When the form is submitted, if the input is disabled in the PHP form section, then input is ignored.
-     * If the input is missing from the request data but the hidden input indicating the input is disabled, then the input is again ignored.
+     * If the input is missing from the request data but the hidden input indicating the input is disabled, then the
+     * input is again ignored.
      *
      * @var boolean
      */
     protected $disabled = false;
-
 
 
     /**
@@ -181,17 +182,17 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @type string                         $html_help_style  style attribute to give to teh help element
      * @type string                         $html_help_class  class attribute to give to the help element
      * @type string                         $default          default value NORMALIZED (eg, if providing the default
-     *       for a Yes_No_Input, you should provide TRUE or FALSE, not '1' or '0')
+     *                                                        for a Yes_No_Input, you should provide TRUE or FALSE, not
+     *                                                        '1' or '0')
      * @type EE_Display_Strategy_Base       $display          strategy
      * @type EE_Normalization_Strategy_Base $normalization_strategy
      * @type EE_Validation_Strategy_Base[]  $validation_strategies
-     * @type boolean                        $ignore_input special argument which can be used to avoid adding any validation strategies,
-     *                                                    and sets the normalization strategy to the Null normalization. This is good
-     *                                                    when you want the input to be totally ignored server-side (like when using
-     *                                                    React.js form inputs)
+     * @type boolean                        $ignore_input     special argument which can be used to avoid adding any
+     *       validation strategies, and sets the normalization strategy to the Null normalization. This is good when
+     *       you want the input to be totally ignored server-side (like when using React.js form inputs)
      *                                                        }
      */
-    public function __construct($input_args = array())
+    public function __construct($input_args = [])
     {
         $input_args = (array) apply_filters('FHEE__EE_Form_Input_Base___construct__input_args', $input_args, $this);
         // the following properties must be cast as arrays
@@ -204,7 +205,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             unset($input_args['validation_strategies']);
         }
         if (isset($input_args['ignore_input'])) {
-            $this->_validation_strategies = array();
+            $this->_validation_strategies = [];
         }
         // loop thru incoming options
         foreach ($input_args as $key => $value) {
@@ -217,9 +218,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         // ensure that "required" is set correctly
         $this->set_required(
             $this->_required,
-            isset($input_args['required_validation_error_message'])
-            ? $input_args['required_validation_error_message']
-            : null
+            $input_args['required_validation_error_message'] ?? null
         );
         // $this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
         $this->_display_strategy->_construct_finalize($this);
@@ -230,7 +229,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             $this->_normalization_strategy = new EE_Null_Normalization();
         }
         if (! $this->_normalization_strategy) {
-                $this->_normalization_strategy = new EE_Text_Normalization();
+            $this->_normalization_strategy = new EE_Text_Normalization();
         }
         $this->_normalization_strategy->_construct_finalize($this);
         // at least we can use the normalization strategy to populate the default
@@ -244,7 +243,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         $this->_sensitive_data_removal_strategy->_construct_finalize($this);
         parent::__construct($input_args);
     }
-
 
 
     /**
@@ -264,7 +262,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * @param $parent_form_section
      * @param $name
@@ -278,7 +275,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         }
         do_action('AHEE__EE_Form_Input_Base___construct_finalize__end', $this, $parent_form_section, $name);
     }
-
 
 
     /**
@@ -307,7 +303,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Sets the display strategy.
      *
@@ -317,7 +312,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         $this->_display_strategy = $strategy;
     }
-
 
 
     /**
@@ -331,7 +325,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Gets sensitive_data_removal_strategy
      *
@@ -341,7 +334,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         return $this->_sensitive_data_removal_strategy;
     }
-
 
 
     /**
@@ -356,7 +348,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Gets the display strategy for this input
      *
@@ -366,7 +357,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         return $this->_display_strategy;
     }
-
 
 
     /**
@@ -381,7 +371,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Gets the normalization strategy set on this input
      *
@@ -391,7 +380,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         return $this->_normalization_strategy;
     }
-
 
 
     /**
@@ -406,7 +394,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Returns all teh validation strategies which apply to this field, numerically indexed
      *
@@ -416,7 +403,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         return $this->_validation_strategies;
     }
-
 
 
     /**
@@ -432,7 +418,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Adds a new validation strategy onto the form input
      *
@@ -443,7 +428,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         $this->_add_validation_strategy($validation_strategy);
     }
-
 
 
     /**
@@ -464,7 +448,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * returns true if input employs any of the validation strategy defined by the supplied array of classnames
      *
@@ -475,7 +458,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         $validation_strategy_classnames = is_array($validation_strategy_classnames)
             ? $validation_strategy_classnames
-            : array($validation_strategy_classnames);
+            : [$validation_strategy_classnames];
         foreach ($this->_validation_strategies as $key => $validation_strategy) {
             if (in_array($key, $validation_strategy_classnames)) {
                 return true;
@@ -483,7 +466,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         }
         return false;
     }
-
 
 
     /**
@@ -495,7 +477,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         return $this->_parent_section->get_html_for_input($this);
     }
-
 
 
     /**
@@ -515,7 +496,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             )
             : $this->_get_display_strategy()->display();
     }
-
 
 
     /**
@@ -539,7 +519,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * @param string $html_other_attributes
      */
@@ -561,7 +540,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Gets the HTML for displaying the label for this form input
      * according to the form section's layout strategy
@@ -572,7 +550,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         return $this->_parent_section->get_layout_strategy()->display_label($this);
     }
-
 
 
     /**
@@ -587,7 +564,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Gets the HTML for displaying the help text for this form input
      * according to the form section's layout strategy
@@ -598,7 +574,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         return $this->_parent_section->get_layout_strategy()->display_help_text($this);
     }
-
 
 
     /**
@@ -629,7 +604,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Performs basic sanitization on this value. But what sanitization can be performed anyways?
      * This value MIGHT be allowed to have tags, so we can't really remove them.
@@ -639,9 +613,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     protected function _sanitize($value)
     {
-        return $value !== null ? stripslashes(html_entity_decode(trim($value))) : null;
+        return $value !== null
+            ? stripslashes(html_entity_decode(trim((string) $value)))
+            : null;
     }
-
 
 
     /**
@@ -656,7 +631,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     protected function _normalize($req_data)
     {
         // any existing validation errors don't apply so clear them
-        $this->_validation_errors = array();
+        $this->_validation_errors = [];
         // if the input is disabled, ignore whatever input was sent in
         if ($this->isDisabled()) {
             $this->_set_raw_value(null);
@@ -667,7 +642,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             $raw_input = $this->find_form_data_for_this_section($req_data);
             // super simple sanitization for now
             if (is_array($raw_input)) {
-                $raw_value = array();
+                $raw_value = [];
                 foreach ($raw_input as $key => $value) {
                     $raw_value[ $key ] = $this->_sanitize($value);
                 }
@@ -692,7 +667,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function html_name()
     {
         $this->_set_default_html_name_if_empty();
-        return $this->_html_name;
+        return $this->_html_name ?? '';
     }
 
 
@@ -702,9 +677,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_label_id()
     {
-        return ! empty($this->_html_label_id) ? $this->_html_label_id : $this->html_id() . '-lbl';
+        return ! empty($this->_html_label_id)
+            ? $this->_html_label_id
+            : $this->html_id() . '-lbl';
     }
-
 
 
     /**
@@ -712,9 +688,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_label_class()
     {
-        return $this->_html_label_class;
+        return $this->_html_label_class ?? '';
     }
-
 
 
     /**
@@ -722,9 +697,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_label_style()
     {
-        return $this->_html_label_style;
+        return $this->_html_label_style ?? '';
     }
-
 
 
     /**
@@ -732,9 +706,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_label_text()
     {
-        return $this->_html_label_text;
+        return $this->_html_label_text ?? '';
     }
-
 
 
     /**
@@ -742,9 +715,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_help_text()
     {
-        return $this->_html_help_text;
+        return $this->_html_help_text ?? '';
     }
-
 
 
     /**
@@ -752,9 +724,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_help_class()
     {
-        return $this->_html_help_class;
+        return $this->_html_help_class ?? '';
     }
-
 
 
     /**
@@ -762,9 +733,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     public function html_help_style()
     {
-        return $this->_html_style;
+        return $this->_html_style ?? '';
     }
-
 
 
     /**
@@ -776,13 +746,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * it may have malicious content, and we MIGHT want to store the form input in a transient or something...
      * in which case, we would have stored the malicious content to our database.
      *
-     * @return string
+     * @return mixed
      */
     public function raw_value()
     {
         return $this->_raw_value;
     }
-
 
 
     /**
@@ -791,11 +760,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      *
      * @return string
      */
-    public function raw_value_in_form()
+    public function raw_value_in_form(): string
     {
-        return htmlentities($this->raw_value(), ENT_QUOTES, 'UTF-8');
+        return htmlentities((string) $this->raw_value(), ENT_QUOTES, 'UTF-8');
     }
-
 
 
     /**
@@ -810,19 +778,17 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Returns the normalized value is a presentable way. By default this is just
      * the normalized value by itself, but it can be overridden for when that's not
      * the best thing to display
      *
-     * @return string
+     * @return mixed
      */
     public function pretty_value()
     {
         return $this->_normalized_value;
     }
-
 
 
     /**
@@ -842,10 +808,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      *
      * @return array
      */
-    public function get_jquery_validation_rules()
+    public function get_jquery_validation_rules(): array
     {
-        $jquery_validation_js = array();
-        $jquery_validation_rules = array();
+        $jquery_validation_js    = [];
+        $jquery_validation_rules = [];
         foreach ($this->get_validation_strategies() as $validation_strategy) {
             $jquery_validation_rules = array_replace_recursive(
                 $jquery_validation_rules,
@@ -859,7 +825,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         }
         return $jquery_validation_js;
     }
-
 
 
     /**
@@ -877,7 +842,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Sets the normalized value on this input
      *
@@ -887,7 +851,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         $this->_normalized_value = $value;
     }
-
 
 
     /**
@@ -901,7 +864,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Sets the HTML label text after it has already been defined
      *
@@ -912,7 +874,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         $this->_html_label_text = $label;
     }
-
 
 
     /**
@@ -936,7 +897,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Returns whether or not this field is required
      *
@@ -948,7 +908,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * @param string $required_css_class
      */
@@ -958,7 +917,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * @return string
      */
@@ -966,7 +924,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         return $this->_required_css_class;
     }
-
 
 
     /**
@@ -990,7 +947,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         $this->_html_help_text = $text;
     }
-
 
 
     /**
@@ -1019,7 +975,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * @param bool   $primary
      * @param string $button_size
@@ -1028,7 +983,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function set_button_css_attributes($primary = true, $button_size = '', $other_attributes = '')
     {
         $button_css_attributes = 'button';
-        $button_css_attributes .= $primary === true ? ' button-primary' : ' button-secondary';
+        $button_css_attributes .= $primary === true
+            ? ' button--primary'
+            : ' button--secondary';
         switch ($button_size) {
             case 'xs':
             case 'extra-small':
@@ -1056,7 +1013,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * @return string
      */
@@ -1067,7 +1023,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         }
         return $this->_button_css_attributes;
     }
-
 
 
     /**
@@ -1117,11 +1072,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             $name_parts = $matches[1];
             array_unshift($name_parts, $before_any_brackets);
         } else {
-            $name_parts = array($before_any_brackets);
+            $name_parts = [$before_any_brackets];
         }
         return $name_parts;
     }
-
 
 
     /**
@@ -1147,7 +1101,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Checks if this form input's data is in the request data
      *
@@ -1159,7 +1112,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         if ($req_data === null) {
             /** @var RequestInterface $request */
-            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $request  = LoaderFactory::getLoader()->getShared(RequestInterface::class);
             $req_data = $request->postParams();
         }
         $checked_value = $this->find_form_data_for_this_section($req_data);
@@ -1171,18 +1124,16 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Overrides parent to add js data from validation and display strategies
      *
      * @param array $form_other_js_data
      * @return array
      */
-    public function get_other_js_data($form_other_js_data = array())
+    public function get_other_js_data($form_other_js_data = [])
     {
         return $this->get_other_js_data_from_strategies($form_other_js_data);
     }
-
 
 
     /**
@@ -1192,7 +1143,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @param array $form_other_js_data
      * @return array
      */
-    public function get_other_js_data_from_strategies($form_other_js_data = array())
+    public function get_other_js_data_from_strategies($form_other_js_data = [])
     {
         $form_other_js_data = $this->get_display_strategy()->get_other_js_data($form_other_js_data);
         foreach ($this->get_validation_strategies() as $validation_strategy) {
@@ -1200,7 +1151,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         }
         return $form_other_js_data;
     }
-
 
 
     /**
@@ -1213,7 +1163,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         // ask our display strategy and validation strategies if they have js to enqueue
         $this->enqueue_js_from_strategies();
     }
-
 
 
     /**
@@ -1230,17 +1179,16 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Gets the default value set on the input (not the current value, which may have been
      * changed because of a form submission). If no default was set, this us null.
+     *
      * @return mixed
      */
     public function get_default()
     {
         return $this->_default;
     }
-
 
 
     /**
@@ -1250,7 +1198,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function disable($disable = true)
     {
         $disabled_attribute = ' disabled="disabled"';
-        $this->disabled = filter_var($disable, FILTER_VALIDATE_BOOLEAN);
+        $this->disabled     = filter_var($disable, FILTER_VALIDATE_BOOLEAN);
         if ($this->disabled) {
             if (strpos($this->_other_html_attributes, $disabled_attribute) === false) {
                 $this->_other_html_attributes .= $disabled_attribute;
@@ -1262,9 +1210,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Returns whether or not this input is currently disabled.
+     *
      * @return bool
      */
     public function isDisabled()

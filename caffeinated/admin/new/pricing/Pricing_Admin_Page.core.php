@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\services\request\DataType;
 
 /**
@@ -37,6 +38,12 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 'add_type'    => esc_html__('Add New Default Price Type', 'event_espresso'),
                 'edit_type'   => esc_html__('Edit Price Type', 'event_espresso'),
                 'delete_type' => esc_html__('Delete Price Type', 'event_espresso'),
+            ],
+            'publishbox' => [
+                'add_new_price'      => esc_html__('Add New Default Price', 'event_espresso'),
+                'edit_price'         => esc_html__('Edit Default Price', 'event_espresso'),
+                'add_new_price_type' => esc_html__('Add New Default Price Type', 'event_espresso'),
+                'edit_price_type'    => esc_html__('Edit Price Type', 'event_espresso'),
             ],
         ];
     }
@@ -170,6 +177,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'default'            => [
                 'nav'           => [
                     'label' => esc_html__('Default Pricing', 'event_espresso'),
+                    'icon' => 'dashicons-money-alt',
                     'order' => 10,
                 ],
                 'list_table'    => 'Prices_List_Table',
@@ -193,6 +201,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'add_new_price'      => [
                 'nav'           => [
                     'label'      => esc_html__('Add New Default Price', 'event_espresso'),
+                    'icon' => 'dashicons-plus-alt',
                     'order'      => 20,
                     'persistent' => false,
                 ],
@@ -211,6 +220,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'edit_price'         => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Default Price', 'event_espresso'),
+                    'icon' => 'dashicons-edit-large',
                     'order'      => 20,
                     'url'        => $PRC_ID
                         ? add_query_arg(['id' => $PRC_ID], $this->_current_page_view_url)
@@ -232,6 +242,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'price_types'        => [
                 'nav'           => [
                     'label' => esc_html__('Price Types', 'event_espresso'),
+                    'icon' => 'dashicons-networking',
                     'order' => 30,
                 ],
                 'list_table'    => 'Price_Types_List_Table',
@@ -255,6 +266,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'add_new_price_type' => [
                 'nav'           => [
                     'label'      => esc_html__('Add New Price Type', 'event_espresso'),
+                    'icon' => 'dashicons-plus-alt',
                     'order'      => 40,
                     'persistent' => false,
                 ],
@@ -273,6 +285,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'edit_price_type'    => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Price Type', 'event_espresso'),
+                    'icon' => 'dashicons-edit-large',
                     'order'      => 40,
                     'persistent' => false,
                 ],
@@ -289,9 +302,10 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 'require_nonce' => false,
             ],
             'tax_settings'       => [
-                'nav'           => [
+                'nav' => [
                     'label' => esc_html__('Tax Settings', 'event_espresso'),
-                    'order' => 40,
+                    'icon' => 'dashicons-sticky',
+                    'order' => 50,
                 ],
                 'labels'        => [
                     'publishbox' => esc_html__('Update Tax Settings', 'event_espresso'),
@@ -337,25 +351,25 @@ class Pricing_Admin_Page extends EE_Admin_Page
         // styles
         wp_enqueue_style('espresso-ui-theme');
         wp_register_style(
-            'espresso_PRICING',
+            'espresso_pricing_css',
             PRICING_ASSETS_URL . 'espresso_pricing_admin.css',
-            [],
+            [EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN],
             EVENT_ESPRESSO_VERSION
         );
-        wp_enqueue_style('espresso_PRICING');
+        wp_enqueue_style('espresso_pricing_css');
 
         // scripts
         wp_enqueue_script('ee_admin_js');
         wp_enqueue_script('jquery-ui-position');
         wp_enqueue_script('jquery-ui-widget');
         wp_register_script(
-            'espresso_PRICING',
+            'espresso_pricing_js',
             PRICING_ASSETS_URL . 'espresso_pricing_admin.js',
             ['jquery'],
             EVENT_ESPRESSO_VERSION,
             true
         );
-        wp_enqueue_script('espresso_PRICING');
+        wp_enqueue_script('espresso_pricing_js');
     }
 
 
@@ -610,7 +624,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $this->_template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
         $this->_template_args['admin_page_content']            = $this->_edit_price_details_meta_box();
 
-        $this->_set_publish_post_box_vars('id', $PRC_ID);
+        $this->_set_publish_post_box_vars('id', $PRC_ID, '', '', true);
         // the details template wrapper
         $this->display_admin_page_with_sidebar();
     }
@@ -783,8 +797,12 @@ class Pricing_Admin_Page extends EE_Admin_Page
      * @throws ReflectionException
      * @since 4.10.30.p
      */
-    public function adjustTicketRelations(EEM_Base $entity_model, $entity_ID, string $action, int $result)
-    {
+    public function adjustTicketRelations(
+        EEM_Base $entity_model,
+        $entity_ID,
+        string $action,
+        int $result
+    ) {
         if (! $entity_ID || (float) $result < 1) {
             return;
         }
@@ -826,7 +844,12 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $entity_model = EEM_Price::instance();
         $deleted      = $this->trashRestoreDeleteEntities($entity_model, 'id');
         $entity       = $entity_model->item_name($deleted);
-        $this->_redirect_after_action($deleted, $entity, 'deleted', ['action' => 'default']);
+        $this->_redirect_after_action(
+            $deleted,
+            $entity,
+            'deleted',
+            ['action' => 'default']
+        );
     }
 
 
@@ -850,8 +873,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 ? $all_updated
                 : false;
         }
-        $success = $all_updated ? esc_html__('Price order was updated successfully.', 'event_espresso') : false;
-        $errors  = ! $all_updated ? esc_html__('An error occurred. The price order was not updated.', 'event_espresso')
+        $success = $all_updated
+            ? esc_html__('Price order was updated successfully.', 'event_espresso')
+            : false;
+        $errors  = ! $all_updated
+            ? esc_html__('An error occurred. The price order was not updated.', 'event_espresso')
             : false;
 
         echo wp_json_encode(['return_data' => false, 'success' => $success, 'errors' => $errors]);
@@ -1005,7 +1031,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $this->_template_args['admin_page_content']            = $this->_edit_price_type_details_meta_box();
 
         $redirect_URL = add_query_arg(['action' => 'price_types'], $this->_admin_base_url);
-        $this->_set_publish_post_box_vars('id', $PRT_ID, false, $redirect_URL);
+        $this->_set_publish_post_box_vars('id', $PRT_ID, false, $redirect_URL, true);
         // the details template wrapper
         $this->display_admin_page_with_sidebar();
     }
@@ -1168,7 +1194,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _tax_settings()
     {
         $this->_set_add_edit_form_tags('update_tax_settings');
-        $this->_set_publish_post_box_vars(null, false, false, null, false);
+        $this->_set_publish_post_box_vars();
         $this->_template_args['admin_page_content'] = $this->tax_settings_form()->get_html();
         $this->display_admin_page_with_sidebar();
     }

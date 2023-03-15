@@ -2,15 +2,16 @@
 
 namespace EventEspressoBatchRequest\JobHandlers;
 
+use EE_Change_Log;
 use EE_Error;
 use EE_Registry;
-use EEM_Base;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
+use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
+use Exception;
 use ReflectionException;
 
 /**
@@ -31,6 +32,9 @@ class ExecuteBatchDeletion extends JobHandler
     protected $model_obj_node_group_persister;
 
 
+    /**
+     * @param NodeGroupDao $model_obj_node_group_persister
+     */
     public function __construct(NodeGroupDao $model_obj_node_group_persister)
     {
         $this->model_obj_node_group_persister = $model_obj_node_group_persister;
@@ -46,8 +50,9 @@ class ExecuteBatchDeletion extends JobHandler
      * @return JobStepResponse
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Exception
      */
-    public function create_job(JobParameters $job_parameters)
+    public function create_job(JobParameters $job_parameters): JobStepResponse
     {
         $deletion_job_code = $job_parameters->request_datum('deletion_job_code', null);
         $roots             = $this->model_obj_node_group_persister->getModelObjNodesInGroup($deletion_job_code);
@@ -79,10 +84,8 @@ class ExecuteBatchDeletion extends JobHandler
             $job_size += count($ids);
         }
         $job_parameters->set_job_size($job_size);
-        return new JobStepResponse(
-            $job_parameters,
-            esc_html__('Beginning to delete items...', 'event_espresso')
-        );
+        $this->updateTextHeader(esc_html__('Beginning to delete items...', 'event_espresso'));
+        return new JobStepResponse($job_parameters, $this->feedback);
     }
 
 
@@ -95,7 +98,7 @@ class ExecuteBatchDeletion extends JobHandler
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function continue_job(JobParameters $job_parameters, $batch_size = 50)
+    public function continue_job(JobParameters $job_parameters, int $batch_size = 50): JobStepResponse
     {
         // We already have the items IDs. So deleting is really fast. Let's speed it up.
         $batch_size               *= 10;
@@ -147,19 +150,14 @@ class ExecuteBatchDeletion extends JobHandler
         // All done deleting for this request. Is there anything to do next time?
         if (empty($models_and_ids_remaining)) {
             $job_parameters->set_status(JobParameters::status_complete);
-            return new JobStepResponse(
-                $job_parameters,
-                esc_html__('Deletion complete.', 'event_espresso')
-            );
+            return new JobStepResponse($job_parameters, $this->feedback);
         }
         $job_parameters->add_extra_data('models_and_ids_to_delete', $models_and_ids_remaining);
-        return new JobStepResponse(
-            $job_parameters,
-            sprintf(
-                esc_html__('Deleted %d items.', 'event_espresso'),
-                $units_processed
-            )
+        $this->displayJobStepResults(
+            $units_processed,
+            esc_html__('Deleted %d items.', 'event_espresso')
         );
+        return new JobStepResponse($job_parameters, $this->feedback);
     }
 
 
@@ -168,8 +166,10 @@ class ExecuteBatchDeletion extends JobHandler
      *
      * @param JobParameters $job_parameters
      * @return JobStepResponse
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function cleanup_job(JobParameters $job_parameters)
+    public function cleanup_job(JobParameters $job_parameters): JobStepResponse
     {
         $this->model_obj_node_group_persister->deleteModelObjNodesInGroup(
             $job_parameters->request_datum('deletion_job_code')
@@ -186,10 +186,24 @@ class ExecuteBatchDeletion extends JobHandler
                 $job_parameters
             );
         }
-        return new JobStepResponse(
+        $this->displayJobFinalResults(
             $job_parameters,
-            esc_html__('All done', 'event_espresso')
+            esc_html__('All Done. Deleted a total of %d items.', 'event_espresso')
         );
+        $this->updateText(
+            $this->infoWrapper(
+                sprintf(
+                    esc_html__(
+                        'If not automatically redirected in %1$s seconds, click here to return to the %2$sprevious admin screen%3$s',
+                        'event_espresso'
+                    ),
+                    '<span id="ee-redirect-timer">10</span>',
+                    '<a href="' . $job_parameters->request_datum('return_url') . '">',
+                    '</a>'
+                )
+            )
+        );
+        return new JobStepResponse($job_parameters, $this->feedback);
     }
 }
 // End of file EventDeletion.php

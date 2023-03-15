@@ -1,6 +1,6 @@
 <h3 class="service-settings-heading"><?php esc_html_e('Add-ons', 'event_espresso') ?></h3>
 
-<div class="ee-card-grid">
+<div class="ee-card-grid ee-card-grid-3-cols">
     <div class="ee-card ee-add-on-card">
         <h4><?php esc_html_e('Events Calendar', 'event_espresso'); ?></h4>
         <p>
@@ -486,7 +486,7 @@
 <h3 class="service-settings-heading"><?php esc_html_e('Support Items', 'event_espresso'); ?></h3>
 <div class='ee-card ee-add-on-card  ee-add-on-card-big'>
     <h3><?php esc_html_e('Priority Support Token', 'event_espresso'); ?></h3>
-    <p class="ee-highlight ee-highlight--notice">
+    <p class="ee-attention">
         <?php esc_html_e(
             'Have an emergency or need help with a time-sensitive issue? Purchase a support token and we\'ll help  you get back on track .',
             'event_espresso'
