@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\checkout\extra_txn_fees\spco\ExtraTxnFeesForRegistrantsHandler;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -308,6 +309,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             $registrations,
             $this->checkout->revisit
         );
+        $extra_txn_fees_handler = new ExtraTxnFeesForRegistrantsHandler($registrations);
+        $extra_txn_fees_handler->applyExtraFeesToRegistrants();
         foreach ($registrations as $REG_ID => $registration) {
             /** @var $registration EE_Registration */
             // has this registration lost it's space ?
@@ -446,13 +449,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      */
     public static function add_spco_line_item_filters(EE_Line_Item_Filter_Collection $line_item_filter_collection)
     {
-        if (! EE_Registry::instance()->SSN instanceof EE_Session) {
-            return $line_item_filter_collection;
-        }
-        if (! EE_Registry::instance()->SSN->checkout() instanceof EE_Checkout) {
-            return $line_item_filter_collection;
-        }
-        if (! EE_Registry::instance()->SSN->checkout()->transaction instanceof EE_Transaction) {
+        if (! EE_Registry::instance()->SSN instanceof EE_Session
+            || ! EE_Registry::instance()->SSN->checkout() instanceof EE_Checkout
+            || ! EE_Registry::instance()->SSN->checkout()->transaction instanceof EE_Transaction
+        ) {
             return $line_item_filter_collection;
         }
         $line_item_filter_collection->add(
@@ -895,7 +895,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *    _apply_registration_payments_to_amount_owing
      *
      * @param array $registrations
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     protected function _apply_registration_payments_to_amount_owing(array $registrations)
     {
