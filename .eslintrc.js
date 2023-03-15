@@ -1,6 +1,5 @@
-module.exports = {
-	root: true,
-	extends: ['./eslint/config.js'],
+export default {
+	extends: ['plugin:@wordpress/eslint-plugin/recommended', 'plugin:jest/recommended'],
 	overrides: [
 		{
 			files: ['test/e2e/**/*.js'],
@@ -36,4 +35,12 @@ module.exports = {
 			},
 		},
 	],
+	root: true,
+	rules: {
+		'jest/valid-describe': 'off',
+		'@wordpress/dependency-group': 'off',
+	},
+	settings: {
+		jest: { version: 28 },
+	},
 };
