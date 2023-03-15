@@ -3,12 +3,13 @@
 	"name": "@eventespresso/core",
 	"version": "1.0.0",
 	"description": "Event Espresso core js and css.",
-	"main": "webpack.dev.js",
+	"exports": "./webpack.dev.js",
 	"repository": "git+https://github.com/eventespresso/event-espresso-core.git",
 	"license": "GPL-2.0",
 	"browserslist": [
 		"extends @wordpress/browserslist-config"
 	],
+	"type": "module",
 	"watch": {
 		"build:css": {
 			"patterns": [
@@ -19,15 +20,16 @@
 		}
 	},
 	"scripts": {
-		"build": "cross-env NODE_ENV=production webpack --config webpack.prod.js",
+		"build": "cross-env NODE_ENV=production webpack --config=webpack.prod.js",
+		"buildTrace": "node --trace-deprecation ./node_modules/webpack/bin/webpack.js --mode=production --config=webpack.prod.js",
 		"build:css": "node ./bin/css-builder/css-builder.js",
 		"check-engines": "wp-scripts check-engines",
 		"ci:build": "npm run build",
 		"ci:lint": "npm run lint",
 		"ci:test": "npm run test-js:coverage-ci",
-		"dev": "concurrently \"webpack --config webpack.dev.js\" \"npm run build:css\"",
-		"dev-w": "concurrently \"webpack --watch --config webpack.dev.js\" \"npm-watch build:css\"",
-		"dev-p": "webpack --watch --watch-poll --config webpack.dev.js",
+		"dev": "concurrently \"webpack --config=webpack.dev.js\" \"npm run build:css\"",
+		"dev-w": "concurrently \"webpack --watch --config=webpack.dev.js\" \"npm-watch build:css\"",
+		"dev-p": "webpack --watch --watch-poll --config=webpack.dev.js",
 		"lc": "jsgl --local ./",
 		"lint": "wp-scripts lint-js .",
 		"lint:fix": "wp-scripts lint-js . --fix",
@@ -111,7 +113,7 @@
 		"css-loader": "^6.7.1",
 		"cssnano": "^5.1.7",
 		"deep-freeze": "0.0.1",
-		"del": "git+https://github.com/sindresorhus/del.git",
+		"del": "3.0.0",
 		"equivalent-key-map": "^0.2.2",
 		"eslint": "^8.0.0",
 		"eslint-plugin-jest": "^25.2.0",
@@ -129,7 +131,7 @@
 		"react-dom": "^17.0.2",
 		"react-test-renderer": "^17.0.2",
 		"recast": "^0.21.1",
-		"webpack": "^5.72.1",
+		"webpack": "^5.76.1",
 		"webpack-assets-manifest": "^5.1.0",
 		"webpack-cli": "^4.9.2",
 		"webpack-merge": "^5.8.0"
