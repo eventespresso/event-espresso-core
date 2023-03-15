@@ -52,7 +52,7 @@ const sizes = {
 	radiusUnits: 'px',
 };
 
-module.exports = {
+export default {
 	folder: 'themes/default',
 	colors,
 	meta,

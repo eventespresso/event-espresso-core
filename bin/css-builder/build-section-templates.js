@@ -1,9 +1,13 @@
-const fs = require( 'fs' );
-const path = require( 'path' );
-const { compile } = require( 'handlebars' );
-const { startCase } = require( 'lodash' );
-const { GREYSCALE_LEVELS } = require( './color-utils' );
-const {
+import fs from 'fs';
+import path from 'path';
+import pkg from 'handlebars';
+const { compile } = pkg;
+import pkg2 from 'lodash';
+const { startCase } = pkg2;
+import { fileURLToPath } from 'url';
+
+import { GREYSCALE_LEVELS } from './color-utils.js';
+import {
 	themeColors,
 	themeColorDesc,
 	defaultSizes,
@@ -12,13 +16,15 @@ const {
 	fontSizeColors,
 	loremIpsum,
 	entityStatusGroups,
-} = require( './default-data' );
+} from './default-data.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 /**
  * Constant for the path holding all the handlebar demo templates.
  * @type {string}
  */
-const TEMPLATES_PATH = path.resolve( __dirname, 'demo-templates' );
+const TEMPLATES_PATH = path.resolve(__dirname, 'demo-templates');
 
 /**
  * A function that builds the colors section for css demo html.
@@ -26,61 +32,52 @@ const TEMPLATES_PATH = path.resolve( __dirname, 'demo-templates' );
  * @param {Object} themeConfig  The configuration object for the theme.
  * @return {string}  Colors section html.
  */
-function buildColorsSection( themeConfig ) {
-	const colorsSectionTemplate = fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'colors-section-template.html' ),
-		'utf8'
-	);
-	const baseColorsTemplate = fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'base-color-template.html' ),
-		'utf8'
-	);
-	const themeColorsTemplate = fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'theme-color-template.html' ),
-		'utf8'
-	);
-	const baseTemplate = compile( baseColorsTemplate );
-	const themeTemplate = compile( themeColorsTemplate );
+function buildColorsSection(themeConfig) {
+	const colorsSectionTemplate = fs.readFileSync(path.resolve(TEMPLATES_PATH, 'colors-section-template.html'), 'utf8');
+	const baseColorsTemplate = fs.readFileSync(path.resolve(TEMPLATES_PATH, 'base-color-template.html'), 'utf8');
+	const themeColorsTemplate = fs.readFileSync(path.resolve(TEMPLATES_PATH, 'theme-color-template.html'), 'utf8');
+	const baseTemplate = compile(baseColorsTemplate);
+	const themeTemplate = compile(themeColorsTemplate);
 	const colorDemoItems = [];
-	themeColors.map( ( color ) => {
+	themeColors.map((color) => {
 		colorDemoItems.push(
-			themeTemplate( {
-				colorLabel: startCase( color ),
+			themeTemplate({
+				colorLabel: startCase(color),
 				color,
-				desc: themeColorDesc[ color ],
+				desc: themeColorDesc[color],
 				isDefault: color === 'default',
-			} )
+			})
 		);
-	} );
+	});
 	const baseColorItems = [];
-	for ( const color in themeConfig.colors ) {
+	for (const color in themeConfig.colors) {
 		baseColorItems.push(
-			baseTemplate( {
-				colorLabel: startCase( color ),
+			baseTemplate({
+				colorLabel: startCase(color),
 				color,
 				isGrey: false,
 				isBW: color === 'black' || color === 'white',
-			} )
+			})
 		);
 	}
 	/// now add grey scale levels
 	const greys = [];
-	for ( let x = 1; x <= GREYSCALE_LEVELS; x++ ) {
-		const color = `grey-${ x }`;
+	for (let x = 1; x <= GREYSCALE_LEVELS; x++) {
+		const color = `grey-${x}`;
 		greys.push(
-			baseTemplate( {
-				colorLabel: startCase( color ),
+			baseTemplate({
+				colorLabel: startCase(color),
 				color,
 				isGrey: true,
-			} )
+			})
 		);
 	}
-	const sectionTemplate = compile( colorsSectionTemplate );
-	return sectionTemplate( {
+	const sectionTemplate = compile(colorsSectionTemplate);
+	return sectionTemplate({
 		themeColors: colorDemoItems,
 		baseColors: baseColorItems,
 		greys,
-	} );
+	});
 }
 
 /**
@@ -89,40 +86,32 @@ function buildColorsSection( themeConfig ) {
  * @return {string} Status section html.
  */
 function buildEntityStatusSection() {
-	const sectionTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'entity-status-section.html' ),
-		'utf-8'
-	) );
-	const sectionGroupTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'entity-status-group.html' ),
-		'utf-8'
-	) );
-	const sectionItemTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'entity-status-template.html' ),
-		'utf8'
-	) );
+	const sectionTemplate = compile(
+		fs.readFileSync(path.resolve(TEMPLATES_PATH, 'entity-status-section.html'), 'utf-8')
+	);
+	const sectionGroupTemplate = compile(
+		fs.readFileSync(path.resolve(TEMPLATES_PATH, 'entity-status-group.html'), 'utf-8')
+	);
+	const sectionItemTemplate = compile(
+		fs.readFileSync(path.resolve(TEMPLATES_PATH, 'entity-status-template.html'), 'utf8')
+	);
 	const entityGroups = [];
 
-	for ( const entityName in entityStatusGroups ) {
-		const entityStatuses = entityStatusGroups[ entityName ];
+	for (const entityName in entityStatusGroups) {
+		const entityStatuses = entityStatusGroups[entityName];
 		entityGroups.push(
-			sectionGroupTemplate(
-				{
-					entityName: startCase( entityName ),
-					entityItems: entityStatuses.map(
-						( { label, code } ) => {
-						return sectionItemTemplate(
-							{
-								statusLabel: `${ startCase( entityName ) } ${ startCase( label ) }`,
-								statusCode: code
-							}
-						);
-					} ),
-				}
-			)
+			sectionGroupTemplate({
+				entityName: startCase(entityName),
+				entityItems: entityStatuses.map(({ label, code }) => {
+					return sectionItemTemplate({
+						statusLabel: `${startCase(entityName)} ${startCase(label)}`,
+						statusCode: code,
+					});
+				}),
+			})
 		);
-	};
-	return sectionTemplate( { entityGroups } );
+	}
+	return sectionTemplate({ entityGroups });
 }
 
 /**
@@ -131,25 +120,19 @@ function buildEntityStatusSection() {
  * @return {string} The section html.
  */
 function buildButtonSection() {
-	const sectionTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'button-section.html' ),
-		'utf-8'
-	) );
-	const sectionItemTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'button-template.html' ),
-		'utf8'
-	) );
+	const sectionTemplate = compile(fs.readFileSync(path.resolve(TEMPLATES_PATH, 'button-section.html'), 'utf-8'));
+	const sectionItemTemplate = compile(fs.readFileSync(path.resolve(TEMPLATES_PATH, 'button-template.html'), 'utf8'));
 
 	const sectionItems = [];
-	themeColors.map( ( color ) => {
+	themeColors.map((color) => {
 		sectionItems.push(
-			sectionItemTemplate( {
-				colorLabel: startCase( color ),
+			sectionItemTemplate({
+				colorLabel: startCase(color),
 				color,
-			} )
+			})
 		);
-	} );
-	return sectionTemplate( { sectionItems } );
+	});
+	return sectionTemplate({ sectionItems });
 }
 
 /**
@@ -158,23 +141,17 @@ function buildButtonSection() {
  * @param {Array} colors  An array of color configuration objects
  * @return {string}  The section html
  */
-function buildShadowsSection( { colors } ) {
-	const sectionTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'shadows-section.html' ),
-		'utf-8'
-	) );
-	const sectionItemTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'shadows-template.html' ),
-		'utf8'
-	) );
-	const boxShadowSizes = [ 'tiny', 'small', 'default', 'big' ];
-	const sectionItems = boxShadowSizes.map( ( size ) => {
-		return sectionItemTemplate( {
+function buildShadowsSection({ colors }) {
+	const sectionTemplate = compile(fs.readFileSync(path.resolve(TEMPLATES_PATH, 'shadows-section.html'), 'utf-8'));
+	const sectionItemTemplate = compile(fs.readFileSync(path.resolve(TEMPLATES_PATH, 'shadows-template.html'), 'utf8'));
+	const boxShadowSizes = ['tiny', 'small', 'default', 'big'];
+	const sectionItems = boxShadowSizes.map((size) => {
+		return sectionItemTemplate({
 			size,
 			notTiny: size !== 'tiny',
-		} );
-	} );
-	return sectionTemplate( { sectionItems } );
+		});
+	});
+	return sectionTemplate({ sectionItems });
 }
 
 /**
@@ -183,63 +160,46 @@ function buildShadowsSection( { colors } ) {
  * @param {Object} sizes
  * @return {string} The section html.
  */
-function buildSizesSection( { sizes } ) {
-	const sectionTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'size-section-template.html' ),
-		'utf8'
-	) );
-	const fontSizeTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'font-size-template.html' ),
-		'utf8'
-	) );
-	const marginSizeTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'margin-size-template.html' ),
-		'utf8'
-	) );
-	const paddingSizeTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'padding-size-template.html' ),
-		'utf8'
-	) );
-	const borderSizeTemplate = compile( fs.readFileSync(
-		path.resolve( TEMPLATES_PATH, 'border-radius-template.html' ),
-		'utf8'
-	) );
+function buildSizesSection({ sizes }) {
+	const sectionTemplate = compile(
+		fs.readFileSync(path.resolve(TEMPLATES_PATH, 'size-section-template.html'), 'utf8')
+	);
+	const fontSizeTemplate = compile(fs.readFileSync(path.resolve(TEMPLATES_PATH, 'font-size-template.html'), 'utf8'));
+	const marginSizeTemplate = compile(
+		fs.readFileSync(path.resolve(TEMPLATES_PATH, 'margin-size-template.html'), 'utf8')
+	);
+	const paddingSizeTemplate = compile(
+		fs.readFileSync(path.resolve(TEMPLATES_PATH, 'padding-size-template.html'), 'utf8')
+	);
+	const borderSizeTemplate = compile(
+		fs.readFileSync(path.resolve(TEMPLATES_PATH, 'border-radius-template.html'), 'utf8')
+	);
 	const defaultFontSizes = defaultSizes.reverse();
 	// const sizesCount = defaultFontSizes.length;
-	const fontSizes = defaultFontSizes.map(
-		( size, index ) => {
-			return fontSizeTemplate( {
-				size,
-				priority: index + 1,
-				color: fontSizeColors[ size ],
-				desc: fontSizeDesc[ size ],
-				example: shorterIpsum( loremIpsum, index )
-			} )
-		}
-	);
+	const fontSizes = defaultFontSizes.map((size, index) => {
+		return fontSizeTemplate({
+			size,
+			priority: index + 1,
+			color: fontSizeColors[size],
+			desc: fontSizeDesc[size],
+			example: shorterIpsum(loremIpsum, index),
+		});
+	});
 	defaultSizes.reverse();
-	const marginSizes = defaultSizes.map(
-		( size ) => marginSizeTemplate( { size } )
-	);
-	const paddingSizes = defaultSizes.map(
-		( size ) => paddingSizeTemplate( { size } )
-	);
-	const radiusSizes = defaultRadii.map(
-		( size ) => borderSizeTemplate( { size } )
-	);
-	return sectionTemplate( {
+	const marginSizes = defaultSizes.map((size) => marginSizeTemplate({ size }));
+	const paddingSizes = defaultSizes.map((size) => paddingSizeTemplate({ size }));
+	const radiusSizes = defaultRadii.map((size) => borderSizeTemplate({ size }));
+	return sectionTemplate({
 		fontSizes,
 		marginSizes,
 		paddingSizes,
 		radiusSizes,
-	} );
+	});
 }
 
-function shorterIpsum( longerIpsum, index ) {
-	const length = ( ( index + 5 ) * ( index + 5 ) * ( index + 1 ) ) + 5;
-	return longerIpsum.length > length ?
-		longerIpsum.substr( 0, longerIpsum.lastIndexOf( ' ', length ) ) :
-		longerIpsum;
+function shorterIpsum(longerIpsum, index) {
+	const length = (index + 5) * (index + 5) * (index + 1) + 5;
+	return longerIpsum.length > length ? longerIpsum.substr(0, longerIpsum.lastIndexOf(' ', length)) : longerIpsum;
 }
 
 /**
@@ -256,14 +216,14 @@ function shorterIpsum( longerIpsum, index ) {
  * @param {Object} themeConfig  The configuration object for the theme.
  * @return {Array} An array of sections for the main template.
  */
-function buildSectionTemplates( themeConfig ) {
+function buildSectionTemplates(themeConfig) {
 	return [
-		buildColorsSection( themeConfig ),
+		buildColorsSection(themeConfig),
 		buildEntityStatusSection(),
 		buildButtonSection(),
-		buildSizesSection( themeConfig ),
-		buildShadowsSection( themeConfig ),
+		buildSizesSection(themeConfig),
+		buildShadowsSection(themeConfig),
 	];
 }
 
-module.exports = buildSectionTemplates;
+export default buildSectionTemplates;

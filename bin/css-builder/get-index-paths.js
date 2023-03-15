@@ -1,9 +1,14 @@
-const path = require( 'path' );
-const getCssFiles = require( './get-css-files' );
-const chalk = require( 'chalk' );
+import path from 'path';
+import chalk from 'chalk';
+import { fileURLToPath } from 'url';
 
-const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/src/components/ui/styles' );
-const pathRegex = new RegExp( '\\' + path.sep, 'g' );
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+import getCssFiles from './get-css-files.js';
+
+const STYLES_DIRECTORY = path.resolve(__dirname, '../../assets/src/components/ui/styles');
+const pathRegex = new RegExp('\\' + path.sep, 'g');
 
 /**
  * Get the relative path for the given file, theme directory and whether we want
@@ -20,13 +25,11 @@ const pathRegex = new RegExp( '\\' + path.sep, 'g' );
  * folder.
  * @return {string}  The generated relative path for the file.
  */
-function getRelativePath( file, themeDirectory, toRoot = false ) {
-	const from = path.resolve( STYLES_DIRECTORY, 'themes', themeDirectory );
-	const to = toRoot ?
-		path.resolve( STYLES_DIRECTORY, 'root', file ) :
-		from;
-	const relativePath = toRoot ? path.relative( from, to ) : `./${ file }`;
-	return relativePath.replace( pathRegex, '/' );
+function getRelativePath(file, themeDirectory, toRoot = false) {
+	const from = path.resolve(STYLES_DIRECTORY, 'themes', themeDirectory);
+	const to = toRoot ? path.resolve(STYLES_DIRECTORY, 'root', file) : from;
+	const relativePath = toRoot ? path.relative(from, to) : `./${file}`;
+	return relativePath.replace(pathRegex, '/');
 }
 
 /**
@@ -36,44 +39,24 @@ function getRelativePath( file, themeDirectory, toRoot = false ) {
  * generated for.
  * @return {Array<string>}  An array of paths for writing to the index.js file.
  */
-function getIndexPaths( themeDirectory ) {
+function getIndexPaths(themeDirectory) {
 	return [].concat(
-		getCssFiles( 'themes/' + themeDirectory, true, false )
-			.map( ( file ) => {
-				const relativePath = getRelativePath( file, themeDirectory );
-				process.stdout.write(
-					chalk.green(
-						chalk.green( ' \u2022 ' ) +
-						relativePath + '\n'
-					)
-				);
-				return relativePath;
-			} ),
-		getCssFiles( 'root', false, false ).map(
-			( file ) => {
-				const relativePath = getRelativePath( file, themeDirectory, true );
-				process.stdout.write(
-					chalk.green(
-						chalk.green( ' \u2022 ' ) +
-						relativePath + '\n'
-					)
-				);
-				return relativePath;
-			}
-		),
-		getCssFiles( 'themes/' + themeDirectory, false, false ).map(
-			( file ) => {
-				const relativePath = getRelativePath( file, themeDirectory );
-				process.stdout.write(
-					chalk.green(
-						chalk.green( ' \u2022 ' ) +
-						relativePath + '\n'
-					)
-				);
-				return relativePath;
-			}
-		),
+		getCssFiles('themes/' + themeDirectory, true, false).map((file) => {
+			const relativePath = getRelativePath(file, themeDirectory);
+			process.stdout.write(chalk.green(chalk.green(' \u2022 ') + relativePath + '\n'));
+			return relativePath;
+		}),
+		getCssFiles('root', false, false).map((file) => {
+			const relativePath = getRelativePath(file, themeDirectory, true);
+			process.stdout.write(chalk.green(chalk.green(' \u2022 ') + relativePath + '\n'));
+			return relativePath;
+		}),
+		getCssFiles('themes/' + themeDirectory, false, false).map((file) => {
+			const relativePath = getRelativePath(file, themeDirectory);
+			process.stdout.write(chalk.green(chalk.green(' \u2022 ') + relativePath + '\n'));
+			return relativePath;
+		})
 	);
 }
 
-module.exports = getIndexPaths;
+export default getIndexPaths;

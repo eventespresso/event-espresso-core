@@ -1,24 +1,24 @@
-const requestToExternal = ( request ) => {
+export const requestToExternal = (request) => {
 	const eeDependenciesMap = {
-		'@eventespresso/eejs': [ 'eejs' ],
-		'@eventespresso/i18n': [ 'eejs', 'i18n' ],
-		'@eventespresso/validators': [ 'eejs', 'validators' ],
-		'@eventespresso/helpers': [ 'eejs', 'helpers' ],
-		'@eventespresso/value-objects': [ 'eejs', 'valueObjects' ],
-		'@eventespresso/model': [ 'eejs', 'model' ],
-		'@eventespresso/higher-order-components': [ 'eejs', 'hocs' ],
-		'@eventespresso/components': [ 'eejs', 'components' ],
-		'@eventespresso/editor-hocs': [ 'eejs', 'editorHocs' ],
-		classnames: [ 'eejs', 'vendor', 'classnames' ],
-		'moment-timezone': [ 'eejs', 'vendor', 'moment' ],
-		cuid: [ 'eejs', 'vendor', 'cuid' ],
+		'@eventespresso/eejs': ['eejs'],
+		'@eventespresso/i18n': ['eejs', 'i18n'],
+		'@eventespresso/validators': ['eejs', 'validators'],
+		'@eventespresso/helpers': ['eejs', 'helpers'],
+		'@eventespresso/value-objects': ['eejs', 'valueObjects'],
+		'@eventespresso/model': ['eejs', 'model'],
+		'@eventespresso/higher-order-components': ['eejs', 'hocs'],
+		'@eventespresso/components': ['eejs', 'components'],
+		'@eventespresso/editor-hocs': ['eejs', 'editorHocs'],
+		classnames: ['eejs', 'vendor', 'classnames'],
+		'moment-timezone': ['eejs', 'vendor', 'moment'],
+		cuid: ['eejs', 'vendor', 'cuid'],
 	};
-	if ( eeDependenciesMap[ request ] ) {
-		return eeDependenciesMap[ request ];
+	if (eeDependenciesMap[request]) {
+		return eeDependenciesMap[request];
 	}
 };
 
-const requestToHandle = ( request ) => {
+export const requestToHandle = (request) => {
 	const handlesMap = {
 		'@eventespresso/eejs': 'eejs-core',
 		'@eventespresso/i18n': 'eventespresso-vendor',
@@ -33,12 +33,12 @@ const requestToHandle = ( request ) => {
 		'moment-timezone': 'eventespresso-vendor',
 		cuid: 'eventespresso-vendor',
 	};
-	if ( handlesMap[ request ] ) {
-		return handlesMap[ request ];
+	if (handlesMap[request]) {
+		return handlesMap[request];
 	}
 };
 
-module.exports = {
+export default {
 	requestToExternal,
 	requestToHandle,
 };

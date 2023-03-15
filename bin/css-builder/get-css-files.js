@@ -1,8 +1,13 @@
-const fs = require( 'fs' );
-const path = require( 'path' );
-const { overEvery } = require( 'lodash' );
+import fs from 'fs';
+import path from 'path';
+import pkg from 'lodash';
+const { overEvery } = pkg;
+import { fileURLToPath } from 'url';
 
-const STYLES_DIRECTORY = path.resolve( __dirname, '../../assets/src/components/ui/styles' );
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const STYLES_DIRECTORY = path.resolve(__dirname, '../../assets/src/components/ui/styles');
 let directory = STYLES_DIRECTORY;
 
 /**
@@ -12,8 +17,8 @@ let directory = STYLES_DIRECTORY;
  *
  * @return {boolean} Whether file is a directory.
  */
-function isDirectory( file ) {
-	return fs.lstatSync( path.resolve( STYLES_DIRECTORY, directory, file ) ).isDirectory();
+function isDirectory(file) {
+	return fs.lstatSync(path.resolve(STYLES_DIRECTORY, directory, file)).isDirectory();
 }
 
 /**
@@ -21,8 +26,8 @@ function isDirectory( file ) {
  * @param {string} file
  * @return {boolean} Whether a file is not a directory
  */
-function isNotDirectory( file ) {
-	return ! isDirectory( file );
+function isNotDirectory(file) {
+	return !isDirectory(file);
 }
 
 /**
@@ -31,7 +36,7 @@ function isNotDirectory( file ) {
  * @param {string} file
  * @return {boolean} True if file is a variable css file.
  */
-function isVariableCss( file ) {
+function isVariableCss(file) {
 	return file.includes('variable');
 }
 
@@ -40,8 +45,8 @@ function isVariableCss( file ) {
  * @param {string} file
  * @return {boolean} True if file is not a variable css file.
  */
-function isNotVariableCss( file ) {
-	return ! isVariableCss( file );
+function isNotVariableCss(file) {
+	return !isVariableCss(file);
 }
 
 /**
@@ -50,8 +55,8 @@ function isNotVariableCss( file ) {
  * @param {string} file
  * @return {boolean} True if base file name is a css file.
  */
-function isCssFile( file ) {
-	return /.\.css$/.test( file );
+function isCssFile(file) {
+	return /.\.css$/.test(file);
 }
 
 /**
@@ -63,11 +68,11 @@ function isCssFile( file ) {
  * @param {string} fileDir If provided is appended to the default path for isDirectory checks.
  * @return {function}  A callback function for passing into Array.filter.
  */
-function filterItems( variablesOnly = false, fileDir ) {
+function filterItems(variablesOnly = false, fileDir) {
 	directory = fileDir !== undefined ? fileDir : STYLES_DIRECTORY;
-	return variablesOnly ?
-		overEvery( [ isNotDirectory, isCssFile, isVariableCss ] ) :
-		overEvery( [ isNotDirectory, isCssFile, isNotVariableCss ] );
+	return variablesOnly
+		? overEvery([isNotDirectory, isCssFile, isVariableCss])
+		: overEvery([isNotDirectory, isCssFile, isNotVariableCss]);
 }
 
 /**
@@ -77,10 +82,8 @@ function filterItems( variablesOnly = false, fileDir ) {
  * @param {string} file
  * @return {string}
  */
-function getCssRelativePath( directory, file ) {
-	return directory === 'root' ?
-		path.join( '../../../root', file ) :
-		path.join( '../', file );
+function getCssRelativePath(directory, file) {
+	return directory === 'root' ? path.join('../../../root', file) : path.join('../', file);
 }
 
 /**
@@ -95,15 +98,12 @@ function getCssRelativePath( directory, file ) {
  * @return {string[]}  An array of relative css file paths for all the css files
  * found in the given directory.
  */
-function getCssFiles( directory, variablesOnly = false, relative = true ) {
-	const filesToRead = path.join( STYLES_DIRECTORY, directory );
+function getCssFiles(directory, variablesOnly = false, relative = true) {
+	const filesToRead = path.join(STYLES_DIRECTORY, directory);
 	return fs
-		.readdirSync( filesToRead )
-		.filter( filterItems( variablesOnly, directory ) )
-		.map( ( file ) =>  relative ?
-			getCssRelativePath( directory, file ) :
-			file
-		)
+		.readdirSync(filesToRead)
+		.filter(filterItems(variablesOnly, directory))
+		.map((file) => (relative ? getCssRelativePath(directory, file) : file));
 }
 
-module.exports = getCssFiles;
+export default getCssFiles;

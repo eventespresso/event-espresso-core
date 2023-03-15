@@ -2,7 +2,7 @@
 const REGEX_HEX = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
 const REGEX_HEX_SHORTHAND = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
 // how many shades of grey we want
-const GREYSCALE_LEVELS = 15;
+export const GREYSCALE_LEVELS = 15;
 // as we approach the background color for the theme,
 // we want to reduce the amount of variation between greys
 // in order to allow for more subtle variations
@@ -15,7 +15,7 @@ const GREYSCALE_HALF_STEPS = 3;
 // and although .5 is the middle of the luminance scale
 // it seemed to me that only really bright colors had values
 // above .25 or so, which is why I'm using this value
-const MID_LUMINANCE = .25;
+const MID_LUMINANCE = 0.25;
 
 /**
  * converts RGB color code to HEX color code
@@ -23,10 +23,8 @@ const MID_LUMINANCE = .25;
  * @param {Object} rgb 	ex: { r: 255, g: 255, b: 255 }
  * @return {string} color hex code ex: #FFFFFF
  */
-const rgbToHex = ( rgb ) => {
-	return "#" + (
-		( 1 << 24 ) + ( rgb.r << 16 ) + ( rgb.g << 8 ) + rgb.b
-	).toString( 16 ).slice( 1 );
+const rgbToHex = (rgb) => {
+	return '#' + ((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1);
 };
 
 /**
@@ -35,14 +33,16 @@ const rgbToHex = ( rgb ) => {
  * @param {string} hex color code    ex: #FFFFFF
  * @return {Object} rgb color object ex: { r: 255, g: 255, b: 255 }
  */
-const hexToRgb = ( hex ) => {
-	hex = convertHexTriplet( hex );
-	const result = REGEX_HEX.exec( hex );
-	return result ? {
-		r: parseInt( result[ 1 ], 16 ),
-		g: parseInt( result[ 2 ], 16 ),
-		b: parseInt( result[ 3 ], 16 )
-	} : null;
+const hexToRgb = (hex) => {
+	hex = convertHexTriplet(hex);
+	const result = REGEX_HEX.exec(hex);
+	return result
+		? {
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+		  }
+		: null;
 };
 
 /**
@@ -51,10 +51,10 @@ const hexToRgb = ( hex ) => {
  * @param {string} hex    ex: #03F
  * @return {string} hex    ex: #0033FF
  */
-const convertHexTriplet = ( hex ) => {
-	return hex.replace( REGEX_HEX_SHORTHAND, ( m, r, g, b ) => {
+const convertHexTriplet = (hex) => {
+	return hex.replace(REGEX_HEX_SHORTHAND, (m, r, g, b) => {
 		return r + r + g + g + b + b;
-	} );
+	});
 };
 
 /**
@@ -65,8 +65,8 @@ const convertHexTriplet = ( hex ) => {
  * @param {number} value single value from rgb object
  * @return {number} magic
  */
-const magicAdjustment = ( value ) => {
-	return Math.pow( ( value + 0.055 ) / 1.055, 2.4 );
+const magicAdjustment = (value) => {
+	return Math.pow((value + 0.055) / 1.055, 2.4);
 };
 
 /**
@@ -75,13 +75,13 @@ const magicAdjustment = ( value ) => {
  * @param {Object} rgb    ex: { r: 255, g: 255, b: 255 }
  * @return {number} luminance value from 0 to 1
  */
-const relativeLuminance = ( rgb ) => {
+const relativeLuminance = (rgb) => {
 	let r = rgb.r / 255;
 	let g = rgb.g / 255;
 	let b = rgb.b / 255;
-	r = r <= 0.03928 ? r / 12.92 : magicAdjustment( r );
-	g = g <= 0.03928 ? g / 12.92 : magicAdjustment( g );
-	b = b <= 0.03928 ? b / 12.92 : magicAdjustment( b );
+	r = r <= 0.03928 ? r / 12.92 : magicAdjustment(r);
+	g = g <= 0.03928 ? g / 12.92 : magicAdjustment(g);
+	b = b <= 0.03928 ? b / 12.92 : magicAdjustment(b);
 	return r * 0.2126 + g * 0.7152 + b * 0.0722;
 };
 
@@ -92,17 +92,17 @@ const relativeLuminance = ( rgb ) => {
  * @param {Object} rgb2    ex: { r: 0, g: 0, b: 0 }
  * @return {number} numerator value for contrast ratio
  */
-const contrastRatio = ( rgb1, rgb2 ) => {
-	let rl1 = relativeLuminance( rgb1 );
-	let rl2 = relativeLuminance( rgb2 );
-	if ( rl1 < rl2 ) {
+const contrastRatio = (rgb1, rgb2) => {
+	let rl1 = relativeLuminance(rgb1);
+	let rl2 = relativeLuminance(rgb2);
+	if (rl1 < rl2) {
 		// do the chevy shuffle if first color's luminance is lower
 		const l1 = rl2;
 		const l2 = rl1;
 		rl1 = l1;
 		rl2 = l2;
 	}
-	return ( rl1 + 0.05 ) / ( rl2 + 0.05 );
+	return (rl1 + 0.05) / (rl2 + 0.05);
 };
 
 /**
@@ -111,7 +111,7 @@ const contrastRatio = ( rgb1, rgb2 ) => {
  * @param {number} contrastRatio numerator
  * @return {string} 'AAA', 'AA' or 'FAIL'
  */
-const wcagScore = ( contrastRatio ) => {
+const wcagScore = (contrastRatio) => {
 	return contrastRatio >= 7 ? 'AAA' : contrastRatio >= 4.5 ? 'AA' : 'FAIL';
 };
 
@@ -124,27 +124,30 @@ const wcagScore = ( contrastRatio ) => {
  * @param {string} level desired WCAG score level of 'AAA' or 'AA'
  * @return {string} HEX color code
  */
-const findContrastColor = ( color, bw = false, level = 'AAA' ) => {
-	color = typeof color === 'string' ? hexToRgb( color ) : color;
+export const findContrastColor = (color, bw = false, level = 'AAA') => {
+	color = typeof color === 'string' ? hexToRgb(color) : color;
 	level = level === 'AAA' ? 'AAA' : 'AA';
 	let score = 'FAIL';
 	const modRgb = { r: 1, g: 1, b: 1 };
-	const colorLuminance = relativeLuminance( color );
-	if ( bw ) {
+	const colorLuminance = relativeLuminance(color);
+	if (bw) {
 		return colorLuminance < MID_LUMINANCE ? '#FFFFFF' : '#000000';
 	}
 	const add = colorLuminance < MID_LUMINANCE;
-	let color2 = modifyRgb( color, modRgb, add );
+	let color2 = modifyRgb(color, modRgb, add);
 	// keep modifying the color until score matches desired level
 	// OR we hit pure black or pure white
-	while ( score !== level && ! (
-		( color2.r === 0 && color2.g === 0 && color2.b === 0 ) ||
-		( color2.r === 255 && color2.g === 255 && color2.b === 255 )
-	) ) {
-		color2 = modifyRgb( color2, modRgb, add );
-		score = wcagScore( contrastRatio( color, color2 ) );
+	while (
+		score !== level &&
+		!(
+			(color2.r === 0 && color2.g === 0 && color2.b === 0) ||
+			(color2.r === 255 && color2.g === 255 && color2.b === 255)
+		)
+	) {
+		color2 = modifyRgb(color2, modRgb, add);
+		score = wcagScore(contrastRatio(color, color2));
 	}
-	return rgbToHex( color2 );
+	return rgbToHex(color2);
 };
 
 /**
@@ -155,16 +158,14 @@ const findContrastColor = ( color, bw = false, level = 'AAA' ) => {
  * @param {number } white single r, g, or b value for the theme's white color
  * @return {number} difference between supplied value and black or white
  */
-const calculateBwDifference = ( black, white ) => {
+const calculateBwDifference = (black, white) => {
 	// dark colors have low rgb values like 25 (or whatever)
 	// whereas whites have higher rgb values like 255
 	// so we'll subtract black from white to get 230 (or whatever)
 	// and then divide that by the number of greyscale levels
 	// to get a "step" value of 23 (or whatever)
 	// which is what we will use to incrementally generate our greys
-	return Math.round(
-		( white - black ) / ( GREYSCALE_LEVELS - GREYSCALE_HALF_STEPS )
-	);
+	return Math.round((white - black) / (GREYSCALE_LEVELS - GREYSCALE_HALF_STEPS));
 };
 
 /**
@@ -177,34 +178,27 @@ const calculateBwDifference = ( black, white ) => {
  * @param {boolean} darkTheme whether theme is dark
  * @return {Array} 9 grey HEX colors from near black to near white
  */
-const generateGreyScale = ( black, white, darkTheme = false ) => {
-	const blackRgb = hexToRgb( black );
-	const whiteRgb = hexToRgb( white );
+export const generateGreyScale = (black, white, darkTheme = false) => {
+	const blackRgb = hexToRgb(black);
+	const whiteRgb = hexToRgb(white);
 	// compute step difference between black and white
 	const rgbMod = {
-		r: calculateBwDifference( blackRgb.r, whiteRgb.r ),
-		g: calculateBwDifference( blackRgb.g, whiteRgb.g ),
-		b: calculateBwDifference( blackRgb.b, whiteRgb.b ),
+		r: calculateBwDifference(blackRgb.r, whiteRgb.r),
+		g: calculateBwDifference(blackRgb.g, whiteRgb.g),
+		b: calculateBwDifference(blackRgb.b, whiteRgb.b),
 	};
 	// add bg color to our array of greys
-	let rgbGrey = darkTheme ? [ blackRgb ] : [ whiteRgb ];
+	let rgbGrey = darkTheme ? [blackRgb] : [whiteRgb];
 	// add 10 steps towards background color
-	for ( let x = 0; x < GREYSCALE_LEVELS; x++ ) {
-		rgbGrey.push(
-			modifyRgb(
-				rgbGrey[ x ],
-				rgbMod,
-				darkTheme,
-				x < GREYSCALE_HALF_STEPS + 1
-			)
-		);
+	for (let x = 0; x < GREYSCALE_LEVELS; x++) {
+		rgbGrey.push(modifyRgb(rgbGrey[x], rgbMod, darkTheme, x < GREYSCALE_HALF_STEPS + 1));
 	}
 	// flip the array
 	rgbGrey = rgbGrey.reverse();
 	// convert 10 of the rgb colors to hex (this will skip the background)
 	const hexGreys = [];
-	for ( let x = 0; x < GREYSCALE_LEVELS; x++ ) {
-		hexGreys.push( rgbToHex( rgbGrey[ x ] ) );
+	for (let x = 0; x < GREYSCALE_LEVELS; x++) {
+		hexGreys.push(rgbToHex(rgbGrey[x]));
 	}
 	return hexGreys;
 };
@@ -218,30 +212,36 @@ const generateGreyScale = ( black, white, darkTheme = false ) => {
  * @param {boolean} halfStep 	if true, applies half of modRgb value
  * @return {Object} rgb    ex: { r: 255, g: 255, b: 255 }
  */
-const modifyRgb = ( color, rgbMod, add = false, halfStep = false ) => {
-	const modRgb = halfStep ? {
-		r: Math.round( rgbMod.r / GREYSCALE_HALF_STEPS ),
-		g: Math.round( rgbMod.g / GREYSCALE_HALF_STEPS ),
-		b: Math.round( rgbMod.b / GREYSCALE_HALF_STEPS ),
-	} : rgbMod;
-	color = add ? {
-		r: color.r + modRgb.r,
-		g: color.g + modRgb.g,
-		b: color.b + modRgb.b,
-	} : {
-		r: color.r - modRgb.r,
-		g: color.g - modRgb.g,
-		b: color.b - modRgb.b,
-	};
-	return add ? {
-		r: color.r <= 255 ? color.r : 255,
-		g: color.g <= 255 ? color.g : 255,
-		b: color.b <= 255 ? color.b : 255,
-	} : {
-		r: color.r >= 0 ? color.r : 0,
-		g: color.g >= 0 ? color.g : 0,
-		b: color.b >= 0 ? color.b : 0,
-	};
+const modifyRgb = (color, rgbMod, add = false, halfStep = false) => {
+	const modRgb = halfStep
+		? {
+				r: Math.round(rgbMod.r / GREYSCALE_HALF_STEPS),
+				g: Math.round(rgbMod.g / GREYSCALE_HALF_STEPS),
+				b: Math.round(rgbMod.b / GREYSCALE_HALF_STEPS),
+		  }
+		: rgbMod;
+	color = add
+		? {
+				r: color.r + modRgb.r,
+				g: color.g + modRgb.g,
+				b: color.b + modRgb.b,
+		  }
+		: {
+				r: color.r - modRgb.r,
+				g: color.g - modRgb.g,
+				b: color.b - modRgb.b,
+		  };
+	return add
+		? {
+				r: color.r <= 255 ? color.r : 255,
+				g: color.g <= 255 ? color.g : 255,
+				b: color.b <= 255 ? color.b : 255,
+		  }
+		: {
+				r: color.r >= 0 ? color.r : 0,
+				g: color.g >= 0 ? color.g : 0,
+				b: color.b >= 0 ? color.b : 0,
+		  };
 };
 
 /**
@@ -254,10 +254,10 @@ const modifyRgb = ( color, rgbMod, add = false, halfStep = false ) => {
  * @param {boolean} darkTheme 	will add modifiers if darkTheme
  * @return {string} hex ex: #FFFFFF
  */
-const generateHighContrast = ( hex, modRgb, darkTheme = false ) => {
-	let color = hexToRgb( hex );
-	color = modifyRgb( color, modRgb, darkTheme );
-	return rgbToHex( color )
+export const generateHighContrast = (hex, modRgb, darkTheme = false) => {
+	let color = hexToRgb(hex);
+	color = modifyRgb(color, modRgb, darkTheme);
+	return rgbToHex(color);
 };
 
 /**
@@ -270,19 +270,18 @@ const generateHighContrast = ( hex, modRgb, darkTheme = false ) => {
  * @param {boolean} darkTheme    will subtract modifiers if darkTheme
  * @return {string} hex ex: #FFFFFF
  */
-const generateLowContrast = ( hex, modRgb, darkTheme = false ) => {
-	let color = hexToRgb( hex );
-	color = modifyRgb( color, modRgb, ! darkTheme );
-	return rgbToHex( color )
+export const generateLowContrast = (hex, modRgb, darkTheme = false) => {
+	let color = hexToRgb(hex);
+	color = modifyRgb(color, modRgb, !darkTheme);
+	return rgbToHex(color);
 };
-
 
 /**
  * @param {string} background hex color code for theme background
  * @return {boolean} true if theme background has a low luminance value
  */
-const isDarkTheme = ( background ) => {
-	return relativeLuminance( hexToRgb( background ) ) < 0.5;
+export const isDarkTheme = (background) => {
+	return relativeLuminance(hexToRgb(background)) < 0.5;
 };
 
 /**
@@ -293,23 +292,25 @@ const isDarkTheme = ( background ) => {
  * @param {Object} color2  rgb color object ex: { r: 200, g: 200, b: 200 }
  * @return {Object} rgb color object difference ex: { r: 55, g: 55, b: 55 }
  */
-const difference = ( color1, color2 ) => {
-	color1 = typeof color1 === 'string' ? hexToRgb( color1 ) : color1;
-	color2 = typeof color2 === 'string' ? hexToRgb( color2 ) : color2;
-	let rl1 = relativeLuminance( color1 );
-	let rl2 = relativeLuminance( color2 );
-	return rl1 > rl2 ? {
-		r: color1.r - color2.r,
-		g: color1.g - color2.g,
-		b: color1.b - color2.b,
-	} : {
-		r: color2.r - color1.r,
-		g: color2.g - color1.g,
-		b: color2.b - color1.b,
-	}
+const difference = (color1, color2) => {
+	color1 = typeof color1 === 'string' ? hexToRgb(color1) : color1;
+	color2 = typeof color2 === 'string' ? hexToRgb(color2) : color2;
+	let rl1 = relativeLuminance(color1);
+	let rl2 = relativeLuminance(color2);
+	return rl1 > rl2
+		? {
+				r: color1.r - color2.r,
+				g: color1.g - color2.g,
+				b: color1.b - color2.b,
+		  }
+		: {
+				r: color2.r - color1.r,
+				g: color2.g - color1.g,
+				b: color2.b - color1.b,
+		  };
 };
 
-module.exports = {
+export default {
 	GREYSCALE_LEVELS,
 	generateHighContrast,
 	findContrastColor,
@@ -317,4 +318,3 @@ module.exports = {
 	generateLowContrast,
 	isDarkTheme,
 };
-

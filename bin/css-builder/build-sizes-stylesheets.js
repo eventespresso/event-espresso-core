@@ -1,29 +1,31 @@
-const path = require( 'path' );
-const fileUtils = require( './file-utils' );
+import path from 'path';
+import fileUtils from './file-utils.js';
+import { fileURLToPath } from 'url';
 
-const TEMPLATES_PATH = path.resolve( __dirname, 'css-templates' );
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const TEMPLATES_PATH = path.resolve(__dirname, 'css-templates');
 
 const { getTemplateCompiler } = fileUtils;
-const templateCompiler = getTemplateCompiler(
-	[ TEMPLATES_PATH, 'size.css.handlebars' ]
-);
+const templateCompiler = getTemplateCompiler([TEMPLATES_PATH, 'size.css.handlebars']);
 
 const defaultFontSizeModifiers = {
-	micro: .06,
-	tiny: .07,
-	smaller: .08,
-	small: .09,
-	default: .1,
-	big: .12,
-	bigger: .15,
-	huge: .2,
-	extreme: .3,
+	micro: 0.06,
+	tiny: 0.07,
+	smaller: 0.08,
+	small: 0.09,
+	default: 0.1,
+	big: 0.12,
+	bigger: 0.15,
+	huge: 0.2,
+	extreme: 0.3,
 };
 const defaultSizeModifiers = {
-	nano: .125,
-	micro: .25,
-	tiny: .5,
-	smaller: .75,
+	nano: 0.125,
+	micro: 0.25,
+	tiny: 0.5,
+	smaller: 0.75,
 	small: 1,
 	default: 1.5,
 	big: 2,
@@ -47,30 +49,26 @@ const defaultRadiusModifiers = {
  * @param {Object} config The configuration object for the theme
  * @return {Array} The build content for writing to a final file.
  */
-function fontSizes( config ) {
-	const sizeModifiers = config.sizes.fontSizeModifiers ?
-		config.sizes.fontSizeModifiers :
-		defaultFontSizeModifiers;
+function fontSizes(config) {
+	const sizeModifiers = config.sizes.fontSizeModifiers ? config.sizes.fontSizeModifiers : defaultFontSizeModifiers;
 	const fontSizeBase = config.sizes.fontSizeBase;
 	const fontUnits = config.sizes.fontUnits || 'rem';
 	let sizes = [];
-	for ( const modifier in sizeModifiers ) {
-		let value = sizeModifiers[ modifier ] * fontSizeBase;
-		value = value.toFixed( 2 );
+	for (const modifier in sizeModifiers) {
+		let value = sizeModifiers[modifier] * fontSizeBase;
+		value = value.toFixed(2);
 		sizes.push(
-			templateCompiler( {
-				modifier: `font-size-${ modifier }`,
+			templateCompiler({
+				modifier: `font-size-${modifier}`,
 				value: value + fontUnits,
-			} )
+			})
 		);
 	}
 	sizes.push(
-		templateCompiler( {
+		templateCompiler({
 			modifier: 'line-height-modifier',
-			value: config.sizes.lineHeightModifier ?
-				config.sizes.lineHeightModifier :
-				1.5,
-		} )
+			value: config.sizes.lineHeightModifier ? config.sizes.lineHeightModifier : 1.5,
+		})
 	);
 	return sizes;
 }
@@ -81,20 +79,18 @@ function fontSizes( config ) {
  * @param {Object} config The configuration object for the theme
  * @return {Array} The build content for writing to a final file.
  */
-function marginSizes( config ) {
-	const sizeModifiers = config.sizes.marginSizeModifiers ?
-		config.sizes.marginSizeModifiers :
-		defaultSizeModifiers;
+function marginSizes(config) {
+	const sizeModifiers = config.sizes.marginSizeModifiers ? config.sizes.marginSizeModifiers : defaultSizeModifiers;
 	const marginDefault = config.sizes.marginDefault;
 	const marginUnits = config.sizes.marginUnits || 'rem';
 	let sizes = [];
-	for ( const modifier in sizeModifiers ) {
-		const value = sizeModifiers[ modifier ] * marginDefault;
+	for (const modifier in sizeModifiers) {
+		const value = sizeModifiers[modifier] * marginDefault;
 		sizes.push(
-			templateCompiler( {
-				modifier: `margin-${ modifier }`,
+			templateCompiler({
+				modifier: `margin-${modifier}`,
 				value: value + marginUnits,
-			} )
+			})
 		);
 	}
 	return sizes;
@@ -106,20 +102,18 @@ function marginSizes( config ) {
  * @param {Object} config The configuration object for the theme
  * @return {Array} The build content for writing to a final file.
  */
-function paddingSizes( config ) {
-	const sizeModifiers = config.sizes.paddingSizeModifiers ?
-		config.sizes.paddingSizeModifiers :
-		defaultSizeModifiers;
+function paddingSizes(config) {
+	const sizeModifiers = config.sizes.paddingSizeModifiers ? config.sizes.paddingSizeModifiers : defaultSizeModifiers;
 	const paddingDefault = config.sizes.paddingDefault;
 	const paddingUnits = config.sizes.paddingUnits || 'rem';
 	let sizes = [];
-	for ( const modifier in sizeModifiers ) {
-		const value = sizeModifiers[ modifier ] * paddingDefault;
+	for (const modifier in sizeModifiers) {
+		const value = sizeModifiers[modifier] * paddingDefault;
 		sizes.push(
-			templateCompiler( {
-				modifier: `padding-${ modifier }`,
+			templateCompiler({
+				modifier: `padding-${modifier}`,
 				value: value + paddingUnits,
-			} )
+			})
 		);
 	}
 	return sizes;
@@ -131,26 +125,24 @@ function paddingSizes( config ) {
  * @param {Object} config The configuration object for the theme
  * @return {Array} The build content for writing to a final file.
  */
-function radiusSizes( config ) {
-	const sizeModifiers = config.sizes.radiusSizeModifiers ?
-		config.sizes.radiusSizeModifiers :
-		defaultRadiusModifiers;
+function radiusSizes(config) {
+	const sizeModifiers = config.sizes.radiusSizeModifiers ? config.sizes.radiusSizeModifiers : defaultRadiusModifiers;
 	const radiusDefault = config.sizes.radiusDefault;
 	const radiusUnits = config.sizes.radiusUnits || 'px';
 	let sizes = [];
-	for ( const modifier in sizeModifiers ) {
-		const value = sizeModifiers[ modifier ] * radiusDefault;
+	for (const modifier in sizeModifiers) {
+		const value = sizeModifiers[modifier] * radiusDefault;
 		sizes.push(
-			templateCompiler( {
-				modifier: `border-radius-${ modifier }`,
-				value: Math.round( value ) + radiusUnits,
-			} )
+			templateCompiler({
+				modifier: `border-radius-${modifier}`,
+				value: Math.round(value) + radiusUnits,
+			})
 		);
 	}
 	return sizes;
 }
 
-module.exports = {
+export default {
 	fontSizes,
 	marginSizes,
 	paddingSizes,

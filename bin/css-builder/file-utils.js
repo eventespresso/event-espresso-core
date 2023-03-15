@@ -1,7 +1,8 @@
-const { compile } = require( 'handlebars' );
-const fs = require( 'fs' );
-const path = require( 'path' );
-const chalk = require( 'chalk' );
+import fs from 'fs';
+import path from 'path';
+import chalk from 'chalk';
+import pkg from 'handlebars';
+const { compile } = pkg;
 
 /**
  * converts backslashes to slashes
@@ -9,8 +10,8 @@ const chalk = require( 'chalk' );
  * @param {string} path
  * @return {string} path with backslashes converted to slashes
  */
-function fixSlashes( path ) {
-	return path.replace( /\\/g, '/' );
+function fixSlashes(path) {
+	return path.replace(/\\/g, '/');
 }
 
 /**
@@ -19,9 +20,9 @@ function fixSlashes( path ) {
  * @param {Array} pathParts
  * @return {string} rendered template
  */
-function readFile( pathParts ) {
-	const filePath = path.resolve.apply( null, pathParts );
-	return fs.readFileSync( filePath, 'utf8' );
+function readFile(pathParts) {
+	const filePath = path.resolve.apply(null, pathParts);
+	return fs.readFileSync(filePath, 'utf8');
 }
 
 /**
@@ -30,8 +31,8 @@ function readFile( pathParts ) {
  * @param {Array} templatePath
  * @return {Function} HandlebarsTemplateDelegate
  */
-function getTemplateCompiler( templatePath ) {
-	return compile( readFile( templatePath ) );
+function getTemplateCompiler(templatePath) {
+	return compile(readFile(templatePath));
 }
 
 /**
@@ -41,9 +42,9 @@ function getTemplateCompiler( templatePath ) {
  * @param {Object} templateVars
  * @return {string} rendered template
  */
-function parseCssTemplate( templatePath, templateVars ) {
-	const templateCompiler = getTemplateCompiler( templatePath );
-	return templateCompiler( templateVars );
+function parseCssTemplate(templatePath, templateVars) {
+	const templateCompiler = getTemplateCompiler(templatePath);
+	return templateCompiler(templateVars);
 }
 
 /**
@@ -54,19 +55,15 @@ function parseCssTemplate( templatePath, templateVars ) {
  * @param {string} template
  * @param {string} output
  */
-function writeFile( pathParts, fileData, template = '', output = '' ) {
-	const filePath = typeof pathParts === 'object' ?
-		path.resolve.apply( null, pathParts ) :
-		pathParts;
-	fs.writeFileSync( filePath, fileData );
-	if ( template !== '' && output !== '' ) {
-		process.stdout.write(
-			chalk.green( '  \u2022 ' + template + ' \u21D2 ' + output + '\n' )
-		);
+function writeFile(pathParts, fileData, template = '', output = '') {
+	const filePath = typeof pathParts === 'object' ? path.resolve.apply(null, pathParts) : pathParts;
+	fs.writeFileSync(filePath, fileData);
+	if (template !== '' && output !== '') {
+		process.stdout.write(chalk.green('  \u2022 ' + template + ' \u21D2 ' + output + '\n'));
 	}
 }
 
-module.exports = {
+export default {
 	fixSlashes,
 	readFile,
 	getTemplateCompiler,
