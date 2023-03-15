@@ -286,7 +286,7 @@ class EE_Html_messenger extends EE_messenger
                         'input'      => 'wp_editor',
                         'label'      => esc_html__('Main Content', 'event_espresso'),
                         'type'       => 'string',
-                        'required'   => true,
+                        'required'   => false,
                         'validation' => true,
                         'format'     => '%s',
                         'rows'       => '15',
@@ -295,7 +295,7 @@ class EE_Html_messenger extends EE_messenger
                         'input'               => 'wp_editor',
                         'label'               => '[EVENT_LIST]',
                         'type'                => 'string',
-                        'required'            => true,
+                        'required'            => false,
                         'validation'          => true,
                         'format'              => '%s',
                         'rows'                => '15',
@@ -305,7 +305,7 @@ class EE_Html_messenger extends EE_messenger
                         'input'               => 'textarea',
                         'label'               => '[TICKET_LIST]',
                         'type'                => 'string',
-                        'required'            => true,
+                        'required'            => false,
                         'validation'          => true,
                         'format'              => '%s',
                         'css_class'           => 'large-text',
@@ -355,7 +355,7 @@ class EE_Html_messenger extends EE_messenger
                         'input'               => 'textarea',
                         'label'               => '[DATETIME_LIST]',
                         'type'                => 'string',
-                        'required'            => true,
+                        'required'            => false,
                         'validation'          => true,
                         'format'              => '%s',
                         'css_class'           => 'large-text',
@@ -366,7 +366,7 @@ class EE_Html_messenger extends EE_messenger
                         'input'               => 'textarea',
                         'label'               => '[ATTENDEE_LIST]',
                         'type'                => 'string',
-                        'required'            => true,
+                        'required'            => false,
                         'validation'          => true,
                         'format'              => '%s',
                         'css_class'           => 'large-text',
@@ -399,7 +399,7 @@ class EE_Html_messenger extends EE_messenger
                         'input'               => 'textarea',
                         'label'               => '[PAYMENT_LIST]',
                         'type'                => 'string',
-                        'required'            => true,
+                        'required'            => false,
                         'validation'          => true,
                         'format'              => '%s',
                         'css_class'           => 'large-text',
@@ -463,13 +463,14 @@ class EE_Html_messenger extends EE_messenger
                 'main',
                 $this->_variation
             ),
-            'main_body'  => wpautop(
+            'main_body' => wpautop(
                 apply_filters(
                     'FHEE__EE_Html_messenger___send_message__main_body',
-                    $this->_content,
-                    $this->_content,
+                    (string) $this->_content,
+                    (string) $this->_content,
                     $this->_incoming_message_type
-                )
+                ),
+                false
             ),
         ];
         $this->_deregister_wp_hooks();
@@ -535,14 +536,14 @@ class EE_Html_messenger extends EE_messenger
     /**
      * add the "powered by EE" credit link to the HTML receipt and invoice
      *
-     * @param string          $content
-     * @param string          $content_again
+     * @param string|null     $content
+     * @param string|null     $content_again
      * @param EE_message_type $incoming_message_type
      * @return string
      */
     public function add_powered_by_credit_link_to_receipt_and_invoice(
-        string $content,
-        string $content_again,
+        ?string $content,
+        ?string $content_again,
         EE_message_type $incoming_message_type
     ): string {
         if (

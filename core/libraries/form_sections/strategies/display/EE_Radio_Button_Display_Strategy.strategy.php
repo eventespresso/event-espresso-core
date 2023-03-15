@@ -16,7 +16,7 @@ class EE_Radio_Button_Display_Strategy extends EE_Compound_Input_Display_Strateg
      * @throws EE_Error
      * @return string of html to display the field
      */
-    public function display()
+    public function display(): string
     {
         $input = $this->get_input();
         $input->set_label_sizes();

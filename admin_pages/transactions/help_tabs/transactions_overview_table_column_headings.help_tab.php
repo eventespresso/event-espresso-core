@@ -126,7 +126,7 @@
                 <strong>
                     <?php printf(
                         esc_html__('View Receipt for Transaction %1$s', 'event_espresso'),
-                        '<span class="dashicons dashicons-media-default"></span>'
+                        '<span class="dashicons dashicons-text-page"></span>'
                     ); ?>
                 </strong>
                 <br />

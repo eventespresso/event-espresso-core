@@ -24,7 +24,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <?php echo wp_kses($publish_hidden_fields, AllowedTags::getWithFormTags()); ?>
     </div>
 
-    <div id="espresso_major_buttons_wrapper">
+    <div id="major-publishing-actions" class="ee-layout-row">
 
         <?php if ($publish_delete_link) : ?>
             <div id="delete-action">
@@ -32,11 +32,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             </div>
         <?php endif; ?>
 
-        <div class="publishing-action">
+        <div class="publishing-action" class='ee-layout-row'>
             <?php echo wp_kses($save_buttons, AllowedTags::getWithFormTags()); ?>
         </div>
-        <div class="clear"></div>
-
     </div>
 
     <div id="event-editor-floating-save-btns" class="hidden">

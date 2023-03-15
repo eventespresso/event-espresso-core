@@ -50,16 +50,17 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment
      */
     const status_id_failed = 'PFL';
 
+
     /**
-     *      private constructor to prevent direct creation
-     *      @Constructor
-     *      @access protected
-     *      @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-     *      @return EEM_Payment
+     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any
+     *                         incoming timezone data that gets saved).  Note this just sends the timezone info to the
+     *                         date time model field objects.  Default is NULL (and will be assumed using the set
+     *                         timezone in the 'timezone_string' wp option)
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     protected function __construct($timezone)
     {
-
         $this->singular_item = esc_html__('Payment', 'event_espresso');
         $this->plural_item = esc_html__('Payments', 'event_espresso');
 

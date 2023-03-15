@@ -3,27 +3,26 @@
   Plugin Name:Event Espresso
   Plugin URI: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: Manage events, sell tickets, and receive payments from your WordPress website. Reduce event administration time, cut-out ticketing fees, and own your customer data. | <a href="https://eventespresso.com/add-ons/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Extensions</a> | <a href="https://eventespresso.com/pricing/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Sales</a> | <a href="admin.php?page=espresso_support">Support</a>
-  Version: 4.10.47.rc.000
+  Version: 5.0.0.rc.026
   Author: Event Espresso
-  Author URI: https://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
-  License: GPLv2
+  Author URI: http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
+  License: GPLv3
   Text Domain: event_espresso
   GitHub Plugin URI: https://github.com/eventespresso/event-espresso-core
-  Copyright (c) 2008-2017 Event Espresso  All Rights Reserved.
+  Copyright (c) 2008-2019 Event Espresso  All Rights Reserved.
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 /**
  * Event Espresso
@@ -41,7 +40,7 @@ if (function_exists('espresso_version')) {
     if (! function_exists('espresso_duplicate_plugin_error')) {
         /**
          *    espresso_duplicate_plugin_error
-         *    displays if more than one version of EE is activated at the same time
+         *    displays if more than one version of EE is activated at the same time.
          */
         function espresso_duplicate_plugin_error()
         {
@@ -61,7 +60,7 @@ if (function_exists('espresso_version')) {
     }
     add_action('admin_notices', 'espresso_duplicate_plugin_error', 1);
 } else {
-    define('EE_MIN_PHP_VER_REQUIRED', '7.2.0');
+    define('EE_MIN_PHP_VER_REQUIRED', '7.4.0');
     if (! version_compare(PHP_VERSION, EE_MIN_PHP_VER_REQUIRED, '>=')) {
         /**
          * espresso_minimum_php_version_error
@@ -94,6 +93,10 @@ if (function_exists('espresso_version')) {
         add_action('admin_notices', 'espresso_minimum_php_version_error', 1);
     } else {
         define('EVENT_ESPRESSO_MAIN_FILE', __FILE__);
+
+        require_once __DIR__ . '/vendor/autoload.php';
+        require_once __DIR__ . '/vendor/wp-graphql/wp-graphql/wp-graphql.php';
+
         /**
          * espresso_version
          * Returns the plugin version
@@ -102,7 +105,7 @@ if (function_exists('espresso_version')) {
          */
         function espresso_version()
         {
-            return apply_filters('FHEE__espresso__espresso_version', '4.10.47.rc.000');
+            return apply_filters('FHEE__espresso__espresso_version', '5.0.0.rc.026');
         }
 
         /**
@@ -112,14 +115,31 @@ if (function_exists('espresso_version')) {
         function espresso_plugin_activation()
         {
             update_option('ee_espresso_activation', true);
+            update_option('event-espresso-core_allow_tracking', 'no');
+            update_option('event-espresso-core_tracking_notice', 'hide');
+            // Run WP GraphQL activation callback
+            graphql_activation_callback();
         }
 
         register_activation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation');
+
+        /**
+         * espresso_plugin_deactivation
+         */
+        function espresso_plugin_deactivation()
+        {
+            // Run WP GraphQL deactivation callback
+            graphql_deactivation_callback();
+            delete_option('event-espresso-core_allow_tracking');
+            delete_option('event-espresso-core_tracking_notice');
+        }
+        register_deactivation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation');
 
         require_once __DIR__ . '/core/bootstrap_espresso.php';
         bootstrap_espresso();
     }
 }
+
 if (! function_exists('espresso_deactivate_plugin')) {
     /**
      *    deactivate_plugin

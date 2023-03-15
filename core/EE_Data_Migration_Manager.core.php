@@ -148,6 +148,11 @@ class EE_Data_Migration_Manager implements ResettableInterface
     protected $script_migration_versions;
 
     /**
+     * @var array $dms_folders
+     */
+    protected $dms_folders;
+
+    /**
      * @var EE_Data_Migration_Manager $_instance
      * @access    private
      */
@@ -361,7 +366,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
      */
     public function get_mapping_new_pk($script_name, $old_table, $old_pk, $new_table)
     {
-        $script  = EE_Registry::instance()->load_dms($script_name);
+        $script = EE_Registry::instance()->load_dms($script_name);
         return $script->get_mapping_new_pk($old_table, $old_pk, $new_table);
     }
 
@@ -392,10 +397,13 @@ class EE_Data_Migration_Manager implements ResettableInterface
      */
     public function get_data_migration_script_folders()
     {
-        return (array) apply_filters(
-            'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
-            ['Core' => EE_CORE . 'data_migration_scripts']
-        );
+        if (empty($this->dms_folders)) {
+            $this->dms_folders = (array) apply_filters(
+                'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
+                ['Core' => EE_CORE . 'data_migration_scripts']
+            );
+        }
+        return $this->dms_folders;
     }
 
 
@@ -503,7 +511,6 @@ class EE_Data_Migration_Manager implements ResettableInterface
      * If none are found (ie, they've all already been run, or they don't apply), returns an empty array
      *
      * @return EE_Data_Migration_Script_Base[]
-     * @throws EE_Error
      * @throws EE_Error
      */
     public function check_for_applicable_data_migration_scripts()
@@ -703,6 +710,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         $init_dbs = false;
         // ok so we definitely have a data migration script
         try {
+            $init_dbs = false;
             // how big of a bite do we want to take? Allow users to easily override via their wp-config
             if (absint($step_size) < 1) {
                 $step_size = defined('EE_MIGRATION_STEP_SIZE') && absint(EE_MIGRATION_STEP_SIZE)
@@ -1128,7 +1136,6 @@ class EE_Data_Migration_Manager implements ResettableInterface
      *
      * @param string $plugin_slug the slug for the ee plugin we are searching for. Default is 'Core'
      * @return string
-     * @throws EE_Error
      * @throws EE_Error
      */
     public function get_most_up_to_date_dms($plugin_slug = 'Core')

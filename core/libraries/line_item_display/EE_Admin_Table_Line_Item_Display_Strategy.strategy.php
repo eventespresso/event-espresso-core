@@ -14,25 +14,38 @@
 class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 {
     /**
+     * @var bool
+     */
+    protected $prices_include_taxes = false;
+
+    /**
      * whether to display the taxes row or not
-     * @type bool $_show_taxes
+     *
+     * @var bool
      */
     protected $_show_taxes = false;
 
+
     /**
      * html for any tax rows
-     * @type string $_show_taxes
+     *
+     * @var string
      */
     protected $_taxes_html = '';
 
 
     /**
      * total amount including tax we can bill for at this time
-     * @type float $_grand_total
+     *
+     * @var float $_grand_total
      */
     protected $_grand_total = 0.00;
 
 
+    public function __construct()
+    {
+        $this->prices_include_taxes = EE_Registry::instance()->CFG->tax_settings->prices_displayed_including_taxes;
+    }
 
     /**
      * @return float
@@ -43,22 +56,22 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      * This is used to output a single
+     *
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function display_line_item(EE_Line_Item $line_item, $options = array())
     {
-
         $html = '';
         // set some default options and merge with incoming
         $default_options = array(
-            'odd' => true,
             'use_table_wrapper' => true,
-            'table_css_class' => 'admin-primary-mbox-tbl',
+            'table_css_class' => 'admin-primary-mbox-tbl striped',
             'taxes_tr_css_class' => 'admin-primary-mbox-taxes-tr',
             'total_tr_css_class' => 'admin-primary-mbox-total-tr'
         );
@@ -139,9 +152,9 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::tr();
         $html .= EEH_HTML::th(esc_html__('Name', 'event_espresso'), '', 'jst-left');
         $html .= EEH_HTML::th(esc_html__('Type', 'event_espresso'), '', 'jst-left');
-        $html .= EEH_HTML::th(esc_html__('Amount', 'event_espresso'), '', 'jst-cntr');
-        $html .= EEH_HTML::th(esc_html__('Qty', 'event_espresso'), '', 'jst-cntr');
-        $html .= EEH_HTML::th(esc_html__('Line Total', 'event_espresso'), '', 'jst-cntr');
+        $html .= EEH_HTML::th(esc_html__('Amount', 'event_espresso'), '', 'jst-rght');
+        $html .= EEH_HTML::th(esc_html__('Qty', 'event_espresso'), '', 'jst-rght');
+        $html .= EEH_HTML::th(esc_html__('Line Total', 'event_espresso'), '', 'jst-rght');
         $html .= EEH_HTML::tbody();
         return $html;
     }
@@ -159,21 +172,21 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      *    _item_row
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _item_row(EE_Line_Item $line_item, $options = array())
     {
         $line_item_related_object = $line_item->get_object();
         $parent_line_item_related_object = $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->get_object() : null;
         // start of row
-        $row_class = $options['odd'] ? 'item odd' : 'item';
-        $html = EEH_HTML::tr('', '', $row_class);
+        $html = EEH_HTML::tr('', '', 'item');
 
 
         // Name Column
@@ -189,7 +202,9 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $name_html = $name_link ? '<a href="' . $name_link . '">' . $name_html . '</a>' : $name_html;
         $name_html .= $line_item->is_taxable() ? ' *' : '';
         // maybe preface with icon?
-        $name_html = $line_item_related_object instanceof EEI_Has_Icon ? $line_item_related_object->get_icon() . $name_html : $name_html;
+        $name_html = $line_item_related_object instanceof EEI_Has_Icon
+            ? $line_item_related_object->get_icon() . '&nbsp;' . $name_html
+            : $name_html;
         $name_html = '<span class="ee-line-item-name linked">' . $name_html . '</span><br>';
         $name_html .=  sprintf(
             _x('%1$sfor the %2$s: %3$s%4$s', 'eg. "for the Event: My Cool Event"', 'event_espresso'),
@@ -206,28 +221,38 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $options
         );
 
-        $html .= EEH_HTML::td($name_html, '', 'jst-left');
+        $html .= EEH_HTML::td($name_html, '', 'ee-line-item-name-td jst-left');
         // Type Column
         $type_html = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() : '';
         $type_html .= $this->_get_cancellations($line_item);
         $type_html .= $line_item->OBJ_type() ? '<br />' : '';
         $code = $line_item_related_object instanceof EEI_Has_Code ? $line_item_related_object->code() : '';
         $type_html .= ! empty($code) ? '<span class="ee-line-item-id">' . sprintf(esc_html__('Code: %s', 'event_espresso'), $code) . '</span>' : '';
-        $html .= EEH_HTML::td($type_html, '', 'jst-left');
-
+        $html .= EEH_HTML::td($type_html, '', 'ee-line-item-type-td jst-left');
 
         // Amount Column
         if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'jst-rght');
+            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'ee-line-item-amount-td jst-rght');
         } else {
-            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'jst-rght');
+            $include_taxes = $this->prices_include_taxes && $line_item->quantity() > 0
+                ? '<br /><span class="grey-text">'
+                  . sprintf(
+                      /* translators: 1: money amount like $123 */
+                      esc_html__('%1$s before taxes', 'event_espresso'),
+                      $line_item->pretaxTotal() / $line_item->quantity()
+                  )
+                  . '</span>'
+                : '';
+            $price = $line_item->unit_price_no_code();
+            $html .= EEH_HTML::td($price . $include_taxes, '', 'ee-line-item-amount-td jst-rght');
         }
 
         // QTY column
-        $html .= EEH_HTML::td($line_item->quantity(), '', 'jst-rght');
+        $html .= EEH_HTML::td($line_item->quantity(), '', 'ee-line-item-quantity-td jst-rght');
 
         // total column
-        $html .= EEH_HTML::td(EEH_Template::format_currency($line_item->total(), false, false), '', 'jst-rght');
+        $total = EEH_Template::format_currency($line_item->pretaxTotal(), false, false);
+        $html .= EEH_HTML::td($total, '', 'ee-line-item-total-td jst-rght');
 
         // finish things off and return
         $html .= EEH_HTML::trx();
@@ -235,19 +260,19 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      *    _get_cancellations
      *
      * @param EE_Line_Item $line_item
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_cancellations(EE_Line_Item $line_item)
     {
         $html = '';
         $cancellations = $line_item->get_cancellations();
         $cancellation = reset($cancellations);
-        // \EEH_Debug_Tools::printr( $cancellation, '$cancellation', __FILE__, __LINE__ );
         if ($cancellation instanceof EE_Line_Item) {
             $html .= ' <span class="ee-line-item-id">';
             $html .= sprintf(
@@ -280,20 +305,28 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      *  _tax_row
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _tax_row(EE_Line_Item $line_item, $options = array())
     {
         // start of row
         $html = EEH_HTML::tr('', 'admin-primary-mbox-taxes-tr');
         // name th
-        $html .= EEH_HTML::th($line_item->name() . '(' . $line_item->get_pretty('LIN_percent') . '%)', '', 'jst-rght', '', ' colspan="4"');
+        $tax_details = $line_item->name() . '(' . $line_item->get_pretty('LIN_percent') . '%)';
+        $html .= EEH_HTML::th(
+            $tax_details,
+            '',
+            'jst-rght',
+            '',
+            ' colspan="4"'
+        );
         // total th
         $html .= EEH_HTML::th(EEH_Template::format_currency($line_item->total(), false, false), '', 'jst-rght');
         // end of row
@@ -319,13 +352,14 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      *  _total_row
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _total_row(EE_Line_Item $line_item, $options = array())
     {

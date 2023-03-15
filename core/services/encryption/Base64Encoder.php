@@ -33,10 +33,10 @@ class Base64Encoder
      * @param string $text_string the text to be encoded
      * @return string
      */
-    public function encodeString($text_string = '')
+    public function encodeString(string $text_string = ''): string
     {
         // you give me nothing??? GET OUT !
-        if (empty($text_string) || ! $this->use_base64_encode) {
+        if (! $this->use_base64_encode || empty($text_string)) {
             return $text_string;
         }
         // encode
@@ -52,10 +52,10 @@ class Base64Encoder
      * @return string
      * @throws RuntimeException
      */
-    public function decodeString($encoded_string = '')
+    public function decodeString(string $encoded_string = ''): string
     {
         // you give me nothing??? GET OUT !
-        if (empty($encoded_string)) {
+        if (! $this->use_base64_encode || empty($encoded_string)) {
             return $encoded_string;
         }
         $this->isValidBase64OrFail($encoded_string);
@@ -68,7 +68,7 @@ class Base64Encoder
      * @return string
      * @throws RuntimeException
      */
-    private function decode($encoded_string)
+    private function decode(string $encoded_string): string
     {
         $decoded_string = base64_decode($encoded_string);
         if ($decoded_string === false) {
@@ -87,10 +87,10 @@ class Base64Encoder
      * @param string $text_string the text to be encoded
      * @return string
      */
-    public function encodeUrl($text_string = '')
+    public function encodeUrl(string $text_string = ''): string
     {
         // you give me nothing??? GET OUT !
-        if (empty($text_string) || ! $this->use_base64_encode) {
+        if (! $this->use_base64_encode || empty($text_string)) {
             return $text_string;
         }
         // encode
@@ -108,10 +108,10 @@ class Base64Encoder
      * @return string
      * @throws RuntimeException
      */
-    public function decodeUrl($encoded_string = '')
+    public function decodeUrl(string $encoded_string = ''): string
     {
         // you give me nothing??? GET OUT !
-        if (empty($encoded_string)) {
+        if (! $this->use_base64_encode || empty($encoded_string)) {
             return $encoded_string;
         }
         // replace previously removed characters
@@ -126,7 +126,7 @@ class Base64Encoder
      * @param string $encoded_string the text to be decoded
      * @throws RuntimeException
      */
-    public function isValidBase64OrFail($encoded_string)
+    public function isValidBase64OrFail(string $encoded_string)
     {
         if (! $this->isValidBase64($encoded_string)) {
             throw new RuntimeException(
@@ -141,13 +141,12 @@ class Base64Encoder
 
     /**
      * @see https://stackoverflow.com/a/51877882
-     * @param $string
+     * @param string $string
      * @return bool
      */
-    public function isValidBase64($string)
+    public function isValidBase64(string $string): bool
     {
-        // ensure data is a string
-        if (! is_string($string) || ! $this->use_base64_encode) {
+        if (! $this->use_base64_encode) {
             return false;
         }
         // first check if we're dealing with an actual valid base64 encoded string

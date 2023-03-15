@@ -189,7 +189,7 @@ class EE_Change_Log extends EE_Base_Class
      */
     public function object()
     {
-        $model_name_of_related_obj = $this->OBJ_type();
+        $model_name_of_related_obj = $this->OBJ_type() ?? '';
         $is_model_name = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
         if (! $is_model_name) {
             return null;

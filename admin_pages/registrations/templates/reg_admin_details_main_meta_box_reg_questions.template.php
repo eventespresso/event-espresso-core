@@ -25,8 +25,8 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     >
         <?php wp_nonce_field($reg_questions_form_action . '_nonce', $reg_questions_form_action . '_nonce'); ?>
         <input type="hidden" name="page" value="<?php echo esc_attr(REG_PG_SLUG); ?>" />
-        <input type="hidden" name="action" value="<?php echo esc_html($reg_questions_form_action); ?>" />
-        <input type="hidden" name="_REG_ID" value="<?php echo esc_html($REG_ID); ?>" />
+        <input type="hidden" name="action" value="<?php echo esc_attr($reg_questions_form_action); ?>" />
+        <input type="hidden" name="_REG_ID" value="<?php echo esc_attr($REG_ID); ?>" />
         <input type="hidden" name="espresso_ajax" id="espresso-ajax" value="0" />
         <input type="hidden" name="noheader" id="reg-admin-noheader-inp" value="true" />
         <?php
@@ -39,10 +39,10 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     $REG_ID
                 )
             ) : ?>
-                <input class='button-primary'
+                <input class='button--primary'
                        id="reg-admin-attendee-questions-submit"
                        type="submit"
-                       value="Update Registration Questions"
+                       value="<?php esc_html_e('Update Registration Questions', 'event_espresso'); ?>"
                 />
                 <?php
             endif;

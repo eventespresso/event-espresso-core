@@ -76,7 +76,7 @@ class CurrentPage
 
 
     /**
-     * @param WP $WP
+     * @param WP|null $WP
      * @return void
      */
     public function parseQueryVars(WP $WP = null)
@@ -104,7 +104,7 @@ class CurrentPage
      * @param WP|null $WP
      * @return string
      */
-    public function getPermalink(WP $WP = null)
+    public function getPermalink(WP $WP = null): string
     {
         $post_id = $this->post_id ?: $this->getPostId($WP);
         if ($post_id) {
@@ -123,7 +123,7 @@ class CurrentPage
     /**
      * @return array
      */
-    public function espressoPostType()
+    public function espressoPostType(): array
     {
         return array_filter(
             $this->post_type,
@@ -137,12 +137,12 @@ class CurrentPage
     /**
      * pokes and prods the WP object query_vars in an attempt to shake out a page/post ID
      *
-     * @param WP $WP
+     * @param WP|null $WP $WP
      * @return int
      */
-    private function getPostId(WP $WP = null)
+    private function getPostId(WP $WP = null): ?int
     {
-        $post_id = null;
+        $post_id = 0;
         if ($WP instanceof WP) {
             // look for the post ID in the aptly named 'p' query var
             if (isset($WP->query_vars['p'])) {
@@ -160,30 +160,31 @@ class CurrentPage
         }
         // none of the above? ok what about an explicit "post_id" URL parameter?
         if (! $post_id && $this->request->requestParamIsSet('post_id')) {
-            $post_id = $this->request->getRequestParam('post_id');
+            $post_id = $this->request->getRequestParam('post_id', 0, DataType::INT);
         }
-        return $post_id;
+        return (int) $post_id;
     }
 
 
     /**
      * similar to getPostId() above but attempts to obtain the "name" for the current page/post
      *
-     * @param WP $WP
-     * @return string
+     * @param WP|null $WP $WP
+     * @return string|null
      */
-    private function getPostName(WP $WP = null)
+    private function getPostName(WP $WP = null): ?string
     {
         global $wpdb;
-        $post_name = null;
+        $post_name = '';
         if ($WP instanceof WP) {
             // if this is a post, then is the post name set?
             if (isset($WP->query_vars['name']) && ! empty($WP->query_vars['name'])) {
-                $post_name = $WP->query_vars['name'];
+                $post_name = is_array($WP->query_vars['name']) ? $WP->query_vars['name'][0] : $WP->query_vars['name'];
             }
             // what about the page name?
             if (! $post_name && isset($WP->query_vars['pagename']) && ! empty($WP->query_vars['pagename'])) {
-                $post_name = $WP->query_vars['pagename'];
+                $post_name = is_array($WP->query_vars['pagename']) ? $WP->query_vars['pagename'][0]
+                    : $WP->query_vars['pagename'];
             }
             // this stinks but let's run a query to try and get the post name from the URL
             // (assuming pretty permalinks are on)
@@ -222,10 +223,10 @@ class CurrentPage
     /**
      * also similar to getPostId() and getPostName() above but not as insane
      *
-     * @param WP $WP
+     * @param WP|null $WP $WP
      * @return array
      */
-    private function getPostType(WP $WP = null)
+    private function getPostType(WP $WP = null): array
     {
         $post_types = [];
         if ($WP instanceof WP) {
@@ -245,7 +246,7 @@ class CurrentPage
      *
      * @return bool
      */
-    public function isEspressoPage()
+    public function isEspressoPage(): bool
     {
         if ($this->is_espresso_page === null) {
             $this->setEspressoPage();
@@ -257,7 +258,7 @@ class CurrentPage
     /**
      * @return int
      */
-    public function postId()
+    public function postId(): int
     {
         return $this->post_id;
     }
@@ -266,7 +267,7 @@ class CurrentPage
     /**
      * @return string
      */
-    public function postName()
+    public function postName(): string
     {
         return $this->post_name;
     }
@@ -275,7 +276,7 @@ class CurrentPage
     /**
      * @return array
      */
-    public function postType()
+    public function postType(): array
     {
         return $this->post_type;
     }
@@ -284,7 +285,7 @@ class CurrentPage
     /**
      * for manually indicating the current page will utilize EE logic
      *
-     * @param null|bool $value
+     * @param bool|int|string|null $value
      * @return void
      */
     public function setEspressoPage($value = null)
@@ -301,7 +302,7 @@ class CurrentPage
      *
      * @return bool
      */
-    private function testForEspressoPage()
+    private function testForEspressoPage(): bool
     {
         // in case it has already been set
         if ($this->is_espresso_page) {
@@ -327,9 +328,7 @@ class CurrentPage
                     $espresso_post_type = $this->request->getRequestParam('post_type');
                     // there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
                     // this essentially sets the post_name to "events" (or whatever EE CPT)
-                    $post_name = isset($post_type_CPT_endpoints[ $espresso_post_type ])
-                        ? $post_type_CPT_endpoints[ $espresso_post_type ]
-                        : '';
+                    $post_name = $post_type_CPT_endpoints[ $espresso_post_type ] ?? '';
                     // if the post type matches one of ours then set the post name to the endpoint
                     if ($post_name) {
                         $this->post_name = $post_name;

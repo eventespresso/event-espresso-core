@@ -504,6 +504,21 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
+     *    get_next_upcoming_date_obj - return the next upcoming datetime
+     *
+     * @param int $DTT_ID
+     * @return EE_Datetime|null
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function get_date_obj(int $DTT_ID = 0): ?EE_Datetime
+    {
+        $datetime = EEM_Datetime::instance()->get_one_by_ID($DTT_ID);
+        return $datetime instanceof EE_Datetime ? $datetime : null;
+    }
+
+
+    /**
      *    get_all_date_obj
      *
      * @param int  $EVT_ID

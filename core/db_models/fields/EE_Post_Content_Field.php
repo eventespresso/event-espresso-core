@@ -37,12 +37,13 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
 
     /**
      * Runs the content through `the_content`, or if prepares the content for placing in a form input
-     * @param string $value_on_field_to_be_outputted
-     * @param string   $schema possible values: 'form_input' or null (if null, will run through 'the_content')
+     *
+     * @param string      $value_on_field_to_be_outputted
+     * @param string|null $schema possible values: 'form_input' or null (if null, will run through 'the_content')
      * @return string
      * @throws EE_Error when WP_DEBUG is on and recursive calling is detected
      */
-    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, ?string $schema = null)
     {
         switch ($schema) {
             case 'form_input':

@@ -3,55 +3,56 @@
 /**
  * template args in use
  *
- * @var $tkt_row
- * @var $tkt_status_class
- * @var $TKT_name
- * @var $TKT_start_date
- * @var $TKT_end_date
- * @var $TKT_status
- * @var $TKT_price
- * @var $TKT_qty
- * @var $TKT_uses
- * @var $TKT_min
- * @var $TKT_max
- * @var $TKT_sold
- * @var $TKT_registrations
- * @var $TKT_ID
- * @var $ticket_datetime_rows
- * @var $TKT_description
- * @var $TKT_is_default
- * @var $TKT_price_amount
- * @var $TKT_price_code
- * @var $TKT_price_rows
- * @var $TKT_base_price
- * @var $TKT_base_price_ID
- * @var $TKT_order
- * @var $ticket_price_rows
- * @var $TKT_required
- * @var $TKT_reserved
- * @var $TKT_qty_for_input
- * @var $TKT_subtotal_amount_display
- * @var $disabled
- * @var $ticket_archive_class
- * @var $trash_icon
+ * @var int $tkt_row
+ * @var int $TKT_qty_for_input
+ * @var string $tkt_status_class
+ * @var string $TKT_name
+ * @var string $ticket_datetime_rows
+ * @var string $TKT_start_date
+ * @var string $TKT_end_date
+ * @var string $TKT_status
+ * @var string $TKT_price
+ * @var string $TKT_qty
+ * @var string $TKT_uses
+ * @var string $TKT_min
+ * @var string $TKT_max
+ * @var string $TKT_required
+ * @var string $TKT_reserved
+ * @var string $TKT_sold
+ * @var string $TKT_registrations
+ * @var string $TKT_ID
+ * @var string $TKT_description
+ * @var string $TKT_is_default
+ * @var string $TKT_price_amount
+ * @var string $TKT_price_code
+ * @var string $TKT_price_rows
+ * @var string $TKT_base_price
+ * @var string $TKT_subtotal_amount_display
+ * @var string $TKT_base_price_ID
+ * @var string $TKT_order
+ * @var string $disabled
+ * @var string $ticket_archive_class
+ * @var string $trash_icon
  * @var string $trash_hidden
- * @var $clone_icon
- * @var $display_edit_tkt_row
- * @var $edit_tickets_name
- * @var $edit_tkt_expanded
+ * @var string $clone_icon
+ * @var string $display_edit_tkt_row
+ * @var string $edit_tkt_expanded
+ * @var string $edit_tickets_name
  *
- * @var $TKT_taxable
- * @var $display_subtotal
- * @var $TKT_subtotal_amount
- * @var $tax_rows
+ * @var string $TKT_taxable
+ * @var string $display_subtotal
+ * @var string $TKT_subtotal_amount
+ * @var string $tax_rows
  *
+ * @var string $show_price_modifier;
+ * @var string $ticket_price_rows
+ * @var string $total_price_rows
+ * @var string $ticket_datetimes_list
+ * @var string $starting_ticket_datetime_rows (datetimes attached to ticket on page load)
+ * @var string $existing_ticket_price_ids;
+ * @var string $ticket_template_id;
  * @var string $show_price_modifier
- * @var $total_price_rows
- * @var $ticket_datetimes_list
- * @var $starting_ticket_datetime_rows (datetimes attached to ticket on page load)
- * @var $existing_ticket_price_ids
- * @var $ticket_template_id
- * @var $show_price_mod_button
+ * @var string $show_price_mod_button
  */
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -395,8 +396,11 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                     </tr>
                     </tbody>
                 </table>
-                <button data-context="price-create" class="button-secondary ee-create-button ee-price-create-button"
-                        data-ticket-row="<?php echo esc_attr($tkt_row); ?>" style="<?php echo esc_attr($show_price_mod_button); ?>">
+                <button class="button button--secondary ee-create-button ee-price-create-button"
+                        data-context="price-create"
+                        data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
+                        style="<?php echo esc_attr($show_price_mod_button); ?>">
+                >
                     <?php esc_html_e('Add Price Modifier', 'event_espresso'); ?>
                 </button>
                 <div class="ticket-is-required-container">
@@ -560,9 +564,10 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                            class="edit-ticket-TKT_is_default"
                            value="<?php echo esc_attr($TKT_is_default); ?>"
                     />
-                    <button class="button button-secondary ee-cancel-button"
+                    <button class="button button--secondary ee-cancel-button"
                             data-context="ticket"
-                            data-ticket-row="<?php echo esc_attr($tkt_row); ?>">
+                            data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
+                    >
                         <?php esc_html_e('Close', 'event_espresso'); ?>
                     </button>
                 </div>

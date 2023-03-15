@@ -180,6 +180,7 @@ jQuery(document).ready( function($) {
 				SPCO.auto_submit_gateway_form();
 				SPCO.start_registration_time_limit_countdown();
 			}
+			console.log('%c eei18n', 'color: Cyan;', eei18n);
 		},
 
 
@@ -416,15 +417,11 @@ jQuery(document).ready( function($) {
 		 * submit registration form - submit form and proceed to next step
 		 */
 		set_listener_for_process_next_reg_step_button : function() {
-			//console.log( JSON.stringify( '**set_listener_for_process_next_reg_step_button**', null, 4 ) );
 			SPCO.main_container.on( 'click', '.spco-next-step-btn', function( e ) {
                 // console_log('**', 'SPCO spco-next-step-btn  >CLICK <  **', true);
 				SPCO.current_form_to_validate = $(this).parents('form:first');
 				SPCO.form_is_valid = SPCO.current_form_to_validate.valid();
 				SPCO.main_container.trigger( 'process_next_step_button_click', [ $( this ) ] );
-				//console.log( JSON.stringify( 'SPCO FINISHED "process_next_step_button_click" event', null, 4 ) );
-				//console.log( JSON.stringify( 'SPCO.form_is_valid: ' + SPCO.form_is_valid, null, 4 ) );
-				//console.log( JSON.stringify( 'SPCO eei18n.ajax_submit: ' + eei18n.ajax_submit, null, 4 ) );
 				if ( ! SPCO.form_is_valid ){
 					SPCO.display_validation_errors();
                     SPCO.invalid_input_to_scroll_to = null;
@@ -501,9 +498,7 @@ jQuery(document).ready( function($) {
          * @function
          */
         set_listener_for_payment_amount_change: function () {
-            //console.log( JSON.stringify( '**SPCO.set_listener_for_payment_amount_change**', null, 4 ) );
             SPCO.main_container.on('spco_payment_amount', function (event, payment_amount) {
-                // console.log( JSON.stringify( 'payment_amount: ' + payment_amount, null, 4 ) );
                 if (parseInt(payment_amount) === 0) {
                     SPCO.remove_billing_forms();
                 }
@@ -587,13 +582,10 @@ jQuery(document).ready( function($) {
 			if ( clicked_checkbox.prop('checked')) {
 				// the targeted attendee question group
 				var targeted_attendee = clicked_checkbox.val();
-				//SPCO.console_log( 'copy_primary_registrant_information : targeted_attendee', targeted_attendee, false );
 				// for each question in the targeted attendee question group
 				$( primary_reg_questions ).each( function() {
 					var new_input_id = SPCO.calculate_target_attendee_input_id( $(this), targeted_attendee );
-					//SPCO.console_log( 'copy_primary_registrant_information : new_input_id', new_input_id, true );
 					var input_exists = $( new_input_id ).length;
-					//console.log( JSON.stringify( new_input_id + ' input exists: ' + input_exists, null, 4 ) );
 					if ( input_exists ){
 						SPCO.copy_form_input_value_from_this( $(new_input_id), $(this) );
 						$(new_input_id).trigger('change');
@@ -735,7 +727,6 @@ jQuery(document).ready( function($) {
 		 * @function
 		 */
 		enable_submit_buttons : function() {
-			//console.log( JSON.stringify( '**enable_submit_buttons**', null, 4 ) );
 			$('.spco-next-step-btn').each( function() {
 				$(this).prop( 'disabled', false ).removeClass( 'disabled spco-disabled-submit-btn ee-button-disabled' );
 			});
@@ -747,7 +738,6 @@ jQuery(document).ready( function($) {
 		 * @function
 		 */
 		disable_submit_buttons : function() {
-			//console.log( JSON.stringify( '**disable_submit_buttons**', null, 4 ) );
 			$('.spco-next-step-btn').each( function() {
 				$(this).prop( 'disabled', true ).addClass('disabled spco-disabled-submit-btn ee-button-disabled');
 			});
@@ -761,7 +751,6 @@ jQuery(document).ready( function($) {
 		 *  @param {object} next_step_btn
 		 */
 		process_next_step : function( next_step_btn ) {
-			//console.log( JSON.stringify( '**SPCO.process_next_step()**', null, 4 ) );
 			var step = $(next_step_btn).attr('rel');
 			// add trigger point so other JS can join the party
 			SPCO.main_container.trigger( 'process_next_step', [ step ] );
@@ -773,8 +762,6 @@ jQuery(document).ready( function($) {
 					);
 				}
 				var next_step = SPCO.get_next_step_slug( step );
-				//SPCO.console_log( 'process_next_step : step', step, true );
-				//SPCO.console_log( 'process_next_step : next_step', next_step, false );
 				// which form is being processed ?
 				var form_to_check = '#ee-spco-'+step+'-reg-step-form';
 				// not disabled? you are NOW!!!
@@ -807,17 +794,10 @@ jQuery(document).ready( function($) {
 		 *  @param {string} form_to_check
 		 */
 		submit_reg_form : function( step, next_step, form_to_check ) {
-
-			//console.log( JSON.stringify( '**SPCO.submit_reg_form()**', null, 4 ) );
-			//console.log( JSON.stringify( 'SPCO.allow_submit_reg_form: ' + SPCO.allow_submit_reg_form, null, 4 ) );
 			if ( ! ( eei18n.ajax_submit && SPCO.allow_submit_reg_form )) {
-				//console.log( JSON.stringify( 'NONE SHALL PASS !!!: ' + SPCO.allow_submit_reg_form, null, 4 ) );
 				return;
 			}
 
-			//console.log( JSON.stringify( 'SPCO step: ' + step, null, 4 ) );
-			//console.log( JSON.stringify( 'next_step: ' + next_step, null, 4 ) );
-			//console.log( JSON.stringify( 'form_to_check: ' + form_to_check, null, 4 ) );
 			var form_data = $( form_to_check ).serialize();
 			form_data += '&process_form_submission=1';
 			form_data += '&ee_front_ajax=1';
@@ -829,9 +809,10 @@ jQuery(document).ready( function($) {
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
 
+			console.log('%c submit_reg_form ', 'color: Yellow; font-size: 14px;');
+			console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
 
-			//console.log( '**SPCO SUBMIT REG FORM !!! ** form_data:' );
-		// alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
+		    // alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
 			// send form via AJAX POST
 			$.ajax({
 
@@ -860,7 +841,6 @@ jQuery(document).ready( function($) {
 				}
 
 			});
-
 		},
 
 
@@ -871,11 +851,9 @@ jQuery(document).ready( function($) {
 		* @param {object} prev_response
 		*/
 		get_next_reg_step : function( next_step, prev_response ){
-
 			if ( ! SPCO.get_next_step ) {
 				return;
 			}
-
 			var form_data = 'action=display_spco_reg_step';
 			form_data += '&step=' + next_step;
 			form_data += '&process_form_submission=0';
@@ -886,27 +864,24 @@ jQuery(document).ready( function($) {
 			form_data += '&revisit=' + eei18n.revisit;
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
-			// alert( 'form_data = ' + form_data );
+
+			console.log('%c get_next_reg_step ', 'color: Yellow; font-size: 14px;');
+			console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
 
 			$.ajax({
-
 				type: "POST",
 				url:  eei18n.ajax_url,
 				data: form_data,
 				dataType: "json",
-
 				beforeSend: function() {
 					SPCO.do_before_sending_ajax();
 				},
-
 				success: function( response ){
-//					SPCO.console_log( 'get_next_reg_step : next_step', next_step, true );
-//					SPCO.console_log_object( 'get_next_reg_step : response', response );
                     if ( typeof prev_response.success !== 'undefined' ) {
                         if ( typeof response.return_data === 'undefined' ) {
                             response.return_data = {};
                         }
-                        response.return_data.success = prev_response.success;
+                        response.return_data['success'] = prev_response.success;
                     }
 					SPCO.process_response( next_step, response );
 				},
@@ -929,7 +904,6 @@ jQuery(document).ready( function($) {
 			if ( SPCO.methods_of_payment === null ) {
 				SPCO.methods_of_payment = $( '#methods-of-payment' );
 			}
-			//SPCO.console_log( 'display_payment_method', payment_method, false );
 			if ( payment_method === '' ) {
 				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
 				SPCO.scroll_to_top_and_display_messages( SPCO.methods_of_payment, msg, true  );
@@ -948,7 +922,8 @@ jQuery(document).ready( function($) {
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
 
-			// alert( 'form_data = ' + form_data );
+			console.log('%c display_payment_method ', 'color: Yellow; font-size: 14px;');
+			console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
 
 			$.ajax({
 
@@ -962,7 +937,6 @@ jQuery(document).ready( function($) {
 				},
 
 				success: function( response ){
-					//SPCO.console_log_object( 'display_payment_method : response', response );
 					if ( typeof response !== 'undefined' && typeof response === 'object' ) {
 						if ( typeof response.return_data === 'undefined' || typeof response.return_data !== 'object' ) {
 							response.return_data = {};
@@ -990,7 +964,9 @@ jQuery(document).ready( function($) {
 		 * @param  {string} next_step
 		 * @param  {object} response
 		 */
-		process_response : function( next_step, response ) {
+		process_response: function (next_step, response) {
+			console.log('%c process_response ', 'color: Lime; font-size: 14px;');
+			console.log('%c params', 'color: HotPink;', next_step, response);
 			SPCO.allow_enable_submit_buttons = true;
 			//clear additional_post_data
 			SPCO.additional_post_data = '';
@@ -1001,7 +977,6 @@ jQuery(document).ready( function($) {
 				//  check for payment_amount
 				if ( typeof response.payment_amount !== 'undefined' ) {
 					SPCO.payment_amount = parseFloat( response.payment_amount );
-					// console.log( JSON.stringify( 'SPCO.payment_amount: ' + SPCO.payment_amount, null, 4 ) );
 					// trigger a custom event so that other JS functions can add listeners for the "spco_payment_amount" event
 					SPCO.main_container.trigger( 'spco_payment_amount', [ SPCO.payment_amount ] );
 				}
@@ -1040,7 +1015,6 @@ jQuery(document).ready( function($) {
 					// once again, if any new validation rules were sent...
 					if ( typeof response.return_data.validation_rules !== 'undefined' ) {
 						// add new form's js validation rules to the mix, now that the new inputs exist
-						//SPCO.console_log( 'set_new_validation_rules', response.return_data.payment_method, false );
 						SPCO.set_new_validation_rules( next_step, response.return_data.validation_rules );
 					}
 
@@ -1101,14 +1075,12 @@ jQuery(document).ready( function($) {
 		 * @param  {object} validation_rules
 		 */
 		set_new_validation_rules : function( next_step, validation_rules ) {
-			//SPCO.console_log( 'set_new_validation_rules : next_step', next_step, true );
 			if ( SPCO.verify_form_validation_exists( 'set_new_validation_rules' )) {
 				// pass new rules for setup
 				EEFV.initialize( validation_rules.form_data );
 				// the form id for the current step
 				var form_id = 'ee-spco-' + next_step + '-reg-step-form';
 				if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
-					//SPCO.console_log( 'set_new_validation_rules : form_id', form_id, true );
 					SPCO.current_form_to_validate = EEFV.form_validators[ form_id ];
 				}
 			}
@@ -1121,12 +1093,9 @@ jQuery(document).ready( function($) {
 		 * @param  {object} response
 		 */
 		switch_payment_methods : function( response ) {
-			//SPCO.console_log( 'switch_payment_methods', response.return_data.payment_method, false );
             SPCO.remove_billing_forms();
-//			SPCO.console_log_object( 'switch_payment_methods : response.return_data.payment_method = ', response.return_data.payment_method );
 			if ( typeof response.return_data.payment_method !== 'undefined' ) {
 				var payment_method_info = $('#spco-payment-method-info-' + response.return_data.payment_method );
-				//SPCO.console_log( 'payment_method_info', payment_method_info.attr('id'), false );
 				if ( typeof response.return_data.payment_method_info !== 'undefined' ) {
 					payment_method_info.append( response.return_data.payment_method_info );
 				}
@@ -1151,9 +1120,7 @@ jQuery(document).ready( function($) {
 		 */
 		remove_billing_forms : function() {
             var payment_method_info_dv = $('.spco-payment-method-info-dv');
-//			SPCO.console_log_object( 'remove_billing_forms : payment_method_info_dv = ', payment_method_info_dv );
             $(payment_method_info_dv).each(function () {
-                //SPCO.console_log( 'remove_billing_forms : payment_method_info_dv', $( this ).attr('id'), false );
                 $(this).hide();
                 $(this).find('.sandbox-panel').remove();
                 $(this).find('.ee-billing-form').remove();
@@ -1186,11 +1153,7 @@ jQuery(document).ready( function($) {
 		},
 
 
-
 		/********** NOTIFICATIONS **********/
-
-
-
 		/**
 		 * @function
 		 * @param  {object} $item

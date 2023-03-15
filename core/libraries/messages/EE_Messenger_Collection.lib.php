@@ -60,12 +60,12 @@ class EE_Messenger_Collection extends EE_Object_Collection
      * finds and returns an object in the Collection based on the info that was set using addObject()
      * PLZ NOTE: the pointer is reset to the beginning of the collection before returning
      *
-     * @param mixed
+     * @param string|null $info
      * @return null | object
      */
     public function get_by_info($info = '')
     {
-        return parent::get_by_info(str_replace(' ', '_', strtolower($info)));
+        return parent::get_by_info(str_replace(' ', '_', strtolower((string)$info)));
     }
 
 

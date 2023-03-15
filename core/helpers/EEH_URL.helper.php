@@ -13,18 +13,27 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEH_URL
 {
+    const CONTEXT_NONE = 0;
+    const CONTEXT_OUTPUT = 1;
+    const CONTEXT_RAW = 2;
+
+
     /**
      * _add_query_arg
      * adds nonce to array of arguments then calls WP add_query_arg function
      *
-     * @access public
      * @param array  $args
      * @param string $url
      * @param bool   $exclude_nonce If true then the nonce will be excluded from the generated url.
+     * @param int    $context
      * @return string
      */
-    public static function add_query_args_and_nonce($args = [], $url = '', $exclude_nonce = false)
-    {
+    public static function add_query_args_and_nonce(
+        array $args = [],
+        string $url = '',
+        bool $exclude_nonce = false,
+        int $context = EEH_URL::CONTEXT_NONE
+    ): string {
         // check that an action exists and add nonce
         if (! $exclude_nonce) {
             if (isset($args['action']) && ! empty($args['action'])) {
@@ -51,7 +60,14 @@ class EEH_URL
             $args['return'] = $action;
         }
 
-        return add_query_arg($args, $url);
+        $url = add_query_arg($args, $url);
+        if ($context === EEH_URL::CONTEXT_OUTPUT) {
+            return esc_url($url);
+        }
+        if ($context === EEH_URL::CONTEXT_RAW) {
+            return esc_url_raw($url);
+        }
+        return $url;
     }
 
 
@@ -63,7 +79,7 @@ class EEH_URL
      * @param array  $args the arguments that should be passed through to the wp_remote_request call.
      * @return boolean
      */
-    public static function remote_file_exists($url, $args = [])
+    public static function remote_file_exists(string $url, array $args = []): bool
     {
         $results = wp_remote_request(
             $url,
@@ -90,8 +106,11 @@ class EEH_URL
      * @param bool   $base_url_only - TRUE will only return the scheme and host with no other parameters
      * @return string
      */
-    public static function refactor_url($url = '', $remove_query = true, $base_url_only = false)
-    {
+    public static function refactor_url(
+        string $url = '',
+        bool $remove_query = true,
+        bool $base_url_only = false
+    ): string {
         // break apart incoming URL
         $url_bits = parse_url($url);
         // HTTP or HTTPS ?
@@ -126,7 +145,7 @@ class EEH_URL
      *                         simply return the query string
      * @return string|array
      */
-    public static function get_query_string($url = '', $as_array = true)
+    public static function get_query_string(string $url = '', bool $as_array = true)
     {
         // decode, then break apart incoming URL
         $url_bits = parse_url(html_entity_decode($url));
@@ -176,7 +195,7 @@ class EEH_URL
      * @param string $prefix Use this to prefix the string with something.
      * @return string
      */
-    public static function generate_unique_token($prefix = '')
+    public static function generate_unique_token(string $prefix = ''): string
     {
         $token = md5(uniqid() . mt_rand());
         return $prefix ? $prefix . '_' . $token : $token;
@@ -191,7 +210,7 @@ class EEH_URL
      * @param string $server_variable
      * @return string
      */
-    public static function filter_input_server_url($server_variable = 'REQUEST_URI')
+    public static function filter_input_server_url(string $server_variable = 'REQUEST_URI'): string
     {
         $URL              = '';
         $server_variables = [
@@ -217,7 +236,7 @@ class EEH_URL
      *
      * @return string
      */
-    public static function current_url()
+    public static function current_url(): string
     {
         $url = '';
         if (
@@ -239,7 +258,7 @@ class EEH_URL
      * @return string
      * @since 4.9.46.rc.029
      */
-    public static function current_url_without_query_paramaters(array $query_parameters)
+    public static function current_url_without_query_paramaters(array $query_parameters): string
     {
         return remove_query_arg($query_parameters, EEH_URL::current_url());
     }
@@ -250,7 +269,7 @@ class EEH_URL
      * @param int    $status
      * @param string $exit_notice
      */
-    public static function safeRedirectAndExit($location, $status = 302, $exit_notice = '')
+    public static function safeRedirectAndExit(string $location, int $status = 302, string $exit_notice = '')
     {
         EE_Error::get_notices(false, true);
         wp_safe_redirect($location, $status);
@@ -269,7 +288,7 @@ class EEH_URL
      * @return string which can be used in a URL
      * @since 4.9.66.p
      */
-    public static function slugify($text, $fallback)
+    public static function slugify(string $text, string $fallback): string
     {
         // url decode after sanitizing title to restore unicode characters,
         // see https://github.com/eventespresso/event-espresso-core/issues/575

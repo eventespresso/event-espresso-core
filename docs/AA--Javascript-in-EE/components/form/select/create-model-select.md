@@ -36,7 +36,7 @@ If provided, used as the label text for the select input.
 
 ## Usage
 
-**Note**: If you plan on exposing something wrapping this component as a component itself on `eejs.components` (this will be the case if you are adding your new component to the Event Espresso `assets/src/components` folder), then import this function directly via relative path.
+**Note**: If you plan on exposing something wrapping this component as a component itself on `eejs.components` (this will be the case if you are adding your new component to the Event Espresso `assets/ZZZ/components` folder), then import this function directly via relative path.
 
 This function can be utilized one of two ways:
 

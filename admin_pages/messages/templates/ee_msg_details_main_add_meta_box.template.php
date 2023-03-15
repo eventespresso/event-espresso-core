@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var EE_Event[] $active_events
  * @var array      $active_messengers
@@ -10,23 +12,21 @@
  * @var string     $edit_message_template_form_url
  */
 
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
-?>
+ $header = $event_name
+    ? sprintf(
+        /* translators: %s: event name */
+        esc_html__('%1$s Custom Template', 'event_espresso'),
+        $event_name
+    )
+    : '';
+    ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
-
-    <h4 class="admin-primary-mbox-h4">
-        <?php
-        echo ($event_name
-            ? sprintf(
-            /* translators: %s: event name */
-                esc_html__('%1$s Custom Template', 'event_espresso'),
-                $event_name
-            )
-            : '');
-        ?>
-    </h4>
+    <?php if ($header) : ?>
+        <h3 class="admin-primary-mbox-h4">
+            <?php echo $header; ?>
+        </h3>
+    <?php endif; ?>
     <p><?php echo wp_kses($action_message, AllowedTags::getWithFormTags()); ?></p>
 
     <form action="<?php echo esc_url_raw($edit_message_template_form_url); ?>"
@@ -69,6 +69,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             </select>
         <?php endif; ?>
 
-        <input id="submit-msg-add-sbmt" class="button-secondary" type="submit" value="Generate Templates">
+        <input id="submit-msg-add-sbmt" class="button--secondary" type="submit" value="Generate Templates">
     </form>
 </div> <!-- end #admin-primary-mbox-dv -->

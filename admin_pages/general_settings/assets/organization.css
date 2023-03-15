@@ -1,93 +1,190 @@
+#country-settings-dv {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
 #country-details-settings-dv, #country-states-settings-dv {
-    float: left;
-    width: 47%;
-    min-width: 350px;
-    padding: 10px;
-}
-
-.form-table {
     width: 100%;
 }
 
-.general-settings-country-input-td input[type="text"],
-.general-settings-country-state-input-td input[type="text"] {
-    font-size: 14px !important;
-    line-height: 1.3 !important;
-    padding: 3px 5px !important;
+#country-settings-dv tr {
+    display: flex;
+    flex-direction: row;
 }
 
-.general-settings-country-input-td input[type="text"].small-text,
-.general-settings-country-state-input-td input[type="text"].small-text {
-    min-width: 5rem;
+.espresso-admin #country-settings-dv table > tbody > tr > th,
+.espresso-admin #country-settings-dv table > tbody > tr > td {
+    padding-block: .25rem;
 }
 
-.general-settings-country-input-td input[type="text"].regular-text,
-.general-settings-country-state-input-td input[type="text"].regular-text {
-    display: table-cell;
+.espresso-admin #country-details-dv .ee-admin-two-column-layout > tbody > tr > th {
+    min-width: max(8rem, 25%);
+    max-width: max(16rem, 25%);
+}
+
+.espresso-admin #country-details-dv .ee-admin-two-column-layout > tbody > tr > td {
+    min-width: max(16rem, 50%);
+    max-width: max(48rem, 50%);
+}
+
+#country-settings-dv .espresso-radio-btn-options-ul {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    min-width: 360px;
+}
+
+#country-settings-dv .espresso-radio-btn-options-ul .nano-lbl {
+    display: unset;
+    margin-inline-end: 2rem;
+}
+
+
+#country-details-dv table th {
+    padding-block-end: 0;
+}
+#country-details-dv table td {
+    padding-block-start: 0;
+}
+
+
+#country-states-dv td input[type="text"] {
+    margin-inline: 0;
+    min-width: clamp(4rem, 8%, 8rem);
     width: 100%;
 }
-
-#general-setting-country-states-tbl td text {
-    padding: 0;
-    margin: 0;
-    width: 100%;
+#country-states-dv td.delete-state-td {
+    text-align: end;
+    padding-block-end: 2rem;
 }
 
-/**/
-#general-setting-country-states-tbl td .STA_active-ul {
-    width: 100%
+
+@media all and (max-width: 782px) {
+
+    #country-settings-dv tr {
+        flex-direction: column;
+        width: calc(100% - 3rem);
+    }
+
+    .espresso-admin #country-states-dv tr {
+        padding-block-end: 2rem;
+    }
+    .espresso-admin #country-states-dv td:last-child {
+        border-block-end: 2px solid var(--ee-border-color-table-row);
+        padding-block-end: 2.5rem !important;
+    }
+
+    #country-settings-dv th:first-child,
+    #country-settings-dv td:first-child {
+        padding-block-start: 1.5rem;
+    }
+
+    #country-states-dv thead {
+        display: none;
+    }
+    #country-states-dv th:first-child,
+    #country-states-dv td:first-child {
+        padding-block-start: 3rem;
+    }
+    #country-states-dv th:last-child,
+    #country-states-dv td:last-child {
+        padding-block-end: 1.5rem;
+    }
+    #country-states-dv table > tbody > tr > td.delete-state-td {
+        text-align: start;
+    }
+
 }
 
-#general-setting-country-states-tbl td .STA_active-ul li {
-    float: left;
-    min-width: 60px;
-    max-width: 89px;
-}
 
-#general-setting-country-states-tbl td {
-    margin: 0;
-}
+@media all and (min-width: 782px) {
+    #country-details-settings-dv,
+    #country-states-settings-dv {
+        padding: 1rem;
+    }
+    #country-states-settings-dv .espresso-form-input-lbl {
+        border: 0;
+        clip: rect(1px, 1px, 1px, 1px);
+        -webkit-clip-path: inset(50%);
+        clip-path: inset(50%);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+        word-wrap: normal !important;
+    }
 
-/**/
-#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(1) {
-    width: 10%;
-    padding-left: 0;
-}
 
-#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(2) {
-    padding-left: 0;
-}
+    .add-new-state-tbl td:first-child,
+    #country-states-dv thead th:nth-child(1),
+    #country-states-dv tbody td:nth-child(1) {
+    /* #country-states-dv tbody tr.country-state-columns td:nth-child(1) { */
+        width: 6rem;
+    }
+    #country-states-dv thead th:nth-child(2),
+    #country-states-dv tbody td:nth-child(2) {
+        min-width: clamp(16rem, calc(50% - 0.5rem), 32rem);
+    }
+    #country-states-dv thead th:nth-child(3),
+    #country-states-dv tbody td:nth-child(3) {
+        padding-inline-start: 1rem !important;
+        width: 13rem;
+    }
 
-#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(3) {
-    width: 6%;
-    min-width: 120px;
-}
+    #country-states-dv .STA_active-ul {
+        width: 13rem;
+    }
 
-#general-setting-country-states-tbl tbody tr.country-state-columns td:nth-child(4) {
-    width: 5%;
-}
-
-#general-setting-country-states-tbl .medium-text {
-    width: 100%;
-}
-
-.add-new-state-tbl td:first-child {
-    width: 10%;
-}
-
-@media all and (min-width: 850px) and (max-width: 1231px) {
-    #country-details-settings-dv, #country-states-settings-dv {
-        width: 100%;
+    #country-states-dv tbody tr.country-state-columns td:nth-child(4) {
+        width: 50px;
+    }
+    #country-settings-dv .espresso-radio-btn-options-ul {
+        min-width: 400px;
     }
 }
 
-@media all and (max-width: 817px) {
-    #country-details-settings-dv, #country-states-settings-dv {
-        width: 100%;
+@media all and (min-width: 1920px) {
+    #country-settings-dv {
+        align-items: flex-start;
+        flex-direction: row;
+        /* justify-content: space-between; */
+    }
+
+    #country-details-settings-dv,
+    #country-states-settings-dv {
+        width: 45%;
+    }
+
+    #country-states-dv thead {
+        display: table-header-group;
+    }
+
+    /* #country-states-dv thead th:nth-child(2), */
+    /* #country-states-dv tbody td:nth-child(2) { */
+    /*     min-width: clamp(8rem, calc(50% - 0.5rem), 12rem); */
+    /* } */
+
+    #country-states-dv tbody tr.country-state-columns td:nth-child(2) input {
+        min-width: clamp(8rem, calc(50% - 0.5rem), 12rem);
+        max-width: clamp(16rem, calc(100% - 0.5rem), 24rem);
     }
 }
+
 
 #site_license_key {
-    width: 90%;
-    margin-right: 10px;
+    margin-right: .5rem;
+    max-width: calc(100% - 4rem) !important;
+}
+#site_license_key + .dashicons.dashicons-admin-network {
+    font-size: 2rem;
+    height: 2rem;
+    margin: 0.5rem 0.25rem 0;
+    width: 2rem;
+}
+.espresso-admin input.ee_media_url {
+    max-width: calc(100% - 4rem) !important;
 }

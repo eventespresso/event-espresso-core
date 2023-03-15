@@ -68,13 +68,16 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
     /**
      * SequentialStepForm constructor
      *
-     * @param int              $order
-     * @param string           $form_name
-     * @param string           $admin_name
-     * @param string           $slug
-     * @param string           $form_action
-     * @param string           $form_config
+     * @param int         $order
+     * @param string      $form_name
+     * @param string      $admin_name
+     * @param string      $slug
+     * @param string      $form_action
+     * @param string      $form_config
      * @param EE_Registry|null $registry
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws DomainException
      */
     public function __construct(
         $order,

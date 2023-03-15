@@ -75,7 +75,7 @@
                         ),
                         "<a href='$reset_db_page_url'>",
                         "</a>",
-                        "<a class='button-primary' href='$reattempt_action_url'>"
+                        "<a class='button--primary' href='$reattempt_action_url'>"
                     );
                     ?>
                 </p>
@@ -114,7 +114,7 @@
                         'event_espresso'
                     ),
                     $most_recent_migration->slug(),
-                    "<a id='do-not-migrate' class='do-not-migrate button-primary' href='$reset_db_action_url'>",
+                    "<a id='do-not-migrate' class='do-not-migrate button--primary' href='$reset_db_action_url'>",
                     "</a>"
                 );
                 ?>

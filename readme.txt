@@ -3,9 +3,9 @@ Contributors: eventespresso, sethshoultes, garthkoyle, pebblo, mnelson4, lorenzo
 Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
 Tags: event registration, ticketing, online registration, ticket sales, event booking, class registration, conference registration, event ticketing, registration, event, events, online event registration
 Requires at least: 4.5
-Requires PHP: 7.2
-Tested up to: 6.0.2
-Stable tag: 4.10.41.decaf
+Requires PHP: 5.4
+Tested up to: 5.7.1
+Stable tag: 4.10.4.decaf
 License: GPL2
 
 Manage online event registration and ticketing. Create event registration forms, sell tickets, collect money, send email, and SEO for events.
@@ -141,9 +141,9 @@ Check out the advanced [installation](https://eventespresso.com/wiki/installing-
 == Installation ==
 
 = Quick Install =
-1. Event Espresso can be installed and activated by searching for the plugin through WordPress admin &rarr; Plugins &rarr; Add New.
+1. Event Espresso can be installed and activated by searching for the plugin through WordPress admin &rarr; Plugins &rarr; Add New. 
 
-=  Installing via FTP =
+=  Installing via FTP =  
 Alternatively, you can download Event Espresso to your computer from the WordPress Plugin Directory.
 
 1. Then locate the `event-espresso-core-decaf` folder on your computer and unzip it.
@@ -252,7 +252,7 @@ Backup your WordPress website before installing any updates.
 * House Cleaning Services
 * [Model Agency Booking/Scheduling](https://eventespresso.com/use-cases/modeling-talent-agency-scheduling/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Room Booking/Scheduling
-* Workshop Registrations
+* Workshop Registrations 
 
 = Classes =
 
@@ -298,7 +298,7 @@ Backup your WordPress website before installing any updates.
 * School Lunch Reservations
 * Parent Teacher Conferences
 * Parent Teacher Association Meetings
-* Wildlife Education and Tours
+* Wildlife Education and Tours 
 
 = Fundraisers & Non-Profit Organizations =
 
@@ -380,3 +380,4 @@ If you aren't quite sure if Event Espresso will work for you and it's not listed
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+

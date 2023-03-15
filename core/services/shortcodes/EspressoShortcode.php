@@ -20,11 +20,14 @@ use WP_Post;
 abstract class EspressoShortcode implements ShortcodeInterface
 {
     /**
-     * transient prefix
-     *
      * @type string
      */
-    const CACHE_TRANSIENT_PREFIX = 'ee_sc_';
+    public const CACHE_TRANSIENT_PREFIX = 'SC_';
+
+    /**
+     * @type string
+     */
+    public const SHORTCODE_PREFIX = 'ESPRESSO_';
 
     /**
      * @var PostRelatedCacheManager $cache_manager
@@ -35,7 +38,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
      * true if ShortcodeInterface::initializeShortcode() has been called
      * if false, then that will get called before processing
      *
-     * @var boolean $initialized
+     * @var bool $initialized
      */
     private $initialized = false;
 
@@ -63,12 +66,12 @@ abstract class EspressoShortcode implements ShortcodeInterface
     /**
      * enqueues scripts then processes the shortcode
      *
-     * @param array $attributes
+     * @param array|string $attributes
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    final public function processShortcodeCallback($attributes = array())
+    final public function processShortcodeCallback($attributes = array()): string
     {
         if ($this instanceof EnqueueAssetsInterface) {
             if (is_admin()) {
@@ -77,8 +80,9 @@ abstract class EspressoShortcode implements ShortcodeInterface
                 $this->enqueueScripts();
             }
         }
+        $attributes = is_array($attributes) ? $attributes : [];
         return $this->shortcodeContent(
-            $this->sanitizeAttributes((array) $attributes)
+            $this->sanitizeAttributes($attributes)
         );
     }
 
@@ -128,7 +132,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function currentPostID()
+    private function currentPostID(): int
     {
         // try to get EE_Event any way we can
         $event = EEH_Event_View::get_event();
@@ -148,10 +152,10 @@ abstract class EspressoShortcode implements ShortcodeInterface
      * @param int $post_ID
      * @return string
      */
-    private function shortcodeCacheID($post_ID)
+    private function shortcodeCacheID(int $post_ID): string
     {
-        $tag = str_replace('ESPRESSO_', '', $this->getTag());
-        return "SC_{$tag}-{$post_ID}";
+        $tag = str_replace(EspressoShortcode::SHORTCODE_PREFIX, '', $this->getTag());
+        return EspressoShortcode::CACHE_TRANSIENT_PREFIX . "$tag-$post_ID";
     }
 
 
@@ -172,7 +176,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
      *
      * @return array
      */
-    protected function customAttributeSanitizationMap()
+    protected function customAttributeSanitizationMap(): array
     {
         return array();
     }
@@ -188,7 +192,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
      * @param array $attributes
      * @return array
      */
-    private function sanitizeAttributes(array $attributes)
+    private function sanitizeAttributes(array $attributes): array
     {
         $custom_sanitization = $this->customAttributeSanitizationMap();
         foreach ($attributes as $key => $value) {
@@ -232,7 +236,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
     /**
      * Returns whether or not this shortcode has been initialized
      *
-     * @return boolean
+     * @return bool
      */
     public function initialized()
     {

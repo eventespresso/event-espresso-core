@@ -2,7 +2,9 @@
 
 namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
 
+use EE_Error;
 use EEH_File;
+use EEHI_File;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 
 /**
@@ -21,8 +23,9 @@ abstract class JobHandlerFile extends JobHandler
     const temp_folder_name = 'batch_temp_folder';
 
     // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
+
     /**
-     * @var \EEHI_File
+     * @var EEHI_File
      */
     protected $_file_helper = null;
 
@@ -30,9 +33,9 @@ abstract class JobHandlerFile extends JobHandler
     /**
      * JobHandlerFile constructor.
      *
-     * @param \EEHI_File|null $file_helper
+     * @param EEHI_File|null $file_helper
      */
-    public function __construct(\EEHI_File $file_helper = null)
+    public function __construct(EEHI_File $file_helper = null)
     {
         if (! $file_helper) {
             $this->_file_helper = new EEH_File();
@@ -40,6 +43,8 @@ abstract class JobHandlerFile extends JobHandler
     }
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
+
     /**
      * Creates a file
      *
@@ -48,18 +53,18 @@ abstract class JobHandlerFile extends JobHandler
      * @param string $filetype
      * @param string $bom initial content to place in the file.
      * @return string
-     * @throws \EventEspressoBatchRequest\Helpers\BatchRequestException
+     * @throws BatchRequestException
      */
     public function create_file_from_job_with_name(
-        $job_id,
-        $filename,
-        $filetype = 'application/ms-excel',
-        $bom = "\xEF\xBB\xBF"
-    ) {
+        string $job_id,
+        string $filename,
+        string $filetype = 'application/ms-excel',
+        string $bom = "\xEF\xBB\xBF"
+    ): string {
         $filepath = '';
         try {
             $base_folder = $this->get_base_folder();
-            $success = $this->_file_helper->ensure_folder_exists_and_is_writable(
+            $success     = $this->_file_helper->ensure_folder_exists_and_is_writable(
                 $base_folder . JobHandlerFile::temp_folder_name
             );
             if ($success) {
@@ -69,7 +74,7 @@ abstract class JobHandlerFile extends JobHandler
             }
             if ($success) {
                 $filepath = $base_folder . JobHandlerFile::temp_folder_name . '/' . $job_id . '/' . $filename;
-                $success = $this->_file_helper->ensure_file_exists_and_is_writable($filepath);
+                $success  = $this->_file_helper->ensure_file_exists_and_is_writable($filepath);
             }
             // let's add the .htaccess file so safari will open the file properly
             if ($success) {
@@ -82,7 +87,8 @@ abstract class JobHandlerFile extends JobHandler
             }
             /**
              * Filters what initial content will be added to the file.
-             * @param string $return_value. By default it's whatever was pased into
+             *
+             * @param string $return_value  By default, it's whatever was passed into
              *                              JobHandlerFile::create_file_from_job_with_name()
              * @param string $filename
              * @param string $filetype default 'application/ms-excel'
@@ -100,12 +106,14 @@ abstract class JobHandlerFile extends JobHandler
             );
             // those methods normally fail with an exception, but if not, let's do it
             if (! $success) {
-                throw new \EE_Error(esc_html__('Could not create temporary file, an unknown error occurred', 'event_espresso'));
+                throw new EE_Error(
+                    esc_html__('Could not create temporary file, an unknown error occurred', 'event_espresso')
+                );
             }
-        } catch (\EE_Error $e) {
+        } catch (EE_Error $e) {
             throw new BatchRequestException(
                 sprintf(
-                    // phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
+                // phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
                     esc_html__('Could not create temporary file for job %1$s, because: %2$s ', 'event_espresso'),
                     $job_id,
                     $e->getMessage()
@@ -117,23 +125,25 @@ abstract class JobHandlerFile extends JobHandler
         return $filepath;
     }
 
+
     /**
      * Gets the URL to download the file
      *
      * @param string $filepath
      * @return string url to file
      */
-    public function get_url_to_file($filepath)
+    public function get_url_to_file(string $filepath): string
     {
         return str_replace($this->get_base_folder(), $this->get_base_url(), $filepath);
     }
+
 
     /**
      * Gets the folder which will contain the "batch_temp_folder"
      *
      * @return string
      */
-    public function get_base_folder()
+    public function get_base_folder(): string
     {
         return apply_filters(
             'FHEE__EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile__get_base_folder',
@@ -141,7 +151,8 @@ abstract class JobHandlerFile extends JobHandler
         );
     }
 
-    public function get_base_url()
+
+    public function get_base_url(): string
     {
         return apply_filters(
             'FHEE__EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile__get_base_url',

@@ -14,27 +14,18 @@ use EventEspresso\core\interfaces\ReservedInstanceInterface;
  */
 class Response implements ResponseInterface, ReservedInstanceInterface
 {
-    /**
-     * @var array $notice
-     */
-    protected $notice = [];
+    protected bool  $deactivate_plugin = false;
+
+    protected array $notice            = [];
 
     /**
      * rendered output to be returned to WP
-     *
-     * @var array
      */
-    protected $output = [];
+    protected array $output             = [];
 
-    /**
-     * @var bool
-     */
-    protected $request_terminated = false;
+    protected array $request_headers    = [];
 
-    /**
-     * @var bool $deactivate_plugin
-     */
-    protected $deactivate_plugin = false;
+    protected bool  $request_terminated = false;
 
 
     /**
@@ -63,14 +54,14 @@ class Response implements ResponseInterface, ReservedInstanceInterface
      */
     public function getNotice($key)
     {
-        return isset($this->notice[ $key ]) ? $this->notice[ $key ] : null;
+        return $this->notice[ $key ] ?? null;
     }
 
 
     /**
      * @return array
      */
-    public function getNotices()
+    public function getNotices(): array
     {
         return $this->notice;
     }
@@ -80,7 +71,7 @@ class Response implements ResponseInterface, ReservedInstanceInterface
      * @param string $string
      * @param bool   $append
      */
-    public function addOutput($string, $append = true)
+    public function addOutput(string $string, bool $append = true)
     {
         if ($append) {
             $this->output[] = $string;
@@ -95,23 +86,25 @@ class Response implements ResponseInterface, ReservedInstanceInterface
      * @param string $separator
      * @return array|string
      */
-    public function getOutput($as_string = true, $separator = PHP_EOL)
+    public function getOutput(bool $as_string = true, string $separator = PHP_EOL)
     {
-        return $as_string ? implode($separator, $this->output) : $this->output ;
+        return $as_string
+            ? implode($separator, $this->output)
+            : $this->output;
     }
 
 
     /**
      * @return boolean
      */
-    public function requestTerminated()
+    public function requestTerminated(): bool
     {
         return $this->request_terminated;
     }
 
 
     /**
-     * @param boolean $request_terminated
+     * @param bool|int|string|null $request_terminated
      */
     public function terminateRequest($request_terminated = true)
     {
@@ -122,7 +115,7 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     /**
      * @return boolean
      */
-    public function pluginDeactivated()
+    public function pluginDeactivated(): bool
     {
         return $this->deactivate_plugin;
     }
@@ -134,5 +127,26 @@ class Response implements ResponseInterface, ReservedInstanceInterface
     public function deactivatePlugin()
     {
         $this->deactivate_plugin = true;
+    }
+
+
+    /**
+     * @return array
+     * @since $VID:$
+     */
+    public function requestHeaders(): array
+    {
+        return $this->request_headers;
+    }
+
+
+    /**
+     * @param string $request_header
+     * @return void
+     * @since $VID:$
+     */
+    public function setRequestHeader(string $request_header): void
+    {
+        $this->request_headers[] = $request_header;
     }
 }

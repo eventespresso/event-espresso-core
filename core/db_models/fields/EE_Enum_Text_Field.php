@@ -85,11 +85,11 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
     /**
      * Gets the pretty version of the enum's value.
      *
-     * @param     int |string $value_on_field_to_be_outputted
-     * @param    null         $schema
+     * @param int|string  $value_on_field_to_be_outputted
+     * @param string|null $schema
      * @return    string
      */
-    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, ?string $schema = null)
     {
         $options = $this->_allowed_enum_values();
         if (isset($options[ $value_on_field_to_be_outputted ])) {

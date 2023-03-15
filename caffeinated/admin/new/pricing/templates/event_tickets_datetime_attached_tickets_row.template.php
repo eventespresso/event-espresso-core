@@ -100,8 +100,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             <span class="clickable gear-icon dashicons dashicons-admin-generic add-edit"
                                   data-context="short-ticket" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
                                   style="display:none"></span>
-                            <!-- the "add-edit" class is used by jQuery to indicate we need to retrieve a edit form using the value from the #next-ticket-row hidden input (which in turn is incremented if the new created item is saved). -->
-                            <!-- Also: when the Add New Ticket form is recalled, jQuery will automatically populate the data-context and data-datetime-row properties on the edit icon and save buttons from the event handler for the datetime being edited. -->
+                            <!--
+                            the "add-edit" class is used by jQuery to indicate we need to retrieve
+                            an edit form using the value from the #next-ticket-row hidden input
+                            (which in turn is incremented if the new created item is saved).
+                            Also: when the Add New Ticket form is recalled, jQuery will automatically populate
+                            the data-context and data-datetime-row properties on the edit icon and save buttons
+                            from the event handler for the datetime being edited.
+                            -->
                         </td>
                     </tr>
                     </tbody>
@@ -122,12 +128,16 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         </span>
                     </div>
                     <div class="save-cancel-button-container">
-                        <button data-context="short-ticket" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
-                                class="button-primary ee-create-button">
+                        <button class="button button--primary ee-create-button"
+                                data-context="short-ticket"
+                                data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
+                        >
                             <?php esc_html_e('Create Ticket', 'event_espresso'); ?>
                         </button>
-                        <button data-context="short-ticket" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
-                                class="button-secondary ee-cancel-button add-edit">
+                        <button class="button button--secondary ee-cancel-button add-edit"
+                                data-context="short-ticket"
+                                data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
+                        >
                             <?php esc_html_e('Close', 'event_espresso'); ?>
                         </button>
                     </div>
@@ -137,5 +147,3 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         </section> <!-- /.datetime-tickets-edit-->
     </td>
 </tr>
-
-

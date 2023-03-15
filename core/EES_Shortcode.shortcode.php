@@ -18,8 +18,7 @@ abstract class EES_Shortcode extends EE_Base
      * @protected   public
      * @var     array $_attributes
      */
-    protected $_attributes = array();
-
+    protected $_attributes = [];
 
 
     /**
@@ -29,13 +28,12 @@ abstract class EES_Shortcode extends EE_Base
     {
         $shortcode = LegacyShortcodesManager::generateShortcodeTagFromClassName(get_class($this));
         // assign shortcode to the preferred callback, which overwrites the "fallback shortcode processor" assigned earlier
-        add_shortcode($shortcode, array($this, 'process_shortcode'));
+        add_shortcode($shortcode, [$this, 'process_shortcode']);
         // make sure system knows this is an EE page
         /** @var CurrentPage $current_page */
         $current_page = LoaderFactory::getLoader()->getShared(CurrentPage::class);
         $current_page->setEspressoPage(true);
     }
-
 
 
     /**
@@ -47,40 +45,36 @@ abstract class EES_Shortcode extends EE_Base
      * that will be required by the shortcode when it is actually processed.
      * Please note that assets may not load if the fallback_shortcode_processor() is being used.
      *
-     * @access    public
      * @param WP $WP
-     * @return    void
+     * @return void
      */
     abstract public function run(WP $WP);
 
 
-
     /**
      *  process_shortcode
-     *  this method is the callback function for the actual shortcode, and is what runs when WP encounters the shortcode within the_content
+     *  this method is the callback function for the actual shortcode, and is what runs when WP encounters the
+     *  shortcode within the_content
      *
-     *  @access     public
-     *  @param      array   $attributes
-     *  @return     mixed
+     * @param array|string $attributes
+     * @return mixed
      */
-    abstract public function process_shortcode($attributes = array());
-
+    abstract public function process_shortcode($attributes = []);
 
 
     /**
      *    instance - returns instance of child class object
      *
-     * @access  public
-     * @param   string $shortcode_class
-     * @return  \EES_Shortcode
+     * @param string|null $shortcode_class
+     * @return EES_Shortcode
      */
-    final public static function instance($shortcode_class = null)
+    final public static function instance(string $shortcode_class = ''): ?EES_Shortcode
     {
         $shortcode_class = ! empty($shortcode_class) ? $shortcode_class : get_called_class();
         if ($shortcode_class === 'EES_Shortcode' || empty($shortcode_class)) {
             return null;
         }
-        $shortcode = str_replace('EES_', '', strtoupper($shortcode_class));
+        $shortcode     = LegacyShortcodesManager::generateShortcodeTagFromClassName($shortcode_class);
         $shortcode_obj = isset(EE_Registry::instance()->shortcodes->{$shortcode})
             ? EE_Registry::instance()->shortcodes->{$shortcode}
             : null;
@@ -90,17 +84,15 @@ abstract class EES_Shortcode extends EE_Base
     }
 
 
-
-
     /**
      *    fallback_shortcode_processor - create instance and call process_shortcode
-     *    NOTE: shortcode may not function perfectly dues to missing assets, but it's better than not having things work at all
+     *    NOTE: shortcode may not function perfectly dues to missing assets, but it's better than not having things
+     *    work at all
      *
-     * @access  public
-     * @param   $attributes
-     * @return  mixed
+     * @param array|null $attributes
+     * @return mixed
      */
-    final public static function fallback_shortcode_processor($attributes)
+    final public static function fallback_shortcode_processor(array $attributes = null)
     {
         if (EE_Maintenance_Mode::disable_frontend_for_maintenance()) {
             return null;
@@ -118,28 +110,22 @@ abstract class EES_Shortcode extends EE_Base
             // set attributes and run the shortcode
             $shortcode_obj->_attributes = (array) $attributes;
             return $shortcode_obj->process_shortcode($shortcode_obj->_attributes);
-        } else {
-            return null;
         }
+        return null;
     }
-
-
 
 
     /**
-     *    invalid_shortcode_processor -  used in cases where we know the shortcode is invalid, most likely due to a deactivated addon, and simply returns an empty string
+     *    invalid_shortcode_processor -  used in cases where we know the shortcode is invalid, most likely due to a
+     *    deactivated addon, and simply returns an empty string
      *
-     * @access  public
-     * @param   $attributes
-     * @return  string
+     * @param $attributes
+     * @return string
      */
-    final public static function invalid_shortcode_processor($attributes)
+    final public static function invalid_shortcode_processor($attributes): string
     {
         return '';
     }
-
-
-
 
 
     /**
@@ -159,7 +145,7 @@ abstract class EES_Shortcode extends EE_Base
      * @param array $custom_sanitization
      * @return array
      */
-    public static function sanitize_attributes(array $attributes, $custom_sanitization = array())
+    public static function sanitize_attributes(array $attributes, array $custom_sanitization = []): array
     {
         foreach ($attributes as $key => $value) {
             // is a custom sanitization callback specified ?
@@ -178,14 +164,14 @@ abstract class EES_Shortcode extends EE_Base
                 case is_int($value):
                 case is_float($value):
                     // typical booleans
-                case in_array($value, array(true, 'true', '1', 'on', 'yes', false, 'false', '0', 'off', 'no'), true):
+                case in_array($value, [true, 'true', '1', 'on', 'yes', false, 'false', '0', 'off', 'no'], true):
                     $attributes[ $key ] = $value;
                     break;
                 case is_string($value):
                     $attributes[ $key ] = sanitize_text_field($value);
                     break;
                 case is_array($value):
-                    $attributes[ $key ] = \EES_Shortcode::sanitize_attributes($value);
+                    $attributes[ $key ] = EES_Shortcode::sanitize_attributes($value);
                     break;
                 default:
                     // only remaining data types are Object and Resource

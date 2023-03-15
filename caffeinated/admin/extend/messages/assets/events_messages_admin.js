@@ -25,6 +25,7 @@ jQuery(document).ready(function($) {
 
 			//modify the form in the modal
 			$('#custom-message-template-grpID').val( this.grpID );
+			$('#custom-message-template-name').val( clickedButton.data('new_template_name') );
 		},
 
 		parseurl: function(url, mode) {

@@ -53,8 +53,7 @@
                             ),
                             $current_db_state,
                             $next_db_state
-                        );
-                            ?>
+                        ); ?>
                         <a id="display-migration-details"
                            class="display-the-hidden lt-grey-text smaller-text hide-if-no-js"
                            rel="migration-details"
@@ -74,7 +73,7 @@
                     </td>
                     <td>
                         <a id="db-backed-up"
-                           class="toggle-migration-monitor button-primary"
+                           class="toggle-migration-monitor button--primary"
                         >
                             <?php echo esc_html(
                                 apply_filters(
@@ -102,8 +101,7 @@
                                 ),
                                 "<b>",
                                 "</b>"
-                            );
-?>
+                            ); ?>
                             </span>
                             <p>
                                 <?php printf(
@@ -123,8 +121,7 @@
                                     '<a href="https://eventespresso.com/wiki/how-to-back-up-your-site/">',
                                     "</a>",
                                     '<br/>'
-                                );
-?>
+                                ); ?>
                             </p>
                             <?php do_action('AHEE__ee_migration_page__option_1_extra_details'); ?>
                         </div>
@@ -151,8 +148,7 @@
                                 $next_db_state,
                                 $ultimate_db_state
                             )
-                        );
-                            ?>
+                        ); ?>
                         <br />
                         <span class="reminder-spn">
                             <?php esc_html_e(
@@ -174,13 +170,12 @@
                             <?php printf(
                                 esc_html__('hide%1$sdetails%1$s-', 'event_espresso'),
                                 '&nbsp;'
-                            );
-?>
+                            ); ?>
                         </a>
                     </td>
                     <td>
                         <a id="do-not-migrate"
-                           class="do-not-migrate button-primary"
+                           class="do-not-migrate button--primary"
                            href="<?php echo esc_url_raw($reset_db_page_link); ?>"
                         >
                             <?php echo esc_html(
@@ -192,8 +187,7 @@
                                     ),
                                     $ultimate_db_state
                                 )
-                            );
-                                    ?>
+                            ); ?>
                         </a>
                     </td>
                 </tr>

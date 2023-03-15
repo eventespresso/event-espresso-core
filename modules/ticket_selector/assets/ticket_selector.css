@@ -17,6 +17,10 @@
 	word-break: normal;
 }
 
+.tckt-price--nowrap {
+    white-space: nowrap !important;
+}
+
 /* span.ui-icon { float:none !important; }*/
 .icon-right span.ui-icon {
 	margin: 0.7em 0.3em 0 0;
@@ -427,7 +431,14 @@
     top: -2px;
 }
 
-.ee-hidden-ticket-tr {
+
+.tckt-slctr-tbl-tr,
+.tckt-slctr-tkt-details-tr {
+    display: table-row;
+}
+
+.tckt-slctr-tbl-tr.ee-hidden-ticket-tr,
+.tckt-slctr-tkt-details-tr.ee-hidden-ticket-tr {
     display: none;
 }
 

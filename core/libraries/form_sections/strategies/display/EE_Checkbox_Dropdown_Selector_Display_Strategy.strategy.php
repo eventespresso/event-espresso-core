@@ -7,7 +7,6 @@
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- *
  */
 class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_Display_Strategy
 {
@@ -19,37 +18,36 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         wp_register_style(
             'checkbox_dropdown_selector',
             EE_GLOBAL_ASSETS_URL . 'css/checkbox_dropdown_selector.css',
-            array('espresso_default'),
+            ['espresso_default'],
             EVENT_ESPRESSO_VERSION
         );
         wp_register_style(
             'espresso_default',
             EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css',
-            array('dashicons'),
+            ['dashicons'],
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_style('checkbox_dropdown_selector');
         wp_register_script(
             'checkbox_dropdown_selector',
             EE_GLOBAL_ASSETS_URL . 'scripts/checkbox_dropdown_selector.js',
-            array('jquery'),
+            ['jquery'],
             EVENT_ESPRESSO_VERSION,
             true
         );
         wp_localize_script(
             'ticket_selector',
             'eeDTS',
-            array(
+            [
                 'maxChecked' => EE_Registry::instance()
                     ->CFG
                     ->template_settings
                     ->EED_Ticket_Selector
-                    ->getDatetimeSelectorMaxChecked()
-            )
+                    ->getDatetimeSelectorMaxChecked(),
+            ]
         );
         wp_enqueue_script('checkbox_dropdown_selector');
     }
-
 
 
     /**
@@ -61,19 +59,17 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
     }
 
 
-
     /**
      * callback for Iframe::addStylesheets() child class methods
      *
      * @param array $iframe_css
      * @return array
      */
-    public function iframe_css(array $iframe_css)
+    public function iframe_css(array $iframe_css): array
     {
         $iframe_css['checkbox_dropdown_selector'] = EE_GLOBAL_ASSETS_URL . 'css/checkbox_dropdown_selector.css';
         return $iframe_css;
     }
-
 
 
     /**
@@ -82,7 +78,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
      * @param array $iframe_js
      * @return array
      */
-    public function iframe_js(array $iframe_js)
+    public function iframe_js(array $iframe_js): array
     {
         $iframe_js['checkbox_dropdown_selector'] = EE_GLOBAL_ASSETS_URL . 'scripts/checkbox_dropdown_selector.js';
         return $iframe_js;
@@ -90,13 +86,15 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
 
 
     /**
-     * @throws EE_Error
      * @return string of html to display the field
+     * @throws EE_Error
      */
-    public function display()
+    public function display(): string
     {
-        $input = $this->get_input();
-        $select_button_text = $input instanceof EE_Checkbox_Dropdown_Selector_Input ? $input->select_button_text() : '';
+        $input              = $this->get_input();
+        $select_button_text = $input instanceof EE_Checkbox_Dropdown_Selector_Input
+            ? $input->select_button_text()
+            : '';
         // $multi = count( $input->options() ) > 1 ? TRUE : FALSE;
         $input->set_label_sizes();
         $label_size_class = $input->get_label_size_class();
@@ -117,58 +115,61 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
         }
 
 
-        $html = \EEH_HTML::div('', '', 'checkbox-dropdown-selector-wrap-dv');
+        $html = EEH_HTML::div('', '', 'checkbox-dropdown-selector-wrap-dv');
         $html .= '<button id="' . $input->html_id() . '-btn"';
         // $html .= ' name="' . $input->html_name() . '"';
-        $html .= ' class="' . $input->html_class() . ' checkbox-dropdown-selector-btn button-secondary button"';
-        $html .= ' style="' . $input->html_style() . '"';
-        $html .= ' data-target="' . $input->html_id() . '-options-dv"';
-        $html .= ' ' . $input->other_html_attributes() . '>';
-        $html .= '<span class="checkbox-dropdown-selector-selected-spn">';
-        $html .= $select_button_text;
-        $html .= '</span> <span class="dashicons dashicons-arrow-down"></span>';
-        $html .= '</button>';
-        $html .= EEH_HTML::div(
+        $html            .= ' class="' . $input->html_class(
+            ) . ' checkbox-dropdown-selector-btn button--secondary button"';
+        $html            .= ' style="' . $input->html_style() . '"';
+        $html            .= ' data-target="' . $input->html_id() . '-options-dv"';
+        $html            .= ' ' . $input->other_html_attributes() . '>';
+        $html            .= '<span class="checkbox-dropdown-selector-selected-spn">';
+        $html            .= $select_button_text;
+        $html            .= '</span> <span class="dashicons dashicons-arrow-down"></span>';
+        $html            .= '</button>';
+        $html            .= EEH_HTML::div(
             '',
             $input->html_id() . '-options-dv',
             'checkbox-dropdown-selector'
         );
-        $html .= EEH_HTML::link(
+        $html            .= EEH_HTML::link(
             '',
             '<span class="dashicons dashicons-no"></span>',
             esc_html__('close datetime selector', 'event_espresso'),
             '',
             'close-espresso-notice'
         );
-        $html .= EEH_HTML::ul();
+        $html            .= EEH_HTML::ul();
         $input_raw_value = (array) $input->raw_value();
         foreach ($input->options() as $value => $display_text) {
-            $html .= EEH_HTML::li();
-            $value = $input->get_normalization_strategy()->unnormalize_one($value);
+            $html    .= EEH_HTML::li();
+            $value   = $input->get_normalization_strategy()->unnormalize_one($value);
             $html_id = $this->get_sub_input_id($value);
-            $html .= EEH_HTML::nl(0, 'checkbox');
-            $html .= '<label for="'
-                     . $html_id
-                     . '" id="'
-                     . $html_id
-                     . '-lbl" class="ee-checkbox-label-after'
-                     . $label_size_class
-                     . '">';
-            $html .= EEH_HTML::nl(1, 'checkbox');
-            $html .= '<input type="checkbox"';
-            $html .= ' name="' . $input->html_name() . '[]"';
-            $html .= ' id="' . $html_id . '"';
-            $html .= ' class="' . $input->html_class() . '-option"';
-            $html .= $input->html_style() ? ' style="' . $input->html_style() . '"' : '';
-            $html .= ' value="' . esc_attr($value) . '"';
-            $html .= ! empty($input_raw_value) && in_array($value, $input_raw_value, true)
+            $html    .= EEH_HTML::nl(0, 'checkbox');
+            $html    .= '<label for="'
+                        . $html_id
+                        . '" id="'
+                        . $html_id
+                        . '-lbl" class="ee-checkbox-label-after'
+                        . $label_size_class
+                        . '">';
+            $html    .= EEH_HTML::nl(1, 'checkbox');
+            $html    .= '<input type="checkbox"';
+            $html    .= ' name="' . $input->html_name() . '[]"';
+            $html    .= ' id="' . $html_id . '"';
+            $html    .= ' class="' . $input->html_class() . '-option"';
+            $html    .= $input->html_style()
+                ? ' style="' . $input->html_style() . '"'
+                : '';
+            $html    .= ' value="' . esc_attr($value) . '"';
+            $html    .= ! empty($input_raw_value) && in_array($value, $input_raw_value, true)
                 ? ' checked'
                 : '';
-            $html .= ' ' . $this->_input->other_html_attributes();
-            $html .= '>';
-            $html .= '<span class="datetime-selector-option-text-spn">' . $display_text . '</span>';
-            $html .= EEH_HTML::nl(-1, 'checkbox') . '</label>';
-            $html .= EEH_HTML::lix();
+            $html    .= ' ' . $this->_input->other_html_attributes();
+            $html    .= '>';
+            $html    .= '<span class="datetime-selector-option-text-spn">' . $display_text . '</span>';
+            $html    .= EEH_HTML::nl(-1, 'checkbox') . '</label>';
+            $html    .= EEH_HTML::lix();
         }
         $html .= EEH_HTML::ulx();
         $html .= EEH_HTML::divx();
@@ -184,7 +185,7 @@ class EE_Checkbox_Dropdown_Selector_Display_Strategy extends EE_Compound_Input_D
             $input->html_id() . '-date-time-filter-notice-pg',
             'date-time-filter-notice-pg small-text lt-grey-text'
         );
-        $html .= \EEH_HTML::br();
+        $html .= EEH_HTML::br();
         return $html;
     }
 }

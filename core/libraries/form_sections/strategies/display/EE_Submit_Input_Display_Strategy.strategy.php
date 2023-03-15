@@ -11,8 +11,9 @@ class EE_Submit_Input_Display_Strategy extends EE_Display_Strategy_Base
 {
     /**
      * @return string of html to display the input
+     * @throws EE_Error
      */
-    public function display()
+    public function display(): string
     {
         $default_value = $this->_input->get_default();
         if ($this->_input->get_normalization_strategy() instanceof EE_Normalization_Strategy_Base) {
@@ -22,13 +23,13 @@ class EE_Submit_Input_Display_Strategy extends EE_Display_Strategy_Base
         $html .= $this->_attributes_string(
             array_merge(
                 $this->_standard_attributes_array(),
-                array(
+                [
                     'type'  => 'submit',
                     'value' => $default_value,
                     // overwrite the standard id with the backwards compatible one
-                    'id' => $this->_input->html_id() . '-submit',
-                    'class' => $this->_input->html_class() . ' ' . $this->_input->button_css_attributes()
-                )
+                    'id'    => $this->_input->html_id() . '-submit',
+                    'class' => $this->_input->html_class() . ' ' . $this->_input->button_css_attributes(),
+                ]
             )
         );
         $html .= $this->_close_tag();

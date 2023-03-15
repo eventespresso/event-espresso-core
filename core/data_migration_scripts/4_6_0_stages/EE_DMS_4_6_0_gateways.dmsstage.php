@@ -16,7 +16,6 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage
     protected $_new_table_name;
     protected $_extra_meta_table_name;
     protected $_currency_table_name;
-    protected $_currency_payment_method_table_name;
 
     /**
      * each key is the name of a 4.1-style gateway we know how to migrate to 4.6
@@ -43,7 +42,6 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage
         $this->_new_table_name = $wpdb->prefix . "esp_payment_method";
         $this->_extra_meta_table_name = $wpdb->prefix . "esp_extra_meta";
         $this->_currency_table_name = $wpdb->prefix . "esp_currency";
-        $this->_currency_payment_method_table_name = $wpdb->prefix . "esp_currency_payment_method";
         $this->_pretty_name = esc_html__('Gateways', 'event_espresso');
         parent::__construct();
     }

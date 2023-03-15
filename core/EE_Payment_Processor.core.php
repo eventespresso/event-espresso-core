@@ -68,17 +68,17 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      *
      * @param EE_Payment_Method    $payment_method
      * @param EE_Transaction       $transaction
-     * @param float                $amount       if only part of the transaction is to be paid for, how much.
+     * @param float|null                $amount       if only part of the transaction is to be paid for, how much.
      *                                           Leave null if payment is for the full amount owing
-     * @param EE_Billing_Info_Form $billing_form (or probably null, if it's an offline or offsite payment method).
+     * @param EE_Billing_Info_Form|null $billing_form (or probably null, if it's an offline or offsite payment method).
      *                                           Receive_form_submission() should have
      *                                           already been called on the billing form
      *                                           (ie, its inputs should have their normalized values set).
-     * @param string               $return_url   string used mostly by offsite gateways to specify
+     * @param string|null          $return_url   string used mostly by offsite gateways to specify
      *                                           where to go AFTER the offsite gateway
      * @param string               $method       like 'CART', indicates who the client who called this was
      * @param bool                 $by_admin     TRUE if payment is being attempted from the admin
-     * @param boolean              $update_txn   whether or not to call
+     * @param bool                 $update_txn   whether or not to call
      *                                           EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
      * @param string               $cancel_url   URL to return to if off-site payments are cancelled
      * @return EE_Payment
@@ -92,14 +92,14 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
     public function process_payment(
         EE_Payment_Method $payment_method,
         EE_Transaction $transaction,
-        $amount = null,
-        $billing_form = null,
-        $return_url = null,
-        $method = 'CART',
-        $by_admin = false,
-        $update_txn = true,
-        $cancel_url = ''
-    ) {
+        ?float $amount = null,
+        ?EE_Billing_Info_Form $billing_form = null,
+        ?string $return_url = null,
+        string $method = 'CART',
+        bool $by_admin = false,
+        bool $update_txn = true,
+        string $cancel_url = ''
+    ): ?EE_Payment {
         if ((float) $amount < 0) {
             throw new EE_Error(
                 sprintf(
@@ -410,7 +410,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * provider.
      *
      * @param EE_Transaction|int $transaction
-     * @param bool               $update_txn whether or not to call
+     * @param bool               $update_txn whether to call
      *                                       EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
      * @return EE_Payment
      * @throws EE_Error
@@ -422,10 +422,8 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @deprecated 4.6.24 method is no longer used. Instead it is up to client code, like SPCO,
      *                                       to call handle_ipn() for offsite gateways that don't receive separate IPNs
      */
-    public function finalize_payment_for($transaction, $update_txn = true)
+    public function finalize_payment_for(EE_Transaction $transaction, bool $update_txn = true): ?EE_Payment
     {
-        /** @var $transaction EE_Transaction */
-        $transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
         $last_payment_method = $transaction->payment_method();
         if ($last_payment_method instanceof EE_Payment_Method) {
             $payment = $last_payment_method->type_obj()->finalize_payment_for($transaction);
@@ -439,19 +437,15 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
     /**
      * Processes a direct refund request, saves the payment, and updates the transaction appropriately.
      *
-     * @param EE_Payment_Method $payment_method
-     * @param EE_Payment        $payment_to_refund
-     * @param array             $refund_info
+     * @param EE_Payment_Method|null $payment_method
+     * @param EE_Payment             $payment_to_refund
+     * @param array                  $refund_info
      * @return EE_Payment
      * @throws EE_Error
-     * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public function process_refund(
-        EE_Payment_Method $payment_method,
+        ?EE_Payment_Method $payment_method,
         EE_Payment $payment_to_refund,
         array $refund_info = array()
     ) {

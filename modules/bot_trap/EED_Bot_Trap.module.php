@@ -90,7 +90,7 @@ class EED_Bot_Trap extends EED_Module
         add_action(
             'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
             array('EED_Bot_Trap', 'bot_trap_settings_form'),
-            5
+            6
         );
         add_filter(
             'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration',

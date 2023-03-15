@@ -24,7 +24,7 @@ class CheckinsCSV
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function getDatetineLabel(EE_Datetime $datetime)
+    public static function getDatetimeLabel(EE_Datetime $datetime): string
     {
         if (trim($datetime->get('DTT_name'))) {
             /* translators: 1: datetime name, 2: datetime ID */
@@ -46,12 +46,12 @@ class CheckinsCSV
     /**
      * Returns checkin value using checkin status and datetime
      *
-     * @param EE_Checkin $checkin
+     * @param EE_Checkin|null $checkin
      * @return string|null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function getCheckinValue(?EE_Checkin $checkin)
+    public static function getCheckinValue(?EE_Checkin $checkin): ?string
     {
         if ($checkin instanceof EE_Checkin && $checkin->get('CHK_in') === true) {
             /* translators: 1: check-in timestamp */

@@ -277,7 +277,7 @@ class EED_Recaptcha_Invisible extends EED_Module
      * @throws ReflectionException
      * @throws DomainException
      */
-    public static function ticketSelectorForm($html, EE_Event $event, $iframe = false)
+    public static function ticketSelectorForm(string $html, EE_Event $event, $iframe = false)
     {
         $recaptcha = RecaptchaFactory::create();
         // do nothing if test has  already  been passed

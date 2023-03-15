@@ -101,13 +101,13 @@ class Stats
     public function optinNotice()
     {
         ?>
-        <div class="updated data-collect-optin" id="espresso-data-collect-optin-container">
+        <div class="espresso-notices updated data-collect-optin" id="espresso-data-collect-optin-container">
             <div id="data-collect-optin-options-container">
                 <span class="dashicons dashicons-admin-site"></span>
                 <span class="data-optin-text"><?php self::optinText(); ?></span>
                 <span style="display: none" id="data-optin-nonce"><?php echo wp_create_nonce('ee-data-optin'); ?></span>
-                <button class="button-secondary data-optin-button" value="no">
-                    <?php esc_html_e('Dismiss', 'event_espresso'); ?>
+                <button class="button button--secondary button--small data-optin-button" value="no">
+                    <span class="dashicons dashicons-dismiss"></span><?php esc_html_e('Dismiss', 'event_espresso'); ?>
                 </button>
                 <div style="clear:both"></div>
             </div>
@@ -125,22 +125,24 @@ class Stats
     public static function optinText(bool $extra = true)
     {
         if (! $extra) {
-            return '<h2 class="ee-admin-settings-hdr" id="UXIP_settings">'
-                   . esc_html__('User eXperience Improvement Program (UXIP)', 'event_espresso')
-                   . EEH_Template::get_help_tab_link('organization_logo_info')
-                   . '</h2>' . sprintf(
-                       esc_html__(
-                           '%1$sPlease help us make Event Espresso better and vote for your favorite features.%2$s The %3$sUser eXperience Improvement Program (UXIP)%4$s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary and it is disabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %5$sPlease see our %6$sPrivacy Policy%7$s for more information.',
-                           'event_espresso'
-                       ),
-                       '<p><em>',
-                       '</em></p>',
-                       '<a href="https://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">',
-                       '</a>',
-                       '<br><br>',
-                       '<a href="https://eventespresso.com/about/privacy-policy/" target="_blank">',
-                       '</a>'
-                   );
+            return '
+            <h2 class="ee-admin-settings-hdr" id="UXIP_settings">'
+                . esc_html__('User eXperience Improvement Program (UXIP)', 'event_espresso')
+                . EEH_Template::get_help_tab_link('organization_logo_info')
+            . '</h2>' . sprintf(
+                esc_html__(
+                    '%1$sPlease help us make Event Espresso better and vote for your favorite features.%2$s The %3$sUser eXperience Improvement Program (UXIP)%4$s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary and it is disabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %5$sPlease see our %6$sPrivacy Policy%7$s for more information.%8$s',
+                    'event_espresso'
+                ),
+                '<p><em>',
+                '</em></p><p>',
+                '<a href="https://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">',
+                '</a>',
+                '<br><br>',
+                '<a href="https://eventespresso.com/about/privacy-policy/" target="_blank">',
+                '</a>',
+                '</p>'
+            );
         }
 
         $settings_url = EEH_URL::add_query_args_and_nonce(

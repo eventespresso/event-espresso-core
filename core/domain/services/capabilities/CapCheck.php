@@ -32,18 +32,15 @@ class CapCheck implements CapCheckInterface
 
     /**
      * @param string|array $capability   - the capability to be checked, like: 'ee_edit_registrations',
-     *                                   or an array of capability strings
+     *                                     or an array of capability strings
      * @param string       $context      - what the user is attempting to do, like: 'Edit Registration'
-     * @param int          $ID           - (optional) ID for item where current_user_can is being called from
+     * @param int|string   $ID           - (optional) ID for item where current_user_can is being called from
      * @throws InvalidDataTypeException
      */
-    public function __construct($capability, $context, $ID = 0)
+    public function __construct($capability, string $context, $ID = 0)
     {
         if (! (is_string($capability) || is_array($capability))) {
             throw new InvalidDataTypeException('$capability', $capability, 'string or array');
-        }
-        if (! is_string($context)) {
-            throw new InvalidDataTypeException('$context', $context, 'string');
         }
         $this->capability = $capability;
         $this->context = strtolower(str_replace(' ', '_', $context));
@@ -63,7 +60,7 @@ class CapCheck implements CapCheckInterface
     /**
      * @return string
      */
-    public function context()
+    public function context(): string
     {
         return $this->context;
     }

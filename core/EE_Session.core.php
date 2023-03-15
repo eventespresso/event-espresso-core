@@ -545,7 +545,7 @@ class EE_Session implements SessionIdentifierInterface
      *
      * @param null $key
      * @param bool $reset_cache
-     * @return array
+     * @return array|EE_Cart|EE_Checkout|EE_Transaction
      */
     public function get_session_data($key = null, $reset_cache = false)
     {

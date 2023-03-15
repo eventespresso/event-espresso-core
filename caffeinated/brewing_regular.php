@@ -6,16 +6,20 @@
  * define and use the hook in a specific caffeinated/whatever class or file.
  */
 
-use EventEspresso\caffeinated\core\domain\services\pue\PueLicensingManager;
+use EventEspresso\caffeinated\core\domain\entities\routing\handlers\admin\PueRequests;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\loaders\LoaderInterface;
-
+use EventEspresso\core\services\routing\Route;
+use EventEspresso\core\services\routing\RouteHandler;
 
 /**
  * EE_Brewing_Regular class.  Just a wrapper to help namespace activity for the functionality of this file.
+ * the purpose of this file is to simply contain any action/filter hook callbacks etc for specific aspects of EE
+ * related to caffeinated (regular) use.  Before putting any code in here, First be certain that it isn't better to
+ * define and use the hook in a specific caffeinated/whatever class or file.
  *
  * @package        Event Espresso
  * @subpackage     /caffeinated/brewing_regular.php
@@ -38,21 +42,29 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      */
     protected $_table_analysis;
 
+    /**
+     * @var RouteHandler
+     */
+    protected $route_handler;
+
 
     /**
      * EE_Brewing_Regular constructor.
      *
      * @param EE_Dependency_Map $dependency_map
      * @param LoaderInterface   $loader
+     * @param RouteHandler      $route_handler
      * @param TableAnalysis     $table_analysis
      */
     public function __construct(
         EE_Dependency_Map $dependency_map,
         LoaderInterface $loader,
+        RouteHandler $route_handler,
         TableAnalysis $table_analysis
     ) {
-        $this->dependency_map = $dependency_map;
-        $this->loader         = $loader;
+        $this->dependency_map  = $dependency_map;
+        $this->loader          = $loader;
+        $this->route_handler   = $route_handler;
         $this->_table_analysis = $table_analysis;
         if (defined('EE_CAFF_PATH')) {
             // defined some new constants related to caffeinated folder
@@ -78,19 +90,13 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
     }
 
 
+    /**
+     * @throws Exception
+     */
     public function initializePUE()
     {
-        $this->dependency_map->registerDependencies(
-            PueLicensingManager::class,
-            [
-                'EE_Dependency_Map'                          => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
-            ]
-        );
-        /** @var PueLicensingManager $pue_manager */
-        $pue_manager = $this->loader->getShared(PueLicensingManager::class);
-        $pue_manager->registerDependencies();
-        $pue_manager->registerHooks();
+        $this->dependency_map->registerDependencies(PueRequests::class, Route::getDefaultDependencies());
+        $this->route_handler->addRoute(PueRequests::class);
     }
 
 
@@ -221,7 +227,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                         'PRT_name'       => esc_html__("Federal Tax", "event_espresso"),
                         'PBT_ID'         => 4,
                         'PRT_is_percent' => true,
-                        'PRT_order'      => 70,
+                        'PRT_order'      => 60,
                         'PRT_deleted'    => false,
                         'PRT_wp_user'    => $default_creator_id,
                     ],
@@ -245,7 +251,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                             'PRC_is_default' => true,
                             'PRC_overrides'  => null,
                             'PRC_deleted'    => false,
-                            'PRC_order'      => 50,
+                            'PRC_order'      => 60,
                             'PRC_parent'     => null,
                             'PRC_wp_user'    => $default_creator_id,
                         ],

@@ -34,7 +34,7 @@ if ($show_backup_db_text) { ?>
     <div id="migration-prep">
 
         <?php if ($script_names) { ?>
-            <h3 class="espresso-header">
+            <h3 class="espresso-header ee-status-bg--info">
                 <span class="dashicons dashicons-flag ee-icon-size-22"></span>
                 <?php
                 echo esc_html(
@@ -52,7 +52,7 @@ if ($show_backup_db_text) { ?>
                 ?>
             </h3>
         <?php } elseif ($show_most_recent_migration) { ?>
-            <h3 class="espresso-header">
+            <h3 class="espresso-header ee-status-bg--info">
                 <span class="dashicons dashicons-awards ee-icon-size-22"></span>
                 <?php echo esc_html(
                     apply_filters(
@@ -81,7 +81,7 @@ if ($show_backup_db_text) { ?>
                     )
                 ); ?> &nbsp;
                 <b>
-                    <a class="button-primary"
+                    <a class="button--primary"
                        id='get-started-after-migrate'
                        href="<?php
                         echo esc_url_raw(add_query_arg(['page' => 'espresso_about'], admin_url('admin.php')));
@@ -105,7 +105,7 @@ if ($show_backup_db_text) { ?>
             if ($most_recent_migration instanceof EE_Data_Migration_Script_Base) {
                 if ($most_recent_migration->can_continue()) {
                     // tell the user they should continue their migration because it appears to be unfinished... well, assuming there were no errors ?>
-                    <h3 class="espresso-header">
+                    <h3 class="espresso-header ee-status-bg--info">
                         <span class="dashicons dashicons-star-half ee-icon-size-22"></span>
                         <?php printf(
                             esc_html__(
@@ -118,7 +118,7 @@ if ($show_backup_db_text) { ?>
                     <?php
                 } elseif ($most_recent_migration->is_broken()) {
                     // tell the user the migration failed, and they should notify EE?>
-                    <h3 class="espresso-header">
+                    <h3 class="espresso-header ee-status-bg--info">
                         <span class="dashicons dashicons-no ee-icon-size-22"></span>
                         <?php echo esc_html($most_recent_migration->get_feedback_message()) ?>
                     </h3>
@@ -170,7 +170,9 @@ if ($show_backup_db_text) { ?>
 
     <?php
     if ($show_migration_progress) { ?>
-        <div id='migration-monitor' <?php if ($show_backup_db_text) : ?>style="display:none"<?php endif; ?>>
+        <div id='migration-monitor' <?php if ($show_backup_db_text) :
+            ?>style="display:none"<?php
+                                    endif; ?>>
             <?php
             if ($show_backup_db_text) { ?>
                 <p>
@@ -184,7 +186,7 @@ if ($show_backup_db_text) { ?>
                 <?php
             } ?>
             <div id='progress-area'>
-                <h3 class="espresso-header">
+                <h3 class="espresso-header ee-status-bg--info">
                     <?php
                     echo sprintf(
                         _n(
@@ -244,12 +246,12 @@ if ($show_backup_db_text) { ?>
                 </div>
                 <!-- #progress-responsive -->
 
-                <button id='start-migration' class='button-primary'>
-                <?php echo esc_html(
-                    $show_continue_current_migration_script
-                        ? __("Continue Database Update", "event_espresso")
-                        : __("Begin Database Update", "event_espresso")
-                ); ?>
+                <button id='start-migration' class='button button--primary'>
+                    <?php echo esc_html(
+                        $show_continue_current_migration_script
+                            ? __("Continue Database Update", "event_espresso")
+                            : __("Begin Database Update", "event_espresso")
+                    ); ?>
                 </button>
                 <br class="clear" />
 
@@ -330,7 +332,7 @@ if ($show_backup_db_text) { ?>
                 </table>
             </div>
             <p>
-                <input class='button-primary'
+                <input class='button--primary'
                        type='submit'
                        value='<?php esc_html_e("Update Maintenance Mode", "event_espresso"); ?>'
                 />

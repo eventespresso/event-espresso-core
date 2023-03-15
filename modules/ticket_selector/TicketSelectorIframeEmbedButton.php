@@ -32,5 +32,11 @@ class TicketSelectorIframeEmbedButton extends IframeEmbedButton
     {
         // add button for iframe code to event editor.
         $this->addEventEditorIframeEmbedButtonFilter();
+
+        add_action(
+            'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__edit',
+            [$this, 'addEventEditorIframeEmbedButtonAssets'],
+            10
+        );
     }
 }

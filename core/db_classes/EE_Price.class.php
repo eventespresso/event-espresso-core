@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * EE_Price class
  *
@@ -16,6 +19,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      * @param array  $date_formats            incoming date_formats in an array where the first value is the
      *                                        date_format and the second value is the time format
      * @return EE_Price
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
@@ -29,6 +37,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
      * @return EE_Price
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public static function new_instance_from_db($props_n_values = array(), $timezone = null)
     {
@@ -37,10 +50,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set Price type ID
+     * Set Price type ID
      *
-     * @access        public
-     * @param        int $PRT_ID
+     * @param int $PRT_ID
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_type($PRT_ID = 0)
     {
@@ -49,10 +66,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set Price Amount
+     * Set Price Amount
      *
-     * @access        public
-     * @param        float $PRC_amount
+     * @param float $PRC_amount
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_amount($PRC_amount = 0.00)
     {
@@ -61,10 +82,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set Price Name
+     * Set Price Name
      *
-     * @access        public
-     * @param        string $PRC_name
+     * @param string $PRC_name
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_name($PRC_name = '')
     {
@@ -73,10 +98,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set Price Description
+     * Set Price Description
      *
-     * @access        public
-     * @param        string $PRC_desc
+     * @param string $PRC_desc
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_description($PRC_desc = '')
     {
@@ -85,10 +114,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        set is_default
+     * set is_default
      *
-     * @access        public
-     * @param        bool $PRC_is_default
+     * @param bool $PRC_is_default
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_is_default($PRC_is_default = false)
     {
@@ -97,10 +130,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        set deleted
+     * set deleted
      *
-     * @access        public
-     * @param        bool $PRC_deleted
+     * @param bool $PRC_deleted
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function set_deleted($PRC_deleted = null)
     {
@@ -109,10 +146,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get Price type
+     * get Price type
      *
-     * @access        public
      * @return        int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function type()
     {
@@ -121,10 +162,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get Price Amount
+     * get Price Amount
      *
-     * @access        public
      * @return        float
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function amount()
     {
@@ -133,10 +178,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get Price Name
+     * get Price Name
      *
-     * @access        public
      * @return        string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function name()
     {
@@ -145,10 +194,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get Price description
+     * get Price description
      *
-     * @access        public
      * @return        string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function desc()
     {
@@ -157,10 +210,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get overrides
+     * get overrides
      *
-     * @access        public
      * @return        int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function overrides()
     {
@@ -169,10 +226,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get order
+     * get order
      *
-     * @access        public
-     * @return        int
+     * @return int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function order()
     {
@@ -183,9 +244,13 @@ class EE_Price extends EE_Soft_Delete_Base_Class
     /**
      * get the author of the price
      *
-     * @since 4.5.0
-     *
      * @return int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @since 4.5.0
      */
     public function wp_user()
     {
@@ -194,10 +259,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get is_default
+     * get is_default
      *
-     * @access        public
-     * @return        bool
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function is_default()
     {
@@ -206,10 +275,14 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get deleted
+     * get deleted
      *
-     * @access        public
-     * @return        bool
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function deleted()
     {
@@ -219,6 +292,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
     /**
      * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function parent()
     {
@@ -228,21 +306,31 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
     // some helper methods for getting info on the price_type for this price
 
+
     /**
      * return whether the price is a base price or not
      *
      * @return boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function is_base_price()
     {
         $price_type = $this->type_obj();
-        return $price_type->base_type() === 1;
+        return $price_type->is_base_price();
     }
 
 
     /**
-     *
-     * @return EE_Price_Type
+     * @return EE_Base_Class|EE_Price_Type
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function type_obj()
     {
@@ -251,9 +339,28 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
+     * @return int
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function type_order()
+    {
+        return $this->get_first_related('Price_Type')->order();
+    }
+
+
+    /**
      * Simply indicates whether this price increases or decreases the total
      *
      * @return boolean true = discount, otherwise adds to the total
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function is_discount()
     {
@@ -266,32 +373,85 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      * whether the price is a percentage or not
      *
      * @return boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function is_percent()
     {
         $price_type = $this->type_obj();
-        return $price_type->get('PRT_is_percent');
+        return $price_type->is_percent();
+    }
+
+
+    /**
+     * whether the price is a percentage or not
+     *
+     * @return boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function is_surcharge()
+    {
+        $price_type = $this->type_obj();
+        return $price_type->is_surcharge();
+    }
+
+    /**
+     * whether the price is a percentage or not
+     *
+     * @return boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function is_tax()
+    {
+        $price_type = $this->type_obj();
+        return $price_type->is_tax();
     }
 
 
     /**
      * return pretty price dependant on whether its a dollar or percent.
      *
-     * @since 4.4.0
-     *
      * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @since 4.4.0
      */
     public function pretty_price()
     {
-        return ! $this->is_percent() ? $this->get_pretty('PRC_amount') : $this->get('PRC_amount') . '%';
+        return ! $this->is_percent()
+            ? $this->get_pretty('PRC_amount')
+            : $this->get('PRC_amount') . '%';
     }
 
 
     /**
      * @return mixed
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function get_price_without_currency_symbol()
     {
-        return str_replace(EE_Registry::instance()->CFG->currency->sign, '', $this->get_pretty('PRC_amount'));
+        return str_replace(
+            EE_Registry::instance()->CFG->currency->sign,
+            '',
+            $this->get_pretty('PRC_amount')
+        );
     }
 }

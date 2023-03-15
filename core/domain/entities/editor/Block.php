@@ -55,14 +55,9 @@ abstract class Block implements BlockInterface
      */
     private $supported_routes;
 
-    /**
-     * @var WP_Block_Type $wp_block_type
-     */
-    private $wp_block_type;
-
 
     /**
-     * BlockLoader constructor.
+     * Block constructor.
      *
      * @param BlockAssetManagerInterface $block_asset_manager
      * @param RequestInterface           $request
@@ -88,7 +83,7 @@ abstract class Block implements BlockInterface
      */
     public function namespacedBlockType()
     {
-        return self::NAME_SPACE . '/' . $this->block_type;
+        return Block::NAME_SPACE . '/' . $this->block_type;
     }
 
 
@@ -111,14 +106,6 @@ abstract class Block implements BlockInterface
         return $this->block_asset_manager;
     }
 
-
-    /**
-     * @param WP_Block_Type $wp_block_type
-     */
-    protected function setWpBlockType($wp_block_type)
-    {
-        $this->wp_block_type = $wp_block_type;
-    }
 
     /**
      * returns an array of fully qualified class names
@@ -189,21 +176,17 @@ abstract class Block implements BlockInterface
         $args = array(
             'attributes'    => $this->attributes(),
             'editor_script' => $this->block_asset_manager->getEditorScriptHandle(),
-            'editor_style'  => $this->block_asset_manager->getEditorStyleHandle(),
             'script'        => $this->block_asset_manager->getScriptHandle(),
-            'style'         => $this->block_asset_manager->getStyleHandle(),
         );
         if ($this->isDynamic()) {
             $args['render_callback'] = array($this, 'renderBlock');
         }
-        $wp_block_type = register_block_type(
+        return register_block_type(
             new WP_Block_Type(
                 $this->namespacedBlockType(),
                 $args
             )
         );
-        $this->setWpBlockType($wp_block_type);
-        return $wp_block_type;
     }
 
 

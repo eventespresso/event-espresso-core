@@ -26,7 +26,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway
 
 
     /**
-     * @return EE_Offsite_Gateway
+     * EE_Offsite_Gateway constructor
      */
     public function __construct()
     {
@@ -42,7 +42,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway
      * Saving the payment from within this method is unnecessary,
      * as it is the responsibility of client code to save it.
      *
-     * @param EE_Payment $payment    to process
+     * @param EE_Payment|null $payment    to process
      * @param array      $billing_info
      * @param string     $return_url URL to send the user to after a successful payment on the payment provider's
      *                               website
@@ -67,8 +67,8 @@ abstract class EE_Offsite_Gateway extends EE_Gateway
      * as it is the responsibility of client code to save it.
      *
      * @param array           $update_info of whatever
-     * @param EEI_Transaction $transaction
-     * @return EEI_Payment updated
+     * @param EE_Transaction $transaction
+     * @return EE_Payment updated
      */
     abstract public function handle_payment_update($update_info, $transaction);
 

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @var int     $reg_page_id
  * @var WP_Post $reg_page_obj
@@ -10,9 +9,6 @@
  * @var int     $cancel_page_id
  * @var WP_Post $cancel_page_obj
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
 ?>
 
 <div class="padding">
@@ -31,7 +27,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 ?>
     </p>
 
-    <table class="form-table">
+    <table class="ee-admin-two-column-layout form-table">
         <tbody>
 
             <tr>
@@ -40,24 +36,28 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         <strong>
                             <?php esc_html_e('Registration Checkout Page', 'event_espresso'); ?>
                         </strong>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('registration_page_info'), AllowedTags::getAllowedTags()); ?>
+                        <?php echo EEH_Template::get_help_tab_link('registration_page_info'); // already escaped ?>
                         <br />
                         <?php echo General_Settings_Admin_Page::edit_view_links($reg_page_id); // already escaped ?>
                     </label>
                 </th>
                 <td>
-                    <select id="reg_page_id" name="reg_page_id" data-placeholder="Choose a page...">
+                    <select id="reg_page_id"
+                            name="reg_page_id"
+                            class='ee-input-width--reg'
+                            data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
+                    >
                         <option value="0">
                             <?php esc_html_e('Main Page', 'event_espresso'); ?>
                         </option>
                         <?php General_Settings_Admin_Page::page_settings_dropdown($reg_page_id); // already escaped ?>
                     </select>
-                    <span>
+                    <div class="ee-page-status__wrapper">
                     <?php echo General_Settings_Admin_Page::page_and_shortcode_status(
                         $reg_page_obj,
                         '[ESPRESSO_CHECKOUT]'
                     ); // already escaped ?>
-                </span>
+                    </div>
                     <br />
                     <p class="description">
                         <?php printf(
@@ -79,7 +79,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         <strong>
                             <?php esc_html_e('Transactions Page', 'event_espresso'); ?>
                         </strong>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('notify_url_info'), AllowedTags::getAllowedTags()); ?>
+                        <?php echo EEH_Template::get_help_tab_link('notify_url_info'); // already escaped ?>
                         <br />
                         <span class="lt-grey-text">
                         <?php esc_html_e('Notify URL (processes payments)', 'event_espresso'); ?>
@@ -89,18 +89,22 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </th>
                 <td>
-                    <select id="txn_page_id" name="txn_page_id" data-placeholder="Choose a page...">
+                    <select id="txn_page_id"
+                            name="txn_page_id"
+                            class='ee-input-width--reg'
+                            data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
+                    >
                         <option value="0">
                             <?php esc_html_e('Main Page', 'event_espresso'); ?>
                         </option>
                         <?php General_Settings_Admin_Page::page_settings_dropdown($txn_page_id); // already escaped ?>
                     </select>
-                    <span>
+                    <div class='ee-page-status__wrapper'>
                     <?php echo General_Settings_Admin_Page::page_and_shortcode_status(
                         $txn_page_obj,
                         '[ESPRESSO_TXN_PAGE]'
                     ); // already escaped ?>
-                </span>
+                    </div>
                     <br />
                     <p class="description">
                         <?php printf(
@@ -122,24 +126,28 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         <strong>
                             <?php esc_html_e('Thank You Page', 'event_espresso'); ?>
                         </strong>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('return_url_info'), AllowedTags::getAllowedTags()); ?>
+                        <?php echo EEH_Template::get_help_tab_link('return_url_info'); // already escaped ?>
                         <br />
                         <?php echo General_Settings_Admin_Page::edit_view_links($thank_you_page_id); // already escaped ?>
                     </label>
                 </th>
                 <td>
-                    <select id="thank_you_page_id" name="thank_you_page_id" data-placeholder="Choose a page...">
+                    <select id="thank_you_page_id"
+                            name="thank_you_page_id"
+                            class='ee-input-width--reg'
+                            data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
+                    >
                         <option value="0">
                             <?php esc_html_e('Main Page', 'event_espresso'); ?>
                         </option>
                         <?php General_Settings_Admin_Page::page_settings_dropdown($thank_you_page_id); // already escaped ?>
                     </select>
-                    <span>
+                    <div class='ee-page-status__wrapper'>
                     <?php echo General_Settings_Admin_Page::page_and_shortcode_status(
                         $thank_you_page_obj,
                         '[ESPRESSO_THANK_YOU]'
                     ); // already escaped ?>
-                </span>
+                    </div>
                     <br />
                     <p class="description">
                         <?php printf(
@@ -161,24 +169,28 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         <strong>
                             <?php esc_html_e('Cancel/Return Page', 'event_espresso'); ?>
                         </strong>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('cancel_return_info'), AllowedTags::getAllowedTags()); ?>
+                        <?php echo EEH_Template::get_help_tab_link('cancel_return_info'); // already escaped ?>
                         <br />
                         <?php echo General_Settings_Admin_Page::edit_view_links($cancel_page_id); // already escaped ?>
                     </label>
                 </th>
                 <td>
-                    <select id="cancel_page_id" name="cancel_page_id" data-placeholder="Choose a page...">
+                    <select id="cancel_page_id"
+                            name="cancel_page_id"
+                            class='ee-input-width--reg'
+                            data-placeholder="<?php esc_html_e('Choose a page...', 'event_espresso'); ?>"
+                    >
                         <option value="0">
                             <?php esc_html_e('Main Page', 'event_espresso'); ?>
                         </option>
                         <?php General_Settings_Admin_Page::page_settings_dropdown($cancel_page_id); // already escaped ?>
                     </select>
-                    <span>
+                    <div class='ee-page-status__wrapper'>
                     <?php echo General_Settings_Admin_Page::page_and_shortcode_status(
                         $cancel_page_obj,
                         '[ESPRESSO_CANCELLED]'
                     ); // already escaped ?>
-                </span>
+                    </div>
                     <br />
                     <p class="description">
                         <?php printf(
@@ -200,7 +212,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         <strong>
                             <?php esc_html_e('Event List', 'event_espresso'); ?>
                         </strong>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('event_list_cpt_info'), AllowedTags::getAllowedTags()); ?>
+                        <?php echo EEH_Template::get_help_tab_link('event_list_cpt_info'); // already escaped ?>
                         <br />
                         <a href='<?php echo esc_url_raw(get_post_type_archive_link('espresso_events')); ?>'>
                             <?php esc_html_e('View', 'event_espresso'); ?>
@@ -234,7 +246,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         <strong>
                             <?php esc_html_e('Venue List', 'event_espresso'); ?>
                         </strong>
-                        <?php echo wp_kses(EEH_Template::get_help_tab_link('venue_list_cpt_info'), AllowedTags::getAllowedTags()); ?>
+                        <?php echo EEH_Template::get_help_tab_link('venue_list_cpt_info'); // already escaped ?>
                         <br />
                         <a href='<?php echo esc_url_raw(get_post_type_archive_link('espresso_venues')); ?>'>
                             <?php esc_html_e('View', 'event_espresso'); ?>

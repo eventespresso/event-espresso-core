@@ -110,13 +110,9 @@ if ($reg_count > 0) {
     }
     ?>
 </ul>
-<form action="<?php echo esc_url_raw($form_url); ?>" method="POST">
-    <?php echo wp_kses($form->get_html_and_js(), AllowedTags::getWithFormTags()); ?>
-    <input class='button button-primary'
-           type="submit"
-           value="<?php esc_attr_e('Confirm', 'event_espresso'); ?>"
-    />
-    <a href="javascript:window.history.back();" class="button button-secondary">
-        <?php esc_html_e('Cancel', 'event_espresso'); ?>
-    </a>
-</form>
+<?php
+
+echo wp_kses(
+    $form->form_open($form_url) . $form->get_html_and_js() . $form->form_close(),
+    AllowedTags::getWithFormTags()
+);

@@ -49,6 +49,7 @@ abstract class EE_Object_Collection extends SplObjectStorage
      * @return array|int|string
      * @since 4.10.33.p
      */
+    #[\ReturnTypeWillChange]
     public function getInfo()
     {
         return $this->valid() ? maybe_unserialize(parent::getInfo()) : '';
@@ -68,7 +69,7 @@ abstract class EE_Object_Collection extends SplObjectStorage
         $info = $this->prepInfo($info);
         $this->rewind();
         while ($this->valid()) {
-            if ($object == $this->current()) {
+            if ($object === $this->current()) {
                 $this->setInfo($info);
                 $this->rewind();
                 return true;

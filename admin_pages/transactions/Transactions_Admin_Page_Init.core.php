@@ -1,24 +1,18 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+
 /**
  * Transactions_Admin_Page_Init class
  *
  * @package               Event Espresso
  * @subpackage            includes/core/admin/transactions/Transactions_Admin_Page_Init.class.php
  * @author                Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
 class Transactions_Admin_Page_Init extends EE_Admin_Page_Init
 {
-    /**
-     * @Constructor
-     * @access public
-     * @return Transactions_Admin_Page_Init
-     */
     public function __construct()
     {
-
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         if (! defined('TXN_PG_SLUG')) {
             define('TXN_PG_SLUG', 'espresso_transactions');
@@ -34,35 +28,23 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init
     }
 
 
-    /**
-     *    _set_init_properties
-     *
-     * @return void
-     */
     protected function _set_init_properties()
     {
         $this->label = esc_html__('Transactions Overview', 'event_espresso');
     }
 
 
-    /**
-     *    _set_menu_map
-     *
-     * @return void
-     */
-    protected function _set_menu_map()
+    public function getMenuProperties(): array
     {
-        $this->_menu_map = new EE_Admin_Page_Sub_Menu(
-            array(
-                'menu_group'      => 'main',
-                'menu_order'      => 50,
-                'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
-                'parent_slug'     => 'espresso_events',
-                'menu_slug'       => TXN_PG_SLUG,
-                'menu_label'      => esc_html__('Transactions', 'event_espresso'),
-                'capability'      => 'ee_read_transactions',
-                'admin_init_page' => $this,
-            )
-        );
+        return [
+            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'      => 'main',
+            'menu_order'      => 50,
+            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'     => 'espresso_events',
+            'menu_slug'       => TXN_PG_SLUG,
+            'menu_label'      => esc_html__('Transactions', 'event_espresso'),
+            'capability'      => 'ee_read_transactions',
+        ];
     }
 }

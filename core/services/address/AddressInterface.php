@@ -4,11 +4,12 @@ namespace EventEspresso\core\services\address;
 
 use EE_Country;
 use EE_State;
+use EEI_Address;
 
 /**
  * Interface AddressInterface
  */
-interface AddressInterface
+interface AddressInterface extends EEI_Address
 {
     public function address(): string;
 

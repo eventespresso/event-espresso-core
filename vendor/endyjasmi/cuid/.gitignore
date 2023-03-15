@@ -1,0 +1,8 @@
+/docs/
+/node_modules/
+/vendor/
+composer.lock
+*.sublime-project
+*.sublime-workspace
+.count
+.pid

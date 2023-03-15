@@ -2,7 +2,7 @@
 
 /**
  * Class EE_Text_Input_Display_Strategy
- * Display strategy that handles how to display form file form inputs which can be used outside of the admin context.
+ * Display strategy that handles how to display form file form inputs which can be used outside the admin context.
  * @package             Event Espresso
  * @subpackage    core
  * @author              Mike Nelson

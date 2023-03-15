@@ -1,10 +1,11 @@
-/* General Styles and screens over 1280px in width */
-
 .ee-progress-step-main-container .number-bubbles-container {
-	display: inline-block;
-	position: relative;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
 	margin: auto;
+	position: relative;
 }
+
+/* General Styles and screens over 1280px in width */
 
 .number-bubbles-container .progress-step-number {
 	cursor: pointer;
@@ -12,6 +13,7 @@
 	padding: 20px 30px;
 	position: relative;
 	text-align: center;
+	width: 85%;
 }
 
 .number-bubbles-container .progress-step-line {
@@ -29,10 +31,6 @@
 	background-color: #fff;
 	border: 2px solid #ddd;
 	border-radius: 30px;
-	-webkit-border-radius: 30px;
-	-moz-border-radius: 30px;
-	-ms-border-radius: 30px;
-	-o-border-radius: 30px;
 	color: #777;
 	height: 30px;
 	margin: auto;
@@ -74,8 +72,8 @@
 
 	/* colors for debugging*/
 	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
-		/*border: 2px solid indianred;*/
-		/*background-color: indianred;*/
+	/*border: 2px solid indianred;*/
+	/*background-color: indianred;*/
 	/*}*/
 
 	.number-bubbles-container .progress-step-number {
@@ -88,10 +86,6 @@
 
 	.number-bubbles-container .progress-step-bubble {
 		border-radius: 30px;
-		-webkit-border-radius: 30px;
-		-moz-border-radius: 30px;
-		-ms-border-radius: 30px;
-		-o-border-radius: 30px;
 		height: 30px;
 		width: 30px;
 	}
@@ -113,8 +107,8 @@
 
 	/* colors for debugging*/
 	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
-		/*border: 2px solid orange;*/
-		/*background-color: orange;*/
+	/*border: 2px solid orange;*/
+	/*background-color: orange;*/
 	/*}*/
 
 	.number-bubbles-container .progress-step-number {
@@ -152,8 +146,8 @@
 
 	/* colors for debugging*/
 	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
-		/*border: 2px solid gold;*/
-		/*background-color: gold;*/
+	/*border: 2px solid gold;*/
+	/*background-color: gold;*/
 	/*}*/
 
 	.number-bubbles-container .progress-step-number {
@@ -191,8 +185,8 @@
 
 	/* colors for debugging*/
 	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
-		/*border: 2px solid darkseagreen;*/
-		/*background-color: darkseagreen;*/
+	/*border: 2px solid darkseagreen;*/
+	/*background-color: darkseagreen;*/
 	/*}*/
 
 	.number-bubbles-container .progress-step-number {
@@ -225,13 +219,14 @@
 
 }
 
+
 /* Admin One Column on Smart Phone */
 @media only screen and (min-width: 360px) and (max-width: 479px) {
 
 	/* colors for debugging*/
 	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
-		/*border: 2px solid lightskyblue;*/
-		/*background-color: lightskyblue;*/
+	/*border: 2px solid lightskyblue;*/
+	/*background-color: lightskyblue;*/
 	/*}*/
 
 	.number-bubbles-container .progress-step-number {
@@ -255,13 +250,14 @@
 		line-height: 16px;
 	}
 
-	.number-bubbles-container .progress-step-text {
-		margin: .25em .5em;
-		font-size: .7em;
-	}
 
 }
 
+.number-bubbles-container .progress-step-text {
+	font-size: .7em;
+	line-height: 1.25;
+	margin: .25em .5em;
+}
 /* Admin One Column on Small Phone */
 @media only screen and (max-width: 359px) {
 
@@ -304,5 +300,11 @@
 }
 
 
+@media only screen and (min-width: 768px) {
+	.ee-progress-step-main-container .number-bubbles-container {
+		display: flex;
+		flex-flow: row nowrap;
+	}
+}
 
 /* Location: core/services/progress_steps/display_strategies/number_bubbles/number_bubbles.css */

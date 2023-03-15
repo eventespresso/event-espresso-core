@@ -78,6 +78,7 @@ class About_Admin_Page extends EE_Admin_Page
             'default' => array(
                 'nav'           => array(
                     'label' => esc_html__('About', 'event_espresso'),
+                    'icon' => 'dashicons-welcome-learn-more',
                     'order' => 20,
                 ),
                 'require_nonce' => false,
@@ -85,6 +86,7 @@ class About_Admin_Page extends EE_Admin_Page
             'credits' => array(
                 'nav'           => array(
                     'label' => esc_html__('Credits', 'event_espresso'),
+                    'icon' => 'dashicons-thumbs-up',
                     'order' => 30,
                 ),
                 'require_nonce' => false,
@@ -93,6 +95,7 @@ class About_Admin_Page extends EE_Admin_Page
             'decafvpro' => array(
                 'nav'           => array(
                     'label' => esc_html__('Decaf vs Regular', 'event_espresso'),
+                    'icon' => 'dashicons-editor-code',
                     'order' => 40,
                 ),
                 'require_nonce' => false,
@@ -100,6 +103,7 @@ class About_Admin_Page extends EE_Admin_Page
             'reviews'   => array(
                 'nav'           => array(
                     'label' => esc_html__('Reviews', 'event_espresso'),
+                    'icon' => 'dashicons-star-filled',
                     'order' => 50,
                 ),
                 'require_nonce' => false,

@@ -20,11 +20,11 @@ class EE_Maybe_Serialized_Text_Field extends EE_Serialized_Text_Field
     /**
      * Formats the array (or string) according to $schema. Right now, just implode with commas
      *
-     * @param type $value_on_field_to_be_outputted
-     * @param type $schema
-     * @return strubg
+     * @param mixed       $value_on_field_to_be_outputted
+     * @param string|null $schema
+     * @return string
      */
-    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, ?string $schema = null)
     {
         $pretty_value = null;
         if (is_array($value_on_field_to_be_outputted)) {

@@ -12,6 +12,12 @@ use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\InvalidRequestStackMiddlewareException;
+use EventEspresso\core\services\request\middleware\BotDetector;
+use EventEspresso\core\services\request\middleware\DetectFileEditorRequest;
+use EventEspresso\core\services\request\middleware\DetectLogin;
+use EventEspresso\core\services\request\middleware\PreProductionVersionWarning;
+use EventEspresso\core\services\request\middleware\RecommendedVersions;
+use EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestStack;
 use EventEspresso\core\services\request\RequestStackBuilder;
@@ -21,6 +27,7 @@ use Exception;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use ReflectionException;
+use Throwable;
 
 /**
  * Class BootstrapCore
@@ -46,30 +53,15 @@ use ReflectionException;
  */
 class BootstrapCore
 {
-    /**
-     * @type LoaderInterface $loader
-     */
-    private $loader;
+    private LoaderInterface       $loader;
 
-    /**
-     * @var RequestInterface $request
-     */
-    protected $request;
+    protected RequestInterface    $request;
 
-    /**
-     * @var ResponseInterface $response
-     */
-    protected $response;
+    protected ResponseInterface   $response;
 
-    /**
-     * @var RequestStackBuilder $request_stack_builder
-     */
-    protected $request_stack_builder;
+    protected RequestStackBuilder $request_stack_builder;
 
-    /**
-     * @var RequestStack $request_stack
-     */
-    protected $request_stack;
+    protected RequestStack        $request_stack;
 
 
     /**
@@ -79,7 +71,7 @@ class BootstrapCore
     {
         do_action('AHEE__EventEspresso_core_services_bootstrap_BootstrapCore___construct');
         // construct request stack and run middleware apps as soon as all WP plugins are loaded
-        add_action('plugins_loaded', array($this, 'initialize'), 0);
+        add_action('plugins_loaded', [$this, 'initialize'], 0);
     }
 
 
@@ -95,6 +87,7 @@ class BootstrapCore
      * @throws InvalidRequestStackMiddlewareException
      * @throws OutOfBoundsException
      * @throws ReflectionException
+     * @throws Throwable
      */
     public function initialize()
     {
@@ -103,7 +96,7 @@ class BootstrapCore
         $bootstrap_request = $this->bootstrapRequestResponseObjects();
         add_action(
             'EE_Load_Espresso_Core__handle_request__initialize_core_loading',
-            array($bootstrap_request, 'setupLegacyRequest')
+            [$bootstrap_request, 'setupLegacyRequest']
         );
         $this->runRequestStack();
     }
@@ -122,7 +115,7 @@ class BootstrapCore
         $bootstrap_di = new BootstrapDependencyInjectionContainer();
         $bootstrap_di->buildLegacyDependencyInjectionContainer();
         $bootstrap_di->buildLoader();
-        $registry = $bootstrap_di->getRegistry();
+        $registry       = $bootstrap_di->getRegistry();
         $dependency_map = $bootstrap_di->getDependencyMap();
         $dependency_map->initialize();
         $registry->initialize();
@@ -153,16 +146,16 @@ class BootstrapCore
      * @return BootstrapRequestResponseObjects
      * @throws InvalidArgumentException
      */
-    private function bootstrapRequestResponseObjects()
+    private function bootstrapRequestResponseObjects(): BootstrapRequestResponseObjects
     {
         /** @var BootstrapRequestResponseObjects $bootstrap_request */
         $bootstrap_request = $this->loader->getShared(
             'EventEspresso\core\services\bootstrap\BootstrapRequestResponseObjects',
-            array($this->loader)
+            [$this->loader]
         );
         $bootstrap_request->buildRequestResponse();
         $bootstrap_request->shareRequestResponse();
-        $this->request = $this->loader->getShared('EventEspresso\core\services\request\Request');
+        $this->request  = $this->loader->getShared('EventEspresso\core\services\request\Request');
         $this->response = $this->loader->getShared('EventEspresso\core\services\request\Response');
         return $bootstrap_request;
     }
@@ -174,13 +167,14 @@ class BootstrapCore
      *
      * @throws EE_Error
      * @throws Exception
+     * @throws Throwable
      */
     public function runRequestStack()
     {
         $this->loadAutoloader();
         $this->setAutoloadersForRequiredFiles();
         $this->request_stack_builder = $this->buildRequestStack();
-        $this->request_stack = $this->request_stack_builder->resolve(
+        $this->request_stack         = $this->request_stack_builder->resolve(
             new RequestStackCoreApp()
         );
         $this->request_stack->handleRequest($this->request, $this->response);
@@ -227,7 +221,7 @@ class BootstrapCore
      *
      * @return RequestStackBuilder
      */
-    public function buildRequestStack()
+    public function buildRequestStack(): RequestStackBuilder
     {
         $request_stack_builder = new RequestStackBuilder($this->loader);
         /**
@@ -237,15 +231,15 @@ class BootstrapCore
          */
         $stack_apps = apply_filters(
             'FHEE__EventEspresso_core_services_bootstrap_BootstrapCore__buildRequestStack__stack_apps',
-            array(
+            [
                 // first in last out
-                'EventEspresso\core\services\request\middleware\BotDetector'                 => array(),
-                'EventEspresso\core\services\request\middleware\DetectFileEditorRequest'     => array(),
-                'EventEspresso\core\services\request\middleware\PreProductionVersionWarning' => array(),
-                'EventEspresso\core\services\request\middleware\RecommendedVersions'         => array(),
+                BotDetector::class                 => [],
+                DetectFileEditorRequest::class     => [],
+                PreProductionVersionWarning::class => [],
+                RecommendedVersions::class         => [],
                 // last in first out
-                'EventEspresso\core\services\request\middleware\DetectLogin'                 => array(),
-            )
+                DetectLogin::class                 => [],
+            ]
         );
         // legacy filter for backwards compatibility
         $stack_apps = apply_filters(
@@ -255,12 +249,12 @@ class BootstrapCore
         // load middleware onto stack : FILO (First In Last Out)
         // items at the beginning of the $stack_apps array will run last
         foreach ((array) $stack_apps as $stack_app => $stack_app_args) {
-            $request_stack_builder->push(array($stack_app, $stack_app_args));
+            $request_stack_builder->push([$stack_app, $stack_app_args]);
         }
         // finally, we'll add this on its own because we need it to always be part of the stack
         // and we also need it to always run first because the rest of the system relies on it
         $request_stack_builder->push(
-            array('EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker', array())
+            [SetRequestTypeContextChecker::class, []]
         );
         return apply_filters(
             'FHEE__EE_Bootstrap__build_request_stack__request_stack_builder',

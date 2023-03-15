@@ -1,6 +1,5 @@
 <?php
 
-use EventEspresso\core\services\adapters\PdfAdapter;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -53,7 +52,8 @@ class Invoice
         );
         /** @var EEM_Registration $reg_model */
         $reg_model = EE_Registry::instance()->load_model('Registration');
-        if ($this->registration = $reg_model->get_registration_for_reg_url_link($url_link)) {
+        $this->registration = $reg_model->get_registration_for_reg_url_link($url_link);
+        if ($this->registration instanceof EE_Registration) {
             $this->transaction = $this->registration->transaction();
             EE_Config::instance()->gateway->payment_settings;
             $this->invoice_payment_method = EEM_Payment_Method::instance()->get_one_of_type('Invoice');
@@ -107,11 +107,7 @@ class Invoice
             );
         }
 
-        if (is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice')) {
-            $template_args['base_url'] = EVENT_ESPRESSO_GATEWAY_URL . 'Invoice/lib/templates/';
-        } else {
-            $template_args['base_url'] = EE_GATEWAYS . '/Invoice/lib/templates/';
-        }
+        $template_args['base_url'] = EE_GATEWAYS . '/Invoice/lib/templates/';
         $primary_attendee = $this->transaction->primary_registration()->attendee();
 
         $template_args['organization'] = $EE->CFG->organization->get_pretty('name');
@@ -290,13 +286,21 @@ class Invoice
         // Create the PDF
         if ($request->requestParamIsSet('html')) {
             echo wp_kses($content, AllowedTags::getWithFormTags());
-            exit(0);
+        } else {
+            Dompdf\Autoloader::register();
+            $options = new Dompdf\Options();
+            $options->set('isRemoteEnabled', true);
+            $options->set('isJavascriptEnabled', false);
+            if (defined('DOMPDF_FONT_DIR')) {
+                $options->setFontDir(DOMPDF_FONT_DIR);
+                $options->setFontCache(DOMPDF_FONT_DIR);
+            }
+            $dompdf = new Dompdf\Dompdf($options);
+            $dompdf->loadHtml($content);
+            $dompdf->render();
+            $dompdf->stream($invoice_name . ".pdf", ['Attachment' => $download]);
         }
-        $pdf_adapter = new PdfAdapter();
-        $pdf_adapter
-            ->initializeOptions()
-            ->generate($content, $invoice_name . ".pdf", (bool) $download);
-        return;
+        exit(0);
     }
 
 
@@ -379,9 +383,7 @@ class Invoice
             $this->registration->reg_code(),
             $this->transaction->ID(),
             $primary_attendee->full_name(),
-            (is_dir(EVENT_ESPRESSO_GATEWAY_DIR . '/invoice'))
-                ? EVENT_ESPRESSO_GATEWAY_URL . 'Invoice/lib/templates/'
-                : EE_GATEWAYS_URL . 'Invoice/lib/templates/',
+            EE_GATEWAYS_URL . 'Invoice/lib/templates/',
             $this->registration->invoice_url(),
             // home_url() . '/?download_invoice=true&amp;id=' . $this->registration->reg_url_link(),
             $invoice_logo_image,

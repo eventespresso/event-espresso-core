@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\domain\services\activation\SuppressAdminNotices;
 use EventEspresso\core\domain\services\custom_post_types\RewriteRules;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\interfaces\ResettableInterface;
@@ -115,6 +116,8 @@ class EEH_Activation implements ResettableInterface
      */
     public static function initialize_db_and_folders()
     {
+        EEH_File::ensure_folder_exists_and_is_writable(EVENT_ESPRESSO_UPLOAD_DIR);
+        EEH_File::ensure_folder_exists_and_is_writable(EVENT_ESPRESSO_UPLOAD_DIR . 'logs');
         return EEH_Activation::create_database_tables();
     }
 
@@ -143,6 +146,7 @@ class EEH_Activation implements ResettableInterface
 
         EEH_Activation::validate_messages_system();
         EEH_Activation::insert_default_payment_methods();
+        SuppressAdminNotices::suppressWpGraphQlTracking();
         // in case we've
         EEH_Activation::remove_cron_tasks();
         EEH_Activation::create_cron_tasks();
@@ -356,7 +360,7 @@ class EEH_Activation implements ResettableInterface
 
     /**
      * @param array|stdClass $settings
-     * @param string         $config
+     * @param int|string         $config
      * @param EE_Config      $EE_Config
      * @return stdClass
      */
@@ -780,10 +784,13 @@ class EEH_Activation implements ResettableInterface
             } else {
                 EE_Error::add_error(
                     esc_html__(
-                        'There were errors creating the Event Espresso database tables and Event Espresso has been 
+                        'There were errors creating the Event Espresso database tables and Event Espresso has been
                             deactivated. To view the errors, please enable WP_DEBUG in your wp-config.php file.',
                         'event_espresso'
-                    )
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
                 );
             }
             return false;
@@ -1596,7 +1603,7 @@ class EEH_Activation implements ResettableInterface
     {
         // phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mysql_DeprecatedRemoved
         global $wpdb;
-        return $wpdb->use_mysqli ? mysqli_errno($wpdb->dbh) : mysql_errno($wpdb->dbh);
+        return $wpdb->use_mysqli ? mysqli_errno($wpdb->dbh) : 0;
         // phpcs:enable
     }
 

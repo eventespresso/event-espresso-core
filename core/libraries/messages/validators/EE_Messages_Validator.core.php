@@ -257,8 +257,8 @@ abstract class EE_Messages_Validator extends EE_Base
                 continue;
             }
 
-            // If we have an override then we use it to indicate the codes we want.
             if (isset($this->_valid_shortcodes_modifier[ $context ][ $field ])) {
+                // If we have an override then we use it to indicate the codes we want.
                 $this->_validators[ $field ]['shortcodes'] = $this->_reassemble_valid_shortcodes_from_group(
                     $this->_valid_shortcodes_modifier[ $context ][ $field ],
                     $codes_from_objs

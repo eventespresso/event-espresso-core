@@ -19,7 +19,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
     /**
      * prefix added to all payment method capabilities names
      */
-    const   CAPABILITIES_PREFIX = 'ee_payment_method_';
+    const CAPABILITIES_PREFIX = 'ee_payment_method_';
 
     /**
      * @var EE_Payment_Method_Manager $_instance
@@ -34,12 +34,12 @@ class EE_Payment_Method_Manager implements ResettableInterface
     /**
      * @var array keys are class names without 'EE_PMT_', values are their filepaths
      */
-    protected $_payment_method_types = array();
+    protected $_payment_method_types = [];
 
     /**
      * @var EE_PMT_Base[]
      */
-    protected $payment_method_objects = array();
+    protected $payment_method_objects = [];
 
 
     /**
@@ -58,7 +58,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
             // plus any time they get reset
             add_filter(
                 'FHEE__EE_Capabilities__addCaps__capabilities_to_add',
-                array($this, 'addPaymentMethodCapsDuringReset')
+                [$this, 'addPaymentMethodCapsDuringReset']
             );
         }
     }
@@ -69,8 +69,9 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @return EE_Payment_Method_Manager instance
      * @throws DomainException
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function instance()
+    public static function instance(): EE_Payment_Method_Manager
     {
         // check if class object is instantiated, and instantiated properly
         if (! self::$_instance instanceof EE_Payment_Method_Manager) {
@@ -87,8 +88,9 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @return EE_Payment_Method_Manager
      * @throws DomainException
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function reset()
+    public static function reset(): EE_Payment_Method_Manager
     {
         self::$_instance = null;
         return self::instance();
@@ -102,7 +104,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      *                               or just re-use the PMTs we found last time we checked during this request (if
      *                               we have not yet checked during this request, then we need to check anyways)
      */
-    public function maybe_register_payment_methods($force_recheck = false)
+    public function maybe_register_payment_methods(bool $force_recheck = false)
     {
         if (! $this->_payment_method_types || $force_recheck) {
             $this->_register_payment_methods();
@@ -115,7 +117,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      *
      * @return array
      */
-    protected function _register_payment_methods()
+    protected function _register_payment_methods(): array
     {
         // grab list of installed modules
         $pm_to_register = glob(EE_PAYMENT_METHODS . '*', GLOB_ONLYDIR);
@@ -147,7 +149,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @param string $payment_method_path - full path up to and including payment method folder
      * @return boolean
      */
-    public function register_payment_method($payment_method_path = '')
+    public function register_payment_method(string $payment_method_path = ''): bool
     {
         do_action('AHEE__EE_Payment_Method_Manager__register_payment_method__begin', $payment_method_path);
         $module_ext = '.pm.php';
@@ -156,7 +158,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
         // grab and sanitize module name
         $module_dir = basename($payment_method_path);
         // create class name from module directory name
-        $module = str_replace(array('_', ' '), array(' ', '_'), $module_dir);
+        $module = str_replace(['_', ' '], [' ', '_'], $module_dir);
         // add class prefix
         $module_class = 'EE_PMT_' . $module;
         // does the module exist ?
@@ -196,7 +198,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @param boolean $force_recheck       whether to force re-checking for new payment method types
      * @return boolean
      */
-    public function payment_method_type_exists($payment_method_name, $force_recheck = false)
+    public function payment_method_type_exists(string $payment_method_name, bool $force_recheck = false): bool
     {
         if (
             $force_recheck
@@ -221,12 +223,12 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @param boolean $force_recheck whether to force re-checking for new payment method types
      * @return array
      */
-    public function payment_method_type_names($with_prefixes = false, $force_recheck = false)
+    public function payment_method_type_names(bool $with_prefixes = false, bool $force_recheck = false): array
     {
         $this->maybe_register_payment_methods($force_recheck);
         if ($with_prefixes) {
-            $classnames = array_keys($this->_payment_method_types);
-            $payment_methods = array();
+            $classnames      = array_keys($this->_payment_method_types);
+            $payment_methods = [];
             foreach ($classnames as $classname) {
                 $payment_methods[] = $this->payment_method_class_from_type($classname);
             }
@@ -243,7 +245,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @param boolean $force_recheck whether to force re-checking for new payment method types
      * @return EE_PMT_Base[]
      */
-    public function payment_method_types($force_recheck = false)
+    public function payment_method_types(bool $force_recheck = false): array
     {
         if ($force_recheck || empty($this->payment_method_objects)) {
             $this->maybe_register_payment_methods($force_recheck);
@@ -264,7 +266,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @param string $classname
      * @return string
      */
-    public function payment_method_type_sans_class_prefix($classname)
+    public function payment_method_type_sans_class_prefix(string $classname): string
     {
         return str_replace('EE_PMT_', '', $classname);
     }
@@ -276,7 +278,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @param string $type
      * @return string
      */
-    public function payment_method_class_from_type($type)
+    public function payment_method_class_from_type(string $type): string
     {
         return 'EE_PMT_' . $type;
     }
@@ -289,8 +291,9 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @return EE_Payment_Method
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function activate_a_payment_method_of_type($payment_method_type)
+    public function activate_a_payment_method_of_type(string $payment_method_type): EE_Payment_Method
     {
         $this->maybe_register_payment_methods();
         $payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
@@ -298,7 +301,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
             $pm_type_class = $this->payment_method_class_from_type($payment_method_type);
             if (class_exists($pm_type_class)) {
                 /** @var $pm_type_obj EE_PMT_Base */
-                $pm_type_obj = new $pm_type_class();
+                $pm_type_obj    = new $pm_type_class();
                 $payment_method = EEM_Payment_Method::instance()->get_one_by_slug($pm_type_obj->system_name());
                 if (! $payment_method) {
                     $payment_method = $this->create_payment_method_of_type($pm_type_obj);
@@ -350,27 +353,27 @@ class EE_Payment_Method_Manager implements ResettableInterface
     /**
      * Creates a payment method of the specified type. Does not save it.
      *
-     * @global WP_User    $current_user
      * @param EE_PMT_Base $pm_type_obj
      * @return EE_Payment_Method
-     * @throws EE_Error
+     * @throws EE_Error*@throws ReflectionException
+     * @throws ReflectionException
+     * @global WP_User    $current_user
      */
-    public function create_payment_method_of_type($pm_type_obj)
+    public function create_payment_method_of_type(EE_PMT_Base $pm_type_obj): EE_Payment_Method
     {
         global $current_user;
-        $payment_method = EE_Payment_Method::new_instance(
-            array(
+        return EE_Payment_Method::new_instance(
+            [
                 'PMD_type'       => $pm_type_obj->system_name(),
                 'PMD_name'       => $pm_type_obj->defaultFrontendName(),
                 'PMD_admin_name' => $pm_type_obj->pretty_name(),
                 'PMD_slug'       => $pm_type_obj->system_name(),// automatically converted to slug
                 'PMD_wp_user'    => $current_user->ID,
                 'PMD_order'      => EEM_Payment_Method::instance()->count(
-                    array(array('PMD_type' => array('!=', 'Admin_Only')))
+                    [['PMD_type' => ['!=', 'Admin_Only']]]
                 ) * 10,
-            )
+            ]
         );
-        return $payment_method;
     }
 
 
@@ -380,8 +383,9 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @param EE_Payment_Method $payment_method
      * @return EE_Payment_Method
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function initialize_payment_method($payment_method)
+    public function initialize_payment_method(EE_Payment_Method $payment_method): EE_Payment_Method
     {
         $pm_type_obj = $payment_method->type_obj();
         $payment_method->set_description($pm_type_obj->default_description());
@@ -406,12 +410,11 @@ class EE_Payment_Method_Manager implements ResettableInterface
     /**
      * Makes sure the payment method is related to the specified payment method
      *
-     * @deprecated in 4.9.40 because the currency payment method table is being deprecated
      * @param EE_Payment_Method $payment_method
      * @return EE_Payment_Method
-     * @throws EE_Error
+     * @deprecated in 4.9.40 because the currency payment method table is being deprecated
      */
-    public function set_usable_currencies_on_payment_method($payment_method)
+    public function set_usable_currencies_on_payment_method(EE_Payment_Method $payment_method): EE_Payment_Method
     {
         EE_Error::doing_it_wrong(
             'EE_Payment_Method_Manager::set_usable_currencies_on_payment_method',
@@ -431,8 +434,9 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @param string $payment_method_slug The slug for the payment method to deactivate.
      * @return int count of rows updated.
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function deactivate_payment_method($payment_method_slug)
+    public function deactivate_payment_method(string $payment_method_slug): int
     {
         EE_Log::instance()->log(
             __FILE__,
@@ -447,8 +451,8 @@ class EE_Payment_Method_Manager implements ResettableInterface
             'payment_method_change'
         );
         $count_updated = EEM_Payment_Method::instance()->update(
-            array('PMD_scope' => array()),
-            array(array('PMD_slug' => $payment_method_slug))
+            ['PMD_scope' => []],
+            [['PMD_slug' => $payment_method_slug]]
         );
         do_action(
             'AHEE__EE_Payment_Method_Manager__deactivate_payment_method__after_deactivating_payment_method',
@@ -497,9 +501,9 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @return array
      * @throws DomainException
      */
-    protected function getPaymentMethodCaps()
+    protected function getPaymentMethodCaps(): array
     {
-        $caps = array();
+        $caps = [];
         foreach ($this->payment_method_type_names() as $payment_method_name) {
             $caps = $this->addPaymentMethodCap($payment_method_name, $caps);
         }
@@ -514,8 +518,11 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @return array
      * @throws DomainException
      */
-    public function addPaymentMethodCap($payment_method_name, array $payment_method_caps, $role = 'administrator')
-    {
+    public function addPaymentMethodCap(
+        string $payment_method_name,
+        array $payment_method_caps,
+        string $role = 'administrator'
+    ): array {
         if (empty($payment_method_name)) {
             throw new DomainException(
                 esc_html__(
@@ -536,7 +543,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
             );
         }
         if (! isset($payment_method_caps[ $role ])) {
-            $payment_method_caps[ $role ] = array();
+            $payment_method_caps[ $role ] = [];
         }
         $payment_method_caps[ $role ][] = EE_Payment_Method_Manager::CAPABILITIES_PREFIX
                                           . strtolower($payment_method_name);
@@ -554,20 +561,20 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @return array
      * @throws DomainException
      */
-    public function addPaymentMethodCapsDuringReset(array $caps, $reset = false)
+    public function addPaymentMethodCapsDuringReset(array $caps, bool $reset = false): array
     {
         if ($reset || ! $this->payment_method_caps_initialized) {
             $this->payment_method_caps_initialized = true;
-            $caps = array_merge_recursive($caps, $this->getPaymentMethodCaps());
+            $caps                                  = array_merge_recursive($caps, $this->getPaymentMethodCaps());
         }
         return $caps;
     }
 
 
     /**
-     * @deprecated 4.9.42
      * @param $caps
      * @return mixed
+     * @deprecated 4.9.42
      */
     public function add_payment_method_caps($caps)
     {

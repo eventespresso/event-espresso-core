@@ -13,7 +13,7 @@ interface EEHI_File
      * @throws EE_Error
      * @return bool
      */
-    public static function ensure_file_exists_and_is_writable($full_file_path = '');
+    public static function ensure_file_exists_and_is_writable(string $full_file_path = ''): bool;
 
 
 
@@ -25,7 +25,7 @@ interface EEHI_File
      * @throws EE_Error
      * @return bool
      */
-    public static function ensure_folder_exists_and_is_writable($folder = '');
+    public static function ensure_folder_exists_and_is_writable(string $folder = ''): bool;
 }
 // End of file EEHI_File.interface.php
 // Location: core/interfaces/EEHI_File.interface.php

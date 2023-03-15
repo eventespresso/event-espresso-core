@@ -18,35 +18,39 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
     }
 
 
-    protected function _extend_page_config()
+    protected function _set_page_config()
     {
+        parent::_set_page_config();
+
         $this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'support';
         // new routes and new configs (or overrides )
-        $new_page_routes = array(
-            'faq' => array(
+        $new_page_routes                              = [
+            'faq' => [
                 'func'       => '_faq',
                 'capability' => 'ee_read_ee',
-            ),
-        );
-        $this->_page_routes = array_merge($this->_page_routes, $new_page_routes);
-        $new_page_config = array(
-            'faq' => array(
-                'nav'           => array(
+            ],
+        ];
+        $this->_page_routes                           = array_merge($this->_page_routes, $new_page_routes);
+        $new_page_config                              = [
+            'faq' => [
+                'nav'           => [
                     'label' => esc_html__('FAQ', 'event_espresso'),
+                    'icon'  => 'dashicons-editor-help',
                     'order' => 40,
-                ),
-                'metaboxes'     => array('_espresso_news_post_box', '_espresso_links_post_box'),
+                ],
+                'metaboxes'     => ['_espresso_news_post_box', '_espresso_links_post_box'],
                 'require_nonce' => false,
-            ),
-        );
-        $this->_page_config = array_merge($this->_page_config, $new_page_config);
+            ],
+        ];
+        $this->_page_config                           = array_merge($this->_page_config, $new_page_config);
         $this->_page_config['default']['metaboxes'][] = '_installation_boxes';
     }
 
 
     protected function _faq()
     {
-        $template_path = EE_SUPPORT_CAF_ADMIN_TEMPLATE_PATH . 'support_admin_details_faq.template.php';
+        $template_path                              =
+            EE_SUPPORT_CAF_ADMIN_TEMPLATE_PATH . 'support_admin_details_faq.template.php';
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             $template_path,
             '',
@@ -58,11 +62,11 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
 
     protected function _installation_boxes()
     {
-        $callback_args = array(
+        $callback_args = [
             'template_path' => EE_SUPPORT_CAF_ADMIN_TEMPLATE_PATH
                                . 'support_admin_details_additional_information.template.php',
-        );
-        add_meta_box(
+        ];
+        $this->addMetaBox(
             'espresso_additional_information_support',
             esc_html__('Additional Information', 'event_espresso'),
             function ($post, $metabox) {

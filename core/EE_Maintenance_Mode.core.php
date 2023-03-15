@@ -3,6 +3,7 @@
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\CurrentPage;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * EE_Maintenance_Mode Class
@@ -87,6 +88,8 @@ class EE_Maintenance_Mode implements ResettableInterface
         add_action('wp_enqueue_scripts', [$this, 'load_assets_required_for_m_mode']);
         // shut 'er down for maintenance ?
         add_filter('the_content', [$this, 'the_content'], 2);
+        // redirect ee menus to maintenance page
+        add_action('admin_page_access_denied', [$this, 'redirect_to_maintenance']);
         // add powered by EE msg
         add_action('shutdown', [$this, 'display_maintenance_mode_notice'], 10);
     }
@@ -286,6 +289,25 @@ class EE_Maintenance_Mode implements ResettableInterface
         }
     }
     // espresso-notices important-notice ee-attention
+
+    /**
+     * Redirects EE admin menu requests to the maintenance page
+     */
+    public function redirect_to_maintenance()
+    {
+        global $pagenow;
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $page   = $request->getRequestParam('page');
+
+        if (
+            $pagenow == 'admin.php' && 
+            strpos($page, 'espresso_') !== false &&
+            $this->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance
+        ) {
+            wp_safe_redirect( 'admin.php?page=espresso_maintenance_settings' );
+            exit;
+        }
+    }
 
 
     /**

@@ -30,7 +30,7 @@ class EE_Invisible_Recaptcha_Display_Strategy extends EE_Display_Strategy_Base
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      */
-    public function display()
+    public function display(): string
     {
         wp_enqueue_script(EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_GOOGLE_INVISIBLE_RECAPTCHA);
         return <<<EOD
