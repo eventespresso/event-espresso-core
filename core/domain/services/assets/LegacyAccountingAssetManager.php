@@ -19,7 +19,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  *
  * @package EventEspresso\core\domain\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class LegacyAccountingAssetManager extends AssetManager
 {
@@ -76,7 +76,7 @@ class LegacyAccountingAssetManager extends AssetManager
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function loadAccountingJs()
     {
@@ -111,7 +111,7 @@ class LegacyAccountingAssetManager extends AssetManager
      * Returns configuration data for the accounting-js library.
      *
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function getAccountingSettings()
     {

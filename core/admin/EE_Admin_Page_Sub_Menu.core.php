@@ -8,13 +8,13 @@ use EventEspresso\core\domain\entities\admin\menu\AdminMenuSubItem;
  * @since      4.4.0
  * @package    Event Espresso
  * @subpackage admin
- * @deprecated $VID:$
+ * @deprecated 5.0.0.p
  */
 class EE_Admin_Page_Sub_Menu extends AdminMenuSubItem
 {
     /**
      * @return string
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     protected function _add_menu_page()
     {

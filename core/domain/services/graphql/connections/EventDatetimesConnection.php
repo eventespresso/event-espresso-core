@@ -14,7 +14,7 @@ use GraphQL\Deferred;
  *
  * @package EventEspresso\core\domain\services\graphql\connections
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EventDatetimesConnection extends ConnectionBase
 {

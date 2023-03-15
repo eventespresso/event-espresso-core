@@ -8,14 +8,14 @@ namespace EventEspresso\core\domain\services\admin\events\editor;
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface EventEditorDataInterface
 {
     /**
      * @param int $eventId
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getData(int $eventId);
 }

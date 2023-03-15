@@ -13,7 +13,7 @@ use EEH_Array;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\database
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class WordPressOption
 {
@@ -188,7 +188,7 @@ abstract class WordPressOption
      * for the rest of the request
      *
      * @return bool
-     * @since  $VID:$
+     * @since  5.0.0.p
      */
     public function deleteOption(): bool
     {

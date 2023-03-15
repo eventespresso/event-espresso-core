@@ -14,7 +14,7 @@ use EventEspresso\core\services\routing\Route;
  *
  * @package EventEspresso\core\domain\entities\routing\admin
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class NonEspressoAdminAjax extends Route
 {
@@ -22,7 +22,7 @@ class NonEspressoAdminAjax extends Route
      * returns true if the current request matches this route
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function matchesCurrentRequest(): bool
     {
@@ -31,7 +31,7 @@ class NonEspressoAdminAjax extends Route
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function registerDependencies()
     {
@@ -42,7 +42,7 @@ class NonEspressoAdminAjax extends Route
      * implements logic required to run during request
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     protected function requestHandler(): bool
     {

@@ -13,7 +13,7 @@ use GraphQL\Deferred;
  *
  * @package EventEspresso\core\domain\services\graphql\connections
  * @author  Manzoor Ahmad Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class AbstractRootQueryConnection extends ConnectionBase
 {

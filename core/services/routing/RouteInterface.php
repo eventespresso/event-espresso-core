@@ -14,7 +14,7 @@ use EventEspresso\core\services\json\JsonDataNode;
  *
  * @package EventEspresso\core\services\routing
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface RouteInterface
 {
@@ -28,7 +28,7 @@ interface RouteInterface
      * final method called by RouteHandler on Route which in turn calls requestHandler()
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function handleRequest(): bool;
 
@@ -36,7 +36,7 @@ interface RouteInterface
     /**
      * a place to run any setup required for matchesCurrentRequest() which runs immediately after
      *
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function initialize();
 
@@ -61,7 +61,7 @@ interface RouteInterface
      * returns true if the current request matches this route
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function matchesCurrentRequest(): bool;
 }

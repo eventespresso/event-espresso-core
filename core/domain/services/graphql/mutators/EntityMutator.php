@@ -17,7 +17,7 @@ use RuntimeException;
  *
  * @package EventEspresso\core\domain\services\graphql\mutators
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class EntityMutator
 {

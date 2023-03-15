@@ -13,7 +13,7 @@ use WPGraphQL\Data\Connection\AbstractConnectionResolver as WPGraphQLConnectionR
  *
  * @package EventEspresso\core\services\graphql\connection_resolvers
  * @author  Manzoor Ahmad Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
 {

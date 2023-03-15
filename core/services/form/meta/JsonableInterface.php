@@ -7,7 +7,7 @@ namespace EventEspresso\core\services\form\meta;
  *
  * @package EventEspresso\core\services\form\meta
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface JsonableInterface
 {

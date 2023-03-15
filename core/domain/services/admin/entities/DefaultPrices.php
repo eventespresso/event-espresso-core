@@ -20,7 +20,7 @@ use RuntimeException;
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class DefaultPrices implements DefaultEntityGeneratorInterface
 {
@@ -62,7 +62,7 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
      * @throws EE_Error
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function create(EE_Base_Class $entity): array
     {

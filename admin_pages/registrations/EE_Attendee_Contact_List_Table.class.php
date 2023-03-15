@@ -189,7 +189,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
      * @param int    $ID
      * @param string $attendee_name
      * @return string
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function editAttendeeLink(int $ID, string $attendee_name): string
     {

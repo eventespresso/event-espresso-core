@@ -21,7 +21,7 @@ use EventEspresso\core\services\form\meta\FormStatus;
  *  FSC_wpUser       int
  *
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EE_Form_Section extends EE_Base_Class
 {

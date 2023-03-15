@@ -7,7 +7,7 @@ use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
- * @since $VID:$
+ * @since 5.0.0.p
  */
 class AdminListTableFilters
 {

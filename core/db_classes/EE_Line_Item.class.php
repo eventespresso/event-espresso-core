@@ -448,7 +448,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function prettyPercent(): string
     {
@@ -508,7 +508,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
-     * @since  $VID:$
+     * @since  5.0.0.p
      */
     public function totalWithTax(): float
     {
@@ -522,7 +522,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @param float $total
      * @throws EE_Error
      * @throws ReflectionException
-     * @since  $VID:$
+     * @since  5.0.0.p
      */
     public function setTotalWithTax(float $total)
     {
@@ -536,7 +536,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.0.p
      */
     public function total(): float
     {
@@ -550,7 +550,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @param float $total
      * @throws EE_Error
      * @throws ReflectionException
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.0.p
      */
     public function set_total($total)
     {
@@ -770,7 +770,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @param int $timestamp
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function setTimestamp(int $timestamp)
     {
@@ -1182,7 +1182,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     public function is_tax(): bool
     {
@@ -1305,7 +1305,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @return string like '2, 004.00', formatted according to the localized currency
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function prettyUnitPrice(): string
     {
@@ -1328,7 +1328,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @return string like '2, 004.00', formatted according to the localized currency
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function prettyTotal(): string
     {

@@ -12,7 +12,7 @@ use EventEspresso\core\services\json\JsonDataNodeValidator;
  *
  * @package EventEspresso\core\domain\entities\routing\data_nodes
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class Config extends JsonDataNode
 {
@@ -90,7 +90,7 @@ class Config extends JsonDataNode
 
     /**
      * @throws DomainException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function initialize()
     {

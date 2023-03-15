@@ -33,7 +33,7 @@ use WPGraphQL\AppContext;
  *
  * @package EventEspresso\core\domain\services\graphql\resolvers
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class FieldResolver extends ResolverBase
 {

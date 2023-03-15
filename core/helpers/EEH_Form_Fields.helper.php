@@ -596,7 +596,7 @@ class EEH_Form_Fields
     /**
      * @param mixed $value
      * @return int
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private static function getInputValueLength($value): int
     {
@@ -623,7 +623,7 @@ class EEH_Form_Fields
      * @param string $class
      * @param mixed $value
      * @return string
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private static function appendInputSizeClass(string $class, $value): string
     {

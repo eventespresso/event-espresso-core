@@ -13,7 +13,7 @@ use EventEspresso\core\domain\services\admin\PluginUpsells;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\admin
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class WordPressPluginsPage extends AdminRoute
 {
@@ -21,7 +21,7 @@ class WordPressPluginsPage extends AdminRoute
      * returns true if the current request matches this route
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function matchesCurrentRequest(): bool
     {
@@ -31,7 +31,7 @@ class WordPressPluginsPage extends AdminRoute
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function registerDependencies()
     {
@@ -79,7 +79,7 @@ class WordPressPluginsPage extends AdminRoute
      * implements logic required to run during request
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     protected function requestHandler(): bool
     {

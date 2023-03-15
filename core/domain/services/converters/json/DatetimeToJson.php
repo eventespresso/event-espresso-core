@@ -17,7 +17,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\domain\services\converters\json
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class DatetimeToJson implements ModelObjectToJsonConverterInterface
 {
@@ -29,7 +29,7 @@ class DatetimeToJson implements ModelObjectToJsonConverterInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function convertAndEncodeArrayOf(array $datetimes)
     {
@@ -51,7 +51,7 @@ class DatetimeToJson implements ModelObjectToJsonConverterInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function convertAndEncode($datetime)
     {
@@ -67,7 +67,7 @@ class DatetimeToJson implements ModelObjectToJsonConverterInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function convertArrayOf(array $datetimes)
     {
@@ -89,7 +89,7 @@ class DatetimeToJson implements ModelObjectToJsonConverterInterface
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function convert($datetime)
     {
@@ -119,7 +119,7 @@ class DatetimeToJson implements ModelObjectToJsonConverterInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function encodeArrayOf(array $datetimes)
     {
@@ -136,7 +136,7 @@ class DatetimeToJson implements ModelObjectToJsonConverterInterface
     /**
      * @param array $datetime_array
      * @return false|string
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function encode(array $datetime_array)
     {

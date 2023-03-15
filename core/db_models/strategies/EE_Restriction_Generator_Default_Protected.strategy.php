@@ -94,7 +94,7 @@ class EE_Restriction_Generator_Default_Protected extends EE_Restriction_Generato
      * @param EEM_Base $model
      * @param string   $action
      * @return string
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function getCapKey(EEM_Base $model, string $action): string
     {
@@ -105,7 +105,7 @@ class EE_Restriction_Generator_Default_Protected extends EE_Restriction_Generato
     /**
      * @param bool $use_default_field_name
      * @return EE_Default_Where_Conditions
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function nonDefaultRestrictions(bool $use_default_field_name): EE_Default_Where_Conditions
     {
@@ -117,7 +117,7 @@ class EE_Restriction_Generator_Default_Protected extends EE_Restriction_Generato
      * @param string $action
      * @return EE_Default_Where_Conditions
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function othersDefaultRestrictions(string $action): EE_Default_Where_Conditions
     {
@@ -141,7 +141,7 @@ class EE_Restriction_Generator_Default_Protected extends EE_Restriction_Generato
      * @param EEM_Event $event_model
      * @param string    $action
      * @return EE_Default_Where_Conditions
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function othersNonDefaultRestrictions(EEM_Event $event_model, string $action): EE_Default_Where_Conditions
     {
@@ -160,7 +160,7 @@ class EE_Restriction_Generator_Default_Protected extends EE_Restriction_Generato
      * @param EEM_Event $event_model
      * @param string    $action
      * @return EE_Default_Where_Conditions
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function privateRestrictions(EEM_Event $event_model, string $action): EE_Default_Where_Conditions
     {

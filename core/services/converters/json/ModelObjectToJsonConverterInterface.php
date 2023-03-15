@@ -8,14 +8,14 @@ namespace EventEspresso\core\services\converters\json;
  *
  * @package EventEspresso\core\services\converters\json
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface ModelObjectToJsonConverterInterface
 {
     /**
      * @param array $entities
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function convertAndEncodeArrayOf(array $entities);
 
@@ -23,7 +23,7 @@ interface ModelObjectToJsonConverterInterface
     /**
      * @param $entity
      * @return false|string
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function convertAndEncode($entity);
 
@@ -31,7 +31,7 @@ interface ModelObjectToJsonConverterInterface
     /**
      * @param array $entities
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function convertArrayOf(array $entities);
 
@@ -39,7 +39,7 @@ interface ModelObjectToJsonConverterInterface
     /**
      * @param $entity
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function convert($entity);
 
@@ -47,7 +47,7 @@ interface ModelObjectToJsonConverterInterface
     /**
      * @param array $entities
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function encodeArrayOf(array $entities);
 
@@ -55,7 +55,7 @@ interface ModelObjectToJsonConverterInterface
     /**
      * @param array $entity_array
      * @return false|string
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function encode(array $entity_array);
 }

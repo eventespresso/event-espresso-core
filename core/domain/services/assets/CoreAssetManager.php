@@ -179,7 +179,7 @@ class CoreAssetManager extends AssetManager
      * EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager::loadQtipJs()
      *
      * @param JavascriptAsset $script
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function loadQtipJs(JavascriptAsset $script = null)
     {

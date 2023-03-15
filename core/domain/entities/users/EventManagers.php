@@ -11,7 +11,7 @@ use WP_Role;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\domain\entities\users
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EventManagers
 {

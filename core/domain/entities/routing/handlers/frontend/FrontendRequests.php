@@ -10,7 +10,7 @@ use EE_Dependency_Map;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\frontend
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class FrontendRequests extends PublicRoute
 {
@@ -20,7 +20,7 @@ class FrontendRequests extends PublicRoute
      * or supply a RouteMatchSpecification class and just use the below
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function matchesCurrentRequest(): bool
     {
@@ -30,7 +30,7 @@ class FrontendRequests extends PublicRoute
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function registerDependencies()
     {
@@ -49,7 +49,7 @@ class FrontendRequests extends PublicRoute
      * implements logic required to run during request
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     protected function requestHandler(): bool
     {

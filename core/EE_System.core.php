@@ -717,7 +717,7 @@ final class EE_System implements ResettableInterface
      * @param int    $version_change
      * @param bool   $is_activation
      * @return int
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private static function getRequestType(array $activation_history, int $version_change, bool $is_activation): int
     {

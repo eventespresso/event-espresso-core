@@ -12,7 +12,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface DefaultEntityGeneratorInterface
 {
@@ -21,7 +21,7 @@ interface DefaultEntityGeneratorInterface
      * @return EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function create(EE_Base_Class $entity): array;
 }

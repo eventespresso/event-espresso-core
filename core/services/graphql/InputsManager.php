@@ -13,7 +13,7 @@ use EventEspresso\core\services\graphql\inputs\InputInterface;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class InputsManager implements GQLManagerInterface
 {
@@ -37,7 +37,7 @@ class InputsManager implements GQLManagerInterface
     /**
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function init()
     {
@@ -47,7 +47,7 @@ class InputsManager implements GQLManagerInterface
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function configureInputs()
     {
@@ -60,7 +60,7 @@ class InputsManager implements GQLManagerInterface
 
     /**
      * @param InputInterface $input
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function registerInput(InputInterface $input)
     {

@@ -19,7 +19,7 @@ use WPGraphQL\AppContext;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface TypeInterface
 {
@@ -37,7 +37,7 @@ interface TypeInterface
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function fields(): array;
 
@@ -46,7 +46,7 @@ interface TypeInterface
      * Creates a key map for internal resolver.
      *
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getFieldsForResolver(): array;
 
@@ -60,7 +60,7 @@ interface TypeInterface
     /**
      * @param int|float $value
      * @return int
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function parseInfiniteValue($value): int;
 
@@ -78,7 +78,7 @@ interface TypeInterface
      * @throws UserError
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function resolveField($source, array $args, AppContext $context, ResolveInfo $info);
 
@@ -95,7 +95,7 @@ interface TypeInterface
      * @throws UserError
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function resolveFromPayload($payload, array $args, AppContext $context);
 }

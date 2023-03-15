@@ -11,7 +11,7 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class GraphQLManager implements GQLManagerInterface
 {
@@ -73,7 +73,7 @@ class GraphQLManager implements GQLManagerInterface
     /**
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function init()
     {

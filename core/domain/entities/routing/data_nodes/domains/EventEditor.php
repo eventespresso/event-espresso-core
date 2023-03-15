@@ -15,7 +15,7 @@ use WP_Post;
  *
  * @package EventEspresso\core\domain\entities\routing\data_nodes\domains
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EventEditor extends JsonDataNode
 {
@@ -48,7 +48,7 @@ class EventEditor extends JsonDataNode
     /**
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function initialize()
     {

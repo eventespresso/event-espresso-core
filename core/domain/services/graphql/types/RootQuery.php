@@ -27,7 +27,7 @@ use GraphQLRelay\Relay;
  *
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class RootQuery extends TypeBase
 {
@@ -113,7 +113,7 @@ class RootQuery extends TypeBase
      * @throws InvalidInterfaceException
      * @throws UserError
      * @throws UnexpectedEntityException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getEventRelationalData($source, array $args, AppContext $context, ResolveInfo $info): string
     {
@@ -148,7 +148,7 @@ class RootQuery extends TypeBase
      * @throws InvalidInterfaceException
      * @throws UserError
      * @throws UnexpectedEntityException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getDatetime($source, array $args, AppContext $context, ResolveInfo $info): EE_Datetime
     {
@@ -180,7 +180,7 @@ class RootQuery extends TypeBase
      * @throws InvalidInterfaceException
      * @throws UserError
      * @throws UnexpectedEntityException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getTicket($source, array $args, AppContext $context, ResolveInfo $info): EE_Ticket
     {

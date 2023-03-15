@@ -95,7 +95,7 @@ class Price_Types_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function getActionUrl(EE_Price_Type $price_type, string $action): string
     {

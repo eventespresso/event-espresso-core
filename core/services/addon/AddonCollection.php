@@ -11,7 +11,7 @@ use EventEspresso\core\services\collections\Collection;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\addon
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class AddonCollection extends Collection
 {

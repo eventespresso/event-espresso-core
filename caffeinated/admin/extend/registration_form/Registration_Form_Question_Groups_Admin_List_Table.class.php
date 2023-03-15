@@ -211,7 +211,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function getActionUrl(EE_Question_Group $question_group, $action): string
     {

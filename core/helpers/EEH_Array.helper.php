@@ -234,7 +234,7 @@ class EEH_Array extends EEH_Base
      * @param array $array_1
      * @param array $array_2
      * @return array
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public static function array_diff_recursive(array $array_1, array $array_2): array
     {
@@ -300,7 +300,7 @@ class EEH_Array extends EEH_Base
      *                          [false] will only flatten sub-arrays down into strings and return a array
      * @param bool  $top_level  used for formatting purposes only, best to leave this alone as it's set internally
      * @return array|false|string
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public static function flattenArray(array $array, bool $to_string = false, bool $top_level = true)
     {

@@ -16,7 +16,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\domain\services\admin\entities
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class DefaultDatetimes implements DefaultEntityGeneratorInterface
 {
@@ -47,7 +47,7 @@ class DefaultDatetimes implements DefaultEntityGeneratorInterface
      * @throws EE_Error
      * @throws InvalidEntityException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function create(EE_Base_Class $entity): array
     {

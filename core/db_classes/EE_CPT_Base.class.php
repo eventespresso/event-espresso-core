@@ -15,13 +15,13 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 {
     /**
      * @var stdClass
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public $labels;
 
     /**
      * @var string
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public $name;
 

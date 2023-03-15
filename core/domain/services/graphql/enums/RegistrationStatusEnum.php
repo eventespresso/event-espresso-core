@@ -12,7 +12,7 @@ use EventEspresso\core\services\graphql\enums\EnumBase;
  * @package EventEspresso\core\domain\services\graphql\enums
  * @author  Manzoor Wani
  * @author  Hossein Rafiei <hoseinrafiei@gmail.com>
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class RegistrationStatusEnum extends EnumBase
 {

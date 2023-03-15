@@ -76,7 +76,7 @@ class BatchRequestProcessor
      * @param array  $request_data
      * @return JobHandlerInterface
      * @throws BatchRequestException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function initializeJobHandler(
         string $job_id,
@@ -228,7 +228,7 @@ class BatchRequestProcessor
      * @param array  $request_data
      * @return JobHandlerInterface
      * @throws BatchRequestException
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.0.p
      */
     public function instantiate_batch_job_handler_from_classname(
         string $classname,
@@ -275,7 +275,7 @@ class BatchRequestProcessor
      * @param string $job_id
      * @param        $job_response
      * @throws BatchRequestException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function validateResponse(string $function, string $job_id, $job_response)
     {
@@ -297,7 +297,7 @@ class BatchRequestProcessor
     /**
      * @param JobParameters $job_parameters
      * @throws BatchRequestException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function verifyJobHandlerClassExists(JobParameters $job_parameters)
     {
@@ -318,7 +318,7 @@ class BatchRequestProcessor
      * @param JobHandlerInterface|NULL $job_handler
      * @param JobParameters $job_parameters
      * @throws BatchRequestException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function validateJobHandler(?JobHandlerInterface $job_handler, JobParameters $job_parameters)
     {

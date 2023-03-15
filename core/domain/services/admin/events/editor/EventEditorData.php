@@ -15,7 +15,7 @@ use EventEspresso\core\domain\services\graphql\Utilities;
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class EventEditorData implements EventEditorDataInterface
 {

@@ -27,7 +27,7 @@ use ReflectionException;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\domain\services\registration\form
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class RegForm extends EE_Form_Section_Proper
 {

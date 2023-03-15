@@ -33,7 +33,7 @@ use EEH_HTML;
  *
  * @package EventEspresso\core\domain\services\admin\events\default_settings
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class AdvancedEditorAdminFormSection
 {
@@ -67,7 +67,7 @@ class AdvancedEditorAdminFormSection
     /**
      * @param array $default_event_settings_form_subsections
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function mergeFormSubsections(array $default_event_settings_form_subsections)
     {
@@ -109,7 +109,7 @@ class AdvancedEditorAdminFormSection
     /**
      * @param array     $valid_data
      * @param EE_Config $config
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function updateAdminFormSettings(array $valid_data, EE_Config $config)
     {

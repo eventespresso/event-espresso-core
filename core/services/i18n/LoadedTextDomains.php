@@ -11,7 +11,7 @@ use EventEspresso\core\services\database\WordPressOption;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\i18n
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class LoadedTextDomains extends WordPressOption
 {

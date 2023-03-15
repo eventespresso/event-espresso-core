@@ -8,14 +8,14 @@ namespace EventEspresso\core\domain\entities\admin\GraphQLData;
  *
  * @package EventEspresso\core\domain\entities\admin\GraphQLData
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface GraphQLDataInterface
 {
     /**
      * @param array $where_params
      * @return array|null
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getData(array $where_params = []);
 }

@@ -17,7 +17,7 @@ use Exception;
  *
  * @package EventEspresso\core\domain\services\admin
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class RouteHandler
 {

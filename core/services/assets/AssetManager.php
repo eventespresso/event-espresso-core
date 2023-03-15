@@ -250,7 +250,7 @@ abstract class AssetManager implements AssetManagerInterface
 
     /**
      * @return  void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function enqueueBrowserAssets()
     {
@@ -337,7 +337,7 @@ abstract class AssetManager implements AssetManagerInterface
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function addManifestFile()
     {
@@ -346,7 +346,7 @@ abstract class AssetManager implements AssetManagerInterface
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function getManifestFile()
     {

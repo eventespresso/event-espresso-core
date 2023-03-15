@@ -20,7 +20,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\domain\services\admin\entities
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class DefaultFormSections implements DefaultEntityGeneratorInterface
 {

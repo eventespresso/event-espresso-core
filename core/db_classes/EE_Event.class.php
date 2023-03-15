@@ -834,7 +834,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @return EE_Base_Class[]|EE_Venue[]
      * @throws EE_Error
      * @throws ReflectionException
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function venues(array $query_params = []): array
     {

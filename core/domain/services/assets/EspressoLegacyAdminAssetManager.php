@@ -10,7 +10,7 @@ use EventEspresso\core\services\assets\AssetManager;
  *
  * @package EventEspresso\core\domain\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EspressoLegacyAdminAssetManager extends AssetManager
 {

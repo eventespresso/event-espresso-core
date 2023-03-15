@@ -46,7 +46,7 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init
     /**
      * @return array|void
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function _set_menu_map()
     {

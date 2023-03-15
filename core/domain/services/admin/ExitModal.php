@@ -28,7 +28,7 @@ class ExitModal
 
     /**
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getExitSurveyInfo()
     {
@@ -66,14 +66,14 @@ class ExitModal
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function modalContainer()
     {
     }
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function enqueues()
     {

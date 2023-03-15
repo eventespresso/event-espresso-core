@@ -21,7 +21,7 @@ use WPGraphQL\AppContext;
  *
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  * @property EEM_Venue $model
  */
 class Venue extends TypeBase

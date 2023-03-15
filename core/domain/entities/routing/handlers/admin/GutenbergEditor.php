@@ -11,7 +11,7 @@ use EventEspresso\core\domain\entities\routing\data_nodes\domains\GutenbergEdito
  *
  * @package EventEspresso\core\domain\entities\routing\admin
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class GutenbergEditor extends AdminRoute
 {

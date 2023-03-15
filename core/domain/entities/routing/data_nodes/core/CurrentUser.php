@@ -12,7 +12,7 @@ use GraphQLRelay\Relay;
  *
  * @package EventEspresso\core\domain\entities\routing\data_nodes
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class CurrentUser extends JsonDataNode
 {

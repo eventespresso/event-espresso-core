@@ -21,7 +21,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  * @property EEM_Price $model
  */
 class Price extends TypeBase
@@ -42,7 +42,7 @@ class Price extends TypeBase
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getFields(): array
     {
@@ -189,7 +189,7 @@ class Price extends TypeBase
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws Exception
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function registerMutations(array $inputFields)
     {

@@ -10,7 +10,7 @@ use EventEspresso\core\services\graphql\enums\EnumBase;
  *
  * @package EventEspresso\core\domain\services\graphql\enums
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class CountriesConnectionOrderbyEnum extends EnumBase
 {

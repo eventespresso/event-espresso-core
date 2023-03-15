@@ -8,7 +8,7 @@ namespace EventEspresso\core\services\database;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\database
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class OptionEngine
 {

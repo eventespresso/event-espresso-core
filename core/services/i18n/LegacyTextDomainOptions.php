@@ -10,7 +10,7 @@ namespace EventEspresso\core\services\i18n;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\i18n
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class LegacyTextDomainOptions
 {
@@ -33,7 +33,7 @@ class LegacyTextDomainOptions
      * attempts to collect all of the ee_lang_check_* options stored in the database
      * and add them to one single option handled by EventEspresso\core\services\i18n\LoadedTextDomains
      *
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function convertToConsolidatedFormat()
     {

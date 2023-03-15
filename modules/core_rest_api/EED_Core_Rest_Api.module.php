@@ -84,7 +84,7 @@ class EED_Core_Rest_Api extends EED_Module
 
 
     /**
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public static function loadCalculatedModelFields()
     {
@@ -797,7 +797,7 @@ class EED_Core_Rest_Api extends EED_Module
      * @param          $version
      * @return array
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function _get_add_relation_query_params(EEM_Base $source_model, EEM_Base $related_model, $version)
     {

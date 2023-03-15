@@ -66,7 +66,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
 
     /**
      * @var ItemizedOrder
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected $itemized_order;
 

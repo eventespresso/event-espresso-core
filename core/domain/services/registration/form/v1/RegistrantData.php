@@ -14,7 +14,7 @@ use ReflectionException;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\domain\services\registration\form\v1
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class RegistrantData
 {

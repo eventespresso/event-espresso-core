@@ -73,7 +73,7 @@ interface ResponseInterface
 
     /**
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function requestHeaders(): array;
 
@@ -81,7 +81,7 @@ interface ResponseInterface
     /**
      * @param string $request_header
      * @return void
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function setRequestHeader(string $request_header): void;
 }

@@ -12,7 +12,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\form\meta
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class Attributes implements JsonableInterface
 {

@@ -8,7 +8,7 @@ use Exception;
 /**
  * @package EventEspresso\core\services\assets
  * @author  Manzoor Wani, Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class Barista implements BaristaInterface
 {

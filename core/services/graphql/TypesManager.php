@@ -13,7 +13,7 @@ use EventEspresso\core\services\graphql\types\TypeInterface;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class TypesManager implements GQLManagerInterface
 {
@@ -37,7 +37,7 @@ class TypesManager implements GQLManagerInterface
     /**
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function init()
     {
@@ -47,7 +47,7 @@ class TypesManager implements GQLManagerInterface
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function configureTypes()
     {
@@ -64,7 +64,7 @@ class TypesManager implements GQLManagerInterface
 
     /**
      * @param TypeInterface $type
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function extendCustomPostType(TypeInterface $type)
     {
@@ -91,7 +91,7 @@ class TypesManager implements GQLManagerInterface
 
     /**
      * @param TypeInterface $type
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function registerType(TypeInterface $type)
     {

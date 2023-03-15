@@ -23,7 +23,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *  FIN_wpUser       int
  *
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EEM_Form_Element extends EEM_Base
 {

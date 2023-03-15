@@ -513,7 +513,7 @@ class Registry
 
     /**
      * @return null
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function getI18nRegistry()
     {
@@ -523,7 +523,7 @@ class Registry
 
     /**
      * @param string $handle
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function registerTranslation($handle)
     {
@@ -534,7 +534,7 @@ class Registry
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function getCssAssetDetails($namespace, $chunk_name)
     {
@@ -549,7 +549,7 @@ class Registry
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function getCssDependencies($namespace, $chunk_name)
     {
@@ -561,7 +561,7 @@ class Registry
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function getJsAssetDetails($namespace, $chunk_name)
     {
@@ -576,7 +576,7 @@ class Registry
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function getJsDependencies($namespace, $chunk_name)
     {
@@ -585,7 +585,7 @@ class Registry
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function registerManifestFiles()
     {
@@ -597,7 +597,7 @@ class Registry
      * @param string $url_base
      * @param string $manifest_file
      * @param string $manifest_file_path
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function registerManifestFile($namespace, $url_base, $manifest_file, $manifest_file_path = '')
     {

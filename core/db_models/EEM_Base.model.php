@@ -726,7 +726,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
     /**
      * @return Mirror
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private static function getMirror(): Mirror
     {
@@ -742,7 +742,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param string $timezone
      * @return array
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private static function getModelArguments(string $model_class_Name, string $timezone): array
     {

@@ -23,7 +23,7 @@ class CoreBlocksAssetManager extends BlockAssetManager
 
 
     /**
-     * @since  $VID:$
+     * @since  5.0.0.p
      * @throws DomainException
      */
     public function enqueueEventEditor()

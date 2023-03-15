@@ -462,7 +462,7 @@ class DisplayTicketSelector
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function ticketVisibilityFilter(EE_Ticket $ticket): bool
     {

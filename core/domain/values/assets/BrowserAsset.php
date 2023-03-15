@@ -97,7 +97,7 @@ abstract class BrowserAsset extends Asset
     /**
      * @param array $attributes
      * @throws DomainException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function addAttributes(array $attributes)
     {
@@ -120,7 +120,7 @@ abstract class BrowserAsset extends Asset
      * @param string $attribute
      * @return bool
      * @throws DomainException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function validateAttribute($attribute)
     {

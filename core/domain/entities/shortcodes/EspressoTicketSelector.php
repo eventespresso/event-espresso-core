@@ -93,7 +93,7 @@ class EspressoTicketSelector extends EspressoShortcode
      * @param string $event_id
      * @return string
      * @throws Exception
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function processInvalidEvent(string $event_id): string
     {

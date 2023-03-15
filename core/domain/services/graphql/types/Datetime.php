@@ -30,7 +30,7 @@ use GraphQL\Type\Definition\ResolveInfo;
  * Class EventDate
  * Description
  *
- * @since   $VID:$
+ * @since   5.0.0.p
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Manzoor Wani
  * @property EEM_Datetime $model

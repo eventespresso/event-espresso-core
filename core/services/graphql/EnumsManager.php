@@ -13,7 +13,7 @@ use EventEspresso\core\services\graphql\enums\EnumInterface;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EnumsManager implements GQLManagerInterface
 {
@@ -37,7 +37,7 @@ class EnumsManager implements GQLManagerInterface
     /**
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function init()
     {
@@ -47,7 +47,7 @@ class EnumsManager implements GQLManagerInterface
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function configureEnums()
     {
@@ -60,7 +60,7 @@ class EnumsManager implements GQLManagerInterface
 
     /**
      * @param EnumInterface $enum
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function registerEnum(EnumInterface $enum)
     {

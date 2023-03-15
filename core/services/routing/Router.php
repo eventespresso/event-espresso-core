@@ -10,7 +10,7 @@ use Exception;
  * Class RoutingSwitch
  *
  * @package EventEspresso\core\services\routing
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class Router
 {

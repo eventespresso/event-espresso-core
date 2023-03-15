@@ -19,7 +19,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class FormBuilder implements EventEditorDataInterface
 {

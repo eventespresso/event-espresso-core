@@ -122,7 +122,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
 
 
     /**
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function setLegacyFiltersForRegFormGeneration()
     {
@@ -192,7 +192,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param array           $query_params
      * @param EE_Registration $registration
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function registrationQuestionGroupsQueryParameters(
         array $query_params,
@@ -212,7 +212,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param EE_Registration      $registration
      * @param EE_Question_Group    $question_group
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function registrationQuestionGroupsRegForm(
         RegFormQuestionGroup $question_group_reg_form,
@@ -233,7 +233,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param int $print_copy_info
      * @param int $attendee_nmbr
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function registrationRegFormPrintCopyInfo(
         int $print_copy_info,
@@ -252,7 +252,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param EE_Question_Group $question_group
      * @param EE_Registration   $registration
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function registrationRegFormRelatedQuestionsQueryParams(
         array $query_params,
@@ -274,7 +274,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param EE_Registration   $registration
      * @param EE_Question_Group $question_group
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function registrationRegFormBeforeQuestionGroupQuestions(
         $html,
@@ -296,7 +296,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param EE_Registration   $registration
      * @param EE_Question_Group $question_group
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function registrationRegFormSubsections(
         array $form_subsections,
@@ -318,7 +318,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param EE_Registration   $registration
      * @param EE_Question_Group $question_group
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function registrationRegFormAfterQuestionGroupQuestions(
         $html,
@@ -338,7 +338,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * @param array $template_args
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function autoCopyAttendeeInfoTemplateArgs(array $template_args = [])
     {
@@ -355,7 +355,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param EE_Question     $question
      * @param EE_Answer|null  $answer
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function generateQuestionInputCountryOptions(
         array $country_options,
@@ -380,7 +380,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param EE_Question     $question
      * @param EE_Answer|null  $answer
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function generateQuestionInputStateOptions(
         array $state_options,
@@ -404,7 +404,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * this method has been replaced by:
      * EventEspresso\core\domain\services\registration\form\v1\RegForm::getRegForm()
      *
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     private function _registrations_reg_form()
     {
@@ -416,7 +416,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * this method has been replaced by:
      * EventEspresso\core\domain\services\registration\form\v1\RegForm::additionalAttendeeRegInfoInput()
      *
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     private function _additional_attendee_reg_info_input()
     {
@@ -428,7 +428,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * this method has been replaced by:
      * EventEspresso\core\domain\services\registration\form\v1\RegForm::questionGroupRegForm()
      *
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     private function _question_group_reg_form()
     {
@@ -440,7 +440,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * this method has been replaced by:
      * EventEspresso\core\domain\services\registration\form\v1\RegForm::questionGroupHeader()
      *
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     private function _question_group_header()
     {
@@ -452,7 +452,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * this method has been replaced by:
      * EventEspresso\core\domain\services\registration\form\v1\CopyAttendeeInfoForm
      *
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     private function _copy_attendee_info_form()
     {
@@ -464,7 +464,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * this method has been replaced by:
      * EventEspresso\core\domain\services\registration\form\v1\AutoCopyAttendeeInfoForm
      *
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     private function _auto_copy_attendee_info()
     {
@@ -476,7 +476,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * this method has been replaced by:
      * EventEspresso\core\domain\services\registration\form\v1\CopyAttendeeInfoForm
      *
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     private function _copy_attendee_info_inputs()
     {
@@ -488,7 +488,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * this method has been replaced by:
      * EventEspresso\core\domain\services\registration\form\v1\RegForm::additionalPrimaryRegistrantInputs()
      *
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     private function _additional_primary_registrant_inputs()
     {
@@ -505,7 +505,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @return EE_Form_Input_Base
      * @throws EE_Error
      * @throws ReflectionException
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     public function reg_form_question(EE_Registration $registration, EE_Question $question): EE_Form_Input_Base
     {
@@ -520,7 +520,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * this method has been replaced by:
      * EventEspresso\core\domain\services\registration\form\v1\RegForm::generateQuestionInput()
      *
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     private function _generate_question_input()
     {
@@ -539,7 +539,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @return array 2d keys are country IDs, values are their names
      * @throws EE_Error
      * @throws ReflectionException
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     public function use_cached_countries_for_form_input(
         array $countries_list = null,
@@ -565,7 +565,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @return array 2d keys are state IDs, values are their names
      * @throws EE_Error
      * @throws ReflectionException
-     * @deprecated   $VID:$
+     * @deprecated   5.0.0.p
      */
     public function use_cached_states_for_form_input(
         array $states_list = null,
@@ -637,7 +637,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
 
 
     /**
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function setLegacyFiltersForRegFormProcessing()
     {
@@ -674,7 +674,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param array           $registrations
      * @param array           $reg_form_data
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function preRegistrationProcess(
         bool $bypass,
@@ -699,7 +699,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param array           $reg_form_data
      * @param EE_Registration $registration
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function validDataLineItem(array $reg_form_data, EE_Registration $registration)
     {
@@ -717,7 +717,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
      * @param                 $form_input
      * @param                 $input_value
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function saveRegistrationFormInput(bool $save, EE_Registration $registration, $form_input, $input_value)
     {
@@ -735,7 +735,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * @param bool $merge_data
      * @return mixed|void
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function mergeAddressDetailsWithCriticalAttendeeDetails(bool $merge_data)
     {
@@ -748,7 +748,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
 
     /**
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function inValidDataError(): bool
     {
@@ -764,7 +764,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
 
     /**
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function inValidTransactionError(): bool
     {
@@ -783,7 +783,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
 
     /**
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function noRegistrationsError(): bool
     {
@@ -810,7 +810,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * @param int $registrations_processed
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function registrationProcessingError(int $registrations_processed): bool
     {

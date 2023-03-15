@@ -10,7 +10,7 @@ use EEM_Ticket;
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class TicketMeta implements EventEditorDataInterface
 {

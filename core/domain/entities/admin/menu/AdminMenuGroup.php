@@ -12,7 +12,7 @@ namespace EventEspresso\core\domain\entities\admin\menu;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\domain\entities\admin\menu
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class AdminMenuGroup extends AdminMenuItem
 {

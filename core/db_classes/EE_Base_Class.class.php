@@ -2253,7 +2253,7 @@ abstract class EE_Base_Class
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function hasRelation($otherModelObjectOrID, string $relationName): bool
     {

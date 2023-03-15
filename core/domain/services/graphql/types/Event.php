@@ -19,7 +19,7 @@ use GraphQLRelay\Relay;
  *
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  * @property EEM_Event $model
  */
 class Event extends TypeBase
@@ -234,7 +234,7 @@ class Event extends TypeBase
     /**
      * Extends the existing WP GraphQL mutations.
      *
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function extendMutations()
     {

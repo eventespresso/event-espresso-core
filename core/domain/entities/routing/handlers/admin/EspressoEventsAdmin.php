@@ -10,7 +10,7 @@ use EE_Dependency_Map;
  *
  * @package EventEspresso\core\domain\entities\routing\admin
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EspressoEventsAdmin extends AdminRoute
 {
@@ -18,7 +18,7 @@ class EspressoEventsAdmin extends AdminRoute
      * returns true if the current request matches this route
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function matchesCurrentRequest(): bool
     {
@@ -31,7 +31,7 @@ class EspressoEventsAdmin extends AdminRoute
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function registerDependencies()
     {

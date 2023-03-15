@@ -122,7 +122,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
     /**
      * @return AdminMenuItem|null
      * @since       4.4.0
-     * @deprecated  $VID:$
+     * @deprecated  5.0.0.p
      */
     public function get_menu_map()
     {
@@ -135,7 +135,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * EE_Admin_Page_Menu_Map.  Their menu can either be EE_Admin_Page_Main_Menu or AdminMenuSubItem.
      *
      * @since       4.4.0
-     * @deprecated  $VID:$
+     * @deprecated  5.0.0.p
      */
     protected function _set_menu_map()
     {
@@ -144,7 +144,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
 
     /**
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function setupLegacyAdminMenuItem()
     {
@@ -157,7 +157,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * Child classes should return an array of properties used to construct the AdminMenuItem
      *
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getMenuProperties(): array
     {
@@ -168,7 +168,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
     /**
      * @param AdminMenuItem $menu
      * @return void
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function setAdminMenu(AdminMenuItem $menu): void
     {
@@ -180,7 +180,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * returns the menu map for this admin page
      *
      * @return AdminMenuItem|null
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function adminMenu(): ?AdminMenuItem
     {
@@ -190,7 +190,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
     /**
      * @param string $wp_page_slug
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function setWpPageSlug(string $wp_page_slug): void
     {
@@ -237,7 +237,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     protected function _set_capability()
     {

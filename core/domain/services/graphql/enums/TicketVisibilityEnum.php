@@ -13,7 +13,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\domain\services\graphql\enums
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class TicketVisibilityEnum extends EnumBase
 {

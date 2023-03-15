@@ -6,7 +6,7 @@ namespace EventEspresso\core\services\deprecated;
  * Class DeprecationManager
  *
  * @author Hossein Rafiei <hoseinrafiei@gmail.com>
- * @since  $VID:$
+ * @since  5.0.0.p
  */
 class DeprecationManager
 {

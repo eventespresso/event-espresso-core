@@ -16,7 +16,7 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class InputCollection extends Collection
 {
@@ -44,7 +44,7 @@ class InputCollection extends Collection
     /**
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function loadCollection()
     {
@@ -78,7 +78,7 @@ class InputCollection extends Collection
      * @return CollectionInterface
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function loadInputs()
     {

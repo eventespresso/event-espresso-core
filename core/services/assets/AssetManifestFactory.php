@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Class AssetManifestFactory
  *
  * @package EventEspresso\core\services\assets
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class AssetManifestFactory implements FactoryInterface
 {

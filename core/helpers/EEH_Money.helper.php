@@ -235,7 +235,7 @@ class EEH_Money extends EEH_Base
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public static function getCurrencySubUnits(?string $CNT_ISO = '', bool $as_decimal = false): float
     {

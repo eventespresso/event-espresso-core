@@ -9,7 +9,7 @@ use EventEspresso\core\domain\DomainInterface;
  *
  * @package EventEspresso\core\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class AssetManifest implements AssetManifestInterface
 {

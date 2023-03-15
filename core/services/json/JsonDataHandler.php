@@ -10,7 +10,7 @@ use stdClass;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\json
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class JsonDataHandler
 {
@@ -349,7 +349,7 @@ class JsonDataHandler
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function resetErrors()
     {

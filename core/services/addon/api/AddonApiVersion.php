@@ -15,7 +15,7 @@ use EventEspresso\core\domain\values\Version;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\domain\entities\addon
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class AddonApiVersion
 {

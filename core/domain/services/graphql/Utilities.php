@@ -8,7 +8,7 @@ use GraphQLRelay\Relay;
  * Class Utilities
  *
  * @package EventEspresso\core\domain\services\graphql
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class Utilities
 {

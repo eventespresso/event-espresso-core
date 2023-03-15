@@ -12,7 +12,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  *
  * @package EventEspresso\core\domain\services\graphql\enums
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class ElementTypeEnum extends EnumBase
 {

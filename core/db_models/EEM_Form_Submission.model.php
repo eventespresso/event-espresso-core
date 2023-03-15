@@ -7,7 +7,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @method EE_Form_Submission get_one($query_params = [])
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EEM_Form_Submission extends EEM_Base
 {

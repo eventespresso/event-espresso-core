@@ -12,7 +12,7 @@ use EventEspresso\core\services\graphql\fields\GraphQLField;
  *
  * @package EventEspresso\core\domain\services\graphql\inputs
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class CountriesConnectionOrderbyInput extends InputBase
 {

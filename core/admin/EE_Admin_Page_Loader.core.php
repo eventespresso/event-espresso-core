@@ -64,7 +64,7 @@ class EE_Admin_Page_Loader
 
     /**
      * @var   int
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private $maintenance_mode = 0;
 
@@ -84,7 +84,7 @@ class EE_Admin_Page_Loader
     /**
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function init()
     {
@@ -192,7 +192,7 @@ class EE_Admin_Page_Loader
     /**
      * @return array
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function findAdminPages(): array
     {
@@ -328,7 +328,7 @@ class EE_Admin_Page_Loader
 
     /**
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function findAdminPageExtensions()
     {
@@ -382,7 +382,7 @@ class EE_Admin_Page_Loader
 
     /**
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function findAdminPageHooks()
     {
@@ -423,7 +423,7 @@ class EE_Admin_Page_Loader
      * @param bool   $register_autoloaders
      * @return array
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function findAdminPageFolders(
         string $path,

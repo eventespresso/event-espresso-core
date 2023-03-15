@@ -24,7 +24,7 @@ use EventEspresso\core\services\routing\Route;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\shared
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class RegularRequests extends PrimaryRoute
 {
@@ -32,7 +32,7 @@ class RegularRequests extends PrimaryRoute
      * called just before matchesCurrentRequest()
      * and allows Route to perform any setup required such as calling setSpecification()
      *
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function initialize()
     {
@@ -115,7 +115,7 @@ class RegularRequests extends PrimaryRoute
      * returns true if the current request matches this route
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function matchesCurrentRequest(): bool
     {
@@ -124,7 +124,7 @@ class RegularRequests extends PrimaryRoute
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function registerDependencies()
     {
@@ -165,7 +165,7 @@ class RegularRequests extends PrimaryRoute
      * implements logic required to run during request
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     protected function requestHandler(): bool
     {

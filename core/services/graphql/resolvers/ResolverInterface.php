@@ -11,7 +11,7 @@ use WPGraphQL\AppContext;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface ResolverInterface
 {
@@ -21,7 +21,7 @@ interface ResolverInterface
      * @param AppContext  $context
      * @param ResolveInfo $info
      * @return mixed
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function resolve($source, array $args, AppContext $context, ResolveInfo $info);
 }

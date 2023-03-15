@@ -535,7 +535,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * returns the path portion of the current request URI with both the WP Root (home_url()) and query params removed
      *
      * @return string
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function requestPath()
     {
@@ -548,7 +548,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      *
      * @param string $uri_segment
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function currentPageIs($uri_segment)
     {

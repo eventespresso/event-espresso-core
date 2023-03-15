@@ -24,7 +24,7 @@ use EventEspresso\core\services\form\meta\Required;
  *  FIN_wpUser       int
  *
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EE_Form_Element extends EE_Base_Class
 {

@@ -97,7 +97,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     /**
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function resolveRequestVars()
     {

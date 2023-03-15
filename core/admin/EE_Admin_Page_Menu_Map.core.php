@@ -8,7 +8,7 @@ use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
  * @since          4.4.0
  * @package        Event Espresso
  * @subpackage     admin
- * @deprecated     $VID:$
+ * @deprecated     5.0.0.p
  */
 abstract class EE_Admin_Page_Menu_Map extends AdminMenuItem
 {
@@ -23,7 +23,7 @@ abstract class EE_Admin_Page_Menu_Map extends AdminMenuItem
 
     /**
      * @return string
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     protected function _add_menu_page(): string
     {
@@ -33,7 +33,7 @@ abstract class EE_Admin_Page_Menu_Map extends AdminMenuItem
 
     /**
      * @param boolean $network_admin whether this is being added to the network admin page or not
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      * @since  4.4.0
      */
     public function add_menu_page(bool $network_admin = false)

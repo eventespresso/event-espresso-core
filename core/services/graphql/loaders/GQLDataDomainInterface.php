@@ -10,7 +10,7 @@ use WPGraphQL\AppContext;
  *
  * @package EventEspresso\core\domain\services\graphql\data\domains
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface GQLDataDomainInterface
 {
@@ -19,7 +19,7 @@ interface GQLDataDomainInterface
      * @param AppContext $context The AppContext
      * @return array
      * @return array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function registerLoaders(array $loaders, AppContext $context): array;
 }

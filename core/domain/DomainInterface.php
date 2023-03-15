@@ -17,7 +17,7 @@ interface DomainInterface extends InterminableInterface
     /**
      * @param string $asset_namespace
      * @return void
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function initialize($asset_namespace = 'eventespresso');
 

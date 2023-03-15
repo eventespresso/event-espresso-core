@@ -2010,7 +2010,7 @@ class EEH_Line_Item
      * @return EE_Line_Item[]
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private static function getGlobalTaxes(): array
     {

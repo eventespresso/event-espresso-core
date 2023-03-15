@@ -956,7 +956,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @param string|null $new_title What the title is
      * @param string|null $new_slug  what the slug is
      * @return string            The new html string for the permalink area
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      * @see TicketSelectorShortcodeButton::addButton
      */
     public function extra_permalink_field_buttons(

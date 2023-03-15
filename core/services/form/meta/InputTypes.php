@@ -18,7 +18,7 @@ use EventEspresso\core\services\graphql\Utils as GQLUtils;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\form\meta
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class InputTypes
 {

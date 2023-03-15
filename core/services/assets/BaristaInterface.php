@@ -6,7 +6,7 @@ namespace EventEspresso\core\services\assets;
 /**
  * @package EventEspresso\core\services\assets
  * @author  Manzoor Wani, Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface BaristaInterface
 {

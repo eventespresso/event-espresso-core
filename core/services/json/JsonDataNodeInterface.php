@@ -14,7 +14,7 @@ use JsonSerializable;
  *
  * @package EventEspresso\core\services\json
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 interface JsonDataNodeInterface extends JsonSerializable
 {
@@ -48,7 +48,7 @@ interface JsonDataNodeInterface extends JsonSerializable
      * JsonDataNode::setInitialized(true) needs to be called once initialization is complete
      * else you're a bad person and bad things will happen to you !!!
      *
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function initialize();
 
@@ -72,7 +72,7 @@ interface JsonDataNodeInterface extends JsonSerializable
 
     /**
      * @return string
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function nodeName();
 }

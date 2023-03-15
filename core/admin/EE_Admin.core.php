@@ -986,7 +986,7 @@ final class EE_Admin implements InterminableInterface
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function enqueue_admin_scripts()
     {
@@ -996,7 +996,7 @@ final class EE_Admin implements InterminableInterface
 
     /**
      * @return RequestInterface
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function get_request()
     {
@@ -1006,14 +1006,14 @@ final class EE_Admin implements InterminableInterface
                 esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
                 'EventEspresso\core\services\request\Request'
             ),
-            '$VID:$'
+            '5.0.0.p'
         );
         return $this->request;
     }
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function hookIntoWpPluginsPage()
     {

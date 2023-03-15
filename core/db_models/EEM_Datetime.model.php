@@ -724,7 +724,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
 
     /**
      * @return bool|int
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function prepModelForQuery()
     {
@@ -739,7 +739,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param bool|int $prev_data_prep_value
      * @return EE_Base_Class[]|EE_Datetime[]
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function getDatetimesAndRestoreModel(array $query_params, $prev_data_prep_value)
     {
@@ -755,7 +755,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param string $order_by
      * @param string $order
      * @return array
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function addDefaultQueryParams(array $query_params, $limit = 0, $order_by = 'DTT_EVT_start', $order = 'ASC')
     {
@@ -769,7 +769,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param array  $query_params
      * @param string $default_where_conditions
      * @return array
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function addDefaultWhereConditions(
         array $query_params,
@@ -785,7 +785,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param bool  $include_deleted
      * @param bool  $include_expired
      * @return array
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function addDefaultWhereParams(array $where_params, bool $include_deleted = true, bool $include_expired = true)
     {
@@ -799,7 +799,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param array $where_params
      * @param bool  $include_deleted
      * @return array
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function addDeletedWhereParams(array $where_params, bool $include_deleted = true)
     {
@@ -813,7 +813,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param array $where_params
      * @param bool  $include_expired
      * @return array
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function addExpiredWhereParams(array $where_params, bool $include_expired = true)
     {
@@ -828,7 +828,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param array $query_params
      * @param int   $limit
      * @return array
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function addLimitQueryParams(array $query_params, $limit = 0)
     {
@@ -844,7 +844,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param string $order_by
      * @param string $order
      * @return array
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function addOrderByQueryParams(array $query_params, $order_by = 'DTT_EVT_start', $order = 'ASC')
     {

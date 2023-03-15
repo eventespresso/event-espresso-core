@@ -13,7 +13,7 @@ use EventEspresso\core\services\graphql\connections\ConnectionInterface;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class ConnectionsManager implements GQLManagerInterface
 {
@@ -42,7 +42,7 @@ class ConnectionsManager implements GQLManagerInterface
     /**
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function init()
     {

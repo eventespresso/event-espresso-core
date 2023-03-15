@@ -12,7 +12,7 @@ use EventEspresso\core\domain\services\graphql\Utilities;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\domain\services\admin\events\editor
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EventManagerData implements EventEditorDataInterface
 {

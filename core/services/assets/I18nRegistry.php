@@ -9,7 +9,7 @@ use EventEspresso\core\domain\DomainInterface;
  * @package EventEspresso\core\services\assets
  * @author  Darren Ethier
  * @since   4.9.62.p
- * @deprecated $VID:$
+ * @deprecated 5.0.0.p
  */
 class I18nRegistry
 {
@@ -29,7 +29,7 @@ class I18nRegistry
      * @param DomainInterface $domain
      * @param JedLocaleData $jed_locale
      * @param array() $i18n_map
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function __construct(DomainInterface $domain, JedLocaleData $jed_locale, array $i18n_map = [])
     {
@@ -40,7 +40,7 @@ class I18nRegistry
     /**
      * @param string $handle The script handle reference.
      * @param string $domain The i18n domain for the strings.
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function registerScriptI18n(string $handle, string $domain = Domain::TEXT_DOMAIN)
     {
@@ -49,7 +49,7 @@ class I18nRegistry
     /**
      * @param array $handles Array of registered script handles.
      * @return array
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function queueI18n(array $handles): array
     {

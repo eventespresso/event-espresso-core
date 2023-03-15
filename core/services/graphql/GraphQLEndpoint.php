@@ -14,7 +14,7 @@ use WPGraphQL\Router;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\graphql
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class GraphQLEndpoint extends WordPressOption
 {

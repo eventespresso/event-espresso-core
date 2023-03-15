@@ -11,7 +11,7 @@ use EventEspresso\core\services\request\Request;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\domain\services\capabilities
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class FeatureFlags
 {

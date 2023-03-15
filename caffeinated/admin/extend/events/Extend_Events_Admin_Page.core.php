@@ -257,7 +257,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      * @param string|null $new_title What the title is
      * @param string|null $new_slug  what the slug is
      * @return string
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public function extra_permalink_field_buttons(
         string $return,
@@ -951,7 +951,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * espresso_event_months_dropdown
      *
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.0.p
      * @access public
      * @return string                dropdown listing month/year selections for events.
      * @throws EE_Error
@@ -972,7 +972,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * returns a list of "active" statuses on the event
      *
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.0.p
      * @param string $current_value whatever the current active status is
      * @return string
      */
@@ -994,7 +994,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * returns a list of "venues"
      *
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.0.p
      * @param string $current_value whatever the current active status is
      * @return string
      * @throws EE_Error
@@ -1017,7 +1017,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     /**
      * output a dropdown of the categories for the category filter on the event admin list table
      *
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.0.p
      * @access  public
      * @return string html
      * @throws EE_Error

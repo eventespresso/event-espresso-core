@@ -19,7 +19,7 @@ use ReflectionException;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\addon
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class AddonManager
 {

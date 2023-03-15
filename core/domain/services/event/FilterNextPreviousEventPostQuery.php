@@ -14,7 +14,7 @@ use ReflectionException;
  * @author  Hossein Rafiei <hoseinrafiei@gmail.com>
  * @see     get_previous_post()
  * @see     get_next_post()
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class FilterNextPreviousEventPostQuery
 {

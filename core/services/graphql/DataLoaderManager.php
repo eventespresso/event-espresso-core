@@ -13,7 +13,7 @@ use EventEspresso\core\services\graphql\loaders\DataLoaderCollection;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class DataLoaderManager implements GQLManagerInterface
 {
@@ -35,7 +35,7 @@ class DataLoaderManager implements GQLManagerInterface
     /**
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function init()
     {

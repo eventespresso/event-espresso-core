@@ -12,7 +12,7 @@ use DomainException;
  * and saved in one massive ee-config object that has many downsides.
  *
  * @package EventEspresso\core\domain\entities\config
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class JsonConfig
 {
@@ -54,7 +54,7 @@ abstract class JsonConfig
      * @param string $string
      * @param false  $camelCase
      * @return string|string[]
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function convertCase($string, $camelCase = false)
     {
@@ -150,7 +150,7 @@ abstract class JsonConfig
      * ie: if $x = 1 and you call setX(1) then the value has not really changed.
      *
      * @param bool $changes
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     protected function markChanges($changes = true)
     {

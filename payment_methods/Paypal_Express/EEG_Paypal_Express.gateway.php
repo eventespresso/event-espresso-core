@@ -64,13 +64,13 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
 
     /**
      * @var ItemizedOrder
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected $itemized_order;
 
     /**
      * @var TokenRequest
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected $token_request;
 
@@ -364,7 +364,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
      * @param EE_Payment $payment
      * @return mixed|null
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function getPaymentToken(EE_Payment $payment)
     {
@@ -383,7 +383,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
      * @param array      $customer_data
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function paymentApproved(EE_Payment $payment, array $checkout_response, array $customer_data)
     {
@@ -405,7 +405,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
      * @param EE_Payment $payment
      * @param array      $checkout_response
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function paymentDeclined(EE_Payment $payment, array $checkout_response)
     {
@@ -423,7 +423,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
      * @param EE_Payment $payment
      * @param array $customer_data
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function paymentFailed(EE_Payment $payment, array $customer_data)
     {
@@ -445,7 +445,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
      * @throws EE_Error
      * @throws ReflectionException
      * @throws Exception
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function processPayment(EE_Payment $payment, string $payment_token, array $customer_details)
     {
@@ -485,7 +485,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
      * @param string $payment_token
      * @return array
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function requestCustomerDetails(EE_Payment $payment, string $payment_token): array
     {
@@ -515,7 +515,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
      * @param EE_Payment|null $payment
      * @return bool
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function validatePayment(?EE_Payment $payment): bool
     {
@@ -539,7 +539,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
      * @param EE_Transaction|null $transaction
      * @return bool
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     private function validateTransaction(EE_Payment $payment, ?EE_Transaction $transaction = null): bool
     {

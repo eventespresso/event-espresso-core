@@ -6,7 +6,7 @@
  * @package             Event Espresso
  * @subpackage          /helpers/
  * @author              Brent Christensen
- * @deprecated          $VID:$
+ * @deprecated          5.0.0.p
  * ------------------------------------------------------------------------
  */
 class EEH_Class_Tools

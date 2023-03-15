@@ -11,7 +11,7 @@ use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class InputBase implements InputInterface
 {
@@ -46,7 +46,7 @@ abstract class InputBase implements InputInterface
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     abstract protected function getFields();
 
@@ -89,7 +89,7 @@ abstract class InputBase implements InputInterface
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function fields()
     {

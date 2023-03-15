@@ -1388,7 +1388,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @return EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function _add_relation_to(
         $otherObjectModelObjectOrID,
@@ -1421,7 +1421,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @return bool|EE_Base_Class|null
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function _remove_relation_to($otherObjectModelObjectOrID, $relationName, $where_query = [])
     {

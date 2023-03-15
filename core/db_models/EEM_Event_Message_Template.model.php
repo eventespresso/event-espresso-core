@@ -134,7 +134,7 @@ class EEM_Event_Message_Template extends EEM_Base
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function messageTemplateGroupIDsForEvent(EE_Event $event): array
     {

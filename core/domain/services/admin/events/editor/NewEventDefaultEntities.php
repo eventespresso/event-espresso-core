@@ -25,7 +25,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class NewEventDefaultEntities extends EventEditorData
 {
@@ -82,7 +82,7 @@ class NewEventDefaultEntities extends EventEditorData
      * @throws InvalidArgumentException
      * @throws InvalidEntityException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getData(int $eventId): array
     {

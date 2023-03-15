@@ -16,7 +16,7 @@ use ReflectionException;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\domain\entities\cache
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class TicketPriceModifiers
 {

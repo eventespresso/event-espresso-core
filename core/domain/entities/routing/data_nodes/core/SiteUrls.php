@@ -11,7 +11,7 @@ use EventEspresso\core\services\json\JsonDataNodeValidator;
  *
  * @package EventEspresso\core\domain\entities\routing\data_nodes
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class SiteUrls extends JsonDataNode
 {
@@ -29,7 +29,7 @@ class SiteUrls extends JsonDataNode
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function initialize()
     {

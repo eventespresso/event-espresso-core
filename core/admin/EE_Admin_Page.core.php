@@ -235,7 +235,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
     /**
      * @var array
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private $publish_post_meta_box_hidden_fields = [];
 
@@ -307,7 +307,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function initializePage()
     {
@@ -2479,7 +2479,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * (publishbox itself could be an array of labels indexed by routes)
      *
      * @return string
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     protected function getPublishBoxTitle(): string
     {
@@ -4087,7 +4087,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * @return string
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function _get_dir()
     {

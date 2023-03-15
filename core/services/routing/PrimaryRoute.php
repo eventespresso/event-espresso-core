@@ -16,7 +16,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\core\services\routing
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class PrimaryRoute extends Route
 {

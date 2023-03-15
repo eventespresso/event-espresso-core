@@ -30,7 +30,7 @@ use GraphQL\Type\Definition\ResolveInfo;
  *
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  * @property EEM_Ticket $model
  */
 class Ticket extends TypeBase
@@ -333,7 +333,7 @@ class Ticket extends TypeBase
      * @throws ReflectionException
      * @throws UserError
      * @throws UnexpectedEntityException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getIsSoldOut(EE_Ticket $source, array $args, AppContext $context, ResolveInfo $info): bool
     {
@@ -354,7 +354,7 @@ class Ticket extends TypeBase
      * @throws ReflectionException
      * @throws UserError
      * @throws UnexpectedEntityException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getRegistrationCount(EE_Ticket $source, array $args, AppContext $context, ResolveInfo $info): int
     {

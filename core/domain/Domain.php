@@ -43,7 +43,7 @@ class Domain extends DomainBase implements CaffeinatedInterface
     private $caffeinated;
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      * @var bool
      */
     private $multisite;
@@ -92,7 +92,7 @@ class Domain extends DomainBase implements CaffeinatedInterface
 
     /**
      * @return bool
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function isMultiSite(): bool
     {

@@ -214,7 +214,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
      *
      * @return bool|EE_Base_Class[]|EE_PRice[]
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function getAllDefaultTaxes()
     {

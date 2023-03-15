@@ -923,7 +923,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      * @param string $content
      * @param string $align     start (default), center, end
      * @return string
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     protected function columnContent($id, $content, $align = 'start')
     {

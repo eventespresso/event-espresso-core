@@ -8,7 +8,7 @@ namespace EventEspresso\core\domain\services\admin\events\editor\ui;
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Hossein Rafiei
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class TicketSelectorShortcodeButton
 {

@@ -12,7 +12,7 @@ use EventEspresso\core\services\json\JsonDataNodeValidator;
  *
  * @package EventEspresso\core\domain\entities\routing\data_nodes\domains
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class WordPressPluginsPageData extends JsonDataNode
 {

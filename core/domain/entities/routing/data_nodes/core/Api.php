@@ -14,7 +14,7 @@ use WPGraphQL\Router;
  *
  * @package EventEspresso\core\domain\entities\routing\data_nodes
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class Api extends JsonDataNode
 {
@@ -33,7 +33,7 @@ class Api extends JsonDataNode
 
     /**
      * @throws DomainException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function initialize()
     {

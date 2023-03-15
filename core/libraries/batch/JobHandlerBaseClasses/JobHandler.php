@@ -46,7 +46,7 @@ abstract class JobHandler implements JobHandlerInterface
      * @param JobParameters $job_parameters
      * @return JobStepResponse
      * @throws BatchRequestException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function createJob(JobParameters $job_parameters): JobStepResponse
     {
@@ -62,7 +62,7 @@ abstract class JobHandler implements JobHandlerInterface
      * @param int           $batch_size
      * @return JobStepResponse
      * @throws BatchRequestException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function continueJob(JobParameters $job_parameters, int $batch_size = 50): JobStepResponse
     {
@@ -78,7 +78,7 @@ abstract class JobHandler implements JobHandlerInterface
      *
      * @param JobParameters $job_parameters
      * @return JobStepResponse
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function advanceJob(JobParameters $job_parameters): JobStepResponse
     {
@@ -94,7 +94,7 @@ abstract class JobHandler implements JobHandlerInterface
      *
      * @param JobParameters $job_parameters
      * @return JobStepResponse
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function advance_job(JobParameters $job_parameters): JobStepResponse
     {
@@ -110,7 +110,7 @@ abstract class JobHandler implements JobHandlerInterface
      * @param JobParameters $job_parameters
      * @return JobStepResponse
      * @throws BatchRequestException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function cleanupJob(JobParameters $job_parameters): JobStepResponse
     {

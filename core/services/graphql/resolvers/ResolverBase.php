@@ -8,7 +8,7 @@ namespace EventEspresso\core\services\graphql\resolvers;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class ResolverBase implements ResolverInterface
 {

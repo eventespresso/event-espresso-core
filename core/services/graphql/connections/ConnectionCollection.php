@@ -16,7 +16,7 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class ConnectionCollection extends Collection
 {
@@ -44,7 +44,7 @@ class ConnectionCollection extends Collection
     /**
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function loadCollection()
     {
@@ -78,7 +78,7 @@ class ConnectionCollection extends Collection
      * @return CollectionInterface
      * @throws CollectionDetailsException
      * @throws CollectionLoaderException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function loadConnections()
     {

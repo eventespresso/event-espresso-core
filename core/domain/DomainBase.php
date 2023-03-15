@@ -84,7 +84,7 @@ abstract class DomainBase implements DomainInterface
     /**
      * @param string $asset_namespace
      * @return void
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function initialize($asset_namespace = Domain::ASSET_NAMESPACE)
     {
@@ -116,7 +116,7 @@ abstract class DomainBase implements DomainInterface
 
     /**
      * @throws DomainException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function setDistributionAssetsPath()
     {

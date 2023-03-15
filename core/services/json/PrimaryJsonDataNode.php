@@ -10,7 +10,7 @@ namespace EventEspresso\core\services\json;
  *
  * @package EventEspresso\core\services\json
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class PrimaryJsonDataNode extends JsonDataNode
 {

@@ -1091,7 +1091,7 @@ class EE_Register_Addon implements EEI_Plugin_API
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      */
     public static function load_pue_update()
     {

@@ -15,7 +15,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  *
  * @package EventEspresso\core\domain\services\assets
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class ReactAssetManager extends AssetManager
 {

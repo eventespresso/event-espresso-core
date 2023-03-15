@@ -21,7 +21,7 @@ use ReflectionException;
  *
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  * @property EEM_Form_Section $model
  */
 class FormSection extends TypeBase
@@ -158,7 +158,7 @@ class FormSection extends TypeBase
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws Exception
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function registerMutations(array $inputFields)
     {

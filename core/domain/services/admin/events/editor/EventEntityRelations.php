@@ -10,7 +10,7 @@ use EE_Error;
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EventEntityRelations extends EventEditorData
 {
@@ -23,7 +23,7 @@ class EventEntityRelations extends EventEditorData
      * @param int $eventId
      * @return array
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getData(int $eventId): array
     {
@@ -45,7 +45,7 @@ class EventEntityRelations extends EventEditorData
      * @param int $eventId
      * @return array
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function processDatetimes(int $eventId): array
     {
@@ -83,7 +83,7 @@ class EventEntityRelations extends EventEditorData
      * @param array $datetimeIds
      * @return array
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function processTickets(array $datetimeIds): array
     {
@@ -122,7 +122,7 @@ class EventEntityRelations extends EventEditorData
     /**
      * @param array $ticketIds
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     private function processPrices(array $ticketIds)
     {

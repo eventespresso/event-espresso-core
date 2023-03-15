@@ -499,7 +499,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * @param string $return    the current html
      * @param int    $id        the post id for the page
      * @return string            The new html string for the permalink area
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      * @see PreviewButton::addButton()
      */
     public function preview_button_html(string $return, int $id): string
@@ -1081,7 +1081,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * @param string $shortlink   The already generated shortlink
      * @param int    $id          Post ID for this item
      * @return string
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      * @see EventShortlinkButton::addButton()
      */
     public function add_shortlink_button_to_editor(string $shortlink, int $id): string

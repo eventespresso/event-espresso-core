@@ -8,7 +8,7 @@ namespace EventEspresso\core\services\graphql\enums;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class EnumBase implements EnumInterface
 {

@@ -12,7 +12,7 @@ use WP_User;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\admin
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class StatusChangeNotice extends WordPressOption
 {

@@ -10,7 +10,7 @@ use EventEspresso\core\services\database\WordPressOption;
  *
  * @package EventEspresso\core\services\session
  * @author  Hossein Rafiei
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class SessionLifespanOption extends WordPressOption
 {

@@ -14,7 +14,7 @@ use Exception;
  *
  * @package EventEspresso\core\domain\services\graphql\connections
  * @author  Manzoor Ahmad Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class RootQueryCountriesConnection extends AbstractRootQueryConnection
 {

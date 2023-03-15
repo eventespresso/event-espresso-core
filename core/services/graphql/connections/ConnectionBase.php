@@ -10,7 +10,7 @@ use EEM_Base;
  *
  * @package EventEspresso\core\services\graphql
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class ConnectionBase implements ConnectionInterface
 {

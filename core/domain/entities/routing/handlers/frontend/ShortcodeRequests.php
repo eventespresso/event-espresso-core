@@ -12,7 +12,7 @@ use EventEspresso\core\services\routing\Route;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\shared
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class ShortcodeRequests extends Route
 {
@@ -22,7 +22,7 @@ class ShortcodeRequests extends Route
      * or supply a RouteMatchSpecification class and just use the below
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     public function matchesCurrentRequest(): bool
     {
@@ -31,7 +31,7 @@ class ShortcodeRequests extends Route
 
 
     /**
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function registerDependencies()
     {
@@ -70,7 +70,7 @@ class ShortcodeRequests extends Route
      * implements logic required to run during request
      *
      * @return bool
-     * @since   $VID:$
+     * @since   5.0.0.p
      */
     protected function requestHandler(): bool
     {

@@ -10,7 +10,7 @@ use Exception;
  *
  * @package EventEspresso\core\domain\entities\admin\GraphQLData
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 abstract class GraphQLData implements GraphQLDataInterface
 {
@@ -39,7 +39,7 @@ abstract class GraphQLData implements GraphQLDataInterface
      * @param string $field_key
      * @param array  $where_params
      * @return mixed|null
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function getQueryResponse(string $field_key, array $where_params = [])
     {
@@ -58,7 +58,7 @@ abstract class GraphQLData implements GraphQLDataInterface
     /**
      * @param array $data
      * @return array|null
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     protected function makeGraphQLRequest(array $data)
     {

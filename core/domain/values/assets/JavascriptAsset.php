@@ -177,7 +177,7 @@ class JavascriptAsset extends BrowserAsset
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 5.0.0.p
      * @param bool $requires_translation
      * @return JavascriptAsset
      */

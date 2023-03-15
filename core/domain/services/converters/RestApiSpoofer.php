@@ -45,7 +45,7 @@ use WP_REST_Server;
  *
  * @package EventEspresso\core\domain\services\converters\spoofers
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class RestApiSpoofer
 {
@@ -112,7 +112,7 @@ class RestApiSpoofer
      * @throws RestPasswordRequiredException
      * @throws UnexpectedEntityException
      * @throws DomainException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getOneApiResult(EEM_Base $model, array $query_params, $include = '')
     {
@@ -139,7 +139,7 @@ class RestApiSpoofer
      * @throws RestPasswordRequiredException
      * @throws UnexpectedEntityException
      * @throws DomainException
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getApiResults(EEM_Base $model, array $query_params, $include = '')
     {
@@ -170,7 +170,7 @@ class RestApiSpoofer
      * @param string $endpoint
      * @return array
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.0.p
      */
     public function getModelSchema($endpoint)
     {

@@ -10,7 +10,7 @@ use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecific
  *
  * @package EventEspresso\core\domain\entities\routing\specifications\admin
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class WordPressPluginsPage extends RouteMatchSpecification
 {

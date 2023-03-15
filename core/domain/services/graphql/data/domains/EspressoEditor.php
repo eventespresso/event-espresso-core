@@ -12,7 +12,7 @@ use WPGraphQL\AppContext;
  *
  * @package EventEspresso\core\domain\services\graphql\data\domains
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.0.p
  */
 class EspressoEditor implements GQLDataDomainInterface
 {
