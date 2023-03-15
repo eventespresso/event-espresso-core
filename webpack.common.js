@@ -1,8 +1,12 @@
-const del = require('del');
-const path = require('path');
-const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
-const miniExtract = require('mini-css-extract-plugin');
+import { deleteSync } from 'del';
+import path from 'path';
+import autoprefixer from 'autoprefixer';
+import cssnano from 'cssnano';
+import miniExtract from 'mini-css-extract-plugin';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const assetsSrcPath = './assets/src/';
 const outputPath = path.resolve(__dirname, 'assets/dist');
@@ -10,7 +14,7 @@ const outputPath = path.resolve(__dirname, 'assets/dist');
 /**
  * Clean build folder before running build
  */
-del.sync([path.resolve(outputPath, '**/*')]);
+deleteSync([path.resolve(outputPath, '**/*')]);
 
 const rulesConfig = {
 	jsRulesConfig: {
@@ -64,18 +68,18 @@ const config = [
 			libraryTarget: 'window',
 		},
 	},
-	{
-		entry: {
-			'eventespresso-vendor': assetsSrcPath + 'eejs/vendor/index.js',
-		},
-		module: moduleConfigWithJsRules,
-		output: {
-			filename: '[name].[chunkhash].dist.js',
-			path: outputPath,
-			library: ['eejs', 'vendor'],
-			libraryTarget: 'this',
-		},
-	},
+	// {
+	// 	entry: {
+	// 		'eventespresso-vendor': assetsSrcPath + 'eejs/vendor/index.js',
+	// 	},
+	// 	module: moduleConfigWithJsRules,
+	// 	output: {
+	// 		filename: '[name].[chunkhash].dist.js',
+	// 		path: outputPath,
+	// 		library: ['eejs', 'vendor'],
+	// 		libraryTarget: 'this',
+	// 	},
+	// },
 	{
 		entry: {
 			'eventespresso-validators': assetsSrcPath + 'eejs/validators/index.js',
@@ -201,9 +205,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks-frontend': [
-				assetsSrcPath + 'blocks/index-frontend.js',
-			],
+			'eventespresso-core-blocks-frontend': [assetsSrcPath + 'blocks/index-frontend.js'],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -216,9 +218,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-css-default': [
-				assetsSrcPath + 'components/ui/styles/themes/default/index.js',
-			],
+			'eventespresso-core-css-default': [assetsSrcPath + 'components/ui/styles/themes/default/index.js'],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -231,4 +231,4 @@ const config = [
 	},
 ];
 
-module.exports.shared = config;
+export default config;
