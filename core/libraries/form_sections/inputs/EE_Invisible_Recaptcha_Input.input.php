@@ -140,7 +140,7 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
             return;
         }
         add_filter(
-            'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
+            'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
             function (array $iframe_assets) {
                 $iframe_assets[ EE_Invisible_Recaptcha_Input::SCRIPT_HANDLE_ESPRESSO_INVISIBLE_RECAPTCHA ] =
                     EED_Recaptcha_Invisible::assetsUrl()

@@ -631,7 +631,7 @@ class EE_Export
                     }
                 }
                 $registrations_csv_ready_array[] = apply_filters(
-                    'FHEE__EE_Export__report_registrations__reg_csv_array',
+                    'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__reg_csv_array',
                     $reg_csv_array,
                     $reg_row
                 );

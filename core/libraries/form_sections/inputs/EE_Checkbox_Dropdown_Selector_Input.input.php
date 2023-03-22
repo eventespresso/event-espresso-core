@@ -64,16 +64,12 @@ class EE_Checkbox_Dropdown_Selector_Input extends EE_Form_Input_With_Options_Bas
             array($display_strategy, 'iframe_css')
         );
         add_filter(
-            'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
+            'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
             array($display_strategy, 'iframe_js')
         );
         add_filter(
             'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__css',
             array($display_strategy, 'iframe_css')
-        );
-        add_filter(
-            'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
-            array($display_strategy, 'iframe_js')
         );
     }
 }

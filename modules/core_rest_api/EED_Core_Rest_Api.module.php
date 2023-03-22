@@ -1326,7 +1326,7 @@ class EED_Core_Rest_Api extends EED_Module
         // this method, not the const directly
         return apply_filters(
             'FHEE__EED_Core_Rest_Api__get_default_query_limit',
-            50
+            100
         );
     }
 

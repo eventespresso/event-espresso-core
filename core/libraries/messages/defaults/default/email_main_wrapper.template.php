@@ -25,7 +25,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 <?php do_action('AHEE__EE_Email_Messenger_main_wrapper_template_header', $message_type, $subject, $from, $main_body); ?>
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" marginheight="0" marginwidth="0">
 <?php do_action('AHEE__EE_Email_Messenger_main_wrapper_template_before_main_body', $message_type, $subject, $from, $main_body); ?>
-<?php echo wp_kses($main_body, AllowedTags::getWithFormTags()); ?>
+<?php echo wp_kses($main_body, AllowedTags::getWithFullTags()); ?>
 <?php do_action('AHEE__EE_Email_Messenger_main_wrapper_template_after_main_body', $message_type, $subject, $from, $main_body); ?>
 </body>
 <?php do_action('AHEE__EE_Email_Messenger_main_wrapper_template_footer', $message_type, $subject, $from, $main_body); ?>

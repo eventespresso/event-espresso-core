@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
@@ -2866,7 +2867,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     private function getTemplateFields()
     {
-        $template_fields = $this->request->getRequestParam('MTP_template_fields', null, 'html', true);
+        $template_fields = $this->request->getRequestParam('MTP_template_fields', null, DataType::EDITOR, true);
         if (empty($template_fields)) {
             EE_Error::add_error(
                 esc_html__(

@@ -49,6 +49,9 @@ class RequestSanitizer
         switch ($type) {
             case DataType::BOOL:
                 return filter_var($param, FILTER_VALIDATE_BOOLEAN);
+            case DataType::EDITOR:
+                $allowed_tags = AllowedTags::getWithFullTags();
+                return wp_kses($param, $allowed_tags);
             case DataType::FLOAT:
                 return (float) $param;
             case DataType::FQCN:

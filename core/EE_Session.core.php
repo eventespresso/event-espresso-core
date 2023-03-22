@@ -320,8 +320,8 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function open_session()
     {
-        // check for existing session and retrieve it from db
-        if (! $this->_espresso_session()) {
+        // Check for an existing session and retrieve it from the database, unless the system is in maintenance level 2.
+        if (EE_Maintenance_Mode::instance()->models_can_query() && ! $this->_espresso_session()) {
             // or just start a new one
             $this->_create_espresso_session();
         }

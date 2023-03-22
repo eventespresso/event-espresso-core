@@ -56,7 +56,7 @@ class TicketSelectorIframe extends Iframe
         }
         $this->addScripts(
             apply_filters(
-                'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
+                'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
                 array(
                     'ticket_selector_iframe_embed' => TICKET_SELECTOR_ASSETS_URL
                                                       . 'ticket_selector_iframe_embed.js?ver='

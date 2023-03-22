@@ -838,7 +838,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function venues(array $query_params = []): array
     {
-        return [$this->venue($query_params)];
+        $venue = $this->venue($query_params);
+        return $venue instanceof EE_Venue ? [$venue] : [];
     }
 
 

@@ -337,12 +337,12 @@ abstract class EE_Gateway
 
 
     /**
-     * @param array|string       $message
-     * @param EE_Base_Class|null $object_logged
+     * @param array|string      $message
+     * @param mixed             $object_logged
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function log($message, ?EE_Base_Class $object_logged)
+    public function log($message, $object_logged)
     {
         if ($object_logged instanceof EE_Payment) {
             $type = 'Payment';

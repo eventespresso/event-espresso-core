@@ -341,10 +341,6 @@ class EED_Ticket_Selector extends EED_Module
             'FHEE__EED_Ticket_Selector__ticket_selector_iframe__css',
             ['EED_Ticket_Selector', 'iframeCss']
         );
-        add_filter(
-            'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
-            ['EED_Ticket_Selector', 'iframeJs']
-        );
     }
 
 

@@ -21,7 +21,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
 <!doctype html>
-<html>
+<html <?php language_attributes(); ?>>
     <head>
         <title><?php echo wp_strip_all_tags($page_title); ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -37,7 +37,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <!-- Additional Style Sheet -->
         <link rel="stylesheet" type="text/css" href="<?php echo esc_url_raw($extra_css); ?>" />
         <?php endif; ?>
-        <style type="text/css">
+        <style>
         @media print{ .noPrint{ display:none !important;height:0!important; width:0!important; margin:0!important; padding:0!important; }}
         </style>
         <?php do_action('AHEE__EE_Html_Messenger_main_wrapper_template_head', $message_type, $page_title, $base_css, $print_css, $main_css, $main_body); ?>
@@ -45,7 +45,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     <?php do_action('AHEE__EE_Html_Messenger_main_wrapper_template_header', $message_type, $page_title, $base_css, $print_css, $main_css, $main_body); ?>
     <body>
         <?php do_action('AHEE__EE_Html_Messenger_main_wrapper_template_before_main_body', $message_type, $page_title, $base_css, $print_css, $main_css, $main_body); ?>
-        <?php echo wp_kses($main_body, AllowedTags::getWithFormTags()); ?>
+        <?php echo wp_kses($main_body, AllowedTags::getWithFullTags()); ?>
         <?php do_action('AHEE__EE_Html_Messenger_main_wrapper_template_after_main_body', $message_type, $page_title, $base_css, $print_css, $main_css, $main_body); ?>
     </body>
     <?php do_action('AHEE__EE_Html_Messenger_main_wrapper_template_footer', $message_type, $page_title, $base_css, $print_css, $main_css, $main_body); ?>

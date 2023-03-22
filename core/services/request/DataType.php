@@ -20,6 +20,7 @@ class DataType
     const DOUBLE  = 'float';
     const FLOAT   = 'float';
 
+    const EDITOR  = 'editor';
     const FQCN    = 'fqcn';
 
     const HTML    = 'html';
@@ -52,6 +53,7 @@ class DataType
                 return null;
             case DataType::OBJECT:
                 return $param;
+            case DataType::EDITOR:
             case DataType::FQCN:
             case DataType::HTML:
             case DataType::KEY:
