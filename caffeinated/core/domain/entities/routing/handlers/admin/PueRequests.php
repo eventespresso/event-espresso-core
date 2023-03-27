@@ -37,7 +37,7 @@ class PueRequests extends Route
     {
         // route may match, but PUE loading is still conditional based on this filter
         $this->load_pue = apply_filters('FHEE__EE_System__brew_espresso__load_pue', true);
-        return $this->request->isAdmin() || $this->request->isAdminAjax() || $this->request->isActivation();
+        return $this->request->isAdmin() || $this->request->isAjax() || $this->request->isActivation();
     }
 
 

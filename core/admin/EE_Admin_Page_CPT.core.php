@@ -86,7 +86,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     /**
      * @var EE_CPT_Base
      */
-    protected $_cpt_model_obj = false;
+    protected $_cpt_model_obj = null;
 
 
     /**

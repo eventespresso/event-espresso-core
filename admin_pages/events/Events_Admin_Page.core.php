@@ -45,7 +45,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * @var EE_Event
      */
-    protected $_cpt_model_obj = false;
+    protected $_cpt_model_obj = null;
 
 
     /**
