@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0fee41b9e1b8829366c294cc25207a84",
+    "content-hash": "94bd620dcbcc4e448a89ae9830c9f172",
     "packages": [
         {
             "name": "appsero/client",
@@ -215,16 +215,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.112",
+            "version": "v1.2.114",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "2c555ce35a07a5c1c808cee7d5bb52c41a4c7b2f"
+                "reference": "62d0e6b38f6715c673e156ffb0fc894791de3452"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/2c555ce35a07a5c1c808cee7d5bb52c41a4c7b2f",
-                "reference": "2c555ce35a07a5c1c808cee7d5bb52c41a4c7b2f",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/62d0e6b38f6715c673e156ffb0fc894791de3452",
+                "reference": "62d0e6b38f6715c673e156ffb0fc894791de3452",
                 "shasum": ""
             },
             "require": {
@@ -261,9 +261,9 @@
             ],
             "support": {
                 "issues": "https://github.com/JayBizzle/Crawler-Detect/issues",
-                "source": "https://github.com/JayBizzle/Crawler-Detect/tree/v1.2.112"
+                "source": "https://github.com/JayBizzle/Crawler-Detect/tree/v1.2.114"
             },
-            "time": "2022-10-05T21:52:44+00:00"
+            "time": "2023-03-21T21:54:27+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -832,7 +832,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1",
+        "php": ">=7.4",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*"
