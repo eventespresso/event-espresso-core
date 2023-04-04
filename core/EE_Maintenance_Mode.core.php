@@ -300,12 +300,12 @@ class EE_Maintenance_Mode implements ResettableInterface
         $page   = $request->getRequestParam('page');
 
         if (
-            $pagenow == 'admin.php' && 
-            strpos($page, 'espresso_') !== false &&
-            $this->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance
+            $pagenow == 'admin.php'
+            && $page !== 'espresso_maintenance_settings'
+            && strpos($page, 'espresso_') !== false
+            && $this->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance
         ) {
-            wp_safe_redirect( 'admin.php?page=espresso_maintenance_settings' );
-            exit;
+            EEH_URL::safeRedirectAndExit('admin.php?page=espresso_maintenance_settings');
         }
     }
 

@@ -32,7 +32,16 @@ class EspressoLegacyAdmin extends AdminRoute
     public function matchesCurrentRequest(): bool
     {
         global $pagenow;
-        return ($pagenow === 'admin.php' || $pagenow === 'admin-ajax.php') && parent::matchesCurrentRequest();
+        $page = $this->request->getRequestParam('page');
+        return (
+                   $pagenow === 'admin.php'
+                   || $pagenow === 'admin-ajax.php'
+               ) && (
+                   $page === 'pricing'
+                   || $page === 'mailchimp'
+                   || $page === 'eea_barcode_scanner'
+                   || str_contains($page, 'espresso')
+               ) && parent::matchesCurrentRequest();
     }
 
 
@@ -133,6 +142,15 @@ class EspressoLegacyAdmin extends AdminRoute
      */
     protected function requestHandler(): bool
     {
+        add_filter(
+            'admin_body_class',
+            function ($classes) {
+                if (strpos($classes, 'espresso-admin') === false) {
+                    $classes .= ' espresso-admin';
+                }
+                return $classes;
+            }
+        );
         $this->loader->getShared(JqueryAssetManager::class);
         $this->loader->getShared(EspressoLegacyAdminAssetManager::class);
         $this->loader->getShared(LegacyAccountingAssetManager::class);

@@ -726,7 +726,7 @@ abstract class EE_PMT_Base
      *
      * @return string
      */
-    public function system_name(): string
+    public function system_name()
     {
         $classname = get_class($this);
         return str_replace("EE_PMT_", '', $classname);

@@ -5,6 +5,8 @@ namespace EventEspresso\PaymentMethods;
 use EE_Error;
 use EE_Payment_Method;
 use EEM_Payment_Method;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 use ReflectionException;
 
 /**
@@ -163,6 +165,13 @@ class Manager
      */
     public static function adminNotice()
     {
+        // Is this an EE admin page ?
+        $request   = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $page_name = $request->getRequestParam('page');
+        // Only show the notice on core EE pages
+        if (! str_contains($page_name, 'espresso')) {
+            return;
+        }
         // Notice if one of the following payment methods is used: PayPal Express, PayPal Pro, Authorize.net AIM.
         try {
             $pp_commerce = EEM_Payment_Method::instance()->get_one_by_slug('paypalcheckout');

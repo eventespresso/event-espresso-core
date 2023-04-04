@@ -2,7 +2,7 @@
 
 /**
  *
- * EE_DMS_4_12_0_Event_Venues
+ * EE_DMS_5_0_0_Event_Venues
  * Copies Venue IDs from `wp_esp_event_venue` to `wp_esp_event_meta` for each Event
  *
  * @package     Event Espresso
@@ -10,7 +10,7 @@
  * @author      Brent Christensen
  *
  */
-class EE_DMS_4_12_0_Event_Venues extends EE_Data_Migration_Script_Stage_Table
+class EE_DMS_5_0_0_Event_Venues extends EE_Data_Migration_Script_Stage_Table
 {
     /**
      * @var string

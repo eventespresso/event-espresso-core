@@ -8,15 +8,15 @@ use EventEspresso\core\services\i18n\LegacyTextDomainOptions;
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load
 // (all other times it gets resurrected from a WordPress option)
-$stages            = glob(EE_CORE . 'data_migration_scripts/4_12_0_stages/*');
+$stages            = glob(EE_CORE . 'data_migration_scripts/5_0_0_stages/*');
 $class_to_filepath = [];
 foreach ($stages as $filepath) {
     $matches = [];
-    preg_match('~4_12_0_stages/(.*).dmsstage.php~', $filepath, $matches);
+    preg_match('~5_0_0_stages/(.*).dmsstage.php~', $filepath, $matches);
     $class_to_filepath[ $matches[1] ] = $filepath;
 }
 // give addons a chance to autoload their stages too
-$class_to_filepath = apply_filters('FHEE__EE_DMS_4_12_0__autoloaded_stages', $class_to_filepath);
+$class_to_filepath = apply_filters('FHEE__EE_DMS_5_0_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
 /**
@@ -30,7 +30,6 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
 class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 {
     /**
-     *
      * @param EE_DMS_Core_4_10_0 $dms_4_10
      * @param TableManager|null  $table_manager
      * @param TableAnalysis|null $table_analysis
@@ -44,7 +43,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
         $this->_pretty_name      = esc_html__("Data Update to Event Espresso 5.0.0", "event_espresso");
         $this->_priority         = 10;
         $this->_migration_stages = [
-
+        		new EE_DMS_5_0_0_Event_Venues()
         ];
         parent::__construct($table_manager, $table_analysis);
     }
@@ -780,7 +779,6 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
             'ENGINE=InnoDB'
         );
 
-        EE_Data_Migration_Script_Base::_delete_table_if_empty('esp_currency_payment_method');
 
         $this->previous_dms->insert_default_data();
         $LegacyTextDomainOptions = new LegacyTextDomainOptions();

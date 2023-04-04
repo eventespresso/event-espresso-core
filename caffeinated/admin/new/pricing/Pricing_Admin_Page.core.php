@@ -724,10 +724,12 @@ class Pricing_Admin_Page extends EE_Admin_Page
                         $ticket->save();
                     }
                 } else {
-                    // we make sure this price is attached to base ticket. but ONLY if its not a tax ticket type.
+                    // we make sure this price is attached to base ticket. but ONLY if it's not a tax ticket type.
                     $ticket = EEM_Ticket::instance()->get_one_by_ID(1);
-                    $ticket->_add_relation_to($PRC_ID, 'Price');
-                    $ticket->save();
+                    if ($ticket instanceof EE_Ticket) {
+                        $ticket->_add_relation_to($PRC_ID, 'Price');
+                        $ticket->save();
+                    }
                 }
             }
 

@@ -73,10 +73,6 @@ class EED_Event_Single_Caff extends EED_Event_Single
             'wp_ajax_espresso_update_event_single_order',
             array('EED_Event_Single_Caff', 'update_event_single_order')
         );
-        add_action(
-            'wp_ajax_nopriv_espresso_update_event_single_order',
-            array('EED_Event_Single_Caff', 'update_event_single_order')
-        );
     }
 
 
@@ -213,9 +209,9 @@ class EED_Event_Single_Caff extends EED_Event_Single
     {
         if (
             ! isset(EE_Registry::instance()->CFG->template_settings->EED_Event_Single)
-            || ! EE_Registry::instance()->CFG->template_settings->EED_Event_Single instanceof EED_Event_Single
+            || ! EE_Registry::instance()->CFG->template_settings->EED_Event_Single instanceof EE_Event_Single_Config
         ) {
-            EE_Registry::instance()->CFG->template_settings->EED_Event_Single = new EED_Event_Single();
+            EE_Registry::instance()->CFG->template_settings->EED_Event_Single = new EE_Event_Single_Config();
         }
         $config_saved = false;
         $template_parts = EED_Event_Single_Caff::getRequest()->getRequestParam('elements');

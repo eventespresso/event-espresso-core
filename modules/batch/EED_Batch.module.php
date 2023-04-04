@@ -119,15 +119,6 @@ class EED_Batch extends EED_Module
         add_action('wp_ajax_nopriv_espresso_batch_continue', [self::instance(), 'continueBatchJob']);
         add_action('wp_ajax_nopriv_espresso_batch_advance', [self::instance(), 'advanceBatchJob']);
         add_action('wp_ajax_nopriv_espresso_batch_cleanup', [self::instance(), 'cleanupBatchJob']);
-        add_filter(
-            'admin_body_class',
-            function ($classes) {
-                if (strpos($classes, 'espresso-admin') === false) {
-                    $classes .= ' espresso-admin';
-                }
-                return $classes;
-            }
-        );
     }
 
 
