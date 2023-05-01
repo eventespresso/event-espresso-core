@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0fee41b9e1b8829366c294cc25207a84",
+    "content-hash": "94bd620dcbcc4e448a89ae9830c9f172",
     "packages": [
         {
             "name": "appsero/client",
@@ -747,16 +747,16 @@
         },
         {
             "name": "wp-graphql/wp-graphql",
-            "version": "v1.12.0",
+            "version": "v1.14.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-graphql/wp-graphql.git",
-                "reference": "6de28e35389891781b8107e0404fa8e0c415c844"
+                "reference": "e37f2e06ded15647630a71c830d35c3f46f1d2b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-graphql/wp-graphql/zipball/6de28e35389891781b8107e0404fa8e0c415c844",
-                "reference": "6de28e35389891781b8107e0404fa8e0c415c844",
+                "url": "https://api.github.com/repos/wp-graphql/wp-graphql/zipball/e37f2e06ded15647630a71c830d35c3f46f1d2b7",
+                "reference": "e37f2e06ded15647630a71c830d35c3f46f1d2b7",
                 "shasum": ""
             },
             "require": {
@@ -778,10 +778,11 @@
                 "lucatume/wp-browser": "^3.1.6",
                 "phpcompatibility/phpcompatibility-wp": "^2.1",
                 "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan": "^1.7",
+                "phpstan/phpstan": "~1.10.11",
                 "phpunit/phpunit": "^9.5",
                 "simpod/php-coveralls-mirror": "^3.0",
-                "szepeviktor/phpstan-wordpress": "1.1.3",
+                "slevomat/coding-standard": "^8.9",
+                "szepeviktor/phpstan-wordpress": "~1.2.0",
                 "wp-graphql/wp-graphql-testcase": "~2.3"
             },
             "type": "wordpress-plugin",
@@ -820,9 +821,9 @@
             "description": "GraphQL API for WordPress",
             "support": {
                 "issues": "https://github.com/wp-graphql/wp-graphql/issues",
-                "source": "https://github.com/wp-graphql/wp-graphql/tree/v1.12.0"
+                "source": "https://github.com/wp-graphql/wp-graphql/tree/v1.14.3"
             },
-            "time": "2022-10-10T15:55:42+00:00"
+            "time": "2023-04-27T17:18:42+00:00"
         }
     ],
     "packages-dev": [],
@@ -832,7 +833,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1",
+        "php": ">=7.4",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*"
