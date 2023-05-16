@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\values\DateFormat;
+use EventEspresso\core\domain\values\TimeFormat;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -14,6 +16,11 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 abstract class EE_Base_Class
 {
     /**
+     * @var EEM_Base|null
+     */
+    protected $_model = null;
+
+    /**
      * This is an array of the original properties and values provided during construction
      * of this model object. (keys are model field names, values are their values).
      * This list is important to remember so that when we are merging data from the db, we know
@@ -21,7 +28,7 @@ abstract class EE_Base_Class
      *
      * @var array
      */
-    protected $_props_n_values_provided_in_constructor;
+    protected array $_props_n_values_provided_in_constructor;
 
     /**
      * Timezone
@@ -32,7 +39,7 @@ abstract class EE_Base_Class
      *
      * @var string
      */
-    protected $_timezone;
+    protected string $_timezone = '';
 
     /**
      * date format
@@ -40,7 +47,7 @@ abstract class EE_Base_Class
      *
      * @var string $_dt_frmt
      */
-    protected $_dt_frmt;
+    protected string $_dt_frmt = '';
 
     /**
      * time format
@@ -48,7 +55,7 @@ abstract class EE_Base_Class
      *
      * @var string $_tm_frmt
      */
-    protected $_tm_frmt;
+    protected string $_tm_frmt = '';
 
     /**
      * This property is for holding a cached array of object properties indexed by property name as the key.
@@ -58,7 +65,7 @@ abstract class EE_Base_Class
      *
      * @var array
      */
-    protected $_cached_properties = array();
+    protected array $_cached_properties = [];
 
     /**
      * An array containing keys of the related model, and values are either an array of related mode objects or a
@@ -69,7 +76,7 @@ abstract class EE_Base_Class
      *
      * @var array
      */
-    protected $_model_relations = array();
+    protected array $_model_relations = [];
 
     /**
      * Array where keys are field names (see the model's _fields property) and values are their values. To see what
@@ -77,25 +84,20 @@ abstract class EE_Base_Class
      *
      * @var array
      */
-    protected $_fields = array();
+    protected array $_fields = [];
 
     /**
-     * @var boolean indicating whether or not this model object is intended to ever be saved
+     * @var bool indicating whether or not this model object is intended to ever be saved
      * For example, we might create model objects intended to only be used for the duration
      * of this request and to be thrown away, and if they were accidentally saved
      * it would be a bug.
      */
-    protected $_allow_persist = true;
+    protected bool $_allow_persist = true;
 
     /**
-     * @var boolean indicating whether or not this model object's properties have changed since construction
+     * @var bool indicating whether or not this model object's properties have changed since construction
      */
-    protected $_has_changes = false;
-
-    /**
-     * @var EEM_Base
-     */
-    protected $_model;
+    protected bool $_has_changes = false;
 
     /**
      * This is a cache of results from custom selections done on a query that constructs this entity. The only purpose
@@ -113,7 +115,7 @@ abstract class EE_Base_Class
      *
      * @var array
      */
-    protected $custom_selection_results = array();
+    protected array $custom_selection_results = [];
 
 
     /**
@@ -144,6 +146,8 @@ abstract class EE_Base_Class
         $model_fields = $model->field_settings(false);
         // ensure $fieldValues is an array
         $fieldValues = is_array($fieldValues) ? $fieldValues : array($fieldValues);
+        // remember what values were passed to this constructor
+        $this->_props_n_values_provided_in_constructor = $fieldValues;
         // verify client code has not passed any invalid field names
         foreach ($fieldValues as $field_name => $field_value) {
             if (! isset($model_fields[ $field_name ])) {
@@ -160,36 +164,33 @@ abstract class EE_Base_Class
                 );
             }
         }
+
+        $date_format = null;
+        $time_format = null;
         $this->_timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
         if (! empty($date_formats) && is_array($date_formats)) {
-            [$this->_dt_frmt, $this->_tm_frmt] = $date_formats;
-        } else {
-            // set default formats for date and time
-            $this->_dt_frmt = (string) get_option('date_format', 'Y-m-d');
-            $this->_tm_frmt = (string) get_option('time_format', 'g:i a');
+            [$date_format, $time_format] = $date_formats;
         }
+        $this->set_date_format($date_format);
+        $this->set_time_format($time_format);
         // if db model is instantiating
-        if ($bydb) {
-            // client code has indicated these field values are from the database
-            foreach ($model_fields as $fieldName => $field) {
-                $this->set_from_db(
+        foreach ($model_fields as $fieldName => $field) {
+            if ($bydb) {
+                // client code has indicated these field values are from the database
+                    $this->set_from_db(
+                        $fieldName,
+                        $fieldValues[ $fieldName ] ?? null
+                    );
+            } else {
+                // we're constructing a brand new instance of the model object.
+                // Generally, this means we'll need to do more field validation
+                    $this->set(
                     $fieldName,
-                    isset($fieldValues[ $fieldName ]) ? $fieldValues[ $fieldName ] : null
-                );
-            }
-        } else {
-            // we're constructing a brand
-            // new instance of the model object. Generally, this means we'll need to do more field validation
-            foreach ($model_fields as $fieldName => $field) {
-                $this->set(
-                    $fieldName,
-                    isset($fieldValues[ $fieldName ]) ? $fieldValues[ $fieldName ] : null,
+                    $fieldValues[ $fieldName ] ?? null,
                     true
                 );
             }
         }
-        // remember what values were passed to this constructor
-        $this->_props_n_values_provided_in_constructor = $fieldValues;
         // remember in entity mapper
         if (! $bydb && $model->has_primary_key_field() && $this->ID()) {
             $model->add_to_entity_map($this);
@@ -274,9 +275,9 @@ abstract class EE_Base_Class
      * Overrides parent because parent expects old models.
      * This also doesn't do any validation, and won't work for serialized arrays
      *
-     * @param    string $field_name
-     * @param    mixed  $field_value
-     * @param bool      $use_default
+     * @param string $field_name
+     * @param mixed  $field_value
+     * @param bool   $use_default
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -285,7 +286,7 @@ abstract class EE_Base_Class
      * @throws ReflectionException
      * @throws ReflectionException
      */
-    public function set($field_name, $field_value, $use_default = false)
+    public function set(string $field_name, $field_value, bool $use_default = false)
     {
         // if not using default and nothing has changed, and object has already been setup (has ID),
         // then don't do anything
@@ -299,65 +300,7 @@ abstract class EE_Base_Class
         $model = $this->get_model();
         $this->_has_changes = true;
         $field_obj = $model->field_settings_for($field_name);
-        if ($field_obj instanceof EE_Model_Field_Base) {
-            // if ( method_exists( $field_obj, 'set_timezone' )) {
-            if ($field_obj instanceof EE_Datetime_Field) {
-                $field_obj->set_timezone($this->_timezone);
-                $field_obj->set_date_format($this->_dt_frmt);
-                $field_obj->set_time_format($this->_tm_frmt);
-            }
-            $holder_of_value = $field_obj->prepare_for_set($field_value);
-            // should the value be null?
-            if (($field_value === null || $holder_of_value === null || $holder_of_value === '') && $use_default) {
-                $this->_fields[ $field_name ] = $field_obj->get_default_value();
-                /**
-                 * To save having to refactor all the models, if a default value is used for a
-                 * EE_Datetime_Field, and that value is not null nor is it a DateTime
-                 * object.  Then let's do a set again to ensure that it becomes a DateTime
-                 * object.
-                 *
-                 * @since 4.6.10+
-                 */
-                if (
-                    $field_obj instanceof EE_Datetime_Field
-                    && $this->_fields[ $field_name ] !== null
-                    && ! $this->_fields[ $field_name ] instanceof DateTime
-                ) {
-                    empty($this->_fields[ $field_name ])
-                        ? $this->set($field_name, time())
-                        : $this->set($field_name, $this->_fields[ $field_name ]);
-                }
-            } else {
-                $this->_fields[ $field_name ] = $holder_of_value;
-            }
-            // if we're not in the constructor...
-            // now check if what we set was a primary key
-            if (
-// note: props_n_values_provided_in_constructor is only set at the END of the constructor
-                $this->_props_n_values_provided_in_constructor
-                && $field_value
-                && $field_name === $model->primary_key_name()
-            ) {
-                // if so, we want all this object's fields to be filled either with
-                // what we've explicitly set on this model
-                // or what we have in the db
-                // echo "setting primary key!";
-                $fields_on_model = self::_get_model(get_class($this))->field_settings();
-                $obj_in_db = self::_get_model(get_class($this))->get_one_by_ID($field_value);
-                foreach ($fields_on_model as $field_obj) {
-                    if (
-                        ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_constructor)
-                        && $field_obj->get_name() !== $field_name
-                    ) {
-                        $this->set($field_obj->get_name(), $obj_in_db->get($field_obj->get_name()));
-                    }
-                }
-                // oh this model object has an ID? well make sure its in the entity mapper
-                $model->add_to_entity_map($this);
-            }
-            // let's unset any cache for this field_name from the $_cached_properties property.
-            $this->_clear_cached_property($field_name);
-        } else {
+        if (! $field_obj instanceof EE_Model_Field_Base) {
             throw new EE_Error(
                 sprintf(
                     esc_html__(
@@ -367,6 +310,99 @@ abstract class EE_Base_Class
                     $field_name
                 )
             );
+        }
+        // if ( method_exists( $field_obj, 'set_timezone' )) {
+        if ($field_obj instanceof EE_Datetime_Field) {
+            $field_obj->set_timezone($this->_timezone);
+            $field_obj->set_date_format($this->_dt_frmt);
+            $field_obj->set_time_format($this->_tm_frmt);
+        }
+        $holder_of_value = $field_obj->prepare_for_set($field_value);
+        // should the value be null?
+        if (($field_value === null || $holder_of_value === null || $holder_of_value === '') && $use_default) {
+            $this->_fields[ $field_name ] = $field_obj->get_default_value();
+            /**
+             * To save having to refactor all the models, if a default value is used for a
+             * EE_Datetime_Field, and that value is not null nor is it a DateTime
+             * object.  Then let's do a set again to ensure that it becomes a DateTime
+             * object.
+             *
+             * @since 4.6.10+
+             */
+            if (
+                $field_obj instanceof EE_Datetime_Field
+                && $this->_fields[ $field_name ] !== null
+                && ! $this->_fields[ $field_name ] instanceof DateTime
+            ) {
+                empty($this->_fields[ $field_name ])
+                    ? $this->set($field_name, time())
+                    : $this->set($field_name, $this->_fields[ $field_name ]);
+            }
+        } else {
+            $this->_fields[ $field_name ] = $holder_of_value;
+        }
+        // if we're not in the constructor...
+        // now check if what we set was a primary key
+        if (
+// note: props_n_values_provided_in_constructor is only set at the END of the constructor
+            $this->_props_n_values_provided_in_constructor
+            && $field_value
+            && $field_name === $model->primary_key_name()
+        ) {
+            // if so, we want all this object's fields to be filled either with
+            // what we've explicitly set on this model
+            // or what we have in the db
+            // echo "setting primary key!";
+            $fields_on_model = self::_get_model(get_class($this))->field_settings();
+            $obj_in_db = self::_get_model(get_class($this))->get_one_by_ID($field_value);
+            foreach ($fields_on_model as $field_obj) {
+                if (
+                    ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_constructor)
+                    && $field_obj->get_name() !== $field_name
+                ) {
+                    $this->set($field_obj->get_name(), $obj_in_db->get($field_obj->get_name()));
+                }
+            }
+            // oh this model object has an ID? well make sure its in the entity mapper
+            $model->add_to_entity_map($this);
+        }
+        // let's unset any cache for this field_name from the $_cached_properties property.
+        $this->_clear_cached_property($field_name);
+    }
+
+
+    /**
+     * Overrides parent because parent expects old models.
+     * This also doesn't do any validation, and won't work for serialized arrays
+     *
+     * @param string $field_name
+     * @param mixed  $field_value_from_db
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function set_from_db(string $field_name, $field_value_from_db)
+    {
+        $field_obj = $this->get_model()->field_settings_for($field_name);
+        if ($field_obj instanceof EE_Model_Field_Base) {
+            // you would think the DB has no NULLs for non-null label fields right? wrong!
+            // eg, a CPT model object could have an entry in the posts table, but no
+            // entry in the meta table. Meaning that all its columns in the meta table
+            // are null! yikes! so when we find one like that, use defaults for its meta columns
+            if ($field_value_from_db === null) {
+                if ($field_obj->is_nullable()) {
+                    // if the field allows nulls, then let it be null
+                    $field_value = null;
+                } else {
+                    $field_value = $field_obj->get_default_value();
+                }
+            } else {
+                $field_value = $field_obj->prepare_for_set_from_db($field_value_from_db);
+            }
+            $this->_fields[ $field_name ] = $field_value;
+            $this->_clear_cached_property($field_name);
         }
     }
 
@@ -503,12 +539,13 @@ abstract class EE_Base_Class
      * This sets the internal date format to what is sent in to be used as the new default for the class
      * internally instead of wp set date format options
      *
+     * @param string|null $format should be a format recognizable by PHP date() functions.
      * @since 4.6
-     * @param string $format should be a format recognizable by PHP date() functions.
      */
-    public function set_date_format($format)
+    public function set_date_format(?string $format = 'Y-m-d')
     {
-        $this->_dt_frmt = $format;
+        $format = $format ?: 'Y-m-d';
+        $this->_dt_frmt = new DateFormat($format);
         // clear cached_properties because they won't be relevant now.
         $this->_clear_cached_properties();
     }
@@ -518,12 +555,13 @@ abstract class EE_Base_Class
      * This sets the internal time format string to what is sent in to be used as the new default for the
      * class internally instead of wp set time format options.
      *
+     * @param string|null $format should be a format recognizable by PHP date() functions.
      * @since 4.6
-     * @param string $format should be a format recognizable by PHP date() functions.
      */
-    public function set_time_format($format)
+    public function set_time_format(?string $format = 'H:i:s')
     {
-        $this->_tm_frmt = $format;
+        $format = $format ?: 'H:i:s';
+        $this->_tm_frmt = new TimeFormat($format);
         // clear cached_properties because they won't be relevant now.
         $this->_clear_cached_properties();
     }
@@ -1121,42 +1159,6 @@ abstract class EE_Base_Class
 
 
     /**
-     * Overrides parent because parent expects old models.
-     * This also doesn't do any validation, and won't work for serialized arrays
-     *
-     * @param string $field_name
-     * @param mixed  $field_value_from_db
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function set_from_db($field_name, $field_value_from_db)
-    {
-        $field_obj = $this->get_model()->field_settings_for($field_name);
-        if ($field_obj instanceof EE_Model_Field_Base) {
-            // you would think the DB has no NULLs for non-null label fields right? wrong!
-            // eg, a CPT model object could have an entry in the posts table, but no
-            // entry in the meta table. Meaning that all its columns in the meta table
-            // are null! yikes! so when we find one like that, use defaults for its meta columns
-            if ($field_value_from_db === null) {
-                if ($field_obj->is_nullable()) {
-                    // if the field allows nulls, then let it be null
-                    $field_value = null;
-                } else {
-                    $field_value = $field_obj->get_default_value();
-                }
-            } else {
-                $field_value = $field_obj->prepare_for_set_from_db($field_value_from_db);
-            }
-            $this->_fields[ $field_name ] = $field_value;
-            $this->_clear_cached_property($field_name);
-        }
-    }
-
-
-    /**
      * verifies that the specified field is of the correct type
      *
      * @param string $field_name
@@ -1341,8 +1343,8 @@ abstract class EE_Base_Class
         // clear cached property
         $this->_clear_cached_property($field_name);
         // reset format properties because they are used in get()
-        $this->_dt_frmt = $date_format !== '' ? $date_format : $this->_dt_frmt;
-        $this->_tm_frmt = $time_format !== '' ? $time_format : $this->_tm_frmt;
+        $this->_dt_frmt = $date_format ?: $this->_dt_frmt;
+        $this->_tm_frmt = $time_format ?: $this->_tm_frmt;
         if ($echo) {
             $this->e($field_name, $date_or_time);
             return '';
@@ -1427,8 +1429,8 @@ abstract class EE_Base_Class
      * other echoes the pretty value for dtt)
      *
      * @param  string $field_name name of model object datetime field holding the value
-     * @param  string $dt_frmt    format for the date returned (if NULL we use default in dt_frmt property)
-     * @param  string $tm_frmt    format for the time returned (if NULL we use default in tm_frmt property)
+     * @param  string $date_format    format for the date returned (if NULL we use default in dt_frmt property)
+     * @param  string $time_format    format for the time returned (if NULL we use default in tm_frmt property)
      * @return string             datetime value formatted
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1436,25 +1438,25 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function get_datetime($field_name, $dt_frmt = '', $tm_frmt = '')
+    public function get_datetime($field_name, $date_format = '', $time_format = '')
     {
-        return $this->_get_datetime($field_name, $dt_frmt, $tm_frmt);
+        return $this->_get_datetime($field_name, $date_format, $time_format);
     }
 
 
     /**
      * @param string $field_name
-     * @param string $dt_frmt
-     * @param string $tm_frmt
+     * @param string $date_format
+     * @param string $time_format
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_datetime($field_name, $dt_frmt = '', $tm_frmt = '')
+    public function e_datetime($field_name, $date_format = '', $time_format = '')
     {
-        $this->_get_datetime($field_name, $dt_frmt, $tm_frmt, null, true);
+        $this->_get_datetime($field_name, $date_format, $time_format, null, true);
     }
 
 

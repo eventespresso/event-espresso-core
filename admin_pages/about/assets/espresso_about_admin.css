@@ -1,0 +1,135 @@
+
+/**** ee about page *****/
+.ee-badge {
+    background-size: 200px 60px;
+    background-color: var(--ee-status-color-charcoal);
+    font-size: var(--ee-font-size-small);
+    text-align: center;
+    font-weight: 600;
+    margin: 5px 0 0;
+    height: 160px;
+    display: inline-block;
+    width: 125px;
+    color: var(--ee-color-white);
+    text-rendering: optimizeLegibility;
+}
+
+.ee-badge .ee-icon-ee-cup-thick:before {
+    font-size: var(--ee-font-size-8xl);
+    margin-left: 20px;
+}
+
+.about-wrap .ee-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+@media only screen and (max-width: 500px) {
+    .about-wrap .ee-badge {
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 1.5em;
+    }
+}
+
+/**** ee decaf reviews *****/
+.review-user-nicename {
+    float: right;
+    padding: 10px;
+    text-align: center;
+}
+
+@media screen and (max-width: 1260px) {
+    .col-3 {
+        clear: left;
+    }
+}
+
+/**** ee decaf vs regular *****/
+.featured-section.features .row {
+    display: inline-block;
+    width: 97%;
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, .06);
+}
+
+.featured-section.features .row .dashicons-yes {
+    color: var(--ee-status-color-dark-green);
+}
+
+.featured-section.features .row .dashicons-no-alt {
+    color: var(--ee-status-color-red);
+}
+
+.featured-section.features .row > div {
+    display: inline-block;
+    float: left;
+    width: 15%;
+    text-align: center;
+}
+
+.featured-section.features .row > .feature {
+    width: 70%;
+    text-align: left;
+}
+
+.featured-section .decaf-regular-table {
+    border-spacing: 0;
+    width: 100%;
+    margin-top: 40px;
+}
+
+.featured-section .decaf-regular-table th {
+    padding-bottom: 20px;
+}
+
+.featured-section .decaf-regular-table td {
+    border-top: 1px solid var(--ee-status-color-light-grey);
+    padding: 20px 0 25px 10px;
+}
+
+.featured-section .decaf-regular-table h3 {
+    margin: 0;
+}
+
+.featured-section .decaf-regular-table td p {
+    margin: 0;
+}
+
+.featured-section .decaf-regular-table .decaf-feature,
+.featured-section .decaf-regular-table .regular-feature {
+    text-align: center;
+    width: 15%;
+}
+
+.featured-section .decaf-regular-table .dashicons-yes {
+    color: var(--ee-status-color-dark-green);
+    font-size: var(--ee-font-size-lg);
+}
+
+.featured-section .decaf-regular-table .dashicons-no-alt {
+    color: var(--ee-status-color-red);
+    font-size: var(--ee-font-size-lg);
+}
+
+.featured-section .decaf-regular-table .dashicons-before:before,
+.featured-section .decaf-regular-table .dashicons-before:before {
+    font-size: var(--ee-font-size-4xl);
+    height: var(--ee-font-size-4xl);
+    width: var(--ee-font-size-4xl);
+}
+
+.featured-section .button-hero .dashicons {
+    font-size: var(--ee-font-size-default);
+    vertical-align: middle;
+}
+
+.featured-section .ti-about-page-text-center {
+    text-align: center;
+}
+
+.decaf-regular-table .text-right {
+    text-align: right;
+}

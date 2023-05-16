@@ -13,7 +13,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * @subpackage         includes/classes/EE_Line_Item.class.php
  * @author             Michael Nelson
  */
-class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
+class EE_Line_Item extends EE_Base_Class
 {
     /**
      * for children line items (currently not a normal relation)

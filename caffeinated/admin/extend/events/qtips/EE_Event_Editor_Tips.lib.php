@@ -37,36 +37,6 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config
                     ),
                 )// defaults
             ),
-            1  => array(
-                'content_id' => 'ticket-icon-help',
-                'target'     => '.ticket-icon',
-                'content'    => esc_html__('Assigned Tickets', 'event_espresso'),
-            ),
-            2  => array(
-                'content_id' => 'clone-icon-help',
-                'target'     => '.clone-icon',
-                'content'    => esc_html__('Duplicate this Item', 'event_espresso'),
-            ),
-            3  => array(
-                'content_id' => 'trash-datetime-help',
-                'target'     => '.datetime-edit-table .trash-icon',
-                'content'    => esc_html__('Trash Datetime', 'event_espresso'),
-            ),
-            4  => array(
-                'content_id' => 'trash-ticket-help',
-                'target'     => '.ticket-row .trash-icon',
-                'content'    => esc_html__('Trash Ticket', 'event_espresso'),
-            ),
-            5  => array(
-                'content_id' => 'trash-price-modifier-help',
-                'target'     => '.ticket-price-rows .trash-icon',
-                'content'    => esc_html__('Trash Price Modifier', 'event_espresso'),
-            ),
-            6  => array(
-                'content_id' => 'gear-icon-help',
-                'target'     => '.gear-icon',
-                'content'    => esc_html__('Advanced Settings', 'event_espresso'),
-            ),
             7  => array(
                 'content_id' => 'tkt-status-archived',
                 'target'     => '.ticket-row .tkt-status-' . EE_Ticket::archived,
@@ -128,32 +98,6 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config
                         'target' => 'mouse',
                         'adjust' => array(
                             'mouse' => false,
-                        ),
-                    ),
-                ),
-            ),
-            12 => array(
-                'content_id' => 'sortable-tkt-drag-handle-tip',
-                'target'     => '.ee-ticket-sortable .sortable-drag-handle',
-                'content'    => esc_html__('Click and drag-n-drop to reorder tickets.', 'event_espresso'),
-                'options'    => array(
-                    'position' => array(
-                        'adjust' => array(
-                            'mouse' => false,
-                            'y'     => 5,
-                        ),
-                    ),
-                ),
-            ),
-            13 => array(
-                'content_id' => 'sortable-dtt-drag-handle-tip',
-                'target'     => '.ee-dtt-sortable .sortable-drag-handle',
-                'content'    => esc_html__('Click and drag-n-drop to reorder datetimes.', 'event_espresso'),
-                'options'    => array(
-                    'position' => array(
-                        'adjust' => array(
-                            'mouse' => false,
-                            'y'     => 5,
                         ),
                     ),
                 ),

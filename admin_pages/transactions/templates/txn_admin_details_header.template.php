@@ -4,6 +4,7 @@
  * @var string   $previous_transaction
  * @var string   $next_transaction
  * @var string   $amount_due
+ * @var int      $amount_due_raw
  * @var string   $amount_due_class
  * @var string   $method_of_payment_name
  * @var string[] $txn_nmbr
@@ -40,7 +41,8 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     </div>
     <div class='ee-admin-container <?php echo esc_attr($amount_due_class); ?>'>
         <label><?php echo esc_html__('Total Amount Due: ', 'event_espresso'); ?></label>
-        <span><?php echo esc_html($amount_due); ?></span>
+        <span id="txn-admin-total-amount-due" data-due="<?php echo esc_attr($amount_due_raw); ?>"><?php echo esc_html
+            ($amount_due); ?></span>
     </div>
     <div class='ee-admin-container'>
         <label><?php echo esc_html__('Last Method of Payment: ', 'event_espresso'); ?></label>

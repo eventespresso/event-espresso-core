@@ -31,15 +31,9 @@ class LegacyShortcodesManager
      */
     public const SHORTCODE_PREFIX = 'EES_';
 
-    /**
-     * @var CurrentPage
-     */
-    protected $current_page;
+    protected CurrentPage $current_page;
 
-    /**
-     * @var EE_Registry $registry
-     */
-    private $registry;
+    private EE_Registry $registry;
 
 
     /**
@@ -322,6 +316,7 @@ class LegacyShortcodesManager
      */
     public function parseContentForShortcodes(?string $content = '', bool $load_all = false): bool
     {
+        $content = $content ?? '';
         $has_shortcode = false;
         foreach ($this->registry->shortcodes as $shortcode_class => $shortcode) {
             if ($load_all || has_shortcode($content, $shortcode_class)) {

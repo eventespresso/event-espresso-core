@@ -237,16 +237,6 @@
     text-align: left;
 }
 
-#espresso_event_editor_event_options .inside p label {
-    margin-inline-end: 2.5%;
-    width: 55%;
-}
-
-#espresso_event_editor_event_options .inside p input,
-#espresso_event_editor_event_options .inside p select {
-    width: 42.5%;
-}
-
 #message .spinner {
     float: none;
 }

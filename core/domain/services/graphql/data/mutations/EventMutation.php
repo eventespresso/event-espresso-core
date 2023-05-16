@@ -87,10 +87,6 @@ class EventMutation
             $args['EVT_timezone_string'] = sanitize_text_field($input['timezoneString']);
         }
 
-        if (! empty($input['visibleOn'])) {
-            $args['EVT_visible_on'] = new DateTime(sanitize_text_field($input['visibleOn']));
-        }
-
         if (! empty($input['manager'])) {
             $parts = Relay::fromGlobalId(sanitize_text_field($input['manager']));
             $args['EVT_wp_user'] = ! empty($parts['id']) ? $parts['id'] : null;

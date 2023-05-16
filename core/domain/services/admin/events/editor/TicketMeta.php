@@ -41,6 +41,15 @@ class TicketMeta implements EventEditorDataInterface
             'FHEE___EventEspresso_core_domain_services_admin_events_editor_TicketMeta__getData__visibilityOptions',
             $this->ticket_model->ticketVisibilityOptions()
         );
-        return ['visibilityOptions' => array_values($ticket_visibility_options)];
+        $visibility_options = [];
+        foreach ($ticket_visibility_options as $key => $ticket_visibility_option) {
+            $visibility_options[] = [
+                'desc' => $ticket_visibility_option['desc'],
+                'label' => $ticket_visibility_option['label'],
+                'level' => $ticket_visibility_option['value'],
+                'value' => $key, // we want to use the keys like PUBLIC or ADMINS_ONLY as values in the client
+            ];
+        }
+        return ['visibilityOptions' => $visibility_options];
     }
 }

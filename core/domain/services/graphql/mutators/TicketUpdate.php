@@ -67,7 +67,7 @@ class TicketUpdate extends EntityMutator
                 EntityMutator::handleExceptions(
                     $exception,
                     esc_html__(
-                        'The ticket could not be deleted because of the following error(s)',
+                        'The ticket could not be updated because of the following error(s)',
                         'event_espresso'
                     )
                 );

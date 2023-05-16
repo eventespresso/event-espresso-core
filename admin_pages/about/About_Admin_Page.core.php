@@ -135,6 +135,14 @@ class About_Admin_Page extends EE_Admin_Page
 
     public function load_scripts_styles()
     {
+        // enqueue style
+        wp_register_style(
+            'espresso_about_admin',
+            EE_ABOUT_ASSETS_URL . 'espresso_about_admin.css',
+            [],
+            EVENT_ESPRESSO_VERSION
+        );
+        wp_enqueue_style('espresso_about_admin');
     }
 
 

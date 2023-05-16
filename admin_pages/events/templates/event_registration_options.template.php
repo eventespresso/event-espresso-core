@@ -23,7 +23,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             'event_espresso'
         ); ?>
     </label>
-    <input class="ee-numeric"
+    <input class="ee-numeric ee-input-width--small"
            id="max-registrants"
            name="additional_limit"
            size="4"

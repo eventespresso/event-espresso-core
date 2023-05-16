@@ -191,6 +191,7 @@ class RegistrationsReport extends JobHandlerFile
         ) {
             $question_query_params[0]['Answer.ANS_ID'] = ['IS_NOT_NULL'];
         }
+        $question_query_params['order_by'] = ['QST_admin_label' => 'ASC'];
         $question_query_params['group_by'] = ['QST_ID'];
         return array_unique(EEM_Question::instance()->get_col($question_query_params, 'QST_admin_label'));
     }

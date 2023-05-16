@@ -39,5 +39,11 @@ class EspressoEventsAdmin extends AdminRoute
             'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection',
             AdminRoute::getDefaultDependencies()
         );
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\services\admin\AdminListTableFilters',
+            [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
     }
 }

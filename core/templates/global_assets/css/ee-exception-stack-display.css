@@ -10,18 +10,18 @@
     border-radius: 3px;
     border: 0.25rem solid hsl(340, 100%, 60%);
     color: hsl(340, 10%, 45%);
-    font-size: .75rem;
+    font-size: var(--ee-font-size-tiny);
     line-height: 1.5em;
     margin: 0 0 1em;
-    padding: 1.5rem 2rem;;
+    padding: 1.5rem 2rem;
 }
 .ee-exception-stack-trace-display .ee-error-dev-msg-pg  strong{
-    font-size: 1.5rem;
+    font-size: var(--ee-font-size-xl);
     font-weight: 800;
 }
 .ee-exception-stack-trace-display .ee-error-dev-msg-pg  .big-text {
     display: block;
-    font-size: 1.25rem;
+    font-size: var(--ee-font-size-bigger);
     padding: .5rem 0;
 }
 #ee-trace-details {
@@ -57,11 +57,6 @@
 }
 .ee-error-trace-dv--hidden, .hidden {
     display:none;
-}
-.small-text {
-    font-size: .85em;
-    line-height: 1.4em;
-    letter-spacing: 1px;
 }
 .lt-grey-text {
     color: hsl(220deg 5% 60%);

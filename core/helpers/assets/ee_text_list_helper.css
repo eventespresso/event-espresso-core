@@ -47,7 +47,7 @@
     border-radius: 0.25rem;
     color: var(--ee-font-color);
     display: inline-flex;
-    font-size: .9rem;
+    font-size: var(--ee-font-size-small);
     height: 2rem;
     justify-content: center;
     line-height: 0;
@@ -59,7 +59,7 @@
 }
 
 .ee-text-links .ee-text-link .dashicons {
-    font-size: 18px;
+    font-size: var(--ee-font-size-big);
 	margin-inline-end: 0.5rem;
 	position: relative;
 	top: 1px;

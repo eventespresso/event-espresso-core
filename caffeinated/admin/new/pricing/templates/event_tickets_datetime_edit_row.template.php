@@ -1,6 +1,6 @@
 <?php
 /**
- * @var string template args in use
+ * template args in use
  * @var integer $dtt_row
  * @var string  $event_datetimes_name
  * @var string  $edit_dtt_expanded
@@ -11,11 +11,12 @@
  * @var integer $DTT_reg_limit
  * @var integer $DTT_order
  * @var integer $dtt_sold
- * @var string  $clone_icon
  * @var string  $trash_icon
  * @var string  $show_trash
  * @var string  $reg_list_url
  * @var string  $dtt_reserved
+ * @var boolean $can_clone
+ * @var boolean $can_trash
  */
 ?>
 <tr valign="top" id="event-datetime-<?php echo esc_attr($dtt_row); ?>"
@@ -65,22 +66,41 @@
 
     <td>
         <div class="ee-editing-container <?php echo esc_attr($edit_dtt_expanded); ?>">
-            <span data-datetime-row="<?php echo esc_attr($dtt_row); ?>" data-context="datetime"
-                  class="ticket-icon dashicons dashicons-admin-generic clickable"></span>
+            <button data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
+                    data-context="datetime"
+                    aria-label="<?php esc_attr_e('edit datetime details', 'event_espresso'); ?>"
+                    class="button button--icon-only button--tiny ticket-icon ee-aria-tooltip dashicons dashicons-admin-generic
+                    clickable"
+            ></button>
         </div>
-        <span data-context="datetime" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
-              class="<?php echo esc_attr($clone_icon); ?> clickable"></span>
-        <span data-context="datetime" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
-              class="<?php echo esc_attr($trash_icon); ?> clickable" style="<?php echo esc_attr($show_trash); ?>"></span>
+        <?php if ($can_clone) : ?>
+        <button data-context="datetime"
+                data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
+                aria-label="<?php esc_attr_e('duplicate datetime', 'event_espresso'); ?>"
+                class="button button--icon-only button--tiny clone-entity ee-aria-tooltip dashicons dashicons-admin-page clickable"
+        ></button>
+        <?php endif; ?>
+        <?php if ($can_trash) : ?>
+        <button data-context="datetime"
+                data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
+                aria-label="<?php esc_attr_e('trash datetime', 'event_espresso'); ?>"
+                class="button button--icon-only button--tiny ee-aria-tooltip <?php echo esc_attr($trash_icon); ?>"
+                style="<?php echo esc_attr($show_trash); ?>"
+        ></button>
+        <?php endif; ?>
         <?php if ($reg_list_url !== '') : ?>
             <a href="<?php echo esc_url_raw($reg_list_url); ?>"
                aria-label="<?php esc_attr_e('View registrations for this datetime.', 'event_espresso'); ?>"
+               class="button button--icon-only button--tiny ee-aria-tooltip reg-list-link clickable"
                style="text-decoration: none;">
                 <span data-context="datetime" data-datetime-row="<?php echo esc_attr($dtt_row); ?>"
                       class="dashicons dashicons-groups clickable"></span>
             </a>
         <?php endif; ?>
-        <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle"></span>
+        <span aria-label="<?php esc_html_e('Click and drag-n-drop to reorder datetimes.', 'event_espresso') ?>"
+              class="button button--icon-only button--tiny ee-aria-tooltip dashicons dashicons-move
+              sortable-drag-handle"
+        ></span>
     </td>
 </tr>
 

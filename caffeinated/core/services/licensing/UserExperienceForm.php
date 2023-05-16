@@ -85,9 +85,9 @@ class UserExperienceForm
             $org_settings_form->add_subsections(
                 [
                     'uxip_optin_hdr' => new EE_Form_Section_HTML(Stats::optinText(false)),
-                    'ueip_optin'     => new EE_Checkbox_Multi_Input(
+                    'uxip_optin' => new EE_Checkbox_Multi_Input(
                         [
-                            true => esc_html__('Yes! I want to help improve Event Espresso!', 'event_espresso')
+                            true => esc_html__('Yes! I want to help improve Event Espresso!', 'event_espresso'),
                         ],
                         [
                             'html_name'       => EE_Core_Config::OPTION_NAME_UXIP,
@@ -99,6 +99,7 @@ class UserExperienceForm
                                 ? filter_var($this->core_config->ee_ueip_optin, FILTER_VALIDATE_BOOLEAN)
                                 : false,
                             'required'        => false,
+                            'label_size'      => 100,
                         ]
                     ),
                 ],

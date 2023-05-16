@@ -2,10 +2,13 @@
 
 use EventEspresso\admin_pages\general_settings\AdminOptionsSettings;
 use EventEspresso\admin_pages\general_settings\OrganizationSettings;
+use EventEspresso\core\domain\services\admin\AdminFontSize;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\DataType;
+use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
@@ -126,15 +129,22 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
+
             'privacy_settings'        => [
                 'func'       => [$this, 'privacySettings'],
                 'capability' => 'manage_options',
             ],
+
             'update_privacy_settings' => [
                 'func'               => [$this, 'updatePrivacySettings'],
                 'capability'         => 'manage_options',
                 'noheader'           => true,
                 'headers_sent_route' => 'privacy_settings',
+            ],
+
+            'set_font_size'            => [
+                'func'       => [$this, 'setFontSize'],
+                'noheader'   => true,
             ],
         ];
     }
@@ -1461,5 +1471,14 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'updated',
             ['action' => 'privacy_settings']
         );
+    }
+
+
+    public function setFontSize()
+    {
+        AdminFontSize::setAdminFontSize(
+            $this->request->getRequestParam('font_size', AdminFontSize::FONT_SIZE_DEFAULT)
+        );
+        wp_safe_redirect($this->request->getServerParam('HTTP_REFERER'));
     }
 }

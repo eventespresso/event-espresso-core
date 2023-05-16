@@ -251,7 +251,7 @@ class EED_Batch extends EED_Module
         wp_enqueue_style(
             EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN,
             EE_ADMIN_URL . 'assets/ee-admin-page.css',
-            [],
+            ['espresso_admin_base'],
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_style(

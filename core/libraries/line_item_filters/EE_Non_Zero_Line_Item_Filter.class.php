@@ -49,7 +49,7 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
                 }
                 if (
                     (
-                        $child_line_item instanceof EEI_Line_Item
+                        $child_line_item instanceof EE_Line_Item
                         && $child_line_item->type() === EEM_Line_Item::type_sub_total
                     )
                     || (

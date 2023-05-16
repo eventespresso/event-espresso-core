@@ -6,5 +6,5 @@
 	margin-block-start: 1rem;
 	margin-block-end: 1rem;
 	padding-inline-start: 10px;
-	font-size: 2rem;
+	font-size: var(--ee-font-size-4xl);
  }

@@ -1201,12 +1201,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'DTT_order'            => $default ? 'DTTNUM' : $datetime_row,
             'dtt_sold'             => $default ? '0' : $datetime->get('DTT_sold'),
             'dtt_reserved'         => $default ? '0' : $datetime->reserved(),
-            'clone_icon'           => ! empty($datetime) && $datetime->get('DTT_sold') > 0
-                ? ''
-                : 'clone-icon ee-icon ee-icon-clone clickable',
+            'can_clone'            => $datetime instanceof EE_Datetime && $datetime->get('DTT_sold'),
+            'can_trash'            => count($all_datetimes) > 1
+                                      && $datetime instanceof EE_Datetime
+                                      && ! $datetime->get('DTT_sold'),
             'trash_icon'           => ! empty($datetime) && $datetime->get('DTT_sold') > 0
-                ? 'dashicons dashicons-lock'
-                : 'trash-icon dashicons dashicons-post-trash clickable',
+                ? 'trash-entity dashicons dashicons-lock'
+                : 'trash-entity dashicons dashicons-post-trash clickable',
             'reg_list_url'         => $default || ! $datetime->event() instanceof EE_Event
                 ? ''
                 : EE_Admin_Page::add_query_args_and_nonce(
@@ -1418,7 +1419,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         // (otherwise there won't be any new relationships created for tickets based off of the default ticket).
         // This will future proof in case there is ever any behaviour change between what the primary_key defaults to.
         $default_datetime = $default || ($ticket instanceof EE_Ticket && $ticket->is_default());
-        $ticket_datetimes = $ticket instanceof EE_Ticket && isset($ticket_datetimes[ $ticket->ID() ])
+        $tkt_datetimes = $ticket instanceof EE_Ticket && isset($ticket_datetimes[ $ticket->ID() ])
             ? $ticket_datetimes[ $ticket->ID() ]
             : [];
         $ticket_subtotal  = $default ? 0 : $ticket->get_ticket_subtotal();
@@ -1527,8 +1528,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 : '',
             'total_price_rows'              => count($prices) > 1 ? count($prices) : 1,
             'ticket_datetimes_list'         => $default ? '<li class="hidden"></li>' : '',
-            'starting_ticket_datetime_rows' => $default || $default_datetime ? '' : implode(',', $ticket_datetimes),
-            'ticket_datetime_rows'          => $default ? '' : implode(',', $ticket_datetimes),
+            'starting_ticket_datetime_rows' => $default || $default_datetime ? '' : implode(',', $tkt_datetimes),
+            'ticket_datetime_rows'          => $default ? '' : implode(',', $tkt_datetimes),
             'existing_ticket_price_ids'     => $default ? '' : implode(',', array_keys($prices)),
             'ticket_template_id'            => $default ? 0 : $ticket->get('TTM_ID'),
             'TKT_taxable'                   => $TKT_taxable,
@@ -1551,10 +1552,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                                                && $ticket->deleted()
                                                && ! $ticket->is_permanently_deleteable()
                 ? 'dashicons dashicons-lock '
-                : 'trash-icon dashicons dashicons-post-trash clickable',
-            'clone_icon'                    => $ticket instanceof EE_Ticket && $ticket->deleted()
-                ? ''
-                : 'clone-icon ee-icon ee-icon-clone clickable',
+                : 'trash-entity dashicons dashicons-post-trash clickable',
+
+            'can_clone'            => $ticket instanceof EE_Ticket && ! $ticket->deleted(),
+            'can_trash'            => $ticket instanceof EE_Ticket
+                                      && (! $ticket->deleted() && $ticket->is_permanently_deleteable()),
         ];
         $template_args['trash_hidden'] = count($all_tickets) === 1
                                          && $template_args['trash_icon'] !== 'dashicons dashicons-lock'
@@ -2025,9 +2027,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         array $ticket_datetimes = [],
         bool $default = false
     ): string {
-        $ticket_datetimes = $ticket instanceof EE_Ticket && isset($ticket_datetimes[ $ticket->ID() ])
+        $tkt_datetimes = $ticket instanceof EE_Ticket && isset($ticket_datetimes[ $ticket->ID() ])
             ? $ticket_datetimes[ $ticket->ID() ]
-            : [];
+            : array();
         $template_args    = [
             'dtt_row'                  => $default && ! $datetime instanceof EE_Datetime
                 ? 'DTTNUM'
@@ -2035,10 +2037,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'tkt_row'                  => $default
                 ? 'TICKETNUM'
                 : $ticket_row,
-            'ticket_datetime_selected' => in_array($datetime_row, $ticket_datetimes, true)
+            'ticket_datetime_selected' => in_array($datetime_row, $tkt_datetimes, true)
                 ? ' ticket-selected'
                 : '',
-            'ticket_datetime_checked'  => in_array($datetime_row, $ticket_datetimes, true)
+            'ticket_datetime_checked'  => in_array($datetime_row, $tkt_datetimes, true)
                 ? ' checked'
                 : '',
             'DTT_name'                 => $default && empty($datetime)

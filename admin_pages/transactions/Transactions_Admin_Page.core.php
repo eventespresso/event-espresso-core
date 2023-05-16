@@ -707,6 +707,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $this->_template_args['total_paid']  = $total_paid;
 
         $this->_template_args['amount_due'] = EEH_Template::format_currency($amount_due, false, false);
+        $this->_template_args['amount_due_raw'] = $amount_due;
 
         $this->_template_args['amount_due_class'] = '';
 

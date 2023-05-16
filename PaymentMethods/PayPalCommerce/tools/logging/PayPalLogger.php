@@ -3,6 +3,7 @@
 namespace EventEspresso\PaymentMethods\PayPalCommerce\tools\logging;
 
 use EE_Error;
+use EE_Gateway;
 use EE_Payment_Method;
 use EED_PayPalOnboard;
 use EEM_Payment_Method;
@@ -75,7 +76,10 @@ class PayPalLogger
             // Default to the standard PP Commerce PM.
             $paypal_pm = EEM_Payment_Method::instance()->get_one_by_slug(Domain::PM_SLUG);
         }
-        $paypal_pm->type_obj()->get_gateway()->log([$default_msg => $data], $paypal_pm);
+        $paypal_gateway = $paypal_pm->type_obj()->get_gateway();
+        if ($paypal_gateway instanceof EE_Gateway) {
+            $paypal_gateway->log([$default_msg => $data], $paypal_pm);
+        }
         if ($popup_log) {
             self::logInWindow(json_encode($data));
         }

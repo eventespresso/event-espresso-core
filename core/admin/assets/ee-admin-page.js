@@ -304,7 +304,7 @@ jQuery(document).ready(function($) {
 		const tooltipTop = tooltipPosition.top;
 		const tooltipBottom = tooltipTop + tooltipHeight;
 
-		let shiftLeft = -16;
+		let shiftLeft = -12;
 		let shiftTop = (tooltipHeight + 24) * -1;
 
 		if (tooltipTop < windowTop) {
@@ -331,7 +331,39 @@ jQuery(document).ready(function($) {
 		$(this).find('.ee-tooltip').fadeOut(125).remove();
 	});
 
+	// list table filters
 	$('.ee-list-table-filter-submit').click(function () {
 		$('#ee-list-table-use-filters').val('yes');
 	});
+
+
+	const $listTableFilters = $('#ee-list-table-filters-dv');
+	const $filtersToggle = $('#ee-list-table-filters-toggle');
+	const $filtersToggleText = $('.ee-list-table-filters-toggle-text');
+	const $filtersToggleHideText = $filtersToggle.data('hideText');
+	const $filtersToggleShowText = $filtersToggle.data('showText');
+	// kinda lame, but we need to delay toggling the button text by the slightest amount
+	// because otherwise the visibility of $listTableFilters is off and incorrect
+	let delayedToggleTextChange;
+	// if the toggle filters button is clicked...
+	$filtersToggle.on('click', function (e) {
+		e.preventDefault();
+		delayedToggleTextChange = setTimeout(toggleListTableFilters, 1);
+	});
+	// or the window orientation changes
+	$(window).on("orientationchange",function(){
+		delayedToggleTextChange = setTimeout(toggleListTableFilters, 1);
+	});
+	const toggleListTableFilters = function(el) {
+		if ($listTableFilters.is(":visible")) {
+			$listTableFilters.fadeOut("fast", function() {
+				$filtersToggleText.text($filtersToggleShowText);
+			});
+		} else {
+			$listTableFilters.css("display", "flex").hide().fadeIn("fast", function() {
+				$filtersToggleText.text($filtersToggleHideText);
+			});
+		}
+		clearTimeout(delayedToggleTextChange);
+	}
 });

@@ -1817,7 +1817,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'TKT_sold'            => $skeleton ? 0 : $ticket->get('TKT_sold'),
             'trash_icon'          => ($skeleton || (! empty($ticket) && ! $ticket->get('TKT_deleted')))
                                      && (! empty($ticket) && $ticket->get('TKT_sold') === 0)
-                ? 'trash-icon dashicons dashicons-post-trash clickable' : 'dashicons dashicons-lock',
+                ? 'dashicons dashicons-post-trash clickable'
+                : 'dashicons dashicons-lock',
             'disabled'            => $skeleton || (! empty($ticket) && ! $ticket->get('TKT_deleted')) ? ''
                 : ' disabled=disabled',
         ];

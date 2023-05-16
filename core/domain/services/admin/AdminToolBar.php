@@ -6,6 +6,8 @@ use EE_Capabilities;
 use EE_Maintenance_Mode;
 use EEH_URL;
 use EEM_Registration;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\Request;
 use WP_Admin_Bar;
 
 /**
@@ -18,30 +20,15 @@ use WP_Admin_Bar;
  */
 class AdminToolBar
 {
-    /**
-     * @var WP_Admin_Bar $admin_bar
-     */
-    private $admin_bar;
+    private ?WP_Admin_Bar   $admin_bar        = null;
 
-    /**
-     * @var EE_Capabilities $capabilities
-     */
-    private $capabilities;
+    private EE_Capabilities $capabilities;
 
-    /**
-     * @var string $events_admin_url
-     */
-    private $events_admin_url;
+    private string          $events_admin_url = '';
 
-    /**
-     * @var string $menu_class
-     */
-    private $menu_class = 'espresso_menu_item_class';
+    private string          $menu_class       = 'espresso_menu_item_class';
 
-    /**
-     * @var string $reg_admin_url
-     */
-    private $reg_admin_url;
+    private string          $reg_admin_url    = '';
 
 
     /**
@@ -52,7 +39,7 @@ class AdminToolBar
     public function __construct(EE_Capabilities $capabilities)
     {
         $this->capabilities = $capabilities;
-        add_action('admin_bar_menu', array($this, 'espressoToolbarItems'), 100);
+        add_action('admin_bar_menu', [$this, 'espressoToolbarItems'], 100);
         $this->enqueueAssets();
     }
 
@@ -61,7 +48,7 @@ class AdminToolBar
      *    espresso_toolbar_items
      *
      * @access public
-     * @param  WP_Admin_Bar $admin_bar
+     * @param WP_Admin_Bar $admin_bar
      * @return void
      */
     public function espressoToolbarItems(WP_Admin_Bar $admin_bar)
@@ -74,13 +61,12 @@ class AdminToolBar
         ) {
             return;
         }
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $this->admin_bar = $admin_bar;
         // we don't use the constants EVENTS_ADMIN_URL or REG_ADMIN_URL
         // because they're only defined in each of their respective constructors
         // and this might be a frontend request, in which case they aren't available
         $this->events_admin_url = admin_url('admin.php?page=espresso_events');
-        $this->reg_admin_url = admin_url('admin.php?page=espresso_registrations');
+        $this->reg_admin_url    = admin_url('admin.php?page=espresso_registrations');
         // now let's add all of the menu items
         $this->addTopLevelMenu();
         $this->addEventsSubMenu();
@@ -103,6 +89,7 @@ class AdminToolBar
         $this->addRegistrationOverviewThisMonthNotApproved();
         $this->addRegistrationOverviewThisMonthCancelled();
         $this->addExtensionsAndServices();
+        $this->addFontSizeSubMenu();
     }
 
 
@@ -114,7 +101,7 @@ class AdminToolBar
         wp_register_style(
             'espresso-admin-toolbar',
             EE_GLOBAL_ASSETS_URL . 'css/espresso-admin-toolbar.css',
-            array('dashicons'),
+            ['dashicons'],
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_style('espresso-admin-toolbar');
@@ -127,17 +114,17 @@ class AdminToolBar
     private function addTopLevelMenu()
     {
         $this->admin_bar->add_menu(
-            array(
+            [
                 'id'    => 'espresso-toolbar',
                 'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">'
                            . esc_html_x('Event Espresso', 'admin bar menu group label', 'event_espresso')
                            . '</span>',
                 'href'  => $this->events_admin_url,
-                'meta'  => array(
+                'meta'  => [
                     'title' => esc_html__('Event Espresso', 'event_espresso'),
                     'class' => $this->menu_class . 'first',
-                ),
-            )
+                ],
+            ]
         );
     }
 
@@ -154,18 +141,18 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-events',
                     'parent' => 'espresso-toolbar',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Events', 'event_espresso'),
                     'href'   => $this->events_admin_url,
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Events', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class,
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -183,12 +170,12 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-events-add-edit',
                     'parent' => 'espresso-toolbar-events',
                     'title'  => esc_html__('Add / Edit', 'event_espresso'),
                     'href'   => '',
-                )
+                ]
             );
         }
     }
@@ -206,21 +193,21 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-events-new',
                     'parent' => 'espresso-toolbar-events',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Add New', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array('action' => 'create_new'),
+                        ['action' => 'create_new'],
                         $this->events_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Add New', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class,
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -242,24 +229,24 @@ class AdminToolBar
                 )
             ) {
                 $this->admin_bar->add_menu(
-                    array(
+                    [
                         'id'     => 'espresso-toolbar-events-edit',
                         'parent' => 'espresso-toolbar-events',
                         'title'  => '<span class="ee-toolbar-icon"></span>'
                                     . esc_html__('Edit Event', 'event_espresso'),
                         'href'   => EEH_URL::add_query_args_and_nonce(
-                            array(
+                            [
                                 'action' => 'edit',
                                 'post'   => $post->ID,
-                            ),
+                            ],
                             $this->events_admin_url
                         ),
-                        'meta'   => array(
+                        'meta'   => [
                             'title'  => esc_html__('Edit Event', 'event_espresso'),
                             'target' => '',
                             'class'  => $this->menu_class,
-                        ),
-                    )
+                        ],
+                    ]
                 );
             }
         }
@@ -278,12 +265,12 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-events-view',
                     'parent' => 'espresso-toolbar-events',
                     'title'  => esc_html__('View', 'event_espresso'),
                     'href'   => '',
-                )
+                ]
             );
         }
     }
@@ -301,18 +288,18 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-events-all',
                     'parent' => 'espresso-toolbar-events',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('All', 'event_espresso'),
                     'href'   => $this->events_admin_url,
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('All', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class,
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -330,24 +317,24 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-events-today',
                     'parent' => 'espresso-toolbar-events',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Today', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array(
+                        [
                             'action' => 'default',
                             'status' => 'today',
-                        ),
+                        ],
                         $this->events_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Today', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class,
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -365,24 +352,24 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-events-month',
                     'parent' => 'espresso-toolbar-events',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('This Month', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array(
+                        [
                             'action' => 'default',
                             'status' => 'month',
-                        ),
+                        ],
                         $this->events_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('This Month', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class,
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -400,18 +387,18 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations',
                     'parent' => 'espresso-toolbar',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Registrations', 'event_espresso'),
                     'href'   => $this->reg_admin_url,
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Registrations', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class,
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -429,17 +416,17 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations-today',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => esc_html__('Today', 'event_espresso'),
                     'href'   => '',
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Today', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class,
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -457,25 +444,25 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations-today-approved',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Approved', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array(
+                        [
                             'action'      => 'default',
                             'status'      => 'today',
                             '_reg_status' => EEM_Registration::status_id_approved,
-                        ),
+                        ],
                         $this->reg_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Approved', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class . ' ee-toolbar-icon-approved',
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -493,25 +480,25 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations-today-pending',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Pending', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array(
+                        [
                             'action'      => 'default',
                             'status'      => 'today',
                             '_reg_status' => EEM_Registration::status_id_pending_payment,
-                        ),
+                        ],
                         $this->reg_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Pending Payment', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class . ' ee-toolbar-icon-pending',
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -529,25 +516,25 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations-today-not-approved',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Not Approved', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array(
+                        [
                             'action'      => 'default',
                             'status'      => 'today',
                             '_reg_status' => EEM_Registration::status_id_not_approved,
-                        ),
+                        ],
                         $this->reg_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Not Approved', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class . ' ee-toolbar-icon-not-approved',
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -565,25 +552,25 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations-today-cancelled',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Cancelled', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array(
+                        [
                             'action'      => 'default',
                             'status'      => 'today',
                             '_reg_status' => EEM_Registration::status_id_cancelled,
-                        ),
+                        ],
                         $this->reg_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Cancelled', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class . ' ee-toolbar-icon-cancelled',
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -601,7 +588,7 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations-month',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => esc_html__('This Month', 'event_espresso'),
@@ -612,12 +599,12 @@ class AdminToolBar
                     //     ),
                     //     $this->reg_admin_url
                     // ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('This Month', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class,
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -635,25 +622,25 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations-month-approved',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Approved', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array(
+                        [
                             'action'      => 'default',
                             'status'      => 'month',
                             '_reg_status' => EEM_Registration::status_id_approved,
-                        ),
+                        ],
                         $this->reg_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Approved', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class . ' ee-toolbar-icon-approved',
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -671,25 +658,25 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations-month-pending',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Pending', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array(
+                        [
                             'action'      => 'default',
                             'status'      => 'month',
                             '_reg_status' => EEM_Registration::status_id_pending_payment,
-                        ),
+                        ],
                         $this->reg_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Pending', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class . ' ee-toolbar-icon-pending',
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -707,25 +694,25 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations-month-not-approved',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Not Approved', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array(
+                        [
                             'action'      => 'default',
                             'status'      => 'month',
                             '_reg_status' => EEM_Registration::status_id_not_approved,
-                        ),
+                        ],
                         $this->reg_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Not Approved', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class . ' ee-toolbar-icon-not-approved',
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -743,25 +730,25 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-registrations-month-cancelled',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Cancelled', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
-                        array(
+                        [
                             'action'      => 'default',
                             'status'      => 'month',
                             '_reg_status' => EEM_Registration::status_id_cancelled,
-                        ),
+                        ],
                         $this->reg_admin_url
                     ),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Cancelled', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class . ' ee-toolbar-icon-cancelled',
-                    ),
-                )
+                    ],
+                ]
             );
         }
     }
@@ -779,18 +766,75 @@ class AdminToolBar
             )
         ) {
             $this->admin_bar->add_menu(
-                array(
+                [
                     'id'     => 'espresso-toolbar-extensions-and-services',
                     'parent' => 'espresso-toolbar',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
                                 . esc_html__('Extensions & Services', 'event_espresso'),
                     'href'   => admin_url('admin.php?page=espresso_packages'),
-                    'meta'   => array(
+                    'meta'   => [
                         'title'  => esc_html__('Extensions & Services', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class,
+                    ],
+                ]
+            );
+        }
+    }
+
+
+    /**
+     * @return void
+     */
+    private function addFontSizeSubMenu()
+    {
+        $this->admin_bar->add_menu(
+            [
+                'id'     => 'espresso-toolbar-font-size',
+                'parent' => 'espresso-toolbar',
+                'title'  => '<span class="ee-toolbar-icon"></span>'
+                            . esc_html__('Set Font Size', 'event_espresso'),
+                'href'   => '',
+                'meta'   => [
+                    'title'  => esc_html__('Set Font Size', 'event_espresso'),
+                    'target' => '',
+                    'class'  => $this->menu_class,
+                ],
+            ]
+        );
+
+        $settings_admin_url = admin_url('admin.php?page=espresso_general_settings');
+
+        $font_sizes = [
+            'tiny'    => AdminFontSize::FONT_SIZE_TINY,
+            'smaller' => AdminFontSize::FONT_SIZE_SMALLER,
+            'small'   => AdminFontSize::FONT_SIZE_SMALL,
+            'default' => AdminFontSize::FONT_SIZE_DEFAULT,
+            'big'     => AdminFontSize::FONT_SIZE_BIG,
+            'bigger'  => AdminFontSize::FONT_SIZE_BIGGER,
+        ];
+
+        foreach ($font_sizes as $font_size => $value) {
+            $this->admin_bar->add_menu(
+                [
+                    'id'     => "espresso-toolbar-set-font-size-$font_size",
+                    'parent' => 'espresso-toolbar-font-size',
+                    'title'  => '<span class="ee-toolbar-icon"></span>'
+                                . sprintf(
+                                    /* translators: Font Size Small */
+                                    esc_html__('Font Size %1$s', 'event_espresso'),
+                                    ucwords($font_size)
+                                ),
+                    'href'   => EEH_URL::add_query_args_and_nonce(
+                        ['action' => 'set_font_size', 'font_size' => $value],
+                        $settings_admin_url
                     ),
-                )
+                    'meta'   => [
+                        'title'  => esc_html__('increases or decreases the Event Espresso admin font size', 'event_espresso'),
+                        'target' => '',
+                        'class'  => $this->menu_class,
+                    ],
+                ]
             );
         }
     }

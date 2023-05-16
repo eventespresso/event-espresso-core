@@ -19,10 +19,12 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 <?php do_action('AHEE__event_tickets_metabox_main__before_content'); ?>
 <div id="event-and-ticket-form-content">
-    <h4 class="event-tickets-datetimes-title">
-        <?php esc_html_e('Event Datetime', 'event_espresso'); ?>
-    </h4>
-    <?php echo wp_kses($event_datetime_help_link, AllowedTags::getAllowedTags()); ?>
+    <div class="ee-layout-row">
+        <h4 class="event-tickets-datetimes-title">
+            <?php esc_html_e('Event Datetime', 'event_espresso'); ?>
+        </h4>
+        <?php echo wp_kses($event_datetime_help_link, AllowedTags::getAllowedTags()); ?>
+    </div>
     <div class="event-datetimes-container">
         <!-- these are the ids for the current displayed datetimes (on create new this is blank -->
         <input id='datetime-IDs'
@@ -130,7 +132,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                value="<?php echo esc_attr($total_ticket_rows); ?>"
         />
         <div class="save-cancel-button-container">
-            <button class="button--secondary ee-create-button" data-context="ticket">
+            <button class="button button--primary ee-create-button" data-context="ticket">
                 <?php esc_html_e('Create New Ticket', 'event_espresso'); ?>
             </button>
         </div>

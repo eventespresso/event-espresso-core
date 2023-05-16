@@ -24,170 +24,34 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 {
+    protected ?EE_Admin_Config     $admin_config       = null;
+
+    protected ?EE_Admin_Hooks      $_hook_obj          = null;
+
+    protected ?EE_Admin_List_Table $_list_table_object = null;
+
+    protected ?EE_Registry         $EE                 = null;
+
+    protected ?FeatureFlags        $feature            = null;
+
+    protected ?LoaderInterface     $loader             = null;
+
+    protected ?RequestInterface    $request            = null;
+
+    protected ?WP_Screen           $_current_screen    = null;
+
     /**
-     * @var EE_Admin_Config
+     * @var array
+     * @since 5.0.0.p
      */
-    protected $admin_config;
+    private array $publish_post_meta_box_hidden_fields = [];
 
     /**
-     * @var LoaderInterface
-     */
-    protected $loader;
-
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
-
-    // set in _init_page_props()
-    public $page_slug;
-
-    public $page_label;
-
-    public $page_folder;
-
-    // set in define_page_props()
-    protected $_admin_base_url;
-
-    protected $_admin_base_path;
-
-    protected $_admin_page_title;
-
-    protected $_labels;
-
-
-    // set early within EE_Admin_Init
-    protected $_wp_page_slug;
-
-    // nav tabs
-    protected $_nav_tabs;
-
-    protected $_default_nav_tab_name;
-
-
-    // template variables (used by templates)
-    protected $_template_path;
-
-    protected $_column_template_path;
-
-    /**
-     * @var array $_template_args
-     */
-    protected $_template_args = [];
-
-    /**
-     * this will hold the list table object for a given view.
+     * some default things shared by all child classes
      *
-     * @var EE_Admin_List_Table $_list_table_object
+     * @var string[]
      */
-    protected $_list_table_object;
-
-    // boolean
-    protected $_is_UI_request; // this starts at null so we can have no header routes progress through two states.
-
-    protected $_routing;
-
-    // list table args
-    protected $_view;
-
-    protected $_views;
-
-
-    // action => method pairs used for routing incoming requests
-    protected $_page_routes;
-
-    /**
-     * @var array $_page_config
-     */
-    protected $_page_config;
-
-    /**
-     * the current page route and route config
-     *
-     * @var array|string|null $_route
-     */
-    protected $_route;
-
-    /**
-     * @var string $_cpt_route
-     */
-    protected $_cpt_route;
-
-    /**
-     * @var array $_route_config
-     */
-    protected $_route_config;
-
-    /**
-     * Used to hold default query args for list table routes to help preserve stickiness of filters for carried out
-     * actions.
-     *
-     * @since 4.6.x
-     * @var array.
-     */
-    protected $_default_route_query_args;
-
-    // set via request page and action args.
-    protected $_current_page;
-
-    protected $_current_view;
-
-    protected $_current_page_view_url;
-
-    /**
-     * unprocessed value for the 'action' request param (default '')
-     *
-     * @var string
-     */
-    protected $raw_req_action = '';
-
-    /**
-     * unprocessed value for the 'page' request param (default '')
-     *
-     * @var string
-     */
-    protected $raw_req_page = '';
-
-    /**
-     * sanitized request action (and nonce)
-     *
-     * @var string
-     */
-    protected $_req_action = '';
-
-    /**
-     * sanitized request action nonce
-     *
-     * @var string
-     */
-    protected $_req_nonce = '';
-
-    /**
-     * @var string
-     */
-    protected $_search_btn_label = '';
-
-    /**
-     * @var string
-     */
-    protected $_search_box_callback = '';
-
-    /**
-     * @var WP_Screen
-     */
-    protected $_current_screen;
-
-    // for holding EE_Admin_Hooks object when needed (set via set_hook_object())
-    protected $_hook_obj;
-
-    // for holding incoming request data
-    protected $_req_data = [];
-
-    // yes / no array for admin form fields
-    protected $_yes_no_values = [];
-
-    // some default things shared by all child classes
-    protected $_default_espresso_metaboxes = [
+    protected array $_default_espresso_metaboxes = [
         '_espresso_news_post_box',
         '_espresso_links_post_box',
         '_espresso_ratings_request',
@@ -195,35 +59,110 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     ];
 
     /**
-     * @var EE_Registry
+     * Used to hold default query args for list table routes to help preserve stickiness of filters for carried out
+     * actions.
+     *
+     * @since 4.6.x
      */
-    protected $EE;
+    protected array $_default_route_query_args = [];
 
+    protected array $_labels                   = [];
+
+    protected array $_nav_tabs                 = [];
+
+    protected array $_page_config              = [];
 
     /**
-     * This is just a property that flags whether the given route is a caffeinated route or not.
+     * action => method pairs used for routing incoming requests
      *
-     * @var boolean
+     * @var array
      */
-    protected $_is_caf = false;
+    protected array $_page_routes   = [];
+
+    protected array $_req_data      = [];
+
+    protected array $_route_config  = [];
+
+    protected array $_template_args = [];
+
+    protected array $_views         = [];
+
+    /**
+     * yes / no array for admin form fields
+     *
+     * @var array|array[]
+     */
+    protected array $_yes_no_values = [];
+
+    protected ?bool  $_is_UI_request = null;
+    // this starts at null so we can have no header routes progress through two states.
+
+    protected bool  $_is_caf        = false;                                                                                                                                                                                                                                  // This is just a property that flags whether the given route is a caffeinated route or not.
+
+    protected bool  $_routing       = false;
 
     /**
      * whether or not initializePage() has run
      *
-     * @var boolean
+     * @var bool
      */
-    protected $initialized = false;
+    protected bool $initialized = false;
+
+
+    protected string $_admin_base_path      = '';
+
+    protected string $_admin_base_url       = '';
+
+    protected string $_admin_page_title     = '';
+
+    protected string $_column_template_path = '';
 
     /**
-     * @var FeatureFlags
+     * a boolean flag to set whether the current route is a cpt route or not.
+     *
+     * @var bool
      */
-    protected $feature;
-
+    protected bool $_cpt_route              = false;
 
     /**
+     * set via request page and action args.
+     *
      * @var string
      */
-    protected $class_name;
+    protected string $_current_page          = '';
+
+    protected string $_current_page_view_url = '';
+
+    protected string $_current_view          = '';
+
+    protected string $_default_nav_tab_name  = 'overview';
+
+    /**
+     * sanitized request action
+     *
+     * @var string
+     */
+    protected string $_req_action = '';
+
+    /**
+     * sanitized request action nonce
+     *
+     * @var string
+     */
+    protected string $_req_nonce        = '';
+
+    protected string $_search_btn_label = '';
+
+    protected string $_template_path    = '';
+
+    protected string $_view             = '';
+
+    /**
+     * set early within EE_Admin_Init
+     *
+     * @var string
+     */
+    protected string $_wp_page_slug = '';
 
     /**
      * if the current class is an admin page extension, like: Extend_Events_Admin_Page,
@@ -231,13 +170,38 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @var string
      */
-    protected $base_class_name;
+    protected string $base_class_name = '';
+
+    protected string $class_name    = '';
 
     /**
-     * @var array
-     * @since 5.0.0.p
+     * unprocessed value for the 'action' request param (default '')
+     *
+     * @var string
      */
-    private $publish_post_meta_box_hidden_fields = [];
+    protected string $raw_req_action = '';
+
+    /**
+     * unprocessed value for the 'page' request param (default '')
+     *
+     * @var string
+     */
+    protected string $raw_req_page = '';
+
+    public string    $page_folder  = '';
+
+    public string    $page_label   = '';
+
+    public string    $page_slug    = '';
+
+
+    /**
+     * the current page route and route config
+     *
+     * @var array|callable|string|null
+     */
+    protected $_route = null;
+
 
 
     /**
@@ -883,11 +847,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     private function _set_defaults()
     {
-        $this->_current_screen       = $this->_admin_page_title = $this->_req_action = $this->_req_nonce = null;
-        $this->_event                = $this->_template_path = $this->_column_template_path = null;
-        $this->_nav_tabs             = $this->_views = $this->_page_routes = [];
-        $this->_page_config          = $this->_default_route_query_args = [];
-        $this->_default_nav_tab_name = 'overview';
         // init template args
         $this->set_template_args(
             [
@@ -946,7 +905,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if (! $this->_current_page && ! $this->request->isAjax()) {
             return false;
         }
-        $this->_route = false;
         // check that the page_routes array is not empty
         if (empty($this->_page_routes)) {
             // user error msg
@@ -3217,8 +3175,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     public function admin_page_wrapper($about = false)
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $this->_nav_tabs                          = $this->_get_main_nav_tabs();
-        $this->_template_args['nav_tabs']         = $this->_nav_tabs;
+        $this->_template_args['nav_tabs']         = $this->_get_main_nav_tabs();
         $this->_template_args['admin_page_title'] = $this->_admin_page_title;
 
         $this->_template_args['before_admin_page_content'] = apply_filters(

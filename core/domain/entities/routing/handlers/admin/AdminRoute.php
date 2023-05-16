@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Admin_Config;
 use EE_Dependency_Map;
+use EventEspresso\core\domain\services\admin\AdminFontSize;
 use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
 use EventEspresso\core\domain\services\capabilities\CapCheck;
 use EventEspresso\core\services\routing\Route;
@@ -26,10 +27,7 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class AdminRoute extends Route
 {
-    /**
-     * @var EE_Admin_Config $admin_config
-     */
-    protected $admin_config;
+    protected EE_Admin_Config $admin_config;
 
     /**
      * @var array $default_dependencies
@@ -65,6 +63,9 @@ class AdminRoute extends Route
     }
 
 
+    /**
+     * @return CapCheckInterface
+     */
     public function getCapCheck()
     {
         return new CapCheck('edit_posts', 'access Event Espresso admin route');
@@ -115,6 +116,8 @@ class AdminRoute extends Route
         do_action(
             'AHEE__EventEspresso_core_domain_entities_routing_handlers_admin_AdminRoute__requestHandler__admin_loaded'
         );
+
+        AdminFontSize::setAdminFontSizeBodyClass();
         return true;
     }
 }

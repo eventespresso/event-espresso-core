@@ -1896,17 +1896,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         if ($checkin instanceof EE_Checkin) {
             return $checkin->status();
         }
-        // can't query checkin for a specific date if no ID was supplied
-        if (empty($DTT_ID)) {
-            return EE_Checkin::status_invalid;
-        }
+        
+        $checkin_query_params = [
+            'order_by' => ['CHK_timestamp' => 'DESC'],
+        ];
+
+        if ($DTT_ID > 0) {
+            $checkin_query_params[0] = ['DTT_ID' => $DTT_ID];
+        }        
 
         $checkin = $this->get_first_related(
             'Checkin',
-            [
-                ['DTT_ID' => $DTT_ID],
-                'order_by' => ['CHK_timestamp' => 'DESC'],
-            ]
+            $checkin_query_params
         );
         return $checkin instanceof EE_Checkin ? $checkin->status() :  EE_Checkin::status_checked_never;
     }

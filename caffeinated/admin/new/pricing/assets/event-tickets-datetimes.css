@@ -1,32 +1,19 @@
 .event-tickets-datetimes-title {
     display: inline-block;
-    font-size: 1.2em;
+    font-size: var(--ee-font-size-bigger);
     padding: 0;
     float: left;
 }
 
-.available-tickets-container {
-    margin: 2em 0 0.5em;
-}
-
-.event-datetimes-container {
-    margin-left: 10px;
-    margin-top: 10px;
-}
-
-/*.event-datetime-row {
-    border-bottom: 2px solid #eee;
-    /*padding-top: 15px;
-    padding-bottom: 11px;
-}/**/
-
-#espresso_events-create_new-event_date_info, #espresso_events-edit-event_date_info, #espresso_events-edit-event_editor_event_datetimes_help_tab, #espresso_events-create_new-event_editor_event_datetimes_help_tab {
+#espresso_events-create_new-event_date_info,
+#espresso_events-edit-event_date_info,
+#espresso_events-create_new-event_editor_event_datetimes_help_tab {
     top: 18px;
     left: 5px;
 }
 
 .datetime-title {
-    font-size: 1.1em;
+    font-size: var(--ee-font-size-big);
     font-weight: bold;
 }
 
@@ -39,10 +26,6 @@
 }
 
 
-.datetime-edit-table {
-    width: 100%;
-    float: left;
-}
 
 #datetime-editing-dtts-table {
     border-collapse: collapse;
@@ -59,34 +42,38 @@
 
 
 
-.datetime-edit-table .datetime-editing-dtts-tbody td:first-child {
+.datetime-edit-table td:first-child,
+.add-new-ticket-table td:first-child {
     width: 30%;
 }
 
-.datetime-edit-table .datetime-editing-dtts-tbody td {
-    height: 1.7em;
-    padding: .25em;
-}
 
-.datetime-edit-table .datetime-editing-dtts-tbody tr.advanced-dtt-edit-row td {
+.datetime-edit-table tr.advanced-dtt-edit-row td {
     height: auto;
 }
 
-.datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(2), .datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(3) {
+.datetime-edit-table td:nth-child(2),
+.datetime-edit-table td:nth-child(3),
+.add-new-ticket-table td:nth-child(2),
+.add-new-ticket-table td:nth-child(3) {
     width: 20%;
 }
 
-
-.datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(4) {
+.datetime-edit-table td:nth-child(4),
+.add-new-ticket-table td:nth-child(4) {
     width: 5%;
 }
 
-.datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(5) {
+.datetime-edit-table td:nth-child(5),
+.datetime-edit-table td:nth-child(6),
+.add-new-ticket-table td:nth-child(5),
+.add-new-ticket-table td:nth-child(6) {
     width: 5%;
     text-align: right;
 }
 
-.datetime-edit .datetime-edit-table .datetime-editing-dtts-tbody td:last-child {
+.datetime-edit .datetime-edit-table td:last-child,
+.add-new-ticket-table td:last-child {
     width: 20%;
 }
 
@@ -102,7 +89,7 @@
 
 @media all and (min-width: 1277px) {
 
-    .table-padding-top  {
+    .table-padding-top {
         position: relative;
         top: 4px;
     }
@@ -139,20 +126,6 @@
 }
 
 
-.ticket-table .ticket-row .trash-icon, .ticket-table .ticket-row .clone-icon:before, .datetime-editing-dtts-tbody .trash-icon, .datetime-editing-dtts-tbody .clone-icon:before {
-    margin-top: 6px;
-}
-
-.ticket-table .ticket-row .gear-icon, .datetime-editing-dtts-tbody .ticket-icon {
-    margin-top: 5px;
-    margin-right: 0;
-    margin-left: 0;
-}
-
-.ticket-table .ticket-row .dashicons-lock:before {
-    margin-left: 5px;
-    margin-top: 5px;
-}
 
 .ee-editor-footer-container {
     margin-top: 20px;
@@ -160,78 +133,70 @@
 
 .ee-editing-container {
     display: inline-block;
+    margin-inline-start: var(--ee-margin-smaller);
+    padding-block-start: var(--ee-padding-micro);
+    padding-inline: var(--ee-padding-pico);
+    border: 1px solid transparent;
+    border-start-start-radius: 3px;
+    border-start-end-radius: 3px;
+}
+
+.ee-editing-container .button {
+    margin-inline: 0 !important;
 }
 
 .ee-edit-editing {
     background-color: #f8f8f8;
+    border-left-color: #EEEEEE;
+    border-right-color: #EEEEEE;
+    border-top-color: #EEEEEE;
     height: 40px;
-    border-top: 1px solid #EEEEEE;
-    border-left: 1px solid #EEEEEE;
-    border-right: 1px solid #EEEEEE;
+    position: relative;
+    top: 3px;
 }
 
-
-.ee-editor-id-container {
-    float: left;
-    margin-top: 25px;
+.ee-edit-editing .button {
+    position: relative;
+    top: -3px;
 }
+
 
 .ee-editor-id-container .ee-item-id {
     color: #889;
-    font-size: 1.3em;
+    font-size: var(--ee-font-size-bigger);
     font-weight: 900;
 }
 
 .ticket-icon:before,
-.clone-icon:before,
-.trash-icon:before,
+.clone-entity:before,
+.trash-entity:before,
 .gear-icon:before,
+.datetime-edit-table .dashicons-admin-page:before,
 .datetime-edit-table .dashicons-lock:before,
-.datetime-edit-table .dashicons-groups:before {
-    font-size: 18px;
-    margin-left: 4px;
-    margin-right: 4px;
-    padding: 0;
-    text-align: center;
-	vertical-align: middle;
+.datetime-edit-table .dashicons-groups:before,
+.datetime-edit-table .dashicons-move:before,
+.ticket-table .dashicons-admin-page:before,
+.ticket-table .dashicons-lock:before,
+.ticket-table .dashicons-groups:before,
+.ticket-table .dashicons-move:before {
+    font-size: var(--ee-font-size-big);
 }
 
-.ee-edit-editing .ticket-icon:before,
-.ee-edit-editing .clone-icon:before,
-.ee-edit-editing .trash-icon:before,
-.ee-edit-editing .gear-icon:before,
-.ee-edit-editing .datetime-edit-table .dashicons-lock:before,
-.ee-edit-editing .datetime-edit-table .dashicons-groups:before {
-    margin-left: 3px;
-    margin-right: 3px;
-}
-
-.datetime-edit-table .dashicons-groups:before {
-	position: relative;
-    top:2px;
-}
 
 
 .datetime-tickets-edit h5 {
     margin-top: 1em;
 }
 
+.ticket-fieldset,
 .datetime-tickets-edit {
     background-color: #F8F8F8;
     border: 1px solid #EEEEEE;
-    border-radius: 3px 3px 3px 3px;
+    border-radius: 3px;
     padding: 1em 1.5em 2em;
-    margin-top: -8px;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
 
-.datetime-edit .ee-edit-editing {
-    /*height: 35px;
-    margin-top: 9px;
-    padding-top: 3px;
-    padding-left: 0;
-    padding-right: 6px;/**/
-}
 
 .button-column {
     padding-left: 10px;
@@ -260,12 +225,6 @@
 }
 
 
-.datetime-tickets-heading, .tickets-heading {
-    display: inline-block;
-    font-size: 1.1em;
-    margin: 2em 0 0.25em
-}
-
 .datetime-ticket {
     display: inline-block;
     padding: 5px;
@@ -279,23 +238,32 @@
 
 .datetime-ticket.ticket-status-TKS {
     background-color: transparent;
-    border-left: solid 4px var(--ee-status-color-purple);  /* prev: #FCB93C */
+    border-left: solid 4px var(--ee-status-color-purple);
+    /* prev: #FCB93C */
 }
+
 .datetime-ticket.ticket-status-TKO {
     background-color: transparent;
-    border-left: solid 4px var(--ee-status-color-green); /* prev: #70CC50 */
+    border-left: solid 4px var(--ee-status-color-green);
+    /* prev: #70CC50 */
 }
+
 .datetime-ticket.ticket-status-TKP {
     background-color: transparent;
-    border-left: solid 4px var(--ee-status-color-blue); /* prev: #00B1CA */
+    border-left: solid 4px var(--ee-status-color-blue);
+    /* prev: #00B1CA */
 }
-.datetime-ticket.ticket-status-TKA{
+
+.datetime-ticket.ticket-status-TKA {
     background-color: transparent;
-    border-left: solid 4px var(--ee-status-color-yellow); /* prev: #8A549A */
+    border-left: solid 4px var(--ee-status-color-yellow);
+    /* prev: #8A549A */
 }
+
 .datetime-ticket.ticket-status-TKE {
     background-color: transparent;
-    border-left: solid 4px var(--ee-status-color-grey); /* prev: #A39D9C */
+    border-left: solid 4px var(--ee-status-color-grey);
+    /* prev: #A39D9C */
 }
 
 
@@ -312,43 +280,70 @@
 /**
  * ticket selected background color for various wp3.8+ admin themes
  */
-.admin-color-fresh .ticket-selected { background-color: var(--ee-status-color-charcoal); color: #fff;}
-.admin-color-light .ticket-selected { background-color: var(--ee-status-color-grey); color: #fff;}
-.admin-color-blue .ticket-selected { background-color: var(--ee-status-color-blue); color: #fff;}
-.admin-color-coffee .ticket-selected { background-color: var(--ee-status-color-dark-grey); color: #fff;}
-.admin-color-ectoplasm .ticket-selected { background-color: var(--ee-status-color-purple); color: #fff;}
-.admin-color-midnight .ticket-selected { background-color: var(--ee-status-color-charcoal); color: #fff;}
-.admin-color-ocean .ticket-selected { background-color: var(--ee-status-color-light-blue); color: #fff;}
-.admin-color-sunrise .ticket-selected { background-color: var(--ee-status-color-orange); color: #fff;}
-
-.event-tickets-container {
-    width: 100%;
+.admin-color-fresh .ticket-selected {
+    background-color: var(--ee-status-color-charcoal);
+    color: #fff;
 }
 
-.ticket-table {
+.admin-color-light .ticket-selected {
+    background-color: var(--ee-status-color-grey);
+    color: #fff;
+}
+
+.admin-color-blue .ticket-selected {
+    background-color: var(--ee-status-color-blue);
+    color: #fff;
+}
+
+.admin-color-coffee .ticket-selected {
+    background-color: var(--ee-status-color-dark-grey);
+    color: #fff;
+}
+
+.admin-color-ectoplasm .ticket-selected {
+    background-color: var(--ee-status-color-purple);
+    color: #fff;
+}
+
+.admin-color-midnight .ticket-selected {
+    background-color: var(--ee-status-color-charcoal);
+    color: #fff;
+}
+
+.admin-color-ocean .ticket-selected {
+    background-color: var(--ee-status-color-light-blue);
+    color: #fff;
+}
+
+.admin-color-sunrise .ticket-selected {
+    background-color: var(--ee-status-color-orange);
+    color: #fff;
+}
+
+
+#event-and-ticket-form-content table {
     border-collapse: collapse;
     width: 100%;
 }
 
-.ticket-table thead {
+#event-and-ticket-form-content table thead {
     border-bottom: 2px solid #eee;
     font-weight: bold;
 }
 
-.ticket-table tbody td {
-    height: 1.7em;
-    padding:.25em;
+#event-and-ticket-form-content table tbody td {
+    padding: .0625rem;
 }
 
 
-.ee-ticket-sortable .sortable-drag-handle, 
+.ee-ticket-sortable .sortable-drag-handle,
 .ee-dtt-sortable .sortable-drag-handle {
     cursor: move;
 }
 
 
-.ticket-table tbody tr.ticket-row:first-child td {
-    /*padding-top: .3em;*/
+#event-and-ticket-form-content table tbody tr:first-child td {
+    padding-top: .25rem;
 }
 
 .ticket-table tbody tr.edit-ticket-row td {
@@ -363,49 +358,61 @@
     padding: 0;
     margin: 0;
 }
+
 .ticket-table tbody .ticket-row td:first-child span {
     display: block;
-    height:2.8em;
-    padding:0;
-}/**/
+    height: 2.8em;
+    padding: 0;
+}
+
+/**/
 
 /*Ticket Title */
-.ticket-table tbody .ticket-row td:nth-child(2) {
+.ticket-table tbody .ticket-row td:nth-child(2),
+#add-new-ticket-table tbody .ticket-row td:nth-child(2) {
     width: 28%;
 }
 
 /*datetime fields */
-.ticket-table tbody .ticket-row td:nth-child(3), .ticket-table tbody .ticket-row td:nth-child(4) {
-    width: 18%;
+.ticket-table tbody .ticket-row td:nth-child(3),
+#add-new-ticket-table tbody .ticket-row td:nth-child(3),
+.ticket-table tbody .ticket-row td:nth-child(4),
+#add-new-ticket-table tbody .ticket-row td:nth-child(4) {
+    width: clamp(10rem, 18%, 100%);
 }
 
 /* Price */
-.ticket-table tbody .ticket-row td:nth-child(5) {
+.ticket-table tbody .ticket-row td:nth-child(5),
+#add-new-ticket-table tbody .ticket-row td:nth-child(5) {
     width: 5%;
 }
 
-.ticket-table tbody .ticket-row td:nth-child(5) input {
-    text-align: right;
+.ticket-table tbody .ticket-row td:nth-child(5) input,
+.ticket-table tbody .ticket-row td:nth-child(6) input {
+    text-align: right !important;
 }
 
 /* Qty */
-.ticket-table tbody .ticket-row td:nth-child(6) {
+.ticket-table tbody .ticket-row td:nth-child(6),
+#add-new-ticket-table tbody .ticket-row td:nth-child(6) {
     width: 5%;
 }
 
 /* Sold, REgs */
 .ticket-table tbody .ticket-row td:nth-child(7),
+#add-new-ticket-table tbody .ticket-row td:nth-child(7),
 .ticket-table tbody .ticket-row td:nth-child(8),
+#add-new-ticket-table tbody .ticket-row td:nth-child(8),
 .ticket-table tbody .ticket-row.ee-wp-debug td:nth-child(9) {
-    text-align: right;
+    text-align: right !important;
     padding-right: 1em;
     width: 4%;
 }
 
 /* Actions */
-.ticket-table tbody .ticket-row td:last-child {
-    width: 20%;
-    min-width: 120px;
+.ticket-table tbody .ticket-row td:last-child,
+#add-new-ticket-table tbody .ticket-row td:last-child {
+    min-width: 10rem;
 }
 
 
@@ -414,66 +421,85 @@
 .ticket-table .ticket-display-row-TKT_registrations,
 .datetime-tickets-sold,
 .datetime-tickets-reserved {
-    display:block;
+    display: block;
     margin-top: 4px;
+    padding-block: var(--ee-padding-smaller);
+    padding-inline: var(--ee-padding-nano);
 }
 
-.ee-status-strip-td {
-    /*padding: 50% 0 150% 0;*/
-    /* padding:0;
-     height: 1.4em;*/
+.TKT_price_label,
+.TKT_qty_label,
+.TKT_sold_label,
+.TKT_reserved_label,
+.TKT_regs_label {
+    display: inline-flex;
+    justify-content: end;
+    width: 100%;
 }
+
+.TKT_price_label,
+.TKT_qty_label {
+    position: relative;
+    inset-inline-start: -0.5rem;
+}
+
+.ee-status-strip-td {}
 
 /* sold out */
 .tkt-status-TKS {
-    border-color: var(--ee-status-color-purple);  /* prev: #FCB93C */
+    border-color: var(--ee-status-color-purple);
+    /* prev: #FCB93C */
 }
+
 .ee-status-legend-TKS {
-    background-color: var(--ee-status-color-purple);  /* prev: #FCB93C */
+    background-color: var(--ee-status-color-purple);
+    /* prev: #FCB93C */
 }
 
 /* on sale */
 .tkt-status-TKO {
-    border-color: var(--ee-status-color-green); /* prev: #70CC50 */
+    border-color: var(--ee-status-color-green);
+    /* prev: #70CC50 */
 }
+
 .ee-status-legend-TKO {
-    background-color: var(--ee-status-color-green); /* prev: #70CC50 */
+    background-color: var(--ee-status-color-green);
+    /* prev: #70CC50 */
 }
 
 /*pending*/
 .tkt-status-TKP {
-    border-color: var(--ee-status-color-blue); /* prev: #00B1CA */
+    border-color: var(--ee-status-color-blue);
+    /* prev: #00B1CA */
 }
+
 .ee-status-legend-TKP {
-    background-color: var(--ee-status-color-blue); /* prev: #00B1CA */
+    background-color: var(--ee-status-color-blue);
+    /* prev: #00B1CA */
 }
 
 /*archived*/
 .tkt-status-TKA {
-    border-color: var(--ee-status-color-charcoal); /* prev: #8A549A */
+    border-color: var(--ee-status-color-charcoal);
+    /* prev: #8A549A */
 }
+
 .ee-status-legend-TKA {
-    background-color: var(--ee-status-color-charcoal); /* prev: #8A549A */
+    background-color: var(--ee-status-color-charcoal);
+    /* prev: #8A549A */
 }
 
 /*expired*/
 .tkt-status-TKE {
-    border-color: var(--ee-status-color-grey); /* prev: #A39D9C */
+    border-color: var(--ee-status-color-grey);
+    /* prev: #A39D9C */
 }
+
 .ee-status-legend-TKE {
-    background-color: var(--ee-status-color-grey); /* prev: #A39D9C */
+    background-color: var(--ee-status-color-grey);
+    /* prev: #A39D9C */
 }
 
-
-
-.ticket-fieldset {
-    background-color: #F8F8F8;
-    border: 1px solid #EEEEEE;
-    border-radius: 3px 3px 3px 3px;
-    padding: 1em 1.5em 2em;
-    margin-top: -8px;
-    margin-bottom: 15px;
-}
 
 
 
@@ -481,7 +507,7 @@
     font-weight: bold;
     padding-left: 10px;
     padding-right: 10px;
-    font-size: 1.2em
+    font-size: var(--ee-font-size-bigger);
 }
 
 .total-price-container .currency-code {
@@ -490,35 +516,38 @@
 }
 
 .edit-ticket-TKT_description {
-    font-size: 1.25em;
+    font-size: var(--ee-font-size-bigger);
     padding: 0.5em;
 }
 
 
 .total-price-container {
-    float:right;
+    float: right;
     margin-top: 10px;
     line-height: 10px;
 }
 
 .ticket-price-amount {
     font-weight: bold;
-    font-size: 1.5em;
+    font-size: var(--ee-font-size-xl);
     display: inline-block;
     margin-left: 10px;
 }
 
-.basic-ticket-info, .price-table {
+.basic-ticket-info,
+.price-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.basic-ticket-info thead, .price-table thead {
+.basic-ticket-info thead,
+.price-table thead {
     font-weight: normal;
     border: none;
 }
 
-.basic-ticket-info tbody tr td, .price-table tbody tr td {
+.basic-ticket-info tbody tr td,
+.price-table tbody tr td {
     padding: 0;
 }
 
@@ -534,7 +563,7 @@
 
 .price-table thead tr td {
     padding-bottom: 5px;
-    font-size: 1.1em;
+    font-size: var(--ee-font-size-big);
 }
 
 .price-table thead tr td:first-child {
@@ -581,9 +610,6 @@
     margin-left: 6px;
 }
 
-.event-datetimes-container .datetime-create-button {
-    margin-top: -40px
-}
 
 .add-new-ticket-table {
     width: 100%;
@@ -594,8 +620,10 @@
 }
 
 
-@media all and (max-width: 770px)  {
-    .datetime-edit-table, #add-new-event-datetime-table {
+@media all and (max-width: 770px) {
+
+    .datetime-edit-table,
+    #add-new-event-datetime-table {
         width: 100%;
     }
 
@@ -603,30 +631,12 @@
         margin-top: -10px;
     }
 
-    .th-adjust, #add-new-event-datetime-table {
+    .th-adjust,
+    #add-new-event-datetime-table {
         margin-top: 10px;
     }
 }
 
-.add-new-ticket-table .add-new-ticket-shortcut-row td:first-child {
-    width: 30%;
-}
-
-.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(2), .add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(3) {
-    width: 20%
-}
-
-.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(4) {
-    width: 15%;
-}
-
-.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(5) {
-    width: 5%;
-}
-
-.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(6) {
-    width: 10%;
-}
 
 .add-datetime-ticket-container .save-cancel-button-container {
     padding-top: 14px;
@@ -641,18 +651,21 @@
 }
 
 .ticket-price-info-display {
+    display: inline-flex;
     margin: 0;
-    padding: 0;
+    padding-inline: var(--ee-padding-pico);
+    padding-block: var(--ee-padding-smaller);
     text-align: right;
 }
 
 .price-table tbody td:nth-child(4) {
     padding: 0;
     margin: 0;
-    text-align:right;
+    text-align: right;
 }
 
-.price-table tbody td:nth-child(2) input, .price-table tbody:nth-child(3) input {
+.price-table tbody td:nth-child(2) input,
+.price-table tbody:nth-child(3) input {
     width: 90%
 }
 
@@ -666,7 +679,8 @@
     margin-right: 0;
 }
 
-.price-table .price-total-row td, .price-table .price-subtotal-row td {
+.price-table .price-total-row td,
+.price-table .price-subtotal-row td {
     padding-top: 10px;
 }
 
@@ -684,31 +698,42 @@
 
 .ticket-fieldset .ee-price-create-button {
     margin-top: 10px;
-    float:right;
-}
-
-.available-tickets-container .ee-create-ticket-button {
-    margin-top: -20px;
-    float:right;
-}
-
-.sortable-drag-handle {
     float: right;
-    padding-top: 8px;
-    font-size: 14px;
-    cursor: move;
 }
 
-#event-and-ticket-form-content .dashicons, #event-and-ticket-form-content .ee-icon {
-    margin-right: 0;
+.available-tickets-container {
+    margin-block-start: var(--ee-margin-default);
+    padding-top: var(--ee-padding-default);
 }
 
-#event-and-ticket-form-content .event-tickets-datetimes-title .ee-icon, #event-and-ticket-form-content .event-tickets-datetimes-title .dashicons {
-    margin-right: 8px
+.price-table-container {
+    margin-block-start: var(--ee-margin-default);
+    padding-top: var(--ee-padding-default);
+}
+
+.ee-create-button-container {
+    margin-block-start: calc(-1 * var(--ee-margin-huge));
+    margin-block-end: var(--ee-margin-default);
+}
+
+.ee-new-datetime-container {
+    align-items: flex-end;
+}
+
+.event-datetime-row {
+    margin-block: var(--ee-margin-default);
 }
 
 
 
 .ticket-is-required-container {
     margin-top: 10px;
+}
+
+#event-and-ticket-form-content div:not(.ee-editing-container) .button.dashicons {
+    margin-inline: var(--ee-margin-pico);
+}
+
+#event-and-ticket-form-content .ee-editing-container .button.dashicons {
+    margin-inline: 0 !important;
 }

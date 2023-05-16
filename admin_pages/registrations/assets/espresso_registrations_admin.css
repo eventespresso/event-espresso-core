@@ -85,12 +85,12 @@
 }
 
 .espresso-admin .wp-list-table .TXN_paid .dashicons-yes:before {
-    font-size: 2rem;
+    font-size: var(--ee-font-size-4xl);
 }
 
 .espresso-admin #espresso-default-admin.registrations h2 .ee-event-name {
     color: var(--ee-font-color-dark);
-    font-size: 1.75rem;
+    font-size: var(--ee-font-size-3xl);
     margin-inline-start: 2rem;
 }
 
@@ -98,11 +98,11 @@
     align-items: baseline;
     color: var(--ee-font-color);
     display: inline-flex;
-    font-size: 1.2rem;
+    font-size: var(--ee-font-size-bigger);
 }
 .espresso-admin #espresso-default-admin.registrations h2 .ee-event-datetime-name .dashicons  {
     color: var(--ee-font-color-light);
-    font-size: 1.5rem;
+    font-size: var(--ee-font-size-xl);
     inset-block-start: 0.25rem;
     margin-inline-start: 2rem;
     margin-inline-end: 1.5rem;
@@ -241,7 +241,7 @@
 }
 
 #reg-admin-approve-decline-reg-status-dv h2 span {
-    font-size: 1.3em;
+    font-size: var(--ee-font-size-bigger);
     margin-left: .5em;
 }
 
@@ -275,7 +275,7 @@
 
 
 .jqplot-title {
-    font-size: 24px;
+    font-size: var(--ee-font-size-xl);
     text-align: left !important;
     margin: 1em 0 0 1em;
 }
@@ -285,7 +285,7 @@
     background: var(--ee-color-white);
     border: 1px solid var(--ee-border-color);
     border-radius: 3px;
-    font-size: 12px;
+    font-size: var(--ee-font-size-tiny);
     color: #333;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
 }
@@ -342,7 +342,7 @@
 .tkt-slctr-tbl th {
     padding: .5em 1em .5em 0;
     border: none;
-    font-size: 1em;
+    font-size: var(--ee-font-size-default);
     line-height: 1em;
     text-align: left;
 }
@@ -351,7 +351,7 @@
     padding: .5em 1em .5em 0;
     border: none;
     border-top: 1px solid var(--ee-border-color);
-    font-size: 1em;
+    font-size: var(--ee-font-size-default);
     line-height: 1em;
 }
 
@@ -386,7 +386,7 @@
 
 #titlediv .smaller-text-field,
 #titlediv .main-text-field {
-    font-size: 1.75rem;
+    font-size: var(--ee-font-size-3xl);
     height: 3.25rem;
     line-height: 100%;
     margin: 0;
@@ -463,12 +463,12 @@
 }
 
 .espresso-admin .wp-list-table .ee-icon-size-22:before {
-    font-size: 22px;
+    font-size: var(--ee-font-size-lg);
 }
 
 /**newsletter send css**/
 .ee-batch-message-send-form h3 {
-    font-size: 2em;
+    font-size: var(--ee-font-size-4xl);
 }
 
 .ee-batch-message-send-form .batch-message-edit-fields {
@@ -521,20 +521,20 @@
 
 /** line item table styles **/
 .ee-line-item-id {
-    font-size: .9em;
+    font-size: var(--ee-font-size-small);
     color: var(--ee-font-color-light);
     font-style: italic;
 }
 
 .ee-line-item-name {
-    font-size: 1.1em;
+    font-size: var(--ee-font-size-big);
     font-weight: 600;
 }
 
 #ee-add-reg-back-button-dv {
     background: var(--ee-color-white);
     color: var(--ee-font-color);
-    font-size: 1.2em;
+    font-size: var(--ee-font-size-bigger);
     line-height: 1.75em;
     padding: 1.5em 1.5em 2em;
     text-align: center;
@@ -599,9 +599,9 @@
 
 .espresso-admin .wp-list-table .ee-more-datetimes-toggle > .dashicons,
 .espresso-admin .wp-list-table .ee-more-datetimes-toggle > .dashicons:before {
-    font-size: 2rem;
-    height: 2rem;
-    width: 2rem;
+    font-size: var(--ee-font-size-4xl);
+    height: var(--ee-font-size-4xl);
+    width: var(--ee-font-size-4xl);
 }
 
 .ee-more-datetimes-toggle > .dashicons {
@@ -623,7 +623,7 @@
 /** Add a bit of style to tickets details table **/
 
 .spco-ticket-details {
-    font-size: 16px;
+    font-size: var(--ee-font-size-default);
     border-top: 1px solid var(--ee-border-color-table-row);
     padding: 30px 0 15px;
     width: 100%;
@@ -669,13 +669,15 @@
     background-color: hsl(207deg 40% 87.5%);
     color: hsl(207deg 5% 25%);
     display: inline-flex;
-    font-size: .95rem;
+    font-size: var(--ee-font-size-default);
     margin-inline-end: 1rem !important;
     padding: .25rem 1.5rem .375rem .5rem;
 }
 .csv-report-notice__wrapper .dashicons-info {
     color: hsl(207deg 65% 50%);
-    font-size: 1.5rem;
+    font-size: var(--ee-font-size-3xl);
+    height: var(--ee-font-size-3xl);
     margin-inline-end: .5rem;
-    top: 1px;
+    /* top: 1px; */
+    width: var(--ee-font-size-3xl);
 }

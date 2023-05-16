@@ -11,6 +11,7 @@ use EventEspresso\core\domain\entities\routing\handlers\admin\GutenbergEditor;
 use EventEspresso\core\domain\entities\routing\handlers\admin\NonEspressoAdminAjax;
 use EventEspresso\core\domain\entities\routing\handlers\admin\PersonalDataRequests;
 use EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage;
+use EventEspresso\core\domain\entities\routing\handlers\admin\WordPressProfilePage;
 use EventEspresso\core\domain\entities\routing\handlers\frontend\FrontendRequests;
 use EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests;
 use EventEspresso\core\services\assets\AssetManifestFactory;
@@ -151,6 +152,7 @@ class RegularRequests extends PrimaryRoute
             GutenbergEditor::class      => AdminRoute::getDefaultDependencies(),
             NonEspressoAdminAjax::class => AdminRoute::getDefaultDependencies(),
             WordPressPluginsPage::class => AdminRoute::getDefaultDependencies(),
+            WordPressProfilePage::class => AdminRoute::getDefaultDependencies(),
             // public dependencies
             PersonalDataRequests::class => $public,
             FrontendRequests::class     => $public,

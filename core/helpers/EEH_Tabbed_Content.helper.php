@@ -100,8 +100,8 @@ class EEH_Tabbed_Content
         $css_class = "ee-nav-tabs--{$tab_count}";
         $css_class .= $page_slug ? " ee-nav-tabs--$page_slug" : '';
         return "
-        <nav class='nav-tab-wrapper wp-clearfix {$css_class}' aria-label='{$aria_label}'>
-            {$tab_content}
+        <nav class='nav-tab-wrapper wp-clearfix $css_class' aria-label='$aria_label'>
+            $tab_content
         </nav>
         ";
     }

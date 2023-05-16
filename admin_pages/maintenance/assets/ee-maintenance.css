@@ -15,18 +15,18 @@ Styling the progress bar and migration page
 .ee-reset-delete-data-actions h4 {
     align-items: center;
     display: flex;
-    font-size: 1.5rem;
+    font-size: var(--ee-font-size-xl);
     justify-content: flex-start;
 }
 
 .ee-reset-delete-data-actions .ee-card {
     background-color: hsl(207deg 25% 97.5%);
-    font-size: 2rem;
+    font-size: var(--ee-font-size-3xl);
 }
 
 .ee-reset-delete-data-actions h4 .dashicons,
 .ee-reset-delete-data-actions h4 .dashicons:before {
-    font-size: 2rem;
+    font-size: var(--ee-font-size-4xl);
 }
 .ee-reset-delete-data-actions h4 .dashicons {
     margin-inline-end: 2rem;
@@ -83,7 +83,7 @@ figure {
     position: absolute;
     top: 5px;
     right: 10px;
-    font-size: 15px;
+    font-size: var(--ee-font-size-default);
     line-height: 15px;
     font-weight: normal;
     font-family: sans-serif;

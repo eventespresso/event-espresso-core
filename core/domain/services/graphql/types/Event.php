@@ -205,12 +205,6 @@ class Event extends TypeBase
                     esc_html__('Timezone (name) for Event times', 'event_espresso')
                 ),
                 new GraphQLField(
-                    'visibleOn',
-                    'String',
-                    'visible_on',
-                    esc_html__('Event Visible Date', 'event_espresso')
-                ),
-                new GraphQLField(
                     'venue',
                     'String',
                     null,

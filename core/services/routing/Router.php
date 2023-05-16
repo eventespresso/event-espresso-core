@@ -14,30 +14,15 @@ use Exception;
  */
 class Router
 {
-    /**
-     * @var EE_Dependency_Map
-     */
-    protected $dependency_map;
+    protected EE_Dependency_Map $dependency_map;
 
-    /**
-     * @var LoaderInterface
-     */
-    protected $loader;
+    protected LoaderInterface   $loader;
 
-    /**
-     * @var RouteHandler
-     */
-    protected $route_handler;
+    protected RouteHandler      $route_handler;
 
-    /**
-     * @var string
-     */
-    protected $route_request_type;
+    protected string            $route_request_type;
 
-    /**
-     * @var array
-     */
-    protected $routes_loaded;
+    protected array             $routes_loaded;
 
 
     /**
@@ -63,12 +48,6 @@ class Router
         if (isset($this->routes_loaded[ __FUNCTION__ ])) {
             return;
         }
-        do_action(
-            'AHEE__EventEspresso_core_services_routing_Router__loadPrimaryRoutes',
-            $this->route_handler,
-            $this->route_request_type,
-            $this->dependency_map
-        );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\routing\handlers\admin\ActivationRequests',
             Route::getFullDependencies()
@@ -81,12 +60,17 @@ class Router
         $this->route_handler->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\ActivationRequests');
         $this->route_handler->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RegularRequests');
         $this->route_request_type = $this->route_handler->getRouteRequestType();
+        do_action(
+            'AHEE__EventEspresso_core_services_routing_Router__loadPrimaryRoutes',
+            $this->route_handler,
+            $this->route_request_type,
+            $this->dependency_map
+        );
         $this->routes_loaded[ __FUNCTION__ ] = true;
     }
 
 
     /**
-     *
      * @throws Exception
      */
     public function registerShortcodesModulesAndWidgets()
@@ -114,7 +98,6 @@ class Router
 
 
     /**
-     *
      * @throws Exception
      */
     public function brewEspresso()
@@ -145,7 +128,6 @@ class Router
 
 
     /**
-     *
      * @throws Exception
      */
     public function loadControllers()
@@ -191,6 +173,9 @@ class Router
                     'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage'
                 );
                 $this->route_handler->addRoute(
+                    'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressProfilePage'
+                );
+                $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat'
                 );
                 break;
@@ -200,7 +185,6 @@ class Router
 
 
     /**
-     *
      * @throws Exception
      */
     public function coreLoadedAndReady()
@@ -231,7 +215,6 @@ class Router
 
 
     /**
-     *
      * @throws Exception
      */
     public function initializeLast()

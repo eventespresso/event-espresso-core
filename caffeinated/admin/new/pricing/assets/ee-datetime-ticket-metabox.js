@@ -394,9 +394,9 @@ jQuery(document).ready(function($) {
 
 			//verify that there isn't only one DTT row.  If there is then let's remove the trash icon from this element.  If there ISNT' then let's show all trash elements.
 			if ( $('.event-datetime-row', '.event-datetimes-container').length === 1 ) {
-				DTTeditform.find('.trash-icon').hide();
+				DTTeditform.find('.trash-entity').hide();
 			} else {
-				$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon', '.datetime-edit').show();
+				$('.event-datetime-row', '.event-datetimes-container').find('.trash-entity', '.datetime-edit').show();
 			}
 			return this;
 		},
@@ -555,7 +555,7 @@ jQuery(document).ready(function($) {
 			});
 
 			//make sure all trash-icons show
-			$('.trash-icon', '.event-datetimes-container').show();
+			$('.trash-entity', '.event-datetimes-container').show();
 
 			//set the context for any potential chains on this.
 			this.context = 'datetime';
@@ -730,7 +730,7 @@ jQuery(document).ready(function($) {
 
 
 			//make sure all trash icons show on creating the ticket
-			$('.trash-icon', '.event-tickets-container').show();
+			$('.trash-entity', '.event-tickets-container').show();
 
 
 			//set the context for any potential chains on this.
@@ -957,7 +957,7 @@ jQuery(document).ready(function($) {
 
 						//if we've only got one row then we need to remove trash on that row.
 						if ( $('.event-datetime-row', '.event-datetimes-container').length == 1 )
-							$('.event-datetime-row', '.event-datetimes-container').find('.trash-icon').hide();
+							$('.event-datetime-row', '.event-datetimes-container').find('.trash-entity').hide();
 						this.toggleActiveDTTorTicket(this.context, true);
 					}
 					break;
@@ -969,7 +969,7 @@ jQuery(document).ready(function($) {
 					this.ticketRow = row;
 					//if we've only got one row then we need to remove trash on that row.
 					if ( $('.ticket-row', '.event-tickets-container').length === 1 )
-						$('.trash-icon', '.event-tickets-container .ticket-row').hide();
+						$('.trash-entity', '.event-tickets-container .ticket-row').hide();
 					this.toggleActiveDTTorTicket(this.context, true);
 					this.createdItems = _.without(this.createdItems, this.ticketRow);
 					break;
@@ -1180,7 +1180,7 @@ jQuery(document).ready(function($) {
 			initialPRCrow.find('.ticket-price-dollar-sign-display').show();
 
 			if ( incomingcontext == 'short-ticket' )
-				initialPRCrow.find('.trash-icon').hide();/**/
+				initialPRCrow.find('.trash-entity').hide();/**/
 
 			//if this is triggered via the "short-ticket" context then we need to get the values from the create ticket form and add to the new row.
 			if ( incomingcontext == 'short-ticket' ) {
@@ -1239,7 +1239,7 @@ jQuery(document).ready(function($) {
 
 				//if there are multiple ticket rows after creating this then let's show all trash icons
 				if ( $('.ticket-row', '.event-tickets-container').length > 1 )
-					$('.trash-icon', '.event-tickets-container .ticket-row' ).show();
+					$('.trash-entity', '.event-tickets-container .ticket-row' ).show();
 
 			} else {
 				//make sure tkt sell until date matches the date-time start date for the first date.
@@ -1332,7 +1332,7 @@ jQuery(document).ready(function($) {
 			});
 
 			//show trash icon
-			newPRCrow.find('.trash-icon').show();
+			newPRCrow.find('.trash-entity').show();
 
 			//hide add-new button on previous row.
 			newPRCrow.prev().prev().find('.ee-create-button').hide();
@@ -2124,7 +2124,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * clone icon toggle
 	 */
-	tktHelper.event_and_ticket_form_content.on('click', '.clone-icon', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.clone-entity', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).data();
@@ -2148,7 +2148,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * trash icon click
 	 */
-	tktHelper.event_and_ticket_form_content.on('click', '.trash-icon', function(e) {
+	tktHelper.event_and_ticket_form_content.on('click', '.trash-entity', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).data();
@@ -2264,7 +2264,7 @@ jQuery(document).ready(function($) {
 			$('.ticket-price-dollar-sign-display', parentContainer).show();
 
 		//recalculate price
-		var data = $(this).parent().parent().find('.trash-icon').data();
+		var data = $(this).parent().parent().find('.trash-entity').data();
 		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
 	});
 
@@ -2274,7 +2274,7 @@ jQuery(document).ready(function($) {
 	tktHelper.event_and_ticket_form_content.on('keyup', '.edit-price-PRC_amount', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		var data = $(this).parent().parent().find('.trash-icon').data();
+		var data = $(this).parent().parent().find('.trash-entity').data();
 		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
 	});
 

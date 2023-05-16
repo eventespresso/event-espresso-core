@@ -180,11 +180,11 @@
     max-width: calc(100% - 4rem) !important;
 }
 #site_license_key + .dashicons.dashicons-admin-network {
-    font-size: 2rem;
-    height: 2rem;
+    font-size: var(--ee-font-size-4xl);
+    height: var(--ee-font-size-4xl);
     margin: 0.5rem 0.25rem 0;
-    width: 2rem;
+    width: var(--ee-font-size-4xl);
 }
 .espresso-admin input.ee_media_url {
-    max-width: calc(100% - 4rem) !important;
+    max-width: calc(100% - var(--ee-font-size-7xl)) !important;
 }

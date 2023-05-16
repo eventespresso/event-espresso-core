@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
 		newTicket = $(newTicket).appendTo('#all-ticket-rows');
 
 		//show trash icon
-		$('.trash-icon', newTicket ).show();
+		$('.trash-entity', newTicket ).show();
 
 		//focus on first input
 		newTicket.find('input:visible').first().focus();
@@ -62,7 +62,7 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.add-new-ticket-table').on('click', '.trash-icon', function(e) {
+	$('.add-new-ticket-table').on('click', '.trash-entity', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 

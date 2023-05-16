@@ -37,9 +37,13 @@ class EventsArchiveIframe extends Iframe
         $EED_Events_Archive->event_list();
         /** @var EspressoEvents $event_list */
         $event_list = EE_Registry::instance()->create('EventEspresso\core\domain\entities\shortcodes\EspressoEvents');
+        $shortcode_content = $event_list->processShortcode();
+        if (empty($shortcode_content)) {
+            return;
+        }
         parent::__construct(
             esc_html__('Event List', 'event_espresso'),
-            $event_list->processShortcode()
+            $shortcode_content
         );
         $this->addStylesheets(
             apply_filters(

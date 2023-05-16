@@ -47,7 +47,7 @@
 	padding: 1rem 2.5rem;
 }
 .ee-batch-runner__wrapper .ee-batch-runner__error h4 {
-	font-size: 1.1em;
+	font-size: var(--ee-font-size-big);
 	font-weight: 600;
 	margin-block-start: 1rem;
 	margin-block-end: .5rem;
@@ -59,14 +59,14 @@
 }
 .ee-batch-runner__wrapper .ee-batch-runner__error code {
 	color: var(--ee-btn-caution-hover);
-	font-size: 1em;
+	font-size: var(--ee-font-size-default);
 	font-weight: 600;
 }
 
 
 .ee-batch-runner__wrapper .ee-batch-job-update-heading {
 	color: var(--ee-font-color-light);
-	font-size: 1.2rem;
+	font-size: var(--ee-font-size-bigger);
 	font-weight: 800;
 	margin: 0;
 	margin-block-start: 1rem;

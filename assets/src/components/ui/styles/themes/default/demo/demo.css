@@ -1188,7 +1188,7 @@ h4 code {
     }
 
     h1 {
-        font-size: var(--ee-font-size-huge);
+        font-size: var(--ee-font-size-4xl);
         margin: var(--ee-padding-big) 0 var(--ee-padding-small);
     }
 

@@ -338,23 +338,22 @@ class EED_PayPalCommerce extends EED_Module
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function logJsError()
     {
-        // Default to the "first" Paypal checkout PM.
+        // Default to the "first" PayPal checkout PM.
         $request        = EED_Module::getRequest();
         $pm_slug        = $request->getRequestParam('pm_slug', Domain::PM_SLUG);
-        $payment_method = EEM_Payment_Method::instance()->get_one_of_type($pm_slug);
-        // Can't log without a pM object.
-        if (! $payment_method) {
-            return;
+        $payment_method = null;
+        $txn_id         = 'unknown';
+        try {
+            $payment_method = EEM_Payment_Method::instance()->get_one_of_type($pm_slug);
+            $txn_id         = sanitize_text_field($request->getRequestParam('txn_id', '-'));
+        } catch (Exception $e) {
+            // Don't throw out anything, log at least something.
         }
-        $txn_id      = sanitize_text_field($request->getRequestParam('txn_id', '-'));
-        $transaction = EEM_Transaction::instance()->get_one_by_ID($txn_id) ?? 'Payment_Method';
-        $payment_method->type_obj()->get_gateway()->log(
-            ['JS Error (Transaction: ' . $txn_id . ')' => $request->getRequestParam('message')],
-            $transaction
-        );
+        PayPalLogger::errorLog("JS Error on transaction: {$txn_id}", $request->postParams(), $payment_method);
     }
 
 

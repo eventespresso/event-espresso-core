@@ -444,8 +444,9 @@ class Insights {
         echo '<div class="updated"><p>';
             echo $notice;
             echo '</p><p class="submit">';
-            echo '&nbsp;<a href="' . esc_url( $optin_url ) . '" class="button-primary button-large">' . $this->client->__trans( 'Allow' ) . '</a>';
-            echo '&nbsp;<a href="' . esc_url( $optout_url ) . '" class="button-secondary button-large">' . $this->client->__trans( 'No thanks' ) . '</a>';
+            echo '&nbsp;<a href="' . esc_url( $optin_url ) . '" class="button button--primary button--big">' . $this->client->__trans( 'Allow' ) . '</a>';
+            echo '&nbsp;<a href="' . esc_url( $optout_url ) . '" class="button button--secondary button--big">' .
+                 $this->client->__trans( 'No thanks' ) . '</a>';
         echo '</p></div>';
 
         echo "<script type='text/javascript'>jQuery('." . $this->client->slug . "-insights-data-we-collect').on('click', function(e) {

@@ -8,27 +8,29 @@ class PhpToUnicode
      * array where keys are PHP date format parameters
      * and values are Unicode Date Format substitutions
      */
-    public static $date_formats = [
+    public static array $date_formats = [
         // YEAR
-        'y' => 'yy',    // 00, 01, ..., 99
-        'Y' => 'yyyy',  // 2000, 2001, ..., 2099
-        'o' => 'GGGG',  // ISO "week-numbering year" 2000, 2001, ..., 2099
+        'y'  => 'yy',    // 00, 01, ..., 99
+        'Y'  => 'yyyy',  // 2000, 2001, ..., 2099
+        'o'  => 'GGGG',  // ISO "week-numbering year" 2000, 2001, ..., 2099
         // MONTH
-        'M' => 'MMM',   // Jan, Feb, ..., Dec
-        'n' => 'M',     // 1, 2, ..., 12
-        'm' => 'MM',    // 01, 02, ..., 12
-        'F' => 'MMMM',  // January, February, ..., December
+        'M'  => 'MMM',   // Jan, Feb, ..., Dec
+        'n'  => 'M',     // 1, 2, ..., 12
+        'm'  => 'MM',    // 01, 02, ..., 12
+        'F'  => 'MMMM',  // January, February, ..., December
         // DAY
-        'd' => 'dd',    // 01, 02, ..., 31
-        'D' => 'eee',   // Sun, Mon, ..., Sat
+        'd'  => 'dd',    // 01, 02, ..., 31
+        'D'  => 'eee',   // Sun, Mon, ..., Sat
         'jS' => 'do',   // 1st, 2nd, ..., 31st
-        'j' => 'd',     // 1, 2, ..., 31
-        'l' => 'eeee',  // Sunday, Monday, ..., Saturday
-        'N' => 'e',     // Day of week 0, 1, ..., 6
-        'w' => 'i',     // ISO Day of week 1, 2, ..., 7
-        'z' => 'D',   // day of the year 0 - 365 to 1 - 366
+        'j'  => 'd',     // 1, 2, ..., 31
+        'l'  => 'eeee',  // Sunday, Monday, ..., Saturday
+        'N'  => 'e',     // Day of week 0, 1, ..., 6
+        'w'  => 'i',     // ISO Day of week 1, 2, ..., 7
+        'z'  => 'D',   // day of the year 0 - 365 to 1 - 366
         // WEEK
-        'W' => 'w',
+        'W'  => 'w',
+        // CHARACTERS
+        '|'  => '',
     ];
 
 
@@ -36,8 +38,8 @@ class PhpToUnicode
      * array where keys are PHP time format parameters
      * and values are Unicode Time Format substitutions
      */
-    public static $time_formats = [
-        // 'a' => 'a', // am, pm, no pecific JS alternative
+    public static array $time_formats = [
+        // 'a' => 'a', // am, pm, no specific JS alternative
         'A' => 'a', // AM, PM
         // HOUR
         // convert "g" to an intermediary format
@@ -60,12 +62,12 @@ class PhpToUnicode
      * array where keys are PHP timezone format parameters
      * and values are Unicode Timezone Format substitutions
      */
-    public static $timezone_formats = [
-        'Z' => 'ZZ',    // -0100, +0000, ..., +1200
-        'e' => 'Z',     // Timezone identifier UTC, GMT, Atlantic/Azores to -01:00, +00:00, ... +12:00
-        'T' => 'Z',     // Timezone abbreviation EST, MDT to -01:00, +00:00, ... +12:00
-        'P' => 'Z',     // -01:00, +00:00, ... +12:00
-        'O' => 'ZZ',    // -0100, +0000, ..., +1200
+    public static array $timezone_formats = [
+        'Z' => 'xx',    // -0100, +0000, ..., +1200
+        'e' => 'xxx',     // Timezone identifier UTC, GMT, Atlantic/Azores to -01:00, +00:00, ... +12:00
+        'T' => 'xxx',     // Timezone abbreviation EST, MDT to -01:00, +00:00, ... +12:00
+        'P' => 'xxx',     // -01:00, +00:00, ... +12:00
+        'O' => 'xx',    // -0100, +0000, ..., +1200
     ];
 
 
@@ -73,12 +75,12 @@ class PhpToUnicode
      * @param string $date_format
      * @return string
      */
-    public function convertDateFormat($date_format)
+    public function convertDateFormat(string $date_format): string
     {
         foreach (PhpToUnicode::$date_formats as $find => $replace) {
             $date_format = (string) str_replace($find, $replace, $date_format);
         }
-        return $date_format;
+        return trim($date_format);
     }
 
 
@@ -86,7 +88,7 @@ class PhpToUnicode
      * @param string $time_format
      * @return string
      */
-    public function convertTimeFormat($time_format)
+    public function convertTimeFormat(string $time_format): string
     {
         foreach (PhpToUnicode::$time_formats as $find => $replace) {
             $time_format = (string) str_replace($find, $replace, $time_format);
@@ -95,6 +97,6 @@ class PhpToUnicode
         foreach (PhpToUnicode::$timezone_formats as $find => $replace) {
             $time_format = (string) str_replace($find, $replace, $time_format);
         }
-        return $time_format;
+        return trim($time_format);
     }
 }

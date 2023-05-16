@@ -1762,48 +1762,48 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
-     * @return int
+     * @return bool
      * @throws EE_Error
      * @throws ReflectionException
      * @since   5.0.0.p
      */
-    public function isHidden(): int
+    public function isHidden(): bool
     {
         return $this->visibility() === EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE;
     }
 
 
     /**
-     * @return int
+     * @return bool
      * @throws EE_Error
      * @throws ReflectionException
      * @since   5.0.0.p
      */
-    public function isNotHidden(): int
+    public function isNotHidden(): bool
     {
         return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE;
     }
 
 
     /**
-     * @return int
+     * @return bool
      * @throws EE_Error
      * @throws ReflectionException
      * @since   5.0.0.p
      */
-    public function isPublicOnly(): int
+    public function isPublicOnly(): bool
     {
         return $this->isNotHidden() && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_PUBLIC_VALUE;
     }
 
 
     /**
-     * @return int
+     * @return bool
      * @throws EE_Error
      * @throws ReflectionException
      * @since   5.0.0.p
      */
-    public function isMembersOnly(): int
+    public function isMembersOnly(): bool
     {
         return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_PUBLIC_VALUE
                && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY_VALUE;
@@ -1811,12 +1811,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
-     * @return int
+     * @return bool
      * @throws EE_Error
      * @throws ReflectionException
      * @since   5.0.0.p
      */
-    public function isAdminsOnly(): int
+    public function isAdminsOnly(): bool
     {
         return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY_VALUE
                && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY_VALUE;
@@ -1824,12 +1824,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
-     * @return int
+     * @return bool
      * @throws EE_Error
      * @throws ReflectionException
      * @since   5.0.0.p
      */
-    public function isAdminUiOnly(): int
+    public function isAdminUiOnly(): bool
     {
         return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY_VALUE
                && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY_VALUE;

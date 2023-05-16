@@ -1,6 +1,6 @@
 .ee-status-change-notice-wrapper {
     clear: both;
-    font-size: .8rem;
+    font-size: var(--ee-font-size-smaller);
     padding-bottom: .75rem;
 }
 
@@ -89,7 +89,7 @@
 }
 
 .ee-status-change-notice-div p {
-    font-size: .9rem;
+    font-size: var(--ee-font-size-small);
     margin: .5em 0;
 }
 
@@ -101,7 +101,7 @@
 .ee-status-change-notice-div span.pill {
     border-radius: 3px;
     color: white;
-    font-size: .75rem;
+    font-size: var(--ee-font-size-tiny);
     font-weight: 600;
     padding: .2rem .6rem;
 }

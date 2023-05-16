@@ -554,11 +554,11 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
     /**
      * Gets the most recent registration of this attendee
      *
-     * @return EE_Registration
+     * @return EE_Registration|null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_most_recent_registration(): EE_Registration
+    public function get_most_recent_registration(): ?EE_Registration
     {
         return $this->get_first_related('Registration', ['order_by' => ['REG_date' => 'DESC']]);
     }
@@ -568,11 +568,11 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      * Gets the most recent registration for this attend at this event
      *
      * @param int $event_id
-     * @return EE_Registration
+     * @return EE_Registration|null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_most_recent_registration_for_event(int $event_id): EE_Registration
+    public function get_most_recent_registration_for_event(int $event_id): ?EE_Registration
     {
         return $this->get_first_related(
             'Registration',

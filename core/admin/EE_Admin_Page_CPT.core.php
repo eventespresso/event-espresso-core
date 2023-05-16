@@ -41,14 +41,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
 
 
     /**
-     * a boolean flag to set whether the current route is a cpt route or not.
-     *
-     * @var bool
-     */
-    protected $_cpt_route = false;
-
-
-    /**
      * This property allows cpt classes to define multiple routes as cpt routes.
      * //in this array we define what the custom post type for this route is.
      * array(
@@ -1066,10 +1058,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * sure you have a key in _labels property that equals 'editor_title' and the value can be whatever you want the
      * default to be.
      *
-     * @param string $title The new title (or existing if there is no editor_title defined)
-     * @return string
+     * @param string|null $title The new title (or existing if there is no editor_title defined)
+     * @return string|null
      */
-    public function add_custom_editor_default_title(string $title): string
+    public function add_custom_editor_default_title(?string $title): ?string
     {
         return $this->_labels['editor_title'][ $this->_cpt_routes[ $this->_req_action ] ] ?? $title;
     }
@@ -1380,6 +1372,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      */
     private function loadEditorTemplate(bool $creating = true)
     {
+        if ($this->admin_config && ! $this->admin_config->useAdvancedEditor()) {
+            add_filter('admin_body_class', function($classes)
+            {
+                $classes .= ' espresso-legacy-editor';
+                return $classes;
+            });
+        }
+
         global $post, $title, $is_IE, $post_type, $post_type_object;
         // these vars are used by the template
         $editing = true;

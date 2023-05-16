@@ -81,7 +81,7 @@ abstract class EE_Gateway
     protected $_money;
 
     /**
-     * Concrete class that implements EEHI_Line_Item, used for manipulating the line item tree
+     * Concrete class that implements EEH_Line_Item, used for manipulating the line item tree
      *
      * @var EEH_Line_Item
      */

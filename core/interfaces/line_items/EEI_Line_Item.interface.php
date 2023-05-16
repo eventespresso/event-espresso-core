@@ -6,7 +6,7 @@
  * @package             Event Espresso
  * @subpackage  core
  * @author              Mike Nelson / Brent Christensen
- *
+ * @deprecatd $VID:$
  */
 interface EEI_Line_Item
 {

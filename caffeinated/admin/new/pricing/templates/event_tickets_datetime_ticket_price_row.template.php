@@ -53,7 +53,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <span class="ticket-price-info-display ticket-price-plus" style="<?php echo esc_attr($show_plus); ?>">+</span>
         <span class="ticket-price-info-display ticket-price-minus" style="<?php echo esc_attr($show_minus); ?>">-</span>
         <span class="ticket-price-info-display ticket-price-dollar-sign-display" style="<?php echo esc_attr($show_currency_symbol); ?>">
-            <?php echo esc_html($price_currency_symbol); ?>
+        <?php echo esc_html($price_currency_symbol); ?>
         </span>
     </td>
     <td>
@@ -78,11 +78,21 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <?php if ($disabled) : ?>
             <span class="dashicons dashicons-lock"></span>
         <?php else : ?>
-            <span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
-                  data-context="price" data-price-row="<?php echo esc_attr($PRC_order); ?>"<?php echo wp_kses($show_trash_icon, AllowedTags::getWithFormTags()); ?>></span>
-            <button data-ticket-row="<?php echo esc_attr($tkt_row); ?>" data-price-row="<?php echo esc_attr($PRC_order); ?>"
-                    data-context="price" class="ee-create-button"<?php echo wp_kses($show_create_button, AllowedTags::getWithFormTags()); ?>><strong>+</strong>
-            </button>
+            <button aria-label="<?php esc_html_e('add a price modifier to this ticket', 'event_espresso') ?>"
+                    data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
+                    data-price-row="<?php echo esc_attr($PRC_order); ?>"
+                    data-context="price"
+                    class="button button--icon-only button--small ee-create-button ee-aria-tooltip dashicons dashicons-plus
+                    clickable"
+                <?php echo wp_kses($show_create_button, AllowedTags::getWithFormTags()); ?>
+            ></button>
+            <button aria-label="<?php esc_html_e('delete this price modifier', 'event_espresso') ?>"
+                    data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
+                    data-context="price"
+                    data-price-row="<?php echo esc_attr($PRC_order); ?>"
+                    class="button button--icon-only button--small trash-entity ee-aria-tooltip dashicons dashicons-post-trash clickable"
+                <?php echo wp_kses($show_trash_icon, AllowedTags::getWithFormTags()); ?>
+            ></button>
         <?php endif; ?>
     </td>
 </tr>

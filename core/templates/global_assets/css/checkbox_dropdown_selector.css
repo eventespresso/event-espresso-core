@@ -44,7 +44,7 @@
 .checkbox-dropdown-selector label {
     cursor: pointer;
     display: block;
-    font-size: 16px !important;
+    font-size: var(--ee-font-size-default) !important;
     margin: 0 !important;
     position: relative;
 }

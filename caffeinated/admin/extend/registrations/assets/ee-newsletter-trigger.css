@@ -1,6 +1,6 @@
 /**newsletter send css**/
 .ee-batch-message-send-form h3 {
-	font-size: 2em;
+	font-size: var(--ee-font-size-4xl);
 }
 
 .ee-batch-message-send-form .batch-message-edit-fields {
@@ -32,4 +32,8 @@
 
 .js-shortcode-selection {
     cursor: pointer;
+}
+
+.send-selected-newsletter-count {
+	margin-inline-end: var(--ee-margin-tiny);
 }

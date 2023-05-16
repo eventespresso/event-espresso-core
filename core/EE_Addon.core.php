@@ -823,7 +823,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
                 $after_plugin_row .= '<th class="check-column" scope="row"></th>';
                 $after_plugin_row .= '<td class="ee-addon-upsell-info-title-td plugin-title column-primary">';
                 $after_plugin_row .= '<p class="ee-addon-upsell-info-dv">
-	                <a class="ee-button" href="' . esc_url_raw($link_url) . '">'
+	                <a class="button button--primary" href="' . esc_url_raw($link_url) . '">'
                     . $link_text
                     . ' &nbsp;<span class="dashicons dashicons-arrow-right-alt2" style="margin:0;"></span>'
                     . '</a>

@@ -50,6 +50,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
         <a id='hide-additional-transaction-session-info'
            class='hide-the-displayed hidden smaller-text'
            rel='additional-transaction-session-info'
+           style='display: none;'
            tabindex='0'
         >
             <span class='dashicons dashicons-dismiss'></span>
@@ -526,9 +527,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                                 <input class='txn-admin-apply-payment-inp required'
                                        id='txn-admin-payment-amount-inp'
                                        name='txn_admin_payment[amount]'
-                                       type='number'
-                                       min="0"
-                                       step="<?php echo esc_attr($currency_steps); ?>"
+                                       type='text'
                                        value=''
                                 />
                                 <p class='description'>

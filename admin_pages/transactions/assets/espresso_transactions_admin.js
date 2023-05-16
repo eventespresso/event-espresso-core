@@ -79,8 +79,8 @@ jQuery(document).ready(function ($) {
         $('#txn-admin-modal-dialog-apply-payment-lnk').show();
         $('#txn-admin-modal-dialog-cancel-lnk').show();
         $('#txn-admin-payment-date-inp').val($('#txn-admin-todays-date-inp').val());
-		const paymentAmount = $('#txn-admin-total-amount-due').text();
-		$('#txn-admin-payment-amount-inp').val(paymentAmount);
+		const paymentAmount = $('#txn-admin-total-amount-due').data('due');
+		$('#txn-admin-payment-amount-inp').val(Number(paymentAmount));
 
         //make sure payment status selector shows
         $('.txn-admin-apply-payment-status-dv').show();
@@ -108,8 +108,8 @@ jQuery(document).ready(function ($) {
         $('#txn-admin-payment-payment-id-inp').val(0);
         $('#txn-admin-payment-type-inp').val(-1);
         $('#txn-admin-payment-date-inp').val($('#txn-admin-todays-date-inp').val());
-		const refundAmount = $('#txn-admin-total-amount-due').text();
-		$('#txn-admin-payment-amount-inp').val(refundAmount);
+		const refundAmount = $('#txn-admin-total-amount-due').data('due');
+		$('#txn-admin-payment-amount-inp').val(Number(refundAmount));
         //don't show payment status selector
         $('.txn-admin-apply-payment-status-dv').hide();
 

@@ -9,7 +9,7 @@
 }
 
 #poststuff .messages-tabs-content .ee-nav-tabs .nav-tab-content {
-    background: var(--ee-background-color);
+    background: var(--ee-admin-bg-color);
     margin: 0;
     padding-inline-end: 0;
     padding-inline-start: 0.5rem;

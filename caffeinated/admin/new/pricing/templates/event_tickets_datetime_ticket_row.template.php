@@ -34,10 +34,10 @@
  * @var string $ticket_archive_class
  * @var string $trash_icon
  * @var string $trash_hidden
- * @var string $clone_icon
  * @var string $display_edit_tkt_row
  * @var string $edit_tkt_expanded
  * @var string $edit_tickets_name
+ * @var boolean $can_clone
  *
  * @var string $TKT_taxable
  * @var string $display_subtotal
@@ -230,20 +230,29 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
     <!-- actions -->
     <td>
         <div class="ee-editing-container <?php echo esc_attr($edit_tkt_expanded); ?>">
-            <span class="gear-icon dashicons dashicons-admin-generic clickable"
-                  data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
-                  data-context="ticket"
-            ></span>
+            <button aria-label="<?php esc_attr_e('edit ticket details', 'event_espresso'); ?>"
+                    class="gear-icon dashicons dashicons-admin-generic ee-aria-tooltip button button--icon-only button--tiny clickable"
+                    data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
+                    data-context="ticket"
+            ></button>
         </div>
-        <span class="<?php echo esc_attr($clone_icon); ?>"
-              data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
-              data-context="ticket"
+        <?php if ($can_clone) : ?>
+        <button aria-label="<?php esc_attr_e('duplicate ticket', 'event_espresso'); ?>"
+                class="button button--icon-only button--tiny clone-entity ee-aria-tooltip dashicons dashicons-admin-page clickable"
+                data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
+                data-context="ticket"
+        ></button>
+        <?php endif; ?>
+        <button aria-label="<?php esc_attr_e('trash ticket', 'event_espresso'); ?>"
+                class="button button--icon-only button--tiny ee-aria-tooltip <?php echo esc_attr($trash_icon); ?>"
+                data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
+                data-context="ticket"
+                style="<?php echo esc_attr($trash_hidden); ?>"
+        ></button>
+        <span aria-label="<?php esc_html_e('Click and drag-n-drop to reorder tickets.', 'event_espresso') ?>"
+                class="button button--icon-only button--tiny ee-aria-tooltip dashicons dashicons-move
+                sortable-drag-handle"
         ></span>
-        <span class="<?php echo esc_attr($trash_icon); ?>"
-              data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
-              data-context="ticket" style="<?php echo esc_attr($trash_hidden); ?>"
-        ></span>
-        <span class="dashicons dashicons-image-flip-vertical sortable-drag-handle"></span>
     </td>
 </tr>
 <tr id="edit-ticketrow-<?php echo esc_attr($tkt_row); ?>" class="edit-ticket-row">
@@ -267,20 +276,27 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                    value="<?php echo esc_attr($tkt_row); ?>"
             />
 
-            <label class='screen-reader-text' for='edit-ticket-TKT_description-<?php echo esc_attr($tkt_row); ?>'>
-                <?php esc_html_e('Ticket Description', 'event_espresso') ?>
-            </label>
-            <textarea class='edit-ticket-TKT_description ee-full-textarea-inp'
-                      id='edit-ticket-TKT_description-<?php echo esc_attr($tkt_row); ?>'
-                      name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_description]"
-                      placeholder="<?php esc_html_e('Ticket Description', 'event_espresso') ?>"
-            ><?php echo esc_textarea($TKT_description); ?></textarea>
-
-            <?php do_action('AHEE__event_tickets_datetime_ticket_row_template_after_desc', $tkt_row, $TKT_ID); ?>
-
+            <div class="ee-editor-id-container">
+                    <h3 class="ee-item-id">
+                        <?php
+                        echo esc_html(
+                            $TKT_ID
+                                ? sprintf(__('Ticket ID: %d', 'event_espresso'), $TKT_ID)
+                                : ''
+                        ); ?>
+                    </h3>
+            </div>
             <div class="basic-ticket-container">
-                <h4 class="tickets-heading"><?php esc_html_e('Ticket Details', 'event_espresso'); ?></h4>
-                <div style="clear:both"></div>
+
+                <label for='edit-ticket-TKT_description-<?php echo esc_attr($tkt_row); ?>'>
+                    <?php esc_html_e('Ticket Description', 'event_espresso') ?>
+                </label>
+                <textarea class='edit-ticket-TKT_description ee-full-textarea-inp'
+                          id='edit-ticket-TKT_description-<?php echo esc_attr($tkt_row); ?>'
+                          name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_description]"
+                ><?php echo esc_textarea($TKT_description); ?></textarea>
+
+                <?php do_action('AHEE__event_tickets_datetime_ticket_row_template_after_desc', $tkt_row, $TKT_ID); ?>
 
                 <table class="basic-ticket-info">
                     <thead>
@@ -396,10 +412,10 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                     </tr>
                     </tbody>
                 </table>
-                <button class="button button--secondary ee-create-button ee-price-create-button"
+                <button class="button button--accent button--small ee-create-button ee-price-create-button"
                         data-context="price-create"
                         data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
-                        style="<?php echo esc_attr($show_price_mod_button); ?>">
+                        style="<?php echo esc_attr($show_price_mod_button); ?>"
                 >
                     <?php esc_html_e('Add Price Modifier', 'event_espresso'); ?>
                 </button>
@@ -535,17 +551,7 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                 $TKT_ID
             ); ?>
             <div class="ee-editor-footer-container">
-                <div class="ee-editor-id-container">
-                    <span class="ee-item-id">
-                        <?php
-                        echo esc_html(
-                            $TKT_ID
-                                ? sprintf(__('Ticket ID: %d', 'event_espresso'), $TKT_ID)
-                                : ''
-                        ); ?>
-                    </span>
-                </div>
-                <div class="save-cancel-button-container">
+                <div class="ee-layout-row ee-layout-row--spaced">
                     <label for="edit-ticket-TKT_is_default_selector-<?php echo esc_attr($tkt_row); ?>">
                         <?php esc_html_e(
                             'use this new ticket as a default ticket for any new events',

@@ -141,7 +141,7 @@
         <span class="TKT_sold"><?php echo esc_html($TKT_sold); ?></span>
     </td>
     <td>
-        <span class="<?php echo esc_attr($trash_icon); ?>"
+        <span class="trash-entity button button--icon-only button--tiny <?php echo esc_attr($trash_icon); ?>"
               data-context="ticket"
               data-ticket-row="<?php echo absint($ticketrow); ?>"
         >

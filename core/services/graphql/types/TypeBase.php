@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\graphql\types;
 
+use DateTimeInterface;
 use EE_Error;
 use EE_Soft_Delete_Base_Class;
 use EEM_Base;
@@ -12,6 +13,7 @@ use EventEspresso\core\domain\services\graphql\resolvers\FieldResolver;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use Exception;
 use GraphQL\Deferred;
 use GraphQL\Error\UserError;
 use InvalidArgumentException;
@@ -35,44 +37,24 @@ use EventEspresso\core\services\form\meta\JsonableInterface;
 abstract class TypeBase implements TypeInterface
 {
     /**
-     * @var string $namespace The graphql namespace/prefix.
+     * The graphql namespace/prefix.
      */
-    protected $namespace = 'Espresso';
+    protected string    $namespace   = 'Espresso';
 
-    /**
-     * @var EEM_Base $model
-     */
-    protected $model;
+    protected ?EEM_Base $model       = null;
 
-    /**
-     * @var string $name
-     */
-    protected $name = '';
+    protected string    $name        = '';
 
-    /**
-     * @var string $description
-     */
-    protected $description = '';
+    protected string    $description = '';
 
     /**
      * @var GraphQLFieldInterface[] $fields
      */
-    protected $fields = [];
+    protected array         $fields              = [];
 
-    /**
-     * @var array $graphql_to_model_map
-     */
-    protected $graphql_to_model_map = [];
+    protected FieldResolver $field_resolver;
 
-    /**
-     * @var FieldResolver $field_resolver
-     */
-    protected $field_resolver;
-
-    /**
-     * @var bool $is_custom_post_type
-     */
-    protected $is_custom_post_type = false;
+    protected bool          $is_custom_post_type = false;
 
 
     /**
@@ -140,7 +122,7 @@ abstract class TypeBase implements TypeInterface
      */
     public function fields(): array
     {
-        return (array) $this->fields;
+        return $this->fields;
     }
 
 
@@ -200,9 +182,8 @@ abstract class TypeBase implements TypeInterface
      */
     public function parseInfiniteValue($value): int
     {
-        $value = trim($value);
-        return $value === null
-               || $value === ''
+        $value = trim((string) $value);
+        return $value === ''
                || $value === '&infin;'
                || $value === 'INF'
                || $value === INF
@@ -217,6 +198,7 @@ abstract class TypeBase implements TypeInterface
      * @param mixed $source
      * @return EE_Base_Class|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function getModel($source): ?EE_Base_Class
     {
@@ -225,7 +207,9 @@ abstract class TypeBase implements TypeInterface
         if ($source instanceof EE_Base_Class) {
             return $source;
         }
-        return $source instanceof Post ? $this->model->get_one_by_ID($source->ID) : null;
+        return $source instanceof Post
+            ? $this->model->get_one_by_ID($source->ID)
+            : null;
     }
 
 
@@ -246,7 +230,9 @@ abstract class TypeBase implements TypeInterface
      */
     public function resolveField($source, array $args, AppContext $context, ResolveInfo $info)
     {
-        $source = $source instanceof RootQuery ? $source : $this->getModel($source);
+        $source = $source instanceof RootQuery
+            ? $source
+            : $this->getModel($source);
 
         return $this->field_resolver->resolve($source, $args, $context, $info);
     }
@@ -258,6 +244,7 @@ abstract class TypeBase implements TypeInterface
      * @param AppContext $context The AppContext passed down the GraphQL tree
      * @return EE_Base_Class|EE_Soft_Delete_Base_Class|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function resolveFromPayload($payload, array $args, AppContext $context)
     {
@@ -276,24 +263,25 @@ abstract class TypeBase implements TypeInterface
      * @param string        $datetime The datetime value.
      * @param EE_Base_Class $source   The source object.
      * @return string ISO8601/RFC3339 formatted datetime.
+     * @throws Exception
      */
     public function formatDatetime(string $datetime, EE_Base_Class $source): string
     {
-        $format   = $source->get_format();
+        $format = $source->get_format();
         // create date object based on local timezone
         $datetime = DateTime::createFromFormat($format, $datetime, new DateTimeZone($source->get_timezone()));
         // change the timezone to UTC
         $datetime->setTimezone(new DateTimeZone('UTC'));
 
-        return $datetime->format(DateTime::RFC3339);
+        return $datetime->format(DateTimeInterface::RFC3339);
     }
 
 
     /**
      * Converts an object to JSON. The object must have a "toJson" method.
      *
-     * @param string        $object   The object/value.
-     * @param EE_Base_Class $source   The source object.
+     * @param JsonableInterface $object The object/value.
+     * @param EE_Base_Class     $source The source object.
      * @return string JSON representation of the object.
      */
     public function toJson(JsonableInterface $object, EE_Base_Class $source): string

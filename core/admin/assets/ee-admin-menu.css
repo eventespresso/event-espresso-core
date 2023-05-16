@@ -1,0 +1,325 @@
+/**
+* Event Espresso admin menu styles
+*/
+
+.ee_menu_group {
+    display: block;
+    background-color: hsla(207deg 0% 50% / 75%);
+    margin: -2px -5px 0 -12px;
+    padding: 2px 0 3px 10px;
+    font-size: var(--ee-font-size-small);
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: var(--ee-color-white);
+    cursor: default;
+}
+
+.version-3-8.admin-color-fresh .ee_menu_group {
+    padding-left: 8px;
+    margin: 3px -12px -3px -12px;
+    border-left: 3px solid var(--ee-status-color-blue);
+    background-color: var(--ee-status-color-charcoal);
+    color: var(--ee-color-white);
+    font-weight: normal;
+}
+
+.version-3-8.admin-color-blue .ee_menu_group {
+    padding-left: 8px;
+    margin: 3px -12px -3px -12px;
+    border-left: 3px solid var(--ee-status-color-light-blue);
+    background-color: var(--ee-status-color-blue);
+    color: var(--ee-color-white);
+    font-weight: normal;
+}
+
+.version-3-8.admin-color-light .ee_menu_group {
+    padding-left: 8px;
+    margin: 3px -12px -3px -12px;
+    border-left: 3px solid var(--ee-status-color-orange);
+    background-color: var(--ee-status-color-light-grey);
+    color: var(--ee-status-color-orange);
+    font-weight: normal;
+}
+
+.version-3-8.admin-color-midnight .ee_menu_group {
+    padding-left: 8px;
+    margin: 3px -12px -3px -12px;
+    background-color: var(--ee-status-color-charcoal);
+    border-left: 3px solid var(--ee-status-color-orange);
+    color: var(--ee-color-white);
+    font-weight: normal;
+}
+
+div.TB-ee-frame a {
+    border-bottom: none;
+    padding: 0;
+    margin: 0;
+}
+
+.display-ee-error-trace-lnk {
+    cursor: pointer;
+}
+
+/******************* DASHICONS ****************** */
+
+
+#wpadminbar .ee-icon:before,
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
+    position: relative;
+    top: -2px;
+    font-size: inherit;
+    height: auto;
+    margin-right: calc(.5 * var(--ee-base-ui-scale));
+    vertical-align: middle;
+    width: auto;
+}
+
+#wpadminbar .ee-icon:before,
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
+    display: inline-block;
+    font-family: "ee-dashicons" !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    line-height: 1;
+    speak: none;
+    text-align: center;
+    text-decoration: inherit;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@media screen and (max-width: 782px) {
+    #wpadminbar li#wp-admin-bar-espresso-toolbar {
+        display: block;
+        position: static;
+    }
+
+    #wpadminbar li#wp-admin-bar-espresso-toolbar .ee-icon-ee-cup-thick:before {
+        font-size: var(--ee-font-size-5xl) !important;
+        color: var(--ee-status-color-grey);
+    }
+
+    #wpadminbar li#wp-admin-bar-espresso-toolbar:hover .ee-icon-ee-cup-thick:before {
+        color: var(--ee-status-color-blue);
+    }
+}
+
+
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
+    font-size: 28px;
+    top: -3px;
+    left: 3px;
+}
+
+#wp-admin-bar-espresso-toolbar .ee-icon-ee-cup-thick:before {
+    content: "\e60e";
+    font-size: 24px !important;
+    left: 4px;
+    top: -1px;
+}
+
+#toplevel_page_espresso_events div.wp-menu-image:before,
+#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
+    /*content: "\e60f";*/
+    content: "\e60e";
+}
+
+
+.tags-links a {
+    white-space: nowrap;
+}
+
+.tags-links a:before {
+    content: "\f323";
+    display: inline-block;
+    font-family: dashicons;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    margin-right: calc(.25 * var(--ee-base-ui-scale));
+}
+
+.espresso-admin .wp-list-table .ee-lock-icon:before {
+    margin-left: 8px;
+}
+
+
+/**
+ * Fixes for some weird WP styling issues encountered on ee menu items
+ */
+#toplevel_page_espresso_events .wp-submenu li.toplevel_page_espresso_events {
+    min-height: inherit;
+}
+
+#toplevel_page_espresso_events .wp-submenu li.current a.toplevel_page_espresso_events {
+    background-color: transparent;
+    font-size: var(--ee-font-size-smaller);
+
+}
+
+
+/**
+ * fancy toggles
+ */
+.ee-switch {
+    align-items: center;
+    display: flex;
+    height: var(--ee-switch-height);
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.ee-switch .ee-switch__input,
+.ee-on-off-toggle {
+    position: absolute;
+    margin-left: -9999px;
+    visibility: hidden;
+}
+
+.ee-switch .ee-switch__input:before {
+    background: none !important;
+    background-size: 0 !important;
+    display: none !important;
+    margin: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+}
+
+.ee-switch .ee-switch__toggle {
+    margin: 0 !important;
+}
+
+.ee-switch .ee-switch__input + .ee-switch__toggle,
+.ee-on-off-toggle + label {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+}
+
+.ee-switch .ee-switch__input + .ee-switch__toggle,
+input.ee-toggle-round-flat + label {
+    width: var(--ee-switch-width);
+    height: var(--ee-switch-height);
+    background-color: var(--ee-status-color-light-grey);
+    border-radius: var(--ee-switch-height);
+    transition: background 0.4s;
+}
+
+.ee-switch .ee-switch__input + .ee-switch__toggle:after,
+input.ee-toggle-round-flat + label:after {
+    background-color: var(--ee-color-white);
+    border-radius: var(--ee-switch-button);
+    bottom: var(--ee-switch-padding);
+    content: "";
+    display: block;
+    height: var(--ee-switch-button);
+    left: var(--ee-switch-padding);
+    position: absolute;
+    top: var(--ee-switch-padding);
+    transition: margin 0.4s, background 0.4s;
+    width: var(--ee-switch-button);
+}
+
+.ee-switch .ee-switch__input:checked + .ee-switch__toggle,
+input.ee-toggle-round-flat:checked + label {
+    background-color: var(--ee-status-color-blue);
+    margin-block: 0;
+}
+
+.ee-switch .ee-switch__input:checked + .ee-switch__toggle:after,
+input.ee-toggle-round-flat:checked + label:after {
+    margin-left: var(--ee-switch-height);
+}
+
+
+.ee-switch .ee-switch__label {
+    margin-inline-end: 1rem;
+    position: relative;
+    width: calc(100% - var(--ee-switch-width) - 1rem);
+}
+
+.ee-switch .ee-switch__label > span {
+    font-weight: 600;
+    position: absolute;
+    inset-inline-start: 1rem;
+    inset-block-start: -.75rem;
+    transition: opacity 100ms ease-in-out;
+}
+
+.ee-switch .ee-switch__input:checked ~ .ee-switch__label .ee-switch--ON {
+    opacity: 1;
+}
+
+.ee-switch .ee-switch__input:checked ~ .ee-switch__label .ee-switch--OFF {
+    opacity: 0;
+}
+
+.ee-switch .ee-switch__input:not(:checked) ~ .ee-switch__label .ee-switch--ON {
+    opacity: 0;
+}
+
+.ee-switch .ee-switch__input:not(:checked) ~ .ee-switch__label .ee-switch--OFF {
+    opacity: 1;
+}
+
+.ee-switch + .description {
+    margin-block-start: var(--ee-base-ui-scale) !important;
+}
+
+
+/** dashboard at a glance icons **/
+#dashboard_right_now li a.ee-dashboard-link-events:before {
+    content: "\f508"
+}
+
+#dashboard_right_now li a.ee-dashboard-link-registrations:before {
+    content: "\f307"
+}
+
+/** ee buttons **/
+.ee-addon-upsell-info-dv .ee-button,
+.ee-addon-upsell-info-dv .ee-button:active,
+.ee-addon-upsell-info-dv .ee-button:visited {
+    box-sizing: border-box;
+    display: inline-block;
+    position: relative;
+    top: -1px;
+    padding: .5em 1em;
+    margin: 0;
+    background: hsl(195, 100%, 45%) linear-gradient(hsl(195, 100%, 35%), hsl(195, 100%, 55%));
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.5) !important;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.25) !important;
+    font-weight: normal;
+    cursor: pointer;
+    color: var(--ee-color-white) !important;
+    text-decoration: none !important;
+    text-align: center;
+    line-height: 1em;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.ee-addon-upsell-info-dv .ee-button:hover {
+    color: var(--ee-color-white) !important;
+    background: hsl(195, 100%, 55%);
+}
+
+.ee-addon-upsell-info-dv .ee-button:active {
+    top: 0;
+}

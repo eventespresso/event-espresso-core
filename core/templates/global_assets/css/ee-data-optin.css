@@ -22,6 +22,6 @@
 
 .data-collect-optin .dashicons-admin-site {
     color: var(--ee-status-color-grey);
-    font-size: 1.6rem;
+    font-size: var(--ee-font-size-2xl);
     margin-inline-end: 1rem;
 }

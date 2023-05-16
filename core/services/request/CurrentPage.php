@@ -44,7 +44,7 @@ class CurrentPage
     private $post_id = 0;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $post_name = '';
 
@@ -265,9 +265,9 @@ class CurrentPage
 
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function postName(): string
+    public function postName(): ?string
     {
         return $this->post_name;
     }

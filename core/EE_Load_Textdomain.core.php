@@ -52,7 +52,7 @@ class EE_Load_Textdomain extends EE_Base
                 return;
             }
         }
-        load_plugin_textdomain('event_espresso', false, WP_LANG_DIR);
+        load_plugin_textdomain('event_espresso', false, dirname(EE_PLUGIN_BASENAME) . '/languages/');
     }
 
 
@@ -89,7 +89,7 @@ class EE_Load_Textdomain extends EE_Base
 
         // load sideloader and sideload the .POT file as this should always be included.
         $sideloader_args = array(
-            '_upload_to'     => WP_LANG_DIR,
+            '_upload_to'     => EE_PLUGIN_DIR_PATH . 'languages/',
             '_download_from' => EE_Load_Textdomain::REPO_BASE_URL . '.pot',
             '_new_file_name' => 'event_espresso.pot',
         );

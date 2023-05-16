@@ -1,3 +1,9 @@
+#wpadminbar .espresso_menu_item_class .ab-item {
+    align-items: center;
+    display: flex;
+    line-height: 2rem  !important;
+    height: 1.5rem !important;
+}
 
 #wp-admin-bar-espresso-toolbar-events-add-edit .ab-empty-item,
 #wp-admin-bar-espresso-toolbar-registrations-today .ab-empty-item {
@@ -80,9 +86,46 @@
     content: "\f174";
 }
 
-.ee-select2{
-    min-width:75%;
+
+#wp-admin-bar-espresso-toolbar-font-size .ee-toolbar-icon::before {
+    content: "\f215";
 }
+
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-tiny .ee-toolbar-icon,
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-smaller .ee-toolbar-icon,
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-small .ee-toolbar-icon,
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-default .ee-toolbar-icon,
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-big .ee-toolbar-icon,
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-bigger .ee-toolbar-icon {
+    text-align: center;
+    width: 2rem !important;
+}
+
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-tiny .ee-toolbar-icon::before {
+    content: "\f215";
+    font-size: .75rem !important;
+}
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-smaller .ee-toolbar-icon::before {
+    content: "\f215";
+    font-size: .875rem !important;
+}
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-small .ee-toolbar-icon::before {
+    content: "\f215";
+    font-size: 1rem !important;
+}
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-default .ee-toolbar-icon::before {
+    content: "\f215";
+    font-size: 1.25rem !important;
+}
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-big .ee-toolbar-icon::before {
+    content: "\f215";
+    font-size: 1.5rem !important;
+}
+#wpadminbar #wp-admin-bar-espresso-toolbar-set-font-size-bigger .ee-toolbar-icon::before {
+    content: "\f215";
+    font-size: 1.875rem !important;
+}
+
 
 .ee-update-nag.update-nag {
     background: #fff;

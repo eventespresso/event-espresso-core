@@ -216,7 +216,8 @@ class EspressoLegacyAdminAssetManager extends AssetManager
 
         $this->addStylesheet(
             EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN,
-            EE_ADMIN_URL . 'assets/ee-admin-page.css'
+            EE_ADMIN_URL . 'assets/ee-admin-page.css',
+            ['espresso_admin_base']
         )->setEnqueueImmediately();
 
         if (! $joyride) {
@@ -234,9 +235,7 @@ class EspressoLegacyAdminAssetManager extends AssetManager
         $this->addStylesheet(
             EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_JOYRIDE,
             EE_GLOBAL_ASSETS_URL . 'css/ee-joyride-styles.css',
-            [EspressoLegacyAdminAssetManager::CSS_HANDLE_JOYRIDE],
-            'all',
-            EVENT_ESPRESSO_VERSION
+            [EspressoLegacyAdminAssetManager::CSS_HANDLE_JOYRIDE]
         )->setEnqueueImmediately();
     }
 

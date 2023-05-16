@@ -20,7 +20,7 @@
 /* green text */
 .status-TCM {
     color: var(--ee-status-color-green);
-    font-size: .85em;
+    font-size: var(--ee-font-size-smaller);
     font-weight: 600;
 }
 
@@ -32,7 +32,7 @@
 /* blue text */
 .status-TIN {
     color: var(--ee-status-color-blue);
-    font-size: .85em;
+    font-size: var(--ee-font-size-smaller);
     font-weight: 600;
 }
 
@@ -44,7 +44,7 @@
 /* orange text */
 .status-TOP {
     color: var(--ee-status-color-orange);
-    font-size: .85em;
+    font-size: var(--ee-font-size-smaller);
     font-weight: 600;
 }
 
@@ -56,13 +56,13 @@
 /* red text */
 .status-TFL {
     color: var(--ee-status-color-pink);
-    font-size: .85em;
+    font-size: var(--ee-font-size-smaller);
 }
 
 /* yellow text */
 .status-TAB {
     color: var(--ee-status-color-yellow);
-    font-size: .85em;
+    font-size: var(--ee-font-size-smaller);
 }
 
 /**
@@ -247,13 +247,13 @@
 }
 
 .ee-admin-dialog-container .admin-modal-dialog-h2 {
-    font-size: 2em;
+    font-size: var(--ee-font-size-4xl);
     margin: .25em 0;
 }
 
 .admin-primary-mbox-h4 {
     margin: 2em 0 .25em;
-    font-size: 1.3em;
+    font-size: var(--ee-font-size-bigger);
 }
 
 .admin-primary-mbox-tbl {
@@ -285,7 +285,7 @@
 
 .admin-primary-mbox-tbl th,
 .admin-primary-mbox-tbl-wrap-inner label {
-    font-size: .9em;
+    font-size: var(--ee-font-size-small);
     font-weight: bold;
     line-height: 1em;
 }
@@ -299,22 +299,22 @@
 }
 
 .admin-primary-mbox-taxes-tr {
-    font-size: 1.1em;
+    font-size: var(--ee-font-size-big);
 }
 
 .admin-primary-mbox-total-tr {
-    font-size: 1.4em;
+    font-size: var(--ee-font-size-lg);
 }
 
 .admin-primary-mbox-total-tr td .important-notice {
     display: block;
     padding: 1em;
-    font-size: 1rem;
+    font-size: var(--ee-font-size-default);
 }
 
 
 .ee-line-item-id {
-    font-size: .9em;
+    font-size: var(--ee-font-size-small);
     color: #BBB;
     font-style: italic;
 }
@@ -325,7 +325,7 @@
 }
 
 .ee-line-item-name {
-    font-size: 1.1em;
+    font-size: var(--ee-font-size-big);
     font-weight: 600;
     margin-inline-end: 1rem;
 }
@@ -506,7 +506,7 @@
 
 
 .jqplot-title {
-    font-size: 24px;
+    font-size: var(--ee-font-size-xl);
     text-align: left !important;
     margin: 1em 0 0 1em;
 }
@@ -516,7 +516,7 @@
     background: #FFF;
     border: 1px solid #DDD;
     border-radius: 3px;
-    font-size: 12px;
+    font-size: var(--ee-font-size-tiny);
     color: #333;
     -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
     -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);

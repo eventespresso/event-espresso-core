@@ -1,17 +1,13 @@
 .event-tickets-datetimes-title {
-    display: inline-block;
-    font-size: 1.35em;
-    margin: 10px 0 10px 0;
+    font-size: var(--ee-font-size-bigger);
+    margin: 0;
     padding: 0;
 }
 
-.event-datetimes-container {
-    margin-top: 10px;
-}
-
-
-.event-tickets-container {
-    margin-top: 15px;
+.event-tickets-datetimes-title,
+.event-tickets-datetimes-title span {
+    align-items: center;
+    display: flex;
 }
 
 .add-new-ticket-table {
@@ -21,7 +17,8 @@
 
 .ee-tkt-status {}
 
-.tkt-archived td, .tkt-archived input {
+.tkt-archived td,
+.tkt-archived input {
     color: var(--ee-status-color-grey);
 }
 
@@ -30,7 +27,7 @@
 }
 
 .tkt-status-TKE {
-   background-color: var(--ee-status-color-grey);
+    background-color: var(--ee-status-color-grey);
 }
 
 .tkt-status-TKP {
@@ -45,43 +42,11 @@
     border-color: var(--ee-status-color-purple);
 }
 
-.add-new-ticket-table td:first-child {
-    width: 5px;
-}
-
-.add-new-ticket-table td:nth-child(2) {
-    width: 36%;
-}
-
-.add-new-ticket-table td:nth-child(3), .add-new-ticket-table td:nth-child(4) {
-    width: 24%
-}
-
-.add-new-ticket-table td:nth-child(6), .add-new-ticket-table td:nth-child(7) {
-    width: 5%;
-}
-
-.add-new-ticket-table td:nth-child(5) {
-    width: 4%;
-    text-align: right;
-    padding-top: 4px;
-}
-
-.add-new-ticket-table td:nth-child(8) {
-    width: 4%;
-    text-align: center;
-    padding-top: 4px;
-}
-
-.datetime-tickets-heading, .tickets-heading {
-    display: inline-block;
-    font-size: 1.2em;
-    margin-bottom: 5px;
-}
-
-.datetime-tickets-sold {
-    padding-top: 5px;
-    padding-left: 15px;
+.datetime-tickets-heading,
+.tickets-heading {
+    font-size: var(--ee-font-size-big);
+    margin-block-start: var(--ee-margin-default);
+    margin-block-end: var(--ee-margin-tiny);
 }
 
 .save-cancel-button-container {
@@ -104,8 +69,8 @@
 
 
 /* make sure trash icon doesn't display for first ticket row /**/
-.add-new-ticket-table tr:first-child .trash-icon {
-    display:none;
+.add-new-ticket-table tr:first-child .trash-entity {
+    display: none;
 }
 
 
@@ -121,16 +86,43 @@
     border-radius: 3px;
     white-space: nowrap;
     -webkit-box-sizing: border-box;
-    -moz-box-sizing:    border-box;
-    box-sizing:         border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
     background: #f3f3f3;
     font-weight: bold;
 }
 
 .espresso-admin .ee-ticket-price-calculator__price-order input.ee-text-input.ee-input-base.ee-input {
-  min-width: auto !important;
+    min-width: auto !important;
 }
 
 .ee-ticket-price-calculator.ee-rspnsv-table .ee-table-cell:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile) {
     padding: var(--ee-padding-micro) !important;
+}
+
+
+.espresso-legacy-editor.espresso-admin #event-and-ticket-form-content select,
+.espresso-legacy-editor.espresso-admin #event-and-ticket-form-content textarea:not(.wp-editor-area):not(.iframe-embed-content),
+.espresso-legacy-editor.espresso-admin #event-and-ticket-form-content input:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]):not(.chosen-search-input) {
+    margin-inline: 0;
+    max-width: 100%;
+    min-width: unset;
+    padding-inline-end: var(--ee-margin-nano);
+    padding-inline-start: var(--ee-margin-nano);
+    width: 100%;
+}
+
+.espresso-legacy-editor.espresso-admin #event-and-ticket-form-content textarea:not(.wp-editor-area):not(.iframe-embed-content) {
+    margin-block-end: var(--ee-margin-default);
+}
+
+.espresso-legacy-editor.espresso-admin #espresso_event_editor_event_options p {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.espresso-legacy-editor.espresso-admin #espresso_event_editor_event_options p select {
+    width: 100%;
+    max-width: unset;
 }

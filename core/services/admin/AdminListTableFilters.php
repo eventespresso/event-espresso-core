@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\admin;
 
+use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -30,6 +31,13 @@ class AdminListTableFilters
     public function __construct(RequestInterface $request)
     {
         $this->request = $request;
+        // add_action('admin_enqueue_scripts', [$this, 'loadScriptsStyles']);
+    }
+
+
+    public function loadScriptsStyles()
+    {
+        wp_enqueue_script(EspressoLegacyAdminAssetManager::JS_HANDLE_EE_ADMIN);
     }
 
 
@@ -79,7 +87,12 @@ class AdminListTableFilters
                    name="s"
                    value="<?php _admin_search_query(); ?>"
             />
-            <?php submit_button($text, '', '', false, ['id' => 'search-submit']); ?>
+            <button id="search-submit" class="button button--secondary" data-type="submit">
+                <span class="dashicons dashicons-search"></span>
+                <span class="ee-search-btn-text"><?php esc_html_e($text); ?></span>
+
+            </button>
+            <?php //submit_button($text, '', '', false, ['id' => 'search-submit']); ?>
             <?php
             if (! empty($this->search_term)) {
                 echo wp_kses($this->generateResetButton($url), AllowedTags::getAllowedTags());
@@ -111,7 +124,7 @@ class AdminListTableFilters
         $filter_submit_btn_text = esc_html__('Filter', 'event_espresso');
 
         echo "
-        <div class='ee-list-table-filters actions alignleft'>
+        <div id='ee-list-table-filters-dv' class='ee-list-table-filters actions alignleft'>
            $filters_html
             <span class='ee-list-table-filters__submit-buttons'>
                 <input type='submit'
@@ -122,7 +135,17 @@ class AdminListTableFilters
                 <input type='hidden' id='ee-list-table-use-filters' name='use_filters' value='$use_filters' />
                 " . wp_kses($this->generateResetButton($url), AllowedTags::getAllowedTags()) . "
             </span>
-        </div>";
+        </div>
+        <button id='ee-list-table-filters-toggle'
+            class='button button--secondary button--small'
+            data-target='ee-list-table-filters'
+            data-hide-text='" . esc_html__('hide filters', 'event_espresso') . "'
+            data-show-text='" . esc_html__('show filters', 'event_espresso') . "'
+        >
+            <span class='dashicons dashicons-filter'></span>
+            <span class='ee-list-table-filters-toggle-text'>" . esc_html__('show filters', 'event_espresso') . "</span>
+        </button>
+        ";
     }
 
 
