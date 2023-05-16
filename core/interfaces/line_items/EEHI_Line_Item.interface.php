@@ -2,7 +2,7 @@
 
 /**
  * Interface EEHI_Line_Item
- * @deprecatd $VID:$
+ * @deprecatd 5.0.4.p
  */
 interface EEHI_Line_Item
 {

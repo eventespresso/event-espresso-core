@@ -11,7 +11,7 @@ use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\admin
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.4.p
  */
 class WordPressProfilePage extends AdminRoute
 {
