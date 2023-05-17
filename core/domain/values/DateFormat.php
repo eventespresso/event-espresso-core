@@ -48,6 +48,9 @@ class DateFormat extends BaseFormat
         '.',
         ' ',
         ':',
+        'c',
+        'r',
+        'U'
     ];
 
     protected static ?string $wordpress_format = null;
