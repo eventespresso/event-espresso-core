@@ -15,7 +15,7 @@ use Exception;
  * @package EventEspresso\core\domain\datetime
  * @author  Darren Ethier
  * @since   4.9.54.rc
- * @deprecated $VID:$
+ * @deprecated 5.0.6.p
  */
 class PhpCompatLessFiveSixHelper extends AbstractHelper
 {

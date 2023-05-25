@@ -16,7 +16,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 class EEH_DTT_Helper
 {
     /**
-     * @since $VID:$
+     * @since 5.0.6.p
      *
      * @var HelperInterface|null
      */
