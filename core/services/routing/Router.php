@@ -7,7 +7,20 @@ use EventEspresso\core\services\loaders\LoaderInterface;
 use Exception;
 
 /**
- * Class RoutingSwitch
+ * Class Router - a class for initializing "Plinko" routing
+ * "WHAT IN TARNATIONS IS PLINKO ROUTING?!"
+ * Routing in other applications is typically handled using a 1:1 relationship between a route and a controller,
+ * where ALL routes are defined and loaded at the beginning of the request, OR the controller is inferred from a URL
+ * parameter, then loaded and executed directly.
+ * In WordPress however, due to how actions are used all over the place for loading functionality, we can not simply
+ * connect a route to a single endpoint as we run the risk of missing other logic getting loaded at the appropriate
+ * hookpoint. Typically WordPress plugins solve this by just loading up EVERYTHING they could possibly need at the
+ * begining of EVERY request and adding ALL the actions and filters that could possibly ever be required.
+ * Event Espresso is too big for that.  We need to be able to load only the functionality that is required for the
+ * current request. So Event Espresso Routes work like the classic "Price is Right" game "Plinko" where the request is
+ * dropped in at the top of the board and then bounces around until it lands in the correct slot at the bottom.
+ * Each point where the request bounces is a Route that can be loaded and used to handle the request up to that
+ * point, including loading dependencies, registering actions, and even loading additional routes or route handlers.
  *
  * @package EventEspresso\core\services\routing
  * @since   5.0.0.p

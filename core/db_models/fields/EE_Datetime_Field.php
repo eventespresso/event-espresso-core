@@ -519,8 +519,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             throw new EE_Error(
                 sprintf(
                     esc_html__(
-                        'The incoming value being prepared for setting in the database must either be empty or a php 
-            		    DateTime object, instead of: %1$s %2$s',
+                        'The incoming value being prepared for setting in the database must either be empty or a php DateTime object, instead of: %1$s %2$s',
                         'event_espresso'
                     ),
                     '<br />',
@@ -691,12 +690,12 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     /**
      * get_timezone_offset
      *
-     * @param DateTimeZone $DateTimeZone
-     * @param int|null     $time
+     * @param DateTimeZone    $DateTimeZone
+     * @param int|string|null $time
      * @return mixed
      * @throws DomainException
      */
-    public function get_timezone_offset(DateTimeZone $DateTimeZone, ?int $time = null)
+    public function get_timezone_offset(DateTimeZone $DateTimeZone, $time = null)
     {
         return EEH_DTT_Helper::get_timezone_offset($DateTimeZone, $time);
     }
@@ -737,7 +736,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * @return DbSafeDateTime|DateTime|null
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException*@throws Exception
+     * @throws InvalidInterfaceException
      * @throws Exception
      * @since 4.9.66.p
      */
@@ -750,9 +749,12 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         if (is_null($default_raw)) {
             return null;
         }
+        $timezone_string = EEH_DTT_Helper::get_valid_timezone_string($this->get_timezone());
+        $timezone        = new DateTimeZone($timezone_string);
+
         return new DbSafeDateTime(
             $this->get_default_value(),
-            EEH_DTT_Helper::get_valid_timezone_string($this->get_timezone())
+            $timezone
         );
     }
 

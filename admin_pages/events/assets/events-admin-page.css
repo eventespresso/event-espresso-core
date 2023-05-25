@@ -1,10 +1,13 @@
 #Events_Admin_List_Table-table-frm .column-name,
 #Extend_Events_Admin_List_Table-table-frm .column-name,
+#Events_Admin_List_Table-table-frm .column-venue,
+#Extend_Events_Admin_List_Table-table-frm .column-venue,
 #Events_Admin_List_Table-table-frm .column-start_date_time,
 #Extend_Events_Admin_List_Table-table-frm .column-start_date_time,
 #Events_Admin_List_Table-table-frm .column-reg_begins,
 #Extend_Events_Admin_List_Table-table-frm .column-reg_begins {
-    width: clamp(4rem, 10%, 16rem);
+    min-width: 4.2rem;
+    max-width: 32rem;
 }
 
 #Events_Admin_List_Table-table-frm .column-event_category,
@@ -28,8 +31,6 @@
     display: none;
 }
 
-#event-dates-and-times {
-}
 
 #event-dates-and-times .dtm-inp {
     width: 200px;
@@ -76,6 +77,7 @@
 }
 
 @media only screen and (max-width: 1125px) {
+
     /* Force table to not be like tables anymore */
     #event-dates-and-times,
     #event-dates-and-times thead,
@@ -116,6 +118,7 @@
 }
 
 @media only screen and (max-width: 850px) {
+
     /* Force tables back into tables */
     #event-dates-and-times {
         display: table;

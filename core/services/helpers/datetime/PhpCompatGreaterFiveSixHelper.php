@@ -10,7 +10,7 @@ use EE_Datetime_Field;
 class PhpCompatGreaterFiveSixHelper extends AbstractHelper
 {
     /**
-     * PhpCompatLessFiveSixHelper constructor.
+     * PhpCompatGreaterFiveSixHelper constructor.
      *
      * @throws DomainException
      */

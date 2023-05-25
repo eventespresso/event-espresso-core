@@ -16,6 +16,13 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 class EEH_DTT_Helper
 {
     /**
+     * @since $VID:$
+     *
+     * @var HelperInterface|null
+     */
+    protected static ?HelperInterface $dtt_helper = null;
+
+    /**
      * return the timezone set for the WP install
      *
      * @return string valid timezone string for PHP DateTimeZone() class
@@ -191,8 +198,8 @@ class EEH_DTT_Helper
     /**
      * Get Timezone Offset for given timezone object.
      *
-     * @param DateTimeZone $date_time_zone
-     * @param null         $time
+     * @param DateTimeZone      $date_time_zone
+     * @param int|string|null   $time
      * @return mixed
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1035,10 +1042,12 @@ class EEH_DTT_Helper
      */
     private static function getHelperAdapter()
     {
-        $dtt_helper_fqcn = PHP_VERSION_ID < 50600
-            ? 'EventEspresso\core\services\helpers\datetime\PhpCompatLessFiveSixHelper'
-            : 'EventEspresso\core\services\helpers\datetime\PhpCompatGreaterFiveSixHelper';
-        return LoaderFactory::getLoader()->getShared($dtt_helper_fqcn);
+        if (is_null(self::$dtt_helper)) {
+            self::$dtt_helper = LoaderFactory::getLoader()
+                ->getShared('EventEspresso\core\services\helpers\datetime\PhpCompatGreaterFiveSixHelper');
+        }
+
+        return self::$dtt_helper;
     }
 
 

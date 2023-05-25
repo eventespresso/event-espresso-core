@@ -1049,7 +1049,7 @@ class EEH_Line_Item
             }
         }
         // only recalculate totals if something changed
-        if ($updates) {
+        if ($updates || $update_txn_status) {
             $total_line_item->recalculate_total_including_taxes($update_txn_status);
             return true;
         }

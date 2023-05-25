@@ -5731,6 +5731,8 @@ body.espresso-admin #contextual-help-wrap strong {
     .espresso-admin .wp-list-table th.column-primary.sortable>a,
     .espresso-admin .wp-list-table .ee-responsive-table-cell--end,
     .espresso-admin .wp-list-table .ee-responsive-table-cell--end .ee-layout-stack,
+    .espresso-admin .wp-list-table .ee-responsive-table-cell--end>.ee-layout-row,
+    .espresso-admin .wp-list-table .ee-responsive-table-cell--end>.ee-layout-stack,
     .espresso-admin .wp-list-table .ee-responsive-table-cell--center,
     .espresso-admin .wp-list-table .ee-responsive-table-cell--center .ee-layout-stack,
     .espresso-admin .wp-list-table .column-primary:not(.column-id) .ee-responsive-table-cell {

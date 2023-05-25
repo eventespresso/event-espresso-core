@@ -65,8 +65,8 @@ interface HelperInterface
 
     /**
      * Get Timezone offset for given timezone object
-     * @param DateTimeZone $date_time_zone
-     * @param null|int         $time
+     * @param DateTimeZone      $date_time_zone
+     * @param int|string|null   $time
      * @return int
      */
     public function getTimezoneOffset(DateTimeZone $date_time_zone, $time = null);

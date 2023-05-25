@@ -26,7 +26,9 @@ class SessionRequests extends Route
         return $this->request->isAdmin()
                || $this->request->isEeAjax()
                || $this->request->isFrontend()
-               || $this->request->isIframe();
+               || $this->request->isIframe()
+               || $this->request->isApi()
+               || $this->request->isWordPressApi();
     }
 
 
