@@ -28,7 +28,7 @@ abstract class EE_Base_Class
      *
      * @var array
      */
-    protected array $_props_n_values_provided_in_constructor;
+    protected ?array $_props_n_values_provided_in_constructor = null;
 
     /**
      * Timezone
@@ -146,8 +146,6 @@ abstract class EE_Base_Class
         $model_fields = $model->field_settings(false);
         // ensure $fieldValues is an array
         $fieldValues = is_array($fieldValues) ? $fieldValues : array($fieldValues);
-        // remember what values were passed to this constructor
-        $this->_props_n_values_provided_in_constructor = $fieldValues;
         // verify client code has not passed any invalid field names
         foreach ($fieldValues as $field_name => $field_value) {
             if (! isset($model_fields[ $field_name ])) {
@@ -191,6 +189,8 @@ abstract class EE_Base_Class
                 );
             }
         }
+        // remember what values were passed to this constructor
+        $this->_props_n_values_provided_in_constructor = $fieldValues;
         // remember in entity mapper
         if (! $bydb && $model->has_primary_key_field() && $this->ID()) {
             $model->add_to_entity_map($this);

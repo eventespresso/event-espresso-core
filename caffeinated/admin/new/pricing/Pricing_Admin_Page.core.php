@@ -1184,7 +1184,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _learn_more_about_pricing_link(): string
     {
         return '
-            <a class="hidden" style="margin:0 20px; cursor:pointer; font-size:12px;" >
+            <a
+                href="https://eventespresso.com/2019/08/how-to-leverage-pricing-and-packaging-to-sell-out-your-next-event/"
+                target="_blank"
+                class="ee-price-guide-link"
+            >
                 ' . esc_html__('learn more about how pricing works', 'event_espresso') . '
             </a>';
     }

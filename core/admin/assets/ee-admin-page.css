@@ -6873,3 +6873,8 @@ screen and (max-height: 400px) {
 .espresso-admin .wp-credits-list li::marker {
     content: "🔹 ";
 }
+
+.espresso-admin .ee-price-guide-link {
+    font-size: 12px;
+    margin: 0 20px;
+}

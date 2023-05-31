@@ -20,6 +20,12 @@ abstract class BaseFormat
         $sanitized_format = '';
         for ($i = 0; $i < strlen($format); $i++) {
             $char = substr($format, $i, 1);
+            // first check if the previous character was a backslash
+            if (substr($format, $i-1, 1) === '\\') {
+                // escaped characters are allowed
+                $sanitized_format .= "\\$char";
+                continue;
+            }
             if (in_array($char, static::$allowed_chars)) {
                 $sanitized_format .= $char;
             }
