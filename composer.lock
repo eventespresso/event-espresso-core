@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0fee41b9e1b8829366c294cc25207a84",
+    "content-hash": "94bd620dcbcc4e448a89ae9830c9f172",
     "packages": [
         {
             "name": "appsero/client",
@@ -747,16 +747,16 @@
         },
         {
             "name": "wp-graphql/wp-graphql",
-            "version": "v1.12.0",
+            "version": "v1.13.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-graphql/wp-graphql.git",
-                "reference": "6de28e35389891781b8107e0404fa8e0c415c844"
+                "reference": "d5d766d0e92a8706824cb2eef2d40fc30b05e8fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-graphql/wp-graphql/zipball/6de28e35389891781b8107e0404fa8e0c415c844",
-                "reference": "6de28e35389891781b8107e0404fa8e0c415c844",
+                "url": "https://api.github.com/repos/wp-graphql/wp-graphql/zipball/d5d766d0e92a8706824cb2eef2d40fc30b05e8fa",
+                "reference": "d5d766d0e92a8706824cb2eef2d40fc30b05e8fa",
                 "shasum": ""
             },
             "require": {
@@ -820,9 +820,9 @@
             "description": "GraphQL API for WordPress",
             "support": {
                 "issues": "https://github.com/wp-graphql/wp-graphql/issues",
-                "source": "https://github.com/wp-graphql/wp-graphql/tree/v1.12.0"
+                "source": "https://github.com/wp-graphql/wp-graphql/tree/v1.13.10"
             },
-            "time": "2022-10-10T15:55:42+00:00"
+            "time": "2023-03-02T20:44:27+00:00"
         }
     ],
     "packages-dev": [],
@@ -832,7 +832,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1",
+        "php": ">=7.4",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*"
