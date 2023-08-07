@@ -58,17 +58,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fixed registration session display / hide buttons issue (#813)](https://github.com/eventespresso/cafe/pull/813)
  - [If extra_request is not set default to an empty array (#815)](https://github.com/eventespresso/cafe/pull/815)
  - [Fix Callback Name (#808)](https://github.com/eventespresso/cafe/pull/808)
- - FIX
 
 #### Changed
  - [Updates from Barista May 30 20:58 (#693)](https://github.com/eventespresso/cafe/pull/693)
- - MOD
-
-#### Deprecated
- - DEP
-
-#### Removed
- - RMV
-
-#### Security
- - SEC
