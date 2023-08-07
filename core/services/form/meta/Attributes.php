@@ -102,7 +102,7 @@ class Attributes implements JsonableInterface
         $attributes = $json_data_handler->decodeJson($json);
         /** @var InputTypes */
         $element_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\InputTypes');
-        return LoaderFactory::getNew(Attributes::class, [ $json_data_handler, $attributes, $element_types ]);
+        return LoaderFactory::getNew(Attributes::class, [$json_data_handler, (array) $attributes, $element_types]);
     }
 
 

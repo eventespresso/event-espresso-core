@@ -11,7 +11,12 @@ class EEM_Currency_Payment_Method extends EEM_Base
 {
     protected static ?EEM_Currency_Payment_Method $_instance = null;
 
-    protected function __construct($timezone = null)
+
+    /**
+     * @param string|null $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item    = esc_html__('Currency Usable by Payment Method', 'event_espresso');
         $this->plural_item      = esc_html__('Currencies Usable by Payment Methods', 'event_espresso');

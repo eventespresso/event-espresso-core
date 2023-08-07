@@ -15,17 +15,23 @@ class DataType
     const ARRAY   = 'array';
 
     const BOOL    = 'bool';
+
     const BOOLEAN = 'bool';
 
     const DOUBLE  = 'float';
+
     const FLOAT   = 'float';
 
     const EDITOR  = 'editor';
+
+    const EMAIL   = 'email';
+
     const FQCN    = 'fqcn';
 
     const HTML    = 'html';
 
     const INT     = 'int';
+
     const INTEGER = 'int';
 
     const KEY     = 'key';
@@ -54,6 +60,7 @@ class DataType
             case DataType::OBJECT:
                 return $param;
             case DataType::EDITOR:
+            case DataType::EMAIL:
             case DataType::FQCN:
             case DataType::HTML:
             case DataType::KEY:

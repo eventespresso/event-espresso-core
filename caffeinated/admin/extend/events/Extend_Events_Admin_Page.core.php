@@ -901,7 +901,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $template_args['default_registration_status']     = EEH_Form_Fields::select_input(
             'default_reg_status',
             $default_reg_status_values,
-            $this->_cpt_model_obj->default_registration_status()
+            $this->_cpt_model_obj->default_registration_status(),
+            '',
+            'ee-input-width--reg',
+            false
         );
         $template_args['display_description']             = EEH_Form_Fields::select_input(
             'display_desc',
@@ -913,13 +916,16 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             $yes_no_values,
             $this->_cpt_model_obj->display_ticket_selector(),
             '',
-            '',
+            'ee-input-width--small',
             false
         );
         $template_args['EVT_default_registration_status'] = EEH_Form_Fields::select_input(
             'EVT_default_registration_status',
             $default_reg_status_values,
-            $this->_cpt_model_obj->default_registration_status()
+            $this->_cpt_model_obj->default_registration_status(),
+            '',
+            'ee-input-width--reg',
+            false
         );
         $template_args['additional_registration_options'] = apply_filters(
             'FHEE__Events_Admin_Page__registration_options_meta_box__additional_registration_options',

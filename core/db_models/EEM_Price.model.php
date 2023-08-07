@@ -4,15 +4,20 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
 /**
- * Price Model
- *
- * @package             Event Espresso
- * @subpackage          includes/models/EEM_Price.model.php
- * @author              Mike Nelson
+ * @package     Event Espresso
+ * @subpackage  includes/models/EEM_Price.model.php
+ * @author      Mike Nelson
+ * @method EE_Price[] get_all($query_params = [])
+ * @method EE_Price  create_default_object()
  */
 class EEM_Price extends EEM_Soft_Delete_Base
 {
-    // private instance of the EEM_Price object
+
+    /**
+     * private instance of the EEM_Price object
+     *
+     * @var EEM_Price $_instance
+     */
     protected static $_instance;
 
 
@@ -20,16 +25,18 @@ class EEM_Price extends EEM_Soft_Delete_Base
      * private constructor to prevent direct creation
      *
      * @Constructor
-     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings
-     *                         (and any incoming timezone data that gets saved).
-     *                         Note this just sends the timezone info to the date time model field objects.
-     *                         Default is NULL
-     *                         (and will be assumed using the set timezone in the 'timezone_string' wp option)
+     * @param string|null $timezone string representing the timezone we want to set for returned Date Time Strings
+     *                              (and any incoming timezone data that gets saved).
+     *                              Note this just sends the timezone info to the date time model field objects.
+     *                              Default is NULL
+     *                              (and will be assumed using the set timezone in the 'timezone_string' wp option)
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function __construct($timezone)
+    protected function __construct(?string $timezone = '')
     {
-        $this->singular_item = __('Price', 'event_espresso');
-        $this->plural_item   = __('Prices', 'event_espresso');
+        $this->singular_item = esc_html__('Price', 'event_espresso');
+        $this->plural_item   = esc_html__('Prices', 'event_espresso');
 
         $this->_tables          = [
             'Price' => new EE_Primary_Table('esp_price', 'PRC_ID'),
@@ -142,9 +149,11 @@ class EEM_Price extends EEM_Soft_Delete_Base
     /**
      * instantiate a new price object with blank/empty properties
      *
-     * @return mixed array on success, FALSE on fail
+     * @return EE_Price
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_new_price()
+    public function get_new_price(): EE_Price
     {
         return $this->create_default_object();
     }
@@ -153,10 +162,11 @@ class EEM_Price extends EEM_Soft_Delete_Base
     /**
      * retrieve  ALL prices from db
      *
-     * @return EE_Base_Class[]|EE_PRice[]
+     * @return EE_Price[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_prices()
+    public function get_all_prices(): array
     {
         // retrieve all prices
         return $this->get_all(['order_by' => ['PRC_amount' => 'ASC']]);
@@ -169,8 +179,9 @@ class EEM_Price extends EEM_Soft_Delete_Base
      * @param int $EVT_ID
      * @return array on success
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_event_prices($EVT_ID = 0)
+    public function get_all_event_prices(int $EVT_ID = 0): array
     {
         return $this->get_all(
             [
@@ -187,12 +198,14 @@ class EEM_Price extends EEM_Soft_Delete_Base
     /**
      * retrieve all active global prices (that are not taxes (PBT_ID=4)) for a particular event
      *
-     * @param boolean $count return count
-     * @param bool    $include_taxes
-     * @return bool|EE_Base_Class[]|EE_PRice[]
+     * @param bool $count return count
+     * @param bool $include_taxes
+     * @return int|EE_Price[]
      * @throws EE_Error
+     * @throws ReflectionException
+     * @throws ReflectionException
      */
-    public function get_all_default_prices($count = false, $include_taxes = false)
+    public function get_all_default_prices(bool $count = false, bool $include_taxes = false)
     {
         $_where = [
             'PRC_deleted'    => 0,
@@ -212,22 +225,23 @@ class EEM_Price extends EEM_Soft_Delete_Base
     /**
      * retrieve all active global prices that are taxes
      *
-     * @return bool|EE_Base_Class[]|EE_PRice[]
+     * @return EE_Price[]
      * @throws EE_Error
+     * @throws ReflectionException
      * @since   5.0.0.p
      */
-    public function getAllDefaultTaxes()
+    public function getAllDefaultTaxes(): array
     {
         return $this->get_all(
             [
                 [
-                    'PRC_deleted'    => 0,
-                    'PRC_is_default' => 1,
-                    'Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax
+                    'PRC_deleted'       => 0,
+                    'PRC_is_default'    => 1,
+                    'Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax,
                 ],
                 'order_by' => [
                     'Price_Type.PRT_order' => 'ASC',
-                    'PRC_order' => 'ASC'
+                    'PRC_order'            => 'ASC',
                 ],
             ]
         );
@@ -237,14 +251,14 @@ class EEM_Price extends EEM_Soft_Delete_Base
     /**
      * retrieve all prices that are taxes
      *
-     * @return EE_Base_Class[]|EE_PRice[]
+     * @return EE_Price[]
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function get_all_prices_that_are_taxes()
+    public function get_all_prices_that_are_taxes(): array
     {
         $taxes     = [];
         $all_taxes = $this->get_all(
@@ -266,10 +280,13 @@ class EEM_Price extends EEM_Soft_Delete_Base
      * retrieve all prices for an ticket plus default global prices, but not taxes
      *
      * @param int $TKT_ID the id of the event.  If not included then we assume that this is a new ticket.
-     * @return EE_Base_Class[]|EE_PRice[]|boolean
+     * @return EE_Price[]
      * @throws EE_Error
+     * @throws ReflectionException
+     * @throws ReflectionException
+     * @throws ReflectionException
      */
-    public function get_all_ticket_prices_for_admin($TKT_ID = 0)
+    public function get_all_ticket_prices_for_admin(int $TKT_ID = 0): array
     {
         $array_of_price_objects = [];
         if (empty($TKT_ID)) {
@@ -305,18 +322,18 @@ class EEM_Price extends EEM_Soft_Delete_Base
             }
             return $array_of_price_objects;
         }
-        return false;
+        return [];
     }
 
 
     /**
-     * _sort_event_prices_by_type
-     *
      * @param EE_Price $price_a
      * @param EE_Price $price_b
-     * @return bool false on fail
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function _sort_event_prices_by_type(EE_Price $price_a, EE_Price $price_b)
+    public function _sort_event_prices_by_type(EE_Price $price_a, EE_Price $price_b): int
     {
         if ($price_a->type_obj()->order() === $price_b->type_obj()->order()) {
             return $this->_sort_event_prices_by_order($price_a, $price_b);
@@ -326,13 +343,13 @@ class EEM_Price extends EEM_Soft_Delete_Base
 
 
     /**
-     *        _sort_event_prices_by_order
-     *
      * @param EE_Price $price_a
      * @param EE_Price $price_b
-     * @return bool false on fail
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function _sort_event_prices_by_order(EE_Price $price_a, EE_Price $price_b)
+    public function _sort_event_prices_by_order(EE_Price $price_a, EE_Price $price_b): int
     {
         if ($price_a->order() === $price_b->order()) {
             return 0;
@@ -345,10 +362,11 @@ class EEM_Price extends EEM_Soft_Delete_Base
      * get all prices of a specific type
      *
      * @param int $type - PRT_ID
-     * @return EE_Base_Class[]|EE_PRice[]
+     * @return EE_Price[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_prices_that_are_type($type = 0)
+    public function get_all_prices_that_are_type(int $type = 0): array
     {
         return $this->get_all(
             [
@@ -368,7 +386,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
      * @return array which can be used like so: $this->get_all(array(array(...where
      *               stuff...),'order_by'=>$this->_order_by_array_for_get_all_method()));
      */
-    public function _order_by_array_for_get_all_method()
+    public function _order_by_array_for_get_all_method(): array
     {
         return [
             'PRC_order'            => 'ASC',

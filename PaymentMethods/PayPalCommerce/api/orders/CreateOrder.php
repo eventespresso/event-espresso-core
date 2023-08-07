@@ -6,6 +6,7 @@ use EE_Error;
 use EE_Line_Item;
 use EE_Transaction;
 use EEM_State;
+use EventEspresso\core\domain\services\validation\email\strategies\Basic;
 use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\currency\CurrencyManager;
@@ -14,7 +15,6 @@ use ReflectionException;
 
 /**
  * Class CreateOrder
- *
  * Generates and sends a Create Order request using PayPal API.
  *
  * @package     Event Espresso
@@ -90,9 +90,8 @@ class CreateOrder extends OrdersApi
      */
     public function sanitizeRequestParameters(array $billing_info)
     {
-        $sanitizer = new RequestSanitizer();
-        foreach ($billing_info as $item => $value)
-        {
+        $sanitizer = new RequestSanitizer(new Basic());
+        foreach ($billing_info as $item => $value) {
             $this->billing_info[ $item ] = $sanitizer->clean($value);
         }
     }
@@ -129,7 +128,7 @@ class CreateOrder extends OrdersApi
         $state       = EEM_State::instance()->get_col(
             [
                 ['STA_ID' => $this->billing_info['bill_state']],
-                'limit' => 1
+                'limit' => 1,
             ],
             'STA_abbrev'
         )[0];
@@ -193,7 +192,7 @@ class CreateOrder extends OrdersApi
             if ($line_item instanceof EE_Line_Item && $line_item->OBJ_type() !== 'Promotion') {
                 $item_money     = $line_item->unit_price();
                 $li_description = $line_item->desc() ?? esc_html__('Event Ticket', 'event_espresso');
-                $line_items [] = [
+                $line_items []  = [
                     'name'        => substr(wp_strip_all_tags($line_item->name()), 0, 126),
                     'quantity'    => $line_item->quantity(),
                     'description' => substr(wp_strip_all_tags($li_description), 0, 125),
@@ -279,7 +278,7 @@ class CreateOrder extends OrdersApi
                     [$this->request_url, $parameters, $response],
                     $this->transaction->payment_method()
                 );
-            } catch (EE_Error | ReflectionException $e) {
+            } catch (EE_Error|ReflectionException $e) {
                 // Just continue.
             }
             return [

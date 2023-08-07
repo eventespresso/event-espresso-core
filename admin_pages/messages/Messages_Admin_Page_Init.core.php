@@ -4,7 +4,6 @@ use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
 
 /**
  * Messages_Admin_Page_Init
- *
  * for setup of the message admin pages
  *
  * @package         Event Espresso
@@ -22,8 +21,6 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init
      */
     public function __construct()
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
         if (! defined('EE_MSG_PG_SLUG')) {
             define('EE_MSG_PG_SLUG', 'espresso_messages');
             define('EE_MSG_PG_NAME', ucwords(str_replace('_', '', EE_MSG_PG_SLUG)));
@@ -48,14 +45,14 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init
     public function getMenuProperties(): array
     {
         return [
-            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
-            'menu_group'      => 'management',
-            'menu_order'      => 10,
-            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
-            'parent_slug'     => 'espresso_events',
-            'menu_slug'       => EE_MSG_PG_SLUG,
-            'menu_label'      => esc_html__('Messages', 'event_espresso'),
-            'capability'      => 'ee_read_global_messages',
+            'menu_type'    => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'   => 'management',
+            'menu_order'   => 10,
+            'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'  => 'espresso_events',
+            'menu_slug'    => EE_MSG_PG_SLUG,
+            'menu_label'   => esc_html__('Messages', 'event_espresso'),
+            'capability'   => 'ee_read_global_messages',
         ];
     }
 }

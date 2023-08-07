@@ -19,7 +19,6 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
 
 
     /**
-     *
      * @param array  $props_n_values          incoming values
      * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
      *                                        used.)
@@ -27,7 +26,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      *                                        date_format and the second value is the time format
      * @return EE_Attendee
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -40,7 +39,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      *                                the website will be used.
      * @return EE_Attendee
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
@@ -184,6 +183,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
         return $this->_QSO_opt_group;
     }
 
+
     /**
      * Duplicates this question option. By default the new question option will be for the same question,
      * but that can be overriden by setting the 'QST_ID' option
@@ -192,7 +192,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * @type int    $QST_ID  the QST_ID attribute of this question option, otherwise it will be for the same question
      *                       as the original
      */
-    public function duplicate($options = array())
+    public function duplicate($options = [])
     {
         $new_question_option = clone $this;
         $new_question_option->set('QSO_ID', null);
@@ -207,6 +207,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
         $new_question_option->save();
     }
 
+
     /**
      * Gets the QSO_system value
      *
@@ -216,6 +217,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
     {
         return $this->get('QSO_system');
     }
+
 
     /**
      * Sets QSO_system

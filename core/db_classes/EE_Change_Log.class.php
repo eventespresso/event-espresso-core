@@ -19,7 +19,7 @@ class EE_Change_Log extends EE_Base_Class
      * @return EE_Change_Log
      * @throws EE_Error
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -32,10 +32,11 @@ class EE_Change_Log extends EE_Base_Class
      *                                the website will be used.
      * @return EE_Change_Log
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
+
 
     /**
      * Gets message
@@ -48,6 +49,7 @@ class EE_Change_Log extends EE_Base_Class
         return $this->get('LOG_message');
     }
 
+
     /**
      * Sets message
      *
@@ -58,6 +60,7 @@ class EE_Change_Log extends EE_Base_Class
     {
         $this->set('LOG_message', $message);
     }
+
 
     /**
      * Gets time
@@ -70,6 +73,7 @@ class EE_Change_Log extends EE_Base_Class
         return $this->get('LOG_time');
     }
 
+
     /**
      * Sets time
      *
@@ -80,6 +84,7 @@ class EE_Change_Log extends EE_Base_Class
     {
         $this->set('LOG_time', $time);
     }
+
 
     /**
      * Gets log_type
@@ -104,6 +109,7 @@ class EE_Change_Log extends EE_Base_Class
         return EEM_Change_Log::get_pretty_label_for_type($this->log_type());
     }
 
+
     /**
      * Sets log_type
      *
@@ -114,6 +120,7 @@ class EE_Change_Log extends EE_Base_Class
     {
         $this->set('LOG_type', $log_type);
     }
+
 
     /**
      * Gets type of the model object related to this log
@@ -126,6 +133,7 @@ class EE_Change_Log extends EE_Base_Class
         return $this->get('OBJ_type');
     }
 
+
     /**
      * Sets type
      *
@@ -136,6 +144,7 @@ class EE_Change_Log extends EE_Base_Class
     {
         $this->set('OBJ_type', $type);
     }
+
 
     /**
      * Gets OBJ_ID (the ID of the item related to this log)
@@ -148,6 +157,7 @@ class EE_Change_Log extends EE_Base_Class
         return $this->get('OBJ_ID');
     }
 
+
     /**
      * Sets OBJ_ID
      *
@@ -158,6 +168,7 @@ class EE_Change_Log extends EE_Base_Class
     {
         $this->set('OBJ_ID', $OBJ_ID);
     }
+
 
     /**
      * Gets wp_user
@@ -170,6 +181,7 @@ class EE_Change_Log extends EE_Base_Class
         return $this->get('LOG_wp_user');
     }
 
+
     /**
      * Sets wp_user
      *
@@ -181,6 +193,7 @@ class EE_Change_Log extends EE_Base_Class
         $this->set('LOG_wp_user', $wp_user_id);
     }
 
+
     /**
      * Gets the model object attached to this log
      *
@@ -190,13 +203,14 @@ class EE_Change_Log extends EE_Base_Class
     public function object()
     {
         $model_name_of_related_obj = $this->OBJ_type() ?? '';
-        $is_model_name = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
+        $is_model_name             = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
         if (! $is_model_name) {
             return null;
         } else {
             return $this->get_first_related($model_name_of_related_obj);
         }
     }
+
 
     /**
      * Shorthand for setting the OBJ_ID and OBJ_type. Slightly handier than using

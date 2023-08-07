@@ -1366,7 +1366,7 @@ class EE_Registry implements ResettableInterface
         $params = $this->mirror->getParametersFromReflection($reflector);
         // and the keys for the incoming arguments array so that we can compare existing arguments with what is expected
         $argument_keys = array_keys($arguments);
-        // now loop thru all of the constructors expected parameters
+        // now loop thru all the constructors' expected parameters
         foreach ($params as $index => $param) {
             try {
                 // is this a dependency for a specific class ?

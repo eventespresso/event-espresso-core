@@ -247,9 +247,9 @@ class EED_PayPalOnboard extends EED_Module
         }
         // Validate the token. Do a health check.
         $now          = time();
-        $minutes_left = abs(($expires_at - $now) / 60);
-        // Count as expired if less than 30 minutes till expiration left.
-        if ($minutes_left <= 30) {
+        $minutes_left = round(($expires_at - $now) / 60);
+        // Count as expired if less than 60 minutes till expiration left.
+        if ($minutes_left <= 60) {
             return true;
         }
         return false;

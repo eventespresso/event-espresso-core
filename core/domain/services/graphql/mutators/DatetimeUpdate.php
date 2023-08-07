@@ -37,29 +37,21 @@ class DatetimeUpdate extends EntityMutator
             try {
                 /** @var EE_Datetime $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
-
-                $tickets = [];
                 $args = DatetimeMutation::prepareFields($input);
 
-                if (isset($args['tickets'])) {
-                    $tickets = $args['tickets'];
-                    unset($args['tickets']);
-                }
-
-                $venue = 'NO_VENUE_SET';
-                if (array_key_exists('venue', $args)) {
-                    $venue = $args['venue'];
-                    unset($args['venue']);
-                }
+                // extract tickets and venue from args then unset them
+                $tickets = $args['tickets'] ?? null;
+                $venue   = $args['venue'] ?? null;
+                unset($args['tickets'], $args['venue']);
 
                 // Update the entity
                 $entity->save($args);
 
-                if (! empty($tickets)) {
+                if ($tickets) {
                     DatetimeMutation::setRelatedTickets($entity, $tickets);
                 }
 
-                if ($venue !== 'NO_VENUE_SET') {
+                if ($venue) {
                     DatetimeMutation::setVenue($entity, $venue);
                 }
 

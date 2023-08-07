@@ -22,19 +22,19 @@ function ee_show_billing_info_cleaned(EE_Form_Section_Proper $form_section, $fou
             if ($subsection->get_sensitive_data_removal_strategy() instanceof EE_Credit_Card_Sensitive_Data_Removal) {
                 $found_cc_data = true;
             }
-            ?>
-            <div class="clearfix">
-            <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
-                <?php echo wp_kses($subsection->get_html_for_label(), AllowedTags::getWithFormTags()); ?>
-            </span>
-            <?php echo wp_kses($subsection->pretty_value(), AllowedTags::getWithFormTags()); ?>
-            </div><?php
+            $subsection->add_html_label_class('admin-side-mbox-label-spn lt-grey-txt');
+            echo wp_kses($subsection->get_html_for_label(), AllowedTags::getWithFormTags());
+            echo "<span class='admin-side-mbox-value-spn'>";
+            echo wp_kses($subsection->pretty_value(), AllowedTags::getWithFormTags());
+            echo "</span>";
         } elseif ($subsection instanceof EE_Form_Section_Proper) {
             $found_cc_data = ee_show_billing_info_cleaned($subsection, $found_cc_data);
         }
     }
     return $found_cc_data;
 }
+
+
 ?>
 
 <div id="admin-side-mbox-billing-info-dv" class="admin-side-mbox-dv">

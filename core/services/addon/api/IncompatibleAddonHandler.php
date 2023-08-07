@@ -11,6 +11,10 @@ class IncompatibleAddonHandler
      */
     public function deactivateIncompatibleAddons()
     {
+        static $done = false;
+        if ($done) {
+            return;
+        }
         $this->deactivateIncompatibleAddon(
             'Wait Lists',
             'EE_WAIT_LISTS_VERSION',
@@ -32,6 +36,7 @@ class IncompatibleAddonHandler
         //     'load_ee_core_wpusers',
         //     'EE_WPUSERS_PLUGIN_FILE'
         // );
+        $done = true;
     }
 
 

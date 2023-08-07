@@ -6,27 +6,32 @@
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- *
  * ------------------------------------------------------------------------
  */
 class EE_Currency extends EE_Base_Class
 {
     /** Currency COde @var CUR_code */
     protected $_CUR_code = null;
+
     /** Currency Name Singular @var CUR_single */
     protected $_CUR_single = null;
+
     /** Currency Name Plural @var CUR_plural */
     protected $_CUR_plural = null;
+
     /** Currency Sign @var CUR_sign */
     protected $_CUR_sign = null;
+
     /** Currency Decimal Places @var CUR_dec_plc */
     protected $_CUR_dec_plc = null;
+
     /** Active? @var CUR_active */
     protected $_CUR_active = null;
+
     protected $_Payment_Method;
 
+
     /**
-     *
      * @param array  $props_n_values          incoming values
      * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
      *                                        used.)
@@ -34,7 +39,7 @@ class EE_Currency extends EE_Base_Class
      *                                        date_format and the second value is the time format
      * @return EE_Attendee
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -47,10 +52,11 @@ class EE_Currency extends EE_Base_Class
      *                                the website will be used.
      * @return EE_Attendee
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
+
 
     /**
      * Gets code
@@ -61,6 +67,7 @@ class EE_Currency extends EE_Base_Class
     {
         return $this->get('CUR_code');
     }
+
 
     /**
      * Sets code
@@ -73,6 +80,7 @@ class EE_Currency extends EE_Base_Class
         return $this->set('CUR_code', $code);
     }
 
+
     /**
      * Gets active
      *
@@ -82,6 +90,7 @@ class EE_Currency extends EE_Base_Class
     {
         return $this->get('CUR_active');
     }
+
 
     /**
      * Sets active
@@ -94,6 +103,7 @@ class EE_Currency extends EE_Base_Class
         return $this->set('CUR_active', $active);
     }
 
+
     /**
      * Gets dec_plc
      *
@@ -103,6 +113,7 @@ class EE_Currency extends EE_Base_Class
     {
         return $this->get('CUR_dec_plc');
     }
+
 
     /**
      * Sets dec_plc
@@ -115,6 +126,7 @@ class EE_Currency extends EE_Base_Class
         return $this->set('CUR_dec_plc', $dec_plc);
     }
 
+
     /**
      * Gets plural
      *
@@ -124,6 +136,7 @@ class EE_Currency extends EE_Base_Class
     {
         return $this->get('CUR_plural');
     }
+
 
     /**
      * Sets plural
@@ -136,6 +149,7 @@ class EE_Currency extends EE_Base_Class
         return $this->set('CUR_plural', $plural);
     }
 
+
     /**
      * Gets sign
      *
@@ -145,6 +159,7 @@ class EE_Currency extends EE_Base_Class
     {
         return $this->get('CUR_sign');
     }
+
 
     /**
      * Sets sign
@@ -157,6 +172,7 @@ class EE_Currency extends EE_Base_Class
         return $this->set('CUR_sign', $sign);
     }
 
+
     /**
      * Gets single
      *
@@ -166,6 +182,7 @@ class EE_Currency extends EE_Base_Class
     {
         return $this->get('CUR_single');
     }
+
 
     /**
      * Sets single
@@ -177,6 +194,7 @@ class EE_Currency extends EE_Base_Class
     {
         return $this->set('CUR_single', $single);
     }
+
 
     /**
      * Gets a prettier name

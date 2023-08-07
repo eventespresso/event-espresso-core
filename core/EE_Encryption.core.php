@@ -13,7 +13,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
 // mcrypt methods are removed in php7.2 but we have a condition in this class that only uses them if they are available.
 
 /**
- * EE_Encryption class
+ * EE_Encryption
  * class for applying low-grade string encryption/decryption
  * really only good for hiding content from simple bots and script kiddies
  * but better for solving encoding issues with databases
@@ -21,6 +21,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
  * @package    Event Espresso
  * @subpackage includes/functions
  * @author     Brent Christensen
+ * @deprecated $VID:$
  */
 class EE_Encryption implements InterminableInterface
 {
@@ -105,6 +106,7 @@ class EE_Encryption implements InterminableInterface
         if (function_exists('base64_encode')) {
             $this->_use_base64_encode = true;
         }
+        EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '$VID:$');
     }
 
 

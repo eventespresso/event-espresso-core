@@ -16,7 +16,7 @@ class EE_Extra_Join extends EE_Base_Class
      * @param null  $timezone
      * @return EE_Extra_Join|mixed
      */
-    public static function new_instance($props_n_values = array(), $timezone = null)
+    public static function new_instance($props_n_values = [], $timezone = '')
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone);
@@ -28,7 +28,7 @@ class EE_Extra_Join extends EE_Base_Class
      * @param null  $timezone
      * @return EE_Extra_Join
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }

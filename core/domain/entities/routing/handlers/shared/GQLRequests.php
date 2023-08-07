@@ -63,8 +63,7 @@ class GQLRequests extends Route
                            $this->request->getRequestParam('action') === 'create_new'
                            || $this->request->getRequestParam('action') === 'edit'
                        )
-                   )
-                   || (
+                   ) || (
                        $pagenow
                        && (
                            $pagenow === 'post-new.php'

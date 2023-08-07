@@ -45,25 +45,24 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
     }
 
 
-
-    public function getSchemaProperties()
+    public function getSchemaProperties(): array
     {
-        return array(
-            'raw' => array(
-                'description' =>  sprintf(
+        return [
+            'raw'      => [
+                'description' => sprintf(
                     esc_html__('%s - the value in the database.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'string'
-            ),
-            'rendered' => array(
-                'description' =>  sprintf(
+                'type'        => 'string',
+            ],
+            'rendered' => [
+                'description' => sprintf(
                     esc_html__('%s - transformed for display.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'string',
-                'readonly' => true
-            )
-        );
+                'type'        => 'string',
+                'readonly'    => true,
+            ],
+        ];
     }
 }

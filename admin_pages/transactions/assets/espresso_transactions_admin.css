@@ -1,5 +1,4 @@
 
-
 #entries-per-page-dv {
     display: inline;
 }
@@ -235,10 +234,32 @@
     line-height: 1.2em;
 }
 
-.admin-side-mbox-label-spn {
-    width: 30%;
-    padding-right: .5em;
-    text-align: right;
+#admin-side-mbox-billing-info-dv {
+    align-items: start;
+    display: grid;
+    grid-gap: var(--ee-padding-small);
+    grid-template-columns: 1fr 2fr;
+    justify-items: start;
+}
+
+.espresso-admin .postbox .inside .admin-side-mbox-label-spn,
+.espresso-admin .postbox .inside .admin-side-mbox-value-spn {
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.espresso-admin .postbox .inside .admin-side-mbox-label-spn {
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    min-width: 5rem;
+    width: max-content;
+}
+
+.espresso-admin .postbox .inside .admin-side-mbox-value-spn {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    word-break: break-all;
 }
 
 .admin-side-mbox-text-dv {
@@ -315,7 +336,7 @@
 
 .ee-line-item-id {
     font-size: var(--ee-font-size-small);
-    color: #BBB;
+    color: #bbbbbb;
     font-style: italic;
 }
 
@@ -392,8 +413,8 @@
     height: auto;
     padding: 3em 4em 2em;
     z-index: 9999;
-    background: #FFF;
-    border: 1px solid #DDD;
+    background: #ffffff;
+    border: 1px solid #dddddd;
     border-radius: 5px;
 }
 
@@ -408,8 +429,8 @@
 .admin-modal-dialog-inner {
     padding: 2em 2em 1em;
     margin: 0;
-    border: 1px solid #DFDFDF;
-    background: #FCFCFC;
+    border: 1px solid #dfdfdf;
+    background: #fcfcfc;
 }
 
 .admin-modal-dialog-inner .admin-modal-dialog-row {
@@ -513,11 +534,11 @@
 
 .jqplot-point-label {
     padding: 0 .5em;
-    background: #FFF;
-    border: 1px solid #DDD;
+    background: #ffffff;
+    border: 1px solid #dddddd;
     border-radius: 3px;
     font-size: var(--ee-font-size-tiny);
-    color: #333;
+    color: #333333;
     -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
     -moz-box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
     box-shadow: 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);

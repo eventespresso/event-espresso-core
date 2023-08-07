@@ -105,10 +105,11 @@
 .espresso-legacy-editor.espresso-admin #event-and-ticket-form-content textarea:not(.wp-editor-area):not(.iframe-embed-content),
 .espresso-legacy-editor.espresso-admin #event-and-ticket-form-content input:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]):not(.chosen-search-input) {
     margin-inline: 0;
+    margin-block: 0;
     max-width: 100%;
     min-width: unset;
-    padding-inline-end: var(--ee-margin-nano);
-    padding-inline-start: var(--ee-margin-nano);
+    padding-inline-end: var(--ee-padding-nano);
+    padding-inline-start: var(--ee-padding-nano);
     width: 100%;
 }
 

@@ -29,6 +29,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
         $this->setSchemaType('object');
     }
 
+
     /**
      * Returns the list of allowed enum options, but filterable.
      * This is used internally
@@ -44,13 +45,13 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
         );
     }
 
+
     /**
      * When setting, just verify that the value being used matches what we've defined as allowable enum values.
      * If not, throw an error (but if WP_DEBUG is false, just set the value to default)
      *
      * @param int $value_inputted_for_field_on_model_object
      * @return int
-     * @throws EE_Error
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
@@ -60,7 +61,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
             && ! array_key_exists($value_inputted_for_field_on_model_object, $allowed_enum_values)
         ) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                $msg = sprintf(
+                $msg  = sprintf(
                     esc_html__('System is assigning incompatible value "%1$s" to field "%2$s"', 'event_espresso'),
                     $value_inputted_for_field_on_model_object,
                     $this->_name
@@ -79,45 +80,40 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
     }
 
 
-
     /**
      * Gets the pretty version of the enum's value.
      *
      * @param int | string $value_on_field_to_be_outputted
-     * @param null         $schema
+     * @param string|null  $schema
      * @return string
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, ?string $schema = null)
     {
         $options = $this->_allowed_enum_values();
-        if (isset($options[ $value_on_field_to_be_outputted ])) {
-            return $options[ $value_on_field_to_be_outputted ];
-        } else {
-            return $value_on_field_to_be_outputted;
-        }
+        return $options[ $value_on_field_to_be_outputted ] ?? $value_on_field_to_be_outputted;
     }
 
 
-    public function getSchemaProperties()
+    public function getSchemaProperties(): array
     {
-        return array(
-            'raw' => array(
-                'description' =>  sprintf(
+        return [
+            'raw'    => [
+                'description' => sprintf(
                     esc_html__('%s - the value in the database.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'enum' => array_keys($this->_allowed_enum_values()),
-                'type' => 'integer'
-            ),
-            'pretty' => array(
-                'description' =>  sprintf(
+                'enum'        => array_keys($this->_allowed_enum_values()),
+                'type'        => 'integer',
+            ],
+            'pretty' => [
+                'description' => sprintf(
                     esc_html__('%s - the value for display.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'enum' => array_values($this->_allowed_enum_values()),
-                'type' => 'string',
-                'read_only' => true
-            )
-        );
+                'enum'        => array_values($this->_allowed_enum_values()),
+                'type'        => 'string',
+                'read_only'   => true,
+            ],
+        ];
     }
 }

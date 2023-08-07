@@ -199,7 +199,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         $all_pmt_help_tabs_config = [];
         foreach ($payment_method_types as $payment_method_type) {
             if (
-                ! EE_Registry::instance()->CAP->current_user_can(
+                ! $this->capabilities->current_user_can(
                     $payment_method_type->cap_name(),
                     'specific_payment_method_type_access'
                 )
@@ -294,7 +294,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         $table_analysis = LoaderFactory::getShared(TableAnalysis::class);
         /** @var TableManager $table_manager */
         $table_manager = LoaderFactory::getShared(TableManager::class);
-        if (! $table_analysis->tableExists('esp_payment_method')){
+        if (! $table_analysis->tableExists('esp_payment_method')) {
             $table_manager->createTable(
                 'esp_payment_method',
                 "PMD_ID int(11) NOT NULL AUTO_INCREMENT,
@@ -316,7 +316,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                 'InnoDB'
             );
         }
-        if (! $table_analysis->tableExists('esp_currency_payment_method')){
+        if (! $table_analysis->tableExists('esp_currency_payment_method')) {
             $table_manager->createTable(
                 'esp_currency_payment_method',
                 "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
@@ -327,7 +327,6 @@ class Payments_Admin_Page extends EE_Admin_Page
                 'InnoDB'
             );
         }
-
     }
 
 
@@ -357,7 +356,7 @@ class Payments_Admin_Page extends EE_Admin_Page
             }
             // check access
             if (
-                ! EE_Registry::instance()->CAP->current_user_can(
+                ! $this->capabilities->current_user_can(
                     $pmt_obj->cap_name(),
                     'specific_payment_method_type_access'
                 )
@@ -470,10 +469,10 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         return $payment_method instanceof EE_Payment_Method
                && $payment_method->type_obj() instanceof EE_PMT_Base
-               && EE_Registry::instance()->CAP->current_user_can(
-                   $payment_method->type_obj()->cap_name(),
-                   'specific_payment_method_type_access'
-               );
+               && $this->capabilities->current_user_can(
+                $payment_method->type_obj()->cap_name(),
+                'specific_payment_method_type_access'
+            );
     }
 
 

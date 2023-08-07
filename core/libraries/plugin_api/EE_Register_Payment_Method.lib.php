@@ -177,4 +177,10 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
         }
         return $payment_method_caps;
     }
+
+
+    public static function reset(): void
+    {
+        self::$_settings = [];
+    }
 }

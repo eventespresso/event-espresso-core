@@ -19,34 +19,37 @@ class EE_Belongs_To_Any_Relation extends EE_Belongs_To_Relation
      *
      * @param string $model_relation_chain
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws Exception
      */
-    public function get_join_statement($model_relation_chain)
+    public function get_join_statement(string $model_relation_chain): string
     {
         // create the sql string like
-        $this_table_fk_field = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+        $this_table_fk_field =
+            $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
         // ALSO, need to get the field with the model name
         $field_with_model_name = $this->get_this_model()->get_field_containing_related_model_name();
 
 
         $other_table_pk_field = $this->get_other_model()->get_primary_key_field();
         $this_table_alias     = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
-            $model_relation_chain,
-            $this->get_this_model()->get_this_model_name()
-        ) . $this_table_fk_field->get_table_alias();
+                $model_relation_chain,
+                $this->get_this_model()->get_this_model_name()
+            ) . $this_table_fk_field->get_table_alias();
         $other_table_alias    = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
-            $model_relation_chain,
-            $this->get_other_model()->get_this_model_name()
-        ) . $other_table_pk_field->get_table_alias();
+                $model_relation_chain,
+                $this->get_other_model()->get_this_model_name()
+            ) . $other_table_pk_field->get_table_alias();
         $other_table          = $this->get_other_model()->get_table_for_alias($other_table_alias);
         return $this->_left_join(
-            $other_table,
-            $other_table_alias,
-            $other_table_pk_field->get_table_column(),
-            $this_table_alias,
-            $this_table_fk_field->get_table_column(),
-            $field_with_model_name->get_qualified_column() . "='" . $this->get_other_model()->get_this_model_name() . "'"
-        )
+                $other_table,
+                $other_table_alias,
+                $other_table_pk_field->get_table_column(),
+                $this_table_alias,
+                $this_table_fk_field->get_table_column(),
+                $field_with_model_name->get_qualified_column() . "='" . $this->get_other_model()->get_this_model_name(
+                ) . "'"
+            )
                . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
     }
 
@@ -58,15 +61,21 @@ class EE_Belongs_To_Any_Relation extends EE_Belongs_To_Relation
      * @param EE_Base_Class|int $this_obj_or_id
      * @param EE_Base_Class|int $other_obj_or_id
      * @param array             $extra_join_model_fields_n_values
-     * @return \EE_Base_Class
-     * @throws \EE_Error
+     * @return EE_Base_Class
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws Exception
      */
-    public function add_relation_to($this_obj_or_id, $other_obj_or_id, $extra_join_model_fields_n_values = array())
-    {
+    public function add_relation_to(
+        $this_obj_or_id,
+        $other_obj_or_id,
+        array $extra_join_model_fields_n_values = []
+    ): EE_Base_Class {
         $this_model_obj  = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
         $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id, true);
         // find the field on THIS model which a foreign key to the other model
-        $fk_on_this_model = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+        $fk_on_this_model =
+            $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
         // set that field on the other model to this model's ID
         $this_model_obj->set($fk_on_this_model->get_name(), $other_model_obj->ID());
         // and make sure this model's field with the foreign model name is set to the correct value
@@ -85,15 +94,18 @@ class EE_Belongs_To_Any_Relation extends EE_Belongs_To_Relation
      * @param EE_Base_Class|int $this_obj_or_id
      * @param EE_Base_Class|int $other_obj_or_id
      * @param array             $where_query
-     * @return \EE_Base_Class
-     * @throws \EE_Error
+     * @return EE_Base_Class
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws Exception
      */
-    public function remove_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = array())
+    public function remove_relation_to($this_obj_or_id, $other_obj_or_id, array $where_query = []): EE_Base_Class
     {
         $this_model_obj  = $this->get_this_model()->ensure_is_obj($this_obj_or_id, true);
         $other_model_obj = $this->get_other_model()->ensure_is_obj($other_obj_or_id);
         // find the field on the other model which is a foreign key to this model
-        $fk_on_this_model = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
+        $fk_on_this_model =
+            $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
         // set that field on the other model to this model's ID
         $this_model_obj->set($fk_on_this_model->get_name(), null, true);
         $this_model_obj->set(

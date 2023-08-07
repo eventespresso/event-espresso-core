@@ -20,7 +20,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
      * @return EE_Payment
      * @throws EE_Error|ReflectionException
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -34,7 +34,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
      * @return EE_Payment
      * @throws EE_Error
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
@@ -219,7 +219,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
     public function set_details($details = '')
     {
         if (is_array($details)) {
-            array_walk_recursive($details, array($this, '_strip_all_tags_within_array'));
+            array_walk_recursive($details, [$this, '_strip_all_tags_within_array']);
         } else {
             $details = wp_strip_all_tags($details);
         }
@@ -456,11 +456,11 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
     public function pretty_status($show_icons = false)
     {
         $status = EEM_Status::instance()->localized_status(
-            array($this->STS_ID() => esc_html__('unknown', 'event_espresso')),
+            [$this->STS_ID() => esc_html__('unknown', 'event_espresso')],
             false,
             'sentence'
         );
-        $icon = '';
+        $icon   = '';
         switch ($this->STS_ID()) {
             case EEM_Payment::status_id_approved:
                 $icon = $show_icons
@@ -589,11 +589,12 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
     /**
      * Gets all the extra meta info on this payment
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Extra_Meta
      * @throws EE_Error
      */
-    public function extra_meta($query_params = array())
+    public function extra_meta($query_params = [])
     {
         return $this->get_many_related('Extra_Meta', $query_params);
     }
@@ -656,10 +657,10 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
             // and put them into the form instead
             if ($method === 'GET') {
                 $querystring = parse_url($redirect_url, PHP_URL_QUERY);
-                $get_params = null;
+                $get_params  = null;
                 parse_str($querystring, $get_params);
                 $inside_form_html .= $this->_args_as_inputs($get_params);
-                $redirect_url = str_replace('?' . $querystring, '', $redirect_url);
+                $redirect_url     = str_replace('?' . $querystring, '', $redirect_url);
             }
             $form = EEH_HTML::nl(1)
                     . '<form method="'
@@ -708,11 +709,12 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
         return $html;
     }
 
+
     /**
      * Converts either a single name and value or array of values into html hidden inputs
      * and returns the string of html
      *
-     * @param string $name
+     * @param string       $name
      * @param string|array $value
      * @return string
      */
@@ -727,8 +729,8 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
             return $html;
         }
         return EEH_HTML::nl()
-            . '<input type="hidden" name="' . $name . '"'
-            . ' value="' . esc_attr($value) . '"/>';
+               . '<input type="hidden" name="' . $name . '"'
+               . ' value="' . esc_attr($value) . '"/>';
     }
 
 
@@ -758,7 +760,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
             $item = (array) $item;
         }
         if (is_array($item)) {
-            array_walk_recursive($item, array($this, '_strip_all_tags_within_array'));
+            array_walk_recursive($item, [$this, '_strip_all_tags_within_array']);
         } else {
             $item = wp_strip_all_tags((string) $item);
         }
@@ -779,7 +781,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
             'STS_ID',
             $this->get_model()->field_settings_for('STS_ID')->get_default_value()
         );
-        $current_status = $this->status();
+        $current_status  = $this->status();
         if (
             $original_status !== EEM_Payment::status_id_approved
             && $current_status === EEM_Payment::status_id_approved
@@ -814,11 +816,12 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
     /**
      * Gets details regarding which registrations this payment was applied to
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Registration_Payment[]
      * @throws EE_Error
      */
-    public function registration_payments($query_params = array())
+    public function registration_payments($query_params = [])
     {
         return $this->get_many_related('Registration_Payment', $query_params);
     }

@@ -105,6 +105,26 @@ class RegistrationsReport extends JobHandlerFile
             $query_params['force_join'] = ['Event', 'Transaction', 'Ticket', 'Attendee'];
         }
 
+        $return_url_args = [];
+        parse_str(
+            parse_url(
+                $job_parameters->request_datum('return_url', ''),
+                PHP_URL_QUERY
+            ),
+            $return_url_args
+        );
+
+        if (
+            isset($return_url_args['orderby'], $return_url_args['order'])
+            && $return_url_args['orderby'] === 'ATT_lname'
+        ) {
+            $query_params['order_by'] = [
+                'Attendee.ATT_lname' => $return_url_args['order'],
+                'Attendee.ATT_fname' => $return_url_args['order'],
+                'REG_ID' => $return_url_args['order']
+            ];
+        }
+
         $query_params = apply_filters(
             'FHEE__EE_Export__report_registration_for_event',
             $query_params,

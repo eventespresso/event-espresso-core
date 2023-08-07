@@ -72,7 +72,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
             $selected = $this->_check_if_option_selected($value) ? ' selected' : '';
             $value    = esc_attr($value);
             $html     .= EEH_HTML::nl(0, 'option');
-            $html     .= "<option value='$value'$selected>$display_text</option>";
+            $html     .= "<option value=\"$value\"$selected>$display_text</option>";
         }
         EEH_HTML::indent(-1, 'option');
         return $html;

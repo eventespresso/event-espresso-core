@@ -144,4 +144,11 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
             }
         }
     }
+
+
+    public static function reset(): void
+    {
+        self::$_registry = [];
+        self::$_extensions = [];
+    }
 }

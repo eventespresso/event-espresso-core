@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\locators;
 
+use EE_Error;
 use EE_Psr4AutoloaderInit;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -17,15 +18,9 @@ use FilesystemIterator;
  */
 class FqcnLocator extends Locator
 {
-    /**
-     * @var array $FQCNs
-     */
-    protected $FQCNs = [];
+    protected array $FQCNs      = [];
 
-    /**
-     * @var array $namespaces
-     */
-    protected $namespaces = [];
+    protected array $namespaces = [];
 
 
     /**
@@ -69,6 +64,7 @@ class FqcnLocator extends Locator
      * @return array
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function locate($namespaces): array
     {
@@ -93,6 +89,7 @@ class FqcnLocator extends Locator
      * @return array
      * @throws InvalidClassException
      * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     protected function findFQCNsByNamespace(string $partial_namespace): array
     {
@@ -111,10 +108,10 @@ class FqcnLocator extends Locator
                     $namespace .= Psr4Autoloader::NS;
                     if (strpos($file, $base_dir) === 0) {
                         $this->FQCNs[] = Psr4Autoloader::NS . str_replace(
-                            [$base_dir, '/'],
-                            [$namespace, Psr4Autoloader::NS],
-                            $file
-                        );
+                                [$base_dir, '/'],
+                                [$namespace, Psr4Autoloader::NS],
+                                $file
+                            );
                     }
                 }
             }
@@ -130,6 +127,7 @@ class FqcnLocator extends Locator
      * @return string
      * @throws InvalidDataTypeException
      * @throws InvalidClassException
+     * @throws EE_Error
      */
     protected function getDirectoryFromPartialNamespace(string $partial_namespace): string
     {

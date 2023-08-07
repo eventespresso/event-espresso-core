@@ -24,6 +24,7 @@ class DbSafeDateTime extends DateTime
      * @type string db_safe_timestamp_format
      */
     const db_safe_timestamp_format = 'Y-m-d H:i:s O e';
+
     // phpcs:enable
 
     // phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
@@ -40,6 +41,7 @@ class DbSafeDateTime extends DateTime
      * @type string $_error_log_dir
      */
     protected $_error_log_dir = '';
+
     // phpcs:enable
 
 
@@ -109,7 +111,6 @@ class DbSafeDateTime extends DateTime
      * We'll replace those with "0000-00-00" which will allow a valid DateTime object to be created,
      * but still result in the internal date for that object being set to "-0001-11-30 10:00:00.000000".
      * so we're no better off, but at least things won't go fatal on us.
-     *
      * @throws Exception
      */
     public function __wakeup(): void
@@ -187,9 +188,9 @@ class DbSafeDateTime extends DateTime
     {
         $time = self::normalizeInvalidDate($time);
         // Various php versions handle the third argument differently.  This conditional accounts for that.
-        $DateTime = $timezone === null
-            ? parent::createFromFormat($format, $time)
-            : parent::createFromFormat($format, $time, $timezone);
+        $DateTime = $timezone instanceof DateTimeZone
+            ? parent::createFromFormat($format, $time, $timezone)
+            : parent::createFromFormat($format, $time);
         return $DateTime instanceof DateTime
             ? self::createFromDateTime($DateTime)
             : $DateTime;

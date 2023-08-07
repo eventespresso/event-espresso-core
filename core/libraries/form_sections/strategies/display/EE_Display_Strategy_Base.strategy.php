@@ -166,6 +166,9 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
         );
         $attributes_string = '';
         foreach ($attributes as $attribute => $value) {
+            if ($attribute !== 'value' && empty($value)) {
+                continue;
+            }
             if (is_numeric($attribute)) {
                 $add = true;
                 if (is_array($value)) {

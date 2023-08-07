@@ -29,10 +29,10 @@
 abstract class EEM_Soft_Delete_Base extends EEM_Base
 {
     /**
-     * @param null $timezone
+     * @param string|null $timezone
      * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct(?string $timezone = '')
     {
         if (! $this->_default_where_conditions_strategy instanceof EE_Default_Where_Conditions) {
             $this->_default_where_conditions_strategy = new EE_Soft_Delete_Where_Conditions();
@@ -125,7 +125,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function count_deleted($query_params = null, $field_to_count = null, $distinct = false)
+    public function count_deleted($query_params = [], $field_to_count = null, $distinct = false)
     {
         $query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
         return $this->count($query_params, $field_to_count, $distinct);
@@ -200,7 +200,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function count_deleted_and_undeleted($query_params = null, $field_to_count = null, $distinct = false)
+    public function count_deleted_and_undeleted($query_params = [], $field_to_count = null, $distinct = false)
     {
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         return $this->count($query_params, $field_to_count, $distinct);
@@ -216,7 +216,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function sum_deleted($query_params = null, $field_to_sum = null)
+    public function sum_deleted($query_params = [], $field_to_sum = null)
     {
         $query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
         return $this->sum($query_params, $field_to_sum);
@@ -232,7 +232,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function sum_deleted_and_undeleted($query_params = null, $field_to_sum = null)
+    public function sum_deleted_and_undeleted($query_params = [], $field_to_sum = null)
     {
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         return $this->sum($query_params, $field_to_sum);

@@ -80,7 +80,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
     {
         $this->_admin_page_title = esc_html__('Registration Form', 'event_espresso');
         $this->_labels           = [
-            'buttons' => [
+            'buttons'    => [
                 'edit_question' => esc_html__('Edit Question', 'event_espresso'),
             ],
             'publishbox' => [
@@ -133,8 +133,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         $this->_page_config = [
             'default' => [
                 'nav'           => [
-                    'label' =>  esc_html__('Questions', 'event_espresso'),
-                    'icon' => 'dashicons-editor-help',
+                    'label' => esc_html__('Questions', 'event_espresso'),
+                    'icon'  => 'dashicons-editor-help',
                     'order' => 10,
                 ],
                 'list_table'    => 'Registration_Form_Questions_Admin_List_Table',
@@ -158,8 +158,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
             'question_groups' => [
                 'nav'           => [
-                    'label' =>  esc_html__('Question Groups', 'event_espresso'),
-                    'icon' => 'dashicons-forms',
+                    'label' => esc_html__('Question Groups', 'event_espresso'),
+                    'icon'  => 'dashicons-forms',
                     'order' => 20,
                 ],
                 'metaboxes'     => $this->_default_espresso_metaboxes,
@@ -175,7 +175,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             'edit_question' => [
                 'nav'           => [
                     'label'      => esc_html__('Edit Question', 'event_espresso'),
-                    'icon' => 'dashicons-edit-large',
+                    'icon'       => 'dashicons-edit-large',
                     'order'      => 15,
                     'persistent' => false,
                     'url'        => isset($this->_req_data['question_id'])
@@ -333,7 +333,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         ];
 
         if (
-            EE_Registry::instance()->CAP->current_user_can(
+            $this->capabilities->current_user_can(
                 'ee_delete_questions',
                 'espresso_registration_form_trash_questions'
             )
@@ -380,7 +380,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      */
     protected function _set_column_values_for(EEM_Base $model)
     {
-        $question_model = EEM_Question::instance();
+        $question_model    = EEM_Question::instance();
         $set_column_values = [];
 
         // some initial checks for proper values.
@@ -409,14 +409,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                 $fieldName === 'QSG_identifier'
                 && (isset($this->_req_data['QSG_identifier']) && empty($this->_req_data['QSG_identifier']))
             ) {
-                $QSG_name = $this->_req_data['QSG_name'] ?? '';
+                $QSG_name                        = $this->_req_data['QSG_name'] ?? '';
                 $set_column_values[ $fieldName ] = sanitize_title($QSG_name) . '-' . uniqid('', true);
             } elseif (
                 $fieldName === 'QST_admin_label'
                 && (isset($this->_req_data['QST_admin_label']) && empty($this->_req_data['QST_admin_label']))
             ) {
                 // the admin label is blank, use a slug version of the question text
-                $QST_text = $this->_req_data['QST_display_text'] ?? '';
+                $QST_text                        = $this->_req_data['QST_display_text'] ?? '';
                 $set_column_values[ $fieldName ] = sanitize_title(wp_trim_words($QST_text, 10));
             } elseif ($fieldName === 'QST_admin_only' && (! isset($this->_req_data['QST_admin_only']))) {
                 $set_column_values[ $fieldName ] = 0;
@@ -569,7 +569,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      */
     protected function _insert_or_update_question($new_question = true)
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $set_column_values = $this->_set_column_values_for($this->_question_model);
         if ($new_question) {
             $question    = EE_Question::new_instance($set_column_values);
@@ -672,7 +671,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      * @param int      $per_page
      * @param int      $current_page
      * @return array model query params, @see
-     *               https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     *                        https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     protected function get_query_params($model, $per_page = 10, $current_page = 10)
     {
@@ -713,7 +712,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
         // capability checks (just leaving this commented out for reference because it illustrates some complicated query params that could be useful when fully implemented)
         /*if ( $model instanceof EEM_Question_Group ) {
-            if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_question_groups', 'espresso_registration_form_edit_question_group' ) ) {
+            if ( ! $this->capabilities->current_user_can( 'edit_others_question_groups', 'espresso_registration_form_edit_question_group' ) ) {
                 $query_params[0] = array(
                     'AND' => array(
                         'OR' => array(
@@ -727,7 +726,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     );
             }
         } else {
-            if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_questions', 'espresso_registration_form_edit_question' ) ) {
+            if ( ! $this->capabilities->current_user_can( 'edit_others_questions', 'espresso_registration_form_edit_question' ) ) {
                 $query_params[0] = array(
                     'AND' => array(
                         'OR' => array(

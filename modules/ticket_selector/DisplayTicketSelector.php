@@ -417,8 +417,8 @@ class DisplayTicketSelector
                 'TKT_visibility'  => ['>', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
             ],
             'order_by' => [
-                'TKT_order'              => 'ASC',
                 'TKT_required'           => 'DESC',
+                'TKT_order'              => 'ASC',
                 'TKT_start_date'         => 'ASC',
                 'TKT_end_date'           => 'ASC',
                 'Datetime.DTT_EVT_start' => 'DESC',
@@ -468,7 +468,10 @@ class DisplayTicketSelector
     {
         return $ticket->isPublicOnly()
                || ($ticket->isMembersOnly() && $this->current_user->isLoggedIn())
-               || ($ticket->isAdminsOnly() && $this->current_user->isEventManager())
+               || (
+                   $ticket->isAdminsOnly()
+                   && ($this->current_user->isEventManager() || $this->current_user->isSuperAdmin())
+               )
                || ($ticket->isAdminUiOnly() && is_admin());
     }
 

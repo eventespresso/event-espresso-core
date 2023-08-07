@@ -90,7 +90,8 @@ class DatetimeMutation
         if (array_key_exists('venue', $input)) {
             $venue_id = sanitize_text_field($input['venue']);
             $parts = Relay::fromGlobalId($venue_id);
-            $args['venue'] = ! empty($parts['id']) ? $parts['id'] : $venue_id;
+            $venue_id = ! empty($parts['id']) ? $parts['id'] : $venue_id;
+            $args['venue'] = absint($venue_id);
         }
 
         return apply_filters(

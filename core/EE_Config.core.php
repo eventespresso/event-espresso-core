@@ -2176,7 +2176,10 @@ class EE_Currency_Config extends EE_Config_Base
         $country = EE_Registry::instance()->load_model('Country')->get_one_by_ID($CNT_ISO);
         if (! $country instanceof EE_Country) {
             throw new DomainException(
-                esc_html__('Invalid Country ISO Code.', 'event_espresso')
+                sprintf(
+                    esc_html__('Invalid Country ISO Code: %1$s', 'event_espresso'),
+                    $CNT_ISO
+                )
             );
         }
         $this->code    = $country->currency_code();                  // currency code: USD, CAD, EUR

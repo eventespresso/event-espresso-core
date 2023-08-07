@@ -25,9 +25,9 @@ class EEH_Activation implements ResettableInterface
     /**
      * WP_User->ID
      *
-     * @var int
+     * @var int|null
      */
-    private static $_default_creator_id;
+    private static ?int $_default_creator_id = null;
 
     /**
      * indicates whether or not we've already verified core's default data during this request,
@@ -36,19 +36,13 @@ class EEH_Activation implements ResettableInterface
      * and trigger core to setup its default data. In which case they might all ask for core to init its default data.
      * This prevents doing that for EVERY single addon.
      *
-     * @var boolean
+     * @var bool
      */
-    protected static $_initialized_db_content_already_in_this_request = false;
+    protected static bool         $_initialized_db_content_already_in_this_request = false;
 
-    /**
-     * @var TableAnalysis $table_analysis
-     */
-    private static $table_analysis;
+    private static ?TableAnalysis $table_analysis                                  = null;
 
-    /**
-     * @var TableManager $table_manager
-     */
-    private static $table_manager;
+    private static ?TableManager  $table_manager                                   = null;
 
 
     /**
@@ -56,7 +50,7 @@ class EEH_Activation implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function getTableAnalysis()
+    public static function getTableAnalysis(): ?TableAnalysis
     {
         if (! self::$table_analysis instanceof TableAnalysis) {
             self::$table_analysis = EE_Registry::instance()->create('TableAnalysis', [], true);
@@ -70,7 +64,7 @@ class EEH_Activation implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function getTableManager()
+    public static function getTableManager(): ?TableManager
     {
         if (! self::$table_manager instanceof TableManager) {
             self::$table_manager = EE_Registry::instance()->create('TableManager', [], true);
@@ -86,7 +80,7 @@ class EEH_Activation implements ResettableInterface
      * @throws ReflectionException
      * @deprecated instead use TableAnalysis::ensureTableNameHasPrefix()
      */
-    public static function ensure_table_name_has_prefix($table_name)
+    public static function ensure_table_name_has_prefix($table_name): string
     {
         return EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix($table_name);
     }
@@ -114,7 +108,7 @@ class EEH_Activation implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function initialize_db_and_folders()
+    public static function initialize_db_and_folders(): bool
     {
         EEH_File::ensure_folder_exists_and_is_writable(EVENT_ESPRESSO_UPLOAD_DIR);
         EEH_File::ensure_folder_exists_and_is_writable(EVENT_ESPRESSO_UPLOAD_DIR . 'logs');
@@ -171,7 +165,7 @@ class EEH_Activation implements ResettableInterface
      * @return array
      * @throws EE_Error
      */
-    public static function get_cron_tasks($which_to_include)
+    public static function get_cron_tasks(string $which_to_include): array
     {
         $cron_tasks = apply_filters(
             'FHEE__EEH_Activation__get_cron_tasks',
@@ -205,7 +199,7 @@ class EEH_Activation implements ResettableInterface
                 )
             );
         }
-        return $cron_tasks;
+        return (array) $cron_tasks;
     }
 
 
@@ -216,7 +210,6 @@ class EEH_Activation implements ResettableInterface
      */
     public static function create_cron_tasks()
     {
-
         foreach (EEH_Activation::get_cron_tasks('current') as $hook_name => $frequency) {
             if (! wp_next_scheduled($hook_name)) {
                 /**
@@ -241,10 +234,10 @@ class EEH_Activation implements ResettableInterface
     /**
      * Remove the currently-existing and now-removed cron tasks.
      *
-     * @param boolean $remove_all whether to only remove the old ones, or remove absolutely ALL the EE ones
+     * @param bool $remove_all whether to only remove the old ones, or remove absolutely ALL the EE ones
      * @throws EE_Error
      */
-    public static function remove_cron_tasks($remove_all = true)
+    public static function remove_cron_tasks(bool $remove_all = true)
     {
         $cron_tasks_to_remove = $remove_all ? 'all' : 'old';
         $crons                = _get_cron_array();
@@ -360,7 +353,7 @@ class EEH_Activation implements ResettableInterface
 
     /**
      * @param array|stdClass $settings
-     * @param int|string         $config
+     * @param int|string     $config
      * @param EE_Config      $EE_Config
      * @return stdClass
      */
@@ -505,19 +498,20 @@ class EEH_Activation implements ResettableInterface
      *                             "[ESPRESSO_THANK_YOU"
      *                             (we don't search for the closing shortcode bracket because they might have added
      *                             parameter to the shortcode
-     * @return WP_Post or NULl
+     * @return WP_Post|array|null
      */
-    public static function get_page_by_ee_shortcode($ee_shortcode)
+    public static function get_page_by_ee_shortcode(string $ee_shortcode)
     {
         global $wpdb;
         $shortcode_and_opening_bracket = '[' . $ee_shortcode;
         $post_id                       =
-            $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_content LIKE '%$shortcode_and_opening_bracket%' LIMIT 1");
+            $wpdb->get_var(
+                "SELECT ID FROM $wpdb->posts WHERE post_content LIKE '%$shortcode_and_opening_bracket%' LIMIT 1"
+            );
         if ($post_id) {
             return get_post($post_id);
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -527,9 +521,8 @@ class EEH_Activation implements ResettableInterface
      * @param array $critical_page
      * @return array
      */
-    public static function create_critical_page($critical_page)
+    public static function create_critical_page(array $critical_page): array
     {
-
         $post_args = [
             'post_title'     => $critical_page['name'],
             'post_status'    => 'publish',
@@ -570,10 +563,10 @@ class EEH_Activation implements ResettableInterface
      * @since  4.6.0
      * @global WPDB $wpdb
      */
-    public static function get_default_creator_id()
+    public static function get_default_creator_id(): ?int
     {
         global $wpdb;
-        if (! empty(self::$_default_creator_id)) {
+        if (self::$_default_creator_id) {
             return self::$_default_creator_id;
         }/**/
         $role_to_check = apply_filters('FHEE__EEH_Activation__get_default_creator_id__role_to_check', 'administrator');
@@ -588,7 +581,13 @@ class EEH_Activation implements ResettableInterface
         }
         $capabilities_key = EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix('capabilities');
         $query            = $wpdb->prepare(
-            "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 0,1",
+            "
+SELECT user_id 
+FROM $wpdb->usermeta 
+WHERE meta_key = '$capabilities_key' 
+  AND meta_value LIKE %s 
+ORDER BY user_id
+LIMIT 0,1",
             '%' . $role_to_check . '%'
         );
         $user_id          = $wpdb->get_var($query);
@@ -596,9 +595,8 @@ class EEH_Activation implements ResettableInterface
         if ($user_id && (int) $user_id) {
             self::$_default_creator_id = (int) $user_id;
             return self::$_default_creator_id;
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -607,11 +605,11 @@ class EEH_Activation implements ResettableInterface
      * Its a wrapper for EventEspresso\core\services\database\TableManager::createTable,
      * but includes extra logic regarding activations.
      *
-     * @param string  $table_name              without the $wpdb->prefix
-     * @param string  $sql                     SQL for creating the table (contents between brackets in an SQL create
+     * @param string $table_name               without the $wpdb->prefix
+     * @param string $sql                      SQL for creating the table (contents between brackets in an SQL create
      *                                         table query)
-     * @param string  $engine                  like 'ENGINE=MyISAM' or 'ENGINE=InnoDB'
-     * @param boolean $drop_pre_existing_table set to TRUE when you want to make SURE the table is completely empty
+     * @param string $engine                   like 'ENGINE=MyISAM' or 'ENGINE=InnoDB'
+     * @param bool   $drop_pre_existing_table  set to TRUE when you want to make SURE the table is completely empty
      *                                         and new once this function is done (ie, you really do want to CREATE a
      *                                         table, and expect it to be empty once you're done) leave as FALSE when
      *                                         you just want to verify the table exists and matches this definition
@@ -620,8 +618,12 @@ class EEH_Activation implements ResettableInterface
      * @throws EE_Error if there are database errors
      * @throws ReflectionException
      */
-    public static function create_table($table_name, $sql, $engine = 'ENGINE=MyISAM ', $drop_pre_existing_table = false)
-    {
+    public static function create_table(
+        string $table_name,
+        string $sql,
+        string $engine = 'ENGINE=InnoDB ',
+        bool $drop_pre_existing_table = false
+    ) {
         if (apply_filters('FHEE__EEH_Activation__create_table__short_circuit', false, $table_name, $sql)) {
             return;
         }
@@ -671,9 +673,9 @@ class EEH_Activation implements ResettableInterface
      * @deprecated instead use TableManager::addColumn()
      */
     public static function add_column_if_it_doesnt_exist(
-        $table_name,
-        $column_name,
-        $column_info = 'INT UNSIGNED NOT NULL'
+        string $table_name,
+        string $column_name,
+        string $column_info = 'INT UNSIGNED NOT NULL'
     ) {
         return EEH_Activation::getTableManager()->addColumn($table_name, $column_name, $column_info);
     }
@@ -688,7 +690,7 @@ class EEH_Activation implements ResettableInterface
      * @throws ReflectionException
      * @deprecated instead use TableManager::getTableColumns()
      */
-    public static function get_fields_on_table($table_name = null)
+    public static function get_fields_on_table(string $table_name = ''): array
     {
         return EEH_Activation::getTableManager()->getTableColumns($table_name);
     }
@@ -701,7 +703,7 @@ class EEH_Activation implements ResettableInterface
      * @throws ReflectionException
      * @deprecated instead use TableAnalysis::tableIsEmpty()
      */
-    public static function db_table_is_empty($table_name)
+    public static function db_table_is_empty(string $table_name): bool
     {
         return EEH_Activation::getTableAnalysis()->tableIsEmpty($table_name);
     }
@@ -713,7 +715,7 @@ class EEH_Activation implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function delete_db_table_if_empty($table_name)
+    public static function delete_db_table_if_empty(string $table_name)
     {
         if (EEH_Activation::getTableAnalysis()->tableIsEmpty($table_name)) {
             return EEH_Activation::getTableManager()->dropTable($table_name);
@@ -724,12 +726,12 @@ class EEH_Activation implements ResettableInterface
 
     /**
      * @param string $table_name
-     * @return int
+     * @return bool|int
      * @throws EE_Error
      * @throws ReflectionException
      * @deprecated instead use TableManager::dropTable()
      */
-    public static function delete_unused_db_table($table_name)
+    public static function delete_unused_db_table(string $table_name)
     {
         return EEH_Activation::getTableManager()->dropTable($table_name);
     }
@@ -738,12 +740,12 @@ class EEH_Activation implements ResettableInterface
     /**
      * @param string $table_name
      * @param string $index_name
-     * @return int
+     * @return bool|int
      * @throws EE_Error
      * @throws ReflectionException
      * @deprecated instead use TableManager::dropIndex()
      */
-    public static function drop_index($table_name, $index_name)
+    public static function drop_index(string $table_name, string $index_name)
     {
         return EEH_Activation::getTableManager()->dropIndex($table_name, $index_name);
     }
@@ -754,7 +756,7 @@ class EEH_Activation implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function create_database_tables()
+    public static function create_database_tables(): bool
     {
         EE_Registry::instance()->load_core('Data_Migration_Manager');
         // find the migration script that sets the database to be compatible with the code
@@ -939,7 +941,10 @@ class EEH_Activation implements ResettableInterface
                     case 'email_confirm':
                         $QST_values = [
                             'QST_display_text'  => esc_html__('Confirm Email Address', 'event_espresso'),
-                            'QST_admin_label'   => esc_html__('Confirm Email Address - System Question', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__(
+                                'Confirm Email Address - System Question',
+                                'event_espresso'
+                            ),
                             'QST_system'        => 'email_confirm',
                             'QST_type'          => 'EMAIL_CONFIRM',
                             'QST_required'      => 1,
@@ -1145,7 +1150,6 @@ class EEH_Activation implements ResettableInterface
      */
     public static function insert_default_status_codes()
     {
-
         global $wpdb;
 
         if (EEH_Activation::getTableAnalysis()->tableExists(EEM_Status::instance()->table())) {
@@ -1208,7 +1212,7 @@ class EEH_Activation implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function generate_default_message_templates()
+    public static function generate_default_message_templates(): bool
     {
         /** @type EE_Message_Resource_Manager $message_resource_manager */
         $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
@@ -1356,7 +1360,7 @@ class EEH_Activation implements ResettableInterface
      */
     protected static function _get_default_messengers_to_generate_on_activation(
         EE_Message_Resource_Manager $message_resource_manager
-    ) {
+    ): array {
         $active_messengers    = $message_resource_manager->active_messengers();
         $installed_messengers = $message_resource_manager->installed_messengers();
         $has_activated        = $message_resource_manager->get_has_activated_messengers_option();
@@ -1430,7 +1434,7 @@ class EEH_Activation implements ResettableInterface
             }
         }
         // get all our CPTs
-        $query   = "SELECT ID FROM {$wpdb->posts} WHERE post_type IN (" . implode(",", $ee_post_types) . ")";
+        $query   = "SELECT ID FROM $wpdb->posts WHERE post_type IN (" . implode(",", $ee_post_types) . ")";
         $cpt_ids = $wpdb->get_col($query);
         // delete each post meta and term relations too
         foreach ($cpt_ids as $post_id) {
@@ -1446,7 +1450,7 @@ class EEH_Activation implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function drop_espresso_tables()
+    public static function drop_espresso_tables(): array
     {
         $tables = [];
         // load registry
@@ -1497,7 +1501,7 @@ class EEH_Activation implements ResettableInterface
      * @deprecated in 4.9.13. Instead use TableManager::dropTables()
      * @global WPDB $wpdb
      */
-    public static function drop_tables($table_names)
+    public static function drop_tables(array $table_names): array
     {
         return EEH_Activation::getTableManager()->dropTables($table_names);
     }
@@ -1511,7 +1515,7 @@ class EEH_Activation implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function delete_all_espresso_tables_and_data($remove_all = true)
+    public static function delete_all_espresso_tables_and_data(bool $remove_all = true)
     {
         global $wpdb;
         self::drop_espresso_tables();
@@ -1599,7 +1603,7 @@ class EEH_Activation implements ResettableInterface
      *
      * @return int mysql error code, see https://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
      */
-    public static function last_wpdb_error_code()
+    public static function last_wpdb_error_code(): int
     {
         // phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mysql_DeprecatedRemoved
         global $wpdb;
@@ -1618,7 +1622,7 @@ class EEH_Activation implements ResettableInterface
      * @global wpdb  $wpdb
      * @deprecated instead use TableAnalysis::tableExists()
      */
-    public static function table_exists($table_name)
+    public static function table_exists(string $table_name): bool
     {
         return EEH_Activation::getTableAnalysis()->tableExists($table_name);
     }
@@ -1639,10 +1643,10 @@ class EEH_Activation implements ResettableInterface
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function removeEmailConfirmFromAddressGroup()
     {
-
         // Pull the email_confirm question ID.
         $email_confirm_question_id = EEM_Question::instance()->get_Question_ID_from_system_string(
             EEM_Attendee::system_question_email_confirm

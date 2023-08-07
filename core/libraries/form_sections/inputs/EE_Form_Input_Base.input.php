@@ -188,8 +188,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @type EE_Normalization_Strategy_Base $normalization_strategy
      * @type EE_Validation_Strategy_Base[]  $validation_strategies
      * @type boolean                        $ignore_input     special argument which can be used to avoid adding any
-     *       validation strategies, and sets the normalization strategy to the Null normalization. This is good when
-     *       you want the input to be totally ignored server-side (like when using React.js form inputs)
+     *                                                        validation strategies, and sets the normalization
+     *                                                        strategy to the Null normalization. This is good when you
+     *                                                        want the input to be totally ignored server-side (like
+     *                                                        when using React.js form inputs)
      *                                                        }
      */
     public function __construct($input_args = [])
@@ -689,6 +691,15 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function html_label_class()
     {
         return $this->_html_label_class ?? '';
+    }
+
+
+    /**
+     * @param string $html_class
+     */
+    public function add_html_label_class(string $html_class)
+    {
+        $this->_html_label_class .= ' ' . trim($html_class);
     }
 
 

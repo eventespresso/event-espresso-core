@@ -4,7 +4,9 @@ namespace EventEspresso\core\domain\values;
 
 class DateFormat extends BaseFormat
 {
+    protected const DEFAULT_FORMAT = 'Y-m-d';
     protected const WORDPRESS_FORMAT_OPTION_NAME = 'date_format';
+
 
     protected static array $allowed_chars = [
         'd',

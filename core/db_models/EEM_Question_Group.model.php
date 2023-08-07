@@ -11,7 +11,7 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
 {
     const system_personal = 1;
 
-    const system_address = 2;
+    const system_address  = 2;
 
     /**
      * private instance of the EEM_Question_Group object
@@ -25,8 +25,9 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
      * EEM_Question_Group constructor.
      *
      * @param string|null $timezone
+     * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item = esc_html__('Question Group', 'event_espresso');
         $this->plural_item   = esc_html__('Question Groups', 'event_espresso');

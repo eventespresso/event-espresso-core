@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\exceptions;
 
+use Exception;
+use UnexpectedValueException;
+
 /**
  * Class EntityNotFoundException
  * thrown if attempting to retrieve an entity from some location (collection, database, etc)
@@ -11,19 +14,26 @@ namespace EventEspresso\core\exceptions;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class EntityNotFoundException extends \UnexpectedValueException
+class EntityNotFoundException extends UnexpectedValueException
 {
     /**
      * EntityNotFoundException constructor
      *
-     * @param string     $identifier_type the name of the identifier used (ie: ID, Name, etc)
-     * @param string     $identifier      the actual data value used to retrieve the entity
-     * @param string     $message
-     * @param int        $code
-     * @param \Exception $previous
+     * @param string         $identifier_type the name of the identifier used (ie: ID, Name, etc)
+     * @param string         $identifier      the actual data value used to retrieve the entity
+     * @param string         $message
+     * @param int            $code
+     * @param Exception|null $previous
      */
-    public function __construct($identifier_type, $identifier, $message = '', $code = 0, \Exception $previous = null)
-    {
+    #[\ReturnTypeWillChange]
+    public function __construct(
+        string $identifier_type,
+        string $identifier,
+        string $message = '',
+        int $code = 0,
+        Exception $previous =
+        null
+    ) {
         if (empty($message)) {
             $message = sprintf(
                 esc_html__(

@@ -13,7 +13,11 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base
     protected static $_instance = null;
 
 
-    protected function __construct($timezone = null)
+    /**
+     * @param string|null $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item = esc_html__('Question Option', 'event_espresso');
         $this->plural_item   = esc_html__('Question Options', 'event_espresso');

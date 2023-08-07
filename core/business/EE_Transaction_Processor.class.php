@@ -28,7 +28,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @var array $registration_query_params
      * @access private
      */
-    private $_registration_query_params = array();
+    private $_registration_query_params = [];
 
     /**
      * @deprecated
@@ -49,7 +49,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @param array $registration_query_params
      * @return EE_Transaction_Processor instance
      */
-    public static function instance($registration_query_params = array())
+    public static function instance($registration_query_params = [])
     {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_Transaction_Processor) {
@@ -62,7 +62,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
     /**
      * @param array $registration_query_params
      */
-    private function __construct($registration_query_params = array())
+    private function __construct($registration_query_params = [])
     {
         // make sure some query params are set for retrieving registrations
         $this->_set_registration_query_params($registration_query_params);
@@ -75,8 +75,9 @@ class EE_Transaction_Processor extends EE_Processor_Base
      */
     private function _set_registration_query_params($registration_query_params)
     {
-        $this->_registration_query_params = ! empty($registration_query_params) ? $registration_query_params
-            : array('order_by' => array('REG_count' => 'ASC'));
+        $this->_registration_query_params = ! empty($registration_query_params)
+            ? $registration_query_params
+            : ['order_by' => ['REG_count' => 'ASC']];
     }
 
 
@@ -94,7 +95,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
     public function manually_update_registration_statuses(
         EE_Transaction $transaction,
         $new_reg_status = '',
-        $registration_query_params = array()
+        $registration_query_params = []
     ) {
         $status_updates = $this->_call_method_on_registrations_via_Registration_Processor(
             'manually_update_registration_status',
@@ -107,7 +108,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
         $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
         $registration_processor->trigger_registration_update_notifications(
             $transaction->primary_registration(),
-            array('manually_updated' => true)
+            ['manually_updated' => true]
         );
         do_action(
             'AHEE__EE_Transaction_Processor__manually_update_registration_statuses',
@@ -130,7 +131,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      */
     public function toggle_registration_statuses_for_default_approved_events(
         EE_Transaction $transaction,
-        $registration_query_params = array()
+        $registration_query_params = []
     ) {
         $status_updates = $this->_call_method_on_registrations_via_Registration_Processor(
             'toggle_registration_status_for_default_approved_events',
@@ -158,7 +159,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      */
     public function toggle_registration_statuses_if_no_monies_owing(
         EE_Transaction $transaction,
-        $registration_query_params = array()
+        $registration_query_params = []
     ) {
         $status_updates = $this->_call_method_on_registrations_via_Registration_Processor(
             'toggle_registration_status_if_no_monies_owing',
@@ -190,7 +191,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
     public function update_transaction_and_registrations_after_checkout_or_payment(
         EE_Transaction $transaction,
         $payment = null,
-        $registration_query_params = array(),
+        $registration_query_params = [],
         $trigger_notifications = true
     ) {
         // make sure some query params are set for retrieving registrations
@@ -205,14 +206,16 @@ class EE_Transaction_Processor extends EE_Processor_Base
         }
         $transaction->save();
         // array of details to aid in decision making by systems
-        $update_params = array(
+        $update_params = [
             'old_txn_status'  => $transaction->old_txn_status(),
             'new_txn_status'  => $transaction->status_ID(),
             'finalized'       => $finalized,
             'revisit'         => $this->_revisit,
-            'payment_updates' => $payment instanceof EE_Payment ? true : false,
+            'payment_updates' => $payment instanceof EE_Payment
+                ? true
+                : false,
             'last_payment'    => $payment,
-        );
+        ];
         // now update the registrations and add the results to our $update_params
         $update_params['status_updates'] = $this->_call_method_on_registrations_via_Registration_Processor(
             'update_registration_after_checkout_or_payment',
@@ -251,17 +254,18 @@ class EE_Transaction_Processor extends EE_Processor_Base
      */
     public function update_transaction_after_reinstating_canceled_registration(
         EE_Registration $registration,
-        $closed_reg_statuses = array(),
+        $closed_reg_statuses = [],
         $update_txn = true
     ) {
         // these reg statuses should not be considered in any calculations involving monies owing
-        $closed_reg_statuses = ! empty($closed_reg_statuses) ? $closed_reg_statuses
+        $closed_reg_statuses = ! empty($closed_reg_statuses)
+            ? $closed_reg_statuses
             : EEM_Registration::closed_reg_statuses();
         if (in_array($registration->status_ID(), $closed_reg_statuses, true)) {
             return false;
         }
         try {
-            $transaction = $this->get_transaction_for_registration($registration);
+            $transaction      = $this->get_transaction_for_registration($registration);
             $ticket_line_item = $this->get_ticket_line_item_for_transaction_registration(
                 $transaction,
                 $registration
@@ -286,7 +290,9 @@ class EE_Transaction_Processor extends EE_Processor_Base
             return false;
         }
         if ($update_txn) {
-            return $transaction->save() ? $success : false;
+            return $transaction->save()
+                ? $success
+                : false;
         }
         return $success;
     }
@@ -304,11 +310,12 @@ class EE_Transaction_Processor extends EE_Processor_Base
      */
     public function update_transaction_after_canceled_or_declined_registration(
         EE_Registration $registration,
-        $closed_reg_statuses = array(),
+        $closed_reg_statuses = [],
         $update_txn = true
     ) {
         // these reg statuses should not be considered in any calculations involving monies owing
-        $closed_reg_statuses = ! empty($closed_reg_statuses) ? $closed_reg_statuses
+        $closed_reg_statuses = ! empty($closed_reg_statuses)
+            ? $closed_reg_statuses
             : EEM_Registration::closed_reg_statuses();
         if (! in_array($registration->status_ID(), $closed_reg_statuses, true)) {
             return false;
@@ -347,7 +354,9 @@ class EE_Transaction_Processor extends EE_Processor_Base
             return false;
         }
         if ($update_txn) {
-            return $transaction->save() ? true : false;
+            return $transaction->save()
+                ? true
+                : false;
         }
         return true;
     }
@@ -357,7 +366,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * get_transaction_for_registration
      *
      * @access    public
-     * @param    EE_Registration $registration
+     * @param EE_Registration $registration
      * @return    EE_Transaction
      * @throws    EE_Error
      */
@@ -380,8 +389,8 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * get_ticket_line_item_for_transaction_registration
      *
      * @access    public
-     * @param    EE_Transaction  $transaction
-     * @param    EE_Registration $registration
+     * @param EE_Transaction  $transaction
+     * @param EE_Registration $registration
      * @return    EE_Line_Item
      * @throws    EE_Error
      */
@@ -416,25 +425,26 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * if ALL registrations are Cancelled or Declined, then this sets the TXN status to
      *
      * @access    public
-     * @param    EE_Transaction $transaction
-     * @param    string         $new_TXN_status
-     * @param    array          $registration_query_params - array of query WHERE params to use when
+     * @param EE_Transaction $transaction
+     * @param string         $new_TXN_status
+     * @param array          $registration_query_params    - array of query WHERE params to use when
      *                                                     retrieving cached registrations from a transaction
-     * @param    array          $closed_reg_statuses
-     * @param    bool           $update_txn
+     * @param array          $closed_reg_statuses
+     * @param bool           $update_txn
      * @return    bool            true if TXN status was updated, false if not
      */
     public function toggle_transaction_status_if_all_registrations_canceled_or_declined(
         EE_Transaction $transaction,
         $new_TXN_status = '',
-        $registration_query_params = array(),
-        $closed_reg_statuses = array(),
+        $registration_query_params = [],
+        $closed_reg_statuses = [],
         $update_txn = true
     ) {
         // make sure some query params are set for retrieving registrations
         $this->_set_registration_query_params($registration_query_params);
         // these reg statuses should not be considered in any calculations involving monies owing
-        $closed_reg_statuses = ! empty($closed_reg_statuses) ? $closed_reg_statuses
+        $closed_reg_statuses = ! empty($closed_reg_statuses)
+            ? $closed_reg_statuses
             : EEM_Registration::closed_reg_statuses();
         // loop through cached registrations
         foreach ($transaction->registrations($this->_registration_query_params) as $registration) {
@@ -449,7 +459,9 @@ class EE_Transaction_Processor extends EE_Processor_Base
             $transaction->set_status($new_TXN_status);
         }
         if ($update_txn) {
-            return $transaction->save() ? true : false;
+            return $transaction->save()
+                ? true
+                : false;
         }
         return true;
     }
@@ -465,13 +477,13 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @param array          $registration_query_params array of query WHERE params to use
      *                                                  when retrieving cached registrations from a transaction
      * @param string         $additional_param
-     * @throws \EE_Error
      * @return boolean
+     * @throws \EE_Error
      */
     private function _call_method_on_registrations_via_Registration_Processor(
         $method_name,
         EE_Transaction $transaction,
-        $registration_query_params = array(),
+        $registration_query_params = [],
         $additional_param = null
     ) {
         $response = false;
@@ -510,7 +522,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      *        the first active Payment Method
      *    whichever is found first.
      *
-     * @param  EE_Registration $edited_registration
+     * @param EE_Registration $edited_registration
      * @return void
      * @throws \EE_Error
      */
@@ -524,7 +536,9 @@ class EE_Transaction_Processor extends EE_Processor_Base
                 foreach ($transaction->registrations() as $registration) {
                     if ($registration instanceof EE_Registration) {
                         // if any REG != "Not Approved" then toggle to false
-                        $all_not_approved = $registration->is_not_approved() ? $all_not_approved : false;
+                        $all_not_approved = $registration->is_not_approved()
+                            ? $all_not_approved
+                            : false;
                     }
                 }
                 // if ALL Registrations are "Not Approved"
@@ -587,8 +601,8 @@ class EE_Transaction_Processor extends EE_Processor_Base
 
 
     /**
-     * @deprecated 4.9.12
      * @return string
+     * @deprecated 4.9.12
      */
     public function old_txn_status()
     {
@@ -605,8 +619,8 @@ class EE_Transaction_Processor extends EE_Processor_Base
 
 
     /**
-     * @deprecated 4.9.12
      * @param string $old_txn_status
+     * @deprecated 4.9.12
      */
     public function set_old_txn_status($old_txn_status)
     {
@@ -626,8 +640,8 @@ class EE_Transaction_Processor extends EE_Processor_Base
 
 
     /**
-     * @deprecated 4.9.12
      * @return string
+     * @deprecated 4.9.12
      */
     public function new_txn_status()
     {
@@ -644,8 +658,8 @@ class EE_Transaction_Processor extends EE_Processor_Base
 
 
     /**
-     * @deprecated 4.9.12
      * @param string $new_txn_status
+     * @deprecated 4.9.12
      */
     public function set_new_txn_status($new_txn_status)
     {
@@ -664,8 +678,8 @@ class EE_Transaction_Processor extends EE_Processor_Base
     /**
      * reg_status_updated
      *
-     * @deprecated 4.9.12
      * @return bool
+     * @deprecated 4.9.12
      */
     public function txn_status_updated()
     {
@@ -677,7 +691,9 @@ class EE_Transaction_Processor extends EE_Processor_Base
             ),
             '4.9.12'
         );
-        return $this->_new_txn_status !== $this->_old_txn_status && $this->_old_txn_status !== null ? true : false;
+        return $this->_new_txn_status !== $this->_old_txn_status && $this->_old_txn_status !== null
+            ? true
+            : false;
     }
 
 
@@ -687,9 +703,9 @@ class EE_Transaction_Processor extends EE_Processor_Base
      *    true if ALL reg steps have been marked as completed
      *        or false if any step is not completed
      *
-     * @deprecated 4.9.12
      * @param EE_Transaction $transaction
      * @return boolean
+     * @deprecated 4.9.12
      */
     public function all_reg_steps_completed(EE_Transaction $transaction)
     {
@@ -713,10 +729,10 @@ class EE_Transaction_Processor extends EE_Processor_Base
      *        or false if any other step is not completed
      *        or false if ALL steps are completed including the exception you are testing !!!
      *
-     * @deprecated 4.9.12
      * @param EE_Transaction $transaction
      * @param string         $exception
      * @return boolean
+     * @deprecated 4.9.12
      */
     public function all_reg_steps_completed_except(EE_Transaction $transaction, $exception = '')
     {
@@ -740,9 +756,9 @@ class EE_Transaction_Processor extends EE_Processor_Base
      *        or false if any step is not completed
      *    or false if ALL steps are completed including the final step !!!
      *
-     * @deprecated 4.9.12
      * @param EE_Transaction $transaction
      * @return boolean
+     * @deprecated 4.9.12
      */
     public function all_reg_steps_completed_except_final_step(EE_Transaction $transaction)
     {
@@ -766,10 +782,10 @@ class EE_Transaction_Processor extends EE_Processor_Base
      *    a Unix timestamp if it has been initialized but not yet completed,
      *    or false if it has not yet been initialized
      *
-     * @deprecated 4.9.12
      * @param EE_Transaction $transaction
      * @param string         $reg_step_slug
      * @return boolean | int
+     * @deprecated 4.9.12
      */
     public function reg_step_completed(EE_Transaction $transaction, $reg_step_slug)
     {
@@ -793,9 +809,9 @@ class EE_Transaction_Processor extends EE_Processor_Base
      *    a Unix timestamp if it has been initialized but not yet completed,
      *    or false if it has not yet been initialized
      *
-     * @deprecated 4.9.12
      * @param EE_Transaction $transaction
      * @return boolean | int
+     * @deprecated 4.9.12
      */
     public function final_reg_step_completed(EE_Transaction $transaction)
     {
@@ -816,12 +832,12 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * set_reg_step_initiated
      * given a valid TXN_reg_step, this sets it's value to a unix timestamp
      *
-     * @deprecated 4.9.12
-     * @access     public
      * @param \EE_Transaction $transaction
      * @param string          $reg_step_slug
      * @return boolean
      * @throws \EE_Error
+     * @deprecated 4.9.12
+     * @access     public
      */
     public function set_reg_step_initiated(EE_Transaction $transaction, $reg_step_slug)
     {
@@ -842,12 +858,12 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * set_reg_step_completed
      * given a valid TXN_reg_step, this sets the step as completed
      *
-     * @deprecated 4.9.12
-     * @access     public
      * @param \EE_Transaction $transaction
      * @param string          $reg_step_slug
      * @return boolean
      * @throws \EE_Error
+     * @deprecated 4.9.12
+     * @access     public
      */
     public function set_reg_step_completed(EE_Transaction $transaction, $reg_step_slug)
     {
@@ -868,12 +884,12 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * set_reg_step_completed
      * given a valid TXN_reg_step slug, this sets the step as NOT completed
      *
-     * @deprecated 4.9.12
-     * @access     public
      * @param \EE_Transaction $transaction
      * @param string          $reg_step_slug
      * @return boolean
      * @throws \EE_Error
+     * @deprecated 4.9.12
+     * @access     public
      */
     public function set_reg_step_not_completed(EE_Transaction $transaction, $reg_step_slug)
     {
@@ -895,11 +911,11 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * given a valid TXN_reg_step slug, this will remove (unset)
      * the reg step from the TXN reg step array
      *
-     * @deprecated 4.9.12
-     * @access     public
      * @param \EE_Transaction $transaction
      * @param string          $reg_step_slug
      * @return void
+     * @deprecated 4.9.12
+     * @access     public
      */
     public function remove_reg_step(EE_Transaction $transaction, $reg_step_slug)
     {
@@ -921,11 +937,11 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * upgrades a TXNs status from failed to abandoned,
      * meaning that contact information has been captured for at least one registrant
      *
-     * @deprecated 4.9.12
-     * @access     public
      * @param EE_Transaction $transaction
      * @return    boolean
      * @throws \EE_Error
+     * @deprecated 4.9.12
+     * @access     public
      */
     public function toggle_failed_transaction_status(EE_Transaction $transaction)
     {
@@ -946,10 +962,10 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * toggle_abandoned_transaction_status
      * upgrades a TXNs status from failed or abandoned to incomplete
      *
+     * @param EE_Transaction $transaction
+     * @return boolean
      * @deprecated 4.9.12
      * @access     public
-     * @param  EE_Transaction $transaction
-     * @return boolean
      */
     public function toggle_abandoned_transaction_status(EE_Transaction $transaction)
     {

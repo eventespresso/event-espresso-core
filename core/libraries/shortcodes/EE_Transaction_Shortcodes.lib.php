@@ -501,7 +501,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
         $image_width_attr = '';
         // if image is wider than 300px, set the width to 300
         if ($image_size !== false) {
-            $image_width = max($image_size[0], 300);
+            $image_width = min($image_size[0], 300);
             $image_width = esc_attr($image_width);
             $image_width_attr = " width='$image_width'";
         }

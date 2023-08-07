@@ -28,7 +28,11 @@ class EEM_Event_Question_Group extends EEM_Base
     protected static $_instance = null;
 
 
-    protected function __construct($timezone = null)
+    /**
+     * @param string|null $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item    = esc_html__('Event to Question Group Link', 'event_espresso');
         $this->plural_item      = esc_html__('Event to Question Group Links', 'event_espresso');

@@ -19,7 +19,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      *
      * @var array[][]
      */
-    protected static $_settings = [];
+    protected static array $_settings = [];
 
 
     /**
@@ -114,5 +114,11 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
     public static function deregister(string $addon_name = '')
     {
         unset(self::$_settings[ $addon_name ]);
+    }
+
+
+    public static function reset(): void
+    {
+        self::$_settings = [];
     }
 }

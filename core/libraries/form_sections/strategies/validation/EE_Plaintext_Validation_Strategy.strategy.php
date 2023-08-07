@@ -28,7 +28,7 @@ class EE_Plaintext_Validation_Strategy extends EE_Validation_Strategy_Base
      * @param string|null $normalized_value
      * @throws EE_Validation_Error
      */
-    public function validate($normalized_value)
+    public function validate($normalized_value = '')
     {
         $normalized_value = (string) $normalized_value;
         $no_tags = wp_strip_all_tags($normalized_value);

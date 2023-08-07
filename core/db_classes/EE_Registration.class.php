@@ -69,10 +69,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ?: new self($props_n_values, false, $timezone, $date_formats);
+        return $has_object
+            ?: new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
@@ -87,7 +88,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
@@ -96,7 +97,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *        Set Event ID
      *
-     * @param        int $EVT_ID Event ID
+     * @param int $EVT_ID Event ID
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -356,7 +357,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         $contexts_that_do_not_update_transaction = (array) apply_filters(
             'AHEE__EE_Registration__statusChangeUpdatesTransaction__contexts_that_do_not_update_transaction',
-            array('spco_reg_step_attendee_information_process_registrations'),
+            ['spco_reg_step_attendee_information_process_registrations'],
             $context,
             $this
         );
@@ -413,7 +414,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function ticket($include_archived = true)
     {
-        $query_params = array();
+        $query_params = [];
         if ($include_archived) {
             $query_params['default_where_conditions'] = 'none';
         }
@@ -432,10 +433,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function event()
+    public function event(): EE_Event
     {
         $event = $this->get_first_related('Event');
-        if (! $event instanceof \EE_Event) {
+        if (! $event instanceof EE_Event) {
             throw new EntityNotFoundException('Event ID', $this->event_ID());
         }
         return $event;
@@ -446,7 +447,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Gets the "author" of the registration.  Note that for the purposes of registrations, the author will correspond
      * with the author of the event this registration is for.
      *
-     * @since 4.5.0
      * @return int
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -454,14 +454,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since 4.5.0
      */
-    public function wp_user()
+    public function wp_user(): int
     {
-        $event = $this->event();
-        if ($event instanceof EE_Event) {
-            return $event->wp_user();
-        }
-        return 0;
+        return $this->event()->wp_user();
     }
 
 
@@ -570,7 +567,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Set Attendee ID
      *
-     * @param        int $ATT_ID Attendee ID
+     * @param int $ATT_ID Attendee ID
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -590,7 +587,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *        Set Transaction ID
      *
-     * @param        int $TXN_ID Transaction ID
+     * @param int $TXN_ID Transaction ID
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -610,7 +607,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *        Set Session
      *
-     * @param    string $REG_session PHP Session ID
+     * @param string $REG_session PHP Session ID
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -630,7 +627,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *        Set Registration URL Link
      *
-     * @param    string $REG_url_link Registration URL Link
+     * @param string $REG_url_link Registration URL Link
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -650,7 +647,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *        Set Attendee Counter
      *
-     * @param        int $REG_count Primary Attendee
+     * @param int $REG_count Primary Attendee
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -670,7 +667,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *        Set Group Size
      *
-     * @param        boolean $REG_group_size Group Registration
+     * @param boolean $REG_group_size Group Registration
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -789,7 +786,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *        Set Registration Date
      *
-     * @param        mixed ( int or string ) $REG_date Registration Date - Unix timestamp or string representation of
+     * @param mixed ( int or string ) $REG_date Registration Date - Unix timestamp or string representation of
      *                                                 Date
      * @throws DomainException
      * @throws EE_Error
@@ -810,7 +807,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *    Set final price owing for this registration after all ticket/price modifications
      *
-     * @param    float $REG_final_price
+     * @param float $REG_final_price
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -830,7 +827,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      *    Set amount paid towards this registration's final price
      *
-     * @param    float $REG_paid
+     * @param float|int|string $REG_paid
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -843,14 +840,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function set_paid($REG_paid = 0.00)
     {
-        $this->set('REG_paid', $REG_paid);
+        $this->set('REG_paid', (float) $REG_paid);
     }
 
 
     /**
      *        Attendee Is Going
      *
-     * @param        boolean $REG_att_is_going Attendee Is Going
+     * @param boolean $REG_att_is_going Attendee Is Going
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -882,9 +879,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return $this->get_first_related('Attendee');
     }
 
+
     /**
      * Gets the name of the attendee.
-     * @since 4.10.12.p
+     *
      * @param bool $apply_html_entities set to true if you want to use HTML entities.
      * @return string
      * @throws EE_Error
@@ -892,6 +890,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since 4.10.12.p
      */
     public function attendeeName($apply_html_entities = false)
     {
@@ -1055,12 +1054,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return add_query_arg(
             (array) apply_filters(
                 'FHEE__EE_Registration__payment_overview_url__query_args',
-                array(
+                [
                     'e_reg_url_link' => $this->reg_url_link(),
                     'step'           => 'payment_options',
                     'revisit'        => true,
                     'clear_session'  => (bool) $clear_session,
-                ),
+                ],
                 $this
             ),
             EE_Registry::instance()->CFG->core->reg_page_url()
@@ -1084,11 +1083,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return add_query_arg(
             (array) apply_filters(
                 'FHEE__EE_Registration__edit_attendee_information_url__query_args',
-                array(
+                [
                     'e_reg_url_link' => $this->reg_url_link(),
                     'step'           => 'attendee_information',
                     'revisit'        => true,
-                ),
+                ],
                 $this
             ),
             EE_Registry::instance()->CFG->core->reg_page_url()
@@ -1109,11 +1108,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function get_admin_edit_url()
     {
         return EEH_URL::add_query_args_and_nonce(
-            array(
+            [
                 'page'    => 'espresso_registrations',
                 'action'  => 'view_registration',
                 '_REG_ID' => $this->ID(),
-            ),
+            ],
             admin_url('admin.php')
         );
     }
@@ -1153,12 +1152,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         // k reg_count !== 1 so let's get the EE_Registration object matching this txn_id and reg_count == 1
         /** @var EE_Registration $primary_registrant */
         $primary_registrant = EEM_Registration::instance()->get_one(
-            array(
-                array(
+            [
+                [
                     'TXN_ID'    => $this->transaction_ID(),
                     'REG_count' => 1,
-                ),
-            )
+                ],
+            ]
         );
         return $primary_registrant;
     }
@@ -1239,9 +1238,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function final_price()
+    public function final_price(): float
     {
-        return $this->get('REG_final_price');
+        return (float) $this->get('REG_final_price');
     }
 
 
@@ -1272,9 +1271,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function paid()
+    public function paid(): float
     {
-        return $this->get('REG_paid');
+        return (float) $this->get('REG_paid');
     }
 
 
@@ -1298,7 +1297,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * owes_monies_and_can_pay
      * whether or not this registration has monies owing and it's' status allows payment
      *
-     * @param array $requires_payment
+     * @param array $requires_payment list of registration statuses that allow a registrant to make a payment
      * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1306,7 +1305,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function owes_monies_and_can_pay($requires_payment = array())
+    public function owes_monies_and_can_pay($requires_payment = [])
     {
         // these reg statuses require payment (if event is not free)
         $requires_payment = ! empty($requires_payment)
@@ -1354,11 +1353,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function pretty_status($show_icons = false)
     {
         $status = EEM_Status::instance()->localized_status(
-            array($this->status_ID() => esc_html__('unknown', 'event_espresso')),
+            [$this->status_ID() => esc_html__('unknown', 'event_espresso')],
             false,
             'sentence'
         );
-        $icon = '';
+        $icon   = '';
         switch ($this->status_ID()) {
             case EEM_Registration::status_id_approved:
                 $icon = $show_icons
@@ -1421,7 +1420,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function answers($query_params = null)
+    public function answers($query_params = [])
     {
         return $this->get_many_related('Answer', $query_params);
     }
@@ -1486,7 +1485,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                 [
                     'Event_Question_Group.'
                     . EEM_Event_Question_Group::instance()->fieldNameForContext($this->is_primary_registrant()) => true,
-                ]
+                ],
             ]
         );
     }
@@ -1631,7 +1630,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function count_checkins_not_checkedout()
     {
-        return $this->get_model()->count_related($this, 'Checkin', array(array('CHK_in' => 1)));
+        return $this->get_model()->count_related($this, 'Checkin', [['CHK_in' => 1]]);
     }
 
 
@@ -1658,12 +1657,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         // is there a datetime ticket that matches this dtt_ID?
         if (
             ! (EEM_Datetime_Ticket::instance()->exists(
-                array(
-                    array(
+                [
+                    [
                         'TKT_ID' => $this->get('TKT_ID'),
                         'DTT_ID' => $DTT_ID,
-                    ),
-                )
+                    ],
+                ]
             ))
         ) {
             return false;
@@ -1696,7 +1695,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             return false;
         }
 
-        $max_uses = $this->ticket() instanceof EE_Ticket ? $this->ticket()->uses() : EE_INF;
+        $max_uses = $this->ticket() instanceof EE_Ticket
+            ? $this->ticket()->uses()
+            : EE_INF;
 
         // if max uses is not set or equals infinity then return true cause its not a factor for whether user can
         // check-in or not.
@@ -1706,19 +1707,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
         // does this datetime have a checkin record?  If so, then the dtt count has already been verified so we can just
         // go ahead and toggle.
-        if (EEM_Checkin::instance()->exists(array(array('REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID)))) {
+        if (EEM_Checkin::instance()->exists([['REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID]])) {
             return true;
         }
 
         // made it here so the last check is whether the number of checkins per unique datetime on this registration
         // disallows further check-ins.
         $count_unique_dtt_checkins = EEM_Checkin::instance()->count(
-            array(
-                array(
+            [
+                [
                     'REG_ID' => $this->ID(),
                     'CHK_in' => true,
-                ),
-            ),
+                ],
+            ],
             'DTT_ID',
             true
         );
@@ -1747,7 +1748,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * checked in -> checked out
      * checked out -> checked in
      *
-     * @param  int $DTT_ID  include specific datetime to toggle Check-in for.
+     * @param int  $DTT_ID  include specific datetime to toggle Check-in for.
      *                      If not included or null, then it is assumed latest datetime is being toggled.
      * @param bool $verify  If true then can_checkin() is used to verify whether the person
      *                      can be checked in or not.  Otherwise this forces change in checkin status.
@@ -1762,7 +1763,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         if (empty($DTT_ID)) {
             $datetime = $this->get_latest_related_datetime();
-            $DTT_ID = $datetime instanceof EE_Datetime ? $datetime->ID() : 0;
+            $DTT_ID   = $datetime instanceof EE_Datetime ? $datetime->ID() : 0;
             // verify the registration can checkin for the given DTT_ID
         } elseif (! $this->can_checkin($DTT_ID, $verify)) {
             EE_Error::add_error(
@@ -1780,14 +1781,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             );
             return false;
         }
-        $status_paths = array(
+        $status_paths = [
             EE_Checkin::status_checked_never => EE_Checkin::status_checked_in,
             EE_Checkin::status_checked_in    => EE_Checkin::status_checked_out,
             EE_Checkin::status_checked_out   => EE_Checkin::status_checked_in,
-        );
+        ];
         // start by getting the current status so we know what status we'll be changing to.
         $cur_status = $this->check_in_status_for_datetime($DTT_ID);
-        $status_to = $status_paths[ $cur_status ];
+        $status_to  = $status_paths[ $cur_status ];
         // database only records true for checked IN or false for checked OUT
         // no record ( null ) means checked in NEVER, but we obviously don't save that
         $new_status = $status_to === EE_Checkin::status_checked_in;
@@ -1796,11 +1797,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         // Eventually we'll probably want to show a list table
         // for the individual Check-ins so that they can be managed.
         $checkin = EE_Checkin::new_instance(
-            array(
+            [
                 'REG_ID' => $this->ID(),
                 'DTT_ID' => $DTT_ID,
                 'CHK_in' => $new_status,
-            )
+            ]
         );
         // if the record could not be saved then return false
         if ($checkin->save() === 0) {
@@ -1824,7 +1825,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             return false;
         }
         // Fire a checked_in and checkout_out action.
-        $checked_status = $status_to === EE_Checkin::status_checked_in ? 'checked_in' : 'checked_out';
+        $checked_status = $status_to === EE_Checkin::status_checked_in
+            ? 'checked_in'
+            : 'checked_out';
         do_action("AHEE__EE_Registration__toggle_checkin_status__{$checked_status}", $this, $DTT_ID);
         return $status_to;
     }
@@ -1844,12 +1847,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function get_latest_related_datetime(): ?EE_Datetime
     {
         return EEM_Datetime::instance()->get_one(
-            array(
-                array(
+            [
+                [
                     'Ticket.Registration.REG_ID' => $this->ID(),
-                ),
-                'order_by' => array('DTT_EVT_start' => 'DESC'),
-            )
+                ],
+                'order_by' => ['DTT_EVT_start' => 'DESC'],
+            ]
         );
     }
 
@@ -1868,12 +1871,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function get_earliest_related_datetime()
     {
         return EEM_Datetime::instance()->get_one(
-            array(
-                array(
+            [
+                [
+            [
+                [
                     'Ticket.Registration.REG_ID' => $this->ID(),
-                ),
-                'order_by' => array('DTT_EVT_start' => 'ASC'),
-            )
+                ],
+                'order_by' => ['DTT_EVT_start' => 'ASC'],
+            ]
+                ],
+                'order_by' => ['DTT_EVT_start' => 'ASC'],
+            ]
         );
     }
 
@@ -1896,20 +1904,21 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         if ($checkin instanceof EE_Checkin) {
             return $checkin->status();
         }
-        
+
+        if (! $DTT_ID) {
+            return EE_Checkin::status_invalid;
+        }
+
         $checkin_query_params = [
+            0          => ['DTT_ID' => $DTT_ID],
             'order_by' => ['CHK_timestamp' => 'DESC'],
         ];
-
-        if ($DTT_ID > 0) {
-            $checkin_query_params[0] = ['DTT_ID' => $DTT_ID];
-        }        
 
         $checkin = $this->get_first_related(
             'Checkin',
             $checkin_query_params
         );
-        return $checkin instanceof EE_Checkin ? $checkin->status() :  EE_Checkin::status_checked_never;
+        return $checkin instanceof EE_Checkin ? $checkin->status() : EE_Checkin::status_checked_never;
     }
 
 
@@ -1983,7 +1992,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function reg_code(): string
     {
-        return $this->get('REG_code') ?: '';
+        return $this->get('REG_code')
+            ?: '';
     }
 
 
@@ -2054,25 +2064,25 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * Note, if you want to just get all registrations in the same transaction (group), use:
      *    $registration->transaction()->registrations();
      *
-     * @since 4.5.0
      * @return EE_Registration[] or empty array if this isn't a group registration.
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since 4.5.0
      */
     public function get_all_other_registrations_in_group()
     {
         if ($this->group_size() < 2) {
-            return array();
+            return [];
         }
 
-        $query[0] = array(
+        $query[0] = [
             'TXN_ID' => $this->transaction_ID(),
-            'REG_ID' => array('!=', $this->ID()),
+            'REG_ID' => ['!=', $this->ID()],
             'TKT_ID' => $this->ticket_ID(),
-        );
+        ];
         /** @var EE_Registration[] $registrations */
         $registrations = $this->get_model()->get_all($query);
         return $registrations;
@@ -2093,11 +2103,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         EE_Registry::instance()->load_helper('URL');
         return EEH_URL::add_query_args_and_nonce(
-            array(
+            [
                 'page'    => 'espresso_registrations',
                 'action'  => 'view_registration',
                 '_REG_ID' => $this->ID(),
-            ),
+            ],
             admin_url('admin.php')
         );
     }
@@ -2149,9 +2159,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         EE_Registry::instance()->load_helper('URL');
         return EEH_URL::add_query_args_and_nonce(
-            array(
+            [
                 'page' => 'espresso_registrations',
-            ),
+            ],
             admin_url('admin.php')
         );
     }
@@ -2166,7 +2176,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function payments($query_params = array())
+    public function payments($query_params = [])
     {
         return $this->get_many_related('Payment', $query_params);
     }
@@ -2181,7 +2191,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function registration_payments($query_params = array())
+    public function registration_payments($query_params = [])
     {
         return $this->get_many_related('Registration_Payment', $query_params);
     }
@@ -2214,13 +2224,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function ticket_line_item()
     {
-        $ticket = $this->ticket();
-        $transaction = $this->transaction();
-        $line_item = null;
+        $ticket            = $this->ticket();
+        $transaction       = $this->transaction();
+        $line_item         = null;
         $ticket_line_items = \EEH_Line_Item::get_line_items_by_object_type_and_IDs(
             $transaction->total_line_item(),
             'Ticket',
-            array($ticket->ID())
+            [$ticket->ID()]
         );
         foreach ($ticket_line_items as $ticket_line_item) {
             if (
@@ -2296,7 +2306,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * possibly toggle Registration status based on comparison of REG_paid vs REG_final_price
      *
-     * @param  boolean $trigger_set_status_logic EE_Registration::set_status() can trigger additional logic
+     * @param boolean $trigger_set_status_logic  EE_Registration::set_status() can trigger additional logic
      *                                           depending on whether the reg status changes to or from "Approved"
      * @return boolean whether the Registration status was updated
      * @throws DomainException
@@ -2311,7 +2321,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function updateStatusBasedOnTotalPaid($trigger_set_status_logic = true)
     {
-        $paid = $this->paid();
+        $paid  = $this->paid();
         $price = $this->final_price();
         switch (true) {
             // overpaid or paid
@@ -2362,9 +2372,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * @deprecated
-     * @since     4.7.0
-     * @param    float $REG_final_price
+     * @param float $REG_final_price
      * @throws EE_Error
      * @throws EntityNotFoundException
      * @throws InvalidArgumentException
@@ -2373,6 +2381,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws ReflectionException
      * @throws RuntimeException
      * @throws DomainException
+     * @deprecated
+     * @since     4.7.0
      */
     public function set_price_paid($REG_final_price = 0.00)
     {
@@ -2389,14 +2399,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * @deprecated
-     * @since 4.7.0
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @deprecated
+     * @since 4.7.0
      */
     public function pretty_price_paid()
     {
@@ -2415,7 +2425,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Gets the primary datetime related to this registration via the related Event to this registration
      *
-     * @deprecated 4.9.17
      * @return EE_Datetime
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -2423,6 +2432,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @deprecated 4.9.17
      */
     public function get_related_primary_datetime()
     {
@@ -2438,15 +2448,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return $this->event()->primary_datetime();
     }
 
+
     /**
      * Returns the contact's name (or "Unknown" if there is no contact.)
-     * @since 4.10.12.p
+     *
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since 4.10.12.p
      */
     public function name()
     {
@@ -2465,5 +2477,107 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         // the existence of a new REG ID means the registration was moved
         $reg_moved = $this->get_extra_meta('registration-moved-to', true, []);
         return isset($reg_moved['NEW_REG_ID']) && $reg_moved['NEW_REG_ID'];
+    }
+
+
+    /**
+     * @param EE_Payment $payment
+     * @param float|null $amount
+     * @return float
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function applyPayment(EE_Payment $payment, ?float $amount = null): float
+    {
+        // echo "\n\n";
+        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 3);
+        // \EEH_Debug_Tools::printr($this->ID(), 'REG ID', __FILE__, __LINE__);
+        $payment_amount = $amount ?? $payment->amount();
+        // ensure $payment_amount is NOT negative
+        $payment_amount = (float) abs($payment_amount);
+        // \EEH_Debug_Tools::printr($payment_amount, 'incoming $payment_amount', __FILE__, __LINE__);
+        // \EEH_Debug_Tools::printr($this->final_price(), 'reg final price', __FILE__, __LINE__);
+        // \EEH_Debug_Tools::printr($this->paid(), 'reg paid to date', __FILE__, __LINE__);
+        $payment_amount = $payment->is_a_refund()
+            ? $this->processRefund($payment_amount)
+            : $this->processPayment($payment_amount);
+        // \EEH_Debug_Tools::printr($payment_amount, 'applied payment_amount', __FILE__, __LINE__);
+        if ($payment_amount) {
+            $reg_payment = EEM_Registration_Payment::instance()->get_one(
+                [['REG_ID' => $this->ID(), 'PAY_ID' => $payment->ID()]]
+            );
+            // if existing registration payment exists
+            if ($reg_payment instanceof EE_Registration_Payment) {
+                // echo "\nUPDATE EXISTING REG PAYMENT";
+                // then update that record
+                $reg_payment->set_amount($payment_amount);
+            } else {
+                // echo "\nCREATE NEW REG PAYMENT";
+                // or add new relation between registration and payment and set amount
+                $reg_payment = EE_Registration_Payment::new_instance(
+                    [
+                        'REG_ID'     => $this->ID(),
+                        'PAY_ID'     => $payment->ID(),
+                        'RPY_amount' => $payment_amount,
+                    ]
+                );
+                // $this->_add_relation_to($payment, 'Payment', ['RPY_amount' => $payment_amount]);
+            }
+            $reg_payment->save();
+            // \EEH_Debug_Tools::printr($reg_payment->ID(), '$reg payment ID', __FILE__, __LINE__);
+        }
+        return $payment_amount;
+    }
+
+
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function processPayment(float $payment_amount): float
+    {
+        // echo "\n";
+        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 3);
+        $paid  = $this->paid();
+        $owing = $this->final_price() - $paid;
+        // \EEH_Debug_Tools::printr($owing, '$owing', __FILE__, __LINE__);
+        if ($owing <= 0) {
+            return 0.0;
+        }
+        // don't allow payment amount to exceed the incoming amount, OR the amount owing
+        $payment_amount = min($payment_amount, $owing);
+        $paid           = $paid + $payment_amount;
+        // \EEH_Debug_Tools::printr($paid, 'NEW REG PAID AMOUNT', __FILE__, __LINE__);
+        // calculate and set new REG_paid
+        $this->set_paid($paid);
+        // make it stick
+        $this->save();
+        return (float) $payment_amount;
+    }
+
+
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
+    private function processRefund(float $payment_amount): float
+    {
+        // echo "\n";
+        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 3);
+        $paid = $this->paid();
+        if ($paid <= 0) {
+            return 0.0;
+        }
+        // don't allow refund amount to exceed the incoming amount, OR the amount paid
+        $payment_amount = min($payment_amount, $paid);
+        // calculate and set new REG_paid
+        $paid = $paid - $payment_amount;
+        \EEH_Debug_Tools::printr($paid, 'NEW REG PAID AMOUNT', __FILE__, __LINE__);
+        $this->set_paid($paid);
+        // make it stick
+        $this->save();
+        // convert payment amount back to a negative value for storage in the db
+        return (float) $payment_amount;
     }
 }

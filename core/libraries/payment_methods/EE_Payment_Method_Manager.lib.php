@@ -21,31 +21,27 @@ class EE_Payment_Method_Manager implements ResettableInterface
      */
     const CAPABILITIES_PREFIX = 'ee_payment_method_';
 
-    /**
-     * @var EE_Payment_Method_Manager $_instance
-     */
-    private static $_instance;
+    private static ?EE_Payment_Method_Manager $_instance = null;
 
     /**
      * @var boolean
      */
-    protected $payment_method_caps_initialized = false;
+    protected bool $payment_method_caps_initialized = false;
 
     /**
-     * @var array keys are class names without 'EE_PMT_', values are their filepaths
+     * @var string[] keys are class names without 'EE_PMT_', values are their filepaths
      */
-    protected $_payment_method_types = [];
+    protected array $_payment_method_types = [];
 
     /**
      * @var EE_PMT_Base[]
      */
-    protected $payment_method_objects = [];
+    protected array $payment_method_objects = [];
 
 
     /**
      * EE_Payment_Method_Manager constructor.
      *
-     * @throws EE_Error
      * @throws DomainException
      */
     public function __construct()
@@ -53,8 +49,11 @@ class EE_Payment_Method_Manager implements ResettableInterface
         // if in admin lets ensure caps are set.
         if (is_admin()) {
             $this->_register_payment_methods();
-            // set them immediately
-            $this->initializePaymentMethodCaps();
+            // add PM caps when EE_Capabilities is initialized
+            add_action(
+                'AHEE__EE_Capabilities__init_caps__before_initialization',
+                [$this, 'initializePaymentMethodCaps']
+            );
             // plus any time they get reset
             add_filter(
                 'FHEE__EE_Capabilities__addCaps__capabilities_to_add',
@@ -202,7 +201,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
     {
         if (
             $force_recheck
-            || ! is_array($this->_payment_method_types)
+            || empty($this->_payment_method_types)
             || ! isset($this->_payment_method_types[ $payment_method_name ])
         ) {
             $this->maybe_register_payment_methods($force_recheck);
@@ -470,7 +469,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
      * @throws EE_Error
      * @throws DomainException
      */
-    protected function initializePaymentMethodCaps()
+    public function initializePaymentMethodCaps()
     {
         // don't do this twice
         if ($this->payment_method_caps_initialized) {

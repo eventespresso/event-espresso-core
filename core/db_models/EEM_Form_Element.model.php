@@ -6,7 +6,6 @@ use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EEM_Form_Element
- *
  * Model Fields:
  *  FIN_UUID         string
  *  FSC_UUID         string    UUID of parent form section
@@ -51,22 +50,22 @@ class EEM_Form_Element extends EEM_Base
      * @param string|null $timezone
      * @throws EE_Error
      */
-    protected function __construct(FormStatus $form_status, InputTypes $input_types, ?string $timezone)
+    protected function __construct(FormStatus $form_status, InputTypes $input_types, ?string $timezone = '')
     {
         $this->input_types   = $input_types;
         $this->singular_item = esc_html__('Form Element', 'event_espresso');
         $this->plural_item   = esc_html__('Form Elements', 'event_espresso');
 
-        $this->_tables          = [
+        $this->_tables = [
             'Form_Element' => new EE_Primary_Table('esp_form_element', 'FIN_UUID'),
         ];
-        $this->_fields          = [
+        $this->_fields = [
             'Form_Element' => [
-                'FIN_UUID'      => new EE_Primary_Key_String_Field(
+                'FIN_UUID'       => new EE_Primary_Key_String_Field(
                     'FIN_UUID',
                     esc_html__('Form Element UUID (universally unique identifier)', 'event_espresso')
                 ),
-                'FSC_UUID' => new EE_Foreign_Key_String_Field(
+                'FSC_UUID'       => new EE_Foreign_Key_String_Field(
                     'FSC_UUID',
                     esc_html__('UUID of parent form section this form input belongs to.', 'event_espresso'),
                     false,
@@ -74,7 +73,7 @@ class EEM_Form_Element extends EEM_Base
                     ['Form_Section'],
                     false
                 ),
-                'FIN_adminOnly' => new EE_Boolean_Field(
+                'FIN_adminOnly'  => new EE_Boolean_Field(
                     'FIN_adminOnly',
                     esc_html__(
                         'Whether or not input is only displayed in the admin. If false, input will appear in public forms',
@@ -92,7 +91,7 @@ class EEM_Form_Element extends EEM_Base
                     true,
                     '{}'
                 ),
-                'FIN_helpText' => new EE_JSON_Field(
+                'FIN_helpText'   => new EE_JSON_Field(
                     'FIN_helpText',
                     esc_html__(
                         'JSON string of properties pertaining to any help text required for an input.',
@@ -101,7 +100,7 @@ class EEM_Form_Element extends EEM_Base
                     true,
                     '{}'
                 ),
-                'FIN_label' => new EE_JSON_Field(
+                'FIN_label'      => new EE_JSON_Field(
                     'FIN_label',
                     esc_html__(
                         'JSON string of properties pertaining to an element\'s label.',
@@ -119,7 +118,7 @@ class EEM_Form_Element extends EEM_Base
                     true,
                     null
                 ),
-                'FIN_options'     => new EE_JSON_Field(
+                'FIN_options'    => new EE_JSON_Field(
                     'FIN_options',
                     esc_html__(
                         'JSON string of options for ENUM type inputs like checkboxes, radio buttons, select inputs, etc.',
@@ -128,13 +127,13 @@ class EEM_Form_Element extends EEM_Base
                     true,
                     '[]'
                 ),
-                'FIN_order'     => new EE_Integer_Field(
+                'FIN_order'      => new EE_Integer_Field(
                     'FIN_order',
                     esc_html__('Order in which form input appears in a form.', 'event_espresso'),
                     false,
                     0
                 ),
-                'FIN_required' => new EE_JSON_Field(
+                'FIN_required'   => new EE_JSON_Field(
                     'FIN_required',
                     esc_html__(
                         'properties pertaining to an input\'s required status and the validation text to display.',
@@ -143,11 +142,11 @@ class EEM_Form_Element extends EEM_Base
                     false,
                     false
                 ),
-                'FIN_status'    => new EE_Enum_Text_Field(
+                'FIN_status'     => new EE_Enum_Text_Field(
                     'FIN_status',
                     esc_html(
                         sprintf(
-                            /* translators: 1 class name */
+                        /* translators: 1 class name */
                             __(
                                 'Whether form element is active, archived, trashed, or used as a default on new forms. Values correspond to the %1$s class constants.',
                                 'event_espresso'
@@ -159,14 +158,14 @@ class EEM_Form_Element extends EEM_Base
                     FormStatus::ACTIVE,
                     $form_status->validStatusOptions()
                 ),
-                'FIN_type'    => new EE_Enum_Text_Field(
+                'FIN_type'       => new EE_Enum_Text_Field(
                     'FIN_type',
                     esc_html__('Form element type.', 'event_espresso'),
                     false,
                     null,
                     $input_types->validTypeOptions()
                 ),
-                'FIN_wpUser'    => new EE_WP_User_Field(
+                'FIN_wpUser'     => new EE_WP_User_Field(
                     'FIN_wpUser',
                     esc_html__('ID of the WP User that created this form input.', 'event_espresso'),
                     false
@@ -219,7 +218,7 @@ class EEM_Form_Element extends EEM_Base
 
 
     /**
-     * @param EE_Form_Section $form_section
+     * @param EE_Form_Section   $form_section
      * @param EE_Form_Element[] $all_form_elements
      * @return EE_Form_Element[]
      * @throws EE_Error

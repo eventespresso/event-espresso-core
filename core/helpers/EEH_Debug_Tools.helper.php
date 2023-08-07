@@ -460,8 +460,10 @@ class EEH_Debug_Tools
             }
             return "{$line_breaks}{$line}) {$var_name}";
         }
-        $margin = "25px 0 0 {$margin}";
-        return '<' . $heading_tag . ' style="color:#2EA2CC; margin:' . $margin . ';"><b>' . $var_name . '</b>';
+        $margin = "1rem 1rem .5rem {$margin}";
+        return '
+        <' . $heading_tag . ' style="color:#2EA2CC; margin:' . $margin . '; position: sticky;">
+            <b>' . $var_name . '</b>';
     }
 
 
@@ -475,7 +477,8 @@ class EEH_Debug_Tools
         if (EEH_Debug_Tools::plainOutput()) {
             return '';
         }
-        return '</' . $heading_tag . '>';
+        return '
+        </' . $heading_tag . '>';
     }
 
 
@@ -577,7 +580,7 @@ class EEH_Debug_Tools
             $file = '';
             $line = '';
         }
-        $margin = is_admin() ? ' 180px' : '0';
+        $margin = is_admin() ? '180px' : '2rem';
         if (is_string($var)) {
             EEH_Debug_Tools::printv($var, $var_name, $file, $line, $heading_tag, $die, $margin);
             return;

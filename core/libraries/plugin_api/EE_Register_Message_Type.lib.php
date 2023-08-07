@@ -485,4 +485,10 @@ class EE_Register_Message_Type implements EEI_Plugin_API
         }
         return $base_path_or_url;
     }
+
+
+    public static function reset(): void
+    {
+        self::$_ee_message_type_registry = [];
+    }
 }

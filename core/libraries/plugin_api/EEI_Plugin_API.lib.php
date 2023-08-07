@@ -36,4 +36,11 @@ interface EEI_Plugin_API
      * @since 4.3.0
      */
     public static function deregister(string $addon_name = '');
+
+
+    /**
+     * @return void
+     * @since $VID:$
+     */
+    public static function reset(): void;
 }

@@ -57,6 +57,12 @@ class EE_Register_Personal_Data_Exporter implements EEI_Plugin_API
     {
         return array_merge($exporters, ...self::$exporters);
     }
+
+
+    public static function reset(): void
+    {
+        self::$exporters = [];
+    }
 }
 // End of file EE_Register_Personal_Data_Exporter.lib.php
 // Location: ${NAMESPACE}/EE_Register_Personal_Data_Exporter.lib.php

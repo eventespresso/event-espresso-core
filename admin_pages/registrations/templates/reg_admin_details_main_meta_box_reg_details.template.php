@@ -23,17 +23,18 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <?php echo wp_kses($view_transaction_button, AllowedTags::getWithFormTags()); ?>
     </div>
 
-    <div class='ee-admin-button-row'>
+    <div class="ee-admin-button-row">
         <a id="display-additional-registration-session-info" class="display-the-hidden smaller-text"
            rel="additional-registration-session-info"
         >
             <span class="dashicons dashicons-plus-alt"></span>
             <?php esc_html_e('view additional registration session details', 'event_espresso'); ?>
         </a>
-        <a id='hide-additional-registration-session-info' class='hide-the-displayed hidden smaller-text'
-           rel='additional-registration-session-info'
+        <a id="hide-additional-registration-session-info" class="hide-the-displayed hidden smaller-text"
+           rel="additional-registration-session-info"
+           style="display: none;"
         >
-            <span class='dashicons dashicons-dismiss'></span>
+            <span class="dashicons dashicons-dismiss"></span>
             <?php esc_html_e('hide additional registration session details', 'event_espresso'); ?>
         </a>
     </div>

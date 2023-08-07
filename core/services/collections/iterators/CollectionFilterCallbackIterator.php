@@ -10,9 +10,10 @@ class CollectionFilterCallbackIterator extends FilterIterator
 {
     /**
      * Used for determining whether the iterated object in the Collection is "valid" or not.
+     *
      * @var Closure
      */
-    private $acceptance_callback;
+    private Closure $acceptance_callback;
 
 
     /**
@@ -28,27 +29,28 @@ class CollectionFilterCallbackIterator extends FilterIterator
         parent::__construct($collection);
     }
 
+
     /**
      * Check whether the current element of the iterator is acceptable
      *
      * @link  http://php.net/manual/en/filteriterator.accept.php
      * @return bool true if the current element is acceptable, otherwise false.
      */
-    public function accept()
+    public function accept(): bool
     {
         $acceptance_callback = $this->acceptance_callback;
         return $acceptance_callback($this->getInnerIterator()->current());
     }
 
 
-
     /**
      * Returns a filtered array of objects from the collection using the provided acceptance callback
+     *
      * @return array
      */
-    public function getFiltered()
+    public function getFiltered(): array
     {
-        $filtered_array = array();
+        $filtered_array = [];
         $this->rewind();
         foreach ($this as $filtered_object) {
             $filtered_array[] = $filtered_object;

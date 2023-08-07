@@ -15,15 +15,9 @@ use PluginUpdateEngineChecker;
  */
 class LicenseService
 {
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @var Stats
-     */
-    private $stats_collection;
+    private Stats $stats_collection;
 
     public function __construct(Stats $stats_collection, Config $config)
     {
@@ -36,7 +30,6 @@ class LicenseService
         // PUE Auto Upgrades stuff
         if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { // include the file
             require_once(EE_THIRD_PARTY . 'pue/pue-client.php');
-
             // $options needs to be an array with the included keys as listed.
             $options = array(
                 // 'optionName' => '', //(optional) - used as the reference for saving update information in the

@@ -87,7 +87,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
      * @type string $text
      * @type string $single                    -answer-enum
      * @type string $multi                     -answer-enum
-     *                    }
+     *                                         }
      */
     protected $_question_type_categories = [];
 
@@ -103,9 +103,10 @@ class EEM_Question extends EEM_Soft_Delete_Base
     /**
      * EEM_Question constructor.
      *
-     * @param null $timezone
+     * @param string|null $timezone
+     * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item                  = esc_html__('Question', 'event_espresso');
         $this->plural_item                    = esc_html__('Questions', 'event_espresso');
@@ -559,9 +560,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
     public function absolute_max_for_system_question(string $system_question_value)
     {
         $maxes = $this->system_question_maxes();
-        return isset($maxes[ $system_question_value ]) ?
-            $maxes[ $system_question_value ]
-            : EE_INF;
+        return $maxes[ $system_question_value ] ?? EE_INF;
     }
 
 

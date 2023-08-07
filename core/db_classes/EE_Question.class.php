@@ -8,13 +8,11 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * @package               Event Espresso
  * @subpackage            includes/classes/EE_Answer.class.php
  * @author                Mike Nelson
- *
  * ------------------------------------------------------------------------
  */
 class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
 {
     /**
-     *
      * @param array  $props_n_values          incoming values
      * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
      *                                        used.)
@@ -22,7 +20,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *                                        date_format and the second value is the time format
      * @return EE_Question
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -35,7 +33,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *                                the website will be used.
      * @return EE_Question
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
@@ -57,7 +55,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *        Set    Question admin text
      *
      * @access        public
-     * @param        string $QST_admin_label
+     * @param string $QST_admin_label
      */
     public function set_admin_label($QST_admin_label = '')
     {
@@ -69,7 +67,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *        Set    system name
      *
      * @access        public
-     * @param        mixed $QST_system
+     * @param mixed $QST_system
      */
     public function set_system_ID($QST_system = '')
     {
@@ -81,7 +79,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *        Set    question's type
      *
      * @access        public
-     * @param        string $QST_type
+     * @param string $QST_type
      */
     public function set_question_type($QST_type = '')
     {
@@ -93,7 +91,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *        Sets whether this question must be answered when presented in a form
      *
      * @access        public
-     * @param        bool $QST_required
+     * @param bool $QST_required
      */
     public function set_required($QST_required = false)
     {
@@ -105,7 +103,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *        Set    Question display text
      *
      * @access        public
-     * @param        string $QST_required_text
+     * @param string $QST_required_text
      */
     public function set_required_text($QST_required_text = '')
     {
@@ -117,7 +115,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *        Sets the order of this question when placed in a sequence of questions
      *
      * @access        public
-     * @param        int $QST_order
+     * @param int $QST_order
      */
     public function set_order($QST_order = 0)
     {
@@ -129,7 +127,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *        Sets whether the question is admin-only
      *
      * @access        public
-     * @param        bool $QST_admin_only
+     * @param bool $QST_admin_only
      */
     public function set_admin_only($QST_admin_only = false)
     {
@@ -141,7 +139,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *        Sets the wordpress user ID on the question
      *
      * @access        public
-     * @param        int $QST_wp_user
+     * @param int $QST_wp_user
      */
     public function set_wp_user($QST_wp_user = 1)
     {
@@ -158,7 +156,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *        on this record actually existing.
      *
      * @access        public
-     * @param    bool $QST_deleted
+     * @param bool $QST_deleted
      */
     public function set_deleted($QST_deleted = false)
     {
@@ -337,12 +335,12 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
     public function options($notDeletedOptionsOnly = true, $selected_value_to_always_include = null)
     {
         if (! $this->ID()) {
-            return array();
+            return [];
         }
-        $query_params = array();
+        $query_params = [];
         if ($selected_value_to_always_include) {
             if (is_array($selected_value_to_always_include)) {
-                $query_params[0]['OR*options-query']['QSO_value'] = array('IN', $selected_value_to_always_include);
+                $query_params[0]['OR*options-query']['QSO_value'] = ['IN', $selected_value_to_always_include];
             } else {
                 $query_params[0]['OR*options-query']['QSO_value'] = $selected_value_to_always_include;
             }
@@ -351,7 +349,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
             $query_params[0]['OR*options-query']['QSO_deleted'] = false;
         }
         // order by QSO_order
-        $query_params['order_by'] = array('QSO_order' => 'ASC');
+        $query_params['order_by'] = ['QSO_order' => 'ASC'];
         return $this->get_many_related('Question_Option', $query_params);
     }
 
@@ -441,16 +439,19 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
         return $questionModel->allowed_question_types();
     }
 
+
     /**
      * Duplicates this question and its question options
      *
      * @return \EE_Question
      */
-    public function duplicate($options = array())
+    public function duplicate($options = [])
     {
         $new_question = clone $this;
         $new_question->set('QST_ID', null);
-        $new_question->set_display_text(sprintf(esc_html__('%s **Duplicate**', 'event_espresso'), $this->display_text()));
+        $new_question->set_display_text(
+            sprintf(esc_html__('%s **Duplicate**', 'event_espresso'), $this->display_text())
+        );
         $new_question->set_admin_label(sprintf(esc_html__('%s **Duplicate**', 'event_espresso'), $this->admin_label()));
         $new_question->set_system_ID(null);
         $new_question->set_wp_user(get_current_user_id());
@@ -460,13 +461,14 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
         if ($success) {
             // we don't totally want to duplicate the question options, because we want them to be for the NEW question
             foreach ($this->options() as $question_option) {
-                $question_option->duplicate(array('QST_ID' => $new_question->ID()));
+                $question_option->duplicate(['QST_ID' => $new_question->ID()]);
             }
             return $new_question;
         } else {
             return null;
         }
     }
+
 
     /**
      * Returns the question's maximum allowed response size
@@ -477,6 +479,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
     {
         return $this->get('QST_max');
     }
+
 
     /**
      * Sets the question's maximum allowed response size
@@ -498,16 +501,16 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * @param array           $input_constructor_args
      * @return EE_Form_Input_Base
      */
-    public function generate_form_input($registration = null, $answer = null, $input_constructor_args = array())
+    public function generate_form_input($registration = null, $answer = null, $input_constructor_args = [])
     {
         $identifier = $this->is_system_question() ? $this->system_ID() : $this->ID();
 
         $input_constructor_args = array_merge(
-            array(
+            [
                 'required'                          => $this->required() ? true : false,
                 'html_label_text'                   => $this->display_text(),
                 'required_validation_error_message' => $this->required_text(),
-            ),
+            ],
             $input_constructor_args
         );
         if (! $answer instanceof EE_Answer && $registration instanceof EE_Registration) {
@@ -577,7 +580,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                     $registration,
                     $answer
                 );
-                $result = new EE_State_Select_Input($state_options, $input_constructor_args);
+                $result        = new EE_State_Select_Input($state_options, $input_constructor_args);
                 break;
             // Country Dropdown
             case EEM_Question::QST_type_country:
@@ -588,7 +591,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                     $registration,
                     $answer
                 );
-                $result = new EE_Country_Select_Input($country_options, $input_constructor_args);
+                $result          = new EE_Country_Select_Input($country_options, $input_constructor_args);
                 break;
             // Checkboxes
             case EEM_Question::QST_type_checkbox:
@@ -600,11 +603,11 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                 break;
             case EEM_Question::QST_type_html_textarea:
                 $input_constructor_args['validation_strategies'][] = new EE_Simple_HTML_Validation_Strategy();
-                $result = new EE_Text_Area_Input($input_constructor_args);
+                $result                                            = new EE_Text_Area_Input($input_constructor_args);
                 $result->remove_validation_strategy('EE_Plaintext_Validation_Strategy');
                 break;
             case EEM_Question::QST_type_email:
-                    $result = new EE_Email_Input($input_constructor_args);
+                $result = new EE_Email_Input($input_constructor_args);
                 break;
             // Email confirm
             case EEM_Question::QST_type_email_confirm:
@@ -620,8 +623,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                 $result = new EE_Float_Input($input_constructor_args);
                 break;
             case EEM_Question::QST_type_url:
-                $input_constructor_args['validation_strategies'][] = LoaderFactory::getLoader()->getNew('EE_URL_Validation_Strategy');
-                $result = new EE_Text_Input($input_constructor_args);
+                $input_constructor_args['validation_strategies'][] =
+                    LoaderFactory::getLoader()->getNew('EE_URL_Validation_Strategy');
+                $result                                            = new EE_Text_Input($input_constructor_args);
                 break;
             case EEM_Question::QST_type_year:
                 $result = new EE_Year_Input(

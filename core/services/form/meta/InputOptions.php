@@ -49,7 +49,7 @@ class InputOptions implements JsonableInterface
         $json_data_handler = new JsonDataHandler();
         $json_data_handler->configure(JsonDataHandler::DATA_TYPE_ARRAY);
         $data = $json_data_handler->decodeJson($json);
-        return new InputOptions($json_data_handler, $data ?? []);
+        return new InputOptions($json_data_handler, (array) $data ?? []);
     }
 
 
@@ -113,7 +113,7 @@ class InputOptions implements JsonableInterface
     public function setOptions(array $options): void
     {
         foreach ($options as $option) {
-            $this->addOption($option);
+            $this->addOption((array) $option);
         }
     }
 }

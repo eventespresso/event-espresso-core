@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\services\validation\email;
 
 use EE_Registration_Config;
-use EventEspresso\core\services\loaders\Loader;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * Class EmailValidator
@@ -15,15 +15,9 @@ use EventEspresso\core\services\loaders\Loader;
  */
 class EmailValidationService implements EmailValidatorInterface
 {
-    /**
-     * @var EE_Registration_Config $registration_config
-     */
-    protected $registration_config;
+    protected EE_Registration_Config $registration_config;
 
-    /**
-     * @var Loader $loader
-     */
-    protected $loader;
+    protected LoaderInterface        $loader;
 
 
     /**
@@ -31,12 +25,12 @@ class EmailValidationService implements EmailValidatorInterface
      * Accepts an \EE_Config as an argument.
      *
      * @param EE_Registration_Config $config
-     * @param Loader                 $loader
+     * @param LoaderInterface        $loader
      */
-    public function __construct(EE_Registration_Config $config, Loader $loader)
+    public function __construct(EE_Registration_Config $config, LoaderInterface $loader)
     {
         $this->registration_config = $config;
-        $this->loader = $loader;
+        $this->loader              = $loader;
     }
 
 
@@ -48,7 +42,7 @@ class EmailValidationService implements EmailValidatorInterface
      * @return boolean
      * @throws EmailValidationException
      */
-    public function validate($email_address)
+    public function validate(string $email_address): bool
     {
         // pick the correct validator according to the config
         switch ($this->registration_config->email_validation_level) {

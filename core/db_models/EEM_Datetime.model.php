@@ -25,16 +25,14 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
     /**
      * private constructor to prevent direct creation
      *
-     * @param string $timezone A string representing the timezone we want to set for returned Date Time Strings
-     *                         (and any incoming timezone data that gets saved).
-     *                         Note this just sends the timezone info to the date time model field objects.
-     *                         Default is NULL
-     *                         (and will be assumed using the set timezone in the 'timezone_string' wp option)
+     * @param string|null $timezone A string representing the timezone we want to set for returned Date Time Strings
+     *                              (and any incoming timezone data that gets saved).
+     *                              Note this just sends the timezone info to the date time model field objects.
+     *                              Default is NULL
+     *                              (and will be assumed using the set timezone in the 'timezone_string' wp option)
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidArgumentException
      */
-    protected function __construct($timezone)
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item           = esc_html__('Datetime', 'event_espresso');
         $this->plural_item             = esc_html__('Datetimes', 'event_espresso');
@@ -54,7 +52,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                     0,
                     'Event'
                 ),
-                'VNU_ID' => new EE_Foreign_Key_Int_Field(
+                'VNU_ID'          => new EE_Foreign_Key_Int_Field(
                     'VNU_ID',
                     __('Venue ID', 'event_espresso'),
                     false,
@@ -90,13 +88,13 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 'DTT_reg_limit'   => new EE_Infinite_Integer_Field(
                     'DTT_reg_limit',
                     esc_html__('Registration Limit for this time', 'event_espresso'),
-                    true,
+                    false,
                     EE_INF
                 ),
                 'DTT_sold'        => new EE_Integer_Field(
                     'DTT_sold',
                     esc_html__('How many sales for this Datetime that have occurred', 'event_espresso'),
-                    true,
+                    false,
                     0
                 ),
                 'DTT_reserved'    => new EE_Integer_Field(
@@ -205,7 +203,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 'DTT_EVT_start' => $start_date,
                 'DTT_EVT_end'   => $end_date,
                 'DTT_order'     => 1,
-                'DTT_reg_limit' => EE_INF,
+                'DTT_reg_limit' => EE_INF_IN_DB,
             ],
             $timezone_string
         );
@@ -787,8 +785,11 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   5.0.0.p
      */
-    private function addDefaultWhereParams(array $where_params, bool $include_deleted = true, bool $include_expired = true)
-    {
+    private function addDefaultWhereParams(
+        array $where_params,
+        bool $include_deleted = true,
+        bool $include_expired = true
+    ) {
         $where_params = $this->addExpiredWhereParams($where_params, $include_expired);
         $where_params = $this->addDeletedWhereParams($where_params, $include_deleted);
         return $where_params;

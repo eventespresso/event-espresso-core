@@ -22,17 +22,20 @@ class EEM_Post_Meta extends EEM_Base
     protected static $_instance = null;
 
 
-
-    protected function __construct($timezone = null)
+    /**
+     * @param string|null $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(?string $timezone = '')
     {
-        $this->singular_item = esc_html__('Post Meta', 'event_espresso');
-        $this->plural_item = esc_html__('Post Metas', 'event_espresso');
-        $this->_tables = array(
+        $this->singular_item       = esc_html__('Post Meta', 'event_espresso');
+        $this->plural_item         = esc_html__('Post Metas', 'event_espresso');
+        $this->_tables             = [
             'Post_Meta' => new EE_Primary_Table('postmeta', 'meta_id'),
-        );
+        ];
         $models_this_can_attach_to = array_keys(EE_Registry::instance()->cpt_models());
-        $this->_fields = array(
-            'Post_Meta' => array(
+        $this->_fields             = [
+            'Post_Meta' => [
                 'meta_id'    => new EE_Primary_Key_Int_Field(
                     'meta_id',
                     esc_html__("Meta ID", "event_espresso")
@@ -55,9 +58,9 @@ class EEM_Post_Meta extends EEM_Base
                     esc_html__("Meta Value", "event_espresso"),
                     true
                 ),
-            ),
-        );
-        $this->_model_relations = array();
+            ],
+        ];
+        $this->_model_relations    = [];
         foreach ($models_this_can_attach_to as $model) {
             $this->_model_relations[ $model ] = new EE_Belongs_To_Relation();
         }

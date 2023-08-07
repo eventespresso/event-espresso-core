@@ -40,15 +40,14 @@ class EE_Register_Addon implements EEI_Plugin_API
 
     /**
      * @var  array $_incompatible_addons keys are addon SLUGS
-     * (first argument passed to EE_Register_Addon::register()), keys are
-     * their MINIMUM VERSION (with all 5 parts. Eg 1.2.3.rc.004).
-     * Generally this should be used sparingly, as we don't want to muddle up
-     * EE core with knowledge of ALL the addons out there.
-     * If you want NO versions of an addon to run with a certain version of core,
-     * it's usually best to define the addon's "min_core_version" as part of its call
-     * to EE_Register_Addon::register(), rather than using this array with a super high value for its
-     * minimum plugin version.
-     * @access    protected
+     *                                   (first argument passed to EE_Register_Addon::register()), keys are
+     *                                   their MINIMUM VERSION (with all 5 parts. Eg 1.2.3.rc.004).
+     *                                   Generally this should be used sparingly, as we don't want to muddle up
+     *                                   EE core with knowledge of ALL the addons out there.
+     *                                   If you want NO versions of an addon to run with a certain version of core,
+     *                                   it's usually best to define the addon's "min_core_version" as part of its call
+     *                                   to EE_Register_Addon::register(), rather than using this array with a super
+     *                                   high value for its minimum plugin version.
      */
     protected static $_incompatible_addons = [
         'Multi_Event_Registration' => '2.0.11.rc.002',
@@ -260,6 +259,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     public static function register(string $addon_name = '', array $setup_args = []): bool
     {
+        // $addon_name = basename($addon_name);
         if (! self::$loader instanceof LoaderInterface) {
             self::$loader = LoaderFactory::getLoader();
         }
@@ -458,7 +458,8 @@ class EE_Register_Addon implements EEI_Plugin_API
                 : '',
             // path to folder containing files for integrating with the EE core admin and/or setting up EE admin pages
             'admin_path'            => isset($setup_args['admin_path'])
-                ? (string) $setup_args['admin_path'] : '',
+                ? (string) $setup_args['admin_path']
+                : '',
             // a method to be called when the EE Admin is first invoked, can be used for hooking into any admin page
             'admin_callback'        => isset($setup_args['admin_callback'])
                 ? (string) $setup_args['admin_callback']
@@ -469,10 +470,12 @@ class EE_Register_Addon implements EEI_Plugin_API
                 : 'addons',
             // the class name for this addon's configuration settings object
             'config_class'          => isset($setup_args['config_class'])
-                ? (string) $setup_args['config_class'] : '',
+                ? (string) $setup_args['config_class']
+                : '',
             // the name given to the config for this addons' configuration settings object (optional)
             'config_name'           => isset($setup_args['config_name'])
-                ? (string) $setup_args['config_name'] : '',
+                ? (string) $setup_args['config_name']
+                : '',
             // an array of "class names" => "full server paths" for any classes that might be invoked by the addon
             'autoloader_paths'      => isset($setup_args['autoloader_paths'])
                 ? (array) $setup_args['autoloader_paths']
@@ -1224,5 +1227,35 @@ class EE_Register_Addon implements EEI_Plugin_API
             unset(self::$_settings[ $addon_name ]);
             do_action('AHEE__EE_Register_Addon__deregister__after', $addon_name);
         }
+    }
+
+
+    public static function reset(): void
+    {
+        EE_Register_Addon::$_settings = [];
+    }
+
+
+    public static function resetAll(): void
+    {
+        // EE_Register_Addon::reset();
+        EE_Register_Admin_Page::reset();
+        EE_Register_Capabilities::reset();
+        EE_Register_Config::reset();
+        EE_Register_CPT::reset();
+        EE_Register_Data_Migration_Scripts::reset();
+        EE_Register_Message_Type::reset();
+        EE_Register_Messages_Shortcode_Library::reset();
+        EE_Register_Messages_Template_Pack::reset();
+        EE_Register_Messages_Template_Variations::reset();
+        EE_Register_Model::reset();
+        EE_Register_Model_Extensions::reset();
+        EE_Register_Module::reset();
+        EE_Register_Payment_Method::reset();
+        EE_Register_Personal_Data_Eraser::reset();
+        EE_Register_Personal_Data_Exporter::reset();
+        EE_Register_Privacy_Policy::reset();
+        EE_Register_Shortcode::reset();
+        EE_Register_Widget::reset();
     }
 }

@@ -8,18 +8,15 @@ use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
- *
  * Class which determines what data migration files CAN be run, and compares
  * that list to those which have ALREADY run, and determines if there are any that
  * SHOULD run. Also, takes care of running them upon the admin's request in conjunction
  * with the AJAX code on the data migration admin page
- *
  * When determining what data migration scripts ought to run, compares
  * the WordPress option with name 'espresso_data_migrations' to all the data migration scripts
  * contained in the appointed folders (includes/core/data_migration_scripts in core,
  * but addons can add their own folder). See EE_Data_Migration_Script_Base.php for the data
  * migration script naming rules (not just conventions).
- *
  * When performing the migrations, the ajax code on the client-side repeatedly pings
  * a URL which calls EE_Data_Migration_Manager::migration_step(), which in turn calls the currently-executing
  * data migration script and calls its function also named migration_step(), which migrates a few records
@@ -32,7 +29,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 class EE_Data_Migration_Manager implements ResettableInterface
 {
     /**
-     *
      * @var EE_Registry
      */
     // protected $EE;
@@ -182,7 +178,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
      */
     public static function reset()
     {
-        self::$_instance = null;
+        self::$_instance = new self();
         return self::instance();
     }
 
@@ -206,9 +202,10 @@ class EE_Data_Migration_Manager implements ResettableInterface
         ];
         $this->stati_that_indicate_to_stop_single_migration_script     = [
             self::status_completed,
-            self::status_fatal_error
+            self::status_fatal_error,
             // note: status_no_more_migration_scripts doesn't apply
         ];
+        $this->dms_folders                                             = [];
         // make sure we've included the base migration script, because we may need the EE_DMS_Unknown_1_0_0 class
         // to be defined, because right now it doesn't get autoloaded on its own
         EE_Registry::instance()->load_core('Data_Migration_Class_Base', [], true);
@@ -355,7 +352,6 @@ class EE_Data_Migration_Manager implements ResettableInterface
 
 
     /**
-     *
      * @param string $script_name eg 'DMS_Core_4_1_0'
      * @param string $old_table   eg 'wp_events_detail'
      * @param string $old_pk      eg 'wp_esp_posts'
@@ -412,9 +408,9 @@ class EE_Data_Migration_Manager implements ResettableInterface
      *
      * @param string $migration_script_name eg 'EE_DMS_Core_4_1_0'
      * @return array {
-     *      @type string  $slug     like 'Core','Calendar',etc
-     *      @type string  $version  like 4.3.0
-     * }
+     * @type string  $slug                  like 'Core','Calendar',etc
+     * @type string  $version               like 4.3.0
+     *                                      }
      * @throws EE_Error
      */
     public function script_migrates_to_version($migration_script_name, $eeAddonClass = '')
@@ -424,7 +420,9 @@ class EE_Data_Migration_Manager implements ResettableInterface
         }
         $dms_info                                                  = $this->parse_dms_classname($migration_script_name);
         $this->script_migration_versions[ $migration_script_name ] = [
-            'slug'    => $eeAddonClass !== '' ? $eeAddonClass : $dms_info['slug'],
+            'slug'    => $eeAddonClass !== ''
+                ? $eeAddonClass
+                : $dms_info['slug'],
             'version' => $dms_info['major_version']
                          . "."
                          . $dms_info['minor_version']
@@ -526,7 +524,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         $script_classes_that_should_run_per_iteration = [];
         $iteration                                    = 0;
         $next_database_state_to_consider              = $current_database_state;
-        $theoretical_database_state = null;
+        $theoretical_database_state                   = null;
         do {
             // the next state after the currently-considered one
             // will start off looking the same as the current, but we may make additions...
@@ -560,8 +558,8 @@ class EE_Data_Migration_Manager implements ResettableInterface
                     }
                 } elseif (
                     $scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ]
-                          instanceof
-                          EE_Data_Migration_Script_Base
+                    instanceof
+                    EE_Data_Migration_Script_Base
                 ) {
                     // this script has been run, or at least started
                     $script = $scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ];
@@ -643,7 +641,6 @@ class EE_Data_Migration_Manager implements ResettableInterface
      */
     public function migration_step($step_size = 0)
     {
-
         // bandaid fix for issue https://events.codebasehq.com/projects/event-espresso/tickets/7535
         if (class_exists('EE_CPT_Strategy')) {
             remove_action('pre_get_posts', [EE_CPT_Strategy::instance(), 'pre_get_posts'], 5);
@@ -886,7 +883,6 @@ class EE_Data_Migration_Manager implements ResettableInterface
      */
     public function database_needs_updating_to($slug_and_version)
     {
-
         $slug                   = $slug_and_version['slug'];
         $version                = $slug_and_version['version'];
         $current_database_state = get_option(self::current_database_state, []);
@@ -932,6 +928,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                 if (empty($files)) {
                     continue;
                 }
+                natsort($files);
                 foreach ($files as $file) {
                     $pos_of_last_slash = strrpos($file, '/');
                     $classname         = str_replace('.dms.php', '', substr($file, $pos_of_last_slash + 1));
@@ -993,16 +990,19 @@ class EE_Data_Migration_Manager implements ResettableInterface
         );
 
         $last_ran_migration_script_properties = isset($last_migration_script_option['option_value'])
-            ? maybe_unserialize($last_migration_script_option['option_value']) : null;
+            ? maybe_unserialize($last_migration_script_option['option_value'])
+            : null;
         // now, tread lightly because we're here because a FATAL non-catchable error
         // was thrown last time when we were trying to run a data migration script
         // so the fatal error could have happened while getting the migration script
         // or doing running it...
-        $versions_migrated_to = isset($last_migration_script_option['option_name']) ? str_replace(
-            EE_Data_Migration_Manager::data_migration_script_option_prefix,
-            "",
-            $last_migration_script_option['option_name']
-        ) : null;
+        $versions_migrated_to = isset($last_migration_script_option['option_name'])
+            ? str_replace(
+                EE_Data_Migration_Manager::data_migration_script_option_prefix,
+                "",
+                $last_migration_script_option['option_name']
+            )
+            : null;
 
         // check if it THINKS it's a data migration script and especially if it's one that HASN'T finished yet
         // because if it has finished, then it obviously couldn't be the cause of this error, right? (because it's all done)
@@ -1173,7 +1173,6 @@ class EE_Data_Migration_Manager implements ResettableInterface
 
     /**
      * Gets the migration script specified but ONLY if it has already run.
-     *
      * Eg, if you wanted to see if 'EE_DMS_Core_4_1_0' has run, you would run the following code:
      * <code> $core_4_1_0_dms_ran = EE_Data_Migration_Manager::instance()->get_migration_ran( '4.1.0', 'Core' ) !==
      * NULL;</code> This is especially useful in addons' data migration scripts, this way they can tell if a core (or

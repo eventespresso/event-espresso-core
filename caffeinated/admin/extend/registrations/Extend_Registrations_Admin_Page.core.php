@@ -1237,12 +1237,13 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         // if no datetime, then we're on the initial view, so let's give some helpful instructions on what the status
         // column represents
         if (! $datetime instanceof EE_Datetime) {
-            $this->_template_args['before_list_table'] .= '<h3 class="description">'
-                                                          . esc_html__(
-                                                              'In this view, the check-in status represents the latest check-in record for the registration in that row.',
-                                                              'event_espresso'
-                                                          )
-                                                          . '</h3>';
+            $this->_template_args['before_list_table'] .= '
+                <div class="description ee-status-outline ee-status-bg--info">'
+                    . esc_html__(
+                        'In this view, the check-in status represents the latest check-in record for the registration in that row.',
+                        'event_espresso'
+                    ) . '
+                </div><br />';
         }
         $this->display_admin_list_table_page_with_no_sidebar();
     }

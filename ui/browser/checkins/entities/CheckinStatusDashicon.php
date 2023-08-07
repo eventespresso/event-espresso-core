@@ -17,10 +17,7 @@ use ReflectionException;
  */
 class CheckinStatusDashicon
 {
-    /**
-     * @var int $checkin_status
-     */
-    private $checkin_status;
+    private int $checkin_status;
 
 
     /**
@@ -66,8 +63,10 @@ class CheckinStatusDashicon
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function fromRegistrationAndDatetime(EE_Registration $registration, EE_Datetime $datetime): CheckinStatusDashicon
-    {
+    public static function fromRegistrationAndDatetime(
+        EE_Registration $registration,
+        EE_Datetime $datetime
+    ): CheckinStatusDashicon {
         return new CheckinStatusDashicon(
             $registration->check_in_status_for_datetime(
                 $datetime->ID()
@@ -83,14 +82,17 @@ class CheckinStatusDashicon
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function fromRegistrationAndDatetimeId(EE_Registration $registration, int $DTT_ID = 0): CheckinStatusDashicon
-    {
+    public static function fromRegistrationAndDatetimeId(
+        EE_Registration $registration,
+        int $DTT_ID = 0
+    ): CheckinStatusDashicon {
         return new CheckinStatusDashicon(
             $registration->check_in_status_for_datetime(
                 absint($DTT_ID)
             )
         );
     }
+
 
     /**
      * Will return the correct set of dashicon css classes for the set checkin status
@@ -99,17 +101,18 @@ class CheckinStatusDashicon
      */
     public function cssClasses(): string
     {
-        switch ($this->checkin_status) {
+        switch ($this->checkinStatus()) {
             case EE_Checkin::status_checked_in:
-                return "dashicons dashicons-yes-alt checkin-icons checkedin-status-{$this->checkin_status}";
+                return "dashicons dashicons-yes-alt checkin-icons checkedin-status-{$this->checkinStatus()}";
             case EE_Checkin::status_checked_out:
-                return "dashicons dashicons-marker checkin-icons checkedin-status-{$this->checkin_status}";
+                return "dashicons dashicons-marker checkin-icons checkedin-status-{$this->checkinStatus()}";
             case EE_Checkin::status_checked_never:
-                return "dashicons dashicons-no checkin-icons checkedin-status-{$this->checkin_status}";
+                return "dashicons dashicons-no checkin-icons checkedin-status-{$this->checkinStatus()}";
             default:
                 return 'dashicons dashicons-warning ee-status--warning';
         }
     }
+
 
     /**
      * returns a description for the Checkin Status Dashicon that can be used in List Table Legends
@@ -118,7 +121,7 @@ class CheckinStatusDashicon
      */
     public function legendLabel(): string
     {
-        switch ($this->checkin_status) {
+        switch ($this->checkinStatus()) {
             case EE_Checkin::status_checked_in:
                 return esc_html__('This Registrant has been Checked In', 'event_espresso');
             case EE_Checkin::status_checked_out:
@@ -130,6 +133,7 @@ class CheckinStatusDashicon
         }
     }
 
+
     /**
      * returns a description for the Checkin Status Dashicon that can be used as a button aria label
      *
@@ -137,7 +141,7 @@ class CheckinStatusDashicon
      */
     public function ariaLabel(): string
     {
-        switch ($this->checkin_status) {
+        switch ($this->checkinStatus()) {
             case EE_Checkin::status_checked_in:
                 return esc_html__('click to change status to Checked Out', 'event_espresso');
             case EE_Checkin::status_checked_out:

@@ -24,7 +24,7 @@ class PueRequests extends Route
      * @var   bool
      * @since 5.0.0.p
      */
-    private $load_pue = true;
+    private bool $load_pue = true;
 
 
     /**
@@ -36,7 +36,7 @@ class PueRequests extends Route
     public function matchesCurrentRequest(): bool
     {
         // route may match, but PUE loading is still conditional based on this filter
-        $this->load_pue = apply_filters('FHEE__EE_System__brew_espresso__load_pue', true);
+        $this->load_pue = (bool) apply_filters('FHEE__EE_System__brew_espresso__load_pue', true);
         return $this->request->isAdmin() || $this->request->isAjax() || $this->request->isActivation();
     }
 

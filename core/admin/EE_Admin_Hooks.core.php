@@ -14,53 +14,41 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EE_Admin_Hooks extends EE_Base
 {
-    /**
-     * we're just going to use this to hold the name of the caller class (child class name)
-     *
-     * @var string
-     */
-    public $caller;
-
 
     /**
-     * this is just a flag set automatically to indicate whether we've got an extended hook class running (i.e.
-     * espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Registration_Form_Hooks).  This flag is
-     * used later to make sure we require the needed files.
+     * This just holds an instance of the page object for this hook
      *
-     * @var bool
+     * @var EE_Admin_Page|EE_Admin_Page_CPT|null
+     * @deprecated  $VID:$
      */
-    protected $_extend;
-
+    protected $_page_object = null;
 
     /**
-     * child classes MUST set this property so that the page object can be loaded correctly
+     * This holds the EE_Admin_Page object from the calling admin page that this object hooks into.
      *
-     * @var string
+     * @var EE_Admin_Page|EE_Admin_Page_CPT|null
      */
-    protected $_name;
+    protected                   $_adminpage_obj = null;
 
+    protected ?EE_Registry      $EE             = null;
+
+    protected ?RequestInterface $request        = null;
 
     /**
      * This is set by child classes and is an associative array of ajax hooks in the format:
      * array(
      *    'ajax_action_ref' => 'executing_method'; //must be public
      * )
-     *
-     * @var array
      */
-    protected $_ajax_func;
-
+    protected array $_ajax_func = [];
 
     /**
      * This is an array of methods that get executed on a page routes admin_init hook. Use the following format:
      * array(
      *    'page_route' => 'executing_method' //must be public
      * )
-     *
-     * @var array
      */
-    protected $_init_func;
-
+    protected array $_init_func = [];
 
     /**
      * This is an array of methods that output metabox content for the given page route.  Use the following format:
@@ -83,11 +71,8 @@ abstract class EE_Admin_Hooks extends EE_Base
      *      'callback_args' => array() //any callback args to include (optional)
      * ]
      * Why are we indexing numerically?  Because it's possible there may be more than one metabox per page_route.
-     *
-     * @var array
      */
-    protected $_metaboxes;
-
+    protected array $_metaboxes = [];
 
     /**
      * This is an array of values that indicate any metaboxes we want removed from a given page route.  Usually this is
@@ -103,11 +88,10 @@ abstract class EE_Admin_Hooks extends EE_Base
      *        id for the screen the metabox is on.
      *    )
      * )
-     *
-     * @var array
      */
-    protected $_remove_metaboxes;
+    protected array $_remove_metaboxes = [];
 
+    protected array $_req_data         = [];
 
     /**
      * This parent class takes care of loading the scripts and styles if the child class has set the properties for
@@ -138,19 +122,12 @@ abstract class EE_Admin_Hooks extends EE_Base
      *        )
      *    )
      * )
-     *
-     * @var array
      */
-    protected $_scripts_styles;
+    protected array $_scripts_styles = [];
 
+    protected array $_scripts        = [];
 
-    /**
-     * This is a property that will contain the current route.
-     *
-     * @var string;
-     */
-    protected $_current_route;
-
+    protected array $_styles         = [];
 
     /**
      * this optional property can be set by child classes to override the priority for the automatic action/filter hook
@@ -158,56 +135,28 @@ abstract class EE_Admin_Hooks extends EE_Base
      *    'wp_hook_reference' => 1
      *    )
      * )
-     *
-     * @var array
      */
-    protected $_wp_action_filters_priority;
+    protected array $_wp_action_filters_priority = [];
+
+    /**
+     * this is just a flag set automatically to indicate whether we've got an extended hook class running (i.e.
+     * espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Registration_Form_Hooks).  This flag is
+     * used later to make sure we require the needed files.
+     */
+    protected bool $_extend = false;
+
+    /**
+     * we're just going to use this to hold the name of the caller class (child class name)
+     */
+    public string    $caller         = '';
+
+    protected string $_current_route = '';
 
 
     /**
-     * This just holds a merged array of the request vars
-     *
-     * @var array
+     * child classes MUST set this property so that the page object can be loaded correctly
      */
-    protected $_req_data;
-
-    /**
-     * @var array
-     */
-    protected $_scripts;
-
-    /**
-     * @var array
-     */
-    protected $_styles;
-
-    /**
-     * This just holds an instance of the page object for this hook
-     *
-     * @var EE_Admin_Page
-     */
-    protected $_page_object;
-
-
-    /**
-     * This holds the EE_Admin_Page object from the calling admin page that this object hooks into.
-     *
-     * @var EE_Admin_Page|EE_Admin_Page_CPT
-     */
-    protected $_adminpage_obj;
-
-
-    /**
-     * Holds EE_Registry object
-     *
-     * @var EE_Registry
-     */
-    protected $EE = null;
-
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    protected string $_name = '';
 
 
     /**
@@ -222,8 +171,8 @@ abstract class EE_Admin_Hooks extends EE_Base
         $this->_adminpage_obj = $admin_page;
         $this->request        = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $this->_req_data      = $this->request->requestParams();
-        $current_page = $this->request->getRequestParam('page');
-        $current_page = $this->request->getRequestParam('current_page', $current_page);
+        $current_page         = $this->request->getRequestParam('page');
+        $current_page         = $this->request->getRequestParam('current_page', $current_page);
         // first let's verify we're on the right page
         if ($current_page !== $this->_adminpage_obj->page_slug) {
             return;
@@ -235,7 +184,7 @@ abstract class EE_Admin_Hooks extends EE_Base
         if (method_exists($this, '_extend_properties')) {
             $this->_extend_properties();
         }
-        $this->_set_page_object();
+        // $this->_set_page_object();
         $this->_init_hooks();
         $this->_load_custom_methods();
         $this->_load_routed_hooks();
@@ -327,11 +276,11 @@ abstract class EE_Admin_Hooks extends EE_Base
                 $type == 'js'
                     ? wp_register_script($ref, $url, $depends, $version, $footer)
                     : wp_register_style(
-                        $ref,
-                        $url,
-                        $depends,
-                        $version
-                    );
+                    $ref,
+                    $url,
+                    $depends,
+                    $version
+                );
             }
             // k now let's do the enqueues
             if (! isset($this->_scripts_styles['enqueues'])) {
@@ -410,6 +359,8 @@ abstract class EE_Admin_Hooks extends EE_Base
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Throwable
+     * @deprecated  $VID:$
      */
     protected function _set_page_object()
     {
@@ -452,6 +403,10 @@ abstract class EE_Admin_Hooks extends EE_Base
             );
             throw new EE_Error(implode('||', $msg));
         }
+        // do NOT load admin pages that are ALREADY LOADED!!!
+        if ($class_name !== $this->_adminpage_obj->class_name) {
+            return;
+        }
         $this->_page_object = LoaderFactory::getLoader()->getShared($class_name, [false]);
         $this->_page_object->initializePage();
     }
@@ -488,15 +443,13 @@ abstract class EE_Admin_Hooks extends EE_Base
                 . $admin_class_name
                 . '___redirect_after_action__before_redirect_modification_'
                 . $this->_current_route,
-                [$this, '_redirect_action_early_' . $this->_current_route],
-                10
+                [$this, '_redirect_action_early_' . $this->_current_route]
             );
         }
         if (method_exists($this, '_redirect_action_' . $this->_current_route)) {
             add_action(
                 'AHEE_redirect_' . $admin_class_name . $this->_current_route,
-                [$this, '_redirect_action_' . $this->_current_route],
-                10
+                [$this, '_redirect_action_' . $this->_current_route]
             );
         }
         // let's hook into the _redirect itself and allow for changing where the user goes after redirect.  This will have $query_args and $redirect_url available.
@@ -520,7 +473,6 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     private function _load_routed_hooks()
     {
-
         // this array provides the hook action names that will be referenced.  Key is the action. Value is an array with the type (action or filter) and the number of parameters for the hook.  We'll default all priorities for automatic hooks to 10.
         $hook_filter_array = [
             'admin_footer'                                                                            => [
@@ -589,9 +541,9 @@ abstract class EE_Admin_Hooks extends EE_Base
             // make sure method exists
             if (! method_exists($this, $method)) {
                 $msg[] = esc_html__(
-                    'There is no corresponding method for the hook labeled in the _ajax_func array',
-                    'event_espresso'
-                ) . '<br />';
+                             'There is no corresponding method for the hook labeled in the _ajax_func array',
+                             'event_espresso'
+                         ) . '<br />';
                 $msg[] = sprintf(
                     esc_html__(
                         'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
@@ -624,9 +576,9 @@ abstract class EE_Admin_Hooks extends EE_Base
             // make sure method exists
             if (! method_exists($this, $method)) {
                 $msg[] = esc_html__(
-                    'There is no corresponding method for the hook labeled in the _init_func array',
-                    'event_espresso'
-                ) . '<br />';
+                             'There is no corresponding method for the hook labeled in the _init_func array',
+                             'event_espresso'
+                         ) . '<br />';
                 $msg[] = sprintf(
                     esc_html__(
                         'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
@@ -661,8 +613,8 @@ abstract class EE_Admin_Hooks extends EE_Base
 
 
     /**
-     * @param array $boxes
-     * @param bool|null  $add
+     * @param array     $boxes
+     * @param bool|null $add
      * @throws EE_Error
      */
     private function _handle_metabox_array(array $boxes, ?bool $add = true)
@@ -711,9 +663,9 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     private function _add_metabox(array $args)
     {
-        $current_screen = get_current_screen();
-        $screen_id      = is_object($current_screen) ? $current_screen->id : null;
-        $callback       = $args['func'] ?? 'some_invalid_callback';
+        $current_screen    = get_current_screen();
+        $screen_id         = is_object($current_screen) ? $current_screen->id : null;
+        $callback          = $args['func'] ?? 'some_invalid_callback';
         $callback_function = is_array($callback) ? end($callback) : $callback;
         // set defaults
         $defaults      = [

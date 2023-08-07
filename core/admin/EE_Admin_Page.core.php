@@ -11,6 +11,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\admin\AdminListTableFilters;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
@@ -29,6 +30,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected ?EE_Admin_Hooks      $_hook_obj          = null;
 
     protected ?EE_Admin_List_Table $_list_table_object = null;
+
+    protected ?EE_Capabilities     $capabilities       = null;
 
     protected ?EE_Registry         $EE                 = null;
 
@@ -94,8 +97,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected array $_yes_no_values = [];
 
-    protected ?bool  $_is_UI_request = null;
-    // this starts at null so we can have no header routes progress through two states.
+    /**
+     * this starts at null so we can have no header routes progress through two states.
+     */
+    protected ?bool $_is_UI_request = null;
 
     protected bool  $_is_caf        = false;                                                                                                                                                                                                                                  // This is just a property that flags whether the given route is a caffeinated route or not.
 
@@ -117,17 +122,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
     protected string $_column_template_path = '';
 
-    /**
-     * a boolean flag to set whether the current route is a cpt route or not.
-     *
-     * @var bool
-     */
-    protected bool $_cpt_route              = false;
+    protected bool   $_cpt_route            = false;
 
     /**
      * set via request page and action args.
-     *
-     * @var string
      */
     protected string $_current_page          = '';
 
@@ -139,15 +137,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
     /**
      * sanitized request action
-     *
-     * @var string
      */
     protected string $_req_action = '';
 
     /**
      * sanitized request action nonce
-     *
-     * @var string
      */
     protected string $_req_nonce        = '';
 
@@ -170,9 +164,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @var string
      */
-    protected string $base_class_name = '';
+    public string $base_class_name = '';
 
-    protected string $class_name    = '';
+    public string $class_name      = '';
 
     /**
      * unprocessed value for the 'action' request param (default '')
@@ -203,7 +197,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected $_route = null;
 
 
-
     /**
      * @Constructor
      * @param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
@@ -215,9 +208,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     public function __construct($routing = true)
     {
         $this->loader       = LoaderFactory::getLoader();
-        $this->admin_config = $this->loader->getShared('EE_Admin_Config');
+        $this->admin_config = $this->loader->getShared(EE_Admin_Config::class);
         $this->feature      = $this->loader->getShared(FeatureFlags::class);
         $this->request      = $this->loader->getShared(RequestInterface::class);
+        $this->capabilities = $this->loader->getShared(EE_Capabilities::class);
         // routing enabled?
         $this->_routing = $routing;
 
@@ -262,7 +256,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * but also needed the parent class to have its construction completed as well.
      * Bottom line is that constructors should ONLY be used for setting initial properties
      * and any complex initialization logic should only run after instantiation is complete.
-     *
      * This method gets called immediately after construction from within
      *      EE_Admin_Page_Init::_initialize_admin_page()
      *
@@ -271,6 +264,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws Throwable
      * @since 5.0.0.p
      */
     public function initializePage()
@@ -523,7 +517,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function _global_ajax_hooks()
     {
         // for lazy loading of metabox content
-        add_action('wp_ajax_espresso-ajax-content', [$this, 'ajax_metabox_content'], 10);
+        add_action('wp_ajax_espresso-ajax-content', [$this, 'ajax_metabox_content']);
 
         add_action(
             'wp_ajax_espresso_hide_status_change_notice',
@@ -539,7 +533,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     public function ajax_metabox_content()
     {
         $content_id  = $this->request->getRequestParam('contentid', '');
-        $content_url = $this->request->getRequestParam('contenturl', '', 'url');
+        $content_url = $this->request->getRequestParam('contenturl', '', DataType::URL);
         EE_Admin_Page::cached_rss_display($content_id, $content_url);
         wp_die();
     }
@@ -584,6 +578,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws Throwable
      */
     final protected function _page_setup()
     {
@@ -593,8 +588,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // But keep in mind, not everything is available from the EE_Admin Page object at this point.
         add_action('admin_init', [$this, 'admin_init_global'], 5);
         // next verify if we need to load anything...
-        $this->_current_page = $this->request->getRequestParam('page', '', 'key');
-        $this->_current_page = $this->request->getRequestParam('current_page', $this->_current_page, 'key');
+        $this->_current_page = $this->request->getRequestParam('page', '', DataType::KEY);
+        $this->_current_page = $this->request->getRequestParam('current_page', $this->_current_page, DataType::KEY);
         $this->page_folder   = strtolower(
             str_replace(['_Admin_Page', 'Extend_'], '', $this->class_name)
         );
@@ -608,8 +603,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         }
         // because WP List tables have two duplicate select inputs for choosing bulk actions,
         // we need to copy the action from the second to the first
-        $action     = $this->request->getRequestParam('action', '-1', 'key');
-        $action2    = $this->request->getRequestParam('action2', '-1', 'key');
+        $action     = $this->request->getRequestParam('action', '-1', DataType::KEY);
+        $action2    = $this->request->getRequestParam('action2', '-1', DataType::KEY);
         $action     = $action !== '-1' ? $action : $action2;
         $req_action = $action !== '-1' ? $action : 'default';
 
@@ -620,7 +615,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_req_action = $route && ($req_action === 'default' || $this->request->isAjax())
             ? $route
             : $req_action;
-
         $this->_current_view = $this->_req_action;
         $this->_req_nonce    = $this->_req_action . '_nonce';
         $this->_define_page_props();
@@ -684,7 +678,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $this->check_user_access();
             if ($this->_is_UI_request) {
                 // admin_init stuff - global, all views for this page class, specific view
-                add_action('admin_init', [$this, 'admin_init'], 10);
+                add_action('admin_init', [$this, 'admin_init']);
                 if (method_exists($this, 'admin_init_' . $this->_current_view)) {
                     add_action('admin_init', [$this, 'admin_init_' . $this->_current_view], 15);
                 }
@@ -731,6 +725,12 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                                );
                 throw new EE_Error(implode('||', $error_msg));
             }
+            // don't load the same class twice
+            static $loaded = [];
+            if (in_array($classname, $loaded, true)) {
+                continue;
+            }
+            $loaded[] = $classname;
             // notice we are passing the instance of this class to the hook object.
             $this->loader->getShared($classname, [$this]);
         }
@@ -769,7 +769,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_current_screen = get_current_screen();
         // load admin_notices - global, page class, and view specific
         add_action('admin_notices', [$this, 'admin_notices_global'], 5);
-        add_action('admin_notices', [$this, 'admin_notices'], 10);
+        add_action('admin_notices', [$this, 'admin_notices']);
         if (method_exists($this, 'admin_notices_' . $this->_current_view)) {
             add_action('admin_notices', [$this, 'admin_notices_' . $this->_current_view], 15);
         }
@@ -797,7 +797,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // add screen options - global, page child class, and view specific
         $this->_add_global_screen_options();
         $this->_add_screen_options();
-        $add_screen_options = "_add_screen_options_{$this->_current_view}";
+        $add_screen_options = "_add_screen_options_$this->_current_view";
         if (method_exists($this, $add_screen_options)) {
             $this->{$add_screen_options}();
         }
@@ -807,15 +807,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // add feature_pointers - global, page child class, and view specific
         $this->_add_feature_pointers();
         $this->_add_global_feature_pointers();
-        $add_feature_pointer = "_add_feature_pointer_{$this->_current_view}";
+        $add_feature_pointer = "_add_feature_pointer_$this->_current_view";
         if (method_exists($this, $add_feature_pointer)) {
             $this->{$add_feature_pointer}();
         }
         // enqueue scripts/styles - global, page class, and view specific
         add_action('admin_enqueue_scripts', [$this, 'load_global_scripts_styles'], 5);
-        add_action('admin_enqueue_scripts', [$this, 'load_scripts_styles'], 10);
-        if (method_exists($this, "load_scripts_styles_{$this->_current_view}")) {
-            add_action('admin_enqueue_scripts', [$this, "load_scripts_styles_{$this->_current_view}"], 15);
+        add_action('admin_enqueue_scripts', [$this, 'load_scripts_styles']);
+        if (method_exists($this, "load_scripts_styles_$this->_current_view")) {
+            add_action('admin_enqueue_scripts', [$this, "load_scripts_styles_$this->_current_view"], 15);
         }
         add_action('admin_enqueue_scripts', [$this, 'admin_footer_scripts_eei18n_js_strings'], 100);
         // admin_print_footer_scripts - global, page child class, and view specific.
@@ -824,19 +824,19 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // is a good use case. Notice the late priority we're giving these
         add_action('admin_print_footer_scripts', [$this, 'admin_footer_scripts_global'], 99);
         add_action('admin_print_footer_scripts', [$this, 'admin_footer_scripts'], 100);
-        if (method_exists($this, "admin_footer_scripts_{$this->_current_view}")) {
-            add_action('admin_print_footer_scripts', [$this, "admin_footer_scripts_{$this->_current_view}"], 101);
+        if (method_exists($this, "admin_footer_scripts_$this->_current_view")) {
+            add_action('admin_print_footer_scripts', [$this, "admin_footer_scripts_$this->_current_view"], 101);
         }
         // admin footer scripts
         add_action('admin_footer', [$this, 'admin_footer_global'], 99);
         add_action('admin_footer', [$this, 'admin_footer'], 100);
-        if (method_exists($this, "admin_footer_{$this->_current_view}")) {
-            add_action('admin_footer', [$this, "admin_footer_{$this->_current_view}"], 101);
+        if (method_exists($this, "admin_footer_$this->_current_view")) {
+            add_action('admin_footer', [$this, "admin_footer_$this->_current_view"], 101);
         }
         do_action('FHEE__EE_Admin_Page___load_page_dependencies__after_load', $this->page_slug);
         // targeted hook
         do_action(
-            "FHEE__EE_Admin_Page___load_page_dependencies__after_load__{$this->page_slug}__{$this->_req_action}"
+            "FHEE__EE_Admin_Page___load_page_dependencies__after_load__{$this->page_slug}__$this->_req_action"
         );
     }
 
@@ -869,6 +869,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Throwable
      * @see    _route_admin_request()
      */
     public function route_admin_request()
@@ -899,9 +900,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @return bool
      * @throws EE_Error
      */
-    protected function _verify_routes()
+    protected function _verify_routes(): bool
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         if (! $this->_current_page && ! $this->request->isAjax()) {
             return false;
         }
@@ -919,6 +919,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                               'event_espresso'
                           );
             throw new EE_Error($error_msg);
+        }
+        // route 'editpost' routes to CPT 'edit' routes
+        $alt_edit_route = $this instanceof EE_Admin_Page_CPT ? $this->cpt_editpost_route : 'edit';
+        if (
+            $this->_req_action === 'editpost'
+            && ! isset($this->_page_routes['editpost'])
+            && isset($this->_page_routes[$alt_edit_route])
+        ) {
+            $this->_req_action = $alt_edit_route;
         }
         // and that the requested page route exists
         if (array_key_exists($this->_req_action, $this->_page_routes)) {
@@ -966,11 +975,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // first lets' catch if the UI request has EVER been set.
         if ($this->_is_UI_request === null) {
             // lets set if this is a UI request or not.
-            $this->_is_UI_request = ! $this->request->getRequestParam('noheader', false, 'bool');
+            $this->_is_UI_request = ! $this->request->getRequestParam('noheader', false, DataType::BOOL);
             // wait a minute... we might have a noheader in the route array
-            $this->_is_UI_request = ! (
-                is_array($this->_route) && isset($this->_route['noheader']) && $this->_route['noheader']
-            )
+            $this->_is_UI_request = ! (isset($this->_route['noheader']) && $this->_route['noheader'])
                 ? $this->_is_UI_request
                 : false;
         }
@@ -986,7 +993,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @return bool we'll throw an exception if this isn't a valid route.
      * @throws EE_Error
      */
-    protected function _verify_route($route)
+    protected function _verify_route(string $route): bool
     {
         if (array_key_exists($this->_req_action, $this->_page_routes)) {
             return true;
@@ -1022,7 +1029,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _verify_nonce($nonce, $nonce_ref)
+    protected function _verify_nonce(string $nonce, string $nonce_ref)
     {
         // verify nonce against expected value
         if (! wp_verify_nonce($nonce, $nonce_ref)) {
@@ -1063,6 +1070,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @throws Throwable
      */
     protected function _route_admin_request()
     {
@@ -1080,11 +1088,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $this->_set_nav_tabs();
         }
         // grab callback function
-        $func = is_array($this->_route) && isset($this->_route['func'])
-            ? $this->_route['func']
-            : $this->_route;
+        $func = $this->_route['func'] ?? $this->_route;
         // check if callback has args
-        $args = is_array($this->_route) && isset($this->_route['args']) ? $this->_route['args'] : [];
+        $args = $this->_route['args'] ?? [];
+
         // action right before calling route
         // (hook is something like 'AHEE__Registrations_Admin_Page__route_admin_request')
         if (! did_action('AHEE__EE_Admin_Page__route_admin_request')) {
@@ -1141,25 +1148,24 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             try {
                 call_user_func_array($route_callback, $args);
             } catch (Throwable $throwable) {
-                $arg_keys = array_keys($args);
                 $nice_args = [];
                 foreach ($args as $key => $arg) {
-                    $nice_args[ $key ] = is_object($arg) ? get_class($arg) : $arg_keys[ $key ];
+                    $nice_args[ $key ] = is_object($arg) ? get_class($arg) : $key;
                 }
                 new ExceptionStackTraceDisplay(
-                        new RuntimeException(
-                            sprintf(
-                                esc_html__(
-                                    'Page route "%1$s" with the supplied arguments (%2$s) threw the following exception: %3$s',
-                                    'event_espresso'
-                                ),
-                                $method,
-                                implode(', ', $nice_args),
-                                $throwable->getMessage()
+                    new RuntimeException(
+                        sprintf(
+                            esc_html__(
+                                'Page route "%1$s" with the supplied arguments (%2$s) threw the following exception: %3$s',
+                                'event_espresso'
                             ),
-                            $throwable->getCode(),
-                            $throwable
-                        )
+                            $method,
+                            implode(', ', $nice_args),
+                            $throwable->getMessage()
+                        ),
+                        $throwable->getCode(),
+                        $throwable
+                    )
                 );
             }
         }
@@ -1181,15 +1187,16 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * route redirects to a headers route in its route config.
      *
      * @param string $new_route New (non header) route to redirect to.
-     * @return   void
+     * @return void
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws Throwable
      * @since   4.3.0
      */
-    protected function _reset_routing_properties($new_route)
+    protected function _reset_routing_properties(string $new_route)
     {
         $this->_is_UI_request = true;
         // now we set the current route to whatever the headers_sent_route is set at
@@ -1230,12 +1237,12 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @return string
      */
     public static function add_query_args_and_nonce(
-        $args = [],
-        $url = '',
-        $sticky = false,
-        $exclude_nonce = false,
+        array $args = [],
+        string $url = '',
+        bool $sticky = false,
+        bool $exclude_nonce = false,
         int $context = EEH_URL::CONTEXT_NONE
-    ) {
+    ): string {
         // if there is a _wp_http_referer include the values from the request but only if sticky = true
         if ($sticky) {
             /** @var RequestInterface $request */
@@ -1263,7 +1270,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @return string              generated link
      * @uses EEH_Template::get_help_tab_link()
      */
-    protected function _get_help_tab_link($help_tab_id, $icon_style = '', $help_text = '')
+    protected function _get_help_tab_link(string $help_tab_id, string $icon_style = '', string $help_text = ''): string
     {
         return EEH_Template::get_help_tab_link(
             $help_tab_id,
@@ -1334,7 +1341,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 }
                 // first priority goes to content.
                 if (! empty($cfg['content'])) {
-                    $content = ! empty($cfg['content']) ? $cfg['content'] : null;
+                    $content = $cfg['content'];
                     // second priority goes to filename
                 } elseif (! empty($cfg['filename'])) {
                     $file_path = $this->_get_dir() . '/help_tabs/' . $cfg['filename'] . '.help_tab.php';
@@ -1506,7 +1513,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     private function _set_current_labels()
     {
-        if (is_array($this->_route_config) && isset($this->_route_config['labels'])) {
+        if (isset($this->_route_config['labels'])) {
             foreach ($this->_route_config['labels'] as $label => $text) {
                 if (is_array($text)) {
                     foreach ($text as $sublabel => $subtext) {
@@ -1531,9 +1538,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function check_user_access($route_to_check = '', $verify_only = false)
+    public function check_user_access(string $route_to_check = '', bool $verify_only = false): bool
     {
-        $route_to_check = ! empty($route_to_check) ? $route_to_check : $this->_req_action;
+        // hack to allow editpost capability to be used for edit CPT pages
+        $req_action = $this instanceof EE_Admin_Page_CPT && $this->_req_action === 'edit'
+            ? 'editpost'
+            : $this->_req_action;
+        $route_to_check = ! empty($route_to_check) ? $route_to_check : $req_action;
         $capability     = ! empty($route_to_check)
                           && isset($this->_page_routes[ $route_to_check ])
                           && is_array($this->_page_routes[ $route_to_check ])
@@ -1547,17 +1558,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $capability = empty($capability) ? 'manage_options' : $capability;
         }
 
-        $id = is_array($this->_route) && ! empty($this->_route['obj_id']) ? $this->_route['obj_id'] : 0;
+        $id = $this->_route['obj_id'] ?? 0;
 
         if (
             ! $this->request->isAjax()
             && (
                 ! function_exists('is_admin')
-                || ! EE_Registry::instance()->CAP->current_user_can(
-                    $capability,
-                    "{$this->page_slug}_$route_to_check",
-                    $id
-                )
+                || ! $this->capabilities->current_user_can($capability, "{$this->page_slug}_$route_to_check", $id)
             )
         ) {
             if ($verify_only) {
@@ -1577,8 +1584,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string                 $title
      * @param callable|string|null   $callback
      * @param string|array|WP_Screen $screen
-     * @param string                 $context
-     * @param string                 $priority
+     * @param string                 $context       Post edit screen contexts include 'normal', 'side', and 'advanced'.
+     *                                              Comments screen contexts include 'normal' and 'side'.
+     *                                              Menus meta boxes (accordion sections) all use the 'side' context.
+     * @param string                 $priority      Accepts 'high', 'core', 'default', or 'low'.
      * @param array|null             $callback_args
      */
     protected function addMetaBox(
@@ -1596,7 +1605,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
         add_meta_box($box_id, $title, $callback, $screen, $context, $priority, $callback_args);
         add_filter(
-            "postbox_classes_{$this->_wp_page_slug}_{$box_id}",
+            "postbox_classes_{$this->_wp_page_slug}_$box_id",
             function ($classes) {
                 $classes[] = 'ee-admin-container';
                 return $classes;
@@ -1718,7 +1727,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws DomainException
      * @throws EE_Error
      */
-    protected function _set_help_popup_content($help_array = [], $display = false)
+    protected function _set_help_popup_content(array $help_array = [], bool $display = false): string
     {
         $content    = '';
         $help_array = empty($help_array) ? $this->_get_help_content() : $help_array;
@@ -1759,7 +1768,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @return array properly formatted array for help popup content
      * @throws EE_Error
      */
-    private function _get_help_content()
+    private function _get_help_content(): array
     {
         // what is the method we're looking for?
         $method_name = '_help_popup_content_' . $this->_req_action;
@@ -1787,14 +1796,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * By default the trigger html is printed.  Otherwise it can be returned if the $display flag is set "false"
      * See comments made on the _set_help_content method for understanding other parts to the help popup tool.
      *
-     * @param string  $trigger_id reference for retrieving the trigger content for the popup
-     * @param boolean $display    if false then we return the trigger string
-     * @param array   $dimensions an array of dimensions for the box (array(h,w))
+     * @param string $trigger_id reference for retrieving the trigger content for the popup
+     * @param bool   $display    if false then we return the trigger string
+     * @param array  $dimensions an array of dimensions for the box (array(h,w))
      * @return string
      * @throws DomainException
      * @throws EE_Error
      */
-    protected function _set_help_trigger($trigger_id, $display = true, $dimensions = ['400', '640'])
+    protected function _set_help_trigger(string $trigger_id, bool $display = true, array $dimensions = ['400', '640'])
     {
         if ($this->request->isAjax()) {
             return '';
@@ -1812,14 +1821,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             ];
             $help_content              = $this->_set_help_popup_content($help_array);
         }
+        $height   = esc_attr($dimensions[0]) ?? 400;
+        $width    = esc_attr($dimensions[1]) ?? 640;
+        $inlineId = esc_attr($trigger_id);
         // let's setup the trigger
-        $content = '<a class="ee-dialog" href="?height='
-                   . esc_attr($dimensions[0])
-                   . '&width='
-                   . esc_attr($dimensions[1])
-                   . '&inlineId='
-                   . esc_attr($trigger_id)
-                   . '" target="_blank"><span class="question ee-help-popup-question"></span></a>';
+        $content = "
+        <a class='ee-dialog' href='?height=$height&width=$width&inlineId=$inlineId' target='_blank'>
+            <span class='question ee-help-popup-question'></span>
+        </a>";
         $content .= $help_content;
         if ($display) {
             echo wp_kses($content, AllowedTags::getWithFormTags());
@@ -2032,7 +2041,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function _set_list_table_view()
     {
         $this->_view = isset($this->_views['in_use']) ? 'in_use' : 'all';
-        $status      = $this->request->getRequestParam('status', null, 'key');
+        $status      = $this->request->getRequestParam('status', null, DataType::KEY);
         $this->_view = $status && array_key_exists($status, $this->_views)
             ? $status
             : $this->_view;
@@ -2068,7 +2077,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $this->_route_config['list_table'],
                 [
                     $this,
-                    LoaderFactory::getShared(AdminListTableFilters::class)
+                    LoaderFactory::getShared(AdminListTableFilters::class),
                 ]
             );
         }
@@ -2083,7 +2092,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *                                                    added to.
      * @return array
      */
-    public function get_list_table_view_RLs($extra_query_args = [])
+    public function get_list_table_view_RLs(array $extra_query_args = []): array
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         if (empty($this->_views)) {
@@ -2110,7 +2119,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
-     * _entries_per_page_dropdown
      * generates a dropdown box for selecting the number of visible rows in an admin page list table
      *
      * @param int $max_entries total number of rows in the table
@@ -2118,11 +2126,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @todo   : Note: ideally this should be added to the screen options dropdown as that would be consistent with how
      *                         WP does it.
      */
-    protected function _entries_per_page_dropdown($max_entries = 0)
+    protected function _entries_per_page_dropdown(int $max_entries = 0): string
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $values   = [10, 25, 50, 100];
-        $per_page = $this->request->getRequestParam('per_page', 10, 'int');
+        $per_page = $this->request->getRequestParam('per_page', 10, DataType::INT);
         if ($max_entries) {
             $values[] = $max_entries;
             sort($values);
@@ -2194,11 +2202,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     private function _add_registered_meta_boxes()
     {
         // we only add meta boxes if the page_route calls for it
-        if (
-            is_array($this->_route_config)
-            && isset($this->_route_config['metaboxes'])
-            && is_array($this->_route_config['metaboxes'])
-        ) {
+        if (isset($this->_route_config['metaboxes']) && is_array($this->_route_config['metaboxes'])) {
             // this simply loops through the callbacks provided
             // and checks if there is a corresponding callback registered by the child
             // if there is then we go ahead and process the metabox loader.
@@ -2246,8 +2250,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     private function _add_screen_columns()
     {
         if (
-            is_array($this->_route_config)
-            && isset($this->_route_config['columns'])
+            isset($this->_route_config['columns'])
             && is_array($this->_route_config['columns'])
             && count($this->_route_config['columns']) === 2
         ) {
@@ -2260,7 +2263,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             );
             $this->_template_args['num_columns']                 = $this->_route_config['columns'][0];
             $screen_id                                           = $this->_current_screen->id;
-            $screen_columns                                      = (int) get_user_option("screen_layout_{$screen_id}");
+            $screen_columns                                      = (int) get_user_option("screen_layout_$screen_id");
             $total_columns                                       = ! empty($screen_columns)
                 ? $screen_columns
                 : $this->_route_config['columns'][1];
@@ -2341,7 +2344,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     }
 
 
-    public static function cached_rss_display($rss_id, $url)
+    public static function cached_rss_display(string $rss_id, string $url): bool
     {
         $loading   = '<p class="widget-loading hide-if-no-js">'
                      . esc_html__('Loading&#8230;', 'event_espresso')
@@ -2371,9 +2374,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     public function espresso_news_post_box()
     {
         ?>
-        <div class="padding">
-            <div id="espresso_news_post_box_content" class="infolinks">
-                <?php
+<div class="padding">
+	<div id="espresso_news_post_box_content" class="infolinks">
+		<?php
                 // Get RSS Feed(s)
                 EE_Admin_Page::cached_rss_display(
                     'espresso_news_post_box_content',
@@ -2385,10 +2388,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     )
                 );
                 ?>
-            </div>
-            <?php do_action('AHEE__EE_Admin_Page__espresso_news_post_box__after_content'); ?>
-        </div>
-        <?php
+	</div>
+	<?php do_action('AHEE__EE_Admin_Page__espresso_news_post_box__after_content'); ?>
+</div>
+<?php
     }
 
 
@@ -2465,13 +2468,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         $title = $this->getPublishBoxTitle();
         if (empty($this->_template_args['save_buttons'])) {
-            $this->_set_publish_post_box_vars(
-                sanitize_key($title),
-                "espresso_{$this->page_slug}_editor_overview",
-                '',
-                '',
-                true
-            );
+            $this->_set_publish_post_box_vars(sanitize_key($title), "espresso_{$this->page_slug}_editor_overview");
         } else {
             $this->addPublishPostMetaBoxHiddenFields(
                 sanitize_key($title),
@@ -2520,7 +2517,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param int|string  $id                       id attached to the item published
      * @param string|null $delete                   page route callback for the delete action
      * @param string|null $save_close_redirect_URL  custom URL to redirect to after Save & Close has been completed
-     * @param boolean     $both_btns                whether to display BOTH the "Save & Close" and "Save" buttons
+     * @param bool        $both_btns                whether to display BOTH the "Save & Close" and "Save" buttons
      *                                              or just the "Save" button
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -2545,7 +2542,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_template_args['publish_box_extra_content'] = $this->_template_args['publish_box_extra_content'] ?? '';
         if ($delete && ! empty($id) && empty($this->_template_args['publish_delete_link'])) {
             // make sure we have a default if just true is sent.
-            $delete      = ! empty($delete) ? $delete : 'delete';
+            $delete                                      = ! empty($delete) ? $delete : 'delete';
             $this->_template_args['publish_delete_link'] = $this->get_action_link_or_button(
                 $delete,
                 $delete,
@@ -2601,18 +2598,18 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     private function _display_no_javascript_warning()
     {
         ?>
-        <noscript>
-            <div id="no-js-message" class="error">
-                <p style="font-size:1.3em;">
-                    <span style="color:red;"><?php esc_html_e('Warning!', 'event_espresso'); ?></span>
-                    <?php esc_html_e(
+<noscript>
+	<div id="no-js-message" class="error">
+		<p style="font-size:1.3em;">
+			<span style="color:red;"><?php esc_html_e('Warning!', 'event_espresso'); ?></span>
+			<?php esc_html_e(
                         'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.',
                         'event_espresso'
                     ); ?>
-                </p>
-            </div>
-        </noscript>
-        <?php
+		</p>
+	</div>
+</noscript>
+<?php
     }
 
 
@@ -2623,8 +2620,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function _display_espresso_notices()
     {
-        $notices = $this->_get_transient(true);
-        echo stripslashes($notices);
+        $notices = (array) $this->_get_transient(true);
+        foreach ($notices as $notice) {
+            echo $notice ? stripslashes($notice) : '';
+        }
     }
 
 
@@ -2636,11 +2635,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function _add_admin_page_ajax_loading_img()
     {
         ?>
-        <div id="espresso-ajax-loading" class="ajax-loading-grey">
-            <span class="ee-spinner ee-spin"></span><span class="hidden"><?php
+<div id="espresso-ajax-loading" class="ajax-loading-grey">
+	<span class="ee-spinner ee-spin"></span><span class="hidden"><?php
                 esc_html_e('loading...', 'event_espresso'); ?></span>
-        </div>
-        <?php
+</div>
+<?php
     }
 
 
@@ -2652,35 +2651,34 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function _add_admin_page_overlay()
     {
         ?>
-        <div id="espresso-admin-page-overlay-dv" class=""></div>
-        <?php
+<div id="espresso-admin-page-overlay-dv" class=""></div>
+<?php
     }
 
 
     /**
      * facade for $this->addMetaBox()
      *
-     * @param string  $action        where the metabox gets displayed
-     * @param string  $title         Title of Metabox (output in metabox header)
-     * @param string  $callback      If not empty and $create_fun is set to false then we'll use a custom callback
-     *                               instead of the one created in here.
-     * @param array   $callback_args an array of args supplied for the metabox
-     * @param string  $column        what metabox column
-     * @param string  $priority      give this metabox a priority (using accepted priorities for wp meta boxes)
-     * @param boolean $create_func   default is true.  Basically we can say we don't WANT to have the runtime function
-     *                               created but just set our own callback for wp's add_meta_box.
+     * @param string   $action        where the metabox gets displayed
+     * @param string   $title         Title of Metabox (output in metabox header)
+     * @param callable $callback      If not empty and $create_fun is set to false then we'll use a custom callback
+     *                                instead of the one created in here.
+     * @param array    $callback_args an array of args supplied for the metabox
+     * @param string   $column        what metabox column
+     * @param string   $priority      give this metabox a priority (using accepted priorities for wp meta boxes)
+     * @param bool     $create_func   default is true.  Basically we can say we don't WANT to have the runtime function
+     *                                created but just set our own callback for wp's add_meta_box.
      * @throws DomainException
      */
     public function _add_admin_page_meta_box(
-        $action,
-        $title,
-        $callback,
-        $callback_args,
-        $column = 'normal',
-        $priority = 'high',
-        $create_func = true
+        string $action,
+        string $title,
+        callable $callback,
+        array $callback_args,
+        string $column = 'normal',
+        string $priority = 'high',
+        bool $create_func = true
     ) {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, $callback);
         // if we have empty callback args and we want to automatically create the metabox callback then we need to make sure the callback args are generated.
         if (empty($callback_args) && $create_func) {
             $callback_args = [
@@ -2785,8 +2783,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * display_admin_page
      * contains the code for actually displaying an admin page
      *
-     * @param boolean $sidebar true with sidebar, false without
-     * @param boolean $about   use the about admin wrapper instead of the default.
+     * @param bool $sidebar true with sidebar, false without
+     * @param bool $about   use the about admin wrapper instead of the default.
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -2794,14 +2792,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    private function _display_admin_page($sidebar = false, $about = false)
+    private function _display_admin_page(bool $sidebar = false, bool $about = false): void
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         // custom remove metaboxes hook to add or remove any metaboxes to/from Admin pages.
         do_action('AHEE__EE_Admin_Page___display_admin_page__modify_metaboxes');
+
         // set current wp page slug - looks like: event-espresso_page_event_categories
         // keep in mind "event-espresso" COULD be something else if the top level menu label has been translated.
-
         $post_body_content = $this->_template_args['before_admin_page_content'] ?? '';
 
         $this->_template_args['add_page_frame'] = $this->_req_action !== 'system_status'
@@ -2854,7 +2851,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidInterfaceException
      * @since 4.3.2
      */
-    public function display_admin_caf_preview_page($utm_campaign_source = '', $display_sidebar = true)
+    public function display_admin_caf_preview_page(string $utm_campaign_source = '', bool $display_sidebar = true)
     {
         // let's generate a default preview action button if there isn't one already present.
         $this->_labels['buttons']['buy_now']           = esc_html__(
@@ -2927,7 +2924,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * generates html wrapper for an admin_list_table page
      *
-     * @param boolean $sidebar whether to display with sidebar or not.
+     * @param bool $sidebar whether to display with sidebar or not.
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -2935,7 +2932,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    private function _display_admin_list_table_page($sidebar = false)
+    private function _display_admin_list_table_page(bool $sidebar = false)
     {
         // setup search attributes
         $this->_set_search_attributes();
@@ -3052,11 +3049,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @return string html string of legend
      * @throws DomainException
      */
-    protected function _display_legend($items)
+    protected function _display_legend(array $items): string
     {
-        $this->_template_args['items'] = apply_filters(
+        $this->_template_args['items'] = (array) apply_filters(
             'FHEE__EE_Admin_Page___display_legend__items',
-            (array) $items,
+            $items,
             $this
         );
         /** @var StatusChangeNotice $status_change_notice */
@@ -3098,22 +3095,21 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _return_json($sticky_notices = false, $notices_arguments = [])
+    protected function _return_json(bool $sticky_notices = false, array $notices_arguments = [])
     {
         // make sure any EE_Error notices have been handled.
         $this->_process_notices($notices_arguments, true, $sticky_notices);
-        $data = isset($this->_template_args['data']) ? $this->_template_args['data'] : [];
+        $data = $this->_template_args['data'] ?? [];
         unset($this->_template_args['data']);
         $json = [
-            'error'     => isset($this->_template_args['error']) ? $this->_template_args['error'] : false,
-            'success'   => isset($this->_template_args['success']) ? $this->_template_args['success'] : false,
-            'errors'    => isset($this->_template_args['errors']) ? $this->_template_args['errors'] : false,
-            'attention' => isset($this->_template_args['attention']) ? $this->_template_args['attention'] : false,
+            'error'     => $this->_template_args['error'] ?? false,
+            'success'   => $this->_template_args['success'] ?? false,
+            'errors'    => $this->_template_args['errors'] ?? false,
+            'attention' => $this->_template_args['attention'] ?? false,
             'notices'   => EE_Error::get_notices(),
-            'content'   => isset($this->_template_args['admin_page_content'])
-                ? $this->_template_args['admin_page_content'] : '',
+            'content'   => $this->_template_args['admin_page_content'] ?? '',
             'data'      => array_merge($data, ['template_args' => $this->_template_args]),
-            'isEEajax'  => true
+            'isEEajax'  => true,
             // special flag so any ajax.Success methods in js can identify this return package as a EEajax package.
         ];
         // make sure there are no php errors or headers_sent.  Then we can set correct json header.
@@ -3154,6 +3150,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * them can be accessed by EE_Admin_child pages. This is assigned to the $_hook_obj property.
      *
      * @param EE_Admin_Hooks $hook_obj This will be the object for the EE_Admin_Hooks child
+     * @deprecated  $VID:$
      */
     public function set_hook_object(EE_Admin_Hooks $hook_obj)
     {
@@ -3164,7 +3161,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      *        generates  HTML wrapper with Tabbed nav for an admin page
      *
-     * @param boolean $about whether to use the special about page wrapper or default.
+     * @param bool $about whether to use the special about page wrapper or default.
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -3172,19 +3169,18 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function admin_page_wrapper($about = false)
+    public function admin_page_wrapper(bool $about = false)
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $this->_template_args['nav_tabs']         = $this->_get_main_nav_tabs();
         $this->_template_args['admin_page_title'] = $this->_admin_page_title;
 
         $this->_template_args['before_admin_page_content'] = apply_filters(
-            "FHEE_before_admin_page_content{$this->_current_page}{$this->_current_view}",
+            "FHEE_before_admin_page_content$this->_current_page$this->_current_view",
             $this->_template_args['before_admin_page_content'] ?? ''
         );
 
         $this->_template_args['after_admin_page_content'] = apply_filters(
-            "FHEE_after_admin_page_content{$this->_current_page}{$this->_current_view}",
+            "FHEE_after_admin_page_content$this->_current_page$this->_current_view",
             $this->_template_args['after_admin_page_content'] ?? ''
         );
         $this->_template_args['after_admin_page_content'] .= $this->_set_help_popup_content();
@@ -3213,7 +3209,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @return string html
      * @throws EE_Error
      */
-    protected function _get_main_nav_tabs()
+    protected function _get_main_nav_tabs(): string
     {
         // let's generate the html using the EEH_Tabbed_Content helper.
         // We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute
@@ -3225,11 +3221,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      *        sort nav tabs
      *
-     * @param $a
-     * @param $b
+     * @param array $a
+     * @param array $b
      * @return int
      */
-    private function _sort_nav_tabs($a, $b)
+    private function _sort_nav_tabs(array $a, array $b): int
     {
         if ($a['order'] === $b['order']) {
             return 0;
@@ -3248,8 +3244,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @uses   EEH_Form_Fields::get_form_fields (/helper/EEH_Form_Fields.helper.php)
      * @uses   EEH_Form_Fields::get_form_fields_array (/helper/EEH_Form_Fields.helper.php)
      */
-    protected function _generate_admin_form_fields($input_vars = [], $generator = 'string', $id = false)
-    {
+    protected function _generate_admin_form_fields(
+        array $input_vars = [],
+        string $generator = 'string',
+        bool $id = false
+    ) {
         return $generator === 'string'
             ? EEH_Form_Fields::get_form_fields($input_vars, $id)
             : EEH_Form_Fields::get_form_fields_array($input_vars);
@@ -3270,11 +3269,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *                                   will use the $referrer string. IF null, then we don't do ANYTHING on save and
      *                                   close (normal form handling).
      */
-    protected function _set_save_buttons($both = true, $text = [], $actions = [], $referrer = null)
+    protected function _set_save_buttons(bool $both = true, array $text = [], array $actions = [], $referrer = null)
     {
-        // make sure $text and $actions are in an array
-        $text          = (array) $text;
-        $actions       = (array) $actions;
         $referrer_url  = ! empty($referrer) ? $referrer : $this->request->getServerParam('REQUEST_URI');
         $button_text   = ! empty($text)
             ? $text
@@ -3295,9 +3291,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             }
         }
         // add in a hidden index for the current page (so save and close redirects properly)
-        $buttons                              .= '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="'
-                                                 . $referrer_url
-                                                 . '" />';
+        $buttons .= '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="'
+                    . $referrer_url
+                    . '" />';
+
         $this->_template_args['save_buttons'] = $buttons;
     }
 
@@ -3310,7 +3307,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @see   $this->_set_add_edit_form_tags() for details on params
      * @since 4.6.0
      */
-    public function set_add_edit_form_tags($route = '', $additional_hidden_fields = [])
+    public function set_add_edit_form_tags(string $route = '', array $additional_hidden_fields = [])
     {
         $this->_set_add_edit_form_tags($route, $additional_hidden_fields);
     }
@@ -3323,7 +3320,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param array  $additional_hidden_fields any additional hidden fields required in the form header
      * @return void
      */
-    protected function _set_add_edit_form_tags($route = '', $additional_hidden_fields = [])
+    protected function _set_add_edit_form_tags(string $route = '', array $additional_hidden_fields = [])
     {
         if (empty($route)) {
             $user_msg = esc_html__(
@@ -3341,7 +3338,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // open form
         $action                                            = $this->_admin_base_url;
         $this->_template_args['before_admin_page_content'] = "
-            <form name='form' method='post' action='{$action}' id='{$route}_event_form' class='ee-admin-page-form' >
+            <form name='form' method='post' action='$action' id='{$route}_event_form' class='ee-admin-page-form' >
             ";
         // add nonce
         $nonce                                             =
@@ -3370,21 +3367,21 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * Public Wrapper for _redirect_after_action() method since its
      * discovered it would be useful for external code to have access.
      *
-     * @param bool   $success
-     * @param string $what
-     * @param string $action_desc
-     * @param array  $query_args
-     * @param bool   $override_overwrite
+     * @param bool|int $success
+     * @param string   $what
+     * @param string   $action_desc
+     * @param array    $query_args
+     * @param bool     $override_overwrite
      * @throws EE_Error
      * @see   EE_Admin_Page::_redirect_after_action() for params.
      * @since 4.5.0
      */
     public function redirect_after_action(
         $success = false,
-        $what = 'item',
-        $action_desc = 'processed',
-        $query_args = [],
-        $override_overwrite = false
+        string $what = 'item',
+        string $action_desc = 'processed',
+        array $query_args = [],
+        bool $override_overwrite = false
     ) {
         $this->_redirect_after_action(
             $success,
@@ -3398,14 +3395,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
     /**
      * Helper method for merging existing request data with the returned redirect url.
-     *
      * This is typically used for redirects after an action so that if the original view was a filtered view those
      * filters are still applied.
      *
      * @param array $new_route_data
      * @return array
      */
-    protected function mergeExistingRequestParamsWithRedirectArgs(array $new_route_data)
+    protected function mergeExistingRequestParamsWithRedirectArgs(array $new_route_data): array
     {
         foreach ($this->request->requestParams() as $ref => $value) {
             // unset nonces
@@ -3441,7 +3437,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         array $query_args = [],
         bool $override_overwrite = false
     ) {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $notices = EE_Error::get_notices(false);
         // overwrite default success messages //BUT ONLY if overwrite not overridden
         if (! $override_overwrite || ! empty($notices['errors'])) {
@@ -3468,9 +3463,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             );
         }
         // check that $query_args isn't something crazy
-        if (! is_array($query_args)) {
-            $query_args = [];
-        }
+        $query_args = is_array($query_args) ? $query_args : [];
         /**
          * Allow injecting actions before the query_args are modified for possible different
          * redirections on save and close actions
@@ -3480,7 +3473,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
          * @since 4.2.0
          */
         do_action(
-            "AHEE__{$this->class_name}___redirect_after_action__before_redirect_modification_{$this->_req_action}",
+            "AHEE__{$this->class_name}___redirect_after_action__before_redirect_modification_$this->_req_action",
             $query_args
         );
         // set redirect url.
@@ -3493,7 +3486,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             && $this->request->requestParamIsSet('save_and_close_referrer')
         ) {
             // even though we have the save_and_close referrer, we need to parse the url for the action in order to generate a nonce
-            $parsed_url = parse_url($this->request->getRequestParam('save_and_close_referrer', '', 'url'));
+            $parsed_url = parse_url($this->request->getRequestParam('save_and_close_referrer', '', DataType::URL));
             // regenerate query args array from referrer URL
             parse_str($parsed_url['query'], $query_args);
             // correct page and action will be in the query args now
@@ -3577,28 +3570,31 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _process_notices($query_args = [], $skip_route_verify = false, $sticky_notices = true)
-    {
+    protected function _process_notices(
+        array $query_args = [],
+        bool $skip_route_verify = false,
+        bool $sticky_notices = true
+    ) {
         // first let's set individual error properties if doing_ajax and the properties aren't already set.
         if ($this->request->isAjax()) {
             $notices = EE_Error::get_notices(false);
             if (empty($this->_template_args['success'])) {
-                $this->_template_args['success'] = isset($notices['success']) ? $notices['success'] : false;
+                $this->_template_args['success'] = $notices['success'] ?? false;
             }
             if (empty($this->_template_args['errors'])) {
-                $this->_template_args['errors'] = isset($notices['errors']) ? $notices['errors'] : false;
+                $this->_template_args['errors'] = $notices['errors'] ?? false;
             }
             if (empty($this->_template_args['attention'])) {
-                $this->_template_args['attention'] = isset($notices['attention']) ? $notices['attention'] : false;
+                $this->_template_args['attention'] = $notices['attention'] ?? false;
             }
         }
         $this->_template_args['notices'] = EE_Error::get_notices();
         // IF this isn't ajax we need to create a transient for the notices using the route (however, overridden if $sticky_notices == true)
         if (! $this->request->isAjax() || $sticky_notices) {
-            $route = isset($query_args['action']) ? $query_args['action'] : 'default';
+            $route = $query_args['action'] ?? 'default';
             $this->_add_transient(
                 $route,
-                $this->_template_args['notices'],
+                (array) $this->_template_args['notices'],
                 true,
                 $skip_route_verify
             );
@@ -3626,13 +3622,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws EE_Error
      */
     public function get_action_link_or_button(
-        $action,
-        $type = 'add',
-        $extra_request = [],
-        $class = 'button button--primary',
-        $base_url = '',
-        $exclude_nonce = false
-    ) {
+        string $action,
+        string $type = 'add',
+        array $extra_request = [],
+        string $class = 'button button--primary',
+        string $base_url = '',
+        bool $exclude_nonce = false
+    ): string {
         // first let's validate the action (if $base_url is FALSE otherwise validation will happen further along)
         if (empty($base_url) && ! isset($this->_page_routes[ $action ])) {
             throw new EE_Error(
@@ -3720,11 +3716,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             if (! $user = wp_get_current_user()) {
                 return;
             }
-            $option = $this->request->getRequestParam('wp_screen_options[option]', '', 'key');
+            $option = $this->request->getRequestParam('wp_screen_options[option]', '', DataType::KEY);
             if (! $option) {
                 return;
             }
-            $value      = $this->request->getRequestParam('wp_screen_options[value]', 0, 'int');
+            $value      = $this->request->getRequestParam('wp_screen_options[value]', 0, DataType::INT);
             $map_option = $option;
             $option     = str_replace('-', '_', $option);
             switch ($map_option) {
@@ -3764,9 +3760,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @param array $data array that will be assigned to template args.
      */
-    public function set_template_args($data)
+    public function set_template_args(array $data)
     {
-        $this->_template_args = array_merge($this->_template_args, (array) $data);
+        $this->_template_args = array_merge($this->_template_args, $data);
     }
 
 
@@ -3782,23 +3778,25 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @return void
      * @throws EE_Error
      */
-    protected function _add_transient($route, $data, $notices = false, $skip_route_verify = false)
-    {
+    protected function _add_transient(
+        string $route,
+        array $data,
+        bool $notices = false,
+        bool $skip_route_verify = false
+    ) {
         $user_id = get_current_user_id();
         if (! $skip_route_verify) {
             $this->_verify_route($route);
         }
         // now let's set the string for what kind of transient we're setting
-        $transient = $notices
-            ? 'ee_rte_n_tx_' . $route . '_' . $user_id
-            : 'rte_tx_' . $route . '_' . $user_id;
+        $transient = $notices ? "ee_rte_n_tx_{$route}_$user_id" : "rte_tx_{$route}_$user_id";
         $data      = $notices ? ['notices' => $data] : $data;
         // is there already a transient for this route?  If there is then let's ADD to that transient
         $existing = is_multisite() && is_network_admin()
             ? get_site_transient($transient)
             : get_transient($transient);
         if ($existing) {
-            $data = array_merge((array) $data, (array) $existing);
+            $data = array_merge($data, (array) $existing);
         }
         if (is_multisite() && is_network_admin()) {
             set_site_transient($transient, $data, 8);
@@ -3815,7 +3813,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string $route
      * @return mixed data
      */
-    protected function _get_transient($notices = false, $route = '')
+    protected function _get_transient(bool $notices = false, string $route = '')
     {
         $user_id   = get_current_user_id();
         $route     = ! $route ? $this->_req_action : $route;
@@ -3847,7 +3845,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         global $wpdb;
         // retrieve all existing transients
         $query =
-            "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '%rte_tx_%' OR option_name LIKE '%rte_n_tx_%'";
+            "SELECT option_name FROM $wpdb->options WHERE option_name LIKE '%rte_tx_%' OR option_name LIKE '%rte_n_tx_%'";
         if ($results = $wpdb->get_results($query)) {
             foreach ($results as $result) {
                 $transient = str_replace('_transient_', '', $result->option_name);
@@ -3865,7 +3863,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return string content of _view property
      */
-    public function get_view()
+    public function get_view(): string
     {
         return $this->_view;
     }
@@ -3876,7 +3874,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return array
      */
-    public function get_views()
+    public function get_views(): array
     {
         return $this->_views;
     }
@@ -3887,7 +3885,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return string _current_page property value
      */
-    public function get_current_page()
+    public function get_current_page(): string
     {
         return $this->_current_page;
     }
@@ -3898,7 +3896,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return string _current_view property value
      */
-    public function get_current_view()
+    public function get_current_view(): string
     {
         return $this->_current_view;
     }
@@ -3920,7 +3918,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return string This returns the url for the current_page_view.
      */
-    public function get_current_page_view_url()
+    public function get_current_page_view_url(): string
     {
         return $this->_current_page_view_url;
     }
@@ -3931,7 +3929,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return RequestInterface
      */
-    public function get_request()
+    public function get_request(): ?RequestInterface
     {
         return $this->request;
     }
@@ -3942,7 +3940,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return array
      */
-    public function get_request_data()
+    public function get_request_data(): array
     {
         return $this->request->requestParams();
     }
@@ -3953,7 +3951,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return string
      */
-    public function get_req_action()
+    public function get_req_action(): string
     {
         return $this->_req_action;
     }
@@ -3962,34 +3960,34 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * @return bool  value of $_is_caf property
      */
-    public function is_caf()
+    public function is_caf(): bool
     {
         return $this->_is_caf;
     }
 
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function default_espresso_metaboxes()
+    public function default_espresso_metaboxes(): array
     {
         return $this->_default_espresso_metaboxes;
     }
 
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function admin_base_url()
+    public function admin_base_url(): string
     {
         return $this->_admin_base_url;
     }
 
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function wp_page_slug()
+    public function wp_page_slug(): string
     {
         return $this->_wp_page_slug;
     }
@@ -4003,10 +4001,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string                   $file file where error occurred
      * @param string                   $func function  where error occurred
      * @param string                   $line line no where error occurred
-     * @return boolean
+     * @return bool
      */
-    protected function _update_espresso_configuration($tab, $config, $file = '', $func = '', $line = '')
-    {
+    protected function _update_espresso_configuration(
+        string $tab,
+        $config,
+        string $file = '',
+        string $func = '',
+        string $line = ''
+    ): bool {
         // remove any options that are NOT going to be saved with the config settings.
         if (isset($config->core->ee_ueip_optin)) {
             // TODO: remove the following two lines and make sure values are migrated from 3.1
@@ -4035,7 +4038,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @return array
      */
-    public function get_yes_no_values()
+    public function get_yes_no_values(): array
     {
         return $this->_yes_no_values;
     }
@@ -4046,7 +4049,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws ReflectionException
      * @since 5.0.0.p
      */
-    protected function _get_dir()
+    protected function _get_dir(): string
     {
         $reflector = new ReflectionClass($this->class_name);
         return dirname($reflector->getFileName());
@@ -4060,7 +4063,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string $class The class to use.
      * @return string
      */
-    protected function _next_link($url, $class = 'dashicons dashicons-arrow-right')
+    protected function _next_link(string $url, string $class = 'dashicons dashicons-arrow-right'): string
     {
         return '<a class="' . $class . '" href="' . $url . '"></a>';
     }
@@ -4073,7 +4076,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string $class The class to use.
      * @return string
      */
-    protected function _previous_link($url, $class = 'dashicons dashicons-arrow-left')
+    protected function _previous_link(string $url, string $class = 'dashicons dashicons-arrow-left'): string
     {
         return '<a class="' . $class . '" href="' . $url . '"></a>';
     }
@@ -4099,9 +4102,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _process_resend_registration()
+    protected function _process_resend_registration(): bool
     {
-        $this->_template_args['success'] = EED_Messages::process_resend($this->_req_data);
+        $this->_template_args['success'] = EED_Messages::process_resend($this->request->requestParams());
         do_action(
             'AHEE__EE_Admin_Page___process_resend_registration',
             $this->_template_args['success'],
@@ -4117,7 +4120,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param EE_Payment $payment
      * @return bool success/fail
      */
-    protected function _process_payment_notification(EE_Payment $payment)
+    protected function _process_payment_notification(EE_Payment $payment): bool
     {
         add_filter('FHEE__EE_Payment_Processor__process_registration_payments__display_notifications', '__return_true');
         do_action('AHEE__EE_Admin_Page___process_admin_payment_notification', $payment);
@@ -4141,10 +4144,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function trashRestoreDeleteEntities(
         EEM_Base $entity_model,
-        $entity_PK_name,
-        $action = EE_Admin_List_Table::ACTION_DELETE,
-        $delete_column = '',
-        callable $callback = null
+        string $entity_PK_name,
+        string $action = EE_Admin_List_Table::ACTION_DELETE,
+        string $delete_column = '',
+        ?callable $callback = null
     ) {
         $entity_PK      = $entity_model->get_primary_key_field();
         $entity_PK_name = $entity_PK_name ?: $entity_PK->get_name();
@@ -4181,18 +4184,18 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws EE_Error
      * @since   4.10.30.p
      */
-    private function resolveEntityFieldDataType(EE_Primary_Key_Field_Base $entity_PK)
+    private function resolveEntityFieldDataType(EE_Primary_Key_Field_Base $entity_PK): string
     {
         $entity_PK_type = $entity_PK->getSchemaType();
         switch ($entity_PK_type) {
             case 'boolean':
-                return 'bool';
+                return DataType::BOOL;
             case 'integer':
-                return 'int';
+                return DataType::INT;
             case 'number':
-                return 'float';
+                return DataType::FLOAT;
             case 'string':
-                return 'string';
+                return DataType::STRING;
         }
         throw new RuntimeException(
             sprintf(
@@ -4267,7 +4270,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string   $delete_column
      * @since 4.10.30.p
      */
-    private function validateDeleteColumn(EEM_Base $entity_model, $delete_column)
+    private function validateDeleteColumn(EEM_Base $entity_model, string $delete_column)
     {
         if (empty($delete_column)) {
             throw new DomainException(
@@ -4301,7 +4304,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string         $action
      * @since 4.10.30.p
      */
-    private function trashRestoreDeleteError($action, EEM_Base $entity_model, Exception $exception = null)
+    private function trashRestoreDeleteError(string $action, EEM_Base $entity_model, Exception $exception = null)
     {
         if ($exception instanceof Exception) {
             throw new RuntimeException(

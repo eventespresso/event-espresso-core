@@ -18,18 +18,18 @@ class EEM_Event_Message_Template extends EEM_Base
     /**
      * protected constructor to prevent direct creation
      *
-     * @param null $timezone
+     * @param string|null $timezone
      * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item = esc_html__('Event Message Template', 'event_espresso');
-        $this->plural_item = esc_html__('Event Message Templates', 'event_espresso');
+        $this->plural_item   = esc_html__('Event Message Templates', 'event_espresso');
 
-        $this->_tables = [
+        $this->_tables                                                  = [
             'Event_Message_Template' => new EE_Primary_Table('esp_event_message_template', 'EMT_ID'),
         ];
-        $this->_fields = [
+        $this->_fields                                                  = [
             'Event_Message_Template' => [
                 'EMT_ID' => new EE_Primary_Key_Int_Field(
                     'EMT_ID',
@@ -51,24 +51,28 @@ class EEM_Event_Message_Template extends EEM_Base
                 ),
             ],
         ];
-        $this->_model_relations = [
+        $this->_model_relations                                         = [
             'Event'                  => new EE_Belongs_To_Relation(),
             'Message_Template_Group' => new EE_Belongs_To_Relation(),
         ];
-        $path_to_event = 'Event';
-        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Event_Related_Public(
-            $path_to_event
-        );
-        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Event_Related_Protected(
-            $path_to_event
-        );
-        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Event_Related_Protected(
-            $path_to_event
-        );
-        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Event_Related_Protected(
-            $path_to_event,
-            EEM_Base::caps_edit
-        );
+        $path_to_event                                                  = 'Event';
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ]       =
+            new EE_Restriction_Generator_Event_Related_Public(
+                $path_to_event
+            );
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] =
+            new EE_Restriction_Generator_Event_Related_Protected(
+                $path_to_event
+            );
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ]       =
+            new EE_Restriction_Generator_Event_Related_Protected(
+                $path_to_event
+            );
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     =
+            new EE_Restriction_Generator_Event_Related_Protected(
+                $path_to_event,
+                EEM_Base::caps_edit
+            );
         parent::__construct($timezone);
     }
 

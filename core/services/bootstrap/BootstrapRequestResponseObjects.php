@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\bootstrap;
 use EE_Dependency_Map;
 use EE_Error;
 use EE_Request;
+use EventEspresso\core\domain\services\validation\email\strategies\Basic;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\LegacyRequestInterface;
 use EventEspresso\core\services\request\Request;
@@ -30,11 +31,11 @@ class BootstrapRequestResponseObjects
 {
     protected LegacyRequestInterface $legacy_request;
 
-    protected LoaderInterface $loader;
+    protected LoaderInterface        $loader;
 
-    protected RequestInterface $request;
+    protected RequestInterface       $request;
 
-    protected ResponseInterface $response;
+    protected ResponseInterface      $response;
 
 
     /**
@@ -53,11 +54,27 @@ class BootstrapRequestResponseObjects
      */
     public function buildRequestResponse()
     {
-        $request_params = new RequestParams(new RequestSanitizer(), $_GET, $_POST);
-        $server_params = new ServerParams(new ServerSanitizer(), $_SERVER);
+        $email_validator   = new Basic();
+        $request_sanitizer = new RequestSanitizer($email_validator);
+        $server_sanitizer  = new ServerSanitizer();
+        $request_params    = new RequestParams($request_sanitizer, $_GET, $_POST);
+        $server_params     = new ServerParams($server_sanitizer, $_SERVER);
         // load our Request and Response objects
-        $this->request = new Request($request_params, $server_params);
-        $this->response = new Response();
+        $this->request  = apply_filters(
+            'FHEE___EventEspresso_core_services_bootstrap_BootstrapRequestResponseObjects__buildRequestResponse__request',
+            new Request($request_params, $server_params),
+            $request_params,
+            $server_params,
+            $request_sanitizer,
+            $server_sanitizer
+        );
+        $this->response = apply_filters(
+            'FHEE___EventEspresso_core_services_bootstrap_BootstrapRequestResponseObjects__buildRequestResponse__response',
+            new Response()
+        );
+        $this->loader->share(Basic::class, $email_validator);
+        $this->loader->share(RequestSanitizer::class, $request_sanitizer);
+        $this->loader->share(ServerSanitizer::class, $server_sanitizer);
         $this->loader->share(RequestParams::class, $request_params);
         $this->loader->share(ServerParams::class, $server_params);
     }
@@ -69,8 +86,8 @@ class BootstrapRequestResponseObjects
      */
     public function shareRequestResponse()
     {
-        $this->loader->share('EventEspresso\core\services\request\Request', $this->request);
-        $this->loader->share('EventEspresso\core\services\request\Response', $this->response);
+        $this->loader->share(Request::class, $this->request);
+        $this->loader->share(Response::class, $this->response);
         EE_Dependency_Map::instance()->setRequest($this->request);
         EE_Dependency_Map::instance()->setResponse($this->response);
     }
@@ -89,8 +106,8 @@ class BootstrapRequestResponseObjects
         );
         $this->legacy_request = new EE_Request($_GET, $_POST, $_COOKIE, $_SERVER);
         $this->legacy_request->setRequest($this->request);
-        $this->legacy_request->admin = $this->request->isAdmin();
-        $this->legacy_request->ajax = $this->request->isAjax();
+        $this->legacy_request->admin      = $this->request->isAdmin();
+        $this->legacy_request->ajax       = $this->request->isAjax();
         $this->legacy_request->front_ajax = $this->request->isFrontAjax();
         EE_Dependency_Map::instance()->setLegacyRequest($this->legacy_request);
         $this->loader->share('EE_Request', $this->legacy_request);

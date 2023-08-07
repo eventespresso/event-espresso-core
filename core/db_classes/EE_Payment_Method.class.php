@@ -17,29 +17,31 @@ class EE_Payment_Method extends EE_Base_Class
      * Payment Method type object, which has all the info about this type of payment method,
      * including functions for processing payments, to get settings forms, etc.
      *
-     * @var EE_PMT_Base
+     * @var EE_PMT_Base|null
      */
-    protected $_type_obj;
+    protected ?EE_PMT_Base $_type_obj = null;
 
 
     /**
      * @param array $props_n_values
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array())
+    public static function new_instance($props_n_values = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
-        return $has_object ? $has_object : new self($props_n_values, false);
+        return $has_object ?: new self($props_n_values, false);
     }
 
 
     /**
      * @param array $props_n_values
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array())
+    public static function new_instance_from_db($props_n_values = [])
     {
         return new self($props_n_values, true);
     }
@@ -69,9 +71,11 @@ class EE_Payment_Method extends EE_Base_Class
     /**
      * Gets whether this payment method can be used anywhere at all (ie frontend cart, admin, etc)
      *
-     * @return boolean
+     * @return int[]|string[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function active()
+    public function active(): array
     {
         return array_intersect(array_keys(EEM_Payment_Method::instance()->scopes()), $this->scope());
     }
@@ -81,11 +85,12 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets this PM as active by making it usable within the CART scope. Offline gateways
      * are also usable from the admin-scope as well. DOES NOT SAVE it
      *
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_active()
     {
-        $default_scopes = array(EEM_Payment_Method::scope_cart);
+        $default_scopes = [EEM_Payment_Method::scope_cart];
         if (
             $this->type_obj() &&
             $this->type_obj()->payment_occurs() === EE_PMT_Base::offline
@@ -101,7 +106,7 @@ class EE_Payment_Method extends EE_Base_Class
      */
     public function deactivate()
     {
-        $this->set_scope(array());
+        $this->set_scope([]);
     }
 
 
@@ -109,6 +114,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets button_url
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function button_url()
     {
@@ -120,6 +127,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets button_url
      *
      * @param string $button_url
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_button_url($button_url)
     {
@@ -131,8 +140,10 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets debug_mode
      *
      * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function debug_mode()
+    public function debug_mode(): bool
     {
         return (bool) $this->get('PMD_debug_mode');
     }
@@ -142,6 +153,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets debug_mode
      *
      * @param boolean $debug_mode
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_debug_mode($debug_mode)
     {
@@ -153,6 +166,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets description
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function description()
     {
@@ -164,6 +179,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets description
      *
      * @param string $description
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_description($description)
     {
@@ -175,6 +192,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets name
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function name()
     {
@@ -186,6 +205,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets name
      *
      * @param string $name
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_name($name)
     {
@@ -197,6 +218,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets open_by_default
      *
      * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function open_by_default()
     {
@@ -208,6 +231,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets open_by_default
      *
      * @param boolean $open_by_default
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_open_by_default($open_by_default)
     {
@@ -219,6 +244,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets order
      *
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function order()
     {
@@ -230,6 +257,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets order
      *
      * @param int $order
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_order($order)
     {
@@ -241,6 +270,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets slug
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function slug()
     {
@@ -252,6 +283,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets slug
      *
      * @param string $slug
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_slug($slug)
     {
@@ -263,6 +296,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets type
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function type()
     {
@@ -274,6 +309,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets type
      *
      * @param string $type
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_type($type)
     {
@@ -285,6 +322,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets wp_user
      *
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function wp_user()
     {
@@ -296,18 +335,23 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets wp_user
      *
      * @param int $wp_user_id
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_wp_user($wp_user_id)
     {
         $this->set('PMD_wp_user', $wp_user_id);
     }
 
+
     /**
      * Overrides parent so when PMD_type is changed we refresh the _type_obj
      *
-     * @param string $field_name
-     * @param mixed $field_value
+     * @param string  $field_name
+     * @param mixed   $field_value
      * @param boolean $use_default
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set($field_name, $field_value, $use_default = false)
     {
@@ -323,6 +367,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets admin_name
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function admin_name()
     {
@@ -334,6 +380,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets admin_name
      *
      * @param string $admin_name
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_admin_name($admin_name)
     {
@@ -345,6 +393,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets admin_desc
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function admin_desc()
     {
@@ -356,6 +406,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets admin_desc
      *
      * @param string $admin_desc
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_admin_desc($admin_desc)
     {
@@ -367,10 +419,12 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets scope
      *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function scope()
     {
-        return $this->get('PMD_scope');
+        return (array) $this->get('PMD_scope');
     }
 
 
@@ -378,10 +432,12 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets scope
      *
      * @param array $scope
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_scope($scope)
     {
-        $this->set('PMD_scope', $scope);
+        $this->set('PMD_scope', (array) $scope);
     }
 
 
@@ -390,6 +446,7 @@ class EE_Payment_Method extends EE_Base_Class
      *
      * @return EE_PMT_Base
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function type_obj()
     {
@@ -411,8 +468,8 @@ class EE_Payment_Method extends EE_Base_Class
                         )
                     );
                 }
-                $r = new ReflectionClass($class_name);
-                $this->_type_obj = $r->newInstanceArgs(array($this));
+                $r               = new ReflectionClass($class_name);
+                $this->_type_obj = $r->newInstanceArgs([$this]);
             } else {
                 throw new EE_Error(
                     sprintf(
@@ -435,16 +492,18 @@ class EE_Payment_Method extends EE_Base_Class
      * and the extra meta. Mostly used for passing off ot gateways.     *
      *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function settings_array()
     {
-        $fields = $this->model_field_array();
+        $fields     = $this->model_field_array();
         $extra_meta = $this->all_extra_meta_array();
         // remove the model's prefix from the fields
-        $combined_settings_array = array();
+        $combined_settings_array = [];
         foreach ($fields as $key => $value) {
             if (strpos($key, 'PMD_') === 0) {
-                $key_sans_model_prefix = str_replace('PMD_', '', $key);
+                $key_sans_model_prefix                              = str_replace('PMD_', '', $key);
                 $combined_settings_array [ $key_sans_model_prefix ] = $value;
             }
         }
@@ -459,7 +518,8 @@ class EE_Payment_Method extends EE_Base_Class
      * @param string $url
      * @param string $css_class
      * @return string of HTML for displaying the button
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function button_html($url = '', $css_class = '')
     {
@@ -487,7 +547,8 @@ class EE_Payment_Method extends EE_Base_Class
      * (as defined by the gateway and the currently active currencies)
      *
      * @return EE_Currency[]
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_usable_currencies()
     {
@@ -500,7 +561,8 @@ class EE_Payment_Method extends EE_Base_Class
      *
      * @param string $currency_code currency ID (code)
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function usable_for_currency($currency_code)
     {
@@ -517,7 +579,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Returns TRUE if this payment method's gateway is an instance of EE_Onsite_Gateway
      *
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_on_site()
     {
@@ -529,7 +592,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Returns TRUE if this payment method's gateway is an instance of EE_Offsite_Gateway
      *
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_off_site()
     {
@@ -541,12 +605,14 @@ class EE_Payment_Method extends EE_Base_Class
      * Returns TRUE if this payment method does not utilize a gateway
      *
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_off_line()
     {
         return $this->type_obj()->payment_occurs() === EE_PMT_Base::offline;
     }
+
 
     /**
      * Overrides default __sleep so the object type is NOT cached.
@@ -568,9 +634,10 @@ class EE_Payment_Method extends EE_Base_Class
      *
      * @param array $set_cols_n_values
      * @return int @see EE_Base_Class::save()
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function save($set_cols_n_values = array())
+    public function save($set_cols_n_values = [])
     {
         $results = parent::save($set_cols_n_values);
         if ($this->get_original('PMD_scope') !== $this->get('PMD_scope')) {

@@ -178,4 +178,10 @@ class EE_Register_Shortcode implements EEI_Plugin_API
     {
         unset(self::$_settings[ $addon_name ]);
     }
+
+
+    public static function reset(): void
+    {
+        self::$_settings = [];
+    }
 }

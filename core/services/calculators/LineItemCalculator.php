@@ -20,16 +20,10 @@ use ReflectionException;
  */
 class LineItemCalculator
 {
-    /**
-     * @var DecimalValues
-     */
-    protected $decimal_values;
+    protected DecimalValues $decimal_values;
 
-    /**
-     * @var array
-     */
-    protected $default_query_params = [
-        ['LIN_type' => ['!=', EEM_Line_Item::type_cancellation]]
+    protected array         $default_query_params = [
+        ['LIN_type' => ['!=', EEM_Line_Item::type_cancellation]],
     ];
 
 
@@ -60,15 +54,19 @@ class LineItemCalculator
         $this->validateLineItemAndType($line_item, EEM_Line_Item::type_total);
         $ticket_line_items = EEH_Line_Item::get_ticket_line_items($line_item);
         if (empty($ticket_line_items)) {
+            // no tickets? ensure totals are zero
+            $this->updatePreTaxTotal($line_item, 0);
+            $this->updateTotal($line_item, 0);
+            $this->updateTransaction($line_item, 0, $update_txn_status);
             return 0;
         }
         [, $pretax_total] = $this->recalculateLineItemTotals($line_item);
         // EEH_Line_Item::visualize($line_item);
         $total_tax = $this->recalculateTaxesAndTaxTotal($line_item);
         // no negative totals plz
-        $grand_total  = max($pretax_total + $total_tax, 0);
+        $grand_total = max($pretax_total + $total_tax, 0);
         $this->updatePreTaxTotal($line_item, $pretax_total, true);
-        $grand_total  = $this->updateTotal($line_item, $grand_total, true);
+        $grand_total = $this->updateTotal($line_item, $grand_total, true);
         $this->updateTransaction($line_item, $grand_total, $update_txn_status);
         return $grand_total;
     }
@@ -150,7 +148,7 @@ class LineItemCalculator
                 $total,
                 $pretax_total
             );
-            $total += $child_total;
+            $total        += $child_total;
             $pretax_total += $child_pretax_total;
         }
         // update the unit price and pretax total
@@ -181,7 +179,7 @@ class LineItemCalculator
         float $pretax_total = 0
     ): array {
         if ($line_item->is_percent()) {
-            $total = $this->calculatePercentage($total, $line_item->percent());
+            $total        = $this->calculatePercentage($total, $line_item->percent());
             $pretax_total = $this->calculatePercentage($pretax_total, $line_item->percent());
         } else {
             // recursively loop through children and recalculate their totals
@@ -204,7 +202,7 @@ class LineItemCalculator
                 $pretax_total = $total = $this->calculateTotalForQuantity($line_item);
             }
         }
-        $total  = $this->updateTotal($line_item, $total, true);
+        $total        = $this->updateTotal($line_item, $total, true);
         $pretax_total = $this->updatePreTaxTotal($line_item, $pretax_total, true);
 
         // need to also adjust unit price too if the pretax total or quantity has been updated
@@ -221,15 +219,18 @@ class LineItemCalculator
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function recalculateSubLineItem(EE_Line_Item $sub_line_item, float $total = 0, float $pretax_total = 0): array
-    {
+    private function recalculateSubLineItem(
+        EE_Line_Item $sub_line_item,
+        float $total = 0,
+        float $pretax_total = 0
+    ): array {
         if ($sub_line_item->is_percent()) {
-            $new_total = $this->calculatePercentage($total, $sub_line_item->percent());
+            $new_total        = $this->calculatePercentage($total, $sub_line_item->percent());
             $new_pretax_total = $this->calculatePercentage($pretax_total, $sub_line_item->percent());
         } else {
             $new_total = $new_pretax_total = $this->calculateTotalForQuantity($sub_line_item);
         }
-        $total = $this->updateTotal($sub_line_item, $new_total);
+        $total        = $this->updateTotal($sub_line_item, $new_total);
         $pretax_total = $this->updatePreTaxTotal($sub_line_item, $new_pretax_total);
         // need to also adjust unit price too if the pretax total or quantity has been updated
         $this->updateUnitPrice($sub_line_item, $pretax_total);
@@ -269,7 +270,7 @@ class LineItemCalculator
             case EEM_Line_Item::type_sub_total:
             case EEM_Line_Item::type_tax_sub_total:
                 // first, loop through children and set their quantities
-                $count = 0;
+                $count    = 0;
                 $children = $line_item->children($this->default_query_params);
                 foreach ($children as $child_line_item) {
                     $count += $this->updateLineItemQuantities($child_line_item);
@@ -413,7 +414,7 @@ class LineItemCalculator
             $line_item->set_total($total);
             $line_item->maybe_save();
         }
-        return $total;
+        return (float) $total;
     }
 
 
@@ -485,10 +486,10 @@ class LineItemCalculator
     {
         $this->validateLineItemAndType($total_line_item, EEM_Line_Item::type_total);
         // calculate the total taxable amount for globally applied taxes
-        $taxable_total = $this->taxableAmountForGlobalTaxes($total_line_item);
+        $taxable_total    = $this->taxableAmountForGlobalTaxes($total_line_item);
         $global_taxes     = $this->applyGlobalTaxes($total_line_item, $taxable_total);
         $non_global_taxes = $this->calculateNonGlobalTaxes($total_line_item);
-        $all_tax_total        = $this->applyNonGlobalTaxes($total_line_item, $global_taxes, $non_global_taxes);
+        $all_tax_total    = $this->applyNonGlobalTaxes($total_line_item, $global_taxes, $non_global_taxes);
         $this->recalculateTaxSubTotal($total_line_item);
         return $all_tax_total;
     }
@@ -592,6 +593,7 @@ class LineItemCalculator
                         ];
                     }
                     $tax = $this->calculatePercentage($line_item_total, $line_item->percent());
+
                     $non_global_taxes[ $tax_ID ]['total'] += $tax;
                 }
             }
@@ -623,7 +625,7 @@ class LineItemCalculator
                     && $non_global_tax['obj'] === $global_tax->OBJ_type()
                     && $non_global_tax['objID'] === $global_tax->OBJ_ID()
                 ) {
-                    $found = true;
+                    $found     = true;
                     $new_total = $global_tax->total() + $non_global_tax['total'];
                     // add non global tax to matching global tax AND the tax total
                     $global_tax->set_total($new_total);
@@ -689,7 +691,7 @@ class LineItemCalculator
      */
     public function taxableAmountForGlobalTaxes(?EE_Line_Item $line_item): float
     {
-        $total      = 0;
+        $total            = 0;
         $child_line_items = $line_item->children($this->default_query_params);
         foreach ($child_line_items as $child_line_item) {
             $this->validateLineItemAndType($child_line_item);
@@ -703,7 +705,7 @@ class LineItemCalculator
                 } else {
                     // pretax total will be equal to the total for line items with globally applied taxes
                     $pretax_total = $this->calculateTotalForQuantity($child_line_item);
-                    $total += $this->updatePreTaxTotal($child_line_item, $pretax_total);
+                    $total        += $this->updatePreTaxTotal($child_line_item, $pretax_total);
                 }
             }
         }

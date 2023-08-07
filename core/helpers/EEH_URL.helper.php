@@ -13,9 +13,11 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEH_URL
 {
-    const CONTEXT_NONE = 0;
+    const CONTEXT_NONE   = 0;
+
     const CONTEXT_OUTPUT = 1;
-    const CONTEXT_RAW = 2;
+
+    const CONTEXT_RAW    = 2;
 
 
     /**
@@ -36,7 +38,7 @@ class EEH_URL
     ): string {
         // check that an action exists and add nonce
         if (! $exclude_nonce) {
-            if (isset($args['action']) && ! empty($args['action'])) {
+            if (! empty($args['action'])) {
                 $args = array_merge(
                     $args,
                     [
@@ -54,7 +56,7 @@ class EEH_URL
             }
         }
 
-        $action  = EEH_URL::getRequest()->getRequestParam('action', '');
+        $action = EEH_URL::getRequest()->getRequestParam('action', '');
         // finally, let's always add a return address (if present) :)
         if ($action !== '') {
             $args['return'] = $action;
@@ -279,7 +281,6 @@ class EEH_URL
 
     /**
      * Slugifies text for usage in a URL.
-     *
      * Currently, this isn't just calling `sanitize_title()` on it, because that percent-encodes unicode characters,
      * and WordPress chokes on them when used as CPT and custom taxonomy slugs.
      *

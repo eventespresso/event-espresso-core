@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * EEE_Base_Class
  * Class for dynamically adding functions onto model objects (EE_Base_Class children).
  * Example usage: create a child of EEE_Base_Class like so:
@@ -27,35 +26,40 @@
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- *
  */
 class EEE_Base_Class
 {
-    const extending_method_prefix = 'ext_';
+    const extending_method_prefix        = 'ext_';
+
     const dynamic_callback_method_prefix = 'dynamic_callback_method_';
+
     /**
      * The model name that is extended (not classname)
      *
-     * @var string
+     * @var string|null
      */
-    protected $_model_name_extended = null;
+    protected ?string $_model_name_extended = null;
+
     /**
      * The model this extends
      *
-     * @var EE_Base_Class
+     * @var EE_Base_Class|null
      */
     protected $_ = null;
 
+
+    /**
+     * @throws EE_Error
+     */
     public function __construct()
     {
         if (! $this->_model_name_extended) {
             throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        "When declaring a class extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'",
-                        "event_espresso"
-                    )
+                esc_html__(
+                    "When declaring a class extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'",
+                    "event_espresso"
                 )
+
             );
         }
         if (did_action('AHEE__EE_' . $this->_model_name_extended . '__construct__end')) {
@@ -73,6 +77,7 @@ class EEE_Base_Class
         $this->_register_extending_methods();
     }
 
+
     /**
      * scans the child of EEME_Base for functions starting with ext_, and magically makes them functions on the
      * model extended. (Internally uses filters, and the __call magic method)
@@ -83,16 +88,17 @@ class EEE_Base_Class
         foreach ($all_methods as $method_name) {
             if (strpos($method_name, self::extending_method_prefix) === 0) {
                 $method_name_on_model = str_replace(self::extending_method_prefix, '', $method_name);
-                $callback_name = "FHEE__EE_{$this->_model_name_extended}__$method_name_on_model";
+                $callback_name        = "FHEE__EE_{$this->_model_name_extended}__$method_name_on_model";
                 add_filter(
                     $callback_name,
-                    array($this, self::dynamic_callback_method_prefix . $method_name_on_model),
+                    [$this, self::dynamic_callback_method_prefix . $method_name_on_model],
                     10,
                     10
                 );
             }
         }
     }
+
 
     /**
      * scans the child of EEME_Base for functions starting with ext_, and magically REMOVES them as functions on the
@@ -104,53 +110,52 @@ class EEE_Base_Class
         foreach ($all_methods as $method_name) {
             if (strpos($method_name, self::extending_method_prefix) === 0) {
                 $method_name_on_model = str_replace(self::extending_method_prefix, '', $method_name);
-                $callback_name = "FHEE__EE_{$this->_model_name_extended}__$method_name_on_model";
+                $callback_name        = "FHEE__EE_{$this->_model_name_extended}__$method_name_on_model";
                 remove_filter(
                     $callback_name,
-                    array($this, self::dynamic_callback_method_prefix . $method_name_on_model),
-                    10
+                    [$this, self::dynamic_callback_method_prefix . $method_name_on_model]
                 );
             }
         }
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     public function __call($callback_method_name, $args)
     {
         if (strpos($callback_method_name, self::dynamic_callback_method_prefix) === 0) {
             // it's a dynamic callback for a method name
             $method_called_on_model = str_replace(self::dynamic_callback_method_prefix, '', $callback_method_name);
-            $original_return_val = $args[0];
-            $model_called = $args[1];
+            $model_called           = $args[1];
             // phpcs:disable WordPress.WP.I18n.SingleUnderscoreGetTextFunction
             $this->_ = $model_called;
             // phpcs:enable
             $args_provided_to_method_on_model = $args[2];
-            $extending_method = self::extending_method_prefix . $method_called_on_model;
+            $extending_method                 = self::extending_method_prefix . $method_called_on_model;
             if (method_exists($this, $extending_method)) {
-                return call_user_func_array(array($this, $extending_method), $args_provided_to_method_on_model);
-            } else {
-                throw new EE_Error(
-                    sprintf(
-                        esc_html__(
-                            "An odd error occurred. Model '%s' had a method called on it that it didn't recognize. So it passed it onto the model extension '%s' (because it had a function named '%s' which should be able to handle it), but the function '%s' doesnt exist!)",
-                            "event_espresso"
-                        ),
-                        $this->_model_name_extended,
-                        get_class($this),
-                        $extending_method,
-                        $extending_method
-                    )
-                );
+                return call_user_func_array([$this, $extending_method], $args_provided_to_method_on_model);
             }
-        } else {
             throw new EE_Error(
                 sprintf(
-                    esc_html__("There is no method named '%s' on '%s'", "event_espresso"),
-                    $callback_method_name,
-                    get_class($this)
+                    esc_html__(
+                        "An odd error occurred. Model '%s' had a method called on it that it didn't recognize. So it passed it onto the model extension '%s' (because it had a function named '%s' which should be able to handle it), but the function '%s' doesnt exist!)",
+                        "event_espresso"
+                    ),
+                    $this->_model_name_extended,
+                    get_class($this),
+                    $extending_method,
+                    $extending_method
                 )
             );
         }
+        throw new EE_Error(
+            sprintf(
+                esc_html__("There is no method named '%s' on '%s'", "event_espresso"),
+                $callback_method_name,
+                get_class($this)
+            )
+        );
     }
 }

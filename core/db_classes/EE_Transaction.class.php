@@ -40,7 +40,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = [], $timezone = null, $date_formats = [])
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         $txn        = $has_object
@@ -64,7 +64,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = [], $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         $txn = new self($props_n_values, true, $timezone);
         $txn->set_old_txn_status($txn->status_ID());
@@ -149,7 +149,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         // _remove_expired_lock() returns 0 when lock is valid (ie: removed = false)
         // and a positive number if the lock was removed (ie: number of locks deleted),
         // so we need to return the opposite
-        return ! $this->_remove_expired_lock() ? true : false;
+        return ! $this->_remove_expired_lock();
     }
 
 
@@ -283,7 +283,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     public function reg_steps()
     {
         $TXN_reg_steps = $this->get('TXN_reg_steps');
-        return is_array($TXN_reg_steps) ? $TXN_reg_steps : [];
+        return is_array($TXN_reg_steps)
+            ? $TXN_reg_steps
+            : [];
     }
 
 
@@ -413,7 +415,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * Set session data within the TXN object
      *
-     * @param EE_Session|array $session_data
+     * @param EE_Session|array|null $session_data
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -496,10 +498,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
                     'Event.EVT_name'     => 'ASC',
                     'Attendee.ATT_lname' => 'ASC',
                     'Attendee.ATT_fname' => 'ASC',
+                    'REG_ID'             => 'ASC',
                 ],
             ]
             : $query_params;
-        $query_params = $get_cached ? [] : $query_params;
+        $query_params = $get_cached
+            ? []
+            : $query_params;
         return $this->get_many_related('Registration', $query_params);
     }
 
@@ -625,20 +630,29 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         $icon   = '';
         switch ($this->status_ID()) {
             case EEM_Transaction::complete_status_code:
-                $icon = $show_icons ? '<span class="dashicons dashicons-yes ee-icon-size-24 green-text"></span>' : '';
+                $icon = $show_icons
+                    ? '<span class="dashicons dashicons-yes ee-icon-size-24 green-text"></span>'
+                    : '';
                 break;
             case EEM_Transaction::incomplete_status_code:
-                $icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 lt-blue-text"></span>'
+                $icon = $show_icons
+                    ? '<span class="dashicons dashicons-marker ee-icon-size-16 lt-blue-text"></span>'
                     : '';
                 break;
             case EEM_Transaction::abandoned_status_code:
-                $icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 red-text"></span>' : '';
+                $icon = $show_icons
+                    ? '<span class="dashicons dashicons-marker ee-icon-size-16 red-text"></span>'
+                    : '';
                 break;
             case EEM_Transaction::failed_status_code:
-                $icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
+                $icon = $show_icons
+                    ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>'
+                    : '';
                 break;
             case EEM_Transaction::overpaid_status_code:
-                $icon = $show_icons ? '<span class="dashicons dashicons-plus ee-icon-size-16 orange-text"></span>' : '';
+                $icon = $show_icons
+                    ? '<span class="dashicons dashicons-plus ee-icon-size-16 orange-text"></span>'
+                    : '';
                 break;
         }
         return $icon . $status[ $this->status_ID() ];
@@ -852,7 +866,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     public function payment_overview_url()
     {
         $primary_registration = $this->primary_registration();
-        return $primary_registration instanceof EE_Registration ? $primary_registration->payment_overview_url() : false;
+        return $primary_registration instanceof EE_Registration
+            ? $primary_registration->payment_overview_url()
+            : false;
     }
 
 
@@ -867,7 +883,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     public function gateway_response_on_transaction()
     {
         $payment = $this->get_first_related('Payment');
-        return $payment instanceof EE_Payment ? $payment->gateway_response() : '';
+        return $payment instanceof EE_Payment
+            ? $payment->gateway_response()
+            : '';
     }
 
 
@@ -1024,7 +1042,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         if ($item instanceof EE_Line_Item) {
             return $item;
         }
-        return $create_if_not_found ? EEH_Line_Item::create_total_line_item($this) : null;
+        return $create_if_not_found
+            ? EEH_Line_Item::create_total_line_item($this)
+            : null;
     }
 
 
@@ -1534,7 +1554,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     private function _set_reg_step_completed_status($reg_step_slug, $status)
     {
         // validate status
-        $status = is_bool($status) || is_int($status) ? $status : false;
+        $status = is_bool($status) || is_int($status)
+            ? $status
+            : false;
         // get reg steps array
         $txn_reg_steps = $this->reg_steps();
         // if reg step does NOT exist

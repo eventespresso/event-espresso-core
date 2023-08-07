@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\messages\MessageTemplateManager;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -16,16 +17,11 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hooks
 {
     /**
-     * @var Messages_Admin_Page
-     */
-    protected $_page_object;
-
-
-    /**
      * espresso_events_Messages_Hooks_Extend constructor.
      *
      * @param EE_Admin_Page $admin_page
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct(EE_Admin_Page $admin_page)
     {
@@ -42,8 +38,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         }
         add_filter(
             'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks',
-            [$this, 'caf_updates'],
-            10
+            [$this, 'caf_updates']
         );
         add_action(
             'AHEE__Extend_Events_Admin_Page___duplicate_event__after',
@@ -220,7 +215,10 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         }
 
         do_action('AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__before_content');
-        echo wp_kses($notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>', AllowedTags::getWithFormTags());
+        echo wp_kses(
+            $notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>',
+            AllowedTags::getWithFormTags()
+        );
         do_action('AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__after_content');
         return '';
     }
@@ -251,17 +249,9 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         $templateDescription = $this->request->getRequestParam('custom_template_args[MTP_description]', '');
         $request->setRequestParam('templateDescription', $templateDescription);
 
-        // set EE_Admin_Page object (see method details in EE_Admin_Hooks parent
-        $this->_set_page_object();
-
-        // is this a template switch if so EE_Admin_Page child needs this object
-        $this->_page_object->set_hook_object($this);
-
-        $this->_page_object->add_message_template(
-            $this->request->getRequestParam('messageType', ''),
-            $this->request->getRequestParam('messenger', ''),
-            $this->request->getRequestParam('group_ID', 0, 'int')
-        );
+        /** @var MessageTemplateManager $message_template_manager */
+        $message_template_manager = LoaderFactory::getShared(MessageTemplateManager::class);
+        $message_template_manager->generateNewTemplates();
     }
 
 

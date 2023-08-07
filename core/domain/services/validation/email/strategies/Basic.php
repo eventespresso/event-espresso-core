@@ -19,16 +19,16 @@ class Basic implements EmailValidatorInterface
      * @return bool
      * @throws EmailValidationException
      */
-    public function validate($email_address)
+    public function validate(string $email_address): bool
     {
-        if (! preg_match('/^.+\@\S+$/', (string) $email_address)) {
+        if (! preg_match('/^.+@\S+$/', (string) $email_address)) {
             // email not in correct {string}@{string} format
             throw new EmailValidationException(
                 esc_html__('Email does not have the required @ sign.', 'event_espresso')
             );
         }
-        $atIndex = $this->getAtIndex($email_address);
-        $local = $this->getLocalPartOfEmail($email_address, $atIndex);
+        $atIndex  = $this->getAtIndex($email_address);
+        $local    = $this->getLocalPartOfEmail($email_address, $atIndex);
         $localLen = strlen($local);
         if ($localLen < 1) {
             // no local part
@@ -63,7 +63,7 @@ class Basic implements EmailValidatorInterface
                 )
             );
         }
-        $domain = $this->getDomainPartOfEmail($email_address, $atIndex);
+        $domain    = $this->getDomainPartOfEmail($email_address, $atIndex);
         $domainLen = strlen($domain);
         if ($domainLen < 1) {
             throw new EmailValidationException(
@@ -90,9 +90,9 @@ class Basic implements EmailValidatorInterface
      * returns the location of the @ symbol
      *
      * @param string $email_address
-     * @return bool|string
+     * @return bool|int
      */
-    protected function getAtIndex($email_address)
+    protected function getAtIndex(string $email_address)
     {
         return strrpos($email_address, '@');
     }
@@ -105,7 +105,7 @@ class Basic implements EmailValidatorInterface
      * @param bool|int $atIndex
      * @return bool|string
      */
-    protected function getLocalPartOfEmail($email_address, $atIndex)
+    protected function getLocalPartOfEmail(string $email_address, $atIndex)
     {
         return substr($email_address, 0, $atIndex);
     }
@@ -118,7 +118,7 @@ class Basic implements EmailValidatorInterface
      * @param bool|int $atIndex
      * @return bool|string
      */
-    protected function getDomainPartOfEmail($email_address, $atIndex)
+    protected function getDomainPartOfEmail(string $email_address, $atIndex)
     {
         return substr($email_address, $atIndex + 1);
     }

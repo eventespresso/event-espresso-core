@@ -2,10 +2,24 @@
 
 namespace EventEspresso\core\services\request\sanitizers;
 
+use EventEspresso\core\domain\services\validation\email\strategies\Basic;
 use EventEspresso\core\services\request\DataType;
 
 class RequestSanitizer
 {
+
+    private Basic $email_validator;
+
+
+    /**
+     * @param Basic $email_validator
+     */
+    public function __construct(Basic $email_validator)
+    {
+        $this->email_validator = $email_validator;
+    }
+
+
     /**
      * Will sanitize the supplied request parameter based on the specified data type
      *
@@ -17,10 +31,14 @@ class RequestSanitizer
      * @return array|bool|float|int|string
      * @since 4.10.14.p
      */
-    public function clean($param, $type = DataType::STRING, $is_array = false, $delimiter = '')
-    {
+    public function clean(
+        $param,
+        string $type = DataType::STRING,
+        bool $is_array = false,
+        string $delimiter = ''
+    ) {
         if ($delimiter !== '' && is_string($param)) {
-            $param = explode($delimiter, $param);
+            $param    = explode($delimiter, $param);
             $is_array = is_array($param);
             // unset the delimiter else this function will recurse forever when we loop over the array of results
             $delimiter = '';
@@ -44,7 +62,7 @@ class RequestSanitizer
      * @return array|float|int|mixed|string|string[]|null
      * @since   4.10.20.p
      */
-    public function sanitizeParam($param, $type = DataType::STRING)
+    public function sanitizeParam($param, string $type = DataType::STRING)
     {
         switch ($type) {
             case DataType::BOOL:
@@ -52,6 +70,8 @@ class RequestSanitizer
             case DataType::EDITOR:
                 $allowed_tags = AllowedTags::getWithFullTags();
                 return wp_kses($param, $allowed_tags);
+            case DataType::EMAIL:
+                return $this->email_validator->validate($param) ? $param : '';
             case DataType::FLOAT:
                 return (float) $param;
             case DataType::FQCN:

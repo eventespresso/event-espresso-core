@@ -15,70 +15,47 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Messages_Generator
 {
-    /**
-     * @type EE_Messages_Data_Handler_Collection
-     */
-    protected $_data_handler_collection;
+    protected EE_Messages_Data_Handler_Collection  $_data_handler_collection;
 
-    /**
-     * @type  EE_Message_Template_Group_Collection
-     */
-    protected $_template_collection;
+    protected EE_Message_Template_Group_Collection $_template_collection;
 
     /**
      * This will hold the data handler for the current EE_Message being generated.
-     *
-     * @type EE_Messages_incoming_data
      */
-    protected $_current_data_handler;
+    protected ?EE_Messages_incoming_data $_current_data_handler = null;
 
     /**
      * This holds the EE_Messages_Queue that contains the messages to generate.
-     *
-     * @type EE_Messages_Queue
      */
-    protected $_generation_queue;
+    protected EE_Messages_Queue $_generation_queue;
 
     /**
      * This holds the EE_Messages_Queue that will store the generated EE_Message objects.
-     *
-     * @type EE_Messages_Queue
      */
-    protected $_ready_queue;
+    protected EE_Messages_Queue $_ready_queue;
 
     /**
      * This is a container for any error messages that get created through the generation
      * process.
-     *
-     * @type array
      */
-    protected $_error_msg = [];
+    protected array $_error_msg = [];
 
     /**
      * Flag used to set when the current EE_Message in the generation queue has been verified.
-     *
-     * @type bool
      */
-    protected $_verified = false;
+    protected bool $_verified = false;
 
     /**
      * This will hold the current messenger object corresponding with the current EE_Message in the generation queue.
-     *
-     * @type EE_messenger
      */
-    protected $_current_messenger;
+    protected ?EE_messenger $_current_messenger = null;
 
     /**
      * This will hold the current message type object corresponding with the current EE_Message in the generation queue.
-     *
-     * @type EE_message_type
      */
-    protected $_current_message_type;
+    protected ?EE_message_type     $_current_message_type = null;
 
-    /**
-     * @type EEH_Parse_Shortcodes
-     */
-    protected $_shortcode_parser;
+    protected EEH_Parse_Shortcodes $_shortcode_parser;
 
 
     /**
@@ -106,7 +83,7 @@ class EE_Messages_Generator
     /**
      * @return EE_Messages_Queue
      */
-    public function generation_queue()
+    public function generation_queue(): EE_Messages_Queue
     {
         return $this->_generation_queue;
     }
@@ -126,7 +103,7 @@ class EE_Messages_Generator
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function generate($save = true)
+    public function generate(bool $save = true): EE_Messages_Queue
     {
         // iterate through the messages in the queue, generate, and add to new queue.
         $this->_generation_queue->get_message_repository()->rewind();
@@ -144,7 +121,7 @@ class EE_Messages_Generator
             $this->_generation_queue->get_message_repository()->next();
             $next_msg = $this->_generation_queue->get_message_repository()->valid()
                 ? $this->_generation_queue->get_message_repository()->current()
-                :  null;
+                : null;
             // restore pointer to current item
             $this->_generation_queue->get_message_repository()->set_current($msg);
 
@@ -264,7 +241,7 @@ class EE_Messages_Generator
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _generate()
+    protected function _generate(): bool
     {
         // double check verification has run and that everything is ready to work with (saves us having to validate
         // everything again).
@@ -335,7 +312,7 @@ class EE_Messages_Generator
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _get_message_template_group()
+    protected function _get_message_template_group(): ?EE_Message_Template_Group
     {
         // first see if there is a specific message template group requested
         // (current message in the queue has a specific GRP_ID)
@@ -408,8 +385,9 @@ class EE_Messages_Generator
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    protected function _specific_message_template_group_from_queue()
+    protected function _specific_message_template_group_from_queue(): ?EE_Message_Template_Group
     {
         // is there a GRP_ID already on the EE_Message object?  If there is, then a specific template has been requested
         // so let's use that.
@@ -444,8 +422,9 @@ class EE_Messages_Generator
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    protected function _queue_shares_same_message_template_group_for_events(array $event_ids)
+    protected function _queue_shares_same_message_template_group_for_events(array $event_ids): bool
     {
         foreach ($this->_current_data_handler->events as $event) {
             $event_ids[ $event['ID'] ] = $event['ID'];
@@ -475,8 +454,9 @@ class EE_Messages_Generator
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    protected function _get_shared_message_template_for_events(array $event_ids)
+    protected function _get_shared_message_template_for_events(array $event_ids): ?EE_Message_Template_Group
     {
         $message_template_group = null;
         if ($this->_queue_shares_same_message_template_group_for_events($event_ids)) {
@@ -511,8 +491,10 @@ class EE_Messages_Generator
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    protected function _get_global_message_template_group_for_current_messenger_and_message_type()
+    protected function _get_global_message_template_group_for_current_messenger_and_message_type(
+    ): ?EE_Message_Template_Group
     {
         // first check the collection (we use an array with 0 in it to represent global groups).
         $global_message_template_group = $this->_template_collection->get_by_key(
@@ -552,7 +534,7 @@ class EE_Messages_Generator
      *
      * @return array
      */
-    protected function _get_event_ids_from_current_data_handler()
+    protected function _get_event_ids_from_current_data_handler(): array
     {
         $event_ids = [];
         foreach ($this->_current_data_handler->events as $event) {
@@ -579,7 +561,7 @@ class EE_Messages_Generator
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _get_templates(EE_Message_Template_Group $message_template_group)
+    protected function _get_templates(EE_Message_Template_Group $message_template_group): array
     {
         $templates         = [];
         $context_templates = $message_template_group->context_templates();
@@ -615,9 +597,11 @@ class EE_Messages_Generator
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _assemble_messages($addressees, $templates, EE_Message_Template_Group $message_template_group)
-    {
-
+    protected function _assemble_messages(
+        array $addressees,
+        array $templates,
+        EE_Message_Template_Group $message_template_group
+    ): bool {
         // if templates are empty then get out because we can't generate anything.
         if (! $templates) {
             $this->_error_msg[] = esc_html__(
@@ -670,13 +654,15 @@ class EE_Messages_Generator
      * @throws InvalidIdentifierException
      */
     protected function _setup_message_object(
-        $context,
+        string $context,
         EE_Messages_Addressee $recipient,
-        $templates,
+        array $templates,
         EE_Message_Template_Group $message_template_group
     ) {
         // stuff we already know
-        $transaction_id = $recipient->txn instanceof EE_Transaction ? $recipient->txn->ID() : 0;
+        $transaction_id = $recipient->txn instanceof EE_Transaction
+            ? $recipient->txn->ID()
+            : 0;
         $transaction_id = empty($transaction_id) && $this->_current_data_handler->txn instanceof EE_Transaction
             ? $this->_current_data_handler->txn->ID()
             : $transaction_id;
@@ -723,7 +709,7 @@ class EE_Messages_Generator
             // let's setup the valid shortcodes for the incoming context.
             $valid_shortcodes = $mt_shortcodes[ $context ];
             // merge in valid shortcodes for the field.
-            $shortcodes = isset($m_shortcodes[ $field ]) ? $m_shortcodes[ $field ] : $valid_shortcodes;
+            $shortcodes = $m_shortcodes[ $field ] ?? $valid_shortcodes;
             if (isset($field_context[ $context ])) {
                 // prefix field.
                 $column_name = 'MSG_' . $field;
@@ -774,7 +760,7 @@ class EE_Messages_Generator
      *
      * @return bool true means there were no errors, false means there were errors.
      */
-    protected function _verify()
+    protected function _verify(): bool
     {
         // reset error message to an empty array.
         $this->_error_msg = [];
@@ -788,10 +774,11 @@ class EE_Messages_Generator
      * This accepts an array and validates that it is an array indexed by context with each value being an array of
      * EE_Messages_Addressee objects.
      *
-     * @param array $addressees Keys correspond to contexts for the message type and values are EE_Messages_Addressee[]
+     * @param array|null $addressees Keys correspond to contexts for the message type and values are
+     *                               EE_Messages_Addressee[]
      * @return bool
      */
-    protected function _valid_addressees($addressees)
+    protected function _valid_addressees(?array $addressees): bool
     {
         if (! $addressees || ! is_array($addressees)) {
             return false;
@@ -814,7 +801,7 @@ class EE_Messages_Generator
      *
      * @return bool   true is if there are no errors.  false is if there is.
      */
-    protected function _validate_messenger_and_message_type()
+    protected function _validate_messenger_and_message_type(): bool
     {
         // first are there any existing error messages?  If so then return.
         if ($this->_error_msg) {
@@ -863,9 +850,8 @@ class EE_Messages_Generator
      *
      * @return bool true means there are no errors.  false means there were errors (and handler did not get setup).
      */
-    protected function _validate_and_setup_data()
+    protected function _validate_and_setup_data(): bool
     {
-
         // First, are there any existing error messages?  If so, return because if there were errors elsewhere this
         // can't be used anyways.
         if ($this->_error_msg) {
@@ -916,7 +902,7 @@ class EE_Messages_Generator
      * @param string $data_handler_class_name   This is the reference string indicating what data handler is being
      *                                          instantiated.
      */
-    protected function _set_data_handler($generating_data, $data_handler_class_name)
+    protected function _set_data_handler($generating_data, string $data_handler_class_name)
     {
         // valid classname for the data handler.  Now let's setup the key for the data handler repository to see if
         // there is already a ready data handler in the repository.
@@ -948,7 +934,7 @@ class EE_Messages_Generator
      * @param bool                   $preview Indicate whether this is being used for a preview or not.
      * @return mixed Prepped data for persisting to the queue.  false is returned if unable to prep data.
      */
-    protected function _prepare_data_for_queue(EE_Message_To_Generate $message_to_generate, $preview)
+    protected function _prepare_data_for_queue(EE_Message_To_Generate $message_to_generate, bool $preview)
     {
         if (! $message_to_generate->valid()) {
             return false; // unable to get the data because the info in the EE_Message_To_Generate class is invalid.
@@ -969,8 +955,10 @@ class EE_Messages_Generator
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function create_and_add_message_to_queue(EE_Message_To_Generate $message_to_generate, $test_send = false)
-    {
+    public function create_and_add_message_to_queue(
+        EE_Message_To_Generate $message_to_generate,
+        bool $test_send = false
+    ): bool {
         // prep data
         $data    = $this->_prepare_data_for_queue($message_to_generate, $message_to_generate->preview());
         $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
@@ -980,7 +968,9 @@ class EE_Messages_Generator
 
         $GRP_ID = apply_filters(
             'FHEE__EE_Messages_Generator__create_and_add_message_to_queue_GRP_ID',
-            $GRP_ID > 0 ? $GRP_ID : $message->GRP_ID(),
+            $GRP_ID > 0
+                ? $GRP_ID
+                : $message->GRP_ID(),
             $message,
             $message_to_generate,
             $test_send

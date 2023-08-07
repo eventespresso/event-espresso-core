@@ -111,64 +111,50 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[PRIMARY_REGISTRANT_FNAME]':
                 return $attendee->fname();
-                break;
 
             case '[PRIMARY_REGISTRANT_LNAME]':
                 return $attendee->lname();
-                break;
 
             case '[PRIMARY_REGISTRANT_EMAIL]':
                 return $attendee->email();
-                break;
 
             case '[PRIMARY_REGISTRANT_REGISTRATION_ID]':
                 return $primary_reg->ID();
-                break;
 
             case '[PRIMARY_REGISTRANT_REGISTRATION_CODE]':
                 return $primary_reg->reg_code();
-                break;
 
             case '[PRIMARY_REGISTRANT_PHONE_NUMBER]':
                 return $attendee->phone();
-                break;
 
             case '[PRIMARY_REGISTRANT_ADDRESS]':
                 return $attendee->address();
-                break;
 
             case '[PRIMARY_REGISTRANT_ADDRESS2]':
                 return $attendee->address2();
-                break;
 
             case '[PRIMARY_REGISTRANT_CITY]':
                 return $attendee->city();
-                break;
 
             case '[PRIMARY_REGISTRANT_ZIP_PC]':
                 return $attendee->zip();
-                break;
 
             case '[PRIMARY_REGISTRANT_ADDRESS_STATE]':
                 $state_obj = $attendee->state_obj();
                 return $state_obj instanceof EE_State ? $state_obj->name() : '';
-                break;
 
             case '[PRIMARY_REGISTRANT_COUNTRY]':
                 $country_obj = $attendee->country_obj();
                 return $country_obj instanceof EE_Country ? $country_obj->name() : '';
-                break;
 
             case '[PRIMARY_REGISTRANT_REGISTRATION_DATE]':
                 if (! $primary_registration->primary_reg_obj instanceof EE_Registration) {
                     return '';
                 }
                 return $primary_registration->primary_reg_obj->get_i18n_datetime('REG_date', get_option('date_format'));
-                break;
 
             case '[PRIMARY_REGISTRANT_FRONTEND_EDIT_REG_LINK]':
                 return $primary_reg->edit_attendee_information_url();
-                break;
         }
 
         if (strpos($shortcode, '[PRIMARY_REGISTRANT_ANSWER_*') !== false) {
@@ -207,7 +193,6 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
                     }
 
                     return $answer;
-                    break;
                 }
             }
         }

@@ -13,7 +13,11 @@ class EEM_Currency extends EEM_Base
     protected static $_instance = null;
 
 
-    protected function __construct($timezone = null)
+    /**
+     * @param string|null $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item    = esc_html__('Currency', 'event_espresso');
         $this->plural_item      = esc_html__('Currencies', 'event_espresso');

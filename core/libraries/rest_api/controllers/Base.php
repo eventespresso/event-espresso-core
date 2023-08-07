@@ -188,7 +188,7 @@ class Base
                 if (is_array($debug_info)) {
                     $debug_info = wp_json_encode($debug_info);
                 }
-                $headers[ 'X-EE4-Debug-' . ucwords($debug_key) ] = $debug_info;
+                $headers['X-EE4-Debug-' . ucwords(str_replace("\x20", '-', $debug_key))] = $debug_info;
             }
         }
         $headers = array_merge(

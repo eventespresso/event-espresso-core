@@ -6,12 +6,12 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
 use EventEspresso\core\services\cache\CacheStorageInterface;
+use EventEspresso\core\services\encryption\Base64Encoder;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\session\SessionStartHandler;
 
 /**
  * EE_Session class
- *
  * Please note that the session doesn't save by default, except when it has a cart set on it.
  * In order for it to save on other pages, you must execute
  * `add_action('FHEE__EE_Session___save_session_to_db__abort_session_save', '__return_false');`
@@ -23,18 +23,19 @@ use EventEspresso\core\services\session\SessionStartHandler;
  */
 class EE_Session implements SessionIdentifierInterface
 {
-    const session_id_prefix = 'ee_ssn_';
+    const session_id_prefix    = 'ee_ssn_';
 
-    const hash_check_prefix = 'ee_shc_';
+    const hash_check_prefix    = 'ee_shc_';
 
     const OPTION_NAME_SETTINGS = 'ee_session_settings';
 
-    const STATUS_CLOSED = 0;
+    const STATUS_CLOSED        = 0;
 
-    const STATUS_OPEN = 1;
+    const STATUS_OPEN          = 1;
 
-    const SAVE_STATE_CLEAN = 'clean';
-    const SAVE_STATE_DIRTY = 'dirty';
+    const SAVE_STATE_CLEAN     = 'clean';
+
+    const SAVE_STATE_DIRTY     = 'dirty';
 
 
     /**
@@ -50,7 +51,7 @@ class EE_Session implements SessionIdentifierInterface
     protected $cache_storage;
 
     /**
-     * @var EE_Encryption $encryption
+     * @var Base64Encoder
      */
     protected $encryption;
 
@@ -78,7 +79,7 @@ class EE_Session implements SessionIdentifierInterface
      *
      * @var array
      */
-    private $_session_data = array();
+    private $_session_data = [];
 
     /**
      * how long an EE session lasts
@@ -96,7 +97,7 @@ class EE_Session implements SessionIdentifierInterface
     private $_expiration;
 
     /**
-     * whether or not session has expired at some point
+     * whether session has expired at some point
      *
      * @var boolean
      */
@@ -123,26 +124,13 @@ class EE_Session implements SessionIdentifierInterface
      */
     private $_user_agent;
 
-    /**
-     * do you really trust the server ?
-     *
-     * @var null
-     */
-    private $_ip_address;
-
-    /**
-     * current WP user_id
-     *
-     * @var null
-     */
-    private $_wp_user_id;
 
     /**
      * array for defining default session vars
      *
      * @var array
      */
-    private $_default_session_vars = array(
+    private $_default_session_vars = [
         'id'            => null,
         'user_id'       => null,
         'ip_address'    => null,
@@ -150,8 +138,8 @@ class EE_Session implements SessionIdentifierInterface
         'init_access'   => null,
         'last_access'   => null,
         'expiration'    => null,
-        'pages_visited' => array(),
-    );
+        'pages_visited' => [],
+    ];
 
     /**
      * timestamp for when last garbage collection cycle was performed
@@ -182,11 +170,11 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @singleton method used to instantiate class object
-     * @param CacheStorageInterface $cache_storage
-     * @param SessionLifespan|null  $lifespan
-     * @param RequestInterface      $request
-     * @param SessionStartHandler   $session_start_handler
-     * @param EE_Encryption         $encryption
+     * @param CacheStorageInterface|null $cache_storage
+     * @param SessionLifespan|null       $lifespan
+     * @param RequestInterface|null      $request
+     * @param SessionStartHandler|null   $session_start_handler
+     * @param Base64Encoder|null         $encryption
      * @return EE_Session
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -197,7 +185,7 @@ class EE_Session implements SessionIdentifierInterface
         SessionLifespan $lifespan = null,
         RequestInterface $request = null,
         SessionStartHandler $session_start_handler = null,
-        EE_Encryption $encryption = null
+        Base64Encoder $encryption = null
     ) {
         // check if class object is instantiated
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
@@ -229,7 +217,7 @@ class EE_Session implements SessionIdentifierInterface
      * @param SessionLifespan       $lifespan
      * @param RequestInterface      $request
      * @param SessionStartHandler   $session_start_handler
-     * @param EE_Encryption         $encryption
+     * @param Base64Encoder|null    $encryption
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -239,7 +227,7 @@ class EE_Session implements SessionIdentifierInterface
         SessionLifespan $lifespan,
         RequestInterface $request,
         SessionStartHandler $session_start_handler,
-        EE_Encryption $encryption = null
+        Base64Encoder $encryption = null
     ) {
         // session loading is turned ON by default,
         // but prior to the 'AHEE__EE_System__core_loaded_and_ready' hook
@@ -249,38 +237,38 @@ class EE_Session implements SessionIdentifierInterface
             return;
         }
         $this->session_start_handler = $session_start_handler;
-        $this->session_lifespan = $lifespan;
-        $this->request = $request;
+        $this->session_lifespan      = $lifespan;
+        $this->request               = $request;
         if (! defined('ESPRESSO_SESSION')) {
             define('ESPRESSO_SESSION', true);
         }
         // retrieve session options from db
-        $session_settings = (array) get_option(EE_Session::OPTION_NAME_SETTINGS, array());
+        $session_settings = (array) get_option(EE_Session::OPTION_NAME_SETTINGS, []);
         if (! empty($session_settings)) {
             // cycle though existing session options
             foreach ($session_settings as $var_name => $session_setting) {
                 // set values for class properties
-                $var_name = '_' . $var_name;
+                $var_name          = '_' . $var_name;
                 $this->{$var_name} = $session_setting;
             }
         }
         $this->cache_storage = $cache_storage;
         // are we using encryption?
-        $this->_use_encryption = $encryption instanceof EE_Encryption
+        $this->_use_encryption = $encryption instanceof Base64Encoder
                                  && EE_Registry::instance()->CFG->admin->encode_session_data();
-        // encrypt data via: $this->encryption->encrypt();
+        // encrypt data via: $this->encryption->encodeString();
         $this->encryption = $encryption;
         // filter hook allows outside functions/classes/plugins to change default empty cart
-        $extra_default_session_vars = apply_filters('FHEE__EE_Session__construct__extra_default_session_vars', array());
-        array_merge($this->_default_session_vars, $extra_default_session_vars);
+        $extra_default_session_vars  = apply_filters('FHEE__EE_Session__construct__extra_default_session_vars', []);
+        $this->_default_session_vars = array_merge($this->_default_session_vars, $extra_default_session_vars);
         // apply default session vars
         $this->_set_defaults();
-        add_action('AHEE__EE_System__initialize', array($this, 'open_session'));
+        add_action('AHEE__EE_System__initialize', [$this, 'open_session']);
         // check request for 'clear_session' param
-        add_action('AHEE__EE_Request_Handler__construct__complete', array($this, 'wp_loaded'));
+        add_action('AHEE__EE_Request_Handler__construct__complete', [$this, 'wp_loaded']);
         // once everything is all said and done,
-        add_action('shutdown', array($this, 'update'), 100);
-        add_action('shutdown', array($this, 'garbageCollection'), 1000);
+        add_action('shutdown', [$this, 'update'], 100);
+        add_action('shutdown', [$this, 'garbageCollection'], 1000);
         $this->configure_garbage_collection_filters();
     }
 
@@ -291,7 +279,7 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function isLoadedAndActive()
+    public static function isLoadedAndActive(): bool
     {
         return did_action('AHEE__EE_System__core_loaded_and_ready')
                && EE_Session::instance() instanceof EE_Session
@@ -302,7 +290,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @return bool
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->status === EE_Session::STATUS_OPEN;
     }
@@ -331,7 +319,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @return bool
      */
-    public function expired()
+    public function expired(): bool
     {
         return $this->_expired;
     }
@@ -349,7 +337,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @return int
      */
-    public function expiration()
+    public function expiration(): int
     {
         return $this->_expiration;
     }
@@ -358,7 +346,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @return int
      */
-    public function extension()
+    public function extension(): int
     {
         return apply_filters('FHEE__EE_Session__extend_expiration__seconds_added', 10 * MINUTE_IN_SECONDS);
     }
@@ -367,9 +355,10 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @param int $time number of seconds to add to session expiration
      */
-    public function extend_expiration($time = 0)
+    public function extend_expiration(int $time = 0)
     {
-        $time = $time ? $time : $this->extension();
+        $time              = $time
+            ?: $this->extension();
         $this->_expiration += absint($time);
     }
 
@@ -377,7 +366,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @return int
      */
-    public function lifespan()
+    public function lifespan(): int
     {
         return $this->session_lifespan->inSeconds();
     }
@@ -392,7 +381,7 @@ class EE_Session implements SessionIdentifierInterface
      *
      * @param string $save_state
      */
-    public function setSaveState($save_state = EE_Session::SAVE_STATE_DIRTY)
+    public function setSaveState(string $save_state = EE_Session::SAVE_STATE_DIRTY)
     {
         $valid_save_states = [
             EE_Session::SAVE_STATE_CLEAN,
@@ -405,7 +394,6 @@ class EE_Session implements SessionIdentifierInterface
     }
 
 
-
     /**
      * This just sets some defaults for the _session data property
      *
@@ -416,7 +404,7 @@ class EE_Session implements SessionIdentifierInterface
         // set some defaults
         foreach ($this->_default_session_vars as $key => $default_var) {
             if (is_array($default_var)) {
-                $this->_session_data[ $key ] = array();
+                $this->_session_data[ $key ] = [];
             } else {
                 $this->_session_data[ $key ] = '';
             }
@@ -428,17 +416,17 @@ class EE_Session implements SessionIdentifierInterface
      * @retrieve  session data
      * @return    string
      */
-    public function id()
+    public function id(): string
     {
         return $this->_sid;
     }
 
 
     /**
-     * @param \EE_Cart $cart
+     * @param EE_Cart $cart
      * @return bool
      */
-    public function set_cart(EE_Cart $cart)
+    public function set_cart(EE_Cart $cart): bool
     {
         $this->_session_data['cart'] = $cart;
         $this->setSaveState();
@@ -458,9 +446,9 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @return \EE_Cart
+     * @return EE_Cart
      */
-    public function cart()
+    public function cart(): ?EE_Cart
     {
         return isset($this->_session_data['cart']) && $this->_session_data['cart'] instanceof EE_Cart
             ? $this->_session_data['cart']
@@ -469,10 +457,10 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @param \EE_Checkout $checkout
+     * @param EE_Checkout $checkout
      * @return bool
      */
-    public function set_checkout(EE_Checkout $checkout)
+    public function set_checkout(EE_Checkout $checkout): bool
     {
         $this->_session_data['checkout'] = $checkout;
         $this->setSaveState();
@@ -492,9 +480,9 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @return \EE_Checkout
+     * @return EE_Checkout
      */
-    public function checkout()
+    public function checkout(): ?EE_Checkout
     {
         return isset($this->_session_data['checkout']) && $this->_session_data['checkout'] instanceof EE_Checkout
             ? $this->_session_data['checkout']
@@ -503,11 +491,12 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @param \EE_Transaction $transaction
+     * @param EE_Transaction $transaction
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_transaction(EE_Transaction $transaction)
+    public function set_transaction(EE_Transaction $transaction): bool
     {
         // first remove the session from the transaction before we save the transaction in the session
         $transaction->set_txn_session_data(null);
@@ -529,9 +518,9 @@ class EE_Session implements SessionIdentifierInterface
 
 
     /**
-     * @return \EE_Transaction
+     * @return EE_Transaction
      */
-    public function transaction()
+    public function transaction(): ?EE_Transaction
     {
         return isset($this->_session_data['transaction'])
                && $this->_session_data['transaction'] instanceof EE_Transaction
@@ -543,11 +532,11 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * retrieve session data
      *
-     * @param null $key
-     * @param bool $reset_cache
+     * @param string|null $key
+     * @param bool        $reset_cache
      * @return array|EE_Cart|EE_Checkout|EE_Transaction
      */
-    public function get_session_data($key = null, $reset_cache = false)
+    public function get_session_data(?string $key = null, bool $reset_cache = false)
     {
         if ($reset_cache) {
             $this->reset_cart();
@@ -555,7 +544,7 @@ class EE_Session implements SessionIdentifierInterface
             $this->reset_transaction();
         }
         if (! empty($key)) {
-            return isset($this->_session_data[ $key ]) ? $this->_session_data[ $key ] : null;
+            return $this->_session_data[ $key ] ?? null;
         }
         return $this->_session_data;
     }
@@ -567,10 +556,10 @@ class EE_Session implements SessionIdentifierInterface
      * @param array $data
      * @return bool
      */
-    public function set_session_data($data)
+    public function set_session_data(array $data): bool
     {
         // nothing ??? bad data ??? go home!
-        if (empty($data) || ! is_array($data)) {
+        if (empty($data)) {
             EE_Error::add_error(
                 esc_html__(
                     'No session data or invalid session data was provided.',
@@ -616,27 +605,18 @@ class EE_Session implements SessionIdentifierInterface
      * @throws RuntimeException
      * @throws ReflectionException
      */
-    private function _espresso_session()
+    private function _espresso_session(): bool
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $this->session_start_handler->startSession();
         $this->status = EE_Session::STATUS_OPEN;
         // get our modified session ID
         $this->_sid = $this->_generate_session_id();
-        // and the visitors IP
-        $this->_ip_address = $this->request->ipAddress();
         // set the "user agent"
         $this->_user_agent = $this->request->userAgent();
         // now let's retrieve what's in the db
         $session_data = $this->_retrieve_session_data();
-        if (! empty($session_data)) {
-            // get the current time in UTC
-            $this->_time = $this->_time !== null ? $this->_time : time();
-            // and reset the session expiration
-            $this->_expiration = isset($session_data['expiration'])
-                ? $session_data['expiration']
-                : $this->_time + $this->session_lifespan->inSeconds();
-        } else {
+        if (empty($session_data)) {
             // set initial site access time and the session expiration
             $this->_set_init_access_and_expiration();
             // set referer
@@ -646,6 +626,12 @@ class EE_Session implements SessionIdentifierInterface
             // no previous session = go back and create one (on top of the data above)
             return false;
         }
+        // get the current time in UTC
+        $this->_time = $this->_time !== null
+            ? $this->_time
+            : time();
+        // and reset the session expiration
+        $this->_expiration = $session_data['expiration'] ?? $this->_time + $this->session_lifespan->inSeconds();
         // now the user agent
         if ($session_data['user_agent'] !== $this->_user_agent) {
             return false;
@@ -675,15 +661,16 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws RuntimeException
+     * @throws ReflectionException
      */
-    protected function _retrieve_session_data()
+    protected function _retrieve_session_data(): array
     {
         $ssn_key = EE_Session::session_id_prefix . $this->_sid;
         try {
             // we're using WP's Transient API to store session data using the PHP session ID as the option name
             $session_data = $this->cache_storage->get($ssn_key, false);
             if (empty($session_data)) {
-                return array();
+                return [];
             }
             if (apply_filters('FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG)) {
                 $hash_check = $this->cache_storage->get(
@@ -708,13 +695,15 @@ class EE_Session implements SessionIdentifierInterface
         } catch (Exception $e) {
             // let's just eat that error for now and attempt to correct any corrupted data
             global $wpdb;
-            $row = $wpdb->get_row(
+            $row          = $wpdb->get_row(
                 $wpdb->prepare(
-                    "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
+                    "SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1",
                     '_transient_' . $ssn_key
                 )
             );
-            $session_data = is_object($row) ? $row->option_value : null;
+            $session_data = is_object($row)
+                ? $row->option_value
+                : null;
             if ($session_data) {
                 $session_data = preg_replace_callback(
                     '!s:(d+):"(.*?)";!',
@@ -729,8 +718,8 @@ class EE_Session implements SessionIdentifierInterface
             $session_data = maybe_unserialize($session_data);
         }
         // in case the data is encoded... try to decode it
-        $session_data = $this->encryption instanceof EE_Encryption
-            ? $this->encryption->base64_string_decode($session_data)
+        $session_data = $this->_use_encryption
+            ? $this->encryption->encodeString($session_data)
             : $session_data;
         if (! is_array($session_data)) {
             try {
@@ -781,7 +770,7 @@ class EE_Session implements SessionIdentifierInterface
      *
      * @return string
      */
-    protected function _generate_session_id()
+    protected function _generate_session_id(): string
     {
         // check if the SID was passed explicitly, otherwise get from session, then add salt and hash it to reduce length
         $session_id = $this->request->requestParamIsSet('EESID')
@@ -796,7 +785,7 @@ class EE_Session implements SessionIdentifierInterface
      *
      * @return string
      */
-    protected function _get_sid_salt()
+    protected function _get_sid_salt(): string
     {
         // was session id salt already saved to db ?
         if (empty($this->_sid_salt)) {
@@ -810,7 +799,7 @@ class EE_Session implements SessionIdentifierInterface
                 $this->_sid_salt = wp_generate_password(64);
             }
             // and save it as a permanent session setting
-            $this->updateSessionSettings(array('sid_salt' => $this->_sid_salt));
+            $this->updateSessionSettings(['sid_salt' => $this->_sid_salt]);
         }
         return $this->_sid_salt;
     }
@@ -823,7 +812,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     protected function _set_init_access_and_expiration()
     {
-        $this->_time = time();
+        $this->_time       = time();
         $this->_expiration = $this->_time + $this->session_lifespan->inSeconds();
         // set initial site access time
         $this->_session_data['init_access'] = $this->_time;
@@ -842,15 +831,15 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function update($new_session = false)
+    public function update(bool $new_session = false): bool
     {
         $this->_session_data = is_array($this->_session_data) && isset($this->_session_data['id'])
             ? $this->_session_data
-            : array();
+            : [];
         if (empty($this->_session_data)) {
             $this->_set_defaults();
         }
-        $session_data = array();
+        $session_data = [];
         foreach ($this->_session_data as $key => $value) {
             switch ($key) {
                 case 'id':
@@ -925,13 +914,15 @@ class EE_Session implements SessionIdentifierInterface
         $this->update(true);
     }
 
+
     /**
      * Detects if there is anything worth saving in the session (eg the cart is a good one, notices are pretty good
      * too). This is used when determining if we want to save the session or not.
-     * @since 4.9.67.p
+     *
      * @return bool
+     * @since 4.9.67.p
      */
-    private function sessionHasStuffWorthSaving()
+    private function sessionHasStuffWorthSaving(): bool
     {
         return $this->save_state === EE_Session::SAVE_STATE_DIRTY
                // we may want to eventually remove the following
@@ -959,7 +950,7 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function _save_session_to_db($clear_session = false)
+    private function _save_session_to_db(bool $clear_session = false): bool
     {
         // don't save sessions for crawlers
         // and unless we're deleting the session data, don't save anything if there isn't a cart
@@ -984,7 +975,7 @@ class EE_Session implements SessionIdentifierInterface
         $session_data = serialize($this->_session_data);
         // do we need to also encode it to avoid corrupted data when saved to the db?
         $session_data = $this->_use_encryption
-            ? $this->encryption->base64_string_encode($session_data)
+            ? $this->encryption->decodeString($session_data)
             : $session_data;
         // maybe save hash check
         if (apply_filters('FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG)) {
@@ -1009,17 +1000,17 @@ class EE_Session implements SessionIdentifierInterface
      * @get    the full page request the visitor is accessing
      * @return string
      */
-    public function _get_page_visit()
+    public function _get_page_visit(): string
     {
         $page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
         // check for request url
         if ($this->request->serverParamIsSet('REQUEST_URI')) {
-            $page_id = '?';
-            $e_reg = '';
+            $page_id     = '?';
+            $e_reg       = '';
             $request_uri = $this->request->getServerParam('REQUEST_URI');
-            $ru_bits = explode('?', $request_uri);
+            $ru_bits     = explode('?', $request_uri);
             $request_uri = $ru_bits[0];
-            $http_host = $this->request->getServerParam('HTTP_HOST');
+            $http_host   = $this->request->getServerParam('HTTP_HOST');
             // check for page_id in SERVER REQUEST
             if ($this->request->requestParamIsSet('page_id')) {
                 // rebuild $e_reg without any of the extra parameters
@@ -1032,7 +1023,9 @@ class EE_Session implements SessionIdentifierInterface
             }
             $page_visit = esc_url(rtrim($http_host . $request_uri . $page_id . $e_reg, '?'));
         }
-        return $page_visit !== home_url('/wp-admin/admin-ajax.php') ? $page_visit : '';
+        return $page_visit !== home_url('/wp-admin/admin-ajax.php')
+            ? $page_visit
+            : '';
     }
 
 
@@ -1040,11 +1033,10 @@ class EE_Session implements SessionIdentifierInterface
      * @the    current wp user id
      * @return int
      */
-    public function _wp_user_id()
+    public function _wp_user_id(): int
     {
         // if I need to explain the following lines of code, then you shouldn't be looking at this!
-        $this->_wp_user_id = get_current_user_id();
-        return $this->_wp_user_id;
+        return get_current_user_id();
     }
 
 
@@ -1060,7 +1052,7 @@ class EE_Session implements SessionIdentifierInterface
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function clear_session($class = '', $function = '')
+    public function clear_session(string $class = '', string $function = '')
     {
 //         echo '
 // <h3 style="color:#999;line-height:.9em;">
@@ -1087,11 +1079,11 @@ class EE_Session implements SessionIdentifierInterface
      * @param bool        $show_all_notices
      * @return bool
      */
-    public function reset_data($data_to_reset = array(), $show_all_notices = false)
+    public function reset_data($data_to_reset = [], bool $show_all_notices = false): bool
     {
         // if $data_to_reset is not in an array, then put it in one
         if (! is_array($data_to_reset)) {
-            $data_to_reset = array($data_to_reset);
+            $data_to_reset = [$data_to_reset];
         }
         // nothing ??? go home!
         if (empty($data_to_reset)) {
@@ -1186,12 +1178,12 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * Used to reset the entire object (for tests).
      *
-     * @since 4.3.0
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @since 4.3.0
      */
     public function reset_instance()
     {
@@ -1227,10 +1219,10 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @see http://stackoverflow.com/questions/10152904/unserialize-function-unserialize-error-at-offset/21389439#10152996
-     * @param $data1
+     * @param string $data1
      * @return string
      */
-    private function find_serialize_error($data1)
+    private function find_serialize_error(string $data1): string
     {
         $error = '<pre>';
         $data2 = preg_replace_callback(
@@ -1246,23 +1238,27 @@ class EE_Session implements SessionIdentifierInterface
             },
             $data1
         );
-        $max = (strlen($data1) > strlen($data2)) ? strlen($data1) : strlen($data2);
+        $max   = (strlen($data1) > strlen($data2))
+            ? strlen($data1)
+            : strlen($data2);
         $error .= $data1 . PHP_EOL;
         $error .= $data2 . PHP_EOL;
         for ($i = 0; $i < $max; $i++) {
             if (@$data1[ $i ] !== @$data2[ $i ]) {
-                $error .= 'Difference ' . @$data1[ $i ] . ' != ' . @$data2[ $i ] . PHP_EOL;
-                $error .= "\t-> ORD number " . ord(@$data1[ $i ]) . ' != ' . ord(@$data2[ $i ]) . PHP_EOL;
-                $error .= "\t-> Line Number = $i" . PHP_EOL;
-                $start = ($i - 20);
-                $start = ($start < 0) ? 0 : $start;
+                $error  .= 'Difference ' . @$data1[ $i ] . ' != ' . @$data2[ $i ] . PHP_EOL;
+                $error  .= "\t-> ORD number " . ord(@$data1[ $i ]) . ' != ' . ord(@$data2[ $i ]) . PHP_EOL;
+                $error  .= "\t-> Line Number = $i" . PHP_EOL;
+                $start  = ($i - 20);
+                $start  = ($start < 0)
+                    ? 0
+                    : $start;
                 $length = 40;
-                $point = $max - $i;
+                $point  = $max - $i;
                 if ($point < 20) {
                     $rlength = 1;
-                    $rpoint = -$point;
+                    $rpoint  = -$point;
                 } else {
-                    $rpoint = $length - 20;
+                    $rpoint  = $length - 20;
                     $rlength = 1;
                 }
                 $error .= "\t-> Section Data1  = ";
@@ -1293,10 +1289,10 @@ class EE_Session implements SessionIdentifierInterface
      *
      * @param array $updated_settings
      */
-    private function updateSessionSettings(array $updated_settings = array())
+    private function updateSessionSettings(array $updated_settings = [])
     {
         // add existing settings, but only if not included in incoming $updated_settings array
-        $updated_settings += get_option(EE_Session::OPTION_NAME_SETTINGS, array());
+        $updated_settings += get_option(EE_Session::OPTION_NAME_SETTINGS, []);
         update_option(EE_Session::OPTION_NAME_SETTINGS, $updated_settings);
     }
 
@@ -1309,7 +1305,7 @@ class EE_Session implements SessionIdentifierInterface
         // only perform during regular requests if last garbage collection was over an hour ago
         if (! (defined('DOING_AJAX') && DOING_AJAX) && (time() - HOUR_IN_SECONDS) >= $this->_last_gc) {
             $this->_last_gc = time();
-            $this->updateSessionSettings(array('last_gc' => $this->_last_gc));
+            $this->updateSessionSettings(['last_gc' => $this->_last_gc]);
             /** @type WPDB $wpdb */
             global $wpdb;
             // filter the query limit. Set to 0 to turn off garbage collection
@@ -1321,19 +1317,19 @@ class EE_Session implements SessionIdentifierInterface
             );
             // non-zero LIMIT means take out the trash
             if ($expired_session_transient_delete_query_limit) {
-                $session_key = str_replace('_', '\_', EE_Session::session_id_prefix);
+                $session_key    = str_replace('_', '\_', EE_Session::session_id_prefix);
                 $hash_check_key = str_replace('_', '\_', EE_Session::hash_check_prefix);
-                // since transient expiration timestamps are set in the future, we can compare against NOW
+                // since transient expiration timestamps are set in the future, we can compare against NOW,
                 // but we only want to pick up any trash that's been around for more than a day
                 $expiration = time() - DAY_IN_SECONDS;
-                $SQL = "
+                $SQL        = "
                     SELECT option_name
-                    FROM {$wpdb->options}
+                    FROM $wpdb->options
                     WHERE
-                      ( option_name LIKE '\_transient\_timeout\_{$session_key}%'
-                      OR option_name LIKE '\_transient\_timeout\_{$hash_check_key}%' )
-                    AND option_value < {$expiration}
-                    LIMIT {$expired_session_transient_delete_query_limit}
+                      ( option_name LIKE '\_transient\_timeout\_$session_key%'
+                      OR option_name LIKE '\_transient\_timeout\_$hash_check_key%' )
+                    AND option_value < $expiration
+                    LIMIT $expired_session_transient_delete_query_limit
                 ";
                 // produces something like:
                 // SELECT option_name FROM wp_options
@@ -1342,7 +1338,7 @@ class EE_Session implements SessionIdentifierInterface
                 // AND option_value < 1508368198 LIMIT 50
                 $expired_sessions = $wpdb->get_col($SQL);
                 // valid results?
-                if (! $expired_sessions instanceof WP_Error && ! empty($expired_sessions)) {
+                if (! empty($expired_sessions)) {
                     $this->cache_storage->deleteMany($expired_sessions, true);
                 }
             }

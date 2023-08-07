@@ -22,40 +22,36 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 {
     /**
      * The alias for the table the column belongs to.
-     * @var string
      */
-    protected $_table_alias;
+    protected string $_table_alias = '';
 
     /**
      * The actual db column name for the table
-     * @var string
      */
-    protected $_table_column;
+    protected string $_table_column;
 
 
     /**
      * The authoritative name for the table column (used by client code to reference the field).
-     * @var string
      */
-    protected $_name;
+    protected string $_name = '';
 
 
     /**
      * A description for the field.
-     * @var string
      */
-    protected $_nicename;
+    protected string $_nicename;
 
 
     /**
      * Whether the field is nullable or not
-     * @var bool
      */
-    protected $_nullable;
+    protected bool $_nullable;
 
 
     /**
      * What the default value for the field should be.
+     *
      * @var mixed
      */
     protected $_default_value;
@@ -63,6 +59,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * Other configuration for the field
+     *
      * @var mixed
      */
     protected $_other_config;
@@ -70,34 +67,34 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * The name of the model this field is instantiated for.
-     * @var string
      */
-    protected $_model_name;
+    protected string $_model_name = '';
 
 
     /**
      * This should be a json-schema valid data type for the field.
+     *
      * @link http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
-     * @var string
+     * @var string|string[]
      */
     private $_schema_type = 'string';
 
 
     /**
      * If the schema has a defined format then it should be defined via this property.
+     *
      * @link http://json-schema.org/latest/json-schema-validation.html#rfc.section.7
-     * @var string
      */
-    private $_schema_format = '';
+    private string $_schema_format = '';
 
 
     /**
      * Indicates that the value of the field is managed exclusively by the server/model and not something
      * settable by client code.
+     *
      * @link http://json-schema.org/latest/json-schema-hypermedia.html#rfc.section.4.4
-     * @var bool
      */
-    private $_schema_readonly = false;
+    private bool $_schema_readonly = false;
 
 
     /**
@@ -116,11 +113,11 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
 
     /**
-     * @param $table_alias
-     * @param $name
-     * @param $model_name
+     * @param string $table_alias
+     * @param string $name
+     * @param string $model_name
      */
-    public function _construct_finalize($table_alias, $name, $model_name)
+    public function _construct_finalize(string $table_alias, string $name, string $model_name)
     {
         $this->_table_alias = $table_alias;
         $this->_name        = $name;
@@ -140,15 +137,18 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         );
     }
 
+
     public function get_table_alias()
     {
         return $this->_table_alias;
     }
 
+
     public function get_table_column()
     {
         return $this->_table_column;
     }
+
 
     /**
      * Returns the name of the model this field is on. Eg 'Event' or 'Ticket_Datetime'
@@ -160,31 +160,39 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         return $this->_model_name;
     }
 
+
     /**
-     * @throws \EE_Error
      * @return string
+     * @throws EE_Error
      */
     public function get_name()
     {
         if ($this->_name) {
             return $this->_name;
-        } else {
-            throw new EE_Error(sprintf(esc_html__(
-                "Model field '%s' has no name set. Did you make a model and forget to call the parent model constructor?",
-                "event_espresso"
-            ), get_class($this)));
         }
+        throw new EE_Error(
+            sprintf(
+                esc_html__(
+                    "Model field '%s' has no name set. Did you make a model and forget to call the parent model constructor?",
+                    "event_espresso"
+                ),
+                get_class($this)
+            )
+        );
     }
+
 
     public function get_nicename()
     {
         return $this->_nicename;
     }
 
+
     public function is_nullable()
     {
         return $this->_nullable;
     }
+
 
     /**
      * returns whether this field is an auto-increment field or not. If it is, then
@@ -197,6 +205,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         return false;
     }
 
+
     /**
      * The default value in the model object's value domain. See lengthy comment about
      * value domains at the top of EEM_Base
@@ -207,6 +216,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     {
         return $this->_default_value;
     }
+
 
     /**
      * Returns the table alias joined to the table column, however this isn't the right
@@ -220,6 +230,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     {
         return $this->get_table_alias() . "." . $this->get_table_column();
     }
+
 
     /**
      * When get() is called on a model object (eg EE_Event), before returning its value,
@@ -235,6 +246,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         return $value_of_field_on_model_object;
     }
 
+
     /**
      * When inserting or updating a field on a model object, run this function on each
      * value to prepare it for insertion into the db. Generally this converts
@@ -248,11 +260,11 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         return $value_of_field_on_model_object;
     }
 
+
     /**
      * When creating a brand-new model object, or setting a particular value for one of its fields, this function
      * is called before setting it on the model object. We may want to strip slashes, unserialize the value, etc.
      * By default, we do nothing.
-     *
      * If the model field is going to perform any validation on the input, this is where it should be done
      * (once the value is on the model object, it may be used in other ways besides putting it into the DB
      * so it's best to validate it right away).
@@ -279,6 +291,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         return $this->prepare_for_set($value_found_in_db_for_model_object);
     }
 
+
     /**
      * When echoing a field's value on a model object, this function is run to prepare the value for presentation in a
      * webpage. For example, we may want to output floats with 2 decimal places by default, dates as "Monday Jan 12,
@@ -296,9 +309,10 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * Returns whatever is set as the nicename for the object.
+     *
      * @return string
      */
-    public function getSchemaDescription()
+    public function getSchemaDescription(): string
     {
         return $this->get_nicename();
     }
@@ -307,6 +321,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     /**
      * Returns whatever is set as the $_schema_type property for the object.
      * Note: this will automatically add 'null' to the schema if the object is_nullable()
+     *
      * @return string|array
      */
     public function getSchemaType()
@@ -322,8 +337,9 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
 
     /**
-     * Sets the _schema_type property.  Child classes should call this in their constructors to override the default state
-     * for this property.
+     * Sets the _schema_type property.  Child classes should call this in their constructors to override the default
+     * state for this property.
+     *
      * @param string|array $type
      * @throws InvalidArgumentException
      */
@@ -337,40 +353,39 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     /**
      * This is usually present when the $_schema_type property is 'object'.  Any child classes will need to override
      * this method and return the properties for the schema.
-     *
      * The reason this is not a property on the class is because there may be filters set on the values for the property
      * that won't be exposed on construct.  For example enum type schemas may have the enum values filtered.
      *
      * @return array
      */
-    public function getSchemaProperties()
+    public function getSchemaProperties(): array
     {
-        return array();
+        return [];
     }
 
 
-
     /**
-     * By default this returns the scalar default value that was sent in on the class prepped according to the class type
-     * as the default.  However, when there are schema properties, then the default property is setup to mirror the
-     * property keys and correctly prepare the default according to that expected property value.
-     * The getSchema method validates whether the schema for default is setup correctly or not according to the schema type
+     * By default this returns the scalar default value that was sent in on the class prepped according to the class
+     * type as the default.  However, when there are schema properties, then the default property is setup to mirror
+     * the property keys and correctly prepare the default according to that expected property value. The getSchema
+     * method validates whether the schema for default is setup correctly or not according to the schema type
      *
      * @return mixed
      */
     public function getSchemaDefault()
     {
-        $default_value = $this->prepare_for_use_in_db($this->prepare_for_set($this->get_default_value()));
+        $default_value     = $this->prepare_for_use_in_db($this->prepare_for_set($this->get_default_value()));
         $schema_properties = $this->getSchemaProperties();
 
         // if this schema has properties than shape the default value to match the properties shape.
         if ($schema_properties) {
-            $value_to_return = array();
+            $value_to_return = [];
             foreach ($schema_properties as $property_key => $property_schema) {
                 switch ($property_key) {
                     case 'pretty':
                     case 'rendered':
-                        $value_to_return[ $property_key ] = $this->prepare_for_pretty_echoing($this->prepare_for_set($default_value));
+                        $value_to_return[ $property_key ] =
+                            $this->prepare_for_pretty_echoing($this->prepare_for_set($default_value));
                         break;
                     default:
                         $value_to_return[ $property_key ] = $default_value;
@@ -383,25 +398,23 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     }
 
 
-
-
     /**
      * If a child class has enum values, they should override this method and provide a simple array
      * of the enum values.
-
      * The reason this is not a property on the class is because there may be filterable enum values that
      * are set on the instantiated object that could be filtered after construct.
      *
      * @return array
      */
-    public function getSchemaEnum()
+    public function getSchemaEnum(): array
     {
-        return array();
+        return [];
     }
 
 
     /**
      * This returns the value of the $_schema_format property on the object.
+     *
      * @return string
      */
     public function getSchemaFormat()
@@ -412,8 +425,9 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * Sets the schema format property.
-     * @throws InvalidArgumentException
+     *
      * @param string $format
+     * @throws InvalidArgumentException
      */
     protected function setSchemaFormat($format)
     {
@@ -424,9 +438,10 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * This returns the value of the $_schema_readonly property on the object.
+     *
      * @return bool
      */
-    public function getSchemaReadonly()
+    public function getSchemaReadonly(): bool
     {
         return $this->_schema_readonly;
     }
@@ -434,7 +449,8 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * This sets the value for the $_schema_readonly property.
-     * @param bool $readonly  (only explicit boolean values are accepted)
+     *
+     * @param bool $readonly (only explicit boolean values are accepted)
      */
     protected function setSchemaReadOnly($readonly)
     {
@@ -451,13 +467,11 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     }
 
 
-
-
     /**
      * Return `%d`, `%s` or `%f` to indicate the data type for the field.
-     * @uses _get_wpdb_data_type()
      *
      * @return string
+     * @uses _get_wpdb_data_type()
      */
     public function get_wpdb_data_type()
     {
@@ -467,9 +481,10 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * Return `%d`, `%s` or `%f` to indicate the data type for the field that should be indicated in wpdb queries.
-     * @param string $type  Included if a specific type is requested.
-     * @uses get_schema_type()
+     *
+     * @param string $type Included if a specific type is requested.
      * @return string
+     * @uses get_schema_type()
      */
     protected function _get_wpdb_data_type($type = '')
     {
@@ -498,7 +513,6 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         }
         return $wpdb_type;
     }
-
 
 
     protected function _get_wpdb_data_type_for_type_array($type)
@@ -535,19 +549,19 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @link http://json-schema.org/
      * @return array
      */
-    public function getSchema()
+    public function getSchema(): array
     {
-        $schema = array(
+        $schema = [
             'description' => $this->getSchemaDescription(),
-            'type' => $this->getSchemaType(),
-            'readonly' => $this->getSchemaReadonly(),
-            'default' => $this->getSchemaDefault()
-        );
+            'type'        => $this->getSchemaType(),
+            'readonly'    => $this->getSchemaReadonly(),
+            'default'     => $this->getSchemaDefault(),
+        ];
 
         // optional properties of the schema
-        $enum = $this->getSchemaEnum();
+        $enum       = $this->getSchemaEnum();
         $properties = $this->getSchemaProperties();
-        $format = $this->getSchemaFormat();
+        $format     = $this->getSchemaFormat();
         if ($enum) {
             $schema['enum'] = $enum;
         }
@@ -561,6 +575,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         }
         return $schema;
     }
+
 
     /**
      * Some fields are in the database-only, (ie, used in queries etc), but shouldn't necessarily be part
@@ -580,8 +595,9 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * Validates the incoming string|array to ensure its an allowable type.
-     * @throws InvalidArgumentException
+     *
      * @param string|array $type
+     * @throws InvalidArgumentException
      */
     private function validateSchemaType($type)
     {
@@ -594,20 +610,6 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
             );
         }
 
-        // validate allowable types.
-        // @link http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
-        $allowable_types = array_flip(
-            array(
-                'string',
-                'number',
-                'null',
-                'object',
-                'array',
-                'boolean',
-                'integer'
-            )
-        );
-
         if (is_array($type)) {
             foreach ($type as $item_in_type) {
                 $this->validateSchemaType($item_in_type);
@@ -615,10 +617,25 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
             return;
         }
 
-        if (! isset($allowable_types[ $type ])) {
+        // validate allowable types.
+        // @link http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
+        $allowable_types = [
+            'string',
+            'number',
+            'null',
+            'object',
+            'array',
+            'boolean',
+            'integer',
+        ];
+
+        if (! in_array($type, $allowable_types, true)) {
             throw new InvalidArgumentException(
                 sprintf(
-                    esc_html__('The incoming argument (%1$s) must be one of the allowable types: %2$s', 'event_espresso'),
+                    esc_html__(
+                        'The incoming argument (%1$s) must be one of the allowable types: %2$s',
+                        'event_espresso'
+                    ),
                     $type,
                     implode(',', array_flip($allowable_types))
                 )
@@ -629,8 +646,9 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
 
     /**
      * Validates that the incoming format is an allowable string to use for the _schema_format property
-     * @throws InvalidArgumentException
+     *
      * @param $format
+     * @throws InvalidArgumentException
      */
     private function validateSchemaFormat($format)
     {
@@ -646,21 +664,24 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         // validate allowable format values
         // @link http://json-schema.org/latest/json-schema-validation.html#rfc.section.7
         $allowable_formats = array_flip(
-            array(
+            [
                 'date-time',
                 'email',
                 'hostname',
                 'ipv4',
                 'ipv6',
                 'uri',
-                'uriref'
-            )
+                'uriref',
+            ]
         );
 
         if (! isset($allowable_formats[ $format ])) {
             throw new InvalidArgumentException(
                 sprintf(
-                    esc_html__('The incoming argument (%1$s) must be one of the allowable formats: %2$s', 'event_espresso'),
+                    esc_html__(
+                        'The incoming argument (%1$s) must be one of the allowable formats: %2$s',
+                        'event_espresso'
+                    ),
                     $format,
                     implode(',', array_flip($allowable_formats))
                 )

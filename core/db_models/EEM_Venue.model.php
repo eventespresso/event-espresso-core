@@ -3,10 +3,10 @@
 /**
  * Venue Model
  *
- * @package               Event Espresso
- * @subpackage            includes/models/
- * @author                Michael Nelson
- *                        ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  includes/models/
+ * @author      Michael Nelson
+ * @method get_one_by_ID($id)
  */
 class EEM_Venue extends EEM_CPT_Base
 {
@@ -14,17 +14,20 @@ class EEM_Venue extends EEM_CPT_Base
     protected static $_instance = null;
 
 
-
-    protected function __construct($timezone = null)
+    /**
+     * @param string|null $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(?string $timezone = '')
     {
-        $this->singular_item = esc_html__('Venue', 'event_espresso');
-        $this->plural_item = esc_html__('Venues', 'event_espresso');
-        $this->_tables = array(
+        $this->singular_item    = esc_html__('Venue', 'event_espresso');
+        $this->plural_item      = esc_html__('Venues', 'event_espresso');
+        $this->_tables          = [
             'Venue_CPT'  => new EE_Primary_Table('posts', 'ID'),
             'Venue_Meta' => new EE_Secondary_Table('esp_venue_meta', 'VNUM_ID', 'VNU_ID'),
-        );
-        $this->_fields = array(
-            'Venue_CPT'  => array(
+        ];
+        $this->_fields          = [
+            'Venue_CPT'  => [
                 'VNU_ID'         => new EE_Primary_Key_Int_Field('ID', esc_html__("Venue ID", "event_espresso")),
                 'VNU_name'       => new EE_Plain_Text_Field(
                     'post_title',
@@ -38,7 +41,12 @@ class EEM_Venue extends EEM_CPT_Base
                     false,
                     ''
                 ),
-                'VNU_identifier' => new EE_Slug_Field('post_name', esc_html__("Venue Identifier", "event_espresso"), false, ''),
+                'VNU_identifier' => new EE_Slug_Field(
+                    'post_name',
+                    esc_html__("Venue Identifier", "event_espresso"),
+                    false,
+                    ''
+                ),
                 'VNU_created'    => new EE_Datetime_Field(
                     'post_date',
                     esc_html__("Date Venue Created", "event_espresso"),
@@ -68,14 +76,19 @@ class EEM_Venue extends EEM_CPT_Base
                     false,
                     0
                 ),
-                'VNU_order'      => new EE_Integer_Field('menu_order', esc_html__("Venue order", "event_espresso"), false, 1),
+                'VNU_order'      => new EE_Integer_Field(
+                    'menu_order',
+                    esc_html__("Venue order", "event_espresso"),
+                    false,
+                    1
+                ),
                 'post_type'      => new EE_WP_Post_Type_Field('espresso_venues'),
-                'password' => new EE_Password_Field(
+                'password'       => new EE_Password_Field(
                     'post_password',
                     esc_html__('Password', 'event_espresso'),
                     false,
                     '',
-                    array(
+                    [
                         'VNU_desc',
                         'VNU_short_desc',
                         'VNU_address',
@@ -91,10 +104,10 @@ class EEM_Venue extends EEM_CPT_Base
                         'VNU_virtual_url',
                         'VNU_google_map_link',
                         'VNU_enable_for_gmap',
-                    )
-                )
-            ),
-            'Venue_Meta' => array(
+                    ]
+                ),
+            ],
+            'Venue_Meta' => [
                 'VNUM_ID'             => new EE_DB_Only_Int_Field(
                     'VNUM_ID',
                     esc_html__("ID of Venue Meta Row", "event_espresso"),
@@ -179,9 +192,9 @@ class EEM_Venue extends EEM_CPT_Base
                     false,
                     false
                 ),
-            ),
-        );
-        $this->_model_relations = array(
+            ],
+        ];
+        $this->_model_relations = [
             'Country'           => new EE_Belongs_To_Relation(),
             'Event'             => new EE_Has_Many_Relation(),
             'Datetime'          => new EE_Has_Many_Relation(),
@@ -189,10 +202,10 @@ class EEM_Venue extends EEM_CPT_Base
             'Term_Relationship' => new EE_Has_Many_Relation(),
             'Term_Taxonomy'     => new EE_HABTM_Relation('Term_Relationship'),
             'WP_User'           => new EE_Belongs_To_Relation(),
-        );
+        ];
         // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
-        $this->model_chain_to_password = '';
+        $this->model_chain_to_password                            = '';
         parent::__construct($timezone);
     }
 }

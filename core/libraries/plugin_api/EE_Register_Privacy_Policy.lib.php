@@ -57,6 +57,12 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
     {
         return array_merge($privacy_policies, ...self::$privacy_policies);
     }
+
+
+    public static function reset(): void
+    {
+        self::$privacy_policies = [];
+    }
 }
 // End of file EE_Register_Privacy_Policy.lib.php
 // Location: ${NAMESPACE}/EE_Register_Privacy_Policy.lib.php

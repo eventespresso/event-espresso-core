@@ -889,7 +889,7 @@ class EE_Error extends Exception
             : '<a class="close-espresso-notice hide-if-no-js"><span class="dashicons dashicons-no"/></a>';
         if ($success_messages !== '') {
             $css_id    = is_admin() ? 'ee-success-message' : 'espresso-notices-success';
-            $css_class = is_admin() ? 'updated fade' : 'success fade-away';
+            $css_class = is_admin() ? 'updated fade ee-status-outline ee-status-bg--success' : 'success fade-away';
             // showMessage( $success_messages );
             $notices .= '<div id="' . $css_id . '" '
                         . 'class="espresso-notices ' . $css_class . '" '
@@ -899,8 +899,10 @@ class EE_Error extends Exception
                         . '</div>';
         }
         if ($attention_messages !== '') {
-            $css_id    = is_admin() ? 'ee-attention-message' : 'espresso-notices-attention';
-            $css_class = is_admin() ? 'notice notice-info ee-notices-attention' : 'attention fade-away';
+            $css_id    = is_admin()  ? 'ee-attention-message' : 'espresso-notices-attention';
+            $css_class = is_admin()
+                ? 'notice notice-info ee-notices-attention ee-status-outline ee-status-bg--attention'
+                : 'attention fade-away';
             // showMessage( $error_messages, TRUE );
             $notices .= '<div id="' . $css_id . '" '
                         . 'class="espresso-notices ' . $css_class . '" '
@@ -911,7 +913,9 @@ class EE_Error extends Exception
         }
         if ($error_messages !== '') {
             $css_id    = is_admin() ? 'ee-error-message' : 'espresso-notices-error';
-            $css_class = is_admin() ? 'error' : 'error fade-away';
+            $css_class = is_admin()
+                ? 'error ee-status-outline ee-status-bg--error'
+                : 'error fade-away';
             // showMessage( $error_messages, TRUE );
             $notices .= '<div id="' . $css_id . '" '
                         . 'class="espresso-notices ' . $css_class . '" '

@@ -25,7 +25,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function __construct($fieldValues = null, $bydb = false, $timezone = null, $date_formats = [])
+    protected function __construct($fieldValues = null, $bydb = false, $timezone = '', $date_formats = [])
     {
         if (! isset($fieldValues['ATT_full_name'])) {
             $fname                        = $fieldValues['ATT_fname'] ?? '';

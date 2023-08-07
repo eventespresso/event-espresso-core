@@ -126,4 +126,9 @@ class EE_Register_Config implements EEI_Plugin_API
     {
         unset(self::$_ee_config_registry[ $addon_name ]);
     }
+
+    public static function reset(): void
+    {
+        self::$_ee_config_registry = [];
+    }
 }

@@ -7,7 +7,6 @@ use WP;
 
 /**
  * Class CurrentPage
- *
  * Primarily an extraction of logic from the legacy EE_Request_Handler class
  * pertaining to details about the current WordPress page/post such as:
  * - post ID
@@ -23,40 +22,19 @@ use WP;
  */
 class CurrentPage
 {
-    /**
-     * @var EE_CPT_Strategy
-     */
-    private $cpt_strategy;
+    private EE_CPT_Strategy  $cpt_strategy;
 
-    /**
-     * @var bool
-     */
-    private $initialized;
+    private bool             $initialized;
 
-    /**
-     * @var bool
-     */
-    private $is_espresso_page;
+    private ?bool            $is_espresso_page = null;
 
-    /**
-     * @var int
-     */
-    private $post_id = 0;
+    private int              $post_id          = 0;
 
-    /**
-     * @var string|null
-     */
-    private $post_name = '';
+    private string           $post_name        = '';
 
-    /**
-     * @var array
-     */
-    private $post_type = [];
+    private array            $post_type        = [];
 
-    /**
-     * @var RequestInterface $request
-     */
-    private $request;
+    private RequestInterface $request;
 
 
     /**
@@ -71,7 +49,7 @@ class CurrentPage
         $this->request      = $request;
         $this->initialized  = is_admin();
         // analyse the incoming WP request
-        add_action('parse_request', [$this, 'parseQueryVars'], 2, 1);
+        add_action('parse_request', [$this, 'parseQueryVars'], 2);
     }
 
 
@@ -93,7 +71,7 @@ class CurrentPage
         $this->post_type = $this->getPostType($WP);
         // true or false ? is this page being used by EE ?
         $this->setEspressoPage();
-        remove_action('parse_request', [$this, 'parseRequest'], 2);
+        remove_action('parse_request', [$this, 'parseQueryVars'], 2);
         $this->initialized = true;
     }
 
@@ -191,7 +169,7 @@ class CurrentPage
             if (! $post_name && ! empty($WP->request)) {
                 $possible_post_name = basename($WP->request);
                 if (! is_numeric($possible_post_name)) {
-                    $SQL                = "SELECT ID from {$wpdb->posts}";
+                    $SQL                = "SELECT ID from $wpdb->posts";
                     $SQL                .= " WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash')";
                     $SQL                .= ' AND post_name=%s';
                     $possible_post_name = $wpdb->get_var($wpdb->prepare($SQL, $possible_post_name));
@@ -204,7 +182,7 @@ class CurrentPage
         // ug... ok... nothing yet... but do we have a post ID?
         // if so then... sigh... run a query to get the post name :\
         if (! $post_name && $this->post_id) {
-            $SQL                = "SELECT post_name from {$wpdb->posts}";
+            $SQL                = "SELECT post_name from $wpdb->posts";
             $SQL                .= " WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash')";
             $SQL                .= ' AND ID=%d';
             $possible_post_name = $wpdb->get_var($wpdb->prepare($SQL, $this->post_id));

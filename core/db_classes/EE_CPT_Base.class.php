@@ -240,8 +240,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
         // first let's see if we already have the _feature_image property set AND if it has a cached element on it FOR the given size
         $attr_key = is_array($attr) ? implode('_', $attr) : $attr;
         $cache_key = is_array($size) ? implode('_', $size) . $attr_key : $size . $attr_key;
-        $this->_feature_image[ $cache_key ] = isset($this->_feature_image[ $cache_key ])
-            ? $this->_feature_image[ $cache_key ] : $this->get_model()->get_feature_image($this->ID(), $size, $attr);
+        $this->_feature_image[ $cache_key ] = $this->_feature_image[ $cache_key ]
+                                              ?? $this->get_model()->get_feature_image($this->ID(), $size, $attr);
         return $this->_feature_image[ $cache_key ];
     }
 

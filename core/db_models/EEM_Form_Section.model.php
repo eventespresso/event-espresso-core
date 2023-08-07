@@ -5,7 +5,6 @@ use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EEM_Form_Section
- *
  * Model Fields:
  *  FSC_UUID         string
  *  FSC_appliesTo    string
@@ -52,7 +51,7 @@ class EEM_Form_Section extends EEM_Base
      * @param string|null $timezone
      * @throws EE_Error
      */
-    protected function __construct(FormStatus $form_status, ?string $timezone)
+    protected function __construct(FormStatus $form_status, ?string $timezone = '')
     {
         $this->valid_applies_to_options = apply_filters(
             'FHEE__EEM_Form_Section__valid_applies_to_options',
@@ -72,15 +71,15 @@ class EEM_Form_Section extends EEM_Base
         ];
         $this->_fields          = [
             'Form_Section' => [
-                'FSC_UUID'      => new EE_Primary_Key_String_Field(
+                'FSC_UUID'       => new EE_Primary_Key_String_Field(
                     'FSC_UUID',
                     esc_html__('Form Section UUID (universally unique identifier)', 'event_espresso')
                 ),
-                'FSC_appliesTo' => new EE_Enum_Text_Field(
+                'FSC_appliesTo'  => new EE_Enum_Text_Field(
                     'FSC_appliesTo',
                     esc_html(
                         sprintf(
-                            /* translators: 1 class name */
+                        /* translators: 1 class name */
                             __(
                                 'Form user type that this form section should be presented to. Values correspond to the %s constants.',
                                 'event_espresso'
@@ -101,13 +100,13 @@ class EEM_Form_Section extends EEM_Base
                     false,
                     '{}'
                 ),
-                'FSC_belongsTo' => new EE_Plain_Text_Field(
+                'FSC_belongsTo'  => new EE_Plain_Text_Field(
                     'FSC_belongsTo',
                     esc_html__('UUID of parent form section that this one belongs to.', 'event_espresso'),
                     false,
                     ''
                 ),
-                'FSC_label' => new EE_JSON_Field(
+                'FSC_label'      => new EE_JSON_Field(
                     'FSC_label',
                     esc_html__(
                         'JSON string of properties pertaining to a form section\'s label.',
@@ -116,17 +115,17 @@ class EEM_Form_Section extends EEM_Base
                     false,
                     '{}'
                 ),
-                'FSC_order'     => new EE_Integer_Field(
+                'FSC_order'      => new EE_Integer_Field(
                     'FSC_order',
                     esc_html__('Order in which form section appears in a form.', 'event_espresso'),
                     false,
                     0
                 ),
-                'FSC_status'    => new EE_Enum_Text_Field(
+                'FSC_status'     => new EE_Enum_Text_Field(
                     'FSC_status',
                     esc_html(
                         sprintf(
-                            /* translators: 1 class name */
+                        /* translators: 1 class name */
                             __(
                                 'Whether form section is active, archived, shared, trashed, or used as a default on new forms. Values correspond to the %1$s class constants.',
                                 'event_espresso'
@@ -138,7 +137,7 @@ class EEM_Form_Section extends EEM_Base
                     FormStatus::ACTIVE,
                     $form_status->validStatusOptions()
                 ),
-                'FSC_wpUser'    => new EE_WP_User_Field(
+                'FSC_wpUser'     => new EE_WP_User_Field(
                     'FSC_wpUser',
                     esc_html__('ID of the WP User that created this form section.', 'event_espresso'),
                     false
@@ -146,9 +145,9 @@ class EEM_Form_Section extends EEM_Base
             ],
         ];
         $this->_model_relations = [
-            'Form_Element' => new EE_Has_Many_Relation(),
+            'Form_Element'    => new EE_Has_Many_Relation(),
             'Form_Submission' => new EE_Has_Many_Relation(),
-            'WP_User'    => new EE_Belongs_To_Relation(),
+            'WP_User'         => new EE_Belongs_To_Relation(),
         ];
         // this model is generally available for reading
         $restrictions                              = [];
@@ -244,7 +243,7 @@ class EEM_Form_Section extends EEM_Base
                     'OR' => [
                         'FSC_UUID'      => $FSC_UUID, // top level form
                         'FSC_belongsTo' => $FSC_UUID, // child form sections
-                    ]
+                    ],
                 ]
             )
             : [];

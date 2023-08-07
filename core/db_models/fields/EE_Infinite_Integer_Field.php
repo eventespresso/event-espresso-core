@@ -18,7 +18,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
     public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
-        $this->setSchemaType(array('integer', 'null'));
+        $this->setSchemaType(['integer', 'null']);
     }
 
 
@@ -26,10 +26,10 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
     {
         if ($value_of_field_on_model_object === EE_INF) {
             return EE_INF_IN_DB;
-        } else {
-            return intval($value_of_field_on_model_object);
         }
+        return (int) $value_of_field_on_model_object;
     }
+
 
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
@@ -40,19 +40,18 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
             $value_inputted_for_field_on_model_object === ""
         ) {
             return EE_INF;
-        } else {
-            return intval($value_inputted_for_field_on_model_object);
         }
+        return (int) $value_inputted_for_field_on_model_object;
     }
+
 
     public function prepare_for_set_from_db($value_inputted_for_field_on_model_object)
     {
-        $intval = intval($value_inputted_for_field_on_model_object);
+        $intval = (int) $value_inputted_for_field_on_model_object;
         if ($intval == EE_INF_IN_DB) {
             return EE_INF;
-        } else {
-            return $intval;
         }
+        return $intval;
     }
 
 
@@ -80,8 +79,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
                 default:
                     return $schema;
             }
-        } else {
-            return $value_on_field_to_be_outputted;
         }
+        return $value_on_field_to_be_outputted;
     }
 }

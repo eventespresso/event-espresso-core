@@ -101,34 +101,34 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
 
     /**
-     *    Private constructor to prevent direct creation.
+     * Private constructor to prevent direct creation.
      *
-     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and
-     *                         any incoming timezone data that gets saved).  Note this just sends the timezone info to
-     *                         the date time model field objects.  Default is null (and will be assumed using the set
-     *                         timezone in the 'timezone_string' wp option)
-     * @throws EE_Error
-     * @throws EE_Error
+     * @param string|null $timezone string representing the timezone we want to set for returned Date Time Strings (and
+     *                              any incoming timezone data that gets saved).  Note this just sends the timezone
+     *                              info to the date time model field objects.  Default is null (and will be assumed
+     *                              using the set timezone in the 'timezone_string' wp option)
      * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item = esc_html__('Message', 'event_espresso');
         $this->plural_item   = esc_html__('Messages', 'event_espresso');
 
-        $this->_tables = array(
+        $this->_tables = [
             'Message' => new EE_Primary_Table('esp_message', 'MSG_ID'),
-        );
+        ];
 
-        $allowed_priority = array(
+        $allowed_priority = [
             self::priority_high   => esc_html__('high', 'event_espresso'),
             self::priority_medium => esc_html__('medium', 'event_espresso'),
             self::priority_low    => esc_html__('low', 'event_espresso'),
-        );
+        ];
 
-        $this->_fields          = array(
-            'Message' => array(
-                'MSG_ID'             => new EE_Primary_Key_Int_Field('MSG_ID', esc_html__('Message ID', 'event_espresso')),
+        $this->_fields          = [
+            'Message' => [
+                'MSG_ID'             => new EE_Primary_Key_Int_Field(
+                    'MSG_ID', esc_html__('Message ID', 'event_espresso')
+                ),
                 'MSG_token'          => new EE_Plain_Text_Field(
                     'MSG_token',
                     esc_html__(
@@ -166,24 +166,31 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
                 ),
                 'MSG_message_type'   => new EE_Plain_Text_Field(
                     'MSG_message_type',
-                    esc_html__('Corresponds to the EE_message_type::name used to generate this message.', 'event_espresso'),
+                    esc_html__(
+                        'Corresponds to the EE_message_type::name used to generate this message.',
+                        'event_espresso'
+                    ),
                     false,
                     'receipt'
                 ),
-                'MSG_context'        => new EE_Plain_Text_Field('MSG_context', esc_html__('Context', 'event_espresso'), false),
+                'MSG_context'        => new EE_Plain_Text_Field(
+                    'MSG_context',
+                    esc_html__('Context', 'event_espresso'),
+                    false
+                ),
                 'MSG_recipient_ID'   => new EE_Foreign_Key_Int_Field(
                     'MSG_recipient_ID',
                     esc_html__('Recipient ID', 'event_espresso'),
                     true,
                     null,
-                    array('Registration', 'Attendee', 'WP_User')
+                    ['Registration', 'Attendee', 'WP_User']
                 ),
                 'MSG_recipient_type' => new EE_Any_Foreign_Model_Name_Field(
                     'MSG_recipient_type',
                     esc_html__('Recipient Type', 'event_espresso'),
                     true,
                     null,
-                    array('Registration', 'Attendee', 'WP_User')
+                    ['Registration', 'Attendee', 'WP_User']
                 ),
                 'MSG_content'        => new EE_Maybe_Serialized_Text_Field(
                     'MSG_content',
@@ -233,15 +240,15 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
                     true,
                     EE_Datetime_Field::now
                 ),
-            ),
-        );
-        $this->_model_relations = array(
+            ],
+        ];
+        $this->_model_relations = [
             'Attendee'               => new EE_Belongs_To_Any_Relation(),
             'Registration'           => new EE_Belongs_To_Any_Relation(),
             'WP_User'                => new EE_Belongs_To_Any_Relation(),
             'Message_Template_Group' => new EE_Belongs_To_Relation(),
             'Transaction'            => new EE_Belongs_To_Relation(),
-        );
+        ];
         parent::__construct($timezone);
     }
 
@@ -291,13 +298,15 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
     public function message_sent_for_attendee($attendee, $message_type)
     {
         $attendee_ID = EEM_Attendee::instance()->ensure_is_ID($attendee);
-        return $this->exists(array(
-            array(
-                'Attendee.ATT_ID'  => $attendee_ID,
-                'MSG_message_type' => $message_type,
-                'STS_ID'           => array('IN', $this->stati_indicating_sent()),
-            ),
-        ));
+        return $this->exists(
+            [
+                [
+                    'Attendee.ATT_ID'  => $attendee_ID,
+                    'MSG_message_type' => $message_type,
+                    'STS_ID'           => ['IN', $this->stati_indicating_sent()],
+                ],
+            ]
+        );
     }
 
 
@@ -314,13 +323,15 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
     public function message_sent_for_registration($registration, $message_type)
     {
         $registrationID = EEM_Registration::instance()->ensure_is_ID($registration);
-        return $this->exists(array(
-            array(
-                'Registration.REG_ID' => $registrationID,
-                'MSG_message_type'    => $message_type,
-                'STS_ID'              => array('IN', $this->stati_indicating_sent()),
-            ),
-        ));
+        return $this->exists(
+            [
+                [
+                    'Registration.REG_ID' => $registrationID,
+                    'MSG_message_type'    => $message_type,
+                    'STS_ID'              => ['IN', $this->stati_indicating_sent()],
+                ],
+            ]
+        );
     }
 
 
@@ -333,11 +344,13 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      */
     public function get_one_by_token($token)
     {
-        return $this->get_one(array(
-            array(
-                'MSG_token' => $token,
-            ),
-        ));
+        return $this->get_one(
+            [
+                [
+                    'MSG_token' => $token,
+                ],
+            ]
+        );
     }
 
 
@@ -348,7 +361,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      */
     public function stati_indicating_sent()
     {
-        return apply_filters('FHEE__EEM_Message__stati_indicating_sent', array(self::status_sent));
+        return apply_filters('FHEE__EEM_Message__stati_indicating_sent', [self::status_sent]);
     }
 
 
@@ -361,7 +374,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
     {
         return apply_filters(
             'FHEE__EEM_Message__stati_indicating_to_send',
-            array(self::status_idle, self::status_resend)
+            [self::status_idle, self::status_resend]
         );
     }
 
@@ -373,11 +386,11 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      */
     public function stati_indicating_failed_sending()
     {
-        $failed_stati = array(
+        $failed_stati = [
             self::status_failed,
             self::status_retry,
             self::status_messenger_executing,
-        );
+        ];
         // if WP_DEBUG is set, then let's include debug_only fails
         if (WP_DEBUG) {
             $failed_stati[] = self::status_debug_only;
@@ -395,7 +408,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
     {
         return apply_filters(
             'FHEE__EEM_Message__all_statuses',
-            array(
+            [
                 EEM_Message::status_sent,
                 EEM_Message::status_incomplete,
                 EEM_Message::status_idle,
@@ -404,9 +417,10 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
                 EEM_Message::status_failed,
                 EEM_Message::status_messenger_executing,
                 EEM_Message::status_debug_only,
-            )
+            ]
         );
     }
+
 
     /**
      * Detects any specific query variables in the request and uses those to setup appropriate
@@ -421,24 +435,25 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         // expected possible query_vars, the key in this array matches an expected key in the request,
         // the value, matches the corresponding EEM_Base child reference.
         $expected_vars   = $this->_expected_vars_for_query_inject();
-        $query_params[0] = array();
+        $query_params[0] = [];
         foreach ($expected_vars as $request_key => $model_name) {
             $request_value = $request->getRequestParam($request_key);
             if ($request_value) {
                 // special case
                 switch ($request_key) {
                     case '_REG_ID':
-                        $query_params[0]['AND**filter_by']['OR**filter_by_REG_ID'] = array(
+                        $query_params[0]['AND**filter_by']['OR**filter_by_REG_ID'] = [
                             'Transaction.Registration.REG_ID' => $request_value,
-                        );
+                        ];
                         break;
                     case 'EVT_ID':
-                        $query_params[0]['AND**filter_by']['OR**filter_by_EVT_ID'] = array(
+                        $query_params[0]['AND**filter_by']['OR**filter_by_EVT_ID'] = [
                             'Transaction.Registration.EVT_ID' => $request_value,
-                        );
+                        ];
                         break;
                     default:
-                        $query_params[0]['AND**filter_by'][ 'OR**filter_by_' . $request_key ][ $model_name . '.' . $request_key ] = $request_value;
+                        $query_params[0]['AND**filter_by'][ 'OR**filter_by_' . $request_key ][ $model_name . '.' . $request_key ] =
+                            $request_value;
                         break;
                 }
             }
@@ -455,13 +470,13 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
     public function get_pretty_label_for_results()
     {
         /** @var RequestInterface $request */
-        $request = EEM_Base::$loader->getShared(RequestInterface::class);
+        $request       = EEM_Base::$loader->getShared(RequestInterface::class);
         $expected_vars = $this->_expected_vars_for_query_inject();
         $pretty_label  = '';
-        $label_parts   = array();
+        $label_parts   = [];
         foreach ($expected_vars as $request_key => $model_name) {
-            $model_name = strpos($model_name, 'EEM_', true) === 0 ? $model_name : "EEM_{$model_name}";
-            $model = EEM_Base::$loader->getShared($model_name);
+            $model_name        = strpos($model_name, 'EEM_', true) === 0 ? $model_name : "EEM_{$model_name}";
+            $model             = EEM_Base::$loader->getShared($model_name);
             $model_field_value = $request->getRequestParam($request_key);
             if ($model instanceof EEM_Base && $model_field_value !== '') {
                 switch ($request_key) {
@@ -505,7 +520,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         if ($label_parts) {
             // prepend to the last element of $label_parts an "and".
             if (count($label_parts) > 1) {
-                $label_parts_index_to_prepend               = count($label_parts) - 1;
+                $label_parts_index_to_prepend                 = count($label_parts) - 1;
                 $label_parts[ $label_parts_index_to_prepend ] = 'and' . $label_parts[ $label_parts_index_to_prepend ];
             }
 
@@ -529,18 +544,18 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      *  {$field_name} => {$model_name}
      * );
      *
-     * @since 4.9.0
      * @return array
+     * @since 4.9.0
      */
     protected function _expected_vars_for_query_inject()
     {
-        return array(
+        return [
             '_REG_ID' => 'Registration',
             'ATT_ID'  => 'Attendee',
             'ID'      => 'WP_User',
             'TXN_ID'  => 'Transaction',
             'EVT_ID'  => 'Event',
-        );
+        ];
     }
 
 
@@ -611,38 +626,40 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
          * Allows code to change what message stati are ignored when deleting.
          * Defaults to only ignore EEM_Message::status_idle messages.
          *
-         * @param string $message_stati_to_keep  An array of message statuses that will be ignored when deleting.
+         * @param string $message_stati_to_keep An array of message statuses that will be ignored when deleting.
          */
         $message_stati_to_keep = (array) apply_filters(
             'FHEE__EEM_Message__delete_old_messages__message_stati_to_keep',
-            array(
-                EEM_Message::status_idle
-            )
+            [
+                EEM_Message::status_idle,
+            ]
         );
 
         // first get all the ids of messages being deleted
         $message_ids_to_delete = EEM_Message::instance()->get_col(
-            array(
-                0 => array(
-                    'STS_ID' => array('NOT_IN', $message_stati_to_keep),
-                    'MSG_modified' => array('<', time() - $time_to_leave_alone)
-                ),
+            [
+                0       => [
+                    'STS_ID'       => ['NOT_IN', $message_stati_to_keep],
+                    'MSG_modified' => ['<', time() - $time_to_leave_alone],
+                ],
                 'limit' => apply_filters(
                     'EEM_Message__delete_old_messages__limit',
                     2000,
                     $delete_threshold
-                )
-            )
+                ),
+            ]
         );
 
         if (! empty($message_ids_to_delete) && is_array($message_ids_to_delete)) {
             global $wpdb;
-            $number_deleted = $wpdb->query('
+            $number_deleted = $wpdb->query(
+                '
                 DELETE
                 FROM ' . $this->table() . '
                 WHERE
                     MSG_ID IN (' . implode(",", $message_ids_to_delete) . ')
-            ');
+            '
+            );
         }
 
         /**
@@ -651,9 +668,17 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
          * below.
          */
         if ($number_deleted !== false) {
-            do_action('AHEE__EEM_Message__delete_old_messages__after_successful_deletion', $message_ids_to_delete, $number_deleted);
+            do_action(
+                'AHEE__EEM_Message__delete_old_messages__after_successful_deletion',
+                $message_ids_to_delete,
+                $number_deleted
+            );
         } else {
-            do_action('AHEE__EEM_Message__delete_old_messages__after_deletion_fail', $message_ids_to_delete, $number_deleted);
+            do_action(
+                'AHEE__EEM_Message__delete_old_messages__after_deletion_fail',
+                $message_ids_to_delete,
+                $number_deleted
+            );
         }
         return $number_deleted;
     }

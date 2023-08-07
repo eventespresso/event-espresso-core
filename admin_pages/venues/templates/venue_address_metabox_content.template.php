@@ -11,7 +11,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 do_action('AHEE__venue_address_metabox_content__before', $template_args);
 ?>
-    <p>
+    <div>
         <label for="phys-addr">
             <?php esc_html_e('Address:', 'event_espresso'); ?>
         </label>
@@ -21,8 +21,8 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
                value="<?php echo esc_html($_venue->get_pretty('VNU_address')); ?>"
                name="vnu_address"
         />
-    </p>
-    <p>
+    </div>
+    <div>
         <label for="phys-addr-2">
             <?php esc_html_e('Address 2:', 'event_espresso'); ?>
         </label>
@@ -32,8 +32,8 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
                value="<?php echo esc_html($_venue->get_pretty('VNU_address2')); ?>"
                name="vnu_address2"
         />
-    </p>
-    <p>
+    </div>
+    <div>
         <label for="phys-city">
             <?php esc_html_e('City:', 'event_espresso'); ?>
         </label>
@@ -43,11 +43,11 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
                value="<?php echo esc_html($_venue->get_pretty('VNU_city')); ?>"
                name="vnu_city"
         />
-    </p>
-    <p>
+    </div>
+    <div>
         <?php echo wp_kses($states_dropdown, AllowedTags::getWithFormTags()); ?>
-    </p>
-    <p>
+    </div>
+    <div>
         <label for="zip-postal">
             <?php esc_html_e('Zip/Postal Code:', 'event_espresso'); ?>
         </label>
@@ -57,9 +57,9 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
                value="<?php echo esc_html($_venue->get_pretty('VNU_zip')); ?>"
                name="vnu_zip"
         />
-    </p>
-    <p>
+    </div>
+    <div>
         <?php echo wp_kses($countries_dropdown, AllowedTags::getWithFormTags()); ?>
-    </p>
+    </div>
 <?php
 do_action('AHEE__venue_address_metabox_content__after', $template_args);

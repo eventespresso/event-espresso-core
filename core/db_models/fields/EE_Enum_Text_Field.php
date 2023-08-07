@@ -10,10 +10,8 @@
  */
 class EE_Enum_Text_Field extends EE_Text_Field_Base
 {
-    /**
-     * @var array $_allowed_enum_values
-     */
-    public $_allowed_enum_values;
+    public array $_allowed_enum_values;
+
 
     /**
      * @param string  $table_column
@@ -24,11 +22,10 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
      */
     public function __construct($table_column, $nice_name, $nullable, $default_value, $allowed_enum_values)
     {
-        $this->_allowed_enum_values = $allowed_enum_values;
+        $this->_allowed_enum_values = (array) $allowed_enum_values;
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->setSchemaType('object');
     }
-
 
 
     /**
@@ -39,13 +36,12 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
      */
     protected function _allowed_enum_values()
     {
-        return apply_filters(
+        return (array) apply_filters(
             'FHEE__EE_Enum_Text_Field___allowed_enum_options',
             $this->_allowed_enum_values,
             $this
         );
     }
-
 
 
     /**
@@ -54,7 +50,6 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
      *
      * @param string $value_inputted_for_field_on_model_object
      * @return string
-     * @throws EE_Error
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
@@ -63,7 +58,7 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
             && ! array_key_exists($value_inputted_for_field_on_model_object, $this->_allowed_enum_values())
         ) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                $msg = sprintf(
+                $msg  = sprintf(
                     esc_html__('System is assigning incompatible value "%1$s" to field "%2$s"', 'event_espresso'),
                     $value_inputted_for_field_on_model_object,
                     $this->_name
@@ -74,7 +69,7 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
                     implode(', ', array_keys($this->_allowed_enum_values())),
                     $value_inputted_for_field_on_model_object
                 );
-                EE_Error::add_error("{$msg}||{$msg2}", __FILE__, __FUNCTION__, __LINE__);
+                EE_Error::add_error("$msg||$msg2", __FILE__, __FUNCTION__, __LINE__);
             }
             return $this->get_default_value();
         }
@@ -92,13 +87,8 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, ?string $schema = null)
     {
         $options = $this->_allowed_enum_values();
-        if (isset($options[ $value_on_field_to_be_outputted ])) {
-            return $options[ $value_on_field_to_be_outputted ];
-        } else {
-            return $value_on_field_to_be_outputted;
-        }
+        return $options[ $value_on_field_to_be_outputted ] ?? $value_on_field_to_be_outputted;
     }
-
 
 
     /**
@@ -115,26 +105,26 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
     }
 
 
-    public function getSchemaProperties()
+    public function getSchemaProperties(): array
     {
-        return array(
-            'raw' => array(
-                'description' =>  sprintf(
+        return [
+            'raw'    => [
+                'description' => sprintf(
                     esc_html__('%s - the value in the database.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'string',
-                'enum' => array_keys($this->_allowed_enum_values)
-            ),
-            'pretty' => array(
-                'description' =>  sprintf(
+                'type'        => 'string',
+                'enum'        => array_keys($this->_allowed_enum_values),
+            ],
+            'pretty' => [
+                'description' => sprintf(
                     esc_html__('%s - the value for display.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'string',
-                'enum' => array_values($this->_allowed_enum_values),
-                'read_only' => true
-            )
-        );
+                'type'        => 'string',
+                'enum'        => array_values($this->_allowed_enum_values),
+                'read_only'   => true,
+            ],
+        ];
     }
 }

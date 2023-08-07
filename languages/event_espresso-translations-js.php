@@ -255,7 +255,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:110
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:108
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:233
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:108
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:107
 	__( 'Details', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:114
@@ -394,11 +394,11 @@ $generated_i18n_strings = array(
 	__( 'Shift dates', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:92
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:92
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:91
 	__( 'earlier', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:96
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:96
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:95
 	__( 'later', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCapacity.tsx:31
@@ -605,11 +605,10 @@ $generated_i18n_strings = array(
 	__( 'Reg list', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:107
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:111
 	__( 'Regs', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:122
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:126
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:121
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:59
 	__( 'Actions', 'event_espresso' ),
 
@@ -820,7 +819,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Set to 0 to stop sales, or leave blank for no limit.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:114
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:121
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:120
 	__( 'Number of Uses', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:120
@@ -830,7 +829,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Example: A ticket might have access to 4 different dates, but setting this field to 2 would mean that the ticket could only be used twice. Leave blank for no limit.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:132
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:129
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:128
 	__( 'Minimum Quantity', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:137
@@ -840,7 +839,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Leave blank for no minimum.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:147
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:137
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:136
 	__( 'Maximum Quantity', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:153
@@ -850,7 +849,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Leave blank for no maximum.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:163
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:146
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:145
 	__( 'Required Ticket', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:165
@@ -863,7 +862,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Ticket Sales', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:95
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:112
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:111
 	__( 'Quantity For Sale', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketRegistrationsLink.tsx:13
@@ -1105,8 +1104,8 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:39
 	__( 'Tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:110
-	__( 'Registrations', 'event_espresso' ),
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:108
+	__( 'Reg List', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:51
 	__( 'Goes on Sale', 'event_espresso' ),
@@ -1121,7 +1120,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Price', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:88
-	__( 'Quantity', 'event_espresso' ),
+	__( 'Qty', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:105
 	__( 'Select a Venue for the Event', 'event_espresso' ),
@@ -1252,7 +1251,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'price', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/constants.ts:28
-	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:19
+	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:20
 	__( 'price type', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:38
@@ -1902,7 +1901,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:68
 	__( 'Add Media', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/buttons/AddPriceModifierButton.tsx:14
+	// Reference: packages/tpc/src/buttons/AddPriceModifierButton.tsx:16
 	__( 'add new price modifier after this row', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/buttons/DeleteAllPricesButton.tsx:14
@@ -1944,6 +1943,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/buttons/taxes/RemoveTaxesButton.tsx:7
 	__( 'Remove taxes', 'event_espresso' ),
 
+	// Reference: packages/tpc/src/components/AddDefaultPricesButton.tsx:9
+	__( 'Add default prices', 'event_espresso' ),
+
 	// Reference: packages/tpc/src/components/DefaultPricesInfo.tsx:29
 	__( 'Modify default prices.', 'event_espresso' ),
 
@@ -1954,23 +1956,33 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:74
 	__( 'Price editing is disabled!', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/NoPricesBanner/AddDefaultPricesButton.tsx:9
-	__( 'Add default prices', 'event_espresso' ),
+	// Reference: packages/tpc/src/components/NoPriceTypesBanner.tsx:12
+	__( 'One or more price types are missing. Maybe they were placed in the trash?', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/NoPricesBanner/index.tsx:13
+	// Reference: packages/tpc/src/components/NoPriceTypesBanner.tsx:17
+	/* translators: %s link to price types admin */
+	__( 'Go to the%sto restore (untrash) your price types and/or create some new ones.', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/NoPriceTypesBanner.tsx:18
+	__( 'price types admin page', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/NoPriceTypesBanner.tsx:26
+	__( 'Missing Price Types!', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/NoPricesBanner.tsx:14
 	__( 'This Ticket is Currently Free', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/NoPricesBanner/index.tsx:21
+	// Reference: packages/tpc/src/components/NoPricesBanner.tsx:21
 	/* translators: %s default prices */
 	__( 'Click the button below to load your %s into the calculator.', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/NoPricesBanner/index.tsx:22
+	// Reference: packages/tpc/src/components/NoPricesBanner.tsx:22
 	__( 'default prices', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/NoPricesBanner/index.tsx:29
+	// Reference: packages/tpc/src/components/NoPricesBanner.tsx:29
 	__( 'Additional ticket price modifiers can be added or removed.', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/NoPricesBanner/index.tsx:32
+	// Reference: packages/tpc/src/components/NoPricesBanner.tsx:31
 	__( 'Click the save button below to assign which dates this ticket will be available for purchase on.', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:22
@@ -2155,6 +2167,12 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Untrash.tsx:8
 	__( 'untrash', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityList/EntityList.tsx:23
+	__( 'OOPS!', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityList/EntityList.tsx:23
+	__( 'Error Loading Entites List', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/EntityList/RegistrationsLink/index.tsx:12
 	__( 'click to open the registrations admin page in a new tab or window', 'event_espresso' ),

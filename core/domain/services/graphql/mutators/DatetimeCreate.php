@@ -33,31 +33,22 @@ class DatetimeCreate extends EntityMutator
             $id = null;
             try {
                 EntityMutator::checkPermissions($model);
-
-                $tickets = [];
                 $args = DatetimeMutation::prepareFields($input);
 
-                if (isset($args['tickets'])) {
-                    $tickets = $args['tickets'];
-                    unset($args['tickets']);
-                }
-
-
-                $venue = 'NO_VENUE_SET';
-                if (array_key_exists('venue', $args)) {
-                    $venue = $args['venue'];
-                    unset($args['venue']);
-                }
+                // extract tickets and venue from args then unset them
+                $tickets = $args['tickets'] ?? null;
+                $venue   = $args['venue'] ?? null;
+                unset($args['tickets'], $args['venue']);
 
                 $entity = EE_Datetime::new_instance($args);
                 $id = $entity->save();
                 EntityMutator::validateResults($id);
 
-                if (! empty($tickets)) {
+                if ($tickets) {
                     DatetimeMutation::setRelatedTickets($entity, $tickets);
                 }
 
-                if ($venue !== 'NO_VENUE_SET') {
+                if ($venue) {
                     DatetimeMutation::setVenue($entity, $venue);
                 }
 

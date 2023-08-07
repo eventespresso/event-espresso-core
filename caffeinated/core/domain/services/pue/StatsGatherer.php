@@ -175,9 +175,9 @@ class StatsGatherer
 
     /**
      * @param string $which enum (@see constants prefixed with COUNT)
-     * @return int|null
+     * @return int|float|null
      */
-    private function getCountFor(string $which): ?int
+    private function getCountFor(string $which)
     {
         try {
             switch ($which) {

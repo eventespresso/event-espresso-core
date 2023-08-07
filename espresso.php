@@ -81,7 +81,7 @@ if (function_exists('espresso_version')) {
                         EE_MIN_PHP_VER_REQUIRED,
                         PHP_VERSION,
                         '<br/>',
-                        '<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
+                        '<a href="https://www.php.net/downloads.php">https://php.net/downloads.php</a>'
                     );
                     ?>
 	</p>
@@ -95,7 +95,6 @@ if (function_exists('espresso_version')) {
         define('EVENT_ESPRESSO_MAIN_FILE', __FILE__);
 
         require_once __DIR__ . '/vendor/autoload.php';
-        require_once __DIR__ . '/vendor/wp-graphql/wp-graphql/wp-graphql.php';
 
         /**
          * espresso_version
@@ -103,7 +102,7 @@ if (function_exists('espresso_version')) {
          *
          * @return string
          */
-        function espresso_version()
+        function espresso_version(): string
         {
             return apply_filters('FHEE__espresso__espresso_version', '5.0.8.rc.000');
         }
@@ -118,6 +117,7 @@ if (function_exists('espresso_version')) {
             update_option('event-espresso-core_allow_tracking', 'no');
             update_option('event-espresso-core_tracking_notice', 'hide');
             // Run WP GraphQL activation callback
+            espressoLoadWpGraphQL();
             graphql_activation_callback();
         }
 
@@ -129,6 +129,7 @@ if (function_exists('espresso_version')) {
         function espresso_plugin_deactivation()
         {
             // Run WP GraphQL deactivation callback
+            espressoLoadWpGraphQL();
             graphql_deactivation_callback();
             delete_option('event-espresso-core_allow_tracking');
             delete_option('event-espresso-core_tracking_notice');
@@ -149,12 +150,25 @@ if (! function_exists('espresso_deactivate_plugin')) {
      * @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
      * @return    void
      */
-    function espresso_deactivate_plugin($plugin_basename = '')
+    function espresso_deactivate_plugin(string $plugin_basename = '')
     {
         if (! function_exists('deactivate_plugins')) {
             require_once ABSPATH . 'wp-admin/includes/plugin.php';
         }
         unset($_GET['activate'], $_REQUEST['activate']);
         deactivate_plugins($plugin_basename);
+    }
+}
+
+
+if (! function_exists('espressoLoadWpGraphQL')) {
+    function espressoLoadWpGraphQL()
+    {
+        if (
+            ! class_exists('WPGraphQL')
+            && is_readable(__DIR__ . '/vendor/wp-graphql/wp-graphql/wp-graphql.php')
+        ) {
+            require_once __DIR__ . '/vendor/wp-graphql/wp-graphql/wp-graphql.php';
+        }
     }
 }

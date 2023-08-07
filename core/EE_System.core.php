@@ -9,6 +9,7 @@ use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\addon\AddonManager;
+use EventEspresso\core\services\helpers\WordPressHooks;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
@@ -140,6 +141,7 @@ final class EE_System implements ResettableInterface
      */
     private $register_custom_taxonomy_terms;
 
+
     /**
      * @singleton method used to instantiate class object
      * @param LoaderInterface|null     $loader
@@ -208,6 +210,11 @@ final class EE_System implements ResettableInterface
         do_action('AHEE__EE_System__construct__begin', $this);
         add_action(
             'AHEE__EE_Bootstrap__load_espresso_addons',
+            [$this, 'loadWpGraphQL'],
+            3
+        );
+        add_action(
+            'AHEE__EE_Bootstrap__load_espresso_addons',
             [$this, 'loadCapabilities'],
             5
         );
@@ -255,12 +262,12 @@ final class EE_System implements ResettableInterface
         // load specifications for custom post types
         add_action(
             'AHEE__EE_Bootstrap__load_core_configuration',
-            array($this, 'loadCustomPostTypes')
+            [$this, 'loadCustomPostTypes']
         );
         // load specifications for custom post types
         add_action(
             'AHEE__EE_Bootstrap__load_core_configuration',
-            array($this, 'loadCustomPostTypes')
+            [$this, 'loadCustomPostTypes']
         );
         // load EE_Config, EE_Textdomain, etc
         add_action(
@@ -292,16 +299,20 @@ final class EE_System implements ResettableInterface
      *
      * @return void
      */
+    public function loadWpGraphQL()
+    {
+        espressoLoadWpGraphQL();
+    }
+
+
+    /**
+     * load and setup EE_Capabilities
+     *
+     * @return void
+     */
     public function loadCapabilities()
     {
         $this->capabilities = $this->loader->getShared('EE_Capabilities');
-        add_action(
-            'AHEE__EE_Capabilities__init_caps__before_initialization',
-            function () {
-                LoaderFactory::getLoader()->getShared('EventEspresso\PaymentMethods\Manager');
-                LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
-            }
-        );
     }
 
 
@@ -431,7 +442,6 @@ final class EE_System implements ResettableInterface
         // check if db has been updated, or if its a brand-new installation
         $espresso_db_update = $this->fix_espresso_db_upgrade_option();
         $request_type       = $this->detect_req_type($espresso_db_update);
-        // EEH_Debug_Tools::printr( $request_type, '$request_type', __FILE__, __LINE__ );
         switch ($request_type) {
             case EE_System::req_type_new_activation:
                 do_action('AHEE__EE_System__detect_if_activation_or_upgrade__new_activation');
@@ -524,7 +534,9 @@ final class EE_System implements ResettableInterface
             update_option('espresso_db_update', $espresso_db_update);
         }
         do_action('FHEE__EE_System__manage_fix_espresso_db_upgrade_option__complete', $espresso_db_update);
-        return ! empty($espresso_db_update) ? $espresso_db_update : [];
+        return ! empty($espresso_db_update)
+            ? $espresso_db_update
+            : [];
     }
 
 
@@ -619,14 +631,14 @@ final class EE_System implements ResettableInterface
      * Detects if the current version indicated in the has existed in the list of
      * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
      *
-     * @param array $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
-     *                                  If not supplied, fetches it from the options table.
-     *                                  Also, caches its result so later parts of the code can also know whether
-     *                                  there's been an update or not. This way we can add the current version to
-     *                                  espresso_db_update, but still know if this is a new install or not
+     * @param array|null $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
+     *                                       If not supplied, fetches it from the options table.
+     *                                       Also, caches its result so later parts of the code can also know whether
+     *                                       there's been an update or not. This way we can add the current version to
+     *                                       espresso_db_update, but still know if this is a new install or not
      * @return int one of the constants on EE_System::req_type_
      */
-    public function detect_req_type($espresso_db_update = null): int
+    public function detect_req_type(?array $espresso_db_update = null): int
     {
         if ($this->_req_type === null) {
             $espresso_db_update          = ! empty($espresso_db_update)
@@ -658,14 +670,14 @@ final class EE_System implements ResettableInterface
         $previous_version_parts = explode('.', $previous_version);
         $current_version_parts  = explode('.', espresso_version());
         return isset(
-            $previous_version_parts[0],
-            $previous_version_parts[1],
-            $current_version_parts[0],
-            $current_version_parts[1]
-        ) && (
-            $previous_version_parts[0] !== $current_version_parts[0]
-            || $previous_version_parts[1] !== $current_version_parts[1]
-        );
+                   $previous_version_parts[0],
+                   $previous_version_parts[1],
+                   $current_version_parts[0],
+                   $current_version_parts[1]
+               ) && (
+                   $previous_version_parts[0] !== $current_version_parts[0]
+                   || $previous_version_parts[1] !== $current_version_parts[1]
+               );
     }
 
 
@@ -687,13 +699,13 @@ final class EE_System implements ResettableInterface
      * set upon activation of the plugin (for core it's 'ee_espresso_activation'); and the version that this plugin was
      * just activated to (for core that will always be espresso_version())
      *
-     * @param array|null $activation_history             the option's value which stores the activation history for
-     *                                                 this
-     *                                                 ee plugin. for core that's 'espresso_db_update'
-     * @param string $activation_indicator_option_name the name of the WordPress option that is temporarily set to
-     *                                                 indicate that this plugin was just activated
-     * @param string $current_version                  the version that was just upgraded to (for core that will be
-     *                                                 espresso_version())
+     * @param array|null $activation_history               the option's value which stores the activation history for
+     *                                                     this
+     *                                                     ee plugin. for core that's 'espresso_db_update'
+     * @param string     $activation_indicator_option_name the name of the WordPress option that is temporarily set to
+     *                                                     indicate that this plugin was just activated
+     * @param string     $current_version                  the version that was just upgraded to (for core that will be
+     *                                                     espresso_version())
      * @return int one of the constants on EE_System::req_type_
      */
     public static function detect_req_type_given_activation_history(
@@ -713,9 +725,9 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * @param array  $activation_history
-     * @param int    $version_change
-     * @param bool   $is_activation
+     * @param array $activation_history
+     * @param int   $version_change
+     * @param bool  $is_activation
      * @return int
      * @since 5.0.0.p
      */
@@ -765,11 +777,11 @@ final class EE_System implements ResettableInterface
      * Gets the most recently active version listed in the activation history,
      * and if none are found (ie, it's a brand new install) returns '0.0.0.dev.000'.
      *
-     * @param array $activation_history  (keys are versions, values are arrays of times activated,
-     *                                   sometimes containing 'unknown-date'
+     * @param array|null $activation_history (keys are versions, values are arrays of times activated,
+     *                                       sometimes containing 'unknown-date'
      * @return string
      */
-    private static function getMostRecentlyActiveVersion(array $activation_history): string
+    private static function getMostRecentlyActiveVersion(?array $activation_history): string
     {
         $most_recent_activation_date  = '1970-01-01 00:00:00';
         $most_recently_active_version = '0.0.0.dev.000';
@@ -780,7 +792,9 @@ final class EE_System implements ResettableInterface
                 if (! $activation_dates) {
                     $activation_dates = ['unknown-date'];
                 }
-                $activation_dates = is_string($activation_dates) ? [$activation_dates] : $activation_dates;
+                $activation_dates = is_string($activation_dates)
+                    ? [$activation_dates]
+                    : $activation_dates;
                 foreach ($activation_dates as $activation_date) {
                     if ($activation_date !== 'unknown-date' && $activation_date > $most_recent_activation_date) {
                         $most_recently_active_version = $version;
@@ -917,10 +931,10 @@ final class EE_System implements ResettableInterface
      */
     public function loadCustomPostTypes()
     {
-        $this->register_custom_taxonomies = $this->loader->getShared(
+        $this->register_custom_taxonomies     = $this->loader->getShared(
             'EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies'
         );
-        $this->register_custom_post_types = $this->loader->getShared(
+        $this->register_custom_post_types     = $this->loader->getShared(
             'EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes'
         );
         $this->register_custom_taxonomy_terms = $this->loader->getShared(
@@ -963,7 +977,7 @@ final class EE_System implements ResettableInterface
     private function _incompatible_addon_error()
     {
         // get array of classes hooking into here
-        $class_names = EEH_Class_Tools::get_class_names_for_all_callbacks_on_hook(
+        $class_names = WordPressHooks::getClassNamesForAllCallbacksOnHook(
             'AHEE__EE_System__register_shortcodes_modules_and_addons'
         );
         if (! empty($class_names)) {
@@ -1015,10 +1029,13 @@ final class EE_System implements ResettableInterface
         add_action('init', [$this, 'initialize'], 10);
         add_action('init', [$this, 'initialize_last'], 100);
         $this->router->brewEspresso();
+        $this->loader->getShared('EventEspresso\PaymentMethods\Manager');
+        $this->loader->getShared('EE_Payment_Method_Manager');
         do_action('AHEE__EE_System__brew_espresso__complete', $this);
     }
 
 
+    /**
     /**
      *    set_hooks_for_core
      *
@@ -1033,7 +1050,7 @@ final class EE_System implements ResettableInterface
         $this->loader->getShared('EventEspresso\core\domain\values\session\SessionLifespan');
         // caps need to be initialized on every request so that capability maps are set.
         // @see https://events.codebasehq.com/projects/event-espresso/tickets/8674
-        $this->registry->CAP->init_caps();
+        $this->capabilities->init_caps();
     }
 
 
@@ -1181,7 +1198,7 @@ final class EE_System implements ResettableInterface
     {
         $this->loader->getShared(
             'EventEspresso\core\domain\services\admin\AdminToolBar',
-            [$this->registry->CAP]
+            [$this->capabilities]
         );
     }
 

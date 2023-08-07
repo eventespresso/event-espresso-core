@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeZone;
 use DomainException;
 use EE_Datetime_Field;
+use Exception;
 
 class PhpCompatGreaterFiveSixHelper extends AbstractHelper
 {
@@ -30,6 +31,7 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
         }
     }
 
+
     /**
      * Returns a timezone string for the provided gmt_offset.
      * This is a valid timezone string that can be sent into DateTimeZone
@@ -37,7 +39,7 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
      * @param float|string $gmt_offset
      * @return string
      */
-    public function getTimezoneStringFromGmtOffset($gmt_offset = '')
+    public function getTimezoneStringFromGmtOffset($gmt_offset = ''): string
     {
         $gmt_offset_or_timezone_string = $this->sanitizeInitialIncomingGmtOffsetForGettingTimezoneString($gmt_offset);
         return is_float($gmt_offset_or_timezone_string)
@@ -46,39 +48,41 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
     }
 
 
-
     /**
      * Returns a formatted offset for use as an argument for constructing DateTimeZone
+     *
      * @param float $gmt_offset This should be a float representing the gmt_offset.
      * @return string
      */
-    protected function convertWpGmtOffsetForDateTimeZone($gmt_offset)
+    protected function convertWpGmtOffsetForDateTimeZone(float $gmt_offset): string
     {
-        $gmt_offset = (float) $gmt_offset;
         $is_negative = $gmt_offset < 0;
-        $gmt_offset *= 100;
-        $gmt_offset = absint($gmt_offset);
+        $gmt_offset  *= 100;
+        $gmt_offset  = absint($gmt_offset);
         // negative and need zero padding?
         if (strlen($gmt_offset) < 4) {
             $gmt_offset = str_pad($gmt_offset, 4, '0', STR_PAD_LEFT);
         }
         $gmt_offset = $this->convertToTimeFraction($gmt_offset);
         // return something like -1300, -0200 or +1300, +0200
-        return $is_negative ? '-' . $gmt_offset : '+' . $gmt_offset;
+        return $is_negative
+            ? '-' . $gmt_offset
+            : '+' . $gmt_offset;
     }
 
 
     /**
      * Converts something like `1550` to `1530` or `0275` to `0245`
      * Incoming offset should be a positive value, this will mutate negative values. Be aware!
+     *
      * @param int $offset
-     * @return mixed
+     * @return string
      */
-    protected function convertToTimeFraction($offset)
+    protected function convertToTimeFraction(int $offset): string
     {
-        $first_part = substr($offset, 0, 2);
+        $first_part  = substr($offset, 0, 2);
         $second_part = substr($offset, 2, 2);
-        $second_part = str_replace(array('25', '50', '75'), array('15', '30', '45'), $second_part);
+        $second_part = str_replace(['25', '50', '75'], ['15', '30', '45'], $second_part);
         return $first_part . $second_part;
     }
 
@@ -89,11 +93,16 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
      * @param DateTimeZone $date_time_zone
      * @param null|int     $time
      * @return int
+     * @throws Exception
      */
-    public function getTimezoneOffset(DateTimezone $date_time_zone, $time = null)
+    public function getTimezoneOffset(DateTimezone $date_time_zone, $time = null): int
     {
-        $time = is_int($time) || $time === null ? $time : (int) strtotime($time);
-        $time = preg_match(EE_Datetime_Field::unix_timestamp_regex, $time) ? $time : time();
+        $time = is_int($time) || $time === null
+            ? $time
+            : (int) strtotime($time);
+        $time = preg_match(EE_Datetime_Field::unix_timestamp_regex, (int) $time)
+            ? $time
+            : time();
         return $date_time_zone->getOffset(new DateTime('@' . $time));
     }
 }

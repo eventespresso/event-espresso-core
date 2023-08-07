@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\helpers\WordPressHooks;
+
 /**
  * EEH_Class_Tools Helper
  *
@@ -98,27 +100,8 @@ class EEH_Class_Tools
      */
     public static function get_class_names_for_all_callbacks_on_hook($hook = null)
     {
-        global $wp_filter;
-        $class_names = [];
-        // are any callbacks registered for this hook ?
-        if (isset($wp_filter[ $hook ])) {
-            // loop thru all of the callbacks attached to the deprecated hookpoint
-            foreach ($wp_filter[ $hook ] as $priority) {
-                foreach ($priority as $callback) {
-                    // is the callback a non-static class method ?
-                    if (isset($callback['function']) && is_array($callback['function'])) {
-                        if (isset($callback['function'][0]) && is_object($callback['function'][0])) {
-                            $class_names[] = get_class($callback['function'][0]);
-                        }
-                        // test for static method
-                    } elseif (strpos($callback['function'], '::') !== false) {
-                        $class         = explode('::', $callback['function']);
-                        $class_names[] = $class[0];
-                    }
-                }
-            }
-        }
-        return $class_names;
+        // moved this function into new class since this class is now deprecated
+        return WordPressHooks::getClassNamesForAllCallbacksOnHook($hook);
     }
 
 

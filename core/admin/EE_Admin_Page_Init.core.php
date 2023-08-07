@@ -18,8 +18,20 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EE_Admin_Page_Init extends EE_Base
 {
-    // identity properties (set in _set_defaults and _set_init_properties)
-    public $label;
+    /**
+     * This holds the menu map object for this admin page.
+     */
+    protected ?AdminMenuItem    $_menu_map           = null;
+
+    protected ?EE_Admin_Page    $_loaded_page_object = null;
+
+    protected ?LoaderInterface  $loader              = null;
+
+    protected ?RequestInterface $request             = null;
+
+    private bool                $_load_page          = false;
+
+    protected bool              $_routing            = false;
 
     /**
      * Menu map has a capability.  However, this allows admin pages to have separate capability requirements for menus
@@ -27,63 +39,33 @@ abstract class EE_Admin_Page_Init extends EE_Base
      *
      * @var string
      */
-    public $capability;
-
-
-    /**
-     * This holds the menu map object for this admin page.
-     *
-     * @var AdminMenuItem
-     */
-    protected $_menu_map = null;
+    public string $capability = '';
 
     /**
-     * deprecated
+     * identity properties (set in _set_defaults and _set_init_properties)
      */
-    public $menu_label;
+    public string    $label         = '';
 
-    public $menu_slug;
+    protected string $_file_name    = '';
 
+    protected string $_folder_name  = '';
 
-    // set in _set_defaults
-    protected $_folder_name;
+    protected string $_folder_path  = '';
 
-    protected $_folder_path;
+    protected string $_wp_page_slug = '';
 
-    protected $_file_name;
+    public string    $hook_file     = '';
 
-    public $hook_file;
-
-    protected $_wp_page_slug;
-
-    protected $_routing;
-
+    public string    $menu_slug     = '';
 
     /**
-     * This holds the page object.
-     *
-     * @var EE_Admin_Page
+     * @deprecated
      */
-    protected $_loaded_page_object;
+    public string   $menu_label    = '';
 
+    protected array $_files_hooked = [];
 
-    // for caf
-    protected $_files_hooked;
-
-    protected $_hook_paths;
-
-    // load_page?
-    private $_load_page;
-
-    /**
-     * @var LoaderInterface
-     */
-    protected $loader;
-
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    protected array $_hook_paths   = [];
 
 
     /**
@@ -139,7 +121,6 @@ abstract class EE_Admin_Page_Init extends EE_Base
      */
     protected function _set_menu_map()
     {
-        $this->_menu_map = null;
     }
 
 
@@ -230,10 +211,14 @@ abstract class EE_Admin_Page_Init extends EE_Base
      */
     private function _set_defaults()
     {
-        $this->_file_name    = $this->_folder_name = $this->_wp_page_slug = $this->capability = null;
+        $this->_file_name    = '';
+        $this->_folder_name  = '';
+        $this->_wp_page_slug = '';
+        $this->capability    = '';
         $this->_routing      = true;
         $this->_load_page    = false;
-        $this->_files_hooked = $this->_hook_paths = [];
+        $this->_files_hooked = [];
+        $this->_hook_paths   = [];
     }
 
 
@@ -446,8 +431,13 @@ abstract class EE_Admin_Page_Init extends EE_Base
         $page      = $this->request->getRequestParam('current_page', $page);
         $menu_slug = $this->_menu_map->menuSlug();
 
-
-        if ($this->_routing && ($page === '' || $page !== $menu_slug)) {
+        // leaving the following in for the time being
+        // because not sure if preventing multiple admin page loading will result in bad things happening
+        $darren_logic                       = false;  // true    false
+        $not_the_droids_you_are_looking_for = $darren_logic
+            ? $this->_routing && ($page === '' || $page !== $menu_slug)
+            : $page === '' || $page !== $menu_slug;
+        if ($not_the_droids_you_are_looking_for) {
             // not on the right page so let's get out.
             return;
         }

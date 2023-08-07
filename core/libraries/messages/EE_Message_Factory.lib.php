@@ -1,52 +1,40 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * Class EE_Message_Factory
- *
  * Description
  *
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- *
- *
  */
 class EE_Message_Factory
 {
-    /**
-     * @type EE_Message_Factory $_instance
-     */
-    protected static $_instance = null;
+    protected static ?EE_Message_Factory  $_instance = null;
 
-
-    /**
-     * @type EE_Message_Resource_Manager $_message_resource_manager
-     */
-    protected $_message_resource_manager;
-
+    protected EE_Message_Resource_Manager $_message_resource_manager;
 
 
     /**
      * EE_Message_Factory constructor.
      *
-     * @access protected
-     * @param \EE_Message_Resource_Manager $Message_Resource_Manager
+     * @param EE_Message_Resource_Manager $Message_Resource_Manager
      */
-    protected function __construct(
-        EE_Message_Resource_Manager $Message_Resource_Manager
-    ) {
+    protected function __construct(EE_Message_Resource_Manager $Message_Resource_Manager)
+    {
         $this->_message_resource_manager = $Message_Resource_Manager;
     }
-
 
 
     /**
      * @singleton method used to instantiate class object
      * @access    public
-     * @param \EE_Message_Resource_Manager $Message_Resource_Manager
-     * @return \EE_Message_Factory instance
+     * @param EE_Message_Resource_Manager $Message_Resource_Manager
+     * @return EE_Message_Factory instance
      */
-    public static function instance(EE_Message_Resource_Manager $Message_Resource_Manager)
+    public static function instance(EE_Message_Resource_Manager $Message_Resource_Manager): ?EE_Message_Factory
     {
         // check if class object is instantiated, and instantiated properly
         if (! self::$_instance instanceof EE_Message_Factory) {
@@ -56,109 +44,88 @@ class EE_Message_Factory
     }
 
 
-
     /**
-     * @access public
-     * @param  array $props_n_values
+     * @param array $props_n_values
      * @return EE_Message
      */
-    public static function create($props_n_values = array())
+    public static function create(array $props_n_values = []): EE_Message
     {
         /** @type EE_Message_Factory $Message_Factory */
-        $Message_Factory = EE_Registry::instance()->load_lib('Message_Factory');
+        $Message_Factory = LoaderFactory::getShared('EE_Message_Factory');
         return $Message_Factory->_create($props_n_values);
     }
 
 
-
     /**
-     * @access public
-     * @param  \EE_Message $message
-     * @return \EE_Message
-     * @throws \EE_Error
+     * @param EE_Message $message
+     * @return EE_Message
      */
-    public static function set_messenger_and_message_type(EE_Message $message)
+    public static function set_messenger_and_message_type(EE_Message $message): EE_Message
     {
         /** @type EE_Message_Factory $Message_Factory */
-        $Message_Factory = EE_Registry::instance()->load_lib('Message_Factory');
+        $Message_Factory = LoaderFactory::getShared('EE_Message_Factory');
         return $Message_Factory->_set_messenger_and_message_type($message);
     }
 
 
-
     /**
-     * @access public
-     * @param  \EE_Message $message
-     * @return \EE_Message
-     * @throws \EE_Error
+     * @param EE_Message $message
+     * @return EE_Message
      */
-    public static function set_messenger(EE_Message $message)
+    public static function set_messenger(EE_Message $message): EE_Message
     {
         /** @type EE_Message_Factory $Message_Factory */
-        $Message_Factory = EE_Registry::instance()->load_lib('Message_Factory');
+        $Message_Factory = LoaderFactory::getShared('EE_Message_Factory');
         return $Message_Factory->_set_messenger($message);
     }
 
 
-
     /**
-     * @access public
-     * @param  \EE_Message $message
-     * @return \EE_Message
-     * @throws \EE_Error
+     * @param EE_Message $message
+     * @return EE_Message
      */
-    public static function set_message_type(EE_Message $message)
+    public static function set_message_type(EE_Message $message): EE_Message
     {
         /** @type EE_Message_Factory $Message_Factory */
-        $Message_Factory = EE_Registry::instance()->load_lib('Message_Factory');
+        $Message_Factory = LoaderFactory::getShared('EE_Message_Factory');
         return $Message_Factory->_set_message_type($message);
     }
 
 
-
     /**
-     * @access protected
-     * @param  array $props_n_values
-     * @return \EE_Message
-     * @throws \EE_Error
+     * @param array $props_n_values
+     * @return EE_Message
      */
-    protected function _create($props_n_values = array())
+    protected function _create(array $props_n_values = []): EE_Message
     {
         $new_instance = false;
         if (! empty($props_n_values['MSG_ID'])) {
             $message = EE_Message::new_instance_from_db($props_n_values);
         } else {
-            $message = EE_Message::new_instance($props_n_values);
+            $message      = EE_Message::new_instance($props_n_values);
             $new_instance = true;
         }
         return $this->_set_messenger_and_message_type($message, $new_instance);
     }
 
 
-
     /**
-     * @access public
-     * @param  \EE_Message $message
-     * @param  bool        $new_instance Whether the message type was setup from the database (false) or not (true)
-     * @return \EE_Message
-     * @throws \EE_Error
+     * @param EE_Message $message
+     * @param bool       $new_instance Whether the message type was setup from the database (false) or not (true)
+     * @return EE_Message
      */
-    protected function _set_messenger_and_message_type(EE_Message $message, $new_instance = false)
+    protected function _set_messenger_and_message_type(EE_Message $message, bool $new_instance = false): EE_Message
     {
         $message = $this->_set_messenger($message);
-        $message = $this->_set_message_type($message, $new_instance);
-        return $message;
+        return $this->_set_message_type($message, $new_instance);
     }
 
 
-
     /**
-     * @access protected
-     * @param  \EE_Message $message
-     * @return \EE_Message
-     * @throws \EE_Error
+     * @param EE_Message $message
+     * @return EE_Message
      */
-    protected function _set_messenger(EE_Message $message)
+    protected function _set_messenger(EE_Message $message): EE_Message
     {
         $messenger = $this->_message_resource_manager->get_messenger($message->messenger());
         if ($messenger instanceof EE_messenger) {
@@ -168,15 +135,12 @@ class EE_Message_Factory
     }
 
 
-
     /**
-     * @access protected
-     * @param  \EE_Message $message
-     * @param  bool        $new_instance Whether the message type was setup from the database (false) or not (true)
-     * @return \EE_Message
-     * @throws \EE_Error
+     * @param EE_Message $message
+     * @param bool       $new_instance Whether the message type was setup from the database (false) or not (true)
+     * @return EE_Message
      */
-    protected function _set_message_type(EE_Message $message, $new_instance = false)
+    protected function _set_message_type(EE_Message $message, bool $new_instance = false): EE_Message
     {
         $message_type = $this->_message_resource_manager->get_message_type($message->message_type());
         if ($message_type instanceof EE_message_type) {

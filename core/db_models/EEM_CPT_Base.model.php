@@ -58,16 +58,14 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      *
      * @var array
      */
-    protected $_custom_stati = array();
+    protected $_custom_stati = [];
 
 
     /**
-     * Adds a relationship to Term_Taxonomy for each CPT_Base
-     *
-     * @param string $timezone
-     * @throws \EE_Error
+     * @param string|null $timezone
+     * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct(?string $timezone = '')
     {
         // adds a relationship to Term_Taxonomy for all these models. For this to work
         // Term_Relationship must have a relation to each model subclassing EE_CPT_Base explicitly
@@ -75,7 +73,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
         // with key equalling the subclassing model's model name (eg 'Event' or 'Venue'), and the value
         // must also be new EE_HABTM_Relation('Term_Relationship');
         $this->_model_relations['Term_Taxonomy'] = new EE_HABTM_Relation('Term_Relationship');
-        $primary_table_name = null;
+        $primary_table_name                      = null;
         // add  the common _status field to all CPT primary tables.
         foreach ($this->_tables as $alias => $table_obj) {
             if ($table_obj instanceof EE_Primary_Table) {
@@ -154,7 +152,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
     public function public_event_stati()
     {
         // @see wp-includes/post.php
-        return get_post_stati(array('public' => true));
+        return get_post_stati(['public' => true]);
     }
 
 
@@ -208,12 +206,14 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
     /**
      * Alters the query params so that only trashed/soft-deleted items are considered
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return array @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     protected function _alter_query_params_so_only_trashed_items_included($query_params)
     {
-        $post_status_field_name = $this->post_status_field_name();
+        $post_status_field_name                     = $this->post_status_field_name();
         $query_params[0][ $post_status_field_name ] = self::post_status_trashed;
         return $query_params;
     }
@@ -235,17 +235,17 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
     /**
      * Performs deletes or restores on items. Both soft-deleted and non-soft-deleted items considered.
      *
-     * @param boolean $delete       true to indicate deletion, false to indicate restoration
-     * @param array $query_params
+     * @param boolean $delete true to indicate deletion, false to indicate restoration
+     * @param array   $query_params
      * @return boolean success
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function delete_or_restore($delete = true, $query_params = array())
+    public function delete_or_restore($delete = true, $query_params = [])
     {
         $post_status_field_name = $this->post_status_field_name();
-        $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
-        $new_status = $delete ? self::post_status_trashed : 'draft';
+        $query_params           = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
+        $new_status             = $delete ? self::post_status_trashed : 'draft';
         return (bool) $this->update([$post_status_field_name => $new_status], $query_params);
     }
 
@@ -268,13 +268,13 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
     /**
      * This simply returns an array of the meta table fields (useful for when we just need to update those fields)
      *
-     * @param  bool $all triggers whether we include DB_Only fields or JUST non DB_Only fields.  Defaults to false (no
+     * @param bool $all  triggers whether we include DB_Only fields or JUST non DB_Only fields.  Defaults to false (no
      *                   db only fields)
      * @return array
      */
     public function get_meta_table_fields($all = false)
     {
-        $all_fields = $fields_to_return = array();
+        $all_fields = $fields_to_return = [];
         foreach ($this->_tables as $alias => $table_obj) {
             if ($table_obj instanceof EE_Secondary_Table) {
                 $all_fields = array_merge($this->_get_fields_for_table($alias), $all_fields);
@@ -315,46 +315,46 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
         require_once(EE_MODELS . 'EEM_Term.model.php');
         // first, check for a term by the same name or slug
         $category_slug = sanitize_title($category_name);
-        $term = EEM_Term::instance()->get_one(
-            array(
-                array(
-                    'OR' => array(
+        $term          = EEM_Term::instance()->get_one(
+            [
+                [
+                    'OR'                     => [
                         'name' => $category_name,
                         'slug' => $category_slug,
-                    ),
-                    'Term_Taxonomy.taxonomy' => self::EVENT_CATEGORY_TAXONOMY
-                ),
-            )
+                    ],
+                    'Term_Taxonomy.taxonomy' => self::EVENT_CATEGORY_TAXONOMY,
+                ],
+            ]
         );
         if (! $term) {
             $term = EE_Term::new_instance(
-                array(
+                [
                     'name' => $category_name,
                     'slug' => $category_slug,
-                )
+                ]
             );
             $term->save();
         }
         // make sure there's a term-taxonomy entry too
         require_once(EE_MODELS . 'EEM_Term_Taxonomy.model.php');
         $term_taxonomy = EEM_Term_Taxonomy::instance()->get_one(
-            array(
-                array(
+            [
+                [
                     'term_id'  => $term->ID(),
                     'taxonomy' => self::EVENT_CATEGORY_TAXONOMY,
-                ),
-            )
+                ],
+            ]
         );
         /** @var $term_taxonomy EE_Term_Taxonomy */
         if (! $term_taxonomy) {
             $term_taxonomy = EE_Term_Taxonomy::new_instance(
-                array(
+                [
                     'term_id'     => $term->ID(),
                     'taxonomy'    => self::EVENT_CATEGORY_TAXONOMY,
                     'description' => $category_description,
-                    'term_count'       => 1,
+                    'term_count'  => 1,
                     'parent'      => $parent_term_taxonomy_id,
-                )
+                ]
             );
             $term_taxonomy->save();
         } else {
@@ -379,7 +379,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
         $term_taxonomy = $this->get_first_related(
             $cpt_model_object_event,
             'Term_Taxonomy',
-            array(array('Term.name' => $category_name, 'taxonomy' => self::EVENT_CATEGORY_TAXONOMY))
+            [['Term.name' => $category_name, 'taxonomy' => self::EVENT_CATEGORY_TAXONOMY]]
         );
         /** @var $term_taxonomy EE_Term_Taxonomy */
         if ($term_taxonomy) {
@@ -411,13 +411,13 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
     /**
      * Just a handy way to get the list of post statuses currently registered with WP.
      *
-     * @global array $wp_post_statuses set in wp core for storing all the post stati
      * @return array
+     * @global array $wp_post_statuses set in wp core for storing all the post stati
      */
     public function get_post_statuses()
     {
         global $wp_post_statuses;
-        $statuses = array();
+        $statuses = [];
         foreach ($wp_post_statuses as $post_status => $args_object) {
             $statuses[ $post_status ] = $args_object->label;
         }
@@ -448,7 +448,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      */
     public function get_custom_post_statuses()
     {
-        $new_stati = array();
+        $new_stati = [];
         foreach ($this->_custom_stati as $status => $props) {
             $new_stati[ $status ] = $props['label'];
         }
@@ -467,7 +467,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      */
     public function instantiate_class_from_post_object_orig($post)
     {
-        $post = (array) $post;
+        $post                               = (array) $post;
         $has_all_necessary_fields_for_table = true;
         // check if the post has fields on the meta table already
         foreach ($this->_get_other_tables() as $table_obj) {
@@ -499,8 +499,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
         if (empty($post)) {
             global $post;
         }
-        $post = (array) $post;
-        $tables_needing_to_be_queried = array();
+        $post                         = (array) $post;
+        $tables_needing_to_be_queried = [];
         // check if the post has fields on the meta table already
         foreach ($this->get_tables() as $table_obj) {
             $fields_for_that_table = $this->_get_fields_for_table($table_obj->get_table_alias());
@@ -523,9 +523,9 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
             ) {
                 // so we're only missing data from a secondary table. Well that's not too hard to query for
                 $table_to_query = reset($tables_needing_to_be_queried);
-                $missing_data = $this->_do_wpdb_query(
+                $missing_data   = $this->_do_wpdb_query(
                     'get_row',
-                    array(
+                    [
                         'SELECT * FROM '
                         . $table_to_query->get_table_name()
                         . ' WHERE '
@@ -533,7 +533,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
                         . ' = '
                         . $post['ID'],
                         ARRAY_A,
-                    )
+                    ]
                 );
                 if (! empty($missing_data)) {
                     $post = array_merge($post, $missing_data);
@@ -549,8 +549,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
     /**
      * Gets the post type associated with this
      *
-     * @throws EE_Error
      * @return string
+     * @throws EE_Error
      */
     public function post_type()
     {

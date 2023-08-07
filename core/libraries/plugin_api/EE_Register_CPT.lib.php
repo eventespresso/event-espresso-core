@@ -264,4 +264,10 @@ class EE_Register_CPT implements EEI_Plugin_API
     {
         unset(self::$_registry[ $addon_name ]);
     }
+
+
+    public static function reset(): void
+    {
+        self::$_registry = [];
+    }
 }

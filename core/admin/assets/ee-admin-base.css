@@ -8,18 +8,23 @@
 .espresso-admin-font-size-tiny {
     --ee-base-ui-scale: .7rem;
 }
+
 .espresso-admin-font-size-smaller {
     --ee-base-ui-scale: .8rem;
 }
+
 .espresso-admin-font-size-small {
     --ee-base-ui-scale: .9rem;
 }
+
 .espresso-admin-font-size-default {
     --ee-base-ui-scale: 1rem;
 }
+
 .espresso-admin-font-size-big {
     --ee-base-ui-scale: 1.1rem;
 }
+
 .espresso-admin-font-size-bigger {
     --ee-base-ui-scale: 1.2rem;
 }
@@ -149,6 +154,14 @@
     --ee-switch-padding: calc(.3 * var(--ee-base-ui-scale));
     --ee-switch-button: calc(var(--ee-switch-height) - (var(--ee-switch-padding) * 2));
 
+    --ee-border-radius-zero: 0;
+    --ee-border-radius-nano: calc(.5 * var(--ee-size-pico));
+    --ee-border-radius-tiny: var(--ee-size-pico);
+    --ee-border-radius-small: var(--ee-size-nano);
+    --ee-border-radius: var(--ee-size-tiny);
+    --ee-border-radius-big: var(--ee-size-small);
+    --ee-border-radius-lg: var(--ee-size-default);
+    --ee-border-radius-full: 999rem;
 
     /* COLORS */
 
@@ -164,6 +177,7 @@
     --ee-status-color-orange: hsl(20, 100%, 60%);
     --ee-status-color-gold: hsl(40, 98%, 50%);
     --ee-status-color-yellow: hsl(50, 95%, 45%);
+    --ee-status-color-pale-yellow: hsl(50, 70%, 75%);
     --ee-status-color-yellow-desat: hsl(50, 95%, 45%);
     --ee-status-color-dark-green: hsl(95, 50%, 25%);
     --ee-status-color-green: hsl(140, 85%, 35%);
@@ -176,6 +190,7 @@
     --ee-status-color-pale-blue: hsl(203, 55%, 95%);
     --ee-status-color-violet: hsl(239, 35%, 60%);
     --ee-status-color-purple: hsl(279, 35%, 50%);
+    --ee-status-color-light-purple: hsl(279, 35%, 70%);
     --ee-status-color-pale-grey: hsl(219, 2%, 75%);
     --ee-status-color-light-grey: hsl(219, 2%, 55%);
     --ee-status-color-grey: hsl(225, 2%, 37.5%);
@@ -414,7 +429,7 @@
 
 .big-text {
     font-size: var(--ee-font-size-big);
-    line-height:var(--ee-font-size-xl);
+    line-height: var(--ee-font-size-xl);
     letter-spacing: -.5px;
 }
 
@@ -471,7 +486,7 @@
 
 
 .espresso-admin.wp-core-ui .button .ee-icon:before {
-    top : 0;
+    top: 0;
 }
 
 
@@ -710,7 +725,6 @@
 }
 
 
-
 /** icon adjustments **/
 .ee-icon-color-grey:before {
     color: var(--ee-status-color-grey);
@@ -791,8 +805,8 @@
 
 
 /** persistent admin (nag) notices **/
-.espresso-notices.ee-nag-notice {
-    border-left: 4px solid var(--ee-status-color-gold);
+.wp-core-ui .espresso-notices.ee-nag-notice .button.dismiss-ee-nag-notice-btn {
+    box-shadow: 0 1px 1px hsla(203, 0%, 0%, 0.5), 1px 1px 3px hsla(203, 10%, 10%, 0.25), -1px -1px 3px hsla(203, 60%, 97.5%, 0.25);
 }
 
 .wp-core-ui .espresso-notices.notice,

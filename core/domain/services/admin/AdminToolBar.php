@@ -116,7 +116,7 @@ class AdminToolBar
         $this->admin_bar->add_menu(
             [
                 'id'    => 'espresso-toolbar',
-                'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">'
+                'title' => '<span class="ab-icon ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">'
                            . esc_html_x('Event Espresso', 'admin bar menu group label', 'event_espresso')
                            . '</span>',
                 'href'  => $this->events_admin_url,

@@ -22,10 +22,7 @@ class GraphQLEndpoint extends WordPressOption
 
     const OPTION_NAME      = 'ee-graphql-endpoint';
 
-    /**
-     * @var boolean
-     */
-    private $is_gql_request;
+    private bool $is_gql_request = false;
 
 
     /**
@@ -35,9 +32,11 @@ class GraphQLEndpoint extends WordPressOption
     {
         parent::__construct(GraphQLEndpoint::OPTION_NAME, GraphQLEndpoint::DEFAULT_ENDPOINT, true);
         add_action('graphql_register_settings', [$this, 'verifyAndSetEndpoint'], 20);
-        // disable WPGraphQL admin by default.
-        add_filter('graphql_show_admin', '__return_false', 10);
-        add_filter('graphql_enable_graphiql', '__return_false', 10);
+        if (! defined('GRAPHQL_DEBUG') || ! GRAPHQL_DEBUG) {
+            // disable WPGraphQL admin by default.
+            add_filter('graphql_show_admin', '__return_false');
+            add_filter('graphql_enable_graphiql', '__return_false');
+        }
     }
 
 
@@ -73,10 +72,8 @@ class GraphQLEndpoint extends WordPressOption
     /**
      * callback hooked into the graphql_register_settings action
      * basically grabs the value for the 'graphql_endpoint' setting and saves it to our own WP option.
-     *
      * i know, i know, i know...
      * WHY are we saving the graphql_endpoint to a WP option if WP GraphQL is already doing the same ?!?!
-     *
      * Because we perform our request type detection during `plugins_loaded`,
      * but they don't settle on their endpoint until `after_setup_theme` has run,
      * which is too late for us, so we are just going to save this separately so that we have it.

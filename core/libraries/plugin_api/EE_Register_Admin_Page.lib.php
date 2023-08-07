@@ -132,4 +132,9 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
         }
         return $paths;
     }
+
+    public static function reset(): void
+    {
+        self::$_ee_admin_page_registry = [];
+    }
 }

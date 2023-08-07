@@ -21,23 +21,20 @@ class EEM_WP_User extends EEM_Base
 
 
     /**
-     *    constructor
-     *
-     * @param null              $timezone
-     * @param ModelFieldFactory $model_field_factory
+     * @param string|null            $timezone
+     * @param ModelFieldFactory|null $model_field_factory
      * @throws EE_Error
-     * @throws InvalidArgumentException
      */
-    protected function __construct($timezone, ModelFieldFactory $model_field_factory)
+    protected function __construct(?string $timezone = '', ModelFieldFactory $model_field_factory = null)
     {
         $this->singular_item = esc_html__('WP_User', 'event_espresso');
-        $this->plural_item = esc_html__('WP_Users', 'event_espresso');
+        $this->plural_item   = esc_html__('WP_Users', 'event_espresso');
         global $wpdb;
-        $this->_tables = array(
+        $this->_tables                                                      = [
             'WP_User' => new EE_Primary_Table($wpdb->users, 'ID', true),
-        );
-        $this->_fields = array(
-            'WP_User' => array(
+        ];
+        $this->_fields                                                      = [
+            'WP_User' => [
                 'ID'                  => $model_field_factory->createPrimaryKeyIntField(
                     'ID',
                     esc_html__('WP_User ID', 'event_espresso')
@@ -81,9 +78,9 @@ class EEM_WP_User extends EEM_Base
                     esc_html__('Display Name', 'event_espresso'),
                     false
                 ),
-            ),
-        );
-        $this->_model_relations = array(
+            ],
+        ];
+        $this->_model_relations                                             = [
             'Attendee'       => new EE_Has_Many_Relation(),
             // all models are related to the change log
             // 'Change_Log'     => new EE_Has_Many_Relation(),
@@ -96,8 +93,8 @@ class EEM_WP_User extends EEM_Base
             'Question_Group' => new EE_Has_Many_Relation(),
             'Ticket'         => new EE_Has_Many_Relation(),
             'Venue'          => new EE_Has_Many_Relation(),
-        );
-        $this->foreign_key_aliases = [
+        ];
+        $this->foreign_key_aliases                                          = [
             'Event.EVT_wp_user'          => 'WP_User.ID',
             'Payment_Method.PMD_wp_user' => 'WP_User.ID',
             'Price.PRC_wp_user'          => 'WP_User.ID',
@@ -107,9 +104,9 @@ class EEM_WP_User extends EEM_Base
             'Ticket.VNU_wp_user'         => 'WP_User.ID',
             'Venue.TKT_wp_user'          => 'WP_User.ID',
         ];
-        $this->_wp_core_model = true;
-        $this->_caps_slug = 'users';
-        $this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read ] = 'list';
+        $this->_wp_core_model                                               = true;
+        $this->_caps_slug                                                   = 'users';
+        $this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read ]       = 'list';
         $this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read_admin ] = 'list';
         foreach ($this->_cap_contexts_to_cap_action_map as $context => $action) {
             $this->_cap_restriction_generators[ $context ] = new EE_Restriction_Generator_WP_User();

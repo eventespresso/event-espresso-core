@@ -94,7 +94,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      *
      * @var int
      */
-    protected int $_blog_offset;
+    protected int $_blog_offset = 0;
 
 
     /**
@@ -227,7 +227,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * @throws InvalidInterfaceException
      * @throws Exception
      */
-    public function set_timezone(?string $timezone_string)
+    public function set_timezone(?string $timezone_string = '')
     {
         if (empty($timezone_string) && $this->_timezone_string !== null) {
             // leave the timezone AS-IS if we already have one and
@@ -440,8 +440,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      */
     public function prepare_for_pretty_echoing($DateTime, ?string $schema = null): string
     {
-        return $this->_prepare_for_display($DateTime, ($schema
-            ?: true));
+        $schema = $schema ?: true;
+        return $this->_prepare_for_display($DateTime, $schema);
     }
 
 
@@ -481,7 +481,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base
                     ),
                     $this->_nicename
                 ),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         }
         $format_string = $this->_get_date_time_output($schema);
@@ -516,16 +518,20 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     {
         // we allow an empty value or DateTime object, but nothing else.
         if (! empty($datetime_value) && ! $datetime_value instanceof DateTime) {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        'The incoming value being prepared for setting in the database must either be empty or a php DateTime object, instead of: %1$s %2$s',
-                        'event_espresso'
-                    ),
-                    '<br />',
-                    print_r($datetime_value, true)
-                )
-            );
+            $datetime_value = $this->_get_date_object($datetime_value);
+            if (! $datetime_value instanceof DateTime) {
+                throw new EE_Error(
+                    sprintf(
+                        esc_html__(
+                            'The incoming value being prepared for setting in the database for the %1$s field must either be empty or a php DateTime object, instead of: %2$s %3$s',
+                            'event_espresso'
+                        ),
+                        $this->get_name(),
+                        '<br />',
+                        print_r($datetime_value, true)
+                    )
+                );
+            }
         }
 
         if ($datetime_value instanceof DateTime) {
@@ -653,8 +659,10 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             if (! $DateTime instanceof DbSafeDateTime) {
                 throw new EE_Error(
                     sprintf(
-                        esc_html__('"%1$s" does not represent a valid Date Time in the format "%2$s".',
-                            'event_espresso'),
+                        esc_html__(
+                            '"%1$s" does not represent a valid Date Time in the format "%2$s".',
+                            'event_espresso'
+                        ),
                         $date_string,
                         $format
                     )
@@ -708,7 +716,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * @return string           abbreviation
      * @throws Exception
      */
-    public function get_timezone_abbrev(?string $timezone_string): string
+    public function get_timezone_abbrev(?string $timezone_string = ''): string
     {
         $timezone_string = EEH_DTT_Helper::get_valid_timezone_string($timezone_string);
         $dateTime        = new DateTime(EE_Datetime_Field::now, new DateTimeZone($timezone_string));
@@ -752,10 +760,13 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         $timezone_string = EEH_DTT_Helper::get_valid_timezone_string($this->get_timezone());
         $timezone        = new DateTimeZone($timezone_string);
 
-        return new DbSafeDateTime(
-            $this->get_default_value(),
-            $timezone
-        );
+        // can't pass unix timestamps directly to Datetime constructor
+        if (is_numeric($default_raw)) {
+            $datetime = new DbSafeDateTime();
+            $datetime->setTimestamp($default_raw);
+            return $datetime;
+        }
+        return new DbSafeDateTime($default_raw, $timezone);
     }
 
 

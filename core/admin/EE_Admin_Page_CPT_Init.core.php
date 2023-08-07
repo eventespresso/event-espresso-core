@@ -19,7 +19,8 @@ abstract class EE_Admin_Page_CPT_Init extends EE_Admin_Page_Init
         // That way this page object is being loaded on all pages to make sure we hook into admin properly.
         // But note... we are ONLY doing this if the given page is NOT pages we WANT to load ;)
         // This is important because we have hooks that help redirect custom post type saves
-        $page = $this->request->getRequestParam('page');
+        $page           = $this->request->getRequestParam('page');
+        $page           = $this->request->getRequestParam('current_page', $page);
         $this->_routing = $page === $this->_menu_map->menuSlug();
         $this->_initialize_admin_page();
         if ($this->_routing) {

@@ -89,7 +89,7 @@ abstract class EE_Form_Section_Base
      *                             }
      * @throws InvalidDataTypeException
      */
-    public function __construct($options_array = array())
+    public function __construct($options_array = [])
     {
         // used by display strategies
         // assign incoming values to properties
@@ -109,7 +109,6 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * @param $parent_form_section
      * @param $name
@@ -117,12 +116,11 @@ abstract class EE_Form_Section_Base
     protected function _construct_finalize($parent_form_section, $name)
     {
         $this->_construction_finalized = true;
-        $this->_parent_section = $parent_form_section;
+        $this->_parent_section         = $parent_form_section;
         if ($name !== null) {
             $this->_name = $name;
         }
     }
-
 
 
     /**
@@ -138,7 +136,6 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * @return string
      */
@@ -146,7 +143,6 @@ abstract class EE_Form_Section_Base
     {
         return $this->_action;
     }
-
 
 
     /**
@@ -158,7 +154,6 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * @return string
      */
@@ -166,7 +161,6 @@ abstract class EE_Form_Section_Base
     {
         return ! empty($this->_method) ? $this->_method : 'POST';
     }
-
 
 
     /**
@@ -183,7 +177,6 @@ abstract class EE_Form_Section_Base
                 $this->_method = 'POST';
         }
     }
-
 
 
     /**
@@ -207,7 +200,6 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * _prep_name_for_html_id
      *
@@ -216,9 +208,8 @@ abstract class EE_Form_Section_Base
      */
     private function _prep_name_for_html_id($name)
     {
-        return sanitize_key(str_replace(array('&nbsp;', ' ', '_'), '-', $name));
+        return sanitize_key(str_replace(['&nbsp;', ' ', '_'], '-', $name));
     }
-
 
 
     /**
@@ -235,7 +226,6 @@ abstract class EE_Form_Section_Base
     {
         return $this->get_html();
     }
-
 
 
     /**
@@ -258,7 +248,6 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * @return string
      */
@@ -266,7 +255,6 @@ abstract class EE_Form_Section_Base
     {
         return $this->_html_class;
     }
-
 
 
     /**
@@ -278,15 +266,22 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
-     * @param mixed $html_class
+     * @param string $html_class
      */
-    public function set_html_class($html_class)
+    public function add_html_class(string $html_class)
     {
-        $this->_html_class = $html_class;
+        $this->_html_class .= ' ' . trim($html_class);
     }
 
+
+    /**
+     * @param string $html_class
+     */
+    public function set_html_class(string $html_class)
+    {
+        $this->_html_class = trim($html_class);
+    }
 
 
     /**
@@ -298,7 +293,6 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * @param mixed $html_style
      */
@@ -306,7 +300,6 @@ abstract class EE_Form_Section_Base
     {
         $this->_html_style = $html_style;
     }
-
 
 
     /**
@@ -318,7 +311,6 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * @return string
      */
@@ -328,24 +320,27 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * Gets the name of the form section. This is not the same as the HTML name.
      *
-     * @throws EE_Error
      * @return string
+     * @throws EE_Error
      */
     public function name()
     {
         if (! $this->_construction_finalized) {
-            throw new EE_Error(sprintf(esc_html__(
-                'You cannot use the form section\s name until _construct_finalize has been called on it (when we set the name). It was called on a form section of type \'s\'',
-                'event_espresso'
-            ), get_class($this)));
+            throw new EE_Error(
+                sprintf(
+                    esc_html__(
+                        'You cannot use the form section\'s name until _construct_finalize has been called on it (when we set the name). It was called on a form section of type \'s\'',
+                        'event_espresso'
+                    ),
+                    get_class($this)
+                )
+            );
         }
         return $this->_name;
     }
-
 
 
     /**
@@ -386,7 +381,6 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * ensures that html id for form either ends in "-form" or "-frm"
      * so that id doesn't conflict/collide with other elements
@@ -396,7 +390,7 @@ abstract class EE_Form_Section_Base
      */
     protected function get_html_id_for_form($html_id)
     {
-        $strlen = strlen($html_id);
+        $strlen  = strlen($html_id);
         $html_id = strpos($html_id, '-form') === $strlen - 5 || strpos($html_id, '-frm') === $strlen - 4
             ? $html_id
             : $html_id . '-frm';
@@ -422,7 +416,6 @@ abstract class EE_Form_Section_Base
     }
 
 
-
     /**
      * enqueues JS (and CSS) for the form (ie immediately call wp_enqueue_script and
      * wp_enqueue_style; the scripts could have optionally been registered earlier)
@@ -434,7 +427,6 @@ abstract class EE_Form_Section_Base
     {
         // defaults to enqueue NO js or css
     }
-
 
 
     /**
@@ -450,11 +442,10 @@ abstract class EE_Form_Section_Base
      * @param array $form_other_js_data
      * @return array
      */
-    public function get_other_js_data($form_other_js_data = array())
+    public function get_other_js_data($form_other_js_data = [])
     {
         return $form_other_js_data;
     }
-
 
 
     /**
@@ -481,7 +472,7 @@ abstract class EE_Form_Section_Base
             return $this;
         }
         if (strpos($form_section_path, '../') === 0) {
-            $parent = $this->parent_section();
+            $parent            = $this->parent_section();
             $form_section_path = substr($form_section_path, strlen('../'));
             if ($parent instanceof EE_Form_Section_Base) {
                 return $parent->find_section_from_path($form_section_path);

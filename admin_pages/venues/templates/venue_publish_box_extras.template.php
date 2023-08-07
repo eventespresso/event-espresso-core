@@ -4,26 +4,36 @@
  * @var string $vnu_phone
  * @var string $vnu_url
  */
+
 ?>
 
-<div class="misc-pub-section">
-    <label>
+<div class="ee-layout-stack">
+    <br/>
+    <label for="vnu_capacity">
         <span class='ee-icon ee-icon-venue ee-icon-color-grey ee-icon-size-18'></span>&nbsp;
         <?php esc_html_e('Capacity', 'event_espresso'); ?>: &nbsp;
-        <input name="vnu_capacity" type="text" class="small-text" value="<?php echo esc_attr($vnu_capacity); ?>" />
     </label>
-</div>
-<div class="misc-pub-section">
-    <label>
-        <span class="ee-icon ee-icon-external-link ee-icon-color-grey ee-icon-size-18"></span>&nbsp;
+    <input type="text"
+           id="vnu_capacity"
+           name="vnu_capacity"
+           class="small-text"
+           value="<?php echo esc_attr($vnu_capacity); ?>"
+    />
+
+    <label for="vnu_url">
+        <span class="dashicons dashicons-external ee-icon-color-grey ee-icon-size-18"></span>&nbsp;
         <?php esc_html_e('Venue Website', 'event_espresso'); ?>: &nbsp;
-        <input name="vnu_url" type="text" class="all-options" value="<?php echo esc_url($vnu_url); ?>" />
     </label>
-</div>
-<div class="misc-pub-section">
-    <label>
-        <span class="ee-dashicons dashicons-phone ee-icon-color-grey ee-icon-size-18"></span>
+    <input id="vnu_url" name="vnu_url" type="text" class="all-options" value="<?php echo esc_url($vnu_url); ?>"/>
+
+    <label for="vnu_phone">
+        <span class="dashicons dashicons-phone ee-icon-color-grey ee-icon-size-18"></span>&nbsp;
         <?php esc_html_e('Venue Phone #', 'event_espresso'); ?>: &nbsp;
-        <input name="vnu_phone" type="text" class="all-options" value="<?php echo esc_attr($vnu_phone); ?>" />
     </label>
+    <input type="text"
+           id="vnu_phone"
+           name="vnu_phone"
+           class="all-options"
+           value="<?php echo esc_attr($vnu_phone); ?>"
+    />
 </div>

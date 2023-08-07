@@ -77,6 +77,8 @@ class PhpToUnicode
      */
     public function convertDateFormat(string $date_format): string
     {
+        // replace backslashed characters and `: ` with empty string
+        $date_format = preg_replace('/(\\\\\w)*(:\s)*/', '', $date_format);
         foreach (PhpToUnicode::$date_formats as $find => $replace) {
             $date_format = (string) str_replace($find, $replace, $date_format);
         }
@@ -90,6 +92,8 @@ class PhpToUnicode
      */
     public function convertTimeFormat(string $time_format): string
     {
+        // replace backslashed characters and `: ` with empty string
+        $time_format = preg_replace('/(\\\\\w)*(:\s)*/', '', $time_format);
         foreach (PhpToUnicode::$time_formats as $find => $replace) {
             $time_format = (string) str_replace($find, $replace, $time_format);
         }

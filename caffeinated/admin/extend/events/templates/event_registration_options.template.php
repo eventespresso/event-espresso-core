@@ -12,7 +12,7 @@
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
-    <p>
+    <p class="ee-event-active-status-pg">
         <label><?php esc_html_e('Active Status: ', 'event_espresso'); ?></label>
         <?php echo wp_kses($active_status, AllowedTags::getAllowedTags()); ?>
     </p>

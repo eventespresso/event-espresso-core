@@ -55,7 +55,7 @@ class Psr4Autoloader
      *
      * @var array
      */
-    protected $prefixes = [];
+    protected array $prefixes = [];
 
 
     /**
@@ -90,11 +90,11 @@ class Psr4Autoloader
      *
      * @param string $prefix    The namespace prefix.
      * @param string $base_dir  A base directory for class files in the namespace.
-     * @param bool $prepend     If true, prepend the base directory to the stack instead of appending it;
+     * @param bool   $prepend   If true, prepend the base directory to the stack instead of appending it;
      *                          this causes it to be searched first rather than last.
      * @return bool             returns TRUE if the namespace was successfully added
      */
-    public function addNamespace(string $prefix, string $base_dir, bool $prepend = false)
+    public function addNamespace(string $prefix, string $base_dir, bool $prepend = false): bool
     {
         // normalize namespace prefix
         $prefix = trim($prefix, Psr4Autoloader::NS) . Psr4Autoloader::NS;
@@ -119,9 +119,9 @@ class Psr4Autoloader
      * Loads the class file for a given class name.
      *
      * @param string $class The fully-qualified class name.
-     * @return false|string The mapped file name on success or boolean false on failure.
+     * @return string The mapped file name on success or boolean false on failure.
      */
-    public function loadClass(string $class)
+    public function loadClass(string $class): string
     {
         // the current namespace prefix
         $prefix = $class;
@@ -150,10 +150,10 @@ class Psr4Autoloader
      *
      * @param string $prefix         The namespace prefix.
      * @param string $relative_class The relative class name.
-     * @return string|null           null if no mapped file can be loaded,
+     * @return string                empty string if no mapped file can be loaded,
      *                               or the name of the mapped file that was loaded.
      */
-    protected function loadMappedFile(string $prefix, string $relative_class): ?string
+    protected function loadMappedFile(string $prefix, string $relative_class): string
     {
         // look through base directories for this namespace prefix
         foreach ($this->prefixes($prefix) as $base_dir) {
@@ -170,14 +170,14 @@ class Psr4Autoloader
             }
         }
         // never found it
-        return null;
+        return '';
     }
 
 
     /**
      * If a file exists, require it from the file system.
      *
-     * @param string $file  The file to require.
+     * @param string $file The file to require.
      * @return bool         True if the file exists, false if not.
      */
     protected function requireFile(string $file): bool

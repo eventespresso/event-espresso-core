@@ -162,7 +162,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'default'        => [
                 'nav'           => [
                     'label' => esc_html__('Maintenance', 'event_espresso'),
-                    'icon' => 'dashicons-admin-tools',
+                    'icon'  => 'dashicons-admin-tools',
                     'order' => 10,
                 ],
                 'require_nonce' => false,
@@ -170,7 +170,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'data_reset'     => [
                 'nav'           => [
                     'label' => esc_html__('Reset/Delete Data', 'event_espresso'),
-                    'icon' => 'dashicons-trash',
+                    'icon'  => 'dashicons-trash',
                     'order' => 20,
                 ],
                 'require_nonce' => false,
@@ -178,7 +178,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'datetime_tools' => [
                 'nav'           => [
                     'label' => esc_html__('Datetime Utilities', 'event_espresso'),
-                    'icon' => 'dashicons-calendar-alt',
+                    'icon'  => 'dashicons-calendar-alt',
                     'order' => 25,
                 ],
                 'require_nonce' => false,
@@ -186,7 +186,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'system_status'  => [
                 'nav'           => [
                     'label' => esc_html__("System Information", "event_espresso"),
-                    'icon' => 'dashicons-info',
+                    'icon'  => 'dashicons-info',
                     'order' => 30,
                 ],
                 'require_nonce' => false,
@@ -491,7 +491,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      */
     protected function _reset_capabilities()
     {
-        EE_Registry::instance()->CAP->init_caps(true);
+        $this->capabilities->init_caps(true);
         EE_Error::add_success(
             esc_html__(
                 'Default Event Espresso capabilities have been restored for all current roles.',
@@ -523,7 +523,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      */
     public function _system_status()
     {
-        $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
+        $this->_template_path                               =
+            EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
         $this->_template_args['system_stati']               = EEM_System_Status::instance()->get_system_stati();
         $this->_template_args['download_system_status_url'] = EE_Admin_Page::add_query_args_and_nonce(
             [
@@ -550,9 +551,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         header("Content-Disposition: attachment; filename=system_status_" . sanitize_key(site_url()) . ".html");
         $output = '<style>table{border:1px solid darkgrey;}td{vertical-align:top}</style>';
         $output .= '<h1>' . sprintf(
-            __('System Information for %1$s', 'event_espresso'),
-            esc_url_raw(site_url())
-        ) . '</h1>';
+                __('System Information for %1$s', 'event_espresso'),
+                esc_url_raw(site_url())
+            ) . '</h1>';
         $output .= EEH_Template::layout_array_as_table($status_info);
         echo esc_html($output);
         die;
@@ -745,10 +746,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             [
                 'migrating'                        => wp_strip_all_tags(__("Updating Database...", "event_espresso")),
                 'next'                             => wp_strip_all_tags(__("Next", "event_espresso")),
-                'fatal_error'                      => wp_strip_all_tags(__(
-                    "A Fatal Error Has Occurred",
-                    "event_espresso"
-                )),
+                'fatal_error'                      => wp_strip_all_tags(
+                    __(
+                        "A Fatal Error Has Occurred",
+                        "event_espresso"
+                    )
+                ),
                 'click_next_when_ready'            => wp_strip_all_tags(
                     __(
                         "The current Database Update has ended. Click 'next' when ready to proceed",

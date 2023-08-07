@@ -809,7 +809,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             echo '<div class="list-table-bottom-buttons alignleft actions">';
             foreach ($this->_bottom_buttons as $type => $action) {
                 $route         = $action['route'] ?? '';
-                $extra_request = $action['extra_request'] ?? '';
+                $extra_request = $action['extra_request'] ?? [];
                 $btn_class     = $action['btn_class'] ?? 'button button--secondary';
                 // already escaped
                 echo wp_kses($this->_admin_page->get_action_link_or_button(

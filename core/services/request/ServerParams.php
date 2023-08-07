@@ -184,7 +184,7 @@ class ServerParams
             $home_path = ! empty($home_path)
                 ? trailingslashit($home_path)
                 : $home_path;
-            return str_replace($home_path, '', (string) $this->server['REQUEST_URI']);
+            return str_replace($home_path, '', (string) ($this->server['REQUEST_URI'] ?? ''));
         }
         return $this->server['REQUEST_URI'];
     }

@@ -14,52 +14,38 @@ use RuntimeException;
  */
 class CipherMethod
 {
-    /**
-     * @var string
-     */
-    protected $cipher_method_option_name;
+    protected string $cipher_method_option_name = '';
 
     /**
      * list of cipher methods that we consider usable,
      * essentially all of the installed_cipher_methods minus weak_algorithms
-     *
-     * @var array
      */
-    protected $cipher_methods = [];
+    protected array  $cipher_methods        = [];
 
-    /**
-     * @var string
-     */
-    protected $default_cipher_method;
+    protected string $default_cipher_method = '';
 
     /**
      * list of ALL cipher methods available on the server
-     *
-     * @var array
      */
-    protected $installed_cipher_methods;
+    protected array $installed_cipher_methods = [];
 
     /**
      * the OpenSSL cipher method to use. default: AES-128-CBC
-     *
-     * @var string
      */
-    protected $validated_cipher_method;
+    protected ?string $validated_cipher_method = null;
 
     /**
      * as early as Aug 2016, Openssl declared the following weak: RC2, RC4, DES, 3DES, MD5 based
      * and ECB mode should be avoided
-     *
-     * @var array
      */
-    protected $weak_algorithms = ['des', 'ecb', 'md5', 'rc2', 'rc4'];
+    protected array $weak_algorithms = ['des', 'ecb', 'md5', 'rc2', 'rc4'];
 
 
     /**
      * @param string $default_cipher_method
      * @param string $cipher_method_option_name
      */
-    public function __construct($default_cipher_method, $cipher_method_option_name)
+    public function __construct(string $default_cipher_method, string $cipher_method_option_name)
     {
         $this->default_cipher_method     = $default_cipher_method;
         $this->cipher_method_option_name = $cipher_method_option_name;
@@ -82,7 +68,7 @@ class CipherMethod
      * @return string
      * @throws RuntimeException
      */
-    public function getCipherMethod($cipher_method = null, $load_alternate = true)
+    public function getCipherMethod(string $cipher_method = '', bool $load_alternate = true): ?string
     {
         if (empty($cipher_method) && $this->validated_cipher_method !== null) {
             return $this->validated_cipher_method;
@@ -113,7 +99,7 @@ class CipherMethod
      *
      * @return bool
      */
-    public function usesAuthenticatedEncryptionMode()
+    public function usesAuthenticatedEncryptionMode(): bool
     {
         return PHP_VERSION_ID >= 70100
                && (
@@ -128,10 +114,11 @@ class CipherMethod
      * @return string
      * @throws RuntimeException
      */
-    protected function getAvailableCipherMethod($cipher_method = null)
+    protected function getAvailableCipherMethod(string $cipher_method = ''): ?string
     {
         // if nothing was supplied, the get what we found in the past to work
-        $cipher_method_to_test = $cipher_method ?: get_option($this->cipher_method_option_name, '');
+        $cipher_method_to_test = $cipher_method
+            ?: get_option($this->cipher_method_option_name, '');
         // verify that the incoming cipher method exists and can produce an initialization vector
         if ($this->validateCipherMethod($cipher_method_to_test) === false) {
             // what? there's no list?
@@ -168,7 +155,7 @@ class CipherMethod
     /**
      * @return array
      */
-    protected function getAvailableStrongCipherMethods()
+    protected function getAvailableStrongCipherMethods(): array
     {
         return array_filter($this->installed_cipher_methods, [$this, 'weakAlgorithmFilter']);
     }
@@ -176,10 +163,10 @@ class CipherMethod
 
     /**
      * @param string $cipher_method
-     * @param false  $throw_exception
+     * @param bool   $throw_exception
      * @return bool
      */
-    protected function validateCipherMethod($cipher_method, $throw_exception = false)
+    protected function validateCipherMethod(string $cipher_method, bool $throw_exception = false): bool
     {
         // verify that the requested cipher method is actually installed and can produce an initialization vector
         if (
@@ -206,8 +193,9 @@ class CipherMethod
     /**
      * @see https://www.php.net/manual/en/function.openssl-get-cipher-methods.php#example-890
      * @param string $cipher_method
+     * @return bool
      */
-    protected function weakAlgorithmFilter($cipher_method)
+    protected function weakAlgorithmFilter(string $cipher_method): bool
     {
         foreach ($this->weak_algorithms as $weak_algorithm) {
             if (stripos($cipher_method, $weak_algorithm) !== false) {

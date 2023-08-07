@@ -20,35 +20,23 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 final class EE_Admin implements InterminableInterface
 {
-    /**
-     * @var EE_Admin $_instance
-     */
-    private static $_instance;
+    private static ?EE_Admin $_instance = null;
 
-    /**
-     * @var PersistentAdminNoticeManager $persistent_admin_notice_manager
-     */
-    private $persistent_admin_notice_manager;
+    private ?PersistentAdminNoticeManager $persistent_admin_notice_manager = null;
 
-    /**
-     * @var LoaderInterface $loader
-     */
-    protected $loader;
+    protected LoaderInterface $loader;
 
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    protected RequestInterface $request;
 
 
     /**
      * @singleton method used to instantiate class object
-     * @param LoaderInterface  $loader
-     * @param RequestInterface $request
-     * @return EE_Admin
+     * @param LoaderInterface|null  $loader
+     * @param RequestInterface|null $request
+     * @return EE_Admin|null
      * @throws EE_Error
      */
-    public static function instance(LoaderInterface $loader = null, RequestInterface $request = null)
+    public static function instance(?LoaderInterface $loader = null, ?RequestInterface $request = null): ?EE_Admin
     {
         // check if class object is instantiated
         if (! EE_Admin::$_instance instanceof EE_Admin) {
@@ -59,10 +47,10 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * @return EE_Admin
+     * @return EE_Admin|null
      * @throws EE_Error
      */
-    public static function reset()
+    public static function reset(): ?EE_Admin
     {
         EE_Admin::$_instance = null;
         $loader = LoaderFactory::getLoader();
@@ -94,8 +82,8 @@ final class EE_Admin implements InterminableInterface
         add_action('admin_init', [$this, 'admin_init'], 100);
         if (! $this->request->isAjax()) {
             // admin hooks
-            add_action('admin_notices', [$this, 'display_admin_notices'], 10);
-            add_action('network_admin_notices', [$this, 'display_admin_notices'], 10);
+            add_action('admin_notices', [$this, 'display_admin_notices']);
+            add_action('network_admin_notices', [$this, 'display_admin_notices']);
             add_filter('pre_update_option', [$this, 'check_for_invalid_datetime_formats'], 100, 2);
             add_filter('plugin_action_links', [$this, 'filter_plugin_actions'], 10, 2);
             add_filter('admin_footer_text', [$this, 'espresso_admin_footer']);
@@ -212,12 +200,12 @@ final class EE_Admin implements InterminableInterface
         if ($this->request->isAjax()) {
             return;
         }
-        add_filter('content_save_pre', [$this, 'its_eSpresso'], 10, 1);
+        add_filter('content_save_pre', [$this, 'its_eSpresso']);
         // make sure our CPTs and custom taxonomy metaboxes get shown for first time users
-        add_action('admin_head', [$this, 'enable_hidden_ee_nav_menu_metaboxes'], 10);
-        add_action('admin_head', [$this, 'register_custom_nav_menu_boxes'], 10);
+        add_action('admin_head', [$this, 'enable_hidden_ee_nav_menu_metaboxes']);
+        add_action('admin_head', [$this, 'register_custom_nav_menu_boxes']);
         // exclude EE critical pages from all nav menus and wp_list_pages
-        add_filter('nav_menu_meta_box_object', [$this, 'remove_pages_from_nav_menu'], 10);
+        add_filter('nav_menu_meta_box_object', [$this, 'remove_pages_from_nav_menu']);
     }
 
 
@@ -260,7 +248,7 @@ final class EE_Admin implements InterminableInterface
         );
         $this->maybeSetDatetimeWarningNotice();
         // at a glance dashboard widget
-        add_filter('dashboard_glance_items', [$this, 'dashboard_glance_items'], 10);
+        add_filter('dashboard_glance_items', [$this, 'dashboard_glance_items']);
         // filter for get_edit_post_link used on comments for custom post types
         add_filter('get_edit_post_link', [$this, 'modify_edit_post_link'], 10, 2);
     }
@@ -275,6 +263,7 @@ final class EE_Admin implements InterminableInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function maybeSetDatetimeWarningNotice()
     {
@@ -409,7 +398,7 @@ final class EE_Admin implements InterminableInterface
         add_filter(
             "postbox_classes_nav-menus_add-extra-nav-menu-pages",
             function ($classes) {
-                array_push($classes, 'ee-admin-container');
+                $classes[] = 'ee-admin-container';
                 return $classes;
             }
         );
@@ -474,7 +463,6 @@ final class EE_Admin implements InterminableInterface
         );
         $pages = $this->_get_extra_nav_menu_pages_items();
         $args['walker'] = new Walker_Nav_Menu_Checklist(false);
-        ;
         $nav_menu_pages_items = walk_nav_menu_tree(
             array_map(
                 [$this, '_setup_extra_nav_menu_pages_items'],
@@ -649,6 +637,7 @@ final class EE_Admin implements InterminableInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function dashboard_glance_items($elements)
     {
@@ -915,8 +904,8 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * @param int      $post_ID
-     * @param \WP_Post $post
+     * @param int     $post_ID
+     * @param WP_Post $post
      * @return void
      * @deprecated 4.8.41
      */

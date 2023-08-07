@@ -12,15 +12,10 @@
  * @package        Event Espresso
  * @subpackage     libraries/shortcodes/EE_Datetime_Shortcodes.lib.php
  * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Datetime_Shortcodes extends EE_Shortcodes
 {
     /**
-     * _init_props
-     *
-     * @access protected
      * @return void
      */
     protected function _init_props()
@@ -44,11 +39,10 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes
 
 
     /**
-     * _parser
-     *
-     * @access protected
      * @param string $shortcode
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _parser($shortcode)
     {
@@ -60,27 +54,25 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[DATETIME_START]':
                 return $this->_data->get_i18n_datetime('DTT_EVT_start');
-                break;
 
             case '[DATETIME_END]':
                 return $this->_data->get_i18n_datetime('DTT_EVT_end');
-                break;
 
             case '[DATETIME_TIMEZONE]':
                 return $this->_data->get_timezone();
-                break;
+
             case '[DATE_START]':
                 return $this->_data->get_i18n_datetime('DTT_EVT_start', get_option('date_format'));
-                break;
+
             case '[DATE_END]':
                 return $this->_data->get_i18n_datetime('DTT_EVT_end', get_option('date_format'));
-                break;
+
             case '[TIME_START]':
                 return $this->_data->get_i18n_datetime('DTT_EVT_start', get_option('time_format'));
-                break;
+
             case '[TIME_END]':
                 return $this->_data->get_i18n_datetime('DTT_EVT_end', get_option('time_format'));
-                break;
+
         }
 
         if (strpos($shortcode, '[ICAL_LINK_*') !== false) {

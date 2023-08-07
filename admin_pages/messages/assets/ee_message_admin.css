@@ -141,6 +141,9 @@
 
 
 /** overview table styles **/
+.espresso-admin .wp-list-table.messages  th:not(.column-message_type) {
+    white-space: nowrap;
+}
 .espresso-admin .wp-list-table.messages  th.column-primary.column-to,
 .espresso-admin .wp-list-table.messages  td.column-primary.column-to,
 .espresso-admin .wp-list-table.messagetemplate  th.column-primary.column-to,

@@ -9,7 +9,7 @@ interface HasSchemaInterface
      *
      * @return string
      */
-    public function getSchemaDescription();
+    public function getSchemaDescription(): string;
 
 
     /**
@@ -29,7 +29,8 @@ interface HasSchemaInterface
      *
      * @return array
      */
-    public function getSchemaProperties();
+    public function getSchemaProperties(): array;
+
 
     /**
      * If a child class has enum values, they should override this method and provide a simple array
@@ -39,21 +40,23 @@ interface HasSchemaInterface
      *
      * @return array
      */
-    public function getSchemaEnum();
+    public function getSchemaEnum(): array;
+
 
     /**
      * This returns the value of the $_schema_format property on the object.
      *
-     * @return string
+     * @return array|string
      */
     public function getSchemaFormat();
+
 
     /**
      * This returns the value of the $_schema_readonly property on the object.
      *
      * @return bool
      */
-    public function getSchemaReadonly();
+    public function getSchemaReadonly(): bool;
 
 
     /**
@@ -62,5 +65,5 @@ interface HasSchemaInterface
      * @link http://json-schema.org/
      * @return array
      */
-    public function getSchema();
+    public function getSchema(): array;
 }

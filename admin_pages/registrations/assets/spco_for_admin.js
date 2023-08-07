@@ -223,7 +223,7 @@ jQuery(document).ready( function($) {
 			// the primary attendee question group
 			var primary_reg_qstn_grp = $('#primary_registrant').val();
 			// find all of the primary attendee's questions for this event
-			return $( '#ee-registration-' + primary_reg_qstn_grp ).children( '.ee-reg-form-qstn-grp-dv' ).find(':input');
+			return $( '#ee-registration-' + primary_reg_qstn_grp ).find(':input');
 		},
 
 

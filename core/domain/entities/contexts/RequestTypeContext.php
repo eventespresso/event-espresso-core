@@ -93,17 +93,17 @@ class RequestTypeContext extends Context
     /**
      * @var boolean $is_activation
      */
-    private $is_activation = false;
+    private bool $is_activation = false;
 
     /**
      * @var boolean $is_unit_testing
      */
-    private $is_unit_testing = false;
+    private bool $is_unit_testing = false;
 
     /**
      * @var array $valid_request_types
      */
-    private $valid_request_types = array();
+    private array $valid_request_types = array();
 
 
     /**
@@ -134,7 +134,7 @@ class RequestTypeContext extends Context
     /**
      * @return array
      */
-    public function validRequestTypes()
+    public function validRequestTypes(): array
     {
         if (empty($this->valid_request_types)) {
             $this->valid_request_types = apply_filters(
@@ -165,7 +165,7 @@ class RequestTypeContext extends Context
     /**
      * @return bool
      */
-    public function isActivation()
+    public function isActivation(): bool
     {
         return $this->is_activation;
     }
@@ -174,7 +174,7 @@ class RequestTypeContext extends Context
     /**
      * @param bool $is_activation
      */
-    public function setIsActivation($is_activation = false)
+    public function setIsActivation(bool $is_activation = false)
     {
         $this->is_activation = filter_var($is_activation, FILTER_VALIDATE_BOOLEAN);
     }
@@ -183,7 +183,7 @@ class RequestTypeContext extends Context
     /**
      * @return bool
      */
-    public function isUnitTesting()
+    public function isUnitTesting(): bool
     {
         return $this->is_unit_testing;
     }
@@ -192,7 +192,7 @@ class RequestTypeContext extends Context
     /**
      * @param bool $is_unit_testing
      */
-    public function setIsUnitTesting($is_unit_testing = false)
+    public function setIsUnitTesting(bool $is_unit_testing = false)
     {
         $this->is_unit_testing = filter_var($is_unit_testing, FILTER_VALIDATE_BOOLEAN);
     }

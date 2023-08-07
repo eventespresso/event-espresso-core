@@ -6,7 +6,7 @@
 #Extend_Events_Admin_List_Table-table-frm .column-start_date_time,
 #Events_Admin_List_Table-table-frm .column-reg_begins,
 #Extend_Events_Admin_List_Table-table-frm .column-reg_begins {
-    min-width: 4.2rem;
+    min-width: calc(var(--ee-font-size-default) * 4.5);
     max-width: 32rem;
 }
 
@@ -236,10 +236,20 @@
 
 #espresso_event_editor_event_options .inside p {
     display: flex;
-    flex-flow: row nowrap;
-    text-align: left;
+    flex-flow: column nowrap;
+    text-align: start;
+}
+
+#espresso_event_editor_event_options .inside p.ee-event-active-status-pg {
+    align-items: center;
+    flex-direction: row;
 }
 
 #message .spinner {
     float: none;
 }
+
+.espresso-admin.wp-core-ui div.espresso-admin .wp-list-table a.ee-event-author:not(.button) {
+    line-height: 1.1;
+}
+

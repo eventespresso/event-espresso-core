@@ -9,7 +9,7 @@ abstract class BaseFormat
     public function __construct(?string $format)
     {
         if (static::$wordpress_format === null) {
-            static::$wordpress_format = get_option(static::WORDPRESS_FORMAT_OPTION_NAME);
+            static::$wordpress_format = get_option(static::WORDPRESS_FORMAT_OPTION_NAME, static::DEFAULT_FORMAT);
         }
         $this->format = $this->sanitizeDateFormat($format ?: static::$wordpress_format);
     }

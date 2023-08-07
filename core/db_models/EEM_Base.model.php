@@ -558,10 +558,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * the array key ('Event_Post_Table'), instead of repeating it. The model fields and model relations
      * do something similar.
      *
-     * @param null $timezone
+     * @param string|null $timezone
      * @throws EE_Error
+     * @throws Exception
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         // check that the model has not been loaded too soon
         if (! did_action('AHEE__EE_System__load_espresso_addons')) {
@@ -783,7 +784,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function instance($timezone = null)
+    public static function instance($timezone = '')
     {
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
@@ -813,7 +814,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function reset($timezone = null)
+    public static function reset($timezone = '')
     {
         if (! static::$_instance instanceof EEM_Base) {
             return null;
@@ -1030,7 +1031,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param array  $query_params      @see
      *                                  https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param string $output            ARRAY_A, OBJECT_K, etc. Just like
-     * @param mixed  $columns_to_select , What columns to select. By default, we select all columns specified by the
+     * @param mixed  $columns_to_select What columns to select. By default, we select all columns specified by the
      *                                  fields on the model, and the models we joined to in the query. However, you can
      *                                  override this and set the select to "*", or a specific column name, like
      *                                  "ATT_ID", etc. If you would like to use these custom selections in WHERE,
@@ -1041,6 +1042,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @return array | stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
      * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function _get_all_wpdb_results($query_params = [], $output = ARRAY_A, $columns_to_select = null)
     {
@@ -1076,8 +1078,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! isset($query_params['extra_selects']) && $columns_to_select === null) {
             return null;
         }
-        $selects = isset($query_params['extra_selects']) ? $query_params['extra_selects'] : $columns_to_select;
-        $selects = is_string($selects) ? explode(',', $selects) : $selects;
+        $selects = $query_params['extra_selects'] ?? $columns_to_select;
+        $selects = is_string($selects)
+            ? explode(',', $selects)
+            : $selects;
         return new CustomSelects($selects);
     }
 
@@ -1100,6 +1104,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                  Eg, array('count'=>array('COUNT(REG_ID)','%d'))
      * @return array|stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_wpdb_results($query_params = [], $output = ARRAY_A, $columns_to_select = null)
     {
@@ -1233,6 +1238,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param array $query_params like EEM_Base's $query_params variable.
      * @return EE_Base_Class|EE_Soft_Delete_Base_Class|NULL
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_one($query_params = [])
     {
@@ -1271,6 +1277,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                      columns you want returned.
      * @return EE_Base_Class[]|array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function next_x(
         $current_field_value,
@@ -1305,6 +1312,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                      columns you want returned.
      * @return EE_Base_Class[]|array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function previous_x(
         $current_field_value,
@@ -1339,6 +1347,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                      the columns will be returned.
      * @return EE_Base_Class|null|array()
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function next(
         $current_field_value,
@@ -1354,7 +1363,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $query_params,
             $columns_to_select
         );
-        return empty($results) ? null : reset($results);
+        return empty($results)
+            ? null
+            : reset($results);
     }
 
 
@@ -1373,6 +1384,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                      the columns will be returned.
      * @return EE_Base_Class|null|array()
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function previous(
         $current_field_value,
@@ -1388,7 +1400,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $query_params,
             $columns_to_select
         );
-        return empty($results) ? null : reset($results);
+        return empty($results)
+            ? null
+            : reset($results);
     }
 
 
@@ -1405,6 +1419,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                      otherwise you can indicate just the columns you want returned.
      * @return EE_Base_Class[]|array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_consecutive(
         $current_field_value,
@@ -1451,7 +1466,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $query_params[0][ $field_to_order_by ] = [$operand, $current_field_value];
         $query_params['limit']                 = $limit;
         // set direction
-        $incoming_orderby         = isset($query_params['order_by']) ? (array) $query_params['order_by'] : [];
+        $incoming_orderby         = isset($query_params['order_by'])
+            ? (array) $query_params['order_by']
+            : [];
         $query_params['order_by'] = $operand === '>'
             ? [$field_to_order_by => 'ASC'] + $incoming_orderby
             : [$field_to_order_by => 'DESC'] + $incoming_orderby;
@@ -1467,13 +1484,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * This sets the _timezone property after model object has been instantiated.
      *
-     * @param null | string $timezone valid PHP DateTimeZone timezone string
+     * @param string|null $timezone valid PHP DateTimeZone timezone string
+     * @throws Exception
      */
-    public function set_timezone($timezone)
+    public function set_timezone(?string $timezone = '')
     {
-        if ($timezone !== null) {
-            $this->_timezone = $timezone;
+        if (! $timezone) {
+            return;
         }
+        $this->_timezone = $timezone;
         // note we need to loop through relations and set the timezone on those objects as well.
         foreach ($this->_model_relations as $relation) {
             $relation->set_timezone($timezone);
@@ -1492,6 +1511,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @access public
      * @return string
+     * @throws Exception
      */
     public function get_timezone()
     {
@@ -1592,22 +1612,29 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * (functionally the equivalent of UTC+0).  So when you send it in, whatever timezone string you include is
      * ignored.
      *
-     * @param string $field_name      The field being setup.
-     * @param string $timestring      The date time string being used.
-     * @param string $incoming_format The format for the time string.
-     * @param string $timezone        By default, it is assumed the incoming time string is in timezone for
-     *                                the blog.  If this is not the case, then it can be specified here.  If incoming
-     *                                format is
-     *                                'U', this is ignored.
+     * @param string      $field_name      The field being setup.
+     * @param string      $timestring      The date time string being used.
+     * @param string      $incoming_format The format for the time string.
+     * @param string|null $timezone        By default, it is assumed the incoming time string is in timezone for
+     *                                     the blog.  If this is not the case, then it can be specified here.  If
+     *                                     incoming format is
+     *                                     'U', this is ignored.
      * @return DateTime
      * @throws EE_Error
+     * @throws Exception
      */
-    public function convert_datetime_for_query($field_name, $timestring, $incoming_format, $timezone = '')
-    {
+    public function convert_datetime_for_query(
+        string $field_name,
+        string $timestring,
+        string $incoming_format,
+        ?string $timezone = ''
+    ) {
         // just using this to ensure the timezone is set correctly internally
         $this->get_formats_for($field_name);
         // load EEH_DTT_Helper
-        $set_timezone     = empty($timezone) ? EEH_DTT_Helper::get_timezone() : $timezone;
+        $set_timezone     = empty($timezone)
+            ? EEH_DTT_Helper::get_timezone()
+            : $timezone;
         $incomingDateTime = date_create_from_format($incoming_format, $timestring, new DateTimeZone($set_timezone));
         EEH_DTT_Helper::setTimezone($incomingDateTime, new DateTimeZone($this->_timezone));
         return \EventEspresso\core\domain\entities\DbSafeDateTime::createFromDateTime($incomingDateTime);
@@ -1803,13 +1830,18 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
         }
         $model_query_info = $this->_create_model_query_info_carrier($query_params);
-        $SQL              = "UPDATE "
-                            . $model_query_info->get_full_join_sql()
-                            . " SET "
-                            . $this->_construct_update_sql($fields_n_values)
-                            . $model_query_info->get_where_sql(
-                            );// note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
-        $rows_affected    = $this->_do_wpdb_query('query', [$SQL]);
+
+        // note: the following query doesn't use _construct_2nd_half_of_select_query()
+        // because it doesn't accept LIMIT, ORDER BY, etc.
+        $rows_affected = $this->_do_wpdb_query(
+            'query',
+            [
+                "UPDATE " . $model_query_info->get_full_join_sql()
+                . " SET " . $this->_construct_update_sql($fields_n_values)
+                . $model_query_info->get_where_sql(),
+            ]
+        );
+
         /**
          * Action called after a model update call has been made.
          *
@@ -1834,6 +1866,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param string $field_to_select
      * @return array just like $wpdb->get_col()
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_col($query_params = [], $field_to_select = null)
     {
@@ -1864,6 +1897,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param string $field_to_select @see EEM_Base::get_col()
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_var($query_params = [], $field_to_select = null)
     {
@@ -1897,7 +1931,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             // if the value is NULL, we want to assign the value to that.
             // wpdb->prepare doesn't really handle that properly
             $prepared_value  = $this->_prepare_value_or_use_default($field_obj, $fields_n_values);
-            $value_sql       = $prepared_value === null ? 'NULL'
+            $value_sql       = $prepared_value === null
+                ? 'NULL'
                 : $wpdb->prepare($field_obj->get_wpdb_data_type(), $prepared_value);
             $cols_n_values[] = $field_obj->get_qualified_column() . "=" . $value_sql;
         }
@@ -1937,6 +1972,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param boolean $allow_blocking
      * @return int the number of rows deleted
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function delete_by_ID($id, $allow_blocking = true)
     {
@@ -2015,7 +2051,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *                                                  derived from the incoming query parameters.
          * @see details on the structure of this array in the phpdocs
          *                                                  for the `_get_ids_for_delete_method`
-         *
          */
         do_action(
             'AHEE__EEM_Base__delete__before_query',
@@ -2064,15 +2099,17 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     $this
                 )
             ) {
-                EEM_Extra_Meta::instance()->delete_permanently([
-                                                                   0 => [
-                                                                       'EXM_type' => $this->get_this_model_name(),
-                                                                       'OBJ_ID'   => [
-                                                                           'IN',
-                                                                           $ids_for_removal,
-                                                                       ],
-                                                                   ],
-                                                               ]);
+                EEM_Extra_Meta::instance()->delete_permanently(
+                    [
+                        0 => [
+                            'EXM_type' => $this->get_this_model_name(),
+                            'OBJ_ID'   => [
+                                'IN',
+                                $ids_for_removal,
+                            ],
+                        ],
+                    ]
+                );
             }
         }
 
@@ -2108,11 +2145,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     public function delete_is_blocked_by_related_models($this_model_obj_or_id, $ignore_this_model_obj = null)
     {
         // first, if $ignore_this_model_obj was supplied, get its model
-        if ($ignore_this_model_obj && $ignore_this_model_obj instanceof EE_Base_Class) {
-            $ignored_model = $ignore_this_model_obj->get_model();
-        } else {
-            $ignored_model = null;
-        }
+        $ignored_model = $ignore_this_model_obj instanceof EE_Base_Class
+            ? $ignore_this_model_obj->get_model()
+            : null;
         // now check all the relations of $this_model_obj_or_id and see if there
         // are any related model objects blocking it?
         $is_blocked = false;
@@ -2121,14 +2156,17 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 // if $ignore_this_model_obj was supplied, then for the query
                 // on that model needs to be told to ignore $ignore_this_model_obj
                 if ($ignored_model && $relation_name === $ignored_model->get_this_model_name()) {
-                    $related_model_objects = $relation_obj->get_all_related($this_model_obj_or_id, [
+                    $related_model_objects = $relation_obj->get_all_related(
+                        $this_model_obj_or_id,
                         [
-                            $ignored_model->get_primary_key_field()->get_name() => [
-                                '!=',
-                                $ignore_this_model_obj->ID(),
+                            [
+                                $ignored_model->get_primary_key_field()->get_name() => [
+                                    '!=',
+                                    $ignore_this_model_obj->ID(),
+                                ],
                             ],
-                        ],
-                    ]);
+                        ]
+                    );
                 } else {
                     $related_model_objects = $relation_obj->get_all_related($this_model_obj_or_id);
                 }
@@ -2170,10 +2208,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         $ids_to_delete_indexed_by_column = [];
         if ($this->has_primary_key_field()) {
-            $primary_table                   = $this->_get_main_table();
-            $primary_table_pk_field          =
-                $this->get_field_by_column($primary_table->get_fully_qualified_pk_column());
-            $other_tables                    = $this->_get_other_tables();
+            $primary_table = $this->_get_main_table();
+            // following lines are commented out because the variables were not being used
+            // not deleting because unsure if calls were intentionally causing side effects
+            // $primary_table_pk_field          =
+            //     $this->get_field_by_column($primary_table->get_fully_qualified_pk_column());
+            // $other_tables                    = $this->_get_other_tables();
             $ids_to_delete_indexed_by_column = $query = [];
             foreach ($row_results_for_deleting as $item_to_delete) {
                 // before we mark this item for deletion,
@@ -2239,7 +2279,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             foreach ($ids_to_delete_indexed_by_column as $column => $ids) {
                 $query[] = $column . ' IN' . $this->_construct_in_value($ids, $this->_primary_key_field);
             }
-            $query_part = ! empty($query) ? implode(' AND ', $query) : $query_part;
+            $query_part = ! empty($query)
+                ? implode(' AND ', $query)
+                : $query_part;
         } elseif (count($this->get_combined_primary_key_fields()) > 1) {
             $ways_to_identify_a_row = [];
             foreach ($ids_to_delete_indexed_by_column as $ids_to_delete_indexed_by_column_for_each_row) {
@@ -2294,6 +2336,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                               that by the setting $distinct to TRUE;
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function count($query_params = [], $field_to_count = null, $distinct = false)
     {
@@ -2319,7 +2362,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $column_to_count = '*';
             }
         }
-        $column_to_count = $distinct ? "DISTINCT " . $column_to_count : $column_to_count;
+        $column_to_count = $distinct
+            ? "DISTINCT " . $column_to_count
+            : $column_to_count;
         $SQL             =
             "SELECT COUNT(" . $column_to_count . ")" . $this->_construct_2nd_half_of_select_query($model_query_info);
         return (int) $this->_do_wpdb_query('get_var', [$SQL]);
@@ -2334,6 +2379,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param string $field_to_sum name of field (array key in $_fields array)
      * @return float
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function sum($query_params, $field_to_sum = null)
     {
@@ -2372,19 +2418,17 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         // because level 2 indicates the database needs updating and
         // is probably out of sync with the code
         if (! EE_Maintenance_Mode::instance()->models_can_query()) {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        "Event Espresso Level 2 Maintenance mode is active. That means EE can not run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2. Please inform support of this error.",
-                        "event_espresso"
-                    )
+            throw new RuntimeException(
+                esc_html__(
+                    "Event Espresso Level 2 Maintenance mode is active. That means EE can not run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2. Please inform support of this error.",
+                    "event_espresso"
                 )
             );
         }
         /** @type WPDB $wpdb */
         global $wpdb;
         if (! method_exists($wpdb, $wpdb_method)) {
-            throw new EE_Error(
+            throw new DomainException(
                 sprintf(
                     esc_html__(
                         'There is no method named "%s" on Wordpress\' $wpdb object',
@@ -2394,8 +2438,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 )
             );
         }
+        $old_show_errors_value = $wpdb->show_errors;
         if (WP_DEBUG) {
-            $old_show_errors_value = $wpdb->show_errors;
             $wpdb->show_errors(false);
         }
         $result = $this->_process_wpdb_query($wpdb_method, $arguments_to_provide);
@@ -2489,6 +2533,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param string $wpdb_method
      * @param array  $arguments_to_provide
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _verify_core_db($wpdb_method, $arguments_to_provide)
     {
@@ -2517,6 +2563,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param $wpdb_method
      * @param $arguments_to_provide
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _verify_addons_db($wpdb_method, $arguments_to_provide)
     {
@@ -2592,17 +2640,20 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * If one of the model Objects has not yet been saved to the database, it is saved before adding the entry in the
      * join table
      *
-     * @param EE_Base_Class                     /int $thisModelObject
-     * @param EE_Base_Class                     /int $id_or_obj EE_base_Class or ID of other Model Object
-     * @param string $relationName                     , key in EEM_Base::_relations
-     *                                                 an attendee to a group, you also want to specify which role they
-     *                                                 will have in that group. So you would use this parameter to
-     *                                                 specify array('role-column-name'=>'role-id')
-     * @param array  $extra_join_model_fields_n_values This allows you to enter further query params for the relation
-     *                                                 to for relation to methods that allow you to further specify
-     *                                                 extra columns to join by (such as HABTM).  Keep in mind that the
-     *                                                 only acceptable query_params is strict "col" => "value" pairs
-     *                                                 because these will be inserted in any new rows created as well.
+     * @param EE_Base_Class|int $id_or_obj                        EE_base_Class or ID of $thisModelObject
+     * @param EE_Base_Class|int $other_model_id_or_obj            EE_base_Class or ID of other Model Object
+     * @param string            $relationName                     , key in EEM_Base::_relations
+     *                                                            an attendee to a group, you also want to specify
+     *                                                            which role they will have in that group. So you would
+     *                                                            use this parameter to specify
+     *                                                            array('role-column-name'=>'role-id')
+     * @param array|null        $extra_join_model_fields_n_values This allows you to enter further query params for the
+     *                                                            relation to for relation to methods that allow you to
+     *                                                            further specify extra columns to join by (such as
+     *                                                            HABTM).  Keep in mind that the only acceptable
+     *                                                            query_params is strict "col" => "value" pairs because
+     *                                                            these will be inserted in any new rows created as
+     *                                                            well.
      * @return EE_Base_Class which was added as a relation. Object referred to by $other_model_id_or_obj
      * @throws EE_Error
      */
@@ -2626,14 +2677,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * an error
      * 'hasAndBelongsToMany' relationships:removes any existing entry in the join table between the two models.
      *
-     * @param EE_Base_Class /int $id_or_obj
-     * @param EE_Base_Class /int $other_model_id_or_obj EE_Base_Class or ID of other Model Object
-     * @param string $relationName key in EEM_Base::_relations
-     * @param array  $where_query  This allows you to enter further query params for the relation to for relation to
-     *                             methods that allow you to further specify extra columns to join by (such as HABTM).
-     *                             Keep in mind that the only acceptable query_params is strict "col" => "value" pairs
-     *                             because these will be inserted in any new rows created as well.
-     * @return boolean of success
+     * @param EE_Base_Class|int $id_or_obj             EE_base_Class or ID of $thisModelObject
+     * @param EE_Base_Class|int $other_model_id_or_obj EE_base_Class or ID of other Model Object
+     * @param string            $relationName          key in EEM_Base::_relations
+     * @param array|null        $where_query           This allows you to enter further query params for the relation
+     *                                                 to for relation to methods that allow you to further specify
+     *                                                 extra columns to join by (such as HABTM). Keep in mind that the
+     *                                                 only acceptable query_params is strict "col" => "value" pairs
+     *                                                 because these will be inserted in any new rows created as well.
+     * @return EE_Base_Class
      * @throws EE_Error
      */
     public function remove_relationship_to($id_or_obj, $other_model_id_or_obj, $relationName, $where_query = [])
@@ -2644,12 +2696,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * @param mixed  $id_or_obj
-     * @param string $relationName
-     * @param array  $where_query_params
-     * @param EE_Base_Class[] objects to which relations were removed
+     * @param mixed       $id_or_obj
+     * @param string      $relationName
+     * @param array|null  $where_query_params
      * @return EE_Base_Class[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function remove_relations($id_or_obj, $relationName, $where_query_params = [])
     {
@@ -2663,15 +2715,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Note: by default, we remove the "default query params"
      * because we want to get even deleted items etc.
      *
-     * @param mixed  $id_or_obj    EE_Base_Class child or its ID
-     * @param string $model_name   like 'Event', 'Registration', etc. always singular
-     * @param array  $query_params @see
+     * @param mixed       $id_or_obj    EE_Base_Class child or its ID
+     * @param string      $model_name   like 'Event', 'Registration', etc. always singular
+     * @param array|null  $query_params @see
      *                             https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_all_related($id_or_obj, $model_name, $query_params = null)
+    public function get_all_related($id_or_obj, $model_name, ?array $query_params = [])
     {
         $model_obj         = $this->ensure_is_obj($id_or_obj);
         $relation_settings = $this->related_settings_for($model_name);
@@ -2687,7 +2739,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param EE_Base_Class|int|string $id_or_obj
      * @param string                   $model_name
-     * @param array                    $query_params
+     * @param array|null               $query_params
      * @return int how many deleted
      * @throws EE_Error
      * @throws ReflectionException
@@ -2708,7 +2760,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param EE_Base_Class|int|string $id_or_obj
      * @param string                   $model_name
-     * @param array                    $query_params
+     * @param array|null               $query_params
      * @return int how many deleted
      * @throws EE_Error
      * @throws ReflectionException
@@ -2725,15 +2777,16 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Instead of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
      * unless otherwise specified in the $query_params
      *
-     * @param int             /EE_Base_Class $id_or_obj
-     * @param string $model_name     like 'Event', or 'Registration'
-     * @param array  $query_params   @see
-     *                               https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @param string $field_to_count name of field to count by. By default, uses primary key
-     * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger
-     *                               that by the setting $distinct to TRUE;
+     * @param EE_Base_Class|int|string $id_or_obj
+     * @param string                   $model_name     like 'Event', or 'Registration'
+     * @param array|null               $query_params   @see
+     *                                                 https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param string                   $field_to_count name of field to count by. By default, uses primary key
+     * @param bool                     $distinct       if we want to only count the distinct values for the column then
+     *                                                 you can trigger that by the setting $distinct to TRUE;
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function count_related(
         $id_or_obj,
@@ -2759,13 +2812,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Instead of getting the related model objects, simply sums up the values of the specified field.
      * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
      *
-     * @param int           /EE_Base_Class $id_or_obj
-     * @param string $model_name   like 'Event', or 'Registration'
-     * @param array  $query_params @see
-     *                             https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @param string $field_to_sum name of field to count by. By default, uses primary key
+     * @param EE_Base_Class|int|string $id_or_obj
+     * @param string                   $model_name   like 'Event', or 'Registration'
+     * @param array|null               $query_params @see
+     *                                               https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param string                   $field_to_sum name of field to count by. By default, uses primary key
      * @return float
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function sum_related($id_or_obj, $model_name, $query_params, $field_to_sum = null)
     {
@@ -2799,10 +2853,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param int | EE_Base_Class $id_or_obj        EE_Base_Class child or its ID
      * @param string              $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
-     * @param array               $query_params     @see
+     * @param array|null          $query_params     @see
      *                                              https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_first_related(EE_Base_Class $id_or_obj, $other_model_name, $query_params)
     {
@@ -2866,6 +2921,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                              of EEM_Base)
      * @return int|string new primary key on main table that got inserted
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function insert($field_n_values)
     {
@@ -2905,8 +2961,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param string $action
      * @return boolean
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _satisfies_unique_indexes($field_n_values, $action = 'insert')
+    protected function _satisfies_unique_indexes(array $field_n_values, $action = 'insert')
     {
         foreach ($this->unique_indexes() as $index_name => $index) {
             $uniqueness_where_params = array_intersect_key($field_n_values, $index->fields());
@@ -2999,6 +3056,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param array $query_params
      * @return boolean
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function exists($query_params)
     {
@@ -3013,6 +3071,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param int|string $id
      * @return boolean
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function exists_by_ID($id)
     {
@@ -3050,7 +3109,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $insertion_col_n_values = [];
         $format_for_insertion   = [];
         $fields_on_table        = $this->_get_fields_for_table($table->get_table_alias());
-        foreach ($fields_on_table as $field_name => $field_obj) {
+        foreach ($fields_on_table as $field_obj) {
             // check if its an auto-incrementing column, in which case we should just leave it to do its autoincrement thing
             if ($field_obj->is_auto_increment()) {
                 continue;
@@ -3198,7 +3257,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         // grab second table from tables array
         $second_table = end($this->_tables);
-        return $second_table instanceof EE_Secondary_Table ? $second_table->get_table_name() : null;
+        return $second_table instanceof EE_Secondary_Table
+            ? $second_table->get_table_name()
+            : null;
     }
 
 
@@ -3211,7 +3272,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function get_table_obj_by_alias($table_alias = '')
     {
-        return isset($this->_tables[ $table_alias ]) ? $this->_tables[ $table_alias ] : null;
+        return $this->_tables[ $table_alias ] ?? null;
     }
 
 
@@ -3314,12 +3375,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * For extracting related models from WHERE (0), HAVING (having), ORDER BY (order_by) or forced joins (force_join)
      *
-     * @param array                       $sub_query_params @see
-     *                                                      https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#-0-where-conditions
+     * @param array                       $sub_query_params
      * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
      * @param string                      $query_param_type one of $this->_allowed_query_params
      * @return EE_Model_Query_Info_Carrier
      * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#-0-where-conditions
      */
     private function _extract_related_models_from_sub_params_array_keys(
         $sub_query_params,
@@ -3361,9 +3422,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     );
                 } elseif (
                     $query_param_type === 0 // ie WHERE
-                    && is_array($possibly_array_of_params)
+                    && is_array($possibly_array_of_params) // need is_array() check so we don't try to explode a string
                     && isset($possibly_array_of_params[2])
-                    && $possibly_array_of_params[2] == true
+                    && $possibly_array_of_params[2]
                 ) {
                     // then $possible_array_of_params looks something like array('<','DTT_sold',true)
                     // indicating that $possible_array_of_params[1] is actually a field name,
@@ -3438,12 +3499,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * before we know what joins to perform. However, we need to know what data types correspond to which fields on
      * other models before we can finalize the where clause SQL.
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
      * @return EE_Model_Query_Info_Carrier
      * @throws EE_Error
-     * @throws ModelConfigurationException*@throws ReflectionException
+     * @throws ModelConfigurationException
      * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function _create_model_query_info_carrier($query_params)
     {
@@ -3461,7 +3522,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             );
             $query_params = [];
         }
-        $query_params[0] = isset($query_params[0]) ? $query_params[0] : [];
+        $query_params[0] = $query_params[0] ?? [];
         // first check if we should alter the query to account for caps or not
         // because the caps might require us to do extra joins
         if (isset($query_params['caps']) && $query_params['caps'] !== 'none') {
@@ -3655,7 +3716,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param string $context one of EEM_Base::valid_cap_contexts()
      * @return array @see
-     *               https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
+     *                        https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @throws EE_Error
      */
     public function caps_where_conditions($context = self::caps_read)
@@ -3663,10 +3724,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         EEM_Base::verify_is_valid_cap_context($context);
         $cap_where_conditions = [];
         $cap_restrictions     = $this->caps_missing($context);
-        /**
-         * @var $cap_restrictions EE_Default_Where_Conditions[]
-         */
-        foreach ($cap_restrictions as $cap => $restriction_if_no_cap) {
+        foreach ($cap_restrictions as $restriction_if_no_cap) {
             $cap_where_conditions = array_replace_recursive(
                 $cap_where_conditions,
                 $restriction_if_no_cap->get_default_where_conditions()
@@ -3722,9 +3780,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                                                  not for this primary model. 'all', the default,
      *                                                                  means default where conditions will apply as
      *                                                                  normal
-     * @param array                       $where_query_params           @see
-     *                                                                  https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
+     * @param array                       $where_query_params
+     * @return array
      * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params
+     *                                                                  .md#0-where-conditions
      */
     private function _get_default_where_conditions_for_models_in_query(
         EE_Model_Query_Info_Carrier $query_info_carrier,
@@ -3860,7 +3920,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param EEM_Base $model
      * @param string   $model_relation_path like 'Transaction.Payment.'
      * @return array @see
-     *               https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
+     *                                      https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @throws EE_Error
      */
     private function _override_defaults_or_make_null_friendly(
@@ -4326,27 +4386,27 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     case 'NOT':
                         $where_clauses[] = "! ("
                                            . $this->_construct_condition_clause_recursive(
-                                               $op_and_value_or_sub_condition,
-                                               $glue
-                                           )
+                                $op_and_value_or_sub_condition,
+                                $glue
+                            )
                                            . ")";
                         break;
                     case 'and':
                     case 'AND':
                         $where_clauses[] = " ("
                                            . $this->_construct_condition_clause_recursive(
-                                               $op_and_value_or_sub_condition,
-                                               ' AND '
-                                           )
+                                $op_and_value_or_sub_condition,
+                                ' AND '
+                            )
                                            . ")";
                         break;
                     case 'or':
                     case 'OR':
                         $where_clauses[] = " ("
                                            . $this->_construct_condition_clause_recursive(
-                                               $op_and_value_or_sub_condition,
-                                               ' OR '
-                                           )
+                                $op_and_value_or_sub_condition,
+                                ' OR '
+                            )
                                            . ")";
                         break;
                 }
@@ -4372,7 +4432,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $where_clauses[]  = $this->_deduce_column_name_from_query_param($query_param) . SP . $op_and_value_sql;
             }
         }
-        return $where_clauses ? implode($glue, $where_clauses) : '';
+        return $where_clauses
+            ? implode($glue, $where_clauses)
+            : '';
     }
 
 
@@ -4432,23 +4494,26 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if ($pos_of_star === false) {
             return $condition_query_param_key;
         }
-        $condition_query_param_sans_star = substr($condition_query_param_key, 0, $pos_of_star);
-        return $condition_query_param_sans_star;
+        return substr($condition_query_param_key, 0, $pos_of_star);
     }
 
 
     /**
      * creates the SQL for the operator and the value in a WHERE clause, eg "< 23" or "LIKE '%monkey%'"
      *
-     * @param mixed      array | string    $op_and_value
+     * @param array|string               $op_and_value
      * @param EE_Model_Field_Base|string $field_obj . If string, should be one of EEM_Base::_valid_wpdb_data_types
      * @return string
      * @throws EE_Error
      */
     private function _construct_op_and_value($op_and_value, $field_obj)
     {
+        $operator = '=';
+        $value    = $op_and_value;
         if (is_array($op_and_value)) {
-            $operator = isset($op_and_value[0]) ? $this->_prepare_operator_for_sql($op_and_value[0]) : null;
+            $operator = isset($op_and_value[0])
+                ? $this->_prepare_operator_for_sql($op_and_value[0])
+                : null;
             if (! $operator) {
                 $php_array_like_string = [];
                 foreach ($op_and_value as $key => $value) {
@@ -4464,13 +4529,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     )
                 );
             }
-            $value = isset($op_and_value[1]) ? $op_and_value[1] : null;
-        } else {
-            $operator = '=';
-            $value    = $op_and_value;
+            $value = $op_and_value[1] ?? null;
         }
+
         // check to see if the value is actually another field
-        if (is_array($op_and_value) && isset($op_and_value[2]) && $op_and_value[2] == true) {
+        if (is_array($op_and_value) && isset($op_and_value[2]) && $op_and_value[2]) {
             return $operator . SP . $this->_deduce_column_name_from_query_param($value);
         }
         if (in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
@@ -4693,7 +4756,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     public function _get_qualified_column_for_field($field_name)
     {
         $all_fields = $this->field_settings();
-        $field      = isset($all_fields[ $field_name ]) ? $all_fields[ $field_name ] : false;
+        $field      = $all_fields[ $field_name ] ?? false;
         if ($field) {
             return $field->get_qualified_column();
         }
@@ -4763,12 +4826,16 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function get_qualified_columns_for_all_fields($model_relation_chain = '', $return_string = true)
     {
-        $table_prefix      = str_replace('.', '__', $model_relation_chain) . (empty($model_relation_chain) ? '' : '__');
+        $table_prefix      = str_replace('.', '__', $model_relation_chain) . (empty($model_relation_chain)
+                ? ''
+                : '__');
         $qualified_columns = [];
         foreach ($this->field_settings() as $field_name => $field) {
             $qualified_columns[] = $table_prefix . $field->get_qualified_column();
         }
-        return $return_string ? implode(', ', $qualified_columns) : $qualified_columns;
+        return $return_string
+            ? implode(', ', $qualified_columns)
+            : $qualified_columns;
     }
 
 
@@ -4847,7 +4914,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     // just add a regular JOIN to this table from the primary table
                     $SQL .= $table_obj->get_join_sql($alias_prefixed);
                 }
-            }//if it's a primary table, dont add any SQL. it should already be in the FROM statement
+            }// if it's a primary table, dont add any SQL. it should already be in the FROM statement
         }
         return $SQL;
     }
@@ -5019,9 +5086,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param $field_obj
      * @return boolean
      */
-    public function is_primary_key_field($field_obj)
+    public function is_primary_key_field($field_obj): bool
     {
-        return $field_obj instanceof EE_Primary_Key_Field_Base ? true : false;
+        return $field_obj instanceof EE_Primary_Key_Field_Base;
     }
 
 
@@ -5197,7 +5264,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         $count_if_model_has_no_primary_key = 0;
         $has_primary_key                   = $this->has_primary_key_field();
-        $primary_key_field                 = $has_primary_key ? $this->get_primary_key_field() : null;
+        $primary_key_field                 = $has_primary_key
+            ? $this->get_primary_key_field()
+            : null;
         foreach ((array) $rows as $row) {
             if (empty($row)) {
                 // wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
@@ -5228,7 +5297,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             // set the timezone on the instantiated objects
             $classInstance->set_timezone($this->_timezone);
             // make sure if there is any timezone setting present that we set the timezone for the object
-            $key                      = $has_primary_key ? $classInstance->ID() : $count_if_model_has_no_primary_key++;
+            $key                      = $has_primary_key
+                ? $classInstance->ID()
+                : $count_if_model_has_no_primary_key++;
             $array_of_objects[ $key ] = $classInstance;
             // also, for all the relations of type BelongsTo, see if we can cache
             // those related models
@@ -5322,7 +5393,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         foreach ($this->field_settings() as $field_name => $field_obj) {
             $this_model_fields_and_values[ $field_name ] = $field_obj->get_default_value();
         }
-        $className     = $this->_get_class_name();
+        $className = $this->_get_class_name();
         return EE_Registry::instance()->load_class($className, [$this_model_fields_and_values], false, false);
     }
 
@@ -5373,13 +5444,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $classInstance = $this->add_to_entity_map($classInstance);
             }
         } else {
-            $classInstance = EE_Registry::instance()
-                                        ->load_class(
-                                            $className,
-                                            [$this_model_fields_n_values, $this->_timezone],
-                                            true,
-                                            false
-                                        );
+            $classInstance = EE_Registry::instance()->load_class(
+                $className,
+                [$this_model_fields_n_values, $this->_timezone],
+                true,
+                false
+            );
         }
         return $classInstance;
     }
@@ -5393,8 +5463,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function get_from_entity_map($id)
     {
-        return isset($this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ])
-            ? $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] : null;
+        return $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] ?? null;
     }
 
 
@@ -5421,12 +5490,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             throw new EE_Error(
                 sprintf(
                     esc_html__("You tried adding a %s to a mapping of %ss", "event_espresso"),
-                    is_object($object) ? get_class($object) : $object,
+                    is_object($object)
+                        ? get_class($object)
+                        : $object,
                     $className
                 )
             );
         }
-        /** @var $object EE_Base_Class */
+
         if (! $object->ID()) {
             throw new EE_Error(
                 sprintf(
@@ -5671,7 +5742,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $quantity = floor($quantity);
         return apply_filters(
             'FHEE__EEM_Base__item_name__plural_or_singular',
-            $quantity > 1 ? $this->plural_item : $this->singular_item,
+            $quantity > 1
+                ? $this->plural_item
+                : $this->singular_item,
             $quantity,
             $this->plural_item,
             $this->singular_item
@@ -6247,7 +6320,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *      If $context is provided (which should be set to one of EEM_Base::valid_cap_contexts())
      *      only returns the cap restrictions array in that context (ie, the array
      *      at that key)
-     *
      */
     public function cap_restrictions($context = EEM_Base::caps_read)
     {
@@ -6358,14 +6430,17 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @return array
      */
-    public static function valid_cap_contexts()
+    public static function valid_cap_contexts(): array
     {
-        return apply_filters('FHEE__EEM_Base__valid_cap_contexts', [
-            self::caps_read,
-            self::caps_read_admin,
-            self::caps_edit,
-            self::caps_delete,
-        ]);
+        return (array) apply_filters(
+            'FHEE__EEM_Base__valid_cap_contexts',
+            [
+                self::caps_read,
+                self::caps_read_admin,
+                self::caps_edit,
+                self::caps_delete,
+            ]
+        );
     }
 
 
@@ -6374,7 +6449,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @return array
      */
-    public static function valid_default_where_conditions()
+    public static function valid_default_where_conditions(): array
     {
         return [
             EEM_Base::default_where_conditions_all,
@@ -6396,7 +6471,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @return bool
      * @throws EE_Error
      */
-    public static function verify_is_valid_cap_context($context)
+    public static function verify_is_valid_cap_context($context): bool
     {
         $valid_cap_contexts = EEM_Base::valid_cap_contexts();
         if (in_array($context, $valid_cap_contexts)) {
@@ -6434,7 +6509,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @return array
      */
-    public function logic_query_param_keys()
+    public function logic_query_param_keys(): array
     {
         return $this->_logic_query_param_keys;
     }
@@ -6448,7 +6523,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param $query_param_key
      * @return bool
      */
-    public function is_logic_query_param_key($query_param_key)
+    public function is_logic_query_param_key($query_param_key): bool
     {
         foreach ($this->logic_query_param_keys() as $logic_query_param_key) {
             if (
@@ -6468,12 +6543,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @return boolean
      * @since 4.9.74.p
      */
-    public function hasPassword()
+    public function hasPassword(): bool
     {
         // if we don't yet know if there's a password field, find out and remember it for next time.
         if ($this->has_password_field === null) {
             $password_field           = $this->getPasswordField();
-            $this->has_password_field = $password_field instanceof EE_Password_Field ? true : false;
+            $this->has_password_field = $password_field instanceof EE_Password_Field;
         }
         return $this->has_password_field;
     }
@@ -6617,7 +6692,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 )
             );
         }
-        return ($this->model_chain_to_password ? $this->model_chain_to_password . '.' : '') . $password_field_name;
+        return (
+               $this->model_chain_to_password
+                   ? $this->model_chain_to_password . '.'
+                   : ''
+               ) . $password_field_name;
     }
 
 
@@ -6628,7 +6707,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @return boolean
      * @since 4.9.74.p
      */
-    public function restrictedByRelatedModelPassword()
+    public function restrictedByRelatedModelPassword(): bool
     {
         return $this->model_chain_to_password !== null;
     }

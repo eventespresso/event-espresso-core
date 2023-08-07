@@ -2,27 +2,29 @@
 
 /**
  * Class EE_Registration_Payment
- *
  * Description
  *
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen
  * @since                 4.7.0
- *
  */
 class EE_Registration_Payment extends EE_Base_Class
 {
     /**
-     *
      * @param array  $props_n_values
      * @param string $timezone
+     * @param array  $date_formats
      * @return EE_Registration_Payment
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array(), $timezone = '', $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        return $has_object
+            ? $has_object
+            : new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
@@ -30,34 +32,34 @@ class EE_Registration_Payment extends EE_Base_Class
      * @param array  $props_n_values
      * @param string $timezone
      * @return EE_Registration_Payment
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = '')
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
 
 
     /**
-     * registration_ID
-     *
-     * @access    public
      * @return    int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function registration_ID()
+    public function registration_ID(): int
     {
-        return $this->get('REG_ID');
+        return (int) $this->get('REG_ID');
     }
 
 
     /**
-     * payment_ID
-     *
-     * @access    public
      * @return    int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function payment_ID()
+    public function payment_ID(): int
     {
-        return $this->get('PAY_ID');
+        return (int) $this->get('PAY_ID');
     }
 
 
@@ -66,44 +68,43 @@ class EE_Registration_Payment extends EE_Base_Class
      *
      * @access    public
      * @return    float
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function amount()
+    public function amount(): float
     {
-        return $this->get('RPY_amount');
+        return (float) $this->get('RPY_amount');
     }
 
 
     /**
-     * amount
-     *
-     * @access    public
-     * @param float $amount
+     * @param float|int|string $amount
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_amount($amount = 0.000)
     {
-        $this->set('RPY_amount', $amount);
+        $this->set('RPY_amount', (float) $amount);
     }
 
 
     /**
-     * registration
-     *
-     * @access    public
-     * @return \EE_Registration
+     * @return EE_Registration
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function registration()
+    public function registration(): EE_Registration
     {
         return $this->get_first_related('Registration');
     }
 
 
     /**
-     * payment
-     *
-     * @access    public
-     * @return \EE_Payment
+     * @return EE_Payment
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function payment()
+    public function payment(): EE_Payment
     {
         return $this->get_first_related('Payment');
     }

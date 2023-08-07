@@ -180,4 +180,10 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
         }
         return array_merge($original_shortcodes, ...$shortcodes);
     }
+
+
+    public static function reset(): void
+    {
+        self::$_ee_messages_shortcode_registry = [];
+    }
 }

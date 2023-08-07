@@ -15,7 +15,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
 {
     /**
      * the following constants define where tickets can be viewed throughout the UI
-     *
      *  TICKET_VISIBILITY_NONE          - will not be displayed anywhere
      *  TICKET_VISIBILITY_PUBLIC        - basically displayed everywhere
      *  TICKET_VISIBILITY_MEMBERS_ONLY  - displayed to any logged-in user
@@ -61,17 +60,15 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
     /**
      * private constructor to prevent direct creation
      *
-     * @Constructor
-     * @access private
-     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings
-     *                         (and any incoming timezone data that gets saved).
-     *                         Note this just sends the timezone info to the date time model field objects.
-     *                         Default is NULL
-     *                         (and will be assumed using the set timezone in the 'timezone_string' wp option)
+     * @param string|null $timezone string representing the timezone we want to set for returned Date Time Strings
+     *                              (and any incoming timezone data that gets saved).
+     *                              Note this just sends the timezone info to the date time model field objects.
+     *                              Default is NULL
+     *                              (and will be assumed using the set timezone in the 'timezone_string' wp option)
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function __construct($timezone)
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item = esc_html__('Ticket', 'event_espresso');
         $this->plural_item   = esc_html__('Tickets', 'event_espresso');
@@ -252,7 +249,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
             'WP_User'         => new EE_Belongs_To_Relation(),
         ];
         // this model is generally available for reading
-        $path_to_event                                                                                       = 'Datetime.Event';
+        $path_to_event                                            = 'Datetime.Event';
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public(
             'TKT_is_default',
             $path_to_event
@@ -260,10 +257,10 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
 
         // account for default tickets in the caps
         $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ]
-            = new EE_Restriction_Generator_Default_Protected(
-                'TKT_is_default',
-                $path_to_event
-            );
+                                                                    = new EE_Restriction_Generator_Default_Protected(
+            'TKT_is_default',
+            $path_to_event
+        );
         $this->_cap_restriction_generators[ EEM_Base::caps_edit ]   = new EE_Restriction_Generator_Default_Protected(
             'TKT_is_default',
             $path_to_event
@@ -414,27 +411,30 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
             'FHEE__EEM_Ticket__construct__ticket_visibility',
             [
                 EEM_Ticket::TICKET_VISIBILITY_PUBLIC_KEY        => [
-                    'desc' => esc_html__('ticket displayed to everyone everywhere', 'event_espresso'),
+                    'desc'  => esc_html__('ticket displayed to everyone everywhere', 'event_espresso'),
                     'label' => esc_html__('Public', 'event_espresso'),
                     'value' => EEM_Ticket::TICKET_VISIBILITY_PUBLIC_VALUE,
                 ],
                 EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY_KEY  => [
-                    'desc' => esc_html__('ticket only displayed to logged-in users', 'event_espresso'),
+                    'desc'  => esc_html__('ticket only displayed to logged-in users', 'event_espresso'),
                     'label' => esc_html__('Members only', 'event_espresso'),
                     'value' => EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY_VALUE,
                 ],
                 EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY_KEY   => [
-                    'desc' => esc_html__('ticket only displayed to logged-in admins', 'event_espresso'),
+                    'desc'  => esc_html__('ticket only displayed to logged-in admins', 'event_espresso'),
                     'label' => esc_html__('Admins only', 'event_espresso'),
                     'value' => EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY_VALUE,
                 ],
                 EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY_KEY => [
-                    'desc' => esc_html__('ticket only displayed in the admin UI and not on the frontend', 'event_espresso'),
+                    'desc'  => esc_html__(
+                        'ticket only displayed in the admin UI and not on the frontend',
+                        'event_espresso'
+                    ),
                     'label' => esc_html__('Admin UI only', 'event_espresso'),
                     'value' => EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY_VALUE,
                 ],
                 EEM_Ticket::TICKET_VISIBILITY_NONE_KEY          => [
-                    'desc' => esc_html__('will hide the ticket everywhere', 'event_espresso'),
+                    'desc'  => esc_html__('will hide the ticket everywhere', 'event_espresso'),
                     'label' => esc_html__('None', 'event_espresso'),
                     'value' => EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE,
                 ],
@@ -484,7 +484,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                 // change because we only want the labels tied to the keys
                 $ticket_visibility_options[] = [
                     'value' => $key,
-                    'label' => $ticket_visibility_option['label']
+                    'label' => $ticket_visibility_option['label'],
                 ];
             }
         }

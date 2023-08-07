@@ -41,7 +41,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      *                              If not provided, we have to assume its not in the uploads directory
      * @return WP_Filesystem_Base
      */
-    private static function _get_wp_filesystem($filepath = ''): WP_Filesystem_Base
+    private static function _get_wp_filesystem(string $filepath = ''): WP_Filesystem_Base
     {
         if (
             apply_filters(
@@ -63,13 +63,11 @@ class EEH_File extends EEH_Base implements EEHI_File
     {
         if (! EEH_File::$_wp_filesystem instanceof WP_Filesystem_Base) {
             require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
-            $method             = 'direct';
-            $wp_filesystem_file =
-                apply_filters(
-                    'filesystem_method_file',
-                    ABSPATH . 'wp-admin/includes/class-wp-filesystem-' . $method . '.php',
-                    $method
-                );
+            $wp_filesystem_file = apply_filters(
+                'filesystem_method_file',
+                ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php',
+                'direct'
+            );
             // added the following validation logic
             // because we allow the filesystem filepath to be filtered,
             // and are loading whatever file the path pointed to,
@@ -508,7 +506,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      */
     public static function delete(string $filepath, bool $recursive = false, $type = false): bool
     {
-        $wp_filesystem = EEH_File::_get_wp_filesystem();
+        $wp_filesystem = EEH_File::_get_wp_filesystem($filepath);
         return $wp_filesystem->delete($filepath, $recursive, $type);
     }
 

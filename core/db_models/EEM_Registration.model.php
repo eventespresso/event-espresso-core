@@ -95,18 +95,16 @@ class EEM_Registration extends EEM_Soft_Delete_Base
 
 
     /**
-     *    private constructor to prevent direct creation
+     * private constructor to prevent direct creation
      *
-     * @Constructor
-     * @access protected
-     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any
-     *                         incoming timezone data that gets saved). Note this just sends the timezone info to the
-     *                         date time model field objects.  Default is NULL (and will be assumed using the set
-     *                         timezone in the 'timezone_string' wp option)
+     * @param string|null $timezone string representing the timezone we want to set for returned Date Time Strings (and
+     *                              any incoming timezone data that gets saved). Note this just sends the timezone info
+     *                              to the date time model field objects.  Default is NULL (and will be assumed using
+     *                              the set timezone in the 'timezone_string' wp option)
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function __construct($timezone = null)
+    protected function __construct(?string $timezone = '')
     {
         $this->_table_analysis         = EE_Registry::instance()->create('TableAnalysis', [], true);
         $this->singular_item           = esc_html__('Registration', 'event_espresso');
@@ -477,13 +475,15 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      */
     public function get_registration_for_transaction_attendee(int $TXN_ID = 0, int $ATT_ID = 0, int $att_nmbr = 0):
     ?EE_Registration {
-        return $this->get_one([
+        return $this->get_one(
             [
-                'TXN_ID' => $TXN_ID,
-                'ATT_ID' => $ATT_ID,
-            ],
-            'limit' => [min($att_nmbr - 1, 0), 1],
-        ]);
+                [
+                    'TXN_ID' => $TXN_ID,
+                    'ATT_ID' => $ATT_ID,
+                ],
+                'limit' => [min($att_nmbr - 1, 0), 1],
+            ]
+        );
     }
 
 
@@ -689,12 +689,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         if (! $TXN_ID) {
             return null;
         }
-        return $this->get_one([
+        return $this->get_one(
             [
-                'TXN_ID'    => $TXN_ID,
-                'REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT,
-            ],
-        ]);
+                [
+                    'TXN_ID'    => $TXN_ID,
+                    'REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT,
+                ],
+            ]
+        );
     }
 
 
@@ -875,7 +877,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     /**
      * returns a count of registrations for the supplied event having the status as specified
      *
-     * @param int   $EVT_ID
+     * @param int          $EVT_ID
      * @param array|string $statuses
      * @return int
      * @throws InvalidArgumentException

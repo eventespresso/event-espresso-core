@@ -4,8 +4,8 @@ use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EEM_Form_Submission
- *
  * @method EE_Form_Submission get_one($query_params = [])
+ *
  * @author  Brent Christensen
  * @since   5.0.0.p
  */
@@ -28,7 +28,7 @@ class EEM_Form_Submission extends EEM_Base
      * @param string|null $timezone
      * @throws EE_Error
      */
-    protected function __construct(?string $timezone)
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item = esc_html__('Form Submission', 'event_espresso');
         $this->plural_item   = esc_html__('Form Submissions', 'event_espresso');

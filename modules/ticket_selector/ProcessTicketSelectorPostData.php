@@ -7,6 +7,7 @@ use EE_Error;
 use EE_Event;
 use EEH_Event_View;
 use EEM_Event;
+use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\RequestInterface;
 use ReflectionException;
 
@@ -74,7 +75,7 @@ class ProcessTicketSelectorPostData
 
     /**
      * @param RequestInterface $request
-     * @param EEM_Event $event_model
+     * @param EEM_Event        $event_model
      */
     public function __construct(RequestInterface $request, EEM_Event $event_model)
     {
@@ -100,7 +101,7 @@ class ProcessTicketSelectorPostData
     {
         // do we have an event id?
         if ($this->event_id === null) {
-            $this->event_id = $this->request->getRequestParam(self::INPUT_KEY_EVENT_ID, 0, 'int');
+            $this->event_id = $this->request->getRequestParam(self::INPUT_KEY_EVENT_ID, 0, DataType::INTEGER);
             if (! $this->event_id) {
                 // $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
                 throw new DomainException(
@@ -181,7 +182,7 @@ class ProcessTicketSelectorPostData
      */
     protected function processInteger(string $what, string $input_key)
     {
-        $this->valid_data[ $what ] = $this->valid_data[ $what ] ?? $this->request->getRequestParam($input_key, 0, 'int');
+        $this->valid_data[ $what ] = $this->request->getRequestParam($input_key, 0, DataType::INTEGER);
     }
 
 
@@ -192,7 +193,7 @@ class ProcessTicketSelectorPostData
     protected function processQuantity(string $input_key)
     {
         /** @var array $row_qty */
-        $row_qty = $this->request->getRequestParam($input_key, [], 'int', true);
+        $row_qty = $this->request->getRequestParam($input_key, [], DataType::INTEGER, true);
         if (empty($row_qty) || ! is_array($row_qty)) {
             throw new DomainException(
                 sprintf(
@@ -223,9 +224,9 @@ class ProcessTicketSelectorPostData
             $row_qty = [$ticket_id => 1];
         }
         foreach ($this->valid_data[ self::DATA_KEY_TICKET_ID ] as $ticket_id) {
-            $qty = $row_qty[ $ticket_id ] ?? 0;
-            $this->valid_data[ self::DATA_KEY_QUANTITY ][ $ticket_id ]     = $qty;
-            $this->valid_data[ self:: DATA_KEY_TOTAL_TICKETS ] += $qty;
+            $qty                                                       = $row_qty[ $ticket_id ] ?? 0;
+            $this->valid_data[ self::DATA_KEY_QUANTITY ][ $ticket_id ] = $qty;
+            $this->valid_data[ self:: DATA_KEY_TOTAL_TICKETS ]         += $qty;
         }
     }
 
@@ -236,7 +237,7 @@ class ProcessTicketSelectorPostData
     protected function processReturnURL(string $input_key)
     {
         // grab and sanitize return-url
-        $input_value = $this->request->getRequestParam($input_key, '', 'url');
+        $input_value = $this->request->getRequestParam($input_key, '', DataType::URL);
         // was the request coming from an iframe ? if so, then:
         if (strpos($input_value, 'event_list=iframe')) {
             // get anchor fragment
@@ -255,7 +256,7 @@ class ProcessTicketSelectorPostData
      */
     protected function processTicketIDs(string $input_key)
     {
-        $ticket_ids          = (array) $this->request->getRequestParam($input_key, [], 'int', true);
+        $ticket_ids          = (array) $this->request->getRequestParam($input_key, [], DataType::INTEGER, true);
         $filtered_ticket_ids = array_filter($ticket_ids);
         if (empty($filtered_ticket_ids)) {
             throw new DomainException(

@@ -89,10 +89,10 @@ abstract class EES_Shortcode extends EE_Base
      *    NOTE: shortcode may not function perfectly dues to missing assets, but it's better than not having things
      *    work at all
      *
-     * @param array|null $attributes
+     * @param array|string $attributes
      * @return mixed
      */
-    final public static function fallback_shortcode_processor(array $attributes = null)
+    final public static function fallback_shortcode_processor($attributes = null)
     {
         if (EE_Maintenance_Mode::disable_frontend_for_maintenance()) {
             return null;

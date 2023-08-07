@@ -25,7 +25,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -43,7 +43,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
@@ -310,17 +310,17 @@ class EE_Price extends EE_Soft_Delete_Base_Class
     /**
      * return whether the price is a base price or not
      *
-     * @return boolean
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_base_price()
+    public function is_base_price(): bool
     {
         $price_type = $this->type_obj();
-        return $price_type->is_base_price();
+        return $price_type instanceof EE_Price_Type ? $price_type->is_base_price() : false;
     }
 
 
@@ -355,67 +355,69 @@ class EE_Price extends EE_Soft_Delete_Base_Class
     /**
      * Simply indicates whether this price increases or decreases the total
      *
-     * @return boolean true = discount, otherwise adds to the total
+     * @return bool true = discount, otherwise adds to the total
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function is_discount()
+    public function is_discount(): bool
     {
         $price_type = $this->type_obj();
-        return $price_type->is_discount();
+        return $price_type instanceof EE_Price_Type ? $price_type->is_discount() : false;
     }
 
 
     /**
      * whether the price is a percentage or not
      *
-     * @return boolean
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_percent()
+    public function is_percent(): bool
     {
         $price_type = $this->type_obj();
-        return $price_type->is_percent();
+        return $price_type instanceof EE_Price_Type ? $price_type->is_percent() : false;
     }
 
 
     /**
      * whether the price is a percentage or not
      *
-     * @return boolean
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function is_surcharge()
+    public function is_surcharge(): bool
     {
         $price_type = $this->type_obj();
-        return $price_type->is_surcharge();
+        return $price_type instanceof EE_Price_Type ? $price_type->is_surcharge() : false;
     }
+
+
 
     /**
      * whether the price is a percentage or not
      *
-     * @return boolean
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function is_tax()
+    public function is_tax(): bool
     {
         $price_type = $this->type_obj();
-        return $price_type->is_tax();
+        return $price_type instanceof EE_Price_Type ? $price_type->is_tax() : false;
     }
 
 

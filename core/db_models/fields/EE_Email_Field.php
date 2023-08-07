@@ -28,7 +28,6 @@ class EE_Email_Field extends EE_Text_Field_Base
     }
 
 
-
     /**
      * In form inputs, we should have called htmlentities and addslashes() on form inputs,
      * so we need to undo that on setting of these fields
@@ -41,6 +40,9 @@ class EE_Email_Field extends EE_Text_Field_Base
      */
     public function prepare_for_set($email_address)
     {
+        if (empty($email_address)) {
+            return '';
+        }
         try {
             $email_address_obj = EmailAddressFactory::create($email_address);
             return $email_address_obj instanceof EmailAddress ? $email_address_obj->get() : '';

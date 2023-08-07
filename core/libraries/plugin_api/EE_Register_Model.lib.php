@@ -199,4 +199,11 @@ class EE_Register_Model implements EEI_Plugin_API
     {
         unset(self::$_model_registry[ $addon_name ], self::$_model_name_to_classname_map[ $addon_name ]);
     }
+
+
+    public static function reset(): void
+    {
+        self::$_model_registry = [];
+        self::$_model_name_to_classname_map = [];
+    }
 }

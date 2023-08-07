@@ -16,11 +16,11 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class EEM_Payment_Method extends EEM_Base
 {
-    const scope_cart = 'CART';
+    const scope_cart  = 'CART';
 
     const scope_admin = 'ADMIN';
 
-    const scope_api = 'API';
+    const scope_api   = 'API';
 
     /**
      * @type EEM_Payment_Method
@@ -31,17 +31,17 @@ class EEM_Payment_Method extends EEM_Base
     /**
      * private constructor to prevent direct creation
      *
-     * @param null $timezone
+     * @param string|null $timezone
      * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct(?string $timezone = '')
     {
-        $this->singular_item = esc_html__('Payment Method', 'event_espresso');
-        $this->plural_item = esc_html__('Payment Methods', 'event_espresso');
-        $this->_tables = [
+        $this->singular_item    = esc_html__('Payment Method', 'event_espresso');
+        $this->plural_item      = esc_html__('Payment Methods', 'event_espresso');
+        $this->_tables          = [
             'Payment_Method' => new EE_Primary_Table('esp_payment_method', 'PMD_ID'),
         ];
-        $this->_fields = [
+        $this->_fields          = [
             'Payment_Method' => [
                 'PMD_ID'              => new EE_Primary_Key_Int_Field(
                     'PMD_ID',
@@ -231,7 +231,7 @@ class EEM_Payment_Method extends EEM_Base
             );
         }
         $acceptable_scopes = [];
-        $count = 0;
+        $count             = 0;
         foreach ($this->scopes() as $scope_name => $desc) {
             $count++;
             $acceptable_scopes[ 'PMD_scope*' . $count ] = ['LIKE', '%' . $scope_name . '%'];

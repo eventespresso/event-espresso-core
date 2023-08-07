@@ -13,26 +13,15 @@ use WP_User;
  */
 class CurrentUser
 {
-    /**
-     * @var WP_User
-     */
-    private $current_user;
+    private EventManagers $event_managers;
 
-    /**
-     * @var boolean
-     */
-    private $is_event_manager = false;
+    private ?WP_User      $current_user     = null;
 
-    /**
-     * @var boolean
-     */
-    private $is_logged_in = false;
+    private bool          $is_event_manager = false;
 
+    private bool          $is_logged_in     = false;
 
-    /**
-     * @var EventManagers
-     */
-    private $event_managers;
+    private bool          $is_super_admin   = false;
 
 
     /**
@@ -50,10 +39,11 @@ class CurrentUser
     public function setCurrentUser(): void
     {
         if (! $this->current_user instanceof WP_User) {
-            $this->current_user = wp_get_current_user();
+            $this->current_user     = wp_get_current_user();
             $event_manager_roles    = array_keys($this->event_managers->roles());
             $current_user_roles     = $this->current_user->roles;
             $this->is_event_manager = ! empty(array_intersect($event_manager_roles, $current_user_roles));
+            $this->is_super_admin   = is_super_admin($this->current_user->ID);
             $this->is_logged_in     = $this->current_user->exists();
         }
     }
@@ -64,7 +54,6 @@ class CurrentUser
      */
     public function currentUser(): ?WP_User
     {
-        $this->setCurrentUser();
         return $this->current_user;
     }
 
@@ -74,7 +63,6 @@ class CurrentUser
      */
     public function isEventManager(): bool
     {
-        $this->setCurrentUser();
         return $this->is_event_manager;
     }
 
@@ -84,7 +72,16 @@ class CurrentUser
      */
     public function isLoggedIn(): bool
     {
-        $this->setCurrentUser();
         return $this->is_logged_in;
+    }
+
+
+    /**
+     * @return bool
+     * @since $VID:$
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->is_super_admin;
     }
 }

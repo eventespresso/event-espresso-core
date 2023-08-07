@@ -86,7 +86,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = [], $timezone = null, $date_formats = [])
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ?: new self($props_n_values, false, $timezone, $date_formats);
@@ -101,7 +101,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = [], $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
@@ -322,10 +322,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Unless otherwise specified, orders datetimes by start date.
      *
      * @param array $query_params
-     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Datetime[]|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function datetimes($query_params = [])
     {
@@ -450,7 +450,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     {
         $price_modifiers = $this->usesGlobalTaxes()
             ? $this->ticket_price_modifiers->getAllDiscountAndSurchargeModifiersForTicket()
-            : $this->ticket_price_modifiers ->getAllModifiersForTicket();
+            : $this->ticket_price_modifiers->getAllModifiersForTicket();
         if (! empty($price_modifiers)) {
             return $price_modifiers;
         }
@@ -460,8 +460,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
                     'Price_Type.PBT_ID' => [
                         'NOT IN',
                         [EEM_Price_Type::base_type_base_price, EEM_Price_Type::base_type_tax],
-                    ]
-                ]
+                    ],
+                ],
             ]
         );
     }
@@ -488,10 +488,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets all the prices that combine to form the final price of this ticket
      *
      * @param array $query_params
-     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Price[]|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function prices(array $query_params = []): array
     {
@@ -506,10 +506,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets all the ticket datetimes (ie, relations between datetimes and tickets)
      *
      * @param array $query_params
-     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Datetime_Ticket|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function datetime_tickets($query_params = [])
     {
@@ -1603,10 +1603,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets all the registrations for this ticket
      *
      * @param array $query_params
-     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Registration[]|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function registrations($query_params = [])
     {
@@ -1641,10 +1641,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Counts the registrations for this ticket
      *
      * @param array $query_params
-     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int
      * @throws EE_Error
      * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function count_registrations($query_params = [])
     {
@@ -1844,7 +1844,6 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function set_visibility(int $visibility)
     {
-
         $ticket_visibility_options = $this->_model->ticketVisibilityOptions();
         $ticket_visibility         = -1;
         foreach ($ticket_visibility_options as $ticket_visibility_option) {

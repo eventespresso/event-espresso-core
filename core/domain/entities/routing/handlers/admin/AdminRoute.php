@@ -68,7 +68,7 @@ class AdminRoute extends Route
      */
     public function getCapCheck()
     {
-        return new CapCheck('edit_posts', 'access Event Espresso admin route');
+        return new CapCheck('ee_read_events', 'access Event Espresso admin route');
     }
 
 

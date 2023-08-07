@@ -6,7 +6,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
- *
  * Transaction Model
  *
  * @package            Event Espresso
@@ -66,19 +65,16 @@ class EEM_Transaction extends EEM_Base
 
 
     /**
-     *    private constructor to prevent direct creation
+     * private constructor to prevent direct creation
      *
-     * @Constructor
-     * @access protected
-     *
-     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any
-     *                         incoming timezone data that gets saved). Note this just sends the timezone info to the
-     *                         date time model field objects.  Default is NULL (and will be assumed using the set
-     *                         timezone in the 'timezone_string' wp option)
-     *
+     * @param string|null $timezone string representing the timezone we want to set for returned Date Time Strings (and
+     *                              any incoming timezone data that gets saved). Note this just sends the timezone info
+     *                              to the date time model field objects.  Default is NULL (and will be assumed using
+     *                              the set timezone in the 'timezone_string' wp option)
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function __construct($timezone)
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item = esc_html__('Transaction', 'event_espresso');
         $this->plural_item   = esc_html__('Transactions', 'event_espresso');
@@ -88,7 +84,9 @@ class EEM_Transaction extends EEM_Base
         ];
         $this->_fields                 = [
             'TransactionTable' => [
-                'TXN_ID'           => new EE_Primary_Key_Int_Field('TXN_ID', esc_html__('Transaction ID', 'event_espresso')),
+                'TXN_ID'           => new EE_Primary_Key_Int_Field(
+                    'TXN_ID', esc_html__('Transaction ID', 'event_espresso')
+                ),
                 'TXN_timestamp'    => new EE_Datetime_Field(
                     'TXN_timestamp',
                     esc_html__('date when transaction was created', 'event_espresso'),
@@ -182,9 +180,7 @@ class EEM_Transaction extends EEM_Base
      *        get the revenue per day  for the Transaction Admin page Reports Tab
      *
      * @access        public
-     *
      * @param string $period
-     *
      * @return stdClass[]
      * @throws EE_Error
      * @throws EE_Error
@@ -221,9 +217,7 @@ class EEM_Transaction extends EEM_Base
      *        get the revenue per event  for the Transaction Admin page Reports Tab
      *
      * @access        public
-     *
      * @param string $period
-     *
      * @return EE_Transaction[]
      */
     public function get_revenue_per_event_report($period = '-1 month')
@@ -281,7 +275,6 @@ class EEM_Transaction extends EEM_Base
      * the registration pointed to by reg_url_link), if not returns null
      *
      * @param string $reg_url_link
-     *
      * @return EE_Transaction
      * @throws EE_Error
      */
@@ -307,12 +300,10 @@ class EEM_Transaction extends EEM_Base
      *
      * @param EE_Transaction|int $transaction_obj_or_id
      * @param boolean            $save_txn whether or not to save the transaction during this function call
-     *
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      * @deprecated
-     *
      */
     public function update_based_on_payments($transaction_obj_or_id, $save_txn = true)
     {
@@ -418,7 +409,6 @@ class EEM_Transaction extends EEM_Base
 
     /**
      * @param array $transaction_IDs
-     *
      * @return bool
      */
     public static function unset_locked_transactions(array $transaction_IDs)

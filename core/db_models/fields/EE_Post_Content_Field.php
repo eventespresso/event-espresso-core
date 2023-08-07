@@ -34,7 +34,6 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
     }
 
 
-
     /**
      * Runs the content through `the_content`, or if prepares the content for placing in a form input
      *
@@ -53,7 +52,10 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
                     if (defined('WP_DEBUG') && WP_DEBUG) {
                         throw new EE_Error(
                             sprintf(
-                                esc_html__('You have recursively called "%1$s" with %2$s set to %3$s which uses "%2$s" filter. You should use it with %2$s "%3$s" instead here.', 'event_espresso'),
+                                esc_html__(
+                                    'You have recursively called "%1$s" with %2$s set to %3$s which uses "%2$s" filter. You should use it with %2$s "%3$s" instead here.',
+                                    'event_espresso'
+                                ),
                                 'EE_Post_Content_Field::prepare_for_pretty_echoing',
                                 '$schema',
                                 'the_content',
@@ -61,7 +63,10 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
                             )
                         );
                     } else {
-                        return $this->prepare_for_pretty_echoing($value_on_field_to_be_outputted, 'the_content_wp_core_only');
+                        return $this->prepare_for_pretty_echoing(
+                            $value_on_field_to_be_outputted,
+                            'the_content_wp_core_only'
+                        );
                     }
                 }
                 return apply_filters(
@@ -90,14 +95,13 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
     }
 
 
-
     /**
      * Verifies we've setup the standard WP core filters on  'the_content_wp_core_only' filter
      */
     protected static function _setup_the_content_wp_core_only_filters()
     {
-        add_filter('the_content_wp_core_only', array( $GLOBALS['wp_embed'], 'run_shortcode'), 8);
-        add_filter('the_content_wp_core_only', array( $GLOBALS['wp_embed'], 'autoembed'), 8);
+        add_filter('the_content_wp_core_only', [$GLOBALS['wp_embed'], 'run_shortcode'], 8);
+        add_filter('the_content_wp_core_only', [$GLOBALS['wp_embed'], 'autoembed'], 8);
         add_filter('the_content_wp_core_only', 'wptexturize', 10);
         add_filter('the_content_wp_core_only', 'wpautop', 10);
         add_filter('the_content_wp_core_only', 'shortcode_unautop', 10);
@@ -112,24 +116,23 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
     }
 
 
-
-    public function getSchemaProperties()
+    public function getSchemaProperties(): array
     {
-        return array(
-            'raw' => array(
-                'description' =>  sprintf(
+        return [
+            'raw'      => [
+                'description' => sprintf(
                     esc_html__('%s - the content as it exists in the database.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'string'
-            ),
-            'rendered' => array(
-                'description' =>  sprintf(
+                'type'        => 'string',
+            ],
+            'rendered' => [
+                'description' => sprintf(
                     esc_html__('%s - the content rendered for display.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'string'
-            )
-        );
+                'type'        => 'string',
+            ],
+        ];
     }
 }

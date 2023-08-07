@@ -51,13 +51,10 @@ class EEM_Change_Log extends EEM_Base
 
 
     /**
-     * constructor
-     *
-     * @access protected
-     * @param null $timezone
+     * @param string|null $timezone
      * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct(?string $timezone = '')
     {
         $this->singular_item       = esc_html__('Log', 'event_espresso');
         $this->plural_item         = esc_html__('Logs', 'event_espresso');

@@ -33,7 +33,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 <label for="<?php echo esc_attr($event_datetimes_name . '-' . $dtt_row); ?>-DTT_description">
                     <?php esc_html_e('Datetime Description', 'event_espresso') ?>
                 </label>
-                <textarea name="<?php echo esc_attr($event_datetimes_name); ?>[<?php echo esc_attr($dtt_row); ?>][]"
+                <textarea name="<?php echo esc_attr($event_datetimes_name); ?>[<?php echo esc_attr($dtt_row); ?>][DTT_description]"
                           id="<?php echo esc_attr($event_datetimes_name . '-' . $dtt_row); ?>-DTT_description"
                           class="event-datetime-DTT_description ee-full-textarea-inp"
                 ><?php echo esc_textarea($DTT_description); ?></textarea>

@@ -61,7 +61,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object(
             $props_n_values,
@@ -86,7 +86,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
@@ -241,7 +241,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Increments sold by amount passed by $qty, and persists it immediately to the database.
      * Simultaneously decreases the reserved count, unless $also_decrease_reserved is false.
      *
-     * @param int $qty
+     * @param int     $qty
      * @param boolean $also_decrease_reserved
      * @return boolean indicating success
      * @throws ReflectionException
@@ -257,13 +257,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
             $success = $this->adjustNumericFieldsInDb(
                 [
                     'DTT_reserved' => $qty * -1,
-                    'DTT_sold' => $qty
+                    'DTT_sold'     => $qty,
                 ]
             );
         } else {
             $success = $this->adjustNumericFieldsInDb(
                 [
-                    'DTT_sold' => $qty
+                    'DTT_sold' => $qty,
                 ]
             );
         }
@@ -293,10 +293,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function decreaseSold(int $qty = 1): bool
     {
-        $qty = absint($qty);
+        $qty     = absint($qty);
         $success = $this->adjustNumericFieldsInDb(
             [
-                'DTT_sold' => $qty * -1
+                'DTT_sold' => $qty * -1,
             ]
         );
         do_action(
@@ -357,7 +357,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function increaseReserved(int $qty = 1): bool
     {
-        $qty = absint($qty);
+        $qty     = absint($qty);
         $success = $this->incrementFieldConditionallyInDb(
             'DTT_reserved',
             'DTT_sold',
@@ -388,10 +388,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function decreaseReserved(int $qty = 1): bool
     {
-        $qty = absint($qty);
+        $qty     = absint($qty);
         $success = $this->adjustNumericFieldsInDb(
             [
-                'DTT_reserved' => $qty * -1
+                'DTT_reserved' => $qty * -1,
             ]
         );
         do_action(
@@ -525,7 +525,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         $echo = false
     ) {
         $field_name = "DTT_EVT_{$start_or_end}";
-        $dtt = $this->_get_datetime(
+        $dtt        = $this->_get_datetime(
             $field_name,
             $dt_frmt,
             $tm_frmt,
@@ -624,12 +624,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function date_range($dt_frmt = '', $conjunction = ' - ')
     {
         $dt_frmt = ! empty($dt_frmt) ? $dt_frmt : $this->_dt_frmt;
-        $start = str_replace(
+        $start   = str_replace(
             ' ',
             '&nbsp;',
             $this->get_i18n_datetime('DTT_EVT_start', $dt_frmt)
         );
-        $end = str_replace(
+        $end     = str_replace(
             ' ',
             '&nbsp;',
             $this->get_i18n_datetime('DTT_EVT_end', $dt_frmt)
@@ -732,12 +732,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function time_range($tm_format = '', $conjunction = ' - ')
     {
         $tm_format = ! empty($tm_format) ? $tm_format : $this->_tm_frmt;
-        $start = str_replace(
+        $start     = str_replace(
             ' ',
             '&nbsp;',
             $this->get_i18n_datetime('DTT_EVT_start', $tm_format)
         );
-        $end = str_replace(
+        $end       = str_replace(
             ' ',
             '&nbsp;',
             $this->get_i18n_datetime('DTT_EVT_end', $tm_format)
@@ -785,8 +785,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         $conjunction = ' - ',
         $separator = ' '
     ) {
-        $dt_format = ! empty($dt_format) ? $dt_format : $this->_dt_frmt;
-        $tm_format = ! empty($tm_format) ? $tm_format : $this->_tm_frmt;
+        $dt_format   = ! empty($dt_format) ? $dt_format : $this->_dt_frmt;
+        $tm_format   = ! empty($tm_format) ? $tm_format : $this->_tm_frmt;
         $full_format = $dt_format . $separator . $tm_format;
         // the range output depends on various conditions
         switch (true) {
@@ -814,7 +814,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * This echos the results of date and time range.
      *
-     * @see date_and_time_range() for more details on purpose.
      * @param string $dt_format
      * @param string $tm_format
      * @param string $conjunction
@@ -824,6 +823,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @see date_and_time_range() for more details on purpose.
      */
     public function e_date_and_time_range($dt_format = '', $tm_format = '', $conjunction = ' - ')
     {
@@ -834,8 +834,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * get start date and start time
      *
-     * @param    string $dt_format - string representation of date format defaults to 'F j, Y'
-     * @param    string $tm_format - string representation of time format defaults to 'g:i a'
+     * @param string $dt_format - string representation of date format defaults to 'F j, Y'
+     * @param string $tm_format - string representation of time format defaults to 'g:i a'
      * @return    mixed    string on success, FALSE on fail
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -881,8 +881,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function length($units = 'seconds', $round_up = false)
     {
-        $start = $this->get_raw('DTT_EVT_start');
-        $end = $this->get_raw('DTT_EVT_end');
+        $start           = $this->get_raw('DTT_EVT_start');
+        $end             = $this->get_raw('DTT_EVT_end');
         $length_in_units = $end - $start;
         switch ($units) {
             // NOTE: We purposefully don't use "break;" in order to chain the divisions
@@ -1040,7 +1040,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Counts the total tickets available
      * (from all the different types of tickets which are available for this datetime).
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1048,9 +1049,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function tickets_remaining($query_params = array())
+    public function tickets_remaining($query_params = [])
     {
-        $sum = 0;
+        $sum     = 0;
         $tickets = $this->tickets($query_params);
         if (! empty($tickets)) {
             foreach ($tickets as $ticket) {
@@ -1075,7 +1076,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Gets the count of all the tickets available at this datetime (not ticket types)
      * before any were sold
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1083,7 +1085,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function sum_tickets_initially_available($query_params = array())
+    public function sum_tickets_initially_available($query_params = [])
     {
         return $this->sum_related('Ticket', $query_params, 'TKT_qty');
     }
@@ -1191,7 +1193,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * This returns a nice display name for the datetime that is contingent on the span between the dates and times.
      *
-     * @param  boolean $use_dtt_name if TRUE then we'll use DTT->name() if its not empty.
+     * @param boolean $use_dtt_name if TRUE then we'll use DTT->name() if its not empty.
      * @return string
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1234,7 +1236,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Gets all the tickets for this datetime
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Ticket[]
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1242,7 +1245,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function tickets($query_params = array())
+    public function tickets($query_params = [])
     {
         return $this->get_many_related('Ticket', $query_params);
     }
@@ -1251,7 +1254,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Gets all the ticket types currently available for purchase
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Ticket[]
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -1259,20 +1263,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function ticket_types_available_for_purchase($query_params = array())
+    public function ticket_types_available_for_purchase($query_params = [])
     {
         // first check if datetime is valid
         if ($this->sold_out() || ! ($this->is_upcoming() || $this->is_active())) {
-            return array();
+            return [];
         }
         if (empty($query_params)) {
-            $query_params = array(
-                array(
-                    'TKT_start_date' => array('<=', EEM_Ticket::instance()->current_time_for_query('TKT_start_date')),
-                    'TKT_end_date'   => array('>=', EEM_Ticket::instance()->current_time_for_query('TKT_end_date')),
+            $query_params = [
+                [
+                    'TKT_start_date' => ['<=', EEM_Ticket::instance()->current_time_for_query('TKT_start_date')],
+                    'TKT_end_date'   => ['>=', EEM_Ticket::instance()->current_time_for_query('TKT_end_date')],
                     'TKT_deleted'    => false,
-                ),
-            );
+                ],
+            ];
         }
         return $this->tickets($query_params);
     }
@@ -1306,13 +1310,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function update_sold()
     {
         $count_regs_for_this_datetime = EEM_Registration::instance()->count(
-            array(
-                array(
+            [
+                [
                     'STS_ID'                 => EEM_Registration::status_id_approved,
                     'REG_deleted'            => 0,
                     'Ticket.Datetime.DTT_ID' => $this->ID(),
-                ),
-            )
+                ],
+            ]
         );
         $this->set_sold($count_regs_for_this_datetime);
         $this->save();
@@ -1352,7 +1356,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Gets the venue related to the event. May provide additional $query_params if desired
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int
      * @throws EE_Error
      * @throws ReflectionException
@@ -1369,7 +1374,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Gets the venue related to the event. May provide additional $query_params if desired
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class|EE_Venue
      * @throws EE_Error
      * @throws ReflectionException
@@ -1476,7 +1482,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Increments sold by amount passed by $qty, and persists it immediately to the database.
      *
-     * @deprecated 4.9.80.p
      * @param int $qty
      * @return boolean
      * @throws ReflectionException
@@ -1484,6 +1489,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @deprecated 4.9.80.p
      */
     public function increase_sold($qty = 1)
     {
@@ -1501,7 +1507,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Decrements (subtracts) sold amount passed by $qty directly in the DB and on the model object. (Ie, no need
      * to save afterwards.)
      *
-     * @deprecated 4.9.80.p
      * @param int $qty
      * @return boolean
      * @throws ReflectionException
@@ -1509,6 +1514,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @deprecated 4.9.80.p
      */
     public function decrease_sold($qty = 1)
     {
@@ -1525,7 +1531,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Increments reserved by amount passed by $qty, and persists it immediately to the database.
      *
-     * @deprecated 4.9.80.p
      * @param int $qty
      * @return boolean indicating success
      * @throws ReflectionException
@@ -1533,6 +1538,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @deprecated 4.9.80.p
      */
     public function increase_reserved($qty = 1)
     {
@@ -1549,7 +1555,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * Decrements (subtracts) reserved by amount passed by $qty, and persists it immediately to the database.
      *
-     * @deprecated 4.9.80.p
      * @param int $qty
      * @return boolean
      * @throws ReflectionException
@@ -1557,6 +1562,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @deprecated 4.9.80.p
      */
     public function decrease_reserved($qty = 1)
     {

@@ -12,7 +12,7 @@ use EventEspresso\core\services\addon\api\ThirdPartyPluginHandler;
 use EventEspresso\core\services\addon\api\v1\AddonApi as AddonApiV1;
 use EventEspresso\core\services\addon\api\v1\RegisterAddon as RegisterV1Addon;
 use Exception;
-use ReflectionException;
+use Throwable;
 
 /**
  * Class AddonManager
@@ -23,30 +23,15 @@ use ReflectionException;
  */
 class AddonManager
 {
-    /**
-     * @var AddonCollection
-     */
-    private $addons;
+    private AddonCollection          $addons;
 
-    /**
-     * @var IncompatibleAddonHandler
-     */
-    private $incompatible_addon_handler;
+    private IncompatibleAddonHandler $incompatible_addon_handler;
 
-    /**
-     * @var Psr4Autoloader
-     */
-    private $psr4_loader;
+    private Psr4Autoloader           $psr4_loader;
 
-    /**
-     * @var RegisterV1Addon
-     */
-    private $register_v1_addon;
+    private RegisterV1Addon          $register_v1_addon;
 
-    /**
-     * @var ThirdPartyPluginHandler
-     */
-    private $third_party_plugin_handler;
+    private ThirdPartyPluginHandler  $third_party_plugin_handler;
 
 
     /**
@@ -86,6 +71,7 @@ class AddonManager
 
     /**
      * @throws Exception
+     * @throws Throwable
      */
     public function loadAddons()
     {
