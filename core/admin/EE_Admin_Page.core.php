@@ -3150,7 +3150,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * them can be accessed by EE_Admin_child pages. This is assigned to the $_hook_obj property.
      *
      * @param EE_Admin_Hooks $hook_obj This will be the object for the EE_Admin_Hooks child
-     * @deprecated  $VID:$
+     * @deprecated  5.0.8.p
      */
     public function set_hook_object(EE_Admin_Hooks $hook_obj)
     {

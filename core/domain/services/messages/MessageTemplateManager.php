@@ -13,7 +13,7 @@ use ReflectionException;
 use RuntimeException;
 
 /**
- * @since $VID:$
+ * @since 5.0.8.p
  */
 class MessageTemplateManager
 {

@@ -78,7 +78,7 @@ class CurrentUser
 
     /**
      * @return bool
-     * @since $VID:$
+     * @since 5.0.8.p
      */
     public function isSuperAdmin(): bool
     {

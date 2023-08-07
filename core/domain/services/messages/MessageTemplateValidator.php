@@ -10,7 +10,7 @@ use EventEspresso\core\services\loaders\LoaderInterface;
 /**
  * validates form fields for message templates
  *
- * @since $VID:$
+ * @since 5.0.8.p
  */
 class MessageTemplateValidator
 {

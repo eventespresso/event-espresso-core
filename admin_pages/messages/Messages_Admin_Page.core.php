@@ -1152,7 +1152,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @param int|string $GRP_ID
      * @throws EE_error
      * @throws ReflectionException
-     * @deprecated $VID:$
+     * @deprecated 5.0.8.p
      */
     public function add_message_template(string $message_type = '', string $messenger = '', $GRP_ID = '')
     {
@@ -2529,7 +2529,7 @@ class Messages_Admin_Page extends EE_Admin_Page
     /**
      * @throws EE_Error
      * @throws ReflectionException
-     * @deprecated $VID:$
+     * @deprecated 5.0.8.p
      */
     protected function _insert_or_update_message_template($new = false)
     {

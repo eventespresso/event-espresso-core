@@ -21,7 +21,7 @@ use EventEspresso\core\interfaces\InterminableInterface;
  * @package    Event Espresso
  * @subpackage includes/functions
  * @author     Brent Christensen
- * @deprecated $VID:$
+ * @deprecated 5.0.8.p
  */
 class EE_Encryption implements InterminableInterface
 {
@@ -106,7 +106,7 @@ class EE_Encryption implements InterminableInterface
         if (function_exists('base64_encode')) {
             $this->_use_base64_encode = true;
         }
-        EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '$VID:$');
+        EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '5.0.8.p');
     }
 
 

@@ -19,7 +19,7 @@ abstract class EE_Admin_Hooks extends EE_Base
      * This just holds an instance of the page object for this hook
      *
      * @var EE_Admin_Page|EE_Admin_Page_CPT|null
-     * @deprecated  $VID:$
+     * @deprecated  5.0.8.p
      */
     protected $_page_object = null;
 
@@ -360,7 +360,7 @@ abstract class EE_Admin_Hooks extends EE_Base
      * @throws EE_Error
      * @throws ReflectionException
      * @throws Throwable
-     * @deprecated  $VID:$
+     * @deprecated  5.0.8.p
      */
     protected function _set_page_object()
     {

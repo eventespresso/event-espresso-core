@@ -2486,7 +2486,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.8.p
      */
     public function applyPayment(EE_Payment $payment, ?float $amount = null): float
     {

@@ -10,7 +10,7 @@ use RuntimeException;
 /**
  *  DTO for managing message template request data
  *
- * @since $VID:$
+ * @since 5.0.8.p
  */
 class MessageTemplateRequestData
 {

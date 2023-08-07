@@ -40,7 +40,7 @@ interface EEI_Plugin_API
 
     /**
      * @return void
-     * @since $VID:$
+     * @since 5.0.8.p
      */
     public static function reset(): void;
 }
