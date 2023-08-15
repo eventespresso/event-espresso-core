@@ -49,13 +49,18 @@ class Base64Encoder
      *
      * @see http://php.net/manual/en/function.base64-encode.php
      * @param string $encoded_string the text to be decoded
+     * @param bool $no_throw         whether to throw an exception if the string is not valid base64
      * @return string
      * @throws RuntimeException
      */
-    public function decodeString(string $encoded_string = ''): string
+    public function decodeString(string $encoded_string = '', bool $no_throw = false): string
     {
         // you give me nothing??? GET OUT !
-        if (! $this->use_base64_encode || empty($encoded_string)) {
+        if (
+            ! $this->use_base64_encode
+            || empty($encoded_string)
+            || ($no_throw && ! $this->isValidBase64($encoded_string))
+        ) {
             return $encoded_string;
         }
         $this->isValidBase64OrFail($encoded_string);

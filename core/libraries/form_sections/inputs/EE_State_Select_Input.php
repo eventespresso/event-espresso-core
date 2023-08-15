@@ -100,6 +100,6 @@ class EE_State_Select_Input extends EE_Select_Input
                 }
             }
         }
-        return $state_options;
+        return $state_options ?? [];
     }
 }

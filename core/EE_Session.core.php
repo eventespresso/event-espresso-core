@@ -719,7 +719,7 @@ class EE_Session implements SessionIdentifierInterface
         }
         // in case the data is encoded... try to decode it
         $session_data = $this->_use_encryption
-            ? $this->encryption->encodeString($session_data)
+            ? $this->encryption->decodeString($session_data)
             : $session_data;
         if (! is_array($session_data)) {
             try {
@@ -975,7 +975,7 @@ class EE_Session implements SessionIdentifierInterface
         $session_data = serialize($this->_session_data);
         // do we need to also encode it to avoid corrupted data when saved to the db?
         $session_data = $this->_use_encryption
-            ? $this->encryption->decodeString($session_data)
+            ? $this->encryption->encodeString($session_data)
             : $session_data;
         // maybe save hash check
         if (apply_filters('FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG)) {

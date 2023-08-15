@@ -8,6 +8,7 @@ use EEM_Payment_Method;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use ReflectionException;
+use EE_Maintenance_Mode;
 
 /**
  * Class EventEspresso\PaymentMethods\Manager
@@ -38,6 +39,9 @@ class Manager
      */
     public function __construct()
     {
+        if (! EE_Maintenance_Mode::instance()->models_can_query()) {
+            return;
+        }
         $this->loadPaymentMethods();
         if (is_admin()) {
             // Use only PayPal Commerce if it's a new setup.

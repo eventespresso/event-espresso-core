@@ -23,30 +23,30 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     /**
      * The alias for the table the column belongs to.
      */
-    protected string $_table_alias = '';
+    protected ?string $_table_alias = '';
 
     /**
      * The actual db column name for the table
      */
-    protected string $_table_column;
+    protected ?string $_table_column;
 
 
     /**
      * The authoritative name for the table column (used by client code to reference the field).
      */
-    protected string $_name = '';
+    protected ?string $_name = '';
 
 
     /**
      * A description for the field.
      */
-    protected string $_nicename;
+    protected ?string $_nicename;
 
 
     /**
      * Whether the field is nullable or not
      */
-    protected bool $_nullable;
+    protected ?bool $_nullable;
 
 
     /**
@@ -68,7 +68,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     /**
      * The name of the model this field is instantiated for.
      */
-    protected string $_model_name = '';
+    protected ?string $_model_name = '';
 
 
     /**
@@ -85,7 +85,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      *
      * @link http://json-schema.org/latest/json-schema-validation.html#rfc.section.7
      */
-    private string $_schema_format = '';
+    private ?string $_schema_format = '';
 
 
     /**

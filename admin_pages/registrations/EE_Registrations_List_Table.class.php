@@ -326,12 +326,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         // setup date query.
         $beginning_string   = EEM_Registration::instance()->convert_datetime_for_query(
             'REG_date',
-            $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start,
+            $this_year_r . '-' . $this_month_r . '-01' . $time_start,
             'Y-m-d H:i:s'
         );
         $end_string         = EEM_Registration::instance()->convert_datetime_for_query(
             'REG_date',
-            $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' ' . $time_end,
+            $this_year_r . '-' . $this_month_r . '-' . $days_this_month . $time_end,
             'Y-m-d H:i:s'
         );
         $_where['REG_date'] = [

@@ -21,14 +21,14 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      *
      * @var string eg Event, Question_Group, Registration
      */
-    private string $_this_model_name = '';
+    private ?string $_this_model_name = '';
 
     /**
      * The model name pointed to by this relation (ie, the model we want to establish a relationship to)
      *
      * @var string eg Event, Question_Group, Registration
      */
-    private string $_other_model_name = '';
+    private ?string $_other_model_name = '';
 
     /**
      * this is typically used when calling the relation models to make sure they inherit any set timezone from the
@@ -36,7 +36,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      *
      * @var string
      */
-    protected string $_timezone = '';
+    protected ?string $_timezone = '';
 
     /**
      * If you try to delete "this_model", and there are related "other_models",
@@ -46,7 +46,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      *
      * @var string (internationalized)
      */
-    protected string $_blocking_delete_error_message;
+    protected ?string $_blocking_delete_error_message;
 
     protected bool   $_blocking_delete = false;
 

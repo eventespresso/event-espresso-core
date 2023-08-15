@@ -738,7 +738,7 @@ input.ee-register-button {
 	max-width: 90%;
 	text-align: center;
 	left: 50%;
-	margin-left:-320px;
+    transform: translateX(-50%);
 	z-index: 999;
 }
 

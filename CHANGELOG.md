@@ -6,11 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.9]
+
+#### Fixed
+ - [Remove double space from DateTime format in registration list (PHP8.2.9) (#820)](https://github.com/eventespresso/cafe/pull/820)
+ - [Don't load Payment Methods when in maintenance mode (#821)](https://github.com/eventespresso/cafe/pull/821)
+ - [Fix argument 1 passed to EED_Add_New_State::state_options() must be of the type array, null given (#818)](https://github.com/eventespresso/cafe/pull/818)
+ - [Fix Position Issue of Notices (#802)](https://github.com/eventespresso/cafe/pull/802)
+ - [Allow db model properties to be null (#826)](https://github.com/eventespresso/cafe/pull/826)
+
+#### Changed
+ - [BuildMachine 5.0.8 changes (#817)](https://github.com/eventespresso/cafe/pull/817)
+ - [Don't Throw Exceptions When Decoding Session Data (#825)](https://github.com/eventespresso/cafe/pull/825)
+
+
 ### [5.0.8]
 
 #### Added
  - [Save per page setting to local session (#1195) (#714)](https://github.com/eventespresso/cafe/pull/714)
- - NEW
 
 #### Fixed
  - [Fix Default Date and Time Formats (#698)](https://github.com/eventespresso/cafe/pull/698)
@@ -58,6 +71,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fixed registration session display / hide buttons issue (#813)](https://github.com/eventespresso/cafe/pull/813)
  - [If extra_request is not set default to an empty array (#815)](https://github.com/eventespresso/cafe/pull/815)
  - [Fix Callback Name (#808)](https://github.com/eventespresso/cafe/pull/808)
+ - [Remove double space from DateTime format in registration list (PHP8.2.9) (#820)](https://github.com/eventespresso/cafe/pull/820)
+ - [Don't load Payment Methods when in maintenance mode (#821)](https://github.com/eventespresso/cafe/pull/821)
+ - [Fix argument 1 passed to EED_Add_New_State::state_options() must be of the type array, null given (#818)](https://github.com/eventespresso/cafe/pull/818)
+ - [Fix Position Issue of Notices (#802)](https://github.com/eventespresso/cafe/pull/802)
+ - [Allow db model properties to be null (#826)](https://github.com/eventespresso/cafe/pull/826)
 
 #### Changed
  - [Updates from Barista May 30 20:58 (#693)](https://github.com/eventespresso/cafe/pull/693)
+ - [BuildMachine 5.0.8 changes (#817)](https://github.com/eventespresso/cafe/pull/817)
+ - [Don't Throw Exceptions When Decoding Session Data (#825)](https://github.com/eventespresso/cafe/pull/825)

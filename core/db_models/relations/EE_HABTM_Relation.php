@@ -13,9 +13,9 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
      * Model which defines the relation between two other models. Eg, the EE_Event_Question_Group model,
      * which joins EE_Event and EE_Question_Group
      */
-    protected string $_joining_model_name                 = '';
+    protected ?string $_joining_model_name                 = '';
 
-    protected string $_model_relation_chain_to_join_model = '';
+    protected ?string $_model_relation_chain_to_join_model = '';
 
 
     /**
