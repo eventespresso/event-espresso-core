@@ -263,6 +263,9 @@ class EE_Maintenance_Mode implements ResettableInterface
      */
     public function display_maintenance_mode_notice()
     {
+        if (! did_action('AHEE__EE_System__load_core_configuration__complete')) {
+            return;
+        }
         /** @var CurrentPage $current_page */
         $current_page = LoaderFactory::getLoader()->getShared(CurrentPage::class);
         // check if M-mode is engaged and for EE shortcode

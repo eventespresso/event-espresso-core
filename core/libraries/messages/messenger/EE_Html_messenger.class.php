@@ -475,7 +475,7 @@ class EE_Html_messenger extends EE_messenger
         ];
         $this->_deregister_wp_hooks();
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts_styles']);
-        echo '<!doctype html>' . wp_kses($this->_get_main_template(), AllowedTags::getWithFullTags());
+        echo ($this->_get_main_template());
         exit();
     }
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
+namespace EventEspresso\core\libraries\batch\JobHandlerBaseClasses;
 
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
-use EventEspressoBatchRequest\Helpers\JobParameters;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
+use EventEspresso\core\libraries\batch\Helpers\BatchRequestException;
+use EventEspresso\core\libraries\batch\Helpers\JobParameters;
+use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
 
 /**
  * Class JobHandler
@@ -17,24 +17,16 @@ use EventEspressoBatchRequest\Helpers\JobStepResponse;
  */
 abstract class JobHandler implements JobHandlerInterface
 {
-    /**
-     * @var array
-     */
-    protected $feedback = [];
+    protected array $feedback = [];
 
-    /**
-     * incoming Request data
-     *
-     * @var array
-     */
-    protected $request_data = [];
+    protected array $request_data = [];
 
     /**
      * Extra data to include as part of the response, literally gets set as JobStepResponse::$_extra_data
      *
      * @var array
      */
-    protected $response_data = [];
+    protected array $response_data = [];
 
 
     /**
@@ -128,6 +120,7 @@ abstract class JobHandler implements JobHandlerInterface
 
 
     /**
+     * @param string|int $key
      * @return mixed
      */
     public function getRequestData($key)

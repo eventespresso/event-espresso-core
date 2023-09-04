@@ -2355,7 +2355,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     'batch'             => EED_Batch::batch_job,
                     'EVT_IDs'           => $event_ids,
                     'deletion_job_code' => $deletion_job_code,
-                    'job_handler'       => urlencode('EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion'),
+                    'job_handler'       => urlencode('EventEspresso\core\libraries\batch\JobHandlers\PreviewEventDeletion'),
                     'return_url'        => urlencode($return_url),
                 ],
                 admin_url()

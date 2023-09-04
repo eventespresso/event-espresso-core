@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspressoBatchRequest\Helpers;
+namespace EventEspresso\core\libraries\batch\Helpers;
 
 /**
  * Class BatchRequestException

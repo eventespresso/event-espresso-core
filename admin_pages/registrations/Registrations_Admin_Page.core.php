@@ -3250,7 +3250,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'EVT_ID'      => $EVT_ID,
                         'filters'     => urlencode(serialize($report_params)),
                         'use_filters' => urlencode($use_filters),
-                        'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\RegistrationsReport'),
+                        'job_handler' => urlencode('EventEspresso\core\libraries\batch\JobHandlers\RegistrationsReport'),
                         'return_url'  => urlencode($return_url),
                     ]
                 )
@@ -3304,7 +3304,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     [
                         'page'        => EED_Batch::PAGE_SLUG,
                         'batch'       => EED_Batch::batch_file_job,
-                        'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\AttendeesReport'),
+                        'job_handler' => urlencode('EventEspresso\core\libraries\batch\JobHandlers\AttendeesReport'),
                         'return_url'  => urlencode($this->request->getRequestParam('return_url', '', DataType::URL)),
                     ]
                 )

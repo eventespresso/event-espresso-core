@@ -17,11 +17,11 @@ To do a basic batch job, which can run from the same admin page as other basic j
  *
  */
 
-namespace EventEspressoBatchRequest\JobHandlers;
-use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile;
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
-use EventEspressoBatchRequest\Helpers\JobParameters;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
+namespace EventEspresso\core\libraries\batch\JobHandlers;
+use EventEspresso\core\libraries\batch\JobHandlerBaseClasses\JobHandlerFile;
+use EventEspresso\core\libraries\batch\Helpers\BatchRequestException;
+use EventEspresso\core\libraries\batch\Helpers\JobParameters;
+use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
 
 
 
@@ -140,7 +140,7 @@ $job_starter_url = EE_Admin_Page::add_query_args_and_nonce(
 				array(
 					'page' => 'espresso_support',
 					'action' => 'batch_file_create',
-					'job_handler' => urlencode( 'EventEspressoBatchRequest\JobHandlers\AttendeesReport' ),
+					'job_handler' => urlencode( 'EventEspresso\core\libraries\batch\JobHandlers\AttendeesReport' ),
 					'redirect_url' => urlencode( $this->_req_data[ 'return_url' ] ),
 				));
 echo "<a href='" . $job_starter_url . "'>Start Job!</a>";

@@ -1,7 +1,7 @@
 <h1><?php 
 	$job_step_response = EED_Batch::instance()->job_step_response();
 	$filename = null;
-	if( $job_step_response instanceof \EventEspressoBatchRequest\Helpers\JobStepResponse ) {
+	if( $job_step_response instanceof \EventEspresso\core\libraries\batch\Helpers\JobStepResponse ) {
 		$filename = EEH_File::get_filename_from_filepath( $job_step_response->job_parameters()->extra_datum( 'filepath' ) );
 	} 
 	if( ! $filename) {

@@ -1,16 +1,16 @@
 <?php
 
-namespace EventEspressoBatchRequest\JobHandlers;
+namespace EventEspresso\core\libraries\batch\JobHandlers;
 
-use EE_Change_Log;
 use EE_Error;
 use EE_Registry;
+use EEM_Base;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
-use EventEspressoBatchRequest\Helpers\JobParameters;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
-use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
+use EventEspresso\core\libraries\batch\Helpers\JobParameters;
+use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
+use EventEspresso\core\libraries\batch\JobHandlerBaseClasses\JobHandler;
 use Exception;
 use ReflectionException;
 
@@ -26,10 +26,7 @@ use ReflectionException;
  */
 class ExecuteBatchDeletion extends JobHandler
 {
-    /**
-     * @var NodeGroupDao
-     */
-    protected $model_obj_node_group_persister;
+    protected NodeGroupDao $model_obj_node_group_persister;
 
 
     /**
@@ -166,8 +163,6 @@ class ExecuteBatchDeletion extends JobHandler
      *
      * @param JobParameters $job_parameters
      * @return JobStepResponse
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     public function cleanup_job(JobParameters $job_parameters): JobStepResponse
     {
@@ -207,4 +202,4 @@ class ExecuteBatchDeletion extends JobHandler
     }
 }
 // End of file EventDeletion.php
-// Location: EventEspressoBatchRequest\JobHandlers/EventDeletion.php
+// Location: EventEspresso\core\libraries\batch\JobHandlers/EventDeletion.php

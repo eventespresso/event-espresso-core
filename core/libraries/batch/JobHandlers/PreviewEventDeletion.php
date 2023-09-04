@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspressoBatchRequest\JobHandlers;
+namespace EventEspresso\core\libraries\batch\JobHandlers;
 
 use EE_Base_Class;
 use EE_Error;
@@ -14,9 +14,9 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
-use EventEspressoBatchRequest\Helpers\JobParameters;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
-use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
+use EventEspresso\core\libraries\batch\Helpers\JobParameters;
+use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
+use EventEspresso\core\libraries\batch\JobHandlerBaseClasses\JobHandler;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -33,10 +33,7 @@ use ReflectionException;
  */
 class PreviewEventDeletion extends JobHandler
 {
-    /**
-     * @var NodeGroupDao
-     */
-    protected $model_obj_node_group_persister;
+    protected NodeGroupDao $model_obj_node_group_persister;
 
     public function __construct(NodeGroupDao $model_obj_node_group_persister)
     {
@@ -124,17 +121,17 @@ class PreviewEventDeletion extends JobHandler
     }
 
     /**
-     * @since 4.10.12.p
      * @param EE_Base_Class[] $model_objs
-     * @param array $dont_traverse_models
+     * @param array           $dont_traverse_models
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since 4.10.12.p
      */
-    protected function createModelObjNodes($model_objs, array $dont_traverse_models = [])
+    protected function createModelObjNodes(array $model_objs, array $dont_traverse_models = []): array
     {
         $nodes = [];
         foreach ($model_objs as $model_obj) {
@@ -151,10 +148,10 @@ class PreviewEventDeletion extends JobHandler
      * Gets all the transactions related to these events that aren't related to other events. They'll be deleted too.
      * (Ones that are related to other events can stay around until those other events are deleted too.)
      * @since 4.10.12.p
-     * @param $event_ids
+     * @param array $event_ids
      * @return array of transaction IDs
      */
-    protected function getTransactionsToDelete($event_ids)
+    protected function getTransactionsToDelete(array $event_ids): array
     {
         if (empty($event_ids)) {
             return [];
@@ -176,7 +173,7 @@ class PreviewEventDeletion extends JobHandler
                       {$wpdb->prefix}esp_transaction t INNER JOIN
                       {$wpdb->prefix}esp_registration r ON t.TXN_ID=r.TXN_ID
                     WHERE
-                       r.EVT_ID IN ({$imploded_sanitized_event_ids})
+                       r.EVT_ID IN ($imploded_sanitized_event_ids)
                        AND NOT EXISTS
                        (
                          SELECT
@@ -186,7 +183,7 @@ class PreviewEventDeletion extends JobHandler
                            {$wpdb->prefix}esp_registration rsub ON tsub.TXN_ID=rsub.TXN_ID
                          WHERE
                            tsub.TXN_ID=t.TXN_ID AND
-                           rsub.EVT_ID NOT IN ({$imploded_sanitized_event_ids})
+                           rsub.EVT_ID NOT IN ($imploded_sanitized_event_ids)
                        )"
             )
         );
@@ -274,4 +271,4 @@ class PreviewEventDeletion extends JobHandler
     }
 }
 // End of file EventDeletion.php
-// Location: EventEspressoBatchRequest\JobHandlers/EventDeletion.php
+// Location: EventEspresso\core\libraries\batch\JobHandlers/EventDeletion.php

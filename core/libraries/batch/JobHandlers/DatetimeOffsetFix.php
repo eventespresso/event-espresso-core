@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspressoBatchRequest\JobHandlers;
+namespace EventEspresso\core\libraries\batch\JobHandlers;
 
 use DateTime;
 use DateTimeZone;
@@ -10,16 +10,16 @@ use EE_Table_Base;
 use EventEspresso\core\domain\entities\DbSafeDateTime;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandler;
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
-use EventEspressoBatchRequest\Helpers\JobParameters;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
+use EventEspresso\core\libraries\batch\JobHandlerBaseClasses\JobHandler;
+use EventEspresso\core\libraries\batch\Helpers\JobParameters;
+use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
 use EE_Registry;
 use EE_Datetime_Field;
 use EEM_Base;
 use EE_Change_Log;
 use Exception;
 use InvalidArgumentException;
+use ReflectionException;
 
 class DatetimeOffsetFix extends JobHandler
 {
@@ -57,9 +57,10 @@ class DatetimeOffsetFix extends JobHandler
     /**
      * @var EEM_Base[]
      */
-    protected $models_with_datetime_fields = array();
+    protected array $models_with_datetime_fields = [];
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 
     /**
      * Performs any necessary setup for starting the job. This is also a good
@@ -72,6 +73,7 @@ class DatetimeOffsetFix extends JobHandler
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function create_job(JobParameters $job_parameters): JobStepResponse
     {
@@ -84,6 +86,7 @@ class DatetimeOffsetFix extends JobHandler
         );
     }
 
+
     /**
      * Performs another step of the job
      *
@@ -94,6 +97,7 @@ class DatetimeOffsetFix extends JobHandler
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function continue_job(JobParameters $job_parameters, int $batch_size = 50): JobStepResponse
     {
@@ -119,12 +123,12 @@ class DatetimeOffsetFix extends JobHandler
         );
     }
 
+
     /**
      * Performs any clean-up logic when we know the job is completed
      *
      * @param JobParameters $job_parameters
      * @return JobStepResponse
-     * @throws BatchRequestException
      */
     public function cleanup_job(JobParameters $job_parameters): JobStepResponse
     {
@@ -145,30 +149,32 @@ class DatetimeOffsetFix extends JobHandler
      *
      * @param string $model_class_name
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function processModel($model_class_name)
+    protected function processModel(string $model_class_name)
     {
         global $wpdb;
         /** @var EEM_Base $model */
-        $model = $model_class_name::instance();
-        $original_offset = self::getOffset();
-        $start_date_range = self::getStartDateRange();
-        $end_date_range = self::getEndDateRange();
-        $sql_date_function = $original_offset > 0 ? 'DATE_ADD' : 'DATE_SUB';
-        $offset = abs($original_offset) * 60;
-        $date_ranges = array();
+        $model             = $model_class_name::instance();
+        $original_offset   = self::getOffset();
+        $start_date_range  = self::getStartDateRange();
+        $end_date_range    = self::getEndDateRange();
+        $sql_date_function = $original_offset > 0
+            ? 'DATE_ADD'
+            : 'DATE_SUB';
+        $offset            = abs($original_offset) * 60;
         // since some affected models might have two tables, we have to get our tables and set up a query for each table.
         foreach ($model->get_tables() as $table) {
-            $query = 'UPDATE ' . $table->get_table_name();
-            $fields_affected = array();
-            $inner_query = array();
+            $query           = 'UPDATE ' . $table->get_table_name();
+            $fields_affected = [];
+            $inner_query     = [];
             foreach ($model->_get_fields_for_table($table->get_table_alias()) as $model_field) {
                 if ($model_field instanceof EE_Datetime_Field) {
                     $inner_query[ $model_field->get_table_column() ] = $model_field->get_table_column() . ' = '
                                                                        . $sql_date_function . '('
                                                                        . $model_field->get_table_column()
-                                                                       . ", INTERVAL {$offset} MINUTE)";
-                    $fields_affected[] = $model_field;
+                                                                       . ", INTERVAL $offset MINUTE)";
+                    $fields_affected[]                               = $model_field;
                 }
             }
             if (! $fields_affected) {
@@ -195,7 +201,7 @@ class DatetimeOffsetFix extends JobHandler
                     break;
                 case is_array($result) && ! empty($result):
                     foreach ($result as $field_name => $error_message) {
-                        $this->recordChangeLog($model, $original_offset, $table, array($field_name), $error_message);
+                        $this->recordChangeLog($model, $original_offset, $table, [$field_name], $error_message);
                     }
                     break;
                 default:
@@ -214,21 +220,25 @@ class DatetimeOffsetFix extends JobHandler
      * @param DbSafeDateTime|null $end_date_range
      * @return array  An array of any errors encountered and the fields they were for.
      */
-    private function doQueryForEachField($query, array $inner_query, $start_date_range, $end_date_range)
-    {
+    private function doQueryForEachField(
+        string $query,
+        array $inner_query,
+        ?DbSafeDateTime $start_date_range,
+        ?DbSafeDateTime $end_date_range
+    ): array {
         global $wpdb;
-        $errors = array();
+        $errors = [];
         foreach ($inner_query as $field_name => $field_query) {
-            $query_to_run = $query;
-            $where_conditions = array();
-            $query_to_run .= ' SET ' . $field_query;
+            $query_to_run     = $query;
+            $where_conditions = [];
+            $query_to_run     .= ' SET ' . $field_query;
             if ($start_date_range instanceof DbSafeDateTime) {
-                $start_date = $start_date_range->format(EE_Datetime_Field::mysql_timestamp_format);
-                $where_conditions[] = "{$field_name} > '{$start_date}'";
+                $start_date         = $start_date_range->format(EE_Datetime_Field::mysql_timestamp_format);
+                $where_conditions[] = "$field_name > '$start_date'";
             }
             if ($end_date_range instanceof DbSafeDateTime) {
-                $end_date = $end_date_range->format(EE_Datetime_Field::mysql_timestamp_format);
-                $where_conditions[] = "{$field_name} < '{$end_date}'";
+                $end_date           = $end_date_range->format(EE_Datetime_Field::mysql_timestamp_format);
+                $where_conditions[] = "$field_name < '$end_date'";
             }
             if ($where_conditions) {
                 $query_to_run .= ' WHERE ' . implode(' AND ', $where_conditions);
@@ -255,7 +265,7 @@ class DatetimeOffsetFix extends JobHandler
      * @param array  $inner_query
      * @return false|int
      */
-    private function doQueryForAllFields($query, array $inner_query)
+    private function doQueryForAllFields(string $query, array $inner_query)
     {
         global $wpdb;
         $query .= ' SET ' . implode(',', $inner_query);
@@ -267,21 +277,22 @@ class DatetimeOffsetFix extends JobHandler
      * Records a changelog entry using the given information.
      *
      * @param EEM_Base              $model
-     * @param float                 $offset
+     * @param int|float             $offset
      * @param EE_Table_Base         $table
      * @param EE_Model_Field_Base[] $model_fields_affected
      * @param string                $error_message If present then there was an error so let's record that instead.
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function recordChangeLog(
         EEM_Base $model,
         $offset,
         EE_Table_Base $table,
-        $model_fields_affected,
-        $error_message = ''
+        array $model_fields_affected,
+        string $error_message = ''
     ) {
         // setup $fields list.
-        $fields = array();
+        $fields = [];
         /** @var EE_Datetime_Field $model_field */
         foreach ($model_fields_affected as $model_field) {
             if (! $model_field instanceof EE_Datetime_Field) {
@@ -313,12 +324,12 @@ class DatetimeOffsetFix extends JobHandler
                 implode(',', $fields)
             );
         // write to the log
-        $changelog = EE_Change_Log::new_instance(array(
+        $changelog = EE_Change_Log::new_instance([
             'LOG_type'    => $error_message
                 ? self::DATETIME_OFFSET_FIX_CHANGELOG_ERROR_TYPE
                 : self::DATETIME_OFFSET_FIX_CHANGELOG_TYPE,
             'LOG_message' => $message,
-        ));
+        ]);
         $changelog->save();
     }
 
@@ -332,8 +343,9 @@ class DatetimeOffsetFix extends JobHandler
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
-    private function getModelsWithDatetimeFields()
+    private function getModelsWithDatetimeFields(): array
     {
         $this->getModelsToProcess();
         if (! empty($this->models_with_datetime_fields)) {
@@ -359,7 +371,7 @@ class DatetimeOffsetFix extends JobHandler
      *
      * @param array $models_to_set array of model class names.
      */
-    private function setModelsToProcess($models_to_set)
+    private function setModelsToProcess(array $models_to_set)
     {
         update_option(self::MODELS_TO_PROCESS_OPTION_KEY, $models_to_set);
     }
@@ -368,11 +380,11 @@ class DatetimeOffsetFix extends JobHandler
     /**
      * Used to keep track of how many models have been processed for the batch
      *
-     * @param $count
+     * @param int $count
      */
-    private function updateCountOfModelsProcessed($count = 1)
+    private function updateCountOfModelsProcessed(int $count = 1)
     {
-        $count = $this->getCountOfModelsProcessed() + (int) $count;
+        $count = $this->getCountOfModelsProcessed() + $count;
         update_option(self::COUNT_OF_MODELS_PROCESSED, $count);
     }
 
@@ -382,7 +394,7 @@ class DatetimeOffsetFix extends JobHandler
      *
      * @return int
      */
-    private function getCountOfModelsProcessed()
+    private function getCountOfModelsProcessed(): int
     {
         return (int) get_option(self::COUNT_OF_MODELS_PROCESSED, 0);
     }
@@ -393,10 +405,10 @@ class DatetimeOffsetFix extends JobHandler
      *
      * @return array  an array of model class names.
      */
-    private function getModelsToProcess()
+    private function getModelsToProcess(): array
     {
         if (empty($this->models_with_datetime_fields)) {
-            $this->models_with_datetime_fields = get_option(self::MODELS_TO_PROCESS_OPTION_KEY, array());
+            $this->models_with_datetime_fields = get_option(self::MODELS_TO_PROCESS_OPTION_KEY, []);
         }
         return $this->models_with_datetime_fields;
     }
@@ -407,7 +419,7 @@ class DatetimeOffsetFix extends JobHandler
      *
      * @param float $offset
      */
-    public static function updateOffset($offset)
+    public static function updateOffset(float $offset)
     {
         update_option(self::OFFSET_TO_APPLY_OPTION_KEY, $offset);
     }
@@ -418,7 +430,7 @@ class DatetimeOffsetFix extends JobHandler
      *
      * @return float
      */
-    public static function getOffset()
+    public static function getOffset(): float
     {
         return (float) get_option(self::OFFSET_TO_APPLY_OPTION_KEY, 0);
     }
@@ -450,7 +462,7 @@ class DatetimeOffsetFix extends JobHandler
             return null;
         }
         try {
-            $datetime = DateTime::createFromFormat('U', $start_date, new DateTimeZone('UTC'));
+            $datetime   = DateTime::createFromFormat('U', $start_date, new DateTimeZone('UTC'));
             $start_date = $datetime instanceof DateTime
                 ? DbSafeDateTime::createFromDateTime($datetime)
                 : null;

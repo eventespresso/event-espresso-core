@@ -1,13 +1,13 @@
 <?php
 
-namespace EventEspressoBatchRequest;
+namespace EventEspresso\core\libraries\batch;
 
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
-use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface;
-use EventEspressoBatchRequest\Helpers\JobParameters;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
+use EventEspresso\core\libraries\batch\Helpers\BatchRequestException;
+use EventEspresso\core\libraries\batch\JobHandlerBaseClasses\JobHandlerInterface;
+use EventEspresso\core\libraries\batch\Helpers\JobParameters;
+use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
 use EventSmart\Multisite\core\services\database\service\DbServiceJobHandler;
 use Exception;
 

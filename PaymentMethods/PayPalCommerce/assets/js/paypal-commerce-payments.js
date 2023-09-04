@@ -1,5 +1,12 @@
 const paypal_payment_methods = {};
+
 jQuery(document).ready(function ($) {
+    // Initialize and run all versions of this payment method (EE Payment Methods Pro add-on allows PM versions).
+    for (const slug in eeaPPCommerceParameters.pm_versions) {
+        paypal_payment_methods[slug] = new EeaPayPalCheckout(slug);
+        paypal_payment_methods[slug].initialize();
+    }
+
 
     /**
      * @namespace EeaPayPalCheckout
@@ -62,20 +69,18 @@ jQuery(document).ready(function ($) {
                 return false;
             }
             // Prevent loading on registration page.
-            if (!this.billing_form.length) {
+            if (! this.billing_form.length) {
                 return false;
             }
-            // PayPal selected as payment method and initialized ?
+            // PayPal components will require re-setup even if PM already initialized.
             if (this.initialized) {
-                // Re-build the PM form in case it was deselected once before.
-                if (!this.payment_button_container.length) {
-                    this.setupPayPal();
-                }
-                return false;
+                this.setupPayPal();
+                this.disableSubmitButtons();
+                return true;
             }
             this.selected = true;
             this.disableSubmitButtons();
-            this.getTransactionData()
+            this.getTransactionData();
             this.initialized = true;
         }
 
@@ -86,8 +91,11 @@ jQuery(document).ready(function ($) {
          * @return boolean
          */
         this.initializeObjects = function () {
-            this.pp_order_id = eeaPPCommerceParameters.pp_order_id;
             this.pp_order_nonce = eeaPPCommerceParameters.pp_order_nonce;
+            // Don't override possibly already saved order ID.
+            if (! this.pp_order_id || this.pp_order_id.length < 1) {
+                this.pp_order_id = eeaPPCommerceParameters.pp_order_id;
+            }
             // this.button_container_id = 'eea-' + pm_slug + '-payment-buttons';
             this.button_container_id = 'eea-paypal-commerce-payment-buttons';
             this.payment_button_container = $('#' + this.button_container_id);
@@ -183,7 +191,6 @@ jQuery(document).ready(function ($) {
         this.setupPayPal = function () {
             const this_pm = this;
             this_pm.spco.do_before_sending_ajax();
-
             paypal.Buttons({
                 style: {
                     layout: 'vertical',
@@ -514,11 +521,5 @@ jQuery(document).ready(function ($) {
                 this.tearDown();
             }
         });
-    }
-
-    // Initialize and run all versions of this payment method (EE Payment Methods Pro add-on allows PM versions).
-    for (const slug in eeaPPCommerceParameters.pm_versions) {
-        paypal_payment_methods[slug] = new EeaPayPalCheckout(slug);
-        paypal_payment_methods[slug].initialize();
     }
 });

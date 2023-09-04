@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspressoBatchRequest\JobHandlers;
+namespace EventEspresso\core\libraries\batch\JobHandlers;
 
 use EEH_Export;
 use EEH_File;
@@ -19,10 +19,10 @@ use EE_Checkin;
 use EE_Datetime;
 use EE_Error;
 use EE_Registry;
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
-use EventEspressoBatchRequest\Helpers\JobParameters;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
-use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile;
+use EventEspresso\core\libraries\batch\Helpers\BatchRequestException;
+use EventEspresso\core\libraries\batch\Helpers\JobParameters;
+use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
+use EventEspresso\core\libraries\batch\JobHandlerBaseClasses\JobHandlerFile;
 use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\AnswersCSV;
 use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\AttendeeCSV;
 use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\CheckinsCSV;
@@ -493,7 +493,6 @@ class RegistrationsReport extends JobHandlerFile
                             ]
                         ]
                     );
-                /** @var EE_Datetime $datetime */
                 $datetime     = $date_model->get_one_by_ID($DTT_ID);
                 $checkin_rows = EEM_Checkin::instance()->get_all(
                     [

@@ -7,7 +7,7 @@ use EventEspresso\core\domain\services\admin\registrations\list_table\csv_report
  *
  * For creating csv file exports/reports in a single request.
  * Note that if you're creating a large csv file this is likely to timeout,
- * and so it would be better to use EventEspressoBatchRequest\BatchRequestProcessor
+ * and so it would be better to use EventEspresso\core\libraries\batch\BatchRequestProcessor
  *
  * @package                   Event Espresso
  * @subpackage                includes/functions

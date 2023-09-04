@@ -76,7 +76,7 @@ class ConfirmDeletion
                         'page'              => EED_Batch::PAGE_SLUG,
                         'batch'             => EED_Batch::batch_job,
                         'deletion_job_code' => $deletion_job_code,
-                        'job_handler'       => urlencode('EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'),
+                        'job_handler'       => urlencode('EventEspresso\core\libraries\batch\JobHandlers\ExecuteBatchDeletion'),
                         'return_url'        => urlencode(
                             add_query_arg(
                                 [

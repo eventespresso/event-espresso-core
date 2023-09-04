@@ -7,8 +7,8 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\DataType;
-use EventEspressoBatchRequest\BatchRequestProcessor;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
+use EventEspresso\core\libraries\batch\BatchRequestProcessor;
+use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
 
 define('BATCH_URL', plugin_dir_url(__FILE__));
 
@@ -281,8 +281,8 @@ class EED_Batch extends EED_Module
             true
         );
         /** @var BatchRequestProcessor $batch_runner */
-        $batch_runner = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
-        // eg 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport'
+        $batch_runner = $this->getLoader()->getShared('EventEspresso\core\libraries\batch\BatchRequestProcessor');
+        // eg 'EventEspresso\core\libraries\batch\JobHandlers\RegistrationsReport'
         // remember the response for later. We need it to display the page body
         $this->_job_step_response = $batch_runner->createJob();
         return $this->_job_step_response;
@@ -351,7 +351,7 @@ class EED_Batch extends EED_Module
     {
         $job_id = EED_Batch::getRequest()->getRequestParam('job_id');
         /** @var BatchRequestProcessor $batch_runner */
-        $batch_runner = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
+        $batch_runner = $this->getLoader()->getShared('EventEspresso\core\libraries\batch\BatchRequestProcessor');
         $job_response = $batch_runner->{$job}($job_id);
         $this->_return_json($job_response->to_array());
     }

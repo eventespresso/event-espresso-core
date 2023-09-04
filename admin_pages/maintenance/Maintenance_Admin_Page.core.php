@@ -1,7 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\DbSafeDateTime;
-use EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix;
+use EventEspresso\core\libraries\batch\JobHandlers\DatetimeOffsetFix;
 
 /**
  * Maintenance_Admin_Page
@@ -920,7 +920,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             $form->receive_form_submission($this->_req_data);
             if ($form->is_valid()) {
                 // save offset data so batch processor can get it.
-                DatetimeOffsetFix::updateOffset($form->get_input_value('offset_input'));
+                DatetimeOffsetFix::updateOffset((float) $form->get_input_value('offset_input'));
                 $utc_timezone          = new DateTimeZone('UTC');
                 $date_range_start_date = DateTime::createFromFormat(
                     'm/d/Y H:i:s',
@@ -945,7 +945,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                             'page'        => EED_Batch::PAGE_SLUG,
                             'batch'       => EED_Batch::batch_job,
                             'label'       => esc_html__('Applying Offset', 'event_espresso'),
-                            'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\DatetimeOffsetFix'),
+                            'job_handler' => urlencode('EventEspresso\core\libraries\batch\JobHandlers\DatetimeOffsetFix'),
                             'return_url'  => urlencode(
                                 add_query_arg(
                                     [

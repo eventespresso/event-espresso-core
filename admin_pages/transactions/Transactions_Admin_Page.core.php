@@ -1963,7 +1963,15 @@ class Transactions_Admin_Page extends EE_Admin_Page
             : [];
         // nothing specified ? then get all reg IDs
         if ($apply_to_all || empty($REG_IDs)) {
-            $registrations = $payment->transaction()->registrations();
+            $registrations = $payment->transaction()->registrations(
+                [
+                    [
+                        'STS_ID' => [
+                            'NOT_IN', [ EEM_Registration::status_id_cancelled ]
+                        ]
+                    ]
+                ]
+            );
             $REG_IDs       = ! empty($registrations)
                 ? array_keys($registrations)
                 : $this->_get_existing_reg_payment_REG_IDs($payment);

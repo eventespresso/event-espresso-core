@@ -493,6 +493,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\session\SessionStartHandler'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\encryption\Base64Encoder'     => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\services\session\SessionStartHandler'                                                            => [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache
+            ],
             'EE_Cart'                                                                                                            => [
                 'EE_Session' => EE_Dependency_Map::load_from_cache,
             ],
@@ -776,7 +779,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\files\FilesDataHandler'                                                         => [
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspressoBatchRequest\BatchRequestProcessor'                                                                    => [
+            'EventEspresso\core\libraries\batch\BatchRequestProcessor'                                                             => [
                 'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
@@ -825,10 +828,10 @@ class EE_Dependency_Map
             'EventEspresso\core\services\addon\api\ThirdPartyPluginHandler'                                                      => [
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspressoBatchRequest\JobHandlers\ExecuteBatchDeletion'                                                         => [
+            'EventEspresso\core\libraries\batch\JobHandlers\ExecuteBatchDeletion'                                                  => [
                 'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion'                                                         => [
+            'EventEspresso\core\libraries\batch\JobHandlers\PreviewEventDeletion'                                                  => [
                 'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\events\data\PreviewDeletion'                                               => [

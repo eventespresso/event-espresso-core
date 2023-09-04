@@ -1,11 +1,11 @@
 <?php
 
-namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
+namespace EventEspresso\core\libraries\batch\JobHandlerBaseClasses;
 
 use EE_Error;
 use EEH_File;
 use EEHI_File;
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
+use EventEspresso\core\libraries\batch\Helpers\BatchRequestException;
 
 /**
  * Class JobHandlerFile

@@ -1873,12 +1873,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return EEM_Datetime::instance()->get_one(
             [
                 [
-            [
-                [
                     'Ticket.Registration.REG_ID' => $this->ID(),
-                ],
-                'order_by' => ['DTT_EVT_start' => 'ASC'],
-            ]
                 ],
                 'order_by' => ['DTT_EVT_start' => 'ASC'],
             ]

@@ -1,7 +1,7 @@
 <?php
 
 $job_step_response = EED_Batch::instance()->job_step_response();
-$filename = $job_step_response instanceof EventEspressoBatchRequest\Helpers\JobStepResponse
+$filename = $job_step_response instanceof EventEspresso\core\libraries\batch\Helpers\JobStepResponse
     ? EEH_File::get_filename_from_filepath($job_step_response->job_parameters()->extra_datum('filepath'))
     : esc_html__('Unknown', 'event_espresso');
 ?>

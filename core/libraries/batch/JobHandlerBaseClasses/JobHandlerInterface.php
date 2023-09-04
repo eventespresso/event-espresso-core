@@ -1,8 +1,14 @@
 <?php
 
+
+namespace EventEspresso\core\libraries\batch\JobHandlerBaseClasses;
+
+use EventEspresso\core\libraries\batch\Helpers\BatchRequestException;
+use EventEspresso\core\libraries\batch\Helpers\JobParameters;
+use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
+
 /**
- *
- * Class JobHandlerInterface
+ * JobHandlerInterface
  *
  * Interface describing classes that BatchRunner can send jobs to for processing.
  * Takes care of initiating the job after it's been assigned an ID,
@@ -15,13 +21,6 @@
  * @since               4.8.26
  *
  */
-
-namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
-
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
-use EventEspressoBatchRequest\Helpers\JobParameters;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
-
 interface JobHandlerInterface
 {
     /**

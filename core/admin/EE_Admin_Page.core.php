@@ -1540,22 +1540,16 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public function check_user_access(string $route_to_check = '', bool $verify_only = false): bool
     {
-        // hack to allow editpost capability to be used for edit CPT pages
-        $req_action = $this instanceof EE_Admin_Page_CPT && $this->_req_action === 'edit'
-            ? 'editpost'
-            : $this->_req_action;
-        $route_to_check = ! empty($route_to_check) ? $route_to_check : $req_action;
-        $capability     = ! empty($route_to_check)
-                          && isset($this->_page_routes[ $route_to_check ])
-                          && is_array($this->_page_routes[ $route_to_check ])
-                          && ! empty($this->_page_routes[ $route_to_check ]['capability'])
-            ? $this->_page_routes[ $route_to_check ]['capability']
+        // if no route_to_check is passed in then use the current route set via _req_action
+        $action = $route_to_check ?: $this->_req_action;
+        $capability = ! empty($this->_page_routes[ $action ]['capability'])
+            ? $this->_page_routes[ $action ]['capability']
             : null;
 
-        if (empty($capability) && empty($route_to_check)) {
-            $capability = ! empty($this->_route['capability']) ? $this->_route['capability'] : 'manage_options';
-        } else {
-            $capability = empty($capability) ? 'manage_options' : $capability;
+        if (empty($capability)) {
+            $capability = empty($route_to_check) && ! empty($this->_route['capability'])
+                ? $this->_route['capability']
+                : 'manage_options';
         }
 
         $id = $this->_route['obj_id'] ?? 0;

@@ -4,7 +4,7 @@
  * CSV Import Export class
  *
  * For dealing with CSV files directly. For exports/reports, it would generally
- * be preferred to use EventEspressoBatchRequest\BatchRequestProcessor and
+ * be preferred to use EventEspresso\core\libraries\batch\BatchRequestProcessor and
  * EEH_Export to create csv files on the server and then direct the user to download them
  *
  * @package                   Event Espresso
