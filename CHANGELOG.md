@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.10]
+
+#### Fixed
+ - [Update ALL Typings and Namespaces for Batch Jobs (#628)](https://github.com/eventespresso/cafe/pull/628)
+ - [Don't run wp_kses across the entire HTML message template (#832)](https://github.com/eventespresso/cafe/pull/832)
+ - [Refactor and Simplify Admin Route Cap Check (#830)](https://github.com/eventespresso/cafe/pull/830)
+ - [Fix EE_Registration::get_earliest_related_datetime() throwing a fatal error (#834)](https://github.com/eventespresso/cafe/pull/834)
+ - [Fix EE_Cart SessionStartHandler dependancy (#836)](https://github.com/eventespresso/cafe/pull/836)
+
+#### Changed
+ - [Build Machine 5.0.9 changes (#828)](https://github.com/eventespresso/cafe/pull/828)
+ - [PayPal Commerce. Fix double](https://github.com/eventespresso/cafe/pull/827)
+ - [Don't apply payments to cancelled payments by default (#844)](https://github.com/eventespresso/cafe/pull/844)
+ - [Verify Core Config Loaded Before Showing Maintenance Mode Notice (#843)](https://github.com/eventespresso/cafe/pull/843)
+
+
 ### [5.0.9]
 
 #### Fixed
@@ -14,10 +30,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fix argument 1 passed to EED_Add_New_State::state_options() must be of the type array, null given (#818)](https://github.com/eventespresso/cafe/pull/818)
  - [Fix Position Issue of Notices (#802)](https://github.com/eventespresso/cafe/pull/802)
  - [Allow db model properties to be null (#826)](https://github.com/eventespresso/cafe/pull/826)
+ - [Update ALL Typings and Namespaces for Batch Jobs (#628)](https://github.com/eventespresso/cafe/pull/628)
+ - [Don't run wp_kses across the entire HTML message template (#832)](https://github.com/eventespresso/cafe/pull/832)
+ - [Refactor and Simplify Admin Route Cap Check (#830)](https://github.com/eventespresso/cafe/pull/830)
+ - [Fix EE_Registration::get_earliest_related_datetime() throwing a fatal error (#834)](https://github.com/eventespresso/cafe/pull/834)
+ - [Fix EE_Cart SessionStartHandler dependancy (#836)](https://github.com/eventespresso/cafe/pull/836)
 
 #### Changed
  - [BuildMachine 5.0.8 changes (#817)](https://github.com/eventespresso/cafe/pull/817)
  - [Don't Throw Exceptions When Decoding Session Data (#825)](https://github.com/eventespresso/cafe/pull/825)
+ - [Build Machine 5.0.9 changes (#828)](https://github.com/eventespresso/cafe/pull/828)
+ - [PayPal Commerce. Fix double](https://github.com/eventespresso/cafe/pull/827)
+ - [Don't apply payments to cancelled payments by default (#844)](https://github.com/eventespresso/cafe/pull/844)
+ - [Verify Core Config Loaded Before Showing Maintenance Mode Notice (#843)](https://github.com/eventespresso/cafe/pull/843)
 
 
 ### [5.0.8]
@@ -76,8 +101,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fix argument 1 passed to EED_Add_New_State::state_options() must be of the type array, null given (#818)](https://github.com/eventespresso/cafe/pull/818)
  - [Fix Position Issue of Notices (#802)](https://github.com/eventespresso/cafe/pull/802)
  - [Allow db model properties to be null (#826)](https://github.com/eventespresso/cafe/pull/826)
+ - [Update ALL Typings and Namespaces for Batch Jobs (#628)](https://github.com/eventespresso/cafe/pull/628)
+ - [Don't run wp_kses across the entire HTML message template (#832)](https://github.com/eventespresso/cafe/pull/832)
+ - [Refactor and Simplify Admin Route Cap Check (#830)](https://github.com/eventespresso/cafe/pull/830)
+ - [Fix EE_Registration::get_earliest_related_datetime() throwing a fatal error (#834)](https://github.com/eventespresso/cafe/pull/834)
+ - [Fix EE_Cart SessionStartHandler dependancy (#836)](https://github.com/eventespresso/cafe/pull/836)
+ - FIX
 
 #### Changed
  - [Updates from Barista May 30 20:58 (#693)](https://github.com/eventespresso/cafe/pull/693)
  - [BuildMachine 5.0.8 changes (#817)](https://github.com/eventespresso/cafe/pull/817)
  - [Don't Throw Exceptions When Decoding Session Data (#825)](https://github.com/eventespresso/cafe/pull/825)
+ - [Build Machine 5.0.9 changes (#828)](https://github.com/eventespresso/cafe/pull/828)
+ - [PayPal Commerce. Fix double](https://github.com/eventespresso/cafe/pull/827)
+ - [Don't apply payments to cancelled payments by default (#844)](https://github.com/eventespresso/cafe/pull/844)
+ - [Verify Core Config Loaded Before Showing Maintenance Mode Notice (#843)](https://github.com/eventespresso/cafe/pull/843)
