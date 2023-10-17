@@ -45,6 +45,10 @@ class EspressoLegacyAdminAssetManager extends AssetManager
 
     const CSS_HANDLE_EE_ADMIN               = 'ee-admin-css';
 
+    const CSS_HANDLE_EE_ADMIN_MEDIA_MODAL   = 'ee-admin-media-modal-css';
+
+    const CSS_HANDLE_EE_ADMIN_FILEBIRD      = 'ee-admin-filebird-css';
+
     const CSS_HANDLE_EE_JOYRIDE             = 'ee-joyride-css';
 
     const CSS_HANDLE_EE_TEXT_LINKS          = 'ee-text-links';
@@ -219,6 +223,25 @@ class EspressoLegacyAdminAssetManager extends AssetManager
             EE_ADMIN_URL . 'assets/ee-admin-page.css',
             ['espresso_admin_base']
         )->setEnqueueImmediately();
+
+        if (
+            apply_filters(
+                'FHEE__EventEspresso_core_domain_services_assets_EspressoLegacyAdminAssetManager__registerStyleSheets__load_media_modal_css',
+                ! class_exists('FileBird\Plugin')
+            )
+        ) {
+            $this->addStylesheet(
+                EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN_MEDIA_MODAL,
+                EE_ADMIN_URL . 'assets/ee-admin-media-modal.css',
+                [EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN]
+            )->setEnqueueImmediately();
+        } else {
+            $this->addStylesheet(
+                EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN_FILEBIRD,
+                EE_ADMIN_URL . 'assets/ee-admin-media-modal-reset.css',
+                [EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN]
+            )->setEnqueueImmediately();
+        }
 
         if (! $joyride) {
             return;

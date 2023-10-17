@@ -1,16 +1,15 @@
 <?php
 
-/**
- * @var bool $add_page_frame
- * @var string           $admin_page_wrapper_div_id
- * @var string           $admin_page_wrapper_div_class
- * @var string           $post_body_content
- * @var string|WP_Screen $current_page
- */
-
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
-global $post_type, $post;
+/**
+ * @var string           $admin_page_wrapper_div_id
+ * @var string           $admin_page_wrapper_div_class
+ * @var string|null      $post_body_content
+ * @var string|WP_Screen $current_page
+ * @var string|null      $post_type
+ * @var WP_Post          $post
+ */
 
 // action for registering metaboxes
 do_action('add_meta_boxes', (string) $post_type, $post);
@@ -25,34 +24,16 @@ do_action('add_meta_boxes', (string) $post_type, $post);
     <!-- admin-page-header -->
     <div id="post-body" class="metabox-holder columns-2">
 
-        <?php
-        if (! empty($post_body_content)) :
-            if ($add_page_frame) {
-                if (
-                    strpos($post_body_content, 'class="padding"') === false
-                    || strpos($post_body_content, 'class="padding"') < 120
-                ) {
-                    $post_body_content = '<div class="padding">' . $post_body_content . '</div>';
-                }
-                if (strpos($post_body_content, '<div class="ee-admin-container">') === false) {
-                    $post_body_content = '<div class="ee-admin-container">' . $post_body_content . '</div>';
-                }
-            }
-            ?>
-            <div id="post-body-content">
-                <?php echo wp_kses($post_body_content, AllowedTags::getWithFullTags()); ?>
-            </div>
-            <!-- post-body-content -->
-        <?php endif; ?>
+        <?php echo (string) $post_body_content; ?>
 
         <div id="postbox-container-1" class="postbox-container">
-            <?php do_meta_boxes($current_page, 'side', null); ?>
+            <?php do_meta_boxes($current_page, 'side', $post); ?>
         </div>
         <!-- postbox-container-1 -->
 
         <div id="postbox-container-2" class="postbox-container">
-            <?php do_meta_boxes($current_page, 'normal', null); ?>
-            <?php do_meta_boxes($current_page, 'advanced', null); ?>
+            <?php do_meta_boxes($current_page, 'normal', $post); ?>
+            <?php do_meta_boxes($current_page, 'advanced', $post); ?>
         </div>
         <!-- postbox-container-2 -->
         <div class="clear"></div>

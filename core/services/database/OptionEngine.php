@@ -12,15 +12,9 @@ namespace EventEspresso\core\services\database;
  */
 class OptionEngine
 {
-    /**
-     * @var   bool
-     */
-    private $is_network_option;
+    private bool $is_network_option;
 
-    /**
-     * @var   int
-     */
-    private $network_ID;
+    private int $network_ID;
 
 
     /**

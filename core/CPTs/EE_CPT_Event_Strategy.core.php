@@ -177,6 +177,8 @@ class EE_CPT_Event_Strategy
                 $SQL .= ' AND ' . EEM_Datetime::instance()->table() . ".DTT_EVT_end > '"
                         . current_time('mysql', true) . "' ";
             }
+            // exclude trashed datetimes
+            $SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_deleted = 0';
         }
         return $SQL;
     }

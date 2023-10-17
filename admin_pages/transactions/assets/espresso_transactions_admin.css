@@ -567,6 +567,7 @@
 
 .espresso-admin.wp-core-ui .txn-overview-actions.ee-list-table-actions {
     padding: 0;
+    min-width: calc((var(--ee-button-height) + (var(--ee-margin-nano) * 2)) * 2 + 2px);
 }
 
 .ui-datepicker {

@@ -22,10 +22,7 @@ class JsonDataHandler
 
     const NO_ERROR_MSG        = 'No error';
 
-    /**
-     * @var string|null
-     */
-    private $data_type = null;
+    private string $data_type = JsonDataHandler::DATA_TYPE_USE_FLAGS;
 
     /**
      * @var array|stdClass|null
@@ -41,17 +38,11 @@ class JsonDataHandler
      *
      * @var int
      */
-    private $decode_flags = 0;
+    private int $decode_flags = 0;
 
-    /**
-     * @var int
-     */
-    private $depth = 512;
+    private int $depth = 512;
 
-    /**
-     * @var string
-     */
-    private $encoded_data = '';
+    private string $encoded_data = '';
 
     /**
      * JSON_FORCE_OBJECT,
@@ -72,17 +63,11 @@ class JsonDataHandler
      *
      * @var int
      */
-    private $encode_flags = 0;
+    private int $encode_flags = 0;
 
-    /**
-     * @var int
-     */
-    private $last_error_code = JSON_ERROR_NONE;
+    private int $last_error_code = JSON_ERROR_NONE;
 
-    /**
-     * @var string
-     */
-    private $last_error_msg = JsonDataHandler::NO_ERROR_MSG;
+    private string $last_error_msg = JsonDataHandler::NO_ERROR_MSG;
 
 
     /**
@@ -276,11 +261,11 @@ class JsonDataHandler
     {
         $this->resetErrors();
         if ($this->isJson($data)) {
-            $this->encoded_data = $data;
+            $this->encoded_data    = $data;
             $this->last_error_code = JSON_ERROR_NONE;
             $this->last_error_msg  = JsonDataHandler::NO_ERROR_MSG;
         } else {
-            $this->encoded_data = json_encode($data, $this->encode_flags, $this->depth);
+            $this->encoded_data    = json_encode($data, $this->encode_flags, $this->depth);
             $this->last_error_code = json_last_error();
             $this->last_error_msg  = json_last_error_msg();
         }

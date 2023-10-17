@@ -2568,7 +2568,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         $payment_amount = min($payment_amount, $paid);
         // calculate and set new REG_paid
         $paid = $paid - $payment_amount;
-        \EEH_Debug_Tools::printr($paid, 'NEW REG PAID AMOUNT', __FILE__, __LINE__);
+        // \EEH_Debug_Tools::printr($paid, 'NEW REG PAID AMOUNT', __FILE__, __LINE__);
         $this->set_paid($paid);
         // make it stick
         $this->save();

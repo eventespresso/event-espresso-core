@@ -108,7 +108,7 @@ jQuery(document).ready(function ($) {
         $('#txn-admin-payment-payment-id-inp').val(0);
         $('#txn-admin-payment-type-inp').val(-1);
         $('#txn-admin-payment-date-inp').val($('#txn-admin-todays-date-inp').val());
-		const refundAmount = $('#txn-admin-total-amount-due').data('due');
+		const refundAmount = $('#txn-admin-payment-total').data('total');
 		$('#txn-admin-payment-amount-inp').val(Number(refundAmount));
         //don't show payment status selector
         $('.txn-admin-apply-payment-status-dv').hide();

@@ -1,0 +1,504 @@
+
+/* MEDIA MODAL */
+
+/* reset */
+.espresso-admin .media-frame,
+.espresso-admin .media-modal-content .media-frame *:not(.screen-reader-text) {
+    bottom: auto;
+    box-sizing: border-box;
+    float: unset;
+    height: auto;
+    left: unset;
+    max-width: unset;
+    position: relative;
+    right: unset;
+    top: unset;
+}
+
+
+:root {
+    --ee-media-sidebar-width: 98%;
+}
+
+@media screen and (min-width: 783px) {
+    :root {
+        --ee-media-sidebar-width: 320px;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    :root {
+        --ee-media-sidebar-width: 480px;
+    }
+}
+
+
+/*  media frame  */
+
+.espresso-admin .media-frame,
+.espresso-admin .media-frame .media-frame-content {
+    height: auto;
+    overflow: auto;
+    width: 100%;
+}
+
+
+.espresso-admin .media-modal-content .media-frame .media-frame-title {
+    padding: var(--ee-padding-big) var(--ee-padding-big) var(--ee-padding-micro);
+}
+
+.espresso-admin .media-frame-title h1,
+.espresso-admin .media-sidebar h2:not(.hndle),
+.espresso-admin .image-details h2:not(.media-attachments-filter-heading) {
+    color: var(--ee-font-color-light);
+    line-height: 1;
+}
+
+.espresso-admin .media-frame-title h1 {
+    font-size: clamp(var(--ee-font-size-4xl), 8vw, var(--ee-font-size-7xl));
+    font-weight: 800;
+    margin: 0;
+    padding: 0;
+    text-align: start;
+}
+
+.espresso-admin .media-modal-content .media-frame h2.media-frame-menu-heading:not(.hndle):not(.nav-tab-wrapper) {
+    margin-block: var(--ee-margin-micro);
+    padding-inline: var(--ee-padding-big);
+}
+
+@media only screen and (max-width: 900px) {
+    .espresso-admin .media-modal-content .media-frame h2.media-frame-menu-heading:not(.hndle):not(.nav-tab-wrapper) {
+        clip: rect(1px, 1px, 1px, 1px);
+        -webkit-clip-path: inset(50%);
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        width: 1px;
+        word-wrap: normal !important;
+    }
+}
+
+
+.espresso-admin.wp-core-ui button.button.media-frame-menu-toggle {
+    display: none;
+}
+
+@media only screen and (max-width: 900px) {
+    .wp-core-ui .media-frame:not(.hide-menu) .button.media-frame-menu-toggle {
+        align-items: center;
+        background-color: var(--ee-btn-secondary);
+        border-color: var(--ee-btn-secondary);
+        display: inline-flex;
+        font-size: calc(var(--ee-button-height) * .421053);
+        font-weight: 500;
+        height: min(calc(var(--ee-button-height) - 4px), auto);
+        inset-block-start: var(--ee-size-huge);
+        inset-inline-end: calc(var(--ee-size-extreme) + var(--ee-size-micro));
+        left: unset;
+        margin: 0;
+        min-height: var(--ee-button-height);
+        padding: 0;
+        padding-block: var(--ee-button-height-shim);
+        padding-inline: var(--ee-button-height-third);
+        position: absolute;
+        text-decoration: unset;
+        transform: unset;
+        z-index: 999;
+    }
+}
+
+@media only screen and (max-width: 599px) {
+    .wp-core-ui .media-frame:not(.hide-menu) .button.media-frame-menu-toggle {
+        inset-block-start: var(--ee-size-big);
+    }
+}
+
+
+.espresso-admin .media-modal-content .media-frame-menu {
+    padding-inline: var(--ee-padding-default);
+    width: unset;
+    z-index: unset;
+}
+
+.espresso-admin .media-modal-content .media-frame .media-menu.visible {
+    align-items: center;
+    background: none;
+    border: none;
+    display: flex;
+    flex-flow: row wrap;
+    padding-block-end: var(--ee-padding-default);
+    padding: 0;
+    transform: unset;
+}
+
+@media only screen and (min-width: 901px) {
+    .espresso-admin .media-modal-content .media-frame .media-menu {
+        align-items: center;
+        background: none;
+        border: none;
+        display: flex;
+        flex-flow: row wrap;
+        padding-block-end: var(--ee-padding-default);
+        padding: 0;
+        transform: unset;
+    }
+
+}
+
+.espresso-admin .media-modal-content .media-frame .media-menu .separator {
+    display: none;
+}
+
+
+.espresso-admin .media-frame .attachments-browser {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-areas:
+        "toolbar sidebar"
+        "uploader sidebar"
+        "heading sidebar"
+        "attachments sidebar";
+    grid-template-columns: 1fr var(--ee-media-sidebar-width);
+    grid-template-rows: 15rem 0 0 calc(100% - 30px);
+    /* grid-template-rows: 6.5rem 0 0 calc(100% - 30px); */
+    padding-block-end: 60px;
+    height: 100%;
+}
+
+@media only screen and (min-width: 1367px) {
+    .espresso-admin .media-frame .attachments-browser {
+        grid-template-rows: 8.5rem 0 0 calc(100% - 30px);
+    }
+}
+
+@media only screen and (min-width: 1920px) {
+    .espresso-admin .media-frame .attachments-browser {
+        grid-template-rows: calc(var(--ee-size-mega) + var(--ee-size-micro)) 0 0 calc(100% - 30px);
+    }
+}
+
+.espresso-admin .media-frame .attachments-browser .media-toolbar {
+    grid-area: toolbar;
+    height: fit-content;
+}
+
+.espresso-admin .media-frame .attachments-browser .uploader-inline {
+    grid-area: uploader;
+}
+
+.espresso-admin .media-frame .attachments-browser .media-views-heading {
+    grid-area: heading;
+}
+
+.espresso-admin .media-frame .attachments-browser > .attachments,
+.espresso-admin .media-frame .attachments-browser > .attachments-wrapper {
+    grid-area: attachments;
+}
+
+.espresso-admin .media-frame .attachments-browser .media-sidebar {
+    grid-area: sidebar;
+}
+
+
+.espresso-admin .media-frame .attachments-browser .media-toolbar,
+.espresso-admin .media-frame .attachments-browser .attachments-wrapper,
+.espresso-admin .media-frame .attachments-browser .media-sidebar {
+    box-sizing: border-box;
+    padding-block: var(--ee-padding-micro);
+    padding-inline: var(--ee-padding-default);
+}
+
+.espresso-admin .media-frame .attachments-browser .uploader-inline,
+.espresso-admin .media-frame .attachments-browser .media-views-heading {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.espresso-admin.wp-core-ui .media-modal-content .media-frame .attachment-preview {
+    box-shadow: none;
+}
+
+.espresso-admin.wp-core-ui .media-modal-content .media-frame .attachment-preview .thumbnail {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+
+.espresso-admin .media-sidebar h2:not(.hndle),
+.espresso-admin .image-details h2:not(.media-attachments-filter-heading) {
+    color: var(--ee-font-color-light);
+    font-size: var(--ee-font-size-xl);
+    font-weight: 700;
+    margin: var(--ee-margin-default) 0 var(--ee-margin-micro);
+    text-transform: uppercase;
+}
+
+
+.espresso-admin .media-router {
+    padding-inline: var(--ee-padding-big);
+}
+
+.espresso-admin .media-router .active,
+.espresso-admin .media-router .media-menu-item.active {
+    background: none;
+    border: none;
+    border-block-end: 5px solid var(--ee-color-primary);
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/*  attachments-browser  */
+
+.espresso-admin .media-frame .attachments-browser .media-toolbar .search-form #media-search-input,
+.espresso-admin .media-frame .attachments-browser .media-toolbar-secondary select.attachment-filters {
+    height: calc(var(--ee-button-height) + 1px);
+    margin: var(--ee-margin-micro);
+    width: min-content !important;
+}
+
+.espresso-admin .media-frame .attachments-browser .attachments {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+
+/*  toolbar  */
+
+.espresso-admin .media-frame h2.media-attachments-filter-heading {
+    top: unset;
+}
+
+.espresso-admin .media-frame .media-frame-tab-panel,
+.espresso-admin .media-frame .attachments-browser .media-toolbar,
+.espresso-admin .media-frame .attachments-browser .media-toolbar-primary,
+.espresso-admin .media-frame .attachments-browser .media-toolbar-secondary {
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.espresso-admin .media-frame .attachments-browser .media-toolbar {
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-inline-start: var(--ee-padding-big);
+}
+
+.espresso-admin .media-frame .attachments-browser .media-toolbar-primary {
+    flex-flow: row nowrap;
+    width: 33%;
+}
+
+.espresso-admin .media-frame .attachments-browser .media-toolbar-primary .media-search-input-label {
+    margin-block: 0;
+    margin-inline: var(--ee-margin-micro);
+}
+
+.espresso-admin .media-frame .attachments-browser .media-toolbar-secondary {
+    width: 66%;
+}
+
+@media only screen and (max-width: 1366px) {
+    .espresso-admin .media-frame .attachments-browser .media-toolbar {
+        align-items: flex-start;
+        display: flex;
+        flex-flow: column nowrap;
+        padding-block-start: var(--ee-padding-default);
+    }
+
+    .espresso-admin .media-frame .attachments-browser .media-toolbar-primary,
+    .espresso-admin .media-frame .attachments-browser .media-toolbar-secondary {
+        align-items: flex-start;
+        flex-flow: column nowrap;
+        width: 100%;
+    }
+}
+
+/*  sidebar  */
+
+.espresso-admin .media-modal-content .media-frame .media-sidebar {
+    background: none;
+    height: 100%;
+    width: var(--ee-media-sidebar-width);
+}
+
+.espresso-admin .media-sidebar .attachment-details {
+    overflow: visible;
+}
+
+.espresso-admin .media-sidebar .setting,
+.espresso-admin .media-sidebar .attachment-details .setting {
+    float: unset;
+}
+
+.espresso-admin .media-sidebar textarea:not(.wp-editor-area):not(.iframe-embed-content),
+.espresso-admin .media-sidebar input:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
+    min-width: unset;
+    max-width: unset;
+    width: 98%;
+}
+
+.espresso-admin .media-sidebar .attachment-info .thumbnail {
+    height: auto;
+    position: relative;
+    max-width: 100%;
+    max-height: calc((var(--ee-media-sidebar-width) - (2 * var(--ee-size-bigger))) * .618);
+    margin: 0;
+    margin-block: var(--ee-margin-micro);
+    margin-inline: 0;
+    overflow: hidden;
+    width: calc(var(--ee-media-sidebar-width) - var(--ee-size-bigger));
+}
+
+.espresso-admin .media-sidebar .attachment-info .thumbnail-image img {
+    height: auto;
+    max-height: calc((var(--ee-media-sidebar-width) - var(--ee-size-bigger)) * .618);
+    max-width: 100%;
+    object-fit: contain;
+    width: calc(var(--ee-media-sidebar-width) - var(--ee-size-bigger));
+}
+
+.espresso-admin .media-sidebar .attachment-info .thumbnail-image:after {
+    content: unset;
+}
+
+.espresso-admin.wp-core-ui .attachment .check .media-modal-icon {
+    height: 15px;
+}
+
+.espresso-admin .media-frame h2.media-attachments-filter-heading {
+    font-size: var(--ee-font-size-default);
+    font-weight: 600;
+    margin-block: 0;
+    margin-inline: var(--ee-margin-micro);
+}
+
+.espresso-admin .attachment-details .setting .value,
+.espresso-admin .attachment-details .setting input[type=email],
+.espresso-admin .attachment-details .setting input[type=number],
+.espresso-admin .attachment-details .setting input[type=password],
+.espresso-admin .attachment-details .setting input[type=search],
+.espresso-admin .attachment-details .setting input[type=tel],
+.espresso-admin .attachment-details .setting input[type=text],
+.espresso-admin .attachment-details .setting input[type=url],
+.espresso-admin .attachment-details .setting textarea,
+.espresso-admin .attachment-details .setting + .description,
+.espresso-admin .media-sidebar .setting .value,
+.espresso-admin .media-sidebar .setting input[type=email],
+.espresso-admin .media-sidebar .setting input[type=number],
+.espresso-admin .media-sidebar .setting input[type=password],
+.espresso-admin .media-sidebar .setting input[type=search],
+.espresso-admin .media-sidebar .setting input[type=tel],
+.espresso-admin .media-sidebar .setting input[type=text],
+.espresso-admin .media-sidebar .setting input[type=url],
+.espresso-admin .media-sidebar .setting textarea {
+    width: 98%;
+}
+
+.espresso-admin .media-sidebar .copy-to-clipboard-container,
+.espresso-admin .media-sidebar .attachment-details .copy-to-clipboard-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-inline-start: unset;
+    margin-block-start: var(--ee-margin-micro);
+    padding: 0;
+}
+
+/*  frame toolbar  */
+.espresso-admin .media-frame .media-frame-toolbar {
+    background: hsl(0deg 0% 100%);
+    position: fixed !important;
+    bottom: 30px !important;
+    left: 30px !important;
+    width: calc(100% - 60px);
+    z-index: 9999;
+}
+
+.espresso-admin .media-frame .media-frame-toolbar .media-toolbar {
+    align-items: center;
+    display: flex;
+    height: 60px;
+    justify-content: space-between;
+}
+
+.espresso-admin .media-frame .media-frame-toolbar .media-toolbar-primary,
+.espresso-admin .media-frame .media-frame-toolbar .media-toolbar-secondary {
+    float: unset;
+    justify-content: center;
+}
+
+.espresso-admin .media-frame .media-frame-toolbar .media-toolbar-secondary .media-selection .attachment {
+    float: left;
+}
+
+.espresso-admin.wp-core-ui .attachment .check {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 24px;
+}
+
+@media only screen and (max-width: 900px) {
+
+    .espresso-admin .media-frame .attachments-browser {
+        grid-template-areas:
+            "toolbar"
+            "uploader"
+            "heading"
+            "attachments"
+            "sidebar";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 0 0 auto auto;
+    }
+
+    .espresso-admin .media-frame .attachments-browser .media-toolbar {
+        padding: var(--ee-padding-default);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .espresso-admin .media-frame .attachments-browser .media-toolbar-primary,
+    .espresso-admin .media-frame .attachments-browser .media-toolbar-secondary {
+        align-items: flex-start;
+        box-sizing: border-box;
+        flex-direction: column;
+        float: unset;
+        max-width: unset;
+        width: 100%;
+    }
+
+    .espresso-admin .media-frame .attachments-browser .media-toolbar .attachment-filters {
+        margin: 0;
+        margin-block-start: var(--ee-margin-big);
+        width: calc(50% - var(--ee-size-pico));
+        min-width: calc(50% - var(--ee-size-pico));
+    }
+
+    .espresso-admin .media-frame .attachments-browser .media-toolbar .media-toolbar-secondary select:first-of-type {
+        margin-inline-end: var(--ee-margin-micro);
+    }
+
+    .espresso-admin .media-frame .attachments-browser .uploader-inline,
+    .espresso-admin .media-frame .attachments-browser.has-load-more .attachments-wrapper,
+    .espresso-admin .media-frame .attachments-browser:not(.has-load-more) .attachments {
+        position: relative;
+        top: unset;
+    }
+
+    .espresso-admin .media-frame .attachments-browser .media-sidebar {
+        border-left: none;
+    }
+}
+
+@media only screen and (max-width: 640px), screen and (max-height: 400px) {
+    .espresso-admin .media-frame .media-frame-toolbar {
+        bottom: 0;
+        width: 100%;
+    }
+}

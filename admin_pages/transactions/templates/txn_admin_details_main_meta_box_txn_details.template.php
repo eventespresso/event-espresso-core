@@ -286,7 +286,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                             ); ?></span>
                         </th>
                         <th class=" jst-rght">
-                            <span id="txn-admin-payment-total"><?php
+                            <span id="txn-admin-payment-total" data-total="<?php echo esc_attr($payment_total); ?>"><?php
                             echo wp_kses(
                                 EEH_Template::format_currency(
                                     $payment_total,
@@ -312,7 +312,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                             ?></span>
                         </th>
                         <th class=" jst-rght">
-                            <span id="txn-admin-payment-total"></span>
+                            <span id="txn-admin-payment-total" data-total="0"></span>
                         </th>
                     </tr>
                     <?php endif; ?>

@@ -1110,7 +1110,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->request->setServerParam('REQUEST_URI', $cleaner_request_uri, true);
         $route_callback = [];
         if (! empty($func)) {
-            if (is_array($func)) {
+            if (is_array($func) && is_callable($func)) {
                 $route_callback = $func;
             } elseif (is_string($func)) {
                 if (strpos($func, '::') !== false) {
@@ -2813,6 +2813,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $template_path = $sidebar
             ? EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php'
             : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
+
+        $this->_template_args['is_ajax'] = $this->request->isAjax();
         if ($this->request->isAjax()) {
             $template_path = EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar_ajax.template.php';
         }
@@ -2821,7 +2823,20 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_template_args['post_body_content']         = $this->_template_args['admin_page_content'] ?? '';
         $this->_template_args['before_admin_page_content'] = $post_body_content;
         $this->_template_args['after_admin_page_content']  = $this->_template_args['after_admin_page_content'] ?? '';
-        $this->_template_args['admin_page_content']        = EEH_Template::display_template(
+
+        // ensure $post_type and $post are set
+        // to prevent WooCommerce from blowing things up if not using CPT
+        global $post_type, $post;
+        $this->_template_args['post_type'] = $post_type ?? '';
+        $this->_template_args['post']  = $post ?? new WP_Post( (object) [ 'ID' => 0, 'filter' => 'raw' ] );
+
+        $this->_template_args['post_body_content'] = EEH_Template::display_template(
+            EE_ADMIN_TEMPLATE . 'admin_details_wrapper_post_body_content.template.php',
+            $this->_template_args,
+            true
+        );
+
+        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             $template_path,
             $this->_template_args,
             true
@@ -3757,6 +3772,12 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     public function set_template_args(array $data)
     {
         $this->_template_args = array_merge($this->_template_args, $data);
+    }
+
+
+    public function setAdminPageTitle(string $title)
+    {
+        $this->_admin_page_title = sanitize_text_field($title);
     }
 
 

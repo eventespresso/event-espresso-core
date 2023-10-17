@@ -1087,6 +1087,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         // but the returned object here has a status of "publish", so use the original post status as well
                         'status*1' => $this->request->getRequestParam('original_post_status'),
                     ],
+                    'status' => ['NOT IN', ['auto-draft']],
                 ],
             ]
         );

@@ -166,16 +166,36 @@
     flex: 1 0 6rem;
 }
 
+.espresso-admin .form-table #question_options {
+    --ee-option-actions-width: calc(((var(--ee-button-height) + (var(--ee-margin-nano) * 2)) * 2) + var(--ee-margin-nano));
+    --ee-option-value-width: calc(((100% - var(--ee-option-actions-width)) * .33) - var(--ee-margin-nano));
+    --ee-option-desc-width: calc(((100% - var(--ee-option-actions-width)) * .66) - var(--ee-margin-nano));
+}
+
 .espresso-admin .form-table #question_options table.question-options-table td select,
 .espresso-admin .form-table #question_options table.question-options-table td input[type="text"] {
     max-width: 100%;
 }
 
 @media screen and (min-width:600px) {
-    .espresso-admin .form-table #question_options table.question-options-table th,
-    .espresso-admin .form-table #question_options table.question-options-table td {
+    .espresso-admin .form-table #question_options table.question-options-table th.option-value-header,
+    .espresso-admin .form-table #question_options table.question-options-table td.option-value-cell {
         display: inline-flex;
         padding-inline-end: .5rem;
+        width: var(--ee-option-value-width);
+    }
+
+    .espresso-admin .form-table #question_options table.question-options-table th.option-desc-header,
+    .espresso-admin .form-table #question_options table.question-options-table td.option-desc-cell {
+        display: inline-flex;
+        padding-inline-end: .5rem;
+        width: var(--ee-option-desc-width);
+    }
+    .espresso-admin .form-table #question_options table.question-options-table th.option-actions-header,
+    .espresso-admin .form-table #question_options table.question-options-table td.option-actions-cell {
+        display: inline-flex;
+        padding-inline-end: .5rem;
+        width: var(--ee-option-actions-width);
     }
     .espresso-admin .form-table #question_options table.question-options-table th:last-child,
     .espresso-admin .form-table #question_options table.question-options-table td:last-child {

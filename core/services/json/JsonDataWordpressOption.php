@@ -15,15 +15,12 @@ use stdClass;
  */
 abstract class JsonDataWordpressOption extends WordPressOption
 {
+    private JsonDataHandler $json_data_handler;
+
     /**
      * @var array|mixed|stdClass
      */
     private $options = [];
-
-    /**
-     * @var JsonDataHandler|null
-     */
-    private $json_data_handler;
 
 
     /**
@@ -54,11 +51,11 @@ abstract class JsonDataWordpressOption extends WordPressOption
      */
     public function updateOption($value): int
     {
-        if (parent::updateOption($this->json_data_handler->encodeData($value))) {
+        $update = parent::updateOption($this->json_data_handler->encodeData($value));
+        if ($update === WordPressOption::UPDATE_SUCCESS) {
             $this->options = $value;
-            return WordPressOption::UPDATE_SUCCESS;
         }
-        return WordPressOption::UPDATE_ERROR;
+        return $update;
     }
 
 
@@ -69,7 +66,7 @@ abstract class JsonDataWordpressOption extends WordPressOption
      */
     public function addProperty(string $property, $value)
     {
-        $options = $this->getAll();
+        $options              = $this->getAll();
         $options->{$property} = $value;
         $this->updateOption($options);
     }

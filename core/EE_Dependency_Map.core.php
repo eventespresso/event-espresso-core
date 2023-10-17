@@ -1,7 +1,6 @@
 <?php
 
 use EventEspresso\core\domain\DomainFactory;
-use EventEspresso\core\domain\services\messages\MessageTemplateValidator;
 use EventEspresso\core\exceptions\InvalidAliasException;
 use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -50,45 +49,21 @@ class EE_Dependency_Map
      */
     const OVERWRITE_DEPENDENCIES = 1;
 
-    /**
-     * @type EE_Dependency_Map $_instance
-     */
-    protected static $_instance;
+    protected static ?EE_Dependency_Map $_instance = null;
 
-    /**
-     * @var ClassInterfaceCache $class_cache
-     */
-    private $class_cache;
+    private ClassInterfaceCache $class_cache;
 
-    /**
-     * @type RequestInterface $request
-     */
-    protected $request;
+    protected ?RequestInterface $request = null;
 
-    /**
-     * @type LegacyRequestInterface $legacy_request
-     */
-    protected $legacy_request;
+    protected ?LegacyRequestInterface $legacy_request = null;
 
-    /**
-     * @type ResponseInterface $response
-     */
-    protected $response;
+    protected ?ResponseInterface $response = null;
 
-    /**
-     * @type LoaderInterface $loader
-     */
-    protected $loader;
+    protected ?LoaderInterface $loader = null;
 
-    /**
-     * @type array $_dependency_map
-     */
-    protected $_dependency_map = [];
+    protected array $_dependency_map = [];
 
-    /**
-     * @type array $_class_loaders
-     */
-    protected $_class_loaders = [];
+    protected array $_class_loaders = [];
 
 
     /**
@@ -814,9 +789,13 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\assets\AssetManifestFactory' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\capabilities\FeatureFlags'                                                       => [
-                'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\domain\services\capabilities\FeatureFlagsConfig' => [
                 'EventEspresso\core\domain\Domain'                                    => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\json\JsonDataHandler'                    => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\capabilities\FeatureFlags'       => [
+                'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\capabilities\FeatureFlagsConfig'  => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\addon\AddonManager'                                                                     => [
                 'EventEspresso\core\services\addon\AddonCollection'              => EE_Dependency_Map::load_from_cache,

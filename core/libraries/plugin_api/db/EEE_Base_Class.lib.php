@@ -45,7 +45,7 @@ class EEE_Base_Class
      *
      * @var EE_Base_Class|null
      */
-    protected $_ = null;
+    protected ?EE_Base_Class $_ = null;
 
 
     /**

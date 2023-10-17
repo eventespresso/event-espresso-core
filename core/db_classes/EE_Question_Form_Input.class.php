@@ -6,7 +6,7 @@ use EventEspresso\core\services\request\RequestInterface;
 /**
  * EE_Question_Form_Input class
  *    a conglomerate type object that combines an EE_Question object with an EE_Answer object
- *    as well as some of it's own class properties to facilitate use within the EEH_Form_Fields.helper class
+ *    as well as some of its own class properties to facilitate use within the EEH_Form_Fields.helper class
  *    access to the EE_Question and EE_Answer objects properties are done indirectly via a super getter and setter
  *
  * @package        Event Espresso
@@ -15,82 +15,59 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EE_Question_Form_Input
 {
-    /**
-     *    EE_Question object
-     *
-     * @access private
-     * @var object
-     */
-    private $_QST = null;
+    protected RequestInterface $request;
+
+    protected array $form_data;
+
+    private ?EE_Question $_QST = null;
+
+
+    private ?EE_Answer $_ANS = null;
 
     /**
-     *    EE_Answer object
-     *
-     * @access private
-     * @var object
-     */
-    private $_ANS = null;
-
-    /**
-     *    $_QST_meta
-     * @access private
+     * $_QST_meta
      * @var array
      */
-    private $_QST_meta = [];
+    private array $_QST_meta = [];
 
     /**
-     *    $QST_input_name
-     * @access private
+     * $QST_input_name
      * @var string
      */
-    private $QST_input_name = '';
+    private string $QST_input_name = '';
 
     /**
-     *    $QST_input_id
-     * @access private
+     * $QST_input_id
      * @var string
      */
-    private $QST_input_id = '';
+    private string $QST_input_id = '';
 
     /**
-     *    $QST_input_class
-     * @access private
+     * $QST_input_class
      * @var string
      */
-    private $QST_input_class = '';
+    private string $QST_input_class = '';
 
-    /**
-     * @var bool $QST_disabled
-     */
-    private $QST_disabled = false;
-
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
-
-    /**
-     * @var array
-     */
-    protected $form_data;
+    private bool $QST_disabled = false;
 
 
     /**
-     * constructor for questions
-     *
-     * @param EE_Question $QST EE_Question object
-     * @param EE_Answer   $ANS EE_Answer object
-     * @param array       $q_meta
+     * @param EE_Question|null $QST EE_Question object
+     * @param EE_Answer|null   $ANS EE_Answer object
+     * @param array            $q_meta
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function __construct(EE_Question $QST = null, EE_Answer $ANS = null, $q_meta = [])
+    public function __construct(EE_Question $QST = null, EE_Answer $ANS = null, array $q_meta = [])
     {
         $this->request   = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $this->form_data = $this->request->requestParams();
         if (empty($QST) || empty($ANS)) {
             EE_Error::add_error(
-                esc_html__('An error occurred. A valid EE_Question or EE_Answer object was not received.', 'event_espresso'),
+                esc_html__(
+                    'An error occurred. A valid EE_Question or EE_Answer object was not received.',
+                    'event_espresso'
+                ),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -107,11 +84,10 @@ class EE_Question_Form_Input
     /**
      * sets meta data for the question form input
      *
-     * @access public
      * @param array $q_meta
      * @return void
      */
-    public function set_question_form_input_meta($q_meta = [])
+    public function set_question_form_input_meta(array $q_meta = [])
     {
         $default_q_meta  = [
             'att_nmbr'       => 1,
@@ -132,9 +108,6 @@ class EE_Question_Form_Input
 
 
     /**
-     * set_question_form_input_init
-     *
-     * @access public
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
@@ -150,9 +123,6 @@ class EE_Question_Form_Input
 
 
     /**
-     * set_input_name
-     *
-     * @access private
      * @param $qstn_id
      * @return void
      * @throws EE_Error
@@ -173,20 +143,20 @@ class EE_Question_Form_Input
     /**
      * get property values for question form input
      *
-     * @access public
      * @param string $property
      * @return mixed
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get($property = null)
+    public function get(string $property = '')
     {
         if (! empty($property)) {
             if (EEM_Question::instance()->has_field($property)) {
                 return $this->_QST->get($property);
             } elseif (EEM_Answer::instance()->has_field($property)) {
                 return $this->_ANS->get($property);
-            } elseif ($this->_question_form_input_property_exists($property)) {
+            // } elseif ($this->_question_form_input_property_exists($property)) {
+            } elseif (property_exists($this, $property)) {
                 return $this->{$property};
             }
         }
@@ -195,19 +165,29 @@ class EE_Question_Form_Input
 
 
     /**
+     * set property values for question form input
+     *
      * @param string $property
-     * @return boolean
+     * @param mixed  $value
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _question_form_input_property_exists(string $property): bool
+    public function set(string $property = '', $value = null)
     {
-        return property_exists(__CLASS__, $property);
+        if (! empty($property)) {
+            if (EEM_Question::instance()->has_field($property)) {
+                $this->_QST->set($property, $value);
+            } elseif (EEM_Answer::instance()->has_field($property)) {
+                $this->_ANS->set($property, $value);
+            } elseif (property_exists($this, $property)) {
+                $this->{$property} = $value;
+            }
+        }
     }
 
 
     /**
-     * set_input_id
-     *
-     * @access private
      * @param $qstn_id
      * @return void
      * @throws EE_Error
@@ -225,22 +205,16 @@ class EE_Question_Form_Input
 
 
     /**
-     * set_input_class
-     *
-     * @access private
      * @return void
      */
     private function _set_input_class()
     {
-        $this->QST_input_class = isset($this->_QST_meta['input_class']) ? $this->_QST_meta['input_class'] : '';
+        $this->QST_input_class = $this->_QST_meta['input_class'] ?? '';
     }
 
 
     /**
-     * set_question_form_input_answer
-     *
-     * @access public
-     * @param mixed    int | string    $qstn_id
+     * @param int|string $qstn_id
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
@@ -255,10 +229,10 @@ class EE_Question_Form_Input
             && isset($this->_QST_meta['time'])
             && isset($this->_QST_meta['price_id'])
         ) {
-            $EVT_ID = $this->_QST_meta['EVT_ID'];
+            $EVT_ID   = $this->_QST_meta['EVT_ID'];
             $att_nmbr = $this->_QST_meta['att_nmbr'];
-            $date = $this->_QST_meta['date'];
-            $time = $this->_QST_meta['time'];
+            $date     = $this->_QST_meta['date'];
+            $time     = $this->_QST_meta['time'];
             $price_id = $this->_QST_meta['price_id'];
             if (isset($this->form_data['qstn'][ $EVT_ID ][ $att_nmbr ][ $date ][ $time ][ $price_id ][ $qstn_id ])) {
                 $answer = $this->form_data['qstn'][ $EVT_ID ][ $att_nmbr ][ $date ][ $time ][ $price_id ][ $qstn_id ];
@@ -269,17 +243,16 @@ class EE_Question_Form_Input
 
 
     /**
-     *        generate_question_form_inputs_for_object
-     *
-     * @access    protected
      * @param EE_Base_class $object $object
      * @param array         $input_types
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function generate_question_form_inputs_for_object(EE_Base_class $object, array $input_types = []): array
-    {
+    public static function generate_question_form_inputs_for_object(
+        EE_Base_class $object,
+        array $input_types = []
+    ): array {
         $inputs = [];
         $fields = $object->get_model()->field_settings();
         foreach ($fields as $field_ID => $field) {
@@ -309,8 +282,9 @@ class EE_Question_Form_Input
                     $use_desc_4_label = $input_types[ $field_ID ]['use_desc_4_label'] ?? false;
                     // whether input is disabled
                     $disabled = isset($input_types[ $field_ID ]['disabled']) && $input_types[ $field_ID ]['disabled'];
+                    // use a different label on mobile devices
                     $add_mobile_label = isset($input_types[ $field_ID ]['add_mobile_label'])
-                                        && $input_types[ $field_ID ]['add_mobile_label'];
+                        && $input_types[ $field_ID ]['add_mobile_label'];
 
                     // create EE_Question_Form_Input object
                     $QFI = new EE_Question_Form_Input(
@@ -330,9 +304,9 @@ class EE_Question_Form_Input
                             ]
                         ),
                         [
-                            'input_id'         => "{$field_ID}-{$object->ID()}",
+                            'input_id'         => "$field_ID-{$object->ID()}",
                             'input_name'       => $input_name,
-                            'input_class'      => "{$field_ID} {$class}",
+                            'input_class'      => "$field_ID $class",
                             'label_class'      => $label_class,
                             'input_prefix'     => '',
                             'append_qstn_id'   => false,
@@ -345,12 +319,11 @@ class EE_Question_Form_Input
                     // does question type have options ?
                     if (
                         in_array($type, ['DROPDOWN', 'RADIO_BTN', 'CHECKBOX'])
-                        && isset($input_types[ $field_ID ])
                         && isset($input_types[ $field_ID ]['options'])
                     ) {
                         foreach ($input_types[ $field_ID ]['options'] as $option) {
                             $option    = stripslashes_deep($option);
-                            $option_id = ! empty($option['id']) ? $option['id'] : 0;
+                            $option_id = $option['id'] ?? null;
                             $QSO       = EE_Question_Option::new_instance(
                                 [
                                     'QSO_value'   => (string) $option_id,
@@ -364,7 +337,7 @@ class EE_Question_Form_Input
                     }
                     // we don't want ppl manually changing primary keys cuz that would just lead to total craziness man
                     if ($disabled || $field_ID == $object->get_model()->primary_key_name()) {
-                        $QFI->set('QST_disabled', true);
+                        $QFI->QST_disabled = true;
                     }
                     $inputs[ $field_ID ] = $QFI;
                 }
@@ -375,9 +348,6 @@ class EE_Question_Form_Input
 
 
     /**
-     *    add_temp_option
-     *
-     * @access public
      * @param EE_Question_Option $QSO EE_Question_Option
      * @return void
      */
@@ -388,43 +358,15 @@ class EE_Question_Form_Input
 
 
     /**
-     * set property values for question form input
-     *
-     * @access public
-     * @param string $property
-     * @param mixed  $value
-     * @return void
-     * @throws EE_Error
-     * @throws ReflectionException
+     * @param boolean           $notDeletedOptionsOnly            whether to return ALL options, or only the ones which
+     *                                                            have not yet been deleted
+     * @param string|array|null $selected_value_to_always_include when retrieving options to an ANSWERED question,
+     *                                                            we want to usually only show non-deleted options AND
+     *                                                            the value that was selected for the answer, whether
+     *                                                            it was trashed or not.
+     * @return EE_Question_Option[]
      */
-    public function set($property = null, $value = null)
-    {
-        if (! empty($property)) {
-            if (EEM_Question::instance()->has_field($property)) {
-                $this->_QST->set($property, $value);
-            } elseif (EEM_Answer::instance()->has_field($property)) {
-                $this->_ANS->set($property, $value);
-            } elseif ($this->_question_form_input_property_exists($property)) {
-                $this->{$property} = $value;
-            }
-        }
-    }
-
-
-    /**
-     *    _question_form_input_property_exists
-     *
-     * @access public
-     * @param boolean      $notDeletedOptionsOnly            1
-     *                                                       whether to return ALL options, or only the ones which have
-     *                                                       not yet been deleted
-     * @param string|array $selected_value_to_always_include , when retrieving options to an ANSWERED question,
-     *                                                       we want to usually only show non-deleted options AND the
-     *                                                       value that was selected for the answer, whether it was
-     *                                                       trashed or not.
-     * @return EE_Question_Option
-     */
-    public function options($notDeletedOptionsOnly = true, $selected_value_to_always_include = null)
+    public function options(bool $notDeletedOptionsOnly = true, $selected_value_to_always_include = null): array
     {
         $temp_options = $this->_QST->temp_options();
         return ! empty($temp_options)
@@ -437,9 +379,6 @@ class EE_Question_Form_Input
 
 
     /**
-     *    get_meta
-     *
-     * @access public
      * @param mixed $key
      * @return mixed
      */

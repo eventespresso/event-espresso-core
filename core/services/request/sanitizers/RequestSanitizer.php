@@ -59,7 +59,7 @@ class RequestSanitizer
     /**
      * @param mixed  $param
      * @param string $type
-     * @return array|float|int|mixed|string|string[]|null
+     * @return mixed
      * @since   4.10.20.p
      */
     public function sanitizeParam($param, string $type = DataType::STRING)
@@ -68,6 +68,9 @@ class RequestSanitizer
             case DataType::BOOL:
                 return filter_var($param, FILTER_VALIDATE_BOOLEAN);
             case DataType::EDITOR:
+                if ($param === null) {
+                    return '';
+                }
                 $allowed_tags = AllowedTags::getWithFullTags();
                 return wp_kses($param, $allowed_tags);
             case DataType::EMAIL:

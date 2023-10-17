@@ -729,4 +729,39 @@ abstract class EE_Admin_Hooks extends EE_Base
         // everything checks out so lets remove the box!
         remove_meta_box($id, $screen, $context);
     }
+
+    /**
+     * This is used whenever we're DOING_AJAX to return a formatted json array that our calling javascript can expect
+     * The returned json object is created from an array in the following format:
+     * array(
+     *  'error' => FALSE, //(default FALSE), contains any errors and/or exceptions (exceptions return json early),
+     *  'success' => FALSE, //(default FALSE) - contains any special success message.
+     *  'notices' => '', // - contains any EE_Error formatted notices
+     *  'content' => 'string can be html', //this is a string of formatted content (can be html)
+     *  'data' => array() //this can be any key/value pairs that a method returns for later json parsing by the js.
+     *  We're also going to include the template args with every package (so js can pick out any specific template args
+     *  that might be included in here)
+     * )
+     * The json object is populated by whatever is set in the $_template_args property.
+     *
+     * @param string $content
+     * @param array $data
+     */
+    public function returnJson(string $content = '', array $data = []): void
+    {
+        // make sure any EE_Error notices have been handled.
+        $notices = EE_Error::get_notices(false);
+        wp_send_json(
+            [
+                'success'   => $notices['success'] ?? false,
+                'errors'    => $notices['errors'] ?? false,
+                'attention' => $notices['attention'] ?? false,
+                'notices'   => $notices,
+                'content'   => $content,
+                'data'      => $data,
+                // special flag so any ajax.Success methods in js can identify this return package as a EEajax package.
+                'isEEajax'  => true,
+            ]
+        );
+    }
 }

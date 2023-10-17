@@ -15,10 +15,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
 {
-    /**
-     * @var EE_Event|null
-     */
-    protected $_event;
+    protected ?EE_Event $_event = null;
 
 
     protected function _set_hooks_properties()
@@ -35,7 +32,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
         $this->_metaboxes = [
             0 => [
                 'page_route' => ['edit', 'create_new'],
-                'func'       => 'primary_questions',
+                'func'       => [$this, 'primary_questions'],
                 'label'      => esc_html__('Questions for Primary Registrant', 'event_espresso'),
                 'priority'   => 'default',
                 'context'    => 'side',
@@ -45,8 +42,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
         // hook into the handler for saving question groups
         add_filter(
             'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks',
-            [$this, 'modify_callbacks'],
-            10
+            [$this, 'modify_callbacks']
         );
 
         // hook into revision restores (we're hooking into the global action because EE_Admin_Hooks classes are already
@@ -58,10 +54,10 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
     /**
      * Callback for FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks hook
      *
-     * @param $callbacks
+     * @param array $callbacks
      * @return array
      */
-    public function modify_callbacks($callbacks)
+    public function modify_callbacks(array $callbacks): array
     {
         // now let's add the question group callback
         $callbacks['primary_question_group_update'] = [$this, 'primary_question_group_update'];
@@ -79,6 +75,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function restore_revision($post_id, $revision_id)
     {
@@ -116,7 +113,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
                 <strong>
                     <?php esc_html_e('Question Groups', 'event_espresso'); ?>
                 </strong>
-                <br />
+                <br/>
                 <?php
                 printf(
                     esc_html__(
@@ -147,24 +144,26 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
             if (! empty($QSGs)) {
                 $html = count($QSGs) > 10 ? '<div style="height:250px;overflow:auto;">' : '';
                 foreach ($QSGs as $QSG) {
-                    $QSG_ID          = absint($QSG->ID());
-                    $checked         = in_array($QSG_ID, $EQGids, true) || $QSG->get('QSG_system') === 1
+                    $QSG_ID             = absint($QSG->ID());
+                    $is_system_question = $QSG->get('QSG_system') === 1;
+                    $checked            = $is_system_question || in_array($QSG_ID, $EQGids, true)
                         ? ' checked'
                         : '';
-                    $visibility      = $QSG->get('QSG_system') === 1
-                        ? ' style="visibility:hidden"'
-                        : '';
-                    $edit_query_args = $this->_adminpage_obj->is_caf()
+
+                    $visibility = $is_system_question ? ' style="visibility:hidden"' : '';
+                    $readonly   = $is_system_question ? ' readonly' : '';
+
+                    $edit_query_args    = $this->_adminpage_obj->is_caf()
                         ? [
                             'action' => 'edit_question_group',
                             'QSG_ID' => $QSG_ID,
                         ]
                         : ['action' => 'question_groups'];
-                    $edit_link       = EE_Admin_Page::add_query_args_and_nonce(
+                    $edit_link          = EE_Admin_Page::add_query_args_and_nonce(
                         $edit_query_args,
                         EE_FORMS_ADMIN_URL
                     );
-                    $edit_link_title = sprintf(
+                    $edit_link_title    = sprintf(
                         esc_attr__('Edit %s Group', 'event_espresso'),
                         $QSG->get('QSG_name')
                     );
@@ -173,9 +172,12 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
 					<p id="event-question-group-' . $QSG_ID . '">
 						<input value="' . $QSG_ID . '"
 						    type="checkbox"
-						    name="question_groups[' . $QSG_ID . ']" '
+						    name="question_groups[' . $QSG_ID . ']"
+                            aria-label="' . sprintf(esc_attr__('primary registrant %s questions'), $QSG->get('QSG_name')) . '" '
                             . $visibility
-                            . $checked . '
+                            . $checked
+                            . $readonly
+                            . '
                         />
 						<a href="' . esc_url_raw($edit_link) . '"
 						    aria-label="' . esc_attr($edit_link_title) . '"
@@ -207,7 +209,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function primary_question_group_update($event, $data)
+    public function primary_question_group_update(EE_Event $event, array $data): bool
     {
         $question_groups = ! empty($data['question_groups']) ? (array) $data['question_groups'] : [];
         $added_qgs       = array_keys($question_groups);

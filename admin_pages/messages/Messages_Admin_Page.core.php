@@ -3277,7 +3277,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             $form->receive_form_submission();
             if ($form->is_valid()) {
                 $valid_data = $form->valid_data();
-                \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 3);
+                // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 3);
                 foreach ($valid_data as $property => $value) {
                     $setter = 'set_' . $property;
                     if (method_exists($network_config, $setter)) {

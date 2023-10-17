@@ -12,7 +12,7 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * Executes loading the form used for creating a custom template
-		 * @param  {jQuery} $clickedbutton jQuery object for the lcicked button
+		 * @param clickedButton jQuery object for the lcicked button
 		 * @return {void}
 		 */
 		createTemplateForm: function( clickedButton ) {
@@ -30,7 +30,7 @@ jQuery(document).ready(function($) {
 
 		parseurl: function(url, mode) {
 			if ( typeof(mode) === 'undefined' ) mode = 'loose';
-			if ( mode == 'strict' ) {
+			if ( mode === 'strict' ) {
 				parseUri.options.strictMode = true;
 			}
 			return parseUri(url);
@@ -82,13 +82,34 @@ jQuery(document).ready(function($) {
 						if ( resp.data.where == 'dialog' )
 							EE_messages_evt_helper.display_modal();
 
-						if ( resp.error ) {
-							EE_messages_evt_helper.display_notices(resp.notices, resp.data.where);
+                        if (resp.notices) {
+                            let noticeHtml = '';
+                            if (resp.notices.success) {
+                                noticeHtml += '<div id="ee-success-message" class="espresso-notices ee-status-outline ee-status-bg--success">'
+                                noticeHtml += resp.notices.success;
+                                noticeHtml += '</div>';
+                            }
+                            if (resp.notices.errors) {
+                                noticeHtml += '<div id="ee-error-message" class="espresso-notices ee-status-outline ee-status-bg--error">';
+                                noticeHtml += resp.notices.errors;
+                                noticeHtml += '</div>';
+                            }
+                            if (noticeHtml) {
+                                $('#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox')
+                                    .find('.ee-notices')
+                                    .html(noticeHtml)
+                                    .append('<br />');
+
+                                $('#espresso-ajax-loading').eeRemoveOverlay().hide();
+                            }
+                        }
+						if ( ! resp.success ) {
+							// EE_messages_evt_helper.display_notices(resp.notices, resp.data.where);
 							EE_messages_evt_helper.display_content(resp.error, resp.data.where, resp.data.what);
 						} else {
 							EE_messages_evt_helper.updateSelectorRow(resp.data);
 							EE_messages_evt_helper.close_modal();
-							EE_messages_evt_helper.display_notices(resp.notices, 'main', resp.data.what);
+							// EE_messages_evt_helper.display_notices(resp.notices, 'main', resp.data.what);
 						}
 						if ( resp.data.close ) {
 							EE_messages_evt_helper.close_modal();
@@ -154,9 +175,16 @@ jQuery(document).ready(function($) {
 			if ( ( content === '' || typeof(content) === 'undefined' ) && type != 'notices' )
 				return;
 
-			var main_container = type == 'content' ? $('.messages-tabs-content', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox') : $('.ee-notices', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox');
-			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content', '.ee-admin-dialog-container') : $('.ee-notices', '.ee-admin-dialog-container');
-			var content_div = where == 'main' ? main_container : dialog_container;
+			var main_container = type === 'content'
+                ? $('.messages-tabs-content', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox')
+                : $('.ee-notices', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox');
+
+			var dialog_container = type === 'content'
+                ? $('.messages-change-edit-templates-content', '.ee-admin-dialog-container')
+                : $('.ee-notices', '.ee-admin-dialog-container');
+
+			var content_div = where === 'main' ? main_container : dialog_container;
+
 
 			/** show any notices **/
 			$('.espresso-notices').show();

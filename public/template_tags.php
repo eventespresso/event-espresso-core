@@ -551,7 +551,7 @@ if (! function_exists('espresso_list_of_event_dates')) {
         $time_format = apply_filters('FHEE__espresso_list_of_event_dates__time_format', $time_format);
         $datetimes   = $DTT_ID
             ? [EEH_Event_View::get_date_obj($DTT_ID)]
-            : EEH_Event_View::get_all_date_obj($EVT_ID, $show_expired, false, $limit);
+            : EEH_Event_View::get_all_date_obj($EVT_ID, $show_expired, false, (int) $limit);
         if (! $format) {
             return apply_filters('FHEE__espresso_list_of_event_dates__datetimes', $datetimes);
         }

@@ -75,79 +75,79 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     {
         $this->_page_routes = [
             'default'                             => [
-                'func'       => '_maintenance',
+                'func'       => [$this, '_maintenance'],
                 'capability' => 'manage_options',
             ],
             'change_maintenance_level'            => [
-                'func'       => '_change_maintenance_level',
+                'func'       => [$this, '_change_maintenance_level'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'system_status'                       => [
-                'func'       => '_system_status',
+                'func'       => [$this, '_system_status'],
                 'capability' => 'manage_options',
             ],
             'download_system_status'              => [
-                'func'       => '_download_system_status',
+                'func'       => [$this, '_download_system_status'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'send_migration_crash_report'         => [
-                'func'       => '_send_migration_crash_report',
+                'func'       => [$this, '_send_migration_crash_report'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'confirm_migration_crash_report_sent' => [
-                'func'       => '_confirm_migration_crash_report_sent',
+                'func'       => [$this, '_confirm_migration_crash_report_sent'],
                 'capability' => 'manage_options',
             ],
             'data_reset'                          => [
-                'func'       => '_data_reset_and_delete',
+                'func'       => [$this, '_data_reset_and_delete'],
                 'capability' => 'manage_options',
             ],
             'reset_db'                            => [
-                'func'       => '_reset_db',
+                'func'       => [$this, '_reset_db'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
                 'args'       => ['nuke_old_ee4_data' => true],
             ],
             'start_with_fresh_ee4_db'             => [
-                'func'       => '_reset_db',
+                'func'       => [$this, '_reset_db'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
                 'args'       => ['nuke_old_ee4_data' => false],
             ],
             'delete_db'                           => [
-                'func'       => '_delete_db',
+                'func'       => [$this, '_delete_db'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'rerun_migration_from_ee3'            => [
-                'func'       => '_rerun_migration_from_ee3',
+                'func'       => [$this, '_rerun_migration_from_ee3'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'reset_reservations'                  => [
-                'func'       => '_reset_reservations',
+                'func'       => [$this, '_reset_reservations'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'reset_capabilities'                  => [
-                'func'       => '_reset_capabilities',
+                'func'       => [$this, '_reset_capabilities'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'reattempt_migration'                 => [
-                'func'       => '_reattempt_migration',
+                'func'       => [$this, '_reattempt_migration'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'datetime_tools'                      => [
-                'func'       => '_datetime_tools',
+                'func'       => [$this, '_datetime_tools'],
                 'capability' => 'manage_options',
             ],
             'run_datetime_offset_fix'             => [
-                'func'               => '_apply_datetime_offset',
+                'func'               => [$this, '_apply_datetime_offset'],
                 'noheader'           => true,
                 'headers_sent_route' => 'datetime_tools',
                 'capability'         => 'manage_options',

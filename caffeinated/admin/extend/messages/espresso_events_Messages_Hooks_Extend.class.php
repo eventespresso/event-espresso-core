@@ -242,16 +242,49 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 
         /** @var RequestInterface $request */
         $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $new_template = [];
 
         // let's clean up the request data a bit for downstream usage of name and description.
         $templateName = $this->request->getRequestParam('custom_template_args[MTP_name]', '');
-        $request->setRequestParam('templateName', $templateName);
-        $templateDescription = $this->request->getRequestParam('custom_template_args[MTP_description]', '');
-        $request->setRequestParam('templateDescription', $templateDescription);
+        if (! $templateName) {
+            EE_Error::add_error(
+                esc_html__(
+                    'Please provide a template name when creating a new message template.',
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+        } else {
+            $request->setRequestParam('templateName', $templateName);
+            $templateDescription = $this->request->getRequestParam('custom_template_args[MTP_description]', '');
+            $request->setRequestParam('templateDescription', $templateDescription);
 
-        /** @var MessageTemplateManager $message_template_manager */
-        $message_template_manager = LoaderFactory::getShared(MessageTemplateManager::class);
-        $message_template_manager->generateNewTemplates();
+            /** @var MessageTemplateManager $message_template_manager */
+            $message_template_manager = LoaderFactory::getShared(MessageTemplateManager::class);
+            $new_template = $message_template_manager->generateNewTemplates();
+        }
+
+        if ($templateName && $new_template) {
+            EE_Error::overwrite_success();
+            EE_Error::add_success(
+                esc_html__(
+                    'The new template has been created and automatically selected for this event. You can edit the new template by clicking the edit button. Note before this template is assigned to this event, the event must be saved.',
+                    'event_espresso'
+                )
+            );
+        }
+        $this->returnJson(
+            '',
+            [
+                'grpID'        => $new_template['GRP_ID'] ?? 0,
+                'templateName' => $templateName,
+                'success'      => (bool) $new_template,
+                'close'        => true,
+            ],
+        );
+
     }
 
 

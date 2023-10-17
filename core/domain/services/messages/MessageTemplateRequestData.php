@@ -219,8 +219,10 @@ class MessageTemplateRequestData
         // have to check for multiple params because a previouv dev used different names for the same param >:(
         $this->message_type = $this->request->getRequestParam('mt', $message_type);
         $this->message_type = $this->request->getRequestParam('message_type', $this->message_type);
+        $this->message_type = $this->request->getRequestParam('messageType', $this->message_type);
         $this->message_type = $this->request->getRequestParam('MTP_message_type', $this->message_type);
         $this->message_type = strtolower($this->message_type);
+
         if (empty($this->message_type)) {
             throw new RuntimeException(
                 esc_html__(

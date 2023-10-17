@@ -495,6 +495,8 @@ class EEH_Event_Query
             $SQL .= EEH_Event_Query::posts_where_sql_for_event_category_slug(EEH_Event_Query::$_event_query_category);
             // Start Date
             $SQL .= EEH_Event_Query::posts_where_sql_for_event_list_month(EEH_Event_Query::$_event_query_month);
+            // Trashed DateTimes
+            $SQL .= EEH_Event_Query::posts_where_sql_for_non_trashed_datetimes();
         }
         return $SQL;
     }
@@ -557,6 +559,19 @@ class EEH_Event_Query
         }
         return $SQL;
     }
+
+    /**
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public static function posts_where_sql_for_non_trashed_datetimes()
+    {
+        return ' AND ' . EEM_Datetime::instance()->table() . '.DTT_deleted = 0';
+    }
+
 
 
     /**

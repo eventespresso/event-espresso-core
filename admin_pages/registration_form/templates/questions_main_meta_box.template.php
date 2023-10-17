@@ -282,7 +282,7 @@ if ($QST_system === 'country') {
                                         ) ?>
                                         </label>
                                     </th>
-                                    <th>
+                                    <th class="option-actions-header">
                                     </th>
                                 </tr>
                             </thead>
@@ -314,7 +314,7 @@ if ($QST_system === 'country') {
                                                class="option-desc ee-input-width--big"
                                         />
                                     </td>
-                                    <td>
+                                    <td class="option-actions-cell">
                                         <a  class="button button--icon-only remove-option remove-item ee-aria-tooltip"
                                             aria-label="<?php esc_html_e('click to delete this option', 'event_espresso') ?>"
                                         >
@@ -379,7 +379,7 @@ if ($QST_system === 'country') {
                                                        value="<?php echo esc_attr($option->get_f('QSO_desc')); ?>"
                                                 />
                                             </td>
-                                            <td>
+                                            <td class="option-actions-cell">
                                             <?php if (! $option->system()) { ?>
                                                 <a class='button button--icon-only remove-option remove-item ee-aria-tooltip'
                                                    aria-label="<?php esc_html_e('click to delete this option', 'event_espresso') ?>"
@@ -436,7 +436,7 @@ if ($QST_system === 'country') {
                                                    class="option-desc ee-input-width--big"
                                             />
                                         </td>
-                                        <td>
+                                        <td class="option-actions-cell">
                                             <?php echo wp_kses(
                                                 EEH_Form_Fields::hidden_input(
                                                     "question_options_count",
@@ -492,10 +492,10 @@ if ($QST_system === 'country') {
                     <td>
                         <?php
                         $system_required   = ['fname', 'email'];
-                        $disabled_attr     = in_array($QST_system, $system_required) ? ' disabled="disabled"' : '';
+                        $disabled_attr     = in_array($QST_system, $system_required) ? ' disabled' : '';
                         $required_on       = $question->get('QST_admin_only');
-                        $show_required_class = $required_on ? '' : ' hidden';
-                        $disabled_attr     = $required_on || ! empty($disabled_attr) ? ' disabled="disabled"' : '';
+                        $show_required_class = $admin_only && $required_on ? '' : ' hidden';
+                        $disabled_attr     = $required_on || ! empty($disabled_attr) ? ' disabled' : '';
                         $id                =
                             ! empty($disabled_attr) && in_array($QST_system, $system_required) ? '_disabled' : '';
                         $requiredOptions   = [
@@ -513,7 +513,7 @@ if ($QST_system === 'country') {
                             AllowedTags::getWithFormTags()
                         );
                         ?>
-                        <p id="required_toggled_on" 
+                        <p id="required_toggled_on"
                            class="description<?php echo esc_attr($show_required_class); ?>"
                         >
                             <?php esc_html_e(

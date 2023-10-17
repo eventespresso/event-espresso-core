@@ -1,0 +1,83 @@
+
+.espresso-admin.wp-core-ui .media-modal .media-modal-content h2 {
+    margin-block-start: unset;
+    margin-block-end: unset;
+}
+
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-menu {
+    padding-inline: 10px;
+}
+
+.espresso-admin.wp-core-ui .media-modal .media-modal-content input[type=email],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content input[type=number],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content input[type=password],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content input[type=search],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content input[type=tel],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content input[type=text],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content input[type=url],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content textarea,
+.espresso-admin.wp-core-ui .media-modal .media-modal-content select {
+    font-size: 14px;
+    height: unset;
+    max-height: unset;
+    max-width: unset;
+    min-height: unset;
+    min-width: unset;
+    padding: 1px 10px;
+    width: fit-content;
+}
+
+.espresso-admin.wp-core-ui .media-modal .media-modal-content button:not(.check),
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-frame .media-menu button {
+    font-size: 14px;
+    height: unset;
+    max-height: unset;
+    max-width: unset;
+    min-height: unset;
+    min-width: unset;
+    padding: 5px 10px;
+    width: fit-content;
+}
+
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-sidebar input[type=email],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-sidebar input[type=number],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-sidebar input[type=password],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-sidebar input[type=search],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-sidebar input[type=tel],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-sidebar input[type=text],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-sidebar input[type=url],
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-sidebar textarea,
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-sidebar select,
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-sidebar button {
+    font-size: 14px;
+    margin: 0;
+    width: 100%;
+}
+
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .media-router button.media-menu-item {
+    padding: 8px 10px 9px;
+    height: 18px;
+    line-height: 1.28571428;
+    font-size: 14px;
+}
+
+
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .button.button-hero {
+    background-color: var(--ee-btn-primary);
+    border-color: var(--ee-btn-primary);
+    color: var(--ee-color-white) !important;
+    font-size: 14px;
+    line-height: 3.14285714;
+    min-height: 46px;
+    padding: 0 36px;
+}
+
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .button.button-hero:hover {
+    background-color: var(--ee-btn-primary-hover);
+    border-color: var(--ee-btn-primary-hover);
+}
+
+.espresso-admin.wp-core-ui .media-modal .media-modal-content .button.button-hero:focus {
+    background-color: var(--ee-btn-primary-focus);
+    border-color: var(--ee-btn-primary-focus);
+}

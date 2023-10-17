@@ -61,7 +61,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
      * @param Callable[] $callbacks
      * @return array
      */
-    public function modify_callbacks($callbacks)
+    public function modify_callbacks(array $callbacks): array
     {
         $callbacks = parent::modify_callbacks($callbacks);
         $callbacks[] = array($this, 'additional_question_group_update');
@@ -155,7 +155,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
                     $html .= '
 					<p id="event-question-group-' . $QSG->ID() . '">
 						<input value="' . $QSG->ID() . '"'
-                             . ' type="checkbox" name="add_attendee_question_groups[' . $QSG->ID() . ']"' . $checked . ' />
+                             . ' type="checkbox" name="add_attendee_question_groups[' . $QSG->ID() . ']" aria-label="' . sprintf(esc_attr__('additional registrant %s questions'), $QSG->get('QSG_name')) . '"' . $checked . ' />
 						<a href="' . $edit_link . '" 
 						   aria-label="' . sprintf(esc_attr__('Edit %s Group', 'event_espresso'), $QSG->get('QSG_name')) . '" 
                           target="_blank"

@@ -18,7 +18,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
 {
     protected function _setup_data()
     {
-        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         $trashed = $this->_admin_page->get_view() == 'trashed' ? true : false;
         $this->_data = $this->_admin_page->get_default_tickets($this->_per_page, false, $trashed);
         $this->_all_data_count = $this->_admin_page->get_default_tickets($this->_per_page, true, false);

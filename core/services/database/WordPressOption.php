@@ -27,34 +27,25 @@ abstract class WordPressOption
      */
     public const UPDATE_SUCCESS = 1;
 
-    public const UPDATE_NONE = 0;
+    public const UPDATE_NONE    = 0;
 
-    public const UPDATE_ERROR = -1;
+    public const UPDATE_ERROR   = -1;
 
-    /**
-     * @var bool
-     */
-    private $autoload = false;
+    private bool $autoload = false;
 
     /**
      * @var mixed
      */
     private $default_value = null;
 
-    /**
-     * @var string
-     */
-    private $option_name = '';
+    private string $option_name = '';
 
     /**
      * @var mixed
      */
     private $value = WordPressOption::NOT_SET_YET;
 
-    /**
-     * @var OptionEngine
-     */
-    private $option_engine;
+    private OptionEngine $option_engine;
 
 
     /**
@@ -62,8 +53,8 @@ abstract class WordPressOption
      *
      * @param string $option_name
      * @param mixed  $default_value
-     * @param bool   $autoload              if true, will load the option on EVERY request
-     * @param bool   $is_network_option     if true, will save the option to the network as opposed to the current blog
+     * @param bool   $autoload          if true, will load the option on EVERY request
+     * @param bool   $is_network_option if true, will save the option to the network as opposed to the current blog
      */
     public function __construct(
         string $option_name,

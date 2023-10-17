@@ -2,9 +2,7 @@
 
 namespace EventEspresso\core\domain\services\capabilities;
 
-use EventEspresso\core\domain\Domain;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
-use EventEspresso\core\services\request\Request;
 
 /**
  * Class FeatureFlags
@@ -15,10 +13,9 @@ use EventEspresso\core\services\request\Request;
  */
 class FeatureFlags
 {
-    /**
-     * @var CapabilitiesChecker $capabilities_checker
-     */
-    private $capabilities_checker;
+    private CapabilitiesChecker $capabilities_checker;
+
+    protected FeatureFlagsConfig $option;
 
     /**
      * array of key value pairs where the key is the feature flag in question
@@ -34,33 +31,20 @@ class FeatureFlags
      */
     private $feature_flags;
 
-    /**
-     * @var Domain
-     */
-    protected $domain;
-
 
     /**
      * FeatureFlags constructor.
      *
      * @param CapabilitiesChecker $capabilities_checker
-     * @param Domain              $domain
+     * @param FeatureFlagsConfig  $option
      */
-    public function __construct(CapabilitiesChecker $capabilities_checker, Domain $domain)
+    public function __construct(CapabilitiesChecker $capabilities_checker, FeatureFlagsConfig $option)
     {
         $this->capabilities_checker = $capabilities_checker;
-        $this->domain = $domain;
+        $this->option = $option;
         $this->feature_flags = apply_filters(
             'FHEE__EventEspresso_core_domain_services_capabilities_FeatureFlags',
-            [
-                'ee_advanced_event_editor'   => $this->domain->isCaffeinated() && ! $this->domain->isMultiSite(),
-                'ee_event_editor_bulk_edit'  => $this->domain->isCaffeinated() && ! $this->domain->isMultiSite(),
-                'use_default_ticket_manager' => true,
-                'use_event_description_rte'  => false,
-                'use_experimental_rte'       => false,
-                'use_reg_form_builder'       => false,
-                'use_reg_options_meta_box'   => false,
-            ]
+            $this->option->getFeatureFlags()
         );
     }
 
@@ -71,7 +55,7 @@ class FeatureFlags
      */
     public function allowed(string $feature): bool
     {
-        $flag = $this->feature_flags[ $feature ] ?? false;
+        $flag = $this->feature_flags->{$feature} ?? false;
         try {
             return $flag instanceof CapCheck
                 ? $this->capabilities_checker->processCapCheck($flag)
@@ -88,7 +72,7 @@ class FeatureFlags
      */
     public function getAllowedFeatures(): array
     {
-        $allowed = array_filter($this->feature_flags, [$this, 'allowed'], ARRAY_FILTER_USE_KEY);
+        $allowed = array_filter( (array) $this->feature_flags, [$this, 'allowed'], ARRAY_FILTER_USE_KEY);
         return array_keys($allowed);
     }
 }

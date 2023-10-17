@@ -14,7 +14,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-    <!-- If you delete this meta tag, Half Life 3 will never be released. -->
+    <!-- Do NOT delete this meta tag -->
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <!-- Facebook sharing information tags -->

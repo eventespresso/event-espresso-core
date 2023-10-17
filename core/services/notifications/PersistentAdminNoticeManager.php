@@ -8,7 +8,6 @@ use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\domain\services\capabilities\CapabilitiesChecker;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
 use EventEspresso\core\exceptions\InvalidClassException;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
@@ -32,10 +31,14 @@ class PersistentAdminNoticeManager
 {
     const WP_OPTION_KEY = 'ee_pers_admin_notices';
 
+    private CapabilitiesChecker $capabilities_checker;
+
+    private RequestInterface $request;
+
     /**
-     * @var Collection|PersistentAdminNotice[] $notice_collection
+     * @var Collection|PersistentAdminNotice[]|null $notice_collection
      */
-    private $notice_collection;
+    private ?Collection $notice_collection = null;
 
     /**
      * if AJAX is not enabled, then the return URL will be used for redirecting back to the admin page where the
@@ -43,17 +46,8 @@ class PersistentAdminNoticeManager
      *
      * @var string $return_url
      */
-    private $return_url;
+    private string $return_url;
 
-    /**
-     * @var CapabilitiesChecker $capabilities_checker
-     */
-    private $capabilities_checker;
-
-    /**
-     * @var RequestInterface $request
-     */
-    private $request;
 
 
     /**
@@ -62,16 +56,15 @@ class PersistentAdminNoticeManager
      * @param CapabilitiesChecker $capabilities_checker
      * @param RequestInterface    $request
      * @param string              $return_url where to  redirect to after dismissing notices
-     * @throws InvalidDataTypeException
      */
     public function __construct(
         CapabilitiesChecker $capabilities_checker,
         RequestInterface $request,
         string $return_url = ''
     ) {
-        $this->setReturnUrl($return_url);
         $this->capabilities_checker = $capabilities_checker;
         $this->request = $request;
+        $this->setReturnUrl($return_url);
         // setup up notices at priority 9 because `EE_Admin::display_admin_notices()` runs at priority 10,
         // and we want to retrieve and generate any nag notices at the last possible moment
         add_action('admin_notices', array($this, 'displayNotices'), 9);
@@ -83,13 +76,9 @@ class PersistentAdminNoticeManager
 
     /**
      * @param string $return_url
-     * @throws InvalidDataTypeException
      */
-    public function setReturnUrl($return_url)
+    public function setReturnUrl(string $return_url)
     {
-        if (! is_string($return_url)) {
-            throw new InvalidDataTypeException('$return_url', $return_url, 'string');
-        }
         $this->return_url = $return_url;
     }
 
@@ -98,11 +87,10 @@ class PersistentAdminNoticeManager
      * @return Collection
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
      */
-    protected function getPersistentAdminNoticeCollection()
+    protected function getPersistentAdminNoticeCollection(): Collection
     {
         if (! $this->notice_collection instanceof Collection) {
             $this->notice_collection = new Collection(
@@ -121,7 +109,6 @@ class PersistentAdminNoticeManager
      * @return void
      * @throws InvalidEntityException
      * @throws DomainException
-     * @throws InvalidDataTypeException
      * @throws DuplicateCollectionIdentifierException
      */
     protected function retrieveStoredNotices()
@@ -151,12 +138,12 @@ class PersistentAdminNoticeManager
                     // new format for nag notices
                     $this->notice_collection->add(
                         new PersistentAdminNotice(
-                            $name,
-                            $details['message'],
+                            (string) $name,
+                            (string) $details['message'],
                             false,
-                            $details['capability'],
-                            $details['cap_context'],
-                            $details['dismissed']
+                            (string) $details['capability'],
+                            (string) $details['cap_context'],
+                            (bool) $details['dismissed']
                         ),
                         sanitize_key($name)
                     );
@@ -165,7 +152,7 @@ class PersistentAdminNoticeManager
                         // old nag notices, that we want to convert to the new format
                         $this->notice_collection->add(
                             new PersistentAdminNotice(
-                                $name,
+                                (string) $name,
                                 (string) $details,
                                 false,
                                 '',
@@ -201,7 +188,6 @@ class PersistentAdminNoticeManager
     /**
      * @throws DomainException
      * @throws InvalidClassException
-     * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
@@ -302,7 +288,6 @@ class PersistentAdminNoticeManager
      * @return void
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidArgumentException
@@ -310,7 +295,7 @@ class PersistentAdminNoticeManager
      * @throws InvalidArgumentException
      * @throws DuplicateCollectionIdentifierException
      */
-    public function dismissNotice($pan_name = '', $purge = false, $return = false)
+    public function dismissNotice(string $pan_name = '', bool $purge = false, bool $return = false)
     {
         $pan_name = $this->request->getRequestParam('ee_nag_notice', $pan_name);
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
@@ -347,7 +332,6 @@ class PersistentAdminNoticeManager
      * saveNotices
      *
      * @throws DomainException
-     * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
@@ -361,28 +345,27 @@ class PersistentAdminNoticeManager
             if (empty($persistent_admin_notices)) {
                 add_option(PersistentAdminNoticeManager::WP_OPTION_KEY, array(), '', 'no');
             }
+            $new_notices_array = [];
             foreach ($this->notice_collection as $persistent_admin_notice) {
-                // are we deleting this notice ?
+                // remove this notice ?
                 if ($persistent_admin_notice->getPurge()) {
-                    unset($persistent_admin_notices[ $persistent_admin_notice->getName() ]);
-                } else {
-                    /** @var PersistentAdminNotice $persistent_admin_notice */
-                    $persistent_admin_notices[ $persistent_admin_notice->getName() ] = array(
-                        'message'     => $persistent_admin_notice->getMessage(),
-                        'capability'  => $persistent_admin_notice->getCapability(),
-                        'cap_context' => $persistent_admin_notice->getCapContext(),
-                        'dismissed'   => $persistent_admin_notice->getDismissed(),
-                    );
+                    continue;
                 }
+                /** @var PersistentAdminNotice $persistent_admin_notice */
+                $new_notices_array[ $persistent_admin_notice->getName() ] = array(
+                    'message'     => $persistent_admin_notice->getMessage(),
+                    'capability'  => $persistent_admin_notice->getCapability(),
+                    'cap_context' => $persistent_admin_notice->getCapContext(),
+                    'dismissed'   => $persistent_admin_notice->getDismissed(),
+                );
             }
-            update_option(PersistentAdminNoticeManager::WP_OPTION_KEY, $persistent_admin_notices);
+            update_option(PersistentAdminNoticeManager::WP_OPTION_KEY, $new_notices_array);
         }
     }
 
 
     /**
      * @throws DomainException
-     * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
      * @throws DuplicateCollectionIdentifierException
@@ -401,7 +384,6 @@ class PersistentAdminNoticeManager
 
     /**
      * @throws DomainException
-     * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException

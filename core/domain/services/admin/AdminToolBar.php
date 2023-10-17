@@ -788,6 +788,9 @@ class AdminToolBar
      */
     private function addFontSizeSubMenu()
     {
+        if (! is_admin()) {
+            return;
+        }
         $this->admin_bar->add_menu(
             [
                 'id'     => 'espresso-toolbar-font-size',

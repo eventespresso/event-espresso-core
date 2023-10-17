@@ -6,7 +6,6 @@ use DomainException;
 use EventEspresso\core\domain\services\capabilities\CapCheck;
 use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
 use EventEspresso\core\domain\services\capabilities\RequiresCapCheckInterface;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
@@ -25,47 +24,26 @@ use Exception;
  */
 class PersistentAdminNotice implements RequiresCapCheckInterface
 {
-    /**
-     * @var string $name
-     */
-    protected $name = '';
+    protected string $name = '';
 
-    /**
-     * @var string $message
-     */
-    protected $message = '';
+    protected string $message = '';
 
-    /**
-     * @var boolean $force_update
-     */
-    protected $force_update = false;
+    protected bool $force_update = false;
 
-    /**
-     * @var string $capability
-     */
-    protected $capability = 'manage_options';
+    protected string $capability = 'manage_options';
 
-    /**
-     * @var string $cap_context
-     */
-    protected $cap_context = 'view persistent admin notice';
+    protected string $cap_context = 'view persistent admin notice';
 
-    /**
-     * @var boolean $dismissed
-     */
-    protected $dismissed = false;
+    protected bool $dismissed = false;
 
-    /**
-     * @var CapCheckInterface $cap_check
-     */
-    protected $cap_check;
+    protected ?CapCheckInterface $cap_check = null;
 
     /**
      * if true, then this notice will be deleted from the database
      *
      * @var boolean $purge
      */
-    protected $purge = false;
+    protected bool $purge = false;
 
     /**
      * gets set to true if notice is successfully registered with the PersistentAdminNoticeManager
@@ -73,7 +51,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      *
      * @var boolean $registered
      */
-    private $registered = false;
+    private bool $registered = false;
 
 
     /**
@@ -84,16 +62,15 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      * @param bool   $force_update enforce the reappearance of a persistent message
      * @param string $capability   user capability required to view this notice
      * @param string $cap_context  description for why the cap check is being performed
-     * @param bool   $dismissed    whether or not the user has already dismissed/viewed this notice
-     * @throws InvalidDataTypeException
+     * @param bool   $dismissed    whether the user has already dismissed/viewed this notice
      */
     public function __construct(
-        $name,
-        $message,
-        $force_update = false,
-        $capability = 'manage_options',
-        $cap_context = 'view persistent admin notice',
-        $dismissed = false
+        string $name,
+        string $message,
+        bool $force_update = false,
+        string $capability = 'manage_options',
+        string $cap_context = 'view persistent admin notice',
+        bool $dismissed = false
     ) {
         $this->setName($name);
         $this->setMessage($message);
@@ -103,16 +80,16 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
         $this->setDismissed($dismissed);
         add_action(
             'AHEE__EventEspresso_core_services_notifications_PersistentAdminNoticeManager__registerNotices',
-            array($this, 'registerPersistentAdminNotice')
+            [$this, 'registerPersistentAdminNotice']
         );
-        add_action('shutdown', array($this, 'confirmRegistered'), 999);
+        add_action('shutdown', [$this, 'confirmRegistered'], 999);
     }
 
 
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -120,13 +97,9 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
 
     /**
      * @param string $name
-     * @throws InvalidDataTypeException
      */
-    private function setName($name)
+    private function setName(string $name)
     {
-        if (! is_string($name)) {
-            throw new InvalidDataTypeException('$name', $name, 'string');
-        }
         $this->name = sanitize_key($name);
     }
 
@@ -134,7 +107,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     /**
      * @return string
      */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
@@ -142,14 +115,10 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
 
     /**
      * @param string $message
-     * @throws InvalidDataTypeException
      */
-    private function setMessage($message)
+    private function setMessage(string $message)
     {
-        if (! is_string($message)) {
-            throw new InvalidDataTypeException('$message', $message, 'string');
-        }
-        $allowedtags = AllowedTags::getAllowedTags();
+        $allowedtags   = AllowedTags::getAllowedTags();
         $this->message = wp_kses($message, $allowedtags);
     }
 
@@ -157,14 +126,14 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     /**
      * @return bool
      */
-    public function getForceUpdate()
+    public function getForceUpdate(): bool
     {
         return $this->force_update;
     }
 
 
     /**
-     * @param bool $force_update
+     * @param bool|int|string $force_update
      */
     private function setForceUpdate($force_update)
     {
@@ -175,7 +144,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     /**
      * @return string
      */
-    public function getCapability()
+    public function getCapability(): string
     {
         return $this->capability;
     }
@@ -183,13 +152,9 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
 
     /**
      * @param string $capability
-     * @throws InvalidDataTypeException
      */
-    private function setCapability($capability)
+    private function setCapability(string $capability)
     {
-        if (! is_string($capability)) {
-            throw new InvalidDataTypeException('$capability', $capability, 'string');
-        }
         $this->capability = ! empty($capability) ? $capability : 'manage_options';
     }
 
@@ -197,7 +162,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     /**
      * @return string
      */
-    public function getCapContext()
+    public function getCapContext(): string
     {
         return $this->cap_context;
     }
@@ -205,13 +170,9 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
 
     /**
      * @param string $cap_context
-     * @throws InvalidDataTypeException
      */
-    private function setCapContext($cap_context)
+    private function setCapContext(string $cap_context)
     {
-        if (! is_string($cap_context)) {
-            throw new InvalidDataTypeException('$cap_context', $cap_context, 'string');
-        }
         $this->cap_context = ! empty($cap_context) ? $cap_context : 'view persistent admin notice';
     }
 
@@ -219,14 +180,14 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     /**
      * @return bool
      */
-    public function getDismissed()
+    public function getDismissed(): bool
     {
         return $this->dismissed;
     }
 
 
     /**
-     * @param bool $dismissed
+     * @param bool|int|string $dismissed
      */
     public function setDismissed($dismissed)
     {
@@ -236,17 +197,11 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
 
     /**
      * @return CapCheckInterface
-     * @throws InvalidDataTypeException
      */
-    public function getCapCheck()
+    public function getCapCheck(): ?CapCheckInterface
     {
         if (! $this->cap_check instanceof CapCheckInterface) {
-            $this->setCapCheck(
-                new CapCheck(
-                    $this->capability,
-                    $this->cap_context
-                )
-            );
+            $this->setCapCheck(new CapCheck($this->capability, $this->cap_context));
         }
         return $this->cap_check;
     }
@@ -264,14 +219,14 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     /**
      * @return bool
      */
-    public function getPurge()
+    public function getPurge(): bool
     {
         return $this->purge;
     }
 
 
     /**
-     * @param bool $purge
+     * @param bool|int|string $purge
      */
     public function setPurge($purge)
     {
@@ -288,7 +243,6 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      *
      * @param Collection $persistent_admin_notice_collection
      * @throws InvalidEntityException
-     * @throws InvalidDataTypeException
      * @throws DuplicateCollectionIdentifierException
      */
     public function registerPersistentAdminNotice(Collection $persistent_admin_notice_collection)

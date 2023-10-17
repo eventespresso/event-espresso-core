@@ -120,13 +120,13 @@ class Transactions_Admin_Page extends EE_Admin_Page
             ],
 
             'espresso_apply_payment' => [
-                'func'       => 'apply_payments_or_refunds',
+                'func'       => [$this, 'apply_payments_or_refunds'],
                 'noheader'   => true,
                 'capability' => 'ee_edit_payments',
             ],
 
             'espresso_apply_refund' => [
-                'func'       => 'apply_payments_or_refunds',
+                'func'       => [$this, 'apply_payments_or_refunds'],
                 'noheader'   => true,
                 'capability' => 'ee_edit_payments',
             ],
@@ -1848,7 +1848,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $PAY_ID = $valid_data['PAY_ID'];
         // get payment amount
         $amount = $valid_data['amount']
-            ? abs($valid_data['amount'])
+            ? EEH_Money::strip_localized_money_formatting($valid_data['amount'])
             : 0;
         // payments have a type value of 1 and refunds have a type value of -1
         // so multiplying amount by type will give a positive value for payments, and negative values for refunds
