@@ -46,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
  - [Build Machine 5.0.9 changes (#828)](https://github.com/eventespresso/cafe/pull/828)
- - [PayPal Commerce. Fix double](https://github.com/eventespresso/cafe/pull/827)
+ - [PayPal Commerce. Fix double opening clicks on SPCO](https://github.com/eventespresso/cafe/pull/827)
  - [Don't apply payments to cancelled payments by default (#844)](https://github.com/eventespresso/cafe/pull/844)
  - [Verify Core Config Loaded Before Showing Maintenance Mode Notice (#843)](https://github.com/eventespresso/cafe/pull/843)
 
