@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Added
  - [Add New FeatureFlagsConfig class (#867)](https://github.com/eventespresso/cafe/pull/867)
  - [Add No Thousands Separator Currency Format Option (#860)](https://github.com/eventespresso/cafe/pull/860)
- - NEW
 
 #### Fixed
  - [Fix Reg Form Admin Question Styles (#858)](https://github.com/eventespresso/cafe/pull/858)
@@ -20,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Ensure  and  Globals Are Set Before Calling add_meta_boxes() #855 (#911)](https://github.com/eventespresso/cafe/pull/911)
  - [Fix Event Editor Custom Message Template Creation (#856)](https://github.com/eventespresso/cafe/pull/856)
  - [Use the transaction payment total as the default refund amount. (#915)](https://github.com/eventespresso/cafe/pull/915)
- - FIX
 
 #### Changed
  - [Updates-from-barista-Sep-18-22.59 (#865)](https://github.com/eventespresso/cafe/pull/865)
@@ -34,16 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Don't include trashed Datetimes in the Event List/CPT Strategy queries (#874) (#909)](https://github.com/eventespresso/cafe/pull/909)
  - [Allow Feature Flags UI #894 (#910)](https://github.com/eventespresso/cafe/pull/910)
  - [Conditionally Load Media Modal Styles #854 (#912)](https://github.com/eventespresso/cafe/pull/912)
- - MOD
-
-#### Deprecated
- - DEP
-
-#### Removed
- - RMV
-
-#### Security
- - SEC
 
 
 
@@ -76,7 +64,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Changed
  - [BuildMachine 5.0.8 changes (#817)](https://github.com/eventespresso/cafe/pull/817)
  - [Don't Throw Exceptions When Decoding Session Data (#825)](https://github.com/eventespresso/cafe/pull/825)
-
 
 
 
