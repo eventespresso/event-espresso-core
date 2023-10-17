@@ -13,7 +13,7 @@ use stdClass;
  * used to store and retrieve Feature Flags configuration
  * Feature Flags are used to enable/disable new features in Event Espresso
  *
- * @since $VID:$
+ * @since 5.0.11.p
  */
 class FeatureFlagsConfig extends JsonDataWordpressOption
 {
