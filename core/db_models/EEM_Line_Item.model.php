@@ -30,7 +30,7 @@ class EEM_Line_Item extends EEM_Base
     /**
      * Tax sub-total is just the total of all the taxes, which should be children
      * of this line item. There should only ever be one tax sub-total, and it should
-     * be a direct child of. Its quantity and LIN_unit_price = 1.
+     * be a direct child of the grand total. Its quantity and LIN_unit_price = 1.
      */
     const type_tax_sub_total = 'tax-sub-total';
 

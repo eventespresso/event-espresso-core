@@ -17,12 +17,12 @@ class Venues extends GraphQLData
      * @return array|null
      * @since 5.0.0.p
      */
-    public function getData(array $where_params = [])
+    public function getData(array $where_params = []): ?array
     {
         $field_key = lcfirst($this->namespace) . 'Venues';
         $query = <<<QUERY
         query GET_VENUES(\$where: RootQueryTo{$this->namespace}VenueConnectionWhereArgs, \$first: Int, \$last: Int ) {
-            {$field_key}(where: \$where, first: \$first, last: \$last) {
+            $field_key(where: \$where, first: \$first, last: \$last) {
                 nodes {
                     id
                     address
@@ -52,7 +52,7 @@ QUERY;
         $this->setParams([
             'operation_name' => 'GET_VENUES',
             'variables'      => [
-                'first' => 100,
+                'first' => GraphQLData::QUERY_LIMIT,
             ],
             'query'          => $query,
         ]);

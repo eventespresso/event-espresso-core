@@ -3,11 +3,9 @@
 namespace EventEspresso\core\domain\services\admin;
 
 use EE_Capabilities;
-use EE_Maintenance_Mode;
 use EEH_URL;
 use EEM_Registration;
-use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\request\Request;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use WP_Admin_Bar;
 
 /**
@@ -53,11 +51,11 @@ class AdminToolBar
      */
     public function espressoToolbarItems(WP_Admin_Bar $admin_bar)
     {
-        // if its an AJAX request, or user is NOT an admin, or in full M-Mode
+        // if it's an AJAX request, or user is NOT an admin, or in full M-Mode
         if (
-            defined('DOING_AJAX')
+            (defined('DOING_AJAX') && DOING_AJAX)
             || ! $this->capabilities->current_user_can('ee_read_ee', 'ee_admin_bar_menu_top_level')
-            || EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance
+            || MaintenanceStatus::isFullSite()
         ) {
             return;
         }
@@ -67,7 +65,7 @@ class AdminToolBar
         // and this might be a frontend request, in which case they aren't available
         $this->events_admin_url = admin_url('admin.php?page=espresso_events');
         $this->reg_admin_url    = admin_url('admin.php?page=espresso_registrations');
-        // now let's add all of the menu items
+        // now let's add all the menu items
         $this->addTopLevelMenu();
         $this->addEventsSubMenu();
         $this->addEventsAddEditHeader();

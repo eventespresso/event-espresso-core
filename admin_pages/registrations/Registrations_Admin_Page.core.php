@@ -722,6 +722,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _get_registration_status_array()
     {
@@ -938,6 +939,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $can_send
         );
 
+        $current_time = current_time('timestamp');
         $this->_views = [
             'all'   => [
                 'slug'        => 'all',
@@ -950,9 +952,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     ]
                 ),
             ],
-            'month' => [
-                'slug'        => 'month',
-                'label'       => esc_html__('This Month', 'event_espresso'),
+            'today' => [
+                'slug'        => 'today',
+                'label'       => sprintf(
+                    esc_html__('Today - %s', 'event_espresso'),
+                    date('M d, Y', $current_time)
+                ),
                 'count'       => 0,
                 'bulk_action' => array_merge(
                     $def_reg_status_actions,
@@ -961,12 +966,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     ]
                 ),
             ],
-            'today' => [
-                'slug'        => 'today',
+            'yesterday' => [
+                'slug'        => 'yesterday',
                 'label'       => sprintf(
-                    esc_html__('Today - %s', 'event_espresso'),
-                    date('M d, Y', current_time('timestamp'))
+                    esc_html__('Yesterday - %s', 'event_espresso'),
+                    date('M d, Y', $current_time - DAY_IN_SECONDS)
                 ),
+                'count'       => 0,
+                'bulk_action' => array_merge(
+                    $def_reg_status_actions,
+                    [
+                        'trash_registrations' => esc_html__('Trash Registrations', 'event_espresso'),
+                    ]
+                ),
+            ],
+            'month' => [
+                'slug'        => 'month',
+                'label'       => esc_html__('This Month', 'event_espresso'),
                 'count'       => 0,
                 'bulk_action' => array_merge(
                     $def_reg_status_actions,
@@ -1216,6 +1232,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function _set_registration_object()
     {
@@ -1246,23 +1263,26 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $count
      * @param bool $this_month
      * @param bool $today
+     * @param bool $yesterday
      * @return EE_Registration[]|int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_registrations(
-        $per_page = 10,
-        $count = false,
-        $this_month = false,
-        $today = false
+        int $per_page = 10,
+        bool $count = false,
+        bool $this_month = false,
+        bool $today = false,
+        bool $yesterday = false
     ) {
         if ($this_month) {
             $this->request->setRequestParam('status', 'month');
         }
         if ($today) {
             $this->request->setRequestParam('status', 'today');
+        }
+        if ($yesterday) {
+            $this->request->setRequestParam('status', 'yesterday');
         }
         $query_params = $this->_get_registration_query_parameters([], $per_page, $count);
         /**
@@ -1587,6 +1607,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws EntityNotFoundException
+     * @throws ReflectionException
      */
     protected function _get_reg_statuses()
     {
@@ -2689,7 +2710,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         // first we start with the transaction... ultimately, we WILL not delete permanently if there are any related
         // registrations on the transaction that are NOT trashed.
-        $TXN = $REG->get_first_related('Transaction');
+        $TXN = $REG->transaction();
         if (! $TXN instanceof EE_Transaction) {
             EE_Error::add_error(
                 sprintf(
@@ -2949,6 +2970,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function _set_reg_event()
     {
@@ -3138,6 +3160,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_attendees($per_page, $count = false, $trash = false)
     {
@@ -3687,6 +3710,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _trash_or_restore_attendees($trash = true)
     {

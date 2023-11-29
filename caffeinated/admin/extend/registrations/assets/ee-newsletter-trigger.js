@@ -1,10 +1,11 @@
 jQuery(document).ready(function($) {
 
-    var EENewsletterTrigger = {
+    const EENewsletterTrigger = {
 
         //used to hold whatever the selected MTP is in the selector.
         selectedMTP: 0,
         formContent: '',
+        batchMessageSendForm: null,
 
         /**
          * this retrieves the form from the page if not already cached in the internal var
@@ -12,8 +13,9 @@ jQuery(document).ready(function($) {
          */
         getForm: function() {
             if ( this.formContent === '' ) {
-                this.formContent = $('#ee-batch-message-send-form').html();
-                $('#ee-batch-message-send-form').html('');
+                this.batchMessageSendForm = $('#ee-batch-message-send-form');
+                this.formContent = this.batchMessageSendForm.html();
+                this.batchMessageSendForm.html('');
             }
             //make sure all formContent is empty.
             return this.formContent;
@@ -24,27 +26,27 @@ jQuery(document).ready(function($) {
          * displays the content retrieved from ajax
          * @param  {string} content the content to display
          * @param  {string} what    what to do with existing content in the target container ('clear', 'append', 'prepend')
-         * @param {string} type content or notices ('content', 'notices') : default = content;
          * @return {void}
          */
         display_content: function(content, what ) {
-             $('#espresso-ajax-loading').eeRemoveOverlay().hide();
+            const $spinner = $('#espresso-ajax-loading');
+            $spinner.eeRemoveOverlay().hide();
             if ( typeof(what) === 'undefined' ) what = 'clear';
 
             //if content is empty let's get out
             if ( ( content === '' || typeof(content) === 'undefined' ) )
                 return;
 
-            var content_div = $('.ee-notices', '.ee-admin-dialog-container');
+            const $contentDiv = $('.ee-notices', '.ee-admin-dialog-container');
 
-            $('#espresso-ajax-loading').eeRemoveOverlay().hide();
-            if ( what == 'clear' ) {
-                content_div.html('');
-                content_div.html(content);
-            } else if ( what == 'append' ) {
-                content_div.append(content);
-            } else if ( what == 'prepend' ) {
-                content_div.prepend(content);
+            $spinner.eeRemoveOverlay().hide();
+            if ( what === 'clear' ) {
+                $contentDiv.html('');
+                $contentDiv.html(content);
+            } else if ( what === 'append' ) {
+                $contentDiv.append(content);
+            } else if ( what === 'prepend' ) {
+                $contentDiv.prepend(content);
             }
         },
 
@@ -55,25 +57,25 @@ jQuery(document).ready(function($) {
          * @return void
          */
          displayForm: function() {
-            var selected = [];
+            const selected = [];
             //let's get all selected regs/contacts.
-            $('#the-list input[type=checkbox]').each( function(i) {
+            $('#the-list input[type=checkbox]').each( function() {
                 if ( $(this).prop("checked") )
                     selected.push($(this).val());
             });
 
-            var selectedCount = selected.length;
-            var selectedSerialized = JSON.stringify( selected );
+            const selectedCount = selected.length;
+            const selectedSerialized = JSON.stringify( selected );
 
             if ( selectedCount === 0 )
-                return false;
+                return;
 
             //get the form
-            var content = this.getForm();
+            const content = this.getForm();
 
-            var dialog = dialogHelper.displayModal(true).addContent(content);
-            var header = $('.newsletter-send-form-title');
-            header.text(header.text().replace('[NUMPEOPLE]', selectedCount));
+            dialogHelper.displayModal(true).addContent(content);
+            const $header = $('.newsletter-send-form-title');
+            $header.text($header.text().replace('[NUMPEOPLE]', selectedCount));
 
             //add values to input
             $('#newsletter-batch-ids').val(selectedSerialized);
@@ -111,22 +113,23 @@ jQuery(document).ready(function($) {
 
          /**
           * updates the form inputs to be filled with data from the selected mtp.
-          * @param  {int} selected_mtp the id for the selected mtp
+          * @param  {string} selected_mtp the id for the selected mtp
           * @return {void}
           */
          updateForm: function( selected_mtp ) {
-            selected_mtp = parseInt(selected_mtp,10);
+            const selectedMtp = parseInt(selected_mtp,10);
+            const $editFields = $('.batch-message-edit-fields');
             //if the selected_mtp is 0 then let's just reset the form inputs and hide the form
-            if ( typeof( selected_mtp) === 'undefined' || selected_mtp == 0 ) {
+            if ( typeof selectedMtp === 'undefined' || selectedMtp === 0 ) {
                 this.resetFormInputs();
-                $('.batch-message-edit-fields').hide();
+                $editFields.hide();
                 return;
             }
 
-            $('.batch-message-edit-fields').show();
+             $editFields.show();
 
             //we have a selected_mtp so let's query and get the data for the form.
-            this.doAjax(selected_mtp);
+            this.doAjax(selectedMtp);
          },
 
 
@@ -140,9 +143,9 @@ jQuery(document).ready(function($) {
          populateForm:function( response ) {
             $('#espresso-ajax-loading').eeRemoveOverlay().hide();
             //so we need to go through the response and update the related inputs.
-            $('#batch-message-from').val(response.batch_message_from);
-            $('#batch-message-subject').val(response.batch_message_subject);
-            $('#batch-message-content').val(response.batch_message_content);
+            $('#batch-message-from').val(response?.batch_message_from);
+            $('#batch-message-subject').val(response?.batch_message_subject);
+            $('#batch-message-content').val(response?.batch_message_content);
             this.setClickEventForShortcodePicker();
          },
 
@@ -154,13 +157,12 @@ jQuery(document).ready(function($) {
          */
         setClickEventForShortcodePicker: function(bind)
         {
-            var $shortcodeContainer = $('.ee_shortcode_chooser_container', '.batch-message-edit-fields'),
-                bind = typeof bind === 'undefined' || typeof bind !== 'boolean',
-                clickHandler = function(e) {
+            const $shortcodeContainer = $('.ee_shortcode_chooser_container', '.batch-message-edit-fields'),
+                clickHandler = function() {
                     EENewsletterTrigger.shortCodePickerClickEvent(this);
                 };
 
-            if (bind) {
+            if (typeof bind === 'undefined' || typeof bind !== 'boolean') {
                 $('.js-shortcode-selection', $shortcodeContainer).on('click.shortcodeClick', clickHandler)
             } else {
                 $('.js-shortcode-selection', $shortcodeContainer).off('click.shortcodeClick', clickHandler)
@@ -173,8 +175,8 @@ jQuery(document).ready(function($) {
          * @param {object} clickedEl
          */
         shortCodePickerClickEvent: function(clickedEl) {
-            var shortcodeRequested = $(clickedEl).data('value');
-            var input = $(clickedEl).data('linkedInputId');
+            const shortcodeRequested = $(clickedEl).data('value');
+            const input = $(clickedEl).data('linkedInputId');
             this.addShortcodeToInput(input, shortcodeRequested);
         },
 
@@ -188,21 +190,18 @@ jQuery(document).ready(function($) {
             if (typeof inputId !== 'string' || typeof shortcodeRequested !== 'string') {
                 return;
             }
-            var input = document.getElementById(inputId);
-            var $input = $(input);
+            const input = document.getElementById(inputId);
+            const $input = $(input);
 
             if(document.selection) {
                 // Go the IE way
                 $input[0].focus();
                 document.selection.createRange().text=shortcodeRequested;
-            }
-            else if ('selectionStart' in input) {
-                var startPos = input.selectionStart;
+            } else if ('selectionStart' in input) {
+                const startPos = input.selectionStart;
                 input.value = input.value.substr(0, startPos) + shortcodeRequested + input.value.substr(input.selectionEnd, input.value.length);
                 input.selectionStart = startPos + input.value.length;
                 input.selectionEnd = startPos + shortcodeRequested.length;
-            } else {
-                //do nothing for now.
             }
         },
 
@@ -217,8 +216,8 @@ jQuery(document).ready(function($) {
           * @return {void}
           */
          doAjax: function( selected_mtp ) {
-                $('#espresso-ajax-loading').eeCenter().eeAddOverlay().show();
-                var package = {
+                $('#espresso-ajax-loading').eeCenter('fixed').eeAddOverlay(0.5).show();
+                const data = {
                     'action' : 'get_newsletter_form_content',
                     'page' : 'espresso_registrations',
                     'get_newsletter_form_content_nonce' : $('#get_newsletter_form_content_nonce').val(),
@@ -229,13 +228,11 @@ jQuery(document).ready(function($) {
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
-                data: package,
+                data: data,
                 success: function(response, status, xhr) {
-                    var ct = xhr.getResponseHeader("content-type") || "";
-                    var resp = '', isjson = true;
+                    const ct = xhr.getResponseHeader("content-type") || "";
+                    let resp = '', isjson = true;
                     if (ct.indexOf('html') > -1) {
-                        /*console.log('html');
-                        console.log('response');/**/
                         //last verification that we definitely DON'T have JSON (possibly via exceptions)
                         try {
                             resp = $.parseJSON(response);
@@ -247,9 +244,6 @@ jQuery(document).ready(function($) {
                     }
 
                     if ( ct.indexOf('json') > -1 || isjson ) {
-                        /*console.log('json');
-                        console.log(response);/**/
-
                         resp = resp === '' ? response : resp;
 
                         if ( resp.error ) {
@@ -264,11 +258,10 @@ jQuery(document).ready(function($) {
                         }
                     }
                 },
-                error: function(xhr,status,error) {
+                error: function(xhr) {
                     EENewsletterTrigger.display_content(xhr.responseText, 'clear');
                 }
             });
-            return false;
          }
 
     };
@@ -279,30 +272,41 @@ jQuery(document).ready(function($) {
             EENewsletterTrigger.displayForm();
     });
 
-    $('.wp-list-table').on('change', 'input[type="checkbox"]', function(e) {
+    $('.wp-list-table').on('change', 'input[type="checkbox"]', function() {
         //count all checkboxes that are checked.
-        var checkCount = $('#the-list input[type=checkbox]:checked').length;
+        const checkCount = $('#the-list input[type=checkbox]:checked').length;
         $('.send-selected-newsletter-count', '#selected-batch-send-trigger').text(checkCount);
     });
 
-    $(document).on('change', '#newsletter_mtp_selected', function() {
+    const $mainDoc = $(document);
+
+    $mainDoc.on('change', '#newsletter_mtp_selected', function() {
         //get selected value and send to server
         EENewsletterTrigger.updateForm($(this).val());
     });
 
-    $(document).on('click', '.shortcodes-info', function(e) {
-      var id = $(this).attr('id').replace('toggle', 'container');
-        $('#' + id).slideToggle();
+
+    $mainDoc.on('click', '.js-open-list-trigger', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const container = '#' + $(this).attr('id').replace('toggle', 'container');
+        $(container).removeClass('ee-mini-modal--closed' ).addClass('ee-mini-modal--open');
     });
 
-    $(document).on('click', '.batch-message-cancel', function(e) {
+    $mainDoc.on('click', '.ee-mini-modal-close-btn', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).parent('.ee-mini-modal').removeClass('ee-mini-modal--open' ).addClass('ee-mini-modal--closed');
+    });
+
+    $mainDoc.on('click', '.batch-message-cancel', function(e) {
         e.preventDefault();
         e.stopPropagation();
         EENewsletterTrigger.closeForm();
     });
 
-    $(document).on('click', '.batch-message-submit', function(e) {
-      $('#espresso-ajax-loading').eeCenter().eeAddOverlay().show();
+    $mainDoc.on('click', '.batch-message-submit', function() {
+      $('#espresso-ajax-loading').eeCenter('fixed').eeAddOverlay(0.5).show();
     });
 
 });

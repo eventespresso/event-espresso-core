@@ -221,6 +221,7 @@ class EED_Messages extends EED_Module
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @since 4.9.0
      */
     public function browser_error_trigger($WP)
@@ -301,6 +302,7 @@ class EED_Messages extends EED_Module
      * This is triggered by the 'msg_cron_trigger' route.
      *
      * @param WP $WP
+     * @throws EE_Error
      */
     public function execute_batch_request($WP)
     {
@@ -313,6 +315,9 @@ class EED_Messages extends EED_Module
     /**
      * This gets executed on wp_cron jobs or when a batch request is initiated on its own separate non regular wp
      * request.
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function run_cron()
     {
@@ -886,8 +891,13 @@ class EED_Messages extends EED_Module
             }
         } else {
             EE_Error::add_error(
-                'Unable to generate the payment notification because the given value for the transaction is invalid.',
-                'event_espresso'
+                esc_html__(
+                    'Unable to generate the payment notification because the given value for the transaction is invalid.',
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
             return false;
         }
@@ -928,6 +938,7 @@ class EED_Messages extends EED_Module
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @since   4.3.0
      */
     public static function registration_message_trigger_url(

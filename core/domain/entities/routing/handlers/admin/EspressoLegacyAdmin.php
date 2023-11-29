@@ -33,15 +33,17 @@ class EspressoLegacyAdmin extends AdminRoute
     {
         global $pagenow;
         $page = $this->request->getRequestParam('page');
-        return (
-                   $pagenow === 'admin.php'
-                   || $pagenow === 'admin-ajax.php'
-               ) && (
+        return ($pagenow === 'admin.php' || $pagenow === 'admin-ajax.php')
+               && (
                    $page === 'pricing'
-                   || $page === 'mailchimp'
-                   || $page === 'eea_barcode_scanner'
                    || str_contains($page, 'espresso')
-               ) && parent::matchesCurrentRequest();
+                   || apply_filters(
+                       'FHEE__EspressoLegacyAdmin__matchesCurrentRequest__page',
+                       false,
+                       $page
+                   )
+               )
+               && parent::matchesCurrentRequest();
     }
 
 
@@ -86,7 +88,7 @@ class EspressoLegacyAdmin extends AdminRoute
             'EventEspresso\core\services\address\CountrySubRegionDao',
             [
                 'EEM_State'                                            => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\validators\JsonValidator' => EE_Dependency_Map::load_from_cache
+                'EventEspresso\core\services\validators\JsonValidator' => EE_Dependency_Map::load_from_cache,
             ]
         );
         $this->dependency_map->registerDependencies(

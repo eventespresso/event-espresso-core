@@ -5,7 +5,6 @@ use EventEspresso\core\services\database\TableManager;
 
 /**
  * Class EE_DMS_Unknown_1_0_0
- *
  * This is a stub data migration that we can put in the array of data migrations when we have an error
  * finding the next data migration script.
  *
@@ -13,12 +12,12 @@ use EventEspresso\core\services\database\TableManager;
  * @subpackage            core
  * @author                Mike Nelson
  * @since                 4.0
- *
  */
 class EE_DMS_Unknown_1_0_0 extends EE_Data_Migration_Script_Base
 {
+
     /**
-     * Returns whether or not this data migration script can operate on the given version of the database.
+     * Returns whether this data migration script can operate on the given version of the database.
      * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
      * it's passed a string like '3.1.38B', it should return true
      *
@@ -30,29 +29,30 @@ class EE_DMS_Unknown_1_0_0 extends EE_Data_Migration_Script_Base
         return false;
     }
 
+
     public function schema_changes_after_migration()
     {
-        return;
     }
+
 
     public function schema_changes_before_migration()
     {
-        return;
     }
 
 
     /**
      * All children of this must call parent::__construct() at the end of their constructor or suffer the consequences!
      *
-     * @param TableManager  $table_manager
-     * @param TableAnalysis $table_analysis
+     * @param TableManager|null  $table_manager
+     * @param TableAnalysis|null $table_analysis
      */
     public function __construct(TableManager $table_manager = null, TableAnalysis $table_analysis = null)
     {
-        $this->_migration_stages = array();
-        $this->_pretty_name = esc_html__("Fatal Uncatchable Error Occurred", "event_espresso");
+        $this->_migration_stages = [];
+        $this->_pretty_name      = esc_html__("Fatal Uncatchable Error Occurred", "event_espresso");
         parent::__construct($table_manager, $table_analysis);
     }
+
 
     public function migration_page_hooks()
     {

@@ -17,12 +17,12 @@ class GeneralSettings extends GraphQLData
      * @return array|null
      * @since 5.0.0.p
      */
-    public function getData(array $where_params = [])
+    public function getData(array $where_params = []): ?array
     {
         $field_key = 'generalSettings';
         $query = <<<QUERY
         query GET_GENERAL_SETTINGS {
-            {$field_key} {
+            $field_key {
                 dateFormat
                 timeFormat
                 timezone

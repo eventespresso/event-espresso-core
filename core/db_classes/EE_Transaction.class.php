@@ -26,6 +26,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     protected $_old_txn_status;
 
+    private ?EE_Registration $_primary_registrant = null;
 
     /**
      * @param array  $props_n_values          incoming values
@@ -812,6 +813,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function primary_registration()
     {
+        if($this->_primary_registrant instanceof EE_Registration) {
+            return $this->_primary_registrant;
+        }
+
         $registrations = (array) $this->get_many_related(
             'Registration',
             [['REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT]]
@@ -822,11 +827,14 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
                 $registration instanceof EE_Registration
                 && ! in_array($registration->status_ID(), EEM_Registration::closed_reg_statuses(), true)
             ) {
+                $this->_primary_registrant = $registration;
                 return $registration;
             }
         }
         // nothing valid found, so just return first thing from array of results
-        return reset($registrations);
+        $primary_registrant = reset($registrations);
+        $this->_primary_registrant = $primary_registrant instanceof EE_Registration ? $primary_registrant : null;
+        return $this->_primary_registrant;
     }
 
 
@@ -1186,9 +1194,12 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function payment_method()
     {
-        $pm = $this->get_first_related('Payment_Method');
-        if ($pm instanceof EE_Payment_Method) {
-            return $pm;
+        $PMD_ID = $this->payment_method_ID();
+        if($PMD_ID) {
+            $pm = EEM_Payment_Method::instance()->get_one_by_ID($this->payment_method_ID());
+            if ($pm instanceof EE_Payment_Method) {
+                return $pm;
+            }
         }
         $last_payment = $this->last_payment();
         if ($last_payment instanceof EE_Payment && $last_payment->payment_method()) {

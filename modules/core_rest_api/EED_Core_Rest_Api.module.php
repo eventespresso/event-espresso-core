@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\Domain;
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\domain\services\factories\EmailAddressFactory;
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -366,7 +367,7 @@ class EED_Core_Rest_Api extends EED_Module
      */
     public static function save_ee_routes()
     {
-        if (EE_Maintenance_Mode::instance()->models_can_query()) {
+        if (DbStatus::isOnline()) {
             $instance = EED_Core_Rest_Api::instance();
             $routes = apply_filters(
                 'EED_Core_Rest_Api__save_ee_routes__routes',

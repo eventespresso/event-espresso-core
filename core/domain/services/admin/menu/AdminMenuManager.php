@@ -5,11 +5,11 @@ namespace EventEspresso\core\domain\services\admin\menu;
 use DomainException;
 use EE_Admin_Page_Init;
 use EE_Error;
-use EE_Maintenance_Mode;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuGroup;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuSubItem;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuTopLevel;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use Exception;
 use OutOfRangeException;
 
@@ -50,7 +50,7 @@ class AdminMenuManager
      *
      * @var bool
      */
-    protected $maintenance_mode = false;
+    protected bool $maintenance_mode = false;
 
     /**
      * same values used by AdminMenuManager::DEFAULT_MENU_POSITION
@@ -72,7 +72,7 @@ class AdminMenuManager
 
     public function initialize()
     {
-        $this->maintenance_mode = EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance;
+        $this->maintenance_mode = MaintenanceStatus::isFullSite();
         $this->menu_position = apply_filters(
             'FHEE__EventEspresso_core_domain_services_admin_menu_AdminMenuManager__initialize__menu_position',
             AdminMenuManager::DEFAULT_MENU_POSITION,

@@ -23,17 +23,15 @@ do_action('AHEE__thank_you_page_overview_template__top', $transaction);
                 );
                 if (! empty($TXN_receipt_url)) : ?>
                     <br/>
-                    <div class="jst-rght">
-                        <a class="ee-button ee-roundish indented-text big-text"
-                           href="<?php echo esc_url_raw($TXN_receipt_url); ?>"
-                        >
-                            <span class="ee-icon ee-icon-PDF-file-type"></span>
-                            <?php echo apply_filters(
-                                'FHEE__thank_you_page_overview_template__order_conf_button_text',
-                                esc_html__('View Full Order Confirmation Receipt', 'event_espresso')
-                            ); ?>
-                        </a>
-                    </div>
+                    <a class="ee-button ee-roundish indented-text big-text"
+                       href="<?php echo esc_url_raw($TXN_receipt_url); ?>"
+                    >
+                        <span class="ee-icon ee-icon-PDF-file-type"></span>
+                        <?php echo apply_filters(
+                            'FHEE__thank_you_page_overview_template__order_conf_button_text',
+                            esc_html__('View Full Order Confirmation Receipt', 'event_espresso')
+                        ); ?>
+                    </a>
                 <?php endif; ?>
             </div>
         </div>

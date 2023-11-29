@@ -1872,9 +1872,7 @@ class espresso_events_Events_Hooks_Extend extends EE_Admin_Hooks
             'edit_prices_name'      => $default && empty($price)
                 ? 'PRICENAMEATTR'
                 : 'edit_prices',
-            'price_type_selector'   => $default && empty($price)
-                ? $this->_get_base_price_template($ticket_row, $price_row, $price, true)
-                : $this->_get_price_type_selector(
+            'price_type_selector'   => $this->_get_price_type_selector(
                     $ticket_row,
                     $price_row,
                     $price,
@@ -1961,7 +1959,7 @@ class espresso_events_Events_Hooks_Extend extends EE_Admin_Hooks
         bool $default,
         bool $disabled = false
     ): string {
-        if ($price->is_base_price()) {
+        if (($price instanceof EE_Price && $price->is_base_price()) || (! $price instanceof EE_Price && $default)) {
             return $this->_get_base_price_template(
                 $ticket_row,
                 $price_row,
@@ -2047,27 +2045,18 @@ class espresso_events_Events_Hooks_Extend extends EE_Admin_Hooks
         bool $default,
         bool $disabled = false
     ): string {
-        $select_name = $default && ! $price instanceof EE_Price
+        $use_default = $default && ! $price instanceof EE_Price;
+        $selected_price_type_id =  $use_default ? 0 : $price->type();
+
+        $select_name = $use_default
             ? 'edit_prices[TICKETNUM][PRICENUM][PRT_ID]'
             : 'edit_prices[' . esc_attr($ticket_row) . '][' . esc_attr($price_row) . '][PRT_ID]';
 
         $price_type_model       = EEM_Price_Type::instance();
-        $price_types            = $price_type_model->get_all(
-            [
-                [
-                    'OR' => [
-                        'PBT_ID'  => '2',
-                        'PBT_ID*' => '3',
-                    ],
-                ],
-            ]
-        );
-        $all_price_types        = $default && ! $price instanceof EE_Price
+        $price_types = $price_type_model->get_all([['NOT' => ['PBT_ID' => '1']]]);
+        $all_price_types        = $use_default
             ? [esc_html__('Select Modifier', 'event_espresso')]
             : [];
-        $selected_price_type_id = $default && ! $price instanceof EE_Price
-            ? 0
-            : $price->type();
         $price_option_spans     = '';
         // setup price types for selector
         foreach ($price_types as $price_type) {
@@ -2075,7 +2064,7 @@ class espresso_events_Events_Hooks_Extend extends EE_Admin_Hooks
                 continue;
             }
             $all_price_types[ $price_type->ID() ] = $price_type->get('PRT_name');
-            // while we're in the loop let's setup the option spans used by js
+            // while we're in the loop lets set up the option spans used by js
             $span_args          = [
                 'PRT_ID'         => $price_type->ID(),
                 'PRT_operator'   => $price_type->is_discount()
@@ -2111,20 +2100,20 @@ class espresso_events_Events_Hooks_Extend extends EE_Admin_Hooks
         $price_selected_operator   = $price instanceof EE_Price && $price->is_discount()
             ? '-'
             : '+';
-        $price_selected_operator   = $default && ! $price instanceof EE_Price
+        $price_selected_operator   = $use_default
             ? ''
             : $price_selected_operator;
         $price_selected_is_percent = $price instanceof EE_Price && $price->is_percent()
             ? 1
             : 0;
-        $price_selected_is_percent = $default && ! $price instanceof EE_Price
+        $price_selected_is_percent = $use_default
             ? ''
             : $price_selected_is_percent;
         $template_args             = [
             'tkt_row'                   => $default
                 ? 'TICKETNUM'
                 : $ticket_row,
-            'PRC_order'                 => $default && ! $price instanceof EE_Price
+            'PRC_order'                 => $use_default
                 ? 'PRICENUM'
                 : $price_row,
             'price_modifier_selector'   => $select_input->get_html_for_input(),

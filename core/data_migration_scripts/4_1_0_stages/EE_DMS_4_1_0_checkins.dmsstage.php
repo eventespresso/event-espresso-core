@@ -8,71 +8,79 @@
  * So, in converting we use those numbers to decide how many checkins to add in 4.1, and just assume that
  * they checked in at the time of the event (which is quite reasonable). We COULD try to hunt for the actual time
  * of their checkin from the events_attendee_checkin table, but that'd be very difficult and problematic.
- *
-4.1 tables and fields:
+ * 4.1 tables and fields:
  * $this->_tables = array(
-            'Checkin'=>new EE_Primary_Table('esp_checkin','CHK_ID')
-        );
-        $this->_fields = array(
-            'Checkin'=> array(
-                'CHK_ID'=>new EE_Primary_Key_Int_Field('CHK_ID', 'Checkin ID'),
-                'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', 'Registration Id', false, 1, 'Registration'),
-                'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', 'Datetime Id', false, 1, 'Datetime'),
-                'CHK_in'=>new EE_Boolean_Field('CHK_in', 'Whether a person has checked in or checked out', false, true),
-                'CHK_timestamp'=>new EE_Datetime_Field('CHK_timestamp', esc_html__('When the row was modified','event_espresso'), false, time(), $timezone )
-            )
-        );
-*/
+ * 'Checkin'=>new EE_Primary_Table('esp_checkin','CHK_ID')
+ * );
+ * $this->_fields = array(
+ * 'Checkin'=> array(
+ * 'CHK_ID'=>new EE_Primary_Key_Int_Field('CHK_ID', 'Checkin ID'),
+ * 'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', 'Registration ID', false, 1, 'Registration'),
+ * 'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', 'Datetime ID', false, 1, 'Datetime'),
+ * 'CHK_in'=>new EE_Boolean_Field('CHK_in', 'Whether a person has checked in or checked out', false, true),
+ * 'CHK_timestamp'=>new EE_Datetime_Field('CHK_timestamp', esc_html__('When the row was modified','event_espresso'),
+ * false, time(), $timezone )
+ * )
+ * );
+ */
 
 class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
 {
-    private $_new_table;
+
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = esc_html__('Checkins', 'event_espresso');
-        $this->_old_table = $wpdb->prefix . "events_attendee";
+        $this->_pretty_name      = esc_html__('Checkins', 'event_espresso');
+        $this->_old_table        = $wpdb->prefix . "events_attendee";
         $this->select_expression = 'att.*, e.event_status';
-        $this->_extra_where_sql = 'AS att
+        $this->_extra_where_sql  = 'AS att
             INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON att.event_id=e.id
             WHERE e.event_status!="D"';
-        $this->_new_table = $wpdb->prefix . "esp_checkin";
+        $this->_new_table        = $wpdb->prefix . "esp_checkin";
         parent::__construct();
     }
+
+
+    /**
+     * @throws EE_Error
+     */
     protected function _migrate_old_row($old_row)
     {
         global $wpdb;
         $new_reg_table = $wpdb->prefix . "esp_registration";
 
-        $num_to_checkin_at_this_time = max(array(intval($old_row['checked_in_quantity']),intval($old_row['checked_in']))) ;
+        $num_to_checkin_at_this_time = max([intval($old_row['checked_in_quantity']), intval($old_row['checked_in'])]);
 
-        $new_registrations_for_attendee = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, $old_row['id'], $new_reg_table);
+        $new_registrations_for_attendee =
+            $this->get_migration_script()->get_mapping_new_pk($this->_old_table, $old_row['id'], $new_reg_table);
         if (! $new_registrations_for_attendee) {
-            $new_registrations_for_attendee = array();
+            $new_registrations_for_attendee = [];
         }
         $new_datetime = $this->_try_to_find_datetime($old_row);
 
         // make sure registrations array is numerically indexed starting at 0 (it probably already is)
         $new_registrations_for_attendee = array_values($new_registrations_for_attendee);
-        $new_checkin_ids = array();
+        $new_checkin_ids                = [];
         for ($i = 0; $i < abs($num_to_checkin_at_this_time); $i++) {
             $new_reg_id = $new_registrations_for_attendee[ $i ];
             if (! $new_reg_id) {
-                $this->add_error(sprintf(
-                    esc_html__(
-                        /* translators: %1$s database row represented in JSON, %2$s number of registrations to check-in
+                $this->add_error(
+                    sprintf(
+                        esc_html__(
+                        /* translators: %1$s database row represented in JSON, %2$s number of registrations to check in
                         *  %3$s number of registrations for the attendee, %4$s new registration rows represented in JSON
                         */
                         // @codingStandardsIgnoreStart
-                        'It appears we wanted to check-in more registrations than actually exist. The old attendee record (%1$s) indicated we should check-in %2$d registrations, but there are only %3$d registrations for that attendee (%4$s)',
-                        // @codingStandardsIgnoreEnd
-                        'event_espresso'
-                    ),
-                    $this->_json_encode($old_row),
-                    abs($num_to_checkin_at_this_time),
-                    count($new_registrations_for_attendee),
-                    $this->_json_encode($new_registrations_for_attendee)
-                ));
+                            'It appears we wanted to check-in more registrations than actually exist. The old attendee record (%1$s) indicated we should check-in %2$d registrations, but there are only %3$d registrations for that attendee (%4$s)',
+                            // @codingStandardsIgnoreEnd
+                            'event_espresso'
+                        ),
+                        $this->_json_encode($old_row),
+                        abs($num_to_checkin_at_this_time),
+                        count($new_registrations_for_attendee),
+                        $this->_json_encode($new_registrations_for_attendee)
+                    )
+                );
                 break;
             }
             $existing_checkin_record = $wpdb->get_var(
@@ -103,21 +111,28 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
      * Tries to find the new datetime the Check-in was for, based on the attendee row
      * (because we know the attendee was for an event as a specific time, and we know
      * the event's OLD ID...)
-     * @global type $wpdb
-     * @param array $old_attendee_row
+     *
+     * @param array $old_attendee
      * @return array row of datetime from DB
+     * @throws EE_Error
+     * @global wpdb $wpdb
      */
-    private function _try_to_find_datetime($old_attendee)
+    private function _try_to_find_datetime(array $old_attendee): array
     {
         global $wpdb;
 
-        $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_detail", $old_attendee['event_id'], $wpdb->posts);
+        $new_event_id =
+            $this->get_migration_script()->get_mapping_new_pk(
+                $wpdb->prefix . "events_detail",
+                $old_attendee['event_id'],
+                $wpdb->posts
+            );
         if (! $new_event_id) {
             $this->add_error(
                 sprintf(
                     esc_html__(
-                        /* translators: 1: original event ID, 2: original attendee database row */
-                        // @codingStandardsIgnoreStart
+                    /* translators: 1: original event ID, 2: original attendee database row */
+                    // @codingStandardsIgnoreStart
                         'Could not find new event ID with old event ID %1$d, on attendee row %2$s; and because of that couldn\'t find the correct datetime for Check-in',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
@@ -126,60 +141,72 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
                     $this->_json_encode($old_attendee)
                 )
             );
-            return 0;
+            return [];
         }
         $old_att_start_date = $old_attendee['start_date'];
         $old_att_start_time = $this->get_migration_script()->convertTimeFromAMPM($old_attendee['event_time']);
-        $old_att_datetime = $this->get_migration_script()->convert_date_string_to_utc($this, $old_attendee, "$old_att_start_date $old_att_start_time:00");
+        $old_att_datetime   =
+            $this->get_migration_script()->convert_date_string_to_utc(
+                $this,
+                $old_attendee,
+                "$old_att_start_date $old_att_start_time:00"
+            );
 
         $datetime_table = $wpdb->prefix . "esp_datetime";
         // add all conditions to an array from which we can SHIFT conditions off in order to widen our search
         // the most important condition should be last, as it will be array_shift'ed off last
-        $conditions = array(
+        $conditions = [
             $wpdb->prepare("$datetime_table.DTT_EVT_start = %s", $old_att_datetime),// times match?
             $wpdb->prepare("$datetime_table.EVT_ID = %d", $new_event_id),// events match?
-        );
+        ];
         // start running queries, widening search each time by removing a condition
-        $datetime_found = null;
         do {
-            $full_query = "SELECT * FROM $datetime_table WHERE " . implode(" AND ", $conditions) . " LIMIT 1";
+            $full_query     = "SELECT * FROM $datetime_table WHERE " . implode(" AND ", $conditions) . " LIMIT 1";
             $datetime_found = $wpdb->get_row($full_query, ARRAY_A);
             array_shift($conditions);
         } while (! $datetime_found && $conditions);
         return $datetime_found;
     }
 
+
     /**
-     * Adds a new Check-in/checkout record according for $new_reg_id,$new_datetime_id,$checking_in, and $timestmap
-     * @param int $new_reg_id
-     * @param int $new_datetime_id
-     * @param string $timestamp mysql datetime
+     * Adds a new Check-in/checkout record according to $new_reg_id,$new_datetime_id,$checking_in, and $timestamp
+     *
+     * @param int   $new_reg_id
+     * @param array $new_datetime
      * @return int new Check-in id
      */
-    private function _insert_checkin_record($new_reg_id, $new_datetime)
+    private function _insert_checkin_record(int $new_reg_id, array $new_datetime): int
     {
         global $wpdb;
 
 
         // ok we can actually do what we set out to do: add a checkin/checkout record
-        $cols_n_values = array(
-            'REG_ID' => $new_reg_id,
-            'DTT_ID' => $new_datetime['DTT_ID'],
-            'CHK_in' => true,
-            'CHK_timestamp' => $new_datetime['DTT_EVT_start']
-        );
-        $datatypes = array(
+        $cols_n_values = [
+            'REG_ID'        => $new_reg_id,
+            'DTT_ID'        => $new_datetime['DTT_ID'] ?? 0,
+            'CHK_in'        => true,
+            'CHK_timestamp' => $new_datetime['DTT_EVT_start'] ?? null,
+        ];
+        $data_types    = [
             '%d',// REG_ID
             '%d',// DTT_ID
             '%d',// CHK_in
             '%s',// CHK_timestamp
-        );
-        $success = $wpdb->insert($this->_new_table, $cols_n_values, $datatypes);
+        ];
+        $success       = $wpdb->insert($this->_new_table, $cols_n_values, $data_types);
         if (! $success) {
-            $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_checkin, $this->_new_table, $cols_n_values, $datatypes));
+            $this->add_error(
+                $this->get_migration_script()->_create_error_message_for_db_insertion(
+                    $this->_old_table,
+                    [],
+                    $this->_new_table,
+                    $cols_n_values,
+                    $data_types
+                )
+            );
             return 0;
         }
-        $new_id = $wpdb->insert_id;
-        return $new_id;
+        return $wpdb->insert_id;
     }
 }

@@ -164,16 +164,16 @@ class EE_Price extends EE_Soft_Delete_Base_Class
     /**
      * get Price Amount
      *
-     * @return        float
+     * @return float
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function amount()
+    public function amount(): float
     {
-        return $this->get('PRC_amount');
+        return (float) $this->get('PRC_amount');
     }
 
 
@@ -432,7 +432,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      * @throws InvalidInterfaceException
      * @since 4.4.0
      */
-    public function pretty_price()
+    public function pretty_price(): string
     {
         return ! $this->is_percent()
             ? $this->get_pretty('PRC_amount')

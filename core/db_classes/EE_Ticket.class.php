@@ -1242,11 +1242,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         // first we need to calculate the maximum number of tickets available for the datetime
         // do we want data for one datetime or all of them ?
         $query_params = $DTT_ID ? [['DTT_ID' => $DTT_ID]] : [];
-        $datetimes    = $this->datetimes($query_params);
+        $datetimes    = $this->get_many_related('Datetime', $query_params);
         if (is_array($datetimes) && ! empty($datetimes)) {
             foreach ($datetimes as $datetime) {
                 if ($datetime instanceof EE_Datetime) {
-                    $datetime->refresh_from_db();
+                    // $datetime->refresh_from_db();
                     // echo "\n . . datetime name: " . $datetime->name() . '<br />';
                     // echo "\n . . datetime ID: " . $datetime->ID() . '<br />';
                     // initialize with no restrictions for each datetime

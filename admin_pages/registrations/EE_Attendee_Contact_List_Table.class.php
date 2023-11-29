@@ -15,7 +15,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     /**
      * @var Registrations_Admin_Page
      */
-    protected $_admin_page;
+    protected EE_Admin_Page $_admin_page;
 
 
     /**

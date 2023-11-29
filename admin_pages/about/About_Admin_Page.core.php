@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
+
 /**
  *
  * EE_About_Admin_Page
@@ -148,7 +150,7 @@ class About_Admin_Page extends EE_Admin_Page
 
     protected function _whats_new()
     {
-        /*$steps = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $this->_get_started_steps() : FALSE;
+        /*$steps = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::STATUS_FULL_SITE ? $this->_get_started_steps() : FALSE;
         $steps = $steps !== FALSE ? $steps : '';
         $this->_admin_page_title = sprintf( esc_html__('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
         $settings_message = $steps;
@@ -168,8 +170,7 @@ class About_Admin_Page extends EE_Admin_Page
         $this->display_about_admin_page();*/
 
         // Copied from _whats_new()
-        $steps = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance
-            ? $this->_get_started_steps() : false;
+        $steps = DbStatus::isOnline() ? $this->_get_started_steps() : false;
         $steps = $steps !== false ? $steps : '';
         $this->_admin_page_title = sprintf(
             esc_html__('Welcome to Event Espresso %s', 'event_espresso'),

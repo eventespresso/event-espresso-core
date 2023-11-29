@@ -207,7 +207,6 @@ class EspressoLegacyAdminAssetManager extends AssetManager
      */
     private function registerStyleSheets($joyride = false)
     {
-
         $this->addStylesheet(
             EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_UI_THEME,
             EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css'

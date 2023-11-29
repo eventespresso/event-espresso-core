@@ -39,7 +39,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         parent::_set_page_config();
 
         $this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'events';
-        // is there a evt_id in the request?
+        // is there an evt_id in the request?
         $EVT_ID                                          = $this->request->getRequestParam('EVT_ID', 0, 'int');
         $EVT_ID                                          = $this->request->getRequestParam('post', $EVT_ID, 'int');
         $TKT_ID                                          = $this->request->getRequestParam('TKT_ID', 0, 'int');
@@ -559,20 +559,27 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                     $new_ticket = $cloned_tickets[ $orig_ticket->ID() ];
                 } else {
                     $new_ticket = clone $orig_ticket;
-                    // get relations on the $orig_ticket that we need to setup.
+                    // get relations on the $orig_ticket that we need to set up.
                     $orig_prices = $orig_ticket->prices();
                     $new_ticket->set('TKT_ID', 0);
                     $new_ticket->set('TKT_sold', 0);
                     $new_ticket->set('TKT_reserved', 0);
-                    $new_ticket->save(); // make sure new ticket has ID.
+                    // make sure new ticket has ID.
+                    $new_ticket->save();
                     // price relations on new ticket need to be setup.
                     foreach ($orig_prices as $orig_price) {
+                        // don't clone default prices, just add a relation
+                        if ($orig_price->is_default()) {
+                            $new_ticket->_add_relation_to($orig_price, 'Price');
+                            $new_ticket->save();
+                            continue;
+                        }
                         $new_price = clone $orig_price;
                         $new_price->set('PRC_ID', 0);
                         $new_price->save();
                         $new_ticket->_add_relation_to($new_price, 'Price');
-                        $new_ticket->save();
                     }
+                    $new_ticket->save();
 
                     do_action(
                         'AHEE__Extend_Events_Admin_Page___duplicate_event__duplicate_ticket__after',
@@ -583,14 +590,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                         $orig_dtt,
                         $new_dtt
                     );
+                    $cloned_tickets[ $orig_ticket->ID() ] = $new_ticket;
                 }
                 // k now we can add the new ticket as a relation to the new datetime
-                // and make sure its added to our cached $cloned_tickets array
+                // and make sure it's added to our cached $cloned_tickets array
                 // for use with later datetimes that have the same ticket.
                 $new_dtt->_add_relation_to($new_ticket, 'Ticket');
-                $new_dtt->save();
-                $cloned_tickets[ $orig_ticket->ID() ] = $new_ticket;
             }
+            $new_dtt->save();
         }
         // clone taxonomy information
         $taxonomies_to_clone_with = apply_filters(

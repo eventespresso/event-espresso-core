@@ -6,6 +6,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.12]
+
+#### Added
+ - [Add Yesterday View to Registrations Admin List Table (#971)](https://github.com/eventespresso/cafe/pull/971)
+
+#### Fixed
+ - [Fix Admin UI Styles (#902)](https://github.com/eventespresso/cafe/pull/902)
+ - [Fix Transaction Admin Payment Currency Formatting (#931)](https://github.com/eventespresso/cafe/pull/931)
+ - [Don't Duplicate Default Prices When Duplicating Event (#932)](https://github.com/eventespresso/cafe/pull/932)
+ - [Fix or Suppress PHP 8.2 Warnings (#936)](https://github.com/eventespresso/cafe/pull/936)
+ - [Add Class Loader for EE_Transaction_Processor (#950)](https://github.com/eventespresso/cafe/pull/950)
+ - [Fix Registrations Report CSV Question Order (#946)](https://github.com/eventespresso/cafe/pull/946)
+ - [Add Styes for Multi-Select Inputs (#943)](https://github.com/eventespresso/cafe/pull/943)
+ - [Fix Promotions Tax Line Items (#851)](https://github.com/eventespresso/cafe/pull/851)
+ - [Fix PHP 8.2 Warnings III (#968)](https://github.com/eventespresso/cafe/pull/968)
+ - [Relax Onsite Gateway URL Prop Type (#964)](https://github.com/eventespresso/cafe/pull/964)
+
+#### Changed
+ - [BM 5.0.11 changes (#926)](https://github.com/eventespresso/cafe/pull/926)
+ - [Refactor Maintenance Mode (#852)](https://github.com/eventespresso/cafe/pull/852)
+ - [Refactor Cron Jobs (#853)](https://github.com/eventespresso/cafe/pull/853)
+ - [Double Varchar Size for Extra Join Model IDs (#939)](https://github.com/eventespresso/cafe/pull/939)
+ - [Dont Map Meta Caps if Cap is NULL (#938)](https://github.com/eventespresso/cafe/pull/938)
+ - [Optimize DB Table Indexes (#949)](https://github.com/eventespresso/cafe/pull/949)
+ - [Reduce the number of queries used when multiple datetimes are assigned to a ticket (#955)](https://github.com/eventespresso/cafe/pull/955)
+ - [Add New Feature Flags Admin UI (Barista#1269) (#957)](https://github.com/eventespresso/cafe/pull/957)
+ - [Fix RTE Button Active State Styles (Barista#1242) (#958)](https://github.com/eventespresso/cafe/pull/958)
+ - [Fix Required Ticket Sort Order in EDTR (Barista#1244) (#959)](https://github.com/eventespresso/cafe/pull/959)
+ - [Fix or Suppress PHP 8.2 Warnings Part II (#947)](https://github.com/eventespresso/cafe/pull/947)
+ - [Add credit card parameter for E2E tests for PayPal Commerce (Barista#1273) (#961)](https://github.com/eventespresso/cafe/pull/961)
+ - [More query optimizations (#962)](https://github.com/eventespresso/cafe/pull/962)
+ - [Increase Query Limit to 250 (Barista#1274) (#972)](https://github.com/eventespresso/cafe/pull/972)
+ - [Undo Changes Made to Cron Jobs in #853 (#967)](https://github.com/eventespresso/cafe/pull/967)
+ - [Increase GQL Query Limit to 250 (#969)](https://github.com/eventespresso/cafe/pull/969)
+
+
+
 ### [5.0.11]
 
 #### Added

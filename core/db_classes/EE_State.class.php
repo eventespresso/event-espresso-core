@@ -73,7 +73,7 @@ class EE_State extends EE_Base_Class
      */
     public function country()
     {
-        return $this->get_first_related('Country');
+        return EEM_Country::instance()->get_one_by_ID($this->country_iso());
     }
 
 

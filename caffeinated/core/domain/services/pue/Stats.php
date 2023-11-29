@@ -6,6 +6,7 @@ use Closure;
 use EE_Maintenance_Mode;
 use EEH_Template;
 use EEH_URL;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -90,8 +91,7 @@ class Stats
      */
     private function canDisplayNotices(): bool
     {
-        return ! $this->config->hasNotifiedForUxip()
-               && $this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance;
+        return MaintenanceStatus::isNotFullSite() && ! $this->config->hasNotifiedForUxip();
     }
 
 
@@ -211,8 +211,8 @@ class Stats
      */
     private function sendStats(): bool
     {
-        return $this->config->isOptedInForUxip()
-               && $this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance
+        return MaintenanceStatus::isNotFullSite()
+               && $this->config->isOptedInForUxip()
                && $this->statSendTimestampExpired();
     }
 

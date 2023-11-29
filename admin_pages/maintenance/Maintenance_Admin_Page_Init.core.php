@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 
 /**
  * Event Espresso
@@ -17,21 +18,15 @@ use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
  */
 class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init
 {
-    /**
-     * @var int
-     */
-    protected $m_mode_level;
+    protected int $m_mode_level;
 
-    /**
-     * @var bool
-     */
-    protected $is_full_m_mode;
+    protected bool $is_full_m_mode;
 
 
     public function __construct()
     {
         $this->m_mode_level = EE_Maintenance_Mode::instance()->level();
-        $this->is_full_m_mode = $this->m_mode_level /*=== EE_Maintenance_Mode::level_2_complete_maintenance*/;
+        $this->is_full_m_mode = MaintenanceStatus::isNotDisabled();
         // define some page related constants
         if (! defined('EE_MAINTENANCE_PG_SLUG')) {
             define('EE_MAINTENANCE_LABEL', esc_html__('Maintenance', 'event_espresso'));
@@ -82,8 +77,8 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init
                 EE_Admin_Page::add_query_args_and_nonce([], EE_MAINTENANCE_ADMIN_URL)
             );
             switch ($this->m_mode_level) {
-                case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
-                    $notice = '<div class="update-nag ee-update-nag">';
+                case EE_Maintenance_Mode::STATUS_PUBLIC_ONLY:
+                    $notice = '<div class="notice ee-nag-notice ee-status-outline ee-status-outline--warning ee-status-bg--warning">';
                     $notice .= sprintf(
                         esc_html__(
                             "Event Espresso is in Frontend-Only MAINTENANCE MODE. This means the front-end (ie, non-wp-admin pages) is disabled for ALL users except site admins. Visit the %s Maintenance Page %s to disable maintenance mode.",
@@ -94,7 +89,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init
                     );
                     $notice .= '</div>';
                     break;
-                case EE_Maintenance_Mode::level_2_complete_maintenance:
+                case EE_Maintenance_Mode::STATUS_FULL_SITE:
                     $notice = '<div class="error"><p>';
                     $notice .= sprintf(
                         esc_html__(

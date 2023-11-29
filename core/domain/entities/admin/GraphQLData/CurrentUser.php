@@ -17,12 +17,12 @@ class CurrentUser extends GraphQLData
      * @return array|null
      * @since 5.0.0.p
      */
-    public function getData(array $where_params = [])
+    public function getData(array $where_params = []): ?array
     {
         $field_key = 'viewer';
         $query = <<<QUERY
         query GET_CURRENT_USER {
-            {$field_key} {
+            $field_key {
                 id
                 databaseId
                 description

@@ -17,5 +17,5 @@ interface GraphQLDataInterface
      * @return array|null
      * @since 5.0.0.p
      */
-    public function getData(array $where_params = []);
+    public function getData(array $where_params = []): ?array;
 }

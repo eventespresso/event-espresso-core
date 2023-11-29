@@ -17,12 +17,12 @@ class PriceTypes extends GraphQLData
      * @return array|null
      * @since 5.0.0.p
      */
-    public function getData(array $where_params = [])
+    public function getData(array $where_params = []): ?array
     {
         $field_key = lcfirst($this->namespace) . 'PriceTypes';
         $query = <<<QUERY
         query GET_PRICE_TYPES(\$first: Int, \$last: Int ) {
-            {$field_key}(first: \$first, last: \$last) {
+            $field_key(first: \$first, last: \$last) {
                 nodes {
                     id
                     dbId
@@ -44,7 +44,7 @@ QUERY;
         $this->setParams([
             'operation_name' => 'GET_PRICE_TYPES',
             'variables'      => [
-                'first' => 100,
+                'first' => GraphQLData::QUERY_LIMIT,
             ],
             'query'          => $query,
         ]);

@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\handlers\frontend\PublicRoute;
+use EventEspresso\core\domain\services\database\DbStatus;
 
 /**
  * Class PersonalDataRequests
@@ -23,7 +24,7 @@ class PersonalDataRequests extends PublicRoute
      */
     public function matchesCurrentRequest(): bool
     {
-        return ($this->request->isAdmin() || $this->request->isAjax()) && $this->maintenance_mode->models_can_query();
+        return ($this->request->isAdmin() || $this->request->isAjax()) && DbStatus::isOnline();
     }
 
 

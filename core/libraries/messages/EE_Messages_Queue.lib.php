@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\exceptions\SendMessageException;
 
 /**
@@ -360,7 +361,7 @@ class EE_Messages_Queue
      */
     public function is_locked($type = EE_Messages_Queue::action_generating)
     {
-        if (! EE_Maintenance_Mode::instance()->models_can_query()) {
+        if (DbStatus::isOffline()) {
             return true;
         }
         $lock = (int) get_option($this->_get_lock_key($type), 0);
@@ -425,7 +426,7 @@ class EE_Messages_Queue
      */
     protected function set_rate_limit($batch_completed)
     {
-        // first get the most up to date rate limit (in case its expired and reset)
+        // first get the most up-to-date rate limit (in case its expired and reset)
         $rate_limit = $this->get_rate_limit();
         $expiry     = $this->get_rate_limit(true);
         $new_limit  = $rate_limit - $batch_completed;

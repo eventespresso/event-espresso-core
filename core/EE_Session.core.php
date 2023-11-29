@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\domain\services\session\SessionIdentifierInterface;
 use EventEspresso\core\domain\values\session\SessionLifespan;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -309,7 +310,7 @@ class EE_Session implements SessionIdentifierInterface
     public function open_session()
     {
         // Check for an existing session and retrieve it from the database, unless the system is in maintenance level 2.
-        if (EE_Maintenance_Mode::instance()->models_can_query() && ! $this->_espresso_session()) {
+        if (DbStatus::isOnline() && ! $this->_espresso_session()) {
             // or just start a new one
             $this->_create_espresso_session();
         }

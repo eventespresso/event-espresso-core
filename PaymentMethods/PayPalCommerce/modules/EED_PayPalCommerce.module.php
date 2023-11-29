@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\services\request\DataType;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\orders\CaptureOrder;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\orders\CreateOrder;
@@ -57,7 +58,7 @@ class EED_PayPalCommerce extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        if (EE_Maintenance_Mode::instance()->models_can_query()) {
+        if (DbStatus::isOnline()) {
             // Create an Order.
             add_action('wp_ajax_eeaPpCreateOrder', [__CLASS__, 'createOrderRequest']);
             add_action('wp_ajax_nopriv_eeaPpCreateOrder', [__CLASS__, 'createOrderRequest']);

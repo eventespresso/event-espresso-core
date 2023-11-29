@@ -586,7 +586,7 @@ class EE_Registration_Processor extends EE_Processor_Base
         );
         $diff                = $transaction->total() - $reg_final_price_sum;
         // ok then, just grab one of the registrations
-        if ($diff !== (float) 0) {
+        if ($diff !== 0.0) {
             $a_reg = EEM_Registration::instance()->get_one(
                 [
                     [

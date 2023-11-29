@@ -152,6 +152,10 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
             $model_obj = $this->get_this_model()->ensure_is_obj($model_object_or_id);
         }
         $ID_value_on_other_model = $model_obj->get($fk_field_obj->get_name());
+        // if PK ID is empty, there is nothing to match to
+        if(empty($ID_value_on_other_model)) {
+            return [];
+        }
         // get all where their PK matches that value
         $query_params[0][ $this->get_other_model()->get_primary_key_field()->get_name() ] = $ID_value_on_other_model;
         $query_params                                                                     =

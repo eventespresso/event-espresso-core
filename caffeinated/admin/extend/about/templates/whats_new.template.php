@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
+
 $is_major_release = true;
 $type             = $is_major_release ? 'major' : 'minor';
 $heading          = $is_major_release
@@ -34,7 +36,7 @@ $version = implode('.', $version);
 <div class="changelog">
     <?php
     // maintenance mode on?
-    if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance) {
+    if (MaintenanceStatus::isFullSite()) {
         ?>
         <div class="ee-attention">
             <h2 class="ee-maintenance-mode-callout">

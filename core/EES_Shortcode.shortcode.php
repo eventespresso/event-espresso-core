@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\CurrentPage;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
@@ -94,7 +95,7 @@ abstract class EES_Shortcode extends EE_Base
      */
     final public static function fallback_shortcode_processor($attributes = null)
     {
-        if (EE_Maintenance_Mode::disable_frontend_for_maintenance()) {
+        if (! is_admin() && MaintenanceStatus::isNotDisabled()) {
             return null;
         }
         // what shortcode was actually parsed ?

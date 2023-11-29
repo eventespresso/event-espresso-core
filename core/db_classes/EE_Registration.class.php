@@ -414,11 +414,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function ticket($include_archived = true)
     {
-        $query_params = [];
-        if ($include_archived) {
-            $query_params['default_where_conditions'] = 'none';
-        }
-        return $this->get_first_related('Ticket', $query_params);
+        return EEM_Ticket::instance()->get_one_by_ID($this->ticket_ID());
     }
 
 
@@ -435,7 +431,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function event(): EE_Event
     {
-        $event = $this->get_first_related('Event');
+        $event = $this->event_obj();
         if (! $event instanceof EE_Event) {
             throw new EntityNotFoundException('Event ID', $this->event_ID());
         }
@@ -876,7 +872,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function attendee()
     {
-        return $this->get_first_related('Attendee');
+        return EEM_Attendee::instance()->get_one_by_ID($this->attendee_ID());
     }
 
 
@@ -894,7 +890,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function attendeeName($apply_html_entities = false)
     {
-        $attendee = $this->get_first_related('Attendee');
+        $attendee = $this->attendee();
         if ($attendee instanceof EE_Attendee) {
             $attendee_name = $attendee->full_name($apply_html_entities);
         } else {
@@ -939,7 +935,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function event_obj()
     {
-        return $this->get_first_related('Event');
+        return EEM_Event::instance()->get_one_by_ID($this->event_ID());
     }
 
 
@@ -1931,7 +1927,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function get_checkin_msg(?int $DTT_ID, bool $error = false): string
     {
         // let's get the attendee first so we can include the name of the attendee
-        $attendee = $this->get_first_related('Attendee');
+        $attendee = $this->attendee();
         if ($attendee instanceof EE_Attendee) {
             if ($error) {
                 return sprintf(
@@ -1967,7 +1963,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function transaction(): EE_Transaction
     {
-        $transaction = $this->get_first_related('Transaction');
+        $transaction = EEM_Transaction::instance()->get_one_by_ID($this->transaction_ID());
         if (! $transaction instanceof \EE_Transaction) {
             throw new EntityNotFoundException('Transaction ID', $this->transaction_ID());
         }
@@ -2485,30 +2481,21 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function applyPayment(EE_Payment $payment, ?float $amount = null): float
     {
-        // echo "\n\n";
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 3);
-        // \EEH_Debug_Tools::printr($this->ID(), 'REG ID', __FILE__, __LINE__);
         $payment_amount = $amount ?? $payment->amount();
         // ensure $payment_amount is NOT negative
         $payment_amount = (float) abs($payment_amount);
-        // \EEH_Debug_Tools::printr($payment_amount, 'incoming $payment_amount', __FILE__, __LINE__);
-        // \EEH_Debug_Tools::printr($this->final_price(), 'reg final price', __FILE__, __LINE__);
-        // \EEH_Debug_Tools::printr($this->paid(), 'reg paid to date', __FILE__, __LINE__);
         $payment_amount = $payment->is_a_refund()
             ? $this->processRefund($payment_amount)
             : $this->processPayment($payment_amount);
-        // \EEH_Debug_Tools::printr($payment_amount, 'applied payment_amount', __FILE__, __LINE__);
         if ($payment_amount) {
             $reg_payment = EEM_Registration_Payment::instance()->get_one(
                 [['REG_ID' => $this->ID(), 'PAY_ID' => $payment->ID()]]
             );
             // if existing registration payment exists
             if ($reg_payment instanceof EE_Registration_Payment) {
-                // echo "\nUPDATE EXISTING REG PAYMENT";
                 // then update that record
                 $reg_payment->set_amount($payment_amount);
             } else {
-                // echo "\nCREATE NEW REG PAYMENT";
                 // or add new relation between registration and payment and set amount
                 $reg_payment = EE_Registration_Payment::new_instance(
                     [
@@ -2517,10 +2504,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                         'RPY_amount' => $payment_amount,
                     ]
                 );
-                // $this->_add_relation_to($payment, 'Payment', ['RPY_amount' => $payment_amount]);
             }
             $reg_payment->save();
-            // \EEH_Debug_Tools::printr($reg_payment->ID(), '$reg payment ID', __FILE__, __LINE__);
         }
         return $payment_amount;
     }
@@ -2532,18 +2517,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     private function processPayment(float $payment_amount): float
     {
-        // echo "\n";
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 3);
         $paid  = $this->paid();
         $owing = $this->final_price() - $paid;
-        // \EEH_Debug_Tools::printr($owing, '$owing', __FILE__, __LINE__);
         if ($owing <= 0) {
             return 0.0;
         }
         // don't allow payment amount to exceed the incoming amount, OR the amount owing
         $payment_amount = min($payment_amount, $owing);
         $paid           = $paid + $payment_amount;
-        // \EEH_Debug_Tools::printr($paid, 'NEW REG PAID AMOUNT', __FILE__, __LINE__);
         // calculate and set new REG_paid
         $this->set_paid($paid);
         // make it stick
@@ -2558,8 +2539,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     private function processRefund(float $payment_amount): float
     {
-        // echo "\n";
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 3);
         $paid = $this->paid();
         if ($paid <= 0) {
             return 0.0;
@@ -2568,7 +2547,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         $payment_amount = min($payment_amount, $paid);
         // calculate and set new REG_paid
         $paid = $paid - $payment_amount;
-        // \EEH_Debug_Tools::printr($paid, 'NEW REG PAID AMOUNT', __FILE__, __LINE__);
         $this->set_paid($paid);
         // make it stick
         $this->save();

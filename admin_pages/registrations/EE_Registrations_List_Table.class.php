@@ -5,6 +5,7 @@ use EventEspresso\core\domain\services\capabilities\user_caps\RegistrationsListT
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * Registrations Table class
@@ -18,17 +19,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     /**
      * @var Registrations_Admin_Page
      */
-    protected $_admin_page;
+    protected EE_Admin_Page $_admin_page;
 
-    /**
-     * @var RegistrationsListTableUserCapabilities
-     */
-    protected $caps_handler;
+    protected RegistrationsListTableUserCapabilities $caps_handler;
 
-    /**
-     * @var array
-     */
-    private $_status;
+    private array $_status;
 
     /**
      * An array of transaction details for the related transaction to the registration being processed.
@@ -36,7 +31,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      *
      * @var array
      */
-    protected $_transaction_details = [];
+    protected array $_transaction_details = [];
 
     /**
      * An array of event details for the related event to the registration being processed.
@@ -44,7 +39,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      *
      * @var array
      */
-    protected $_event_details = [];
+    protected array $_event_details = [];
+
+    private int $EVT_ID = 0;
 
 
     /**
@@ -53,15 +50,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function __construct(Registrations_Admin_Page $admin_page)
     {
         $this->caps_handler = new RegistrationsListTableUserCapabilities(EE_Registry::instance()->CAP);
-        $req_data = $admin_page->get_request_data();
-        if (! empty($req_data['event_id'])) {
+        parent::__construct($admin_page);
+        $this->EVT_ID = $this->request->getRequestParam('event_id', 0, DataType::INTEGER);
+        $req_data     = $admin_page->get_request_data();
+        if ($this->EVT_ID) {
             $extra_query_args = [];
             foreach ($admin_page->get_views() as $view_details) {
-                $extra_query_args[ $view_details['slug'] ] = ['event_id' => $req_data['event_id']];
+                $extra_query_args[ $view_details['slug'] ] = ['event_id' => $this->EVT_ID];
             }
             $this->_views = $admin_page->get_list_table_view_RLs($extra_query_args);
         }
-        parent::__construct($admin_page);
         $this->_status = $this->_admin_page->get_registration_status_array();
     }
 
@@ -69,6 +67,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     /**
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _setup_data()
     {
@@ -82,8 +81,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected function _set_properties()
     {
-        $return_url          = $this->getReturnUrl();
-        $req_data            = $this->_admin_page->get_request_data();
+        $return_url = $this->getReturnUrl();
+        $req_data   = $this->_admin_page->get_request_data();
 
         $this->_wp_list_args = [
             'singular' => esc_html__('registration', 'event_espresso'),
@@ -92,14 +91,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             'screen'   => $this->_admin_page->get_current_screen()->id,
         ];
 
-        $EVT_ID = isset($req_data['event_id']) ? (int) $req_data['event_id'] : 0;
-
         $DTT_ID = $req_data['DTT_ID'] ?? 0;
         $DTT_ID = $req_data['datetime_id'] ?? $DTT_ID;
         $DTT_ID = (int) $DTT_ID;
 
-        if ($EVT_ID) {
-            $this->_columns        = [
+        if ($this->EVT_ID) {
+            $this->_columns = [
                 'cb'               => '<input type="checkbox" />', // Render a checkbox instead of text
                 'id'               => esc_html__('ID', 'event_espresso'),
                 'ATT_fname'        => esc_html__('Name', 'event_espresso'),
@@ -112,7 +109,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'actions'          => $this->actionsColumnHeader(),
             ];
         } else {
-            $this->_columns        = [
+            $this->_columns = [
                 'cb'               => '<input type="checkbox" />', // Render a checkbox instead of text
                 'id'               => esc_html__('ID', 'event_espresso'),
                 'ATT_fname'        => esc_html__('Name', 'event_espresso'),
@@ -125,7 +122,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             ];
         }
 
-        $csv_report = RegistrationsCsvReportParams::getRequestParams($return_url, $req_data, $EVT_ID, $DTT_ID);
+        $csv_report = RegistrationsCsvReportParams::getRequestParams($return_url, $req_data, $this->EVT_ID, $DTT_ID);
         if (! empty($csv_report)) {
             $this->_bottom_buttons['csv_reg_report'] = $csv_report;
         }
@@ -182,16 +179,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected function _set_related_details(EE_Registration $registration)
     {
-        $transaction                = $registration->get_first_related('Transaction');
-        $status                     = $transaction instanceof EE_Transaction
-            ? $transaction->status_ID()
-            : EEM_Transaction::failed_status_code;
+        $transaction                = $registration->transaction();
+        $status                     = $transaction->status_ID();
         $this->_transaction_details = [
             'transaction' => $transaction,
             'status'      => $status,
-            'id'          => $transaction instanceof EE_Transaction
-                ? $transaction->ID()
-                : 0,
+            'id'          => $transaction->ID(),
             'title_attr'  => sprintf(
                 esc_html__('View Transaction Details (%s)', 'event_espresso'),
                 EEH_Template::pretty_status($status, false, 'sentence')
@@ -229,9 +222,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $filters = [];
         // todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as
         // methods.
-        $cur_date     = $this->_req_data['month_range'] ?? '';
-        $cur_category = $this->_req_data['EVT_CAT'] ?? -1;
-        $reg_status   = $this->_req_data['_reg_status'] ?? '';
+        $cur_date     = $this->request->getRequestParam('month_range', '');
+        $cur_category = $this->request->getRequestParam('EVT_CAT', -1, DataType::INTEGER);
+        $reg_status   = $this->request->getRequestParam('_reg_status', '');
         $filters[]    = EEH_Form_Fields::generate_registration_months_dropdown($cur_date, $reg_status, $cur_category);
         $filters[]    = EEH_Form_Fields::generate_event_category_dropdown($cur_category);
         $status       = [];
@@ -243,14 +236,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             $filters[] = EEH_Form_Fields::select_input(
                 '_reg_status',
                 $status,
-                isset($this->_req_data['_reg_status'])
-                    ? strtoupper(sanitize_key($this->_req_data['_reg_status']))
-                    : ''
+                $reg_status ? strtoupper($reg_status) : ''
             );
         }
         foreach (['event_id', 'datetime_id', 'ticket_id'] as $filter_key) {
-            if (isset($this->_req_data[ $filter_key ])) {
-                $filters[] = EEH_Form_Fields::hidden_input($filter_key, $this->_req_data[ $filter_key ], 'reg_' . $filter_key);
+            if ($this->request->requestParamIsSet($filter_key)) {
+                $filters[] = EEH_Form_Fields::hidden_input(
+                    $filter_key,
+                    $this->request->getRequestParam($filter_key),
+                    'reg_' . $filter_key
+                );
             }
         }
         return $filters;
@@ -267,9 +262,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected function _add_view_counts()
     {
-        $this->_views['all']['count']   = $this->_total_registrations();
-        $this->_views['month']['count'] = $this->_total_registrations_this_month();
-        $this->_views['today']['count'] = $this->_total_registrations_today();
+        $this->_views['all']['count']       = $this->_total_registrations();
+        $this->_views['today']['count']     = $this->_total_registrations_today();
+        $this->_views['yesterday']['count'] = $this->totalRegistrationsYesterday();
+        $this->_views['month']['count']     = $this->_total_registrations_this_month();
         if ($this->caps_handler->userCanTrashRegistrations()) {
             $this->_views['incomplete']['count'] = $this->_total_registrations('incomplete');
             $this->_views['trash']['count']      = $this->_total_registrations('trash');
@@ -286,11 +282,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     protected function _total_registrations(string $view = ''): int
     {
         $_where = [];
-        $EVT_ID = isset($this->_req_data['event_id'])
-            ? absint($this->_req_data['event_id'])
-            : false;
-        if ($EVT_ID) {
-            $_where['EVT_ID'] = $EVT_ID;
+        if ($this->EVT_ID) {
+            $_where['EVT_ID'] = $this->EVT_ID;
         }
         switch ($view) {
             case 'trash':
@@ -312,37 +305,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected function _total_registrations_this_month(): int
     {
-        $EVT_ID          = isset($this->_req_data['event_id'])
-            ? absint($this->_req_data['event_id'])
-            : false;
-        $_where          = $EVT_ID
-            ? ['EVT_ID' => $EVT_ID]
-            : [];
-        $this_year_r     = date('Y', current_time('timestamp'));
-        $time_start      = ' 00:00:00';
-        $time_end        = ' 23:59:59';
-        $this_month_r    = date('m', current_time('timestamp'));
-        $days_this_month = date('t', current_time('timestamp'));
-        // setup date query.
-        $beginning_string   = EEM_Registration::instance()->convert_datetime_for_query(
-            'REG_date',
-            $this_year_r . '-' . $this_month_r . '-01' . $time_start,
-            'Y-m-d H:i:s'
-        );
-        $end_string         = EEM_Registration::instance()->convert_datetime_for_query(
-            'REG_date',
-            $this_year_r . '-' . $this_month_r . '-' . $days_this_month . $time_end,
-            'Y-m-d H:i:s'
-        );
-        $_where['REG_date'] = [
-            'BETWEEN',
-            [
-                $beginning_string,
-                $end_string,
-            ],
-        ];
-        $_where['STS_ID']   = ['!=', EEM_Registration::status_id_incomplete];
-        return EEM_Registration::instance()->count([$_where]);
+        $current_time   = current_time('timestamp');
+        $year_and_month = date('Y-m', $current_time);
+        $days_in_month  = date('t', $current_time);
+
+        $start_date = "$year_and_month-01";
+        $end_date   = "$year_and_month-$days_in_month";
+
+        return $this->totalRegistrationsForDateRange($start_date, $end_date);
     }
 
 
@@ -353,32 +323,54 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected function _total_registrations_today(): int
     {
-        $EVT_ID             = isset($this->_req_data['event_id'])
-            ? absint($this->_req_data['event_id'])
-            : false;
-        $_where             = $EVT_ID
-            ? ['EVT_ID' => $EVT_ID]
-            : [];
-        $current_date       = date('Y-m-d', current_time('timestamp'));
-        $time_start         = ' 00:00:00';
-        $time_end           = ' 23:59:59';
-        $_where['REG_date'] = [
-            'BETWEEN',
-            [
-                EEM_Registration::instance()->convert_datetime_for_query(
-                    'REG_date',
-                    $current_date . $time_start,
-                    'Y-m-d H:i:s'
-                ),
-                EEM_Registration::instance()->convert_datetime_for_query(
-                    'REG_date',
-                    $current_date . $time_end,
-                    'Y-m-d H:i:s'
-                ),
+        $today = date('Y-m-d', current_time('timestamp'));
+        return $this->totalRegistrationsForDateRange($today, $today);
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function totalRegistrationsYesterday(): int
+    {
+        $yesterday    = date('Y-m-d', current_time('timestamp') - DAY_IN_SECONDS);
+        return $this->totalRegistrationsForDateRange($yesterday, $yesterday);
+    }
+
+
+    /**
+     * @param string $start_date earlier date string in format 'Y-m-d'
+     * @param string $end_date   later date string in format 'Y-m-d'
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function totalRegistrationsForDateRange(string $start_date, string $end_date): int
+    {
+        $where = [
+            'REG_date' => [
+                'BETWEEN',
+                [
+                    EEM_Registration::instance()->convert_datetime_for_query(
+                        'REG_date',
+                        "$start_date 00:00:00",
+                        'Y-m-d H:i:s'
+                    ),
+                    EEM_Registration::instance()->convert_datetime_for_query(
+                        'REG_date',
+                        "$end_date  23:59:59",
+                        'Y-m-d H:i:s'
+                    ),
+                ],
             ],
+            'STS_ID'   => ['!=', EEM_Registration::status_id_incomplete],
         ];
-        $_where['STS_ID']   = ['!=', EEM_Registration::status_id_incomplete];
-        return EEM_Registration::instance()->count([$_where]);
+        if ($this->EVT_ID) {
+            $where['EVT_ID'] = $this->EVT_ID;
+        }
+        return EEM_Registration::instance()->count([$where]);
     }
 
 
@@ -395,10 +387,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     {
         /** checkbox/lock **/
         $REG_ID        = $item->ID();
-        $transaction   = $item->get_first_related('Transaction');
-        $payment_count = $transaction instanceof EE_Transaction
-            ? $transaction->count_related('Payment')
-            : 0;
+        $transaction   = $item->transaction();
+        $payment_count = $transaction->count_related('Payment');
 
         $content = '<input type="checkbox" name="_REG_ID[]" value="' . $REG_ID . '" />';
         $content .= $payment_count > 0 || ! $this->caps_handler->userCanEditRegistration($item)
@@ -447,7 +437,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column_ATT_fname(EE_Registration $registration, bool $prep_content = true): string
     {
-
         $status         = esc_attr($registration->status_ID());
         $pretty_status  = EEH_Template::pretty_status($status, false, 'sentence');
         $prime_reg_star = $registration->count() === 1
@@ -457,10 +446,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $group_count = '
             <span class="reg-count-group-size" >
                 ' . sprintf(
-            esc_html__('(%1$s / %2$s)', 'event_espresso'),
-            $registration->count(),
-            $registration->group_size()
-        ) . '
+                esc_html__('(%1$s / %2$s)', 'event_espresso'),
+                $registration->count(),
+                $registration->group_size()
+            ) . '
             </span >';
 
         $content = '
@@ -469,20 +458,20 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                   class="ee-status-dot ee-status-bg--' . $status . ' ee-aria-tooltip"
             ></span>
             ' . $this->viewRegistrationLink($registration, $status)
-                   . $prime_reg_star
-                   . $group_count . '
+            . $prime_reg_star
+            . $group_count . '
             <span class="spacer"></span>
             <span>
                 ' . sprintf(
-                       esc_html__('Reg Code: %s', 'event_espresso'),
-                       $registration->get('REG_code')
-                   ) . '
+                esc_html__('Reg Code: %s', 'event_espresso'),
+                $registration->get('REG_code')
+            ) . '
             </span>
         </div>';
 
         $url_params = ['_REG_ID' => $registration->ID()];
-        if (isset($this->_req_data['event_id'])) {
-            $url_params['event_id'] = $registration->event_ID();
+        if ($this->EVT_ID) {
+            $url_params['event_id'] = $this->EVT_ID;
         }
         // trash/restore/delete actions
         $actions = $this->trashRegistrationLink($registration, $url_params);
@@ -508,12 +497,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         // Build row actions
         $content = $this->caps_handler->userCanViewTransaction()
             ? '<a class="ee-aria-tooltip ee-status-color--' . $this->_transaction_details['status'] . '" href="'
-              . $this->viewTransactionUrl()
-              . '" aria-label="'
-              . esc_attr($this->_transaction_details['title_attr'])
-              . '">'
-              . $registration->get_i18n_datetime('REG_date', 'M jS Y g:i a')
-              . '</a>'
+            . $this->viewTransactionUrl()
+            . '" aria-label="'
+            . esc_attr($this->_transaction_details['title_attr'])
+            . '">'
+            . $registration->get_i18n_datetime('REG_date', 'M jS Y g:i a')
+            . '</a>'
             : $registration->get_i18n_datetime('REG_date');
 
         return $prep_content ? $this->columnContent('_REG_date', $content) : $content;
@@ -532,13 +521,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function column_event_name(EE_Registration $registration): string
     {
         $this->_set_related_details($registration);
-        $EVT_ID     = $registration->event_ID();
-        $event_name = $registration->event_name();
-        $event_name = $event_name ?: esc_html__("No Associated Event", 'event_espresso');
-        $event_name = wp_trim_words($event_name, 30, '...');
-        $edit_event = $this->editEventLink($EVT_ID, $event_name);
+        $EVT_ID                  = $registration->event_ID();
+        $event_name              = $registration->event_name();
+        $event_name              = $event_name ?: esc_html__("No Associated Event", 'event_espresso');
+        $event_name              = wp_trim_words($event_name, 30, '...');
+        $edit_event              = $this->editEventLink($EVT_ID, $event_name);
         $actions['event_filter'] = $this->eventFilterLink($EVT_ID, $event_name);
-        $content = sprintf('%1$s %2$s', $edit_event, $this->row_actions($actions));
+        $content                 = sprintf('%1$s %2$s', $edit_event, $this->row_actions($actions));
 
         return $this->columnContent('event_name', $content);
     }
@@ -620,11 +609,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     /**
      * @param EE_Registration $registration
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column__REG_count(EE_Registration $registration): string
     {
-        $content =
-            sprintf(esc_html__('%1$s / %2$s', 'event_espresso'), $registration->count(), $registration->group_size());
+        $content = sprintf(
+            esc_html__('%1$s / %2$s', 'event_espresso'),
+            $registration->count(),
+            $registration->group_size()
+        );
         return $this->columnContent('_REG_count', $content);
     }
 
@@ -637,10 +631,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column_PRC_amount(EE_Registration $registration): string
     {
-        $ticket   = $registration->ticket();
-        $req_data = $this->_admin_page->get_request_data();
+        $ticket = $registration->ticket();
 
-        $content = isset($req_data['event_id']) && $ticket instanceof EE_Ticket
+        $content = $this->EVT_ID && $ticket instanceof EE_Ticket
             ? '<div class="TKT_name">' . $ticket->name() . '</div>'
             : '';
 
@@ -664,20 +657,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column__REG_final_price(EE_Registration $registration): string
     {
-        $ticket   = $registration->ticket();
-        $req_data = $this->_admin_page->get_request_data();
-        $content  = isset($req_data['event_id']) || ! $ticket instanceof EE_Ticket
+        $ticket  = $registration->ticket();
+        $content = $this->EVT_ID || ! $ticket instanceof EE_Ticket
             ? ''
-            : '<span class="TKT_name ee-status-color--'
-              . $ticket->ticket_status()
-              . '">'
-              . $ticket->name()
-              . '</span> ';
+            : '<span class="TKT_name ee-status-color--' . $ticket->ticket_status() . '">' . $ticket->name() . '</span>';
 
-        $content .= '
-            <span class="reg-overview-paid-event-spn">
-                ' . $registration->pretty_final_price() . '
-            </span>';
+        $content .= '<span class="reg-overview-paid-event-spn">' . $registration->pretty_final_price() . '</span>';
         return $this->columnContent('_REG_final_price', $content, 'end');
     }
 
@@ -686,6 +671,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @param EE_Registration $registration
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column__REG_paid(EE_Registration $registration): string
     {
@@ -701,11 +687,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             </span>';
         if ($registration->paid() > 0) {
             $content .= '<span class="ee-status-text-small">'
-                        . sprintf(
-                            esc_html__('...via %s', 'event_espresso'),
-                            $payment_method_name
-                        )
-                        . '</span>';
+                . sprintf(
+                    esc_html__('...via %s', 'event_espresso'),
+                    $payment_method_name
+                )
+                . '</span>';
         }
         return $this->columnContent('_REG_paid', $content, 'end');
     }
@@ -877,7 +863,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
 
     private function editContactAction(EE_Registration $registration, ?EE_Attendee $attendee = null): string
     {
-
         if ($attendee instanceof EE_Attendee && $this->caps_handler->userCanEditContacts()) {
             $edit_link_url = EE_Admin_Page::add_query_args_and_nonce(
                 [
@@ -917,8 +902,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             );
             return '
 			    <a href="' . $resend_reg_link_url . '" aria-label="'
-                                         . esc_attr__('Resend Registration Details', 'event_espresso')
-                                         . '" class="ee-aria-tooltip button button--icon-only">
+                . esc_attr__('Resend Registration Details', 'event_espresso')
+                . '" class="ee-aria-tooltip button button--icon-only">
 			        <span class="dashicons dashicons-email-alt"></span>
 			    </a>';
         }
@@ -930,9 +915,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     {
         return EE_Admin_Page::add_query_args_and_nonce(
             [
-                    'action' => 'view_transaction',
-                    'TXN_ID' => $this->_transaction_details['id'],
-                ],
+                'action' => 'view_transaction',
+                'TXN_ID' => $this->_transaction_details['id'],
+            ],
             TXN_ADMIN_URL
         );
     }
@@ -969,7 +954,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         ) {
             return '
                 <a aria-label="' . esc_attr__('View Transaction Invoice', 'event_espresso')
-                                         . '" target="_blank" href="' . $registration->invoice_url() . '" class="ee-aria-tooltip button button--icon-only">
+                . '" target="_blank" href="' . $registration->invoice_url() . '" class="ee-aria-tooltip button button--icon-only">
                     <span class="dashicons dashicons-media-spreadsheet"></span>
                 </a>';
         }
@@ -1014,7 +999,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         }
 
         // don't delete registrations that have payments applied
-        $transaction   = $registration->get_first_related('Transaction');
+        $transaction   = $registration->transaction();
         $payment_count = $transaction instanceof EE_Transaction
             ? $transaction->count_related('Payment')
             : 0;
@@ -1112,7 +1097,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
 
     private function eventFilterLink(int $EVT_ID, string $event_name): string
     {
-        if (!$EVT_ID) {
+        if (! $EVT_ID) {
             return '';
         }
         $event_filter_url = EE_Admin_Page::add_query_args_and_nonce(['event_id' => $EVT_ID], REG_ADMIN_URL);
@@ -1120,12 +1105,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             <a  class="ee-aria-tooltip ee-event-filter-link"
                 href="' . $event_filter_url . '"
                 aria-label="' . sprintf(
-                    esc_attr__('Filter this list to only show registrations for %s', 'event_espresso'),
-                    $event_name
-                ) . '"
+                esc_attr__('Filter this list to only show registrations for %s', 'event_espresso'),
+                $event_name
+            ) . '"
             >
                 <span class="dashicons dashicons-groups dashicons--small"></span>'
-                . esc_html__('View Registrations', 'event_espresso') . '
+            . esc_html__('View Registrations', 'event_espresso') . '
             </a>';
     }
 }

@@ -1,7 +1,9 @@
 <?php
 
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
+
 // maintenance mode on?
-if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance) {
+if (MaintenanceStatus::isFullSite()) {
     ?>
     <div class="ee-attention">
         <h2 class="ee-maintenance-mode-callout">

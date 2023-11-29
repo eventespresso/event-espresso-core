@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\domain\values\model\CustomSelects;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -1185,6 +1186,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function get_one_by_ID($id)
     {
+        // if no id is passed, just return null
+        if (empty($id)) {
+            return null;
+        }
         if ($this->get_from_entity_map($id)) {
             return $this->get_from_entity_map($id);
         }
@@ -2417,7 +2422,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         // if we're in maintenance mode level 2, DON'T run any queries
         // because level 2 indicates the database needs updating and
         // is probably out of sync with the code
-        if (! EE_Maintenance_Mode::instance()->models_can_query()) {
+        if (DbStatus::isOffline()) {
             throw new RuntimeException(
                 esc_html__(
                     "Event Espresso Level 2 Maintenance mode is active. That means EE can not run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2. Please inform support of this error.",
@@ -2623,7 +2628,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     public function show_db_query_if_previously_requested($sql_query)
     {
         if ($this->_show_next_x_db_queries > 0) {
-            echo esc_html($sql_query);
+            $left = is_admin() ? '12rem' : '2rem';
+            echo "
+            <div class='ee-status-outline ee-status-bg--attention' style='margin: 2rem 2rem 2rem $left;'>
+                " . esc_html($sql_query) . "
+            </div>";
             $this->_show_next_x_db_queries--;
         }
     }
@@ -5628,7 +5637,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             // then check if that alias exists in the incoming data
             // AND that the actual PK the $FK_alias represents matches the $qualified_column (full PK)
             foreach ($this->foreign_key_aliases as $FK_alias => $PK_column) {
-                if ($PK_column === $qualified_column && isset($cols_n_values[ $FK_alias ])) {
+                if ($PK_column === $qualified_column && !empty($cols_n_values[ $FK_alias ])) {
                     $value = $cols_n_values[ $FK_alias ];
                     [$pk_class] = explode('.', $PK_column);
                     $pk_model_name = "EEM_{$pk_class}";

@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -310,7 +311,7 @@ class EE_CPT_Strategy extends EE_Base
                 // is current query for an EE CPT ?
                 if (isset($this->_CPTs[ $post_type ])) {
                     // is EE on or off ?
-                    if (EE_Maintenance_Mode::instance()->level()) {
+                    if (MaintenanceStatus::isNotDisabled()) {
                         // reroute CPT template view to maintenance_mode.template.php
                         if (! has_filter('template_include', array('EE_Maintenance_Mode', 'template_include'))) {
                             add_filter('template_include', array('EE_Maintenance_Mode', 'template_include'), 99999);

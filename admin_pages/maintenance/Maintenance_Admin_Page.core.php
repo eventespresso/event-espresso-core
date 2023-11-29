@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\DbSafeDateTime;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\libraries\batch\JobHandlers\DatetimeOffsetFix;
 
 /**
@@ -211,11 +212,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         // it all depends on if we're in maintenance model level 1 (frontend-only) or
         // level 2 (everything except maintenance page)
         try {
-            // get the current maintenance level and check if
-            // we are removed
-            $mMode_level  = $this->maintenance_mode->level();
-            $placed_in_mm = $this->maintenance_mode->set_maintenance_mode_if_db_old();
-            if ($mMode_level == EE_Maintenance_Mode::level_2_complete_maintenance && ! $placed_in_mm) {
+            // get the current maintenance level and check if we are removed
+            $was_full_site_maintenence_mode = MaintenanceStatus::isFullSite();
+            $no_longer_in_maintenence_mode = ! $this->maintenance_mode->set_maintenance_mode_if_db_old();
+            if ($was_full_site_maintenence_mode && $no_longer_in_maintenence_mode) {
                 // we just took the site out of maintenance mode, so notify the user.
                 // unfortunately this message appears to be echoed on the NEXT page load...
                 // oh well, we should really be checking for this on addon deactivation anyways
@@ -228,12 +228,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 $this->_process_notices(['page' => 'espresso_maintenance_settings']);
             }
             // in case an exception is thrown while trying to handle migrations
-            if ($mMode_level === EE_Maintenance_Mode::level_2_complete_maintenance) {
+            if (MaintenanceStatus::isFullSite()) {
                 $show_maintenance_switch = false;
                 $show_migration_progress = true;
-                if (isset($this->_req_data['continue_migration'])) {
-                    $show_backup_db_text = false;
-                } else {
+                if (! isset($this->_req_data['continue_migration'])) {
                     $show_backup_db_text = true;
                 }
                 $scripts_needing_to_run          =
@@ -270,8 +268,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 && $most_recent_migration->is_broken()
             )
         ) {
-            $this->_template_path                =
-                EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
+            $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
+
             $this->_template_args['support_url'] = 'https://eventespresso.com/support/forums/';
             $this->_template_args['next_url']    = EEH_URL::add_query_args_and_nonce(
                 [
@@ -306,7 +304,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     [
                         'current_db_state' => sprintf(
                             esc_html__("EE%s (%s)", "event_espresso"),
-                            isset($current_db_state[ $plugin_slug ]) ? $current_db_state[ $plugin_slug ] : 3,
+                            $current_db_state[ $plugin_slug ] ?? 3,
                             $plugin_slug
                         ),
                         'next_db_state'    => sprintf(
@@ -317,8 +315,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     ]
                 );
             } else {
-                $this->_template_args['current_db_state'] = null;
-                $this->_template_args['next_db_state']    = null;
+                $this->_template_args['current_db_state'] = '';
+                $this->_template_args['next_db_state']    = '';
             }
             $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
             $this->_template_args = array_merge(
@@ -642,7 +640,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      */
     public function _reset_db($nuke_old_ee4_data = true)
     {
-        $this->maintenance_mode->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
+        $this->maintenance_mode->set_maintenance_level(EE_Maintenance_Mode::STATUS_OFF);
         if ($nuke_old_ee4_data) {
             EEH_Activation::delete_all_espresso_cpt_data();
             EEH_Activation::delete_all_espresso_tables_and_data(false);
@@ -664,7 +662,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      */
     public function _delete_db()
     {
-        $this->maintenance_mode->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
+        $this->maintenance_mode->set_maintenance_level(EE_Maintenance_Mode::STATUS_OFF);
         EEH_Activation::delete_all_espresso_cpt_data();
         EEH_Activation::delete_all_espresso_tables_and_data();
         EEH_Activation::remove_cron_tasks();
@@ -682,12 +680,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      */
     public function _rerun_migration_from_ee3()
     {
-        $this->maintenance_mode->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
+        $this->maintenance_mode->set_maintenance_level(EE_Maintenance_Mode::STATUS_OFF);
         EEH_Activation::delete_all_espresso_cpt_data();
         EEH_Activation::delete_all_espresso_tables_and_data(false);
         // set the db state to something that will require migrations
         update_option(EE_Data_Migration_Manager::current_database_state, '3.1.36.0');
-        $this->maintenance_mode->set_maintenance_level(EE_Maintenance_Mode::level_2_complete_maintenance);
+        $this->maintenance_mode->set_maintenance_level(EE_Maintenance_Mode::STATUS_FULL_SITE);
         $this->_redirect_after_action(
             true,
             esc_html__("Database", 'event_espresso'),

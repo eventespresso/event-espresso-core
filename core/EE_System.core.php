@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -559,7 +560,7 @@ final class EE_System implements ResettableInterface
     {
         $request_type = $this->detect_req_type();
         // only initialize system if we're not in maintenance mode.
-        if ($this->maintenance_mode->level() !== EE_Maintenance_Mode::level_2_complete_maintenance) {
+        if (! MaintenanceStatus::isFullSite()) {
             /** @var EventEspresso\core\domain\services\custom_post_types\RewriteRules $rewrite_rules */
             $rewrite_rules = $this->loader->getShared(
                 'EventEspresso\core\domain\services\custom_post_types\RewriteRules'

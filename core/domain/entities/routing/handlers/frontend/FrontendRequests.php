@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\frontend;
 
 use EE_Dependency_Map;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 
 /**
  * Class FrontendRequests
@@ -25,7 +26,7 @@ class FrontendRequests extends PublicRoute
     public function matchesCurrentRequest(): bool
     {
         return ($this->request->isFrontend() || $this->request->isFrontAjax() || $this->request->isIframe())
-               && ! $this->maintenance_mode->level();
+               && MaintenanceStatus::isDisabled();
     }
 
 

@@ -13,16 +13,23 @@
  */
 class Prices_List_Table extends EE_Admin_List_Table
 {
-    private $_PRT;
+    /**
+     * @var Pricing_Admin_Page
+     */
+    protected EE_Admin_Page $_admin_page;
+
+    protected EEM_Price_Type $_PRT;
 
     /**
-     * Array of price types.
-     *
      * @var EE_Price_Type[]
      */
-    protected $_price_types = [];
+    protected array $_price_types = [];
 
 
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
     public function __construct(EE_Admin_Page $admin_page)
     {
         parent::__construct($admin_page);
@@ -32,11 +39,15 @@ class Prices_List_Table extends EE_Admin_List_Table
     }
 
 
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
     protected function _setup_data()
     {
-        $trashed               = $this->_admin_page->get_view() == 'trashed' ? true : false;
+        $trashed               = $this->_admin_page->get_view() === 'trashed';
         $this->_data           = $this->_admin_page->get_prices_overview_data($this->_per_page, false, $trashed);
-        $this->_all_data_count = $this->_admin_page->get_prices_overview_data($this->_per_page, true, false);
+        $this->_all_data_count = $this->_admin_page->get_prices_overview_data($this->_per_page, true);
         $this->_trashed_count  = $this->_admin_page->get_prices_overview_data($this->_per_page, true, true);
     }
 

@@ -16,16 +16,13 @@ Just because EE is active DOES NOT mean it is safe to run database queries on EE
 
 ```php
 function foobar(){
-    switch ( EE_Maintenance_Mode::instance()->level()){
-        case EE_Maintenance_Mode::level_0_not_in_maintenance:
+    if ( MaintenanceStatus::isDisabled() ) {
         //we're not in maintenance mode at all, run anything
-        break;
-        case EE_Maintenance_model::level_1_frontend_only_maintenance:
+    } else if ( MaintenanceStatus::isPublicOnly() ) {
         //we may want to consider if this is a frontend or backend request
         //if frontend, we probably don't want to do much besides inform the user the site is in maintenance mode and to come back later
         //if in the backend, we probably still want to behave normally
-        break;
-        case EE_Maintenance_mode::level_2_complete_maintenance:
+    } else if ( MaintenanceStatus::isFullSite() ) {
         //we probably shouldn't do anything at all. We should also actually make sure our admin pages aren't even added until we're out of maintenance mode
     }
 }

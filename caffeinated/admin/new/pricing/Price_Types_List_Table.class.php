@@ -16,9 +16,15 @@ class Price_Types_List_Table extends EE_Admin_List_Table
     /**
      * @var Pricing_Admin_Page
      */
-    protected $_admin_page;
+    protected EE_Admin_Page $_admin_page;
+
+    protected EEM_Price_Type $_PRT;
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function __construct($admin_page)
     {
         parent::__construct($admin_page);
@@ -27,6 +33,10 @@ class Price_Types_List_Table extends EE_Admin_List_Table
     }
 
 
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
     protected function _setup_data()
     {
         $trashed               = $this->_admin_page->get_view() == 'trashed';

@@ -43,7 +43,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
         $this->_pretty_name      = esc_html__("Data Update to Event Espresso 5.0.0", "event_espresso");
         $this->_priority         = 10;
         $this->_migration_stages = [
-        		new EE_DMS_5_0_0_Event_Venues()
+            new EE_DMS_5_0_0_Event_Venues(),
         ];
         parent::__construct($table_manager, $table_analysis);
     }
@@ -58,9 +58,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
     public function can_migrate_from_version($version_array): bool
     {
         $version_string = $version_array['Core'];
-        return $version_string
-               && version_compare($version_string, '5.0.0.decaf', '<')
-               && version_compare($version_string, '4.10.0.decaf', '>=');
+        return $version_string &&
+               version_compare($version_string, '5.0.0.decaf', '<') &&
+               version_compare($version_string, '4.10.0.decaf', '>=');
     }
 
 
@@ -81,8 +81,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
             ANS_value text NOT NULL,
             PRIMARY KEY  (ANS_ID),
             KEY REG_ID (REG_ID),
-            KEY QST_ID (QST_ID)',
-            'ENGINE=InnoDB'
+            KEY QST_ID (QST_ID)'
         );
 
 
@@ -104,8 +103,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				KEY ATT_ID (ATT_ID),
 				KEY ATT_email (ATT_email(191)),
 				KEY ATT_lname (ATT_lname),
-				KEY ATT_fname (ATT_fname)",
-            'ENGINE=InnoDB'
+				KEY ATT_fname (ATT_fname)"
         );
 
 
@@ -118,8 +116,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				CHK_timestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PRIMARY KEY  (CHK_ID),
 				KEY REG_ID (REG_ID),
-				KEY DTT_ID (DTT_ID)",
-            'ENGINE=InnoDB'
+				KEY DTT_ID (DTT_ID)"
         );
 
 
@@ -140,8 +137,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				CNT_tel_code varchar(12) DEFAULT NULL,
 				CNT_is_EU tinyint(1) DEFAULT '0',
 				CNT_active tinyint(1) DEFAULT '0',
-				PRIMARY KEY  (CNT_ISO)",
-            'ENGINE=InnoDB'
+				PRIMARY KEY  (CNT_ISO)"
         );
 
 
@@ -153,8 +149,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				CUR_sign varchar(45) DEFAULT '$',
 				CUR_dec_plc varchar(1) NOT NULL DEFAULT '2',
 				CUR_active tinyint(1) DEFAULT '0',
-				PRIMARY KEY  (CUR_code)",
-            'ENGINE=InnoDB'
+				PRIMARY KEY  (CUR_code)"
         );
 
 
@@ -168,8 +163,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				CUR_code varchar(6) NOT NULL,
 				PMD_ID int(11) NOT NULL,
 				PRIMARY KEY  (CPM_ID),
-				KEY PMD_ID (PMD_ID)",
-            'ENGINE=InnoDB'
+				KEY PMD_ID (PMD_ID)"
         );
 
 
@@ -191,10 +185,11 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				DTT_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (DTT_ID),
 				KEY DTT_EVT_start (DTT_EVT_start),
+				KEY DTT_EVT_end (DTT_EVT_end),
 				KEY EVT_ID (EVT_ID),
-				KEY DTT_is_primary (DTT_is_primary)",
-            'ENGINE=InnoDB'
+				KEY VNU_ID (VNU_ID)"
         );
+        $this->_get_table_manager()->dropIndex('esp_datetime', 'DTT_is_primary');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -204,8 +199,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				TKT_ID int(10) unsigned NOT NULL,
 				PRIMARY KEY  (DTK_ID),
 				KEY DTT_ID (DTT_ID),
-				KEY TKT_ID (TKT_ID)",
-            'ENGINE=InnoDB'
+				KEY TKT_ID (TKT_ID)"
         );
 
 
@@ -216,8 +210,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				GRP_ID int(10) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (EMT_ID),
 				KEY EVT_ID (EVT_ID),
-				KEY GRP_ID (GRP_ID)",
-            'ENGINE=InnoDB'
+				KEY GRP_ID (GRP_ID)"
         );
 
 
@@ -239,8 +232,8 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				EVT_donations tinyint(1) NULL,
 				FSC_UUID varchar(25) DEFAULT NULL,
 				PRIMARY KEY  (EVTM_ID),
-				KEY EVT_ID (EVT_ID)",
-            'ENGINE=InnoDB'
+				KEY EVT_ID (EVT_ID),
+				KEY VNU_ID (VNU_ID)"
         );
 
 
@@ -253,8 +246,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				EQG_additional tinyint(1) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (EQG_ID),
 				KEY EVT_ID (EVT_ID),
-				KEY QSG_ID (QSG_ID)",
-            'ENGINE=InnoDB'
+				KEY QSG_ID (QSG_ID)"
         );
 
 
@@ -264,8 +256,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				EVT_ID bigint(20) unsigned NOT NULL,
 				VNU_ID bigint(20) unsigned NOT NULL,
 				EVV_primary tinyint(1) unsigned NOT NULL DEFAULT 0,
-				PRIMARY KEY  (EVV_ID)",
-            'ENGINE=InnoDB'
+				PRIMARY KEY  (EVV_ID)"
         );
 
 
@@ -277,22 +268,20 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				EXM_key varchar(45) DEFAULT NULL,
 				EXM_value text,
 				PRIMARY KEY  (EXM_ID),
-				KEY EXM_type (EXM_type,OBJ_ID,EXM_key)",
-            'ENGINE=InnoDB'
+				KEY EXM_type (EXM_type,OBJ_ID,EXM_key)"
         );
 
 
         $this->_table_has_not_changed_since_previous(
             'esp_extra_join',
             "EXJ_ID int(11) NOT NULL AUTO_INCREMENT,
-				EXJ_first_model_id varchar(6) NOT NULL,
+				EXJ_first_model_id varchar(12) NOT NULL,
 				EXJ_first_model_name varchar(20) NOT NULL,
-				EXJ_second_model_id varchar(6) NOT NULL,
+				EXJ_second_model_id varchar(12) NOT NULL,
 				EXJ_second_model_name varchar(20) NOT NULL,
 				PRIMARY KEY  (EXJ_ID),
 				KEY first_model (EXJ_first_model_name,EXJ_first_model_id),
-				KEY second_model (EXJ_second_model_name,EXJ_second_model_id)",
-            'ENGINE=InnoDB'
+				KEY second_model (EXJ_second_model_name,EXJ_second_model_id)"
         );
 
 
@@ -312,11 +301,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				FIN_type tinytext DEFAULT NULL,
 				FIN_wpUser bigint(20) unsigned DEFAULT NULL,
 				PRIMARY KEY  (FIN_UUID),
-				KEY FSC_UUID (FSC_UUID),
-				KEY FIN_order (FIN_order),
-				KEY FIN_status (FIN_status)",
-            'ENGINE=InnoDB'
+				KEY FSC_UUID (FSC_UUID)"
         );
+        $this->_get_table_manager()->dropIndex('esp_form_element', 'FIN_order');
+        $this->_get_table_manager()->dropIndex('esp_form_element', 'FIN_status');
 
 
         $this->_table_is_new_in_this_version(
@@ -330,11 +318,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				FSC_status varchar(32) NOT NULL DEFAULT 'active',
 				FSC_wpUser bigint(20) unsigned DEFAULT NULL,
 				PRIMARY KEY  (FSC_UUID),
-				KEY FSC_belongsTo (FSC_belongsTo),
-				KEY FSC_order (FSC_order),
-				KEY FSC_status (FSC_status)",
-            'ENGINE=InnoDB'
+				KEY FSC_belongsTo (FSC_belongsTo)"
         );
+        $this->_get_table_manager()->dropIndex('esp_form_section', 'FSC_order');
+        $this->_get_table_manager()->dropIndex('esp_form_section', 'FSC_status');
 
 
         $this->_table_is_new_in_this_version(
@@ -346,8 +333,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				FSB_submitted datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PRIMARY KEY  (FSB_UUID),
 				KEY FSC_UUID (FSC_UUID),
-				KEY TXN_ID (TXN_ID)",
-            'ENGINE=InnoDB'
+				KEY TXN_ID (TXN_ID)"
         );
 
 
@@ -374,8 +360,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				KEY parent_order (LIN_parent,LIN_order),
 				KEY txn_type_timestamp (TXN_ID,LIN_type,LIN_timestamp),
 				KEY txn_obj_id_obj_type (TXN_ID,OBJ_ID,OBJ_type),
-				KEY obj_id_obj_type (OBJ_ID,OBJ_type)",
-            'ENGINE=InnoDB'
+				KEY obj_id_obj_type (OBJ_ID,OBJ_type)"
         );
 
 
@@ -391,8 +376,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (LOG_ID),
 				KEY LOG_time (LOG_time),
 				KEY OBJ (OBJ_type,OBJ_ID),
-				KEY LOG_type (LOG_type)",
-            'ENGINE=InnoDB'
+				KEY LOG_type (LOG_type)"
         );
 
 
@@ -418,20 +402,19 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (MSG_ID),
 				KEY GRP_ID (GRP_ID),
 				KEY TXN_ID (TXN_ID),
-				KEY MSG_messenger (MSG_messenger),
-				KEY MSG_message_type (MSG_message_type),
-				KEY MSG_context (MSG_context),
 				KEY MSG_recipient_ID (MSG_recipient_ID),
-				KEY MSG_recipient_type (MSG_recipient_type),
 				KEY MSG_to (MSG_to(191)),
 				KEY MSG_from (MSG_from(191)),
-				KEY MSG_subject (MSG_subject(191)),
-				KEY MSG_priority (MSG_priority),
-				KEY STS_ID (STS_ID),
-				KEY MSG_created (MSG_created),
-				KEY MSG_modified (MSG_modified)",
-            'ENGINE=InnoDB'
+				KEY MSG_modified (MSG_modified)"
         );
+        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_messenger');
+        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_message_type');
+        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_context');
+        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_recipient_type');
+        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_subject');
+        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_created');
+        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_priority');
+        $this->_get_table_manager()->dropIndex('esp_message', 'STS_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -442,8 +425,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				MTP_template_field varchar(30) NOT NULL,
 				MTP_content text NOT NULL,
 				PRIMARY KEY  (MTP_ID),
-				KEY GRP_ID (GRP_ID)",
-            'ENGINE=InnoDB'
+				KEY GRP_ID (GRP_ID)"
         );
 
 
@@ -460,8 +442,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				MTP_deleted tinyint(1) NOT NULL DEFAULT '0',
 				MTP_is_active tinyint(1) NOT NULL DEFAULT '1',
 				PRIMARY KEY  (GRP_ID),
-				KEY MTP_user_id (MTP_user_id)",
-            'ENGINE=InnoDB'
+				KEY MTP_user_id (MTP_user_id)"
         );
 
 
@@ -483,8 +464,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PAY_redirect_args text,
 				PRIMARY KEY  (PAY_ID),
 				KEY PAY_timestamp (PAY_timestamp),
-				KEY TXN_ID (TXN_ID)",
-            'ENGINE=InnoDB'
+				KEY TXN_ID (TXN_ID)"
         );
 
 
@@ -504,10 +484,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PMD_button_url varchar(1012) DEFAULT NULL,
 				PMD_scope varchar(255) NULL DEFAULT 'frontend',
 				PRIMARY KEY  (PMD_ID),
-				UNIQUE KEY PMD_slug_UNIQUE (PMD_slug),
-				KEY PMD_type (PMD_type)",
-            'ENGINE=InnoDB'
+				UNIQUE KEY PMD_slug_UNIQUE (PMD_slug)"
         );
+        $this->_get_table_manager()->dropIndex('esp_payment_method', 'PMD_type');
 
 
         $this->_table_is_changed_in_this_version(
@@ -524,8 +503,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PRC_wp_user bigint(20) unsigned NULL,
 				PRC_parent int(10) unsigned DEFAULT 0,
 				PRIMARY KEY  (PRC_ID),
-				KEY PRT_ID (PRT_ID)",
-            'ENGINE=InnoDB'
+				KEY PRT_ID (PRT_ID)"
         );
 
 
@@ -539,8 +517,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PRT_wp_user bigint(20) unsigned NULL,
 				PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				UNIQUE KEY PRT_name_UNIQUE (PRT_name),
-				PRIMARY KEY  (PRT_ID)",
-            'ENGINE=InnoDB'
+				PRIMARY KEY  (PRT_ID)"
         );
 
 
@@ -551,8 +528,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PRC_ID int(10) unsigned NOT NULL,
 				PRIMARY KEY  (TKP_ID),
 				KEY TKT_ID (TKT_ID),
-				KEY PRC_ID (PRC_ID)",
-            'ENGINE=InnoDB'
+				KEY PRC_ID (PRC_ID)"
         );
 
 
@@ -562,8 +538,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				TTM_name varchar(45) NOT NULL,
 				TTM_description text,
 				TTM_file varchar(45),
-				PRIMARY KEY  (TTM_ID)",
-            'ENGINE=InnoDB'
+				PRIMARY KEY  (TTM_ID)"
         );
 
 
@@ -581,10 +556,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				QST_max smallint(5) NOT NULL DEFAULT -1,
 				QST_wp_user bigint(20) unsigned NULL,
 				QST_deleted tinyint(2) unsigned NOT NULL DEFAULT 0,
-				PRIMARY KEY  (QST_ID),
-				KEY QST_order (QST_order)",
-            'ENGINE=InnoDB'
+				PRIMARY KEY  (QST_ID)"
         );
+        $this->_get_table_manager()->dropIndex('esp_question', 'QST_order');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -601,9 +575,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				QSG_wp_user bigint(20) unsigned NULL,
 				PRIMARY KEY  (QSG_ID),
 				UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier),
-				KEY QSG_order (QSG_order)",
-            'ENGINE=InnoDB'
+				KEY QSG_order (QSG_order)"
         );
+        $this->_get_table_manager()->dropIndex('esp_question_group', 'QSG_order');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -613,10 +587,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				QST_ID int(10) unsigned NOT NULL,
 				QGQ_order int(10) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (QGQ_ID),
-				KEY QST_ID (QST_ID),
-				KEY QSG_ID_order (QSG_ID,QGQ_order)",
-            'ENGINE=InnoDB'
+				KEY QST_ID (QST_ID)"
         );
+        $this->_get_table_manager()->dropIndex('esp_question_group_question', 'QSG_ID_order');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -629,10 +602,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				QSO_system varchar(25) DEFAULT NULL,
 				QSO_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (QSO_ID),
-				KEY QST_ID (QST_ID),
-				KEY QSO_order (QSO_order)",
-            'ENGINE=InnoDB'
+				KEY QST_ID (QST_ID)"
         );
+        $this->_get_table_manager()->dropIndex('esp_question_option', 'QSO_order');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -656,13 +628,13 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (REG_ID),
 				KEY REG_url_link (REG_url_link),
 				KEY REG_code (REG_code),
+				KEY REG_date (REG_date),
 				KEY TXN_ID (TXN_ID),
 				KEY ATT_ID (ATT_ID),
 				KEY TKT_ID (TKT_ID),
-				KEY EVT_ID (EVT_ID),
-				KEY STS_ID (STS_ID)",
-            'ENGINE=InnoDB'
+				KEY EVT_ID (EVT_ID)"
         );
+        $this->_get_table_manager()->dropIndex('esp_registration', 'STS_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -673,8 +645,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 					  RPY_amount decimal(12,3) NOT NULL DEFAULT '0.00',
 					  PRIMARY KEY  (RPY_ID),
 					  KEY REG_ID (REG_ID),
-					  KEY PAY_ID (PAY_ID)",
-            'ENGINE=InnoDB'
+					  KEY PAY_ID (PAY_ID)"
         );
 
 
@@ -687,8 +658,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				STA_active tinyint(1) DEFAULT '1',
 				PRIMARY KEY  (STA_ID),
 				KEY STA_abbrev (STA_abbrev),
-				KEY CNT_ISO (CNT_ISO)",
-            'ENGINE=InnoDB'
+				KEY CNT_ISO (CNT_ISO)"
         );
 
 
@@ -701,8 +671,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				STS_desc tinytext,
 				STS_open tinyint(1) NOT NULL DEFAULT 1,
 				UNIQUE KEY STS_ID_UNIQUE (STS_ID),
-				KEY STS_type (STS_type)",
-            'ENGINE=InnoDB'
+				KEY STS_type (STS_type)"
         );
 
 
@@ -732,8 +701,8 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				TKT_visibility smallint(6) unsigned NOT NULL DEFAULT 100,
 				PRIMARY KEY  (TKT_ID),
-				KEY TKT_start_date (TKT_start_date)",
-            'ENGINE=InnoDB'
+				KEY TKT_start_date (TKT_start_date),
+				KEY TKT_end_date (TKT_end_date)"
         );
 
 
@@ -749,10 +718,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PMD_ID int(11) DEFAULT NULL,
 				TXN_reg_steps text,
 				PRIMARY KEY  (TXN_ID),
-				KEY TXN_timestamp (TXN_timestamp),
-				KEY STS_ID (STS_ID)",
-            'ENGINE=InnoDB'
+				KEY TXN_timestamp (TXN_timestamp)"
         );
+        $this->_get_table_manager()->dropIndex('esp_transaction', 'STS_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -775,8 +743,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 			PRIMARY KEY  (VNUM_ID),
 			KEY VNU_ID (VNU_ID),
 			KEY STA_ID (STA_ID),
-			KEY CNT_ISO (CNT_ISO)',
-            'ENGINE=InnoDB'
+			KEY CNT_ISO (CNT_ISO)'
         );
 
 

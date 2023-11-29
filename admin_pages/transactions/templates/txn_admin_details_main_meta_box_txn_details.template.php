@@ -401,8 +401,7 @@ $currency_steps = EEH_Money::getCurrencySubUnits('', true);
                 'AHEE__txn_admin_details_main_meta_box_txn_details__after_actions_buttons',
                 $can_edit_payments
             );
-            $extra_actions = ob_get_clean();
-            echo str_replace(['<li', '</li>'], ['<span', '</span>'], $extra_actions);
+            echo str_replace(['<li', '</li>'], ['<span', '</span>'], ob_get_clean());
             ?>
         </div>
 

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\helpers\DebugDisplay;
+
 /**
  * Class EE_SPCO_Line_Item_Display_Strategy
  * recursively displays line item information for display in SPCO
@@ -7,108 +9,114 @@
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen
- *
  */
 class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 {
-    /**
-     * @var bool
-     */
-    protected $prices_include_taxes = false;
+    use DebugDisplay;
+
+    protected bool $prices_include_taxes = false;
 
     /**
      * array of events
      *
      * @type EE_Line_Item[] $_events
      */
-    private $_events = array();
+    private array $_events = [];
 
     /**
      * whether to display the taxes row or not
      *
      * @type bool $_show_taxes
      */
-    private $_show_taxes = false;
+    private bool $_show_taxes = false;
 
     /**
      * html for any tax rows
      *
      * @type string $_show_taxes
      */
-    private $_taxes_html = '';
+    private string $_taxes_html = '';
 
     /**
      * total amount including tax we can bill for at this time
      *
      * @type float $_grand_total
      */
-    private $_grand_total = 0.00;
+    private float $_grand_total = 0.00;
 
     /**
      * total number of items being billed for
      *
      * @type int $_total_items
      */
-    private $_total_items = 0;
+    private int $_total_items = 0;
+
+    private bool $debug = false;   //  true  false
 
 
     public function __construct()
     {
         $this->prices_include_taxes = EE_Registry::instance()->CFG->tax_settings->prices_displayed_including_taxes;
+        $this->initializeDebugDisplay();
     }
-
 
 
     /**
      * @return float
      */
-    public function grand_total()
+    public function grand_total(): float
     {
         return $this->_grand_total;
     }
 
 
-
     /**
      * @return int
      */
-    public function total_items()
+    public function total_items(): int
     {
         return $this->_total_items;
     }
 
 
-
     /**
-     * @param EE_Line_Item $line_item
-     * @param array        $options
-     * @param EE_Line_Item $parent_line_item
-     * @return mixed
+     * @param EE_Line_Item      $line_item
+     * @param array             $options
+     * @param EE_Line_Item|null $parent_line_item
+     * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function display_line_item(
         EE_Line_Item $line_item,
-        $options = array(),
-        EE_Line_Item $parent_line_item = null
-    ) {
+        $options = [],
+        ?EE_Line_Item $parent_line_item = null
+    ): string {
         $html = '';
         // set some default options and merge with incoming
-        $default_options = array(
+        $options += [
             'show_desc' => true,  //    true        false
             'odd'       => false,
-        );
-        $options = array_merge($default_options, (array) $options);
+        ];
+
+        $this->debugLog('', 2);
+        $this->debugLog(__FUNCTION__);
+        $this->debugLog($line_item->name() . ': ' . $line_item->code() . ' (' . $line_item->type() . ')');
+        if ($line_item->type() === EEM_Line_Item::type_total) {
+            $this->debugLog('******************************************************************', 2);
+        }
 
         switch ($line_item->type()) {
             case EEM_Line_Item::type_line_item:
-                $this->_show_taxes = $line_item->is_taxable() ? true : $this->_show_taxes;
-                if ($line_item->OBJ_type() === 'Ticket') {
-                    // item row
-                    $html .= $this->_ticket_row($line_item, $options);
-                } else {
-                    // item row
-                    $html .= $this->_item_row($line_item, $options);
-                }
+                $sub_taxes         = EEH_Line_Item::get_nearest_descendant_of_type(
+                    $line_item,
+                    EEM_Line_Item::type_sub_tax
+                );
+                $show_taxes = $line_item->is_taxable() || $sub_taxes;
+                $this->_show_taxes = $show_taxes ? true : $this->_show_taxes;
+                $html              .= $line_item->OBJ_type() === 'Ticket'
+                    ? $this->ticketRow($line_item, $options, $show_taxes)
+                    : $this->itemRow($line_item, $options, $show_taxes);
                 if (
                     apply_filters(
                         'FHEE__EE_SPCO_Line_Item_Display_Strategy__display_line_item__display_sub_line_items',
@@ -116,14 +124,17 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     )
                 ) {
                     // got any kids?
-                    foreach ($line_item->children() as $child_line_item) {
-                        $html .= $this->display_line_item($child_line_item, $options, $line_item);
+                    $child_line_items = $line_item->children();
+                    if ($child_line_items) {
+                        foreach ($child_line_items as $child_line_item) {
+                            $html .= $this->display_line_item($child_line_item, $options, $line_item);
+                        }
                     }
                 }
                 break;
 
             case EEM_Line_Item::type_sub_line_item:
-                $html .= $this->_sub_item_row($line_item, $options, $parent_line_item);
+                $html .= $this->subItemRow($line_item, $options, $parent_line_item);
                 break;
 
             case EEM_Line_Item::type_sub_tax:
@@ -133,16 +144,21 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             case EEM_Line_Item::type_sub_total:
                 static $sub_total = 0;
                 $event_sub_total = 0;
-                $text = esc_html__('Sub-Total', 'event_espresso');
+                $text            = esc_html__('Sub-Total', 'event_espresso');
                 if ($line_item->OBJ_type() === 'Event') {
                     $options['event_id'] = $line_item->OBJ_ID();
                     if (! isset($this->_events[ $options['event_id'] ])) {
-                        $event = EEM_Event::instance()->get_one_by_ID($options['event_id']);
+                        $this->_events[ $options['event_id'] ] = 0;
+                        $event                                 = EEM_Event::instance()->get_one_by_ID(
+                            $options['event_id']
+                        );
+                        $event_name                            = $event instanceof EE_Event ? $event->name() . ' ' : '';
                         // if event has default reg status of Not Approved, then don't display info on it
                         if (
                             $event instanceof EE_Event
                             && $event->default_registration_status() === EEM_Registration::status_id_not_approved
                         ) {
+                            // unless display is forced
                             $display_event = false;
                             // unless there are registrations for it that are returning to pay
                             if (isset($options['registrations']) && is_array($options['registrations'])) {
@@ -151,7 +167,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                                         continue;
                                     }
                                     $display_event = $registration->event_ID() === $options['event_id']
-                                                     && $registration->status_ID() !== EEM_Registration::status_id_not_approved
+                                    && $registration->status_ID() !== EEM_Registration::status_id_not_approved
                                         ? true
                                         : $display_event;
                                 }
@@ -161,8 +177,9 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                             }
                         }
                         $this->_events[ $options['event_id'] ] = 0;
-                        $html .= $this->_event_row($line_item);
-                        $text = esc_html__('Event Sub-Total', 'event_espresso');
+
+                        $html .= $this->eventRow($line_item);
+                        $text = $event_name . esc_html__('Event Sub-Total', 'event_espresso');
                     }
                 }
                 $child_line_items = $line_item->children();
@@ -171,26 +188,33 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     // recursively feed children back into this method
                     $html .= $this->display_line_item($child_line_item, $options, $line_item);
                 }
-                $event_sub_total += isset($options['event_id']) ? $this->_events[ $options['event_id'] ] : 0;
+                if (isset($options['event_id'], $this->_events[ $options['event_id'] ])) {
+                    $event_sub_total += $this->_events[ $options['event_id'] ];
+                }
                 $sub_total += $event_sub_total;
+                $this->debugLog(' = count($child_line_items): ' . count($child_line_items), 3);
+                $this->debugLog(' = count($this->_events): ' . count($this->_events), 3);
                 if (
                     (
                         // event subtotals
-                        $line_item->code() !== 'pre-tax-subtotal' && count($child_line_items) > 1
-                    )
-                    || (
+                        $line_item->code() !== 'pre-tax-subtotal'
+                        && count($child_line_items) > 1
+                    ) || (
                         // pre-tax subtotals
-                        $line_item->code() === 'pre-tax-subtotal' && count($this->_events) > 1
+                        $line_item->code() === 'pre-tax-subtotal'
+                        && count($this->_events) > 1
                     )
                 ) {
                     $options['sub_total'] = $line_item->OBJ_type() === 'Event' ? $event_sub_total : $sub_total;
-                    $html .= $this->_sub_total_row($line_item, $text, $options);
+                    $html                 .= $this->subTotalRow($line_item, $text, $options);
+                } else {
+                    $this->debugLog('NO EVENT SUBTOTAL', 3);
                 }
                 break;
 
             case EEM_Line_Item::type_tax:
                 if ($this->_show_taxes) {
-                    $this->_taxes_html .= $this->_tax_row($line_item, $options);
+                    $this->_taxes_html .= $this->taxRow($line_item, $options);
                 }
                 break;
 
@@ -202,8 +226,11 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                         // recursively feed children back into this method
                         $html .= $this->display_line_item($child_line_item, $options, $line_item);
                     }
-                    if (count($child_line_items) > 1) {
-                        $this->_taxes_html .= $this->_total_tax_row($line_item, esc_html__('Tax Total', 'event_espresso'));
+                    if ($child_line_items) {
+                        $this->_taxes_html .= $this->totalTaxRow(
+                            $line_item,
+                            esc_html__('Tax Total', 'event_espresso')
+                        );
                     }
                 }
                 break;
@@ -226,23 +253,25 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     }
                 }
                 $html .= $this->_taxes_html;
-                $html .= $this->_total_row($line_item, esc_html__('Total', 'event_espresso'));
-                $html .= $this->_payments_and_amount_owing_rows($line_item, $options);
+                $html .= $this->totalRow($line_item, esc_html__('Total', 'event_espresso'));
+                $html .= $this->paymentsAndAmountOwingRows($line_item, $options);
                 break;
         }
         return $html;
     }
 
 
-
     /**
      * _event_row - basically a Heading row displayed once above each event's ticket rows
      *
      * @param EE_Line_Item $line_item
-     * @return mixed
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _event_row(EE_Line_Item $line_item)
+    private function eventRow(EE_Line_Item $line_item): string
     {
+        $this->debugLog(' - ' . __FUNCTION__);
         // start of row
         $html = EEH_HTML::tr('', 'event-cart-total-row', 'total_tr odd');
         // event name td
@@ -259,20 +288,22 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      * _ticket_row
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
-     * @return mixed
+     * @param bool         $show_taxes
+     * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _ticket_row(EE_Line_Item $line_item, $options = array())
+    private function ticketRow(EE_Line_Item $line_item, array $options = [], bool $show_taxes = false): string
     {
+        $this->debugLog(' - ' . __FUNCTION__);
         // start of row
         $row_class = $options['odd'] ? 'item odd' : 'item';
-        $html = EEH_HTML::tr('', '', $row_class);
+        $html      = EEH_HTML::tr('', '', $row_class);
         // name && desc
         $name_and_desc = apply_filters(
             'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name',
@@ -281,15 +312,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         );
         $name_and_desc .= apply_filters(
             'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__desc',
-            (
-                $options['show_desc']
-                    ? '<span class="line-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>'
-                    : ''
-            ),
+            $options['show_desc']
+                ? '<span class="line-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>'
+                : '',
             $line_item,
             $options
         );
-        $name_and_desc .= $line_item->is_taxable() ? ' * ' : '';
+        $name_and_desc .= $show_taxes ? ' * ' : '';
         $name_and_desc = apply_filters(
             'FHEE__EE_SPCO_Line_Item_Display_Strategy___ticket_row__name_and_desc',
             $name_and_desc,
@@ -298,7 +327,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         );
 
         // name td
-        $html .= EEH_HTML::td( /*__FUNCTION__ .*/
+        $html .= EEH_HTML::td(
             $name_and_desc,
             '',
             'item_l'
@@ -309,9 +338,9 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $line_item->unit_price_no_code(),
             $line_item
         );
-        $html .= EEH_HTML::td($price, '', 'spco-nowrap item_c jst-rght');
+        $html  .= EEH_HTML::td($price, '', 'spco-nowrap item_c jst-rght');
         // quantity td
-        $html .= EEH_HTML::td($line_item->quantity(), '', 'spco-nowrap item_l jst-rght');
+        $html               .= EEH_HTML::td($line_item->quantity(), '', 'spco-nowrap item_l jst-rght');
         $this->_total_items += $line_item->quantity();
         // determine total for line item
         $total = apply_filters(
@@ -319,7 +348,9 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $line_item->pretaxTotal(),
             $line_item
         );
-        $this->_events[ $options['event_id'] ] += $total;
+        if (isset($this->_events[ $options['event_id'] ])) {
+            $this->_events[ $options['event_id'] ] += $total;
+        }
         // total td
         $html .= EEH_HTML::td(
             EEH_Template::format_currency($total, false, false),
@@ -332,21 +363,23 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      * _item_row
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
-     * @return mixed
+     * @param bool         $show_taxes
+     * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _item_row(EE_Line_Item $line_item, $options = array())
+    private function itemRow(EE_Line_Item $line_item, array $options = [], bool $show_taxes = false): string
     {
+        $this->debugLog(' - ' . __FUNCTION__);
         // start of row
         $row_class = $options['odd'] ? 'item odd' : 'item';
-        $html = EEH_HTML::tr('', '', $row_class);
-        $obj_name = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() . ': ' : '';
+        $html      = EEH_HTML::tr('', '', $row_class);
+        $obj_name  = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() . ': ' : '';
         // name && desc
         $name_and_desc = apply_filters(
             'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name',
@@ -356,14 +389,14 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $name_and_desc .= apply_filters(
             'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__desc',
             (
-                $options['show_desc']
+            $options['show_desc']
                 ? '<span class="line-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>'
                 : ''
             ),
             $line_item,
             $options
         );
-        $name_and_desc .= $line_item->is_taxable() ? ' * ' : '';
+        $name_and_desc .= $show_taxes ? ' * ' : '';
         $name_and_desc = apply_filters(
             'FHEE__EE_SPCO_Line_Item_Display_Strategy___item_row__name_and_desc',
             $name_and_desc,
@@ -398,21 +431,24 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      * _sub_item_row
      *
-     * @param EE_Line_Item $line_item
-     * @param array        $options
-     * @param EE_Line_Item $parent_line_item
-     * @return mixed
+     * @param EE_Line_Item      $line_item
+     * @param array             $options
+     * @param EE_Line_Item|null $parent_line_item
+     * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _sub_item_row(EE_Line_Item $line_item, $options = array(), EE_Line_Item $parent_line_item = null)
-    {
+    private function subItemRow(
+        EE_Line_Item $line_item,
+        array $options = [],
+        ?EE_Line_Item $parent_line_item = null
+    ): string {
         if (
-            $parent_line_item instanceof  EE_Line_Item
-            && $line_item->children() === array()
+            $parent_line_item instanceof EE_Line_Item
+            && $line_item->children() === []
             && $line_item->name() === $parent_line_item->name()
             && apply_filters(
                 'FHEE__EE_SPCO_Line_Item_Display_Strategy___sub_item_row__hide_main_sub_line_item',
@@ -421,17 +457,18 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         ) {
             return '';
         }
+        $this->debugLog(' - ' . __FUNCTION__);
         // start of row
         $html = EEH_HTML::tr('', '', 'item sub-item-row');
         // name && desc
-        $name_and_desc = EEH_HTML::span('', '', 'sub-item-row-bullet dashicons dashicons-arrow-right')
-                         . $line_item->name();
-        $name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text">: '
-                                                  . $line_item->desc()
-                                                  . '</span>' : '';
+        $name_and_desc = EEH_HTML::span('', '', 'sub-item-row-bullet dashicons dashicons-arrow-right');
+        $name_and_desc .= $line_item->name();
+        $name_and_desc .= $options['show_desc']
+            ? '<span class="line-sub-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>'
+            : '';
         // name td
         $html .= EEH_HTML::td($name_and_desc, '', 'item_l sub-item');
-        $qty = $parent_line_item instanceof EE_Line_Item ? $parent_line_item->quantity() : 1;
+        $qty  = $parent_line_item instanceof EE_Line_Item ? $parent_line_item->quantity() : 1;
         // discount/surcharge td
         if ($line_item->is_percent()) {
             $html .= EEH_HTML::td(
@@ -452,16 +489,14 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td();
         // end of row
         $html .= EEH_HTML::trx();
-        $html = apply_filters(
+        return apply_filters(
             'FHEE__EE_SPCO_Line_Item_Display_Strategy___sub_item_row__html',
             $html,
             $line_item,
             $options,
             $parent_line_item
         );
-        return $html;
     }
-
 
 
     /**
@@ -469,17 +504,24 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
-     * @return mixed
+     * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _tax_row(EE_Line_Item $line_item, $options = array())
+    private function taxRow(EE_Line_Item $line_item, array $options = []): string
     {
+        $this->debugLog(' - ' . __FUNCTION__);
+        $total = $line_item->total();
+        if (! $total) {
+            return '';
+        }
         // start of row
         $html = EEH_HTML::tr('', 'item sub-item tax-total');
         // name && desc
         $name_and_desc = $line_item->name();
-        $name_and_desc .= '<span class="smaller-text lt-grey-text" style="margin:0 0 0 2em;">'
-                          . esc_html__(' * taxable items', 'event_espresso') . '</span>';
+        $name_and_desc .= '<span class="smaller-text lt-grey-text" style="margin:0 0 0 2em;">';
+        $name_and_desc .= esc_html__(' * taxable items', 'event_espresso');
+        $name_and_desc .= '</span>';
         $name_and_desc .= $options['show_desc'] ? '<br/>' . $line_item->desc() : '';
         // name td
         $html .= EEH_HTML::td( /*__FUNCTION__ .*/
@@ -488,16 +530,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             'item_l sub-item'
         );
         // percent td
-        $html .= EEH_HTML::td($line_item->percent() . '%', '', 'spco-nowrap jst-rght', '');
+        $html .= EEH_HTML::td($line_item->percent() . '%', '', 'spco-nowrap jst-rght');
         // empty td (price)
         $html .= EEH_HTML::td(EEH_HTML::nbsp());
         // total td
         $html .= EEH_HTML::td(
-            EEH_Template::format_currency(
-                $line_item->total(),
-                false,
-                false
-            ),
+            EEH_Template::format_currency($total, false, false),
             '',
             'spco-nowrap item_r jst-rght'
         );
@@ -507,17 +545,18 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      * _total_row
      *
      * @param EE_Line_Item $line_item
      * @param string       $text
-     * @return mixed
+     * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _total_tax_row(EE_Line_Item $line_item, $text = '')
+    private function totalTaxRow(EE_Line_Item $line_item, string $text = ''): string
     {
+        $this->debugLog(' - ' . __FUNCTION__);
         $html = '';
         if ($line_item->total()) {
             // start of row
@@ -545,18 +584,19 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      * _total_row
      *
      * @param EE_Line_Item $line_item
      * @param string       $text
      * @param array        $options
-     * @return mixed
+     * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _sub_total_row(EE_Line_Item $line_item, $text = '', $options = array())
+    private function subTotalRow(EE_Line_Item $line_item, string $text = '', array $options = []): string
     {
+        $this->debugLog(' - ' . __FUNCTION__);
         $html = '';
         if ($line_item->total()) {
             // start of row
@@ -582,17 +622,18 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      * _total_row
      *
      * @param EE_Line_Item $line_item
      * @param string       $text
-     * @return mixed
+     * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _total_row(EE_Line_Item $line_item, $text = '')
+    private function totalRow(EE_Line_Item $line_item, string $text = ''): string
     {
+        $this->debugLog(' - ' . __FUNCTION__);
         // start of row
         $html = EEH_HTML::tr('', '', 'spco-grand-total total_tr odd');
         // total td
@@ -609,23 +650,24 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      * _payments_and_amount_owing_rows
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
-     * @return mixed
+     * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _payments_and_amount_owing_rows(EE_Line_Item $line_item, $options = array())
+    private function paymentsAndAmountOwingRows(EE_Line_Item $line_item, array $options = []): string
     {
-        $html = '';
-        $owing = $line_item->total();
+        $this->debugLog(' - ' . __FUNCTION__);
+        $html        = '';
+        $owing       = $line_item->total();
         $transaction = EEM_Transaction::instance()->get_one_by_ID($line_item->TXN_ID());
         if ($transaction instanceof EE_Transaction) {
-            $registration_payments = array();
-            $registrations = ! empty($options['registrations'])
+            $registration_payments = [];
+            $registrations         = ! empty($options['registrations'])
                 ? $options['registrations']
                 : $transaction->registrations();
             foreach ($registrations as $registration) {
@@ -636,8 +678,8 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             if (! empty($registration_payments)) {
                 foreach ($registration_payments as $registration_payment) {
                     if ($registration_payment instanceof EE_Registration_Payment) {
-                        $owing -= $registration_payment->amount();
-                        $payment = $registration_payment->payment();
+                        $owing        -= $registration_payment->amount();
+                        $payment      = $registration_payment->payment();
                         $payment_desc = '';
                         if ($payment instanceof EE_Payment) {
                             $payment_desc = sprintf(

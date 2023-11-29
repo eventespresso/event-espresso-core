@@ -137,10 +137,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:15
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:75
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:48
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:40
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:42
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:198
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:48
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:40
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:42
 	__( 'Name', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:19
@@ -263,7 +263,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:114
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:111
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:81
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:83
 	__( 'Capacity', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:119
@@ -288,12 +288,12 @@ $generated_i18n_strings = array(
 	__( 'Dates', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:92
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:51
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:53
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:215
 	__( 'Start Date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:99
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:65
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:67
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:222
 	__( 'End Date', 'event_espresso' ),
 
@@ -357,7 +357,7 @@ $generated_i18n_strings = array(
 	__( 'delete', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:36
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:40
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:42
 	// Reference: packages/ui-components/src/bulkEdit/BulkActions.tsx:43
 	__( 'bulk actions', 'event_espresso' ),
 
@@ -552,10 +552,10 @@ $generated_i18n_strings = array(
 	__( 'name', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:37
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:31
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:33
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/DateCell.tsx:25
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/HeaderCell.tsx:27
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:31
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:33
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:23
 	__( 'ID', 'event_espresso' ),
 
@@ -580,7 +580,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:46
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:54
-	// Reference: packages/ee-components/src/EntityList/EntityListFilterBar.tsx:46
+	// Reference: packages/ee-components/src/EntityList/EntityListFilterBar.tsx:38
 	__( 'search', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:47
@@ -604,28 +604,28 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:46
 	__( 'Single Date', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:106
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:108
 	__( 'Reg list', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:107
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:109
 	__( 'Regs', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:122
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:121
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:124
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:123
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:59
 	__( 'Actions', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:52
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:54
 	__( 'Start', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:66
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:68
 	__( 'End', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:82
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:84
 	__( 'Cap', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:94
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:98
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:96
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:100
 	__( 'Sold', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:33
@@ -856,7 +856,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Required Ticket', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:165
-	__( 'If enabled, the ticket must be selected and will appear first in frontend ticket lists.', 'event_espresso' ),
+	__( 'If enabled, the ticket must be selected and will appear first in ticket lists.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:177
 	__( 'Visibility', 'event_espresso' ),
@@ -915,16 +915,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:39
 	__( 'copy ticket', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:44
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:46
 	__( 'edit ticket details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:48
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:50
 	__( 'delete tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:48
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:50
 	__( 'trash tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:52
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:54
 	__( 'edit ticket prices', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:14
@@ -1007,7 +1007,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Move Ticket to Trash', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:15
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:52
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:54
 	__( 'On Sale', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:17
@@ -1087,7 +1087,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'ticket ID', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:52
-	__( 'link', 'event_espresso' ),
+	__( 'linked', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:8
 	__( 'ticket sales start date only', 'event_espresso' ),
@@ -1107,57 +1107,57 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:39
 	__( 'Tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:108
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:110
 	__( 'Reg List', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:51
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:53
 	__( 'Goes on Sale', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:65
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:67
 	__( 'Sale Ends', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:66
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:68
 	__( 'Ends', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:78
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:80
 	__( 'Price', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:88
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:90
 	__( 'Qty', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:103
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:104
+	__( 'Venue capacity', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:112
 	__( 'Venue telephone', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:110
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:119
 	__( 'Edit this Venue', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:119
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:128
 	__( 'Select a Venue for the Event', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:21
 	__( 'Venue Details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:38
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:47
 	__( 'unlimited space', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:41
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:50
 	/* translators: %d venue capacity */
 	__( 'Space for up to %d people', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:52
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:61
 	__( 'Venue address', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:58
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:67
 	__( 'Venue Details card', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:67
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:76
 	__( 'no image', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:71
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:80
 	__( 'Venue name', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:95
-	__( 'Venue capacity', 'event_espresso' ),
 
 	// Reference: domains/core/admin/wpPluginsPage/src/exitSurvey/Popup.tsx:29
 	__( 'Do you have a moment to share why you are deactivating Event Espresso?', 'event_espresso' ),
@@ -1273,10 +1273,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:68
 	__( 'End Date is required', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:32
+	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:30
 	__( 'no results found', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:33
+	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:31
 	__( 'try changing filter settings', 'event_espresso' ),
 
 	// Reference: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:38
@@ -1301,16 +1301,13 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:18
 	__( 'Bulk update details', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:27
-	__( 'set custom dates order', 'event_espresso' ),
+	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:26
+	__( 'set order', 'event_espresso' ),
 
 	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:28
-	__( 'set custom tickets order', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:30
 	__( 'Set Custom Dates Order - this is how dates are ordered on the frontend', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:31
+	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:29
 	__( 'Set Custom Tickets Order - this is how tickets are ordered on the frontend', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:32
@@ -2198,17 +2195,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleBulkActionsButton.tsx:8
 	__( 'show bulk actions', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
-	__( 'hide filters', 'event_espresso' ),
+	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:23
+	__( 'filters', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
-	__( 'show filters', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/Legend/ToggleLegendButton.tsx:26
-	__( 'hide legend', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/Legend/ToggleLegendButton.tsx:26
-	__( 'show legend', 'event_espresso' ),
+	// Reference: packages/ui-components/src/Legend/ToggleLegendButton.tsx:38
+	__( 'legend', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/LoadingNotice/LoadingNotice.tsx:11
 	__( 'loading…', 'event_espresso' ),

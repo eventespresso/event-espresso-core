@@ -211,6 +211,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         }
         // loop thru incoming options
         foreach ($input_args as $key => $value) {
+            if ($key === 'disabled') {
+                $this->disable($value);
+                continue;
+            }
             // add underscore to $key to match property names
             $_key = '_' . $key;
             if (property_exists($this, $_key)) {
@@ -1222,7 +1226,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
 
     /**
-     * Returns whether or not this input is currently disabled.
+     * Returns whether this input is currently disabled.
      *
      * @return bool
      */

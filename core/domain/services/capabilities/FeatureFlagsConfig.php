@@ -101,6 +101,9 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
      */
     public function getFeatureFlags(): stdClass
     {
+        if (apply_filters('FHEE__FeatureFlagsConfig__getFeatureFlags__use_default_feature_flags', true)) {
+            return $this->getDefaultFeatureFlagOptions();
+        }
         return $this->getAll() ?: $this->getDefaultFeatureFlagOptions();
     }
 

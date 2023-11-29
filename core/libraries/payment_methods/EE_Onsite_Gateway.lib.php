@@ -12,10 +12,16 @@
  */
 abstract class EE_Onsite_Gateway extends EE_Gateway
 {
+    /**
+     *
+     * @var $_gateway_url string|null
+     */
+    protected $_gateway_url = null;
+
+
     public function __construct()
     {
         $this->_supports_sending_refunds = true;
-        parent::__construct();
     }
 
     /**

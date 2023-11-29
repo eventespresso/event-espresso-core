@@ -253,3 +253,7 @@
     line-height: 1.1;
 }
 
+.espresso-admin.wp-core-ui .ee-status.event-active-status {
+    white-space: nowrap;
+}
+

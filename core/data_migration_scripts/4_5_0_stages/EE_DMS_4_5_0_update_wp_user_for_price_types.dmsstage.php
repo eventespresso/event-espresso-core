@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Populates the new wp_user related fields for existing records in the db  for price types, (introduced in this
- * version, 4.5.0).
+ * Populates the new wp_user related fields for existing records in the db  for price types,
+ * (introduced in this version, 4.5.0).
  *
  * @since      4.5.0
  * @package    Event Espresso
@@ -10,6 +10,7 @@
  */
 class EE_DMS_4_5_0_update_wp_user_for_price_types extends EE_Data_Migration_Script_Stage_Table
 {
+
     public function __construct()
     {
         global $wpdb;
@@ -19,6 +20,10 @@ class EE_DMS_4_5_0_update_wp_user_for_price_types extends EE_Data_Migration_Scri
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _migrate_old_row($old_row)
     {
         // foreach ticket row we add the id for the current logged in user.
@@ -29,12 +34,8 @@ class EE_DMS_4_5_0_update_wp_user_for_price_types extends EE_Data_Migration_Scri
             $this->_old_table,
             ['PRT_wp_user' => $user_id],
             ['PRT_ID' => $old_row['PRT_ID']],
-            [
-                '%d',// PRT_wp_user
-            ],
-            [
-                '%d',// PRT_ID
-            ]
+            ['%d'], // PRT_wp_user
+            ['%d']  // PRT_ID
         );
         if (false === $updated) {
             $this->add_error(

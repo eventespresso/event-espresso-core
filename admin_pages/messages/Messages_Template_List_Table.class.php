@@ -13,7 +13,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     /**
      * @var Messages_Admin_Page
      */
-    protected $_admin_page;
+    protected EE_Admin_Page $_admin_page;
 
 
     /**
@@ -29,6 +29,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * Setup data object
      *
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _setup_data()
     {
@@ -96,6 +97,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     /**
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_table_filters()
     {
@@ -134,6 +136,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * Add counts to the _views property
      *
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _add_view_counts()
     {
@@ -163,7 +166,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws EE_Error
      */
-    public function column_description($item)
+    public function column_description(EE_Message_Template_Group $item): string
     {
         return '<p>' . $item->message_type_obj()->description . '</p>';
     }
@@ -173,9 +176,8 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @param EE_Message_Template_Group $item
      * @return string
      * @throws EE_Error
-     * @throws ReflectionException
      */
-    public function column_messenger($item)
+    public function column_messenger(EE_Message_Template_Group $item): string
     {
         // Return the name contents
         return sprintf(
@@ -194,10 +196,10 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function column_recipients($item)
+    public function column_recipients(EE_Message_Template_Group $item): string
     {
         // Return the name contents
-        return $this->_get_context_links($item) . $this->row_actions($this->_get_actions_for_messenger_column($item));
+        return $this->_get_context_links($item);
     }
 
 
@@ -208,7 +210,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @return string message_type name
      * @throws EE_Error
      */
-    public function column_message_type($item)
+    public function column_message_type(EE_Message_Template_Group $item): string
     {
         return ucwords($item->message_type_obj()->label['singular']);
     }
@@ -220,8 +222,9 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @param bool $global
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _get_messengers_dropdown_filter($global = true)
+    protected function _get_messengers_dropdown_filter(bool $global = true): string
     {
         $messenger_options                                   = [];
         $active_message_template_groups_grouped_by_messenger = EEM_Message_Template_Group::instance()->get_all(
@@ -254,8 +257,9 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @param bool $global
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _get_message_types_dropdown_filter($global = true)
+    protected function _get_message_types_dropdown_filter(bool $global = true): string
     {
         $message_type_options                                   = [];
         $active_message_template_groups_grouped_by_message_type = EEM_Message_Template_Group::instance()->get_all(
@@ -290,7 +294,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_edit_url(EE_Message_Template_Group $item)
+    protected function _get_edit_url(EE_Message_Template_Group $item): string
     {
         $edit_url = '';
         // edit link but only if item isn't trashed.
@@ -322,7 +326,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_context_links(EE_Message_Template_Group $item)
+    protected function _get_context_links(EE_Message_Template_Group $item): string
     {
         // first check if we even show the context links or not.
         if (
@@ -341,11 +345,11 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
         $context_templates = $item->context_templates();
         foreach ($context_templates as $context => $template_fields) {
             $mtp_to          = ! empty($template_fields['to'])
-                               && $template_fields['to'] instanceof EE_Message_Template
+            && $template_fields['to'] instanceof EE_Message_Template
                 ? $template_fields['to']->get('MTP_content')
                 : null;
             $inactive_class  = (empty($mtp_to) && ! empty($template_fields['to']))
-                               || ! $item->is_context_active($context)
+            || ! $item->is_context_active($context)
                 ? ' mtp-inactive'
                 : '';
             $context_title   = ucwords($c_configs[ $context ]['label']);
@@ -357,15 +361,15 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
                 ],
                 EE_MSG_ADMIN_URL
             );
-            $label = sprintf(
+            $label           = sprintf(
                 esc_attr__('Edit message content for the %1$s', 'event_espresso'),
                 $context_title
             );
             $context_array[] = '<a href="' . $edit_link . '"'
-                               . ' class="' . "{$item->message_type()}-{$context}-edit-link{$inactive_class}" . ' ee-aria-tooltip"'
-                               . ' aria-label="' . $label . '">'
-                               . $context_title
-                               . '</a>';
+                . ' class="' . "{$item->message_type()}-{$context}-edit-link{$inactive_class}" . ' ee-aria-tooltip"'
+                . ' aria-label="' . $label . '">'
+                . $context_title
+                . '</a>';
         }
 
         return implode(' | ', $context_array);
@@ -380,7 +384,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
      * @param EE_Message_Template_Group $item
      * @return array
      */
-    protected function _get_actions_for_messenger_column(EE_Message_Template_Group $item)
+    protected function _get_actions_for_messenger_column(EE_Message_Template_Group $item): array
     {
         return [];
     }

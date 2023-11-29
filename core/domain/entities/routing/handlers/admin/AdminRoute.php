@@ -97,6 +97,12 @@ class AdminRoute extends Route
      */
     protected function registerDependencies()
     {
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\services\admin\AdminListTableFilters',
+            [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
     }
 
 

@@ -655,9 +655,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                     // huh, no more scripts to run... apparently we're done!
                     // but don't forget to make sure initial data is there
                     // we should be good to allow them to exit maintenance mode now
-                    EE_Maintenance_Mode::instance()->set_maintenance_level(
-                        EE_Maintenance_Mode::level_0_not_in_maintenance
-                    );
+                    EE_Maintenance_Mode::instance()->deactivateMaintenanceMode();
                     // saving migrations run should actually be unnecessary,
                     // but leaving in place just in case... remember this migration was finished
                     // (even if we time out while initializing db for core and plugins)
@@ -743,9 +741,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                     $scripts_remaining = $this->check_for_applicable_data_migration_scripts();
                     if (! $scripts_remaining) {
                         // we should be good to allow them to exit maintenance mode now
-                        EE_Maintenance_Mode::instance()->set_maintenance_level(
-                            EE_Maintenance_Mode::level_0_not_in_maintenance
-                        );
+                        EE_Maintenance_Mode::instance()->deactivateMaintenanceMode();
                         // huh, no more scripts to run... apparently we're done!
                         // but don't forget to make sure initial data is there
                         $init_dbs                 = true;

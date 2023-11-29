@@ -7,12 +7,12 @@ class Event extends GraphQLData
     /**
      * @inheritDoc
      */
-    public function getData(array $params = [])
+    public function getData(array $params = []): ?array
     {
         $field_key = lcfirst($this->namespace) . 'Event';
         $query     = <<<QUERY
         query GET_EVENT(\$id: ID!) {
-            {$field_key}(id: \$id, idType: DATABASE_ID) {
+            $field_key(id: \$id, idType: DATABASE_ID) {
                 id
                 dbId
                 cacheId

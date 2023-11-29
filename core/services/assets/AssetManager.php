@@ -316,10 +316,10 @@ abstract class AssetManager implements AssetManagerInterface
                 sprintf(
                     esc_html__(
                         'The "%1$s" script is not registered when it should be!%2$s
-                        Are you running the Barista plugin for development purposes? 
+                        Are you running the Barista plugin for development purposes?
                         If so, then you need to build the appropriate assets for this domain.%2$s
-                        If you are seeing this error on a live website, then you should not have 
-                        the WP_DEBUG constant in your wp-config.php file set to "true". 
+                        If you are seeing this error on a live website, then you should not have
+                        the WP_DEBUG constant in your wp-config.php file set to "true".
                         Please contact Event Espresso support for more information.',
                         'event_espresso'
                     ),

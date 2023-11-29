@@ -7,16 +7,18 @@
  * @package         Event Espresso
  * @subpackage      /includes/core/admin/messages
  * @author          Darren Ethier
- * ------------------------------------------------------------------------
  */
 class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
 {
     /**
      * Setup initial data.
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _setup_data()
     {
-        $this->_data = $this->get_admin_page()->get_message_templates(
+        $this->_data           = $this->get_admin_page()->get_message_templates(
             $this->_per_page,
             $this->_view,
             false,
@@ -39,23 +41,23 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
     protected function _set_properties()
     {
         parent::_set_properties();
-        $this->_wp_list_args = array(
+        $this->_wp_list_args = [
             'singular' => esc_html__('Message Template Group', 'event_espresso'),
             'plural'   => esc_html__('Message Template', 'event_espresso'),
             'ajax'     => true, // for now,
             'screen'   => $this->get_admin_page()->get_current_screen()->id,
-        );
+        ];
 
         $this->_columns = array_merge(
-            array(
+            [
                 'cb'   => '<input type="checkbox" />',
                 'name' => esc_html__('Template Name', 'event_espresso'),
-            ),
+            ],
             $this->_columns,
-            array(
+            [
                 'events'  => esc_html__('Events', 'event_espresso'),
-                'actions' => '',
-            )
+                'actions' => $this->actionsColumnHeader(),
+            ]
         );
     }
 
@@ -85,6 +87,7 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
     /**
      * @param EE_Message_Template_Group $item
      * @return string
+     * @throws EE_Error
      */
     public function column_cb($item)
     {
@@ -95,8 +98,9 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
     /**
      * @param EE_Message_Template_Group $item
      * @return string
+     * @throws EE_Error
      */
-    public function column_name($item)
+    public function column_name(EE_Message_Template_Group $item): string
     {
         return '<p>' . $item->name() . '</p>';
     }
@@ -105,34 +109,132 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
     /**
      * @param EE_Message_Template_Group $item
      * @return string
+     * @throws EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function column_actions($item)
+    public function column_actions(EE_Message_Template_Group $item): string
     {
+        $actions = '';
         if (
             EE_Registry::instance()->CAP->current_user_can(
                 'ee_edit_messages',
                 'espresso_messages_add_new_message_template'
             )
         ) {
-            $create_args = array(
-                'GRP_ID'       => $item->ID(),
-                'messenger'    => $item->messenger(),
-                'message_type' => $item->message_type(),
-                'action'       => 'add_new_message_template',
+            $create_link = EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'GRP_ID'       => $item->ID(),
+                    'messenger'    => $item->messenger(),
+                    'message_type' => $item->message_type(),
+                    'action'       => 'add_new_message_template',
+                ],
+                EE_MSG_ADMIN_URL
             );
-            $create_link = EE_Admin_Page::add_query_args_and_nonce($create_args, EE_MSG_ADMIN_URL);
 
-            $aria_label = esc_html__('Create Custom Message Template', 'event_espresso');
-            return "
-            <a href='$create_link' class='ee-aria-tooltip button button--icon-only' aria-label='$aria_label'>
+            $actions .= "
+            <a href='$create_link'
+               aria-label='" . esc_html__('Create Custom Message Template', 'event_espresso') . "'
+               class='ee-aria-tooltip button button--icon-only'
+            >
                 <span class='dashicons dashicons-admin-customizer'></span>
             </a>";
         }
-        return '';
+
+
+        if (
+            ! $item->get('MTP_deleted')
+            && EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_message',
+                'espresso_messages_trash_message_template',
+                $item->ID()
+            )
+        ) {
+            // add additional actions for trash/restore etc.
+            $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'action'   => 'trash_message_template',
+                    'id'       => $item->GRP_ID(),
+                    'noheader' => true,
+                ],
+                EE_MSG_ADMIN_URL
+            );
+            $actions .= '
+                <a href="' . $trash_lnk_url . '"
+                   aria-label="' . esc_attr__('Move Template Group to Trash', 'event_espresso') . '"
+                   class="ee-aria-tooltip button button--icon-only"
+                >
+                   <span class="dashicons dashicons-trash"></span>
+                </a>';
+        } else {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_message',
+                    'espresso_messages_restore_message_template',
+                    $item->ID()
+                )
+            ) {
+                // restore link
+                $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                    [
+                        'action'   => 'restore_message_template',
+                        'id'       => $item->GRP_ID(),
+                        'noheader' => true,
+                    ],
+                    EE_MSG_ADMIN_URL
+                );
+                $actions .= '
+                    <a href="' . $restore_lnk_url . '"
+                       aria-label="' . esc_attr__('Restore Message Template', 'event_espresso') . '"
+                       class="ee-aria-tooltip button button--icon-only"
+                    >
+                        <span class="dashicons dashicons-undo"></span>
+                    </a>';
+            }
+
+            if (
+                $this->_view === 'trashed'
+                && EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_message',
+                    'espresso_messages_delete_message_template',
+                    $item->ID()
+                )
+            ) {
+                // delete price link
+                $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
+                    [
+                        'action'   => 'delete_message_template',
+                        'id'       => $item->GRP_ID(),
+                        'noheader' => true,
+                    ],
+                    EE_MSG_ADMIN_URL
+                );
+                $actions .= '
+                    <a href="' . $delete_lnk_url . '"
+                       aria-label="' . esc_attr__('Delete Template Group Permanently', 'event_espresso') . '"
+                       class="ee-aria-tooltip button button--icon-only"
+                    >
+                        <span class="dashicons dashicons-trash"></span>
+                    </a>';
+            }
+        }
+
+        return $this->actionsModalMenu(
+            $this->_action_string(
+                $actions,
+                $item,
+                'div',
+                'custom-messages-overview-actions ee-list-table-actions'
+            )
+        );
     }
+
 
     /**
      * Set the view counts on the _views property
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _add_view_counts()
     {
@@ -152,92 +254,12 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
      * column_events
      * This provides a count of events using this custom template
      *
-     * @param  EE_Message_Template_Group $item message_template group data
+     * @param EE_Message_Template_Group $item message_template group data
      * @return string column output
      */
-    public function column_events($item)
+    public function column_events(EE_Message_Template_Group $item): string
     {
         return $item->count_events();
-    }
-
-
-    /**
-     * Add additional actions for custom message template list view.
-     *
-     * @param EE_Message_Template_Group $item
-     * @return array
-     * @throws EE_Error
-     */
-    protected function _get_actions_for_messenger_column(EE_Message_Template_Group $item)
-    {
-        $actions = parent::_get_actions_for_messenger_column($item);
-
-        // add additional actions for trash/restore etc.
-        $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action'   => 'trash_message_template',
-            'id'       => $item->GRP_ID(),
-            'noheader' => true,
-        ), EE_MSG_ADMIN_URL);
-        // restore link
-        $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action'   => 'restore_message_template',
-            'id'       => $item->GRP_ID(),
-            'noheader' => true,
-        ), EE_MSG_ADMIN_URL);
-        // delete price link
-        $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-            'action'   => 'delete_message_template',
-            'id'       => $item->GRP_ID(),
-            'noheader' => true,
-        ), EE_MSG_ADMIN_URL);
-
-        if (
-            ! $item->get('MTP_deleted')
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_message',
-                'espresso_messages_trash_message_template',
-                $item->ID()
-            )
-        ) {
-            $actions['trash'] = '
-                <a href="' . $trash_lnk_url . '" 
-                   aria-label="' . esc_attr__('Move Template Group to Trash', 'event_espresso') . '"
-                >
-                    ' . esc_html__('Move to Trash', 'event_espresso') . '
-                </a>';
-        } else {
-            if (
-                EE_Registry::instance()->CAP->current_user_can(
-                    'ee_delete_message',
-                    'espresso_messages_restore_message_template',
-                    $item->ID()
-                )
-            ) {
-                $actions['restore'] = '
-                    <a href="' . $restore_lnk_url . '" 
-                       aria-label="' . esc_attr__('Restore Message Template', 'event_espresso') . '"
-                    >
-                        ' . esc_html__('Restore', 'event_espresso') . '
-                    </a>';
-            }
-
-            if (
-                $this->_view === 'trashed'
-                && EE_Registry::instance()->CAP->current_user_can(
-                    'ee_delete_message',
-                    'espresso_messages_delete_message_template',
-                    $item->ID()
-                )
-            ) {
-                $actions['delete'] = '
-                    <a href="' . $delete_lnk_url . '" 
-                       aria-label="' . esc_attr__('Delete Template Group Permanently', 'event_espresso') . '"
-                    >
-                        ' . esc_html__('Delete Permanently', 'event_espresso') . '
-                    </a>';
-            }
-        }
-        return $actions;
     }
 
 
@@ -247,8 +269,9 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
      * @param bool $global
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _get_messengers_dropdown_filter($global = true)
+    protected function _get_messengers_dropdown_filter(bool $global = true): string
     {
         return parent::_get_messengers_dropdown_filter(false);
     }
@@ -260,8 +283,9 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
      * @param bool $global
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _get_message_types_dropdown_filter($global = true)
+    protected function _get_message_types_dropdown_filter(bool $global = true): string
     {
         return parent::_get_message_types_dropdown_filter(false);
     }

@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -22,47 +23,49 @@ class EE_Messages_Scheduler extends EE_Base
      */
     const message_cron_schedule = 300;
 
+
     /**
      * Constructor
      */
     public function __construct()
     {
         // register tasks (and make sure only registered once).
-        if (! has_action('FHEE__EEH_Activation__get_cron_tasks', array($this, 'register_scheduled_tasks'))) {
-            add_action('FHEE__EEH_Activation__get_cron_tasks', array($this, 'register_scheduled_tasks'), 10);
+        if (! has_action('FHEE__EEH_Activation__get_cron_tasks', [$this, 'register_scheduled_tasks'])) {
+            add_action('FHEE__EEH_Activation__get_cron_tasks', [$this, 'register_scheduled_tasks']);
         }
 
         // register callbacks for scheduled events (but make sure they are set only once).
         if (
             ! has_action(
                 'AHEE__EE_Messages_Scheduler__generation',
-                array('EE_Messages_Scheduler', 'batch_generation')
+                ['EE_Messages_Scheduler', 'batch_generation']
             )
         ) {
-            add_action('AHEE__EE_Messages_Scheduler__generation', array('EE_Messages_Scheduler', 'batch_generation'));
-            add_action('AHEE__EE_Messages_Scheduler__sending', array('EE_Messages_Scheduler', 'batch_sending'));
-            add_action('AHEE__EE_Messages_Scheduler__cleanup', array('EE_Messages_Scheduler', 'cleanup'));
+            add_action('AHEE__EE_Messages_Scheduler__generation', ['EE_Messages_Scheduler', 'batch_generation']);
+            add_action('AHEE__EE_Messages_Scheduler__sending', ['EE_Messages_Scheduler', 'batch_sending']);
+            add_action('AHEE__EE_Messages_Scheduler__cleanup', ['EE_Messages_Scheduler', 'cleanup']);
         }
 
         // add custom schedules
-        add_filter('cron_schedules', array($this, 'custom_schedules'));
+        add_filter('cron_schedules', [$this, 'custom_schedules']);
     }
 
 
     /**
      * Add custom schedules for wp_cron
      *
-     * @param $schedules
+     * @param array $schedules
+     * @return array
      */
-    public function custom_schedules($schedules)
+    public function custom_schedules(array $schedules): array
     {
-        $schedules['ee_message_cron'] = array(
+        $schedules['ee_message_cron'] = [
             'interval' => self::message_cron_schedule,
             'display'  => esc_html__(
                 'This is the cron time interval for EE Message schedules (defaults to once every 5 minutes)',
                 'event_espresso'
             ),
-        );
+        ];
         return $schedules;
     }
 
@@ -76,12 +79,12 @@ class EE_Messages_Scheduler extends EE_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function register_scheduled_tasks($tasks)
+    public function register_scheduled_tasks(array $tasks): array
     {
         EE_Registry::instance()->load_helper('DTT_Helper');
         $tasks['AHEE__EE_Messages_Scheduler__generation'] = 'ee_message_cron';
         $tasks['AHEE__EE_Messages_Scheduler__sending']    = 'ee_message_cron';
-        $tasks['AHEE__EE_Messages_Scheduler__cleanup'] = array( EEH_DTT_Helper::tomorrow(), 'daily');
+        $tasks['AHEE__EE_Messages_Scheduler__cleanup']    = [EEH_DTT_Helper::tomorrow(), 'daily'];
         return $tasks;
     }
 
@@ -91,8 +94,10 @@ class EE_Messages_Scheduler extends EE_Base
      * Note: The EED_Messages module has the handlers for these requests.
      *
      * @param string $task The task the request is being generated for.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function initiate_scheduled_non_blocking_request($task)
+    public static function initiate_scheduled_non_blocking_request(string $task)
     {
         if (
             apply_filters(
@@ -102,18 +107,18 @@ class EE_Messages_Scheduler extends EE_Base
         ) {
             $request_url  = add_query_arg(
                 array_merge(
-                    array('ee' => 'msg_cron_trigger'),
+                    ['ee' => 'msg_cron_trigger'],
                     EE_Messages_Scheduler::get_request_params($task)
                 ),
                 site_url()
             );
-            $request_args = array(
+            $request_args = [
                 'timeout'     => 300,
                 'blocking'    => (defined('DOING_CRON') && DOING_CRON)
-                                 || (defined('DOING_AJAX') && DOING_AJAX),
+                    || (defined('DOING_AJAX') && DOING_AJAX),
                 'sslverify'   => false,
                 'redirection' => 10,
-            );
+            ];
             $response     = wp_remote_get($request_url, $request_args);
             if (is_wp_error($response)) {
                 trigger_error($response->get_error_message());
@@ -131,15 +136,15 @@ class EE_Messages_Scheduler extends EE_Base
      * @param string $task The task the request is for.
      * @return array
      */
-    public static function get_request_params($task)
+    public static function get_request_params(string $task): array
     {
         // transient is used for flood control on msg_cron_trigger requests
         $transient_key = 'ee_trans_' . uniqid($task);
         set_transient($transient_key, 1, 5 * MINUTE_IN_SECONDS);
-        return array(
+        return [
             'type' => $task,
             'key'  => $transient_key,
-        );
+        ];
     }
 
 
@@ -147,11 +152,13 @@ class EE_Messages_Scheduler extends EE_Base
      * This is used to execute an immediate call to the run_cron task performed by EED_Messages
      *
      * @param string $task The task the request is being generated for.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function initiate_immediate_request_on_cron($task)
+    public static function initiate_immediate_request_on_cron(string $task)
     {
         /** @var RequestInterface $request */
-        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $request      = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $request_args = EE_Messages_Scheduler::get_request_params($task);
         // set those request args in the request so it gets picked up
         foreach ($request_args as $request_key => $request_value) {
@@ -163,6 +170,9 @@ class EE_Messages_Scheduler extends EE_Base
 
     /**
      * Callback for scheduled AHEE__EE_Messages_Scheduler__generation wp cron event
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function batch_generation()
     {
@@ -180,6 +190,9 @@ class EE_Messages_Scheduler extends EE_Base
 
     /**
      * Callback for scheduled AHEE__EE_Messages_Scheduler__sending
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function batch_sending()
     {
@@ -201,16 +214,16 @@ class EE_Messages_Scheduler extends EE_Base
      * permanently from the database messages that have a MSG_modified date older than 30 days.
      *
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function cleanup()
     {
         // First, confirm that the generation and sending EE_Messages_Scheduler crons are
         // set and reschedule them if they are not.
-        $message_crons_to_check = array(
+        $message_crons_to_check = [
             'AHEE__EE_Messages_Scheduler__generation' => 'ee_message_cron',
             'AHEE__EE_Messages_Scheduler__sending'    => 'ee_message_cron',
-        );
+        ];
         foreach ($message_crons_to_check as $hook_name => $frequency) {
             if (! wp_next_scheduled($hook_name)) {
                 wp_schedule_event(time(), $frequency, $hook_name);
@@ -219,10 +232,7 @@ class EE_Messages_Scheduler extends EE_Base
 
         // check if user has cleanup turned on or if we're in maintenance mode.  If in maintenance mode we'll wait
         // until the next scheduled event.
-        if (
-            ! EE_Registry::instance()->CFG->messages->delete_threshold
-            || ! EE_Maintenance_Mode::instance()->models_can_query()
-        ) {
+        if (! EE_Registry::instance()->CFG->messages->delete_threshold || DbStatus::isOffline()) {
             return;
         }
 

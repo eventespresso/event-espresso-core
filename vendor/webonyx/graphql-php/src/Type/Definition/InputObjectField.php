@@ -33,6 +33,18 @@ class InputObjectField
     /** @var mixed[] */
     public $config;
 
+    public $caps;
+
+    public $formatter;
+
+    public $key;
+
+    public $resolver;
+
+    public $use_for_input;
+
+    public $use_for_output;
+
     /**
      * @param mixed[] $opts
      */

@@ -3,12 +3,17 @@
 namespace EventEspresso\core\services\request;
 
 use EE_Capabilities;
+use EE_Cron_Tasks;
 use EE_Error;
+use EE_Maintenance_Mode;
+use EE_System;
+use EventEspresso\core\domain\services\capabilities\CapabilitiesChecker;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\deprecated\DeprecationManager;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use InvalidArgumentException;
 
 /**
@@ -24,7 +29,7 @@ use InvalidArgumentException;
  */
 class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCoreAppInterface
 {
-    protected RequestInterface  $request;
+    protected RequestInterface $request;
 
     protected ResponseInterface $response;
 
@@ -58,18 +63,12 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
         // legacy action for backwards compatibility
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
         $this->setupFramework();
-        $loader               = LoaderFactory::getLoader();
-        $capabilities_checker = $loader->getShared(
-            'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker',
-            [EE_Capabilities::instance()]
-        );
-        $loader->getShared(
-            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager',
-            [$capabilities_checker, $request]
-        );
-        // WP cron jobs
-        $loader->getShared('EE_Cron_Tasks');
-        $loader->getShared('EE_System');
+        $capabilities_checker = LoaderFactory::getShared(CapabilitiesChecker::class, [EE_Capabilities::instance()]);
+        LoaderFactory::getShared(PersistentAdminNoticeManager::class, [$capabilities_checker, $request]);
+        // needed
+        LoaderFactory::getShared(EE_Maintenance_Mode::class);
+        LoaderFactory::getShared(EE_Cron_Tasks::class);
+        LoaderFactory::getShared(EE_System::class);
         return $this->response;
     }
 

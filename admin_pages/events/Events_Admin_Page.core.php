@@ -1967,15 +1967,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $end                             = $DateTime->getTimestamp();
             $where['Datetime.DTT_EVT_start'] = ['BETWEEN', [$start, $end]];
         } elseif ($status === 'today') {
-            $DateTime                        =
-                new DateTime('now', new DateTimeZone(EEM_Event::instance()->get_timezone()));
+            $DateTime                        = new DateTime(
+                'now',
+                new DateTimeZone(EEM_Event::instance()->get_timezone())
+            );
             $start                           = $DateTime->setTime(0, 0)->format(implode(' ', $start_formats));
             $end                             = $DateTime->setTime(23, 59, 59)->format(implode(' ', $start_formats));
             $where['Datetime.DTT_EVT_start'] = ['BETWEEN', [$start, $end]];
         } elseif ($status === 'month') {
             $now                             = date('Y-m-01');
-            $DateTime                        =
-                new DateTime($now, new DateTimeZone(EEM_Event::instance()->get_timezone()));
+            $DateTime                        = new DateTime(
+                $now,
+                new DateTimeZone(EEM_Event::instance()->get_timezone())
+            );
             $start                           = $DateTime->setTime(0, 0)->format(implode(' ', $start_formats));
             $end                             = $DateTime->setDate(date('Y'), date('m'), $DateTime->format('t'))
                                                         ->setTime(23, 59, 59)

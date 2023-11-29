@@ -110,7 +110,7 @@ abstract class EE_Form_Section_Base
 
 
     /**
-     * @param $parent_form_section
+     * @param EE_Form_Section_Base|null $parent_form_section
      * @param $name
      */
     protected function _construct_finalize($parent_form_section, $name)

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
+
 /**
  * Extend_About_Admin_Page
  *
@@ -103,10 +105,7 @@ class Extend_About_Admin_Page extends About_Admin_Page
 
     protected function _whats_new()
     {
-        $steps                                            =
-            EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance
-                ? $this->_get_started_steps() : false;
-        $steps                                            = $steps !== false ? $steps : '';
+        $steps = MaintenanceStatus::isNotDisabled() ? $this->_get_started_steps() : '';
         $this->_admin_page_title                          = sprintf(
             esc_html__('Welcome to Event Espresso %s', 'event_espresso'),
             EVENT_ESPRESSO_VERSION

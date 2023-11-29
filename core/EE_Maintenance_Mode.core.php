@@ -1,8 +1,11 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\interfaces\ResettableInterface;
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\CurrentPage;
+use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -18,49 +21,78 @@ class EE_Maintenance_Mode implements ResettableInterface
 {
     /**
      * constants available to client code for interpreting the values of EE_Maintenance_Mode::level().
-     * level_0_not_in_maintenance means the site is NOT in maintenance mode (so everything's normal)
+     * STATUS_OFF means the site is NOT in maintenance mode (so everything's normal)
      */
-    const level_0_not_in_maintenance = 0;
+    public const STATUS_OFF = 0;
+
 
     /**
-     * level_1_frontend_only_maintenance means that the site's frontend EE code should be completely disabled
+     * STATUS_PUBLIC_ONLY means that the site's frontend EE code should be completely disabled
      * but the admin backend should be running as normal. Maybe an admin can view the frontend though
      */
-    const level_1_frontend_only_maintenance = 1;
+    public const STATUS_PUBLIC_ONLY = 1;
 
     /**
-     * level_2_complete_maintenance means the frontend AND EE backend code are disabled. The only system running
+     * STATUS_FULL_SITE means the frontend AND EE backend code are disabled. The only system running
      * is the maintenance mode stuff, which will require users to update all addons, and then finish running all
      * migration scripts before taking the site out of maintenance mode
      */
-    const level_2_complete_maintenance = 2;
+    public const STATUS_FULL_SITE = 2;
 
     /**
      * the name of the option which stores the current level of maintenance mode
      */
-    const option_name_maintenance_mode = 'ee_maintenance_mode';
+    private const OPTION_NAME = 'ee_maintenance_mode';
 
+
+    protected LoaderInterface $loader;
+
+    private RequestInterface $request;
+
+    private static ?EE_Maintenance_Mode $_instance = null;
 
     /**
-     * @var EE_Maintenance_Mode $_instance
+     * @var int
+     * @since $VID:$
      */
-    private static $_instance;
+    private int $status;
 
     /**
-     * @var EE_Registry $EE
+     * @var int
+     * @since $VID:$
      */
-    protected $EE;
+    private int $admin_status;
+
+    /**
+     * true if current_user_can('administrator')
+     *
+     * @var bool
+     * @since $VID:$
+     */
+    private bool $current_user_is_admin;
+
+    /**
+     * used to control updates to the WP options setting in the database
+     *
+     * @var bool
+     * @since $VID:$
+     */
+    private bool $update_db;
 
 
     /**
      * @singleton method used to instantiate class object
-     * @return EE_Maintenance_Mode
+     * @param LoaderInterface|null  $loader
+     * @param RequestInterface|null $request
+     * @return EE_Maintenance_Mode|null
      */
-    public static function instance()
-    {
+    public static function instance(
+        ?LoaderInterface $loader = null,
+        ?RequestInterface $request = null
+    ): ?EE_Maintenance_Mode {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_Maintenance_Mode) {
-            self::$_instance = new self();
+            self::$_instance = new EE_Maintenance_Mode($loader, $request);
         }
         return self::$_instance;
     }
@@ -69,10 +101,10 @@ class EE_Maintenance_Mode implements ResettableInterface
     /**
      * Resets maintenance mode (mostly just re-checks whether we should be in maintenance mode)
      *
-     * @return EE_Maintenance_Mode
+     * @return EE_Maintenance_Mode|null
      * @throws EE_Error
      */
-    public static function reset()
+    public static function reset(): ?EE_Maintenance_Mode
     {
         self::instance()->set_maintenance_mode_if_db_old();
         return self::instance();
@@ -82,8 +114,18 @@ class EE_Maintenance_Mode implements ResettableInterface
     /**
      *private constructor to prevent direct creation
      */
-    private function __construct()
+    private function __construct(LoaderInterface $loader, RequestInterface $request)
     {
+        $this->loader                = $loader;
+        $this->request               = $request;
+        $this->current_user_is_admin = current_user_can('administrator');
+        $this->status                = $this->loadStatusFromDatabase();
+        $this->admin_status          = $this->setAdminStatus($this->status);
+        // now make sure the status is set correctly everywhere
+        $this->update_db = false;
+        $this->set_maintenance_level($this->status);
+        $this->update_db = true;
+
         // if M-Mode level 2 is engaged, we still need basic assets loaded
         add_action('wp_enqueue_scripts', [$this, 'load_assets_required_for_m_mode']);
         // shut 'er down for maintenance ?
@@ -91,55 +133,54 @@ class EE_Maintenance_Mode implements ResettableInterface
         // redirect ee menus to maintenance page
         add_action('admin_page_access_denied', [$this, 'redirect_to_maintenance']);
         // add powered by EE msg
-        add_action('shutdown', [$this, 'display_maintenance_mode_notice'], 10);
+        add_action('shutdown', [$this, 'display_maintenance_mode_notice']);
     }
 
 
-    /**
-     * retrieves the maintenance mode option value from the db
-     *
-     * @return int
-     */
-    public function real_level()
+    private function loadStatusFromDatabase(): int
     {
-        return (int) get_option(self::option_name_maintenance_mode, EE_Maintenance_Mode::level_0_not_in_maintenance);
+        return (int) get_option(EE_Maintenance_Mode::OPTION_NAME, EE_Maintenance_Mode::STATUS_OFF);
     }
 
 
     /**
-     * Returns whether the models reportedly are able to run queries or not
-     * (ie, if the system thinks their tables are present and up-to-date).
-     *
-     * @return boolean
-     */
-    public function models_can_query()
-    {
-        return $this->real_level() !== EE_Maintenance_Mode::level_2_complete_maintenance;
-    }
-
-
-    /**
+     * changes the maintenance mode level to reflect whether the current user is an admin or not.
      * Determines whether we're in maintenance mode and what level. However, while the site
      * is in level 1 maintenance, and an admin visits the frontend, this function makes it appear
-     * to them as if teh site isn't in maintenance mode.
-     * EE_Maintenance_Mode::level_0_not_in_maintenance => not in maintenance mode (in normal mode)
-     * EE_Maintenance_Mode::level_1_frontend_only_maintenance=> frontend-only maintenance mode
-     * EE_Maintenance_Mode::level_2_complete_maintenance => frontend and backend maintenance mode
+     * to them as if the site isn't in maintenance mode.
+     *      EE_Maintenance_Mode::STATUS_OFF => not in maintenance mode (in normal mode)
+     *      EE_Maintenance_Mode::STATUS_PUBLIC_ONLY=> frontend-only maintenance mode
+     *      EE_Maintenance_Mode::STATUS_FULL_SITE => frontend and backend maintenance mode
      *
+     * @param int $status
+     * @return int
+     * @since $VID:$
+     */
+    private function setAdminStatus(int $status): int
+    {
+        if (
+            $status === EE_Maintenance_Mode::STATUS_PUBLIC_ONLY
+            && $this->current_user_is_admin
+            && ($this->request->isAjax() || ! $this->request->isAdmin())
+        ) {
+            return EE_Maintenance_Mode::STATUS_OFF;
+        }
+        return $status;
+    }
+
+
+    public function real_level(): int
+    {
+        return $this->status;
+    }
+
+
+    /**
      * @return int
      */
-    public function level()
+    public function level(): int
     {
-        $maintenance_mode_level = $this->real_level();
-        // if this is an admin request, we'll be honest... except if it's ajax, because that might be from the frontend
-        if (
-            $maintenance_mode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance// we're in level 1
-            && ((defined('DOING_AJAX') && DOING_AJAX) || ! is_admin()) // on non-ajax frontend requests
-            && current_user_can('administrator') // when the user is an admin
-        ) {
-            $maintenance_mode_level = EE_Maintenance_Mode::level_0_not_in_maintenance;
-        }
-        return $maintenance_mode_level;
+        return $this->admin_status;
     }
 
 
@@ -149,18 +190,17 @@ class EE_Maintenance_Mode implements ResettableInterface
      * @return boolean true if DB is old and maintenance mode was triggered; false otherwise
      * @throws EE_Error
      */
-    public function set_maintenance_mode_if_db_old()
+    public function set_maintenance_mode_if_db_old(): bool
     {
-        LoaderFactory::getLoader()->getShared('Data_Migration_Manager');
+        $this->loader->getShared('Data_Migration_Manager');
         if (EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()) {
-            update_option(self::option_name_maintenance_mode, self::level_2_complete_maintenance);
+            $this->activateFullSiteMaintenanceMode();
             return true;
         }
-        if ($this->level() === self::level_2_complete_maintenance) {
+        if ($this->status === EE_Maintenance_Mode::STATUS_FULL_SITE) {
             // we also want to handle the opposite: if the site is mm2, but there aren't any migrations to run
             // then we shouldn't be in mm2. (Maybe an addon got deactivated?)
-            update_option(self::option_name_maintenance_mode, self::level_0_not_in_maintenance);
-            return false;
+            $this->deactivateMaintenanceMode();
         }
         return false;
     }
@@ -172,10 +212,89 @@ class EE_Maintenance_Mode implements ResettableInterface
      * @param int $level
      * @return void
      */
-    public function set_maintenance_level($level)
+    public function set_maintenance_level(int $level): void
     {
-        do_action('AHEE__EE_Maintenance_Mode__set_maintenance_level', $level);
-        update_option(self::option_name_maintenance_mode, (int) $level);
+        switch ($level) {
+            case EE_Maintenance_Mode::STATUS_OFF:
+                $this->deactivateMaintenanceMode();
+                return;
+            case EE_Maintenance_Mode::STATUS_PUBLIC_ONLY:
+                $this->activatePublicOnlyMaintenanceMode();
+                return;
+            case EE_Maintenance_Mode::STATUS_FULL_SITE:
+                $this->activateFullSiteMaintenanceMode();
+                return;
+        }
+        throw new DomainException(
+            sprintf(
+                esc_html__(
+                    '"%1$s" is not valid a EE maintenance mode level. Please choose from one of the following: %2$s',
+                    'event_espresso'
+                ),
+                $level,
+                'EE_Maintenance_Mode::STATUS_OFF, EE_Maintenance_Mode::STATUS_PUBLIC_ONLY, EE_Maintenance_Mode::STATUS_FULL_SITE',
+            )
+        );
+    }
+
+
+    /**
+     * sets database status to online
+     * sets maintenance mode status to public only, unless current user is an admin, then maintenance mode is disabled
+     *
+     * @return void
+     * @since $VID:$
+     */
+    public function activatePublicOnlyMaintenanceMode()
+    {
+        DbStatus::setOnline();
+        // disable maintenance mode for admins, otherwise enable public only maintenance mode
+        if ($this->admin_status === EE_Maintenance_Mode::STATUS_OFF) {
+            MaintenanceStatus::disableMaintenanceMode();
+        } else {
+            MaintenanceStatus::setPublicOnlyMaintenanceMode();
+        }
+        $this->updateMaintenaceModeStatus(EE_Maintenance_Mode::STATUS_PUBLIC_ONLY);
+    }
+
+
+    /**
+     * sets database status to offline
+     * sets maintenance mode status to full site
+     *
+     * @return void
+     * @since $VID:$
+     */
+    public function activateFullSiteMaintenanceMode()
+    {
+        DbStatus::setOffline();
+        MaintenanceStatus::setFullSiteMaintenanceMode();
+        $this->updateMaintenaceModeStatus(EE_Maintenance_Mode::STATUS_FULL_SITE);
+    }
+
+
+    /**
+     * sets database status to online
+     * turns maintenance mode off
+     *
+     * @return void
+     * @since $VID:$
+     */
+    public function deactivateMaintenanceMode()
+    {
+        DbStatus::setOnline();
+        MaintenanceStatus::disableMaintenanceMode();
+        $this->updateMaintenaceModeStatus(EE_Maintenance_Mode::STATUS_OFF);
+    }
+
+
+    private function updateMaintenaceModeStatus(int $status)
+    {
+        if (! $this->update_db) {
+            return;
+        }
+        do_action('AHEE__EE_Maintenance_Mode__set_maintenance_level', $status);
+        update_option(EE_Maintenance_Mode::OPTION_NAME, $status);
     }
 
 
@@ -184,19 +303,19 @@ class EE_Maintenance_Mode implements ResettableInterface
      *
      * @return bool
      */
-    public static function disable_frontend_for_maintenance()
+    public static function disable_frontend_for_maintenance(): bool
     {
-        return (! is_admin() && EE_Maintenance_Mode::instance()->level());
+        return ! is_admin() && MaintenanceStatus::isNotDisabled();
     }
 
 
     /**
      * @return void
      */
-    public function load_assets_required_for_m_mode()
+    public function load_assets_required_for_m_mode(): void
     {
         if (
-            $this->real_level() === EE_Maintenance_Mode::level_2_complete_maintenance
+            $this->status === EE_Maintenance_Mode::STATUS_FULL_SITE
             && ! wp_script_is('espresso_core')
         ) {
             wp_register_style(
@@ -225,7 +344,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      *
      * @return    string
      */
-    public static function template_include()
+    public static function template_include(): string
     {
         // shut 'er down for maintenance ? then don't use any of our templates for our endpoints
         return get_template_directory() . '/index.php';
@@ -239,10 +358,10 @@ class EE_Maintenance_Mode implements ResettableInterface
      * @param string $the_content
      * @return string
      */
-    public function the_content($the_content)
+    public function the_content(string $the_content): string
     {
         // check if M-mode is engaged and for EE shortcode
-        if ($this->level() && strpos($the_content, '[ESPRESSO_') !== false) {
+        if ($this->admin_status && strpos($the_content, '[ESPRESSO_') !== false) {
             // this can eventually be moved to a template, or edited via admin. But for now...
             $the_content = sprintf(
                 esc_html__(
@@ -263,19 +382,18 @@ class EE_Maintenance_Mode implements ResettableInterface
      */
     public function display_maintenance_mode_notice()
     {
-        if (! did_action('AHEE__EE_System__load_core_configuration__complete')) {
+        if (
+            ! $this->current_user_is_admin
+            || $this->status === EE_Maintenance_Mode::STATUS_OFF
+            || $this->request->isAdmin()
+            || $this->request->isAjax()
+            || ! did_action('AHEE__EE_System__load_core_configuration__complete')
+        ) {
             return;
         }
         /** @var CurrentPage $current_page */
-        $current_page = LoaderFactory::getLoader()->getShared(CurrentPage::class);
-        // check if M-mode is engaged and for EE shortcode
-        if (
-            ! (defined('DOING_AJAX') && DOING_AJAX)
-            && $this->real_level()
-            && ! is_admin()
-            && current_user_can('administrator')
-            && $current_page->isEspressoPage()
-        ) {
+        $current_page = $this->loader->getShared(CurrentPage::class);
+        if ($current_page->isEspressoPage()) {
             printf(
                 esc_html__(
                     '%sclose%sEvent Registration is currently disabled because Event Espresso has been placed into Maintenance Mode. To change Maintenance Mode settings, click here %sEE Maintenance Mode Admin Page%s',
@@ -293,20 +411,19 @@ class EE_Maintenance_Mode implements ResettableInterface
     }
     // espresso-notices important-notice ee-attention
 
+
     /**
      * Redirects EE admin menu requests to the maintenance page
      */
     public function redirect_to_maintenance()
     {
         global $pagenow;
-        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-        $page   = $request->getRequestParam('page');
-
+        $page = $this->request->getRequestParam('page', '', DataType::STRING);
         if (
             $pagenow == 'admin.php'
             && $page !== 'espresso_maintenance_settings'
             && strpos($page, 'espresso_') !== false
-            && $this->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance
+            && $this->status == EE_Maintenance_Mode::STATUS_FULL_SITE
         ) {
             EEH_URL::safeRedirectAndExit('admin.php?page=espresso_maintenance_settings');
         }
@@ -375,5 +492,41 @@ class EE_Maintenance_Mode implements ResettableInterface
 
     final public static function __callStatic($a, $b)
     {
+    }
+
+
+    /************************ @DEPRECATED ********************** */
+
+    /**
+     * @depecated $VID:$
+     */
+    const level_0_not_in_maintenance = 0;
+
+    /**
+     * @depecated $VID:$
+     */
+    const level_1_frontend_only_maintenance = 1;
+
+    /**
+     * @depecated $VID:$
+     */
+    const level_2_complete_maintenance = 2;
+
+    /**
+     * @depecated $VID:$
+     */
+    const option_name_maintenance_mode = 'ee_maintenance_mode';
+
+
+    /**
+     * Returns whether the models reportedly are able to run queries or not
+     * (ie, if the system thinks their tables are present and up-to-date).
+     *
+     * @return boolean
+     * @depecated $VID:$
+     */
+    public function models_can_query(): bool
+    {
+        return DbStatus::isOnline();
     }
 }

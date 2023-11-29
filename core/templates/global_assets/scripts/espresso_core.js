@@ -9,9 +9,9 @@ jQuery( document ).ready( function ( $ ) {
 		*	center elements on screen
 		 * @param {string}  position // relative, absolute or fixed (default)
 		*/
-        eeCenter: function(position) {
+        eeCenter: function(position = 'fixed') {
             position             = typeof position !== 'undefined' && position !== '' ? position : 'fixed';
-            var window_height    = $(window).height(),
+            let window_height    = $(window).height(),
                 window_width     = $(window).width(),
                 container_height = this.outerHeight(),
                 container_width  = this.outerWidth(),
@@ -41,6 +41,7 @@ jQuery( document ).ready( function ( $ ) {
                 'position': position,
                 'top':      Math.max(1, element_top) + 'px',
                 'left':     Math.max(0, element_left) + 'px',
+                'transform': 'unset',
                 'margin':   0
             });
             return this;
@@ -55,7 +56,7 @@ jQuery( document ).ready( function ( $ ) {
 		 */
 		eeAddOverlay : function( opacity ) {
 			opacity = typeof opacity === 'undefined' || opacity > 1 ? 0.5 : opacity;
-			var overlay = '<div id="ee-overlay"></div>';
+			const overlay = '<div id="ee-overlay"></div>';
 			$(overlay).appendTo('body').css({
 				'position' : 'fixed',
 				'top' : 0,
@@ -88,7 +89,7 @@ jQuery( document ).ready( function ( $ ) {
 		 * @return {object}
 		 */
 		eeScrollTo : function( speed ) {
-			var selector = this;
+            const selector = this;
 			speed = typeof(speed) === 'undefined' ? 2000 : speed;
 			$("html,body").animate({
 				scrollTop: selector.offset().top - 80
@@ -101,7 +102,7 @@ jQuery( document ).ready( function ( $ ) {
 		*	return the correct value for a form input regardless of it's type
 		*/
 		eeInputValue : function () {
-			var inputType = this.prop('type');
+            const inputType = this.prop('type');
 			if ( inputType ===  'checkbox' || inputType === 'radio' ) {
 				return this.prop('checked');
 			} else {
@@ -114,13 +115,13 @@ jQuery( document ).ready( function ( $ ) {
 		*	return an object of URL params
 		*/
 		eeGetParams : function () {
-			var urlParams = {};
-			var url = this.attr('href');
+            const urlParams = {};
+            let url = this.attr('href');
 			url = typeof url !== 'undefined' && url !== '' ? url : location.href;
 			url = url.substring( url.indexOf( '?' ) + 1 ).split( '#' );
 			urlParams.hash = typeof url[1] !== 'undefined' && url[1] !== '' ? url[1] : '';
-			var qs = url[0].split( '&' );
-			for( var i = 0; i < qs.length; i++ ) {
+            const qs = url[0].split('&');
+            for( let i = 0; i < qs.length; i++ ) {
 				qs[ i ] = qs[ i ].split( '=' );
 				urlParams[ qs[ i ][0] ] = decodeURIComponent( qs[ i ][1] );
 			}
@@ -167,8 +168,8 @@ jQuery( document ).ready( function ( $ ) {
 	});
 
 
-	var existing_message = $('#message');
-	$('.show-if-js').css({ 'display' : 'inline-block' });
+    const existing_message = $('#message');
+    $('.show-if-js').css({ 'display' : 'inline-block' });
 	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );
 
 
@@ -176,7 +177,7 @@ jQuery( document ).ready( function ( $ ) {
 		// stop any message alerts that are in progress
 		$(existing_message).stop().hide();
 		// spinny things pacify the masses
-		$('#espresso-ajax-loading').eeCenter().show();
+		$('#espresso-ajax-loading').eeCenter('fixed').show();
 	};
 
 
@@ -184,8 +185,8 @@ jQuery( document ).ready( function ( $ ) {
 	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, removeExisting, doScroll ) {
 		removeExisting = typeof removeExisting !== false;
 		doScroll = typeof doScroll === 'undefined' ? true : doScroll;
-		var messages = $( '#ajax-notices-container' );
-		// if there is no existing message...
+        const messages = $('#ajax-notices-container');
+        // if there is no existing message...
 		if ( removeExisting === true ) {
 			messages.html('');
 		}
@@ -204,8 +205,8 @@ jQuery( document ).ready( function ( $ ) {
 		}
 
 		$( '#espresso-ajax-loading' ).fadeOut( 'fast' );
-		var msg = '';
-		// no existing errors?
+        let msg = '';
+        // no existing errors?
 		if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
 			msg = msg + '<div class="ee-admin-notification error hidden"><p>' + response.errors + '</p></div>';
 		}
@@ -218,8 +219,8 @@ jQuery( document ).ready( function ( $ ) {
 			msg = msg + '<div class="ee-admin-notification updated hidden ee-fade-away"><p>' + response.success + '</p></div>';
 		}
 		messages.html( msg );
-		var new_messages = messages;
-		messages.remove();
+        const new_messages = messages;
+        messages.remove();
 		beforeWhat = typeof beforeWhat !== 'undefined' && beforeWhat !== '' ? beforeWhat : '.nav-tab-wrapper';
 		// set message content
 		if ( doScroll ) {
@@ -252,9 +253,9 @@ jQuery( document ).ready( function ( $ ) {
 
 	function display_espresso_ajax_notices( message, type ) {
 		type = typeof type !== 'undefined' && type !== '' ? type : 'error';
-		var notice_id = '#espresso-ajax-notices-' + type;
+		const notice_id = '#espresso-ajax-notices-' + type;
 		$( notice_id + ' .espresso-notices-msg' ).text( message );
-		$( '#espresso-ajax-notices' ).eeCenter();
+		$( '#espresso-ajax-notices' ).eeCenter('fixed');
 		$( notice_id ).slideDown('fast');
 		$('.espresso-ajax-notices.fade-away').delay(10000).slideUp('fast');
 	}
@@ -282,8 +283,8 @@ jQuery( document ).ready( function ( $ ) {
 	// generic click event for displaying and giving focus to an element and hiding control
 	$('.display-the-hidden').on( 'click', function(e) {
 		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_display = $(this).attr("rel");
-		//alert( 'item_to_display = ' + item_to_display );
+        const item_to_display = $(this).attr("rel");
+        // alert( 'item_to_display = ' + item_to_display );
 		// hide the control element
 		$(this).fadeOut(50).hide();
 		// display the target's div container - use slideToggle or removeClass
@@ -300,11 +301,11 @@ jQuery( document ).ready( function ( $ ) {
 
 
 
-	// generic click event for re-hiding an element and displaying it's display control
+	// generic click event for re-hiding an element and displaying its display control
 	$('.hide-the-displayed').on( 'click', function(e) {
 		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_hide = $(this).attr("rel");
-		// hide the control element
+        const item_to_hide = $(this).attr("rel");
+        // hide the control element
 		$(this).fadeOut(50).hide();
 		// hide the target's div container - use slideToggle or addClass
 		$('#'+item_to_hide+'-dv').slideToggle(250, function() {
@@ -319,10 +320,10 @@ jQuery( document ).ready( function ( $ ) {
 
 
 	// generic click event for resetting a form input - can be coupled with the "hide_the_displayed" function above
-	$('.cancel').click(function() {
+	$('.cancel').click(function(e) {
 		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_cancel = $(this).attr("rel");
-		// set target element's value to an empty string
+        const item_to_cancel = $(this).attr("rel");
+        // set target element's value to an empty string
 		$('#'+item_to_cancel).val('');
 		e.preventDefault();
 		e.stopPropagation();
@@ -336,14 +337,14 @@ jQuery( document ).ready( function ( $ ) {
 	 */
 	$( '.ee-country-select-js' ).change(
 		function () {
-			var country_select_id = $(this).attr( 'id' ),
-				selected_country  = $(this).find( "option:selected" ).text(),
-				state_select_id   = '',
-				$state_select      = null,
-				selected_state    = null,
-				valid_option      = false;
+            let country_select_id = $(this).attr('id'),
+                selected_country = $(this).find("option:selected").text(),
+                state_select_id = '',
+                $state_select = null,
+                selected_state = null,
+                valid_option = false;
 
-			// console.log( ' ' );
+            // console.log( ' ' );
 			// console.log( 'COUNTRY SELECTION CHANGED' );
 			// console.log( 'country_select_id: ' + country_select_id );
 			// console.log( 'selected_country: ' + selected_country );
@@ -356,8 +357,8 @@ jQuery( document ).ready( function ( $ ) {
 				state_select_id = country_select_id.replace( 'country', 'state' );
 			} else {
 				// no ??? dang... now we have to try and find the corresponding state question.
-				var $state_div = $(this).parent().next('.ee-state-select-js-input-dv');
-				if ( ! $state_div.length ) {
+                let $state_div = $(this).parent().next('.ee-state-select-js-input-dv');
+                if ( ! $state_div.length ) {
 					// console.log( 'State Select div not found after Country Select div' );
 					$state_div = $(this).parent().prev( '.ee-state-select-js-input-dv' );
 				}
@@ -492,8 +493,8 @@ jQuery( document ).ready( function ( $ ) {
      */
     window.eeRgbToHex = function (rgb) {
         // console_log('rgb', rgb, false);
-        var hex = '';
-        var rgb_parts = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+        let hex = '';
+        const rgb_parts = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
         if (rgb_parts && rgb_parts.length === 4) {
             hex = "#" + ("0" + parseInt(rgb_parts[1], 10).toString(16)).slice(-2);
             hex += ("0" + parseInt(rgb_parts[2], 10).toString(16)).slice(-2);
@@ -516,8 +517,8 @@ jQuery( document ).ready( function ( $ ) {
      */
     window.eeGetParentBackgroundColor = function (domElement) {
     	// set default color of white with full opacity
-        var BackgroundColor = 'rgba(255,255,255,1)';
-        var $parent = domElement.parent();
+        let BackgroundColor = 'rgba(255,255,255,1)';
+        const $parent = domElement.parent();
         // if no BG color is found by the time we get to the "<html>" tag, then just return the default;
         if ($parent.length && $parent.prop('tagName') !== 'HTML') {
             // console_log('$parent', $parent.prop('tagName') + ' #' + $parent.attr('id'), true);
@@ -541,7 +542,7 @@ jQuery( document ).ready( function ( $ ) {
     // display a "you need to enable cookies" message if cookies are disabled in the browser settings
     if (! navigator.cookieEnabled) {
     	$('#ee-cookies-not-set-msg').removeClass('hidden');
-    }    
+    }
 
 
 
@@ -565,22 +566,22 @@ jQuery( document ).ready( function ( $ ) {
  * Docs: http://www.openjs.com/scripts/others/dump_function_php_print_r.php
  */
 function dump(arr,level) {
-	var dumped_text = "";
-	if ( ! level ) {
+    let dumped_text = "";
+    if ( ! level ) {
 		level = 0;
 	}
 
 	//The padding given at the beginning of the line.
-	var level_padding = "";
-	for(var j=0;j<level+1;j++) {
+    let level_padding = "";
+    for(let j=0; j<level+1; j++) {
 		level_padding += "    ";
 	}
 	//Array/Hashes/Objects
 	if( typeof(arr) === 'object' ) {
-		for(var item in arr) {
+		for(const item in arr) {
 			if ( typeof item !== 'undefined' && arr.hasOwnProperty( item ) ) {
-				var value = arr[item];
-				//If it is an array
+                const value = arr[item];
+                //If it is an array
 				if( typeof(value) === 'object' ) {
 					dumped_text += level_padding + "'" + item + "' ...\n";
 					dumped_text += dump(value,level+1);
@@ -626,8 +627,8 @@ window.console_log = function( item_name, value, spacer ) {
  */
 window.console_log_object = function( obj_name, obj, depth ) {
 	depth      = typeof depth !== 'undefined' ? depth : 0;
-	var spacer = '';
-	for ( var i = 0; i < depth; i++ ) {
+    let spacer = '';
+    for (let i = 0; i < depth; i++ ) {
 		spacer = spacer + '    ';
 	}
 	if ( typeof obj === 'object' ) {

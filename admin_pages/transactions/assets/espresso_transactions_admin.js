@@ -14,32 +14,29 @@ jQuery(document).ready(function ($) {
 
 	let dialog_content = {};
 	let d_contents = '';
-	const txn_admin_payments_table = $('#txn-admin-payments-tbl');
 
+    const txn_admin_payments_table = $('#txn-admin-payments-tbl');
 
 	txn_admin_payments_table.on('click', '.txn-admin-payment-action-edit-lnk', function () {
         display_payments_and_refunds_modal_dialog();
         // grab payment ID
 		const PAY_ID = $(this).data('paymentId');
-        const payAmt = accounting.unformat($('#payment-amount-' + PAY_ID).text());
+        const paymentAmount = accounting.unformat($('#payment-amount-' + PAY_ID).text());
+
+        const $payDateInput = $('#txn-admin-payment-date-inp');
+        const $payAmountInput = $('#txn-admin-payment-amount-inp');
+
 
 		//display depending on whether amount is negative (refund) or positive (payment).
-        if (payAmt < 0) {
+        if (paymentAmount < 0) {
             //refund
             $('.txn-reg-status-change-reg-status').val('RCN');
             $('#txn-admin-payment-type-inp').val(-1);
             $('#admin-modal-dialog-edit-refund-h2').show().find('span').html(PAY_ID);
             // transfer values from table to modal box form
             $('#txn-admin-payment-payment-id-inp').val(PAY_ID);
-            $('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID).text());
-            $('#txn-admin-payment-date-inp').val($('#payment-date-' + PAY_ID).text());
-            $('#txn-admin-payment-method-slct').val($('#payment-gateway-id-' + PAY_ID).text());
-            $('#txn-admin-payment-gateway-response-inp').val($('#payment-response-' + PAY_ID).text());
-            $('#txn-admin-payment-txn-id-chq-nmbr-inp').val($('#payment-txn-id-chq-nmbr-' + PAY_ID).text());
-            $('#txn-admin-payment-po-nmbr-inp').val($('#payment-po-nmbr-' + PAY_ID).text());
-            $('#txn-admin-payment-accounting-inp').val($('#payment-accntng-' + PAY_ID).text());
-            $('#txn-admin-payment-details-inp').val($('#payment-details-' + PAY_ID).text());
-            $('#txn-admin-payment-amount-inp').val(payAmt * -1);
+            updateTxnPaymentDetails(PAY_ID);
+            $payAmountInput.val(paymentAmount * -1);
             $('#txn-admin-apply-payment-to-all-registrations-inp').data('paymentId', PAY_ID);
             $('#txn-admin-apply-payment-to-some-registrations-inp').data('paymentId', PAY_ID);
 
@@ -52,39 +49,50 @@ jQuery(document).ready(function ($) {
             // transfer values from table to modal box form
             $('#txn-admin-payment-payment-id-inp').val(PAY_ID);
             $('#txn-admin-payment-type-inp').val(1);
-            $('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID).text());
-            $('#txn-admin-payment-date-inp').val($('#payment-date-' + PAY_ID).text());
-            $('#txn-admin-payment-method-slct').val($('#payment-gateway-id-' + PAY_ID).text());
-            $('#txn-admin-payment-gateway-response-inp').val($('#payment-response-' + PAY_ID).text());
-            $('#txn-admin-payment-txn-id-chq-nmbr-inp').val($('#payment-txn-id-chq-nmbr-' + PAY_ID).text());
-            $('#txn-admin-payment-po-nmbr-inp').val($('#payment-po-nmbr-' + PAY_ID).text());
-            $('#txn-admin-payment-accounting-inp').val($('#payment-accntng-' + PAY_ID).text());
-            $('#txn-admin-payment-details-inp').val($('#payment-details-' + PAY_ID).text());
-            $('#txn-admin-payment-amount-inp').val(payAmt);
+            updateTxnPaymentDetails(PAY_ID);
+            const formattedAmount = accounting.formatMoney(paymentAmount);
+            $payAmountInput.val(formattedAmount);
             $('#txn-admin-apply-payment-to-all-registrations-inp').data('paymentId', PAY_ID);
             $('#txn-admin-apply-payment-to-some-registrations-inp').data('paymentId', PAY_ID);
 
             $('#txn-admin-modal-dialog-edit-payment-lnk').show();
             $('#txn-admin-modal-dialog-cancel-lnk').show();
         }
-        dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true, false);
+        dttPickerHelper.resetpicker().picker(
+            $payDateInput,
+            {},
+            $payAmountInput,
+            true,
+            false
+        );
     });
 
 
     $("#display-txn-admin-apply-payment").on('click', function () {
         display_payments_and_refunds_modal_dialog();
+
+        const $payDateInput = $('#txn-admin-payment-date-inp');
+        const $payAmountInput = $('#txn-admin-payment-amount-inp');
+
         //set reg status to approved by default
         $('.txn-reg-status-change-reg-status').val('RAP');
         $('#admin-modal-dialog-apply-payment-h2').show();
         $('#txn-admin-modal-dialog-apply-payment-lnk').show();
         $('#txn-admin-modal-dialog-cancel-lnk').show();
-        $('#txn-admin-payment-date-inp').val($('#txn-admin-todays-date-inp').val());
+        $payDateInput.val($('#txn-admin-todays-date-inp').val());
 		const paymentAmount = $('#txn-admin-total-amount-due').data('due');
-		$('#txn-admin-payment-amount-inp').val(Number(paymentAmount));
+        const formattedAmount = accounting.formatMoney(paymentAmount);
+        $payAmountInput.val(formattedAmount);
 
         //make sure payment status selector shows
         $('.txn-admin-apply-payment-status-dv').show();
-        dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true, false);
+        dttPickerHelper.resetpicker().picker(
+            $payDateInput,
+            {},
+            $payAmountInput,
+            true,
+            false
+        );
     });
 
     txn_admin_payments_table.on('click', '.txn-admin-payment-action-delete-lnk', function () {
@@ -101,19 +109,30 @@ jQuery(document).ready(function ($) {
 
     $("#display-txn-admin-apply-refund").on('click', function () {
         display_payments_and_refunds_modal_dialog();
+
+        const $payDateInput = $('#txn-admin-payment-date-inp');
+        const $payAmountInput = $('#txn-admin-payment-amount-inp');
+
         $('.txn-reg-status-change-reg-status').val('RCN');
         $('#admin-modal-dialog-apply-refund-h2').show();
         $('#txn-admin-modal-dialog-apply-refund-lnk').show();
         $('#txn-admin-modal-dialog-cancel-lnk').show();
         $('#txn-admin-payment-payment-id-inp').val(0);
         $('#txn-admin-payment-type-inp').val(-1);
-        $('#txn-admin-payment-date-inp').val($('#txn-admin-todays-date-inp').val());
+        $payDateInput.val($('#txn-admin-todays-date-inp').val());
 		const refundAmount = $('#txn-admin-payment-total').data('total');
-		$('#txn-admin-payment-amount-inp').val(Number(refundAmount));
+        const formattedAmount = accounting.formatMoney(refundAmount);
+        $payAmountInput.val(formattedAmount);
         //don't show payment status selector
         $('.txn-admin-apply-payment-status-dv').hide();
 
-        dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true, false);
+        dttPickerHelper.resetpicker().picker(
+            $payDateInput,
+            {},
+            $payAmountInput,
+            true,
+            false
+        );
     });
 
 
@@ -197,7 +216,7 @@ jQuery(document).ready(function ($) {
 
     function validate_form_inputs() {
 		let goodToGo = true;
-        $('#txn-admin-apply-payment-frm .required').each(function (index) {
+        $('#txn-admin-apply-payment-frm .required').each(function () {
             if (!$(this).val()) {
                 $(this).addClass('requires-value').siblings('.validation-notice-dv').fadeIn();
                 $(this).eeScrollTo(400);
@@ -213,13 +232,13 @@ jQuery(document).ready(function ($) {
     }
 
 
-    function toggleAjaxActivity(done) {
+    function toggleAjaxActivity() {
         $('#espresso-ajax-loading').eeCenter('').fadeIn('fast');
         $('#ee-ajax-processing-text').fadeIn('fast');
     }
 
 
-    function apply_payment_or_refund(editOrApply) {
+    function apply_payment_or_refund() {
         $('#txn-admin-apply-payment-frm').submit();
     }
 
@@ -304,4 +323,15 @@ jQuery(document).ready(function ($) {
         $( this ).datepicker({ dateFormat: 'yy-mm-dd' });
 	});
 
+
+    function updateTxnPaymentDetails(PAY_ID) {
+        $('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID).text());
+        $('#txn-admin-payment-date-inp').val($('#payment-date-' + PAY_ID).text());
+        $('#txn-admin-payment-method-slct').val($('#payment-gateway-id-' + PAY_ID).text());
+        $('#txn-admin-payment-gateway-response-inp').val($('#payment-response-' + PAY_ID).text());
+        $('#txn-admin-payment-txn-id-chq-nmbr-inp').val($('#payment-txn-id-chq-nmbr-' + PAY_ID).text());
+        $('#txn-admin-payment-po-nmbr-inp').val($('#payment-po-nmbr-' + PAY_ID).text());
+        $('#txn-admin-payment-accounting-inp').val($('#payment-accntng-' + PAY_ID).text());
+        $('#txn-admin-payment-details-inp').val($('#payment-details-' + PAY_ID).text());
+    }
 });

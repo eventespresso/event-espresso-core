@@ -1,11 +1,12 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
+
 /**
  * This class contains all the code related to Event Espresso capabilities.
  * Assigned to the EE_Registry::instance()->CAP property.
  *
  * @link       https://github.com/eventespresso/event-espresso-core/tree/master/docs/K--Capability-System
- *
  * @since      4.5.0
  * @package    Event Espresso
  * @subpackage core, capabilities
@@ -13,7 +14,8 @@
  */
 final class EE_Capabilities extends EE_Base
 {
-    const ROLE_ADMINISTRATOR        = 'administrator';
+
+    const ROLE_ADMINISTRATOR = 'administrator';
 
     const ROLE_EVENTS_ADMINISTRATOR = 'ee_events_administrator';
 
@@ -23,12 +25,7 @@ final class EE_Capabilities extends EE_Base
      */
     const option_name = 'ee_caps_initialized';
 
-    /**
-     * instance of EE_Capabilities object
-     *
-     * @var EE_Capabilities
-     */
-    private static $_instance;
+    private static ?EE_Capabilities $_instance = null;
 
 
     /**
@@ -36,10 +33,9 @@ final class EE_Capabilities extends EE_Base
      * Array is indexed by Role and values are ee capabilities.
      *
      * @since 4.5.0
-     *
      * @var array
      */
-    private $capabilities_map = [];
+    private array $capabilities_map = [];
 
     /**
      * This used to hold an array of EE_Meta_Capability_Map objects
@@ -47,7 +43,7 @@ final class EE_Capabilities extends EE_Base
      *
      * @var EE_Meta_Capability_Map[]
      */
-    private $_meta_caps = [];
+    private array $_meta_caps = [];
 
     /**
      * The internal $capabilities_map needs to be initialized before it can be used.
@@ -66,12 +62,12 @@ final class EE_Capabilities extends EE_Base
      *
      * @var boolean|null $initialized
      */
-    private $initialized;
+    private ?bool $initialized = null;
 
     /**
      * @var boolean $reset
      */
-    private $reset = false;
+    private bool $reset = false;
 
 
     /**
@@ -79,7 +75,6 @@ final class EE_Capabilities extends EE_Base
      *
      * @return EE_Capabilities
      * @since 4.5.0
-     *
      */
     public static function instance(): EE_Capabilities
     {
@@ -107,14 +102,13 @@ final class EE_Capabilities extends EE_Base
      * @param bool $reset allows for resetting the default capabilities saved on roles.  Note that this doesn't
      *                    actually REMOVE any capabilities from existing roles, it just resaves defaults roles and
      *                    ensures that they are up to date.
-     *
      * @since 4.5.0
      * @return bool
      * @throws EE_Error
      */
     public function init_caps(?bool $reset = false): bool
     {
-        if (! EE_Maintenance_Mode::instance()->models_can_query()) {
+        if (DbStatus::isOffline()) {
             return false;
         }
         $this->reset = filter_var($reset, FILTER_VALIDATE_BOOLEAN);
@@ -300,34 +294,33 @@ final class EE_Capabilities extends EE_Base
     /**
      * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a
      * "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
-     *
      * The actual logic is carried out by implementer classes in their definition of _map_meta_caps.
      *
-     * @param array  $caps    actual users capabilities
-     * @param string $cap     initial capability name that is being checked (the "map" key)
-     * @param int    $user_id The user id
-     * @param array  $args    Adds context to the cap. Typically the object ID.
+     * @param array       $caps    actual users capabilities
+     * @param string|null $cap     initial capability name that is being checked (the "map" key)
+     * @param int         $user_id The user id
+     * @param array       $args    Adds context to the cap. Typically the object ID.
      * @return array actual users capabilities
      * @throws EE_Error
      * @throws ReflectionException
      * @since 4.5.0
      * @see   wp-includes/capabilities.php
-     *
      */
-    public function map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
+    public function map_meta_caps(array $caps, ?string $cap, int $user_id, array $args): array
     {
-        if (did_action('AHEE__EE_System__load_espresso_addons__complete')) {
-            // loop through our _meta_caps array
-            foreach ($this->_meta_caps as $meta_map) {
-                if (! $meta_map instanceof EE_Meta_Capability_Map) {
-                    continue;
-                }
-                // don't load models if there is no object ID in the args
-                if (! empty($args[0])) {
-                    $meta_map->ensure_is_model();
-                }
-                $caps = $meta_map->map_meta_caps($caps, $cap, $user_id, $args);
+        if (! $cap || ! did_action('AHEE__EE_System__load_espresso_addons__complete')) {
+            return $caps;
+        }
+        // loop through our _meta_caps array
+        foreach ($this->_meta_caps as $meta_map) {
+            if (! $meta_map instanceof EE_Meta_Capability_Map) {
+                continue;
             }
+            // don't load models if there is no object ID in the args
+            if (! empty($args[0])) {
+                $meta_map->ensure_is_model();
+            }
+            $caps = $meta_map->map_meta_caps($caps, $cap, $user_id, $args);
         }
         return $caps;
     }
@@ -340,7 +333,6 @@ final class EE_Capabilities extends EE_Base
      *
      * @return array
      * @since 4.5.0
-     *
      */
     private function _init_caps_map(): array
     {
@@ -351,13 +343,11 @@ final class EE_Capabilities extends EE_Base
                     // basic access
                     'ee_read_ee',
                     // gateways
-                    /**
-                     * note that with payment method capabilities, although we've implemented
-                     * capability mapping which will be used for accessing payment methods owned by
-                     * other users.  This is not fully implemented yet in the payment method ui.
-                     * Currently only the "plural" caps are in active use.
-                     * (Specific payment method caps are in use as well).
-                     **/
+                    // note that with payment method capabilities, although we've implemented
+                    // capability mapping which will be used for accessing payment methods owned by
+                    // other users.  This is not fully implemented yet in the payment method ui.
+                    // Currently only the "plural" caps are in active use.
+                    // (Specific payment method caps are in use as well).
                     'ee_manage_gateways',
                     'ee_read_payment_methods',
                     'ee_read_others_payment_methods',
@@ -845,10 +835,10 @@ final class EE_Capabilities extends EE_Base
      * write those filters wherever current_user_can is called).
      * 2. Explicit passing of $id from a given context ( useful in the cases of map_meta_cap filters )
      *
-     * @param string $cap     The cap being checked.
-     * @param string $context The context where the current_user_can is being called from.
-     * @param int|string $id  [optional] ID for entity where current_user_can() is being called from
-     *                        (used in map_meta_cap() filters).
+     * @param string     $cap     The cap being checked.
+     * @param string     $context The context where the current_user_can is being called from.
+     * @param int|string $id      [optional] ID for entity where current_user_can() is being called from
+     *                            (used in map_meta_cap() filters).
      * @return bool  Whether user can or not.
      * @since 4.5.0
      */
@@ -874,7 +864,6 @@ final class EE_Capabilities extends EE_Base
      * @param string      $context The context where the user_can is being called from (used in filters).
      * @param int         $id      Optional. Id for item where user_can is being called from ( used in map_meta_cap()
      *                             filters)
-     *
      * @return bool Whether user can or not.
      */
     public function user_can($user, string $cap, string $context, int $id = 0): bool
@@ -889,9 +878,7 @@ final class EE_Capabilities extends EE_Base
             $user,
             $id
         );
-        return ! empty($id)
-            ? user_can($user, $filtered_cap, $id)
-            : user_can($user, $filtered_cap);
+        return ! empty($id) ? user_can($user, $filtered_cap, $id) : user_can($user, $filtered_cap);
     }
 
 
@@ -907,16 +894,12 @@ final class EE_Capabilities extends EE_Base
      * @param string $context The context where the current_user_can is being called from.
      * @param int    $id      Optional. Id for item where current_user_can is being called from (used in map_meta_cap()
      *                        filters.
-     *
      * @return bool  Whether user can or not.
      * @since 4.5.0
-     *
      */
     public function current_user_can_for_blog(int $blog_id, string $cap, string $context, int $id = 0): bool
     {
-        $user_can = ! empty($id)
-            ? current_user_can_for_blog($blog_id, $cap, $id)
-            : current_user_can($blog_id, $cap);
+        $user_can = ! empty($id) ? current_user_can_for_blog($blog_id, $cap, $id) : current_user_can($blog_id, $cap);
         // apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
         $user_can = apply_filters(
             'FHEE__EE_Capabilities__current_user_can_for_blog__user_can__' . $context,
@@ -1008,57 +991,37 @@ final class EE_Capabilities extends EE_Base
  */
 abstract class EE_Meta_Capability_Map
 {
-    /**
-     * @var EEM_Base
-     */
-    protected $_model;
+    protected ?EEM_Base $_model = null;
 
-    /**
-     * @var string
-     */
-    protected $_model_name;
+    protected string $_model_name = '';
 
-    /**
-     * @var string
-     */
-    public $meta_cap;
+    public string $meta_cap = '';
 
-    /**
-     * @var string
-     */
-    public $published_cap = '';
+    public string $published_cap = '';
 
-    /**
-     * @var string
-     */
-    public $others_cap = '';
+    public string $others_cap = '';
 
-    /**
-     * @var string
-     */
-    public $private_cap = '';
+    public string $private_cap = '';
 
 
     /**
      * constructor.
      * Receives the setup arguments for the map.
      *
-     * @param string $meta_cap   What meta capability is this mapping.
-     * @param array  $map_values array {
-     *                           //array of values that MUST match a count of 4.  It's okay to send an empty string for
-     *                           capabilities that don't get mapped to.
-     *
-     * @type         $map_values [0] string A string representing the model name. Required.  String's
+     * @param string $meta_cap       What meta capability is this mapping.
+     * @param array  $map_values     array {
+     *                               //array of values that MUST match a count of 4.  It's okay to send an empty string
+     *                               for capabilities that don't get mapped to.
+     * @type         $map_values     [0] string A string representing the model name. Required.  String's
      *                               should always be used when Menu Maps are registered via the
      *                               plugin API as models are not allowed to be instantiated when
      *                               in maintenance mode 2 (migrations).
-     * @type         $map_values [1] string represents the capability used for published. Optional.
-     * @type         $map_values [2] string represents the capability used for "others". Optional.
-     * @type         $map_values [3] string represents the capability used for private. Optional.
+     * @type         $map_values     [1] string represents the capability used for published. Optional.
+     * @type         $map_values     [2] string represents the capability used for "others". Optional.
+     * @type         $map_values     [3] string represents the capability used for private. Optional.
      *                               }
      * @throws EE_Error
      * @since                        4.5.0
-     *
      */
     public function __construct(string $meta_cap, array $map_values)
     {
@@ -1128,20 +1091,17 @@ abstract class EE_Meta_Capability_Map
 
 
     /**
-     *
-     * @param $caps
-     * @param $cap
-     * @param $user_id
-     * @param $args
-     *
+     * @param array       $caps    actual users capabilities
+     * @param string|null $cap     initial capability name that is being checked (the "map" key)
+     * @param int         $user_id The user id
+     * @param array       $args    Adds context to the cap. Typically the object ID.
      * @return array
      * @since 4.6.x
-     *
      * @see   EE_Meta_Capability_Map::_map_meta_caps() for docs on params.
      */
-    public function map_meta_caps($caps, $cap, $user_id, $args): array
+    public function map_meta_caps(array $caps, ?string $cap, int $user_id, array $args): array
     {
-        return $this->_map_meta_caps($caps, $cap, (int) $user_id, $args);
+        return $this->_map_meta_caps($caps, $cap, $user_id, $args);
     }
 
 
@@ -1153,10 +1113,8 @@ abstract class EE_Meta_Capability_Map
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
-     *
      * @return array   actual users capabilities
      * @see   wp-includes/capabilities.php
-     *
      * @since 4.5.0
      */
     abstract protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array;
@@ -1182,13 +1140,11 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
-     *
      * @return array   actual users capabilities
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.5.0
      * @see   wp-includes/capabilities.php
-     *
      */
     protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
     {
@@ -1271,12 +1227,11 @@ class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
-     *
      * @return array   actual users capabilities
      * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.5.0
      * @see   wp-includes/capabilities.php
-     *
      */
     protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
     {
@@ -1304,13 +1259,11 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
-     *
      * @return array   actual users capabilities
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.5.0
      * @see   wp-includes/capabilities.php
-     *
      */
     protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
     {
@@ -1344,11 +1297,7 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map
                 }
             }
             // yes this means that if users created the private post, they are able to see it regardless of private cap.
-            if (
-                $status_obj->private
-                && ! empty($this->private_cap)
-                && $obj->wp_user() !== $user_id
-            ) {
+            if ($status_obj->private && ! empty($this->private_cap) && $obj->wp_user() !== $user_id) {
                 // the user is trying to view a private object for an object they don't own.
                 $caps[] = $this->private_cap;
             }
@@ -1398,13 +1347,11 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map
      * @param string $cap     initial capability name that is being checked (the "map" key)
      * @param int    $user_id The user id
      * @param array  $args    Adds context to the cap. Typically the object ID.
-     *
      * @return array   actual users capabilities
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.5.0
      * @see   wp-includes/capabilities.php
-     *
      */
     protected function _map_meta_caps(array $caps, string $cap, int $user_id, array $args): array
     {
@@ -1465,6 +1412,7 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
      * @return array   actual users capabilities
      * @throws EE_Error
      * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.5.0
      * @see   wp-includes/capabilities.php
      */

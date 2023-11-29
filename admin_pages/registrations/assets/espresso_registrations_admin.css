@@ -16,12 +16,13 @@
     white-space: nowrap;
 }
 
-.espresso-admin .wp-list-table .column-event_name {
+
+.espresso-admin .wp-list-table .column-event_name,
+.espresso-admin .wp-list-table .column-DTT_EVT_start {
     width: clamp(6rem, 8rem, 20rem);
 }
 
 .espresso-admin .wp-list-table .column-_REG_date,
-.espresso-admin .wp-list-table .column-DTT_EVT_start,
 .espresso-admin .wp-list-table #ATT_email,
 .espresso-admin .wp-list-table th #ee-responsive-table-cell-ATT_email,
 .espresso-admin .wp-list-table td #ee-responsive-table-cell-ATT_email {
@@ -36,12 +37,11 @@
 
 
 @media only screen and (min-width: 1366px) {
-    .espresso-admin .wp-list-table .column-_REG_date,
-    .espresso-admin .wp-list-table .column-DTT_EVT_start {
+    .espresso-admin .wp-list-table .column-_REG_date {
         width: clamp(8rem, 12rem, 16rem);
     }
-
-    .espresso-admin .wp-list-table .column-event_name {
+    .espresso-admin .wp-list-table .column-event_name,
+    .espresso-admin .wp-list-table .column-DTT_EVT_start {
         width: clamp(12rem, 16rem, 20rem);
     }
 
@@ -81,6 +81,10 @@
 .wp-list-table td.column-TXN_paid {
     text-align: end;
     width: clamp(6rem, 7.5%, 15rem);
+}
+
+.wp-list-table td.column-_REG_final_price .TKT_name + .reg-overview-paid-event-spn{
+    margin-inline-start: var(--ee-margin-nano);
 }
 
 .espresso-admin .wp-list-table .TXN_paid .dashicons-yes:before {
@@ -483,36 +487,36 @@
 }
 
 /**newsletter send css**/
-.ee-batch-message-send-form h3 {
+
+.js-shortcode-selection {
+    cursor: pointer;
+    display: inline-block;
+    padding: calc(.25 * var(--ee-base-ui-scale)) calc(.5 * var(--ee-base-ui-scale));
+    transition: all 150ms;
+}
+.js-shortcode-selection:hover {
+    background-color: var(--ee-status-color-pale-blue);
+    color: var(--ee-font-color-dark);
+}
+
+.ee_shortcode_chooser_container h4 {
+    color: var(--ee-border-color);
     font-size: var(--ee-font-size-4xl);
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+    margin-block-end: calc(1.75 * var(--ee-base-ui-scale));
 }
 
-.ee-batch-message-send-form .batch-message-edit-fields {
-    background-color: var(--ee-color-off-white);
-    padding: 10px;
-    margin-top: 20px;
-    border-radius: 4px;
+.ee_shortcode_chooser_container h6 {
+    color: var(--ee-font-color-light);
+    font-size: var(--ee-font-size-small);
+    font-weight: 800;
+    line-height: 1.25;
+    margin: 0;
+    margin-block-end: var(--ee-base-ui-scale);
 }
 
-.ee-batch-message-send-form .batch-message-input, .ee-batch-message-send-form .batch-message-textarea {
-    width: 100%;
-}
-
-.ee-batch-message-send-form .batch-message-textarea {
-    height: 200px;
-}
-
-.ee-batch-message-send-form .shortcodes-info-container {
-    padding: 5px 20px 5px 20px;;
-    margin-bottom: 10px;
-    background-color: var(--ee-color-almost-white);
-    border-radius: 4px;
-}
-
-.contact-details-buttons a.button--small {
-    float: right;
-    margin-left: 8px;
-}
 
 /**
  * Fixes for admin side spco (because wp-admin adds some of its own styles to elements)
@@ -574,7 +578,7 @@
 @media only screen and (min-width: 1366px) {
     .espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date,
     .espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date > a {
-        width: clamp(8rem, 12rem, 16rem);
+        width: clamp(10rem, 14rem, 18rem);
     }
 }
 
@@ -586,7 +590,6 @@
     box-sizing: border-box;
     display: flex;
     padding: 0;
-    padding-inline-end: 2rem;
     width: 100%;
 }
 
@@ -595,10 +598,23 @@
     flex-flow: column nowrap;
 }
 
-
 .ee-reg-list-dates-list-date {
     display: flex;
     flex-flow: row nowrap;
+    justify-content: space-between;
+    width: clamp(10rem, 14rem, 18rem);
+}
+
+.espresso-admin.wp-core-ui .wp-list-table .ee-reg-list-dates-list-date > a {
+    flex-flow: row wrap;
+    flex-grow: 4;
+    padding-inline: 0 !important;
+    width: 100% !important;
+}
+.espresso-admin.wp-core-ui .wp-list-table .ee-reg-list-dates-list-date > div,
+.espresso-admin.wp-core-ui .wp-list-table .ee-reg-list-dates-list-date > button {
+    flex-grow: 0;
+    width: fit-content;
 }
 
 
@@ -627,11 +643,6 @@
 .ee-more-datetimes-toggle.open > .dashicons {
     transform: rotate(-90deg);
 }
-
-.espresso-admin .ee-event-filter-link .dashicons.dashicons--small {
-    margin-inline-end: 0.25rem;
-}
-
 .espresso-admin .ee-event-filter-link .dashicons.dashicons--small:before {
     top: -2px;
 }

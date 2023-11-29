@@ -190,12 +190,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 EVENT_ESPRESSO_VERSION,
                 true
             );
-            wp_enqueue_style(
-                'ee-newsletter-trigger-css',
-                REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.css',
-                [],
-                EVENT_ESPRESSO_VERSION
-            );
             // hook in buttons for newsletter message type trigger.
             add_action(
                 'AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons',
@@ -350,15 +344,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $this->_template_args['success'] = true;
         $this->_template_args['error']   = false;
         $this->_template_args['data']    = [
-            'batch_message_from'    => isset($template_fields['from'])
-                ? $template_fields['from']
-                : '',
-            'batch_message_subject' => isset($template_fields['subject'])
-                ? $template_fields['subject']
-                : '',
-            'batch_message_content' => isset($template_fields['newsletter_content'])
-                ? $template_fields['newsletter_content']
-                : '',
+            'batch_message_from'    => $template_fields['from'] ?? '',
+            'batch_message_subject' => $template_fields['subject'] ?? '',
+            'batch_message_content' => $template_fields['newsletter_content'] ?? '',
         ];
         $this->_return_json();
     }
@@ -449,13 +437,13 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                     ? 'content'
                     : $field;
                 $field_id               = 'batch-message-' . strtolower($field_id);
-                $available_shortcodes[] = '<span class="js-shortcode-selection" data-value="'
-                                          . $shortcode
-                                          . '" data-linked-input-id="' . $field_id . '">'
-                                          . $shortcode
-                                          . '</span>';
+                $available_shortcodes[] = '
+                <span class="js-shortcode-selection"
+                      data-value="' . $shortcode . '"
+                      data-linked-input-id="' . $field_id . '"
+                >' . $shortcode . '</span>';
             }
-            $codes[ $field ] = implode(', ', $available_shortcodes);
+            $codes[ $field ] = '<ul><li>' . implode('</li><li>', $available_shortcodes) . '</li></ul>';
         }
         $shortcodes         = $codes;
         $form_template      = REG_CAF_TEMPLATE_PATH . 'newsletter-send-form.template.php';

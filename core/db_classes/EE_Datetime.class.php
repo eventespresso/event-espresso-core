@@ -1292,7 +1292,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function event()
     {
-        return $this->get_first_related('Event');
+        return EEM_Event::instance()->get_one_by_ID($this->get('EVT_ID'));
     }
 
 
@@ -1364,6 +1364,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function venue_ID(array $query_params = []): int
     {
+        // If no $query_params have been passed, use the VNU_ID assigned to the Datetime itself
+        if (empty($query_params)){
+            return (int) $this->get('VNU_ID');
+        }
+        // $query_params set, pull the first related venue using those
         $venue = $this->get_first_related('Venue', $query_params);
         return $venue instanceof EE_Venue
             ? $venue->ID()
@@ -1376,12 +1381,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      *
      * @param array $query_params @see
      *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @return EE_Base_Class|EE_Venue
+     * @return EE_Base_Class|EE_Venue|null
      * @throws EE_Error
      * @throws ReflectionException
      */
     public function venue(array $query_params = [])
-    {
+    {   
+        // If no $query_params have been passed, use the VNU_ID assigned to the Datetime itself
+        if (empty($query_params)){
+            $VNU_ID = $this->venue_ID();
+            return $VNU_ID ? EEM_Venue::instance()->get_one_by_ID($VNU_ID) : null;
+        }
         return $this->get_first_related('Venue', $query_params);
     }
 

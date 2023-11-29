@@ -102,30 +102,26 @@ abstract class EE_Gateway
      *
      * @var int
      */
-    protected $_ID;
+    protected int $_ID;
 
     /**
      * @var $_debug_mode boolean whether to send requests to teh sandbox site or not
      */
-    protected $_debug_mode;
+    protected bool $_debug_mode;
 
     /**
      * @var string $_name name to show for this payment method
      */
-    protected $_name;
+    protected string $_name;
 
     /**
      * @var string name to show for this payment method to admin-type users
      */
-    protected $_admin_name;
+    protected string $_admin_name;
+
+    protected array $settings;
 
 
-    /**
-     * EE_Gateway constructor
-     */
-    public function __construct()
-    {
-    }
 
 
     /**
@@ -194,9 +190,25 @@ abstract class EE_Gateway
     public function set_settings(array $settings_array)
     {
         foreach ($settings_array as $name => $value) {
-            $property_name          = "_" . $name;
-            $this->{$property_name} = $value;
+            // preface property name with underscore
+            $property_name          = strpos($name, '_') !== 0
+                ? '_' . $name
+                : $name;
+            if (property_exists($this, $property_name)) {
+                $this->{$property_name} = $value;
+            } else {
+                $this->settings[ $property_name ] = $value;
+            }
         }
+    }
+
+
+    public function __get($property_name)
+    {
+        if (property_exists($this, $property_name)) {
+            return $this->{$property_name};
+        }
+        return $this->settings[ $property_name ] ?? null;
     }
 
 

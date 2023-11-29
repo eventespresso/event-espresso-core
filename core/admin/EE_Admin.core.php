@@ -2,6 +2,8 @@
 
 use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\domain\services\database\DbStatus;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -129,7 +131,7 @@ final class EE_Admin implements InterminableInterface
         }
         if ($plugin === $main_file) {
             // compare current plugin to this one
-            if (EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance) {
+            if (MaintenanceStatus::isFullSite()) {
                 $maintenance_link = '<a href="admin.php?page=espresso_maintenance_settings"'
                                     . ' title="Event Espresso is in maintenance mode.  Click this link to learn why.">'
                                     . esc_html__('Maintenance Mode Active', 'event_espresso')
@@ -181,7 +183,7 @@ final class EE_Admin implements InterminableInterface
     public function init()
     {
         // only enable most of the EE_Admin IF we're not in full maintenance mode
-        if (EE_Maintenance_Mode::instance()->models_can_query()) {
+        if (DbStatus::isOnline()) {
             $this->initModelsReady();
         }
         // run the admin page factory but ONLY if:
@@ -570,7 +572,7 @@ final class EE_Admin implements InterminableInterface
              * This is for user-proofing.
              */
             add_filter('wp_dropdown_pages', [$this, 'modify_dropdown_pages']);
-            if (EE_Maintenance_Mode::instance()->models_can_query()) {
+            if (DbStatus::isOnline()) {
                 $this->adminInitModelsReady();
             }
         }

@@ -15,6 +15,12 @@
 abstract class EE_Offsite_Gateway extends EE_Gateway
 {
     /**
+     *
+     * @var string|null $_gateway_ur
+     */
+    protected $_gateway_url = null;
+
+    /**
      * whether or not the gateway uses an IPN
      * that is sent in a separate request than the returning registrant.
      * if false, then we need to process the payment results manually
@@ -22,7 +28,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway
      *
      * @type bool
      */
-    protected $_uses_separate_IPN_request = false;
+    protected bool $_uses_separate_IPN_request = false;
 
 
     /**
@@ -31,7 +37,6 @@ abstract class EE_Offsite_Gateway extends EE_Gateway
     public function __construct()
     {
         $this->_supports_receiving_refunds = true;
-        parent::__construct();
     }
 
 

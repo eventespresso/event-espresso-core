@@ -6,6 +6,7 @@ use EventEspresso\core\services\collections\CollectionDetailsException;
 use EventEspresso\core\services\collections\CollectionLoaderException;
 use EventEspresso\core\services\graphql\connections\ConnectionCollection;
 use EventEspresso\core\services\graphql\connections\ConnectionInterface;
+use Exception;
 
 /**
  * Class ConnectionsManager
@@ -53,6 +54,9 @@ class ConnectionsManager implements GQLManagerInterface
     }
 
 
+    /**
+     * @throws Exception
+     */
     public function registerConnections()
     {
         // loop through the collection of types and register their fields

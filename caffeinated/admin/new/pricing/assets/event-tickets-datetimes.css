@@ -54,21 +54,17 @@
 .datetime-edit-table td:nth-child(3),
 .add-new-ticket-table td:nth-child(2),
 .add-new-ticket-table td:nth-child(3) {
-    width: calc(var(--ee-base-ui-scale) * 10.5);
+    width: calc(var(--ee-base-ui-scale) * 11);
 }
 
 .datetime-edit-table td:nth-child(4),
-.add-new-ticket-table td:nth-child(4) {
-    text-align: right;
-    width: calc(var(--ee-base-ui-scale) * 4.375);
-}
-
+.add-new-ticket-table td:nth-child(4),
 .datetime-edit-table td:nth-child(5),
 .datetime-edit-table td:nth-child(6),
 .add-new-ticket-table td:nth-child(5),
 .add-new-ticket-table td:nth-child(6) {
-    max-width: 5%;
     text-align: right;
+    width: calc(var(--ee-base-ui-scale) * 5);
 }
 
 .datetime-edit .datetime-edit-table td:last-child,
@@ -391,7 +387,7 @@
 #add-new-ticket-table tbody .ticket-row td:nth-child(3),
 .ticket-table tbody .ticket-row td:nth-child(4),
 #add-new-ticket-table tbody .ticket-row td:nth-child(4) {
-    width: calc(var(--ee-base-ui-scale) * 10.5);
+    width: calc(var(--ee-base-ui-scale) * 11);
 }
 
 /* Price */
@@ -404,20 +400,18 @@
 
 /* Qty */
 .ticket-table tbody .ticket-row td:nth-child(6),
-#add-new-ticket-table tbody .ticket-row td:nth-child(6) {
-    text-align: right !important;
-    width: calc(var(--ee-base-ui-scale) * 4.375);
-}
+#add-new-ticket-table tbody .ticket-row td:nth-child(6),
 
 /* Sold, REgs */
 .ticket-table tbody .ticket-row td:nth-child(7),
 #add-new-ticket-table tbody .ticket-row td:nth-child(7),
 .ticket-table tbody .ticket-row td:nth-child(8),
 #add-new-ticket-table tbody .ticket-row td:nth-child(8),
-.ticket-table tbody .ticket-row.ee-wp-debug td:nth-child(9) {
+.ticket-table tbody .ticket-row.ee-wp-debug td:nth-child(9),
+#add-new-ticket-table  tbody .ticket-row.ee-wp-debug td:nth-child(9) {
     text-align: right !important;
     padding-right: 1em;
-    max-width: 4%;
+    width: calc(var(--ee-base-ui-scale) * 5);
 }
 
 /* Actions */
@@ -436,6 +430,7 @@
     margin-top: 4px;
     padding-block: var(--ee-padding-nano);
     padding-inline: var(--ee-padding-nano);
+    text-align: right;
 }
 
 .TKT_price_label,
@@ -740,7 +735,6 @@
 
 #event-and-ticket-form-content tbody tr td:last-child {
     padding-inline-start: calc(var(--ee-padding-pico) / 2);
-    text-align: end;
 }
 
 #event-and-ticket-form-content div:not(.ee-editing-container) .button.dashicons,

@@ -8,7 +8,7 @@ class EE_Primary_Table extends EE_Table_Base
 {
     /**
      *
-     * @global type $wpdb
+     * @global wpdb $wpdb
      * @param string $table_name with or without wpdb prefix
      * @param string $pk_column name of primary key column
      * @param boolean $global whether the table is "global" as in there is only 1 table on an entire multisite install,

@@ -16,10 +16,7 @@ use OutOfBoundsException;
  */
 class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
 {
-    /**
-     * @var array $container
-     */
-    private $container = [];
+    private array $container = [];
 
 
     /**
@@ -94,7 +91,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @param $offset
      * @param $value
      */
-    public function __set($offset, $value)
+    public function __set($offset, $value): void
     {
         $this->offsetSet($offset, $value);
     }
@@ -105,6 +102,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @return mixed
      * @throws OutOfBoundsException
      */
+    #[\ReturnTypeWillChange]
     public function __get($offset)
     {
         if (! array_key_exists($offset, $this->container)) {
@@ -127,7 +125,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @param $offset
      * @return bool
      */
-    public function __isset($offset)
+    public function __isset($offset): bool
     {
         return $this->offsetExists($offset);
     }
@@ -136,7 +134,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     /**
      * @param $offset
      */
-    public function __unset($offset)
+    public function __unset($offset): void
     {
         $this->offsetUnset($offset);
     }
@@ -146,7 +144,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @param $offset
      * @param $value
      */
-    public function add($offset, $value)
+    public function add($offset, $value): void
     {
         $this->offsetSet($offset, $value);
     }
@@ -155,7 +153,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
     /**
      * @param $offset
      */
-    public function remove($offset)
+    public function remove($offset): void
     {
         $this->offsetUnset($offset);
     }
@@ -175,6 +173,7 @@ class RegistryContainer implements ArrayAccess, CountableTraversableAggregate
      * @param $offset
      * @return mixed|null
      */
+    #[\ReturnTypeWillChange]
     public function get($offset)
     {
         return $this->offsetGet($offset);

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
@@ -489,7 +491,7 @@ final class EE_Config implements ResettableInterface
         // that update_option bailed at the($value === $old_value) conditional,
         // or...
         // the db update query returned 0 rows affected
-        // (probably because the data  value was the same from it's perspective)
+        // (probably because the data  value was the same from its perspective)
         // so the existence of the hook means that a negative result from update_option is NOT an error,
         // but just means no update occurred, so don't display an error to the user.
         // BUT... if update_option returns FALSE, AND the hook is missing,
@@ -847,7 +849,7 @@ final class EE_Config implements ResettableInterface
             // first check if the record already exists
             $existing_config = get_option($config_option_name);
             $config_obj = serialize($config_obj);
-            // just return if db record is already up to date (NOT type safe comparison)
+            // just return if db record is already up-to-date (NOT type safe comparison)
             if ($existing_config == $config_obj) {
                 $this->{$section}->{$name} = $config_obj;
                 return true;
@@ -1041,11 +1043,8 @@ final class EE_Config implements ResettableInterface
         // only init widgets on admin pages when not in complete maintenance, and
         // on frontend when not in any maintenance mode
         if (
-            ! EE_Maintenance_Mode::instance()->level()
-            || (
-                is_admin()
-                && EE_Maintenance_Mode::instance()->level() !== EE_Maintenance_Mode::level_2_complete_maintenance
-            )
+            MaintenanceStatus::isDisabled()
+            || (is_admin() && MaintenanceStatus::isNotFullSite())
         ) {
             // grab list of installed widgets
             $widgets_to_register = glob(EE_WIDGETS . '*', GLOB_ONLYDIR);
@@ -1878,7 +1877,7 @@ class EE_Core_Config extends EE_Config_Base
         // set correct table for query
         $table_name = $wpdb->get_blog_prefix($current_main_site_id) . 'options';
         // rather than getting blog option for the $current_main_site_id, we do a direct $wpdb query because
-        // get_blog_option() does a switch_to_blog an that could cause infinite recursion because EE_Core_Config might be
+        // get_blog_option() does a switch_to_blog and that could cause infinite recursion because EE_Core_Config might be
         // re-constructed on the blog switch.  Note, we are still executing any core wp filters on this option retrieval.
         // this bit of code is basically a direct copy of get_option without any caching because we are NOT switched to the blog
         // for the purpose of caching.
@@ -2163,7 +2162,7 @@ class EE_Currency_Config extends EE_Config_Base
      */
     public function setCurrency(?string $CNT_ISO = 'US')
     {
-        if (empty($CNT_ISO) || ! EE_Maintenance_Mode::instance()->models_can_query()) {
+        if (empty($CNT_ISO) || DbStatus::isOffline()) {
             return;
         }
 
@@ -2260,7 +2259,7 @@ class EE_Registration_Config extends EE_Config_Base
     public $email_validation_level;
 
     /**
-     *    whether or not to show alternate payment options during the reg process if payment status is pending
+     * whether to show alternate payment options during the reg process if payment status is pending
      *
      * @var boolean $show_pending_payment_options
      */
@@ -2286,21 +2285,21 @@ class EE_Registration_Config extends EE_Config_Base
     public $reg_confirmation_last;
 
     /**
-     * Whether or not to enable the EE Bot Trap
+     * Whether to enable the EE Bot Trap
      *
      * @var boolean $use_bot_trap
      */
     public $use_bot_trap;
 
     /**
-     * Whether or not to encrypt some data sent by the EE Bot Trap
+     * Whether to encrypt some data sent by the EE Bot Trap
      *
      * @var boolean $use_encryption
      */
     public $use_encryption;
 
     /**
-     * Whether or not to use ReCaptcha
+     * Whether to use ReCaptcha
      *
      * @var boolean $use_captcha
      */
@@ -2368,14 +2367,14 @@ class EE_Registration_Config extends EE_Config_Base
     public $recaptcha_width;
 
     /**
-     * Whether or not invalid attempts to directly access the registration checkout page should be tracked.
+     * Whether invalid attempts to directly access the registration checkout page should be tracked.
      *
      * @var boolean $track_invalid_checkout_access
      */
     protected $track_invalid_checkout_access = true;
 
     /**
-     * Whether or not to show the privacy policy consent checkbox
+     * Whether to show the privacy policy consent checkbox
      *
      * @var bool
      */
@@ -2400,6 +2399,14 @@ class EE_Registration_Config extends EE_Config_Base
      * @var boolean $enable_copy_attendee
      */
     protected $copy_attendee_info = true;
+
+    /**
+     * @var bool|int|string|null $skip_reg_confirmation
+     * @deprecated
+     */
+    public $skip_reg_confirmation;
+
+
 
 
     /**
@@ -2553,7 +2560,7 @@ class EE_Registration_Config extends EE_Config_Base
 
 
     /**
-     * Gets the options to make availalbe for the gateway log lifespan
+     * Gets the options to make available for the gateway log lifespan
      * @return array
      */
     public function gatewayLogLifespanOptions()
@@ -2615,40 +2622,19 @@ class EE_Registration_Config extends EE_Config_Base
  */
 class EE_Admin_Config extends EE_Config_Base
 {
-    /**
-     * @var boolean $useAdvancedEditor
-     */
-    private $useAdvancedEditor;
+    private $useAdvancedEditor = true;
 
-    /**
-     * @var string $log_file_name
-     */
-    public $log_file_name;
+    public $use_remote_logging = false;
 
-    /**
-     * @var string $debug_file_name
-     */
-    public $debug_file_name;
+    public $show_reg_footer = false;
 
-    /**
-     * @var boolean $use_remote_logging
-     */
-    public $use_remote_logging;
+    private $is_caffeinated;
 
-    /**
-     * @var string $remote_logging_url
-     */
-    public $remote_logging_url;
+    public $use_dashboard_widget = false;
 
-    /**
-     * @var boolean $show_reg_footer
-     */
-    public $show_reg_footer;
+    public $use_personnel_manager = false;
 
-    /**
-     * @var string $affiliate_id
-     */
-    public $affiliate_id;
+    public $use_event_timezones = false;
 
     /**
      * adds extra layer of encoding to session data to prevent serialization errors
@@ -2660,29 +2646,32 @@ class EE_Admin_Config extends EE_Config_Base
      */
     private $encode_session_data = false;
 
+    public ?string $log_file_name = '';
+
+    public ?string $debug_file_name = '';
+
+    public ?string $remote_logging_url = '';
+
+    public ?string $affiliate_id = 'default';
+
     /**
-     * @var boolean
+     * @var int|null $events_in_dashboard
+     * @deprecated
      */
-    private $is_caffeinated;
+    public ?int $events_in_dashboard = 30;
 
 
-    /**
-     *    class constructor
-     *
-     * @access    public
-     */
     public function __construct()
     {
+        /** @var EventEspresso\core\domain\Domain $domain */
+        $domain               = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
+        $this->is_caffeinated = $domain->isCaffeinated();
+
         // set default general admin settings
-        $this->useAdvancedEditor = true;
-        $this->use_remote_logging = false;
-        $this->remote_logging_url = null;
         $this->show_reg_footer = apply_filters(
             'FHEE__EE_Admin_Config__show_reg_footer__default',
             false
         );
-        $this->affiliate_id = 'default';
-        $this->encode_session_data = false;
     }
 
 
@@ -2690,7 +2679,7 @@ class EE_Admin_Config extends EE_Config_Base
      * @param bool $reset
      * @return string
      */
-    public function log_file_name($reset = false)
+    public function log_file_name(bool $reset = false): ?string
     {
         if (empty($this->log_file_name) || $reset) {
             $this->log_file_name = sanitize_key('espresso_log_' . md5(uniqid('', true))) . '.txt';
@@ -2704,7 +2693,7 @@ class EE_Admin_Config extends EE_Config_Base
      * @param bool $reset
      * @return string
      */
-    public function debug_file_name($reset = false)
+    public function debug_file_name(bool $reset = false): ?string
     {
         if (empty($this->debug_file_name) || $reset) {
             $this->debug_file_name = sanitize_key('espresso_debug_' . md5(uniqid('', true))) . '.txt';
@@ -2717,7 +2706,7 @@ class EE_Admin_Config extends EE_Config_Base
     /**
      * @return string
      */
-    public function affiliate_id()
+    public function affiliate_id(): ?string
     {
         return ! empty($this->affiliate_id) ? $this->affiliate_id : 'default';
     }
@@ -2726,14 +2715,14 @@ class EE_Admin_Config extends EE_Config_Base
     /**
      * @return boolean
      */
-    public function encode_session_data()
+    public function encode_session_data(): bool
     {
         return filter_var($this->encode_session_data, FILTER_VALIDATE_BOOLEAN);
     }
 
 
     /**
-     * @param boolean $encode_session_data
+     * @param bool|int|string $encode_session_data
      */
     public function set_encode_session_data($encode_session_data)
     {
@@ -2743,17 +2732,13 @@ class EE_Admin_Config extends EE_Config_Base
     /**
      * @return boolean
      */
-    public function useAdvancedEditor()
+    public function useAdvancedEditor(): bool
     {
-        if ($this->is_caffeinated === null) {
-            $domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
-            $this->is_caffeinated = $domain->isCaffeinated();
-        }
         return $this->useAdvancedEditor && $this->is_caffeinated;
     }
 
     /**
-     * @param boolean $use_advanced_editor
+     * @param bool|int|string $use_advanced_editor
      */
     public function setUseAdvancedEditor($use_advanced_editor = true)
     {
@@ -2772,25 +2757,45 @@ class EE_Admin_Config extends EE_Config_Base
  */
 class EE_Template_Config extends EE_Config_Base
 {
-    /**
-     * @var string $current_espresso_theme
-     */
-    public $current_espresso_theme;
+    public ?EE_Ticket_Selector_Config $EED_Ticket_Selector;
+
+    public ?EE_Event_Single_Config $EED_Event_Single;
+
+    public ?EE_Events_Archive_Config $EED_Events_Archive;
 
     /**
-     * @var EE_Ticket_Selector_Config $EED_Ticket_Selector
+     * @var EE_People_Config|null $EED_People_Single
+     * @since $VID:$
      */
-    public $EED_Ticket_Selector;
+    public $EED_People_Single;
+
+    public string $current_espresso_theme = '';
+
+    public bool $display_address_in_regform = true;
 
     /**
-     * @var EE_Event_Single_Config $EED_Event_Single
+     * @var bool|int|string|null $enable_default_style
+     * @deprecated
      */
-    public $EED_Event_Single;
+    public $enable_default_style;
 
     /**
-     * @var EE_Events_Archive_Config $EED_Events_Archive
+     * @var bool|int|string|null $display_description_on_multi_reg_page
+     * @deprecated
      */
-    public $EED_Events_Archive;
+    public $display_description_on_multi_reg_page;
+
+    /**
+     * @var bool|int|string|null $use_custom_templates
+     * @deprecated
+     */
+    public $use_custom_templates;
+
+    /**
+     * @var bool|int|string|null $custom_style_sheet
+     * @deprecated
+     */
+    public $custom_style_sheet;
 
 
     /**
@@ -3037,7 +3042,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     public $show_expired_tickets;
 
     /**
-     * whether or not to display a dropdown box populated with event datetimes
+     * whether to display a dropdown box populated with event datetimes
      * that toggles which tickets are displayed for a ticket selector.
      * uses one of the *_DATETIME_SELECTOR constants defined above
      *
@@ -3224,12 +3229,7 @@ class EE_Environment_Config extends EE_Config_Base
      * according to max_input_vars
      *
      * @param int   $input_count the count of input vars.
-     * @return array {
-     *                           An array that represents whether available space and if no available space the error
-     *                           message.
-     * @type bool   $has_space   whether more inputs can be added.
-     * @type string $msg         Any message to be displayed.
-     *                           }
+     * @return string error message
      */
     public function max_input_vars_limit_check($input_count = 0)
     {
@@ -3249,12 +3249,9 @@ class EE_Environment_Config extends EE_Config_Base
                     $input_count,
                     $max_input_vars
                 );
-            } else {
-                return '';
             }
-        } else {
-            return '';
         }
+        return '';
     }
 
 
@@ -3280,7 +3277,7 @@ class EE_Environment_Config extends EE_Config_Base
 class EE_Tax_Config extends EE_Config_Base
 {
     /*
-     * flag to indicate whether or not to display ticket prices with the taxes included
+     * flag to indicate whether to display ticket prices with the taxes included
      *
      * @var boolean $prices_displayed_including_taxes
      */
@@ -3337,7 +3334,7 @@ class EE_Gateway_Config extends EE_Config_Base
     public $payment_settings;
 
     /**
-     * Where keys are gateway slugs, and values are booleans indicating whether or not
+     * Where keys are gateway slugs, and values are booleans indicating whether
      * the gateway is stored in the uploads directory
      *
      * @var array

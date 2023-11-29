@@ -22,30 +22,15 @@ use InvalidArgumentException;
  */
 class QueryBuilder
 {
-    /**
-     * @var RequestInterface $request
-     */
-    protected $request;
+    protected RequestInterface $request;
 
-    /**
-     * @var array
-     */
-    protected $filters;
+    protected EEM_Registration $registration_model;
 
-    /**
-     * @var EEM_Registration $registration_model
-     */
-    protected $registration_model;
+    protected array $filters;
 
-    /**
-     * @var string $view
-     */
-    protected $view;
+    protected string $view;
 
-    /**
-     * @var array $where_params
-     */
-    protected $where_params;
+    protected array $where_params;
 
 
     /**
@@ -84,7 +69,7 @@ class QueryBuilder
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function getQueryParams($per_page = 10, $count_query = false)
+    public function getQueryParams(int $per_page = 10, bool $count_query = false): array
     {
         $query_params = [
             0                          => $this->getWhereClause(),
@@ -112,7 +97,7 @@ class QueryBuilder
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function getWhereClause()
+    protected function getWhereClause(): array
     {
         $this->addAttendeeIdToWhereConditions();
         $this->addEventIdToWhereConditions();
@@ -239,8 +224,9 @@ class QueryBuilder
      */
     protected function addDateToWhereConditions()
     {
+        $current_time = current_time('timestamp');
         if ($this->view === 'today') {
-            $now = date('Y-m-d', current_time('timestamp'));
+            $now = date('Y-m-d', $current_time);
             $this->where_params['REG_date'] = [
                 'BETWEEN',
                 [
@@ -258,9 +244,28 @@ class QueryBuilder
             ];
             return;
         }
+        if ($this->view === 'yesterday') {
+            $yesterday = date('Y-m-d', $current_time - DAY_IN_SECONDS);
+            $this->where_params['REG_date'] = [
+                'BETWEEN',
+                [
+                    $this->registration_model->convert_datetime_for_query(
+                        'REG_date',
+                        $yesterday . ' 00:00:00',
+                        'Y-m-d H:i:s'
+                    ),
+                    $this->registration_model->convert_datetime_for_query(
+                        'REG_date',
+                        $yesterday . ' 23:59:59',
+                        'Y-m-d H:i:s'
+                    ),
+                ],
+            ];
+            return;
+        }
         if ($this->view === 'month') {
-            $current_year_and_month = date('Y-m', current_time('timestamp'));
-            $days_this_month = date('t', current_time('timestamp'));
+            $current_year_and_month = date('Y-m', $current_time);
+            $days_this_month = date('t', $current_time);
             $this->where_params['REG_date'] = [
                 'BETWEEN',
                 [
@@ -349,7 +354,7 @@ class QueryBuilder
      *
      * @return array
      */
-    protected function getOrderbyClause()
+    protected function getOrderbyClause(): array
     {
         $orderby_field = $this->request->getRequestParam('orderby');
         $orderby_field = $orderby_field ? sanitize_text_field($orderby_field) : '_REG_date';
@@ -386,6 +391,8 @@ class QueryBuilder
             $orderby,
             array_fill(0, count($orderby), $order)
         );
+        // always add REG_count to the orderby array
+        $orderby['REG_count'] = 'ASC';
         // because there are many registrations with the same date, define
         // a secondary way to order them, otherwise MySQL seems to be a bit random
         if (empty($orderby['REG_ID'])) {
@@ -404,10 +411,10 @@ class QueryBuilder
     /**
      * Sets up the limit for the registrations query.
      *
-     * @param $per_page
+     * @param int $per_page
      * @return array
      */
-    protected function getLimitClause($per_page)
+    protected function getLimitClause(int $per_page): array
     {
         $current_page = $this->request->getRequestParam('paged', 1, 'int');
         $per_page = $this->request->getRequestParam('perpage', $per_page, 'int');

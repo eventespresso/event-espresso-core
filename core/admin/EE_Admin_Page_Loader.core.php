@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\services\admin\menu\AdminMenuManager;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -63,10 +64,10 @@ class EE_Admin_Page_Loader
     public $hook_file;
 
     /**
-     * @var   int
+     * @var bool
      * @since 5.0.0.p
      */
-    private $maintenance_mode = 0;
+    private bool $full_site_maintenance = false;
 
 
     /**
@@ -89,7 +90,7 @@ class EE_Admin_Page_Loader
     public function init()
     {
         $this->menu_manager->initialize();
-        $this->maintenance_mode = EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance;
+        $this->full_site_maintenance = MaintenanceStatus::isFullSite();
         // let's do a scan and see what installed pages we have
         $this->findAndLoadAdminPages();
     }
@@ -152,7 +153,7 @@ class EE_Admin_Page_Loader
             $admin_menu = $this->menu_manager->getAdminMenu($admin_page_init);
             $admin_page_init->setCapability($admin_menu->capability(), $admin_menu->menuSlug());
             // skip if in full maintenance mode and maintenance_mode_parent is NOT set
-            if ($this->maintenance_mode && ! $admin_menu->maintenanceModeParent()) {
+            if ($this->full_site_maintenance && ! $admin_menu->maintenanceModeParent()) {
                 unset($admin_pages[ $page ]);
                 continue;
             }

@@ -336,7 +336,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     public function column_ATT_fname(EE_Transaction $transaction)
     {
         $primary_reg = $transaction->primary_registration();
-        $attendee = $primary_reg->get_first_related('Attendee');
+        $attendee = $primary_reg->attendee();
         if ($attendee instanceof EE_Attendee) {
             $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                 array(
@@ -376,7 +376,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
      */
     public function column_ATT_email(EE_Transaction $transaction)
     {
-        $attendee = $transaction->primary_registration()->get_first_related('Attendee');
+        $attendee = $transaction->primary_registration()->attendee();
         if (! empty($attendee)) {
             return '<a href="mailto:' . $attendee->get('ATT_email') . '">'
                    . $attendee->get('ATT_email')
@@ -405,7 +405,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     public function column_event_name(EE_Transaction $transaction)
     {
         $actions = array();
-        $event = $transaction->primary_registration()->get_first_related('Event');
+        $event = $transaction->primary_registration()->event();
         if (! empty($event)) {
             $edit_event_url = EE_Admin_Page::add_query_args_and_nonce(
                 array('action' => 'edit', 'post' => $event->ID()),

@@ -19,6 +19,10 @@ class EE_DMS_4_5_0_update_wp_user_for_tickets extends EE_Data_Migration_Script_S
     }
 
 
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
     protected function _migrate_old_row($old_row)
     {
         // foreach ticket row we add the id for the current logged in user.

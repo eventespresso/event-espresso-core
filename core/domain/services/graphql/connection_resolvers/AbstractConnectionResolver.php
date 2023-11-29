@@ -5,6 +5,9 @@ namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 use EE_Base_Class;
 use EventEspresso\core\domain\services\graphql\Utilities;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use Exception;
+use GraphQL\Type\Definition\ResolveInfo;
+use WPGraphQL\AppContext;
 use WPGraphQL\Data\Connection\AbstractConnectionResolver as WPGraphQLConnectionResolver;
 
 /**
@@ -17,12 +20,21 @@ use WPGraphQL\Data\Connection\AbstractConnectionResolver as WPGraphQLConnectionR
  */
 abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
 {
-    const MAX_QUERY_LIMIT = 250;
+    public const MAX_QUERY_LIMIT = 250;
 
-    /**
-     * @var Utilities
-     */
-    private $utilities;
+    private ?Utilities $utilities = null;
+
+
+    public function __construct($source, array $args, AppContext $context, ResolveInfo $info)
+    {
+        add_filter(
+            'graphql_connection_max_query_amount',
+            static function ($max_query_amount) {
+                return self::MAX_QUERY_LIMIT;
+            }
+        );
+        parent::__construct($source, $args, $context, $info);
+    }
 
 
     /**
@@ -98,7 +110,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
     // }
 
     /**
-     * Determine whether or not the the offset is valid, i.e the entity corresponding to the
+     * Determine whether the offset is valid, i.e the entity corresponding to the
      * offset exists. Offset is equivalent to entity ID. So this function is equivalent to
      * checking if the entity with the given ID exists.
      *
@@ -116,7 +128,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
     /**
      * Validates Model.
      *
-     * @param array $model Entity node.
+     * @param EE_Base_Class|null $model Entity node.
      * @return bool
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
@@ -168,10 +180,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      */
     protected function sanitizeWhereArgsForInputFields(array $where_args, array $arg_mapping, array $id_fields = []): array
     {
-        $query_args = $this->getUtilities()->sanitizeWhereArgs($where_args, $arg_mapping, $id_fields);
-        return ! empty($query_args) && is_array($query_args)
-            ? $query_args
-            : [];
+        return $this->getUtilities()->sanitizeWhereArgs($where_args, $arg_mapping, $id_fields);
     }
 
 

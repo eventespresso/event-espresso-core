@@ -14,7 +14,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
     /**
      * @var Payments_Admin_Page $_admin_page
      */
-    protected $_admin_page;
+    protected EE_Admin_Page $_admin_page;
 
 
     /**

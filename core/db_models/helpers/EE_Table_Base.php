@@ -11,7 +11,7 @@ abstract class EE_Table_Base
      *
      * @var string
      */
-    public $_table_name;
+    public string $_table_name;
 
 
     /**
@@ -19,37 +19,37 @@ abstract class EE_Table_Base
      *
      * @var string
      */
-    public $_table_alias;
+    public string $_table_alias;
 
 
     /**
      * Table's private key column
      *
-     * @var string
+     * @var string|null
      */
-    protected $_pk_column;
+    protected ?string $_pk_column = null;
 
 
     /**
      * Whether this table is a global table (in multisite) or specific to site.
      *
-     * @var bool
+     * @var bool|null
      */
-    protected $_global;
+    protected ?bool $_global;
 
 
     /**
-     * @param string  $table_name with or without wpdb prefix
-     * @param string  $pk_column
-     * @param boolean $global     whether the table is "global" as in there is only 1 table on an entire multisite
-     *                            install, or whether each site on a multisite install has a copy of this table
-     * @global wpdb   $wpdb
+     * @param string      $table_name with or without wpdb prefix
+     * @param string|null $pk_column
+     * @param boolean     $global     whether the table is "global" as in there is only 1 table on an entire multisite
+     *                                install, or whether each site on a multisite installation has a copy of this table
+     * @global wpdb       $wpdb
      */
-    public function __construct($table_name, $pk_column, $global = false)
+    public function __construct(string $table_name, ?string $pk_column, bool $global = false)
     {
         $this->_global = $global;
         $prefix        = $this->get_table_prefix();
-        // if they added the prefix, let's remove it because we delay adding the prefix until right when its needed.
+        // if they added the prefix, let's remove it because we delay adding the prefix until right when it's needed.
         if (strpos($table_name, $prefix) === 0) {
             $table_name = substr_replace($table_name, '', 0, strlen($prefix));
         }
@@ -79,7 +79,7 @@ abstract class EE_Table_Base
      *
      * @param string $table_alias
      */
-    public function _construct_finalize_with_alias($table_alias)
+    public function _construct_finalize_with_alias(string $table_alias)
     {
         $this->_table_alias = $table_alias;
     }

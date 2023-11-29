@@ -2,11 +2,13 @@
 
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\domain\services\activation\SuppressAdminNotices;
+use EventEspresso\core\domain\services\cron\CronSetup;
 use EventEspresso\core\domain\services\custom_post_types\RewriteRules;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * EEH_Activation Helper
@@ -30,30 +32,28 @@ class EEH_Activation implements ResettableInterface
     private static ?int $_default_creator_id = null;
 
     /**
-     * indicates whether or not we've already verified core's default data during this request,
+     * indicates whether we've already verified core's default data during this request,
      * because after migrations are done, any addons activated while in maintenance mode
-     * will want to setup their own default data, and they might hook into core's default data
-     * and trigger core to setup its default data. In which case they might all ask for core to init its default data.
+     * will want to set up their own default data, and they might hook into core's default data
+     * and trigger core to set up its default data. In which case they might all ask for core to init its default data.
      * This prevents doing that for EVERY single addon.
      *
      * @var bool
      */
-    protected static bool         $_initialized_db_content_already_in_this_request = false;
+    protected static bool $_initialized_db_content_already_in_this_request = false;
 
-    private static ?TableAnalysis $table_analysis                                  = null;
+    private static ?TableAnalysis $table_analysis = null;
 
-    private static ?TableManager  $table_manager                                   = null;
+    private static ?TableManager $table_manager = null;
 
 
     /**
      * @return TableAnalysis
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     public static function getTableAnalysis(): ?TableAnalysis
     {
         if (! self::$table_analysis instanceof TableAnalysis) {
-            self::$table_analysis = EE_Registry::instance()->create('TableAnalysis', [], true);
+            self::$table_analysis = LoaderFactory::getLoader()->getShared(TableAnalysis::class);
         }
         return self::$table_analysis;
     }
@@ -61,28 +61,13 @@ class EEH_Activation implements ResettableInterface
 
     /**
      * @return TableManager
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     public static function getTableManager(): ?TableManager
     {
         if (! self::$table_manager instanceof TableManager) {
-            self::$table_manager = EE_Registry::instance()->create('TableManager', [], true);
+            self::$table_manager = LoaderFactory::getLoader()->getShared(TableManager::class);
         }
         return self::$table_manager;
-    }
-
-
-    /**
-     * @param $table_name
-     * @return string
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @deprecated instead use TableAnalysis::ensureTableNameHasPrefix()
-     */
-    public static function ensure_table_name_has_prefix($table_name): string
-    {
-        return EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix($table_name);
     }
 
 
@@ -141,9 +126,10 @@ class EEH_Activation implements ResettableInterface
         EEH_Activation::validate_messages_system();
         EEH_Activation::insert_default_payment_methods();
         SuppressAdminNotices::suppressWpGraphQlTracking();
-        // in case we've
+
         EEH_Activation::remove_cron_tasks();
         EEH_Activation::create_cron_tasks();
+
         // remove all TXN locks since that is being done via extra meta now
         delete_option('ee_locked_transactions');
         // also, check for CAF default db content
@@ -158,7 +144,6 @@ class EEH_Activation implements ResettableInterface
      * Returns an array of cron tasks. Array values are the actions fired by the cron tasks (the "hooks"),
      * values are the frequency (the "recurrence"). See http://codex.wordpress.org/Function_Reference/wp_schedule_event
      * If the cron task should NO longer be used, it should have a value of EEH_Activation::cron_task_no_longer_in_use
-     * (null)
      *
      * @param string $which_to_include can be 'current' (ones that are currently in use),
      *                                 'old' (only returns ones that should no longer be used),or 'all',
@@ -558,8 +543,6 @@ class EEH_Activation implements ResettableInterface
      * The role being used to check is filterable.
      *
      * @return int|null WP_user ID or NULL
-     * @throws EE_Error
-     * @throws ReflectionException
      * @since  4.6.0
      * @global WPDB $wpdb
      */
@@ -582,10 +565,10 @@ class EEH_Activation implements ResettableInterface
         $capabilities_key = EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix('capabilities');
         $query            = $wpdb->prepare(
             "
-SELECT user_id 
-FROM $wpdb->usermeta 
-WHERE meta_key = '$capabilities_key' 
-  AND meta_value LIKE %s 
+SELECT user_id
+FROM $wpdb->usermeta
+WHERE meta_key = '$capabilities_key'
+  AND meta_value LIKE %s
 ORDER BY user_id
 LIMIT 0,1",
             '%' . $role_to_check . '%'
@@ -621,7 +604,7 @@ LIMIT 0,1",
     public static function create_table(
         string $table_name,
         string $sql,
-        string $engine = 'ENGINE=InnoDB ',
+        string $engine = 'ENGINE=InnoDB',
         bool $drop_pre_existing_table = false
     ) {
         if (apply_filters('FHEE__EEH_Activation__create_table__short_circuit', false, $table_name, $sql)) {
@@ -661,59 +644,9 @@ LIMIT 0,1",
 
 
     /**
-     * Checks if this column already exists on the specified table. Handy for addons which want to add a column
-     *
-     * @param string $table_name  (without "wp_", eg "esp_attendee"
-     * @param string $column_name
-     * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be
-     *                            'VARCHAR(10)'
-     * @return bool|int
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @deprecated instead use TableManager::addColumn()
-     */
-    public static function add_column_if_it_doesnt_exist(
-        string $table_name,
-        string $column_name,
-        string $column_info = 'INT UNSIGNED NOT NULL'
-    ) {
-        return EEH_Activation::getTableManager()->addColumn($table_name, $column_name, $column_info);
-    }
-
-
-    /**
-     * Gets all the fields on the database table.
-     *
-     * @param string $table_name , without prefixed $wpdb->prefix
-     * @return array of database column names
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @deprecated instead use TableManager::getTableColumns()
-     */
-    public static function get_fields_on_table(string $table_name = ''): array
-    {
-        return EEH_Activation::getTableManager()->getTableColumns($table_name);
-    }
-
-
-    /**
-     * @param string $table_name
-     * @return bool
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @deprecated instead use TableAnalysis::tableIsEmpty()
-     */
-    public static function db_table_is_empty(string $table_name): bool
-    {
-        return EEH_Activation::getTableAnalysis()->tableIsEmpty($table_name);
-    }
-
-
-    /**
      * @param string $table_name
      * @return bool | int
      * @throws EE_Error
-     * @throws ReflectionException
      */
     public static function delete_db_table_if_empty(string $table_name)
     {
@@ -721,33 +654,6 @@ LIMIT 0,1",
             return EEH_Activation::getTableManager()->dropTable($table_name);
         }
         return false;
-    }
-
-
-    /**
-     * @param string $table_name
-     * @return bool|int
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @deprecated instead use TableManager::dropTable()
-     */
-    public static function delete_unused_db_table(string $table_name)
-    {
-        return EEH_Activation::getTableManager()->dropTable($table_name);
-    }
-
-
-    /**
-     * @param string $table_name
-     * @param string $index_name
-     * @return bool|int
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @deprecated instead use TableManager::dropIndex()
-     */
-    public static function drop_index(string $table_name, string $index_name)
-    {
-        return EEH_Activation::getTableManager()->dropIndex($table_name, $index_name);
     }
 
 
@@ -1406,14 +1312,6 @@ LIMIT 0,1",
 
 
     /**
-     * @return void
-     */
-    public static function plugin_deactivation()
-    {
-    }
-
-
-    /**
      * Finds all our EE4 custom post types, and deletes them and their associated data
      * (like post meta or term relations)
      *
@@ -1486,24 +1384,6 @@ LIMIT 0,1",
             $tables[ $table ] = $table;
         }
         return EEH_Activation::getTableManager()->dropTables($tables);
-    }
-
-
-    /**
-     * Drops all the tables mentioned in a single MYSQL query. Double-checks
-     * each table name provided has a wpdb prefix attached, and that it exists.
-     * Returns the list actually deleted
-     *
-     * @param array $table_names
-     * @return array of table names which we deleted
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @deprecated in 4.9.13. Instead use TableManager::dropTables()
-     * @global WPDB $wpdb
-     */
-    public static function drop_tables(array $table_names): array
-    {
-        return EEH_Activation::getTableManager()->dropTables($table_names);
     }
 
 
@@ -1613,22 +1493,6 @@ LIMIT 0,1",
 
 
     /**
-     * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
-     *
-     * @param string $table_name with or without $wpdb->prefix
-     * @return boolean
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @global wpdb  $wpdb
-     * @deprecated instead use TableAnalysis::tableExists()
-     */
-    public static function table_exists(string $table_name): bool
-    {
-        return EEH_Activation::getTableAnalysis()->tableExists($table_name);
-    }
-
-
-    /**
      * Resets the cache on EEH_Activation
      */
     public static function reset()
@@ -1660,5 +1524,120 @@ LIMIT 0,1",
                 ],
             ]
         );
+    }
+
+
+    /************************ @DEPRECATED ********************** */
+
+
+    /**
+     * Checks if this column already exists on the specified table. Handy for addons which want to add a column
+     *
+     * @param string $table_name  (without "wp_", eg "esp_attendee"
+     * @param string $column_name
+     * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be
+     *                            'VARCHAR(10)'
+     * @return bool|int
+     * @throws EE_Error
+     * @deprecated instead use TableManager::addColumn()
+     */
+    public static function add_column_if_it_doesnt_exist(
+        string $table_name,
+        string $column_name,
+        string $column_info = 'INT UNSIGNED NOT NULL'
+    ) {
+        return EEH_Activation::getTableManager()->addColumn($table_name, $column_name, $column_info);
+    }
+
+
+    /**
+     * Gets all the fields on the database table.
+     *
+     * @param string $table_name , without prefixed $wpdb->prefix
+     * @return array of database column names
+     * @throws EE_Error
+     * @deprecated instead use TableManager::getTableColumns()
+     */
+    public static function get_fields_on_table(string $table_name = ''): array
+    {
+        return EEH_Activation::getTableManager()->getTableColumns($table_name);
+    }
+
+
+    /**
+     * @param string $table_name
+     * @return bool
+     * @deprecated instead use TableAnalysis::tableIsEmpty()
+     */
+    public static function db_table_is_empty(string $table_name): bool
+    {
+        return EEH_Activation::getTableAnalysis()->tableIsEmpty($table_name);
+    }
+
+
+    /**
+     * @param string $table_name
+     * @return bool|int
+     * @throws EE_Error
+     * @deprecated instead use TableManager::dropTable()
+     */
+    public static function delete_unused_db_table(string $table_name)
+    {
+        return EEH_Activation::getTableManager()->dropTable($table_name);
+    }
+
+
+    /**
+     * @param string $table_name
+     * @param string $index_name
+     * @return bool|int
+     * @throws EE_Error
+     * @deprecated instead use TableManager::dropIndex()
+     */
+    public static function drop_index(string $table_name, string $index_name)
+    {
+        return EEH_Activation::getTableManager()->dropIndex($table_name, $index_name);
+    }
+
+
+    /**
+     * Drops all the tables mentioned in a single MYSQL query. Double-checks
+     * each table name provided has a wpdb prefix attached, and that it exists.
+     * Returns the list actually deleted
+     *
+     * @param array $table_names
+     * @return array of table names which we deleted
+     * @throws EE_Error
+     * @deprecated in 4.9.13. Instead use TableManager::dropTables()
+     * @global WPDB $wpdb
+     */
+    public static function drop_tables(array $table_names): array
+    {
+        return EEH_Activation::getTableManager()->dropTables($table_names);
+    }
+
+
+    /**
+     * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
+     *
+     * @param string $table_name with or without $wpdb->prefix
+     * @return boolean
+     * @global wpdb  $wpdb
+     * @deprecated instead use TableAnalysis::tableExists()
+     */
+    public static function table_exists(string $table_name): bool
+    {
+        return EEH_Activation::getTableAnalysis()->tableExists($table_name);
+    }
+
+
+    /**
+     * @param $table_name
+     * @return string
+     * @deprecated instead use TableAnalysis::ensureTableNameHasPrefix()
+     */
+    public static function ensure_table_name_has_prefix($table_name): string
+    {
+        return EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix($table_name);
     }
 }

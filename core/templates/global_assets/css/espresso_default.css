@@ -391,12 +391,8 @@ ul.ee-upcoming-events-widget-ul li{
 	display: inline-block;
 	position: relative;
 	top: -2px;
-	margin: 0 0 1em;
-	background: var(--ee-status-color-light-blue) -webkit-linear-gradient( var(--ee-status-color-blue), var(--ee-status-color-light-blue)); /* For Safari 5.1 to 6.0 */
-	background: var(--ee-status-color-light-blue) -o-linear-gradient( var(--ee-status-color-blue), var(--ee-status-color-light-blue)); /* For Opera 11.1 to 12.0 */
-	background: var(--ee-status-color-light-blue) -moz-linear-gradient( var(--ee-status-color-blue), var(--ee-status-color-light-blue)); /* For Firefox 3.6 to 15 */
-	background: var(--ee-status-color-light-blue) linear-gradient( var(--ee-status-color-blue), var(--ee-status-color-light-blue)); /* Standard syntax */
-
+	margin: .25em .5em 1em;
+	background: var(--ee-status-color-blue);
 	border: 1px solid rgba(0,0,0,0.01) !important;
 	border-top: 1px solid rgba(255,255,255,0.5) !important;
 	border-bottom: 1px solid rgba(0,0,0,0.25) !important;
@@ -459,6 +455,10 @@ input.ee-register-button {
 .huge.ee-button, .huge.ee-button:visited {
 	font-size: 16px;
 	padding: 14px 32px 16px;
+}
+.ee-button.big-text, .ee-button.big-text:visited {
+	font-size: 1em;
+	padding: .8em 1.6em .9em;
 }
 
 /* ROUND BUTTONS */
@@ -985,9 +985,8 @@ input.ee-register-button {
 	width:100%;
 	padding: .75em 2.5%;
 	margin: 0 auto 1em;
-	background: #fff;
+	background: hsla(50, 95%, 45%, .05);
 	border: 4px solid var(--ee-status-color-yellow);
-	color: var(--ee-status-color-dark-grey);
 	font-size: 1em;
 	line-height: 1.6em;
 	text-align: center;
@@ -1089,7 +1088,7 @@ input.ee-register-button {
 	bottom: 0;
 	box-sizing: border-box;
 	color: #fff;
-	font-size: .85rem;
+	font-size: 16px;
 	font-weight: 500;
 	left: 0;
     letter-spacing: .025rem;
@@ -1108,9 +1107,11 @@ input.ee-register-button {
 
 .ee-really-important-notice-dv p {
 	margin: 0;
+    text-align: center;
 }
 .ee-really-important-notice-dv a {
 	color: #efff20;
+    cursor: pointer;
     font-weight: 600;
     text-shadow:
         -1px -1px 0 rgba(0, 0, 0, 0.25),

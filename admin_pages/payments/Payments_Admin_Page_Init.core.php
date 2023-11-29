@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\services\database\TableAnalysis;
 
 /**
@@ -74,6 +75,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
      * Checks that there is at least one active gateway. If not, add a notice
      *
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function check_payment_gateway_setup()
     {
@@ -82,7 +84,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
         // because the tables are deleted just before this request runs.
         // see https://events.codebasehq.com/projects/event-espresso/tickets/7539
         if (
-            ! EE_Maintenance_Mode::instance()->models_can_query()
+            DbStatus::isOffline()
             || ! $this->_get_table_analysis()->tableExists(EEM_Payment_Method::instance()->table())
         ) {
             return;

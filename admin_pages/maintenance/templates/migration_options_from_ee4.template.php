@@ -90,9 +90,7 @@
             'Don\'t want to keep your old Event Espresso data? Alternatively, you can delete it all and start fresh.',
             'event_espresso'
         ); ?>
-        <a
-            href="<?php echo esc_url_raw($data_reset_page); ?>"
-        >
+        <a href="<?php echo esc_url_raw($data_reset_page); ?>">
             <?php esc_html_e('Visit the Maintenance Page and Reset Your Event Espresso Data', 'event_espresso'); ?>
         </a>
     </p>

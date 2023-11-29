@@ -14,15 +14,14 @@ use Exception;
  */
 abstract class GraphQLData implements GraphQLDataInterface
 {
+    public const QUERY_LIMIT = 250;
+
     /**
      * @var string $namespace The graphql namespace/prefix.
      */
-    protected $namespace = 'Espresso';
+    protected string $namespace = 'Espresso';
 
-    /**
-     * @var array $params
-     */
-    private $params = [];
+    private array $params = [];
 
 
     /**
@@ -32,7 +31,6 @@ abstract class GraphQLData implements GraphQLDataInterface
     {
         $this->params = $params;
     }
-
 
 
     /**
@@ -60,7 +58,7 @@ abstract class GraphQLData implements GraphQLDataInterface
      * @return array|null
      * @since 5.0.0.p
      */
-    protected function makeGraphQLRequest(array $data)
+    protected function makeGraphQLRequest(array $data): ?array
     {
         $error = '';
         try {

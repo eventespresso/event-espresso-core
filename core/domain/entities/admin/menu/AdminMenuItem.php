@@ -5,7 +5,7 @@ namespace EventEspresso\core\domain\entities\admin\menu;
 use DomainException;
 use EE_Admin_Page_Init;
 use EE_Capabilities;
-use EE_Maintenance_Mode;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use InvalidArgumentException;
 use OutOfBoundsException;
 
@@ -39,11 +39,11 @@ abstract class AdminMenuItem
      *
      * @var bool
      */
-    protected $maintenance_mode = false;
+    protected bool $maintenance_mode = false;
 
     /**
      * Menu maps can define a parent slug that gets used instead of the main parent slug for the menu when
-     * EE_Maintenance_Mode::level_2_complete_maintenance is active.
+     * EE_Maintenance_Mode::STATUS_FULL_SITE is active.
      *
      * @var string
      */
@@ -136,7 +136,7 @@ abstract class AdminMenuItem
     {
         // we don't want this coupling anymore >:(
         unset($menu_args['admin_init_page'], $required['admin_init_page']);
-        $this->maintenance_mode = EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance;
+        $this->maintenance_mode = MaintenanceStatus::isFullSite();
 
         // filter all args before processing so plugins can manipulate various settings for menus.
         $menu_args = apply_filters(

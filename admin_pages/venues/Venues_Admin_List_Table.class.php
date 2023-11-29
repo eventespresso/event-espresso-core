@@ -16,7 +16,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table
     /**
      * @var Venues_Admin_Page $_admin_page
      */
-    protected $_admin_page;
+    protected EE_Admin_Page $_admin_page;
 
 
     protected function _setup_data()

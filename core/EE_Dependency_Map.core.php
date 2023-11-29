@@ -220,7 +220,7 @@ class EE_Dependency_Map
             // otherwise just take the incoming array because nothing previously existed
             : $dependencies;
         return $registered
-               || count(EE_Dependency_Map::$_instance->_dependency_map[ $class ]) === count($dependencies);
+            || count(EE_Dependency_Map::$_instance->_dependency_map[ $class ]) === count($dependencies);
     }
 
 
@@ -450,6 +450,10 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
+            'EE_Maintenance_Mode'                                                                                                => [
+                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+            ],
             'EE_Request_Handler'                                                                                                 => [
                 'EventEspresso\core\services\request\Request'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Response' => EE_Dependency_Map::load_from_cache,
@@ -469,7 +473,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\encryption\Base64Encoder'     => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\session\SessionStartHandler'                                                            => [
-                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
             'EE_Cart'                                                                                                            => [
                 'EE_Session' => EE_Dependency_Map::load_from_cache,
@@ -754,7 +758,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\files\FilesDataHandler'                                                         => [
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\libraries\batch\BatchRequestProcessor'                                                             => [
+            'EventEspresso\core\libraries\batch\BatchRequestProcessor'                                                           => [
                 'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
@@ -807,10 +811,10 @@ class EE_Dependency_Map
             'EventEspresso\core\services\addon\api\ThirdPartyPluginHandler'                                                      => [
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\libraries\batch\JobHandlers\ExecuteBatchDeletion'                                                  => [
+            'EventEspresso\core\libraries\batch\JobHandlers\ExecuteBatchDeletion'                                                => [
                 'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\libraries\batch\JobHandlers\PreviewEventDeletion'                                                  => [
+            'EventEspresso\core\libraries\batch\JobHandlers\PreviewEventDeletion'                                                => [
                 'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\events\data\PreviewDeletion'                                               => [
@@ -930,6 +934,8 @@ class EE_Dependency_Map
             'EE_CPT_Strategy'                              => 'load_core',
             // load_class
             'EE_Registration_Processor'                    => 'load_class',
+            'EE_Transaction_Payments'                      => 'load_class',
+            'EE_Transaction_Processor'                     => 'load_class',
             // load_lib
             'EE_Message_Resource_Manager'                  => 'load_lib',
             'EE_Message_Type_Collection'                   => 'load_lib',

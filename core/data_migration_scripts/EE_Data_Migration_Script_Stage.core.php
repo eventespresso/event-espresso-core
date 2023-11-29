@@ -2,47 +2,41 @@
 
 /**
  * Class EE_Data_Migration_Script_Stage
- *
- * Each migration script is meant to be composed of different stages. Often, each stage corresponds
- * to a table that needs to be migrated: eg migrating 3.1 events to 4.1 event CPTs. However, each migration stage does
- * NOT NEED to correspond to migrating a single table: it could also correspond to a group of wp options, files, etc.
- * Only 3 functions need to be implemented for each migration stage: the constructor (it needs to set the _pretty_name
- * property),
- *  _count_records_to_migrate() (which, when migrating a database table, would usually just return the count of records
- *  in the table, but doesn't need to return the exactly correct number, as its mostly only used in the UI), and
- *  _migration_step() (which converts X records from their old format to the new format. Whatever definition your
- *  migration stage uses for "record" in _count_records_to_migrate() should be the same definition in
- * _migration_step() (ie, it its a count of rows in the old attendees table in _count_records_to_migrate(), it should
- * also be OLD attendee rows migrated on each call to _migration_step().
+ * Each migration script is meant to be composed of different stages.
+ * Often, each stage corresponds to a table that needs to be migrated:
+ * e.g. migrating 3.1 events to 4.1 event CPTs.
+ * However, each migration stage does NOT NEED to correspond to migrating
+ * a single table: it could also correspond to a group of wp options, files, etc.
+ * Only 3 functions need to be implemented for each migration stage:
+ * - the constructor
+ *      it needs to set the _pretty_name property
+ * - _count_records_to_migrate()
+ *      which, when migrating a database table, would usually just return
+ *      the count of records in the table, but doesn't need to return the
+ *      exactly correct number, as its mostly only used in the UI
+ * - _migration_step()
+ *      which converts X records from their old format to the new format.
+ *      Whatever definition your migration stage uses for "record"
+ *      in _count_records_to_migrate() should be the same definition in
+ *      _migration_step(), ie, it's a count of rows in the old attendees table
+ *      in _count_records_to_migrate(), it should also be OLD attendee rows
+ *      migrated on each call to _migration_step().
  *
  * @package               Event Espresso
  * @subpackage            core
  * @author                Mike Nelson
  * @since                 4.0
- *
- */
-
-/**
- * Each migration script is meant to be composed of different stages. Often, each stage corresponds
- * to a table that needs to be migrated: eg migrating 3.1 events to 4.1 event CPTs. However, each migration stage does
- * NOT NEED to correspond to migrating a single table: it could also correspond to a group of wp options, files, etc.
- * Only 3 functions need to be implemented for each migration stage: the constructor (it needs to set the _pretty_name
- * property),
- *  _count_records_to_migrate() (which, when migrating a database table, would usually just return the count of records
- *  in the table, but doesn't need to return the exactly correct number, as its mostly only used in the UI), and
- *  _migration_step() (which converts X records from their old format to the new format. Whatever definition your
- *  migration stage uses for "record" in _count_records_to_migrate() should be the same definition in
- * _migration_step() (ie, it its a count of rows in the old attendees table in _count_records_to_migrate(), it should
- * also be OLD attendee rows migrated on each call to _migration_step().
  */
 abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Base
 {
+
     /**
      * The migration script this is a stage of
      *
      * @var EE_Data_Migration_Script_Base
      */
-    protected $_migration_script;
+    protected EE_Data_Migration_Script_Base $_migration_script;
+
 
     /**
      * This should eb called to essentially 'finalize' construction of the stage.
@@ -51,10 +45,11 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
      *
      * @param EE_Data_Migration_Script_Base $migration_script
      */
-    public function _construct_finalize($migration_script)
+    public function _construct_finalize(EE_Data_Migration_Script_Base $migration_script)
     {
         $this->_migration_script = $migration_script;
     }
+
 
     /**
      * Migrates X old records to the new format. If a fatal error is encountered it is NOT caught here,
@@ -69,7 +64,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
         // before we run the migration step, we want ot take note of warnings that get outputted
         ob_start();
         $items_migrated = $this->_migration_step($num_items_to_migrate);
-        $output = ob_get_contents();
+        $output         = ob_get_contents();
         ob_end_clean();
         if ($output) {
             $this->add_error($output);
@@ -92,29 +87,31 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
      */
     abstract protected function _migration_step($num_items_to_migrate = 50);
 
+
     /**
      * Counts the records that have been migrated so far
      *
      * @return int
      */
-    public function count_records_migrated()
+    public function count_records_migrated(): int
     {
         return $this->_records_migrated;
     }
+
 
     /**
      * returns an array of strings describing errors
      *
      * @return array
      */
-    public function get_errors()
+    public function get_errors(): array
     {
         return $this->_errors;
     }
 
 
     /**
-     * Sets all of the properties of this script stage to match what's in the array, which is assumed
+     * Sets all the properties of this script stage to match what's in the array, which is assumed
      * to have been made from the properties_as_array() function.
      *
      * @param array $array_of_properties like what's produced from properties_as_array() method
@@ -127,12 +124,13 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
         }
     }
 
+
     /**
      * Gets the script this is a stage of
      *
      * @return EE_Data_Migration_Script_Base
      */
-    protected function get_migration_script()
+    protected function get_migration_script(): EE_Data_Migration_Script_Base
     {
         return $this->_migration_script;
     }

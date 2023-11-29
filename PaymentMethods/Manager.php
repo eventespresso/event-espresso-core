@@ -5,10 +5,10 @@ namespace EventEspresso\PaymentMethods;
 use EE_Error;
 use EE_Payment_Method;
 use EEM_Payment_Method;
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use ReflectionException;
-use EE_Maintenance_Mode;
 
 /**
  * Class EventEspresso\PaymentMethods\Manager
@@ -25,9 +25,9 @@ class Manager
      * List of PMs that can be replaced with PP Commerce.
      * ['payment method name' => 'settings option']
      *
-     * @var $pms_can_hide
+     * @var array $pms_can_hide
      */
-    protected static $pms_can_hide = [
+    protected static array $pms_can_hide = [
         'paypal_express' => 'api_username',
         'paypal_pro'     => 'api_username',
         'aim'            => 'login_id',
@@ -39,7 +39,7 @@ class Manager
      */
     public function __construct()
     {
-        if (! EE_Maintenance_Mode::instance()->models_can_query()) {
+        if (DbStatus::isOffline()) {
             return;
         }
         $this->loadPaymentMethods();

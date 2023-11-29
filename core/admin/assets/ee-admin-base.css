@@ -444,6 +444,12 @@
     line-height: var(--ee-font-size-4xl);
     letter-spacing: -1px;
 }
+.extreme-text {
+    color: var(--ee-font-color-light);
+    font-size: var(--ee-font-size-4xl);
+    line-height: var(--ee-font-size-4xl);
+    letter-spacing: -2px;
+}
 
 
 /******************* DASHICONS ****************** */

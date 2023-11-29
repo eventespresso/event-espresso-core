@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * For displaying the migration page. Does not allow the user to migrate until all known EE
  * addons are updated from PUE. Using AJAX to run the migration and update the progress bar
@@ -17,13 +20,9 @@
  * @var string                        $ultimate_db_state
  * @var string                        $reset_db_page_link
  * @var string                        $migration_options_html
- * @var int                           $mMode_level
  */
 
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
-
-$mMode_level = EE_Maintenance_Mode::instance()->level();
+$m_mode_active = MaintenanceStatus::isNotDisabled();
 
 if ($show_backup_db_text) { ?>
     <h1><span class="dashicons dashicons-migrate"></span>
@@ -170,11 +169,8 @@ if ($show_backup_db_text) { ?>
 
     <?php
     if ($show_migration_progress) { ?>
-        <div id='migration-monitor' <?php if ($show_backup_db_text) :
-            ?>style="display:none"<?php
-                                    endif; ?>>
-            <?php
-            if ($show_backup_db_text) { ?>
+        <div id='migration-monitor' <?php if ($show_backup_db_text) : ?>style="display:none"<?php endif; ?>>
+            <?php if ($show_backup_db_text) { ?>
                 <p>
                     <a class="toggle-migration-monitor small-text" style="cursor: pointer;">
                         <span class="dashicons dashicons-arrow-left-alt2" style="top:0;"></span>
@@ -283,12 +279,7 @@ if ($show_backup_db_text) { ?>
                                 name="maintenance_mode_level"
                                 type='radio'
                                 value="0"
-                                <?php echo esc_attr(
-                                    $mMode_level === EE_Maintenance_Mode::level_0_not_in_maintenance
-                                        ? 'checked'
-                                        : ''
-                                );
-                                ?>
+                                <?php echo esc_attr($m_mode_active ? '' : 'checked');?>
                             />
                         </td>
                         <th align="left">
@@ -309,12 +300,7 @@ if ($show_backup_db_text) { ?>
                                 name="maintenance_mode_level"
                                 type='radio'
                                 value="1"
-                                <?php echo esc_attr(
-                                    $mMode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance
-                                        ? 'checked'
-                                        : ''
-                                );
-                                ?>
+                                <?php echo esc_attr($m_mode_active ? 'checked' : '');?>
                             />
                         </td>
                         <th align="left">

@@ -156,7 +156,8 @@ class EEH_Line_Item
     public static function add_ticket_purchase(
         ?EE_Line_Item $total_line_item,
         EE_Ticket $ticket,
-        int $qty = 1
+        int $qty = 1,
+        bool $recalculate_totals = true
     ): ?EE_Line_Item {
         if (! $total_line_item instanceof EE_Line_Item || ! $total_line_item->is_total()) {
             throw new EE_Error(
@@ -176,7 +177,9 @@ class EEH_Line_Item
         if (! $line_item instanceof EE_Line_Item) {
             $line_item = self::create_ticket_line_item($total_line_item, $ticket, $qty);
         }
-        $total_line_item->recalculate_total_including_taxes();
+        if ($recalculate_totals) {
+            $total_line_item->recalculate_total_including_taxes();
+        }
         return $line_item;
     }
 
@@ -385,10 +388,11 @@ class EEH_Line_Item
                 $percent    = 0;
                 $unit_price = $sign * $price->amount();
             }
+            $price_desc = $price->desc() ? $price->desc() : $price->type_obj()->name();
             $sub_line_item         = EE_Line_Item::new_instance(
                 [
                     'LIN_name'       => $price->name(),
-                    'LIN_desc'       => $price->desc(),
+                    'LIN_desc'       => $price_desc,
                     'LIN_quantity'   => $price->is_percent() ? null : $qty,
                     'LIN_is_taxable' => false,
                     'LIN_order'      => $price->order(),
@@ -1172,7 +1176,6 @@ class EEH_Line_Item
                 '4.6.18'
             );
         }
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
         // check if only a single line_item_id was passed
         if (! empty($line_item_codes) && ! is_array($line_item_codes)) {
@@ -1667,13 +1670,16 @@ class EEH_Line_Item
      */
     public static function visualize(EE_Line_Item $line_item, int $indentation = 0, bool $top_level = true)
     {
+        if (! defined('WP_DEBUG') || ! WP_DEBUG) {
+            return;
+        }
         $testing  = defined('EE_TESTS_DIR');
         $new_line = $testing ? "\n" : '<br />';
         if ($top_level && ! $testing) {
             echo '<div style="position: relative; z-index: 9999; margin: 2rem;">';
             echo '<pre style="padding: 2rem 3rem; color: #00CCFF; background: #363636;">';
         }
-        if ($indentation) {
+        if ($top_level || $indentation) {
             echo $new_line;
         }
         echo str_repeat('. ', $indentation);
@@ -1686,8 +1692,8 @@ class EEH_Line_Item
             }
         }
         echo wp_kses($line_item->name(), AllowedTags::getAllowedTags());
-        echo " [ ID:{$line_item->ID()} | qty:{$line_item->quantity()} ] {$line_item->type()} : ";
-        echo "\${$line_item->total()}";
+        echo " [ ID:{$line_item->ID()} | qty:{$line_item->quantity()} ] {$line_item->type()}";
+        echo " : \${$line_item->total()} : \${$line_item->pretaxTotal()}";
         if ($breakdown) {
             echo " ( $breakdown )";
         }

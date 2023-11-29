@@ -93,6 +93,8 @@ class AppContext {
 	 */
 	public $node_resolver;
 
+    public $connection_query_class;
+
 	/**
 	 * AppContext constructor.
 	 */

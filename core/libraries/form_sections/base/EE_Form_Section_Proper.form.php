@@ -166,7 +166,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     /**
      * Finishes construction given the parent form section and this form section's name
      *
-     * @param EE_Form_Section_Proper $parent_form_section
+     * @param EE_Form_Section_Proper|null $parent_form_section
      * @param string                 $name
      * @throws EE_Error
      */
@@ -1263,7 +1263,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                         get_class($subsection),
                         $subsection_name,
                         $this->name()
-                    )
+                    ),
+                    __FILE__, __FUNCTION__, __LINE__
                 );
                 unset($new_subsections[ $subsection_name ]);
             }

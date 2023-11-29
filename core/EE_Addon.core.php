@@ -3,6 +3,8 @@
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\RequiresDependencyMapInterface;
 use EventEspresso\core\domain\RequiresDomainInterface;
+use EventEspresso\core\domain\services\database\DbStatus;
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -386,7 +388,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
             // so we need to treat the empty string as if nothing had been passed, and should instead use the default
             $verify_schema = true;
         }
-        if (EE_Maintenance_Mode::instance()->level() !== EE_Maintenance_Mode::level_2_complete_maintenance) {
+        if (DbStatus::isOnline()) {
             if ($verify_schema) {
                 $this->initialize_db();
             }
@@ -767,7 +769,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     public function admin_init()
     {
         // is admin and not in M-Mode ?
-        if (is_admin() && ! EE_Maintenance_Mode::instance()->level()) {
+        if (is_admin() && MaintenanceStatus::isDisabled()) {
             add_filter('plugin_action_links', [$this, 'plugin_action_links'], 10, 2);
             add_filter('after_plugin_row_' . $this->_plugin_basename, [$this, 'after_plugin_row'], 10, 3);
         }

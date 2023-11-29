@@ -15,12 +15,10 @@
  */
 abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Script_Stage
 {
-    protected $_old_table;
-
     /**
      * @var string The columns to select. May be overridden for children.
      */
-    protected $select_expression = '*';
+    protected string $select_expression = '*';
 
     /**
      * Set in the constructor to add this sql to both the counting query in
@@ -28,9 +26,9 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
      * EE_Data_Migration_Script_Stage_Table::_get_rows().
      * Eg "where column_name like '%some_value%'"
      *
-     * @var string
+     * @var string|null
      */
-    protected $_extra_where_sql;
+    protected ?string $_extra_where_sql;
 
 
     /**
@@ -41,12 +39,12 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
      * rows from the database, and $num_items_to_migrate is set to 50, then we SHOULD actually migrate 50 rows,but at
      * very least we MUST report/return 50 items migrated)
      *
-     * @param int $num_items
+     * @param int $num_items_to_migrate
      * @return int number of items ACTUALLY migrated
      */
-    public function _migration_step($num_items = 50)
+    public function _migration_step($num_items_to_migrate = 50)
     {
-        $rows = $this->_get_rows($num_items);
+        $rows = $this->_get_rows($num_items_to_migrate);
         $items_actually_migrated = 0;
         foreach ($rows as $old_row) {
             $this->_migrate_old_row($old_row);
@@ -87,8 +85,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
     {
         global $wpdb;
         $query = "SELECT COUNT(*) FROM {$this->_old_table} {$this->_extra_where_sql}";
-        $count = $wpdb->get_var($query);
-        return $count;
+        return (int) $wpdb->get_var($query);
     }
 
     /**
@@ -97,7 +94,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
      * fatal error which prevents all future migrations, throw an exception describing it
      *
      * @param array $old_row an associative array where keys are column names and values are their values.
-     * @return null
+     * @return void
      */
     abstract protected function _migrate_old_row($old_row);
 }

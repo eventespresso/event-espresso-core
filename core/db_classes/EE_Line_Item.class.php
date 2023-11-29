@@ -12,35 +12,43 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * @package            Event Espresso
  * @subpackage         includes/classes/EE_Line_Item.class.php
  * @author             Michael Nelson
+ * @method EE_Ticket|EE_Transaction|null get_first_related($r, $q = [])
  */
 class EE_Line_Item extends EE_Base_Class
 {
     /**
      * for children line items (currently not a normal relation)
      *
-     * @type EE_Line_Item[]
+     * @var EE_Line_Item[]
      */
-    protected $_children = [];
+    protected array $_children = [];
+
+    /**
+     * query params used to obtain children line items above
+     *
+     * @var array
+     */
+    private array $children_query_params = [];
 
     /**
      * for the parent line item
      *
-     * @var EE_Line_Item
+     * @var EE_Line_Item|null
      */
-    protected $_parent;
+    protected ?EE_Line_Item $_parent = null;
 
     /**
      * @var LineItemCalculator
      */
-    protected $calculator;
+    protected LineItemCalculator $calculator;
 
 
     /**
-     * @param array  $props_n_values          incoming values
-     * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
-     *                                        used.)
-     * @param array  $date_formats            incoming date_formats in an array where the first value is the
-     *                                        date_format and the second value is the time format
+     * @param array       $props_n_values incoming values
+     * @param string|null $timezone       incoming timezone as set by the model.
+     *                                    If not set the timezone for the website will be used.
+     * @param array       $date_formats   incoming date_formats in an array where the first value is the
+     *                                    date_format and the second value is the time format
      * @return EE_Line_Item
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -48,8 +56,11 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
-    {
+    public static function new_instance(
+        array $props_n_values = [],
+        ?string $timezone = '',
+        array $date_formats = []
+    ): EE_Line_Item {
         $has_object = parent::_check_for_object(
             $props_n_values,
             __CLASS__,
@@ -61,9 +72,9 @@ class EE_Line_Item extends EE_Base_Class
 
 
     /**
-     * @param array  $props_n_values  incoming values from the database
-     * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
-     *                                the website will be used.
+     * @param array       $props_n_values incoming values from the database
+     * @param string|null $timezone       incoming timezone as set by the model.
+     *                                    If not set the timezone for the website will be used.
      * @return EE_Line_Item
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -71,7 +82,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = [], $timezone = '')
+    public static function new_instance_from_db(array $props_n_values = [], ?string $timezone = ''): EE_Line_Item
     {
         return new self($props_n_values, true, $timezone);
     }
@@ -116,9 +127,9 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function ID()
+    public function ID(): int
     {
-        return $this->get('LIN_ID');
+        return (int) $this->get('LIN_ID');
     }
 
 
@@ -132,9 +143,9 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function TXN_ID()
+    public function TXN_ID(): int
     {
-        return $this->get('TXN_ID');
+        return (int) $this->get('TXN_ID');
     }
 
 
@@ -148,7 +159,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_TXN_ID($TXN_ID)
+    public function set_TXN_ID(int $TXN_ID)
     {
         $this->set('TXN_ID', $TXN_ID);
     }
@@ -164,9 +175,9 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function name()
+    public function name(): string
     {
-        $name = $this->get('LIN_name');
+        $name = (string) $this->get('LIN_name');
         if (! $name) {
             $name = ucwords(str_replace('-', ' ', $this->type()));
         }
@@ -184,7 +195,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_name($name)
+    public function set_name(string $name)
     {
         $this->set('LIN_name', $name);
     }
@@ -200,7 +211,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function desc()
+    public function desc(): string
     {
         return $this->get('LIN_desc');
     }
@@ -216,7 +227,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_desc($desc)
+    public function set_desc(string $desc)
     {
         $this->set('LIN_desc', $desc);
     }
@@ -248,7 +259,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_quantity($quantity)
+    public function set_quantity(int $quantity)
     {
         $this->set('LIN_quantity', max($quantity, 0));
     }
@@ -280,7 +291,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_OBJ_ID($item_id)
+    public function set_OBJ_ID(int $item_id)
     {
         $this->set('OBJ_ID', $item_id);
     }
@@ -296,9 +307,9 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function OBJ_type()
+    public function OBJ_type(): string
     {
-        return $this->get('OBJ_type');
+        return (string) $this->get('OBJ_type');
     }
 
 
@@ -312,7 +323,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function OBJ_type_i18n()
+    public function OBJ_type_i18n(): string
     {
         $obj_type = $this->OBJ_type();
         switch ($obj_type) {
@@ -332,7 +343,7 @@ class EE_Line_Item extends EE_Base_Class
                 $obj_type = esc_html__('Transaction', 'event_espresso');
                 break;
         }
-        return apply_filters('FHEE__EE_Line_Item__OBJ_type_i18n', $obj_type, $this);
+        return (string) apply_filters('FHEE__EE_Line_Item__OBJ_type_i18n', $obj_type, $this);
     }
 
 
@@ -346,7 +357,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_OBJ_type($OBJ_type)
+    public function set_OBJ_type(string $OBJ_type)
     {
         $this->set('OBJ_type', $OBJ_type);
     }
@@ -362,16 +373,16 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function unit_price()
+    public function unit_price(): float
     {
-        return $this->get('LIN_unit_price');
+        return (float) $this->get('LIN_unit_price');
     }
 
 
     /**
      * Sets unit_price
      *
-     * @param float $unit_price
+     * @param int|float $unit_price
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -380,25 +391,25 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function set_unit_price($unit_price)
     {
-        $this->set('LIN_unit_price', $unit_price);
+        $this->set('LIN_unit_price', (float) $unit_price);
     }
 
 
     /**
      * Checks if this item is a percentage modifier or not
      *
-     * @return boolean
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_percent()
+    public function is_percent(): bool
     {
         if ($this->is_tax_sub_total()) {
             // tax subtotals HAVE a percent on them, that percentage only applies
-            // to taxable items, so its' an exception. Treat it like a flat line item
+            // to taxable items, so it's an exception. Treat it like a flat line item
             return false;
         }
         $unit_price = abs($this->get('LIN_unit_price'));
@@ -421,7 +432,7 @@ class EE_Line_Item extends EE_Base_Class
                 )
             );
         }
-        // if they're both 0, assume its not a percent item
+        // if they're both 0, assume it's not a percent item
         return false;
     }
 
@@ -436,9 +447,9 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function percent()
+    public function percent(): float
     {
-        return $this->get('LIN_percent');
+        return (float) $this->get('LIN_percent');
     }
 
 
@@ -450,14 +461,14 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function prettyPercent(): string
     {
-        return $this->get_pretty('LIN_percent');
+        return (string) $this->get_pretty('LIN_percent');
     }
 
 
     /**
      * Sets percent (between 100-0.01)
      *
-     * @param float $percent
+     * @param int|float $percent
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -466,7 +477,7 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function set_percent($percent)
     {
-        $this->set('LIN_percent', $percent);
+        $this->set('LIN_percent', (float) $percent);
     }
 
 
@@ -489,16 +500,16 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * Sets total
      *
-     * @param float $pretax_total
+     * @param int|float $pretax_total
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function setPretaxTotal(float $pretax_total)
+    public function setPretaxTotal($pretax_total)
     {
-        $this->set('LIN_pretax', $pretax_total);
+        $this->set('LIN_pretax', (float) $pretax_total);
     }
 
 
@@ -517,14 +528,14 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * Sets total
      *
-     * @param float $total
+     * @param int|float $total
      * @throws EE_Error
      * @throws ReflectionException
      * @since  5.0.0.p
      */
-    public function setTotalWithTax(float $total)
+    public function setTotalWithTax($total)
     {
-        $this->set('LIN_total', $total);
+        $this->set('LIN_total', (float) $total);
     }
 
 
@@ -545,14 +556,14 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * Sets total
      *
-     * @param float $total
+     * @param int|float $total
      * @throws EE_Error
      * @throws ReflectionException
      * @deprecatd 5.0.0.p
      */
     public function set_total($total)
     {
-        $this->setTotalWithTax($total);
+        $this->setTotalWithTax((float) $total);
     }
 
 
@@ -566,9 +577,9 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function order()
+    public function order(): int
     {
-        return $this->get('LIN_order');
+        return (int) $this->get('LIN_order');
     }
 
 
@@ -582,7 +593,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_order($order)
+    public function set_order(int $order)
     {
         $this->set('LIN_order', $order);
     }
@@ -598,9 +609,9 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function parent_ID()
+    public function parent_ID(): int
     {
-        return $this->get('LIN_parent');
+        return (int) $this->get('LIN_parent');
     }
 
 
@@ -614,7 +625,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_parent_ID($parent)
+    public function set_parent_ID(int $parent)
     {
         $this->set('LIN_parent', $parent);
     }
@@ -630,9 +641,9 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function type()
+    public function type(): string
     {
-        return $this->get('LIN_type');
+        return (string) $this->get('LIN_type');
     }
 
 
@@ -646,7 +657,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_type($type)
+    public function set_type(string $type)
     {
         $this->set('LIN_type', $type);
     }
@@ -658,18 +669,21 @@ class EE_Line_Item extends EE_Base_Class
      * it uses its cached reference to its parent line item (which would have been set by `EE_Line_Item::set_parent()`
      * or indirectly by `EE_Line_item::add_child_line_item()`)
      *
-     * @return EE_Base_Class|EE_Line_Item
+     * @return EE_Line_Item|null
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function parent()
+    public function parent(): ?EE_Line_Item
     {
-        return $this->ID()
-            ? $this->get_model()->get_one_by_ID($this->parent_ID())
-            : $this->_parent;
+        if (! $this->_parent instanceof EE_Line_Item) {
+            $this->_parent = $this->ID()
+                ? $this->get_model()->get_one_by_ID($this->parent_ID())
+                : $this->_parent;
+        }
+        return $this->_parent;
     }
 
 
@@ -685,16 +699,21 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function children(array $query_params = []): array
     {
-        if ($this->ID()) {
+        // check if the query params have changed since the last time we ran this query
+        $new_params = ! empty(EEH_Array::array_diff_recursive($query_params, $this->children_query_params));
+        if (($new_params || empty($this->_children)) && $this->ID()) {
+            $this->children_query_params = $query_params;
             // ensure where params are an array
-            $query_params[0] = $query_params[0] ?? [];
+            $query_params[0] = isset($query_params[0]) && is_array($query_params[0]) ? $query_params[0] : [];
             // add defaults for line item parent and orderby
             $query_params[0] += ['LIN_parent' => $this->ID()];
             $query_params    += ['order_by' => ['LIN_order' => 'ASC']];
-            return $this->get_model()->get_all($query_params);
-        }
-        if (! is_array($this->_children)) {
-            $this->_children = [];
+            $children = $this->get_model()->get_all($query_params);
+            foreach ($children as $child) {
+                if ($child instanceof EE_Line_Item) {
+                    $this->_children[ $child->code() ] = $child;
+                }
+            }
         }
         return $this->_children;
     }
@@ -710,9 +729,9 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function code()
+    public function code(): string
     {
-        return $this->get('LIN_code');
+        return (string) $this->get('LIN_code');
     }
 
 
@@ -726,7 +745,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_code($code)
+    public function set_code(string $code)
     {
         $this->set('LIN_code', $code);
     }
@@ -735,30 +754,30 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * Gets is_taxable
      *
-     * @return boolean
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_taxable()
+    public function is_taxable(): bool
     {
-        return $this->get('LIN_is_taxable');
+        return (bool) $this->get('LIN_is_taxable');
     }
 
 
     /**
      * Sets is_taxable
      *
-     * @param boolean $is_taxable
+     * @param bool $is_taxable
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_is_taxable($is_taxable)
+    public function set_is_taxable(bool $is_taxable)
     {
         $this->set('LIN_is_taxable', $is_taxable);
     }
@@ -782,14 +801,14 @@ class EE_Line_Item extends EE_Base_Class
      * EEM_Promotion_Object
      *        Eg, if this line item join model object is for a ticket, this will return the EE_Ticket object
      *
-     * @return EE_Base_Class | NULL
+     * @return EE_Base_Class|null
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_object()
+    public function get_object(): ?EE_Base_Class
     {
         $model_name_of_related_obj = $this->OBJ_type();
         return $this->get_model()->has_relation($model_name_of_related_obj)
@@ -802,21 +821,23 @@ class EE_Line_Item extends EE_Base_Class
      * Like EE_Line_Item::get_object(), but can only ever actually return an EE_Ticket.
      * (IE, if this line item is for a price or something else, will return NULL)
      *
-     * @param array $query_params
-     * @return EE_Base_Class|EE_Ticket
+     * @param array $query_params deprecated $VID:$
+     * @return EE_Ticket|null
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function ticket($query_params = [])
+    public function ticket(array $query_params = []): ?EE_Ticket
     {
         // we're going to assume that when this method is called
         // we always want to receive the attached ticket EVEN if that ticket is archived.
-        // This can be overridden via the incoming $query_params argument
-        $remove_defaults = ['default_where_conditions' => 'none'];
-        $query_params    = array_merge($remove_defaults, $query_params);
+        if(! $this->OBJ_ID() || $this->OBJ_type() !== EEM_Line_Item::OBJ_TYPE_TICKET) {
+            return null;
+        }
+        if(empty($query_args)) {
+            return EEM_Ticket::instance()->get_one_by_ID($this->OBJ_ID());
+        }
+        // legacy usage
+        $query_params += ['default_where_conditions' => 'none'];
         return $this->get_first_related(EEM_Line_Item::OBJ_TYPE_TICKET, $query_params);
     }
 
@@ -824,14 +845,14 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * Gets the EE_Datetime that's related to the ticket, IF this is for a ticket
      *
-     * @return EE_Datetime | NULL
+     * @return EE_Datetime|null
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_ticket_datetime()
+    public function get_ticket_datetime(): ?EE_Datetime
     {
         if ($this->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET) {
             $ticket = $this->ticket();
@@ -857,7 +878,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function ticket_event_name()
+    public function ticket_event_name(): string
     {
         $event_name = esc_html__('Unknown', 'event_espresso');
         $event      = $this->ticket_event();
@@ -878,7 +899,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function ticket_event()
+    public function ticket_event(): ?EE_Event
     {
         $event  = null;
         $ticket = $this->ticket();
@@ -904,7 +925,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function ticket_datetime_start($date_format = '', $time_format = '')
+    public function ticket_datetime_start(string $date_format = '', string $time_format = ''): string
     {
         $first_datetime_string = esc_html__('Unknown', 'event_espresso');
         $datetime              = $this->get_ticket_datetime();
@@ -928,7 +949,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function add_child_line_item(EE_Line_Item $line_item, $set_order = true)
+    public function add_child_line_item(EE_Line_Item $line_item, bool $set_order = true): bool
     {
         // should we calculate the LIN_order for this line item ?
         if ($set_order || $line_item->order() === null) {
@@ -944,7 +965,7 @@ class EE_Line_Item extends EE_Base_Class
             if ($this->TXN_ID()) {
                 $line_item->set_TXN_ID($this->TXN_ID());
             }
-            return $line_item->save();
+            return (bool) $line_item->save();
         }
         $this->_children[ $line_item->code() ] = $line_item;
         if ($line_item->parent() !== $this) {
@@ -967,7 +988,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_parent($line_item)
+    public function set_parent(EE_Line_Item $line_item)
     {
         if ($this->ID()) {
             if (! $line_item->ID()) {
@@ -995,16 +1016,14 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_child_line_item($code)
+    public function get_child_line_item(string $code)
     {
         if ($this->ID()) {
             return $this->get_model()->get_one(
                 [['LIN_parent' => $this->ID(), 'LIN_code' => $code]]
             );
         }
-        return isset($this->_children[ $code ])
-            ? $this->_children[ $code ]
-            : null;
+        return $this->_children[ $code ] ?? null;
     }
 
 
@@ -1019,10 +1038,10 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function delete_children_line_items()
+    public function delete_children_line_items(): int
     {
         if ($this->ID()) {
-            return $this->get_model()->delete([['LIN_parent' => $this->ID()]]);
+            return (int) $this->get_model()->delete([['LIN_parent' => $this->ID()]]);
         }
         $count           = count($this->_children);
         $this->_children = [];
@@ -1047,7 +1066,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function delete_child_line_item($code, $stop_search_once_found = true)
+    public function delete_child_line_item(string $code, bool $stop_search_once_found = true): int
     {
         if ($this->ID()) {
             $items_deleted = 0;
@@ -1076,14 +1095,14 @@ class EE_Line_Item extends EE_Base_Class
      * has no children, why do we have it? It should be deleted so this function
      * does that
      *
-     * @return boolean
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function delete_if_childless_subtotal()
+    public function delete_if_childless_subtotal(): bool
     {
         if ($this->ID() && $this->type() === EEM_Line_Item::type_sub_total && ! $this->children()) {
             return $this->delete();
@@ -1102,10 +1121,10 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function generate_code()
+    public function generate_code(): string
     {
         // each line item in the cart requires a unique identifier
-        return md5($this->get('OBJ_type') . $this->get('OBJ_ID') . microtime());
+        return $this->get('OBJ_type') . '-' . $this->get('OBJ_ID');
     }
 
 
@@ -1196,7 +1215,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_tax_sub_total()
+    public function is_tax_sub_total(): bool
     {
         return $this->type() === EEM_Line_Item::type_tax_sub_total;
     }
@@ -1210,7 +1229,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_line_item()
+    public function is_line_item(): bool
     {
         return $this->type() === EEM_Line_Item::type_line_item;
     }
@@ -1224,7 +1243,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_sub_line_item()
+    public function is_sub_line_item(): bool
     {
         return $this->type() === EEM_Line_Item::type_sub_line_item;
     }
@@ -1238,23 +1257,23 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_sub_total()
+    public function is_sub_total(): bool
     {
         return $this->type() === EEM_Line_Item::type_sub_total;
     }
 
 
     /**
-     * Whether or not this line item is a cancellation line item
+     * Whether this line item is a cancellation line item
      *
-     * @return boolean
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_cancellation()
+    public function is_cancellation(): bool
     {
         return EEM_Line_Item::type_cancellation === $this->type();
     }
@@ -1268,7 +1287,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_total()
+    public function is_total(): bool
     {
         return $this->type() === EEM_Line_Item::type_total;
     }
@@ -1282,7 +1301,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_cancelled()
+    public function is_cancelled(): bool
     {
         return $this->type() === EEM_Line_Item::type_cancellation;
     }
@@ -1336,7 +1355,7 @@ class EE_Line_Item extends EE_Base_Class
 
     /**
      * Gets the final total on this item, taking taxes into account.
-     * Has the side-effect of setting the sub-total as it was just calculated.
+     * Has the side effect of setting the sub-total as it was just calculated.
      * If this is used on a grand-total line item, also updates the transaction's
      * TXN_total (provided this line item is allowed to persist, otherwise we don't
      * want to change a persistable transaction with info from a non-persistent line item)
@@ -1359,7 +1378,7 @@ class EE_Line_Item extends EE_Base_Class
 
     /**
      * Recursively goes through all the children and recalculates sub-totals EXCEPT for
-     * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
+     * tax-sub-totals (they're an odd beast). Updates the 'total' on each line item according to either its
      * unit price * quantity or the total of all its children EXCEPT when we're only calculating the taxable total and
      * when this is called on the grand total
      *
@@ -1408,7 +1427,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_total_tax()
+    public function get_total_tax(): float
     {
         $grand_total_line_item = EEH_Line_Item::find_transaction_grand_total_for_line_item($this);
         return $this->calculator->recalculateTaxesAndTaxTotal($grand_total_line_item);
@@ -1442,13 +1461,14 @@ class EE_Line_Item extends EE_Base_Class
 
 
     /**
-     * Gets all the descendants (ie, children or children of children etc) that
+     * Gets all the descendants (ie, children or children of children etc.) that
      * are of the type 'tax'
      *
      * @return EE_Line_Item[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function tax_descendants()
+    public function tax_descendants(): array
     {
         return EEH_Line_Item::get_tax_descendants($this);
     }
@@ -1459,8 +1479,9 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return EE_Line_Item[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_items()
+    public function get_items(): array
     {
         return EEH_Line_Item::get_line_item_descendants($this);
     }
@@ -1488,14 +1509,14 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * Gets the transaction for this line item
      *
-     * @return EE_Base_Class|EE_Transaction
+     * @return EE_Transaction|null
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function transaction()
+    public function transaction(): ?EE_Transaction
     {
         return $this->get_first_related(EEM_Line_Item::OBJ_TYPE_TRANSACTION);
     }
@@ -1507,7 +1528,7 @@ class EE_Line_Item extends EE_Base_Class
      * save_this_and_cached() will NOT save the descendants.
      * Also sets the transaction on this line item and all its descendants before saving
      *
-     * @param int $txn_id if none is provided, assumes $this->TXN_ID()
+     * @param int|null $txn_id if none is provided, assumes $this->TXN_ID()
      * @return int count of items saved
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1515,17 +1536,14 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function save_this_and_descendants_to_txn($txn_id = null)
+    public function save_this_and_descendants_to_txn(int $txn_id = 0): int
     {
         $count = 0;
-        if (! $txn_id) {
-            $txn_id = $this->TXN_ID();
+        if ($txn_id) {
+            $this->set_TXN_ID($txn_id);
         }
-        $this->set_TXN_ID($txn_id);
         $children = $this->children();
-        $count    += $this->save()
-            ? 1
-            : 0;
+        $count    += $this->save() ? 1 : 0;
         foreach ($children as $child_line_item) {
             if ($child_line_item instanceof EE_Line_Item) {
                 $child_line_item->set_parent_ID($this->ID());
@@ -1546,13 +1564,11 @@ class EE_Line_Item extends EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function save_this_and_descendants()
+    public function save_this_and_descendants(): int
     {
         $count    = 0;
         $children = $this->children();
-        $count    += $this->save()
-            ? 1
-            : 0;
+        $count    += $this->save() ? 1 : 0;
         foreach ($children as $child_line_item) {
             if ($child_line_item instanceof EE_Line_Item) {
                 $child_line_item->set_parent_ID($this->ID());
@@ -1573,7 +1589,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws ReflectionException
      * @throws EE_Error
      */
-    public function get_cancellations()
+    public function get_cancellations(): array
     {
         return EEH_Line_Item::get_descendants_of_type($this, EEM_Line_Item::type_cancellation);
     }
@@ -1582,7 +1598,7 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * If this item has an ID, then this saves it again to update the db
      *
-     * @return int count of items saved
+     * @return bool|int count of items saved or false on error
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1612,18 +1628,18 @@ class EE_Line_Item extends EE_Base_Class
 
     /**
      * @param bool $raw
-     * @return int
+     * @return int|string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function timestamp($raw = false)
+    public function timestamp(bool $raw = false)
     {
         return $raw
-            ? $this->get_raw('LIN_timestamp')
-            : $this->get('LIN_timestamp');
+            ? (int) $this->get_raw('LIN_timestamp')
+            : (string) $this->get('LIN_timestamp');
     }
 
 
@@ -1634,9 +1650,10 @@ class EE_Line_Item extends EE_Base_Class
      * @param string $type one of the constants on EEM_Line_Item
      * @return EE_Line_Item[]
      * @throws EE_Error
+     * @throws ReflectionException
      * @deprecated 4.6.0
      */
-    protected function _get_descendants_of_type($type)
+    protected function _get_descendants_of_type(string $type): array
     {
         EE_Error::doing_it_wrong(
             'EE_Line_Item::_get_descendants_of_type()',

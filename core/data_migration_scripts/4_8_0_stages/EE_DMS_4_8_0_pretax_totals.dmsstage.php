@@ -12,7 +12,7 @@
  */
 class EE_DMS_4_8_0_pretax_totals extends EE_Data_Migration_Script_Stage
 {
-    protected $_line_item_table_name;
+    protected string $_line_item_table_name;
 
 
     /**
@@ -32,7 +32,7 @@ class EE_DMS_4_8_0_pretax_totals extends EE_Data_Migration_Script_Stage
      * Counts the records to migrate; the public version may cache it
      * @return int
      */
-    protected function _count_records_to_migrate()
+    protected function _count_records_to_migrate(): int
     {
         return 1;
     }
@@ -45,13 +45,14 @@ class EE_DMS_4_8_0_pretax_totals extends EE_Data_Migration_Script_Stage
      * IMPORTANT: The count of items migrated should ONLY be less than $num_items_to_migrate when it's the last migration step, otherwise it
      * should always return $num_items_to_migrate. (Eg, if we're migrating attendees rows from the database, and $num_items_to_migrate is set to 50,
      * then we SHOULD actually migrate 50 rows,but at very least we MUST report/return 50 items migrated)
+     *
      * @param int $num_items_to_migrate
      * @return int number of items ACTUALLY migrated
      */
     protected function _migration_step($num_items_to_migrate = 50)
     {
         global $wpdb;
-        $rows_updated = $wpdb->update(
+        $wpdb->update(
             $this->_line_item_table_name,
             array( 'LIN_code' => 'pre-tax-subtotal' ),
             array( 'LIN_code' => 'tickets' ),

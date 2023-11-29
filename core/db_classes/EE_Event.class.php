@@ -1244,7 +1244,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     {
         $active_status = $this->get_active_status();
         $status        = "
-        <span class='ee-status ee-status-bg--$active_status event-active-status-$active_status'>
+        <span class='event-active-status event-active-status-$active_status ee-status ee-status-bg--$active_status'>
             " . EEH_Template::pretty_status($active_status, false, 'sentence') . "
         </span >";
         if ($echo) {

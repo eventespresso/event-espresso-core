@@ -16,12 +16,10 @@ use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
  */
 class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 {
-    protected RequestInterface $request;
-
     /**
      * @var Extend_Registrations_Admin_Page
      */
-    protected $_admin_page;
+    protected EE_Admin_Page $_admin_page;
 
     /**
      * This property will hold the related Datetimes on an event IF the event id is included in the request.
@@ -60,9 +58,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function __construct($admin_page)
     {
-        $this->request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-        $this->resolveRequestVars();
         parent::__construct($admin_page);
+        $this->resolveRequestVars();
     }
 
 
@@ -291,7 +288,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                          . esc_html__('Hide Upcoming Events', 'event_espresso')
                          . '
                     </label>
-                    <span class="ee-help-btn dashicons dashicons-editor-help ee-aria-tooltip" 
+                    <span class="ee-help-btn dashicons dashicons-editor-help ee-aria-tooltip"
                           aria-label="'
                          . esc_html__(
                              'Will not display events with start dates in the future (ie: have not yet begun)',
@@ -306,7 +303,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                          . '>
                             ' . esc_html__('Hide Expired Events', 'event_espresso') . '
                     </label>
-                    <span class="ee-help-btn dashicons dashicons-editor-help ee-aria-tooltip" 
+                    <span class="ee-help-btn dashicons dashicons-editor-help ee-aria-tooltip"
                           aria-label="'
                          . esc_html__(
                              'Will not display events with end dates in the past (ie: have already finished)',

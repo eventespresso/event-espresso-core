@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\partners\TrackSellerOnboarding;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
@@ -56,7 +57,7 @@ class EED_PayPalOnboard extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        if (EE_Maintenance_Mode::instance()->models_can_query()) {
+        if (DbStatus::isOnline()) {
             // Get onboarding URL.
             add_action('wp_ajax_eeaPpGetOnboardingUrl', [__CLASS__, 'getOnboardingUrl']);
             // Get the seller access token.

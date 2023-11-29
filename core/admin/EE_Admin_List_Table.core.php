@@ -2,6 +2,7 @@
 
 use EventEspresso\core\services\admin\AdminListTableFilters;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 if (! class_exists('WP_List_Table')) {
@@ -33,7 +34,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
 
     const ACTION_TRASH   = 'trash';
 
-    protected static $actions = [
+    protected static array $actions = [
         self::ACTION_COPY,
         self::ACTION_DELETE,
         self::ACTION_EDIT,
@@ -46,7 +47,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var array $_data
      */
-    protected $_data;
+    protected array $_data;
 
 
     /**
@@ -54,7 +55,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var int $_all_data_count
      */
-    protected $_all_data_count;
+    protected int $_all_data_count;
 
 
     /**
@@ -62,7 +63,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var int $_trashed_count
      */
-    protected $_trashed_count;
+    protected int $_trashed_count;
 
 
     /**
@@ -70,7 +71,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var string $_screen
      */
-    protected $_screen;
+    protected string $_screen;
 
 
     /**
@@ -78,7 +79,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var EE_Admin_Page $_admin_page
      */
-    protected $_admin_page;
+    protected EE_Admin_Page $_admin_page;
 
 
     /**
@@ -86,7 +87,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var string $_view
      */
-    protected $_view;
+    protected string $_view;
 
 
     /**
@@ -94,7 +95,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var array $_views
      */
-    protected $_views;
+    protected array $_views;
 
 
     /**
@@ -109,7 +110,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var array $_wp_list_args
      */
-    protected $_wp_list_args;
+    protected array $_wp_list_args;
 
     /**
      * an array of column names
@@ -119,7 +120,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var array $_columns
      */
-    protected $_columns;
+    protected array $_columns;
 
     /**
      * An array of sortable columns
@@ -130,14 +131,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var array $_sortable_columns
      */
-    protected $_sortable_columns;
+    protected array $_sortable_columns;
 
     /**
      * callback method used to perform AJAX row reordering
      *
-     * @var string $_ajax_sorting_callback
+     * @var string|null $_ajax_sorting_callback
      */
-    protected $_ajax_sorting_callback;
+    protected ?string $_ajax_sorting_callback = null;
 
     /**
      * An array of hidden columns (if needed)
@@ -145,35 +146,35 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var array $_hidden_columns
      */
-    protected $_hidden_columns;
+    protected array $_hidden_columns;
 
     /**
      * holds the per_page value
      *
      * @var int $_per_page
      */
-    protected $_per_page;
+    protected int $_per_page;
 
     /**
      * holds what page number is currently being viewed
      *
      * @var int $_current_page
      */
-    protected $_current_page;
+    protected int $_current_page;
 
     /**
      * the reference string for the nonce_action
      *
      * @var string $_nonce_action_ref
      */
-    protected $_nonce_action_ref;
+    protected string $_nonce_action_ref;
 
     /**
      * property to hold incoming request data (as set by the admin_page_core)
      *
      * @var array $_req_data
      */
-    protected $_req_data;
+    protected array $_req_data;
 
 
     /**
@@ -181,7 +182,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var array $_yes_no
      */
-    protected $_yes_no = [];
+    protected array $_yes_no = [];
 
     /**
      * Array describing buttons that should appear at the bottom of the page
@@ -194,7 +195,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @var array $_bottom_buttons
      */
-    protected $_bottom_buttons = [];
+    protected array $_bottom_buttons = [];
 
 
     /**
@@ -204,7 +205,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @type string $_primary_column
      */
-    protected $_primary_column = '';
+    protected string $_primary_column = '';
 
 
     /**
@@ -212,12 +213,14 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      *
      * @type bool $_has_checkbox_column
      */
-    protected $_has_checkbox_column = false;
+    protected bool $_has_checkbox_column = false;
 
     /**
      * @var AdminListTableFilters|null
      */
     protected ?AdminListTableFilters $admin_list_table_filters = null;
+
+    protected ?RequestInterface    $request            = null;
 
 
     /**
@@ -226,10 +229,11 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function __construct(EE_Admin_Page $admin_page, ?AdminListTableFilters $filters = null)
     {
+        $this->request       = LoaderFactory::getShared(RequestInterface::class);
         $this->_admin_page   = $admin_page;
         $this->_req_data     = $this->_admin_page->get_request_data();
         $this->_view         = $this->_admin_page->get_view();
-        $this->_views        = empty($this->_views) ? $this->_admin_page->get_list_table_view_RLs() : $this->_views;
+        $this->_views        = $this->_admin_page->get_list_table_view_RLs();
         $this->_current_page = $this->get_pagenum();
         $this->_screen       = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_view();
         $this->_yes_no       = [

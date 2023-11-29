@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -22,35 +23,35 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      *
      * @var boolean
      */
-    protected $_migrating = true;
+    protected bool $_migrating = true;
 
     /**
      * numerically-indexed array where each value is EE_Data_Migration_Script_Stage object
      *
      * @var EE_Data_Migration_Script_Stage[] $migration_functions
      */
-    protected $_migration_stages = array();
+    protected array $_migration_stages = array();
 
     /**
-     * Indicates we've already ran the schema changes that needed to happen BEFORE the data migration
+     * Indicates we've already run the schema changes that needed to happen BEFORE the data migration
      *
      * @var boolean
      */
-    protected $_schema_changes_before_migration_ran = null;
+    protected ?bool $_schema_changes_before_migration_ran = null;
 
     /**
-     * Indicates we've already ran the schema changes that needed to happen AFTER the data migration
+     * Indicates we've already run the schema changes that needed to happen AFTER the data migration
      *
      * @var boolean
      */
-    protected $_schema_changes_after_migration_ran = null;
+    protected ?bool $_schema_changes_after_migration_ran = null;
 
     /**
      * String which describes what's currently happening in this migration
      *
-     * @var string
+     * @var string|null
      */
-    protected $_feedback_message;
+    protected ?string $_feedback_message = '';
 
     /**
      * Indicates the script's priority. Like wp's add_action and add_filter, lower numbers
@@ -58,10 +59,10 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      *
      * @var int
      */
-    protected $_priority = 5;
+    protected int $_priority = 5;
 
     /**
-     * Multi-dimensional array that defines the mapping from OLD table Primary Keys
+     * Multidimensional array that defines the mapping from OLD table Primary Keys
      * to NEW table Primary Keys.
      * Top-level array keys are OLD table names (minus the "wp_" part),
      * 2nd-level array keys are NEW table names (again, minus the "wp_" part),
@@ -70,16 +71,16 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      *
      * @var array
      */
-    protected $_mappings = array();
+    protected array $_mappings = array();
 
     /**
      * @var EE_Data_Migration_Script_Base
      */
-    protected $previous_dms;
+    protected EE_Data_Migration_Script_Base $previous_dms;
 
 
     /**
-     * Returns whether or not this data migration script can operate on the given version of the database.
+     * Returns whether this data migration script can operate on the given version of the database.
      * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
      * it's passed a string like '3.1.38B', it should return true.
      * If this DMS is to migrate data from an EE3 addon, you will probably want to use
@@ -95,10 +96,10 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * of calling its schema_changes_before_migration() and
      * schema_changes_after_migration() for you. )
      *
-     * @param array $current_database_state_of keys are EE plugin slugs (eg 'Core', 'Calendar', 'Mailchimp', etc)
+     * @param array $version_array keys are EE plugin slugs (eg 'Core', 'Calendar', 'Mailchimp', etc)
      * @return boolean
      */
-    abstract public function can_migrate_from_version($current_database_state_of);
+    abstract public function can_migrate_from_version($version_array);
 
 
     /**
@@ -128,8 +129,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * All children of this must call parent::__construct()
      * at the end of their constructor or suffer the consequences!
      *
-     * @param TableManager  $table_manager
-     * @param TableAnalysis $table_analysis
+     * @param TableManager|null  $table_manager
+     * @param TableAnalysis|null $table_analysis
      */
     public function __construct(TableManager $table_manager = null, TableAnalysis $table_analysis = null)
     {
@@ -163,7 +164,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      * @param string     $old_table with wpdb prefix (wp_). Eg: wp_events_detail
      * @param int|string $old_pk    old primary key. Eg events_detail.id's value
      * @param string     $new_table with wpdb prefix (wp_). Eg: wp_posts
-     * @param int|string $new_pk    eg posts.ID
+     * @param array|int|string $new_pk    eg posts.ID
      * @return void
      * @throws EE_Error
      */
@@ -477,7 +478,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
     protected function _table_is_new_in_this_version(
         $table_name,
         $table_definition_sql,
-        $engine_string = 'ENGINE=InnoDB '
+        $engine_string = 'ENGINE=InnoDB'
     ) {
         $this->_create_table_and_catch_errors(
             $table_name,
@@ -506,7 +507,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
     protected function _table_is_changed_in_this_version(
         $table_name,
         $table_definition_sql,
-        $engine_string = 'ENGINE=MyISAM'
+        $engine_string = 'ENGINE=InnoDB'
     ) {
         $this->_create_table_and_catch_errors(
             $table_name,
@@ -567,7 +568,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
     protected function _table_should_exist_previously(
         $table_name,
         $table_definition_sql,
-        $engine_string = 'ENGINE=MyISAM'
+        $engine_string = 'ENGINE=InnoDB'
     ) {
         $this->_create_table_and_catch_errors(
             $table_name,
@@ -596,7 +597,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
     protected function _table_has_not_changed_since_previous(
         $table_name,
         $table_definition_sql,
-        $engine_string = 'ENGINE=MyISAM'
+        $engine_string = 'ENGINE=InnoDB'
     ) {
         if ($this->_currently_migrating()) {
             // if we're doing a migration, and this table apparently already exists, then we don't need do anything right?
@@ -611,18 +612,18 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
     }
 
     /**
-     * Returns whether or not this migration script is being used as part of an actual migration
+     * Returns whether this migration script is being used as part of an actual migration
      *
      * @return boolean
      */
     protected function _currently_migrating()
     {
         // we want to know if we are currently performing a migration. We could just believe what was set on the _migrating property, but let's double-check (ie the script should apply and we should be in MM)
-        return $this->_migrating &&
-               $this->can_migrate_from_version(
-                   EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set()
-               ) &&
-               EE_Maintenance_Mode::instance()->real_level() == EE_Maintenance_Mode::level_2_complete_maintenance;
+        return $this->_migrating
+            && DbStatus::isOffline()
+            && $this->can_migrate_from_version(
+                EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set()
+            );
     }
 
 
@@ -674,7 +675,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
     private function _create_table_and_catch_errors(
         $table_name,
         $table_definition_sql,
-        $engine_string = 'ENGINE=MyISAM',
+        $engine_string = 'ENGINE=InnoDB',
         $drop_pre_existing_tables = false
     ) {
         try {
@@ -737,7 +738,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 
     /**
-     * Indicates whether or not this migration script should continue
+     * Indicates whether this migration script should continue
      *
      * @return boolean
      */
@@ -903,7 +904,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 
     /**
-     * Sets whether or not this DMS is being ran as part of a migration, instead of
+     * Sets whether this DMS is being ran as part of a migration, instead of
      * just being used to setup (or verify) the current database structure matches
      * what the latest DMS indicates it should be
      *

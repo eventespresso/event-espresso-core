@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\database\MaintenanceStatus;
+
 /**
  * EEPMT_Check
  *
@@ -48,7 +50,7 @@ class EE_PMT_Check extends EE_PMT_Base
      */
     public function generate_new_settings_form()
     {
-        if (EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance) {
+        if (MaintenanceStatus::isNotFullSite()) {
             $organization = EE_Registry::instance()->CFG->organization;
             $organization_name = $organization->get_pretty('name');
             $default_address = $organization->address_1 != '' ? $organization->get_pretty('address_1') . '<br />' : '';

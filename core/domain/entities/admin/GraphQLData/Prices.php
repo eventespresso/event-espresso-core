@@ -17,12 +17,12 @@ class Prices extends GraphQLData
      * @return array|null
      * @since 5.0.0.p
      */
-    public function getData(array $where_params = [])
+    public function getData(array $where_params = []): ?array
     {
         $field_key = lcfirst($this->namespace) . 'Prices';
         $query = <<<QUERY
         query GET_PRICES(\$where: {$this->namespace}RootQueryPricesConnectionWhereArgs, \$first: Int, \$last: Int ) {
-            {$field_key}(where: \$where, first: \$first, last: \$last) {
+            $field_key(where: \$where, first: \$first, last: \$last) {
                 nodes {
                     id
                     dbId
@@ -47,7 +47,7 @@ QUERY;
         $this->setParams([
             'operation_name' => 'GET_PRICES',
             'variables'      => [
-                'first' => 100,
+                'first' => GraphQLData::QUERY_LIMIT,
             ],
             'query'          => $query,
         ]);

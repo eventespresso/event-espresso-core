@@ -553,10 +553,6 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
             <div class="ee-editor-footer-container">
                 <div class="ee-layout-row ee-layout-row--spaced">
                     <label for="edit-ticket-TKT_is_default_selector-<?php echo esc_attr($tkt_row); ?>">
-                        <?php esc_html_e(
-                            'use this new ticket as a default ticket for any new events',
-                            'event_espresso'
-                        ); ?>
                         <input type="checkbox"
                                name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_is_default_selector]"
                                class="edit-ticket-TKT_is_default_selector"
@@ -564,12 +560,18 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                                value="1"
                                <?php echo esc_attr($disabled ? ' disabled' : ''); ?>
                         />
+                        <?php esc_html_e(
+                            'use this new ticket as a default ticket for any new events',
+                            'event_espresso'
+                        ); ?>
                     </label>
                     <input type="hidden"
                            name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_is_default]"
                            class="edit-ticket-TKT_is_default"
                            value="<?php echo esc_attr($TKT_is_default); ?>"
                     />
+                </div>
+                <div class="ee-layout-row ee-layout-row--justify-end">
                     <button class="button button--secondary ee-cancel-button"
                             data-context="ticket"
                             data-ticket-row="<?php echo esc_attr($tkt_row); ?>"

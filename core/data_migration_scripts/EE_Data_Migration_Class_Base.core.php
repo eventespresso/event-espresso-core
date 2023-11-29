@@ -2,6 +2,7 @@
 
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Class EE_Data_Migration_Class_Base
@@ -17,58 +18,52 @@ use EventEspresso\core\services\database\TableManager;
 abstract class EE_Data_Migration_Class_Base
 {
     /**
-     * @var $records_to_migrate int count of all that have been migrated
+     * count of all that need to be migrated
      */
-    protected $_records_to_migrate = 0;
+    protected ?int $_records_to_migrate = null;
 
-    /**
-     *
-     * @var $records_migrated int
-     */
-    protected $_records_migrated = 0;
+    protected int $_records_migrated = 0;
+
+    protected $_new_table = '';
+
+    protected $_old_table = '';
 
     /**
      * Whether this migration script is done or not. This COULD be deduced by
      * _records_to_migrate and _records_migrated, but that might nto be accurate
      *
-     * @var string one of EE_Data_migration_Manager::status_* constants
+     * @var string|null one of EE_Data_migration_Manager::status_* constants
      */
-    protected $_status = null;
+    protected ?string $_status = null;
 
     /**
      * internationalized name of this class. Convention is to NOT restate that
      * this class if a migration script or a migration script stage
      *
-     * @var string (i18ned)
+     * @var string|null
      */
-    protected $_pretty_name = null;
+    protected ?string $_pretty_name = null;
 
     /**
      * @var array
      */
-    protected $_errors = array();
+    protected array $_errors = array();
 
-    /**
-     * @var \EventEspresso\core\services\database\TableManager $table_manager
-     */
-    protected $_table_manager;
+    protected ?TableManager $_table_manager = null;
 
-    /**
-     * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
-     */
-    protected $_table_analysis;
+    protected ?TableAnalysis $_table_analysis = null;
 
 
     /**
      * Just initializes the status of the migration
      *
-     * @param TableManager  $table_manager
-     * @param TableAnalysis $table_analysis
+     * @param TableManager|null  $table_manager
+     * @param TableAnalysis|null $table_analysis
      */
     public function __construct(TableManager $table_manager = null, TableAnalysis $table_analysis = null)
     {
-        $this->_table_manager = $table_manager;
-        $this->_table_analysis = $table_analysis;
+        $this->_table_manager = $table_manager ?? LoaderFactory::getShared(TableManager::class);
+        $this->_table_analysis = $table_analysis ?? LoaderFactory::getShared(TableAnalysis::class);
         $this->set_status(EE_Data_Migration_Manager::status_continue);
     }
 
@@ -81,7 +76,7 @@ abstract class EE_Data_Migration_Class_Base
      */
     public function pretty_name()
     {
-        if ($this->_pretty_name === null) {
+        if (! $this->_pretty_name) {
             throw new EE_Error(
                 sprintf(
                     esc_html__(
@@ -255,7 +250,7 @@ abstract class EE_Data_Migration_Class_Base
             ),
             '4.6.12'
         );
-        return $this->set_broken();
+        $this->set_broken();
     }
 
     /**
@@ -268,10 +263,12 @@ abstract class EE_Data_Migration_Class_Base
         return $this->get_status() == EE_Data_Migration_Manager::status_completed;
     }
 
+
     /**
      * Checks if the current script has more to do or not (ie, if it's status is CONTINUE)
      *
      * @return boolean
+     * @throws EE_Error
      */
     public function has_more_to_do()
     {
@@ -297,7 +294,7 @@ abstract class EE_Data_Migration_Class_Base
 
     /**
      * A lot like "__sleep()" magic method in purpose, this is meant for persisting this class'
-     * properties to the DB. However, we don't want to use __sleep() because its quite
+     * properties to the DB. However, we don't want to use __sleep() because it's quite
      * possible that this class is defined when it goes to sleep, but NOT available when it
      * awakes (eg, this class is part of an addon that is deactivated at some point).
      */
@@ -312,7 +309,7 @@ abstract class EE_Data_Migration_Class_Base
     }
 
     /**
-     * Sets all of the properties of this script stage to match what's in the array, which is assumed
+     * Sets all the properties of this script stage to match what's in the array, which is assumed
      * to have been made from the properties_as_array() function.
      *
      * @param array $array_of_properties like what's produced from properties_as_array() method
