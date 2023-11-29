@@ -5,7 +5,7 @@ namespace EventEspresso\core\domain\services\database;
 /**
  * convenience class for setting and checking the current database status
  *
- * @since $VID:$
+ * @since 5.0.12.p
  */
 class DbStatus
 {

@@ -821,7 +821,7 @@ class EE_Line_Item extends EE_Base_Class
      * Like EE_Line_Item::get_object(), but can only ever actually return an EE_Ticket.
      * (IE, if this line item is for a price or something else, will return NULL)
      *
-     * @param array $query_params deprecated $VID:$
+     * @param array $query_params deprecated 5.0.12.p
      * @return EE_Ticket|null
      * @throws EE_Error
      * @throws ReflectionException

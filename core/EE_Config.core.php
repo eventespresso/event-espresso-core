@@ -2765,7 +2765,7 @@ class EE_Template_Config extends EE_Config_Base
 
     /**
      * @var EE_People_Config|null $EED_People_Single
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     public $EED_People_Single;
 

@@ -53,13 +53,13 @@ class EE_Maintenance_Mode implements ResettableInterface
 
     /**
      * @var int
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     private int $status;
 
     /**
      * @var int
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     private int $admin_status;
 
@@ -67,7 +67,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      * true if current_user_can('administrator')
      *
      * @var bool
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     private bool $current_user_is_admin;
 
@@ -75,7 +75,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      * used to control updates to the WP options setting in the database
      *
      * @var bool
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     private bool $update_db;
 
@@ -154,7 +154,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      *
      * @param int $status
      * @return int
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     private function setAdminStatus(int $status): int
     {
@@ -243,7 +243,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      * sets maintenance mode status to public only, unless current user is an admin, then maintenance mode is disabled
      *
      * @return void
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     public function activatePublicOnlyMaintenanceMode()
     {
@@ -263,7 +263,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      * sets maintenance mode status to full site
      *
      * @return void
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     public function activateFullSiteMaintenanceMode()
     {
@@ -278,7 +278,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      * turns maintenance mode off
      *
      * @return void
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     public function deactivateMaintenanceMode()
     {
@@ -498,22 +498,22 @@ class EE_Maintenance_Mode implements ResettableInterface
     /************************ @DEPRECATED ********************** */
 
     /**
-     * @depecated $VID:$
+     * @depecated 5.0.12.p
      */
     const level_0_not_in_maintenance = 0;
 
     /**
-     * @depecated $VID:$
+     * @depecated 5.0.12.p
      */
     const level_1_frontend_only_maintenance = 1;
 
     /**
-     * @depecated $VID:$
+     * @depecated 5.0.12.p
      */
     const level_2_complete_maintenance = 2;
 
     /**
-     * @depecated $VID:$
+     * @depecated 5.0.12.p
      */
     const option_name_maintenance_mode = 'ee_maintenance_mode';
 
@@ -523,7 +523,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      * (ie, if the system thinks their tables are present and up-to-date).
      *
      * @return boolean
-     * @depecated $VID:$
+     * @depecated 5.0.12.p
      */
     public function models_can_query(): bool
     {

@@ -231,7 +231,7 @@ class LineItemCalculator
      * @return float[]
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     private function recalculatePercentageLineItem(
         EE_Line_Item $line_item,
@@ -257,7 +257,7 @@ class LineItemCalculator
      * @return float[]
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     private function recalculateNonPercentageLineItem(
         EE_Line_Item $line_item
@@ -894,7 +894,7 @@ class LineItemCalculator
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.12.p
      */
     public function reorderSubLineItems(EE_Line_Item $line_item)
     {
