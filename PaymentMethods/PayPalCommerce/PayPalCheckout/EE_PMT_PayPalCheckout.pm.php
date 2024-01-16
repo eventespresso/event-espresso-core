@@ -2,6 +2,7 @@
 
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\DataType;
+use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\PaymentMethods\PayPalCommerce\PayPalCheckout\forms\BillingForm;
 use EventEspresso\PaymentMethods\PayPalCommerce\PayPalCheckout\forms\SettingsForm;
@@ -58,7 +59,6 @@ class EE_PMT_PayPalCheckout extends EE_PMT_Base
     {
         // Settings form.
         $settings_form = new SettingsForm($this, $this->_pm_instance);
-
         // Filter the form contents.
         return apply_filters(
             'FHEE__EE_PMT_PayPalCheckout__generate_new_settings_form__form_filtering',
@@ -78,10 +78,26 @@ class EE_PMT_PayPalCheckout extends EE_PMT_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function generate_new_billing_form(EE_Transaction $transaction = null, $extra_args = [])
+    public function generate_new_billing_form(EE_Transaction $transaction = null, ?array $extra_args = [])
     {
+        $request        = LoaderFactory::getShared(Request::class);
+        $request_params = $request->requestParams();
+        // Return the default billing form for the postbox if this is a WP admin transaction info page.
+        if (! empty($request_params['page']) && $request_params['page'] === 'espresso_transactions') {
+            $default_form = new EE_Billing_Attendee_Info_Form($this->_pm_instance, $extra_args);
+            $default_form->add_subsections(['credit_card' => new EE_Credit_Card_Input()]);
+            return $default_form;
+        }
+        // Just in case this is used on other admin pages.
+        if (empty($transaction) && ! empty($request_params['TXN_ID'])) {
+            $txn_instance = EEM_Transaction::instance()->get_one_by_ID($request_params['TXN_ID']);
+            $transaction  = $txn_instance instanceof EE_Transaction ? $txn_instance : null;
+        }
         $options = array_merge(
-            ['transaction' => $transaction, 'template_path' => $this->_template_path],
+            [
+                'transaction'   => $transaction,
+                'template_path' => $this->_template_path,
+            ],
             $extra_args
         );
         return new BillingForm($this->_pm_instance, $options);
@@ -94,7 +110,7 @@ class EE_PMT_PayPalCheckout extends EE_PMT_Base
      * @return array
      * @see EE_PMT_Base::help_tabs_config()
      */
-    public function help_tabs_config()
+    public function help_tabs_config(): array
     {
         return [
             $this->get_help_tab_name() => [
@@ -130,7 +146,7 @@ class EE_PMT_PayPalCheckout extends EE_PMT_Base
             }
             // Try loading the template.
             EE_Registry::instance()->load_helper('Template');
-        } catch (EE_Error | ReflectionException $e) {
+        } catch (EE_Error|ReflectionException $e) {
             // Just return, adding nothing.
             return;
         }

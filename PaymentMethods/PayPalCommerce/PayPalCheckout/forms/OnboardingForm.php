@@ -2,20 +2,15 @@
 
 namespace EventEspresso\PaymentMethods\PayPalCommerce\PayPalCheckout\forms;
 
-use EE_Form_Section_Base;
 use EED_PayPalOnboard;
 use EEM_Payment_Method;
 use EE_Admin_Two_Column_Layout;
 use EE_Error;
-use EE_Form_Section_HTML;
 use EE_Form_Section_Proper;
 use EE_Payment_Method;
 use EE_PMT_Base;
 use EE_Simple_HTML_Validation_Strategy;
-use EEH_HTML;
-use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
-use EventEspresso\PaymentMethods\PayPalCommerce\tools\extra_meta\PayPalExtraMetaManager;
-use Exception;
+use ReflectionException;
 
 /**
  * Class OnboardingForm
@@ -29,44 +24,23 @@ class OnboardingForm extends EE_Form_Section_Proper
     /**
      *  Payment method.
      *
-     * @var EE_PMT_Base
+     * @var EE_PMT_Base|null
      */
     protected $payment_method = null;
 
     /**
      *  Payment method instance.
      *
-     * @var EE_PMT_Base
+     * @var EE_PMT_Base|null
      */
     protected $pm_instance = null;
 
     /**
      *  Payment method slug.
      *
-     * @var EE_PMT_Base
+     * @var EE_PMT_Base|null
      */
     protected $pm_slug = null;
-
-    /**
-     *  PayPal Onboarding button text.
-     *
-     * @var string
-     */
-    protected $onboard_btn_text = '';
-
-    /**
-     *  PayPal Onboarding button in sandbox mode text.
-     *
-     * @var string
-     */
-    protected $sandbox_btn_text = '';
-
-    /**
-     *  PayPal Onboarding section sandbox mode text.
-     *
-     * @var string
-     */
-    protected $authed_sandbox_text = '';
 
     /**
      *  Options field header.
@@ -82,6 +56,13 @@ class OnboardingForm extends EE_Form_Section_Proper
      */
     protected $onboarding_url = '';
 
+    /**
+     *  Onboarding form html entities object.
+     *
+     * @var OnboardingFormHtml|null
+     */
+    protected $form_html = null;
+
 
     /**
      * Class constructor.
@@ -95,18 +76,9 @@ class OnboardingForm extends EE_Form_Section_Proper
         $this->payment_method      = $pmt;
         $this->pm_instance         = $payment_method;
         $this->pm_slug             = $this->pm_instance->slug();
-        $this->onboard_btn_text    = esc_html__('Connect with PayPal', 'event_espresso');
-        $this->sandbox_btn_text    = esc_html__('Connect with PayPal (sandbox)', 'event_espresso');
-        $this->authed_sandbox_text = esc_html__('(using sandbox credentials)', 'event_espresso');
+        $this->form_html           = new OnboardingFormHtml($pmt, $payment_method);
         // Help tab link as icon.
-        $this->option_heading = EEH_HTML::th(
-            sprintf(
-                esc_html__('PayPal Onboarding: %1$s', 'event_espresso'),
-                $this->payment_method->get_help_tab_link()
-            ),
-            'eea_paypal_onboard_heading_' . $this->pm_slug,
-            'eea-paypal-onboard-heading'
-        );
+        $this->option_heading = $this->form_html->getHeader();
         $options = [
             'html_id'               => $this->pm_slug . '_pp_commerce_form',
             'layout_strategy'       => new EE_Admin_Two_Column_Layout(),
@@ -121,206 +93,15 @@ class OnboardingForm extends EE_Form_Section_Proper
      * Add the onboarding options section.
      *
      * @return array
-     * @throws EE_Error
      */
     public function onboardSectionContents(): array
     {
         $subsections = [];
         // Get the Onboarding status.
         $is_onboard  = EED_PayPalOnboard::isOnboard($this->pm_instance);
-        $subsections = $this->addOnboardButton($subsections, $is_onboard);
-        $subsections = $this->addOffboardButton($subsections, $is_onboard);
-        $subsections = $this->addPmSlugHolder($subsections);
-        return $subsections;
-    }
-
-
-    /**
-     * Add the onboarding button.
-     *
-     * @param array $subsections
-     * @param bool  $is_onboard
-     * @return array
-     * @throws EE_Error
-     */
-    public function addOnboardButton(array $subsections, bool $is_onboard): array
-    {
-        // Prep the redirect link for the merchant if he is not onboard yet.
-        $onboard_url = '';
-        if (! $is_onboard) {
-            $onboard_url = EED_PayPalOnboard::getSignUpLink($this->pm_instance);
-        }
-        $this->onboarding_url = $onboard_url ? $onboard_url . '?&displayMode=minibrowser' : '#';
-        // Section to be displayed if not onboard.
-        $subsections['paypal_onboard_btn'] = new EE_Form_Section_HTML(
-            EEH_HTML::tr(
-                $this->option_heading .
-                EEH_HTML::td(
-                    EEH_HTML::link(
-                        $this->onboarding_url,
-                        EEH_HTML::span($this->onboard_btn_text),
-                        '',
-                        'eea_paypal_onboard_btn_' . $this->pm_slug,
-                        'eea-paypal-onboard-btn button button--primary',
-                        '',
-                        'target="_blank" data-paypal-onboard-complete="onboardedCallback" data-paypal-button="true"'
-                        . ' data-ee-pm-slug=' . $this->pm_slug
-                    )
-                ),
-                'eea_paypal_onboard_section_' . $this->pm_slug,
-                'eea-onboard-section-' . $this->pm_slug,
-                // Are we onboard ?
-                $is_onboard ? 'display:none;' : ''
-            ),
-            ['required' => true]
-        );
-        return $subsections;
-    }
-
-
-    /**
-     * Get the sandbox onboarding section contents.
-     *
-     * @return string
-     */
-    public function getOnboardSandboxSection(): string
-    {
-        // Is this a test onboarding ?
-        $sandbox_mode_text = $this->pm_instance->debug_mode() ? $this->authed_sandbox_text : '';
-        return ' ' . EEH_HTML::strong(
-            $sandbox_mode_text,
-            'eea_paypal_onboard_test_txt_' . $this->pm_slug,
-            'eea-paypal-onboard-test-txt'
-        );
-    }
-
-
-    /**
-     * Get the seller merchant ID section contents.
-     *
-     * @return string
-     */
-    public function getSellerIdSection(): string
-    {
-        try {
-            $payer_id = PayPalExtraMetaManager::getPmOption($this->pm_instance, Domain::META_KEY_PAYER_ID) ?? '--';
-        } catch (Exception $e) {
-            $payer_id = '--';
-        }
-        return ' ' . EEH_HTML::strong(
-            sprintf(esc_html__('Linked account ID: %1$s', 'event_espresso'), $payer_id),
-            'eea_paypal_seller_id_' . $this->pm_slug,
-            'eea-paypal-seller-id'
-        );
-    }
-
-
-    /**
-     * Add the offboarding (deauthorize) button.
-     *
-     * @param array $subsections
-     * @param bool  $is_onboard
-     * @return array
-     */
-    public function addOffboardButton(array $subsections, bool $is_onboard): array
-    {
-        $onboard_sandbox_section = $this->getOnboardSandboxSection();
-        // If we are connected, display the seller merchant ID.
-        $seller_id_section = $this->getSellerIdSection();
-        // Section to be displayed when onboard.
-        $subsections['paypal_offboard_btn'] = new EE_Form_Section_HTML(
-            EEH_HTML::tr(
-                $this->option_heading
-                . EEH_HTML::td(
-                    EEH_HTML::img(
-                        EEP_PAYPAL_COMMERCE_URL . 'assets' . DS . 'lib' . DS . 'paypal-onboard.png',
-                        '',
-                        'eea_paypal_offboard_ico',
-                        'eea-paypal-offboard-ico'
-                    )
-                    . EEH_HTML::strong(
-                        esc_html__('Connected.', 'event_espresso'),
-                        'eea_paypal_offboard_txt_' . $this->pm_slug,
-                        'eea-paypal-offboard-txt'
-                    )
-                    . $onboard_sandbox_section
-                    . $seller_id_section
-                    . EEH_HTML::link(
-                        '#',
-                        EEH_HTML::span(esc_html__('Disconnect', 'event_espresso')),
-                        '',
-                        'eea_paypal_offboard_btn_' . $this->pm_slug,
-                        'eea-paypal-onboard-btn button button--primary'
-                    )
-                ),
-                'eea_paypal_offboard_section_' . $this->pm_slug,
-                'eea-offboard-section-' . $this->pm_slug,
-                // Are we onboard ?
-                ! $is_onboard ? 'display:none;' : ''
-            ),
-            ['required' => true]
-        );
-        return $subsections;
-    }
-
-
-    /**
-     * Add the PM slug holder.
-     *
-     * @param array $subsections
-     * @return array
-     */
-    public function addPmSlugHolder(array $subsections): array
-    {
-        $subsections['paypal_pm_slug_holder'] = new EE_Form_Section_HTML(
-            EEH_HTML::span(
-                '',
-                'eea_paypal_pm_slug',
-                'eea-paypal-pm-slug',
-                'display:none;'
-            )
-        );
-        return $subsections;
-    }
-
-
-    /**
-     * HTML for the disconnect warning dialog.
-     *
-     * @return EE_Form_Section_Base
-     */
-    public function disconnectDialogHtml(): EE_Form_Section_Base
-    {
-        $message = esc_html__(
-            'Disconnecting your PayPal account will prevent you from offering PayPal services and products on your website.',
-            'event_espresso'
-        );
-        return new EE_Form_Section_HTML(
-            EEH_HTML::tr(
-                EEH_HTML::td(
-                    EEH_HTML::strong(
-                        $message,
-                        'eea_paypal_dialog_txt_' . $this->pm_slug,
-                        'eea-paypal-dialog-txt'
-                    ) .
-                    EEH_HTML::link(
-                        '',
-                        'Cancel',
-                        'cancel, go back',
-                        'eea_paypal_dialog_cancel_' . $this->pm_slug,
-                        'eea-paypal-dialog-cancel button button--secondary'
-                    ) .
-                    EEH_HTML::link(
-                        '',
-                        'Disconnect',
-                        'ok, continue',
-                        'eea_paypal_dialog_ok_' . $this->pm_slug,
-                        'eea-paypal-dialog-ok button button--primary-alt'
-                    )
-                ),
-                'eea_paypal_disconnect_dialog_' . $this->pm_slug
-            )
-        );
+        $subsections = $this->form_html->addOnboardButton($subsections, $is_onboard);
+        $subsections = $this->form_html->addOffboardButton($subsections, $is_onboard);
+        return $this->form_html->addPmSlugHolder($subsections);
     }
 
 
@@ -330,6 +111,7 @@ class OnboardingForm extends EE_Form_Section_Proper
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function enqueue_js()
     {
@@ -344,14 +126,18 @@ class OnboardingForm extends EE_Form_Section_Proper
                 'pm_slug' => $payment_method->slug(),
             ];
         }
-
+        $countries_iso = ["US", "AU", "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU",
+                          "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"];
         $parameters = [
-            'onboard_btn_text'     => $this->onboard_btn_text,
-            'sandbox_btn_text'     => $this->sandbox_btn_text,
-            'sandbox_text'         => $this->authed_sandbox_text,
+            'onboard_btn_text'     => $this->form_html->onboard_btn_text,
+            'sandbox_btn_text'     => $this->form_html->sandbox_btn_text,
+            'sandbox_text'         => $this->form_html->authed_sandbox_text,
             'pm_versions'          => $pm_versions,
             'onboarding_url'       => $this->onboarding_url,
-            'disconnect_dialog'    => $this->disconnectDialogHtml()->get_html(),
+            'supported_countries'  => $countries_iso,
+            'connect_dialog'       => $this->form_html->connectDialog()->get_html(),
+            'disconnect_dialog'    => $this->form_html->disconnectDialog()->get_html(),
+            'processing_mask'      => $this->form_html->processingMask()->get_html(),
             'ee_default_styles'    => EE_ADMIN_URL . 'assets/ee-admin-page.css',
             'wp_stylesheet'        => includes_url('css/dashicons.min.css'),
             'can_disable_input'    => method_exists('EE_Form_Input_Base', 'isDisabled'),
@@ -362,7 +148,7 @@ class OnboardingForm extends EE_Form_Section_Proper
                 'event_espresso'
             ),
             'unknown_container'    => esc_html__('Could not specify the parent form.', 'event_espresso'),
-            'pm_nice_name'         => esc_html__('PayPal Payments', 'event_espresso'),
+            'pm_nice_name'         => esc_html__('PayPal Commerce', 'event_espresso'),
             'blocked_popup_notice' => esc_html__(
                 'The authentication process could not be executed. Please allow window pop-ups in your browser for this website in order to process a successful authentication.',
                 'event_espresso'
@@ -380,21 +166,19 @@ class OnboardingForm extends EE_Form_Section_Proper
                 'event_espresso'
             ),
         ];
-
         // Styles.
         wp_enqueue_style(
             'eea_paypal_onboard_form_styles',
             EEP_PAYPAL_COMMERCE_URL . 'assets' . DS . 'css' . DS . 'eea-paypal-onboard.css',
             [],
-            filemtime(EEP_PAYPAL_COMMERCE_DIR . 'assets' . DS . 'css' . DS . 'eea-paypal-onboard.css')
+            EVENT_ESPRESSO_VERSION
         );
-
         // Scripts.
         wp_enqueue_script(
             'eea_paypal_onboard_form_scripts',
             EEP_PAYPAL_COMMERCE_URL . 'assets' . DS . 'js' . DS . 'eea-paypal-onboarding.js',
             [],
-            filemtime(EEP_PAYPAL_COMMERCE_DIR . 'assets' . DS . 'js' . DS . 'eea-paypal-onboarding.js')
+            EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_script(
             'eea_paypal_partner_script',
@@ -402,10 +186,8 @@ class OnboardingForm extends EE_Form_Section_Proper
             [],
             EVENT_ESPRESSO_VERSION
         );
-
         // Localize the script with some extra data.
         wp_localize_script('eea_paypal_onboard_form_scripts', 'eeaPPOnboardParameters', $parameters);
-
         parent::enqueue_js();
     }
 }

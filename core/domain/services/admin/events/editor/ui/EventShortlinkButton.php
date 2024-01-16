@@ -10,7 +10,7 @@ namespace EventEspresso\core\domain\services\admin\events\editor\ui;
  * @author  Hossein Rafiei
  * @since   5.0.0.p
  */
-class EventShortlinkButton
+class EventShortlinkButton extends PermalinkHtmlHook
 {
     public static function getShortlink(int $id): string
     {
@@ -23,17 +23,18 @@ class EventShortlinkButton
         return '';
     }
 
-    public static function addButton(string $html, int $id): string
+
+    public static function addButton(string $html, int $post_id): string
     {
-        $permalink = get_permalink($id);
-        $shortlink = esc_attr(EventShortlinkButton::getShortlink($id));
-        if (! empty($shortlink) && $shortlink !== $permalink && home_url('?page_id=' . $id) !== $permalink) {
+        $permalink = get_permalink($post_id);
+        $shortlink = esc_attr(EventShortlinkButton::getShortlink($post_id));
+        if (! empty($shortlink) && $shortlink !== $permalink && home_url('?page_id=' . $post_id) !== $permalink) {
             $onclick = 'prompt("URL:", jQuery("#espresso-event-shortlink").val()); return false;';
-            $html .= "
+            $html    .= "
                 <input id='espresso-event-shortlink' type='hidden' value='$shortlink' />
                 <button type='button' class='button button--tiny button--secondary' onclick='$onclick'>
                     <span class='dashicons dashicons-admin-links'></span>
-                    " . __('Shortlink') . "
+                    " . esc_html__('Shortlink') . "
                 </button>";
         }
         return $html;

@@ -1193,6 +1193,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             $country->isActive(),
             DataType::BOOL
         );
+        $cols_n_values['CNT_is_EU']      = $this->request->getRequestParam(
+            "cntry[$CNT_ISO][CNT_is_EU]",
+            $country->isEU(),
+            DataType::BOOL
+        );
 
         // allow filtering of country data
         $cols_n_values = apply_filters(

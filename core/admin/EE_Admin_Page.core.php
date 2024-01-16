@@ -107,7 +107,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected bool  $_routing       = false;
 
     /**
-     * whether or not initializePage() has run
+     * whether initializePage() has run
      *
      * @var bool
      */
@@ -1691,10 +1691,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             <div class="ee-notices"></div>
             <div class="ee-admin-dialog-container-inner-content"></div>
         </div>
-        ';
-
-        // current set timezone for timezone js
-        echo '<span id="current_timezone" class="hidden">' . esc_html(EEH_DTT_Helper::get_timezone()) . '</span>';
+        <span id="current_timezone" class="hidden">' . esc_html(EEH_DTT_Helper::get_timezone()) . '</span>
+        <input type="hidden" id="espresso_admin_current_page" value="' . esc_attr($this->_current_page) . '"/>';
     }
 
 
@@ -2088,23 +2086,23 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public function get_list_table_view_RLs(array $extra_query_args = []): array
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        if (empty($this->_views)) {
-            $this->_views = [];
-        }
+        $extra_query_args = apply_filters(
+            'FHEE__EE_Admin_Page__get_list_table_view_RLs__extra_query_args',
+            $extra_query_args,
+            $this
+        );
         // cycle thru views
         foreach ($this->_views as $key => $view) {
             $query_args = [];
             // check for current view
-            $this->_views[ $key ]['class']               = $this->_view === $view['slug'] ? 'current' : '';
-            $query_args['action']                        = $this->_req_action;
-            $query_args[ $this->_req_action . '_nonce' ] = wp_create_nonce($query_args['action'] . '_nonce');
-            $query_args['status']                        = $view['slug'];
+            $this->_views[ $key ]['class'] = $this->_view === $view['slug'] ? 'current' : '';
+            $query_args['action']          = $this->_req_action;
+            $action_nonce                  = "{$this->_req_action}_nonce";
+            $query_args[ $action_nonce ]   = wp_create_nonce($action_nonce);
+            $query_args['status']          = $view['slug'];
             // merge any other arguments sent in.
             if (isset($extra_query_args[ $view['slug'] ])) {
-                foreach ($extra_query_args[ $view['slug'] ] as $extra_query_arg) {
-                    $query_args[] = $extra_query_arg;
-                }
+                $query_args = array_merge($query_args, $extra_query_args[ $view['slug'] ]);
             }
             $this->_views[ $key ]['url'] = EE_Admin_Page::add_query_args_and_nonce($query_args, $this->_admin_base_url);
         }
@@ -2122,7 +2120,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function _entries_per_page_dropdown(int $max_entries = 0): string
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $values   = [10, 25, 50, 100];
         $per_page = $this->request->getRequestParam('per_page', 10, DataType::INT);
         if ($max_entries) {
@@ -2683,7 +2680,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // if $create_func is true (default) then we automatically create the function for displaying the actual meta box.  If false then we take the $callback reference passed through and use it instead (so callers can define their own callback function/method if they wish)
         $call_back_func = $create_func
             ? static function ($post, $metabox) {
-                do_action('AHEE_log', __FILE__, __FUNCTION__, '');
                 echo EEH_Template::display_template(
                     $metabox['args']['template_path'],
                     $metabox['args']['template_args'],
@@ -3895,6 +3891,18 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     }
 
 
+    /**
+     * @param array $views
+     * @return void
+     * @since $VID:$
+     */
+    public function updateViews(array $views)
+    {
+        $this->_views = array_merge($this->_views, $views);
+    }
+
+
+    /**
     /**
      * get_current_page
      *

@@ -841,38 +841,36 @@ class EEH_Form_Fields
 
         // we also need to verify
 
-        $display_text = $QFI->get('QST_display_text');
-        $input_name   = $QFI->get('QST_input_name');
+        $display_text = (string) $QFI->get('QST_display_text');
+        $input_name   = (string) $QFI->get('QST_input_name');
         $answer       = $request->getRequestParam($input_name, $QFI->get('ANS_value'));
-        $input_id     = $QFI->get('QST_input_id');
-        $input_class  = $QFI->get('QST_input_class');
+        $input_id     = (string) $QFI->get('QST_input_id');
+        $input_class  = (string) $QFI->get('QST_input_class');
         //      $disabled = $QFI->get('QST_disabled') ? ' disabled="disabled"' : '';
-        $disabled          = $QFI->get('QST_disabled');
+        $disabled          = (bool) $QFI->get('QST_disabled');
         $required_label    = apply_filters(' FHEE__EEH_Form_Fields__generate_form_input__required_label', '<em>*</em>');
-        $QST_required      = $QFI->get('QST_required');
-        $required          =
-            $QST_required
-                ? ['label' => $required_label, 'class' => 'required needs-value', 'title' => $QST_required]
-                : [];
+        $QST_required      = (bool) $QFI->get('QST_required');
+        $required          = $QST_required
+            ? ['label' => $required_label, 'class' => 'required needs-value', 'title' => $QST_required]
+            : [];
         $use_html_entities = $QFI->get_meta('htmlentities');
-        $required_text     =
-            $QFI->get('QST_required_text') != ''
-                ? $QFI->get('QST_required_text')
-                : esc_html__('This field is required', 'event_espresso');
+        $required_text     = (string) $QFI->get('QST_required_text') !== ''
+            ? (string) $QFI->get('QST_required_text')
+            : esc_html__('This field is required', 'event_espresso');
         $required_text     = $QST_required
             ? "\n\t\t\t"
               . '<div class="required-text hidden">'
               . self::prep_answer($required_text, $use_html_entities)
               . '</div>'
             : '';
-        $label_class       = $QFI->get('label_class');
+        $label_class       = (string) $QFI->get('label_class');
         $label_class       = $label_class ? "{$label_class} espresso-form-input-lbl" : 'espresso-form-input-lbl';
         $QST_options       = $QFI->options(true, $answer);
         $options           = is_array($QST_options) ? self::prep_answer_options($QST_options) : [];
-        $system_ID         = $QFI->get('QST_system');
-        $label_b4          = $QFI->get_meta('label_b4');
-        $use_desc_4_label  = $QFI->get_meta('use_desc_4_label');
-        $add_mobile_label  = $QFI->get_meta('add_mobile_label');
+        $system_ID         = (string) $QFI->get('QST_system');
+        $label_b4          = (bool) $QFI->get_meta('label_b4');
+        $use_desc_4_label  = (bool) $QFI->get_meta('use_desc_4_label');
+        $add_mobile_label  = (bool) $QFI->get_meta('add_mobile_label');
 
 
         switch ($QFI->get('QST_type')) {
@@ -1330,11 +1328,11 @@ class EEH_Form_Fields
     /**
      * generates HTML for form radio button inputs
      *
-     * @param bool|string $question    label content
-     * @param string      $answer      form input value attribute
+     * @param string      $question    label content
+     * @param string|int  $answer      form input value attribute
      * @param array|bool  $options     array of answer options where array key = option value and array value = option
      *                                 display text
-     * @param bool|string $name        form input name attribute
+     * @param string $name        form input name attribute
      * @param string      $id          form input css id attribute
      * @param string      $class       form input css class attribute
      * @param array|bool  $required    'label', 'class', and 'msg' - array of values for required "label" content, css
@@ -1342,28 +1340,28 @@ class EEH_Form_Fields
      * @param string      $required_text
      * @param string      $label_class css class attribute for the label
      * @param bool|string $disabled    disabled="disabled" or null
-     * @param bool        $system_ID
+     * @param string      $system_ID
      * @param bool        $use_html_entities
      * @param bool        $label_b4
      * @param bool        $use_desc_4_label
      * @return string HTML
      */
     public static function radio(
-        $question = false,
+        string $question = '',
         $answer = null,
         $options = false,
-        $name = false,
-        $id = '',
-        $class = '',
+        string $name = '',
+        string $id = '',
+        string $class = '',
         $required = false,
-        $required_text = '',
-        $label_class = '',
-        $disabled = false,
-        $system_ID = false,
-        $use_html_entities = true,
-        $label_b4 = false,
-        $use_desc_4_label = false,
-        $add_mobile_label = false
+        string $required_text = '',
+        string $label_class = '',
+        bool $disabled = false,
+        string $system_ID = '',
+        bool $use_html_entities = true,
+        bool $label_b4 = false,
+        bool $use_desc_4_label = false,
+        bool $add_mobile_label = false
     ) {
         // need these
         if (! $question || ! $name || ! $options || empty($options) || ! is_array($options)) {
@@ -1404,6 +1402,7 @@ class EEH_Form_Fields
                     : self::get_label_size_class($OPT->value());
                 $desc    = $OPT->desc();// no self::prep_answer
                 $answer  = is_numeric($value) && empty($answer) ? 0 : $answer;
+                $value  = is_numeric($answer) && empty($value) ? 0 : $value;
                 $checked = (string) $value == (string) $answer ? ' checked' : '';
                 $opt     = '-' . sanitize_key($value);
 
@@ -1709,7 +1708,7 @@ class EEH_Form_Fields
     /**
      *  prep_option_value
      *
-     * @param string $option_value
+     * @param string|int $option_value
      * @return string
      */
     public static function prep_option_value($option_value)

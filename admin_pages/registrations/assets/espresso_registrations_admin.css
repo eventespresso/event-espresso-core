@@ -83,8 +83,8 @@
     width: clamp(6rem, 7.5%, 15rem);
 }
 
-.wp-list-table td.column-_REG_final_price .TKT_name + .reg-overview-paid-event-spn{
-    margin-inline-start: var(--ee-margin-nano);
+.wp-list-table td.column-PRC_amount .TKT_name {
+    margin-inline-end: var(--ee-margin-nano);
 }
 
 .espresso-admin .wp-list-table .TXN_paid .dashicons-yes:before {

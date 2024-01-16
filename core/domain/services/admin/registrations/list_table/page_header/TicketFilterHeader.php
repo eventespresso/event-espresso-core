@@ -71,11 +71,11 @@ class TicketFilterHeader extends AdminPageHeaderDecorator
                     $text
                 );
                 if (empty($text)) {
-                    $text = '<h3 style="line-height:1.5em;">';
+                    $text = '<h3 class="ee-filter-header__text">';
                     $text .= esc_html__('Viewing registrations for ticket:', 'event_espresso');
                 }
                 $text .= '&nbsp; &nbsp; ';
-                $text .= '<span class="drk-grey-text" style="font-size:.9em;">';
+                $text .= '<span class="ee-filter-header__details">';
                 $text .= '<span class="dashicons dashicons-tickets-alt"></span>';
                 $text .= $ticket_details . '</span></h3>';
             }

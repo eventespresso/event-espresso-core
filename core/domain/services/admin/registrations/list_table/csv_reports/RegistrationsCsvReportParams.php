@@ -21,11 +21,11 @@ class RegistrationsCsvReportParams
      * @return array
      */
     public static function getRequestParams(
-        $return_url,
-        $request_params = [],
-        $EVT_ID = 0,
-        $DTT_ID = 0
-    ) {
+        string $return_url,
+        array $request_params = [],
+        int $EVT_ID = 0,
+        int $DTT_ID = 0
+    ): array {
         if (
             ! EE_Capabilities::instance()->current_user_can(
                 'ee_read_registrations',

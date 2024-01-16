@@ -11,6 +11,7 @@ use EventEspresso\PaymentMethods\PayPalCommerce\tools\encryption\OpenSSLEncrypti
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\encryption\PPCommerceEncryptionKeyManager;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
 use Exception;
+use ReflectionException;
 
 /**
  * Class PayPalExtraMetaManager
@@ -27,9 +28,8 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param string            $option_name
      * @return mixed
-     * @throws Exception
      */
-    public static function getPmOption(EE_Payment_Method $paypal_pm, string $option_name)
+    public static function getPmOption(EE_Payment_Method $paypal_pm, string $option_name): mixed
     {
         $pp_meta_data = self::extraMeta($paypal_pm);
         $option_value = $pp_meta_data->getOption($option_name);
@@ -52,7 +52,6 @@ class PayPalExtraMetaManager
      * @param string            $option_name
      * @param                   $option_value
      * @return bool
-     * @throws EE_Error
      */
     public static function savePmOption(EE_Payment_Method $paypal_pm, string $option_name, $option_value): bool
     {
@@ -67,7 +66,6 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param array             $options_list
      * @return bool
-     * @throws EE_Error
      */
     public static function savePmOptions(EE_Payment_Method $paypal_pm, array $options_list): bool
     {
@@ -82,7 +80,6 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param string            $option_name
      * @return bool
-     * @throws EE_Error
      */
     public static function deletePmOption(EE_Payment_Method $paypal_pm, string $option_name): bool
     {
@@ -96,7 +93,6 @@ class PayPalExtraMetaManager
      *
      * @param EE_Payment_Method $paypal_pm
      * @return array|bool
-     * @throws EE_Error
      */
     public static function getAllData(EE_Payment_Method $paypal_pm)
     {
@@ -124,7 +120,6 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param array             $request_data
      * @return bool             Updated or not.
-     * @throws EE_Error
      */
     public static function updateDebugMode(EE_Payment_Method $paypal_pm, array $request_data): bool
     {
@@ -155,7 +150,6 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param array             $response
      * @return bool
-     * @throws EE_Error
      */
     public static function savePartnerAccessToken(EE_Payment_Method $paypal_pm, array $response): bool
     {
@@ -200,15 +194,12 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param array             $response
      * @return bool
-     * @throws EE_Error
      */
     public static function saveSellerApiCredentials(EE_Payment_Method $paypal_pm, array $response): bool
     {
         $api_credentials     = [];
         $expected_parameters = [
-            Domain::META_KEY_CLIENT_ID,
-            Domain::META_KEY_CLIENT_SECRET,
-            Domain::META_KEY_PAYER_ID,
+            Domain::META_KEY_SELLER_MERCHANT_ID,
         ];
         foreach ($expected_parameters as $api_key) {
             if (! isset($response[ $api_key ])) {
@@ -216,17 +207,49 @@ class PayPalExtraMetaManager
                 continue;
             }
             try {
-                if ($api_key === Domain::META_KEY_CLIENT_SECRET) {
-                    $api_credentials[ $api_key ] = self::encryptString($response[ $api_key ], $paypal_pm);
-                } else {
-                    $api_credentials[ $api_key ] = $response[ $api_key ];
-                }
+                $api_credentials[ $api_key ] = $response[ $api_key ];
             } catch (Exception $exception) {
                 PayPalLogger::errorLog($exception->getMessage(), $response, $paypal_pm);
                 return false;
             }
         }
         return self::savePmOptions($paypal_pm, $api_credentials);
+    }
+
+
+    /**
+     * Save other payment method related settings from a data array.
+     *
+     * @param EE_Payment_Method $paypal_pm
+     * @param array             $data
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function parseAndSaveOptions(EE_Payment_Method $paypal_pm, array $data): bool
+    {
+        $allowed_checkout_type = 'express_checkout';
+        // Note, although PayPal shows that this should include PPCP_CUSTOM or EXPRESS_CHECKOUT only,
+        // in reality, it will also include other products like MOBILE_PAYMENT_ACCEPTANCE etc.
+        if (! empty($data['response']['products'][0]['name']) && is_array($data['response']['products'])) {
+            foreach ($data['response']['products'] as $product) {
+                if (str_contains($product['name'], 'PPCP')) {
+                    // This merchant has PPCP in the products list, so we can enable both (all) checkout types.
+                    $allowed_checkout_type = 'all';
+                    break;
+                }
+            }
+        }
+        // Set the Checkout type (a PM option), just in case merchant doesn't save PM options manually.
+        $checkout_type = $paypal_pm->get_extra_meta(Domain::META_KEY_CHECKOUT_TYPE, true, false);
+        if (! $checkout_type) {
+            $paypal_pm->update_extra_meta(Domain::META_KEY_CHECKOUT_TYPE, $allowed_checkout_type);
+        }
+        return PayPalExtraMetaManager::savePmOption(
+            $paypal_pm,
+            Domain::META_KEY_ALLOWED_CHECKOUT_TYPE,
+            $allowed_checkout_type
+        );
     }
 
 
@@ -271,7 +294,6 @@ class PayPalExtraMetaManager
      * @param string            $text
      * @param EE_Payment_Method $paypal_pm
      * @return string
-     * @throws Exception
      */
     public static function decryptString(string $text, EE_Payment_Method $paypal_pm): string
     {
@@ -280,11 +302,15 @@ class PayPalExtraMetaManager
             return $text;
         }
         // Try decrypting.
-        $encryptor      = LoaderFactory::getLoader()->getShared(OpenSSLEncryption::class, [new Base64Encoder()]);
-        $key_identifier = $paypal_pm->debug_mode()
-            ? PPCommerceEncryptionKeyManager::SANDBOX_ENCRYPTION_KEY_ID
-            : PPCommerceEncryptionKeyManager::PRODUCTION_ENCRYPTION_KEY_ID;
-        $decrypted      = $encryptor->decrypt($text, $key_identifier);
+        try {
+            $encryptor      = LoaderFactory::getLoader()->getShared(OpenSSLEncryption::class, [new Base64Encoder()]);
+            $key_identifier = $paypal_pm->debug_mode()
+                ? PPCommerceEncryptionKeyManager::SANDBOX_ENCRYPTION_KEY_ID
+                : PPCommerceEncryptionKeyManager::PRODUCTION_ENCRYPTION_KEY_ID;
+            $decrypted      = $encryptor->decrypt($text, $key_identifier);
+        } catch (Exception) {
+            return $text;
+        }
         return $decrypted ?? $text;
     }
 }

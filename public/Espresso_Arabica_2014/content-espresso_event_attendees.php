@@ -24,5 +24,3 @@ $gravatar = $show_gravatar
 <?php do_action( 'AHEE__content-espresso_event_attendees__before', $contact, $show_gravatar ); ?>
 <li><?php echo wp_kses($gravatar . '&nbsp;' .  $contact->full_name(true), AllowedTags::getAllowedTags()); ?></li>
 <?php do_action( 'AHEE__content-espresso_event_attendees__after', $contact, $show_gravatar ); ?>
-
-<!--<br >-->

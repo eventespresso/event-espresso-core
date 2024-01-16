@@ -185,10 +185,10 @@ class EEH_Template
      */
     public static function locate_template(
         $templates = [],
-        $template_args = [],
-        $load = true,
-        $return_string = true,
-        $check_if_custom = false
+        array $template_args = [],
+        bool $load = true,
+        bool $return_string = true,
+        bool $check_if_custom = false
     ) {
         // first use WP locate_template to check for template in the current theme folder
         $template_path = locate_template($templates);
@@ -513,7 +513,7 @@ class EEH_Template
 
             // add currency code ?
             $amount_formatted = $display_code
-                ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>'
+                ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">' . $mny->code . '</span>'
                 : $amount_formatted;
         }
         // filter results

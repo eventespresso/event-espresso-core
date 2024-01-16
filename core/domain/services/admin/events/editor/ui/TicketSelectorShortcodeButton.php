@@ -10,27 +10,24 @@ namespace EventEspresso\core\domain\services\admin\events\editor\ui;
  * @author  Hossein Rafiei
  * @since   5.0.0.p
  */
-class TicketSelectorShortcodeButton
+class TicketSelectorShortcodeButton extends PermalinkHtmlHook
 {
-    public static function addButton(
-        string $return,
-        int $id,
-        ?string $new_title,
-        ?string $new_slug
-    ): string {
+    public static function addButton(string $html, int $post_id): string
+    {
         // make sure this is only when editing
-        if (empty($id)) {
-            return $return;
+        if (empty($post_id)) {
+            return $html;
         }
-        $post = get_post($id);
+        $post = get_post($post_id);
         // make sure this is EE event
         if (! $post || $post->post_type !== 'espresso_events') {
-            return $return;
+            return $html;
         }
-        $onclick   = 'prompt("Ticket Selector Shortcode:", jQuery("#espresso-ticket-selector-shortlink").val()); return false;';
-        $shortcode = esc_attr("[ESPRESSO_TICKET_SELECTOR event_id='$id']");
+        $onclick   =
+            'prompt("Ticket Selector Shortcode:", jQuery("#espresso-ticket-selector-shortlink").val()); return false;';
+        $shortcode = esc_attr("[ESPRESSO_TICKET_SELECTOR event_id='$post_id']");
         $title     = esc_html__('Ticket Selector Shortcode', 'event_espresso');
-        $return    .= "
+        $html      .= "
             <a class='button button--tiny button--secondary'
                onclick='$onclick'
                href='#'
@@ -38,8 +35,8 @@ class TicketSelectorShortcodeButton
             >
                 <span class='dashicons dashicons-shortcode'></span>
                 $title
-            </a>";
-        $return    .= "<input id='espresso-ticket-selector-shortlink' type='hidden' value='$shortcode'>";
-        return $return;
+            </a>
+            <input id='espresso-ticket-selector-shortlink' type='hidden' value='$shortcode'>";
+        return $html;
     }
 }

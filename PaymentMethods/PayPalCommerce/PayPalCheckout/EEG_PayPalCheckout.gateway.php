@@ -51,7 +51,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
 
     /**
      * @param EE_Payment|null $payment
-     * @param array|null $billing_info
+     * @param array|null      $billing_info
      * @return EE_Payment
      * @throws EE_Error
      * @throws ReflectionException
@@ -59,13 +59,14 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
     public function do_direct_payment($payment, $billing_info = null)
     {
         $failed_status = $this->_pay_model->failed_status();
-        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $request       = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         // Check the payment.
         $payment_valid = $this->validateThisPayment($payment, $request);
         if ($payment_valid->details() === 'error' && $payment_valid->status() === $failed_status) {
             return $payment_valid;
         }
-        $payment_method = $payment->transaction()->payment_method();
+        $transaction    = $payment->transaction();
+        $payment_method = $transaction->payment_method();
 
         // Get saved order details.
         try {
@@ -87,7 +88,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         // Remove the saved order data.
         PayPalExtraMetaManager::deletePmOption($payment_method, Domain::META_KEY_LAST_ORDER);
         // Looks like all is good. Do a payment success.
-        return $this->setPaymentSuccess($payment, $order);
+        return $this->setPaymentSuccess($payment, $transaction, $order);
     }
 
 
@@ -98,6 +99,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
      * @param RequestInterface $request
      * @return EE_Payment
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function validateThisPayment(?EE_Payment $payment, RequestInterface $request): EE_Payment
     {
@@ -131,7 +133,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
      * Validate the Order.
      *
      * @param string $provided_order_id
-     * @param $order
+     * @param        $order
      * @return string string if error and empty if valid.
      */
     public function orderInvalid(string $provided_order_id, $order): string
@@ -161,13 +163,13 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
      * @param array|string $response_data
      * @param string       $err_message
      * @return EE_Payment
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public function setPaymentFailure(
         EE_Payment $payment,
-        string $status,
-        $response_data,
-        string $err_message = ''
+        string     $status,
+                   $response_data,
+        string     $err_message = ''
     ): EE_Payment {
         $this->log(['Error request data:' => $response_data], $payment);
         $payment->set_status($status);
@@ -180,19 +182,76 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
     /**
      * Set the payment success.
      *
-     * @param EE_Payment $payment
-     * @param array      $order
+     * @param EE_Payment     $payment
+     * @param EE_Transaction $transaction
+     * @param array          $order
      * @return EE_Payment
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
-    public function setPaymentSuccess(EE_Payment $payment, array $order): EE_Payment
+    public function setPaymentSuccess(EE_Payment $payment, EE_Transaction $transaction, array $order): EE_Payment
     {
-        $amount = $order['purchase_units'][0]['payments']['captures'][0]['amount']['value'];
+        $amount = $order['purchase_units'][0]['payments']['captures'][0]['amount']['value'] ?? 0;
+        if (! $amount) {
+            $this->log(['Success order but amount is 0 !' => $order], $payment);
+        }
         $payment->set_status(EEM_Payment::status_id_approved);
         $payment->set_amount((float) $amount);
-        $payment->set_txn_id_chq_nmbr($order['purchase_units'][0]['payments']['captures'][0]['id']);
-        $payment->set_details($order['payer']);
-        $payment->set_gateway_response($order['status']);
+        $payment->set_txn_id_chq_nmbr($order['purchase_units'][0]['payments']['captures'][0]['id'] ?? $order['id']);
+        $payment->set_gateway_response($order['status'] ?? 'success');
+        $this->saveBillingDetails($payment, $transaction, $order);
         return $payment;
+    }
+
+
+    /**
+     * Save some transaction details, like billing information.
+     *
+     * @param EE_Payment     $payment
+     * @param EE_Transaction $transaction
+     * @param array          $order
+     * @return void
+     * @throws EE_Error|ReflectionException
+     */
+    public function saveBillingDetails(EE_Payment $payment, EE_Transaction $transaction, array $order): void
+    {
+        $input_values   = [];
+        $primary_reg    = $transaction->primary_registration();
+        $attendee       = $primary_reg instanceof EE_Registration ? $primary_reg->attendee() : null;
+        $transaction    = $payment->transaction();
+        $payment_method = $transaction->payment_method();
+        $postmeta_name  = $payment_method->type_obj() instanceof EE_PMT_Base
+            ? 'billing_info_' . $payment_method->type_obj()->system_name()
+            : '';
+        if (empty($order['payment_source']) || ! $attendee instanceof EE_Attendee) {
+            // I guess we are done here then. Just save what we have.
+            $payment->set_details($order);
+            return;
+        }
+        // Do we have order information from the express checkout (PayPal button) ?
+        if (! empty($order['payment_source']['paypal'])) {
+            $payer                      = $order['payment_source']['paypal'];
+            $payer_name                 = $payer['name'] ?? '';
+            $input_values['first_name'] = $payer_name['given_name'] ?? $attendee->fname();
+            $input_values['last_name']  = $payer_name['surname'] ?? $attendee->lname();
+            $input_values['email']      = $payer_name['email_address'] ?? $attendee->email();
+            $input_values['address']    = $payer_name['address_line_1'] ?? $attendee->address();
+            $input_values['address2']   = $payer_name['address_line_2'] ?? $attendee->address2();
+            $input_values['city']       = $payer_name['admin_area_2'] ?? $attendee->city();
+            $input_values['country']    = $payer_name['country_code'] ?? $attendee->country();
+            $input_values['zip']        = $payer_name['postal_code'] ?? $attendee->zip();
+        }
+        // Or card information from ACDC ?
+        if (! empty($order['payment_source']['card'])) {
+            $payer_card = $order['payment_source']['card'];
+            if (! empty($payer_card['name'])) {
+                $full_name = explode(' ', $payer_card['name']);
+                // Don't need to save each field because others should be populated from the billing form.
+                $input_values['credit_card'] = $payer_card['last_digits'] ?? '';
+                $input_values['first_name']  = $full_name[0] ?? $attendee->fname();
+                $input_values['last_name']   = $full_name[1] ?? $attendee->lname();
+            }
+        }
+        update_post_meta($attendee->ID(), $postmeta_name, $input_values);
+        $attendee->save();
     }
 }

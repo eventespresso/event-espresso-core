@@ -21,7 +21,13 @@ class TableAnalysis extends EE_Base
      * The maximum number of characters that can be indexed on a column using utf8mb4 collation,
      * see https://events.codebasehq.com/redirect?https://make.wordpress.org/core/2015/04/02/the-utf8mb4-upgrade/
      */
-    public const INDEX_COLUMN_SIZE = 191;
+    public const INDEX_COLUMN_SIZE  = 191;
+
+    public const INDEX_TYPE_INDEX   = 'INDEX';
+
+    public const INDEX_TYPE_UNIQUE  = 'UNIQUE';
+
+    private array $known_tables = [];
 
 
     /**
@@ -41,7 +47,7 @@ class TableAnalysis extends EE_Base
 
 
     /**
-     * Indicates whether or not the table has any entries. $table_name can
+     * Indicates whether the table has any entries. $table_name can
      * optionally start with $wpdb->prefix or not
      *
      * @param string $table_name
@@ -61,7 +67,7 @@ class TableAnalysis extends EE_Base
 
 
     /**
-     * Indicates whether or not the table exists. $table_name can optionally
+     * Indicates whether the table exists. $table_name can optionally
      * have the $wpdb->prefix on the beginning, or not.
      *
      * @param string $table_name
@@ -71,9 +77,12 @@ class TableAnalysis extends EE_Base
      */
     public function tableExists(string $table_name): bool
     {
-        global $wpdb, $EZSQL_ERROR;
         $table_name = $this->ensureTableNameHasPrefix($table_name);
-        // ignore if this causes an sql error
+        if (isset($this->known_tables[ $table_name ])) {
+            return true;
+        }
+        global $wpdb, $EZSQL_ERROR;
+        // ignore if this causes an SQL error
         $old_error             = $wpdb->last_error;
         $old_suppress_errors   = $wpdb->suppress_errors();
         $old_show_errors_value = $wpdb->show_errors(false);
@@ -101,19 +110,19 @@ class TableAnalysis extends EE_Base
                 ) // in case not using mysql and error codes aren't reliable, just check for this error string
             ) {
                 return false;
-            } else {
-                // log this because that's weird. Just use the normal PHP error log
-                error_log(
-                    sprintf(
-                        esc_html__(
-                            'Event Espresso error detected when checking if table existed: %1$s (it wasn\'t just that the table didn\'t exist either)',
-                            'event_espresso'
-                        ),
-                        $new_error
-                    )
-                );
             }
+            // log this because that's weird. Just use the normal PHP error log
+            error_log(
+                sprintf(
+                    esc_html__(
+                        'Event Espresso error detected when checking if table existed: %1$s (it wasn\'t just that the table didn\'t exist either)',
+                        'event_espresso'
+                    ),
+                    $new_error
+                )
+            );
         }
+        $this->known_tables[ $table_name ] = true;
         return true;
     }
 
@@ -127,8 +136,27 @@ class TableAnalysis extends EE_Base
     public function showIndexes(string $table_name, string $index_name): array
     {
         global $wpdb;
+        if (! $this->tableExists($table_name)) {
+            return [];
+        }
         $table_name         = $this->ensureTableNameHasPrefix($table_name);
         $index_exists_query = "SHOW INDEX FROM $table_name WHERE Key_name = '$index_name'";
         return $wpdb->get_results($index_exists_query);
+    }
+
+
+    /**
+     * @param string $table_name
+     * @param string $index_name
+     * @return bool
+     * @since $VID:$
+     */
+    public function indexExists(string $table_name, string $index_name): bool
+    {
+        global $wpdb;
+        $table_name         = $this->ensureTableNameHasPrefix($table_name);
+        $index_exists_query = "SHOW INDEX FROM $table_name WHERE key_name = '$index_name'";
+        // using get_var with the $index_exists_query returns the table's name
+        return $this->tableExists($table_name) && $wpdb->get_var($index_exists_query) === $table_name;
     }
 }

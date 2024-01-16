@@ -12,38 +12,34 @@ use EEH_URL;
  * @author  Hossein Rafiei
  * @since   5.0.0.p
  */
-class DuplicateEventButton
+class DuplicateEventButton extends PermalinkHtmlHook
 {
-    public static function addButton(
-        string $return,
-        int $id,
-        ?string $new_title,
-        ?string $new_slug
-    ): string {
+    public static function addButton(string $html, int $post_id): string
+    {
         // make sure this is only when editing
-        if (empty($id)) {
-            return $return;
+        if (empty($post_id)) {
+            return $html;
         }
-        $post = get_post($id);
+        $post = get_post($post_id);
         // make sure this is EE event
         if (! $post || $post->post_type !== 'espresso_events') {
-            return $return;
+            return $html;
         }
-        $href   = EEH_URL::add_query_args_and_nonce(
-            ['action' => 'duplicate_event', 'EVT_ID' => $id],
+        $href  = EEH_URL::add_query_args_and_nonce(
+            ['action' => 'duplicate_event', 'EVT_ID' => $post_id],
             admin_url('admin.php?page=espresso_events')
         );
-        $title  = esc_attr__('Duplicate', 'event_espresso');
-        $return .= "
-            <a aria-label='$title' 
-               class='button button--tiny button--secondary'  
+        $title = esc_attr__('Duplicate', 'event_espresso');
+        $html  .= "
+            <a aria-label='$title'
+               class='button button--tiny button--secondary'
                href='$href'
-               id='ee-duplicate-event-button' 
+               id='ee-duplicate-event-button'
                value='duplicate_event'
             >
                 <span class='dashicons dashicons-admin-page'></span>
                 $title
             </a>";
-        return $return;
+        return $html;
     }
 }

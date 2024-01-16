@@ -65,7 +65,7 @@ class DateFilterHeader extends AdminPageHeaderDecorator
                     $text
                 );
                 $text .= '&nbsp; &nbsp; ';
-                $text .= '<span class="drk-grey-text">';
+                $text .= '<span class="ee-filter-header__details">';
                 $text .= '<span class="dashicons dashicons-calendar"></span>';
                 $text .= $datetime->name();
                 $text .= ' ( ' . $datetime->start_date() . ' )';

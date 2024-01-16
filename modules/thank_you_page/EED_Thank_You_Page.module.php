@@ -275,6 +275,8 @@ class EED_Thank_You_Page extends EED_Module
             EED_Thank_You_Page::resend_reg_confirmation_email();
         }
         if (! EE_Registry::instance()->SSN instanceof EE_Session) {
+            // Make sure we allow loading the session. It is required here.
+            add_filter('FHEE_load_EE_Session', '__return_true', 999);
             EE_Registry::instance()->SSN = LoaderFactory::getShared('EE_Session');
         }
         EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);

@@ -165,13 +165,8 @@ class TableManager extends EE_Base
             return 0;
         }
         global $wpdb;
-        $table_name         = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
-        $index_exists_query = "SHOW INDEX FROM $table_name WHERE key_name = '$index_name'";
-        if (
-            $this->getTableAnalysis()->tableExists($table_name)
-            && $wpdb->get_var($index_exists_query)
-               === $table_name // using get_var with the $index_exists_query returns the table's name
-        ) {
+        $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
+        if ($this->getTableAnalysis()->indexExists($table_name, $index_name)) {
             return $wpdb->query("ALTER TABLE $table_name DROP INDEX $index_name");
         }
         return 0;
@@ -246,7 +241,7 @@ class TableManager extends EE_Base
      * @param string     $index_name
      * @param string     $column_name        if none is provided, we assume the column name matches the index
      *                                       (often true in EE)
-     * @param string|int $desired_index_size defaults to TableAnalysis::index_col_size, the max for utf8mb4.
+     * @param string|int $index_size         defaults to TableAnalysis::index_col_size, the max for utf8mb4.
      * @return bool whether an index was dropped or not
      * @throws /EE_Error if table analysis object isn't defined
      */
@@ -254,7 +249,7 @@ class TableManager extends EE_Base
         string $table_name,
         string $index_name,
         string $column_name = '',
-        $desired_index_size = TableAnalysis::INDEX_COLUMN_SIZE
+        $index_size = TableAnalysis::INDEX_COLUMN_SIZE
     ) {
         if ($column_name === '') {
             $column_name = $index_name;
@@ -269,11 +264,49 @@ class TableManager extends EE_Base
         foreach ($index_entries as $index_entry) {
             if (
                 $column_name === $index_entry->Column_name
-                && (string)$desired_index_size !== $index_entry->Sub_part
+                && (string) $index_size !== $index_entry->Sub_part
             ) {
                 return $this->dropIndex($table_name, $index_name);
             }
         }
         return false;
+    }
+
+
+    /**
+     * @param string      $table_name
+     * @param string      $index_name
+     * @param string      $column_name
+     * @param string      $index_type
+     * @param string|null $index_size
+     * @param bool $descending
+     * @throws EE_Error
+     */
+    public function addIndex(
+        string $table_name,
+        string $index_name,
+        string $column_name,
+        string $index_type = TableAnalysis::INDEX_TYPE_INDEX,
+        ?string $index_size = null,
+        bool $descending = false
+    ) {
+        if (apply_filters('FHEE__EEH_Activation__add_index__short_circuit', false)) {
+            return;
+        }
+        global $wpdb;
+        $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
+        if (! $this->getTableAnalysis()->indexExists($table_name, $index_name)) {
+            // ensure index type is valid
+            $index_type = in_array($index_type, [TableAnalysis::INDEX_TYPE_INDEX, TableAnalysis::INDEX_TYPE_UNIQUE])
+                    ? $index_type
+                    : TableAnalysis::INDEX_TYPE_INDEX;
+            // ensure index size does not exceed max allowed for utf8mb4
+            $index_size  = $index_size ? max($index_size, TableAnalysis::INDEX_COLUMN_SIZE) : null;
+            // if index size is set, then add it to the column name
+            $column_name = $index_size ? "$column_name($index_size)" : $column_name;
+            // add DESC to the column name for indexes that will benefit from that (like timestamps)
+            $column_name = $descending ? "$column_name DESC" : $column_name;
+            $wpdb->query("ALTER TABLE $table_name ADD $index_type $index_name ($column_name);");
+        }
     }
 }

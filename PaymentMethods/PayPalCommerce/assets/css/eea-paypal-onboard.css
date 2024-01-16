@@ -29,14 +29,14 @@
     background-size: 22px 22px;
 }
 
-
+.eea-onboard-section .eea-paypal-onboard-trigger-btn {
+    display: none !important;
+}
 
 /** PayPal Commerce images **/
 .eea-paypal-onboard-btn span:before {
     background-image: url('https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-mark-color.svg');
 }
-
-
 
 /** Connection information text **/
 .eea-paypal-offboard-ico {
@@ -56,9 +56,61 @@
     font-weight: bold;
 }
 
-
 /** Disconnect dialog **/
 .ee-admin-dialog-container .eea-paypal-dialog-cancel, .ee-admin-dialog-container .eea-paypal-dialog-ok {
     margin: 20px 10px 0 10px;
     float: right;
+}
+
+/** Processing Mask **/
+.eep-ppc-processing-mask {
+    z-index: 9999990;
+    position: fixed;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.82;
+}
+
+.eep-ppc-processing-message {
+    z-index: 9999991;
+    position: fixed;
+    align-self: center;
+    width: 20em;
+    height: 6em;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    color: #ADB3B6FF;
+    text-align: center;
+    background: rgb(17 17 17 / 36%);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.eep-ppc-pm-types {
+    margin: 10px 0 10px;
+}
+
+.eep-ppc-pm-types .ee-checkbox-label-after,
+.eea-ppc-express-checkout-img .ee-checkbox-label-after {
+    margin-block-start: 0 !important;
+}
+
+.eea-ppc-ppcp-img {
+    width: 140px;
+}
+.eea-ppc-ppcp-img, .eea-ppc-express-checkout-img {
+    padding: 10px;
+}
+
+.eep-ppc-dialog-yes-no {
+    text-align: right;
 }

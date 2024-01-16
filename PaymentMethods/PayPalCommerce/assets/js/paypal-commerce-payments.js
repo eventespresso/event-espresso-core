@@ -18,12 +18,14 @@ jQuery(document).ready(function ($) {
      * @namespace paypal
      * @type {{
      *  paypal: object,
+     *  hostedFields: Object,
      * }}
+     *
      * @namespace eeaPPCommerceParameters
      * @type {{
      * 	pm_versions: array,
-     * 	client_id: string,
      * 	payment_currency: string,
+     * 	checkout_type: string,
      * 	currency_sign: string,
      * 	pp_order_id: string,
      * 	pp_order_nonce: string,
@@ -31,6 +33,7 @@ jQuery(document).ready(function ($) {
      * 	org_country: string,
      * 	decimal_places: int,
      * 	site_name: string,
+     * 	active_states: array,
      * 	no_spco_error: string,
      * 	no_pm_error: string,
      * 	browser_not_supported: string,
@@ -41,6 +44,9 @@ jQuery(document).ready(function ($) {
      * 	payment_error: string,
      * 	no_order_id: string,
      * 	general_pp_error: string,
+     * 	hf_render_error: string,
+     * 	pm_capture_error: string,
+     * 	not_acdc_eligible: string,
      * }}
      */
     function EeaPayPalCheckout(pm_slug) {
@@ -48,7 +54,6 @@ jQuery(document).ready(function ($) {
         this.paypal = {};
         this.transaction = {};
         this.spco = window.SPCO || null;
-
 
         /**
          * Initial setup.
@@ -59,13 +64,13 @@ jQuery(document).ready(function ($) {
             // Ensure that the SPCO has loaded.
             if (typeof this.spco == null) {
                 this.hidePm();
-                this.throwError(eeaPPCommerceParameters.no_spco_error, '', false);
+                this.throwError(eeaPPCommerceParameters.no_spco_error, '', this.slug, false);
                 return false;
             }
             // Ensure that PayPal scripts loaded.
             if (typeof paypal === 'undefined') {
                 this.hidePm();
-                this.throwError(eeaPPCommerceParameters.no_pm_error, '');
+                this.throwError(eeaPPCommerceParameters.no_pm_error, '', this.slug);
                 return false;
             }
             // Prevent loading on registration page.
@@ -74,7 +79,13 @@ jQuery(document).ready(function ($) {
             }
             // PayPal components will require re-setup even if PM already initialized.
             if (this.initialized) {
-                this.setupPayPal();
+                // PayPal buttons or Hosted Fields ?
+                    if (eeaPPCommerceParameters.checkout_type !== 'express_checkout') {
+                        this.setupHostedFields();
+                    }
+                    if (eeaPPCommerceParameters.checkout_type !== 'ppcp') {
+                        this.setupPayPalButtons();
+                    }
                 this.disableSubmitButtons();
                 return true;
             }
@@ -96,42 +107,35 @@ jQuery(document).ready(function ($) {
             if (! this.pp_order_id || this.pp_order_id.length < 1) {
                 this.pp_order_id = eeaPPCommerceParameters.pp_order_id;
             }
-            // this.button_container_id = 'eea-' + pm_slug + '-payment-buttons';
-            this.button_container_id = 'eea-paypal-commerce-payment-buttons';
-            this.payment_button_container = $('#' + this.button_container_id);
+            this.button_container_id = '#eep-' + pm_slug + '-payment-buttons';
             this.payment_method_selector = $('#ee-available-payment-method-inputs');
             this.payment_method_select_lbl = $('#ee-available-payment-method-inputs-' + pm_slug + '-lbl');
             this.payment_method_info_div = $('#spco-payment-method-info-' + pm_slug);
             this.billing_form = $('#pp-' + pm_slug + '-billing-form');
-            this.payment_form = this.payment_button_container.parents('form:first');
             // PP order details
             this.order_nonce_input = $('#eea-' + pm_slug + '-order-nonce');
             this.order_id_input = $('#eea-' + pm_slug + '-order-id');
             this.order_status_input = $('#eea-' + pm_slug + '-order-status');
             this.order_amount_input = $('#eea-' + pm_slug + '-order-amount');
-            // Billing data.
-            if (typeof this.billing_form !== 'undefined') {
-                this.bill_first_name = this.billing_form.find(
-                    'input[id*="billing-form-first-name"]:visible');
-                this.bill_last_name = this.billing_form.find(
-                    'input[id*="billing-form-last-name"]:visible');
-                this.bill_email = this.billing_form.find(
-                    'input[id*="billing-form-email"]:visible');
-                this.bill_address = this.billing_form.find(
-                    'input[id*="billing-form-address"]:visible');
-                this.bill_address_2 = this.billing_form.find(
-                    'input[id*="billing-form-address2"]:visible');
-                this.bill_city = this.billing_form.find(
-                    'input[id*="billing-form-city"]:visible');
-                this.bill_state = this.billing_form.find(
-                    'select[id*="billing-form-state"]:visible');
-                this.bill_country = this.billing_form.find(
-                    'select[id*="billing-form-country"]:visible');
-                this.bill_zip = this.billing_form.find(
-                    'input[id*="billing-form-zip"]:visible');
-                this.bill_phone = this.billing_form.find(
-                    'input[id*="billing-form-phone"]:visible');
-            }
+            // PP credit card fields
+            this.card_input_id = '#' + this.slug + '-card-number';
+            this.cvv_input_id = '#' + this.slug + '-cvv';
+            this.expiration_date_input_id = '#' + this.slug + '-expiration-date';
+            this.card_holder_name_input_id = '#' + this.slug + '-card-holder-name';
+            this.type_separator_id = '#eep-ppc-separator-holder';
+            this.card_fields_class = '.' + this.slug + '-card-fields';
+            this.payment_form = this.order_nonce_input.parents('form:first');
+            this.new_state_form_id = '#new_state_micro_form';
+            this.acdc_submit_btn_dv = '#' + this.slug + '-submit-dv';
+            // Billing inputs.
+            this.bill_address = $('#pp-' + this.slug + '-billing-form-address');
+            this.bill_address_2 = $('#pp-' + this.slug + '-billing-form-address2');
+            this.bill_city = $('#pp-' + this.slug + '-billing-form-city');
+            this.bill_state = $('#pp-' + this.slug + '-billing-form-state');
+            this.bill_country = $('#pp-' + this.slug + '-billing-form-country');
+            this.bill_zip = $('#pp-' + this.slug + '-billing-form-zip');
+            this.bill_phone = $('#pp-' + this.slug + '-billing-form-phone');
+            this.add_new_state = $('#pp-' + this.slug + '-billing-form-nsmf_add_new_state');
         }
 
 
@@ -170,8 +174,13 @@ jQuery(document).ready(function ($) {
                     }
                     // Save transaction data.
                     this_pm.transaction = response;
-                    // Now we can set up PayPal buttons.
-                    this_pm.setupPayPal();
+                    // Now we can set up PayPal. PayPal buttons or Hosted Fields ? Or both ?
+                    if (eeaPPCommerceParameters.checkout_type !== 'express_checkout') {
+                        this_pm.setupHostedFields();
+                    }
+                    if (eeaPPCommerceParameters.checkout_type !== 'ppcp') {
+                        this_pm.setupPayPalButtons();
+                    }
                     this_pm.spco.end_ajax();
                     return true;
                 },
@@ -188,7 +197,7 @@ jQuery(document).ready(function ($) {
          * Sets up PayPal payment button.
          * @function
          */
-        this.setupPayPal = function () {
+        this.setupPayPalButtons = function () {
             const this_pm = this;
             this_pm.spco.do_before_sending_ajax();
             paypal.Buttons({
@@ -196,95 +205,189 @@ jQuery(document).ready(function ($) {
                     layout: 'vertical',
                     color: 'blue',
                     shape: 'rect',
-                    label: 'paypal'
-                },
-                onInit: function (data, actions) {
-                    // actions.disable();
-                },
-                onClick: function () {
-                    console.log('-- PP onClick:');
-                    const form_valid = this_pm.payment_form.valid();
-                    if (!form_valid) {
-                        this_pm.throwError(eeaPPCommerceParameters.form_validation_notice, '');
-                        return false;
-                    }
+                    label: 'pay'
                 },
                 // Sets up the transaction when a payment button is clicked.
                 createOrder: function (data, actions) {
-                    this_pm.spco.do_before_sending_ajax();
-                    console.log('-- PP createOrder:', data, actions);
                     return this_pm.createOrder();
                 },
                 // Finalize the transaction after payer approval
                 onApprove: function (data, actions) {
-                    this_pm.spco.do_before_sending_ajax();
-                    console.log('-- PP onApprove:', data, actions);
-                    return this_pm.captureOrder(data, actions);
+                    this_pm.hideACDCForm();
+                    return this_pm.captureOrder(data);
                 },
                 onError: function (error) {
-                    console.log('-- PP onError:', error);
-                    console.error(eeaPPCommerceParameters.general_pp_error);
+                    console.error(eeaPPCommerceParameters.general_pp_error, error);
                     if (String(error).includes('PAYMENT_ALREADY_DONE')) {
                         // Hide any return to cart buttons, etc.
                         $('.hide-me-after-successful-payment-js').hide();
                         // Save order ID.
-                        const order_data = {
-                            pp_order_id: this_pm.getOrderId(),
-                            pp_order_nonce: this_pm.getOrderNonce(),
-                        };
-                        this_pm.saveOrderData(order_data);
+                        this_pm.saveOrderInDom();
+                        this_pm.hideACDCForm();
                         // Trigger click event on SPCO "Proceed to Next Step" button.
                         this_pm.spco.enable_submit_buttons();
-                        this_pm.payment_button_container.parents('form:first').find('.spco-next-step-btn').trigger('click');
+                        this_pm.order_nonce_input.parents('form:first').find('.spco-next-step-btn').trigger('click');
                     } else {
-                        let message = eeaPPCommerceParameters.payment_error + '; ' + error;
-                        this_pm.throwError(message, this_pm.slug);
+                        let message = eeaPPCommerceParameters.payment_error;
+                        this_pm.throwError(message, error, this_pm.slug);
                     }
                 }
-            }).render('#' + this.button_container_id);
+            }).render(this.button_container_id);
             this_pm.spco.end_ajax();
         };
+
+
+        /**
+         * Sets up PayPal Hosted Fields.
+         * @function
+         */
+        this.setupHostedFields = function () {
+            const this_pm = this;
+            this_pm.spco.do_before_sending_ajax();
+            if (paypal.HostedFields.isEligible()) {
+                // Renders card fields
+                paypal.HostedFields.render({
+                    // Call your server to set up the transaction
+                    createOrder: function () {
+                        return this_pm.createOrder();
+                    },
+                    styles: {
+                        '.valid': {
+                            'color': 'green'
+                        },
+                        '.invalid': {
+                            'color': 'red'
+                        }
+                    },
+                    fields: {
+                        number: {
+                            selector: this_pm.card_input_id,
+                            placeholder: "4111 1111 1111 1111"
+                        },
+                        cvv: {
+                            selector: this_pm.cvv_input_id,
+                            placeholder: "123"
+                        },
+                        expirationDate: {
+                            selector: this_pm.expiration_date_input_id,
+                            placeholder: "MM/YY"
+                        }
+                    }
+                }).then(function (cardFields) {
+                    this_pm.submitCardFieldsListener(cardFields);
+                }).catch(function (orderData) {
+                    this_pm.throwError(
+                        eeaPPCommerceParameters.hf_render_error + ' ' + JSON.stringify(orderData),
+                        JSON.stringify(orderData),
+                        this_pm.slug
+                    );
+                });
+            } else {
+                // Hides card fields if the merchant isn't eligible
+                this_pm.hideACDCForm();
+                this_pm.displayError(
+                    eeaPPCommerceParameters.not_acdc_eligible,
+                    $(this.button_container_id)
+                );
+                // And allow Express checkout.
+                if (eeaPPCommerceParameters.checkout_type === 'ppcp') {
+                    this_pm.setupPayPalButtons();
+                }
+            }
+            this_pm.spco.end_ajax();
+        }
+
+
+        /**
+         * Listener for the card fields submit action.
+         * @function
+         */
+        this.submitCardFieldsListener = function (cardFields) {
+            const this_pm = this;
+            $("#" + this_pm.slug + "-submit").on('click', (event) => {
+                event.preventDefault();
+                // Validate the form.
+                let state = cardFields.getState();
+                let form_valid = this_pm.payment_form.valid();
+                Object.keys(state.fields).forEach(function callback(value) {
+                    let field_valid = state.fields[value].isValid;
+                    // Highlight the problem field.
+                    if (!field_valid) {
+                        form_valid = false;
+                        $(state.fields[value].container).addClass('ee-needs-value');
+                    } else {
+                        $(state.fields[value].container).removeClass('ee-needs-value');
+                    }
+                });
+                if (form_valid) {
+                    let bill_state = '';
+                    let bill_state_id = this.bill_state.val();
+                    for (const key in eeaPPCommerceParameters.active_states) {
+                        if (bill_state_id === key) {
+                            bill_state = eeaPPCommerceParameters.active_states[key];
+                        }
+                    }
+
+                    let bill_address_2 = this.bill_address_2.val();
+                    if (!bill_address_2) {
+                        bill_address_2 = '';
+                    }
+                    cardFields.submit({
+                        // Cardholder's first and last name
+                        cardholderName: $(this_pm.card_holder_name_input_id).val(),
+                        // Billing Address
+                        billingAddress: {
+                            // Street address, line 1
+                            streetAddress: this.bill_address.val(),
+                            // Street address, line 2 (Ex: Unit, Apartment, etc.)
+                            extendedAddress: bill_address_2,
+                            // State
+                            region: bill_state,
+                            // City
+                            locality: this.bill_city.val(),
+                            // Postal Code
+                            postalCode: this.bill_zip.val(),
+                            // Country Code
+                            countryCodeAlpha2: this.bill_country.val()
+                        }
+                    }).then(function () {
+                        return this_pm.captureOrder([]);
+                    }).catch(function (err) {
+                        this_pm.throwError(
+                            eeaPPCommerceParameters.pm_capture_error + ' ' + JSON.stringify(err),
+                            JSON.stringify(err),
+                            this_pm.slug
+                        );
+                    });
+                } else {
+                    this_pm.displayError(
+                        eeaPPCommerceParameters.form_validation_notice,
+                        $(this_pm.card_input_id)
+                    );
+                }
+            });
+        }
 
 
         /**
          * Send a request to the server side to create an Order through the PayPal API.
          * @function
          */
-        this.createOrder = function () {
-            console.log('-- createOrder:');
+        this.createOrder = function (billing_info) {
+            console.log('function createOrder()');
+            this.spco.do_before_sending_ajax();
             // Do we already have an order created ?
             if (this.pp_order_id.length > 0) {
-                console.log('-- createOrder return:', this.pp_order_id);
                 this.spco.end_ajax();
                 return this.pp_order_id;
             }
             // Create a new order.
             const this_pm = this;
             const request_data = new FormData();
-            const billing_info = {
-                bill_first_name: this.bill_first_name.val(),
-                bill_last_name: this.bill_last_name.val(),
-                bill_address: this.bill_address.val(),
-                bill_city: this.bill_city.val(),
-                bill_state: this.bill_state.val(),
-                bill_country: this.bill_country.val(),
-                bill_zip: this.bill_zip.val(),
-                bill_email: this.bill_email.val()
-            };
-            let bill_address_2 = this.bill_address_2.val();
-            if (bill_address_2) {
-                billing_info.bill_address_2 = bill_address_2;
-            }
-            let phone = this.bill_phone.val();
-            if (phone) {
-                billing_info.bill_phone = phone;
-            }
-            console.log('-- billing_info:', billing_info);
-            request_data.append('action', 'eeaPpCreateOrder');
+            request_data.append('action', 'eeaPPCCreateOrder');
             request_data.append('txn_id', eeaPPCommerceParameters.txn_id);
             request_data.append('payment_method', this.slug);
             request_data.append('billing_info', JSON.stringify(billing_info));
-
             // Do a request to create an Order.
             return fetch(eei18n.ajax_url, {
                 method: 'POST',
@@ -302,14 +405,14 @@ jQuery(document).ready(function ($) {
                         if (typeof response_data.error !== 'undefined') {
                             message = response_data.error;
                         }
-                        this_pm.throwError(message, this_pm.slug, false);
-                        console.log('-- createOrder return false:');
+                        this_pm.throwError(message, response_data, this_pm.slug, false);
+                        console.log('-- createOrder return false!');
                         this_pm.spco.end_ajax();
                         return false;
                     }
                 })
                 .catch((error) => {
-                    this_pm.throwError(error, this_pm.slug);
+                    this_pm.throwError(error, '', this_pm.slug);
                 });
         };
 
@@ -318,14 +421,19 @@ jQuery(document).ready(function ($) {
          * Send a request to the server side to capture the Order through the PayPal API.
          * @function
          */
-        this.captureOrder = function (order_data, order_actions) {
-            console.log('-- captureOrder:', order_data);
+        this.captureOrder = function (order_data) {
+            console.log('function captureOrder()');
             const this_pm = this;
+            this_pm.spco.do_before_sending_ajax();
             const request_data = new FormData();
-            request_data.append('action', 'eeaPpCaptureOrder');
+            let order_id = this.getOrderId();
+            if (typeof order_data.orderID !== 'undefined' && order_data.orderID) {
+                order_id = order_data.orderID;
+            }
+            request_data.append('action', 'eeaPPCCaptureOrder');
             request_data.append('payment_method', this.slug);
             request_data.append('txn_id', eeaPPCommerceParameters.txn_id);
-            request_data.append('order_id', order_data.orderID);
+            request_data.append('order_id', order_id);
 
             // Do a request to capture the Order.
             return fetch(eei18n.ajax_url, {
@@ -336,14 +444,13 @@ jQuery(document).ready(function ($) {
                 .then((response_data) => {
                     console.log('-- captureOrder response:', response_data);
                     if (typeof response_data.error !== 'undefined') {
-                        // if (response_data.name === 'INSTRUMENT_DECLINED') {
-                        //     this_pm.clearOrder();
-                        // }
+                        if (response_data.name === 'INSTRUMENT_DECLINED') {
+                            this_pm.clearOrder();
+                        }
                         let message = eeaPPCommerceParameters.payment_error;
                         if (response_data.message) message += '\n\n' + response_data.message;
-                        this_pm.throwError(message, this_pm.slug);
+                        this_pm.throwError(message, response_data, this_pm.slug);
                         // order_actions.restart();
-                        console.log('-- captureOrder return []:');
                         this_pm.spco.end_ajax();
                         return [];
                     }
@@ -353,7 +460,7 @@ jQuery(document).ready(function ($) {
                     $('.hide-me-after-successful-payment-js').hide();
                     // Trigger click event on SPCO "Proceed to Next Step" button.
                     this_pm.spco.enable_submit_buttons();
-                    this_pm.payment_button_container.parents('form:first').find('.spco-next-step-btn').trigger('click');
+                    this_pm.order_nonce_input.parents('form:first').find('.spco-next-step-btn').trigger('click');
                     console.log('-- captureOrder return response_data:', response_data);
                     this_pm.spco.end_ajax();
                     return response_data;
@@ -362,18 +469,74 @@ jQuery(document).ready(function ($) {
 
 
         /**
+         * Hide the advanced credit debit card fields.
+         * @function
+         */
+        this.hideACDCForm = function () {
+            const card_fields = [
+                $(this.card_fields_class),
+                $(this.type_separator_id),
+                $(this.new_state_form_id),
+                $(this.acdc_submit_btn_dv),
+            ];
+            const bill_fields = [
+                $(this.card_holder_name_input_id),
+                this.bill_address,
+                this.bill_address_2,
+                this.bill_city,
+                this.bill_state,
+                this.bill_country,
+                this.bill_zip,
+                this.bill_phone,
+                this.add_new_state,
+            ];
+            // No need to validate this form, disable inputs.
+            SPCO.remove_previous_validation_rules();
+            // Send additional POST data with the form submit
+            SPCO.additional_post_data += '&eep_ppc_skip_form_validation=true';
+            $.each(bill_fields, function(index, field) {
+                    field.parent().hide();
+                    field.removeAttr('required');
+                }
+            );
+            // Hide card fields as well.
+            $.each(card_fields, function(index, field) {
+                    field.hide();
+                }
+            );
+        }
+
+
+        /**
          * Add order data to the payment form to pass it to the gateway.
          * @function
          */
         this.saveOrderData = function (order_data) {
-            console.log('-- saveOrderData:', order_data);
-            // Save order data in case there's an error.
-            this.pp_order_id = order_data.pp_order_id;
-            this.pp_order_nonce = order_data.pp_order_nonce;
+            console.log('function saveOrderData()', order_data);
+            // Check each parameter before setting its value.
+            if (typeof order_data.pp_order_id !== 'undefined' && order_data.pp_order_id) {
+                this.pp_order_id = order_data.pp_order_id;
+            }
+            if (typeof order_data.pp_order_nonce !== 'undefined' && order_data.pp_order_nonce) {
+                this.pp_order_nonce = order_data.pp_order_nonce;
+            }
+            if (typeof order_data.pp_order_status !== 'undefined' && order_data.pp_order_status) {
+                this.order_status_input.val(order_data.pp_order_status);
+            }
+            if (typeof order_data.pp_order_amount !== 'undefined' && order_data.pp_order_amount) {
+                this.order_amount_input.val(order_data.pp_order_amount);
+            }
+            this.saveOrderInDom();
+        };
+
+
+        /**
+         * Get paypal_order_id.
+         * @function
+         */
+        this.saveOrderInDom = function () {
             this.order_id_input.val(this.pp_order_id);
             this.order_nonce_input.val(this.pp_order_nonce);
-            this.order_status_input.val(order_data.pp_order_status);
-            this.order_amount_input.val(order_data.pp_order_amount);
         };
 
 
@@ -400,7 +563,7 @@ jQuery(document).ready(function ($) {
          * @function
          */
         this.clearOrder = function () {
-            console.log('-- clearOrder:');
+            console.log('function clearOrder()');
             this.pp_order_id = '';
             this.pp_order_nonce = '';
             return true;
@@ -410,24 +573,28 @@ jQuery(document).ready(function ($) {
         /**
          * Display and/or log the error.
          * @function
+         * @param message
          * @param details
          * @param pm_slug
          * @param log_error
          * @param display_error
          */
-        this.throwError = function (details, pm_slug, log_error, display_error) {
-            let error = eeaPPCommerceParameters.error_response;
-            if (details) {
-                error = error + ': ' + details;
+        this.throwError = function (message, details, pm_slug, log_error, display_error) {
+            let error_message = eeaPPCommerceParameters.error_response;
+            if (message) {
+                error_message = error_message + ': ' + message;
             }
-            console.error(error);
+            console.error(error_message, details);
             // front-end message
             if (display_error !== false) {
-                this.displayError(details);
+                this.displayError(error_message);
             }
             // add to PM logs
             if (log_error !== false) {
-                this.logError(error, pm_slug);
+                if (!details) {
+                    details = error_message;
+                }
+                this.logError(details, pm_slug);
             }
         };
 
@@ -446,13 +613,12 @@ jQuery(document).ready(function ($) {
          * Scroll to top and display the error message.
          * @function displayError
          */
-        this.displayError = function (message) {
+        this.displayError = function (message, item) {
             let notification = this.spco.generate_message_object('', '', message);
-            this.spco.scroll_to_top_and_display_messages(
-                this.payment_method_info_div,
-                notification,
-                this
-            );
+            if (typeof item === 'undefined' || typeof item.offset() === 'undefined') {
+                item = this.spco.main_container;
+            }
+            this.spco.scroll_to_top_and_display_messages(item, notification, true);
         };
 
 
@@ -483,7 +649,7 @@ jQuery(document).ready(function ($) {
          * @function disableSubmitButtons
          */
         this.disableSubmitButtons = function () {
-            if (this.selected && this.payment_button_container.length > 0) {
+            if (this.selected && this.order_nonce_input.length > 0) {
                 this.spco.allow_enable_submit_buttons = false;
                 this.spco.disable_submit_buttons();
             }

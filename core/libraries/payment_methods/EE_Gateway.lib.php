@@ -42,7 +42,7 @@ abstract class EE_Gateway
      *
      * @var boolean
      */
-    protected $_supports_sending_refunds = false;
+    protected bool $_supports_sending_refunds = false;
 
     /**
      * Whether this gateway can support RECEIVING a refund request from the payment
@@ -50,76 +50,70 @@ abstract class EE_Gateway
      *
      * @var boolean
      */
-    protected $_supports_receiving_refunds = false;
+    protected bool $_supports_receiving_refunds = false;
 
     /**
      * Model for querying for existing payments
      *
-     * @var EEMI_Payment
+     * @var EEMI_Payment|null
      */
-    protected $_pay_model;
+    protected ?EEMI_Payment $_pay_model = null;
 
     /**
      * Model used for adding to the payments log
      *
-     * @var EEM_Change_Log
+     * @var EEM_Change_Log|null
      */
-    protected $_pay_log;
+    protected ?EEM_Change_Log $_pay_log = null;
 
     /**
      * Used for formatting some input to gateways
      *
-     * @var EEH_Template
+     * @var EEH_Template|null
      */
-    protected $_template;
+    protected ?EEH_Template $_template = null;
 
     /**
      * Concrete class that implements EEHI_Money, used by most gateways
      *
-     * @var EEH_Money
+     * @var EEH_Money|null
      */
-    protected $_money;
+    protected ?EEH_Money $_money = null;
 
     /**
      * Concrete class that implements EEH_Line_Item, used for manipulating the line item tree
      *
-     * @var EEH_Line_Item
+     * @var EEH_Line_Item|null
      */
-    protected $_line_item;
+    protected ?EEH_Line_Item $_line_item = null;
 
-    /**
-     * @var GatewayDataFormatterInterface
-     */
-    protected $_gateway_data_formatter;
+    protected ?GatewayDataFormatterInterface $_gateway_data_formatter = null;
 
-    /**
-     * @var FormatterInterface
-     */
-    protected $_unsupported_character_remover;
+    protected ?FormatterInterface $_unsupported_character_remover = null;
 
     /**
      * The ID of the payment method using this gateway
      *
      * @var int
      */
-    protected int $_ID;
+    protected int $_ID = 0;
 
     /**
      * @var $_debug_mode boolean whether to send requests to teh sandbox site or not
      */
-    protected bool $_debug_mode;
+    protected bool $_debug_mode = false;
 
     /**
      * @var string $_name name to show for this payment method
      */
-    protected string $_name;
+    protected string $_name = '';
 
     /**
      * @var string name to show for this payment method to admin-type users
      */
-    protected string $_admin_name;
+    protected string $_admin_name = '';
 
-    protected array $settings;
+    protected array $settings = [];
 
 
 

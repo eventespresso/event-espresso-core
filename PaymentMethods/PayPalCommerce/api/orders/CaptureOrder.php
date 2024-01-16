@@ -25,14 +25,14 @@ class CaptureOrder extends OrdersApi
      *
      * @var string
      */
-    protected $currency_code;
+    protected string $currency_code;
 
     /**
      * Transaction this order is for.
      *
      * @var EE_Transaction
      */
-    protected $transaction;
+    protected EE_Transaction $transaction;
 
 
     /**
@@ -55,7 +55,6 @@ class CaptureOrder extends OrdersApi
      * Capture payment for PayPal Order.
      *
      * @return array
-     * @throws EE_Error
      */
     public function capture(): array
     {

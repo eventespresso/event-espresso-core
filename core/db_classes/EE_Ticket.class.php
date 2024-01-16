@@ -645,12 +645,19 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_ticket_total_with_taxes($no_cache = false)
+    public function get_ticket_total_with_taxes(bool $no_cache = false): float
     {
         if ($this->_ticket_total_with_taxes === null || $no_cache) {
-            $this->_ticket_total_with_taxes = $this->usesGlobalTaxes()
-                ? $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin()
-                : $this->ticket_price();
+            $this->_ticket_total_with_taxes = $this->get_ticket_subtotal();
+            // add taxes
+            if ($this->usesGlobalTaxes()) {
+                $this->_ticket_total_with_taxes += $this->get_ticket_taxes_total_for_admin();
+            } else {
+                $subtotal = $this->_ticket_total_with_taxes;
+                foreach ($this->tax_price_modifiers() as $tax) {
+                    $this->_ticket_total_with_taxes += $subtotal * $tax->amount() / 100;
+                }
+            }
         }
         return (float) $this->_ticket_total_with_taxes;
     }

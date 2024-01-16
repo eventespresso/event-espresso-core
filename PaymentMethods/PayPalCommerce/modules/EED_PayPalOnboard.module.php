@@ -1,6 +1,9 @@
 <?php
 
 use EventEspresso\core\domain\services\database\DbStatus;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\DataType;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\partners\TrackSellerOnboarding;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
@@ -36,36 +39,27 @@ class EED_PayPalOnboard extends EED_Module
      */
     public function run($WP)
     {
-        // TODO: Implement run() method.
     }
 
 
     /**
-     * For hooking into EE Core, other modules, etc.
+     * For hooking into EE Admin Core and other modules.
      *
      * @return void
      */
-    public static function set_hooks()
-    {
-    }
-
-
-    /**
-     * For hooking into EE Admin Core, other modules, etc.
-     *
-     * @return void
-     */
-    public static function set_hooks_admin()
+    public static function set_hooks_admin(): void
     {
         if (DbStatus::isOnline()) {
             // Get onboarding URL.
             add_action('wp_ajax_eeaPpGetOnboardingUrl', [__CLASS__, 'getOnboardingUrl']);
-            // Get the seller access token.
-            add_action('wp_ajax_eeaPpGetSellerAccessToken', [__CLASS__, 'getSellerAccessToken']);
+            // Catch the return/redirect from PayPal onboarding page.
+            add_action('init', [__CLASS__, 'updateOnboardingStatus'], 10);
             // Return the connection/onboard status.
             add_action('wp_ajax_eeaPpGetOnboardStatus', [__CLASS__, 'getOnboardStatus']);
             // Revoke access.
             add_action('wp_ajax_eeaPpOffboard', [__CLASS__, 'offboard']);
+            // Admin notice.
+            add_action('admin_init', [__CLASS__, 'adminNotice']);
         }
     }
 
@@ -76,7 +70,7 @@ class EED_PayPalOnboard extends EED_Module
      *
      * @return void
      */
-    public static function getOnboardingUrl()
+    public static function getOnboardingUrl(): void
     {
         $signup_link = '';
         try {
@@ -89,44 +83,26 @@ class EED_PayPalOnboard extends EED_Module
                 );
             }
             PayPalExtraMetaManager::updateDebugMode($paypal_pm, EED_Module::getRequest()->postParams());
-            $signup_link = self::getSignUpLink($paypal_pm);
+            // $signup_link   = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_ONBOARDING_URL);
+            // $token_expired = EED_PayPalOnboard::partnerAccessTokenExpired($paypal_pm);
+            // if (! $signup_link || $token_expired) {
+            $signup_link = EED_PayPalOnboard::requestOnboardingUrl($paypal_pm);
+            // }
+            if (! $signup_link) {
+                $err_msg = esc_html__('Error! Could not generate a sign-up link.', 'event_espresso');
+                PayPalLogger::errorLogAndExit($err_msg, ['signup_link' => $signup_link], $paypal_pm);
+            }
+            PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_ONBOARDING_URL, $signup_link);
         } catch (Exception $exception) {
-            self::exitWithError($exception->getMessage());
+            PayPalLogger::errorLogAndExit($exception->getMessage());
         }
         // Is it empty (can happen if we didn't get the URL through the API).
         $signup_link = $signup_link ? $signup_link . '?&displayMode=minibrowser' : '#';
-        echo json_encode(
+        wp_send_json(
             [
                 'signup_link' => $signup_link,
             ]
         );
-        exit();
-    }
-
-
-    /**
-     * Get the URL to redirect the seller to and start the onboarding.
-     *
-     * @param EE_Payment_Method $paypal_pm
-     * @return string
-     * @throws EE_Error
-     * @throws Exception
-     */
-    public static function getSignUpLink(EE_Payment_Method $paypal_pm): string
-    {
-        $signup_link   = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_ONBOARDING_URL);
-        $token_expired = self::partnerAccessTokenExpired($paypal_pm);
-        if (! $signup_link || $token_expired) {
-            // Generate sign-up link and save.
-            $signup_link = self::requestOnboardingUrl($paypal_pm);
-            if (! $signup_link) {
-                $err_msg = esc_html__('Error! Could not generate a sign-up link.', 'event_espresso');
-                PayPalLogger::errorLog($err_msg, ['signup_link' => $signup_link], $paypal_pm);
-                return '';
-            }
-            PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_ONBOARDING_URL, $signup_link);
-        }
-        return $signup_link;
     }
 
 
@@ -134,53 +110,25 @@ class EED_PayPalOnboard extends EED_Module
      * Request the sign-up link from PayPal.
      *
      * @param EE_Payment_Method $paypal_pm
+     * @param bool              $one_time_request
      * @return string
      * @throws EE_Error
      * @throws Exception
      */
-    public static function requestOnboardingUrl(EE_Payment_Method $paypal_pm): string
+    public static function requestOnboardingUrl(EE_Payment_Method $paypal_pm, bool $one_time_request = false): string
     {
         $signup_link = '';
         // Get the access token.
-        $access_token = self::getPartnerAccessToken($paypal_pm);
+        $access_token = EED_PayPalOnboard::getPartnerAccessToken($paypal_pm);
         if (! $access_token) {
             $err_msg = esc_html__('Error! No access token.', 'event_espresso');
             PayPalLogger::errorLog($err_msg, ['access_token' => $access_token], $paypal_pm);
-            return $signup_link;
+            return '';
         }
-        $identifier_string = new OneTimeString($paypal_pm->debug_mode());
-        $seller_nonce      = $identifier_string->value();
-        // Save the identifier for future use.
-        PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_SELLER_NONCE, $seller_nonce);
         // Request the access token.
-        $body_params = json_encode(
-            [
-                'products'       => ['EXPRESS_CHECKOUT'],
-                'legal_consents' => [
-                    [
-                        'type'    => 'SHARE_DATA_CONSENT',
-                        'granted' => true,
-                    ],
-                ],
-                'operations'     => [
-                    [
-                        'operation'                  => 'API_INTEGRATION',
-                        'api_integration_preference' => [
-                            'rest_api_integration' => [
-                                'integration_method'  => 'PAYPAL',
-                                'integration_type'    => 'FIRST_PARTY',
-                                'first_party_details' => [
-                                    'features'     => ['PAYMENT', 'REFUND', 'PARTNER_FEE'],
-                                    'seller_nonce' => $seller_nonce,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ]
-        );
+        $body_params = EED_PayPalOnboard::signupLinkRequestBody($paypal_pm);
         $bn_code     = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_BN_CODE);
-        $post_args   = [
+        $post_params = [
             'method'  => 'POST',
             'headers' => [
                 'User-Agent'                    => sanitize_text_field($_SERVER['HTTP_USER_AGENT']),
@@ -190,13 +138,19 @@ class EED_PayPalOnboard extends EED_Module
             ],
             'body'    => $body_params,
         ];
-        $request_url = self::getPayPalApiUrl($paypal_pm) . '/v2/customer/partner-referrals';
-        $response    = self::sendRequest($paypal_pm, $request_url, $post_args);
-        if (isset($response['error'])) {
-            return '';
-        }
+        $request_url = Domain::getPayPalApiUrl($paypal_pm) . '/v2/customer/partner-referrals';
+        $response    = EED_PayPalOnboard::sendRequest($paypal_pm, $request_url, $post_params);
         // Check the data we received.
-        if (empty($response['links'])) {
+        if (isset($response['error']) || empty($response['links'])) {
+            // Did the original access token get replaced by any chance ?
+            if (! $one_time_request
+                && ! empty($response['message'])
+                && $response['message'] === 'Access Token not found in cache'
+            ) {
+                // Clear all PM metadata and try getting the access token One more time.
+                PayPalExtraMetaManager::deleteAllData($paypal_pm);
+                return EED_PayPalOnboard::requestOnboardingUrl($paypal_pm, true);
+            }
             $err_msg = esc_html__('Incoming sign-up link parameter validation failed.', 'event_espresso');
             PayPalLogger::errorLog($err_msg, $response, $paypal_pm);
             return '';
@@ -204,10 +158,196 @@ class EED_PayPalOnboard extends EED_Module
         // Now retrieve that sign-up link.
         foreach ($response['links'] as $link) {
             if ($link['rel'] === 'action_url') {
-                return $link['href'] ?? '';
+                $signup_link = $link['href'] ?? '';
             }
         }
         return $signup_link;
+    }
+
+
+    /**
+     * Get the return URL.
+     *
+     * @param EE_Payment_Method $paypal_pm
+     * @return string
+     * @throws Exception
+     */
+    public static function signupLinkRequestBody(EE_Payment_Method $paypal_pm): string
+    {
+        $identifier_string = new OneTimeString($paypal_pm->debug_mode());
+        $tracking_id       = $identifier_string->value();
+        $request           = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $checkout_type     = $request->getRequestParam('checkout_type', 'EXPRESS_CHECKOUT', DataType::STRING);
+        // Save the identifier for future use.
+        PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_TRACKING_ID, $tracking_id);
+        // Assemble the return URL.
+        $return_url = EED_PayPalOnboard::getReturnUrl($paypal_pm);
+        return json_encode([
+            'tracking_id'             => $tracking_id,
+            'operations'              => [
+                [
+                    'operation'                  => 'API_INTEGRATION',
+                    'api_integration_preference' => [
+                        'rest_api_integration' => [
+                            'integration_method'  => 'PAYPAL',
+                            'integration_type'    => 'THIRD_PARTY',
+                            'third_party_details' => [
+                                'features' => ['PAYMENT', 'REFUND'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'products'                => [$checkout_type],
+            'legal_consents'          => [
+                [
+                    'type'    => 'SHARE_DATA_CONSENT',
+                    'granted' => true,
+                ],
+            ],
+            'partner_config_override' => [
+                'return_url' => $return_url,
+            ],
+        ]);
+    }
+
+
+    /**
+     * Get the return URL.
+     *
+     * @param EE_Payment_Method $paypal_pm
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function getReturnUrl(EE_Payment_Method $paypal_pm): string
+    {
+        $wp_nonce = EED_Module::getRequest()->getRequestParam('wp_nonce');
+        $nonce    = wp_create_nonce(Domain::NONCE_NAME_ONBOARDING_RETURN);
+        return add_query_arg(
+            [
+                'page'                        => 'espresso_payment_settings',
+                'webhook_action'              => 'eea_pp_commerce_merchant_onboard',
+                'payment_method'              => $paypal_pm->slug(),
+                '_wpnonce'                    => $wp_nonce,
+                'nonce'                       => $nonce,
+                Domain::META_KEY_SANDBOX_MODE => $paypal_pm->debug_mode() ? '1' : '0',
+            ],
+            admin_url('admin.php')
+        );
+    }
+
+
+    /**
+     * Redirect to the payment method (PP) settings home page.
+     *
+     * @return void
+     */
+    public static function redirectToPmSettingsHome(): void
+    {
+        $get_params = EED_Module::getRequest()->getParams();
+        if (empty($get_params['payment_method'])) {
+            // Simply do not redirect.
+            return;
+        }
+        $args_to_add = [
+            'page'           => 'espresso_payment_settings',
+            'payment_method' => $get_params['payment_method'],
+        ];
+        if (isset($get_params['sandbox_mode'])) {
+            $args_to_add[ Domain::META_KEY_SANDBOX_MODE ] = $get_params['sandbox_mode'];
+        }
+        $home_url = add_query_arg($args_to_add, admin_url('admin.php'));
+        wp_redirect($home_url);
+        exit;
+    }
+
+
+    /**
+     * Check user’s onboarding status.
+     * This will handle the user return from the auth page and also check the status via the API.
+     *
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function updateOnboardingStatus(): void
+    {
+        // Check if this is the webhook from PayPal.
+        if (! isset($_GET['webhook_action'], $_GET['nonce'])
+            || $_GET['webhook_action'] !== 'eea_pp_commerce_merchant_onboard'
+        ) {
+            return;  // Ignore.
+        }
+        $get_params = EED_Module::getRequest()->getParams();
+        // Get the payment method.
+        $paypal_pm = EED_PayPalCommerce::getPaymentMethod();
+        // Check the response (GET) parameters.
+        if (! EED_PayPalOnboard::onboardingStatusResponseValid($get_params, $paypal_pm)) {
+            // Missing parameters. Can't proceed.
+            PayPalLogger::errorLog(
+                esc_html__('Missing required onboarding parameters.', 'event_espresso'),
+                $get_params,
+                $paypal_pm
+            );
+            EED_PayPalOnboard::redirectToPmSettingsHome();
+            return;
+        }
+        // Were the requested permissions granted ?
+        if (empty($get_params[ Domain::API_PARAM_PERMISSIONS_GRANTED ])) {
+            $error_message = esc_html__(
+                'Permissions not granted by merchant or email not confirmed.',
+                'event_espresso'
+            );
+            PayPalLogger::errorLog($error_message, $get_params, $paypal_pm);
+            EED_PayPalOnboard::redirectToPmSettingsHome();
+            return;
+        }
+        // Check on the onboarding status (recommended by PP).
+        $onboarding_status = EED_PayPalOnboard::trackSellerOnboarding(
+            $paypal_pm,
+            $get_params[ Domain::META_KEY_SELLER_MERCHANT_ID ]
+        );
+        if (! isset($onboarding_status['valid']) || ! $onboarding_status['valid']) {
+            PayPalLogger::errorLog(
+                $onboarding_status['message'],
+                array_merge($get_params, $onboarding_status),
+                $paypal_pm
+            );
+            EED_PayPalOnboard::redirectToPmSettingsHome();
+            return;
+        }
+        // Start saving the setup and info.
+        PayPalExtraMetaManager::parseAndSaveOptions($paypal_pm, $onboarding_status);
+        // Save the credentials.
+        PayPalExtraMetaManager::saveSellerApiCredentials($paypal_pm, $get_params);
+        // If onboarded successfully, remove the onboarding URL.
+        PayPalExtraMetaManager::deletePmOption($paypal_pm, Domain::META_KEY_ONBOARDING_URL);
+        // Also clen GET params by redirecting, because PP auto redirects to the return_url on closing the onboarding window.
+        EED_PayPalOnboard::redirectToPmSettingsHome();
+    }
+
+
+    /**
+     * Check if all required parameters for the onboarding status check are present.
+     *
+     * @param array $data
+     * @param mixed $paypal_pm
+     * @return bool
+     */
+    public static function onboardingStatusResponseValid(array $data, mixed $paypal_pm): bool
+    {
+        // Check that we have all the required parameters and the nonce is ok.
+        if ($paypal_pm instanceof EE_Payment_Method
+            && wp_verify_nonce($data['nonce'], Domain::NONCE_NAME_ONBOARDING_RETURN)
+            && ! empty($data[ Domain::API_PARAM_PARTNER_ID ])
+            && ! empty($data[ Domain::META_KEY_SELLER_MERCHANT_ID ])
+            && isset($data[ Domain::API_PARAM_PERMISSIONS_GRANTED ])
+            && isset($data[ Domain::API_PARAM_EMAIL_CONFIRMED ])
+        ) {
+            return true;
+        }
+        return false;
     }
 
 
@@ -217,16 +357,16 @@ class EED_PayPalOnboard extends EED_Module
      * @param EE_Payment_Method $paypal_pm
      * @return string
      * @throws EE_Error
-     * @throws Exception
+     * @throws ReflectionException
      */
     public static function getPartnerAccessToken(EE_Payment_Method $paypal_pm): string
     {
         // Do we have it saved ?
         $access_token = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_ACCESS_TOKEN);
-        $expired      = self::partnerAccessTokenExpired($paypal_pm);
+        $expired      = EED_PayPalOnboard::partnerAccessTokenExpired($paypal_pm);
         // If we don't have it, request/update it.
         if (! $access_token || $expired) {
-            return self::requestPartnerAccessToken($paypal_pm);
+            return EED_PayPalOnboard::requestPartnerAccessToken($paypal_pm);
         }
         // Access token is saved as encrypted, so return decrypted.
         return $access_token;
@@ -238,7 +378,6 @@ class EED_PayPalOnboard extends EED_Module
      *
      * @param EE_Payment_Method $paypal_pm
      * @return bool
-     * @throws Exception
      */
     public static function partnerAccessTokenExpired(EE_Payment_Method $paypal_pm): bool
     {
@@ -246,7 +385,7 @@ class EED_PayPalOnboard extends EED_Module
         if (! $expires_at) {
             return true;
         }
-        // Validate the token. Do a health check.
+        // Validate the token expiration date.
         $now          = time();
         $minutes_left = round(($expires_at - $now) / 60);
         // Count as expired if less than 60 minutes till expiration left.
@@ -263,6 +402,7 @@ class EED_PayPalOnboard extends EED_Module
      * @param EE_Payment_Method $paypal_pm
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function requestPartnerAccessToken(EE_Payment_Method $paypal_pm): string
     {
@@ -279,13 +419,13 @@ class EED_PayPalOnboard extends EED_Module
         if (defined('LOCAL_MIDDLEMAN_SERVER')) {
             $post_args['sslverify'] = false;
         }
-        $post_url = self::getMiddlemanBaseUrl($paypal_pm) . 'get_token';
-        $response = self::sendRequest($paypal_pm, $post_url, $post_args);
+        $post_url = EED_PayPalOnboard::getMiddlemanBaseUrl($paypal_pm) . 'get_token';
+        $response = EED_PayPalOnboard::sendRequest($paypal_pm, $post_url, $post_args);
         if (isset($response['error'])) {
             return '';
         }
         // Check the data we received.
-        if (! self::partnerTokenResponseValid($response, $paypal_pm)) {
+        if (! EED_PayPalOnboard::partnerTokenResponseValid($response, $paypal_pm)) {
             return '';
         }
         // If we are here all seems to be ok. Save the token and it's data.
@@ -298,178 +438,19 @@ class EED_PayPalOnboard extends EED_Module
 
 
     /**
-     * Get the seller access token.
-     * (AJAX)
-     *
-     * @return void
-     * @throws Exception
-     */
-    public static function getSellerAccessToken()
-    {
-        $paypal_pm   = EED_PayPalCommerce::getPaymentMethod();
-        $post_params = EED_Module::getRequest()->postParams();
-        $bn_code     = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_BN_CODE);
-        if (! $paypal_pm instanceof EE_Payment_Method) {
-            PayPalLogger::errorLogAndExit(
-                esc_html__('No payment method.', 'event_espresso'),
-                $post_params,
-                $paypal_pm
-            );
-        }
-        $seller_nonce = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_SELLER_NONCE);
-        // Look for mandatory parameters.
-        if (
-            empty($post_params[ Domain::API_KEY_AUTH_CODE ])
-            || empty($post_params[ Domain::API_KEY_SHARED_ID ])
-            || ! $seller_nonce
-            || ! $bn_code
-        ) {
-            $error_message = esc_html__('Missing authCode and sharedId.', 'event_espresso');
-            PayPalLogger::errorLogAndExit($error_message, $post_params, $paypal_pm);
-        }
-        $nonce = wp_create_nonce('eea_pp_commerce_get_seller_access_token');
-        // Request the access token.
-        $post_args = [
-            'method'  => 'POST',
-            'headers' => [
-                'User-Agent'                    => sanitize_text_field($_SERVER['HTTP_USER_AGENT']),
-                'Content-Type'                  => 'application/json',
-                'Authorization'                 => 'Basic ' . base64_encode($post_params[ Domain::API_KEY_SHARED_ID ]),
-                'PayPal-Partner-Attribution-Id' => $bn_code,
-            ],
-            'body'    => [
-                'nonce'         => $nonce,
-                'grant_type'    => 'authorization_code',
-                'code'          => $post_params[ Domain::API_KEY_AUTH_CODE ],
-                'code_verifier' => $seller_nonce,
-            ],
-        ];
-        $post_url  = self::getPayPalApiUrl($paypal_pm) . '/v1/oauth2/token';
-        $response  = self::sendRequest($paypal_pm, $post_url, $post_args);
-        if (isset($response['error'])) {
-            self::exitWithError($response['message']);
-        }
-        // Check the data we received.
-        if (
-            empty($response['access_token'])
-            || empty($response['expires_in'])
-            || empty($response['refresh_token'])
-        ) {
-            // This is an error.
-            $err_msg = esc_html__('Incoming parameter validation failed.', 'event_espresso');
-            PayPalLogger::errorLogAndExit($err_msg, $response, $paypal_pm);
-        }
-        // Now we can request the seller API credentials.
-        $credentials_saved = self::requestApiCredentials($paypal_pm, $response['access_token']);
-        if (isset($credentials_saved['error'])) {
-            echo json_encode(
-                [
-                    'error'   => $credentials_saved['error'],
-                    'message' => $credentials_saved['message'],
-                ]
-            );
-        } else {
-            echo json_encode(
-                [
-                    'success'  => true,
-                    'on_board' => true,
-                ]
-            );
-        }
-        exit();
-    }
-
-
-    /**
-     * Get the seller API credentials.
-     *
-     * @param EE_Payment_Method $paypal_pm
-     * @param string            $seller_token
-     * @return array
-     * @throws EE_Error
-     * @throws Exception
-     */
-    public static function requestApiCredentials(EE_Payment_Method $paypal_pm, string $seller_token): array
-    {
-        $partner_merchant_id = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PARTNER_MERCHANT_ID);
-        $bn_code             = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_BN_CODE);
-        $get_params          = [
-            'method'  => 'GET',
-            'headers' => [
-                'User-Agent'                    => sanitize_text_field($_SERVER['HTTP_USER_AGENT']),
-                'Content-Type'                  => 'application/json',
-                'Authorization'                 => 'Bearer ' . $seller_token,
-                'PayPal-Partner-Attribution-Id' => $bn_code,
-            ],
-        ];
-        $request_url = self::getPayPalApiUrl($paypal_pm)
-                        . '/v1/customer/partners/'
-                        . $partner_merchant_id
-                        . '/merchant-integrations/credentials/';
-        $response = self::sendRequest($paypal_pm, $request_url, $get_params);
-        // Check the data we received.
-        if (empty($response['client_id']) || empty($response['client_secret'])) {
-            // This is an error.
-            if (isset($response['message'])) {
-                $err_msg  = $response['message'];
-                $err_name = $response['name'] ?? 'UNRECOGNIZED_ERROR';
-            } else {
-                $err_msg  = esc_html__('Incoming parameter validation failed.', 'event_espresso');
-                $err_name = 'INCOMING_PARAMETER_INVALID';
-            }
-            PayPalLogger::errorLog($err_msg, $response, $paypal_pm);
-            return ['error' => $err_name, 'message' => $err_msg];
-        }
-        // Finally, track seller onboarding status.
-        $onboarding_status = self::trackSellerOnboarding(
-            $paypal_pm,
-            $partner_merchant_id,
-            $response[ Domain::META_KEY_PAYER_ID ],
-            $response[ Domain::META_KEY_CLIENT_ID ],
-            $response[ Domain::META_KEY_CLIENT_SECRET ]
-        );
-        if (isset($onboarding_status['error'])) {
-            return $onboarding_status;
-        }
-        // If onboarded successfully, remove the onetime onboarding URL.
-        if (PayPalExtraMetaManager::saveSellerApiCredentials($paypal_pm, $response)) {
-            PayPalExtraMetaManager::deletePmOption($paypal_pm, Domain::META_KEY_ONBOARDING_URL);
-            return ['success' => true];
-        } else {
-            return [
-                'error'   => 'SELLER_CREDENTIALS_NOT_SAVED',
-                'message' => esc_html__('Seller credentials were not saved.', 'event_espresso'),
-            ];
-        }
-    }
-
-
-    /**
      * Request seller onboarding status from PayPal.
      *
      * @param EE_Payment_Method $paypal_pm
-     * @param string            $partner_id
-     * @param                   $seller_id
-     * @param string            $client_id
-     * @param string            $client_secret
+     * @param string            $merchant_id
      * @return array
-     * @throws EE_Error
-     * @throws Exception
      */
-    public static function trackSellerOnboarding(
-        EE_Payment_Method $paypal_pm,
-        string $partner_id,
-        $seller_id,
-        string $client_id,
-        string $client_secret
-    ): array {
-        $track_onboarding = self::getTrackOnboardingApi(
-            $paypal_pm,
-            $partner_id,
-            $seller_id,
-            $client_id,
-            $client_secret
-        );
+    public static function trackSellerOnboarding(EE_Payment_Method $paypal_pm, string $merchant_id): array
+    {
+        $track_onboarding = EED_PayPalOnboard::getTrackOnboardingApi($paypal_pm, $merchant_id);
+        if (! $track_onboarding instanceof TrackSellerOnboarding) {
+            $err_msg = esc_html__('Failed to track seller onboarding.', 'event_espresso');
+            return ['error' => 'TRACK_ONBOARDING_FAILED', 'message' => $err_msg];
+        }
         return $track_onboarding->isValid();
     }
 
@@ -478,47 +459,21 @@ class EED_PayPalOnboard extends EED_Module
      * Returns the Track Seller Onboarding API.
      *
      * @param EE_Payment_Method $paypal_pm
-     * @param string            $partner_id
-     * @param string            $seller_id
-     * @param string            $client_id
-     * @param string            $client_secret
+     * @param string            $merchant_id
      * @return TrackSellerOnboarding|null
-     * @throws Exception
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function getTrackOnboardingApi(
         EE_Payment_Method $paypal_pm,
-        string $partner_id,
-        string $seller_id,
-        string $client_id,
-        string $client_secret
+        string            $merchant_id
     ): ?TrackSellerOnboarding {
-        $paypal_api = self::getPayPalApi($paypal_pm, $client_id, $client_secret);
-        if (! $paypal_api) {
+        $partner_id = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PARTNER_MERCHANT_ID);
+        $paypal_api = EED_PayPalCommerce::getPayPalApi($paypal_pm);
+        if (! $paypal_api instanceof PayPalApi || ! $partner_id) {
             return null;
         }
-        return new TrackSellerOnboarding($paypal_api, $partner_id, $seller_id, $paypal_pm->debug_mode());
-    }
-
-
-    /**
-     * Return a PayPal API object, or false on failure.
-     *
-     * @param EE_Payment_Method $paypal_pm
-     * @param string            $client_id
-     * @param string            $client_secret
-     * @return PayPalApi|null
-     * @throws Exception
-     */
-    public static function getPayPalApi(
-        EE_Payment_Method $paypal_pm,
-        string $client_id,
-        string $client_secret
-    ): ?PayPalApi {
-        $bn_code = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_BN_CODE);
-        if (! $client_id || ! $client_secret || ! $bn_code) {
-            return null;
-        }
-        return new PayPalApi($client_id, $client_secret, $bn_code, $paypal_pm->debug_mode());
+        return new TrackSellerOnboarding($paypal_api, $partner_id, $merchant_id, $paypal_pm->debug_mode());
     }
 
 
@@ -527,48 +482,71 @@ class EED_PayPalOnboard extends EED_Module
      * (AJAX)
      *
      * @return void
-     * @throws EE_Error
      */
-    public static function getOnboardStatus()
+    public static function getOnboardStatus(): void
     {
         $paypal_pm = EED_PayPalCommerce::getPaymentMethod();
         if (! $paypal_pm instanceof EE_Payment_Method) {
             $err_msg = esc_html__('Could not specify the payment method.', 'event_espresso');
             PayPalLogger::errorLog($err_msg, EED_Module::getRequest()->postParams(), $paypal_pm);
-            echo json_encode(['on_board' => false]);
-            exit();
+            wp_send_json(['on_board' => false]);
         }
         try {
-            $seller_id = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PAYER_ID) ?? '--';
+            $seller_id = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_SELLER_MERCHANT_ID) ?? '--';
         } catch (Exception $e) {
             $seller_id = '--';
         }
-        echo json_encode(
+        wp_send_json(
             [
-                'on_board'  => self::isOnboard($paypal_pm),
+                'on_board'  => EED_PayPalOnboard::isOnboard($paypal_pm),
                 'seller_id' => $seller_id,
             ]
         );
-        exit();
     }
 
 
     /**
-     * Deauthorize the seller. Remove all API credentials.
+     * De-authorize the seller. Remove all API credentials.
      * (AJAX)
      *
      * @return void
      */
-    public static function offboard()
+    public static function offboard(): void
     {
         $paypal_pm = EED_PayPalCommerce::getPaymentMethod();
+        if (! $paypal_pm instanceof EE_Payment_Method) {
+            wp_send_json([
+                'error'   => 'INVALID_PM',
+                'message' => esc_html__(
+                    'Invalid payment method. Please refresh the page and try again.',
+                    'event_espresso'
+                ),
+            ]);
+        }
         PayPalExtraMetaManager::deleteAllData($paypal_pm);
-        echo json_encode(
-            [
-                'success' => true,
-            ]
-        );
-        exit();
+        wp_send_json(['success' => true]);
+    }
+
+
+    /**
+     * Checks if already onboard.
+     *
+     * @param EE_Payment_Method $payment_method
+     * @return boolean
+     */
+    public static function isOnboard(EE_Payment_Method $payment_method): bool
+    {
+        $pp_meta_data = PayPalExtraMetaManager::getAllData($payment_method);
+        return
+            // onborded with a third party integration ?
+            (! empty($pp_meta_data[ Domain::META_KEY_SELLER_MERCHANT_ID ])
+                && ! empty($pp_meta_data[ Domain::META_KEY_ACCESS_TOKEN ])
+            )
+            // or with the first party integration ?
+            || (! empty($pp_meta_data[ Domain::META_KEY_CLIENT_ID ])
+                && ! empty($pp_meta_data[ Domain::META_KEY_CLIENT_SECRET ])
+                && ! empty($pp_meta_data[ Domain::META_KEY_PAYER_ID ])
+            );
     }
 
 
@@ -579,7 +557,6 @@ class EED_PayPalOnboard extends EED_Module
      * @param string            $request_url
      * @param array             $request_args
      * @return array
-     * @throws EE_Error
      */
     public static function sendRequest(EE_Payment_Method $paypal_pm, string $request_url, array $request_args): array
     {
@@ -594,10 +571,10 @@ class EED_PayPalOnboard extends EED_Module
         $response_body = (isset($response['body']) && $response['body']) ? json_decode($response['body'], true) : [];
         if (empty($response_body) || isset($response_body['error'])) {
             $message = $response_body['error_description']
-                ?? sprintf(
-                    esc_html__('Unknown response received while sending a request to: %1$s', 'event_espresso'),
-                    $request_url
-                );
+                       ?? sprintf(
+                           esc_html__('Unknown response received while sending a request to: %1$s', 'event_espresso'),
+                           $request_url
+                       );
             PayPalLogger::errorLog($message, [$request_url, $request_args, $response], $paypal_pm);
             $error_return['message'] = $message;
             return $error_return;
@@ -612,7 +589,6 @@ class EED_PayPalOnboard extends EED_Module
      * @param                   $response
      * @param EE_Payment_Method $paypal_pm
      * @return bool
-     * @throws EE_Error
      */
     public static function partnerTokenResponseValid($response, EE_Payment_Method $paypal_pm): bool
     {
@@ -641,6 +617,8 @@ class EED_PayPalOnboard extends EED_Module
      *
      * @param EE_Payment_Method $payment_method
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function getMiddlemanBaseUrl(EE_Payment_Method $payment_method): string
     {
@@ -654,56 +632,61 @@ class EED_PayPalOnboard extends EED_Module
 
 
     /**
-     * Returns the base PayPal API URL.
+     * This Payment Method admin notices.
      *
-     * @param EE_Payment_Method $payment_method
-     * @return string
-     */
-    public static function getPayPalApiUrl(EE_Payment_Method $payment_method): string
-    {
-        return $payment_method->debug_mode() ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
-    }
-
-
-    /**
-     * Checks if already onboard.
-     *
-     * @param EE_Payment_Method $payment_method
-     * @return boolean
-     * @throws EE_Error
-     */
-    public static function isOnboard(EE_Payment_Method $payment_method): bool
-    {
-        $pp_meta_data = PayPalExtraMetaManager::getAllData($payment_method);
-        if (
-            $pp_meta_data
-            && isset($pp_meta_data[ Domain::META_KEY_CLIENT_ID ])
-            && $pp_meta_data[ Domain::META_KEY_CLIENT_ID ]
-            && isset($pp_meta_data[ Domain::META_KEY_CLIENT_SECRET ])
-            && $pp_meta_data[ Domain::META_KEY_CLIENT_SECRET ]
-        ) {
-            return true;
-        }
-        return false;
-    }
-
-
-    /**
-     * Return error message as json allowing to show an alert on the front-end.
-     *
-     * @param string $error_message
-     * @param bool   $show_alert
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function exitWithError(string $error_message = '', bool $show_alert = false)
+    public static function adminNotice()
     {
-        echo json_encode(
-            [
-                'error'   => $error_message,
-                'message' => $error_message,
-                'alert'   => $show_alert,
-            ]
-        );
-        exit();
+        // A notice to re-connect if still connected through the first party integration.
+        $pp_commerce = EEM_Payment_Method::instance()->get_one_by_slug('paypalcheckout');
+        // Show the notice only if PayPal Commerce is active.
+        if (! $pp_commerce instanceof EE_Payment_Method
+            || ! EED_PayPalOnboard::isOnboard($pp_commerce)
+            || EED_PayPalCommerce::isThirdParty($pp_commerce)
+        ) {
+            return;
+        }
+        add_action('admin_notices', [__CLASS__, 'reConnectNotice']);
+    }
+
+
+    /**
+     * Re-connect notice contents.
+     *
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function reConnectNotice()
+    {
+        $open_anchor = $close_anchor = '';
+        $pp_commerce = EEM_Payment_Method::instance()->get_one_by_slug('paypalcheckout');
+        if ($pp_commerce instanceof EE_Payment_Method) {
+            $pm_page = add_query_arg(
+                [
+                    'page'           => 'espresso_payment_settings',
+                    'webhook_action' => 'eea_pp_commerce_merchant_onboard',
+                    'payment_method' => $pp_commerce->slug(),
+                ],
+                admin_url('admin.php')
+            );
+            $open_anchor  = "<a href='$pm_page'>";
+            $close_anchor = "</a>";
+        }
+        echo '<div class="error"><p>'
+        . sprintf(
+            esc_html__(
+                '%1$sPayPal Commerce%2$s has updated the API integration type to allow more flexibility with payments. Please disconnect and re-Connect on the %3$sPayment Methods admin%4$s page to update the credentials and allow advanced payment type options.',
+                'event_espresso'
+            ),
+            '<strong>',
+            '</strong>',
+            $open_anchor,
+            $close_anchor
+         )
+         . '</p></div>';
     }
 }

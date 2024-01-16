@@ -5,7 +5,6 @@ namespace EventEspresso\PaymentMethods\PayPalCommerce\api\orders;
 use EE_Error;
 use EE_Line_Item;
 use EE_Transaction;
-use EEM_State;
 use EventEspresso\core\domain\services\validation\email\strategies\Basic;
 use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
@@ -15,6 +14,7 @@ use ReflectionException;
 
 /**
  * Class CreateOrder
+ *
  * Generates and sends a Create Order request using PayPal API.
  *
  * @package     Event Espresso
@@ -49,21 +49,21 @@ class CreateOrder extends OrdersApi
      *
      * @var string
      */
-    protected $currency_code;
+    protected string $currency_code;
 
     /**
      * Billing info.
      *
      * @var array
      */
-    protected $billing_info;
+    protected array $billing_info;
 
     /**
      * Transaction this order is for.
      *
      * @var EE_Transaction
      */
-    protected $transaction;
+    protected EE_Transaction $transaction;
 
 
     /**
@@ -88,10 +88,12 @@ class CreateOrder extends OrdersApi
      * @param array $billing_info
      * @return void
      */
-    public function sanitizeRequestParameters(array $billing_info)
+    public function sanitizeRequestParameters(array $billing_info): void
     {
-        $sanitizer = new RequestSanitizer(new Basic());
-        foreach ($billing_info as $item => $value) {
+        $email_validator = new Basic();
+        $sanitizer       = new RequestSanitizer($email_validator);
+        foreach ($billing_info as $item => $value)
+        {
             $this->billing_info[ $item ] = $sanitizer->clean($value);
         }
     }
@@ -123,16 +125,13 @@ class CreateOrder extends OrdersApi
     protected function getParameters(): array
     {
         $registrant  = $this->transaction->primary_registration();
+        $attendee    = $registrant->attendee();
         $event       = $registrant->event();
-        $description = $event->name() ?? esc_html__('Tickets for an event', 'event_espresso');
-        $state       = EEM_State::instance()->get_col(
-            [
-                ['STA_ID' => $this->billing_info['bill_state']],
-                'limit' => 1,
-            ],
-            'STA_abbrev'
-        )[0];
-        $params      = [
+        $description = $event->name() ?: sprintf(
+            esc_html__('Tickets for an event at %1$s', 'event_espresso'),
+            get_bloginfo('name')
+        );
+        return [
             'intent'              => 'CAPTURE',
             'purchase_units'      => [
                 [
@@ -151,28 +150,14 @@ class CreateOrder extends OrdersApi
                 'user_action'         => 'PAY_NOW',
             ],
             'payer'               => [
-                'email_address' => $this->billing_info['bill_email'],
+                'email_address' => $attendee->email(),
                 'name'          => [
-                    'given_name' => substr($this->billing_info['bill_first_name'], 0, 139),
-                    'surname'    => substr($this->billing_info['bill_last_name'], 0, 139),
+                    'given_name' => $attendee->fname(),
+                    'surname'    => $attendee->lname(),
 
-                ],
-                'address'       => [
-                    'country_code'   => $this->billing_info['bill_country'],
-                    'address_line_1' => substr($this->billing_info['bill_address'], 0, 299),
-                    'admin_area_1'   => $state ?? '',
-                    'admin_area_2'   => substr($this->billing_info['bill_city'], 0, 119),
-                    'postal_code'    => substr($this->billing_info['bill_zip'], 0, 59),
                 ],
             ],
         ];
-        if (isset($this->billing_info['bill_address_2']) && $this->billing_info['bill_address_2']) {
-            $params['payer']['address']['address_line_2'] = substr($this->billing_info['bill_address_2'], 0, 299);
-        }
-        if (isset($this->billing_info['bill_phone']) && $this->billing_info['bill_phone']) {
-            $params['payer']['phone_number'] = $this->billing_info['bill_phone'];
-        }
-        return $params;
     }
 
 
@@ -192,7 +177,7 @@ class CreateOrder extends OrdersApi
             if ($line_item instanceof EE_Line_Item && $line_item->OBJ_type() !== 'Promotion') {
                 $item_money     = $line_item->unit_price();
                 $li_description = $line_item->desc() ?? esc_html__('Event Ticket', 'event_espresso');
-                $line_items []  = [
+                $line_items [] = [
                     'name'        => substr(wp_strip_all_tags($line_item->name()), 0, 126),
                     'quantity'    => $line_item->quantity(),
                     'description' => substr(wp_strip_all_tags($li_description), 0, 125),
@@ -223,7 +208,7 @@ class CreateOrder extends OrdersApi
      * @return void
      * @throws EE_Error|ReflectionException
      */
-    protected function countTaxTotal()
+    protected function countTaxTotal(): void
     {
         // List taxes.
         $this->tax_total = 0;
@@ -278,7 +263,7 @@ class CreateOrder extends OrdersApi
                     [$this->request_url, $parameters, $response],
                     $this->transaction->payment_method()
                 );
-            } catch (EE_Error|ReflectionException $e) {
+            } catch (EE_Error | ReflectionException $e) {
                 // Just continue.
             }
             return [

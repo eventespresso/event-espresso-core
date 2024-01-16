@@ -6,6 +6,7 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
 
@@ -58,8 +59,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function __construct($admin_page)
     {
-        parent::__construct($admin_page);
+        $this->request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $this->resolveRequestVars();
+        parent::__construct($admin_page);
     }
 
 
@@ -70,7 +72,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     private function resolveRequestVars()
     {
-        $this->event_id            = $this->request->getRequestParam('event_id', 0, 'int');
+        $this->event_id            = $this->request->getRequestParam('event_id', 0, DataType::INTEGER);
         $this->datetimes_for_event = DatetimesForEventCheckIn::fromEventID($this->event_id);
         // if we're filtering for a specific event and it only has one datetime, then grab its ID
         $this->datetime    = $this->datetimes_for_event->getOneDatetimeForEvent();
@@ -79,7 +81,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $this->datetime_id = $this->request->getRequestParam(
             'DTT_ID',
             $this->datetime_id,
-            'int'
+            DataType::INTEGER
         );
     }
 
@@ -106,8 +108,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected function _set_properties()
     {
-        $return_url = $this->getReturnUrl();
-
         $this->_wp_list_args = [
             'singular' => esc_html__('registrant', 'event_espresso'),
             'plural'   => esc_html__('registrants', 'event_espresso'),
@@ -139,7 +139,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $this->_primary_column = '_REG_att_checked_in';
 
         $csv_report = RegistrationsCsvReportParams::getRequestParams(
-            $return_url,
+            $this->getReturnUrl(),
             $this->_req_data,
             $this->event_id,
             $this->datetime_id
@@ -195,8 +195,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
     protected function _get_table_filters()
     {
         $filters               = [];
-        $this->hide_expired    = $this->request->getRequestParam('hide_expired', false, 'bool');
-        $this->hide_upcoming   = $this->request->getRequestParam('hide_upcoming', false, 'bool');
+        $this->hide_expired    = $this->request->getRequestParam('hide_expired', false, DataType::BOOL);
+        $this->hide_upcoming   = $this->request->getRequestParam('hide_upcoming', false, DataType::BOOL);
         $hide_expired_checked  = $this->hide_expired ? 'checked' : '';
         $hide_upcoming_checked = $this->hide_upcoming ? 'checked' : '';
         // get datetimes for ALL active events (note possible capability restrictions)

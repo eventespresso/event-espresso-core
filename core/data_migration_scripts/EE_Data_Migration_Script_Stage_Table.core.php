@@ -28,7 +28,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
      *
      * @var string|null
      */
-    protected ?string $_extra_where_sql;
+    protected ?string $_extra_where_sql = '';
 
 
     /**

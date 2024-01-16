@@ -389,7 +389,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     public static function flush_submitted_form_data_from_session()
     {
         return EE_Registry::instance()->SSN->reset_data(
-            array(EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY)
+            [EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY]
         );
     }
 

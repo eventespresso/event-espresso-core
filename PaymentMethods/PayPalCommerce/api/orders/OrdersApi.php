@@ -18,12 +18,12 @@ abstract class OrdersApi
     /**
      * @var PayPalApi
      */
-    protected $api;
+    protected PayPalApi $api;
 
     /**
      * @var string
      */
-    protected $request_url;
+    protected string $request_url;
 
 
     /**

@@ -150,15 +150,17 @@ class EE_Question_Form_Input
      */
     public function get(string $property = '')
     {
-        if (! empty($property)) {
-            if (EEM_Question::instance()->has_field($property)) {
-                return $this->_QST->get($property);
-            } elseif (EEM_Answer::instance()->has_field($property)) {
-                return $this->_ANS->get($property);
-            // } elseif ($this->_question_form_input_property_exists($property)) {
-            } elseif (property_exists($this, $property)) {
-                return $this->{$property};
-            }
+        if (empty($property)) {
+            return null;
+        }
+        if (EEM_Question::instance()->has_field($property)) {
+            return $this->_QST->get($property);
+        }
+        if (EEM_Answer::instance()->has_field($property)) {
+            return $this->_ANS->get($property);
+        }
+        if (property_exists($this, $property)) {
+            return $this->{$property};
         }
         return null;
     }
@@ -175,14 +177,17 @@ class EE_Question_Form_Input
      */
     public function set(string $property = '', $value = null)
     {
-        if (! empty($property)) {
-            if (EEM_Question::instance()->has_field($property)) {
-                $this->_QST->set($property, $value);
-            } elseif (EEM_Answer::instance()->has_field($property)) {
-                $this->_ANS->set($property, $value);
-            } elseif (property_exists($this, $property)) {
-                $this->{$property} = $value;
-            }
+        if (empty($property)) {
+            return;
+        }
+        if (EEM_Question::instance()->has_field($property)) {
+            $this->_QST->set($property, $value);
+        }
+        if (EEM_Answer::instance()->has_field($property)) {
+            $this->_ANS->set($property, $value);
+        }
+        if (property_exists($this, $property)) {
+            $this->{$property} = $value;
         }
     }
 

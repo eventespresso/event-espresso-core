@@ -2757,14 +2757,23 @@ class EE_Admin_Config extends EE_Config_Base
  */
 class EE_Template_Config extends EE_Config_Base
 {
-    public ?EE_Ticket_Selector_Config $EED_Ticket_Selector;
-
-    public ?EE_Event_Single_Config $EED_Event_Single;
-
-    public ?EE_Events_Archive_Config $EED_Events_Archive;
+    /**
+     * @var EE_Ticket_Selector_Config|stdClass|null
+     */
+    public $EED_Ticket_Selector;
 
     /**
-     * @var EE_People_Config|null $EED_People_Single
+     * @var EE_Event_Single_Config|stdClass|null
+     */
+    public $EED_Event_Single;
+
+    /**
+     * @var EE_Events_Archive_Config|stdClass|null
+     */
+    public $EED_Events_Archive;
+
+    /**
+     * @var EE_People_Config|stdClass|null
      * @since 5.0.12.p
      */
     public $EED_People_Single;

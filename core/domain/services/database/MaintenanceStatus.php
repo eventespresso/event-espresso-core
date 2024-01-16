@@ -28,26 +28,56 @@ class MaintenanceStatus
     private static string $status = MaintenanceStatus::DISABLED;
 
 
+    /**
+     * returns true if maintenance mode is enabled for the entire site (admin & frontend)
+     *
+     * @return bool
+     */
     public static function isFullSite(): bool
     {
         return MaintenanceStatus::$status === MaintenanceStatus::FULL_SITE;
     }
 
+
+    /**
+     * returns true if maintenance mode is NOT enabled for the entire site (admin & frontend)
+     * PLZ NOTE: this does not mean that maintenance mode is NOT enabled for the frontend only
+     *
+     * @return bool
+     */
     public static function isNotFullSite(): bool
     {
         return MaintenanceStatus::$status !== MaintenanceStatus::FULL_SITE;
     }
 
+
+    /**
+     * returns true if maintenance mode is enabled for the site's frontend only
+     *
+     * @return bool
+     */
     public static function isPublicOnly(): bool
     {
         return MaintenanceStatus::$status === MaintenanceStatus::PUBLIC_ONLY;
     }
 
+
+    /**
+     * returns true if maintenance mode is NOT enabled in any way
+     *
+     * @return bool
+     */
     public static function isDisabled(): bool
     {
         return MaintenanceStatus::$status === MaintenanceStatus::DISABLED;
     }
 
+
+    /**
+     * returns true if maintenance mode is enabled for the site in some way (admin and/or frontend)
+     *
+     * @return bool
+     */
     public static function isNotDisabled(): bool
     {
         return MaintenanceStatus::$status !== MaintenanceStatus::DISABLED;

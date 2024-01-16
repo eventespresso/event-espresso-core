@@ -16,14 +16,14 @@ class EE_Taxes extends EE_Base
      *
      * @var array
      */
-    private static $_subtotal = [];
+    private static array $_subtotal = [];
 
     /**
      * This holds an array of EE_Price objects that are of PRT_ID == 4 (tax price types)
      *
      * @var EE_Price[]
      */
-    private static $_default_taxes = [];
+    private static array $_default_taxes = [];
 
 
     /**
@@ -36,13 +36,13 @@ class EE_Taxes extends EE_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function get_total_taxes_for_admin(EE_Ticket $ticket)
+    public static function get_total_taxes_for_admin(EE_Ticket $ticket): float
     {
-        $tax = 0;
+        $tax       = 0;
         $total_tax = 0;
         // This first checks to see if the given ticket is taxable.
         if (! $ticket->taxable()) {
-            return $tax;
+            return (float) $tax;
         }
         // get subtotal (notice we're only retrieving a subtotal if there isn't one given)
         $subtotal = EE_Taxes::get_subtotal_for_admin($ticket);
@@ -53,7 +53,7 @@ class EE_Taxes extends EE_Base
             // assuming taxes are not cumulative
             $total_tax += $subtotal * $tax->amount() / 100;
         }
-        return $total_tax;
+        return (float) $total_tax;
     }
 
 
@@ -65,13 +65,13 @@ class EE_Taxes extends EE_Base
      * @throws ReflectionException
      * eg 20 for %20 tax (NOT 0.20, which
      */
-    public static function get_total_taxes_percentage()
+    public static function get_total_taxes_percentage(): float
     {
         $total_tax_percent = 0;
         foreach (EE_Taxes::get_taxes_for_admin() as $tax_price) {
             $total_tax_percent += $tax_price->get('PRC_amount');
         }
-        return $total_tax_percent;
+        return (float) $total_tax_percent;
     }
 
 
@@ -81,7 +81,7 @@ class EE_Taxes extends EE_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function get_subtotal_for_admin(EE_Ticket $ticket)
+    public static function get_subtotal_for_admin(EE_Ticket $ticket): float
     {
         $TKT_ID = $ticket->ID();
         return EE_Taxes::$_subtotal[ $TKT_ID ] ?? EE_Taxes::_get_subtotal_for_admin($ticket);
@@ -103,7 +103,7 @@ class EE_Taxes extends EE_Base
         $prices = $ticket->get_many_related(
             'Price',
             [
-                0 => [
+                0                          => [
                     'Price_Type.PBT_ID' => ['!=', EEM_Price_Type::base_type_tax],
                 ],
                 'default_where_conditions' => 'none',
@@ -131,8 +131,8 @@ class EE_Taxes extends EE_Base
                 }
             }
         }
-        $TKT_ID = $ticket->ID();
-        EE_Taxes::$_subtotal[ $TKT_ID ] = $subtotal;
+        $TKT_ID                         = $ticket->ID();
+        EE_Taxes::$_subtotal[ $TKT_ID ] = (float) $subtotal;
         return $subtotal;
     }
 
@@ -142,12 +142,13 @@ class EE_Taxes extends EE_Base
      *
      * @return EE_Price[] EE_Price objects that have PRT_ID == 4
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function get_taxes_for_admin(): array
     {
         if (empty(EE_Taxes::$_default_taxes)) {
             /** @var EEM_Price $price_model */
-            $price_model = LoaderFactory::getLoader()->getShared('EEM_Price');
+            $price_model              = LoaderFactory::getLoader()->getShared('EEM_Price');
             EE_Taxes::$_default_taxes = $price_model->get_all(
                 [['PRC_is_default' => 1, 'Price_Type.PBT_ID' => 4]]
             );

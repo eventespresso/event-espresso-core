@@ -95,7 +95,7 @@ class ResponseInspector
                     'error'   => $response->get_error_code(),
                     'message' => sprintf(
                         esc_html__('Response error. Message: %1$s.', 'event_espresso'),
-                        $response->get_error_messages()
+                        $response->get_error_message()
                     ),
                 ]
             );

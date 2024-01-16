@@ -486,6 +486,33 @@ class EEM_Line_Item extends EEM_Base
 
 
     /**
+     * searches the cart for existing line items for the specified transaction and promotion
+     *
+     * @param int $TXN_ID
+     * @param string $promo_code
+     * @return EE_Base_Class|EE_Line_Item|EE_Soft_Delete_Base_Class|null
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since 1.0.0
+     */
+    public function getExistingPromotionLineItemForTransactionByCode(int $TXN_ID, string $promo_code)
+    {
+        return $this->get_one(
+            [
+                [
+                    'TXN_ID'     => $TXN_ID,
+                    'LIN_name'   => $promo_code,
+                    'OBJ_type'   => EEM_Line_Item::OBJ_TYPE_PROMOTION,
+                ],
+            ]
+        );
+    }
+
+
+    /**
      * get_all_promotion_line_items
      * searches the cart for any and all existing promotion line items
      *

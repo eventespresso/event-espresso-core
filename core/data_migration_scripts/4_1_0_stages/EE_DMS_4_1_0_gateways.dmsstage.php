@@ -187,7 +187,7 @@ class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage
      * @param string $new_gateway_slug
      * @return string
      */
-    private function _get_old_gateway_option(string $new_gateway_slug): string
+    private function _get_old_gateway_option(string $new_gateway_slug): ?string
     {
         return get_option(
             $this->_get_old_gateway_option_name($new_gateway_slug),

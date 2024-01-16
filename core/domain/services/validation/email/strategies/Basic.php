@@ -21,10 +21,16 @@ class Basic implements EmailValidatorInterface
      */
     public function validate(string $email_address): bool
     {
-        if (! preg_match('/^.+@\S+$/', (string) $email_address)) {
+        if (! preg_match('/^.+@\S+$/', $email_address)) {
             // email not in correct {string}@{string} format
             throw new EmailValidationException(
                 esc_html__('Email does not have the required @ sign.', 'event_espresso')
+            );
+        }
+        if (substr_count($email_address, '@') > 1) {
+            // more than one email address?
+            throw new EmailValidationException(
+                esc_html__('Only one email address allowed (multiple @ sign detected).', 'event_espresso')
             );
         }
         $atIndex  = $this->getAtIndex($email_address);

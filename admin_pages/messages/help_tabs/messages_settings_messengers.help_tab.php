@@ -45,11 +45,11 @@
         ),
         '<div class="ee-switch">'
         . '<input class="ee-switch__input" type="checkbox" checked disabled>'
-        . '<label class="ee-switch__toggle" for="ee-on-off-toggle-on"></label>'
+        . '<label class="ee-switch__toggle" for="ee-on-off-toggle-on" style="min-width:unset !important; padding: 0;"></label>'
         . '</div>',
         '<div class="ee-switch">'
         . '<input class="ee-switch__input" type="checkbox" disabled>'
-        . '<label class="ee-switch__toggle" for="ee-on-off-toggle-off"></label>'
+        . '<label class="ee-switch__toggle" for="ee-on-off-toggle-off" style="min-width:unset !important; padding: 0;"></label>'
         . '</div>'
     ); ?>
 </p>

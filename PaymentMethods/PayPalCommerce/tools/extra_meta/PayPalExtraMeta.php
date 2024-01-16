@@ -52,7 +52,6 @@ class PayPalExtraMeta
      *
      * @param array $data
      * @return bool
-     * @throws EE_Error
      */
     public function saveBatch(array $data): bool
     {
@@ -78,7 +77,6 @@ class PayPalExtraMeta
      *
      * @param string $option_name
      * @return mixed
-     * @throws EE_Error
      */
     public function getOption(string $option_name)
     {
@@ -92,7 +90,6 @@ class PayPalExtraMeta
      * Return the metadata array if all good. False otherwise.
      *
      * @return array|bool
-     * @throws EE_Error
      */
     public function getMetaData()
     {
@@ -115,7 +112,6 @@ class PayPalExtraMeta
      * @param string $name
      * @param        $value
      * @return bool
-     * @throws EE_Error
      */
     public function saveOption(string $name, $value): bool
     {
@@ -151,7 +147,6 @@ class PayPalExtraMeta
      *
      * @param string $name
      * @return bool
-     * @throws EE_Error
      */
     public function deleteOption(string $name): bool
     {

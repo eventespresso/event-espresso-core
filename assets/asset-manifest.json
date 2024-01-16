@@ -23,17 +23,17 @@
     "dates-table-view.css": "/static/css/dates-table-view.fc6705f5.chunk.css",
     "dates-table-view.js": "/static/js/dates-table-view.6e63357c.chunk.js",
     "dates-table-view.js.map": "/static/js/dates-table-view.6e63357c.chunk.js.map",
-    "edtrServices.js": "/static/js/edtrServices.7f51b510.js",
-    "edtrServices.js.map": "/static/js/edtrServices.7f51b510.js.map",
-    "edtrServices.php": "/static/js/edtrServices.3dfe4571.asset.php",
+    "edtrServices.js": "/static/js/edtrServices.67147781.js",
+    "edtrServices.js.map": "/static/js/edtrServices.67147781.js.map",
+    "edtrServices.php": "/static/js/edtrServices.bf217bbb.asset.php",
     "eeComponents.css": "/static/css/eeComponents.ac62fdb0.css",
     "eeComponents.js": "/static/js/eeComponents.c4d9e11d.js",
     "eeComponents.js.map": "/static/js/eeComponents.c4d9e11d.js.map",
     "eeComponents.php": "/static/js/eeComponents.9fbf5b6b.asset.php",
     "eventEditor.css": "/static/css/eventEditor.83eacf6a.css",
-    "eventEditor.js": "/static/js/eventEditor.5414d673.js",
-    "eventEditor.js.map": "/static/js/eventEditor.5414d673.js.map",
-    "eventEditor.php": "/static/js/eventEditor.102d65dc.asset.php",
+    "eventEditor.js": "/static/js/eventEditor.a576dbed.js",
+    "eventEditor.js.map": "/static/js/eventEditor.a576dbed.js.map",
+    "eventEditor.php": "/static/js/eventEditor.1aefe9f3.asset.php",
     "events.js": "/static/js/events.28ce1ab2.js",
     "events.js.map": "/static/js/events.28ce1ab2.js.map",
     "events.php": "/static/js/events.7bba8cb0.asset.php",
@@ -126,9 +126,9 @@
     "static/js/blocks.4ab89eab.js.LICENSE.txt": "/static/js/blocks.4ab89eab.js.LICENSE.txt",
     "static/js/data.43f67b25.js.LICENSE.txt": "/static/js/data.43f67b25.js.LICENSE.txt",
     "static/js/dates.bbffe846.js.LICENSE.txt": "/static/js/dates.bbffe846.js.LICENSE.txt",
-    "static/js/edtrServices.7f51b510.js.LICENSE.txt": "/static/js/edtrServices.7f51b510.js.LICENSE.txt",
+    "static/js/edtrServices.67147781.js.LICENSE.txt": "/static/js/edtrServices.67147781.js.LICENSE.txt",
     "static/js/eeComponents.c4d9e11d.js.LICENSE.txt": "/static/js/eeComponents.c4d9e11d.js.LICENSE.txt",
-    "static/js/eventEditor.5414d673.js.LICENSE.txt": "/static/js/eventEditor.5414d673.js.LICENSE.txt",
+    "static/js/eventEditor.a576dbed.js.LICENSE.txt": "/static/js/eventEditor.a576dbed.js.LICENSE.txt",
     "static/js/form.2f5f7eed.js.LICENSE.txt": "/static/js/form.2f5f7eed.js.LICENSE.txt",
     "static/js/formBuilder.b57b46ff.js.LICENSE.txt": "/static/js/formBuilder.b57b46ff.js.LICENSE.txt",
     "static/js/plugins.9bc32fca.js.LICENSE.txt": "/static/js/plugins.9bc32fca.js.LICENSE.txt",
@@ -161,8 +161,8 @@
       "static/js/dates.cb8000a0.asset.php"
     ],
     "edtrServices": [
-      "static/js/edtrServices.7f51b510.js",
-      "static/js/edtrServices.3dfe4571.asset.php"
+      "static/js/edtrServices.67147781.js",
+      "static/js/edtrServices.bf217bbb.asset.php"
     ],
     "eeComponents": [
       "static/css/eeComponents.ac62fdb0.css",
@@ -258,8 +258,8 @@
     ],
     "eventEditor": [
       "static/css/eventEditor.83eacf6a.css",
-      "static/js/eventEditor.5414d673.js",
-      "static/js/eventEditor.102d65dc.asset.php"
+      "static/js/eventEditor.a576dbed.js",
+      "static/js/eventEditor.1aefe9f3.asset.php"
     ],
     "wpPluginsPage": [
       "static/css/wpPluginsPage.b279b3dc.css",

@@ -458,35 +458,15 @@ class EE_Checkout
 
 
     /**
-     *    set_current_step
-     *
-     * @access    public
      * @param string $current_step
-     * @return    void
+     * @return void
      */
-    public function set_current_step($current_step)
+    public function set_current_step(string $current_step)
     {
         // grab what step we're on
-        $this->current_step = isset($this->reg_steps[ $current_step ])
-            ? $this->reg_steps[ $current_step ]
-            : reset(
-                $this->reg_steps
-            );
+        $this->current_step = $this->reg_steps[ $current_step ] ?? reset($this->reg_steps);
         // verify instance
-        if ($this->current_step instanceof EE_SPCO_Reg_Step) {
-            // we don't want to repeat completed steps if this is the first time through SPCO
-            if ($this->continue_reg && ! $this->revisit && $this->current_step->completed()) {
-                // so advance to the next step
-                $this->set_next_step();
-                if ($this->next_step instanceof EE_SPCO_Reg_Step) {
-                    // and attempt to set it as the current step
-                    $this->set_current_step($this->next_step->slug());
-                }
-                return;
-            }
-            $this->current_step->set_is_current_step(true);
-            $this->current_step->setRequest(EED_Single_Page_Checkout::getRequest());
-        } else {
+        if (! $this->current_step instanceof EE_SPCO_Reg_Step)  {
             EE_Error::add_error(
                 esc_html__('The current step could not be set.', 'event_espresso'),
                 __FILE__,
@@ -494,6 +474,18 @@ class EE_Checkout
                 __LINE__
             );
         }
+        // we don't want to repeat completed steps if this is the first time through SPCO
+        if ($this->continue_reg && ! $this->revisit && $this->current_step->completed()) {
+            // so advance to the next step
+            $this->set_next_step();
+            if ($this->next_step instanceof EE_SPCO_Reg_Step) {
+                // and attempt to set it as the current step
+                $this->set_current_step($this->next_step->slug());
+            }
+            return;
+        }
+        $this->current_step->set_is_current_step(true);
+        $this->current_step->setRequest(EED_Single_Page_Checkout::getRequest());
     }
 
 

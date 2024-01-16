@@ -2,6 +2,8 @@
 
 namespace EventEspresso\PaymentMethods\PayPalCommerce\domain;
 
+use EE_Payment_Method;
+
 /**
  * Class Domain
  *
@@ -33,19 +35,14 @@ class Domain
     public const META_KEY_ACCESS_TOKEN = 'access_token';
 
     /**
-     * Name of the extra meta that stores the seller nonce.
+     * Name of the extra meta that stores the last request tracking ID.
      */
-    public const META_KEY_SELLER_NONCE = 'seller_nonce';
+    public const META_KEY_TRACKING_ID = 'tracking_id';
 
     /**
      * Name of the extra meta that stores the Event Espresso PayPal Account's merchant id.
      */
     public const META_KEY_APP_ID = 'app_id';
-
-    /**
-     * Name of the extra meta that holds the partner client ID.
-     */
-    public const META_KEY_PARTNER_CLIENT_ID = 'partner_client_id';
 
     /**
      * Name of the extra meta that holds the seller client ID.
@@ -63,14 +60,19 @@ class Domain
     public const META_KEY_EXPIRES_IN = 'expires_in';
 
     /**
-     * Name of the extra meta that holds the seller payer ID.
+     * Name of the extra meta that holds the partner client ID.
      */
-    public const META_KEY_PAYER_ID = 'payer_id';
+    public const META_KEY_PARTNER_CLIENT_ID = 'partner_client_id';
 
     /**
      * Name of the extra meta that holds the partner merchant ID.
      */
     public const META_KEY_PARTNER_MERCHANT_ID = 'partner_merchant_id';
+
+    /**
+     * Name of the extra meta that holds the seller merchant ID.
+     */
+    public const META_KEY_SELLER_MERCHANT_ID = 'merchantIdInPayPal';
 
     /**
      * Name of the extra meta that holds the onboarding URL.
@@ -88,14 +90,64 @@ class Domain
     public const META_KEY_LAST_ORDER = 'last_order_details';
 
     /**
+     * Name of the extra meta that stores the allowed PP checkout type selected by merchant while onboarding.
+     */
+    public const META_KEY_ALLOWED_CHECKOUT_TYPE = 'allowed_checkout_type';
+
+    /**
+     * Name of the extra meta that stores the PP checkout type selected by merchant after onboarding.
+     */
+    public const META_KEY_CHECKOUT_TYPE = 'checkout_type';
+
+    /**
      * Name of the PayPal API parameter that holds the auth code.
      */
     public const API_KEY_AUTH_CODE = 'authCode';
 
     /**
-     * Name of the PayPal API parameter that holds the shared ID.
+     * Name of the PayPal API parameter that holds the client token.
      */
-    public const API_KEY_SHARED_ID = 'sharedId';
+    public const API_KEY_CLIENT_TOKEN = 'client_token';
+
+     /**
+     * Name of the extra meta that holds the seller payer ID.
+     */
+    public const META_KEY_PAYER_ID = 'payer_id';
+
+    /**
+     * Name of the PayPal API parameter that holds the client token expiration time.
+     */
+    public const API_KEY_EXPIRES_IN = 'expires_in';
+
+    /**
+     * Name of the PayPal API parameter that holds the bool of if permissions were granted.
+     */
+    public const API_PARAM_PERMISSIONS_GRANTED = 'permissionsGranted';
+
+    /**
+     * Name of the PayPal API parameter that holds the bool of if the primary email was confirmed.
+     */
+    public const API_PARAM_PRIM_EMAIL_CONFIRMED = 'primary_email_confirmed';
+
+    /**
+     * Name of the PayPal API parameter that holds the bool of if email was confirmed.
+     */
+    public const API_PARAM_EMAIL_CONFIRMED = 'isEmailConfirmed';
+
+    /**
+     * Name of the PayPal API parameter that holds the partner ID.
+     */
+    public const API_PARAM_PARTNER_ID = 'merchantId';
+
+    /**
+     * Name of the PayPal API parameter that holds the merchant ID in the Track seller onboarding status request.
+     */
+    public const API_PARAM_TRACK_MERCHANT_ID = 'merchant_id';
+
+    /**
+     * Name of the PayPal API parameter that holds the payments_receivable status.
+     */
+    public const API_PARAM_PAYMENTS_RECEIVABLE = 'payments_receivable';
 
     /**
      * Name of the nonce used in the capture order request.
@@ -103,7 +155,24 @@ class Domain
     public const CAPTURE_ORDER_NONCE_NAME = 'eea_pp_commerce_capture_order_payment';
 
     /**
+     * Name of the nonce used in the onboarding process.
+     */
+    public const NONCE_NAME_ONBOARDING_RETURN = 'eea_pp_commerce_onboarding_return';
+
+    /**
      * Holds this payment method slug.
      */
     public const PM_SLUG = 'paypalcheckout';
+
+
+    /**
+     * Returns the base PayPal API URL.
+     *
+     * @param EE_Payment_Method $payment_method
+     * @return string
+     */
+    public static function getPayPalApiUrl(EE_Payment_Method $payment_method): string
+    {
+        return $payment_method->debug_mode() ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+    }
 }

@@ -2,9 +2,12 @@
 
 use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\services\request\DataType;
+use EventEspresso\PaymentMethods\PayPalCommerce\api\clients\ClientToken;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\orders\CaptureOrder;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\orders\CreateOrder;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
+use EventEspresso\PaymentMethods\PayPalCommerce\api\FirstPartyPayPalApi;
+use EventEspresso\PaymentMethods\PayPalCommerce\api\ThirdPartyPayPalApi;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\extra_meta\PayPalExtraMetaManager;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
@@ -37,17 +40,6 @@ class EED_PayPalCommerce extends EED_Module
      */
     public function run($WP)
     {
-        // TODO: Implement run() method.
-    }
-
-
-    /**
-     * For hooking into EE Core and other modules.
-     *
-     * @return void
-     */
-    public static function set_hooks()
-    {
     }
 
 
@@ -56,15 +48,15 @@ class EED_PayPalCommerce extends EED_Module
      *
      * @return void
      */
-    public static function set_hooks_admin()
+    public static function set_hooks_admin(): void
     {
         if (DbStatus::isOnline()) {
             // Create an Order.
-            add_action('wp_ajax_eeaPpCreateOrder', [__CLASS__, 'createOrderRequest']);
-            add_action('wp_ajax_nopriv_eeaPpCreateOrder', [__CLASS__, 'createOrderRequest']);
+            add_action('wp_ajax_eeaPPCCreateOrder', [__CLASS__, 'createOrderRequest']);
+            add_action('wp_ajax_nopriv_eeaPPCCreateOrder', [__CLASS__, 'createOrderRequest']);
             // Capture the Order.
-            add_action('wp_ajax_eeaPpCaptureOrder', [__CLASS__, 'captureOrderRequest']);
-            add_action('wp_ajax_nopriv_eeaPpCaptureOrder', [__CLASS__, 'captureOrderRequest']);
+            add_action('wp_ajax_eeaPPCCaptureOrder', [__CLASS__, 'captureOrderRequest']);
+            add_action('wp_ajax_nopriv_eeaPPCCaptureOrder', [__CLASS__, 'captureOrderRequest']);
             // Log errors from the JS side.
             add_action('wp_ajax_eeaPPCommerceLogError', [__CLASS__, 'logJsError']);
             add_action('wp_ajax_nopriv_eeaPPCommerceLogError', [__CLASS__, 'logJsError']);
@@ -87,9 +79,9 @@ class EED_PayPalCommerce extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function createOrderRequest()
+    public static function createOrderRequest(): void
     {
-        $paypal_pm   = self::getPaymentMethod();
+        $paypal_pm   = EED_PayPalCommerce::getPaymentMethod();
         $request     = EED_Module::getRequest();
         $post_params = $request->postParams();
         if (! $paypal_pm instanceof EE_Payment_Method) {
@@ -98,24 +90,21 @@ class EED_PayPalCommerce extends EED_Module
                 $post_params
             );
         }
-        $transaction  = self::getTransaction();
+        $transaction  = EED_PayPalCommerce::getTransaction();
         $billing_info = $post_params['billing_info'] ?? [];
         if ($billing_info) {
             $billing_info_decoded = json_decode(stripslashes($billing_info), true);
-            if (is_array($billing_info_decoded)) {
-                $billing_info = $billing_info_decoded;
-            }
+            $billing_info = is_array($billing_info_decoded) ? $billing_info_decoded : [];
         }
-        if (! $transaction || ! $billing_info || ! is_array($billing_info)) {
+        if (! $transaction) {
             PayPalLogger::errorLogAndExit(
-                esc_html__('Transaction or billing info not found.', 'event_espresso'),
+                esc_html__('Transaction info not found.', 'event_espresso'),
                 $post_params,
                 $paypal_pm
             );
         }
-        $order_data = self::createOrder($transaction, $billing_info, $paypal_pm);
-        echo json_encode($order_data);
-        exit();
+        $order_data = EED_PayPalCommerce::createOrder($transaction, $billing_info, $paypal_pm);
+        wp_send_json($order_data);
     }
 
 
@@ -124,17 +113,15 @@ class EED_PayPalCommerce extends EED_Module
      * (AJAX)
      *
      * @return void
-     * @throws EE_Error
-     * @throws ReflectionException
      */
-    public static function captureOrderRequest()
+    public static function captureOrderRequest(): void
     {
         $error_message = false;
-        $paypal_pm     = self::getPaymentMethod();
+        $paypal_pm     = EED_PayPalCommerce::getPaymentMethod();
         if (! $paypal_pm instanceof EE_Payment_Method) {
             $error_message = esc_html__('Payment method not found (capture Order).', 'event_espresso');
         }
-        $transaction = self::getTransaction();
+        $transaction = EED_PayPalCommerce::getTransaction();
         if (! $transaction) {
             $error_message = esc_html__('Transaction not found.', 'event_espresso');
         }
@@ -146,9 +133,8 @@ class EED_PayPalCommerce extends EED_Module
         if ($error_message) {
             PayPalLogger::errorLogAndExit($error_message, EED_Module::getRequest()->postParams(), $paypal_pm);
         }
-        $capture_response = self::captureOrder($transaction, $paypal_pm, $order_id);
-        echo json_encode($capture_response);
-        exit();
+        $capture_response = EED_PayPalCommerce::captureOrder($transaction, $paypal_pm, $order_id);
+        wp_send_json($capture_response);
     }
 
 
@@ -161,14 +147,13 @@ class EED_PayPalCommerce extends EED_Module
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
-     * @throws Exception
      */
     public static function createOrder(
         EE_Transaction $transaction,
         array $billing_info,
         EE_Payment_Method $paypal_pm
     ): array {
-        $create_order_api = self::getCreateOrderApi($transaction, $billing_info, $paypal_pm);
+        $create_order_api = EED_PayPalCommerce::getCreateOrderApi($transaction, $billing_info, $paypal_pm);
         if (! $create_order_api instanceof CreateOrder) {
             return [
                 'error'   => 'CREATE_ORDER_API_FAULT',
@@ -195,16 +180,13 @@ class EED_PayPalCommerce extends EED_Module
      * @param EE_Payment_Method $paypal_pm
      * @param string            $order_id
      * @return array
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @throws Exception
      */
     public static function captureOrder(
         EE_Transaction $transaction,
         EE_Payment_Method $paypal_pm,
         string $order_id
     ): array {
-        $capture_order_api = self::getCaptureOrderApi($transaction, $paypal_pm, $order_id);
+        $capture_order_api = EED_PayPalCommerce::getCaptureOrderApi($transaction, $paypal_pm, $order_id);
         if (! $capture_order_api instanceof CaptureOrder) {
             return [
                 'error'   => 'CAPTURE_ORDER_API_FAULT',
@@ -216,7 +198,11 @@ class EED_PayPalCommerce extends EED_Module
             return $order;
         }
         // Attach the transaction ID to this order.
-        $order['ee_txn_id'] = $transaction->ID();
+        try {
+            $order['ee_txn_id'] = $transaction->ID();
+        } catch (Exception $e) {
+            // Just don't set the txn id.
+        }
         // Save this order details.
         PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_LAST_ORDER, $order);
         $nonce = wp_create_nonce(Domain::CAPTURE_ORDER_NONCE_NAME);
@@ -236,15 +222,14 @@ class EED_PayPalCommerce extends EED_Module
      * @param array             $billing_info
      * @param EE_Payment_Method $paypal_pm
      * @return CreateOrder|null
-     * @throws Exception
      */
     public static function getCreateOrderApi(
         EE_Transaction $transaction,
         array $billing_info,
         EE_Payment_Method $paypal_pm
     ): ?CreateOrder {
-        $paypal_api = self::getPayPalApi($paypal_pm);
-        if (! $paypal_api) {
+        $paypal_api = EED_PayPalCommerce::getPayPalApi($paypal_pm);
+        if (! $paypal_api instanceof PayPalApi) {
             return null;
         }
         return new CreateOrder($paypal_api, $transaction, $billing_info);
@@ -258,15 +243,14 @@ class EED_PayPalCommerce extends EED_Module
      * @param EE_Payment_Method $paypal_pm
      * @param string            $order_id
      * @return CaptureOrder|null
-     * @throws Exception
      */
     public static function getCaptureOrderApi(
         EE_Transaction $transaction,
         EE_Payment_Method $paypal_pm,
         string $order_id
     ): ?CaptureOrder {
-        $paypal_api = self::getPayPalApi($paypal_pm);
-        if (! $paypal_api) {
+        $paypal_api = EED_PayPalCommerce::getPayPalApi($paypal_pm);
+        if (! $paypal_api instanceof PayPalApi) {
             return null;
         }
         return new CaptureOrder($paypal_api, $transaction, $order_id);
@@ -278,17 +262,55 @@ class EED_PayPalCommerce extends EED_Module
      *
      * @param EE_Payment_Method $paypal_pm
      * @return PayPalApi|null
-     * @throws Exception
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function getPayPalApi(EE_Payment_Method $paypal_pm): ?PayPalApi
     {
+        // Try getting the first party credentials to determine if this is a first party integration that's active.
         $client_id     = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_CLIENT_ID);
         $client_secret = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_CLIENT_SECRET);
         $bn_code       = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_BN_CODE);
-        if (! $client_id || ! $client_secret || ! $bn_code) {
+        if ($client_id && $client_secret) {
+            return new FirstPartyPayPalApi($client_id, $client_secret, $bn_code, $paypal_pm->debug_mode());
+        }
+        // Third party integration credentials:
+        $access_token = EED_PayPalOnboard::getPartnerAccessToken($paypal_pm);
+        if (! $access_token || ! $bn_code) {
             return null;
         }
-        return new PayPalApi($client_id, $client_secret, $bn_code, $paypal_pm->debug_mode());
+        $partner_client_id = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PARTNER_CLIENT_ID) ?: '';
+        $payer_id          = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_SELLER_MERCHANT_ID) ?: '';
+        return new ThirdPartyPayPalApi($access_token, $bn_code, $partner_client_id, $payer_id, $paypal_pm->debug_mode());
+    }
+
+
+    /**
+     * Requests a client token.
+     *
+     * @param EE_Payment_Method $paypal_pm
+     * @return array
+     */
+    public static function requestClientToken(EE_Payment_Method $paypal_pm): array
+    {
+        $error = [
+            'error' => 'GET_CLIENT_TOKEN_FAULT'
+        ];
+        $paypal_api = EED_PayPalCommerce::getPayPalApi($paypal_pm);
+        if (! $paypal_api instanceof PayPalApi) {
+            $error['message'] = esc_html__('Got an error while trying to get the client token.', 'event_espresso');
+            return $error;
+        }
+        $client_token_api = new ClientToken($paypal_api, $paypal_pm->debug_mode());
+        $client_token = $client_token_api->getToken();
+        if (isset($client_token['error'])) {
+            return $client_token;
+        }
+        if (empty($client_token)) {
+            $error['message'] = esc_html__('Client token not valid.', 'event_espresso');
+            return $error;
+        }
+        return $client_token;
     }
 
 
@@ -296,20 +318,37 @@ class EED_PayPalCommerce extends EED_Module
      * Retrieve the payment method from the provided data.
      *
      * @return EE_Transaction|null
-     * @throws EE_Error
      */
     public static function getTransaction(): ?EE_Transaction
     {
-        $txn_id      = EED_Module::getRequest()->getRequestParam('txn_id', 0, DataType::INT);
-        $transaction = EEM_Transaction::instance()->get_one_by_ID($txn_id);
-        if (! $transaction instanceof EE_Transaction) {
-            PayPalLogger::errorLog(
-                esc_html__('No transaction found by ID:', 'event_espresso'),
-                EED_Module::getRequest()->postParams()
-            );
+        try {
+            $txn_id      = EED_Module::getRequest()->getRequestParam('txn_id', 0, DataType::INT);
+            $transaction = EEM_Transaction::instance()->get_one_by_ID($txn_id);
+            if (! $transaction instanceof EE_Transaction) {
+                PayPalLogger::errorLog(
+                    esc_html__('No transaction found by ID:', 'event_espresso'),
+                    EED_Module::getRequest()->postParams()
+                );
+                return null;
+            }
+        } catch (Exception $e) {
             return null;
         }
         return $transaction;
+    }
+
+
+    /**
+     * Return a PayPal API object, or false on failure.
+     *
+     * @param EE_Payment_Method $paypal_pm
+     * @return bool
+     */
+    public static function isThirdParty(EE_Payment_Method $paypal_pm): bool
+    {
+        $pp_meta_data = PayPalExtraMetaManager::getAllData($paypal_pm);
+        return ! empty($pp_meta_data[ Domain::META_KEY_SELLER_MERCHANT_ID ])
+            && ! empty($pp_meta_data[ Domain::META_KEY_ACCESS_TOKEN ]);
     }
 
 
@@ -327,7 +366,7 @@ class EED_PayPalCommerce extends EED_Module
             if ($payment_method instanceof EE_Payment_Method) {
                 return $payment_method;
             }
-        } catch (EE_Error $e) {
+        } catch (Exception $e) {
             return null;
         }
         return null;
@@ -338,10 +377,8 @@ class EED_PayPalCommerce extends EED_Module
      * Log JS error.
      *
      * @return void
-     * @throws EE_Error
-     * @throws ReflectionException
      */
-    public static function logJsError()
+    public static function logJsError(): void
     {
         // Default to the "first" PayPal checkout PM.
         $request        = EED_Module::getRequest();
@@ -365,7 +402,6 @@ class EED_PayPalCommerce extends EED_Module
      * @param EE_Transaction      $transaction
      * @param string              $scope @see EEM_Payment_Method::get_all_for_events
      * @return array
-     * @throws EE_Error
      */
     public static function filterPaymentMethods(array $payment_methods, $transaction, $scope): array
     {
@@ -377,5 +413,27 @@ class EED_PayPalCommerce extends EED_Module
             }
         }
         return $payment_methods;
+    }
+
+
+    /**
+     *  Get all active states.
+     *
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function getActiveStates(): array
+    {
+        $state_options = [];
+        $states        = EEM_State::instance()->get_all_active_states();
+        if (! empty($states)) {
+            foreach ($states as $numeral => $state) {
+                if ($state instanceof EE_State) {
+                    $state_options[ $numeral ] = $state->abbrev();
+                }
+            }
+        }
+        return $state_options;
     }
 }

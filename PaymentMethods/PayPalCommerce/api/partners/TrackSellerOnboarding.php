@@ -2,8 +2,8 @@
 
 namespace EventEspresso\PaymentMethods\PayPalCommerce\api\partners;
 
-use EE_Error;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
+use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
 
 /**
@@ -18,25 +18,18 @@ use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
 class TrackSellerOnboarding extends PartnersApi
 {
     /**
-     * Partner access token.
-     *
-     * @var int
-     */
-    protected $access_token;
-
-    /**
      * Partner ID.
      *
-     * @var int
+     * @var string
      */
-    protected $partner_id;
+    protected string $partner_id;
 
     /**
      * Seller ID.
      *
-     * @var int
+     * @var string
      */
-    protected $seller_id;
+    protected string $seller_id;
 
 
     /**
@@ -64,7 +57,6 @@ class TrackSellerOnboarding extends PartnersApi
      * Get the onboarding status and validate it.
      *
      * @return array
-     * @throws EE_Error
      */
     public function isValid(): array
     {
@@ -79,25 +71,27 @@ class TrackSellerOnboarding extends PartnersApi
      *
      * @param array $response
      * @return array
-     * @throws EE_Error
      */
     public function validateStatus(array $response): array
     {
         if (! empty($response['error'])) {
             return $response;
         }
+        if (! empty($response['name']) && ! empty($response['message'])) {
+            return ['error' => $response['name'], 'message' => $response['message']];
+        }
         // Check the data we received.
         if (
-            empty($response['merchant_id'])
-            || ! isset($response['payments_receivable'])
-            || ! isset($response['primary_email_confirmed'])
+            empty($response[ Domain::API_PARAM_TRACK_MERCHANT_ID ])
+            || ! isset($response[ Domain::API_PARAM_PAYMENTS_RECEIVABLE ])
+            || ! isset($response[ Domain::API_PARAM_PRIM_EMAIL_CONFIRMED ])
         ) {
             $err_msg = esc_html__('Missing required data for validating the onboarding status.', 'event_espresso');
             PayPalLogger::errorLog($err_msg, $response);
             return ['error' => 'ONBOARDING_MISSING_REQUIRED_DATA', 'message' => $err_msg];
         }
         // Now validate the onboarding status.
-        if (! $response['payments_receivable']) {
+        if (! $response[ Domain::API_PARAM_PAYMENTS_RECEIVABLE ]) {
             $err_msg = esc_html__(
                 'Your Account has been limited by PayPal. Please check your PayPal account inbox for an email from PayPal to determine the next steps for this.',
                 'event_espresso'
@@ -105,11 +99,14 @@ class TrackSellerOnboarding extends PartnersApi
             PayPalLogger::errorLog($err_msg, $response);
             return ['error' => 'ONBOARDING_LIMITED_BY_PAYPAL', 'message' => $err_msg];
         }
-        if (! $response['primary_email_confirmed']) {
+        if (! $response[ Domain::API_PARAM_PRIM_EMAIL_CONFIRMED ]) {
             $err_msg = esc_html__('Email address not confirmed. Please confirm your email address.', 'event_espresso');
             PayPalLogger::errorLog($err_msg, $response);
             return ['error' => 'ONBOARDING_CONFIRM_EMAIL', 'message' => $err_msg];
         }
-        return ['valid' => true];
+        return [
+            'valid'    => true,
+            'response' => $response,
+        ];
     }
 }

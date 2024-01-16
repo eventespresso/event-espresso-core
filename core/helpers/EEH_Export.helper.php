@@ -123,8 +123,9 @@ class EEH_Export
                 continue;
             }
 
-            $output[] = preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field_value) ?
-                ( $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field_value) . $enclosure ) : $field_value;
+            $output[] = $field_value && preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field_value)
+                ? ( $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field_value) . $enclosure )
+                : $field_value;
         }
 
         return  implode($delimiter, $output) . PHP_EOL;

@@ -674,11 +674,16 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
             return false;
         }
         $billing_form->clean_sensitive_data();
-        return update_post_meta(
-            $this->ID(),
-            $this->get_billing_info_postmeta_name($payment_method),
-            $billing_form->input_values(true)
-        );
+        $postmeta_name = $this->get_billing_info_postmeta_name($payment_method);
+        $saved_values  = get_post_meta($this->ID(), $postmeta_name);
+        $input_values  = $billing_form->input_values(true);
+        // Merge the values in case some fields were already saved somewhere.
+        if ($saved_values && is_array($saved_values)) {
+            // Need a one dimensional array.
+            $saved_values = array_merge(...$saved_values);
+            $input_values = array_merge($saved_values, $input_values);
+        }
+        return update_post_meta($this->ID(), $postmeta_name, $input_values);
     }
 
 

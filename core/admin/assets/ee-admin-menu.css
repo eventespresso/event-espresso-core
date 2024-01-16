@@ -209,8 +209,8 @@ div.TB-ee-frame a {
 
 .ee-switch .ee-switch__input + .ee-switch__toggle,
 input.ee-toggle-round-flat + label {
-    width: var(--ee-switch-width);
-    height: var(--ee-switch-height);
+    width: var(--ee-switch-width) !important;
+    height: var(--ee-switch-height) !important;
     background-color: var(--ee-status-color-light-grey);
     border-radius: var(--ee-switch-height);
     transition: background 0.4s;

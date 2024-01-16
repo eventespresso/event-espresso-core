@@ -738,7 +738,7 @@ class EE_Error extends Exception
         }
         if (EE_Session::isLoadedAndActive()) {
             // clear notices for user currently engaged in a session
-            return EE_Session::instance()->reset_data(EE_Error::OPTIONS_KEY_NOTICES);
+            return EE_Session::instance()->reset_data([EE_Error::OPTIONS_KEY_NOTICES]);
         }
         // clear global notices and hope none belonged to some for some other site visitor
         return update_option(EE_Error::OPTIONS_KEY_NOTICES, []);

@@ -206,7 +206,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         add_filter('FHEE__Events_Admin_Page___event_legend_items__items', [$this, 'additional_legend_items']);
         add_action('admin_init', [$this, 'admin_init']);
         // this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
-        add_filter('get_sample_permalink_html', [DuplicateEventButton::class, 'addButton'], 8, 4);
+        // add_filter('get_sample_permalink_html', [DuplicateEventButton::class, 'addButton'], 8, 2);
+        DuplicateEventButton::addEventEditorPermalinkButton(8);
     }
 
 

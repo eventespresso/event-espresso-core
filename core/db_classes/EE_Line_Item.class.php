@@ -213,7 +213,7 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function desc(): string
     {
-        return $this->get('LIN_desc');
+        return (string) $this->get('LIN_desc');
     }
 
 

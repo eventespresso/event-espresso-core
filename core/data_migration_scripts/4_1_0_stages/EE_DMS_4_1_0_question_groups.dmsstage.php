@@ -143,9 +143,9 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage
             $identifier = $old_question_group['group_identifier'];
         }
         $cols_n_values = [
-            'QSG_name'            => stripslashes($old_question_group['group_name']),
+            'QSG_name'            => stripslashes($old_question_group['group_name'] ?: ''),
             'QSG_identifier'      => $identifier,
-            'QSG_desc'            => stripslashes($old_question_group['group_description']),
+            'QSG_desc'            => stripslashes($old_question_group['group_description'] ?: ''),
             'QSG_order'           => $old_question_group['group_order'],
             'QSG_show_group_name' => $old_question_group['show_group_name'],
             'QSG_show_group_desc' => $old_question_group['show_group_description'],

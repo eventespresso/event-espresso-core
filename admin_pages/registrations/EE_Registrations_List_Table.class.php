@@ -5,7 +5,9 @@ use EventEspresso\core\domain\services\capabilities\user_caps\RegistrationsListT
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\DataType;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Registrations Table class
@@ -41,7 +43,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected array $_event_details = [];
 
+    private array $filters = [];
+
     private int $EVT_ID = 0;
+
+    private int $DTT_ID = 0;
+
+    private int $TKT_ID = 0;
 
 
     /**
@@ -50,17 +58,61 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function __construct(Registrations_Admin_Page $admin_page)
     {
         $this->caps_handler = new RegistrationsListTableUserCapabilities(EE_Registry::instance()->CAP);
+        $this->request      = $this->request ?? LoaderFactory::getShared(RequestInterface::class);
+        $this->setupFilters();
         parent::__construct($admin_page);
-        $this->EVT_ID = $this->request->getRequestParam('event_id', 0, DataType::INTEGER);
-        $req_data     = $admin_page->get_request_data();
-        if ($this->EVT_ID) {
-            $extra_query_args = [];
-            foreach ($admin_page->get_views() as $view_details) {
-                $extra_query_args[ $view_details['slug'] ] = ['event_id' => $this->EVT_ID];
-            }
-            $this->_views = $admin_page->get_list_table_view_RLs($extra_query_args);
-        }
         $this->_status = $this->_admin_page->get_registration_status_array();
+    }
+
+
+    private function setupFilters()
+    {
+        // for event filtering
+        $this->EVT_ID = $this->request->getRequestParam('EVT_ID', 0, DataType::INTEGER);
+        $this->EVT_ID = $this->request->getRequestParam('event_id', $this->EVT_ID, DataType::INTEGER);
+        // for datetime filtering
+        $this->DTT_ID = $this->request->getRequestParam('DTT_ID', 0, DataType::INTEGER);
+        $this->DTT_ID = $this->request->getRequestParam('datetime_id', $this->DTT_ID, DataType::INTEGER);
+        // for ticket filtering
+        $this->TKT_ID = $this->request->getRequestParam('TKT_ID', 0, DataType::INTEGER);
+        $this->TKT_ID = $this->request->getRequestParam('ticket_id', $this->TKT_ID, DataType::INTEGER);
+
+        $filters = [
+            'event_id'    => $this->EVT_ID,
+            'datetime_id' => $this->DTT_ID,
+            'ticket_id'   => $this->TKT_ID,
+        ];
+        foreach ($filters as $filter_key => $filter_value) {
+            if ($filter_value) {
+                $this->filters[ $filter_key ] = $filter_value;
+            }
+        }
+
+        add_filter(
+            'FHEE__EE_Admin_Page__get_list_table_view_RLs__extra_query_args',
+            [$this, 'filterExtraQueryArgs'],
+            10,
+            2
+        );
+    }
+
+
+    /**
+     * @param array         $extra_query_args
+     * @param EE_Admin_Page $admin_page
+     * @return void
+     * @since $VID:$
+     */
+    public function filterExtraQueryArgs(array $extra_query_args, EE_Admin_Page $admin_page): array
+    {
+        if ($admin_page instanceof Registrations_Admin_Page) {
+            foreach ($admin_page->get_views() as $view_details) {
+                foreach ($this->filters as $filter_key => $filter_value) {
+                    $extra_query_args[ $view_details['slug'] ][ $filter_key ] = $filter_value;
+                }
+            }
+        }
+        return $extra_query_args;
     }
 
 
@@ -81,19 +133,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected function _set_properties()
     {
-        $return_url = $this->getReturnUrl();
-        $req_data   = $this->_admin_page->get_request_data();
-
         $this->_wp_list_args = [
             'singular' => esc_html__('registration', 'event_espresso'),
             'plural'   => esc_html__('registrations', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         ];
-
-        $DTT_ID = $req_data['DTT_ID'] ?? 0;
-        $DTT_ID = $req_data['datetime_id'] ?? $DTT_ID;
-        $DTT_ID = (int) $DTT_ID;
 
         if ($this->EVT_ID) {
             $this->_columns = [
@@ -122,11 +167,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             ];
         }
 
-        $csv_report = RegistrationsCsvReportParams::getRequestParams($return_url, $req_data, $this->EVT_ID, $DTT_ID);
-        if (! empty($csv_report)) {
-            $this->_bottom_buttons['csv_reg_report'] = $csv_report;
-        }
-
         $this->_primary_column   = 'id';
         $this->_sortable_columns = [
             '_REG_date'     => ['_REG_date' => true],   // true means its already sorted
@@ -147,6 +187,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             'id'            => ['REG_ID' => false],
         ];
         $this->_hidden_columns   = [];
+
+        $csv_report = RegistrationsCsvReportParams::getRequestParams(
+            $this->getReturnUrl(),
+            $this->_admin_page->get_request_data(),
+            $this->EVT_ID,
+            $this->DTT_ID
+        );
+        if (! empty($csv_report)) {
+            $this->_bottom_buttons['csv_reg_report'] = $csv_report;
+        }
     }
 
 
@@ -239,14 +289,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 $reg_status ? strtoupper($reg_status) : ''
             );
         }
-        foreach (['event_id', 'datetime_id', 'ticket_id'] as $filter_key) {
-            if ($this->request->requestParamIsSet($filter_key)) {
-                $filters[] = EEH_Form_Fields::hidden_input(
-                    $filter_key,
-                    $this->request->getRequestParam($filter_key),
-                    'reg_' . $filter_key
-                );
-            }
+        foreach ($this->filters as $filter_key => $filter_value) {
+            $filters[] = EEH_Form_Fields::hidden_input($filter_key, $filter_value, 'reg_' . $filter_key);
         }
         return $filters;
     }
@@ -273,6 +317,21 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     }
 
 
+    private function addWhereParamsForFilters(array $where = []): array
+    {
+        if ($this->EVT_ID) {
+            $where['EVT_ID'] = $this->EVT_ID;
+        }
+        if ($this->DTT_ID) {
+            $where['Ticket.Datetime.DTT_ID'] = $this->DTT_ID;
+        }
+        if ($this->TKT_ID) {
+            $where['TKT_ID'] = $this->TKT_ID;
+        }
+        return $where;
+    }
+
+
     /**
      * @param string $view
      * @return int
@@ -281,20 +340,17 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected function _total_registrations(string $view = ''): int
     {
-        $_where = [];
-        if ($this->EVT_ID) {
-            $_where['EVT_ID'] = $this->EVT_ID;
-        }
+        $where = $this->addWhereParamsForFilters();
         switch ($view) {
             case 'trash':
-                return EEM_Registration::instance()->count_deleted([$_where]);
+                return EEM_Registration::instance()->count_deleted([$where]);
             case 'incomplete':
-                $_where['STS_ID'] = EEM_Registration::status_id_incomplete;
+                $where['STS_ID'] = EEM_Registration::status_id_incomplete;
                 break;
             default:
-                $_where['STS_ID'] = ['!=', EEM_Registration::status_id_incomplete];
+                $where['STS_ID'] = ['!=', EEM_Registration::status_id_incomplete];
         }
-        return EEM_Registration::instance()->count([$_where]);
+        return EEM_Registration::instance()->count([$where]);
     }
 
 
@@ -335,7 +391,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     protected function totalRegistrationsYesterday(): int
     {
-        $yesterday    = date('Y-m-d', current_time('timestamp') - DAY_IN_SECONDS);
+        $yesterday = date('Y-m-d', current_time('timestamp') - DAY_IN_SECONDS);
         return $this->totalRegistrationsForDateRange($yesterday, $yesterday);
     }
 
@@ -349,27 +405,26 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     private function totalRegistrationsForDateRange(string $start_date, string $end_date): int
     {
-        $where = [
-            'REG_date' => [
-                'BETWEEN',
-                [
-                    EEM_Registration::instance()->convert_datetime_for_query(
-                        'REG_date',
-                        "$start_date 00:00:00",
-                        'Y-m-d H:i:s'
-                    ),
-                    EEM_Registration::instance()->convert_datetime_for_query(
-                        'REG_date',
-                        "$end_date  23:59:59",
-                        'Y-m-d H:i:s'
-                    ),
+        $where = $this->addWhereParamsForFilters(
+            [
+                'REG_date' => [
+                    'BETWEEN',
+                    [
+                        EEM_Registration::instance()->convert_datetime_for_query(
+                            'REG_date',
+                            "$start_date 00:00:00",
+                            'Y-m-d H:i:s'
+                        ),
+                        EEM_Registration::instance()->convert_datetime_for_query(
+                            'REG_date',
+                            "$end_date  23:59:59",
+                            'Y-m-d H:i:s'
+                        ),
+                    ],
                 ],
-            ],
-            'STS_ID'   => ['!=', EEM_Registration::status_id_incomplete],
-        ];
-        if ($this->EVT_ID) {
-            $where['EVT_ID'] = $this->EVT_ID;
-        }
+                'STS_ID'   => ['!=', EEM_Registration::status_id_incomplete],
+            ]
+        );
         return EEM_Registration::instance()->count([$where]);
     }
 

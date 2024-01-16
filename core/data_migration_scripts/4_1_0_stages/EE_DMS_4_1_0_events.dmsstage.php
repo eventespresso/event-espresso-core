@@ -261,12 +261,13 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
                 $this->_convert_start_end_times($event_row, $post_id);
                 $event_meta = maybe_unserialize($event_row['event_meta']);
                 $guid       = $event_meta['event_thumbnail_url'] ?? null;
-                $this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post(
-                    $guid,
-                    $post_id,
-                    $this
-                );
-
+                if ($guid) {
+                    $this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post(
+                        $guid,
+                        $post_id,
+                        $this
+                    );
+                }
                 // maybe create a venue from info on the event?
                 $new_venue_id = $this->_maybe_create_venue($event_row);
                 if ($new_venue_id) {
@@ -604,11 +605,13 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
             if ($new_id) {
                 $this->_insert_venue_into_meta_table($new_id, $old_event);
                 $guid = $old_event['venue_image'] ?? null;
-                $this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post(
-                    $guid,
-                    $new_id,
-                    $this
-                );
+                if($guid) {
+                    $this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post(
+                        $guid,
+                        $new_id,
+                        $this
+                    );
+                }
             }
             // we don't bother recording the conversion from old events to venues as that
             // will complicate finding the conversion from old venues to new events

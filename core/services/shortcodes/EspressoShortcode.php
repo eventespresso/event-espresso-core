@@ -19,20 +19,10 @@ use WP_Post;
  */
 abstract class EspressoShortcode implements ShortcodeInterface
 {
-    /**
-     * @type string
-     */
     public const CACHE_TRANSIENT_PREFIX = 'SC_';
-
-    /**
-     * @type string
-     */
     public const SHORTCODE_PREFIX = 'ESPRESSO_';
 
-    /**
-     * @var PostRelatedCacheManager $cache_manager
-     */
-    private $cache_manager;
+    private PostRelatedCacheManager $cache_manager;
 
     /**
      * true if ShortcodeInterface::initializeShortcode() has been called
@@ -40,7 +30,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
      *
      * @var bool $initialized
      */
-    private $initialized = false;
+    private bool $initialized = false;
 
 
     /**
@@ -100,7 +90,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
      */
     private function shortcodeContent(array $attributes)
     {
-        $shortcode = $this;
         $post_ID = $this->currentPostID();
         // something like "SC_EVENTS-123"
         $cache_ID = $this->shortcodeCacheID($post_ID);
@@ -110,11 +99,11 @@ abstract class EspressoShortcode implements ShortcodeInterface
             // serialized attributes
             wp_json_encode($attributes),
             // Closure for generating content if cache is expired
-            function () use ($shortcode, $attributes) {
-                if ($shortcode->initialized() === false) {
-                    $shortcode->initializeShortcode();
+            function () use ($attributes) {
+                if ($this->initialized() === false) {
+                    $this->initializeShortcode();
                 }
-                return $shortcode->processShortcode($attributes);
+                return $this->processShortcode($attributes);
             },
             // filterable cache expiration set by each shortcode
             apply_filters(
@@ -234,11 +223,11 @@ abstract class EspressoShortcode implements ShortcodeInterface
 
 
     /**
-     * Returns whether or not this shortcode has been initialized
+     * Returns whether this shortcode has been initialized
      *
      * @return bool
      */
-    public function initialized()
+    public function initialized(): bool
     {
         return $this->initialized;
     }

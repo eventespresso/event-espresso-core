@@ -361,12 +361,15 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             );
         }
         // add preview button
-        add_filter('get_sample_permalink_html', [PreviewButton::class, 'addButton'], 5, 2);
+        // add_filter('get_sample_permalink_html', [PreviewButton::class, 'addButton'], 5, 2);
+        PreviewButton::addEventEditorPermalinkButton(5);
         // add shortlink button to cpt edit screens.
         //  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
-        add_filter('get_sample_permalink_html', [EventShortlinkButton::class, 'addButton'], 10, 2);
+        // add_filter('get_sample_permalink_html', [EventShortlinkButton::class, 'addButton'], 10, 2);
+        EventShortlinkButton::addEventEditorPermalinkButton();
         // this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
-        add_filter('get_sample_permalink_html', [TicketSelectorShortcodeButton::class, 'addButton'], 12, 4);
+        // add_filter('get_sample_permalink_html', [TicketSelectorShortcodeButton::class, 'addButton'], 12, 2);
+        TicketSelectorShortcodeButton::addEventEditorPermalinkButton(12);
         // insert our own post_stati dropdown
         add_action('post_submitbox_misc_actions', [$this, 'custom_post_stati_dropdown']);
         // This allows adding additional information to the publish post submitbox on the wp post edit form

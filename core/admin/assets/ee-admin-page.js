@@ -4,7 +4,7 @@ jQuery(document).ready(function($) {
 	// clear firefox and safari cache
 	$(window).on("unload", function() {});
 
-	const $wpContent = $('#wpcontent');
+	const $wpwrap = $('#wpwrap');
 
 
 	function validate_form_inputs( submittedForm ) {
@@ -218,7 +218,7 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$wpContent.on( 'click', '.espresso-help-tab-lnk', function(){
+	$wpwrap.on( 'click', '.espresso-help-tab-lnk', function(){
 		var target_help_tab = '#tab-link-' + $(this).attr('id') + ' a';
 		if ( $('#contextual-help-wrap').css('display') === 'none' ) {
 			$('#contextual-help-link').trigger('click');
@@ -235,11 +235,12 @@ jQuery(document).ready(function($) {
 	espressoAjaxPopulate = function(el) {
 		function show(i, id) {
 			var p, e = $('#' + id).find('.widget-loading');
+            const page = $('#espresso_admin_current_page').val();
 			if ( e.length ) {
 				p = e.parent();
 				var u = $('#' + id + '_url').text();
 				setTimeout( function(){
-					p.load( ajaxurl + '?action=espresso-ajax-content&ee_admin_ajax=1&contentid=' + id + '&contenturl=' + u, '', function() {
+					p.load( ajaxurl + '?page=' + page + '&action=espresso-ajax-content&ee_admin_ajax=1&contentid=' + id + '&contenturl=' + u, '', function() {
 						p.hide().slideDown('normal', function(){
 							$(this).css('display', '');
 						});
@@ -267,17 +268,17 @@ jQuery(document).ready(function($) {
 		});
 	}
 
-	$wpContent.on( 'click', '.ee-modal-menu__button', function(e) {
+	$wpwrap.on( 'click', '.ee-modal-menu__button', function(e) {
 		e.preventDefault();
 		espressoCloseModalMenus();
 		$(this).parent().toggleClass('active');
 	});
-	$wpContent.on('click', '.ee-modal-menu__close', function () {
+	$wpwrap.on('click', '.ee-modal-menu__close', function () {
 		espressoCloseModalMenus();
 	});
 
 
-	$wpContent.on('mouseenter', '.ee-aria-tooltip', function () {
+	$wpwrap.on('mouseenter', '.ee-aria-tooltip', function () {
 		const label = $(this).attr('aria-label');
 		const tooltip = '<span class="ee-tooltip">' + label + '</span>';
 
@@ -295,39 +296,71 @@ jQuery(document).ready(function($) {
 			windowTop += 16;
 		}
 
-		const tooltipHeight = $tooltip.height();
-		const tooltipWidth = $tooltip.width();
-		const tooltipPosition = $(this).offset();
+		const tooltipHeight = $tooltip.outerHeight();
+		const tooltipWidth = $tooltip.outerWidth();
+		const tooltipOffset = $(this).offset();
+        const tooltipLeft = tooltipOffset.left;
+        const tooltipRight = tooltipLeft + tooltipWidth;
+        const tooltipTop = tooltipOffset.top;
+        const tooltipBottom = tooltipTop + tooltipHeight;
 
-		const tooltipLeft = tooltipPosition.left;
-		const tooltipRight = tooltipLeft + tooltipWidth;
-		const tooltipTop = tooltipPosition.top;
-		const tooltipBottom = tooltipTop + tooltipHeight;
+		let shiftLeft = -16; // plus 1 rem for a bit of space
+		let shiftTop = (tooltipHeight + 8) * -1; // plus half rem for a bit of space
 
-		let shiftLeft = -12;
-		let shiftTop = (tooltipHeight + 24) * -1;
-
+        // does tooltip go off the top of the screen?
 		if (tooltipTop < windowTop) {
-			shiftTop = (shiftTop - (windowTop - tooltipTop)) * -1;
-		} else if (tooltipBottom > windowBottom) {
+			shiftTop -= tooltipTop - windowTop;
+		}
+        // or the bottom of the screen?
+        if (tooltipBottom > windowBottom) {
 			shiftTop -= tooltipBottom - windowBottom;
 		}
-
+        // what about the left side of the screen?
 		if (tooltipLeft < 0) {
-			shiftLeft = (shiftTop - tooltipLeft) * -1;
-		} else if (tooltipRight > windowWidth) {
+			shiftLeft = 16; // just set left to 1 rem for a bit of space
+		}
+        // or the right side?
+        if (tooltipRight > windowWidth) {
 			shiftLeft -= tooltipRight - windowWidth;
 		}
 
-		$tooltip.css({
-			left: $tooltip.position().left + shiftLeft + "px",
-			top: $tooltip.position().top + shiftTop + "px"
-		});
+        const $parent = $(this).closest('.ee-aria-tooltip__bounding-box');
+        if ($parent.length) {
+            const parentHeight = $parent.height();
+            const parentWidth = $parent.width();
+            const parentOffset = $parent.offset();
+            const parentLeft = parentOffset.left;
+            const parentRight = parentLeft + parentWidth;
+            const parentTop = parentOffset.top;
+            const parentBottom = parentTop + parentHeight;
 
-		$tooltip.delay(500).fadeIn(250);
+            // does tooltip go off the top of the parent container?
+            if ((tooltipTop + shiftTop) < parentTop) {
+                shiftTop += tooltipTop - parentTop;
+            }
+            // or the bottom of the parent container?
+            if ((tooltipBottom + shiftTop) > parentBottom) {
+                shiftTop -= tooltipBottom - parentBottom;
+            }
+            // what about the left side of the parent container?
+            if ((tooltipLeft + shiftLeft) < parentLeft) {
+                shiftLeft = parentLeft + 16;
+            }
+            // or the right side of the parent container?
+            if ((tooltipRight + shiftLeft) > parentRight) {
+                shiftLeft -= tooltipRight - parentRight + 16;
+            }
+        }
+        const tooltipStyles = {
+            left: shiftLeft + "px",
+            top: shiftTop + "px"
+        };
+
+		$tooltip.css(tooltipStyles).delay(500).fadeIn(250);
 	});
 
-	$wpContent.on('mouseleave', '.ee-aria-tooltip', function () {
+	$wpwrap.on('mouseleave', '.ee-aria-tooltip', function () {
+        // comment this out if you need to adjust tooltip styles and want them to stay open
 		$(this).find('.ee-tooltip').fadeOut(125).remove();
 	});
 

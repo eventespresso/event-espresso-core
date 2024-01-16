@@ -191,8 +191,10 @@ class EE_Cart implements ResettableInterface
      *
      * @access public
      * @return EE_Line_Item[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_tickets()
+    public function get_tickets(): array
     {
         if ($this->_grand_total === null) {
             return array();
@@ -209,7 +211,7 @@ class EE_Cart implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function all_ticket_quantity_count()
+    public function all_ticket_quantity_count(): int
     {
         $tickets = $this->get_tickets();
         if (empty($tickets)) {
@@ -217,7 +219,7 @@ class EE_Cart implements ResettableInterface
         }
         $count = 0;
         foreach ($tickets as $ticket) {
-            $count += $ticket->get('LIN_quantity');
+            $count += $ticket->quantity();
         }
         return $count;
     }

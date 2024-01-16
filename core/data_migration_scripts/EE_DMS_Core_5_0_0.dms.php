@@ -59,8 +59,8 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
     {
         $version_string = $version_array['Core'];
         return $version_string &&
-               version_compare($version_string, '5.0.0.decaf', '<') &&
-               version_compare($version_string, '4.10.0.decaf', '>=');
+            version_compare($version_string, '5.0.0.decaf', '<') &&
+            version_compare($version_string, '4.10.0.decaf', '>=');
     }
 
 
@@ -79,10 +79,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
             REG_ID int(10) unsigned NOT NULL,
             QST_ID int(10) unsigned NOT NULL,
             ANS_value text NOT NULL,
-            PRIMARY KEY  (ANS_ID),
-            KEY REG_ID (REG_ID),
-            KEY QST_ID (QST_ID)'
+            PRIMARY KEY  (ANS_ID)'
         );
+        $this->_get_table_manager()->addIndex('esp_answer', 'REG_ID', 'REG_ID');
+        $this->_get_table_manager()->addIndex('esp_answer', 'QST_ID', 'QST_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -99,12 +99,18 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				ATT_zip varchar(12) DEFAULT	NULL,
 				ATT_email varchar(255) NOT NULL,
 				ATT_phone varchar(45) DEFAULT NULL,
-				PRIMARY KEY  (ATTM_ID),
-				KEY ATT_ID (ATT_ID),
-				KEY ATT_email (ATT_email(191)),
-				KEY ATT_lname (ATT_lname),
-				KEY ATT_fname (ATT_fname)"
+				PRIMARY KEY  (ATTM_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_attendee_meta', 'ATT_ID', 'ATT_ID');
+        $this->_get_table_manager()->addIndex(
+            'esp_attendee_meta',
+            'ATT_email',
+            'ATT_email',
+            TableAnalysis::INDEX_TYPE_INDEX,
+            TableAnalysis::INDEX_COLUMN_SIZE
+        );
+        $this->_get_table_manager()->addIndex('esp_attendee_meta', 'ATT_lname', 'ATT_lname');
+        $this->_get_table_manager()->addIndex('esp_attendee_meta', 'ATT_fname', 'ATT_fname');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -114,9 +120,17 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				DTT_ID int(10) unsigned NOT NULL,
 				CHK_in tinyint(1) unsigned NOT NULL DEFAULT 1,
 				CHK_timestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				PRIMARY KEY  (CHK_ID),
-				KEY REG_ID (REG_ID),
-				KEY DTT_ID (DTT_ID)"
+				PRIMARY KEY  (CHK_ID)"
+        );
+        $this->_get_table_manager()->addIndex('esp_checkin', 'REG_ID', 'REG_ID');
+        $this->_get_table_manager()->addIndex('esp_checkin', 'DTT_ID', 'DTT_ID');
+        $this->_get_table_manager()->addIndex(
+            'esp_checkin',
+            'CHK_timestamp',
+            'CHK_timestamp',
+            TableAnalysis::INDEX_TYPE_INDEX,
+            null,
+            true
         );
 
 
@@ -162,9 +176,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
             "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
 				CUR_code varchar(6) NOT NULL,
 				PMD_ID int(11) NOT NULL,
-				PRIMARY KEY  (CPM_ID),
-				KEY PMD_ID (PMD_ID)"
+				PRIMARY KEY  (CPM_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_currency_payment_method', 'PMD_ID', 'PMD_ID');
 
 
         $this->_table_is_changed_in_this_version(
@@ -183,13 +197,13 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				DTT_order mediumint(3) unsigned DEFAULT 0,
 				DTT_parent int(10) unsigned DEFAULT 0,
 				DTT_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
-				PRIMARY KEY  (DTT_ID),
-				KEY DTT_EVT_start (DTT_EVT_start),
-				KEY DTT_EVT_end (DTT_EVT_end),
-				KEY EVT_ID (EVT_ID),
-				KEY VNU_ID (VNU_ID)"
+				PRIMARY KEY  (DTT_ID)"
         );
-        $this->_get_table_manager()->dropIndex('esp_datetime', 'DTT_is_primary');
+        $this->_get_table_manager()->addIndex('esp_datetime', 'EVT_ID', 'EVT_ID');
+        // $this->_get_table_manager()->addIndex('esp_datetime', 'VNU_ID', 'VNU_ID');
+        $this->_get_table_manager()->addIndex('esp_datetime', 'DTT_EVT_start', 'DTT_EVT_start');
+        // $this->_get_table_manager()->addIndex('esp_datetime', 'DTT_EVT_end', 'DTT_EVT_end');
+        // $this->_get_table_manager()->dropIndex('esp_datetime', 'DTT_is_primary');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -197,10 +211,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
             "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				DTT_ID int(10) unsigned NOT NULL,
 				TKT_ID int(10) unsigned NOT NULL,
-				PRIMARY KEY  (DTK_ID),
-				KEY DTT_ID (DTT_ID),
-				KEY TKT_ID (TKT_ID)"
+				PRIMARY KEY  (DTK_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_datetime_ticket', 'DTT_ID', 'DTT_ID');
+        $this->_get_table_manager()->addIndex('esp_datetime_ticket', 'TKT_ID', 'TKT_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -208,10 +222,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
             "EMT_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				EVT_ID bigint(20) unsigned NOT NULL DEFAULT 0,
 				GRP_ID int(10) unsigned NOT NULL DEFAULT 0,
-				PRIMARY KEY  (EMT_ID),
-				KEY EVT_ID (EVT_ID),
-				KEY GRP_ID (GRP_ID)"
+				PRIMARY KEY  (EMT_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_event_message_template', 'EVT_ID', 'EVT_ID');
+        $this->_get_table_manager()->addIndex('esp_event_message_template', 'GRP_ID', 'GRP_ID');
 
 
         $this->_table_is_changed_in_this_version(
@@ -231,10 +245,17 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				EVT_external_URL varchar(200) NULL,
 				EVT_donations tinyint(1) NULL,
 				FSC_UUID varchar(25) DEFAULT NULL,
-				PRIMARY KEY  (EVTM_ID),
-				KEY EVT_ID (EVT_ID),
-				KEY VNU_ID (VNU_ID)"
+				PRIMARY KEY  (EVTM_ID)"
         );
+        $this->_get_table_manager()->addIndex(
+            'esp_event_meta',
+            'EVT_ID',
+            'EVT_ID',
+            TableAnalysis::INDEX_TYPE_INDEX,
+            null,
+            true
+        );
+        // $this->_get_table_manager()->addIndex('esp_event_meta', 'VNU_ID', 'VNU_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -244,10 +265,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				QSG_ID int(10) unsigned NOT NULL,
 				EQG_primary tinyint(1) unsigned NOT NULL DEFAULT 0,
 				EQG_additional tinyint(1) unsigned NOT NULL DEFAULT 0,
-				PRIMARY KEY  (EQG_ID),
-				KEY EVT_ID (EVT_ID),
-				KEY QSG_ID (QSG_ID)"
+				PRIMARY KEY  (EQG_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_event_question_group', 'EVT_ID', 'EVT_ID');
+        $this->_get_table_manager()->addIndex('esp_event_question_group', 'QSG_ID', 'QSG_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -267,9 +288,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				EXM_type varchar(45) DEFAULT NULL,
 				EXM_key varchar(45) DEFAULT NULL,
 				EXM_value text,
-				PRIMARY KEY  (EXM_ID),
-				KEY EXM_type (EXM_type,OBJ_ID,EXM_key)"
+				PRIMARY KEY  (EXM_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_extra_meta', 'EXM_type', 'EXM_type,OBJ_ID,EXM_key');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -279,9 +300,17 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				EXJ_first_model_name varchar(20) NOT NULL,
 				EXJ_second_model_id varchar(12) NOT NULL,
 				EXJ_second_model_name varchar(20) NOT NULL,
-				PRIMARY KEY  (EXJ_ID),
-				KEY first_model (EXJ_first_model_name,EXJ_first_model_id),
-				KEY second_model (EXJ_second_model_name,EXJ_second_model_id)"
+				PRIMARY KEY  (EXJ_ID)"
+        );
+        $this->_get_table_manager()->addIndex(
+            'esp_extra_join',
+            'first_model',
+            'EXJ_first_model_name,EXJ_first_model_id'
+        );
+        $this->_get_table_manager()->addIndex(
+            'esp_extra_join',
+            'second_model',
+            'EXJ_second_model_name,EXJ_second_model_id'
         );
 
 
@@ -300,11 +329,11 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				FIN_status varchar(32) NOT NULL DEFAULT 'active',
 				FIN_type tinytext DEFAULT NULL,
 				FIN_wpUser bigint(20) unsigned DEFAULT NULL,
-				PRIMARY KEY  (FIN_UUID),
-				KEY FSC_UUID (FSC_UUID)"
+				PRIMARY KEY  (FIN_UUID)"
         );
-        $this->_get_table_manager()->dropIndex('esp_form_element', 'FIN_order');
-        $this->_get_table_manager()->dropIndex('esp_form_element', 'FIN_status');
+        $this->_get_table_manager()->addIndex('esp_form_element', 'FSC_UUID', 'FSC_UUID');
+        // $this->_get_table_manager()->dropIndex('esp_form_element', 'FIN_order');
+        // $this->_get_table_manager()->dropIndex('esp_form_element', 'FIN_status');
 
 
         $this->_table_is_new_in_this_version(
@@ -317,11 +346,11 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				FSC_order tinyint(2) unsigned NOT NULL DEFAULT 0,
 				FSC_status varchar(32) NOT NULL DEFAULT 'active',
 				FSC_wpUser bigint(20) unsigned DEFAULT NULL,
-				PRIMARY KEY  (FSC_UUID),
-				KEY FSC_belongsTo (FSC_belongsTo)"
+				PRIMARY KEY  (FSC_UUID)"
         );
-        $this->_get_table_manager()->dropIndex('esp_form_section', 'FSC_order');
-        $this->_get_table_manager()->dropIndex('esp_form_section', 'FSC_status');
+        $this->_get_table_manager()->addIndex('esp_form_section', 'FSC_belongsTo', 'FSC_belongsTo');
+        // $this->_get_table_manager()->dropIndex('esp_form_section', 'FSC_order');
+        // $this->_get_table_manager()->dropIndex('esp_form_section', 'FSC_status');
 
 
         $this->_table_is_new_in_this_version(
@@ -331,9 +360,17 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				TXN_ID int(10) DEFAULT NULL,
 				FSB_data mediumtext DEFAULT NULL,
 				FSB_submitted datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				PRIMARY KEY  (FSB_UUID),
-				KEY FSC_UUID (FSC_UUID),
-				KEY TXN_ID (TXN_ID)"
+				PRIMARY KEY  (FSB_UUID)"
+        );
+        $this->_get_table_manager()->addIndex('esp_form_submission', 'FSC_UUID', 'FSC_UUID');
+        $this->_get_table_manager()->addIndex('esp_form_submission', 'TXN_ID', 'TXN_ID');
+        $this->_get_table_manager()->addIndex(
+            'esp_form_submission',
+            'FSB_submitted',
+            'FSB_submitted',
+            TableAnalysis::INDEX_TYPE_INDEX,
+            null,
+            true
         );
 
 
@@ -356,11 +393,19 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				OBJ_ID int(11) DEFAULT NULL,
 				OBJ_type varchar(45) DEFAULT NULL,
 				LIN_timestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				PRIMARY KEY  (LIN_ID),
-				KEY parent_order (LIN_parent,LIN_order),
-				KEY txn_type_timestamp (TXN_ID,LIN_type,LIN_timestamp),
-				KEY txn_obj_id_obj_type (TXN_ID,OBJ_ID,OBJ_type),
-				KEY obj_id_obj_type (OBJ_ID,OBJ_type)"
+				PRIMARY KEY  (LIN_ID)"
+        );
+        $this->_get_table_manager()->addIndex('esp_line_item', 'parent_order', 'LIN_parent,LIN_order');
+        $this->_get_table_manager()->addIndex('esp_line_item', 'txn_type_timestamp', 'TXN_ID,LIN_type,LIN_timestamp');
+        $this->_get_table_manager()->addIndex('esp_line_item', 'txn_obj_id_obj_type', 'TXN_ID,OBJ_ID,OBJ_type');
+        $this->_get_table_manager()->addIndex('esp_line_item', 'obj_id_obj_type', 'OBJ_ID,OBJ_type');
+        $this->_get_table_manager()->addIndex(
+            'esp_line_item',
+            'LIN_timestamp',
+            'LIN_timestamp',
+            TableAnalysis::INDEX_TYPE_INDEX,
+            null,
+            true
         );
 
 
@@ -373,11 +418,11 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				LOG_type varchar(45) DEFAULT NULL,
 				LOG_message text,
 				LOG_wp_user int(11) DEFAULT NULL,
-				PRIMARY KEY  (LOG_ID),
-				KEY LOG_time (LOG_time),
-				KEY OBJ (OBJ_type,OBJ_ID),
-				KEY LOG_type (LOG_type)"
+				PRIMARY KEY  (LOG_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_log', 'LOG_time', 'LOG_time');
+        $this->_get_table_manager()->addIndex('esp_log', 'LOG_type', 'LOG_type');
+        $this->_get_table_manager()->addIndex('esp_log', 'OBJ', 'OBJ_type,OBJ_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -399,22 +444,34 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				STS_ID varchar(3) NOT NULL DEFAULT 'MIC',
 				MSG_created datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				MSG_modified datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				PRIMARY KEY  (MSG_ID),
-				KEY GRP_ID (GRP_ID),
-				KEY TXN_ID (TXN_ID),
-				KEY MSG_recipient_ID (MSG_recipient_ID),
-				KEY MSG_to (MSG_to(191)),
-				KEY MSG_from (MSG_from(191)),
-				KEY MSG_modified (MSG_modified)"
+				PRIMARY KEY  (MSG_ID)"
         );
-        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_messenger');
-        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_message_type');
-        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_context');
-        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_recipient_type');
-        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_subject');
-        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_created');
-        $this->_get_table_manager()->dropIndex('esp_message', 'MSG_priority');
-        $this->_get_table_manager()->dropIndex('esp_message', 'STS_ID');
+        $this->_get_table_manager()->addIndex('esp_message', 'GRP_ID', 'GRP_ID');
+        $this->_get_table_manager()->addIndex('esp_message', 'TXN_ID', 'TXN_ID');
+        $this->_get_table_manager()->addIndex('esp_message', 'MSG_recipient_ID', 'MSG_recipient_ID');
+        $this->_get_table_manager()->addIndex(
+            'esp_message',
+            'MSG_to',
+            'MSG_to',
+            TableAnalysis::INDEX_TYPE_INDEX,
+            TableAnalysis::INDEX_COLUMN_SIZE
+        );
+        $this->_get_table_manager()->addIndex(
+            'esp_message',
+            'MSG_from',
+            'MSG_from',
+            TableAnalysis::INDEX_TYPE_INDEX,
+            TableAnalysis::INDEX_COLUMN_SIZE
+        );
+        $this->_get_table_manager()->addIndex('esp_message', 'MSG_modified', 'MSG_modified');
+        // $this->_get_table_manager()->dropIndex('esp_message', 'MSG_messenger');
+        // $this->_get_table_manager()->dropIndex('esp_message', 'MSG_message_type');
+        // $this->_get_table_manager()->dropIndex('esp_message', 'MSG_context');
+        // $this->_get_table_manager()->dropIndex('esp_message', 'MSG_recipient_type');
+        // $this->_get_table_manager()->dropIndex('esp_message', 'MSG_subject');
+        // $this->_get_table_manager()->dropIndex('esp_message', 'MSG_created');
+        // $this->_get_table_manager()->dropIndex('esp_message', 'MSG_priority');
+        // $this->_get_table_manager()->dropIndex('esp_message', 'STS_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -424,9 +481,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				MTP_context varchar(50) NOT NULL,
 				MTP_template_field varchar(30) NOT NULL,
 				MTP_content text NOT NULL,
-				PRIMARY KEY  (MTP_ID),
-				KEY GRP_ID (GRP_ID)"
+				PRIMARY KEY  (MTP_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_message_template', 'GRP_ID', 'GRP_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -441,9 +498,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				MTP_is_override tinyint(1) NOT NULL DEFAULT '0',
 				MTP_deleted tinyint(1) NOT NULL DEFAULT '0',
 				MTP_is_active tinyint(1) NOT NULL DEFAULT '1',
-				PRIMARY KEY  (GRP_ID),
-				KEY MTP_user_id (MTP_user_id)"
+				PRIMARY KEY  (GRP_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_message_template_group', 'MTP_user_id', 'MTP_user_id');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -462,10 +519,17 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PAY_details text,
 				PAY_redirect_url varchar(300),
 				PAY_redirect_args text,
-				PRIMARY KEY  (PAY_ID),
-				KEY PAY_timestamp (PAY_timestamp),
-				KEY TXN_ID (TXN_ID)"
+				PRIMARY KEY  (PAY_ID)"
         );
+        $this->_get_table_manager()->addIndex(
+            'esp_payment',
+            'PAY_timestamp',
+            'PAY_timestamp',
+            TableAnalysis::INDEX_TYPE_INDEX,
+            null,
+            true
+        );
+        $this->_get_table_manager()->addIndex('esp_payment', 'TXN_ID', 'TXN_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -483,10 +547,15 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PMD_open_by_default tinyint(1) NOT NULL DEFAULT '0',
 				PMD_button_url varchar(1012) DEFAULT NULL,
 				PMD_scope varchar(255) NULL DEFAULT 'frontend',
-				PRIMARY KEY  (PMD_ID),
-				UNIQUE KEY PMD_slug_UNIQUE (PMD_slug)"
+				PRIMARY KEY  (PMD_ID)"
         );
-        $this->_get_table_manager()->dropIndex('esp_payment_method', 'PMD_type');
+        $this->_get_table_manager()->addIndex(
+            'esp_payment_method',
+            'PMD_slug_UNIQUE',
+            'PMD_slug',
+            TableAnalysis::INDEX_TYPE_UNIQUE
+        );
+        // $this->_get_table_manager()->dropIndex('esp_payment_method', 'PMD_type');
 
 
         $this->_table_is_changed_in_this_version(
@@ -502,9 +571,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
 				PRC_wp_user bigint(20) unsigned NULL,
 				PRC_parent int(10) unsigned DEFAULT 0,
-				PRIMARY KEY  (PRC_ID),
-				KEY PRT_ID (PRT_ID)"
+				PRIMARY KEY  (PRC_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_price', 'PRT_ID', 'PRT_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -526,10 +595,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
             "TKP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				TKT_ID int(10) unsigned NOT NULL,
 				PRC_ID int(10) unsigned NOT NULL,
-				PRIMARY KEY  (TKP_ID),
-				KEY TKT_ID (TKT_ID),
-				KEY PRC_ID (PRC_ID)"
+				PRIMARY KEY  (TKP_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_ticket_price', 'TKT_ID', 'TKT_ID');
+        $this->_get_table_manager()->addIndex('esp_ticket_price', 'PRC_ID', 'PRC_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -558,7 +627,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				QST_deleted tinyint(2) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (QST_ID)"
         );
-        $this->_get_table_manager()->dropIndex('esp_question', 'QST_order');
+        // $this->_get_table_manager()->dropIndex('esp_question', 'QST_order');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -573,11 +642,15 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				QSG_system tinyint(2) NULL,
 				QSG_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
 				QSG_wp_user bigint(20) unsigned NULL,
-				PRIMARY KEY  (QSG_ID),
-				UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier),
-				KEY QSG_order (QSG_order)"
+				PRIMARY KEY  (QSG_ID)"
         );
-        $this->_get_table_manager()->dropIndex('esp_question_group', 'QSG_order');
+        $this->_get_table_manager()->addIndex(
+            'esp_question_group',
+            'QSG_identifier_UNIQUE',
+            'QSG_identifier',
+            TableAnalysis::INDEX_TYPE_UNIQUE
+        );
+        // $this->_get_table_manager()->dropIndex('esp_question_group', 'QSG_order');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -586,10 +659,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				QSG_ID int(10) unsigned NOT NULL,
 				QST_ID int(10) unsigned NOT NULL,
 				QGQ_order int(10) unsigned NOT NULL DEFAULT 0,
-				PRIMARY KEY  (QGQ_ID),
-				KEY QST_ID (QST_ID)"
+				PRIMARY KEY  (QGQ_ID)"
         );
-        $this->_get_table_manager()->dropIndex('esp_question_group_question', 'QSG_ID_order');
+        $this->_get_table_manager()->addIndex('esp_question_group_question', 'QST_ID', 'QST_ID');
+        // $this->_get_table_manager()->dropIndex('esp_question_group_question', 'QSG_ID_order');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -601,9 +674,9 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				QSO_order int(10) unsigned NOT NULL DEFAULT 0,
 				QSO_system varchar(25) DEFAULT NULL,
 				QSO_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
-				PRIMARY KEY  (QSO_ID),
-				KEY QST_ID (QST_ID)"
+				PRIMARY KEY  (QSO_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_question_option', 'QST_ID', 'QST_ID');
         $this->_get_table_manager()->dropIndex('esp_question_option', 'QSO_order');
 
 
@@ -625,16 +698,24 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				REG_group_size tinyint(2) unsigned DEFAULT '1',
 				REG_att_is_going tinyint(1) DEFAULT '0',
 				REG_deleted tinyint(1) DEFAULT '0',
-				PRIMARY KEY  (REG_ID),
-				KEY REG_url_link (REG_url_link),
-				KEY REG_code (REG_code),
-				KEY REG_date (REG_date),
-				KEY TXN_ID (TXN_ID),
-				KEY ATT_ID (ATT_ID),
-				KEY TKT_ID (TKT_ID),
-				KEY EVT_ID (EVT_ID)"
+				PRIMARY KEY  (REG_ID)"
         );
-        $this->_get_table_manager()->dropIndex('esp_registration', 'STS_ID');
+        $this->_get_table_manager()->addIndex('esp_registration', 'REG_url_link', 'REG_url_link');
+        $this->_get_table_manager()->addIndex('esp_registration', 'REG_code', 'REG_code');
+        // $this->_get_table_manager()->addIndex(
+        //     'esp_registration',
+        //     'REG_date',
+        //     'REG_date',
+        //     TableAnalysis::INDEX_TYPE_INDEX,
+        //     null,
+        //     true
+        // );
+        $this->_get_table_manager()->addIndex('esp_registration', 'TXN_ID', 'TXN_ID');
+        $this->_get_table_manager()->addIndex('esp_registration', 'ATT_ID', 'ATT_ID');
+        $this->_get_table_manager()->addIndex('esp_registration', 'TKT_ID', 'TKT_ID');
+        $this->_get_table_manager()->addIndex('esp_registration', 'EVT_ID', 'EVT_ID');
+        $this->_get_table_manager()->dropIndex('esp_registration', 'REG_deleted');
+        // $this->_get_table_manager()->dropIndex('esp_registration', 'STS_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -643,10 +724,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 					  REG_ID int(10) unsigned NOT NULL,
 					  PAY_ID int(10) unsigned NULL,
 					  RPY_amount decimal(12,3) NOT NULL DEFAULT '0.00',
-					  PRIMARY KEY  (RPY_ID),
-					  KEY REG_ID (REG_ID),
-					  KEY PAY_ID (PAY_ID)"
+					  PRIMARY KEY  (RPY_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_registration_payment', 'REG_ID', 'REG_ID');
+        $this->_get_table_manager()->addIndex('esp_registration_payment', 'PAY_ID', 'PAY_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -656,10 +737,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				STA_abbrev varchar(24) NOT NULL,
 				STA_name varchar(100) NOT NULL,
 				STA_active tinyint(1) DEFAULT '1',
-				PRIMARY KEY  (STA_ID),
-				KEY STA_abbrev (STA_abbrev),
-				KEY CNT_ISO (CNT_ISO)"
+				PRIMARY KEY  (STA_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_state', 'STA_abbrev', 'STA_abbrev');
+        $this->_get_table_manager()->addIndex('esp_state', 'CNT_ISO', 'CNT_ISO');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -670,9 +751,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				STS_can_edit tinyint(1) NOT NULL DEFAULT 0,
 				STS_desc tinytext,
 				STS_open tinyint(1) NOT NULL DEFAULT 1,
-				UNIQUE KEY STS_ID_UNIQUE (STS_ID),
-				KEY STS_type (STS_type)"
+				PRIMARY KEY  (STS_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_status', 'STS_type', 'STS_type');
+        $this->_get_table_manager()->dropIndex('esp_status', 'STS_ID_UNIQUE');
 
 
         $this->_table_is_changed_in_this_version(
@@ -700,10 +782,10 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				TKT_parent int(10) unsigned DEFAULT '0',
 				TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				TKT_visibility smallint(6) unsigned NOT NULL DEFAULT 100,
-				PRIMARY KEY  (TKT_ID),
-				KEY TKT_start_date (TKT_start_date),
-				KEY TKT_end_date (TKT_end_date)"
+				PRIMARY KEY  (TKT_ID)"
         );
+        $this->_get_table_manager()->addIndex('esp_ticket', 'TKT_start_date', 'TKT_start_date');
+        // $this->_get_table_manager()->addIndex('esp_ticket', 'TKT_end_date', 'TKT_end_date');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -717,10 +799,17 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				TXN_hash_salt varchar(250) DEFAULT NULL,
 				PMD_ID int(11) DEFAULT NULL,
 				TXN_reg_steps text,
-				PRIMARY KEY  (TXN_ID),
-				KEY TXN_timestamp (TXN_timestamp)"
+				PRIMARY KEY  (TXN_ID)"
         );
-        $this->_get_table_manager()->dropIndex('esp_transaction', 'STS_ID');
+        $this->_get_table_manager()->addIndex(
+            'esp_transaction',
+            'TXN_timestamp',
+            'TXN_timestamp',
+            TableAnalysis::INDEX_TYPE_INDEX,
+            null,
+            true
+        );
+        // $this->_get_table_manager()->dropIndex('esp_transaction', 'STS_ID');
 
 
         $this->_table_has_not_changed_since_previous(
@@ -740,11 +829,11 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 			VNU_virtual_url varchar(255) DEFAULT NULL,
 			VNU_enable_for_gmap tinyint(1) DEFAULT 0,
 			VNU_google_map_link varchar(255) DEFAULT NULL,
-			PRIMARY KEY  (VNUM_ID),
-			KEY VNU_ID (VNU_ID),
-			KEY STA_ID (STA_ID),
-			KEY CNT_ISO (CNT_ISO)'
+			PRIMARY KEY  (VNUM_ID)'
         );
+        $this->_get_table_manager()->addIndex('esp_venue_meta', 'VNU_ID', 'VNU_ID');
+        $this->_get_table_manager()->addIndex('esp_venue_meta', 'STA_ID', 'STA_ID');
+        $this->_get_table_manager()->addIndex('esp_venue_meta', 'CNT_ISO', 'CNT_ISO');
 
 
         $this->previous_dms->insert_default_data();

@@ -8,15 +8,23 @@ jQuery(document).ready(function ($) {
      *  signup_link: string,
      *  localized: array,
      *  onboard_btn: object,
+     *  onboard_trigger_btn: object,
      *  offboard_btn: object,
      *  form: object,
+     *  onboard_window: object,
      *  onboard_section: object,
      *  offboard_section: object,
      *  sandbox_select: object,
+     *  onboard_sandbox_section: object,
      *  processing_icon_name: string,
      *  processing_icon: object,
      *  clear_metadata_btn: object,
+     *  pp_pm_slug_holder: object,
      *  pp_seller_section: object,
+     *  connect_ok_id: string,
+     *  connect_cancel_id: string,
+     *  disconnect_ok_id: string,
+     *  disconnect_cancel_id: string,
      * }}
      *
      * @namespace eeaPPOnboardParameters
@@ -38,14 +46,19 @@ jQuery(document).ready(function ($) {
      * 	debug_is_on_notice: string,
      *  debug_is_off_notice: boolean,
      *  refresh_alert: string,
+     *  connect_dialog: string,
      *  disconnect_dialog: string,
+     *  processing_mask: string,
+     *  supported_countries: array,
      * }}
      */
     function EeaPayPalOnboarding(pm_slug) {
         this.slug = pm_slug;
         this.signup_link = '';
+        this.onboard_window = null;
         this.processing_icon_name = 'espresso-ajax-loading';
         this.onboard_btn = $('#eea_paypal_onboard_btn_' + pm_slug);
+        this.onboard_trigger_btn = $('#eea_paypal_onboard_trigger_btn_' + pm_slug);
         this.offboard_btn = $('#eea_paypal_offboard_btn_' + pm_slug);
         this.onboard_section = $('#eea_paypal_onboard_section_' + pm_slug);
         this.offboard_section = $('#eea_paypal_offboard_section_' + pm_slug);
@@ -55,6 +68,15 @@ jQuery(document).ready(function ($) {
         this.pp_pm_slug_holder = $('#eea_paypal_pm_slug');
         this.clear_metadata_btn = $('#eea_clear_metadata_' + pm_slug);
         this.pp_seller_section = $('#eea_paypal_seller_id_' + pm_slug);
+        this.connect_ok_id = '#eea_ppc_connect_ok_' + pm_slug;
+        this.connect_cancel_id = '#eea_ppc_connect_cancel_' + pm_slug;
+        this.disconnect_ok_id = '#eep_ppc_disconnect_ok_' + pm_slug;
+        this.disconnect_cancel_id = '#eep_ppc_disconnect_cancel_' + pm_slug;
+        this.pp_country_select_id = '#eep_ppc_country_' + pm_slug;
+        this.checkout_type_select_id = '#eep_ppc_checkout_type_' + pm_slug;
+        this.express_checkout_type_id = this.checkout_type_select_id + '-express_checkout';
+        this.ppcp_checkout_type_id = this.checkout_type_select_id + '-ppcp';
+        this.ppcp_checkout_type_lbl = this.ppcp_checkout_type_id + '-lbl';
 
 
         /**
@@ -103,15 +125,10 @@ jQuery(document).ready(function ($) {
             const this_pm = this;
             // Update button text on page load, depending on the PM sandbox mode.
             this_pm.toggleBtnText(this_pm, this_pm.sandbox_select.val());
-
             // Listen for the sandbox mode change.
-            this.sandbox_select.on('change', function () {
+            this_pm.sandbox_select.on('change', function () {
                 const sandbox_mode = this_pm.sandbox_select.val();
-                // Disable the Connect button for the time the URL is being updated. Save current URL.
-                this_pm.signup_link = this_pm.onboard_btn.attr('href');
-                this_pm.onboard_btn.removeAttr('href');
                 // Update the onboarding URL if the debug mode was changed.
-                this_pm.sendRequest('eeaPpGetOnboardingUrl', {}, this_pm.updateOnboardingUrl, false);
                 this_pm.toggleBtnText(this_pm, sandbox_mode);
             });
         };
@@ -127,8 +144,94 @@ jQuery(document).ready(function ($) {
             this.onboard_btn.on('click', function (event) {
                 this_pm.pp_pm_slug_holder.text(this_pm.slug);
                 this_pm.sandbox_mode = this_pm.sandbox_select.val();
+                this_pm.preOnboardingForm();
             });
         };
+
+
+        /**
+         * Shows the pre onboarding/options form.
+         * @function
+         */
+        this.preOnboardingForm = function () {
+            position_overlay(true);
+            position_dialog(2, false);
+            dialogHelper.addContent(eeaPPOnboardParameters.connect_dialog);
+            // Pre onboarding form setup.
+            this.preOnboardingFormSetup();
+            // Onboarding form listeners.
+            this.onboardFormListeners();
+        }
+
+
+        /**
+         * Set up the pre-onboarding form.
+         * @function
+         */
+        this.preOnboardingFormSetup = function () {
+            $(this.express_checkout_type_id).attr('disabled', true);
+        }
+
+
+        /**
+         * Onboard/options form listeners.
+         * @function
+         */
+        this.onboardFormListeners = function () {
+            let this_pm = this;
+            // Cancel.
+            $(this.connect_cancel_id).on('click', function() {
+                this_pm.hideDialog();
+                return false;
+            });
+            // Continue the onboarding.
+            $(this.connect_ok_id).on('click', function() {
+                this_pm.startOnboarding();
+            });
+            // Change country select.
+            $(this.pp_country_select_id).on('change', function() {
+                this_pm.validateCountry();
+            });
+        }
+
+
+        /**
+         * Start the onboarding process.
+         * @return {void}
+         */
+        this.startOnboarding = function () {
+            let selected_country = $(this.pp_country_select_id).val();
+            let checkout_type = 'EXPRESS_CHECKOUT';
+            if ($(this.ppcp_checkout_type_id).is(':checked')) {
+                checkout_type = 'PPCP';
+            }
+            // Request the onboarding URL and then initiate PayPal onboarding flow.
+            const url_parameters = new URLSearchParams(window.location.search);
+            const request_params = {
+                wp_nonce: url_parameters.get('_wpnonce'),
+                country: selected_country,
+                checkout_type: checkout_type
+            };
+            this.sendRequest('eeaPpGetOnboardingUrl', request_params, this.initiatePayPalOnboarding, false);
+        };
+
+
+        /**
+         * Validate the selected country.
+         * @return {void}
+         */
+        this.validateCountry = function () {
+            let selected_country = $(this.pp_country_select_id).val();
+            if ($.inArray(selected_country, eeaPPOnboardParameters.supported_countries) === -1) {
+                // Do not allow PPCP pm to be selected if there is no support for selected country.
+                $(this.ppcp_checkout_type_id).prop('checked', false);
+                $(this.ppcp_checkout_type_id).attr('disabled', true);
+                $(this.ppcp_checkout_type_lbl).fadeOut('fast');
+            } else {
+                $(this.ppcp_checkout_type_lbl).show();
+                $(this.ppcp_checkout_type_id).removeAttr('disabled');
+            }
+        }
 
 
         /**
@@ -136,39 +239,7 @@ jQuery(document).ready(function ($) {
          * @return {void}
          */
         this.hideDialog = function () {
-            overlay.fadeOut('fast');
-            eedialog.fadeOut('fast');
-        };
-
-
-        /**
-         * Show a dialog with the disconnect warning.
-         * @return {boolean}
-         */
-        this.confirmDisconnect = function () {
-            const this_pm = this;
-            position_overlay(false);
-            position_dialog(4, false);
-            dialogHelper.addContent(eeaPPOnboardParameters.disconnect_dialog);
-            $('#eea_paypal_dialog_ok_' + this_pm.slug).on('click', function() {
-                this_pm.hideDialog();
-                const btn_container = $(this).closest('tr');
-                if (btn_container) {
-                    this_pm.sandbox_mode = this_pm.sandbox_select.val();
-                    this_pm.sendRequest('eeaPpOffboard', {}, this_pm.reloadPage, false);
-                } else {
-                    console.error(eeaPPOnboardParameters.unknown_container);
-                }
-                return true;
-            });
-            $('#eea_paypal_dialog_cancel_' + this_pm.slug).on('click', function() {
-                this_pm.hideDialog();
-                return false;
-            });
-            overlay.on('click', function() {
-                this_pm.hideDialog();
-                return false;
-            });
+            dialogHelper.closeModal();
         };
 
 
@@ -199,6 +270,22 @@ jQuery(document).ready(function ($) {
 
 
         /**
+         * Trigger a click to initiate PayPal.
+         * @param this_pm
+         * @param response
+         * @function
+         */
+        this.initiatePayPalOnboarding = function (this_pm, response) {
+            if (typeof response.signup_link !== 'undefined') {
+                this_pm.onboard_trigger_btn.attr('href', response.signup_link);
+                this_pm.hideDialog();
+                this_pm.processing_icon.fadeOut('fast');
+                this_pm.onboard_trigger_btn[0].click();
+            }
+        }
+
+
+        /**
          * Simply reloads the page.
          * @param this_pm
          * @param response
@@ -209,23 +296,6 @@ jQuery(document).ready(function ($) {
             // Reload the page when disconnected.
             // Seems to be required for PP scripts. If not refreshed the signup link is opened in a new window or tab.
             location.reload();
-        };
-
-
-        /**
-         * Change the onboarding URL, sandbox vs live.
-         * @param this_pm
-         * @param response
-         * @function
-         */
-        this.updateOnboardingUrl = function (this_pm, response) {
-            window.do_before_admin_page_ajax();
-            let signup_link = this_pm.signup_link;
-            if (typeof response.signup_link !== 'undefined') {
-                signup_link = response.signup_link;
-            }
-            this_pm.onboard_btn.attr('href', signup_link);
-            this_pm.processing_icon.fadeOut('fast');
         };
 
 
@@ -282,7 +352,7 @@ jQuery(document).ready(function ($) {
                 },
                 success: function (response) {
                     ppc_onboarding_processing = false;
-                    const is_valid = this_pm.checkForErrors(response);
+                    const is_valid = this_pm.checkForErrors(response, request_action === 'eeaPpGetOnboardingUrl');
                     if (is_valid && typeof callback !== 'undefined' && callback) {
                         // Run the callback if there are no errors.
                         callback(this_pm, response);
@@ -293,7 +363,7 @@ jQuery(document).ready(function ($) {
                 },
                 error: function (jqXHR, details, error) {
                     ppc_onboarding_processing = false;
-                    this_pm.requestError(jqXHR, error, details, this_pm);
+                    this_pm.requestError(jqXHR, error, details, this_pm, request_action === 'eeaPpGetOnboardingUrl');
                 },
             });
         };
@@ -304,18 +374,45 @@ jQuery(document).ready(function ($) {
          * @function
          */
         this.toggleBtnText = function (this_pm, sandbox_mode) {
-            const btn_text_span = this_pm.onboard_btn.find('span')[0];
-
             // Change button text.
-            if (btn_text_span) {
-                if (sandbox_mode === '1') {
-                    $(btn_text_span).text(eeaPPOnboardParameters.sandbox_btn_text);
-                } else {
-                    $(btn_text_span).text(eeaPPOnboardParameters.onboard_btn_text);
-                }
+            if (sandbox_mode === '1') {
+                this_pm.onboard_btn.text(eeaPPOnboardParameters.sandbox_btn_text);
+            } else {
+                this_pm.onboard_btn.text(eeaPPOnboardParameters.onboard_btn_text);
             }
             // Also update sandbox text.
             this.updateConnectionInfo(this_pm);
+        };
+
+
+        /**
+         * Show a dialog with the disconnect warning.
+         * @return {boolean}
+         */
+        this.confirmDisconnect = function () {
+            const this_pm = this;
+            position_overlay(false);
+            position_dialog(3, false);
+            dialogHelper.addContent(eeaPPOnboardParameters.disconnect_dialog);
+            $(this_pm.disconnect_ok_id).on('click', function() {
+                this_pm.hideDialog();
+                const btn_container = $(this).closest('tr');
+                if (btn_container) {
+                    this_pm.sandbox_mode = this_pm.sandbox_select.val();
+                    this_pm.sendRequest('eeaPpOffboard', {}, this_pm.reloadPage, false);
+                } else {
+                    console.error(eeaPPOnboardParameters.unknown_container);
+                }
+                return true;
+            });
+            $(this.disconnect_cancel_id).on('click', function() {
+                this_pm.hideDialog();
+                return false;
+            });
+            overlay.on('click', function() {
+                this_pm.hideDialog();
+                return false;
+            });
         };
 
 
@@ -327,7 +424,7 @@ jQuery(document).ready(function ($) {
         this.showAlert = function (error) {
             const this_pm = this;
             position_overlay(false);
-            position_dialog(4, false);
+            position_dialog(3, false);
             dialogHelper.addContent('Error: ' + error);
             overlay.on('click', function() {
                 this_pm.hideDialog();
@@ -338,16 +435,21 @@ jQuery(document).ready(function ($) {
         /**
          * Check for errors in the response.
          * @param response
+         * @param close_window
          * @return {boolean}
          */
-        this.checkForErrors = function (response) {
+        this.checkForErrors = function (response, close_window) {
             if (response === null || response.error) {
+                if (close_window) {
+                    this.onboard_window.close();
+                }
                 let error = eeaPPOnboardParameters.request_error;
                 if (response !== null && response.message) {
                     error = response.message;
                 }
                 console.error(error);
                 this.showAlert(error);
+                this.processing_icon.fadeOut('fast');
                 return false;
             }
             return true;
@@ -431,7 +533,7 @@ jQuery(document).ready(function ($) {
          * Display or log the error.
          * @function
          */
-        this.requestError = function (response, err, details, this_pm) {
+        this.requestError = function (response, err, details, this_pm, close_window) {
             this_pm.processing_icon.fadeOut('fast');
             let error = eeaPPOnboardParameters.error_response;
             if (details) {
@@ -439,6 +541,9 @@ jQuery(document).ready(function ($) {
             }
             console.error(error);
             this_pm.showAlert(error);
+            if (close_window) {
+                this_pm.onboard_window.close();
+            }
         };
     }
 
@@ -448,22 +553,3 @@ jQuery(document).ready(function ($) {
         paypal_pms[slug].initialize();
     }
 });
-
-// Default callback for PayPal to trigger when onboarding was a success.
-function onboardedCallback(authCode, sharedId) {
-    // Prevent double callback triggers (which did happen frequently).
-    if (ppc_onboarding_processing) {
-        return;
-    }
-    ppc_onboarding_processing = true;
-    const pm_slug = document.getElementById('eea_paypal_pm_slug').textContent;
-    const request_data = {
-        authCode: authCode,
-        sharedId: sharedId
-    };
-    paypal_pms[pm_slug].sendRequest('eeaPpGetSellerAccessToken', request_data, false, true);
-    // Close the window.
-    if (typeof PAYPAL !== 'undefined') {
-        PAYPAL.apps.Signup.MiniBrowser.closeFlow();
-    }
-}

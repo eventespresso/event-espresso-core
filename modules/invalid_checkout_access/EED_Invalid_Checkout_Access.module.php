@@ -58,7 +58,7 @@ class EED_Invalid_Checkout_Access extends EED_Module
     /**
      * @return InvalidCheckoutAccess
      */
-    public static function getInvalidCheckoutAccess()
+    public static function getInvalidCheckoutAccess(): InvalidCheckoutAccess
     {
         if (! self::$invalid_checkout_access_form instanceof InvalidCheckoutAccess) {
             self::$invalid_checkout_access_form = new InvalidCheckoutAccess();

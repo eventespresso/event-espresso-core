@@ -56,7 +56,7 @@ class AttendeeFilterHeader extends AdminPageHeaderDecorator
                         '%1$s Viewing registrations for %2$s%3$s',
                         'event_espresso'
                     ),
-                    '<h3 style="line-height:1.5em;">',
+                    '<h3 class="ee-filter-header__text">',
                     '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
                         array(
                             'action' => 'edit_attendee',

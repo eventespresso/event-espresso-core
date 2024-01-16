@@ -6,6 +6,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.13]
+
+#### Fixed
+ - [Set Defaults and Types for EE_Gateway Properties (#989)](https://github.com/eventespresso/cafe/pull/989)
+ - [Fix Escaping for [ESPRESSO_MY_EVENTS] Shortcode (#975)](https://github.com/eventespresso/cafe/pull/975)
+ - [Fix Messages Settings Admin Toggle Switch Display (#996)](https://github.com/eventespresso/cafe/pull/996)
+ - [Fix Event Registrations Report CSV (#988)](https://github.com/eventespresso/cafe/pull/988)
+ - [Relax Property Types in EE_Template_Config (#1007)](https://github.com/eventespresso/cafe/pull/1007)
+ - [Fix EE_Line_Item::desc() Return Type (#1009)](https://github.com/eventespresso/cafe/pull/1009)
+ - [Fix Country Settings Is EU Option Not Saving (#1017)](https://github.com/eventespresso/cafe/pull/1017)
+ - [Fix Registration List Table View Links When Filtered by Event (#1016)](https://github.com/eventespresso/cafe/pull/1016)
+ - [Fix Event List Registration Links (#1014)](https://github.com/eventespresso/cafe/pull/1014)
+ - [Fix Session Reset Keys Data Type (#1023)](https://github.com/eventespresso/cafe/pull/1023)
+ - [Fix Ticket Total with Taxes (#1018)](https://github.com/eventespresso/cafe/pull/1018)
+ - [Fix Undefined Constant and Uninitialized Properties (#1030)](https://github.com/eventespresso/cafe/pull/1030)
+ - [ES. Fix missing thank you page session (#1032)](https://github.com/eventespresso/cafe/pull/1032)
+ - [Fix Model Path for DTT_ID in addWhereParamsForFilters() (#1039)](https://github.com/eventespresso/cafe/pull/1039)
+ - [Fix RSS Feeds and UI Tweaks (#1045)](https://github.com/eventespresso/cafe/pull/1045)
+ - [Fix fatals/deprecated notices thrown during migrations (#1063)](https://github.com/eventespresso/cafe/pull/1063)
+
+#### Changed
+ - [BM 5.0.12.p changes (#977)](https://github.com/eventespresso/cafe/pull/977)
+ - [Refactor How Database Table Indexes are Added (#983)](https://github.com/eventespresso/cafe/pull/983)
+ - [Check for Multiple @ Sign in Email Addresses (#973)](https://github.com/eventespresso/cafe/pull/973)
+ - [Move Venue Sorting into useVenues() Hook (Barista#1276) (#1000)](https://github.com/eventespresso/cafe/pull/1000)
+ - [PPC. Third party integration (#807)](https://github.com/eventespresso/cafe/pull/807)
+ - [Make M-Mode Changes Backwards Compatible (#979)](https://github.com/eventespresso/cafe/pull/979)
+ - [Dont Use Links to Close Notices (#1036)](https://github.com/eventespresso/cafe/pull/1036)
+ - [PPC. Fix not ACDC eligible behaviour (#1040)](https://github.com/eventespresso/cafe/pull/1040)
+ - [Protect Ticket Assignments Manager Layout from Other Plugin CSS  (#1065)](https://github.com/eventespresso/cafe/pull/1065)
+
+
 ### [5.0.12]
 
 #### Added
@@ -83,7 +115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
  - [Build Machine 5.0.9 changes (#828)](https://github.com/eventespresso/cafe/pull/828)
- - [PayPal Commerce. Fix double opening clicks on SPCO](https://github.com/eventespresso/cafe/pull/827)
+ - [PayPal Commerce. Fix double](https://github.com/eventespresso/cafe/pull/827)
  - [Don't apply payments to cancelled payments by default (#844)](https://github.com/eventespresso/cafe/pull/844)
  - [Verify Core Config Loaded Before Showing Maintenance Mode Notice (#843)](https://github.com/eventespresso/cafe/pull/843)
 

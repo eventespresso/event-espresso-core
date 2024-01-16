@@ -1126,38 +1126,38 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Qty', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:104
-	__( 'Venue capacity', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:112
 	__( 'Venue telephone', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:119
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:111
 	__( 'Edit this Venue', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:128
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:120
 	__( 'Select a Venue for the Event', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:21
 	__( 'Venue Details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:47
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:39
 	__( 'unlimited space', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:50
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:42
 	/* translators: %d venue capacity */
 	__( 'Space for up to %d people', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:61
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:53
 	__( 'Venue address', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:67
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:59
 	__( 'Venue Details card', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:76
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:68
 	__( 'no image', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:80
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:72
 	__( 'Venue name', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:96
+	__( 'Venue capacity', 'event_espresso' ),
 
 	// Reference: domains/core/admin/wpPluginsPage/src/exitSurvey/Popup.tsx:29
 	__( 'Do you have a moment to share why you are deactivating Event Espresso?', 'event_espresso' ),

@@ -582,7 +582,7 @@ abstract class EE_messenger extends EE_Messages_Base
                     $select_values,
                     $default_value,
                     'data-messenger="' . $this->name . '" data-messagetype="' . $mt_slug . '"',
-                    'message-template-selector'
+                    'message-template-selector ee-input-size--small'
                 );
                 $new_template_name = sprintf(
                     esc_html__('Custom %1$s', 'event_espresso'),
@@ -598,7 +598,7 @@ abstract class EE_messenger extends EE_Messages_Base
                        data-grpid="' . $default_value . '"
                        target="_blank"
                        href="' . $create_url . '"
-                       class="button button--secondary create-mtpg-button"
+                       class="button button--secondary button--small create-mtpg-button"
                     >
                         ' . esc_html__('Create New Custom', 'event_espresso') . '
                     </a>';
@@ -618,7 +618,7 @@ abstract class EE_messenger extends EE_Messages_Base
                        data-grpid="' . $default_value . '"
                        target="_blank"
                        href="' . $edit_url . '"
-                       class="button button--secondary edit-mtpg-button"
+                       class="button button--secondary button--small edit-mtpg-button"
                     >
                         ' . esc_html__('Edit', 'event_espresso') . '
                     </a>'

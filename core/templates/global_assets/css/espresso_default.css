@@ -11,26 +11,35 @@
 :root {
 
     --ee-color-white: hsl(207, 0%, 100%);
+    --ee-color-may-as-well-be-white: hsl(207, 0%, 97.5%);
     --ee-color-almost-white: hsl(207, 0%, 95%);
+    --ee-color-white-cloud: hsl(207, 5%, 87.5%);
+    --ee-color-grey-cloud: hsl(207, 5%, 75%);
     --ee-color-off-white: hsl(207, 0%, 90%);
-    --ee-status-color-pink: hsl(340, 100%, 85%);
-    --ee-status-color-red: hsl(340, 60%, 55%);
-    --ee-status-color-orange: hsl(18, 70%, 50%);
-    --ee-status-color-gold: hsl(39, 98%, 50%);
-    --ee-status-color-yellow: hsl(50, 95%, 45%);
-    --ee-status-color-dark-green: hsl(95, 70%, 22.5%);
-    --ee-status-color-green: hsl(140, 85%, 35%);
-    --ee-status-color-green-high-contrast: hsl(140, 100%, 25%);
-    --ee-status-color-blue-green: hsl(176, 95%, 30%);
-    --ee-status-color-blue: hsl(203, 60%, 50%);
-    --ee-status-color-light-blue: hsl(203, 90%, 70%);
-    --ee-status-color-pale-blue: hsl(203, 50%, 95%);
-    --ee-status-color-violet: hsl(239, 35%, 60%);
-    --ee-status-color-purple: hsl(279, 35%, 50%);
+    --ee-status-color-pink: hsl(340, 100%, 75%);
+    --ee-status-color-hot-pink: hsl(342, 79%, 68%);
+    --ee-status-color-red: hsl(350, 95%, 65%);
+    --ee-status-color-orange: hsl(20, 100%, 65%);
+    --ee-status-color-gold: hsl(40, 100%, 55%);
+    --ee-status-color-yellow: hsl(50, 100%, 50%);
+    --ee-status-color-pale-yellow: hsl(50, 75%, 80%);
+    --ee-status-color-yellow-desat: hsl(50, 100%, 50%);
+    --ee-status-color-dark-green: hsl(95, 55%, 30%);
+    --ee-status-color-green: hsl(140, 90%, 40%);
+    --ee-status-color-dark-green-low-contrast: hsl(140, 90%, 50%);
+    --ee-status-color-green-high-contrast: hsl(140, 100%, 30%);
+    --ee-status-color-light-green: hsl(145, 40%, 50%);
+    --ee-status-color-blue-green: hsl(176, 100%, 35%);
+    --ee-status-color-blue: hsl(203, 65%, 55%);
+    --ee-status-color-light-blue: hsl(203, 95%, 75%);
+    --ee-status-color-pale-blue: hsl(203, 60%, 95%);
+    --ee-status-color-violet: hsl(239, 40%, 65%);
+    --ee-status-color-purple: hsl(279, 40%, 55%);
+    --ee-status-color-light-purple: hsl(279, 40%, 75%);
     --ee-status-color-pale-grey: hsl(219, 2%, 75%);
     --ee-status-color-light-grey: hsl(219, 2%, 55%);
     --ee-status-color-grey: hsl(225, 2%, 37.5%);
-    --ee-status-color-dark-grey: hsl(225, 2%, 20%);
+    --ee-status-color-dark-grey: hsl(225, 2%, 25%);
     --ee-status-color-charcoal: hsl(225, 0%, 15%);
 
 }
@@ -744,23 +753,23 @@ input.ee-register-button {
 
 .espresso-notices,
 .espresso-ajax-notices {
-	box-sizing: border-box;
-	position: relative;
-	width: 74.5%;
-	min-width: 200px;
-	max-width: 640px;
-	height: auto;
-	padding: .75em 2.5%;
-	margin: 0 auto 2em;
-	z-index: 999;
-	background: #fff;
-	border   : 4px solid;
-	font-size: 1em;
-	color: #666;
-	line-height: 1.6em;
-	text-align: center;
-	font-weight: bold;
-	box-shadow: 4px 10px 15px -3px rgba(0,0,0,.3), 0  1px 3px -1px rgba(0,0,0,.6), -3px -2px 10px rgba(0,0,0,.1);
+    background: var(--ee-color-white);
+    border: 4px solid;
+    box-shadow: 4px 10px 15px -3px rgba(0,0,0,.3), 0 9px 9px -3px rgba(0,0,0,.6), -3px -2px 10px rgba(0,0,0,.15);
+    box-sizing: border-box;
+    color: var(--ee-status-color-dark-grey);
+    font-size: 1em;
+    font-weight: bold;
+    height: auto;
+    line-height: 1.6em;
+    margin: 0 auto 2em;
+    max-width: 640px;
+    min-width: 300px;
+    padding: 1em 1.25em;
+    position: relative;
+    text-align: center;
+    width: 74.5%;
+    z-index: 999;
 }
 .espresso-notices p,
 .espresso-ajax-notices p {
@@ -788,13 +797,14 @@ input.ee-register-button {
 	font-size: 21px;
 	font-weight: bold;
 	line-height: 21px;
+	margin: 0;
 	padding: 0;
 	position: absolute;
 	right: 3px;
 	text-align: center;
+	text-decoration: none !important;
 	top: 1px;
 	vertical-align: middle;
-	text-decoration: none !important;
 }
 .close-espresso-notice:hover {
 	color: var(--ee-status-color-dark-grey);

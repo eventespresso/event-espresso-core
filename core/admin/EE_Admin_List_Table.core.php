@@ -229,7 +229,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function __construct(EE_Admin_Page $admin_page, ?AdminListTableFilters $filters = null)
     {
-        $this->request       = LoaderFactory::getShared(RequestInterface::class);
+        $this->request       = $this->request ?? LoaderFactory::getShared(RequestInterface::class);
         $this->_admin_page   = $admin_page;
         $this->_req_data     = $this->_admin_page->get_request_data();
         $this->_view         = $this->_admin_page->get_view();
@@ -249,6 +249,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
 
         $this->_setup_data();
         $this->_add_view_counts();
+        // ensure changes made to views in child classes get ported back to the admin page
+        $this->_admin_page->updateViews($this->_views);
 
         $this->_nonce_action_ref = $this->_view;
 

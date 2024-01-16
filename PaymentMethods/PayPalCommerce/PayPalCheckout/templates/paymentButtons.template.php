@@ -5,7 +5,10 @@
  *
  * @package     Event Espresso
  * @subpackage  eea-paypal-commerce
+ *
+ * Template arguments:
+ * @type bool   $pm_slug    The payment method slug.
  */
 
 ?>
-<div id="eea-paypal-commerce-payment-buttons"></div>
+<div id="eep-<?php echo $pm_slug; ?>-payment-buttons" class="eep-ppc-payment-buttons"></div>

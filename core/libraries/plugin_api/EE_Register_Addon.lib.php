@@ -649,6 +649,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      *
      * @param array $addon_settings
      * @return void
+     * @throws EE_Error
      */
     private static function _setup_namespaces(array $addon_settings)
     {
