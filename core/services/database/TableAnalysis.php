@@ -149,7 +149,7 @@ class TableAnalysis extends EE_Base
      * @param string $table_name
      * @param string $index_name
      * @return bool
-     * @since $VID:$
+     * @since 5.0.13.p
      */
     public function indexExists(string $table_name, string $index_name): bool
     {

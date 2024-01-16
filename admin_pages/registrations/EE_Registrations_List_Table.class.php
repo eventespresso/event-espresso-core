@@ -101,7 +101,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @param array         $extra_query_args
      * @param EE_Admin_Page $admin_page
      * @return void
-     * @since $VID:$
+     * @since 5.0.13.p
      */
     public function filterExtraQueryArgs(array $extra_query_args, EE_Admin_Page $admin_page): array
     {

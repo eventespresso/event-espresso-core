@@ -14,7 +14,7 @@ use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
  * @package     Event Espresso
  * @subpackage  eea-paypal-commerce
  * @author      Nazar Kolivoshka
- * @since       $VID:$
+ * @since       5.0.13.p
  */
 class ClientToken extends ClientsApi
 {

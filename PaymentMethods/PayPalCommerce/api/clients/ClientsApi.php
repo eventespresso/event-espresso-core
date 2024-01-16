@@ -12,7 +12,7 @@ use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
  * @package     Event Espresso
  * @subpackage  eea-paypal-commerce
  * @author      Nazar Kolivoshka
- * @since       $VID:$
+ * @since       5.0.13.p
  */
 abstract class ClientsApi
 {

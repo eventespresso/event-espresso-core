@@ -3894,7 +3894,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * @param array $views
      * @return void
-     * @since $VID:$
+     * @since 5.0.13.p
      */
     public function updateViews(array $views)
     {

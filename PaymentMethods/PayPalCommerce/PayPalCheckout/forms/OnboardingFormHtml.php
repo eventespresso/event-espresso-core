@@ -23,7 +23,7 @@ use Exception;
  * @package     Event Espresso
  * @subpackage  eea-paypal-commerce
  * @author      Nazar Kolivoshka
- * @since       $VID:$
+ * @since       5.0.13.p
  */
 class OnboardingFormHtml
 {
