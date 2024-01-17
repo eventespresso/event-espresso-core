@@ -308,7 +308,7 @@ class PayPalExtraMetaManager
                 ? PPCommerceEncryptionKeyManager::SANDBOX_ENCRYPTION_KEY_ID
                 : PPCommerceEncryptionKeyManager::PRODUCTION_ENCRYPTION_KEY_ID;
             $decrypted      = $encryptor->decrypt($text, $key_identifier);
-        } catch (Exception) {
+        } catch (Exception $e) {
             return $text;
         }
         return $decrypted ?? $text;

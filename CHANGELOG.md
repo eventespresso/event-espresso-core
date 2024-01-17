@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.14]
+
+#### Fixed
+ - [Fix paypal exception causing fatal on PHP7.4 (#1071)](https://github.com/eventespresso/cafe/pull/1071)
+
 ### [5.0.13]
 
 #### Fixed
@@ -36,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Dont Use Links to Close Notices (#1036)](https://github.com/eventespresso/cafe/pull/1036)
  - [PPC. Fix not ACDC eligible behaviour (#1040)](https://github.com/eventespresso/cafe/pull/1040)
  - [Protect Ticket Assignments Manager Layout from Other Plugin CSS  (#1065)](https://github.com/eventespresso/cafe/pull/1065)
+ - [BM Changes 5.0.13.p (#1067)](https://github.com/eventespresso/cafe/pull/1067)
+
 
 
 ### [5.0.12]
