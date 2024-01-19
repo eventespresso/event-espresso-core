@@ -29,7 +29,7 @@ class PayPalExtraMetaManager
      * @param string            $option_name
      * @return mixed
      */
-    public static function getPmOption(EE_Payment_Method $paypal_pm, string $option_name): mixed
+    public static function getPmOption(EE_Payment_Method $paypal_pm, string $option_name)
     {
         $pp_meta_data = self::extraMeta($paypal_pm);
         $option_value = $pp_meta_data->getOption($option_name);

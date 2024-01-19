@@ -335,7 +335,7 @@ class EED_PayPalOnboard extends EED_Module
      * @param mixed $paypal_pm
      * @return bool
      */
-    public static function onboardingStatusResponseValid(array $data, mixed $paypal_pm): bool
+    public static function onboardingStatusResponseValid(array $data, $paypal_pm): bool
     {
         // Check that we have all the required parameters and the nonce is ok.
         if ($paypal_pm instanceof EE_Payment_Method

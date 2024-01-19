@@ -991,7 +991,10 @@ final class EE_Capabilities extends EE_Base
  */
 abstract class EE_Meta_Capability_Map
 {
-    protected ?EEM_Base $_model = null;
+    /**
+     * @var EEM_Base
+     */
+    protected $_model = null;
 
     protected string $_model_name = '';
 

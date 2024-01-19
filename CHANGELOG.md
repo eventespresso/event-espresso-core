@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.15]
+
+#### Fixed
+ - [Remove mixed return and parameter type (available in PHP8) (#1073)](https://github.com/eventespresso/cafe/pull/1073)
+ - [Dont set type properties of ?EEM_Base (#1074)](https://github.com/eventespresso/cafe/pull/1074)
+
+
 ### [5.0.14]
 
 #### Fixed
