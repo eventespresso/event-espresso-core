@@ -4496,7 +4496,7 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin .wp-editor-container .wp-editor-area {
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 .espresso-admin.wp-core-ui:not(.event-espresso_page_espresso_messages) .tmce-active .quicktags-toolbar {

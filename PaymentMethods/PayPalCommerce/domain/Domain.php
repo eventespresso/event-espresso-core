@@ -120,9 +120,14 @@ class Domain
     public const API_KEY_EXPIRES_IN = 'expires_in';
 
     /**
-     * Name of the PayPal API parameter that holds the bool of if permissions were granted.
+     * Name of the PayPal API parameter that holds the list of oAuth integrations related to the merchant.
      */
-    public const API_PARAM_PERMISSIONS_GRANTED = 'permissionsGranted';
+    public const API_PARAM_OAUTH_INTEGRATIONS = 'oauth_integrations';
+
+    /**
+     * Name of the PayPal API parameter that holds the list of third party permissions that were granted.
+     */
+    public const API_PARAM_PERMISSIONS_GRANTED = 'oauth_third_party';
 
     /**
      * Name of the PayPal API parameter that holds the bool of if the primary email was confirmed.

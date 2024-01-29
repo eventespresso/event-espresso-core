@@ -352,13 +352,13 @@ jQuery(document).ready(function ($) {
                 },
                 success: function (response) {
                     ppc_onboarding_processing = false;
-                    const is_valid = this_pm.checkForErrors(response, request_action === 'eeaPpGetOnboardingUrl');
+                    const is_valid = this_pm.checkForErrors(this_pm, response, request_action === 'eeaPpGetOnboardingUrl');
                     if (is_valid && typeof callback !== 'undefined' && callback) {
                         // Run the callback if there are no errors.
                         callback(this_pm, response);
                     }
                     if (update_ui) {
-                        this_pm.updateOnboardingUI(false);
+                        this_pm.updateOnboardingUI(this_pm, false);
                     }
                 },
                 error: function (jqXHR, details, error) {
@@ -434,22 +434,23 @@ jQuery(document).ready(function ($) {
 
         /**
          * Check for errors in the response.
+         * @param this_pm
          * @param response
          * @param close_window
          * @return {boolean}
          */
-        this.checkForErrors = function (response, close_window) {
+        this.checkForErrors = function (this_pm, response, close_window) {
             if (response === null || response.error) {
                 if (close_window) {
-                    this.onboard_window.close();
+                    this_pm.onboard_window.close();
                 }
                 let error = eeaPPOnboardParameters.request_error;
                 if (response !== null && response.message) {
                     error = response.message;
                 }
                 console.error(error);
-                this.showAlert(error);
-                this.processing_icon.fadeOut('fast');
+                this_pm.showAlert(error);
+                this_pm.processing_icon.fadeOut('fast');
                 return false;
             }
             return true;
@@ -460,17 +461,16 @@ jQuery(document).ready(function ($) {
          * Updates the UI to show if we've managed to get onboard.
          * @function
          */
-        this.updateOnboardingUI = function (check_status) {
+        this.updateOnboardingUI = function (this_pm, check_status) {
             window.do_before_admin_page_ajax();
             let request_data = {
                 action: 'eeaPpGetOnboardStatus',
-                payment_method: this.slug,
-                sandbox_mode: this.sandbox_mode
+                payment_method: this_pm.slug,
+                sandbox_mode: this_pm.sandbox_mode
             };
             if (check_status) {
                 request_data.check_status = check_status;
             }
-            const this_pm = this;
             $.ajax({
                 type: 'POST',
                 url: eei18n.ajax_url,

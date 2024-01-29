@@ -6,6 +6,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.16]
+
+#### Added
+ - NEW
+
+#### Fixed
+ - [PPC. Fix onboarding validation (#1085)](https://github.com/eventespresso/cafe/pull/1085)
+ - [ES. Fix onboarding in Live mode (#1087)](https://github.com/eventespresso/cafe/pull/1087)
+ - [Fix text wrapping in the event editor (#1078)](https://github.com/eventespresso/cafe/pull/1078)
+ - FIX
+
+#### Changed
+ - [Mod/core/bm changes 5 0 15 (#1075)](https://github.com/eventespresso/cafe/pull/1075)
+ - MOD
+
+#### Deprecated
+ - DEP
+
+#### Removed
+ - RMV
+
+#### Security
+ - SEC
+
+
+
 ### [5.0.15]
 
 #### Fixed

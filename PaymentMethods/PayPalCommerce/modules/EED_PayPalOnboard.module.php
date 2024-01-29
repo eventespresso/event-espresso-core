@@ -227,7 +227,7 @@ class EED_PayPalOnboard extends EED_Module
         return add_query_arg(
             [
                 'page'                        => 'espresso_payment_settings',
-                'webhook_action'              => 'eea_pp_commerce_merchant_onboard',
+                'webhook_action'              => 'eepPpcMerchantOnboard',
                 'payment_method'              => $paypal_pm->slug(),
                 '_wpnonce'                    => $wp_nonce,
                 'nonce'                       => $nonce,
@@ -275,7 +275,7 @@ class EED_PayPalOnboard extends EED_Module
     {
         // Check if this is the webhook from PayPal.
         if (! isset($_GET['webhook_action'], $_GET['nonce'])
-            || $_GET['webhook_action'] !== 'eea_pp_commerce_merchant_onboard'
+            || $_GET['webhook_action'] !== 'eepPpcMerchantOnboard'
         ) {
             return;  // Ignore.
         }
@@ -290,16 +290,6 @@ class EED_PayPalOnboard extends EED_Module
                 $get_params,
                 $paypal_pm
             );
-            EED_PayPalOnboard::redirectToPmSettingsHome();
-            return;
-        }
-        // Were the requested permissions granted ?
-        if (empty($get_params[ Domain::API_PARAM_PERMISSIONS_GRANTED ])) {
-            $error_message = esc_html__(
-                'Permissions not granted by merchant or email not confirmed.',
-                'event_espresso'
-            );
-            PayPalLogger::errorLog($error_message, $get_params, $paypal_pm);
             EED_PayPalOnboard::redirectToPmSettingsHome();
             return;
         }
@@ -342,7 +332,6 @@ class EED_PayPalOnboard extends EED_Module
             && wp_verify_nonce($data['nonce'], Domain::NONCE_NAME_ONBOARDING_RETURN)
             && ! empty($data[ Domain::API_PARAM_PARTNER_ID ])
             && ! empty($data[ Domain::META_KEY_SELLER_MERCHANT_ID ])
-            && isset($data[ Domain::API_PARAM_PERMISSIONS_GRANTED ])
             && isset($data[ Domain::API_PARAM_EMAIL_CONFIRMED ])
         ) {
             return true;
@@ -668,7 +657,7 @@ class EED_PayPalOnboard extends EED_Module
             $pm_page = add_query_arg(
                 [
                     'page'           => 'espresso_payment_settings',
-                    'webhook_action' => 'eea_pp_commerce_merchant_onboard',
+                    'webhook_action' => 'eepPpcMerchantOnboard',
                     'payment_method' => $pp_commerce->slug(),
                 ],
                 admin_url('admin.php')

@@ -85,6 +85,7 @@ class TrackSellerOnboarding extends PartnersApi
             empty($response[ Domain::API_PARAM_TRACK_MERCHANT_ID ])
             || ! isset($response[ Domain::API_PARAM_PAYMENTS_RECEIVABLE ])
             || ! isset($response[ Domain::API_PARAM_PRIM_EMAIL_CONFIRMED ])
+            || ! isset($response[ Domain::API_PARAM_OAUTH_INTEGRATIONS ])
         ) {
             $err_msg = esc_html__('Missing required data for validating the onboarding status.', 'event_espresso');
             PayPalLogger::errorLog($err_msg, $response);
@@ -103,6 +104,24 @@ class TrackSellerOnboarding extends PartnersApi
             $err_msg = esc_html__('Email address not confirmed. Please confirm your email address.', 'event_espresso');
             PayPalLogger::errorLog($err_msg, $response);
             return ['error' => 'ONBOARDING_CONFIRM_EMAIL', 'message' => $err_msg];
+        }
+        if (empty($response[ Domain::API_PARAM_OAUTH_INTEGRATIONS ])) {
+            $permissions_valid = false;
+            // Look for the granted permissions.
+            foreach ($response[ Domain::API_PARAM_OAUTH_INTEGRATIONS ] as $integration_type) {
+                if (! empty($integration_type[ Domain::API_PARAM_PERMISSIONS_GRANTED ])) {
+                    $permissions_valid = true;
+                }
+            }
+            // Did we find any ? If no - oauth not valid.
+            if (! $permissions_valid) {
+                $err_msg = esc_html__(
+                    'Not all required permissions were granted. Please allow all permissions while onboarding.',
+                    'event_espresso'
+                );
+                PayPalLogger::errorLog($err_msg, $response);
+                return ['error' => 'ONBOARDING_PERMISSIONS_NOT_GRANTED', 'message' => $err_msg];
+            }
         }
         return [
             'valid'    => true,
