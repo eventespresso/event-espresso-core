@@ -2780,7 +2780,7 @@ class EE_Template_Config extends EE_Config_Base
 
     public string $current_espresso_theme = '';
 
-    public bool $display_address_in_regform = true;
+    public $display_address_in_regform = true;
 
     /**
      * @var bool|int|string|null $enable_default_style

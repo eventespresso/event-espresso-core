@@ -6,31 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
-### [5.0.16]
+### [5.0.17]
 
-#### Added
- - NEW
+#### Fixed
+ - [Fix PHP Fatal error: Uncaught TypeError: Cannot assign int to property EE_Template_Config:: of type bool (#1102)](https://github.com/eventespresso/cafe/pull/1102)
+
+#### Changed
+ - [BuildMachine 5.0.16.p changes (#1088)](https://github.com/eventespresso/cafe/pull/1088)
+ - [Prevent fatal error from get_edit_post_link returning null (#1097)](https://github.com/eventespresso/cafe/pull/1097)
+
+### [5.0.16]
 
 #### Fixed
  - [PPC. Fix onboarding validation (#1085)](https://github.com/eventespresso/cafe/pull/1085)
- - [ES. Fix onboarding in Live mode (#1087)](https://github.com/eventespresso/cafe/pull/1087)
  - [Fix text wrapping in the event editor (#1078)](https://github.com/eventespresso/cafe/pull/1078)
- - FIX
 
 #### Changed
- - [Mod/core/bm changes 5 0 15 (#1075)](https://github.com/eventespresso/cafe/pull/1075)
- - MOD
-
-#### Deprecated
- - DEP
-
-#### Removed
- - RMV
-
-#### Security
- - SEC
-
-
+ - [BuildMachine 5.0.16.p changes (#1088)](https://github.com/eventespresso/cafe/pull/1088)
 
 ### [5.0.15]
 
